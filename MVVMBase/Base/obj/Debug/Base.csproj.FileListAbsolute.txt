@@ -1,0 +1,5 @@
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\Base\bin\Debug\Base.dll
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\Base\bin\Debug\Base.pdb
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\Base\obj\Debug\Base.dll
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\Base\obj\Debug\Base.pdb
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\Base\obj\Debug\Base.csprojResolveAssemblyReference.cache

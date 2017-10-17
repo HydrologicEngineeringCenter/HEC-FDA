@@ -1,0 +1,17 @@
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\obj\Debug\View.csprojResolveAssemblyReference.cache
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\obj\Debug\Windows\BasicWindow.g.cs
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\obj\Debug\View_MarkupCompile.cache
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\obj\Debug\View_MarkupCompile.lref
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\bin\Debug\View.dll
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\bin\Debug\View.pdb
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\bin\Debug\Base.dll
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\bin\Debug\ViewModel.dll
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\bin\Debug\Base.pdb
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\bin\Debug\ViewModel.pdb
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\obj\Debug\Windows\BasicWindow.baml
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\obj\Debug\View.g.resources
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\obj\Debug\View.dll
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\obj\Debug\View.pdb
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\obj\Debug\NamedActionConverters\NamedActionButton.g.cs
+C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\obj\Debug\NamedActionConverters\NamedActionButton.baml
