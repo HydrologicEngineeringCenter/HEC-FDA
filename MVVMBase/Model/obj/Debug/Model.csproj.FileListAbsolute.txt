@@ -5,3 +5,10 @@ C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\Model\bin\Debug
 C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\Model\obj\Debug\Model.csprojResolveAssemblyReference.cache
 C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\Model\obj\Debug\Model.dll
 C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\Model\obj\Debug\Model.pdb
+C:\Framework\MVVMBase\Model\bin\Debug\Model.dll
+C:\Framework\MVVMBase\Model\bin\Debug\Model.pdb
+C:\Framework\MVVMBase\Model\bin\Debug\Base.dll
+C:\Framework\MVVMBase\Model\bin\Debug\Base.pdb
+C:\Framework\MVVMBase\Model\obj\Debug\Model.csprojResolveAssemblyReference.cache
+C:\Framework\MVVMBase\Model\obj\Debug\Model.dll
+C:\Framework\MVVMBase\Model\obj\Debug\Model.pdb

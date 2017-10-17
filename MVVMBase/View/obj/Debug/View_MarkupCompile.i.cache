@@ -4,7 +4,7 @@
 library
 C#
 .cs
-C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\obj\Debug\
+C:\Framework\MVVMBase\View\obj\Debug\
 View
 none
 false
@@ -13,8 +13,8 @@ DEBUG;TRACE
 2-1889051908
 
 8203409448
-68-1058960374
+68528530190
 NamedActionConverters\NamedActionButton.xaml;Windows\BasicWindow.xaml;
 
-False
+True
 

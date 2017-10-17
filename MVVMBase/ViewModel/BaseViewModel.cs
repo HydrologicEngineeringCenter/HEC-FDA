@@ -18,7 +18,7 @@ namespace ViewModel
         {
             get
             {
-                return _errorLevel > Base.Enumerations.ErrorLevel.ErrorFree;
+                return _errorLevel > Base.Enumerations.ErrorLevel.Unassigned;
             }
         }
         public Base.Interfaces.INamedAction ErrorsAction
@@ -73,7 +73,7 @@ namespace ViewModel
         {
             if (_RuleMap.ContainsKey(propertyName))
             {
-                if (_RuleMap[propertyName].ErrorLevel > Base.Enumerations.ErrorLevel.ErrorFree)
+                if (_RuleMap[propertyName].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
                 {
                     return _RuleMap[propertyName].Errors;
                 }
@@ -96,13 +96,13 @@ namespace ViewModel
         {
             _Errors = new List<string>();
             Base.Enumerations.ErrorLevel prevErrorState = _errorLevel;
-            _errorLevel = Base.Enumerations.ErrorLevel.ErrorFree;
+            _errorLevel = Base.Enumerations.ErrorLevel.Unassigned;
             foreach (string s in _RuleMap.Keys)
             {
                 _RuleMap[s].Update();
-                if (_RuleMap[s].ErrorLevel > Base.Enumerations.ErrorLevel.ErrorFree)
+                if (_RuleMap[s].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
                 {
-                    if (_errorLevel > Base.Enumerations.ErrorLevel.ErrorFree)
+                    if (_errorLevel > Base.Enumerations.ErrorLevel.Unassigned)
                     {
                         _errorLevel = _RuleMap[s].ErrorLevel;
                     }
@@ -113,7 +113,7 @@ namespace ViewModel
                     _Errors.AddRange(_RuleMap[s].Errors);
                 }
             }
-            if (_errorLevel > Base.Enumerations.ErrorLevel.ErrorFree)
+            if (_errorLevel > Base.Enumerations.ErrorLevel.Unassigned)
             {
                 //errors exist
                 if (_errorLevel != prevErrorState)
@@ -165,8 +165,8 @@ namespace ViewModel
                 }
                 if (!biggerErrorsExist)
                 {
-                    if (currState == Base.Enumerations.ErrorLevel.ErrorFree) _errorLevel = currState;
-                    if (_errorLevel > Base.Enumerations.ErrorLevel.ErrorFree)
+                    if (currState == Base.Enumerations.ErrorLevel.Unassigned) _errorLevel = currState;
+                    if (_errorLevel > Base.Enumerations.ErrorLevel.Unassigned)
                     {
                         _errorLevel = _errorLevel | currState;
                     }

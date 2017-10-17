@@ -49,7 +49,7 @@ namespace ViewModel.Validation
         public void Update()
         {
             _errors = new List<string>();
-            _errorLevel = Base.Enumerations.ErrorLevel.ErrorFree;
+            _errorLevel = Base.Enumerations.ErrorLevel.Unassigned;
             try
             {
                 foreach (Rule r in _rules)
@@ -57,7 +57,7 @@ namespace ViewModel.Validation
                     if (!r.Expression())
                     {
                         _errors.Add(r.Message);
-                        if(_errorLevel > Base.Enumerations.ErrorLevel.ErrorFree) {
+                        if(_errorLevel > Base.Enumerations.ErrorLevel.Unassigned) {
                              _errorLevel = _errorLevel | r.ErrorLevel;
                         }else
                         {

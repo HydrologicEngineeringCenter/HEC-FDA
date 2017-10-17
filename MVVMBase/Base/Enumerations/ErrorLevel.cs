@@ -6,11 +6,11 @@ namespace Base.Enumerations
     public enum ErrorLevel: byte
     {
         Unassigned = 0X00,
-        ErrorFree = 0x01,
-        Info = 0x02,
-        Minor = 0x04,
-        Major = 0x08,
-        Fatal = 0x10,
+        Info = 0x01,
+        Minor = 0x02,
+        Major = 0x04,
+        Fatal = 0x20,
+        Severe = 0x40,
         
     }
 }

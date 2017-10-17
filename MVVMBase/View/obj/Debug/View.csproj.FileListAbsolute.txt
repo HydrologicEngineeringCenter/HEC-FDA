@@ -15,3 +15,20 @@ C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\obj\Debug\
 C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\obj\Debug\View.pdb
 C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\obj\Debug\NamedActionConverters\NamedActionButton.g.cs
 C:\Users\Q0HECWPL\Documents\Visual Studio 2015\Projects\MVVMBase\View\obj\Debug\NamedActionConverters\NamedActionButton.baml
+C:\Framework\MVVMBase\View\bin\Debug\View.dll
+C:\Framework\MVVMBase\View\bin\Debug\View.pdb
+C:\Framework\MVVMBase\View\bin\Debug\Base.dll
+C:\Framework\MVVMBase\View\bin\Debug\ViewModel.dll
+C:\Framework\MVVMBase\View\bin\Debug\Base.pdb
+C:\Framework\MVVMBase\View\bin\Debug\ViewModel.pdb
+C:\Framework\MVVMBase\View\obj\Debug\View.csprojResolveAssemblyReference.cache
+C:\Framework\MVVMBase\View\obj\Debug\NamedActionConverters\NamedActionButton.g.cs
+C:\Framework\MVVMBase\View\obj\Debug\Windows\BasicWindow.g.cs
+C:\Framework\MVVMBase\View\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Framework\MVVMBase\View\obj\Debug\View_MarkupCompile.cache
+C:\Framework\MVVMBase\View\obj\Debug\View_MarkupCompile.lref
+C:\Framework\MVVMBase\View\obj\Debug\NamedActionConverters\NamedActionButton.baml
+C:\Framework\MVVMBase\View\obj\Debug\Windows\BasicWindow.baml
+C:\Framework\MVVMBase\View\obj\Debug\View.g.resources
+C:\Framework\MVVMBase\View\obj\Debug\View.dll
+C:\Framework\MVVMBase\View\obj\Debug\View.pdb
