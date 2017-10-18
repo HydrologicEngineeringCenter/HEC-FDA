@@ -32,29 +32,34 @@ namespace Base.Implementations
         {
             foreach (Base.Interfaces.IRecieveMessages s in _subscribers)
             {
-                
-                if (s.SenderTypeFilter == null)
+                if(s is Base.Interfaces.IRecieveInstanceMessages)
                 {
-                    if (s.MessageTypeFilter == null)
-                    {
-                        //error filter?
-                        s.RecieveMessage(sender, e);
-                    } else if (s.MessageTypeFilter == e.GetType())
-                    {
-                        //error filter?
-                        s.RecieveMessage(sender, e);
-                    }
-                }else if(s.SenderTypeFilter == sender.GetType())
+                    Base.Interfaces.IRecieveInstanceMessages sinstance = s as Base.Interfaces.IRecieveInstanceMessages;
+                    if(sinstance.InstanceHash != sender.GetHashCode()) { continue; }
+                }
+                if (e.Message is Base.Interfaces.IErrorMessage)
                 {
-                    if (s.MessageTypeFilter == null)
+                    if (s.SenderTypeFilter == null || s.SenderTypeFilter == sender.GetType())
                     {
-                        //error filter?
-                        s.RecieveMessage(sender, e);
+                        if (s.MessageTypeFilter == null || s.MessageTypeFilter == e.GetType())
+                        {
+                            //error filter
+                            Base.Interfaces.IErrorMessage emess = e.Message as Base.Interfaces.IErrorMessage;
+                            if (emess.ErrorLevel >= s.FilterLevel)
+                            {
+                                s.RecieveMessage(sender, e);
+                            }
+                        }
                     }
-                    else if (s.MessageTypeFilter == e.GetType())
+                }
+                else
+                {
+                    if (s.SenderTypeFilter == null || s.SenderTypeFilter == sender.GetType())
                     {
-                        //error filter?
-                        s.RecieveMessage(sender, e);
+                        if (s.MessageTypeFilter == null || s.MessageTypeFilter == e.GetType())
+                        {
+                            s.RecieveMessage(sender, e);
+                        }
                     }
                 }
             }
