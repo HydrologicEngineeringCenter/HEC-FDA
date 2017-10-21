@@ -41,7 +41,7 @@ namespace Base.Implementations
                 {
                     if (s.SenderTypeFilter == null || s.SenderTypeFilter == sender.GetType())
                     {
-                        if (s.MessageTypeFilter == null || s.MessageTypeFilter == e.GetType())
+                        if (s.MessageTypeFilter == null || s.MessageTypeFilter == e.Message.GetType())
                         {
                             //error filter
                             Base.Interfaces.IErrorMessage emess = e.Message as Base.Interfaces.IErrorMessage;
@@ -56,7 +56,7 @@ namespace Base.Implementations
                 {
                     if (s.SenderTypeFilter == null || s.SenderTypeFilter == sender.GetType())
                     {
-                        if (s.MessageTypeFilter == null || s.MessageTypeFilter == e.GetType())
+                        if (s.MessageTypeFilter == null || s.MessageTypeFilter == e.Message.GetType())
                         {
                             s.RecieveMessage(sender, e);
                         }
@@ -71,11 +71,11 @@ namespace Base.Implementations
                 if (s == listener) _subscribers.Remove(s);
             }
         }
-        public static void Unsubscribe(Base.Interfaces.IRecieveMessages listener, Base.Enumerations.ErrorLevel filterLevel, System.Type filterType)
+        public static void Unsubscribe(Base.Interfaces.IRecieveMessages listener, Base.Enumerations.ErrorLevel filterLevel, System.Type senderFilterType, System.Type messageFilterType)
         {
             foreach (Base.Interfaces.IRecieveMessages s in _subscribers)
             {
-                if (s == listener) _subscribers.Remove(s);
+                if (s == listener && s.FilterLevel == filterLevel && s.SenderTypeFilter == senderFilterType && s.MessageTypeFilter == messageFilterType) _subscribers.Remove(s);
             }
         }
     }

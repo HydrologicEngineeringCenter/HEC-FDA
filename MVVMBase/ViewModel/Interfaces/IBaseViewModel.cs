@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ViewModel.Interfaces
 {
-    public interface IBaseViewModel: Base.Interfaces.IValidate, System.ComponentModel.INotifyPropertyChanged
+    public interface IBaseViewModel: System.ComponentModel.INotifyPropertyChanged
     {
 
     }

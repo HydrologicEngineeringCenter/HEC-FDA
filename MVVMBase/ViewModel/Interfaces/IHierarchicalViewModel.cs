@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using ViewModel.Implementations;
 
 namespace ViewModel.Interfaces
 {
-    public interface IHierarchicalViewModel: IBaseViewModel, IExpandable, IHaveActionList, INavigate, IDisplayToUI
+    public interface IHierarchicalViewModel: IBaseViewModel, IExpandable, IHaveActionList, INavigate, IDisplayToUI, Base.Interfaces.IValidate
     {
         IHierarchicalViewModel Parent { get; set; }
         System.Collections.ObjectModel.ObservableCollection<IHierarchicalViewModel> Children { get; }

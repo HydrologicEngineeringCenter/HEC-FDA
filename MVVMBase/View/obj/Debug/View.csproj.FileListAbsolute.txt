@@ -32,3 +32,7 @@ C:\Framework\MVVMBase\View\obj\Debug\Windows\BasicWindow.baml
 C:\Framework\MVVMBase\View\obj\Debug\View.g.resources
 C:\Framework\MVVMBase\View\obj\Debug\View.dll
 C:\Framework\MVVMBase\View\obj\Debug\View.pdb
+C:\Framework\MVVMBase\View\obj\Debug\UserControls\MessageView.g.cs
+C:\Framework\MVVMBase\View\obj\Debug\UserControls\MessageView.baml
+C:\Framework\MVVMBase\View\obj\Debug\UserControls\SubscriberMessageView.g.cs
+C:\Framework\MVVMBase\View\obj\Debug\UserControls\SubscriberMessageView.baml

@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Reflection;
 using ViewModel.Events;
 using ViewModel.Interfaces;
 
-namespace ViewModel
+namespace ViewModel.Implementations
 {
-    public class HierarchicalViewModel : BaseViewModel, IHierarchicalViewModel
+    public class HierarchicalViewModel : ValidatingBaseViewModel, IHierarchicalViewModel
     {
         private List<IDisplayableNamedAction> _Actions = null;
         private ObservableCollection<IHierarchicalViewModel> _Children;

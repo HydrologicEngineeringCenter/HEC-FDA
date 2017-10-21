@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using Base.Interfaces;
 
-namespace ViewModel
+namespace ViewModel.Implementations
 {
-    public class BaseViewModel : Interfaces.IBaseViewModel
+    public class ValidatingBaseViewModel: Implementations.BaseViewModel, Base.Interfaces.IValidate
     {
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
-        public event PropertyChangedEventHandler PropertyChanged;
         private Dictionary<string, IPropertyRule> _RuleMap = new Dictionary<string, IPropertyRule>();
         private List<string> _Errors;
         private NamedAction _ErrorsAction;
@@ -134,7 +133,8 @@ namespace ViewModel
                         }
                     }
                 }
-            }else
+            }
+            else
             {
                 //no errors exist
                 if (_errorLevel != prevErrorState)
@@ -150,10 +150,10 @@ namespace ViewModel
             if (prevState != _RuleMap[propertyName].ErrorLevel)
             {
                 //a change occured.
-                
+
                 ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
                 Base.Enumerations.ErrorLevel currState = _RuleMap[propertyName].ErrorLevel;
-                
+
                 //check if it is the biggest one.
                 bool biggerErrorsExist = false;
                 foreach (string s in _RuleMap.Keys)
@@ -175,13 +175,13 @@ namespace ViewModel
                         _errorLevel = currState;
                     }
                 }
-                if ((currState ^ prevState)>0) { NotifyPropertyChanged(nameof(HasErrors)); }
+                if ((currState ^ prevState) > 0) { NotifyPropertyChanged(nameof(HasErrors)); }
             }
         }
-        protected void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName]string propertyName = "")
+        protected override void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName]string propertyName = "")
         {
             if (_RuleMap.ContainsKey(propertyName)) { Validate(propertyName); }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            base.NotifyPropertyChanged(propertyName);
         }
     }
 }

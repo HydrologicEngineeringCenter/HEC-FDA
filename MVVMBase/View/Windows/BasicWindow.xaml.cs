@@ -7,7 +7,7 @@ namespace View.Windows
     /// </summary>
     public partial class BasicWindow : Window
     {
-        public BasicWindow(ViewModel.BaseViewModel bvm):base(bvm)
+        public BasicWindow(ViewModel.Implementations.BaseViewModel bvm):base(bvm)
         {
             DataContext = bvm;
             InitializeComponent();

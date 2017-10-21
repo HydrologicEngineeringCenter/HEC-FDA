@@ -1,7 +1,4 @@
-﻿
-
-using System;
-using ViewModel.Events;
+﻿using ViewModel.Events;
 
 namespace View.Windows
 {
@@ -9,12 +6,17 @@ namespace View.Windows
     {
         //private bool _ClosedByRedX = true;
         private System.Timers.Timer _t;
-        public Window(ViewModel.BaseViewModel bvm)
+        public Window(ViewModel.Implementations.BaseViewModel bvm)
         {
             DataContext = bvm;
             AddHandlers(bvm);
         }
-        private void AddHandlers(ViewModel.BaseViewModel bvm)
+        public Window()
+        {
+            DataContext = null;
+            //AddHandlers(bvm);
+        }
+        protected virtual void AddHandlers(ViewModel.Implementations.BaseViewModel bvm)
         {
             if(bvm is ViewModel.Interfaces.INavigate)
             {
@@ -37,7 +39,7 @@ namespace View.Windows
             //    ((ViewModel.Interfaces.IClose)bvm).CloseEvent += wb_Close;
             //}
         }
-        private void RemoveHandlers(ViewModel.BaseViewModel bvm)
+        protected virtual void RemoveHandlers(ViewModel.Implementations.BaseViewModel bvm)
         {
             if (bvm is ViewModel.Interfaces.INavigate)
             {
@@ -77,7 +79,7 @@ namespace View.Windows
         }
         protected void Vm_RequestNavigation(object sender, ViewModel.Events.NavigationEventArgs e)
         {
-            ViewModel.BaseViewModel vm = e.ViewModel as ViewModel.BaseViewModel;
+            ViewModel.Implementations.BaseViewModel vm = e.ViewModel as ViewModel.Implementations.BaseViewModel;
             if (vm != null)
             {
                 if ((e.NavigationProperties & ViewModel.Enumerations.NavigationOptionsEnum.AsNewWindow) > 0)
@@ -96,7 +98,7 @@ namespace View.Windows
                 }
                 else
                 {
-                    ViewModel.BaseViewModel bvm = DataContext as ViewModel.BaseViewModel;
+                    ViewModel.Implementations.BaseViewModel bvm = DataContext as ViewModel.Implementations.BaseViewModel;
                     RemoveHandlers(bvm);
                     if (e.WindowTitle != "") this.Title = e.WindowTitle;
                     this.DataContext = vm;
