@@ -35,12 +35,14 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
-    <Folder Include="Attributes\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\ReporterDisplayNameAttribute.cs" />
     <Compile Include="Enumerations\ErrorLevel.cs" />
     <Compile Include="Events\MessageEventArgs.cs" />
     <Compile Include="Events\ProgressReportEventArgs.cs" />
+    <Compile Include="Events\ReporterAddedEventArgs.cs" />
+    <Compile Include="Implementations\Message.cs" />
     <Compile Include="Implementations\MessageHub.cs" />
     <Compile Include="Interfaces\IDirectory.cs" />
     <Compile Include="Interfaces\IErrorMessage.cs" />

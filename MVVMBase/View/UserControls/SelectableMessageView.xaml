@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="View.UserControls.SelectableMessageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:View.UserControls"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="400">
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="30"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Show output from: " HorizontalAlignment="Right"/>
+            <ComboBox Name="reportersCmb" Grid.Column="1" Margin="5" ItemsSource="{Binding Reporters}" SelectedItem="{Binding Sender}" MinWidth="80"/>
+            <Label Content="Max Message Count: " Grid.Column="2" HorizontalAlignment="Right"/>
+            <TextBox Grid.Column="3" Margin="5" Text="{Binding MessageCounter}" MinWidth="50"/>
+            <Button Click="Button_Click" Content="X" Grid.Column="4" Margin="5"/>
+        </Grid>
+
+        <local:MessageView x:Name="mv" Grid.Row="1" Margin="5" Message="{Binding IMessage}" MessageCount="{Binding MessageCounter}"/>
+    </Grid>
+</UserControl>

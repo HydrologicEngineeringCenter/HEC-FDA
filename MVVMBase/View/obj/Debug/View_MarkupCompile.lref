@@ -2,6 +2,7 @@
 
 FC:\Framework\MVVMBase\View\NamedActionConverters\NamedActionButton.xaml;;
 FC:\Framework\MVVMBase\View\UserControls\MessageView.xaml;;
+FC:\Framework\MVVMBase\View\UserControls\SelectableMessageView.xaml;;
 FC:\Framework\MVVMBase\View\UserControls\SubscriberMessageView.xaml;;
 FC:\Framework\MVVMBase\View\Windows\BasicWindow.xaml;;
 

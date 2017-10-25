@@ -26,7 +26,14 @@ namespace View.UserControls
         public static readonly DependencyProperty FilterLevelProperty = DependencyProperty.Register(nameof(FilterLevel), typeof(Base.Enumerations.ErrorLevel), typeof(SubscriberMessageView), new PropertyMetadata(Base.Enumerations.ErrorLevel.Unassigned, FilterLevelChangedCallback));
         public static readonly DependencyProperty SenderTypeFilterProperty = DependencyProperty.Register(nameof(SenderTypeFilter), typeof(System.Type), typeof(SubscriberMessageView), new PropertyMetadata(null, SenderTypeFilterChangedCallback));
         public static readonly DependencyProperty MessageTypeFilterProperty = DependencyProperty.Register(nameof(MessageTypeFilter), typeof(System.Type), typeof(SubscriberMessageView), new PropertyMetadata(null, MessageTypeFilterChangedCallback));
+        public static readonly DependencyProperty MessageCountProperty = DependencyProperty.Register(nameof(MessageCount), typeof(int), typeof(SubscriberMessageView), new PropertyMetadata(100, MessageCountChangedCallback));
+
         private ViewModel.Implementations.SubscriberMessageViewModel _vm = new ViewModel.Implementations.SubscriberMessageViewModel();
+        public int MessageCount
+        {
+            get { return (int)GetValue(MessageCountProperty); }
+            set { SetValue(MessageCountProperty, value); }
+        }
         public ErrorLevel FilterLevel
         {
             get
@@ -73,22 +80,22 @@ namespace View.UserControls
         {
             SubscriberMessageView v = d as SubscriberMessageView;
             v._vm.FilterLevel = v.FilterLevel;
-            Base.Implementations.MessageHub.Unsubscribe(v._vm, (Base.Enumerations.ErrorLevel)e.OldValue, v.SenderTypeFilter, v.MessageTypeFilter);
-            Base.Implementations.MessageHub.Subscribe(v._vm);
         }
         private static void SenderTypeFilterChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             SubscriberMessageView v = d as SubscriberMessageView;
+            System.Diagnostics.Debugger.Break();
             v._vm.SenderTypeFilter = v.SenderTypeFilter;
-            Base.Implementations.MessageHub.Unsubscribe(v._vm, v.FilterLevel, (Type)e.OldValue, v.MessageTypeFilter);
-            Base.Implementations.MessageHub.Subscribe(v._vm);
         }
         private static void MessageTypeFilterChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             SubscriberMessageView v = d as SubscriberMessageView;
             v._vm.MessageTypeFilter = v.MessageTypeFilter;
-            Base.Implementations.MessageHub.Unsubscribe(v._vm, v.FilterLevel, v.SenderTypeFilter, (Type)e.OldValue);
-            Base.Implementations.MessageHub.Subscribe(v._vm);
+        }
+        private static void MessageCountChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            SubscriberMessageView v = d as SubscriberMessageView;
+            v._vm.MessageCount = v.MessageCount;
         }
     }
 }

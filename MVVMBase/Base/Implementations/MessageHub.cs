@@ -6,7 +6,13 @@ namespace Base.Implementations
     public sealed class MessageHub : Base.Interfaces.IReportMessage
     {
         public event MessageReportedEventHandler MessageReport;
+        public static event ReporterAddedEventHandler ReporterAdded;
         private static List<Base.Interfaces.IRecieveMessages> _subscribers;
+        private static List<Base.Interfaces.IReportMessage> _reporters;
+        public static List<Base.Interfaces.IReportMessage> Reporters
+        {
+            get { return _reporters; }
+        }
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
@@ -15,6 +21,7 @@ namespace Base.Implementations
         private MessageHub()
         {
             _subscribers = new List<Base.Interfaces.IRecieveMessages>();
+            _reporters = new List<Interfaces.IReportMessage>();
         }
         public static void Subscribe(Base.Interfaces.IRecieveMessages listener)
         {
@@ -23,10 +30,13 @@ namespace Base.Implementations
         public static void Register(Base.Interfaces.IReportMessage messanger)
         {
             messanger.MessageReport += Broadcast;
+            _reporters.Add(messanger);
+            ReporterAdded?.Invoke(null, new ReporterAddedEventArgs(messanger));
         }
         public static void Unregister(Base.Interfaces.IReportMessage messanger)
         {
             messanger.MessageReport -= Broadcast;
+            _reporters.Remove(messanger);
         }
         private static void Broadcast(object sender, MessageEventArgs e)
         {

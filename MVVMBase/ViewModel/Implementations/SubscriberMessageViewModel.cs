@@ -16,6 +16,7 @@ namespace ViewModel.Implementations
         private Base.Enumerations.ErrorLevel _filterLevel = ErrorLevel.Unassigned;
         private Type _senderType = null;
         private Type _messageType = null;
+        private int _messageCount = 100;
         public Base.Interfaces.IMessage IMessage
         {
             get { return _message; }
@@ -41,6 +42,7 @@ namespace ViewModel.Implementations
             }
             set
             {
+                System.Diagnostics.Debugger.Break();
                 _senderType = value; NotifyPropertyChanged();
             }
         }
@@ -54,6 +56,17 @@ namespace ViewModel.Implementations
             set
             {
                 _messageType = value; NotifyPropertyChanged();
+            }
+        }
+        public int MessageCount
+        {
+            get
+            {
+                return _messageCount;
+            }
+            set
+            {
+                _messageCount = value; NotifyPropertyChanged();
             }
         }
         protected virtual void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName]string propertyName = "")

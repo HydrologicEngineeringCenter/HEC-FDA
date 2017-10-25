@@ -36,3 +36,5 @@ C:\Framework\MVVMBase\View\obj\Debug\UserControls\MessageView.g.cs
 C:\Framework\MVVMBase\View\obj\Debug\UserControls\MessageView.baml
 C:\Framework\MVVMBase\View\obj\Debug\UserControls\SubscriberMessageView.g.cs
 C:\Framework\MVVMBase\View\obj\Debug\UserControls\SubscriberMessageView.baml
+C:\Framework\MVVMBase\View\obj\Debug\UserControls\SelectableMessageView.g.cs
+C:\Framework\MVVMBase\View\obj\Debug\UserControls\SelectableMessageView.baml

@@ -14,15 +14,26 @@ namespace View.UserControls
     public partial class MessageView : UserControl
     {
         public static readonly DependencyProperty MessageProperty = DependencyProperty.Register(nameof(Message), typeof(Base.Interfaces.IMessage), typeof(MessageView), new PropertyMetadata(MessagesChangedCallback));
+        public static readonly DependencyProperty MessageCountProperty = DependencyProperty.Register(nameof(MessageCount), typeof(int), typeof(MessageView), new PropertyMetadata(100, MessageCountChangedCallback));
         private SolidColorBrush[] _errorColors = new SolidColorBrush[] { new SolidColorBrush(Colors.Black), new SolidColorBrush(Colors.Green), new SolidColorBrush(Colors.Goldenrod), new SolidColorBrush(Colors.Orange), new SolidColorBrush(Colors.LightCoral), new SolidColorBrush(Colors.DarkRed) };
         public Base.Interfaces.IMessage Message
         {
             get { return (Base.Interfaces.IMessage)GetValue(MessageProperty); }
             set { SetValue(MessageProperty, value); }
         }
+        public int MessageCount
+        {
+            get { return (int)GetValue(MessageCountProperty); }
+            set { SetValue(MessageCountProperty, value); }
+        }
         public MessageView()
         {
             InitializeComponent();
+        }
+        private static void MessageCountChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            MessageView owner = (MessageView)d;
+            owner.tb.Inlines.Clear();
         }
         private static void MessagesChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -60,7 +71,7 @@ namespace View.UserControls
                 r.Text = mess.Message;
                 owner.tb.Inlines.Add(r);
             }
-            if (owner.tb.Inlines.Count() > 10)
+            if (owner.tb.Inlines.Count() > owner.MessageCount)
             {
                 owner.tb.Inlines.Remove(owner.tb.Inlines.First());
             }

@@ -53,6 +53,9 @@
     <Compile Include="UserControls\MessageView.xaml.cs">
       <DependentUpon>MessageView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\SelectableMessageView.xaml.cs">
+      <DependentUpon>SelectableMessageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\SubscriberMessageView.xaml.cs">
       <DependentUpon>SubscriberMessageView.xaml</DependentUpon>
     </Compile>
@@ -77,6 +80,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\MessageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\SelectableMessageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

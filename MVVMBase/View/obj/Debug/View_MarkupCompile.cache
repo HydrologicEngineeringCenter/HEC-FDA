@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 
-41314394206
+52003112852
 
-6-573067118
+71512488238
 68528530190
-NamedActionConverters\NamedActionButton.xaml;UserControls\MessageView.xaml;UserControls\SubscriberMessageView.xaml;Windows\BasicWindow.xaml;
+NamedActionConverters\NamedActionButton.xaml;UserControls\MessageView.xaml;UserControls\SelectableMessageView.xaml;UserControls\SubscriberMessageView.xaml;Windows\BasicWindow.xaml;
 
 False
 
