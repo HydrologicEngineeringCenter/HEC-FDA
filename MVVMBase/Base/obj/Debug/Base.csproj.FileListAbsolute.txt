@@ -7,4 +7,5 @@ C:\Framework\MVVMBase\Base\bin\Debug\Base.dll
 C:\Framework\MVVMBase\Base\bin\Debug\Base.pdb
 C:\Framework\MVVMBase\Base\obj\Debug\Base.dll
 C:\Framework\MVVMBase\Base\obj\Debug\Base.pdb
-C:\Framework\MVVMBase\Base\obj\Debug\Base.csprojResolveAssemblyReference.cache
+C:\Framework\MVVMBase\Output\Base.dll
+C:\Framework\MVVMBase\Output\Base.pdb

@@ -16,3 +16,5 @@ C:\Framework\MVVMBase\ViewModel\bin\Debug\Model.pdb
 C:\Framework\MVVMBase\ViewModel\obj\Debug\ViewModel.csprojResolveAssemblyReference.cache
 C:\Framework\MVVMBase\ViewModel\obj\Debug\ViewModel.dll
 C:\Framework\MVVMBase\ViewModel\obj\Debug\ViewModel.pdb
+C:\Framework\MVVMBase\Output\ViewModel.dll
+C:\Framework\MVVMBase\Output\ViewModel.pdb

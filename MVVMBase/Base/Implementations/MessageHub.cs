@@ -42,10 +42,29 @@ namespace Base.Implementations
         {
             foreach (Base.Interfaces.IRecieveMessages s in _subscribers)
             {
-                if(s is Base.Interfaces.IRecieveInstanceMessages)
+                if (s is Base.Interfaces.IRecieveInstanceMessages)
                 {
                     Base.Interfaces.IRecieveInstanceMessages sinstance = s as Base.Interfaces.IRecieveInstanceMessages;
-                    if(sinstance.InstanceHash != sender.GetHashCode()) { continue; }
+                    if (sinstance.InstanceHash != sender.GetHashCode()) { continue; }
+                    if (e.Message is Base.Interfaces.IErrorMessage)
+                    {
+                        if (s.MessageTypeFilter == null || s.MessageTypeFilter == e.Message.GetType())
+                        {
+                            //error filter
+                            Base.Interfaces.IErrorMessage emess = e.Message as Base.Interfaces.IErrorMessage;
+                            if (emess.ErrorLevel >= s.FilterLevel)
+                            {
+                                s.RecieveMessage(sender, e);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (s.MessageTypeFilter == null || s.MessageTypeFilter == e.Message.GetType())
+                        {
+                            s.RecieveMessage(sender, e);
+                        }
+                    }
                 }
                 if (e.Message is Base.Interfaces.IErrorMessage)
                 {

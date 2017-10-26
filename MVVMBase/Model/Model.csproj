@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\Output\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="Messaging\DebuggingErrorMessage.cs" />
     <Compile Include="Messaging\ErrorMessage.cs" />
-    <Compile Include="Messaging\Message.cs" />
     <Compile Include="Messaging\TimeStampedErrorMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
