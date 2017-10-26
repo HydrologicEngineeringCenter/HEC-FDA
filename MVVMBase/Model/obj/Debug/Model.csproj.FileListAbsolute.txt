@@ -1,5 +1,0 @@
-C:\Framework\MVVMBase\Output\Model.dll
-C:\Framework\MVVMBase\Output\Model.pdb
-C:\Framework\MVVMBase\Model\obj\Debug\Model.csprojResolveAssemblyReference.cache
-C:\Framework\MVVMBase\Model\obj\Debug\Model.dll
-C:\Framework\MVVMBase\Model\obj\Debug\Model.pdb
