@@ -1,0 +1,4 @@
+C:\Framework\MVVMBase\Output\Base.dll
+C:\Framework\MVVMBase\Output\Base.pdb
+C:\Framework\MVVMBase\Base\obj\Debug\Base.dll
+C:\Framework\MVVMBase\Base\obj\Debug\Base.pdb
