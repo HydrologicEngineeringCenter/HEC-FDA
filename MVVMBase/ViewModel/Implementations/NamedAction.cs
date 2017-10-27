@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace ViewModel
+namespace ViewModel.Implementations
 {
     public class NamedAction : Interfaces.IDisplayableNamedAction, INotifyPropertyChanged
     {

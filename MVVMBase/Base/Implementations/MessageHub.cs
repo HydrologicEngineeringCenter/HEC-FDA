@@ -7,6 +7,7 @@ namespace Base.Implementations
     {
         public event MessageReportedEventHandler MessageReport;
         public static event ReporterAddedEventHandler ReporterAdded;
+        public static event ReporterRemovedEventHandler ReporterRemoved;
         private static List<Base.Interfaces.IRecieveMessages> _subscribers;
         private static List<Base.Interfaces.IReportMessage> _reporters;
         public static List<Base.Interfaces.IReportMessage> Reporters
@@ -37,6 +38,7 @@ namespace Base.Implementations
         {
             messanger.MessageReport -= Broadcast;
             _reporters.Remove(messanger);
+            ReporterRemoved?.Invoke(null, new ReporterRemovedEventArgs(messanger));
         }
         private static void Broadcast(object sender, MessageEventArgs e)
         {

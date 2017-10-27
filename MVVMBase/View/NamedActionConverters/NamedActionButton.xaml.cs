@@ -9,7 +9,7 @@ namespace View.NamedActionConverters
     /// <summary>
     /// Interaction logic for NamedActionButton.xaml
     /// </summary>
-    [Base.Attributes.ReporterDisplayName("abscd")]
+    [Base.Attributes.ReporterDisplayName("TestingWithNamedActionButtons")]
     public partial class NamedActionButton : UserControl, Base.Interfaces.IReportMessage
     {
         public static DependencyProperty ButtonNamedActionProperty = DependencyProperty.Register(nameof(NamedAction), typeof(Base.Interfaces.INamedAction), typeof(NamedActionButton), new FrameworkPropertyMetadata(ButtonNamedActionPropertyCallback));
@@ -57,17 +57,20 @@ namespace View.NamedActionConverters
             headerBinding.Mode = BindingMode.OneWay;
             headerBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
             BindingOperations.SetBinding(btn, System.Windows.Controls.Button.ContentProperty, headerBinding);
-            Binding enabledBinding = new Binding("IsEnabled");
-            enabledBinding.Source = na;
-            enabledBinding.Mode = BindingMode.OneWay;
-            enabledBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            BindingOperations.SetBinding(btn, System.Windows.Controls.Button.IsEnabledProperty, enabledBinding);
-            Binding visibilityBinding = new Binding("IsVisible");
-            visibilityBinding.Source = na;
-            visibilityBinding.Mode = BindingMode.OneWay;
-            visibilityBinding.Converter = new System.Windows.Controls.BooleanToVisibilityConverter();
-            visibilityBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            BindingOperations.SetBinding(btn, System.Windows.Controls.Button.VisibilityProperty, visibilityBinding);
+            if (na is ViewModel.Interfaces.IDisplayToUI)
+            {
+                Binding enabledBinding = new Binding(nameof(ViewModel.Interfaces.IDisplayToUI.IsEnabled));
+                enabledBinding.Source = na;
+                enabledBinding.Mode = BindingMode.OneWay;
+                enabledBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                BindingOperations.SetBinding(btn, System.Windows.Controls.Button.IsEnabledProperty, enabledBinding);
+                Binding visibilityBinding = new Binding(nameof(ViewModel.Interfaces.IDisplayToUI.IsVisible));
+                visibilityBinding.Source = na;
+                visibilityBinding.Mode = BindingMode.OneWay;
+                visibilityBinding.Converter = new System.Windows.Controls.BooleanToVisibilityConverter();
+                visibilityBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                BindingOperations.SetBinding(btn, System.Windows.Controls.Button.VisibilityProperty, visibilityBinding);
+            }
             nab._ActionHandler = (ob, ev) => na.Action(ob, ev);
             btn.Click += nab._ActionHandler;
         }

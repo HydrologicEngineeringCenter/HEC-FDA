@@ -42,8 +42,10 @@
     <Compile Include="Events\MessageEventArgs.cs" />
     <Compile Include="Events\ProgressReportEventArgs.cs" />
     <Compile Include="Events\ReporterAddedEventArgs.cs" />
+    <Compile Include="Events\ReporterRemovedEventArgs.cs" />
     <Compile Include="Implementations\Message.cs" />
     <Compile Include="Implementations\MessageHub.cs" />
+    <Compile Include="Implementations\TextFileMessageSubscriber.cs" />
     <Compile Include="Interfaces\IDirectory.cs" />
     <Compile Include="Interfaces\IErrorMessage.cs" />
     <Compile Include="Interfaces\IMessage.cs" />

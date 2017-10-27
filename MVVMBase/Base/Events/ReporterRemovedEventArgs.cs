@@ -1,16 +1,17 @@
 ﻿using System;
 
+
 namespace Base.Events
 {
-    public delegate void ReporterAddedEventHandler(object sender, ReporterAddedEventArgs e);
-    public class ReporterAddedEventArgs: EventArgs
+    public delegate void ReporterRemovedEventHandler(object sender, ReporterRemovedEventArgs e);
+    public class ReporterRemovedEventArgs : EventArgs
     {
         private readonly Base.Interfaces.IReportMessage _reporter;
         public Base.Interfaces.IReportMessage Reporter
         {
             get { return _reporter; }
         }
-        public ReporterAddedEventArgs(Base.Interfaces.IReportMessage reporter)
+        public ReporterRemovedEventArgs(Base.Interfaces.IReportMessage reporter)
         {
             _reporter = reporter;
         }

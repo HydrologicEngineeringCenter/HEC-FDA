@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Base.Interfaces;
+using ViewModel.Events;
 
 namespace ViewModel.Implementations
 {
-    public class ValidatingBaseViewModel: Implementations.BaseViewModel, Base.Interfaces.IValidate
+    public class ValidatingBaseViewModel: Implementations.BaseViewModel, Base.Interfaces.IValidate, ViewModel.Interfaces.INavigate
     {
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+        public event NavigationEventHandler NavigationEvent;
         private Dictionary<string, IPropertyRule> _RuleMap = new Dictionary<string, IPropertyRule>();
         private List<string> _Errors;
         private NamedAction _ErrorsAction;
@@ -35,6 +37,10 @@ namespace ViewModel.Implementations
         public Base.Enumerations.ErrorLevel ErrorLevel
         {
             get { return _errorLevel; }
+        }
+        public ValidatingBaseViewModel()
+        {
+            ErrorsAction = new NamedAction() { Action = ShowErrors , IsEnabled = HasErrors};
         }
         public void AddMultiPropertyRule(List<string> properties, IRule rule)
         {
@@ -67,9 +73,19 @@ namespace ViewModel.Implementations
                 _RuleMap.Add(property, r);
             }
         }
+        private void ShowErrors(object arg1, EventArgs arg2)
+        {
+            if (HasErrors)
+            {
+                ViewModel.Implementations.ErrorReportViewModel ervm = new ErrorReportViewModel();
+                Navigate(this, new NavigationEventArgs(ervm, Enumerations.NavigationOptionsEnum.AsNewWindow, "Errors Exist"));
+                ervm.SetErrors(_RuleMap);
+            }
 
+        }
         public IEnumerable GetErrors(string propertyName)
         {
+            if (propertyName == null) return null;
             if (_RuleMap.ContainsKey(propertyName))
             {
                 if (_RuleMap[propertyName].ErrorLevel > Base.Enumerations.ErrorLevel.Unassigned)
@@ -118,6 +134,8 @@ namespace ViewModel.Implementations
                 if (_errorLevel != prevErrorState)
                 {
                     Base.Enumerations.ErrorLevel changed = _errorLevel ^ prevErrorState;
+                    NotifyPropertyChanged(nameof(HasErrors));
+                    if (ErrorsAction is ViewModel.Interfaces.IDisplayToUI) { ((ViewModel.Interfaces.IDisplayToUI)ErrorsAction).IsEnabled = HasErrors; }
                     foreach (Base.Enumerations.ErrorLevel e in Enum.GetValues(typeof(Base.Enumerations.ErrorLevel)))
                     {
                         if ((changed & e) > 0)
@@ -140,6 +158,7 @@ namespace ViewModel.Implementations
                 if (_errorLevel != prevErrorState)
                 {
                     NotifyPropertyChanged(nameof(HasErrors));//errors no longer exist
+                    if (ErrorsAction is ViewModel.Interfaces.IDisplayToUI) { ((ViewModel.Interfaces.IDisplayToUI)ErrorsAction).IsEnabled = HasErrors; }
                 }
             }
         }
@@ -175,13 +194,18 @@ namespace ViewModel.Implementations
                         _errorLevel = currState;
                     }
                 }
-                if ((currState ^ prevState) > 0) { NotifyPropertyChanged(nameof(HasErrors)); }
+                if ((currState ^ prevState) > 0) { NotifyPropertyChanged(nameof(HasErrors)); if (ErrorsAction is ViewModel.Interfaces.IDisplayToUI) { ((ViewModel.Interfaces.IDisplayToUI)ErrorsAction).IsEnabled = HasErrors; } }
             }
         }
         protected override void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName]string propertyName = "")
         {
             if (_RuleMap.ContainsKey(propertyName)) { Validate(propertyName); }
             base.NotifyPropertyChanged(propertyName);
+        }
+
+        public void Navigate(object sender, NavigationEventArgs e)
+        {
+            NavigationEvent?.Invoke(sender,e);
         }
     }
 }

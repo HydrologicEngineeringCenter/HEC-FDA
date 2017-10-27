@@ -96,10 +96,11 @@ namespace ViewModel.Implementations
         public SelectableMessageViewModel()
         {
             Base.Implementations.MessageHub.ReporterAdded += MessageHub_ReporterAdded;
+            Base.Implementations.MessageHub.ReporterRemoved += MessageHub_ReporterRemoved;
             MessageHub_ReporterAdded(null, null);
 
         }
-        private void MessageHub_ReporterAdded(object sender, ReporterAddedEventArgs e)
+        private void updateReporeters()
         {
             _reporters = new List<TypeRepresentation>();
             TypeRepresentation nullType = new TypeRepresentation();
@@ -122,7 +123,14 @@ namespace ViewModel.Implementations
             if (_reporters.Count() > 0) { Sender = _reporters.First(); }
             NotifyPropertyChanged(nameof(Reporters));
         }
-
+        private void MessageHub_ReporterAdded(object sender, ReporterAddedEventArgs e)
+        {
+            updateReporeters();
+        }
+        private void MessageHub_ReporterRemoved(object sender, ReporterRemovedEventArgs e)
+        {
+            updateReporeters();
+        }
         protected virtual void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName]string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

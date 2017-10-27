@@ -49,6 +49,7 @@
     <Compile Include="Enumerations\NavigationOptionsEnum.cs" />
     <Compile Include="Events\NavigationEventArgs.cs" />
     <Compile Include="Events\UpdatePlotEventArgs.cs" />
+    <Compile Include="Implementations\ErrorReportViewModel.cs" />
     <Compile Include="Implementations\HierarchicalViewModel.cs" />
     <Compile Include="Implementations\SelectableMessageViewModel.cs" />
     <Compile Include="Implementations\SubscriberMessageViewModel.cs" />
