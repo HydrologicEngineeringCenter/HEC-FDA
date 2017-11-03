@@ -21,5 +21,9 @@ namespace Base.Implementations
         {
             _message = message;
         }
+        public override string ToString()
+        {
+            return _message;
+        }
     }
 }

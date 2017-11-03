@@ -14,7 +14,6 @@ namespace ViewModel.Implementations
         private bool _IsEnabled = true;
         private bool _IsVisible = true;
         private string _Name;
-        public event NavigationEventHandler NavigationEvent;
         public List<IDisplayableNamedAction> Actions
         {
             get
@@ -250,10 +249,6 @@ namespace ViewModel.Implementations
             } while (root.Parent != null);
 
             return root.GetDescendantOfTypeAndName<T>(name);
-        }
-        public void Navigate(object sender, NavigationEventArgs e)
-        {
-            NavigationEvent?.Invoke(sender, e);
         }
     }
 }
