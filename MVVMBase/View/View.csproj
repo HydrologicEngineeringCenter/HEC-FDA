@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Implementations\TextFileMessageSubscriber.cs" />
+    <Compile Include="NamedActionConverters\ContextMenuConverter.cs" />
     <Compile Include="NamedActionConverters\ImageNamedActionButton.xaml.cs">
       <DependentUpon>ImageNamedActionButton.xaml</DependentUpon>
     </Compile>

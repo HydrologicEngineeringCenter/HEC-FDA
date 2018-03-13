@@ -91,6 +91,7 @@ namespace ViewModel.Implementations
         }
         public void AddChild(IHierarchicalViewModel child, bool allowDuplicateNames = false)
         {
+            if (_Children == null) { _Children = new ObservableCollection<IHierarchicalViewModel>(); }
             if (!allowDuplicateNames)
             {
                 if (CheckForNameConflict(child))
@@ -121,7 +122,7 @@ namespace ViewModel.Implementations
             //    ICanClose ele = child as ICanClose;
             //    ele.Close += RequestClose;
             //}
-            if (_Children == null) { _Children = new ObservableCollection<IHierarchicalViewModel>(); }
+            
             _Children.Add(child);
             child.Parent = this;
             NotifyPropertyChanged(nameof(Children));

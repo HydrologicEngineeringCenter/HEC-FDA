@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Base.Events;
+using System.Net.Sockets;
 
 namespace Base.Implementations
 {
@@ -10,6 +11,12 @@ namespace Base.Implementations
         public static event ReporterRemovedEventHandler ReporterRemoved;
         private static List<Base.Interfaces.IRecieveMessages> _subscribers;
         private static List<Base.Interfaces.IReportMessage> _reporters;
+        private static System.Net.Sockets.TcpClient _reporter;
+        private static System.Net.Sockets.TcpListener _listener;
+        private static System.Net.IPAddress _ip;
+        //private static int _listeningPort;
+        //private static int _reportingPort;
+        private static bool _connected;
         public static List<Base.Interfaces.IReportMessage> Reporters
         {
             get { return _reporters; }
@@ -17,6 +24,15 @@ namespace Base.Implementations
         public void ReportMessage(object sender, MessageEventArgs e)
         {
             MessageReport?.Invoke(sender, e);
+        }
+        public static System.Net.IPAddress IPAddress
+        {
+            get { return _ip; }
+            set { _ip = value; }
+        }
+        public static bool Connected
+        {
+            get { return _connected; }
         }
         public static readonly MessageHub Instance = new MessageHub();
         private MessageHub()
@@ -39,6 +55,49 @@ namespace Base.Implementations
             messanger.MessageReport -= Broadcast;
             _reporters.Remove(messanger);
             ReporterRemoved?.Invoke(null, new ReporterRemovedEventArgs(messanger));
+        }
+        public static void InitalizeListener(int port)
+        {
+            _listener = new System.Net.Sockets.TcpListener(_ip, port);
+            _listener.Start();
+            
+            System.Threading.Timer _t = new System.Threading.Timer(Listen,null,0,100);
+
+        }
+        private static void Listen(object state)
+        {
+            if (_listener.Pending())
+            {
+                Broadcast(_listener, new MessageEventArgs(new Message("Connection Found.")));
+                System.Net.Sockets.TcpClient client = (System.Net.Sockets.TcpClient)_listener.AcceptTcpClientAsync().AsyncState;
+                if (client != null)
+                {
+                    NetworkStream ns = client.GetStream();
+                    byte[] bytes = new byte[256];
+                    string data;
+                    int i;
+                    while ((i = ns.Read(bytes, 0, bytes.Length)) != 0)
+                    {
+                        data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+                        Broadcast(_listener, new MessageEventArgs(new Message(data)));
+                    }
+                    client.Dispose();
+                }
+            }
+        }
+        public static async void AttemptConnectionToListner(int port)
+        {
+            if (_reporter == null) { _reporter = new TcpClient(); }
+            try
+            {
+                await _reporter.ConnectAsync(_ip, port);
+                _connected = true;
+            }
+            catch
+            {
+                Broadcast(_reporter, new MessageEventArgs(new Message("Connection attempt failed.")));
+            }
+
         }
         private static void Broadcast(object sender, MessageEventArgs e)
         {
@@ -93,6 +152,12 @@ namespace Base.Implementations
                         }
                     }
                 }
+            }
+            if (_connected)
+            {
+                byte[] stream = System.Text.Encoding.ASCII.GetBytes(e.Message.ToString());
+                _reporter.GetStream().Write(stream, 0, stream.Length);
+                _reporter.GetStream().Flush();
             }
         }
         public static void UnsubscribeAll(Base.Interfaces.IRecieveMessages listener)

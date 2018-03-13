@@ -22,7 +22,8 @@ namespace View.Implementations
         private static int _dequeue;
         private string _filePath = System.IO.Path.GetTempFileName();
         System.IO.StreamWriter sw;
-        private System.Collections.Generic.List<System.ComponentModel.BackgroundWorker> _bwList;
+        //private System.Collections.Generic.List<System.ComponentModel.BackgroundWorker> _bwList;
+        private System.ComponentModel.BackgroundWorker _bw;
         private System.Collections.Concurrent.ConcurrentQueue<Base.Interfaces.IMessage> _messages;
         public static TextFileMessageSubscriber Instance = new TextFileMessageSubscriber();
         public ErrorLevel FilterLevel
@@ -83,37 +84,22 @@ namespace View.Implementations
             if (!System.IO.File.Exists(_filePath)) { System.IO.File.Create(_filePath); }
             sw = new StreamWriter(new FileStream(_filePath, FileMode.Create, FileAccess.Write));
             sw.AutoFlush = true;
-            _bwList = new System.Collections.Generic.List<System.ComponentModel.BackgroundWorker>();
+            _bw = new System.ComponentModel.BackgroundWorker();
+            _bw.DoWork += _bw_DoWork;
         }
         public void RecieveMessage(object sender, MessageEventArgs e)
         {
             _messages.Enqueue(e.Message);
             Interlocked.Increment(ref _enqueue);
-            if (_messages.Count > _maxMessageCount)
+            if (_messages.Count > _maxMessageCount && !_bw.IsBusy)
             {
                 //dequeue
-                System.ComponentModel.BackgroundWorker bw = null;
                 lock (_bwListLock)
                 {
-                    bool addBW = true;
-                    for (int i = 0; i < _bwList.Count(); i++)
-                    {
-                        if (!_bwList[i].IsBusy)
-                        {
-                            bw = _bwList[i];
-                            addBW = false;
-                            break;
-                        }
-                    }
-                    if (addBW)
-                    {
-                        bw = new System.ComponentModel.BackgroundWorker();
-
-                        bw.DoWork += _bw_DoWork;
-                        _bwList.Add(bw);
-                    }
+                    if (!_bw.IsBusy) _bw.RunWorkerAsync();
                 }
-                bw.RunWorkerAsync();
+
+                
             }
         }
         private void _bw_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
@@ -131,10 +117,8 @@ namespace View.Implementations
             }
             try
             {
-                lock (_lock)
-                {
-                    sw.Write(s.ToString());
-                }
+                var str = s.ToString();
+                if (!string.IsNullOrEmpty(str)) sw.Write(str);
             }
             catch (Exception ex)
             {
@@ -144,14 +128,14 @@ namespace View.Implementations
         }
         public void Dispose()
         {
-            int busyCount = 0;
-            for (int i = 0; i < _bwList.Count(); i++)
-            {
-                if (!_bwList[i].IsBusy)
-                {
-                    busyCount++;
-                }
-            }
+            //int busyCount = 0;
+            //for (int i = 0; i < _bwList.Count(); i++)
+            //{
+            //    if (!_bwList[i].IsBusy)
+            //    {
+            //        busyCount++;
+            //    }
+            //}
             sw.Dispose();
             sw.Close();
         }
