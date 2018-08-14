@@ -1,0 +1,25 @@
+<GDAL_WMS>
+  <!-- -->
+  <Service name="TMS">
+    <ServerUrl>http://www.hec.usace.army.mil/maps/demo/modesto-dev/GetImage.ashx?time=02Jan2005_0100&amp;zoom=${z}&amp;x=${x}&amp;y=${y}</ServerUrl>
+  </Service>
+  <DataWindow>
+    <UpperLeftX>-20037508.34</UpperLeftX>
+    <UpperLeftY>20037508.34</UpperLeftY>
+    <LowerRightX>20037508.34</LowerRightX>
+    <LowerRightY>-20037508.34</LowerRightY>
+    <TileLevel>20</TileLevel>
+    <TileCountX>1</TileCountX>
+    <TileCountY>1</TileCountY>
+    <YOrigin>top</YOrigin>
+  </DataWindow>
+  <Projection>EPSG:900913</Projection>
+  <BandsCount>4</BandsCount>
+  <BlockSizeX>256</BlockSizeX>
+  <BlockSizeY>256</BlockSizeY>
+  <MaxConnections>5</MaxConnections>
+  <ZeroBlockHttpCodes>204,404</ZeroBlockHttpCodes>
+  <Cache>
+    <Path>C:\Users\q0hecajk\AppData\Local\HEC\Mapping</Path>
+  </Cache>
+</GDAL_WMS>

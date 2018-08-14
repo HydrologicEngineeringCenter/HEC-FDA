@@ -1,0 +1,104 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FdaViewModel.FlowTransforms
+{
+    class InflowOutflowOwnerElement : Utilities.OwnerElement
+    {
+        #region Notes
+        #endregion
+        #region Fields
+        #endregion
+        #region Properties
+        public override string GetTableConstant()
+        {
+            return TableName;
+        }
+        #endregion
+        #region Constructors
+        public InflowOutflowOwnerElement(BaseFdaElement owner) : base(owner)
+        {
+            Name = "Inflow Outflow Relationships";
+            IsBold = false;
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+
+            Utilities.NamedAction addInflowOutflow = new Utilities.NamedAction();
+            addInflowOutflow.Header = "Create New Inflow Outflow Relationship";
+            addInflowOutflow.Action = AddInflowOutflow;
+
+            //Utilities.NamedAction importFromAscii = new Utilities.NamedAction();
+            //importFromAscii.Header = "Import Inflow Outflow Relationship From ASCII";
+            //importFromAscii.Action = ImportFromASCII;
+
+            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
+            localActions.Add(addInflowOutflow);
+            //localActions.Add(importFromAscii);
+
+            Actions = localActions;
+        }
+
+
+        #endregion
+        #region Voids
+        private void ImportFromASCII(object arg1, EventArgs arg2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddInflowOutflow(object arg1, EventArgs arg2)
+        {
+            InflowOutflowEditorVM vm = new InflowOutflowEditorVM();
+            
+            Navigate(vm);
+            if (!vm.WasCancled)
+            {
+                if (!vm.HasFatalError)
+                {
+                    InflowOutflowElement ele = new FlowTransforms.InflowOutflowElement(vm.Name, vm.Description, vm.Curve, this);
+                    AddElement(ele);
+                    AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ele.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(InflowOutflowElement)));
+                    
+                }
+            }
+
+        }
+        public override void AddBaseElements()
+        {
+            //throw new NotImplementedException();
+        }
+        public override void AddValidationRules()
+        {
+            //throw new NotImplementedException();
+        }
+        #endregion
+        #region Functions
+        public override string TableName
+        {
+            get
+            {
+                return "Inflow Outflow Relationships";
+            }
+        }
+
+        public override string[] TableColumnNames()
+        {
+            return new string[] { "Inflow Outflow Relationship", "Description" , "Curve Distribution Type"};
+        }
+        public override Type[] TableColumnTypes()
+        {
+            return new Type[] { typeof(string), typeof(string), typeof(string) };
+        }
+
+        public override void AddElement(object[] rowData)
+        {
+            Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[2]));
+            InflowOutflowElement inout = new InflowOutflowElement((string)rowData[0], (string)rowData[1], ucdc, this);
+            inout.InflowOutflowCurve.fromSqliteTable(inout.TableName);
+            AddElement(inout,false);
+        }
+        #endregion
+    }
+}

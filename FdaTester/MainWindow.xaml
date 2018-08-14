@@ -1,0 +1,28 @@
+﻿<Window x:Class="FdaTester.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FdaTester"
+        mc:Ignorable="d"
+        Closing="Window_Closing"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+
+        <Button Name="btnLogPearsonIIITestAgainstFORTRAN" Content="LPIII test against FORTRAN" Grid.Row="0" Grid.Column="0" Margin="5" Click="LogP3FortranVSCSharp_Click" />
+        <Button Name="btnLogPearsonIIITestConstructors" Content="LPIII test Constructor" Grid.Row="1" Grid.Column="0" Margin="5" Click="LogP3Constructors_Click" />
+        <Button Name="btnLogPearsonIIITestAgainstR" Content="LPIII test against R" Grid.Row="2" Grid.Column="0" Margin="5" Click="btnLogPearsonIIITestAgainstR_Click" />
+        <Button Name="btnCompositionTesting" Content="Composition Testing" Grid.Row="3" Grid.Column="0" Margin="5" Click="btnCompositionTesting_Click"/>
+        <Button Name="btnComputeTesting" Content="Compute Testing" Grid.Row="4" Grid.Column="0" Margin="5" Click="btnComputeTesting_Click" />
+        <Button Name="btnDatabaseTesting" Content="Database Testing" Grid.Row="5" Grid.Column="0" Margin="5" Click="btnDatabaseTesting_Click"/>
+
+    </Grid>
+</Window>

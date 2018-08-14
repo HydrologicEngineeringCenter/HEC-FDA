@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="Fda.Conditions.AddRatingCurveToCondition"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Fda.Conditions"
+                          xmlns:Utils="clr-namespace:Fda.Utilities"
+
+             mc:Ignorable="d" 
+             d:DesignHeight="150" d:DesignWidth="400">
+    <Grid>
+        <Border BorderBrush="Black" BorderThickness="2">
+            <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="60" />
+        </Grid.ColumnDefinitions>
+        <Label Content="Rating Curve:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Right" />
+        <ComboBox Grid.Row="1" Grid.Column="1" Height="30" Width="170" VerticalAlignment="Top" ItemsSource="{Binding ListOfRatingCurves}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedRatingElement}" />
+        <Button Grid.Row="1" Grid.Column="2" Name="btn_NewRatingCurve" VerticalAlignment="Top" Width="24" Height="24" Margin="0,0,10,0" ToolTip="Create New Rating Curve" Click="btn_NewRatingCurve_Click">
+            <Image  Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
+        </Button>
+        <!--<Utils:OKCloseControl Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right"/>-->
+        <Button Name="btn_OK" Content="OK" Width="50" Height="22" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="5,5,60,5" Click="btn_OK_Click"/>
+                <Button Name="btn_Cancel" Content="Cancel" Width="50" Height="22" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="5" Click="btn_Cancel_Click"/>
+                <Button Name="btn_PopOut"  Grid.Row="3" Grid.Column="1" Content="^" HorizontalAlignment="Left" Width="50" Height="22" Click="btn_PopOut_Click" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

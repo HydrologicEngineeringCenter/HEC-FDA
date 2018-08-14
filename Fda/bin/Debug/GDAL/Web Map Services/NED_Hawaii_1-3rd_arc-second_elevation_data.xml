@@ -1,0 +1,24 @@
+<GDAL_WMS>
+  <Service Name="WMS">
+    <Version>1.1.1</Version>
+    <ServerUrl>http://imsref.cr.usgs.gov:80/wmsconnector/com.esri.wms.Esrimap/USGS_EDC_Elev_NED_3?</ServerUrl>
+    <SRS>EPSG:4326</SRS>
+    <ImageFormat>image/jpeg</ImageFormat>
+    <Layers>NED.HI_NED_13</Layers>
+  </Service>
+  <DataWindow>
+    <UpperLeftX>-161.0005555561</UpperLeftX>
+    <UpperLeftY>23.0005555552</UpperLeftY>
+    <LowerRightX>-153.9994444444</LowerRightX>
+    <LowerRightY>17.9994444438</LowerRightY>
+    <SizeX>1073741824</SizeX>
+    <SizeY>766509056</SizeY>
+  </DataWindow>
+  <OverviewCount>20</OverviewCount>
+  <BlockSizeX>512</BlockSizeX>
+  <BlockSizeY>512</BlockSizeY>
+  <Projection>EPSG:4326</Projection>
+  <Cache>
+    <Path>C:\Users\q0hecajk\AppData\Local\HEC\Mapping</Path>
+  </Cache>
+</GDAL_WMS>

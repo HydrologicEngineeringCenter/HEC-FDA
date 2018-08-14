@@ -1,0 +1,132 @@
+﻿<Window x:Class="FdaTester.ModelTester.UnitTests.Functions.LogPearsonIII.LogPearsonIIITestAgainstFORTRAN.FortranCSharpLogP3Tester"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FdaTester.ModelTester.UnitTests.LogP3_Fortran_vs_CSharp"
+        mc:Ignorable="d"
+         xmlns:oxy="http://oxyplot.org/wpf"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"  
+        Title="MainWindow" Height="700" Width="1000">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+
+            <RowDefinition Height="200"/>
+
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+
+        <TextBox Name="txt_filePath" Grid.Row="0" Width="570" HorizontalAlignment="Left" Margin="5" />
+        <Button Name="btn_FileBrowse" Grid.Row="0" Width="22" Height="22" Margin="590,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left"  ToolTip="Open File..." Click="btn_FileBrowse_Click">
+            <TextBlock Text="..." HorizontalAlignment="Center" ></TextBlock>
+        </Button>
+        <Button Name="btn_createNewData" Grid.Row="0" Width="22" Height="22" Margin="625,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left"  ToolTip="Create New File..." Click="btn_createNewData_Click">
+            <TextBlock Text="+" HorizontalAlignment="Center" ></TextBlock>
+        </Button>
+        <Button Name="btn_view" Content="View" Grid.Row="0" HorizontalAlignment="Left" Width="40" Height="22" Margin="660,5,5,5" VerticalAlignment="Center" Click="btn_view_Click"/>
+
+        <TabControl Grid.Row="2" Margin="5">
+            <TabItem Header="Ind. Results" Name="IndResultsTab">
+                <Border Name="PlotBorder"  Margin="5" CornerRadius="1" BorderBrush="Black" BorderThickness="1">
+                    <oxy:PlotView Name="CurvePlot" Margin="0,0,0,0" Model="{Binding myPlotModel}"/>
+                </Border>
+            </TabItem>
+            <TabItem Header="Whisker" Name="WhiskerTab">
+                <Border Name="WhiskerPlotBorder"  Margin="5" CornerRadius="1" BorderBrush="Black" BorderThickness="1">
+                    <oxy:PlotView Name="WhiskerPlot" Margin="0,0,0,0" Model="{Binding myWhiskerPlotModel}"/>
+                </Border>
+            </TabItem>
+            <TabItem Header="% Diff Plot" Name="percDiffPlot">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="*"/>
+
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Content="Iterations to plot as csv: " />
+                    <TextBox Grid.Row="0" Name="txt_iterationCSV" Width="180" HorizontalAlignment="Left" Margin="150,5,5,5" />
+                    <Button Name="btn_plot" Content="Plot" Grid.Row="0" HorizontalAlignment="Left" Width="60" Margin="350,5,5,5" Click="btn_plot_Click"  />
+                    <Border Name="percDiffPlotBorder" Grid.Row="1" Margin="5" CornerRadius="1" BorderBrush="Black" BorderThickness="1">
+                        <oxy:PlotView Name="percDiffOxyPlot" Margin="0,0,0,0" Model="{Binding myPercDiffPlotModel}"/>
+                    </Border>
+                </Grid>
+
+            </TabItem>
+            <TabItem Header="St Dev vs % Diff" Name="StDevTab">
+                <Border Name="StDevBorder"  Margin="5" CornerRadius="1" BorderBrush="Black" BorderThickness="1">
+                    <oxy:PlotView Name="StDevPlot" Margin="0,0,0,0" Model="{Binding myStDevPlotModel}"/>
+                </Border>
+            </TabItem>
+        </TabControl>
+
+        <!--<Grid.ColumnDefinitions>
+            -->
+        <!--<ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>-->
+        <!--
+        </Grid.ColumnDefinitions>-->
+
+        <Grid Grid.Row="1" >
+
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="125"/>
+                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="140"/>
+
+
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="1" Content="Fortran Flows:" />
+            <ListBox Grid.Column="1" Name="lst_fortranFlows" HorizontalContentAlignment="Right" Margin="5,30,5,5" />
+            <Label Grid.Column="2" Content="C# Flows:" />
+            <ListBox Grid.Column="2" Name="lst_cSharpFlows" HorizontalContentAlignment="Right" Margin="5,30,5,5" />
+            <Label Grid.Column="3" Content="Absolute Diff:" />
+            <ListBox Grid.Column="3" Name="lst_absDiff" HorizontalContentAlignment="Right" Margin="5,30,5,5" />
+            <Label Grid.Column="4" Content="% Diff:" />
+            <ListBox Grid.Column="4" Name="lst_percDiff" HorizontalContentAlignment="Right" Margin="5,30,5,5" />
+            <Label Grid.Column="5" Content="Probabilities:" />
+            <ListBox Grid.Column="5" Name="lst_probs" HorizontalContentAlignment="Right" Margin="5,30,5,5" />
+            <Grid Grid.Column="0" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="*"/>
+
+                </Grid.ColumnDefinitions>
+                <Label Content="Mean:" Grid.Row="0" Grid.Column="0" Margin="5"/>
+                <Label Content="St Dev:" Grid.Row="1" Grid.Column="0" Margin="5"/>
+                <Label Content="Skew:" Grid.Row="2" Grid.Column="0" Margin="5"/>
+                <Label Content="POR:" Grid.Row="3" Grid.Column="0" Margin="5"/>
+                <Label Content="Test:" Grid.Row="4" Grid.Column="0" Margin="5"/>
+                <Label Name="lbl_test" Grid.Row="4" Grid.Column="1" Margin="5" />
+
+                <Label Name="lbl_mean" Grid.Row="0" Grid.Column="1" Margin="5" />
+                <Label Name="lbl_stDev" Grid.Row="1" Grid.Column="1" Margin="5" />
+
+                <Label Name="lbl_skew" Grid.Row="2" Grid.Column="1" Margin="5" />
+
+                <Label Name="lbl_POR" Grid.Row="3" Grid.Column="1" Margin="5" />
+
+            </Grid>
+        </Grid>
+        <Button Name="btn_previous" Content="Previous" Grid.Row="3" HorizontalAlignment="Left" Width="50" Margin="5" Click="btn_previous_Click" />
+        <Button Name="btn_next" Content="next" Grid.Row="3" HorizontalAlignment="Left" Width="50" Margin="60,5,5,5" Click="btn_next_Click" />
+        <Label Name="lbl_totalNumber" Grid.Row="3"   Content="Total # of Tests:" HorizontalAlignment="Right" Margin="5,5,240,5" />
+        <Label Content="Go to #: " Grid.Row="3" HorizontalAlignment="Right" Margin="5,5,120,5" />
+        <TextBox Name="txt_objectID" Grid.Row="3" HorizontalAlignment="Right" Margin="5,5,80,5" Width="40" />
+        <Button Name="btn_go" Content="Go" Grid.Row="3" HorizontalAlignment="Right" Margin="5,5,20,5" Width="50" Click="btn_go_Click" />
+
+    </Grid>
+</Window>

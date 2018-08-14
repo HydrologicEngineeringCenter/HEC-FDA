@@ -1,0 +1,120 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+DataTable_Viewer
+</name>
+</assembly>
+<members>
+<member name="T:DataTable_Viewer.My.Resources.Resources">
+<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+<member name="P:DataTable_Viewer.My.Resources.Resources.ResourceManager">
+<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member>
+<member name="P:DataTable_Viewer.My.Resources.Resources.Culture">
+<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member>
+<member name="T:DataTable_Viewer.ColumnStatsWindow">
+<summary>
+ColumnStatsWindow
+</summary>
+</member>
+<member name="M:DataTable_Viewer.ColumnStatsWindow.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:DataTable_Viewer.ErrorWindow">
+<summary>
+ErrorWindow
+</summary>
+</member>
+<member name="M:DataTable_Viewer.ErrorWindow.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:DataTable_Viewer.FieldCalculator">
+<summary>
+FieldCalculator
+</summary>
+</member>
+<member name="M:DataTable_Viewer.FieldCalculator.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:DataTable_Viewer.SelectByAttribute">
+<summary>
+SelectByAttribute
+</summary>
+</member>
+<member name="M:DataTable_Viewer.SelectByAttribute.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:DataTable_Viewer.FindAndReplace">
+<summary>
+FindAndReplace
+</summary>
+</member>
+<member name="M:DataTable_Viewer.FindAndReplace.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:DataTable_Viewer.WpfCustomViewer">
+<summary>
+WpfCustomViewer
+</summary>
+</member>
+<member name="M:DataTable_Viewer.WpfCustomViewer.GetSelectedRowVirtualRowIndices">
+ <summary>
+ Gets the row indices of all selected rows sorted by the table row position regardless of sorting. key=table row position, value=database row position
+ </summary>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:DataTable_Viewer.WpfCustomViewer.GetSelectedCellVirtualRowIndices">
+ <summary>
+ Gets the row indices of all selected cells sorted by the table row position regardless of sorting. key=table row position, value=database row position
+ </summary>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="F:DataTable_Viewer.WpfCustomViewer._TableToolbarTray">
+<summary>
+TableToolbarTray Name Field
+</summary>
+</member>
+<member name="F:DataTable_Viewer.WpfCustomViewer._EditorToolbar">
+<summary>
+EditorToolbar Name Field
+</summary>
+</member>
+<member name="M:DataTable_Viewer.WpfCustomViewer.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:DataTable_Viewer.WinForms_Viewer">
+<summary>
+WinForms_Viewer
+</summary>
+</member>
+<member name="M:DataTable_Viewer.WinForms_Viewer.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+</members>
+</doc>

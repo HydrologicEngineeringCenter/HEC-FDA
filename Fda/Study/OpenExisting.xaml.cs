@@ -1,0 +1,38 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace Fda.Study
+{
+    /// <summary>
+    /// Interaction logic for CreateNew.xaml
+    /// </summary>
+    public partial class OpenExisting : UserControl
+    {
+        public OpenExisting()
+        {
+            InitializeComponent();
+        }
+
+        private void TextBoxFileBrowser_SelectionMade(string fullpath, string filename)
+        {
+            FdaViewModel.Study.ExistingStudyVM vm = (FdaViewModel.Study.ExistingStudyVM)this.DataContext;
+            vm.Path = fullpath;
+        }
+
+        //private void TextBoxFolderBrowser_SelectionMade(string fullpath)
+        //{
+
+        //}
+    }
+}

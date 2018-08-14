@@ -1,0 +1,24 @@
+<GDAL_WMS>
+  <Service Name="WMS">
+    <Version>1.1.1</Version>
+    <ServerUrl>http://raster.nationalmap.gov/ArcGIS/services/Orthoimagery/USGS_EDC_Ortho_HRO/MapServer/WMSServer?</ServerUrl>
+    <SRS>EPSG:102113</SRS>
+    <ImageFormat>image/png</ImageFormat>
+    <Layers>0</Layers>
+  </Service>
+  <DataWindow>
+    <UpperLeftX>-18136856.238319</UpperLeftX>
+    <UpperLeftY>10594664.353819</UpperLeftY>
+    <LowerRightX>-7542354.554092</LowerRightX>
+    <LowerRightY>2419491.455114</LowerRightY>
+    <SizeX>1073741824</SizeX>
+    <SizeY>828375040</SizeY>
+  </DataWindow>
+  <OverviewCount>20</OverviewCount>
+  <BlockSizeX>512</BlockSizeX>
+  <BlockSizeY>512</BlockSizeY>
+  <Projection>EPSG:102113</Projection>
+  <Cache>
+    <Path>C:\Users\q0hecajk\AppData\Local\HEC\Mapping</Path>
+  </Cache>
+</GDAL_WMS>

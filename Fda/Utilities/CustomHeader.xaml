@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="Fda.Utilities.CustomHeader"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Fda.Utilities"
+             mc:Ignorable="d" 
+             d:DesignHeight="25" d:DesignWidth="300">
+    <Grid>
+        <StackPanel Orientation="Horizontal" >
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="20" />
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" Name="image_Image" Source="{Binding Path=ImageSource}" />
+                <TextBlock Grid.Column="1" Name="txt_Name" Text="{Binding Path=Name}" Margin="5,0,0,0" />
+                <TextBlock Grid.Column="2" Name="txt_Decoration" Text="{Binding Path=Decoration}" Foreground="Red" />
+            </Grid>
+            
+        </StackPanel>
+            
+    </Grid>
+</UserControl>

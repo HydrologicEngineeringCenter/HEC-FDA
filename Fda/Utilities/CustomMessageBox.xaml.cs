@@ -1,0 +1,107 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace Fda.Utilities
+{
+    /// <summary>
+    /// Interaction logic for CustomMessageBox.xaml
+    /// </summary>
+    public partial class CustomMessageBox : UserControl
+    {
+        public CustomMessageBox()
+        {
+            InitializeComponent();
+
+            btn_Yes.Click += Btn_Click;
+            btn_No.Click += Btn_Click;
+            btn_Ok.Click += Btn_Click;
+            btn_Cancel.Click += Btn_Click;
+            btn_Close.Click += Btn_Click;
+            btn_Abort.Click += Btn_Click;
+            btn_Retry.Click += Btn_Click;
+            btn_Ignore.Click += Btn_Click;
+        }
+
+        private void Btn_Click(object sender, RoutedEventArgs e)
+        {
+            string name = ((Button)sender).Content.ToString();
+
+            FdaViewModel.Utilities.CustomMessageBoxVM vm = (FdaViewModel.Utilities.CustomMessageBoxVM)this.DataContext;
+            switch (name)
+            {
+
+                case "Yes":
+                    vm.ClickedButton = FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Yes;
+
+                    break;
+                case "No":
+                    vm.ClickedButton = FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.No;
+
+                    break;
+                case "OK":
+                    vm.ClickedButton = FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK;
+                   
+                    break;
+                case "Cancel":
+                    vm.ClickedButton = FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Cancel;
+
+                    break;
+                case "Close":
+                    vm.ClickedButton = FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Close;
+
+                    break;
+                case "Abort":
+                    vm.ClickedButton = FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Abort;
+
+                    break;
+                case "Retry":
+                    vm.ClickedButton = FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Retry;
+
+                    break;
+                case "Ignore":
+                    vm.ClickedButton = FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Ignore;
+
+                    break;
+            }
+
+
+            var window = Window.GetWindow(this);
+            window.Close();
+
+        }
+
+        //private void btn_No_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var window = Window.GetWindow(this);
+        //    window.Close();
+        //}
+
+        //private void btn_Ok_Click(object sender, RoutedEventArgs e)
+        //{
+            
+        //}
+
+        //private void btn_Cancel_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var window = Window.GetWindow(this);
+        //    window.Close();
+        //}
+
+        //private void btn_Close_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var window = Window.GetWindow(this);
+        //    window.Close();
+        //}
+    }
+}

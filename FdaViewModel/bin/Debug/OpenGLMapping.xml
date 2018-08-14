@@ -1,0 +1,493 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+OpenGLMapping
+</name>
+</assembly>
+<members>
+<member name="T:OpenGLMapping.My.MyWpfExtension">
+ <summary>
+ Module used to define the properties that are available in the My Namespace for WPF
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="P:OpenGLMapping.My.MyWpfExtension.Application">
+ <summary>
+ Returns the application object for the running application
+ </summary>
+</member>
+<member name="P:OpenGLMapping.My.MyWpfExtension.Computer">
+ <summary>
+ Returns information about the host computer.
+ </summary>
+</member>
+<member name="P:OpenGLMapping.My.MyWpfExtension.User">
+ <summary>
+ Returns information for the current user.  If you wish to run the application with the current 
+ Windows user credentials, call My.User.InitializeWithWindowsUser().
+ </summary>
+</member>
+<member name="P:OpenGLMapping.My.MyWpfExtension.Log">
+ <summary>
+ Returns the application log. The listeners can be configured by the application's configuration file.
+ </summary>
+</member>
+<member name="P:OpenGLMapping.My.MyWpfExtension.Windows">
+ <summary>
+ Returns the collection of Windows defined in the project.
+ </summary>
+</member>
+<member name="T:OpenGLMapping.My.Resources.Resources">
+<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+<member name="P:OpenGLMapping.My.Resources.Resources.ResourceManager">
+<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member>
+<member name="P:OpenGLMapping.My.Resources.Resources.Culture">
+<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member>
+<member name="P:OpenGLMapping.My.Resources.Resources.Add_File_22x22">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:OpenGLMapping.My.Resources.Resources.Earth_Icon_22x22">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:OpenGLMapping.My.Resources.Resources.Pan_Hand_22x22">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:OpenGLMapping.My.Resources.Resources.Pause">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:OpenGLMapping.My.Resources.Resources.Play">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:OpenGLMapping.My.Resources.Resources.Select_22x22">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:OpenGLMapping.My.Resources.Resources.SlowDown">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:OpenGLMapping.My.Resources.Resources.SpeedUp">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:OpenGLMapping.My.Resources.Resources.StepBack">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:OpenGLMapping.My.Resources.Resources.StepForward">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:OpenGLMapping.My.Resources.Resources.Zoom_In_22x22">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="M:OpenGLMapping.JenksBreaksClusters.#ctor(System.Collections.Generic.List{System.Double},System.Int32)">
+ <summary>
+ Initializes a new instance of the <see cref="T:OpenGLMapping.JenksBreaksClusters"/> class.
+ </summary>
+ <param name="values">Values used for calculation.</param>
+ <param name="numClasses">Number of breaks that should be calculated.</param>
+</member>
+<member name="M:OpenGLMapping.JenksBreaksClusters.Optimize">
+ <summary>
+ Optimization routine
+ </summary>
+</member>
+<member name="M:OpenGLMapping.JenksBreaksClusters.GetSumStandardDeviations">
+ <summary>
+ Calculates the sum of standard deviations of individual variants from the class mean through all class.
+ It's the objective function - should be minimized
+ </summary>
+ <returns>The sum of standard deviations.</returns>
+</member>
+<member name="M:OpenGLMapping.JenksBreaksClusters.JenksData.#ctor(System.Double)">
+ <summary>
+ Initializes a new instance of the <see cref="T:OpenGLMapping.JenksBreaksClusters.JenksData"/> class.
+ </summary>
+ <param name="dataValue">The value.</param>
+</member>
+<member name="P:OpenGLMapping.JenksBreaksClusters.JenksData.ClassId">
+ <summary>
+ Gets or sets the number of the break to which a value belongs.
+ </summary>
+</member>
+<member name="T:OpenGLMapping.VectorAttributePropertiesControl">
+<summary>
+VectorAttributePropertiesControl
+</summary>
+</member>
+<member name="M:OpenGLMapping.VectorAttributePropertiesControl.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.FeatureNodeHeader">
+<summary>
+FeatureNodeHeader
+</summary>
+</member>
+<member name="M:OpenGLMapping.FeatureNodeHeader.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.ProgressBarDialog">
+<summary>
+ProgressBarDialog
+</summary>
+</member>
+<member name="M:OpenGLMapping.ProgressBarDialog.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.AnimationControl">
+<summary>
+AnimationControl
+</summary>
+</member>
+<member name="M:OpenGLMapping.AnimationControl.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.AnimationSettings">
+<summary>
+AnimationSettings
+</summary>
+</member>
+<member name="M:OpenGLMapping.AnimationSettings.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.ExportAnimationWizard">
+<summary>
+ExportAnimationWizard
+</summary>
+</member>
+<member name="M:OpenGLMapping.ExportAnimationWizard.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.AttributeTable">
+<summary>
+AttributeTable
+</summary>
+</member>
+<member name="M:OpenGLMapping.AttributeTable.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="M:OpenGLMapping.OpenGLFeatureDrawInfo.RoundUpToPowerOfTwo(System.Int32)">
+ <summary>
+ keeping because it's cool. It was considered for use when dealing with textures.
+ </summary>
+ <param name="x"></param>
+ <returns></returns>
+</member>
+<member name="T:OpenGLMapping.ColorPicker">
+<summary>
+ColorPicker
+</summary>
+</member>
+<member name="M:OpenGLMapping.ColorPicker.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.ColorPickerDialog">
+<summary>
+ColorPickerDialog
+</summary>
+</member>
+<member name="M:OpenGLMapping.ColorPickerDialog.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.FeatureNodeProperties">
+<summary>
+FeatureNodeProperties
+</summary>
+</member>
+<member name="M:OpenGLMapping.FeatureNodeProperties.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.InsertionAdorner">
+ <summary>
+ InsertionAdorner class implemented from code developed at Zag studios which was found (with tutorial) on the Zag log (http://www.zagstudio.com/blog/488#.Us185vRDvp4)
+ </summary>
+ <remarks>Implemented by Woodrow Lee Fields 01/08/2014</remarks>
+</member>
+<member name="T:OpenGLMapping.RasterDrawPropertiesControl">
+<summary>
+RasterDrawPropertiesControl
+</summary>
+</member>
+<member name="M:OpenGLMapping.RasterDrawPropertiesControl.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.RasterDrawInfoEditor">
+<summary>
+RasterDrawInfoEditor
+</summary>
+</member>
+<member name="M:OpenGLMapping.RasterDrawInfoEditor.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.SymbolDrawInfoEditor">
+<summary>
+SymbolDrawInfoEditor
+</summary>
+</member>
+<member name="M:OpenGLMapping.SymbolDrawInfoEditor.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.BufferWindow">
+<summary>
+BufferWindow
+</summary>
+</member>
+<member name="M:OpenGLMapping.BufferWindow.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.ClipToShapefile">
+<summary>
+ClipToShapefile
+</summary>
+</member>
+<member name="M:OpenGLMapping.ClipToShapefile.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.CreateCentroidsWindow">
+<summary>
+CreateCentroidsWindow
+</summary>
+</member>
+<member name="M:OpenGLMapping.CreateCentroidsWindow.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.ExportToShapefile">
+<summary>
+ExportToShapefile
+</summary>
+</member>
+<member name="M:OpenGLMapping.ExportToShapefile.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.RasterToPolygon">
+<summary>
+RasterToPolygon
+</summary>
+</member>
+<member name="M:OpenGLMapping.RasterToPolygon.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.SelectByPolygon">
+<summary>
+SelectByPolygon
+</summary>
+</member>
+<member name="M:OpenGLMapping.SelectByPolygon.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.VWSimplify">
+<summary>
+VWSimplify
+</summary>
+</member>
+<member name="M:OpenGLMapping.VWSimplify.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.VectorDrawPropertiesControl">
+<summary>
+VectorDrawPropertiesControl
+</summary>
+</member>
+<member name="M:OpenGLMapping.VectorDrawPropertiesControl.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.MapProperties">
+<summary>
+MapProperties
+</summary>
+</member>
+<member name="M:OpenGLMapping.MapProperties.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.MapPropertiesControl">
+<summary>
+MapPropertiesControl
+</summary>
+</member>
+<member name="M:OpenGLMapping.MapPropertiesControl.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.MeasureResultsDialog">
+<summary>
+MeasureResultsDialog
+</summary>
+</member>
+<member name="M:OpenGLMapping.MeasureResultsDialog.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="M:OpenGLMapping.OpenGLMapWindow.SetMaximumExtent(LifeSimGIS.Extent,System.Boolean)">
+ <summary>
+ Set the maximum extent of the map window.
+ </summary>
+ <DataExtent>Maximum data extent.</DataExtent>
+ <remarks>Assumes that the setter value is representative of the data</remarks>
+</member>
+<member name="T:OpenGLMapping.QueryWindow">
+<summary>
+QueryWindow
+</summary>
+</member>
+<member name="M:OpenGLMapping.QueryWindow.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.WPFMapWindow">
+<summary>
+WPFMapWindow
+</summary>
+</member>
+<member name="M:OpenGLMapping.WPFMapWindow.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.AddFileSplitButton">
+<summary>
+AddFileSplitButton
+</summary>
+</member>
+<member name="M:OpenGLMapping.AddFileSplitButton.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.CreateNewFeature">
+<summary>
+CreateNewFeature
+</summary>
+</member>
+<member name="M:OpenGLMapping.CreateNewFeature.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.SelectableLayersControl">
+<summary>
+SelectableLayersControl
+</summary>
+</member>
+<member name="M:OpenGLMapping.SelectableLayersControl.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.SnappingSettingsControl">
+<summary>
+SnappingSettingsControl
+</summary>
+</member>
+<member name="M:OpenGLMapping.SnappingSettingsControl.InitializeComponent">
+<summary>
+InitializeComponent
+</summary>
+</member>
+<member name="T:OpenGLMapping.XamlGeneratedNamespace.GeneratedInternalTypeHelper">
+<summary>
+GeneratedInternalTypeHelper
+</summary>
+</member>
+<member name="M:OpenGLMapping.XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateInstance(System.Type,System.Globalization.CultureInfo)">
+<summary>
+CreateInstance
+</summary>
+</member>
+<member name="M:OpenGLMapping.XamlGeneratedNamespace.GeneratedInternalTypeHelper.GetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Globalization.CultureInfo)">
+<summary>
+GetPropertyValue
+</summary>
+</member>
+<member name="M:OpenGLMapping.XamlGeneratedNamespace.GeneratedInternalTypeHelper.SetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Object,System.Globalization.CultureInfo)">
+<summary>
+SetPropertyValue
+</summary>
+</member>
+<member name="M:OpenGLMapping.XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateDelegate(System.Type,System.Object,System.String)">
+<summary>
+CreateDelegate
+</summary>
+</member>
+<member name="M:OpenGLMapping.XamlGeneratedNamespace.GeneratedInternalTypeHelper.AddEventHandler(System.Reflection.EventInfo,System.Object,System.Delegate)">
+<summary>
+AddEventHandler
+</summary>
+</member>
+</members>
+</doc>

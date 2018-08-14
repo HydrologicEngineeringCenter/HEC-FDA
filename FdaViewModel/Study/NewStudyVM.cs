@@ -1,0 +1,114 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FdaViewModel.Study
+{
+    public class NewStudyVM : BaseViewModel
+    {
+        #region Notes
+        #endregion
+        #region Fields
+        private string _Path;
+        private string _StudyName;
+        private string _Description;
+        #endregion
+        #region Properties
+        public string Path { get { return _Path; }
+        set
+            {
+                if (!_Path.Equals(value)){
+                    _Path = value;
+                    NotifyPropertyChanged();
+                }
+
+            }
+        }
+        public string StudyName
+        {
+            get { return _StudyName; }
+            set
+            {
+                if (!_StudyName.Equals(value))
+                {
+                    _StudyName = value;
+                    NotifyPropertyChanged();
+                }
+
+            }
+        }
+        public string Description
+        {
+            get { return _Description; }
+            set
+            {
+                if (!_Description.Equals(value))
+                {
+                    _Description = value;
+                    NotifyPropertyChanged();
+                }
+
+            }
+        }
+        #endregion
+        #region Constructors
+        public NewStudyVM() : base()
+        {
+            _Path = "C:\\temp\\FDA\\";
+            _StudyName = "Example";
+            _Description = "My description";
+        }
+        #endregion
+        #region Voids
+        public override void AddValidationRules()
+        {
+            AddRule(nameof(Path), () => Path != null, "Path cannot be null.");
+            AddRule(nameof(Path), () => Path != "", "Path cannot be null.");
+
+            //path must be a valid path and not currently exist //possibly allow for creation of new directory here, but would require invalid character search.
+            //AddRule(nameof(Path), () => System.IO.Directory.Exists(Path), "Directory must exist");
+            //path must not contain invalid characters
+            AddRule(nameof(Path), () =>
+            {
+                foreach (Char c in System.IO.Path.GetInvalidPathChars())
+                {
+                    
+                    if (Path.Contains(c))
+                    {
+                        
+                        return false;
+                    }
+                }
+                if (Path.Contains('?')) return false;
+                return true;
+            },"Path contains invalid characters.");
+        //study name must not be null
+            AddRule(nameof(StudyName), () => StudyName != null, "Study Name cannot be null.");
+            AddRule(nameof(StudyName), () => StudyName != "", "Study Name cannot be null.");
+
+            //check if folder with that name already exists
+            AddRule(nameof(StudyName), () =>
+            {
+                
+                if(System.IO.File.Exists(Path +"\\"+StudyName +"\\"+ StudyName + ".sqlite"))
+                {
+                    return false;
+                }
+                return true;
+            }, "A study with that name already exists.");
+
+            //notes can be null.
+        }
+
+        public override void Save()
+        {
+            //create a new database via the model?
+        }
+        #endregion
+        #region Functions
+        #endregion
+
+    }
+}

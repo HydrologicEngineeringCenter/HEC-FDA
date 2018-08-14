@@ -1,0 +1,6 @@
+Function1xValues,Function1yValues,Function2xValues,Function2yValues,ExpectedValue,Comments
+1 2,100 200,1.2 1.5 2.5,.1 .12 .2,.123, *****  Test 5 **** 
+1 2,100 200,1.2 1.5 2.5,.1 .12 .2,.123, *****  Test 4 **** 
+1 2,100 200,.5 1.5 2.5,.1 .12 .2,.1275, *****  Test 3 **** 
+1 2,100 200,.5 2.5,.1 .2,.15, *****  Test 2 **** 
+1 2,100 200,1 2,.1 .2,.15, *****  Test 1 **** 

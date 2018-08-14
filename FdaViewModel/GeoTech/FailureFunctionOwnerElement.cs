@@ -1,0 +1,113 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using FdaModel;
+using FdaModel.Utilities.Attributes;
+using System.Threading.Tasks;
+
+namespace FdaViewModel.GeoTech
+{
+    //[Author(q0heccdm, 6 / 8 / 2017 2:00:01 PM)]
+    class FailureFunctionOwnerElement : Utilities.OwnerElement
+    {
+        #region Notes
+        // Created By: q0heccdm
+        // Created Date: 6/8/2017 2:00:01 PM
+        #endregion
+        #region Fields
+        #endregion
+        #region Properties
+        public override string GetTableConstant()
+        {
+            return TableName;
+        }
+        #endregion
+        #region Constructors
+        public FailureFunctionOwnerElement(BaseFdaElement owner):base(owner)
+        {
+            Name = "Failure Functions";
+            IsBold = false;
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+
+            Utilities.NamedAction addFailureFunction = new Utilities.NamedAction();
+            addFailureFunction.Header = "Create New Failure Function Curve";
+            addFailureFunction.Action = AddNewFailureFunction;
+
+            //Utilities.NamedAction ImportRatingCurve = new Utilities.NamedAction();
+            //ImportRatingCurve.Header = "Import Rating Curve From ASCII";
+            //ImportRatingCurve.Action = ImportRatingCurvefromAscii;
+
+            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
+            localActions.Add(addFailureFunction);
+            //localActions.Add(ImportRatingCurve);
+
+            Actions = localActions;
+
+        }
+        #endregion
+        #region Voids
+        public void AddNewFailureFunction(object arg1, EventArgs arg2)
+        {
+            List<LeveeFeatureElement> leveeList = GetElementsOfType<LeveeFeatureElement>();
+            FailureFunctionEditorVM vm = new FailureFunctionEditorVM(leveeList);
+            Navigate(vm);
+            if (!vm.WasCancled)
+            {
+                if (!vm.HasError)
+                {
+                    FailureFunctionElement ele = new FailureFunctionElement(vm.Name, vm.Description, vm.Curve,vm.SelectedLateralStructure , this);
+                    AddElement(ele);
+                    AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ele.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(FailureFunctionElement)));
+                }
+            }
+        }
+        #endregion
+        #region Functions
+        #endregion
+        public override string TableName
+        {
+            get
+            {
+                return "Failure Functions";
+            }
+        }
+
+        public override void AddBaseElements()
+        {
+            
+        }
+
+        public override void AddValidationRules()
+        {
+            //throw new NotImplementedException();
+        }
+
+        public override string[] TableColumnNames()
+        {
+            return new string[] { "Name", "Description", "Associated Levee Feature", "Curve Distribution Type" };
+        }
+
+        public override Type[] TableColumnTypes()
+        {
+            return new Type[] { typeof(string), typeof(string), typeof(string), typeof(string) };
+        }
+        public override void AddElement(object[] rowData)
+        {
+
+            List<LeveeFeatureElement> ele = GetElementsOfType<LeveeFeatureElement>();
+            LeveeFeatureElement lfe = null;
+            foreach(LeveeFeatureElement element in ele)
+            {
+                if(element.Name == (string)rowData[2])
+                {
+                    lfe = element;
+                }
+            }
+            Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
+            FailureFunctionElement failure = new FailureFunctionElement((string)rowData[0], (string)rowData[1], ucdc, lfe, this);
+            failure.FailureFunctionCurve.fromSqliteTable(failure.TableName);
+            AddElement(failure, false);
+        }
+    }
+}

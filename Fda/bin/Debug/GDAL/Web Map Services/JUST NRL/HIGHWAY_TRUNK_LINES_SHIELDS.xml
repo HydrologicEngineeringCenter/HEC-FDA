@@ -1,0 +1,24 @@
+<GDAL_WMS>
+  <Service Name="WMS">
+    <Version>1.1.1</Version>
+    <ServerUrl>http://geoint.nrlssc.navy.mil/nrltileserver/WMS?</ServerUrl>
+    <SRS>EPSG:4326</SRS>
+    <ImageFormat>image/png</ImageFormat>
+    <Layers>HIGHWAY_TRUNK_LINES_SHIELDS</Layers>
+  </Service>
+  <DataWindow>
+    <UpperLeftX>-158.0987525712289</UpperLeftX>
+    <UpperLeftY>71.11415680588715</UpperLeftY>
+    <LowerRightX>177.7907646993832</LowerRightX>
+    <LowerRightY>-54.854932840219014</LowerRightY>
+    <SizeX>1073741824</SizeX>
+    <SizeY>402653184</SizeY>
+  </DataWindow>
+  <OverviewCount>20</OverviewCount>
+  <BlockSizeX>512</BlockSizeX>
+  <BlockSizeY>512</BlockSizeY>
+  <Projection>EPSG:4326</Projection>
+  <Cache>
+    <Path>C:\Users\q0hecajk\AppData\Local\HEC\Mapping</Path>
+  </Cache>
+</GDAL_WMS>

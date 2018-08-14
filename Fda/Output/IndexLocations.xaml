@@ -1,0 +1,63 @@
+﻿<UserControl x:Class="Fda.Output.IndexLocations"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Fda.Output"
+        xmlns:OkClose="clr-namespace:Fda.Utilities"
+        xmlns:ViewModel="clr-namespace:FdaViewModel.Output;assembly=FdaViewModel"
+        mc:Ignorable="d"
+        Height="455" Width="250" Background="WhiteSmoke">
+    <UserControl.Resources>
+        <ViewModel:IndexLocationsVM x:Key="vm" />
+    </UserControl.Resources>
+    <Grid DataContext="{DynamicResource vm}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="38" />
+            <RowDefinition Height="38" />
+            <RowDefinition Height="38" />
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="38" />
+        </Grid.RowDefinitions>
+
+        <!--<QH:HelpButton Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Margin="2" PathIsEmbeddedResource="True" xmlPATH="IndexLocationEditor.xml" AssemblyName="HEC-GeoFDA" RootNamespace="GeoFDA" ToolTip="Get Help On Index Location Editor"/>-->
+
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="88*"/>
+                <ColumnDefinition Width="120*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Reach Name:" Height="28" HorizontalAlignment="Right" Name="Label1" VerticalAlignment="Center" />
+            <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" Margin="5" Name="ReachName" VerticalAlignment="Center" ItemsSource="{Binding Path=ReachName}" />
+        </Grid>
+        <Grid Grid.Row="2" DataContext="{Binding Path=IndexLocation,NotifyOnTargetUpdated=True}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="88*"/>
+                <ColumnDefinition Width="120*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="River Station:"  Height="28" HorizontalAlignment="Right" Name="Label3" VerticalAlignment="Center" />
+            <TextBox Grid.Column="1" HorizontalAlignment="Stretch" Margin="5" Name="TxtRiverStat" Text="{Binding Path=Stationing,NotifyOnTargetUpdated=True}"  VerticalAlignment="Center" IsReadOnly="True"/>
+        </Grid>
+        <Grid Grid.Row="3" DataContext="{Binding Path=IndexLocation,NotifyOnTargetUpdated=True}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="88*"/>
+                <ColumnDefinition Width="120*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Invert:"  Height="28" HorizontalAlignment="Right" Name="Label4" VerticalAlignment="Center" />
+            <TextBox Grid.Column="1" HorizontalAlignment="Stretch" Margin="5" Name="TxtInvert" Text="{Binding Path=Invert,NotifyOnTargetUpdated=True, ValidatesOnDataErrors=True}" VerticalAlignment="Center"/>
+        </Grid>
+
+        <!--<CA:CopyPasteDataGrid Name="MyWPFDGV" Grid.Row="4" Grid.ColumnSpan="2" Margin="5" AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="CellOrRowHeader" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeRows="False" CanUserSortColumns="False" IsReadOnly="False" CanUserReorderColumns="False" AlternatingRowBackground="#FFF3F9F7" AlternationCount="2" RowHeight="22" VerticalContentAlignment="Center" ItemsSource="{Binding Path=IndexLocation.ItemsSoucre}">
+            <DataGrid.Columns>
+                <DataGridTextColumn HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" Header="Probability" Binding="{Binding Path=Probability}" Width="1*"/>
+                <DataGridTextColumn HeaderStyle="{StaticResource WrappedColumnHeaderStyle}"  Header="Flow" Binding="{Binding Path=Flow}" Width="1*"/>
+                <DataGridTextColumn HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" Header="Water Surface Elevation" Binding="{Binding Path=WaterSurfaceElevation}" Width="1*"/>
+            </DataGrid.Columns>
+        </CA:CopyPasteDataGrid>-->
+
+        <OkClose:OKCloseControl Grid.Row="5" />
+
+    </Grid>
+</UserControl>

@@ -1,0 +1,24 @@
+<GDAL_WMS>
+  <Service Name="WMS">
+    <Version>1.1.1</Version>
+    <ServerUrl>http://geoint.nrlssc.navy.mil/nrltileserver/WMS?</ServerUrl>
+    <SRS>EPSG:4326</SRS>
+    <ImageFormat>image/png</ImageFormat>
+    <Layers>AEROWAY_POINTS</Layers>
+  </Service>
+  <DataWindow>
+    <UpperLeftX>-179.88088000000076</UpperLeftX>
+    <UpperLeftY>83.0833300000001</UpperLeftY>
+    <LowerRightX>179.9510000000003</LowerRightX>
+    <LowerRightY>-89.99999999999991</LowerRightY>
+    <SizeX>1073741824</SizeX>
+    <SizeY>515899392</SizeY>
+  </DataWindow>
+  <OverviewCount>20</OverviewCount>
+  <BlockSizeX>512</BlockSizeX>
+  <BlockSizeY>512</BlockSizeY>
+  <Projection>EPSG:4326</Projection>
+  <Cache>
+    <Path>C:\Users\q0hecajk\AppData\Local\HEC\Mapping</Path>
+  </Cache>
+</GDAL_WMS>

@@ -1,0 +1,182 @@
+﻿<UserControl x:Class="Fda.Plots.DoubleLineModulatorHorizontalCoverButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Fda.Plots"
+             xmlns:utils="clr-namespace:Fda.Utilities"
+
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <utils:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
+
+
+        <Style TargetType="{x:Type Image}" x:Key="PlusImage">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Source" Value="pack://application:,,,/Fda;component/Resources/AddDisabled.png" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="True">
+                    <Setter Property="Source" Value="pack://application:,,,/Fda;component/Resources/Add.png" />
+                </Trigger>
+
+            </Style.Triggers>
+        </Style>
+
+
+
+        <Style TargetType="{x:Type Button}" x:Key="AddButton">
+
+            <Setter Property="Background" Value="Blue" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border CornerRadius="2" BorderBrush="Black" BorderThickness="3">
+                            <Grid Background="{TemplateBinding Background}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <!--<RowDefinition Height="*" />-->
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Image Style="{StaticResource PlusImage}" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                                    </Image>
+                                    <ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0" />
+                                </StackPanel>
+
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                                <Setter Property="Foreground" Value="White" />
+                                <!--<Setter TargetName="PathIcon" Property="Fill" Value="Black" />-->
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="LightGray" />
+
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type Button}" x:Key="AddButtonVerticalModulator">
+
+            <Setter Property="Background" Value="LightGreen" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="LayoutTransform">
+                <Setter.Value>
+                    <RotateTransform Angle="-90"/>
+                </Setter.Value>
+            </Setter>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+
+                        <Border CornerRadius="2"  BorderBrush="Black" BorderThickness="3">
+                            <Grid Background="{TemplateBinding Background}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Image Style="{StaticResource PlusImage}" Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                    <ContentPresenter x:Name="MyContentPresenter" Grid.Row="0" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="10,0,0,0" />
+
+                                </StackPanel>
+
+                                <!--<Image Grid.Row="1" Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>-->
+
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                                <Setter Property="Foreground" Value="White" />
+                                <!--<Setter TargetName="PathIcon" Property="Fill" Value="Black" />-->
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="LightGray" />
+
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style TargetType="{x:Type Button}" x:Key="AddButtonHorizontalModulator">
+
+            <Setter Property="Background" Value="LightGreen" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+
+                        <Border CornerRadius="2"  BorderBrush="Black" BorderThickness="3">
+                            <Grid Background="{TemplateBinding Background}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Image Style="{StaticResource PlusImage}" Grid.Row="1" Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                    <ContentPresenter x:Name="MyContentPresenter" Grid.Row="0" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="10,0,0,0" />
+
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                                <Setter Property="Foreground" Value="White" />
+                                <!--<Setter TargetName="PathIcon" Property="Fill" Value="Black" />-->
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="LightGray" />
+
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+    <Grid>
+        <Button Style="{StaticResource AddButtonHorizontalModulator}" Content="Inflow Outflow Curve" Margin="0,2,0,2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="{Binding IsEnabled}" Click="Button_Click" />
+
+    </Grid>
+</UserControl>

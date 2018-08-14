@@ -1,0 +1,24 @@
+<GDAL_WMS>
+  <Service Name="WMS">
+    <Version>1.1.1</Version>
+    <ServerUrl>http://geoint.nrlssc.navy.mil/nrltileserver/WMS?</ServerUrl>
+    <SRS>EPSG:4326</SRS>
+    <ImageFormat>image/png</ImageFormat>
+    <Layers>RNC_10K</Layers>
+  </Service>
+  <DataWindow>
+    <UpperLeftX>-176.8798828125</UpperLeftX>
+    <UpperLeftY>64.51171875</UpperLeftY>
+    <LowerRightX>174.111328125</LowerRightX>
+    <LowerRightY>17.7099609375</LowerRightY>
+    <SizeX>1073741824</SizeX>
+    <SizeY>142606336</SizeY>
+  </DataWindow>
+  <OverviewCount>20</OverviewCount>
+  <BlockSizeX>512</BlockSizeX>
+  <BlockSizeY>512</BlockSizeY>
+  <Projection>EPSG:4326</Projection>
+  <Cache>
+    <Path>C:\Users\q0hecajk\AppData\Local\HEC\Mapping</Path>
+  </Cache>
+</GDAL_WMS>

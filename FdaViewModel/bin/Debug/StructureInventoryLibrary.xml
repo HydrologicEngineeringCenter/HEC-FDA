@@ -1,0 +1,33 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+StructureInventoryLibrary
+</name>
+</assembly>
+<members>
+<member name="T:StructureInventoryLibrary.My.Resources.Resources">
+<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+<member name="P:StructureInventoryLibrary.My.Resources.Resources.ResourceManager">
+<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member>
+<member name="P:StructureInventoryLibrary.My.Resources.Resources.Culture">
+<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member>
+<member name="M:StructureInventoryLibrary.StructureInventoryBase.ContainsRequiredStructureAttributes(System.String@)">
+ <summary>
+ Checks if all of the required columns exist in the database.
+ </summary>
+ <param name="errorMessage"></param>
+ <returns></returns>
+</member>
+</members>
+</doc>

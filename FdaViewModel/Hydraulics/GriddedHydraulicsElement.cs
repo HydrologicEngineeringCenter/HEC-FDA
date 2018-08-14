@@ -1,0 +1,126 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using FdaModel;
+using FdaModel.Utilities.Attributes;
+using System.Threading.Tasks;
+
+namespace FdaViewModel.Hydraulics
+{
+    class GriddedHydraulicsElement : Utilities.OwnedElement
+    {
+        #region Notes
+        #endregion
+        #region Fields
+        private const string _TableConstant = "Gridded Water Surface Profile - ";
+
+        private string _Name;
+        private string _Path;
+        private string _Description;
+        private List<string> _Years;
+        private Watershed.TerrainElement _Terrain;
+        private List<string> _AvailableGrids;
+        #endregion
+        #region Properties
+        public override string GetTableConstant()
+        {
+            return _TableConstant;
+        }
+        public List<string> AvailableGrids
+        {
+            get { return _AvailableGrids; }
+            set { _AvailableGrids = value; NotifyPropertyChanged(); }
+        }
+        public Watershed.TerrainElement Terrains
+        {
+            get { return _Terrain; }
+            set { _Terrain = value; NotifyPropertyChanged(); }
+        }
+        public List<string> Years
+        {
+            get { return _Years; }
+            set { _Years = value; NotifyPropertyChanged(); }
+        }
+        public string Path
+        {
+            get { return _Path; }
+            set { _Path = value; NotifyPropertyChanged(); }
+        }
+
+        public string HydraulicsName
+        {
+            get { return _Name; }
+            set { _Name = value; NotifyPropertyChanged(); }
+        }
+        public string Description
+        {
+            get { return _Description; }
+            set { _Description = value; NotifyPropertyChanged(); }
+        }
+
+        public override string TableName
+        {
+            get
+            {
+                return GetTableConstant() + Name;
+            }
+        }
+        #endregion
+        #region Constructors
+        public GriddedHydraulicsElement(BaseFdaElement owner, GridImporterVM vm) : base(owner)
+        {
+            Name = vm.Name;
+            HydraulicsName = vm.Name;
+            Path = vm.Path;
+            Description = vm.Description;
+            Years = vm.Years;
+            Terrains = vm.Terrains[0];//needs to be the selected terrain...
+
+            AvailableGrids = vm.AvailableGrids;
+
+            Utilities.NamedAction properties = new Utilities.NamedAction();
+            properties.Header = "Properties";
+            properties.Action = ViewProperties;
+
+            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
+            localActions.Add(properties);
+            Actions = localActions;
+
+        }
+        #endregion
+        #region Voids
+        private void ViewProperties(object arg1, EventArgs arg2)
+        {
+            //PropertiesVM propVM = new PropertiesVM(HydraulicsName, Description, Path, _Terrain);
+            //Navigate(propVM, true, true);
+        }
+        public override void AddValidationRules()
+        {
+            //throw new NotImplementedException();
+        }
+
+        public override void Save()
+        {
+            //throw new NotImplementedException();
+        }
+
+        public override object[] RowData()
+        {
+            return new object[] { Name };
+        }
+
+        public override bool SavesToRow()
+        {
+            return true;
+        }
+        public override bool SavesToTable()
+        {
+            return true;
+        }
+        #endregion
+        #region Functions
+        #endregion
+
+    }
+}

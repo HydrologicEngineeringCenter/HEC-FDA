@@ -1,0 +1,1133 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+Statistics
+</name>
+</assembly>
+<members>
+<member name="T:Statistics.My.Resources.Resources">
+<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+<member name="P:Statistics.My.Resources.Resources.ResourceManager">
+<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member>
+<member name="P:Statistics.My.Resources.Resources.Culture">
+<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member>
+<member name="T:Statistics.ContinuousDistribution">
+ <summary>
+ This is the parent of many continuous distributions, each will have a property to return a distributed variable based on a
+ random number between zero and 1 exclusive
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.Kolmogorov_SmirnovTest(Statistics.Emperical@)">
+ <summary>
+ The Kolmogorov Smirnov Test. 
+ </summary>
+ <param name="Fe">The data that defines the summary statistics, I am asking for it again since I do not store the data as an array in the continuous distribution class.</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.AkaikeInformationCriterionTest(System.Double[])">
+ <summary>
+ 
+ </summary>
+ <param name="data">the data used to estimate the parameters for the distribution</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.BayesianInformationCriterionTest(System.Double[])">
+ <summary>
+ 
+ </summary>
+ <param name="data">the data used to estimate the parameters for the distribution</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.ProbabilityPlotCorrelationtest(Statistics.Emperical@)">
+ <summary>
+ The probability plot correlation test is a comparison described by correlation of the emperical distribution to the numerically approximated distribution
+ </summary>
+ <param name="Fe">the emperical distribution of the input data</param>
+ <returns>a number representing the correlation of the input data to the computed numerical distribution</returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.PearsonChiSquaredTest(Statistics.Emperical@)">
+ <summary>
+ The Pearson Chi Squared test takes the square of the difference between the emperical data and the analytical data across probability divided by the anylitical, and sums the errors. it then samples a chi squared distribution where n = the number of variables in the anylitical distribution with the sum of the errors.
+ </summary>
+ <param name="Fe">the emperical distribution function</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.AndersonDarling(Statistics.Emperical)">
+ <summary>
+ this is a test that weights the tails. (not sure how it works, nor if it is coded correctly)
+ </summary>
+ <param name="Fe">an emperical distribution function</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.Cramer_VonMiserTest(Statistics.Emperical@)">
+ <summary>
+ this test is much like the anderson darling, with a different weighting function, not sure how to use it, nor if it is coded correctly.
+ </summary>
+ <param name="fe">the emperical distribution</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ContinuousDistribution.GetNumberOfParameters">
+ <summary>
+ This is how many parameters are utilized to generate random numbers of this type (excluding probability)(necessary for the chisquared test)
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ContinuousDistribution.GetSampleSize">
+ <summary>
+ This is the number of records from the input dataset
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ContinuousDistribution.GetCentralTendency">
+ <summary>
+ This is the most representative value for the input dataset, it varys by distribution type
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.getDistributedVariable(System.Double)">
+ <summary>
+ Returns a variable which will be determined by the distribution of the actual object that this continuous distribution represents
+ </summary>
+ <param name="probability">a random number between zero and one exclusive that represents a probability of occurance</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.GetPDF(System.Double)">
+ <summary>
+ Returns a probability between zero and 1 which is determined based on the provided value and the pdf function
+ </summary>
+ <param name="Value">a value that is presumed to be from the distribution</param>
+ <returns>a value between zero and 1</returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.GetCDF(System.Double)">
+ <summary>
+ returns a value for a given probability
+ </summary>
+ <param name="value"></param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.Clone">
+ <summary>
+ Creates a copy in memory of the continuous distribution.
+ </summary>
+ <returns>Continuous distribution</returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.writetoXElement">
+ <summary>
+ This function creates an Xelement that represents the data contained in the concrete class. 
+ </summary>
+ <returns>An Xelement that represents the data in the concrete class.</returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.readfromXElement(System.Xml.Linq.XElement)">
+ <summary>
+ this function reads in a distribution from an xml element using reflection.
+ </summary>
+ <param name="el">the element that is a continuous distribution</param>
+ <returns>A concrete continuous distribution.</returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.readfromXML(System.Xml.Linq.XElement)">
+ <summary>
+ this sub reads in a distribution from an xml element using reflection.
+ </summary>
+ <param name="el">the element that is a continuous distribution</param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.getDistributedArray(System.Int32@)">
+ <summary>
+ creates an array of uniformly spaced distributed variables from zero to 1
+ </summary>
+ <param name="bins">how many bins you want</param>
+ <returns>returns a variable at the midpoint of each bin</returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.getParametricBootStrapSample">
+ <summary>
+ This function returns an array of sample size equivalent to the data that generated this distribution, but the data is based on a random number and the parameteric distribution rather than the underlying data
+ </summary>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ContinuousDistribution.getParametricBootStrapSample(System.Collections.Generic.List{System.Double})">
+ <summary>
+ This function returns an array of sample size equivalent to the data that generated this distribution, but the data is based on a random number and the parameteric distribution rather than the underlying data
+ </summary>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Emperical.#ctor(System.Collections.Generic.List{System.Double}@)">
+ <summary>
+ This takes a summary dataset sorts it and passes it back to the user in a varaity of ways.
+ </summary>
+ <param name="data">a list of double</param>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.Emperical.GetData">
+ <summary>
+ returns the data sorted
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.Emperical.GetSampleSize">
+ <summary>
+ total number of records in the dataset
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.Emperical.GetMin">
+ <summary>
+ the minimum of the dataset
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.Emperical.GetMedian">
+ <summary>
+ the median value of the dataset
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.Emperical.A">
+ <summary>
+ this is the A parameter in the plotting position equation.  the default is zero which is consistent with Weibull plotting position.
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.Emperical.B">
+ <summary>
+ this is the B parameter in the plotting position equation.  the default is zero which is consistent with Weibull plotting position.
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.Emperical.GetMax">
+ <summary>
+ the maximum of the dataset
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Emperical.GetCDF(System.Double@)">
+ <summary>
+ returns the exceedance probability that which corresponds with this value
+ </summary>
+ <param name="value">a value you wish to find the exceedance probability of</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Emperical.GetPercentile(System.Double)">
+ <summary>
+ returns a value for a given exceedance probability
+ </summary>
+ <param name="percentile">the exceedance probability you are interested in</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Emperical.PlottingPosition">
+ <summary>
+ calculates the plotting position for each data record in the dataset.
+ </summary>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.LGumbel.#ctor(System.Double[])">
+ <summary>
+ Takes data as an input and computes the lmoments, and describes fit parameters based on the data
+ </summary>
+ <param name="data"></param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.LGumbel.getDistributedVariable(System.Double)">
+ <summary>
+ returns a Gumbel distribution using the L moments methodology to define alhpa and xi
+ </summary>
+ <param name="probability"></param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.LTriangular.#ctor">
+ <summary>
+ This constructor is not intended for use, it is available for reflection purposes only
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.LTriangular.#ctor(System.Double,System.Double,System.Double)">
+ <summary>
+ A contstuctor to directly define paramaterization of a triangular distribution
+ </summary>
+ <param name="min">the minimum value that can be returned</param>
+ <param name="max">the maximum value that can be returned</param>
+ <param name="mostlikely">the most likely value to be returned, usually this is the mode of a dataset</param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.LTriangular.getDistributedVariable(System.Double)">
+ <summary>
+ returns a triangularly distributed variable based on the min max and most likely variables provided upon the objects creation
+ </summary>
+ <param name="probability">a random number between zero and 1 exclusive</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.BasicProductMomentsStats.#ctor(System.Double[])">
+ <summary>
+ Calculates Sum, Mean, Sample Size, and Variance.  Can produce these values and Standard of Deviation
+ </summary>
+ <param name="data">an array of data records that get discarded after summary stats are produced</param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.BasicProductMomentsStats.#ctor">
+ <summary>
+ An empty constructor so the user can create a "Running product momments Statistic" utilize "AddObservation" to add a record and update the statistics.
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.BasicProductMomentsStats.#ctor(System.Double,System.Double,System.Double,System.Double)">
+ <summary>
+ Constructor so the user can create a "Running product momments Statistic" with pre-set statistics. Utilize "AddObservation" to add a record and update the statistics.
+ </summary>
+ <param name="mean">Initial Mean (Average)</param>
+ <param name="variance">Initial Variance</param>
+ <param name="minimum">Initial Data Minimum</param>
+ <param name="maximum">Initial Data Maximum</param>
+</member>
+<member name="M:Statistics.BasicProductMomentsStats.AddObservation(System.Double)">
+ <summary>
+ increments the number of records by 1 and updates the sum and sum of squares so that mean and variance can be calculated
+ </summary>
+ <param name="observation"></param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.BasicProductMomentsStats.AddObservations(System.Double[])">
+ <summary>
+ Loops through the array of records, increments the number of records by 1 and updates 
+ the sum and sum of squares so that mean and variance can be calculated
+ </summary>
+ <param name="observations"></param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.BasicProductMomentsStats.AddObservations(System.Single[])">
+ <summary>
+ Loops through the array of records, increments the number of records by 1 and updates 
+ the sum and sum of squares so that mean and variance can be calculated
+ </summary>
+ <param name="observations"></param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.BasicProductMomentsStats.AddObservations(System.Collections.Generic.List{System.Double})">
+ <summary>
+ Loops through the list of records, increments the number of records by 1 and updates 
+ the sum and sum of squares so that mean and variance can be calculated
+ </summary>
+ <param name="observations"></param>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.BasicProductMomentsStats.GetSum">
+ <summary>
+ returns the sum of the records in the dataset
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.BasicProductMomentsStats.GetMean">
+ <summary>
+ returns the mean of the records in the dataset
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.BasicProductMomentsStats.GetVariance">
+ <summary>
+ returns the variance of the dataset (using N)
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.BasicProductMomentsStats.GetSampleVariance">
+ <summary>
+ returns the Mean Squared error of the dataset (using N-1)
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.BasicProductMomentsStats.GetSampleStDev">
+ <summary>
+ returns the standard deviation of the dataset (using N-1)
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.BasicProductMomentsStats.GetSampleSize">
+ <summary>
+ returns the sample size of the dataset
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.BasicProductMomentsStats.GetMin">
+ <summary>
+ returns the minimum of the dataset
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.BasicProductMomentsStats.GetMax">
+ <summary>
+ returns the maxium of the dataset
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.BasicProductMomentsStats.SetTolerance">
+ <summary>
+ Sets the tolerance for convergence, this value is used in conjunction with the confidence interval for convergence, see SetConfidenceInterval
+ </summary>
+ <value>a number between 0 and 1, smaller numbers are more stringent, the default value is .01</value>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.BasicProductMomentsStats.SetConfidenceInterval">
+ <summary>
+ Sets the confidence interval for convergence.  Convergence assumes normal distribution.
+ </summary>
+ <value>a centered confidence interval, this value will be used to derive an upper tail z_alpha value</value>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.Histogram.LessThanHistogramMinimum">
+ <summary>
+ The number of instances where an observation was less than the histogram minimum.
+ </summary>
+ <value></value>
+ <returns>Number of observations less than the histogram minimum.</returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.Histogram.GreaterThanHistogramMaximum">
+ <summary>
+ The number of instances where an observation was greater than the histogram maximum.
+ </summary>
+ <value></value>
+ <returns>Number of observations greater than the histogram maximum.</returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Histogram.#ctor(System.Int32,System.Double,System.Double,System.Boolean)">
+ <summary>
+ Create a basic product moment stats object that also includes a histogram. The histogram can dynamically update the number of bins or be fixed.
+ </summary>
+ <param name="numberofBins">Number of bins desired for the histogram.</param>
+ <param name="ExpectedMin">The expected minimum value.</param>
+ <param name="ExpectedMax">The expected maximum value.</param>
+ <param name="FixedHistogram">Boolean value determining whether the histogram size is fixed or will dynamically increase to contain all values added.</param>
+ <remarks></remarks>
+</member>
+<member name="T:Statistics.ChiSquared">
+ <summary>
+ The chi squared distribution is a transformation of the normal distribution which relies only on the argument of sample size or degrees of freedom
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ChiSquared.#ctor">
+ <summary>
+ This constructor is not intended for use, it is available for reflection purposes only
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ChiSquared.getK">
+ <summary>
+ the degrees of freedom
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ChiSquared.GetNumberOfParameters">
+ <summary>
+ there is only one descriptive variable for chi squared (the degrees of freedom)
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ChiSquared.GetCentralTendency">
+ <summary>
+ returns degrees of freedom for chi squared
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ChiSquared.GetStDev">
+ <summary>
+ stdev = 2*k in a chi squared distribution
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ChiSquared.GetSampleSize">
+ <summary>
+ this returns the degrees of freedom in a chi squared distribution
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="T:Statistics.Exponential">
+ <summary>
+ The exponential distribution is another extreme value distribution.
+ </summary>
+ <remarks></remarks> 
+</member>
+<member name="M:Statistics.Exponential.#ctor(System.Double[]@)">
+ <summary>
+ a constructor that allows the user to create an exponential from a series of data
+ </summary>
+ <param name="data">data you wish to convert into an exponential distribution using method of moments</param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Exponential.#ctor(System.Double,System.Double)">
+ <summary>
+ a constructor to create an exponential distribution from its summary moments
+ </summary>
+ <param name="mean">the first moment</param>
+ <param name="stdev">the second moment</param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Exponential.#ctor">
+ <summary>
+ This constructor is not intended for use, it is available for reflection purposes only
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Exponential.getDistributedVariable(System.Double)">
+ <summary>
+ this function returns an exponentially distributed random variate
+ </summary>
+ <param name="probability">a random number between zero and 1 exclusive</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.Exponential.GetNumberOfParameters">
+ <summary>
+ for an exponential distribution there is only one descriptive variable, the value Lambda
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="T:Statistics.Gumbel">
+ <summary>
+ The Gumbel Distribution is an extreme value distribution which uses mu and beta (shape and scale) to describe the transform of uniformly distributed random numbers.
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Gumbel.#ctor(System.Double[]@)">
+ <summary>
+ The basic constructor for a Gumbel Distribution which utilizes data as an input
+ </summary>
+ <param name="data">input of data that will be fitted using method of moments to determine mean, stdev, mu, and beta</param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Gumbel.#ctor">
+ <summary>
+ This constructor is not intended for use, it is available for reflection purposes only
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Gumbel.getDistributedVariable(System.Double)">
+ <summary>
+ Returns a Gumbel distribted variable.
+ </summary>
+ <param name="probability">a random number between zero and 1 exclusive</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="T:Statistics.Lindell">
+ <summary>
+ The Lindell continuous distribution is not a true distribution. It has been included as a continuous distribution to make it
+ easy to use in conjunction with other continuous distributions to define uncertainty around warning issuance delay. The formula was developed to describe
+ diffusion and mobilization and has also been applied to warning issuance delay. The A and B parameters are used to fit the curve to the desired shape. 
+ The mathematical formulation describing diffusion and mobilization developed by Lindell et al. (2002) and Lindell and Perry (2004).
+ Exercise caution when using this distribution as it was developed for a very specific use case.
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Lindell.GetCDF(System.Double)">
+ <summary>
+ Gets the CDF of the Lindell relationship for a given value.
+ </summary>
+ <param name="value">Minutes</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.Lindell.GetCentralTendency">
+ <summary>
+ Not available and will throw an exception.
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Lindell.getDistributedVariable(System.Double)">
+ <summary>
+ Calculates the distributed variable using the inverse CDF based on the A and B variables. The returned value will not be greater than 360 (6 hours).
+ </summary>
+ <param name="probability">a random number between zero and 1 exclusive</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Lindell.GetPDF(System.Double)">
+ <summary>
+ This function gets an approximation of the PDF based on 15 minute intervals to better align with the Lindell approximations.
+ </summary>
+ <param name="Value">Minutes</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Lindell.SetParameters(System.Double[])">
+ <summary>
+ Currently not available and will throw and exception.
+ </summary>
+ <param name="data"></param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Log10Normal.#ctor(System.Double[])">
+ <summary>
+ the log normal distribution converts the data to log base 10 before fitting a normal distribution, do not include values that are negative.
+ </summary>
+ <param name="data">original data, which will be transformed to log base 10</param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Log10Normal.#ctor">
+ <summary>
+ This constructor is not intended for use, it is available for reflection purposes only
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Log10Normal.getDistributedVariable(System.Double)">
+ <summary>
+ Gets a variable distributed based on the log normal distribution
+ </summary>
+ <param name="probability">a value between zero and 1 exclusive</param>
+ <returns>a log base 10 variate.  (convert it back to linear space!)</returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.LogNormal.#ctor(System.Double[])">
+ <summary>
+ the log normal distribution converts the data to log base e before fitting a normal distribution, do not include values that are negative.
+ </summary>
+ <param name="data">original data, which will be transformed to log base e</param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.LogNormal.#ctor">
+ <summary>
+ This constructor is not intended for use, it is available for reflection purposes only
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.LogNormal.getDistributedVariable(System.Double)">
+ <summary>
+ Gets a variable distributed based on the log normal distribution
+ </summary>
+ <param name="probability">a value between zero and 1 exclusive</param>
+ <returns>a log base e variate.  (convert it back to linear space!)</returns>
+ <remarks></remarks>
+</member>
+<member name="T:Statistics.LogPearsonIII">
+ <summary>
+ The Log Pearson type III distribution is utilized for extream value statistics, particularly in USACE flow frequency calculations.  It uses mean standard diviation and skew to describe the randomly distributed variates. 
+ </summary>
+ <remarks>do not provide negative values in the data argument for constructing this class.</remarks>
+</member>
+<member name="M:Statistics.LogPearsonIII.#ctor(System.Double[])">
+ <summary>
+ This expects data in linear space to be provided, it is then transformed to logbase 10 space, and summarized into Mean, Stdev, and G(skew)
+ </summary>
+ <param name="data"></param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.LogPearsonIII.#ctor(System.Double,System.Double,System.Double,System.Int32)">
+ <summary>
+ The user defined lp3 allows the user to create an LP3 distribution by describing the fit parameters
+ </summary>
+ <param name="mean">The mean of the log base 10 of the flow data</param>
+ <param name="stdev">The standard deviation of the log base 10 of the flow data</param>
+ <param name="g">The skew of the log base 10 of the flow data</param>
+ <param name="samplesize">The number of records in the data base used to create the mean standard deviation and skew, or the equivalent length of record. this is utilized for uncertianty about the curve with the non central t distribution.</param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.LogPearsonIII.#ctor">
+ <summary>
+ This constructor is not intended for use, it is available for reflection purposes only
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.LogPearsonIII.GetRealizationLP3(System.Double,System.Double)">
+ <summary>
+ This is a method to sample a new Log Pearson type III Distribution from the original fitted distribution.  The mean is sampled using the normal distribution and the standard deviation is sampled using the ChiSquared distribution.  Skew is unchanged.
+ </summary>
+ <param name="meanRV">a random number between zero and 1 exclusive, for sampling the mean</param>
+ <param name="SigmaRV">a random number between zero and 1 exclusive, for sampling the standard deviation.</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.LogPearsonIII.getDistributedVariable(System.Double)">
+ <summary>
+ returns a value that is distributed with a log pearson type III distribution.
+ </summary>
+ <param name="probability">a random number between zero and 1 exclusive, this represents natural variability alone.</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="T:Statistics.Normal">
+ <summary>
+ The normal distribution is a child of the continuous distribution class which allows the user to fit, and test goodness of fit, and then generate normally distributed variables based on the input data.
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Normal.#ctor(System.Double[]@)">
+ <summary>
+ This takes the data, calculates a mean, standard deviation, and number of records and fits a normal distribution
+ </summary>
+ <param name="data"></param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Normal.#ctor">
+ <summary>
+ This creates a standard normal distribution, mean of zero, standard deviation of 1
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Normal.#ctor(System.Double,System.Double)">
+ <summary>
+ User defined normal distribution. Creates a normal distribution with the defined mean and standard deviation
+ </summary>
+ <param name="mean"></param>
+ <param name="stdev"></param>
+ <remarks>Generally it is bad form to utilize parametric bootstraps with a user defined distribution</remarks>
+</member>
+<member name="M:Statistics.Normal.getDistributedVariable(System.Double)">
+ <summary>
+ This function returns a normally distributed variable from the distribution type you have created based on the probability provided
+ </summary>
+ <param name="probability">A number between zero and 1 not including either zero or 1</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.ProductMomentsStats.#ctor(System.Double[])">
+ <summary>
+ Calculates Sum, Mean, Sample Size, Kurtosis, Skew, Median, Mode, Min, Max, and Variance.  Can produce these values and Standard of Deviation
+ </summary>
+ <param name="data">an array of data records, that get discarded after summary stats are produced</param>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ProductMomentsStats.GetSum">
+ <summary>
+ returns the sum of the records in the dataset
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ProductMomentsStats.GetMean">
+ <summary>
+ returns the mean of the records in the dataset
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ProductMomentsStats.GetVariance">
+ <summary>
+ returns the variance of the dataset (using N)
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ProductMomentsStats.GetSampleVariance">
+ <summary>
+ returns the Mean Squared error of the dataset (using N-1)
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ProductMomentsStats.GetSampleStDev">
+ <summary>
+ returns the standard deviation of the dataset (using N-1)
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ProductMomentsStats.GetSampleSize">
+ <summary>
+ returns the sample size of the dataset
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ProductMomentsStats.GetMin">
+ <summary>
+ returns the minimum of the dataset
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ProductMomentsStats.GetMax">
+ <summary>
+ returns the maxium of the dataset
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ProductMomentsStats.GetSkew">
+ <summary>
+ returns the skew of the dataset (The third moment)
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ProductMomentsStats.GetKurtosis">
+ <summary>
+ returns the kurtosis of the dataset (the fourth moment)
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ProductMomentsStats.GetMode">
+ <summary>
+ returns the mode of the dataset (divides by 2 if it is an even number of records)
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Statistics.ProductMomentsStats.GetMedian">
+ <summary>
+ returns the median of the dataset
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="T:Statistics.Triangular">
+ <summary>
+ The triangular distribution
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Triangular.#ctor">
+ <summary>
+ This constructor is not intended for use, it is available for reflection purposes only
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Triangular.#ctor(System.Double,System.Double,System.Double)">
+ <summary>
+ A contstuctor to directly define paramaterization of a triangular distribution
+ </summary>
+ <param name="min">the minimum value that can be returned</param>
+ <param name="max">the maximum value that can be returned</param>
+ <param name="mostlikely">the most likely value to be returned, usually this is the mode of a dataset</param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.Triangular.getDistributedVariable(System.Double)">
+ <summary>
+ returns a triangularly distributed variable based on the min max and most likely variables provided upon the objects creation
+ </summary>
+ <param name="probability">a random number between zero and 1 exclusive</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.TruncatedNormal.#ctor(System.Double,System.Double,System.Double,System.Double)">
+ <summary>
+ creates a specified truncated normal
+ </summary>
+ <param name="mean"></param>
+ <param name="stdev"></param>
+ <param name="min">if nothing then we assume probability of 0</param>
+ <param name="max">if nothing then we assume probability of 1</param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.CurveDecreasing.GetYfromX(System.Double)">
+ <summary>
+ Samples a Y value for a given X from the X coordinates of the curve, solves the function F(X) = Y
+ </summary>
+ <param name="xValue">A value that represents the X, if the value is below the lowest x value, it returns the lowest y value, if the value is above the highest x value it returns the highest y value</param>
+ <returns>a y value for a given x</returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.CurveDecreasing.GetXfromY(System.Double)">
+ <summary>
+ Samples an X value based on a given Y from the Y coordinates of the curve, solves the inverse function of F(X)=Y
+ </summary>
+ <param name="yValue">A value that represents the Y, if the value is below the lowest y value, it returns the lowest x value, if the value is above the highest y value it returns the highest x value</param>
+ <returns>an x value for a given y</returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.CurveIncreasing.GetYfromX(System.Double)">
+ <summary>
+ Samples a Y value for a given X from the X coordinates of the curve, solves the function F(X) = Y
+ </summary>
+ <param name="xValue">A value that represents the X, if the value is below the lowest x value, it returns the lowest y value, if the value is above the highest x value it returns the highest y value</param>
+ <returns>a y value for a given x</returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.CurveIncreasing.GetXfromY(System.Double)">
+ <summary>
+ Samples an X value based on a given Y from the Y coordinates of the curve, solves the inverse function of F(X)=Y
+ </summary>
+ <param name="yValue">A value that represents the Y, if the value is below the lowest y value, it returns the lowest x value, if the value is above the highest y value it returns the highest x value</param>
+ <returns>an x value for a given y</returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.UncertainCurveDataCollection.CurveSample(System.Double)">
+ <summary>
+ This function samples a curve using the probability axis of the continuous distribution in the Y value for each x ordinate, which will result in a new paired data curve. 
+ </summary>
+ <param name="Probability">A value between 0 and 1 representing the value to sample from each y continuous distribution</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.statistics.Sum(System.Double[],System.Int32,System.Int32)">
+ <summary>
+ This function sums an array from the start value (as index) to the end value (as index)
+ </summary>
+ <param name="arr">the array with double data</param>
+ <param name="endval">the record index you wish to end the sum for</param>
+ <param name="startval">the record index you wish to begin the sum for</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.statistics.Mean(System.Double[],System.Int32,System.Int32)">
+ <summary>
+ this function calculates the mean of the array from the start value (as an index) to the end value (as an index)
+ </summary>
+ <param name="arr">the array of data() as double</param>
+ <param name="endval">the record index you wish to end the sum for</param>
+ <param name="startval">the record index you wish to begin the sum for</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.statistics.variance(System.Double[],System.Int32,System.Int32)">
+ <summary>
+ This function calculates the variance of an array from the start value (as an index) to the end value (as an index)
+ </summary>
+ <param name="arr">the array as a double</param>
+ <param name="endval">the record index you wish to end the sum for</param>
+ <param name="startval">the record index you wish to begin the sum for</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.statistics.skew(System.Double[],System.Int32,System.Int32)">
+ <summary>
+ This function calculates the skew of an array from the start value (as an index) to the end value (as an index)
+ </summary>
+ <param name="arr">the array as a double</param>
+ <param name="endval">the record index you wish to end the sum for</param>
+ <param name="startval">the record index you wish to begin the sum for</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.statistics.Covariance(System.Double[],System.Double[])">
+ <summary>
+ This function calculates the covariance of two arrays, using the shortest of the two arrays as the range of comparison
+ </summary>
+ <param name="arr1">the first array as a double</param>
+ <param name="arr2">the second array as a double</param>
+ <returns></returns>
+ <remarks>if you hand this function the same array twice, it will calculate variance.</remarks>
+</member>
+<member name="M:Statistics.statistics.Correlation(System.Double[],System.Double[])">
+ <summary>
+ 
+ </summary>
+ <param name="arr1"></param>
+ <param name="arr2"></param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.statistics.Covariance(System.Double[],System.Double[],System.Int32)">
+ <summary>
+ This function calculates the covariance of two arrays, using the shortest of the two arrays as the range of comparison
+ </summary>
+ <param name="arr1">the first array as a double</param>
+ <param name="arr2">the second array as a double</param>
+ <param name="number">The number of records you wish to truncate the sample to</param>
+ <returns></returns>
+ <remarks>if you hand this function the same array twice, it will calculate variance.</remarks>
+</member>
+<member name="M:Statistics.statistics.Mode(System.Double[])">
+ <summary>
+ This function evaluates the mode of a dataset.
+ </summary>
+ <param name="data"></param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.statistics.Covariance_Matrix(System.Collections.Generic.List{System.Collections.Generic.List{System.Double}})">
+ <summary>
+ This function creates a covariance matrix from a series of lists of double
+ </summary>
+ <param name="data">the data (the lists of the actual data do not have to be the same lengths</param>
+ <returns>this function returns an NxN matrix with the variances along the diagonal where N is the number of arrays in the data</returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.statistics.Correlation_Matrix(System.Collections.Generic.List{System.Collections.Generic.List{System.Double}})">
+ <summary>
+ This function creates a correlation matrix from a series of lists of double
+ </summary>
+ <param name="data">the data (the lists of the actual data do not have to be the same lengths, but the data is trimmed from the end...</param>
+ <returns>this function returns an NxN matrix with 1's along the diagonal, and correlations in both corners where N is the number of arrays in the data</returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.statistics.CorrelatedUniforms(System.Double@,System.Double,System.Double@)">
+ <summary>
+ Creates a uniformly distributed number that matches the input random number
+ </summary>
+ <param name="InputRandom">the uniform random number you wish to have a correlated random number created for</param>
+ <param name="ErrorRandom">the uniform error random number that will define how far away the correlated number is from the input</param>
+ <param name="correlation">the control on how correlated the two random numbers are.</param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.statistics.factorial(System.UInt64,System.UInt64)">
+ <summary>
+ A factorial function
+ </summary>
+ <param name="N">the number you wish to factoral (N!)</param>
+ <param name="lowerbound">a divisor, utilized for the choose function, evaluates (N!/lowerbound!)</param>
+ <returns>an integer that is huge!</returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.statistics.Choose(System.UInt64,System.UInt64)">
+ <summary>
+ The choose function, which is valuable for probabilty evaluations
+ </summary>
+ <param name="n">the number of options</param>
+ <param name="k">the number of selections from the number of options</param>
+ <returns>a value that represents the number of ways k items can be pulled from n number of items regarless of order </returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.statistics.polevl(System.Double,System.Double[],System.Int32)">
+ <summary>
+ Evaluates a polynomial of n degrees
+ </summary>
+ <param name="x"></param>
+ <param name="coef"></param>
+ <param name="N"></param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.statistics.p1evl(System.Double,System.Double[],System.Int32)">
+ <summary>
+ Evaluates a polynomial of n degrees assumgin coef(N) =1
+ </summary>
+ <param name="x"></param>
+ <param name="coef"></param>
+ <param name="N"></param>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="T:Statistics.PDF_Factory">
+ <summary>
+ This is a class that creates PDFs and CDFs from an array of data
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.PDF_Factory.#ctor(System.Double[]@,System.Int32,System.Double@,System.Double@)">
+ <summary>
+ This constructor allows the user to specify the number of bins, and the range of the bins.  Each bin is of uniform width.
+ </summary>
+ <param name="data">the data that is to be turned into a cdf or pdf</param>
+ <param name="numbins">the number of bins desired</param>
+ <param name="max">the max value for the last bin</param>
+ <param name="min">the minimum value for the first bin</param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.PDF_Factory.#ctor(System.Double[],System.Int32)">
+ <summary>
+ This constructor allows the user to specify the number of bins, but uses the range of the data for the range of the bins, each bin is uniform width
+ </summary>
+ <param name="data">the data that is to be turned into a cdf or a pdf</param>
+ <param name="numbins">the number of bins desired</param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.PDF_Factory.#ctor(System.Double[],System.Double[])">
+ <summary>
+ this constructor allows the user to specify the number and size of each bin, each bin can be varying in size.
+ </summary>
+ <param name="data">the data desired to be converted into a pdf or cdf</param>
+ <param name="bins">the bins as an array</param>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.CorrelatedRandomNumbers.GetCorrelatedSNormRandoms(System.Double[0:,0:]@)">
+ <summary>
+ This will give the user the opportunity to get an array of correlated Snormally distributed random numbers, the array of random numbers needs to be the same dimension the correlation matrix (i.e. double(n,0)
+ </summary>
+ <param name="SNormrandyarray">a standard normal array that is of dimension (n,0)</param>
+ <returns>one array(n,0) of random numbers that are correlated, and normally distributed</returns>
+ <remarks></remarks>
+</member>
+<member name="M:Statistics.CorrelatedRandomNumbers.GetCorrelatedUniformRandoms(System.Double[0:,0:]@)">
+ <summary>
+ This will give the user the opportunity to get an array of correlated uniform random numbers, the array of random numbers needs to be the same dimension the correlation matrix (i.e. double(n,0)
+ </summary>
+ <param name="SNormrandyarray">a standard normal array that is of dimension (n,0)</param>
+ <returns>one array(n,0) of random numbers that are correlated, and uniformly distributed between zero and 1 exclusive</returns>
+ <remarks></remarks>
+</member>
+</members>
+</doc>

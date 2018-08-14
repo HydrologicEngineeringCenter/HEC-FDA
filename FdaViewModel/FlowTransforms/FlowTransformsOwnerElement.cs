@@ -1,0 +1,82 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using FdaModel;
+using FdaModel.Utilities.Attributes;
+using System.Threading.Tasks;
+
+namespace FdaViewModel.FlowTransforms
+{
+    //[Author(q0heccdm, 6 / 8 / 2017 9:23:47 AM)]
+    class FlowTransformsOwnerElement : Utilities.OwnerElement
+    {
+        #region Notes
+        // Created By: q0heccdm
+        // Created Date: 6/8/2017 9:23:47 AM
+        #endregion
+        #region Fields
+        #endregion
+        #region Properties
+        public override string GetTableConstant()
+        {
+            return TableName;
+        }
+        #endregion
+        #region Constructors
+        public FlowTransformsOwnerElement(BaseFdaElement owner) : base(owner)
+        {
+            Name = "Flow Transforms";
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+        }
+        #endregion
+        #region Voids
+        #endregion
+        #region Functions
+        #endregion
+        public override string TableName
+        {
+            get
+            {
+                return "Flow Transforms";
+            }
+        }
+
+        public override void AddBaseElements()
+        {
+            InflowOutflowOwnerElement io = new InflowOutflowOwnerElement(this);
+            AddElement(io);
+        }
+        public override void Save()
+        {
+            foreach (Utilities.OwnedElement ele in _Elements)
+            {
+                ele.Save();
+            }
+        }
+        public override void AddValidationRules()
+        {
+            //throw new NotImplementedException();
+        }
+
+
+        public override string[] TableColumnNames()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Type[] TableColumnTypes()
+        {
+            throw new NotImplementedException();
+        }
+        public override bool SavesToTable()
+        {
+            return false;
+        }
+
+        public override void AddElement(object[] rowData)
+        {
+            //throw new NotImplementedException();
+        }
+    }
+}

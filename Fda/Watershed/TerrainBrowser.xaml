@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="Fda.Watershed.TerrainBrowser"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Fda.Watershed"
+        xmlns:OkClose="clr-namespace:Fda.Utilities"
+                     xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
+
+        mc:Ignorable="d"
+        Height="110" Width="460">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Terrain Name" Grid.Row="0" Grid.Column="0" Margin="5"/>
+        <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5" Text="{Binding Path=TerrainName, Mode=TwoWay,ValidatesOnDataErrors=True}" />
+
+            <Label Content="Terrain Path" Grid.Row="1" Grid.Column="0" Margin="5"/>
+        <CA:ComboBoxWithBrowser ItemsSource="{Binding Path=AvailablePaths}"  SelectedPath="{Binding OriginalPath}" Filter="Grid files (*.vrt;*.tif;*.flt)|*.vrt;*.tif;*.flt|All files (*.*) |*.*" ValidateToShapeTypes="False" Margin="5" Name="cmb_Path" Grid.Row="1" Grid.Column="1" CmbSelectionMade="cmb_Path_CmbSelectionMade"/>
+
+        <OkClose:OKCloseControl Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" />
+    </Grid>
+</UserControl>

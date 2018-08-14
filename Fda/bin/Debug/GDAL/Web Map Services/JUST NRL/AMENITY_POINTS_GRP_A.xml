@@ -1,0 +1,24 @@
+<GDAL_WMS>
+  <Service Name="WMS">
+    <Version>1.1.1</Version>
+    <ServerUrl>http://geoint.nrlssc.navy.mil/nrltileserver/WMS?</ServerUrl>
+    <SRS>EPSG:4326</SRS>
+    <ImageFormat>image/png</ImageFormat>
+    <Layers>AMENITY_POINTS_GRP_A</Layers>
+  </Service>
+  <DataWindow>
+    <UpperLeftX>-179.88081000000014</UpperLeftX>
+    <UpperLeftY>78.22265000000031</UpperLeftY>
+    <LowerRightX>179.84414999999996</LowerRightX>
+    <LowerRightY>-71.7450899999982</LowerRightY>
+    <SizeX>1073741824</SizeX>
+    <SizeY>446693376</SizeY>
+  </DataWindow>
+  <OverviewCount>20</OverviewCount>
+  <BlockSizeX>512</BlockSizeX>
+  <BlockSizeY>512</BlockSizeY>
+  <Projection>EPSG:4326</Projection>
+  <Cache>
+    <Path>C:\Users\q0hecajk\AppData\Local\HEC\Mapping</Path>
+  </Cache>
+</GDAL_WMS>

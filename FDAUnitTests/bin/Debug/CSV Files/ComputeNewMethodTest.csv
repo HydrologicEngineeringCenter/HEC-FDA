@@ -1,0 +1,6 @@
+TestName,DataSet,FunctionSequence,ThresholdEnum,ThresholdValue,IsLateralStructure,ElevationHeight,IsPerformanceOnly,ExpectedAEP,ExpectedEAD,Comments
+Test_1,1,0 3 5 7 9,4,5000,true,10,false,.63039,419.5224
+Test_2,1,0 3 5 7 9,4,1100,true,10,false,.7296,419.5224
+Test_3,1,0 3 5 7 9,4,3,true,10,false,.9145,419.5224
+Test_4,1,0 3 5 7,4,5000,true,10,false,.6071,225.737
+Test_5,1,0 3 7,4,5000,true,10,false,.60715,40160.84

@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="Fda.Inventory.DepthDamageCurves.DepthDamageEditorControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Fda.Inventory.DepthDamageCurves"
+                          xmlns:ca="clr-namespace:Consequences_Assist;assembly=Consequences_Assist"
+                          xmlns:cac="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
+             xmlns:utils="clr-namespace:Fda.Utilities"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="900">
+    <UserControl.Resources>
+        <utils:DepthDamageEnumToStringConverter x:Key="enumToStringConverter" />
+        <utils:TableWithPlotCurveConverter x:Key="TWPConverter" />
+    </UserControl.Resources>
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="1*"/>
+            <!--<RowDefinition Height="auto"/>-->
+
+        </Grid.RowDefinitions>
+     
+
+        <TextBlock Text="Damage curve name: " Margin="0,5,0,5" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        <TextBox Name="DepthDamageNameBox" Grid.Column="1" Grid.Row="0" Text="{Binding Name}" LostFocus="DepthDamageNameBox_LostFocus" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+
+        <TextBlock Text="Description: " Margin="0,5,0,5" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <cac:TextBoxDescription Name="StructureCurveDescriptionBox" Text="{Binding Description}"  Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center"></cac:TextBoxDescription>
+
+        <TextBlock Text="Damage Type: " Margin="0,5,0,5" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        <ComboBox Name="DamageTypeBox" Grid.Column="1" ItemsSource="{Binding DamageTypeEnums}" SelectedItem="{Binding DamageType, Converter={StaticResource enumToStringConverter}}"  Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="DamageTypeBox_SelectionChanged" >
+        </ComboBox>
+
+        <!--<TextBlock Text="Location: " Margin="0,5,0,5" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        <cac:TextBoxDescription Name="StructureCurveLocationBox" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Center"></cac:TextBoxDescription>
+
+        <TextBlock Text="Hydraulic Conditions: " Margin="0,5,0,5" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        <cac:TextBoxDescription Name="StructureCurveConditionsBox" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Center"></cac:TextBoxDescription>
+
+        <TextBlock Text="Construction Conditions: " Margin="0,5,0,5" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <cac:TextBoxDescription Name="StructureCurveConstructionBox" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Stretch" VerticalAlignment="Center"></cac:TextBoxDescription>-->
+
+        <!--<local:CurveEditorControl x:Name="StructureCurveEditor" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,5,0,0" TableWidth=".75*" plotTitle="Depth-Damage Curve" xAxisLabel="Depth" yAxisLabel="% Damage" yAxisMaximum="100" yAxisMinimum="0" xAxisMinimum="-10" yColumnHeader="% Damage" xColumnHeader="Depth" MinYValue="0" MaxYValue="100" IsAscending="True" IsStrictX="True" IsStrictY="False"></local:CurveEditorControl>-->
+        <ca:TableWithPlot Grid.Row="3" Grid.ColumnSpan="2" Curve="{Binding Curve}" IsReadOnly="false" TableWidth="250" xColumnHeader="Depth" yColumnHeader="% Damage" xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Structural Depth-Damage Curve" />
+    </Grid>
+</UserControl>
