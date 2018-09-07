@@ -17,7 +17,7 @@
         <StackPanel Grid.Row="0">
             <RadioButton Name="rad_AddStageDamage" Content="Add Aggregated Stage Damage" Margin="10"/>
             <StackPanel Orientation="Horizontal">
-                 <ComboBox Height="25" Width="200" ItemsSource="{Binding ListOfStageDamageElements}" DisplayMemberPath="Name" SelectedItem="{Binding StageDamageElement}" HorizontalAlignment="Left" Margin="30,0,0,0" />
+                 <ComboBox Height="25" Width="200" ItemsSource="{Binding ListOfStageDamageElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedElement}" HorizontalAlignment="Left" Margin="30,0,0,0" />
                 <Button Margin="5" Name="btn_NewStageDamage" Width="25" Height="25" Click="btn_NewStageDamage_Click">
                     <Image  Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
                 </Button>

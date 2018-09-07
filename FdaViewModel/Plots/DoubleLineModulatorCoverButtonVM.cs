@@ -31,7 +31,6 @@ namespace FdaViewModel.Plots
         #region Constructors
         public DoubleLineModulatorCoverButtonVM():base()
         {
-
         }
         public DoubleLineModulatorCoverButtonVM(IndividualLinkedPlotControlVM parent)
         {
@@ -40,16 +39,12 @@ namespace FdaViewModel.Plots
         #endregion
         #region Voids
         public void ButtonClicked()
-        {
-            
+        {  
             if (this.Clicked != null)
             {
                 this.Clicked(this, new EventArgs());
             }
         }
-        #endregion
-        #region Functions
-        #endregion
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
@@ -59,5 +54,9 @@ namespace FdaViewModel.Plots
         {
             //throw new NotImplementedException();
         }
+        #endregion
+        #region Functions
+        #endregion
+
     }
 }

@@ -36,48 +36,46 @@
   <ItemGroup>
     <Reference Include="Consequences_Assist, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\x86\Debug\Consequences_Assist.dll</HintPath>
+      <HintPath>..\lib\Consequences_Assist.dll</HintPath>
     </Reference>
     <Reference Include="DataBase_Reader, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\x86\Debug\DataBase_Reader.dll</HintPath>
+      <HintPath>..\lib\DataBase_Reader.dll</HintPath>
     </Reference>
     <Reference Include="LifeSimGIS, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\x86\Debug\LifeSimGIS.dll</HintPath>
+      <HintPath>..\lib\LifeSimGIS.dll</HintPath>
     </Reference>
     <Reference Include="OpenGLMapping">
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\Debug\OpenGLMapping.dll</HintPath>
+      <HintPath>..\lib\OpenGLMapping.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\Debug\OpenTK.dll</HintPath>
+      <HintPath>..\lib\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="OxyPlot">
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\x86\Debug\OxyPlot.dll</HintPath>
+      <HintPath>..\lib\OxyPlot.dll</HintPath>
     </Reference>
     <Reference Include="OxyPlot.Wpf">
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\x86\Debug\OxyPlot.Wpf.dll</HintPath>
+      <HintPath>..\lib\OxyPlot.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="Statistics">
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\Debug\Statistics.dll</HintPath>
+      <HintPath>..\lib\Statistics.dll</HintPath>
     </Reference>
-    <Reference Include="StructureInventoryLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Documents\HEC FDA\Bug Related\StructureInventoryLibrary\StructureInventoryLibrary\bin\Debug\StructureInventoryLibrary.dll</HintPath>
+    <Reference Include="StructureInventoryLibrary">
+      <HintPath>..\lib\StructureInventoryLibrary.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite, Version=1.0.105.2, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.Core.1.0.105.2\lib\net451\System.Data.SQLite.dll</HintPath>
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.105.2\..\lib\net451\System.Data.SQLite.dll</HintPath>
       <Private>True</Private>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-    <Reference Include="System.Data.SQLite.Linq, Version=1.0.105.2, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.105.2\lib\net451\System.Data.SQLite.Linq.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Data.SQLite.Linq">
+      <HintPath>..\lib\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -98,6 +96,8 @@
     <Compile Include="Conditions\AddInflowOutflowToConditionVM.cs" />
     <Compile Include="Conditions\AddRatingCurveToConditionVM.cs" />
     <Compile Include="Conditions\AddStageDamageToConditionVM.cs" />
+    <Compile Include="Conditions\ConditionBuilder.cs" />
+    <Compile Include="Conditions\ConditionFactory.cs" />
     <Compile Include="Conditions\ConditionsEditorVM.cs" />
     <Compile Include="Conditions\ConditionsElement.cs" />
     <Compile Include="Conditions\ConditionsOwnerElement.cs" />
@@ -230,14 +230,14 @@
     <Compile Include="WaterSurfaceElevation\WaterSurfaceElevationRowItemVM.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Model\FdaModel.csproj">
       <Project>{33bebaaf-125c-404c-8107-3a3fe2a5c776}</Project>
       <Name>FdaModel</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets')" />

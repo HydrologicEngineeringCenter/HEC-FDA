@@ -20,71 +20,85 @@ namespace FdaViewModel.Conditions
         #endregion
         #region Fields
         //public delegate void MyEventHandler(object sender, bool stuff);
-        
+
         //public event MyEventHandler OpenImporterInWindow;
 
-        
+
 
         private ImpactArea.ImpactAreaOwnerElement _ImpactAreaOwner;
 
-        private bool _IsPlot0Visible = false;
-        private bool _IsPlot1Visible = false;
-        private bool _IsPlot3Visible = false;
-        private bool _IsPlot5Visible = false;
-        private bool _IsPlot7Visible = false;
-        private bool _IsPlot8Visible = false;
+        //private bool _IsPlot0Visible = false;
+        //private bool _IsPlot1Visible = false;
+        //private bool _IsPlot3Visible = false;
+        //private bool _IsPlot5Visible = false;
+        //private bool _IsPlot7Visible = false;
+        //private bool _IsPlot8Visible = false;
 
 
-        private Plots.IndividualLinkedPlotVM _Plot0VM;
-        private Plots.IndividualLinkedPlotVM _Plot1VM;
-        private Plots.IndividualLinkedPlotVM _Plot3VM;
-        private Plots.IndividualLinkedPlotVM _Plot5VM;
-        private Plots.IndividualLinkedPlotVM _Plot7VM;
-        private Plots.IndividualLinkedPlotVM _Plot8VM;
+        //private Plots.IndividualLinkedPlotVM _Plot0VM;
+        //private Plots.IndividualLinkedPlotVM _Plot1VM;
+        //private Plots.IndividualLinkedPlotVM _Plot3VM;
+        //private Plots.IndividualLinkedPlotVM _Plot5VM;
+        //private Plots.IndividualLinkedPlotVM _Plot7VM;
+        //private Plots.IndividualLinkedPlotVM _Plot8VM;
 
         private Plots.IndividualLinkedPlotControlVM _Plot0ControlVM;
-        //private Plots.IndividualLinkedPlotControlVM _DLMControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot1ControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot3ControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot5ControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot7ControlVM;
+        private Plots.IndividualLinkedPlotControlVM _Plot8ControlVM;
 
+
+        private ObservableCollection<Plots.IndividualLinkedPlotControlVM> _AddedPlots = new ObservableCollection<Plots.IndividualLinkedPlotControlVM>();
+
+        private string _Name;
+        private int _Year;
+        private ImpactArea.ImpactAreaElement _SelectedImpactArea;
 
 
         #endregion
         #region Properties
-        public List<Plots.IndividualLinkedPlotControlVM> ListOfLinkedPlots { get; set; }
+        //public List<Plots.IndividualLinkedPlotControlVM> ListOfLinkedPlots { get; set; }
+        public ObservableCollection<Plots.IndividualLinkedPlotControlVM> AddedPlots
+        {
+            get { return _AddedPlots; }
+            set { _AddedPlots = value; NotifyPropertyChanged(); }
+        }
+
+        public ImpactArea.ImpactAreaRowItem IndexLocation { get; set; }
+
         #region ArePlotsVisible
-        public bool IsPlot0Visible
-        {
-            get { return _IsPlot0Visible; }
-            set { _IsPlot0Visible = value; NotifyPropertyChanged(); }
-        }
-        public bool IsPlot1Visible
-        {
-            get { return _IsPlot1Visible; }
-            set { _IsPlot1Visible = value; NotifyPropertyChanged(); }
-        }
-        public bool IsPlot3Visible
-        {
-            get { return _IsPlot3Visible; }
-            set { _IsPlot3Visible = value; NotifyPropertyChanged(); }
-        }
-        public bool IsPlot5Visible
-        {
-            get { return _IsPlot5Visible; }
-            set { _IsPlot5Visible = value; NotifyPropertyChanged(); }
-        }
-        public bool IsPlot7Visible
-        {
-            get { return _IsPlot7Visible; }
-            set { _IsPlot7Visible = value; NotifyPropertyChanged(); }
-        }
-        public bool IsPlot8Visible
-        {
-            get { return _IsPlot8Visible; }
-            set { _IsPlot8Visible = value; NotifyPropertyChanged(); }
-        }
+        //public bool IsPlot0Visible
+        //{
+        //    get { return _IsPlot0Visible; }
+        //    set { _IsPlot0Visible = value; NotifyPropertyChanged(); }
+        //}
+        //public bool IsPlot1Visible
+        //{
+        //    get { return _IsPlot1Visible; }
+        //    set { _IsPlot1Visible = value; NotifyPropertyChanged(); }
+        //}
+        //public bool IsPlot3Visible
+        //{
+        //    get { return _IsPlot3Visible; }
+        //    set { _IsPlot3Visible = value; NotifyPropertyChanged(); }
+        //}
+        //public bool IsPlot5Visible
+        //{
+        //    get { return _IsPlot5Visible; }
+        //    set { _IsPlot5Visible = value; NotifyPropertyChanged(); }
+        //}
+        //public bool IsPlot7Visible
+        //{
+        //    get { return _IsPlot7Visible; }
+        //    set { _IsPlot7Visible = value; NotifyPropertyChanged(); }
+        //}
+        //public bool IsPlot8Visible
+        //{
+        //    get { return _IsPlot8Visible; }
+        //    set { _IsPlot8Visible = value; NotifyPropertyChanged(); }
+        //}
 
         #endregion
 
@@ -121,116 +135,185 @@ namespace FdaViewModel.Conditions
             set { _Plot7ControlVM = value; NotifyPropertyChanged(); }
         }
 
+        public Plots.IndividualLinkedPlotControlVM Plot8ControlVM
+        {
+            get { return _Plot8ControlVM; }
+            set { _Plot8ControlVM = value; NotifyPropertyChanged(); }
+        }
 
-
-        public Plots.IndividualLinkedPlotVM Plot0VM
-        {
-            get { return _Plot0VM; }
-            set { _Plot0VM = value; NotifyPropertyChanged(); }
-        }
-        public Plots.IndividualLinkedPlotVM Plot1VM
-        {
-            get { return _Plot1VM; }
-            set { _Plot1VM = value; NotifyPropertyChanged(); }
-        }
-        public Plots.IndividualLinkedPlotVM Plot3VM
-        {
-            get { return _Plot3VM; }
-            set { _Plot3VM = value; NotifyPropertyChanged(); }
-        }
-        public Plots.IndividualLinkedPlotVM Plot5VM
-        {
-            get { return _Plot5VM; }
-            set { _Plot5VM = value; NotifyPropertyChanged(); }
-        }
-        public Plots.IndividualLinkedPlotVM Plot7VM
-        {
-            get { return _Plot7VM; }
-            set { _Plot7VM = value; NotifyPropertyChanged(); }
-        }
-        public Plots.IndividualLinkedPlotVM Plot8VM
-        {
-            get { return _Plot8VM; }
-            set { _Plot8VM = value; NotifyPropertyChanged(); }
-        }
+        //public Plots.IndividualLinkedPlotVM Plot0VM
+        //{
+        //    get { return _Plot0VM; }
+        //    set { _Plot0VM = value; NotifyPropertyChanged(); }
+        //}
+        //public Plots.IndividualLinkedPlotVM Plot1VM
+        //{
+        //    get { return _Plot1VM; }
+        //    set { _Plot1VM = value; NotifyPropertyChanged(); }
+        //}
+        //public Plots.IndividualLinkedPlotVM Plot3VM
+        //{
+        //    get { return _Plot3VM; }
+        //    set { _Plot3VM = value; NotifyPropertyChanged(); }
+        //}
+        //public Plots.IndividualLinkedPlotVM Plot5VM
+        //{
+        //    get { return _Plot5VM; }
+        //    set { _Plot5VM = value; NotifyPropertyChanged(); }
+        //}
+        //public Plots.IndividualLinkedPlotVM Plot7VM
+        //{
+        //    get { return _Plot7VM; }
+        //    set { _Plot7VM = value; NotifyPropertyChanged(); }
+        //}
+        //public Plots.IndividualLinkedPlotVM Plot8VM
+        //{
+        //    get { return _Plot8VM; }
+        //    set { _Plot8VM = value; NotifyPropertyChanged(); }
+        //}
         #endregion
 
         public string Description { get;
             set; }
-        public string Name { get;
-            set; }
-        public int Year { get;
-            set; }
-        public AddFlowFrequencyToConditionVM FlowFrequencyVM { get; set; }
-        public AddInflowOutflowToConditionVM InflowOutflowVM { get; set; }
-        public AddRatingCurveToConditionVM RatingCurveVM { get; set; }
-        public AddExteriorInteriorStageToConditionVM ExteriorInteriorVM { get; set; }
-        public AddStageDamageToConditionVM StageDamageVM { get; set; }
+        public string Name
+        {
+            get { return _Name; }
+            set { _Name = value; NotifyPropertyChanged(); }
+        }
+           
+        public int Year
+        {
+            get { return _Year; }
+            set { _Year = value; NotifyPropertyChanged(); }
+        }
+            
+        //public AddFlowFrequencyToConditionVM FlowFrequencyVM { get; set; }
+        //public AddInflowOutflowToConditionVM InflowOutflowVM { get; set; }
+        //public AddRatingCurveToConditionVM RatingCurveVM { get; set; }
+        //public AddExteriorInteriorStageToConditionVM ExteriorInteriorVM { get; set; }
+        //public AddStageDamageToConditionVM StageDamageVM { get; set; }
 
         public List<ImpactArea.ImpactAreaElement> ImpactAreas { get; set; }
-        public ImpactArea.ImpactAreaElement SelectedImpactArea { get;
-            set; }
+        public ImpactArea.ImpactAreaElement SelectedImpactArea
+        {
+            get { return _SelectedImpactArea; }
+            set { _SelectedImpactArea = value; NotifyPropertyChanged(); }
+        }
         public List<Inventory.InventoryElement> StructureInventories { get; set; }
 
         #endregion
         #region Constructors
-        public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas,List<Inventory.InventoryElement> structInventories, AddFlowFrequencyToConditionVM lp3vm, AddInflowOutflowToConditionVM inOutVM, AddRatingCurveToConditionVM ratingCurveVM, AddStageDamageToConditionVM stageDamageVM, AddExteriorInteriorStageToConditionVM extIntStageVM, ImpactArea.ImpactAreaOwnerElement impactAreaOwnerElement)
-        {
-            _ImpactAreaOwner = impactAreaOwnerElement;
-            ImpactAreas = impAreas;
-            StructureInventories = structInventories;
-            FlowFrequencyVM = lp3vm;
-            InflowOutflowVM = inOutVM;
-            RatingCurveVM = ratingCurveVM;
-            ExteriorInteriorVM = extIntStageVM;
-            StageDamageVM = stageDamageVM;
-            ListOfLinkedPlots = new List<Plots.IndividualLinkedPlotControlVM>();
-            
-        }
+        //public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas,List<Inventory.InventoryElement> structInventories, AddFlowFrequencyToConditionVM lp3vm, AddInflowOutflowToConditionVM inOutVM, AddRatingCurveToConditionVM ratingCurveVM, AddStageDamageToConditionVM stageDamageVM, AddExteriorInteriorStageToConditionVM extIntStageVM, ImpactArea.ImpactAreaOwnerElement impactAreaOwnerElement)
+        //{
+        //    _ImpactAreaOwner = impactAreaOwnerElement;
+        //    ImpactAreas = impAreas;
+        //    StructureInventories = structInventories;
+        //    FlowFrequencyVM = lp3vm;
+        //    InflowOutflowVM = inOutVM;
+        //    RatingCurveVM = ratingCurveVM;
+        //    ExteriorInteriorVM = extIntStageVM;
+        //    StageDamageVM = stageDamageVM;
+        //    ListOfLinkedPlots = new List<Plots.IndividualLinkedPlotControlVM>();
 
-        public ConditionsPlotEditorVM(Plots.IndividualLinkedPlotControlVM indLinkedPlotControl0VM,  Plots.IndividualLinkedPlotControlVM control1VM, Plots.IndividualLinkedPlotControlVM control3VM, Plots.IndividualLinkedPlotControlVM control5VM, Plots.IndividualLinkedPlotControlVM control7VM)
+        //}
+
+
+
+        public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas, Plots.IndividualLinkedPlotControlVM indLinkedPlotControl0VM, Plots.IndividualLinkedPlotControlVM control1VM,
+            Plots.IndividualLinkedPlotControlVM control3VM, Plots.IndividualLinkedPlotControlVM control5VM, Plots.IndividualLinkedPlotControlVM control7VM, Plots.IndividualLinkedPlotControlVM control8VM,
+            string name, string description, int year, ImpactArea.ImpactAreaElement selectedImpArea) : this(impAreas, indLinkedPlotControl0VM, control1VM, control3VM, control5VM, control7VM, control8VM)
         {
+            Name = name;
+            Description = description;
+            Year = year;
+            SelectedImpactArea = selectedImpArea;
+
+            if (Plot0ControlVM.CurveImporterVM != null && Plot0ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
+            {
+                Plot0ControlVM.AddCurveToPlot(this, new EventArgs());
+            }
+            if (Plot1ControlVM.CurveImporterVM != null && Plot1ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
+            {
+                Plot1ControlVM.AddCurveToPlot(this, new EventArgs());
+                Plot1ControlVM.CurrentVM = (BaseViewModel)Plot1ControlVM.ModulatorPlotWrapperVM;
+            }
+            if (Plot3ControlVM.CurveImporterVM != null && Plot3ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
+            {
+                Plot3ControlVM.AddCurveToPlot(this, new EventArgs());
+            }
+            if (Plot5ControlVM.CurveImporterVM != null && Plot5ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
+            {
+                Plot5ControlVM.AddCurveToPlot(this, new EventArgs());
+                Plot5ControlVM.CurrentVM = (BaseViewModel)Plot5ControlVM.ModulatorPlotWrapperVM;
+            }
+            if (Plot7ControlVM.CurveImporterVM != null && Plot7ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
+            {
+                Plot7ControlVM.AddCurveToPlot(this, new EventArgs());
+            }
+        }
+        public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas, Plots.IndividualLinkedPlotControlVM indLinkedPlotControl0VM, Plots.IndividualLinkedPlotControlVM control1VM, 
+            Plots.IndividualLinkedPlotControlVM control3VM, Plots.IndividualLinkedPlotControlVM control5VM, Plots.IndividualLinkedPlotControlVM control7VM, Plots.IndividualLinkedPlotControlVM control8VM)
+        {
+            ImpactAreas = impAreas;
+
             Plot0ControlVM = indLinkedPlotControl0VM;
             //start with only plot0 button enabled
             Plot0ControlVM.ImportButtonVM.IsEnabled = true;
+
+            Plot1ControlVM = control1VM;       
+            Plot3ControlVM = control3VM;
+            Plot5ControlVM = control5VM;
+            Plot7ControlVM = control7VM;
+            Plot8ControlVM = control8VM;
+
+            AttachEventsToControls();
+        }
+
+        private void AttachEventsToControls()
+        {
             Plot0ControlVM.PlotIsShowing += Plot0IsShowing;
             Plot0ControlVM.PlotIsNotShowing += Plot0IsNotShowing;
+            Plot0ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
 
-           // DLMControlVM = DLMcontrol;
+            Plot1ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
 
-            Plot1ControlVM = control1VM;
-            //Plot1ControlVM.PlotIsShowing += Plot1IsShowing;
-            //Plot1ControlVM.PlotIsNotShowing += Plot1IsNotShowing;
-
-            Plot3ControlVM = control3VM;
             Plot3ControlVM.PlotIsShowing += Plot3IsShowing;
             Plot3ControlVM.PlotIsNotShowing += Plot3IsNotShowing;
+            Plot3ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
 
-            Plot5ControlVM = control5VM;
+            Plot5ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
 
-            Plot7ControlVM = control7VM;
+            Plot7ControlVM.PlotIsShowing += Plot7IsShowing;
+            Plot7ControlVM.PlotIsNotShowing += Plot7IsNotShowing;
+            Plot7ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
 
-
-
+            Plot8ControlVM.PreviewCompute += RunPreviewCompute;
 
             _Plot0ControlVM.RequestNavigation += Navigate;
             _Plot1ControlVM.RequestNavigation += Navigate;
             _Plot3ControlVM.RequestNavigation += Navigate;
             _Plot5ControlVM.RequestNavigation += Navigate;
             _Plot7ControlVM.RequestNavigation += Navigate;
+            _Plot8ControlVM.RequestNavigation += Navigate;
 
         }
 
-      
 
         #endregion
         #region Voids
-       
+        private void Plot7IsShowing(object sender, EventArgs e)
+        {
+            Plot8ControlVM.ImportButtonVM.IsEnabled = true;
+        }
+        private void Plot7IsNotShowing(object sender, EventArgs e)
+        {
+            Plot8ControlVM.ImportButtonVM.IsEnabled = false;
+        }
         private void Plot3IsShowing(object sender, EventArgs e)
         {
             Plot7ControlVM.ImportButtonVM.IsEnabled = true;
             Plot5ControlVM.ImportButtonVM.IsEnabled = true;
-            if(Plot5ControlVM.ModulatorCoverButtonVM != null)
+            if (Plot5ControlVM.ModulatorCoverButtonVM != null)
             {
                 Plot5ControlVM.ModulatorCoverButtonVM.IsEnabled = true;
             }
@@ -259,18 +342,63 @@ namespace FdaViewModel.Conditions
             {
                 Plot1ControlVM.ModulatorCoverButtonVM.IsEnabled = true;
             }
-           
-                Plot1ControlVM.ImportButtonVM.IsEnabled = true;
-            
-                //DLMControlVM.ImportButtonVM.IsEnabled = true;
+
+            Plot1ControlVM.ImportButtonVM.IsEnabled = true;
+
+            //DLMControlVM.ImportButtonVM.IsEnabled = true;
             Plot3ControlVM.ImportButtonVM.IsEnabled = true;
 
+            //add the selected curve to the list of added curves
+            //_AddedPlots.Add(Plot0ControlVM.IndividualPlotWrapperVM.PlotVM);
         }
         private void Plot0IsNotShowing(object sender, EventArgs e)
         {
             //figure out what to do here. It will depend on if plots already exist there or not.
             Plot3ControlVM.ImportButtonVM.IsEnabled = false;
+            //_AddedPlots.Remove(Plot0ControlVM.IndividualPlotWrapperVM.PlotVM);
+            ClosePreviewComputePlot();
+
         }
+
+        private void ClosePreviewComputePlot()
+        {
+            Plot8ControlVM.SetCurrentViewToCoverButton();
+            //create a method to see if the compute would be valid?
+            //then... if(condition.isValid){enable the button} else disable the button
+        }
+
+        private void UpdateSelectedCurves(object sender, EventArgs e)
+        {
+            _AddedPlots.Clear();
+
+            if(Plot0ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            {
+                _AddedPlots.Add(Plot0ControlVM);
+            }
+            if (Plot1ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot1ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            {
+                _AddedPlots.Add(Plot1ControlVM);
+            }
+            if (Plot3ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            {
+                _AddedPlots.Add(Plot3ControlVM);
+            }
+            if (Plot5ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot5ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            {
+                _AddedPlots.Add(Plot5ControlVM);
+            }
+            if (Plot7ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot7ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            {
+                _AddedPlots.Add(Plot7ControlVM);
+            }
+            //if (Plot8ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            //{
+            //    _AddedPlots.Add(Plot8ControlVM.IndividualPlotWrapperVM.PlotVM);
+            //}
+
+
+        }
+
         public void LaunchNewImpactArea(object sender, EventArgs e)
         {
             if (_ImpactAreaOwner != null)
@@ -299,159 +427,159 @@ namespace FdaViewModel.Conditions
             }
 
         }
-        public void LaunchAddInflowFrequencyCurve(object o,EventArgs e)
-        {
-            Navigate(FlowFrequencyVM);
-            if (!FlowFrequencyVM.WasCancled)
-            {
-                if (!FlowFrequencyVM.HasError)
-                {
-                    if(FlowFrequencyVM.SelectedFlowFrequencyElement != null)
-                    {
-                        FdaModel.Functions.FrequencyFunctions.LogPearsonIII lp3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(FlowFrequencyVM.SelectedFlowFrequencyElement.Distribution,FdaModel.Functions.FunctionTypes.InflowFrequency);
+        //public void LaunchAddInflowFrequencyCurve(object o,EventArgs e)
+        //{
+        //    Navigate(FlowFrequencyVM);
+        //    if (!FlowFrequencyVM.WasCancled)
+        //    {
+        //        if (!FlowFrequencyVM.HasError)
+        //        {
+        //            if(FlowFrequencyVM.SelectedFlowFrequencyElement != null)
+        //            {
+        //                FdaModel.Functions.FrequencyFunctions.LogPearsonIII lp3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(FlowFrequencyVM.SelectedFlowFrequencyElement.Distribution,FdaModel.Functions.FunctionTypes.InflowFrequency);
 
-                        Plot0VM = new Plots.IndividualLinkedPlotVM( lp3,lp3.GetOrdinatesFunction().Function, "LP3", "Probability", "Inflow", FlowFrequencyVM.SelectedFlowFrequencyElement.Name);
-                        if (Plot0VM.Curve.Count < 1)
-                        {
-                            Utilities.CustomMessageBoxVM message = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "The selected curve contains zero points.");
-                            Navigate(message);
-                        }
-                        else
-                        {
-                            //IsPlot0Visible = true;
-                            Plot0VM.IsVisible = true;
-                        }
-                    }   
-                }
-            }
-        }
+        //                Plot0VM = new Plots.IndividualLinkedPlotVM( lp3,lp3.GetOrdinatesFunction().Function, "LP3", "Probability", "Inflow", FlowFrequencyVM.SelectedFlowFrequencyElement.Name);
+        //                if (Plot0VM.Curve.Count < 1)
+        //                {
+        //                    Utilities.CustomMessageBoxVM message = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "The selected curve contains zero points.");
+        //                    Navigate(message);
+        //                }
+        //                else
+        //                {
+        //                    //IsPlot0Visible = true;
+        //                    Plot0VM.IsVisible = true;
+        //                }
+        //            }   
+        //        }
+        //    }
+        //}
 
        
-        public void LaunchAddRatingCurve()
-        {
-            Navigate(RatingCurveVM);
-            if (!RatingCurveVM.WasCancled)
-            {
-                if (!RatingCurveVM.HasError)
-                {
-                    if (RatingCurveVM.SelectedRatingElement != null)
-                    {
-                        FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)RatingCurveVM.SelectedRatingElement.RatingCurve, FdaModel.Functions.FunctionTypes.Rating);
+        //public void LaunchAddRatingCurve()
+        //{
+        //    Navigate(RatingCurveVM);
+        //    if (!RatingCurveVM.WasCancled)
+        //    {
+        //        if (!RatingCurveVM.HasError)
+        //        {
+        //            if (RatingCurveVM.SelectedRatingElement != null)
+        //            {
+        //                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)RatingCurveVM.SelectedRatingElement.RatingCurve, FdaModel.Functions.FunctionTypes.Rating);
 
-                        List<double> ys = new List<double>();
-                        List<double> xs = new List<double>();
-                        foreach (double y in (rating.GetOrdinatesFunction().Function.YValues))
-                        {
-                            ys.Add(y);
-                        }
-                        foreach (double x in (rating.GetOrdinatesFunction().Function.XValues))
-                        {
-                            xs.Add(x);
-                        }
-                        Plot3VM = new Plots.IndividualLinkedPlotVM( rating,new Statistics.CurveIncreasing(ys.ToArray(), xs.ToArray(), true, false), "Rating", "Exterior Stage (ft)", "Outflow (cfs)",RatingCurveVM.SelectedRatingElement.Name);
-                        if (Plot3VM.Curve.Count < 1)
-                        {
-                            Utilities.CustomMessageBoxVM message = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "The selected curve contains zero points.");
-                            Navigate(message);
-                        }
-                        else
-                        {
-                            IsPlot3Visible = true;
-                        }
+        //                List<double> ys = new List<double>();
+        //                List<double> xs = new List<double>();
+        //                foreach (double y in (rating.GetOrdinatesFunction().Function.YValues))
+        //                {
+        //                    ys.Add(y);
+        //                }
+        //                foreach (double x in (rating.GetOrdinatesFunction().Function.XValues))
+        //                {
+        //                    xs.Add(x);
+        //                }
+        //                Plot3VM = new Plots.IndividualLinkedPlotVM( rating,new Statistics.CurveIncreasing(ys.ToArray(), xs.ToArray(), true, false), "Rating", "Exterior Stage (ft)", "Outflow (cfs)",RatingCurveVM.SelectedRatingElement.Name);
+        //                if (Plot3VM.Curve.Count < 1)
+        //                {
+        //                    Utilities.CustomMessageBoxVM message = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "The selected curve contains zero points.");
+        //                    Navigate(message);
+        //                }
+        //                else
+        //                {
+        //                    IsPlot3Visible = true;
+        //                }
                       
-                    }
-                }
-            }
-        }
+        //            }
+        //        }
+        //    }
+        //}
 
-        public void LaunchAddInflowOutflowCurve()
-        {
-            Navigate(InflowOutflowVM);
-            if (!InflowOutflowVM.WasCancled)
-            {
-                if (!InflowOutflowVM.HasError)
-                {
-                    if (InflowOutflowVM.SelectedInflowOutflowElement != null)
-                    {
-                        FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction inflowOutflow = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)InflowOutflowVM.SelectedInflowOutflowElement.InflowOutflowCurve, FdaModel.Functions.FunctionTypes.InflowOutflow);
+        //public void LaunchAddInflowOutflowCurve()
+        //{
+        //    Navigate(InflowOutflowVM);
+        //    if (!InflowOutflowVM.WasCancled)
+        //    {
+        //        if (!InflowOutflowVM.HasError)
+        //        {
+        //            if (InflowOutflowVM.SelectedInflowOutflowElement != null)
+        //            {
+        //                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction inflowOutflow = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)InflowOutflowVM.SelectedInflowOutflowElement.InflowOutflowCurve, FdaModel.Functions.FunctionTypes.InflowOutflow);
                         
-                        Plot1VM = new Plots.IndividualLinkedPlotVM(inflowOutflow, inflowOutflow.GetOrdinatesFunction().Function, "InflowOutflow", "Inflow (cfs)", "Outflow (cfs)", InflowOutflowVM.SelectedInflowOutflowElement.Name);
-                        if (Plot1VM.Curve.Count < 1)
-                        {
-                            Utilities.CustomMessageBoxVM message = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "The selected curve contains zero points.");
-                            Navigate(message);
-                        }
-                        else
-                        {
-                            IsPlot1Visible = true;
-                        }
+        //                Plot1VM = new Plots.IndividualLinkedPlotVM(inflowOutflow, inflowOutflow.GetOrdinatesFunction().Function, "InflowOutflow", "Inflow (cfs)", "Outflow (cfs)", InflowOutflowVM.SelectedInflowOutflowElement.Name);
+        //                if (Plot1VM.Curve.Count < 1)
+        //                {
+        //                    Utilities.CustomMessageBoxVM message = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "The selected curve contains zero points.");
+        //                    Navigate(message);
+        //                }
+        //                else
+        //                {
+        //                    IsPlot1Visible = true;
+        //                }
                         
                         
-                    }
-                }
-            }
-        }
+        //            }
+        //        }
+        //    }
+        //}
 
-        public void LaunchAddStageDamageCurve()
-        {
-            Navigate(StageDamageVM);
-            if (!StageDamageVM.WasCancled)
-            {
-                if (!StageDamageVM.HasError)
-                {
-                    if (StageDamageVM.StageDamageElement != null)
-                    {
-                        FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)StageDamageVM.StageDamageElement.Curve, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
+        //public void LaunchAddStageDamageCurve()
+        //{
+        //    Navigate(StageDamageVM);
+        //    if (!StageDamageVM.WasCancled)
+        //    {
+        //        if (!StageDamageVM.HasError)
+        //        {
+        //            if (StageDamageVM.StageDamageElement != null)
+        //            {
+        //                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)StageDamageVM.StageDamageElement.Curve, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
 
-                        Plot7VM = new Plots.IndividualLinkedPlotVM( stageDamage,stageDamage.GetOrdinatesFunction().Function, "StageDamage", "Stage (ft)", "Damage ($)",StageDamageVM.StageDamageElement.Name);
+        //                Plot7VM = new Plots.IndividualLinkedPlotVM( stageDamage,stageDamage.GetOrdinatesFunction().Function, "StageDamage", "Stage (ft)", "Damage ($)",StageDamageVM.StageDamageElement.Name);
 
-                        if (Plot7VM.Curve.Count < 1)
-                        {
-                            Utilities.CustomMessageBoxVM message = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "The selected curve contains zero points.");
-                            Navigate(message);
-                        }
-                        else
-                        {
-                            IsPlot7Visible = true;
-                        }
+        //                if (Plot7VM.Curve.Count < 1)
+        //                {
+        //                    Utilities.CustomMessageBoxVM message = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "The selected curve contains zero points.");
+        //                    Navigate(message);
+        //                }
+        //                else
+        //                {
+        //                    IsPlot7Visible = true;
+        //                }
                        
-                    }
-                }
-            }
+        //            }
+        //        }
+        //    }
 
-        }
+        //}
 
-        public void LaunchAddExteriorInteriorCurve()
-        {
-            Navigate(ExteriorInteriorVM);
-            if (!ExteriorInteriorVM.WasCancled)
-            {
-                if (!ExteriorInteriorVM.HasError)
-                {
-                    if (ExteriorInteriorVM.SelectedExteriorInteriorStageElement != null)
-                    {
-                        FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extIntStage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)ExteriorInteriorVM.SelectedExteriorInteriorStageElement.ExteriorInteriorCurve, FdaModel.Functions.FunctionTypes.ExteriorInteriorStage);
+        //public void LaunchAddExteriorInteriorCurve()
+        //{
+        //    Navigate(ExteriorInteriorVM);
+        //    if (!ExteriorInteriorVM.WasCancled)
+        //    {
+        //        if (!ExteriorInteriorVM.HasError)
+        //        {
+        //            if (ExteriorInteriorVM.SelectedExteriorInteriorStageElement != null)
+        //            {
+        //                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extIntStage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)ExteriorInteriorVM.SelectedExteriorInteriorStageElement.ExteriorInteriorCurve, FdaModel.Functions.FunctionTypes.ExteriorInteriorStage);
 
-                        Plot5VM = new Plots.IndividualLinkedPlotVM(extIntStage, extIntStage.GetOrdinatesFunction().Function, "ExteriorInteriorStage", "Exterior Stage (ft)", "Interior Stage (ft)",ExteriorInteriorVM.SelectedExteriorInteriorStageElement.Name);
-                        if (Plot5VM.Curve.Count < 1)
-                        {
-                            Utilities.CustomMessageBoxVM message = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "The selected curve contains zero points.");
-                            Navigate(message);
-                        }
-                        else
-                        {
-                            IsPlot5Visible = true;
-                        }
+        //                Plot5VM = new Plots.IndividualLinkedPlotVM(extIntStage, extIntStage.GetOrdinatesFunction().Function, "ExteriorInteriorStage", "Exterior Stage (ft)", "Interior Stage (ft)",ExteriorInteriorVM.SelectedExteriorInteriorStageElement.Name);
+        //                if (Plot5VM.Curve.Count < 1)
+        //                {
+        //                    Utilities.CustomMessageBoxVM message = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "The selected curve contains zero points.");
+        //                    Navigate(message);
+        //                }
+        //                else
+        //                {
+        //                    IsPlot5Visible = true;
+        //                }
                         
-                    }
-                }
-            }
+        //            }
+        //        }
+        //    }
 
-        }
+        //}
 
-        public void RunPreviewCompute()
+        public void RunPreviewCompute(Object sender, EventArgs e)
         {
-            
+
             //get the threshold values
             PerformanceThreshold threshold = new PerformanceThreshold(PerformanceThresholdTypes.InteriorStage, 8);
 
@@ -464,33 +592,33 @@ namespace FdaViewModel.Conditions
 
             List<FdaModel.Functions.BaseFunction> myListOfBaseFunctions = new List<FdaModel.Functions.BaseFunction>();
 
-            if(IsPlot0Visible == true)
+            if (Plot0ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
             {
-                FdaModel.Functions.FrequencyFunctions.LogPearsonIII zero = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(FlowFrequencyVM.SelectedFlowFrequencyElement.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
+                FdaModel.Functions.FrequencyFunctions.LogPearsonIII zero = (FdaModel.Functions.FrequencyFunctions.LogPearsonIII)Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;//new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(FlowFrequencyVM.SelectedFlowFrequencyElement.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
                 myListOfBaseFunctions.Add(zero);
             }
-            if (IsPlot1Visible == true)
+            if (Plot1ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot1ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
             {
-                FdaModel.Functions.BaseFunction one = new OrdinatesFunction(Plot1VM.Curve, FdaModel.Functions.FunctionTypes.InflowOutflow);
+                FdaModel.Functions.BaseFunction one = Plot1ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;// new OrdinatesFunction(Plot1VM.Curve, FdaModel.Functions.FunctionTypes.InflowOutflow);
                 myListOfBaseFunctions.Add(one);
             }
-            if(IsPlot3Visible ==true)
+            if (Plot3ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
             {
                 //i have to flip the x and y values back before computing
-                ReadOnlyCollection<double> xs = Plot3VM.Curve.YValues;
-                ReadOnlyCollection<double> ys = Plot3VM.Curve.XValues;
+                ReadOnlyCollection<double> xs = Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction.GetOrdinatesFunction().Function.YValues;// Plot3VM.Curve.YValues;
+                ReadOnlyCollection<double> ys = Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction.GetOrdinatesFunction().Function.XValues; //Plot3VM.Curve.XValues;
                 //FdaModel.Functions.BaseFunction temp = new OrdinatesFunction();
-                FdaModel.Functions.BaseFunction three = new OrdinatesFunction(xs,ys, FdaModel.Functions.FunctionTypes.Rating);
+                FdaModel.Functions.BaseFunction three = new OrdinatesFunction(xs, ys, FdaModel.Functions.FunctionTypes.Rating);
                 myListOfBaseFunctions.Add(three);
             }
-            if (IsPlot5Visible == true)
+            if (Plot5ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot5ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
             {
-                FdaModel.Functions.BaseFunction five = new OrdinatesFunction(Plot5VM.Curve, FdaModel.Functions.FunctionTypes.ExteriorInteriorStage);
+                FdaModel.Functions.BaseFunction five = Plot5ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction; //new OrdinatesFunction(Plot5VM.Curve, FdaModel.Functions.FunctionTypes.ExteriorInteriorStage);
                 myListOfBaseFunctions.Add(five);
             }
-            if (IsPlot7Visible == true)
+            if (Plot7ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot7ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
             {
-                FdaModel.Functions.BaseFunction seven = new OrdinatesFunction(Plot7VM.Curve, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
+                FdaModel.Functions.BaseFunction seven = Plot7ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction; //new OrdinatesFunction(Plot7VM.Curve, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
                 myListOfBaseFunctions.Add(seven);
             }
 
@@ -505,39 +633,51 @@ namespace FdaViewModel.Conditions
             Random randomNumberGenerator = new Random(0);
 
             //create the realization
-            FdaModel.ComputationPoint.Outputs.Realization simpleTestResult = new FdaModel.ComputationPoint.Outputs.Realization(simpleTest, false, false); //bool oldCompute, bool performance only
+            FdaModel.ComputationPoint.Outputs.Realization simpleTestRealization = new FdaModel.ComputationPoint.Outputs.Realization(simpleTest, false, false); //bool oldCompute, bool performance only
 
             //compute
-            simpleTestResult.Compute(randomNumberGenerator);
+            simpleTestRealization.Compute(randomNumberGenerator);
 
             //if it was successful, plot number 8. if not then message why not
-            
-            foreach(FdaModel.Functions.BaseFunction bf in simpleTestResult.Functions)
+
+            foreach (FdaModel.Functions.BaseFunction bf in simpleTestRealization.Functions)
             {
-                if(bf.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+                if (bf.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
                 {
-                    Plot8VM = new Plots.IndividualLinkedPlotVM(bf, bf.GetOrdinatesFunction().Function, "Damage Frequency", "Frequency", "Damage ($)");
-                    IsPlot8Visible = true;
-                    
+                    //Plot8VM = new Plots.IndividualLinkedPlotVM(bf, bf.GetOrdinatesFunction().Function, "Damage Frequency", "Frequency", "Damage ($)");
+                    //IsPlot8Visible = true;
+
 
                 }
             }
-            if(IsPlot8Visible == false)
-            {
-                StringBuilder messages = new StringBuilder();
-                foreach(FdaModel.Utilities.Messager.ErrorMessage em in simpleTestResult.Messages.Messages)
-                {
-                    messages.AppendLine(em.Message);
-                }
-                Utilities.CustomMessageBoxVM custmb = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, messages.ToString());
-                Navigate(custmb);
-            }
+            //if (IsPlot8Visible == false)
+            //{
+            //    StringBuilder messages = new StringBuilder();
+            //    foreach (FdaModel.Utilities.Messager.ErrorMessage em in simpleTestRealization.Messages.Messages)
+            //    {
+            //        messages.AppendLine(em.Message);
+            //    }
+            //    Utilities.CustomMessageBoxVM custmb = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, messages.ToString());
+            //    Navigate(custmb);
+            //}
 
+
+            //the compute isn't working right now so i am going to just throw a random 8 at it.
+            double[] x5 = new double[] { .2f, .3f, .4f, .5f, .6f, .7f, .8f, .9f };
+            double[] y5 = new double[] { 2, 200, 300, 600, 1100, 2000, 3000, 4000 };
+            OrdinatesFunction eight = new OrdinatesFunction(x5, y5, FdaModel.Functions.FunctionTypes.DamageFrequency);
+
+            Plot8ControlVM.IndividualPlotWrapperVM.PlotVM = new Plots.IndividualLinkedPlotVM(eight,eight.GetOrdinatesFunction().Function,"Cody test");
+            Plot8ControlVM.CurrentVM = (FdaViewModel.BaseViewModel)Plot8ControlVM.IndividualPlotWrapperVM;
         }
 
         public override void AddValidationRules()
         {
-            //throw new NotImplementedException();
+            AddRule(nameof(Name), () => { if (Name == null) { return false; } else { return !Name.Equals(""); } }, "Name cannot be blank");
+            AddRule(nameof(Year), () => { if (Year < 1900 || Year > 3000) { return false; } else { return true; } }, "Invalid Year");
+            AddRule(nameof(SelectedImpactArea), () => { if (SelectedImpactArea == null) { return false; } else { return true; } }, "No impact area selected");
+
+
         }
 
         public override void Save()

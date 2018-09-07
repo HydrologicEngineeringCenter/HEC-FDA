@@ -9,7 +9,7 @@ namespace FdaViewModel.Plots
     interface iConditionsControl
     {
         //events
-        event EventHandler UpdatePlots;
+        event EventHandler SelectedCurveUpdated;
         event EventHandler PlotIsShowing;
         event EventHandler PlotIsNotShowing;
 

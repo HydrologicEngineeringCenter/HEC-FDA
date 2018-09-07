@@ -48,15 +48,12 @@ namespace FdaViewModel.Plots
         #region Constructors
         public ParentUserControlVM():base()
         {
-
         }
 
         public ParentUserControlVM(List<FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction> listOfOrdFuncs)
         {
             _Curves = listOfOrdFuncs;
             _FailureFunction = listOfOrdFuncs[0].Function ;
-            
-
         }
         public ParentUserControlVM(List<FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction> listOfOrdFuncs, string failureFunctionTitle, string xAxisTitle = null, string yAxisTitle = null)
         {
@@ -65,7 +62,6 @@ namespace FdaViewModel.Plots
             Title = failureFunctionTitle;
             XAxisLabel = xAxisTitle;
             YAxisLabel = yAxisTitle;
-
         }
 
         public override void AddValidationRules()

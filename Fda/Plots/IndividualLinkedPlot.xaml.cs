@@ -22,13 +22,15 @@ namespace Fda.Plots
     /// <summary>
     /// Interaction logic for FailureFunctionPlot.xaml
     /// </summary>
-    public partial class IndividualLinkedPlot : UserControl, INotifyPropertyChanged,ILinkedPlot
+    public partial class IndividualLinkedPlot : UserControl, INotifyPropertyChanged, ILinkedPlot
     {
         public static readonly DependencyProperty BaseFunctionProperty = DependencyProperty.Register("BaseFunction", typeof(FdaModel.Functions.BaseFunction), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(BaseFunctionChangedCallBack)));
 
         public static readonly DependencyProperty CurveProperty = DependencyProperty.Register("Curve", typeof(Statistics.CurveIncreasing), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(CurveChangedCallBack)));
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register("Title", typeof(string), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(TitleChangedCallBack)));
-        //public static readonly DependencyProperty SubTitleProperty = DependencyProperty.Register("SubTitle", typeof(string), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(SubTitleChangedCallBack)));
+
+        public static readonly DependencyProperty SubTitleProperty = DependencyProperty.Register("SubTitle", typeof(string), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(SubTitleChangedCallBack)));
+
         public static readonly DependencyProperty XAxisLabelProperty = DependencyProperty.Register("XAxisLabel", typeof(string), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(XAxisLabelChangedCallBack)));
         public static readonly DependencyProperty YAxisLabelProperty = DependencyProperty.Register("YAxisLabel", typeof(string), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(YAxisLabelChangedCallBack)));
         public static readonly DependencyProperty SetYAxisToLogarithmicProperty = DependencyProperty.Register("SetYAxisToLogarithmic", typeof(bool), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(SetYAxisToLogarithmicCallBack)));
@@ -41,20 +43,33 @@ namespace Fda.Plots
         //private OxyPlot.Wpf.PlotView _linkedPlot;//this is the plot that "this" will link with
         private bool _FreezeTracker;
         private bool _HideTracker;
-        
 
 
+        private OxyColor AREA_UNDER_CURVE_COLOR = OxyColor.FromArgb(50, 128, 255, 128);
+        private OxyColor AREA_PLOT_COLOR = OxyColor.FromArgb(100, 100, 100, 100);
 
-        private int _NextPlotSharedAxisEnum = -1;
-        private int _PreviousPlotSharedAxisEnum = -1;
+        private SharedAxisEnum _NextPlotSharedAxisEnum = SharedAxisEnum.unknown;
+        private SharedAxisEnum _PreviousPlotSharedAxisEnum = SharedAxisEnum.unknown;
 
         private ILinkedPlot _NextPlot;
         private ILinkedPlot _PreviousPlot;
         private ILinkedPlot _PlotThatSharesAnAreaPlot;
 
+        private string _SelectedName;
+
 
         #region Properties
-       public bool OutOfRange { get; set; }
+        public string TestName
+        {
+            get
+            {
+                return _SelectedName;
+            }
+            set { _SelectedName = value; }
+        }
+        public bool HasYAreaPlots { get; set; }
+        public bool HasXAreaPlots { get; set; }
+        public bool OutOfRange { get; set; }
 
         List<AreaSeries> ListOfRemovedAreaSeries { get; set; }
         public bool FreezeNextTracker
@@ -65,7 +80,7 @@ namespace Fda.Plots
                 _FreezeTracker = value;
                 if (value == true)
                 {
-                    if(ThisIsEndNode == false)
+                    if(IsEndNode == false)
                     {
                         NextPlot.FreezeNextTracker = true;
 
@@ -73,7 +88,7 @@ namespace Fda.Plots
                 }
                 else
                 {
-                    if (ThisIsEndNode == false)
+                    if (IsEndNode == false)
                     {
                         NextPlot.FreezeNextTracker = false;
 
@@ -90,7 +105,7 @@ namespace Fda.Plots
                 _FreezeTracker = value;
                 if (value == true)
                 {
-                    if (ThisIsStartNode == false)
+                    if (IsStartNode == false)
                     {
                         PreviousPlot.FreezePreviousTracker = true;
 
@@ -98,7 +113,7 @@ namespace Fda.Plots
                 }
                 else
                 {
-                    if (ThisIsStartNode == false)
+                    if (IsStartNode == false)
                     {
                         PreviousPlot.FreezePreviousTracker = false;
 
@@ -109,13 +124,13 @@ namespace Fda.Plots
         }
 
         //public bool SharedAxisIsX { get; set; }
-        public bool ThisIsStartNode { get; set; }
-        public bool ThisIsEndNode { get; set; }
+        public bool IsStartNode { get; set; }
+        public bool IsEndNode { get; set; }
         public double MinX { get; set; }
         private double HigherMinX { get; set; }
         private double LowerMaxX { get; set; }
-        public double MaxX { get;
-            set; }
+        public double MaxX { get; set; }
+ 
         public double MinY { get; set; }
         private double HigherMinY { get; set; }
         private double LowerMaxY { get; set; }
@@ -124,7 +139,7 @@ namespace Fda.Plots
         public bool FlipFrequencyAxis {
             get;
             set; }
-        public int NextPlotSharedAxisEnum
+        public SharedAxisEnum NextPlotSharedAxisEnum
         {
             get { return _NextPlotSharedAxisEnum; }
             set { _NextPlotSharedAxisEnum = value; }
@@ -172,11 +187,11 @@ namespace Fda.Plots
             get { return (string)GetValue(TitleProperty); }
             set { SetValue(TitleProperty, value); }
         }
-        //public string SubTitle
-        //{
-        //    get { return (string)GetValue(SubTitleProperty); }
-        //    set { SetValue(SubTitleProperty, value); }
-        //}
+        public string SubTitle
+        {
+            get { return (string)GetValue(SubTitleProperty); }
+            set { SetValue(SubTitleProperty, value); }
+        }
         #endregion
 
         #region CallBacks
@@ -233,14 +248,14 @@ namespace Fda.Plots
 
             owner.OxyPlot1.Model.Title = title;
         }
-        //private static void SubTitleChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        //{
-        //    IndividualLinkedPlot owner = d as IndividualLinkedPlot;
-        //    string subTitle = e.NewValue as string;
+        private static void SubTitleChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            IndividualLinkedPlot owner = d as IndividualLinkedPlot;
+            owner.TestName = e.NewValue as string;
 
-        //    owner.OxyPlot1.Model.Title += " - " +subTitle;
-            
-        //}
+            //owner.OxyPlot1.Model.Title += " - " + subTitle;
+
+        }
         private static void XAxisLabelChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             IndividualLinkedPlot owner = d as IndividualLinkedPlot;
@@ -260,11 +275,11 @@ namespace Fda.Plots
             IndividualLinkedPlot owner = d as IndividualLinkedPlot;
             Statistics.CurveIncreasing curve = e.NewValue as Statistics.CurveIncreasing;
 
+            ContentControl parentControl = Plots.IndividualLinkedPlotControl.FindParent<ContentControl>(owner);
             if (curve == null)
 
             {
                 //find parent 
-                ContentControl parentControl = Plots.IndividualLinkedPlotControl.FindParent<ContentControl>(owner);
                 if (parentControl != null && parentControl.GetType() == typeof(ConditionsIndividualPlotWrapper))
                 {
                     parentControl = IndividualLinkedPlotControl.FindParent<ContentControl>(parentControl);
@@ -281,8 +296,6 @@ namespace Fda.Plots
 
                 return;
             }
-
-           
 
             ////if the y axis is log scale then no values of "0" will be displayed because there is no log(0). I change them to be close to zero.
             //if (owner.SetYAxisToLogarithmic == true)
@@ -306,7 +319,8 @@ namespace Fda.Plots
                 //if the y axis is log scale then no values of "0" will be displayed because there is no log(0). I change them to be close to zero.
                 if (owner.SetYAxisToLogarithmic == true && curve.get_Y(i) == 0)
                 {
-                    series1.Points.Add(new DataPoint(curve.get_X(i), .000001));
+                    //if the value is 0 then don't plot that point
+                    //series1.Points.Add(new DataPoint(curve.get_X(i), .000001));
 
                 }
                 else
@@ -325,12 +339,6 @@ namespace Fda.Plots
             {
                 FlipFreqAxis(owner);
             }
-
-
-
-           
-
-
 
         }
 
@@ -360,6 +368,8 @@ namespace Fda.Plots
 
             OxyPlot1.Model.MouseMove += Model_MouseMove;
             OxyPlot1.Model.MouseDown += Model_MouseDown;
+
+            ListOfRemovedAreaSeries = new List<AreaSeries>();
 
         }
 
@@ -394,17 +404,7 @@ namespace Fda.Plots
                     }
                 }
             }
-            
-
-
-            //if (FlipFrequencyAxis == true)
-            //{
-            //    FlipFreqAxis(this);
-            //}
-
-
-
-
+           
             //PlotLowerXAreaPlot();
             //PlotHigherXAreaPlot();
             //PlotLowerYAreaPlot();
@@ -413,8 +413,6 @@ namespace Fda.Plots
             //{
             //    PlotAreaUnderTheCurve();
             //}
-
-
 
             //find parent and add this plot to its selectedPlot property.
             ContentControl parentControl = Plots.IndividualLinkedPlotControl.FindParent<ContentControl>(this);
@@ -428,7 +426,7 @@ namespace Fda.Plots
                 FdaViewModel.Plots.IndividualLinkedPlotControlVM vm = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
 
                 this.BaseFunction = vm.IndividualPlotWrapperVM.PlotVM.BaseFunction;
-                ((Plots.IndividualLinkedPlotControl)parentControl).LinkedPlot = this;
+                ((IndividualLinkedPlotControl)parentControl).LinkedPlot = this;
                 ((IndividualLinkedPlotControl)parentControl).UpdateThePlots();
             }
 
@@ -472,7 +470,7 @@ namespace Fda.Plots
         public void HideTracker()
         {
             if(OxyPlot1.Model.Series.Count == 0) { return; }
-            double largeNegativeNumber = -100000000; // just a big number that should be off every plot
+            double largeNegativeNumber =  -100000000; // just a big number that should be off every plot
             DataPoint dp = new DataPoint(largeNegativeNumber, largeNegativeNumber);
             ScreenPoint position = OxyPlot1.Model.Axes[0].Transform(largeNegativeNumber, largeNegativeNumber, OxyPlot1.Model.Axes[1]);
             //ScreenPoint sp = new ScreenPoint(position.X, position.Y);
@@ -492,52 +490,71 @@ namespace Fda.Plots
         }
         #endregion
         #region Produce Area Plots
-        private void PlotAreaUnderTheCurve()
+
+        private LineSeries GetCurrentLineSeries()
+        {
+            if (OxyPlot1.Model.Series.Count > 0)
+            {
+                foreach (Series s in OxyPlot1.Model.Series)
+                {
+                    if (s.GetType() == typeof(LineSeries))
+                    {
+                        return (LineSeries)s;
+                    }
+                }
+            }        
+            return null;      
+        }
+        public void PlotAreaUnderTheCurve()
         {
             AreaSeries AreaUnderTheCurveSeries = new AreaSeries();
-
-            double incrementValue = .001;
-            double startValue = MinX + incrementValue;
-            while(startValue<MaxX && startValue>MinX)
+            LineSeries thisLineSeries = GetCurrentLineSeries();
+            if (thisLineSeries != null)
             {
-                DataPoint dp = new DataPoint(startValue, GetPairedValue(startValue, true, this.OxyPlot1.Model, true));
-                if(dp.Y == -1)
-                { //do nothing
-                }
-                else
+
+                double incrementValue = .001;
+                double startValue = 1 - thisLineSeries.Points[0].X;
+                double endValue = 1 - thisLineSeries.Points[thisLineSeries.Points.Count - 1].X;
+                //double startValue = MinX + incrementValue;
+                while (startValue < endValue)//&& startValue > MinX)
                 {
+                    DataPoint dp = new DataPoint(startValue, GetPairedValue(startValue, true, this.OxyPlot1.Model, true));
+                    if (dp.Y != -1)
+
                     AreaUnderTheCurveSeries.Points.Add(dp);
-                    AreaUnderTheCurveSeries.Points2.Add(new DataPoint( dp.X, .001));//can't do zero y because log axis will lose its mind
+                    AreaUnderTheCurveSeries.Points2.Add(new DataPoint(dp.X, MinY));//can't do zero y because log axis will lose its mind
 
+                    startValue += incrementValue;
                 }
-                startValue += incrementValue;
+
+                //AreaUnderTheCurveSeries.Points.Add(new DataPoint(MinX, .01));
+                //AreaUnderTheCurveSeries.Points.Add(new DataPoint(HigherMinX, .01));
+                //AreaUnderTheCurveSeries.Points2.Add(new DataPoint(MinX, OxyPlot1.Model.Axes[1].Maximum));
+                //AreaUnderTheCurveSeries.Points2.Add(new DataPoint(HigherMinX, OxyPlot1.Model.Axes[1].Maximum));
+                AreaUnderTheCurveSeries.Color = AREA_UNDER_CURVE_COLOR;
+                //lowerAreaSeries.Fill = OxyColors.LightPink;
+                AreaUnderTheCurveSeries.Fill = AREA_UNDER_CURVE_COLOR;
+
+                this.OxyPlot1.Model.Series.Add(AreaUnderTheCurveSeries);
+                this.OxyPlot1.InvalidatePlot(true);
             }
-            //AreaUnderTheCurveSeries.Points.Add(new DataPoint(MinX, .01));
-            //AreaUnderTheCurveSeries.Points.Add(new DataPoint(HigherMinX, .01));
-            //AreaUnderTheCurveSeries.Points2.Add(new DataPoint(MinX, OxyPlot1.Model.Axes[1].Maximum));
-            //AreaUnderTheCurveSeries.Points2.Add(new DataPoint(HigherMinX, OxyPlot1.Model.Axes[1].Maximum));
-            AreaUnderTheCurveSeries.Color = OxyColor.FromArgb(50, 128, 255, 128);
-            //lowerAreaSeries.Fill = OxyColors.LightPink;
-            AreaUnderTheCurveSeries.Fill = OxyColor.FromArgb(50, 128, 255, 128);// Color.FromArgb(1, 100, 100, 100);
-
-            this.OxyPlot1.Model.Series.Add(AreaUnderTheCurveSeries);
-            this.OxyPlot1.InvalidatePlot(true);
-
         }
+
+
         public void PlotLowerXAreaPlot()
         {
             if (FlipFrequencyAxis == false)
             {
                 AreaSeries lowerAreaSeries = new AreaSeries();
-                lowerAreaSeries.Points.Add(new DataPoint(MinX, .001));
-                lowerAreaSeries.Points.Add(new DataPoint(HigherMinX, .001));
+                lowerAreaSeries.Points.Add(new DataPoint(MinX, OxyPlot1.Model.Axes[1].ActualMinimum));// .001));
+                lowerAreaSeries.Points.Add(new DataPoint(HigherMinX, OxyPlot1.Model.Axes[1].ActualMinimum));// .001));
                 //lowerAreaSeries.Points2.Add(new DataPoint(MinX, OxyPlot1.Model.Axes[1].Maximum));
                 //lowerAreaSeries.Points2.Add(new DataPoint(HigherMinX, OxyPlot1.Model.Axes[1].Maximum));
                 lowerAreaSeries.Points2.Add(new DataPoint(MinX, MaxY));
                 lowerAreaSeries.Points2.Add(new DataPoint(HigherMinX, MaxY));
-                lowerAreaSeries.Color = OxyColor.FromArgb(50, 100, 100, 100);
+                lowerAreaSeries.Color = AREA_PLOT_COLOR;
                 //lowerAreaSeries.Fill = OxyColors.LightPink;
-                lowerAreaSeries.Fill = OxyColor.FromArgb(50, 100, 100, 100);// Color.FromArgb(1, 100, 100, 100);
+                lowerAreaSeries.Fill = AREA_PLOT_COLOR;
 
                 this.OxyPlot1.Model.Series.Add(lowerAreaSeries);
                 this.OxyPlot1.InvalidatePlot(true);
@@ -545,15 +562,15 @@ namespace Fda.Plots
             else
             {
                 AreaSeries lowerAreaSeries = new AreaSeries();
-                lowerAreaSeries.Points.Add(new DataPoint(1 - MinX, .001));
-                lowerAreaSeries.Points.Add(new DataPoint(1 - HigherMinX, .001));
+                lowerAreaSeries.Points.Add(new DataPoint(1 - MinX, OxyPlot1.Model.Axes[1].ActualMinimum));// .001));
+                lowerAreaSeries.Points.Add(new DataPoint(1 - HigherMinX, OxyPlot1.Model.Axes[1].ActualMinimum));// .001));
                 //lowerAreaSeries.Points2.Add(new DataPoint(1 - MinX, OxyPlot1.Model.Axes[1].Maximum));
                 //lowerAreaSeries.Points2.Add(new DataPoint(1 - HigherMinX, OxyPlot1.Model.Axes[1].Maximum));
                 lowerAreaSeries.Points2.Add(new DataPoint(1 - MinX, MaxY));
                 lowerAreaSeries.Points2.Add(new DataPoint(1 - HigherMinX, MaxY));
-                lowerAreaSeries.Color = OxyColor.FromArgb(50, 100, 100, 100);
+                lowerAreaSeries.Color = AREA_PLOT_COLOR;
                 //lowerAreaSeries.Fill = OxyColors.LightPink;
-                lowerAreaSeries.Fill = OxyColor.FromArgb(50, 100, 100, 100);// Color.FromArgb(1, 100, 100, 100);
+                lowerAreaSeries.Fill = AREA_PLOT_COLOR;
 
                 this.OxyPlot1.Model.Series.Add(lowerAreaSeries);
                 this.OxyPlot1.InvalidatePlot(true);
@@ -569,15 +586,15 @@ namespace Fda.Plots
             if (FlipFrequencyAxis == false)
             {
                 AreaSeries lowerAreaSeries = new AreaSeries();
-                lowerAreaSeries.Points.Add(new DataPoint(LowerMaxX, .001));
-                lowerAreaSeries.Points.Add(new DataPoint(MaxX, .001));
+                lowerAreaSeries.Points.Add(new DataPoint(LowerMaxX, OxyPlot1.Model.Axes[1].ActualMinimum));//.001));
+                lowerAreaSeries.Points.Add(new DataPoint(MaxX, OxyPlot1.Model.Axes[1].ActualMinimum));//.001));
                 //lowerAreaSeries.Points2.Add(new DataPoint(LowerMaxX, OxyPlot1.Model.Axes[1].Maximum));
                 //lowerAreaSeries.Points2.Add(new DataPoint(MaxX, OxyPlot1.Model.Axes[1].Maximum));
                 lowerAreaSeries.Points2.Add(new DataPoint(LowerMaxX, MaxY));
                 lowerAreaSeries.Points2.Add(new DataPoint(MaxX, MaxY));
-                lowerAreaSeries.Color = OxyColor.FromArgb(50, 100, 100, 100);
+                lowerAreaSeries.Color = AREA_PLOT_COLOR;
                 //lowerAreaSeries.Fill = OxyColors.LightPink;
-                lowerAreaSeries.Fill = OxyColor.FromArgb(50, 100, 100, 100);// Color.FromArgb(1, 100, 100, 100);
+                lowerAreaSeries.Fill = AREA_PLOT_COLOR;
 
                 this.OxyPlot1.Model.Series.Add(lowerAreaSeries);
                 this.OxyPlot1.InvalidatePlot(true);
@@ -585,33 +602,53 @@ namespace Fda.Plots
             else
             {
                 AreaSeries lowerAreaSeries = new AreaSeries();
-                lowerAreaSeries.Points.Add(new DataPoint(1 - LowerMaxX, .001));
-                lowerAreaSeries.Points.Add(new DataPoint(1 - MaxX, .001));
+                lowerAreaSeries.Points.Add(new DataPoint(1 - LowerMaxX, OxyPlot1.Model.Axes[1].ActualMinimum));//.001));
+                lowerAreaSeries.Points.Add(new DataPoint(1 - MaxX, OxyPlot1.Model.Axes[1].ActualMinimum));//.001));
                 //lowerAreaSeries.Points2.Add(new DataPoint(1 - LowerMaxX, OxyPlot1.Model.Axes[1].Maximum));
                 //lowerAreaSeries.Points2.Add(new DataPoint(1 - MaxX, OxyPlot1.Model.Axes[1].Maximum));
                 lowerAreaSeries.Points2.Add(new DataPoint(1 - LowerMaxX, MaxY));
                 lowerAreaSeries.Points2.Add(new DataPoint(1 - MaxX, MaxY));
-                lowerAreaSeries.Color = OxyColor.FromArgb(50, 100, 100, 100);
+                lowerAreaSeries.Color = AREA_PLOT_COLOR;
                 //lowerAreaSeries.Fill = OxyColors.LightPink;
-                lowerAreaSeries.Fill = OxyColor.FromArgb(50, 100, 100, 100);// Color.FromArgb(1, 100, 100, 100);
+                lowerAreaSeries.Fill = AREA_PLOT_COLOR;
 
                 this.OxyPlot1.Model.Series.Add(lowerAreaSeries);
                 this.OxyPlot1.InvalidatePlot(true);
             }
         }
 
+        private void UpdateYAxisAreaPlots()
+        {
+            if(!(HigherMinY == 0 && LowerMaxY == 0))
+            {
+                RemoveAreaPlots();
+                PlotLowerYAreaPlot();
+                PlotHigherYAreaPlot();
+            }
+        }
+
+        private void UpdateXAxisAreaPlots()
+        {
+            if (!(HigherMinX == 0 && LowerMaxX == 0))
+            {
+                RemoveAreaPlots();
+                PlotLowerXAreaPlot();
+                PlotHigherXAreaPlot();
+            }
+        }
+
         public void PlotLowerYAreaPlot()
         {
             AreaSeries lowerAreaSeries = new AreaSeries();
-            lowerAreaSeries.Points.Add(new DataPoint(.001, MinY));
-            lowerAreaSeries.Points.Add(new DataPoint(.001, HigherMinY));
+            lowerAreaSeries.Points.Add(new DataPoint(OxyPlot1.Model.Axes[0].ActualMinimum,MinY));//.001, MinY));
+            lowerAreaSeries.Points.Add(new DataPoint(OxyPlot1.Model.Axes[0].ActualMinimum,HigherMinY));//.001, HigherMinY));
             //lowerAreaSeries.Points2.Add(new DataPoint(OxyPlot1.Model.Axes[0].Maximum, MinY));
             //lowerAreaSeries.Points2.Add(new DataPoint(OxyPlot1.Model.Axes[0].Maximum, HigherMinY));
             lowerAreaSeries.Points2.Add(new DataPoint(MaxX, MinY));
             lowerAreaSeries.Points2.Add(new DataPoint(MaxX, HigherMinY));
-            lowerAreaSeries.Color = OxyColor.FromArgb(50, 100, 100, 100);
+            lowerAreaSeries.Color = AREA_PLOT_COLOR;
             //lowerAreaSeries.Fill = OxyColors.LightPink;
-            lowerAreaSeries.Fill = OxyColor.FromArgb(50, 100, 100, 100);// Color.FromArgb(1, 100, 100, 100);
+            lowerAreaSeries.Fill = AREA_PLOT_COLOR;
 
             this.OxyPlot1.Model.Series.Add(lowerAreaSeries);
             this.OxyPlot1.InvalidatePlot(true);
@@ -620,15 +657,15 @@ namespace Fda.Plots
         public void PlotHigherYAreaPlot()
         {
             AreaSeries lowerAreaSeries = new AreaSeries();
-            lowerAreaSeries.Points.Add(new DataPoint(.001, LowerMaxY));
-            lowerAreaSeries.Points.Add(new DataPoint(.001, MaxY));
+            lowerAreaSeries.Points.Add(new DataPoint(OxyPlot1.Model.Axes[0].ActualMinimum,LowerMaxY));//.001, LowerMaxY));
+            lowerAreaSeries.Points.Add(new DataPoint(OxyPlot1.Model.Axes[0].ActualMinimum, MaxY));//, MaxY));
             //lowerAreaSeries.Points2.Add(new DataPoint(OxyPlot1.Model.Axes[0].Maximum, LowerMaxY));
             //lowerAreaSeries.Points2.Add(new DataPoint(OxyPlot1.Model.Axes[0].Maximum, MaxY));
             lowerAreaSeries.Points2.Add(new DataPoint(MaxX, LowerMaxY));
             lowerAreaSeries.Points2.Add(new DataPoint(MaxX, MaxY));
-            lowerAreaSeries.Color = OxyColor.FromArgb(50, 100, 100, 100);
+            lowerAreaSeries.Color = AREA_PLOT_COLOR;
             //lowerAreaSeries.Fill = OxyColors.LightPink;
-            lowerAreaSeries.Fill = OxyColor.FromArgb(50, 100, 100, 100);// Color.FromArgb(1, 100, 100, 100);
+            lowerAreaSeries.Fill = AREA_PLOT_COLOR;
 
             this.OxyPlot1.Model.Series.Add(lowerAreaSeries);
             this.OxyPlot1.InvalidatePlot(true);
@@ -703,7 +740,7 @@ namespace Fda.Plots
         /// This method gets the min and max x and y values to be used when setting up the axes for plotting.
         /// 
         /// </summary>
-        private static void SetMinMaxValues(IndividualLinkedPlot plot)
+        public static void SetMinMaxValues(IndividualLinkedPlot plot)
         {
             LineSeries thisLineSeries = new LineSeries();
             if(plot.OxyPlot1.Model.Series.Count>0)
@@ -747,6 +784,23 @@ namespace Fda.Plots
             plot.OxyPlot1.Model.Axes[1].Minimum = minY;
             plot.OxyPlot1.Model.Axes[1].Maximum = maxY;
         }
+
+        private void ResetMinMaxValues(IndividualLinkedPlot otherPlot)
+        {
+            SetMinMaxValues(otherPlot);
+            HigherMinX = 0;
+            HigherMinY = 0;
+            LowerMaxX = 0;
+            LowerMaxY = 0;
+
+            otherPlot.HigherMinX = 0;
+            otherPlot.HigherMinY = 0;
+            otherPlot.LowerMaxX = 0;
+            otherPlot.LowerMaxY = 0;
+
+
+        }
+
         /// <summary>
         /// This method will get the lowest x value between the two plots and will change their axes to start at that point.
         /// This method will get the highest x value between the two plots and will change their axes to end at that point and redraw the plot.
@@ -754,9 +808,14 @@ namespace Fda.Plots
         /// <param name="plotToCompareWith"></param>
         public void SetSharedXAxisWithPlot(IndividualLinkedPlot plotToCompareWith)
         {
-            _PlotThatSharesAnAreaPlot = plotToCompareWith;
-            //double minX;
+            //clear out the min and max values before resetting
+            //ResetMinMaxValues(plotToCompareWith);
+            HasXAreaPlots = true;
+            plotToCompareWith.HasXAreaPlots = true;
 
+            _PlotThatSharesAnAreaPlot = plotToCompareWith;
+
+            //double minX;
             if (this.MinX < plotToCompareWith.MinX)
             {
                 this.HigherMinX = plotToCompareWith.MinX;
@@ -766,15 +825,14 @@ namespace Fda.Plots
             }
             else
             {
-                MinX = plotToCompareWith.MinX;
                 plotToCompareWith.HigherMinX = this.MinX;
+                this.MinX = plotToCompareWith.MinX;
                 this.HigherMinX = plotToCompareWith.HigherMinX;
             }
 
 
 
             //double maxX;
-
             if (this.MaxX < plotToCompareWith.MaxX)
             {
                 plotToCompareWith.LowerMaxX = this.MaxX;
@@ -787,31 +845,43 @@ namespace Fda.Plots
                 plotToCompareWith.MaxX = this.MaxX;
                 plotToCompareWith.LowerMaxX = this.LowerMaxX;
             }
-
-            //if (this.FlipFrequencyAxis == true)
-            //{
-
-            //}
-            //else
-            //{
+       
                 this.OxyPlot1.Model.Axes[0].Maximum = MaxX;
                 this.OxyPlot1.Model.Axes[0].Minimum = MinX;
-            //}
-            //if (plotToCompareWith.FlipFrequencyAxis == true)
-            //{
 
-            //}
-            //else
-            //{
                 plotToCompareWith.OxyPlot1.Model.Axes[0].Maximum = MaxX;
                 plotToCompareWith.OxyPlot1.Model.Axes[0].Minimum = MinX;
 
-            //}
+
+            //UpdateYAxisAreaPlots();
+            RemoveAreaPlots();
+            plotToCompareWith.RemoveAreaPlots();
+
+            if (HasYAreaPlots)
+            {
+                PlotLowerYAreaPlot();
+                PlotHigherYAreaPlot();
+            }
+            if (plotToCompareWith.HasYAreaPlots)
+            {
+                plotToCompareWith.PlotLowerYAreaPlot();
+                plotToCompareWith.PlotHigherYAreaPlot();
+            }
+            //draw the area plot under the curve of plot8
+            if (BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+            {
+                PlotAreaUnderTheCurve();
+            }
+            else if(plotToCompareWith.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+            {
+                plotToCompareWith.PlotAreaUnderTheCurve();
+            }
 
             PlotLowerXAreaPlot();
             PlotHigherXAreaPlot();
             plotToCompareWith.PlotLowerXAreaPlot();
             plotToCompareWith.PlotHigherXAreaPlot();
+
 
             this.OxyPlot1.InvalidatePlot(true);
             plotToCompareWith.OxyPlot1.InvalidatePlot(true);
@@ -822,7 +892,11 @@ namespace Fda.Plots
 
         public void SetSharedYAxisWithPlot(IndividualLinkedPlot plotToCompareWith)
         {
-            //this method is where i should plot the lower and higher y axis area plots.
+            //clear out the min and max values before resetting
+            //ResetMinMaxValues(plotToCompareWith);
+            HasYAreaPlots = true;
+            plotToCompareWith.HasYAreaPlots = true;
+
             _PlotThatSharesAnAreaPlot = plotToCompareWith;
 
 
@@ -862,10 +936,35 @@ namespace Fda.Plots
             plotToCompareWith.OxyPlot1.Model.Axes[1].Maximum = MaxY;
             plotToCompareWith.OxyPlot1.Model.Axes[1].Minimum = MinY;
 
+            //UpdateXAxisAreaPlots();
+            RemoveAreaPlots();
+            plotToCompareWith.RemoveAreaPlots();
+
+            if (HasXAreaPlots)
+            {
+                PlotLowerXAreaPlot();
+                PlotHigherXAreaPlot();
+            }
+            if (plotToCompareWith.HasXAreaPlots)
+            {
+                plotToCompareWith.PlotLowerXAreaPlot();
+                plotToCompareWith.PlotHigherXAreaPlot();
+            }
+            //draw the area plot under the curve of plot8
+            if (BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+            {
+                PlotAreaUnderTheCurve();
+            }
+            else if (plotToCompareWith.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+            {
+                plotToCompareWith.PlotAreaUnderTheCurve();
+            }
+
             PlotLowerYAreaPlot();
             PlotHigherYAreaPlot();
             plotToCompareWith.PlotLowerYAreaPlot();
             plotToCompareWith.PlotHigherYAreaPlot();
+
 
             this.OxyPlot1.InvalidatePlot(true);
             plotToCompareWith.OxyPlot1.InvalidatePlot(true);
@@ -874,25 +973,10 @@ namespace Fda.Plots
         #endregion
 
         #region DisplayTrackers
-        /// <summary>
-        /// This method displays an oxyplot tracker in the next linked plot at position (x,y). Then the x and y value of the next plot after that is calculated, and "DisplayNextTracker" is called with the new (x,y) values.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        public void DisplayNextTracker(double x, double y)
+
+        private void DisplayCurrentTracker(DataPoint dp)
         {
-
-            //only display to the top and bottom of curve?
-            if (x > MaxX) { return; }
-            if (y > MaxY) { return; }
-            if (x < MinX) { return; }
-            if (y < MinY) { return; }
-            
-
-            //////////////////////////////
-
-            DataPoint dp = new DataPoint(x, y);
-            ScreenPoint position = OxyPlot1.Model.Axes[0].Transform(x, y, OxyPlot1.Model.Axes[1]);
+            ScreenPoint position = OxyPlot1.Model.Axes[0].Transform(dp.X, dp.Y, OxyPlot1.Model.Axes[1]);
             //ScreenPoint sp = new ScreenPoint(position.X, position.Y);
             TrackerHitResult thr = new TrackerHitResult(); // _OxyPlotModel.Series[0], newPoint, sp);
             thr.Series = OxyPlot1.Model.Series[0];
@@ -900,187 +984,129 @@ namespace Fda.Plots
             thr.Position = position;
             thr.Text = XAxisLabel + ": " + Math.Round(dp.X, 3).ToString() + Environment.NewLine + YAxisLabel + ": " + Math.Round(dp.Y, 3).ToString();
             OxyPlot1.ShowTracker(thr);
-            
+        }
 
-            if (ThisIsEndNode == true) { return; }
+        /// <summary>
+        /// This method displays an oxyplot tracker in the next linked plot at position (x,y). Then the x and y value of the next plot after that is calculated, and "DisplayNextTracker" is called with the new (x,y) values.
+        /// This will continue down the line until "isEndNode" is true
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public void DisplayNextTracker(double x, double y)
+        {
+            //only display to the top and bottom of curve?
+            if (x > MaxX || y > MaxY || x < MinX || y < MinY) { return; } //this is checking if the point will be somewhere in the entire plot window
+            if (x > Curve.XValues.Max() || y > Curve.YValues.Max()) { DisplayMaxOutOfRangeTracker(); return; } //this checks if the point is out of the range of the curve
+            if (x < Curve.XValues.Min() || y < Curve.YValues.Min()) { DisplayMinOutOfRangeTracker(); return; }
+
+            DataPoint dp = new DataPoint(x, y);
+
+            DisplayCurrentTracker(dp);
+
+            if (IsEndNode == true)
+            {
+                return;
+            }
 
             //get the x and y values for the next plot
-            double otherValue;
-         
-            
-
-            switch (_NextPlotSharedAxisEnum)
+            try
             {
-                case 1:
+                DataPoint nextPlotDataPoint = GetNextTrackerDataPoint(_NextPlotSharedAxisEnum, dp);
+                _NextPlot.DisplayNextTracker(nextPlotDataPoint.X, nextPlotDataPoint.Y);
+            }
+            catch (Exception e)
+            {
+                //it wasn't able to get the point from getPreviousTrackerDataPoint because it was out of the range of the curve. I don't think i care.
+            }
+        }
+
+        private DataPoint GetNextTrackerDataPoint(SharedAxisEnum nextPlotSharedAxis, DataPoint currentDataPoint)
+        {
+            DataPoint dp = new DataPoint();
+            switch (nextPlotSharedAxis)
+            {
+                case SharedAxisEnum.XX:
                     {
-                        //otherValue = GetPairedValue(x, true, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
-                        if (NextPlot.FlipFrequencyAxis == true)
-                        {
-                            otherValue = NextPlot.Curve.GetYfromX(1 - x);
-
-                        }
-                        else
-                        {
-                            otherValue = NextPlot.Curve.GetYfromX(x);
-
-                        }
-                        NextPlot.DisplayNextTracker(x, otherValue);
-
+                        dp = GetNextTrackerDataPointForSharedAxisXX(currentDataPoint.X);
                         break;
                     }
-                case 2:
+                case SharedAxisEnum.XY:
                     {
-                        //otherValue = GetPairedValue(x, false, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
-
-                        otherValue = NextPlot.Curve.GetXfromY(x);
-                        if (NextPlot.FlipFrequencyAxis == true)
-                        {
-                            NextPlot.DisplayNextTracker(1 - x, otherValue);
-
-                        }
-                        else
-                        {
-                            NextPlot.DisplayNextTracker(x, otherValue);
-                        }
+                        dp = GetNextTrackerDataPointForSharedAxisXY(currentDataPoint.X);
                         break;
                     }
-                case 3:
+                case SharedAxisEnum.YX:
                     {
-                        //otherValue = GetPairedValue(y, true, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
-                        if (NextPlot.FlipFrequencyAxis == true)
-                        {
-                            otherValue = NextPlot.Curve.GetYfromX(y);
-
-                        }
-                        else
-                        {
-                            otherValue = NextPlot.Curve.GetYfromX(y);
-
-                        }
-                        NextPlot.DisplayNextTracker(y,otherValue);
+                        dp = GetNextTrackerDataPointForSharedAxisYX(currentDataPoint.Y);
                         break;
                     }
-                case 4:
+                case SharedAxisEnum.YY:
                     {
-                        otherValue = NextPlot.Curve.GetXfromY(y);
-                        //otherValue = GetPairedValue(y, false, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
-                        if (NextPlot.FlipFrequencyAxis == true)
-                        {
-                            NextPlot.DisplayNextTracker(1 - otherValue, y);
-
-                        }
-                        else
-                        {
-                            NextPlot.DisplayNextTracker(otherValue, y);
-                        }
+                        dp = GetNextTrackerDataPointForSharedAxisYY(currentDataPoint.Y);
                         break;
                     }
             }
+            return dp;
+        }
 
-
-
+     private DataPoint getPreviousTrackerDataPoint(SharedAxisEnum previousPlotSharedAxis, DataPoint currentDataPoint)
+        {
+            DataPoint nextPlotDataPoint = new DataPoint();
+            switch (_PreviousPlotSharedAxisEnum)
+            {
+                case SharedAxisEnum.XX:
+                    {
+                        nextPlotDataPoint = GetPreviousTrackerDataPointForSharedAxisXX(currentDataPoint.X);
+                        break;
+                    }
+                case SharedAxisEnum.XY:
+                    {
+                        nextPlotDataPoint = GetPreviousTrackerDataPointForSharedAxisXY(currentDataPoint.X, currentDataPoint.Y);
+                        break;
+                    }
+                case SharedAxisEnum.YX:
+                    {
+                        nextPlotDataPoint = GetPreviousTrackerDataPointForSharedAxisYX(currentDataPoint.X);
+                        break;
+                    }
+                case SharedAxisEnum.YY:
+                    {
+                        nextPlotDataPoint = GetPreviousTrackerDataPointForSharedAxisYY(currentDataPoint.Y);
+                        break;
+                    }
+            }
+            return nextPlotDataPoint;
         }
 
         public void DisplayPreviousTracker(double x, double y)
         {
 
             //only display to the top and bottom of the curve my cursor is on?
-            if (x > MaxX) { return; }
-            if (y > MaxY) { return; }
-            if (x < MinX) { return; }
-            if (y < MinY) { return; }
-
-            //////////////////////////////
+            if (x > MaxX || y > MaxY || x < MinX || y < MinY) { return; } //this is checking if the point will be somewhere in the entire plot window
+            if (x > Curve.XValues.Max() || y > Curve.YValues.Max()) { DisplayMaxOutOfRangeTracker(); return; } //this checks if the point is out of the range of the curve
+            if (x < Curve.XValues.Min() || y < Curve.YValues.Min()) { DisplayMinOutOfRangeTracker(); return; }
 
             DataPoint dp = new DataPoint(x, y);
-            ScreenPoint position = OxyPlot1.Model.Axes[0].Transform(x, y, OxyPlot1.Model.Axes[1]);
-            //ScreenPoint sp = new ScreenPoint(position.X, position.Y);
-            TrackerHitResult thr = new TrackerHitResult(); // _OxyPlotModel.Series[0], newPoint, sp);
-            thr.Series = OxyPlot1.Model.Series[0];
-            thr.DataPoint = dp;
-            thr.Position = position;
-            thr.Text = XAxisLabel + ": " + Math.Round(dp.X, 3).ToString() + Environment.NewLine + YAxisLabel + ": " + Math.Round(dp.Y, 3).ToString();
-            OxyPlot1.ShowTracker(thr);
 
-            if (ThisIsStartNode == true) {
-                return; }
+            DisplayCurrentTracker(dp);
 
-            //get the x and y values for the next plot
-            double otherValue;
-            switch (_PreviousPlotSharedAxisEnum)
+            if (IsStartNode == true)
             {
-                case 1:
-                    {
-                        //otherValue = GetPairedValue(x, true, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
-                        if(PreviousPlot.FlipFrequencyAxis == true)
-                        {
-                            otherValue = PreviousPlot.Curve.GetYfromX(1-x);
-
-                        }
-                        else
-                        {
-                            otherValue = PreviousPlot.Curve.GetYfromX(x);
-
-                        }
-                        PreviousPlot.DisplayPreviousTracker(x, otherValue);
-
-                        break;
-                    }
-                case 2:
-                    {
-                        //otherValue = GetPairedValue(dp.Y, true, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
-                        if (PreviousPlot.FlipFrequencyAxis == true)
-                        {
-                            otherValue = PreviousPlot.Curve.GetYfromX(1-dp.Y);
-
-                        }
-                        else
-                        {
-                            otherValue = PreviousPlot.Curve.GetYfromX(dp.Y);
-                        }
-                        PreviousPlot.DisplayPreviousTracker(dp.X, otherValue);
-
-                        break;
-                    }
-                case 3:
-                    {
-                        otherValue = PreviousPlot.Curve.GetXfromY(dp.X);
-                        //otherValue = GetPairedValue(dp.X, false, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
-                        if (PreviousPlot.FlipFrequencyAxis == true)
-                        {
-                            PreviousPlot.DisplayPreviousTracker(1-otherValue, dp.X);
-
-                        }
-                        else
-                        {
-                            PreviousPlot.DisplayPreviousTracker(otherValue, dp.X);
-
-                        }
-
-                        break;
-                    }
-                case 4:
-                    {
-                        otherValue = PreviousPlot.Curve.GetXfromY(y);
-                        //otherValue = GetPairedValue(y, false, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
-                        if (PreviousPlot.FlipFrequencyAxis == true)
-                        {
-                            PreviousPlot.DisplayPreviousTracker(1 - otherValue, y);
-
-                        }
-                        else
-                        {
-                            PreviousPlot.DisplayPreviousTracker(otherValue, y);
-
-                        }
-
-                        break;
-                    }
+                return;
             }
 
-
-
+            //get the x and y values for the next plot
+            try
+            {
+                DataPoint nextPlotTrackerPoint = getPreviousTrackerDataPoint(_PreviousPlotSharedAxisEnum, dp);
+                _PreviousPlot.DisplayPreviousTracker(nextPlotTrackerPoint.X, nextPlotTrackerPoint.Y);
+            }
+            catch(Exception e)
+            {
+                //it wasn't able to get the point from getPreviousTrackerDataPoint because it was out of the range of the curve. I don't think i care.
+            }
         }
+
         /// <summary>
         /// This is how i freeze the trackers when the user clicks in a plot. I basically set a boolean on all the plots that the tracker is frozen. Then in the "DisplayTheTrackers" method i check if the tracker is frozen on the first line.
         /// </summary>
@@ -1123,167 +1149,30 @@ namespace Fda.Plots
                         
                         OxyPlot1.ShowTracker(result);
 
-                        double otherValue;
-
                         ///////////////   DISPLAY NEXT PLOT TRACKER ///////////////////
-                        if (ThisIsEndNode == false)
+                        if (IsEndNode == false)
                         {
-                            switch (_NextPlotSharedAxisEnum)
+                            try
                             {
-                                case 1:
-                                    {
-                                        //otherValue = GetPairedValue(dp.X, true, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
-                                        if (NextPlot.FlipFrequencyAxis == true)
-                                        {
-                                            otherValue = NextPlot.Curve.GetYfromX(1 - dp.X);
-
-                                        }
-                                        else
-                                        {
-                                            otherValue = NextPlot.Curve.GetYfromX(dp.X);
-
-                                        }
-                                        // if (this.ThisIsEndNode == true)
-                                        // {
-                                        // //dont display anything further only display previous plots
-                                        // }
-                                        // else
-                                        //{
-                                        NextPlot.DisplayNextTracker(dp.X, otherValue);
-                                        //}
-                                        break;
-                                    }
-                                case 2:
-                                    {
-                                        otherValue = NextPlot.Curve.GetXfromY(dp.X);
-                                        //otherValue = GetPairedValue(dp.X, false, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
-                                        if (NextPlot.FlipFrequencyAxis == true)
-                                        {
-                                            NextPlot.DisplayNextTracker(1 - dp.X, otherValue);
-
-                                        }
-                                        else
-                                        {
-                                            NextPlot.DisplayNextTracker(dp.X, otherValue);
-
-                                        }
-
-                                        break;
-                                    }
-                                case 3:
-                                    {
-                                        //otherValue = GetPairedValue(dp.Y, true, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
-                                        if (NextPlot.FlipFrequencyAxis == true)
-                                        {
-                                            otherValue = NextPlot.Curve.GetYfromX(1 - dp.Y);
-
-                                        }
-                                        else
-                                        {
-                                            otherValue = NextPlot.Curve.GetYfromX(dp.Y);
-
-                                        }
-                                        NextPlot.DisplayNextTracker(dp.Y, otherValue);
-
-                                        break;
-                                    }
-                                case 4:
-                                    {
-                                        otherValue = NextPlot.Curve.GetXfromY(dp.Y);
-                                        //otherValue = GetPairedValue(dp.Y, false, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
-                                        if (NextPlot.FlipFrequencyAxis == true)
-                                        {
-                                            NextPlot.DisplayNextTracker(1 - otherValue, dp.Y);
-
-                                        }
-                                        else
-                                        {
-                                            NextPlot.DisplayNextTracker(otherValue, dp.Y);
-
-                                        }
-
-                                        break;
-                                    }
-
+                                DataPoint nextPlotDataPoint = GetNextTrackerDataPoint(_NextPlotSharedAxisEnum, dp);
+                                _NextPlot.DisplayNextTracker(nextPlotDataPoint.X, nextPlotDataPoint.Y);
+                            }
+                            catch (Exception e)
+                            {
+                                //it wasn't able to get the point from getPreviousTrackerDataPoint because it was out of the range of the curve. I don't think i care.
                             }
                         }
-                        if(ThisIsStartNode == false)
+                        if(IsStartNode == false)
                         {
                             ////////////////////////   DISPLAY PREVIOUS PLOT TRACKERS  //////////////////
-                            switch (_PreviousPlotSharedAxisEnum)
+                            try
                             {
-                                case 1://they share x axes
-                                    {
-                                        if(CheckForOutsideTheRange(dp.X)==true)
-                                        {
-                                            ((IndividualLinkedPlot)PreviousPlot).DisplayMaxXRedTracker();
-                                            return;
-                                        }
-                                        if (PreviousPlot.FlipFrequencyAxis == true)
-                                        {
-                                            otherValue = PreviousPlot.Curve.GetYfromX(1 - dp.X);
-
-                                        }
-                                        else
-                                        {
-                                            otherValue = PreviousPlot.Curve.GetYfromX(dp.X);
-
-                                        }
-                                        PreviousPlot.DisplayPreviousTracker(dp.X, otherValue);
-
-                                        break;
-                                    }
-                                case 2:
-                                    {
-                                        //otherValue = GetPairedValue(dp.Y, true, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
-                                        if (PreviousPlot.FlipFrequencyAxis == true)
-                                        {
-                                            otherValue = PreviousPlot.Curve.GetYfromX(1 - dp.Y);
-
-                                        }
-                                        else
-                                        {
-                                            otherValue = PreviousPlot.Curve.GetYfromX(dp.Y);
-
-                                        }
-                                        PreviousPlot.DisplayPreviousTracker(dp.X, otherValue);
-
-                                        break;
-                                    }
-                                case 3:
-                                    {
-                                        otherValue = PreviousPlot.Curve.GetXfromY(dp.X);
-                                        //otherValue = GetPairedValue(dp.X, false, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
-                                        if (PreviousPlot.FlipFrequencyAxis == true)
-                                        {
-                                            PreviousPlot.DisplayPreviousTracker(1 - otherValue, dp.X);
-
-                                        }
-                                        else
-                                        {
-                                            PreviousPlot.DisplayPreviousTracker(otherValue, dp.X);
-
-                                        }
-
-                                        break;
-                                    }
-                                case 4:
-                                    {
-                                        otherValue = PreviousPlot.Curve.GetXfromY(dp.Y);
-                                        //otherValue = GetPairedValue(dp.Y, false, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
-                                        if (PreviousPlot.FlipFrequencyAxis == true)
-                                        {
-                                            PreviousPlot.DisplayPreviousTracker(1 - otherValue, dp.Y);
-
-                                        }
-                                        else
-                                        {
-                                            PreviousPlot.DisplayPreviousTracker(otherValue, dp.Y);
-
-                                        }
-
-                                        break;
-                                    }
+                                DataPoint prevPlotDataPoint = getPreviousTrackerDataPoint(_PreviousPlotSharedAxisEnum, dp);
+                                _PreviousPlot.DisplayPreviousTracker(prevPlotDataPoint.X, prevPlotDataPoint.Y);
+                            }
+                            catch (Exception e)
+                            {
+                                //it wasn't able to get the point from getPreviousTrackerDataPoint because it was out of the range of the curve. I don't think i care.
                             }
                         }
                     }
@@ -1309,7 +1198,7 @@ namespace Fda.Plots
             return false;
         }
 
-        public void DisplayMaxXRedTracker()
+        public void DisplayMaxOutOfRangeTracker()
         {
             DataPoint highestPoint = new DataPoint();
             foreach (Series s in OxyPlot1.Model.Series)
@@ -1326,8 +1215,33 @@ namespace Fda.Plots
                 thr.Series = s;
                 thr.DataPoint = highestPoint;
                 thr.Position = position;
-                
+        //        thr.PlotModel.DefaultColors = new List<OxyColor>
+        //{
+        //    OxyColors.Red,
+        //    OxyColors.Green,
+        //    OxyColors.Blue,
+        //    OxyColor.FromRgb(0x20, 0x4A, 0x87)
+        //};
                 thr.Text ="OUT OF RANGE" + Environment.NewLine + XAxisLabel + ": " + Math.Round(highestPoint.X, 3).ToString() + Environment.NewLine + YAxisLabel + ": " + Math.Round(highestPoint.Y, 3).ToString();
+                OxyPlot1.ShowTracker(thr);
+            }
+        }
+
+        public void DisplayMinOutOfRangeTracker()
+        {
+            DataPoint lowestPoint = new DataPoint();
+            foreach (Series s in OxyPlot1.Model.Series)
+            {
+                if (s.GetType() == typeof(LineSeries))
+                {
+                    lowestPoint = ((LineSeries)s).Points.First();
+                }
+                ScreenPoint position = OxyPlot1.Model.Axes[0].Transform(lowestPoint.X, lowestPoint.Y, OxyPlot1.Model.Axes[1]);
+                TrackerHitResult thr = new TrackerHitResult(); // _OxyPlotModel.Series[0], newPoint, sp);
+                thr.Series = s;
+                thr.DataPoint = lowestPoint;
+                thr.Position = position;
+                thr.Text = "OUT OF RANGE" + Environment.NewLine + XAxisLabel + ": " + Math.Round(lowestPoint.X, 3).ToString() + Environment.NewLine + YAxisLabel + ": " + Math.Round(lowestPoint.Y, 3).ToString();
                 OxyPlot1.ShowTracker(thr);
             }
         }
@@ -1363,19 +1277,19 @@ namespace Fda.Plots
             string linkedAxisUpper = linkedAxis.ToUpper();
             if(thisAxisUpper == "X" && linkedAxisUpper == "X")  //enum 1
             {
-                _NextPlotSharedAxisEnum = 1;
+                _NextPlotSharedAxisEnum = SharedAxisEnum.XX;
             }
             else if (thisAxisUpper == "X" && linkedAxisUpper == "Y") //enum 2
             {
-                _NextPlotSharedAxisEnum = 2;
+                _NextPlotSharedAxisEnum = SharedAxisEnum.XY;
             }
             else if (thisAxisUpper == "Y" && linkedAxisUpper == "X")  // enum 3
             {
-                _NextPlotSharedAxisEnum = 3;
+                _NextPlotSharedAxisEnum = SharedAxisEnum.YX;
             }
             else if (thisAxisUpper == "Y" && linkedAxisUpper == "Y") // enum 4
             {
-                _NextPlotSharedAxisEnum = 4;
+                _NextPlotSharedAxisEnum = SharedAxisEnum.YY;
             }
         }
 
@@ -1389,12 +1303,13 @@ namespace Fda.Plots
         /// <param name="linkedAxis">This should be "x" or "y". It is not case sensitive.</param>
         public void SetNextPlotLinkage(ILinkedPlot plot, string thisAxis = "",string linkedAxis = "")
         {
-            if (ThisIsEndNode == true) { return; }
+            if (IsEndNode == true) { return; }
             thisAxis = "";
             linkedAxis = "";
             switch (BaseFunction.FunctionType)
             {
                 case FdaModel.Functions.FunctionTypes.InflowFrequency:
+                case FdaModel.Functions.FunctionTypes.OutflowFrequency:
                     if (plot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowOutflow)
                     {
                         thisAxis = "y";
@@ -1446,18 +1361,18 @@ namespace Fda.Plots
         }
         public void SetPreviousPlotLinkage(ILinkedPlot plot)
         {
-            if (ThisIsStartNode == true) { return; }
+            if (IsStartNode == true) { return; }
             _PreviousPlot = plot;
             _PreviousPlotSharedAxisEnum = PreviousPlot.NextPlotSharedAxisEnum;
         }
 
         public void SetAsStartNode()
         {
-            ThisIsStartNode = true;
+            IsStartNode = true;
         }
         public void SetAsEndNode()
         {
-            ThisIsEndNode = true;
+            IsEndNode = true;
         }
 
         #endregion
@@ -1553,8 +1468,12 @@ namespace Fda.Plots
             return pairedValue;
         }
 
-
-        public void RemoveAreaPlots()
+        /// <summary>
+        /// Each removed area series gets added to a list so that if the button
+        /// in the toolbar gets clicked to toggle between adding and removing
+        /// the area plots, it will be easy to put them back in the plot
+        /// </summary>
+        public void RemoveAreaPlotsFromButtonClick()
         {
             ListOfRemovedAreaSeries = new List<AreaSeries>();
             for (int i = 0; i < OxyPlot1.Model.Series.Count; i++)
@@ -1567,7 +1486,18 @@ namespace Fda.Plots
                 }
             }
             this.OxyPlot1.InvalidatePlot(true);
-
+        }
+        public void RemoveAreaPlots()
+        {
+            for (int i = 0; i < OxyPlot1.Model.Series.Count; i++)
+            {
+                if (OxyPlot1.Model.Series[i].GetType() == typeof(AreaSeries))
+                {
+                    OxyPlot1.Model.Series.RemoveAt(i);
+                    i--;
+                }
+            }
+            this.OxyPlot1.InvalidatePlot(true);
         }
         public void AddAreaPlots()
         {
@@ -1578,6 +1508,136 @@ namespace Fda.Plots
             this.OxyPlot1.InvalidatePlot(true);
         }
 
-        
+
+
+
+        #region DisplayTrackerWithSharedAxisMethods
+
+        //private Boolean isValueWithinRangeOfPlot(double value, Boolean evalueateXAxis, ILinkedPlot plot)
+        //{
+        //    if(evalueateXAxis)
+        //    {
+        //        if(value<plot.MinX || value>plot.MaxX)
+        //        {
+        //            return false;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (value < plot.MinY || value > plot.MaxY)
+        //        {
+        //            return false;
+        //        }
+        //    }
+        //    return true;
+        //}
+
+        private DataPoint GetPreviousTrackerDataPointForSharedAxisXX(double dataPointXValue)
+        {
+            DataPoint dp = new DataPoint();
+       
+            double otherValue;
+            if (PreviousPlot.FlipFrequencyAxis == true)
+            {
+                dataPointXValue = 1 - dataPointXValue;
+            }
+
+           
+                otherValue = PreviousPlot.Curve.GetYfromX(dataPointXValue);
+                dp = new DataPoint(dataPointXValue, otherValue);
+    
+            return dp;
+        }
+
+        private DataPoint GetPreviousTrackerDataPointForSharedAxisXY(double dataPointX, double dataPointY)
+        {
+            double otherValue;
+            if (PreviousPlot.FlipFrequencyAxis == true)
+            {
+                otherValue = PreviousPlot.Curve.GetYfromX(1 - dataPointY);
+            }
+            else
+            {
+                otherValue = PreviousPlot.Curve.GetYfromX(dataPointY);
+            }
+            return new DataPoint(dataPointX, otherValue);
+        }
+
+        private DataPoint GetPreviousTrackerDataPointForSharedAxisYX(double dataPointX)
+        {
+            double otherValue = PreviousPlot.Curve.GetXfromY(dataPointX);
+            if (PreviousPlot.FlipFrequencyAxis == true)
+            {
+                otherValue = 1 - otherValue;
+            }
+            return new DataPoint(otherValue, dataPointX);
+        }
+        private DataPoint GetPreviousTrackerDataPointForSharedAxisYY(double dataPointY)
+        {
+            double otherValue = PreviousPlot.Curve.GetXfromY(dataPointY);
+            if (PreviousPlot.FlipFrequencyAxis == true)
+            {
+                otherValue = 1 - otherValue;
+            }
+            
+            return new DataPoint(otherValue, dataPointY);
+        }
+
+
+        private DataPoint GetNextTrackerDataPointForSharedAxisXX(double x)
+        {
+            double otherValue;
+            if (NextPlot.FlipFrequencyAxis == true)
+            {
+                otherValue = NextPlot.Curve.GetYfromX(1 - x);
+            }
+            else
+            {
+                otherValue = NextPlot.Curve.GetYfromX(x);
+            }
+            return new DataPoint(x, otherValue);
+        }
+
+        private DataPoint GetNextTrackerDataPointForSharedAxisXY(double x)
+        {
+            double otherValue = NextPlot.Curve.GetXfromY(x);
+            if (NextPlot.FlipFrequencyAxis == true)
+            {
+                x = (1 - x);
+            }
+            return new DataPoint(x, otherValue);
+        }
+
+        private DataPoint GetNextTrackerDataPointForSharedAxisYX(double y)
+        {
+            double otherValue;
+            if (NextPlot.FlipFrequencyAxis == true)
+            {
+                otherValue = NextPlot.Curve.GetYfromX(y);
+            }
+            else
+            {
+                otherValue = NextPlot.Curve.GetYfromX(y);
+            }
+
+            return new DataPoint(y, otherValue);
+
+        }
+
+        private DataPoint GetNextTrackerDataPointForSharedAxisYY(double y)
+        {
+            double otherValue = NextPlot.Curve.GetXfromY(y);
+            if (NextPlot.FlipFrequencyAxis == true)
+            {
+                otherValue = (1 - otherValue);
+            }
+           
+            return new DataPoint(otherValue, y);
+
+        }
+
+
+        #endregion
+
     }
 }

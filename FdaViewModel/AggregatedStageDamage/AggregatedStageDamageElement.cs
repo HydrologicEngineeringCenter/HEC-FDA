@@ -33,20 +33,20 @@ namespace FdaViewModel.AggregatedStageDamage
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
         }
-        public Inventory.DamageCategory.DamageCategoryRowItem DamageCategory 
-        {
-            get { return _DamageCategory; }
-            set { _DamageCategory = value;  NotifyPropertyChanged(); }
-        }
+        //public Inventory.DamageCategory.DamageCategoryRowItem DamageCategory 
+        //{
+        //    get { return _DamageCategory; }
+        //    set { _DamageCategory = value;  NotifyPropertyChanged(); }
+        //}
         #endregion
         #region Constructors
-        public AggregatedStageDamageElement(BaseFdaElement owner, string name , string description, Inventory.DamageCategory.DamageCategoryRowItem damagecategory, Statistics.UncertainCurveDataCollection curve, CreationMethodEnum method) : base(owner)
+        public AggregatedStageDamageElement(BaseFdaElement owner, string name , string description, Statistics.UncertainCurveDataCollection curve, CreationMethodEnum method) : base(owner)
         {
             Name = name;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/StageDamage.png");
 
             Description = description;
-            DamageCategory = damagecategory;
+            //DamageCategory = damagecategory;
             Curve = curve;
             _Method = method;
             //add named actions like edit.
@@ -81,7 +81,7 @@ namespace FdaViewModel.AggregatedStageDamage
         {
             List<Inventory.DamageCategory.DamageCategoryOwnedElement> damcateleements = GetElementsOfType<Inventory.DamageCategory.DamageCategoryOwnedElement>();
             Inventory.DamageCategory.DamageCategoryOwnedElement damcatelement = damcateleements.FirstOrDefault();
-            AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(Name, Description, DamageCategory, damcatelement.DamageCategories, Curve);
+            AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(Name, Description, Curve);
             Navigate(vm, true, true);
             if (!vm.WasCancled)
             {
@@ -89,7 +89,7 @@ namespace FdaViewModel.AggregatedStageDamage
                 {
                     Name = vm.Name;//should i disable this way of renaming? if not i need to check for name conflicts.
                     Description = vm.Description;//is binding two way? is this necessary?
-                    DamageCategory = vm.DamageCategory;
+                    //DamageCategory = vm.DamageCategory;
                     Curve = vm.Curve;
                 }
             }
@@ -104,16 +104,16 @@ namespace FdaViewModel.AggregatedStageDamage
         {
             //delete this and actually fix the problem
 
-            if(DamageCategory == null)
-            {
-                return new object[] { Name, Description, "", Curve.Distribution, _Method };
+            //if(DamageCategory == null)
+            //{
+            //    return new object[] { Name, Description, "", Curve.Distribution, _Method };
 
-            }
-            else
-            {
-            return new object[] { Name, Description, DamageCategory.Name, Curve.Distribution, _Method };
+            //}
+            //else
+            //{
+            return new object[] { Name, Description, Curve.Distribution, _Method };
 
-            }
+           // }
         }
 
         public override bool SavesToRow()

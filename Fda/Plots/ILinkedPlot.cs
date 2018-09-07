@@ -8,11 +8,14 @@ namespace Fda.Plots
 {
     public interface ILinkedPlot
     {
-        
+        double MaxX { get; set; }
+        double MaxY { get; set; }
+        double MinX { get; set; }
+        double MinY { get; set; }
         FdaModel.Functions.BaseFunction BaseFunction { get; set; }
-        int NextPlotSharedAxisEnum { get; set; }
-        bool ThisIsStartNode { get; set; }
-        bool ThisIsEndNode { get; set; }
+        SharedAxisEnum NextPlotSharedAxisEnum { get; set; }
+        bool IsStartNode { get; set; }
+        bool IsEndNode { get; set; }
         bool FreezeNextTracker { get; set; }
         bool FreezePreviousTracker { get; set; }
 
@@ -26,6 +29,8 @@ namespace Fda.Plots
 
         void SetNextPlotLinkage(ILinkedPlot plot, string thisAxis, string theirAxis);
         void SetPreviousPlotLinkage(ILinkedPlot plot);
+
+        
 
     }
 }

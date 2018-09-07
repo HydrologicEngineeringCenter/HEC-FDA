@@ -22,12 +22,21 @@ namespace FdaViewModel.Plots
         private string _XAxisLabel;
         private string _YAxisLabel;
         private string _SubTitle;
+        private bool _DisplayImportButton;
+
 
         public event EventHandler ShowImportButton;
         public event EventHandler ShowTheImporter;
+        public event EventHandler CurveUpdated;
+
+        private IndividualLinkedPlotVM _PlotVM;
         #endregion
         #region Properties
-
+        public bool DisplayImportButton
+        {
+            get { return _DisplayImportButton; }
+            set { _DisplayImportButton = value; }
+        }
         public string Title
         {
             get { return _Title; }
@@ -63,8 +72,8 @@ namespace FdaViewModel.Plots
         }
         public IndividualLinkedPlotVM PlotVM
         {
-            get;
-            set;
+            get { return _PlotVM; }
+            set { _PlotVM = value; }// _PlotVM.CurveUpdated += CurveHasBeenUpdated; }
         }
         #endregion
         #region Constructors
@@ -72,32 +81,31 @@ namespace FdaViewModel.Plots
         {
 
         }
-        public ConditionsIndividualPlotWrapperVM(bool setYAxisToLog, bool flipFreqAxis, string title, string xAxisLabel, string yAxisLabel)
+        public ConditionsIndividualPlotWrapperVM(bool setYAxisToLog, bool flipFreqAxis, string title, string xAxisLabel, string yAxisLabel, bool displayImportButton = true)
         {
+            DisplayImportButton = displayImportButton;
             FlipXAxis = flipFreqAxis;
             SetYAxisToLog = setYAxisToLog;
             Title = title;
             XAxisLabel = xAxisLabel;
             YAxisLabel = yAxisLabel;
+            
         }
 
         #endregion
         #region Voids
-
+        //public void CurveHasBeenUpdated(object sender, EventArgs e)
+        //{
+        //    CurveUpdated?.Invoke(sender, e);
+        //}
         public void ShowTheImportButton(object sender, EventArgs e)
         {
-            if(ShowImportButton != null)
-            {
-                ShowImportButton(sender, e);
-            }
+            ShowImportButton?.Invoke(sender, e);
         }
 
         public void ShowTheImporterForm(object sender, EventArgs e)
         {
-            if(ShowTheImporter != null)
-            {
-                ShowTheImporter(sender, e);
-            }
+            ShowTheImporter?.Invoke(sender, e);
         }
         public override void AddValidationRules()
         {

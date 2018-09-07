@@ -7,6 +7,7 @@ using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using FdaModel.Functions;
 using Statistics;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.Conditions
 {
@@ -24,16 +25,20 @@ namespace FdaViewModel.Conditions
 
         private ConditionsOwnerElement _owner;
 
-        private AggregatedStageDamage.AggregatedStageDamageElement _StageDamageElement;
+        //private AggregatedStageDamage.AggregatedStageDamageElement _StageDamageElement;
         private List<AggregatedStageDamage.AggregatedStageDamageElement> _ListOfStageDamageElements;
 
         #endregion
         #region Properties
         public bool IsPoppedOut { get; set; }
-        public AggregatedStageDamage.AggregatedStageDamageElement StageDamageElement
+        //public AggregatedStageDamage.AggregatedStageDamageElement StageDamageElement
+        //{
+        //    get { return _StageDamageElement; }
+        //    set { _StageDamageElement = value; NotifyPropertyChanged(); }
+        //}
+        public OwnedElement SelectedElement
         {
-            get { return _StageDamageElement; }
-            set { _StageDamageElement = value; NotifyPropertyChanged(); }
+            get;set;
         }
         public List<AggregatedStageDamage.AggregatedStageDamageElement> ListOfStageDamageElements
         {
@@ -45,7 +50,9 @@ namespace FdaViewModel.Conditions
         {
             get
             {
-                 FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)StageDamageElement.Curve, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
+                UncertainCurveDataCollection curve = ((AggregatedStageDamage.AggregatedStageDamageElement)SelectedElement).Curve;
+                 FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamage = 
+                    new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InteriorStageDamage);
                 return stageDamage.GetOrdinatesFunction().Function;
             }
         }
@@ -54,7 +61,7 @@ namespace FdaViewModel.Conditions
         {
             get
             {
-                return new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(SelectedCurve, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
+                return new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(SelectedCurve, FunctionTypes.InteriorStageDamage);
 
             }
         }
@@ -63,14 +70,20 @@ namespace FdaViewModel.Conditions
         {
             get
             {
-                return StageDamageElement.Name;
+                return SelectedElement.Name;
             }
         }
 
+       
+
         #endregion
         #region Constructors
-        public AddStageDamageToConditionVM(List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamageElements, ConditionsOwnerElement owner)
+        public AddStageDamageToConditionVM(List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamageElements, ConditionsOwnerElement owner):this(listOfStageDamageElements,null,owner)
         {
+        }
+        public AddStageDamageToConditionVM(List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamageElements, AggregatedStageDamage.AggregatedStageDamageElement selectedElement, ConditionsOwnerElement owner):base()
+        {
+            SelectedElement = selectedElement;
             ListOfStageDamageElements = listOfStageDamageElements;
             _owner = owner;
 
@@ -97,7 +110,7 @@ namespace FdaViewModel.Conditions
                             }
                             ListOfStageDamageElements = theNewList;
                             //StageDamageRelationships.Add((AggregatedStageDamage.AggregatedStageDamageElement)eles.FirstOrDefault().Elements.Last());
-                            StageDamageElement = ListOfStageDamageElements.Last();
+                            SelectedElement = ListOfStageDamageElements.Last();
                         }
                     }
                 }

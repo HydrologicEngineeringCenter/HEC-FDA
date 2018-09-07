@@ -29,16 +29,16 @@ namespace FdaViewModel.AggregatedStageDamage
             get { return _Description; }
             set { _Description = value; NotifyPropertyChanged(); }
         }
-        public Inventory.DamageCategory.DamageCategoryRowItem DamageCategory
-        {
-            get { return _DamageCategory; }
-            set { _DamageCategory = value; NotifyPropertyChanged(); }
-        }
-        public List<Inventory.DamageCategory.DamageCategoryRowItem> DamageCategories
-        {
-            get { return _damagecategories; }
-            set { _damagecategories = value; NotifyPropertyChanged(); }
-        }
+        //public Inventory.DamageCategory.DamageCategoryRowItem DamageCategory
+        //{
+        //    get { return _DamageCategory; }
+        //    set { _DamageCategory = value; NotifyPropertyChanged(); }
+        //}
+        //public List<Inventory.DamageCategory.DamageCategoryRowItem> DamageCategories
+        //{
+        //    get { return _damagecategories; }
+        //    set { _damagecategories = value; NotifyPropertyChanged(); }
+        //}
         public bool ReadOnly
         {
             get { return _ReadOnly; }
@@ -75,12 +75,12 @@ namespace FdaViewModel.AggregatedStageDamage
 
         //    Curve = new Statistics.UncertainCurveIncreasing(xValues,yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
         //}
-        public AggregatedStageDamageEditorVM(string name, string description, Inventory.DamageCategory.DamageCategoryRowItem damagecategory, List<Inventory.DamageCategory.DamageCategoryRowItem> damcats, Statistics.UncertainCurveDataCollection curve) : base()
+        public AggregatedStageDamageEditorVM(string name, string description, Statistics.UncertainCurveDataCollection curve) : base()
         {
             Name = name;
             Description = description;
-            DamageCategories = damcats;
-            DamageCategory = damagecategory;
+            //DamageCategories = damcats;
+            //DamageCategory = damagecategory;
             Curve = curve;
         }
         #endregion

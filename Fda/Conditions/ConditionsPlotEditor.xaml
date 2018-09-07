@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Fda.Conditions"
              xmlns:utils="clr-namespace:Fda.Utilities"
              xmlns:plot="clr-namespace:Fda.Plots"
-      
+             x:Name="ConditionsPlotEditorWindow"
              xmlns:Cac="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              MinWidth="600"
              MinHeight="700"
@@ -185,7 +185,7 @@
     
     <Grid Name="mainGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="120" />
+            <RowDefinition Height="90" />
             <RowDefinition Height="0" />
             <RowDefinition Height="*"/>
             <RowDefinition Height="45"/>
@@ -198,8 +198,8 @@
         
         <Grid Name="grid_TopRow" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="22"/>
+                <RowDefinition Height="34"/>
                 <RowDefinition Height="30" />
             </Grid.RowDefinitions>
             <Menu Grid.Row="0">
@@ -213,10 +213,10 @@
 
                 </MenuItem>
             </Menu>
-        <ToolBarTray Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Name="tool_toolbar"  Margin="5" >
-            <ToolBar  Margin="5" >
+        <ToolBarTray Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Name="tool_toolbar"  Margin="0" Height="32" >
+            <ToolBar  Margin="2" >
                 <Button Name="btn_HideTrackers" ToolTip="Hide Trackers" Width="40" Click="btn_HideTrackers_Click"  >
-                    <Image Name="img_HideTrackers" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/HideTrackers.png"/>
+                    <Image Name="img_HideTrackers" Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/HideTrackers.png"/>
 
                 </Button>
                 <!--<Button Name="btn_PopPlotsOut" Width="40" ToolTip="Pop Plots Out" Click="btn_PopPlotsOut_Click">
@@ -224,57 +224,57 @@
 
                 </Button>-->
                 <Button Name="btn_ToggleAreaPlots" Width="40" ToolTip="Hide Area Plots" Click="btn_ToggleAreaPlots_Click" >
-                    <Image Name="img_HideAreaPlots" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/HideAreaPlots.png"/>
+                    <Image Name="img_HideAreaPlots" Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/HideAreaPlots.png"/>
 
                 </Button>
 
-                <Separator Margin="10,0,10,0"/>
+                <!--<Separator Margin="10,0,10,0"/>-->
 
 
             </ToolBar>
             <ToolBar>
                 <Label Content="Plot:" />
-                <ComboBox Name="cmb_PlotNames" Width="150" ItemsSource="{Binding AddedPlots}" DisplayMemberPath="{Binding Title}" />
+                    <ComboBox Name="cmb_PlotNames" Width="150" ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}},Path=ObservablePlots}" DisplayMemberPath="TestName"  />
                 <Label Content="X:"/>
                 <TextBox Name="txt_XValue" Width="60"  />
                 <Label Content="Y:"/>
                 <TextBox Name="txt_YValue" Width="60" />
-                <Button Name="btn_PlotSpecificPoint" Content="Display"  />
-                <Separator Margin="10,0,10,0"/>
+                    <Button Name="btn_PlotSpecificPoint" Content="Display"  Click="btn_PlotSpecificPoint_Click"/>
+                <!--<Separator Margin="10,0,10,0"/>-->
             </ToolBar>
-            <ToolBar>
+            <!--<ToolBar>
                 <Label Content="AEP:" VerticalAlignment="Center"/>
                 <Label Content="{Binding AEP}" VerticalAlignment="Center" />
                 <Label Content="EAD:" VerticalAlignment="Center"/>
                 <Label Content="{Binding EAD}" VerticalAlignment="Center"/>
-            </ToolBar>
+            </ToolBar>-->
         </ToolBarTray>
             <!--<StackPanel Grid.Row="2" Orientation="Horizontal">
                 <Label Content="LP3: "/>
                 <Label Name="lbl_LP3"  Visibility="{Binding IsPlot0Visible,Converter={StaticResource BoolToVisibilityConverter}}" Content="{Binding Plot0VM.SelectedElementName}"/>
             </StackPanel>-->
-            <StackPanel Grid.Row="3" Orientation="Horizontal">
+            <StackPanel Grid.Row="3" Orientation="Horizontal" Height="25">
                 
                 <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="10,0,0,0">
                     <Label  Content="Name:" />
-                    <TextBox Name="txt_Name" Width="235" Text="{Binding Name}" />
+                    <TextBox Name="txt_Name" Width="175" Text="{Binding Name}" Margin="2" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="10,0,0,0">
                     <Label  Content="Description:" />
-                    <Cac:TextBoxDescription Width="225" Text="{Binding Description}" />
+                    <Cac:TextBoxDescription Width="175" Text="{Binding Description}" Margin="2" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="2" Margin="10,0,0,0">
                     <Label Content="Year:"/>
-                    <TextBox Name="txt_year" Width="40" Text="{Binding Year}"/>
+                    <TextBox Name="txt_year" Width="40" Text="{Binding Year}" Margin="2"/>
                 </StackPanel>
-                <!--<StackPanel Orientation="Horizontal" Grid.Column="3" Margin="10,0,0,0">
+                <StackPanel Orientation="Horizontal" Grid.Column="3" Margin="10,0,0,0">
                     <Label Content="Impact Area:" />
-                    <ComboBox Name="cmb_ImpAreas" Width="210" ItemsSource="{Binding ImpactAreas}" SelectedItem="{Binding SelectedImpactArea}" />
-                    <Button Name="btn_AddImpactAreas" Width="30" Height="30" Click="btn_AddImpactAreas_Click" Margin="10,0,0,0" >
-                        <Image Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
+                    <ComboBox Name="cmb_ImpAreas" Width="210" ItemsSource="{Binding ImpactAreas}" SelectedItem="{Binding SelectedImpactArea}" Margin="2" />
+                    <Button Name="btn_AddImpactAreas" Width="30" Height="20" Click="btn_AddImpactAreas_Click" Margin="10,0,10,0" >
+                        <Image Width="20" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
 
                     </Button>
-                </StackPanel>-->
+                </StackPanel>
                 <!--<StackPanel Orientation="Horizontal" Grid.Column="2">
                 <Label Content="Structures:" />
                 <ComboBox Name="cmb_Structures" Width="150" ItemsSource="{Binding StructureInventories}" DisplayMemberPath="{Binding Name}"/>
@@ -380,7 +380,7 @@
 
             <!--<plot:IndividualLinkedPlot  x:Name="plot0"  Visibility="{Binding IsVisible,Converter={StaticResource BoolToVisibilityConverter}}" Grid.Row="10" Grid.RowSpan="2" Grid.Column="10" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Curve}" BaseFunction="{Binding Path=BaseFunction}" Title="{Binding Path=Title}"  XAxisLabel="{Binding XAxisLabel}" YAxisLabel="{Binding YAxisLabel}"  SetYAxisToLogarithmic="True" FlipFrequencyAxis="True" />-->
             <!--<Button Style="{StaticResource AddButton}" Content="Flow Frequency Curve" Visibility="{Binding Plot0VM.IsVisible,Converter={StaticResource BoolToInverseVisibilityConverter}}"  Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Click="btn_AddPlot0_Click" />-->
-            <plot:IndividualLinkedPlotControl x:Name="Plot0Control" DataContext="{Binding Plot0ControlVM}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Content="{Binding CurrentVM}"/>
+            <plot:IndividualLinkedPlotControl x:Name="Plot0Control" DataContext="{Binding Plot0ControlVM}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Content="{Binding CurrentVM}" />
 
             <!--<plot:DoubleLineModulator x:Name="doubleLineModulator" Visibility="{Binding IsPlot1Visible,Converter={StaticResource BoolToVisibilityConverter}}" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Curve="{Binding Path=Plot1VM.Curve}" BaseFunction="{Binding Path=Plot1VM.BaseFunction}" />-->
             <!--<Button Style="{StaticResource AddButtonVerticalModulator}" Name="btn_AddPlot1" IsEnabled="{Binding IsPlot0Visible}" Visibility="{Binding IsPlot1Visible,Converter={StaticResource BoolToInverseVisibilityConverter}}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Content="Inflow Outflow" Click="btn_AddPlot1_Click"/>-->
@@ -402,6 +402,7 @@
             <!--<Button Name="btn_AddPlot7" Style="{StaticResource AddButton}" IsEnabled="{Binding IsPlot3Visible}" Visibility="{Binding IsPlot7Visible,Converter={StaticResource BoolToInverseVisibilityConverter}}" Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Content="Depth Damage Curve" Click="btn_AddPlot7_Click"/>-->
             <plot:IndividualLinkedPlotControl x:Name="Plot7Control" DataContext="{Binding Plot7ControlVM}" Content="{Binding CurrentVM}" Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" />
 
+            <plot:IndividualLinkedPlotControl x:Name="Plot8Control" DataContext="{Binding Plot8ControlVM}" Content="{Binding CurrentVM}" Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" />
 
             <!--<plot:IndividualLinkedPlot x:Name="plot8" Visibility="{Binding IsPlot8Visible,Converter={StaticResource BoolToVisibilityConverter}}" Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot8VM.Curve}" BaseFunction="{Binding Path=Plot8VM.BaseFunction}" Title="{Binding Path=Plot8VM.Title}"  XAxisLabel="{Binding Plot8VM.XAxisLabel}" YAxisLabel="{Binding Plot8VM.YAxisLabel}"  FlipFrequencyAxis="True" SetYAxisToLogarithmic="True"/>-->
             <!--<Button Name="btn_AddPlot8" Style="{StaticResource AddButton}" IsEnabled="{Binding IsPlot7Visible}" Visibility="{Binding IsPlot8Visible,Converter={StaticResource BoolToInverseVisibilityConverter}}"  Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Content="Preview Compute" Click="btn_AddPlot8_Click"/>-->

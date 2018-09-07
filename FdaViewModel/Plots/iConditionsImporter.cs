@@ -17,6 +17,7 @@ namespace FdaViewModel.Plots
         Statistics.CurveIncreasing SelectedCurve { get;  }
         FdaModel.Functions.BaseFunction BaseFunction { get; }
         string SelectedElementName { get; }
+        Utilities.OwnedElement SelectedElement { get; }
         bool IsPoppedOut { get; set; }
         
 

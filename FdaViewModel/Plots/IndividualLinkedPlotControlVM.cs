@@ -16,20 +16,20 @@ namespace FdaViewModel.Plots
         // Created Date: 12/19/2017 1:26:57 PM
         #endregion
         #region Fields
-        public event EventHandler UpdatePlots;
+        public event EventHandler SelectedCurveUpdated;
         public event EventHandler PlotIsShowing;
         public event EventHandler PlotIsNotShowing;
-
         public event EventHandler PopPlotOut;
-        
+        public event EventHandler PreviewCompute;
 
         private BaseViewModel _CurrentVM;
         #endregion
         #region Properties
         public IndividualLinkedPlotVM PreviousPlot { get; set; }
-      public BaseViewModel PreviousVM
+        public BaseViewModel PreviousVM
         {
-            get;set;
+            get;
+            set;
         }
         public BaseViewModel CurrentVM
         {
@@ -48,22 +48,24 @@ namespace FdaViewModel.Plots
         #region Constructors
         public IndividualLinkedPlotControlVM():base()
         {
-           
-
         }
         public IndividualLinkedPlotControlVM(IIndividualLinkedPlotWrapper indLinkedPlotWrapperVM, ICoverButton coverButton, iConditionsImporter importerVM, ICoverButton modulatorCoverButton = null, IIndividualLinkedPlotWrapper modulatorPlotWrapper = null)//Conditions.AddFlowFrequencyToConditionVM addFlowFreqVM)
         {
             IndividualPlotWrapperVM = indLinkedPlotWrapperVM;
             IndividualPlotWrapperVM.ShowImportButton += new EventHandler(ShowTheImportButton);
             IndividualPlotWrapperVM.ShowTheImporter += new EventHandler(ImportButtonClicked);
+            //IndividualPlotWrapperVM.CurveUpdated += SelectedCurveUpdated;
 
             ImportButtonVM = coverButton;
             ImportButtonVM.Clicked += new EventHandler(ImportButtonClicked);
 
-            CurveImporterVM = importerVM;
-            CurveImporterVM.OKClickedEvent += new EventHandler(AddCurveToPlot);
-            CurveImporterVM.CancelClickedEvent += new EventHandler(ImporterWasCanceled);
-            CurveImporterVM.PopImporterOut += new EventHandler(PopTheImporterOut);
+            if (importerVM != null)
+            {
+                CurveImporterVM = importerVM;
+                CurveImporterVM.OKClickedEvent += new EventHandler(AddCurveToPlot);
+                CurveImporterVM.CancelClickedEvent += new EventHandler(ImporterWasCanceled);
+                CurveImporterVM.PopImporterOut += new EventHandler(PopTheImporterOut);
+            }
 
             ModulatorCoverButtonVM = modulatorCoverButton;
             //if (ModulatorCoverButtonVM != null)
@@ -84,6 +86,7 @@ namespace FdaViewModel.Plots
                 CurrentVM = (BaseViewModel)ImportButtonVM;
 
             }
+          
 
         }
         #endregion
@@ -157,9 +160,16 @@ namespace FdaViewModel.Plots
         /// <param name="e"></param>
         public void ImportButtonClicked(object sender,EventArgs e)
         {
+            //special logic for the plot8 preview. I want to skip the importer and run the preview compute logic
+            if(CurveImporterVM == null)
+            {
+                PreviewTheCompute(this, new EventArgs());
+                return;
+            }
+
             //this gets a little crazy but if the user clicks the modulator cover button the importer will pop up.
             //if they then click cancel i want the view to show the importer button, not the modulator importer button.
-            bool previousViewShouldBeTheCoverButton = false;
+           bool previousViewShouldBeTheCoverButton = false;
            if(CurrentVM == ModulatorCoverButtonVM)
             {
                 previousViewShouldBeTheCoverButton = true;
@@ -170,12 +180,13 @@ namespace FdaViewModel.Plots
             //this feels hacky but the curve in the oxyplot is going to get set to null automatically. I am not totally sure why. This will
             //cause a crash if the user moves the mouse over one of the other plots becuase the curve will be null on this plot.
             //i am therefore preemptively setting the curve to null and updating the linkages.
-            if (IndividualPlotWrapperVM.PlotVM != null)
-            {
-                IndividualPlotWrapperVM.PlotVM.Curve = null;
-            }
-            CurrentVM = (BaseViewModel)CurveImporterVM;
+            //8/30/18 this doesn't seem to be the case anymore so i commented it out
+            //if (IndividualPlotWrapperVM.PlotVM != null)
+            //{
+            //   // IndividualPlotWrapperVM.PlotVM.Curve = null;
+            //}
             
+            CurrentVM = (BaseViewModel)CurveImporterVM;
 
             if (previousViewShouldBeTheCoverButton == true)
             {
@@ -196,38 +207,41 @@ namespace FdaViewModel.Plots
 
             CurveImporterVM.IsPoppedOut = false;
 
-            
-
-            IndividualPlotWrapperVM.SubTitle = CurveImporterVM.SelectedElementName;
+            IndividualPlotWrapperVM.SubTitle = CurveImporterVM.SelectedElement.Name;
             //switch to the plot vm
-            IndividualPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(CurveImporterVM.BaseFunction, CurveImporterVM.SelectedCurve);
-
-            
+            IndividualPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(CurveImporterVM.BaseFunction, CurveImporterVM.SelectedCurve, CurveImporterVM.SelectedElementName);
 
             CurrentVM = (BaseViewModel)IndividualPlotWrapperVM;
 
             //store the previouse curve
-            PreviousPlot = new IndividualLinkedPlotVM(CurveImporterVM.BaseFunction, CurveImporterVM.SelectedCurve);
-            
+            PreviousPlot = new IndividualLinkedPlotVM(CurveImporterVM.BaseFunction, CurveImporterVM.SelectedCurve, CurveImporterVM.SelectedElementName); 
 
             if (ModulatorPlotWrapperVM != null)
             {
-                ModulatorPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(CurveImporterVM.BaseFunction, CurveImporterVM.SelectedCurve);
+                ModulatorPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(CurveImporterVM.BaseFunction, CurveImporterVM.SelectedCurve, CurveImporterVM.SelectedElementName);
                 //CurrentVM = (BaseViewModel)ModulatorPlotWrapperVM;
             }
 
-
+            //tell the conditions plot editor vm that this plot is showing
             if (PlotIsShowing != null)
             {
                 PlotIsShowing(sender, e);
             }
 
             //raise the updateplots event - is this still necesarry i update the plots in the ind linked plots loaded event
-            //if(UpdatePlots != null)
-            //{
-            //    UpdatePlots(sender, e);
-            //}
+            if (SelectedCurveUpdated != null)
+            {
+                SelectedCurveUpdated(sender, e);
+            }
 
+        }
+
+        public void PreviewTheCompute(object sender, EventArgs e)
+        {
+            if (PreviewCompute != null)
+            {
+                PreviewCompute(sender, e);
+            }
         }
 
         public void PlotIsNotShowingAnymore(object sender, EventArgs e)
@@ -235,6 +249,10 @@ namespace FdaViewModel.Plots
             if(PlotIsNotShowing != null)
             {
                 PlotIsNotShowing(sender, e);
+            }
+            if (SelectedCurveUpdated != null)
+            {
+                SelectedCurveUpdated(sender, e);
             }
         }
 
@@ -244,6 +262,11 @@ namespace FdaViewModel.Plots
             {
                 PopPlotOut(sender, e);
             }
+        }
+
+        public void SetCurrentViewToCoverButton()
+        {
+            CurrentVM = (BaseViewModel)ImportButtonVM;
         }
 
         public override void AddValidationRules()

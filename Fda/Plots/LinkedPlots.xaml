@@ -21,7 +21,12 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <ToolBarTray Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Name="tool_toolbar"  Margin="5">
+        <Grid Name="grid_TopRow" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="25" />
+            </Grid.RowDefinitions>
+        <ToolBarTray Grid.Row="0"  Grid.ColumnSpan="2" Name="tool_toolbar"  Margin="5">
         <ToolBar  Margin="5" >
             <Button Name="btn_HideTrackers" ToolTip="Hide Trackers" Width="40" Click="btn_HideTrackers_Click" >
                 <Image Name="img_HideTrackers" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/HideTrackers.png"/>
@@ -41,22 +46,43 @@
                        
         </ToolBar>
             <ToolBar>
-                <Label Content="Plot:" />
+                <Label Content="Plot:" VerticalAlignment="Center"/>
                 <ComboBox Name="cmb_PlotNames" Width="150" />
-                <Label Content="X:"/>
+                <Label Content="X:" VerticalAlignment="Center"/>
                 <TextBox Name="txt_XValue" Width="60"  TextChanged="txt_XValue_TextChanged" PreviewTextInput="txt_XValue_PreviewTextInput" />
-                <Label Content="Y:"/>
+                <Label Content="Y:" VerticalAlignment="Center"/>
                 <TextBox Name="txt_YValue" Width="60" />
-                <Button Name="btn_PlotSpecificPoint" Content="Display" Click="btn_PlotSpecificPoint_Click"  />
+                <Button Name="btn_PlotSpecificPoint" Content="Display" Click="btn_PlotSpecificPoint_Click" Background="Gray"  />
                 <Separator Margin="10,0,10,0"/>
             </ToolBar>
             <ToolBar>
-                <Label Content="AEP:" VerticalAlignment="Center"/>
+                    <Button Name="btn_Prev" Width="40" Content="Prev" Background="Gray" IsEnabled="False" Click="btn_Prev_Click"/>
+                    <Button Name="btn_Next" Width="40" Content="Next" Background="Gray" Click="btn_Next_Click"/>
+                    <Label Content="Iteration " HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox Name="txt_IterationNumber" Width="50" Text="{Binding IterationNumber,Mode=OneWay}"/>
+                    <Label Content="of " VerticalAlignment="Center" />
+                    <Label Name="lbl_IterationTotal" Content="{Binding TotalRealizations}" VerticalAlignment="Center"/>
+                    <Button Name="btn_DisplayIteration" Content="Display" Click="btn_DisplayIteration_Click" Background="Gray"/>
+                    <Label Content="AEP:" VerticalAlignment="Center" Margin="5,0,0,0"/>
                 <Label Content="{Binding AEP}" VerticalAlignment="Center" />
                 <Label Content="EAD:" VerticalAlignment="Center"/>
                 <Label Content="{Binding EAD}" VerticalAlignment="Center"/>
             </ToolBar>
         </ToolBarTray>
+            <StackPanel Name="stk_AepAndEad" Grid.Row="1" Orientation="Horizontal">
+            <StackPanel Name="stk_MeanAEP" Orientation="Horizontal">
+                <Label Content="Mean Annual Exceedance Probability: "/>
+                <Label Name="lbl_MeanAEP" Content="{Binding MeanAEP}" Width="50" />
+                <Button Name="btn_ViewMeanAEP" Content="View" Width="40" Margin="2" Click="btn_ViewMeanAEP_Click"/>
+            </StackPanel>
+                <StackPanel Name="stk_MeanEAD" Orientation="Horizontal">
+                    <Label Content="Mean Expected Annual Damage: "/>
+                    <Label Name="lbl_MeanEAD" Content="{Binding MeanEAD}" Width="65" />
+                    <Button Name="btn_ViewMeanEAD" Content="View" Width="40" Margin="2" Click="btn_ViewMeanEAD_Click"/>
+                </StackPanel>
+
+            </StackPanel>
+        </Grid>
         <Grid Name="plot1Grid" Grid.Row="1" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />

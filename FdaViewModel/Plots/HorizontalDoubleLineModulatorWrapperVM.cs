@@ -18,6 +18,8 @@ namespace FdaViewModel.Plots
         #region Fields
         public event EventHandler ShowImportButton;
         public event EventHandler ShowTheImporter;
+        public event EventHandler CurveUpdated;
+
         #endregion
         #region Properties
         public IndividualLinkedPlotVM PlotVM
@@ -35,7 +37,10 @@ namespace FdaViewModel.Plots
         #region Constructors
         public HorizontalDoubleLineModulatorWrapperVM()
         {
-
+        }
+        public HorizontalDoubleLineModulatorWrapperVM(IndividualLinkedPlotVM plotVM):this()
+        {
+            PlotVM = plotVM;
         }
         #endregion
         #region Voids

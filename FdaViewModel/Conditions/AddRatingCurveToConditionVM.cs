@@ -7,6 +7,7 @@ using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using FdaModel.Functions;
 using Statistics;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.Conditions
 {
@@ -20,7 +21,7 @@ namespace FdaViewModel.Conditions
         #region Fields
         private ConditionsOwnerElement _owner;
 
-        private StageTransforms.RatingCurveElement _SelectedRatingElement;
+        //private StageTransforms.RatingCurveElement _SelectedRatingElement;
         private List<StageTransforms.RatingCurveElement> _ListOfRatingCurves;
 
         public event EventHandler OKClickedEvent;
@@ -28,17 +29,21 @@ namespace FdaViewModel.Conditions
         public event EventHandler PopImporterOut;
         #endregion
         #region Properties
+        public OwnedElement SelectedElement
+        {
+            get;set;
+        }
         public bool IsPoppedOut { get; set; }
         public string SelectedElementName
         {
-            get { return _SelectedRatingElement.Name; }
+            get { return SelectedElement.Name; }
         }
 
-        public StageTransforms.RatingCurveElement SelectedRatingElement
-        {
-            get { return _SelectedRatingElement; }
-            set { _SelectedRatingElement = value; NotifyPropertyChanged(); }
-        }
+        //public StageTransforms.RatingCurveElement SelectedRatingElement
+        //{
+        //    get { return _SelectedRatingElement; }
+        //    set { _SelectedRatingElement = value; NotifyPropertyChanged(); }
+        //}
         
         public List<StageTransforms.RatingCurveElement> ListOfRatingCurves
         {
@@ -50,7 +55,9 @@ namespace FdaViewModel.Conditions
         {
             get
             {
-                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)SelectedRatingElement.RatingCurve, FdaModel.Functions.FunctionTypes.Rating);
+                UncertainCurveDataCollection curve = ((StageTransforms.RatingCurveElement)SelectedElement).RatingCurve;
+                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = 
+                    new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.Rating);
 
                 List<double> ys = new List<double>();
                 List<double> xs = new List<double>();
@@ -73,10 +80,18 @@ namespace FdaViewModel.Conditions
                 return new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(SelectedCurve, FunctionTypes.Rating);
             }
         }
+
+        
         #endregion
         #region Constructors
-        public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves, ConditionsOwnerElement owner)
+        public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves, ConditionsOwnerElement owner):this(listOfRatingCurves,null,owner)
         {
+            
+        }
+
+        public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves, StageTransforms.RatingCurveElement selectedRatingElement, ConditionsOwnerElement owner):base()
+        {
+            SelectedElement = selectedRatingElement;
             _owner = owner;
             ListOfRatingCurves = listOfRatingCurves;
         }
@@ -124,7 +139,7 @@ namespace FdaViewModel.Conditions
                             }
                             ListOfRatingCurves = theNewList;
                             //RatingCurveRelationships.Add((StageTransforms.RatingCurveElement)eles.FirstOrDefault().Elements.Last());
-                            SelectedRatingElement = ListOfRatingCurves.Last();
+                            SelectedElement = ListOfRatingCurves.Last();
                         }
                     }
                 }

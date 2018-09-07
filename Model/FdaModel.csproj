@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FdaModel</RootNamespace>
     <AssemblyName>FdaModel</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,17 +33,21 @@
   <ItemGroup>
     <Reference Include="DataBase_Reader, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\Debug\DataBase_Reader.dll</HintPath>
+      <HintPath>..\lib\DataBase_Reader.dll</HintPath>
+    </Reference>
+    <Reference Include="DataTable_Viewer">
+      <HintPath>..\lib\DataTable_Viewer.dll</HintPath>
     </Reference>
     <Reference Include="GDALAssist">
-      <HintPath>..\..\..\..\LifeSim\q0heccdm_LifeSim_1.0\LifeSim_WPF\bin\Debug\GDALAssist.dll</HintPath>
+      <HintPath>..\lib\GDALAssist.dll</HintPath>
     </Reference>
     <Reference Include="gdal_csharp, Version=1.0.4916.28018, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\LifeSim\q0heccdm_LifeSim_1.0\LifeSim_WPF\bin\Debug\gdal_csharp.dll</HintPath>
+      <HintPath>..\lib\gdal_csharp.dll</HintPath>
     </Reference>
-    <Reference Include="Statistics">
-      <HintPath>..\..\..\..\Consequences\ConsequenceToolLibraries_Main-jrk\ConsequenceToolLibraries\Output\Debug\Statistics.dll</HintPath>
+    <Reference Include="Statistics, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Statistics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

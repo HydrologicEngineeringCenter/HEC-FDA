@@ -17,6 +17,21 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -41,59 +56,62 @@
     <StartupObject>Fda.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Consequences_Assist, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\x86\Debug\Consequences_Assist.dll</HintPath>
+    <Reference Include="Consequences_Assist">
+      <HintPath>..\lib\Consequences_Assist.dll</HintPath>
     </Reference>
     <Reference Include="DataBase_Reader">
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\x86\Debug\DataBase_Reader.dll</HintPath>
+      <HintPath>..\lib\DataBase_Reader.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.0.0\..\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.0.0\..\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="gdal_csharp, Version=1.0.4916.28018, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\gdal_csharp.dll</HintPath>
     </Reference>
     <Reference Include="LifeSimGIS, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\x86\Debug\LifeSimGIS.dll</HintPath>
+      <HintPath>..\lib\LifeSimGIS.dll</HintPath>
     </Reference>
     <Reference Include="OpenGLMapping">
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\x86\Debug\OpenGLMapping.dll</HintPath>
+      <HintPath>..\lib\OpenGLMapping.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK">
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\x86\Debug\OpenTK.dll</HintPath>
+      <HintPath>..\lib\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK.GLControl">
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\x86\Debug\OpenTK.GLControl.dll</HintPath>
+      <HintPath>..\lib\OpenTK.GLControl.dll</HintPath>
     </Reference>
     <Reference Include="OxyPlot">
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\x86\Debug\OxyPlot.dll</HintPath>
+      <HintPath>..\lib\OxyPlot.dll</HintPath>
     </Reference>
     <Reference Include="OxyPlot.Wpf">
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\x86\Debug\OxyPlot.Wpf.dll</HintPath>
+      <HintPath>..\lib\OxyPlot.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="QuickHelp">
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\x86\Debug\QuickHelp.dll</HintPath>
+      <HintPath>..\lib\QuickHelp.dll</HintPath>
     </Reference>
     <Reference Include="Statistics">
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\x86\Debug\Statistics.dll</HintPath>
+      <HintPath>..\lib\Statistics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite, Version=1.0.105.2, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.Core.1.0.105.2\lib\net451\System.Data.SQLite.dll</HintPath>
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.105.2\..\lib\net451\System.Data.SQLite.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.SQLite.EF6, Version=1.0.105.2, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.105.2\lib\net451\System.Data.SQLite.EF6.dll</HintPath>
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.105.2\..\lib\net451\System.Data.SQLite.EF6.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.SQLite.Linq, Version=1.0.105.2, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.105.2\lib\net451\System.Data.SQLite.Linq.dll</HintPath>
+      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.105.2\..\lib\net451\System.Data.SQLite.Linq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Windows.Forms" />
@@ -276,6 +294,8 @@
     <Compile Include="Plots\LinkedPlots.xaml.cs">
       <DependentUpon>LinkedPlots.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Plots\PlotsUtil.cs" />
+    <Compile Include="Plots\SharedAxisEnum.cs" />
     <Compile Include="Plots\SingleLinePlot.xaml.cs">
       <DependentUpon>SingleLinePlot.xaml</DependentUpon>
     </Compile>
@@ -813,6 +833,21 @@
     <Resource Include="Resources\AddDisabled.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets')" />

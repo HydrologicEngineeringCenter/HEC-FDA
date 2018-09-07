@@ -178,7 +178,7 @@
 
     <Grid>
 
-        <Button Style="{StaticResource AddButton}" Content="Flow Frequency Curve" IsEnabled="{Binding IsEnabled}" Visibility="{Binding Plot0VM.IsVisible,Converter={StaticResource BoolToInverseVisibilityConverter}}"  Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Click="Button_Click" />
+        <Button Style="{StaticResource AddButton}" Content="{Binding Content}" IsEnabled="{Binding IsEnabled}" Visibility="{Binding Plot0VM.IsVisible,Converter={StaticResource BoolToInverseVisibilityConverter}}"  Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Click="Button_Click" />
 
 
     </Grid>

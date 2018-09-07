@@ -21,7 +21,7 @@ namespace FdaViewModel.Conditions
         public event EventHandler CancelClickedEvent;
         public event EventHandler PopImporterOut;
 
-        private FrequencyRelationships.AnalyticalFrequencyElement _SelectedFlowFrequencyElement;
+        //private FrequencyRelationships.AnalyticalFrequencyElement _SelectedFlowFrequencyElement;
         private ConditionsOwnerElement _owner;
         private List<FrequencyRelationships.AnalyticalFrequencyElement> _InflowFrequencyCurves;
         private Statistics.CurveIncreasing _SelectedCurve;
@@ -32,25 +32,27 @@ namespace FdaViewModel.Conditions
 
         public string SelectedElementName
         {
-            get { return _SelectedFlowFrequencyElement.Name; }
+            get { if (SelectedElement != null) { return SelectedElement.Name; } else { return ""; } }
         }
+        public Utilities.OwnedElement SelectedElement { get;
+            set; }
         public Statistics.CurveIncreasing SelectedCurve
         {
-            get { return new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(SelectedFlowFrequencyElement.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency).GetOrdinatesFunction().Function; }
+            get { return new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(((FrequencyRelationships.AnalyticalFrequencyElement)SelectedElement).Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency).GetOrdinatesFunction().Function; }
             
         }
 
         public FdaModel.Functions.BaseFunction BaseFunction
         {
-            get { return new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(SelectedFlowFrequencyElement.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency); }
+            get { return new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(((FrequencyRelationships.AnalyticalFrequencyElement)SelectedElement).Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency); }
         
 
         }
-        public FrequencyRelationships.AnalyticalFrequencyElement SelectedFlowFrequencyElement
-        {
-            get { return _SelectedFlowFrequencyElement; }
-            set { _SelectedFlowFrequencyElement = value; NotifyPropertyChanged(); }
-        }
+        //public FrequencyRelationships.AnalyticalFrequencyElement SelectedFlowFrequencyElement
+        //{
+        //    get { return _SelectedFlowFrequencyElement; }
+        //    set { _SelectedFlowFrequencyElement = value; SelectedElement = value; NotifyPropertyChanged(); }
+        //}
             public List<FrequencyRelationships.AnalyticalFrequencyElement> InflowFrequencyCurves
         {
             get { return _InflowFrequencyCurves; }
@@ -58,12 +60,17 @@ namespace FdaViewModel.Conditions
         }
         #endregion
         #region Constructors
-        public AddFlowFrequencyToConditionVM():base()
-        {
+        //public AddFlowFrequencyToConditionVM():base()
+        //{
 
-        }
-        public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves, ConditionsOwnerElement owner):base()
+        //}
+        public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves, ConditionsOwnerElement owner):this(lp3Curves,null,owner)
         {
+            
+        }
+        public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves, FrequencyRelationships.AnalyticalFrequencyElement selectedElement,ConditionsOwnerElement owner) : base()
+        {
+            SelectedElement = selectedElement;
             InflowFrequencyCurves = lp3Curves;
             _owner = owner;
         }
@@ -91,7 +98,7 @@ namespace FdaViewModel.Conditions
                             }
                             InflowFrequencyCurves = theNewList;
                             //AnalyiticalRelationships.Add((FrequencyRelationships.AnalyticalFrequencyElement)eles.FirstOrDefault().Elements.Last());
-                            SelectedFlowFrequencyElement = InflowFrequencyCurves.Last();
+                            SelectedElement = InflowFrequencyCurves.Last();
                         }
                     }
                 }

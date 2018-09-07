@@ -18,6 +18,7 @@ namespace FdaViewModel.Plots
         #region Fields
         public event EventHandler ShowImportButton;
         public event EventHandler ShowTheImporter;
+        public event EventHandler CurveUpdated;
         #endregion
         #region Properties
         public IndividualLinkedPlotVM PlotVM
@@ -35,15 +36,18 @@ namespace FdaViewModel.Plots
         #region Constructors
         public DoubleLineModulatorWrapperVM()
         {
-
         }
+        /// <summary>
+        /// Call this when opening up a conditions node that already has values for this plot
+        /// </summary>
+        /// <param name="plotVM"></param>
+        public DoubleLineModulatorWrapperVM(IndividualLinkedPlotVM plotVM):this()
+        {
+            PlotVM = plotVM;
+        }
+
         #endregion
         #region Voids
-        #endregion
-        #region Functions
-        #endregion
-       
-
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
@@ -53,5 +57,12 @@ namespace FdaViewModel.Plots
         {
             //throw new NotImplementedException();
         }
+
+        #endregion
+        #region Functions
+        #endregion
+
+
+
     }
 }

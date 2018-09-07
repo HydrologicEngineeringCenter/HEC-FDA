@@ -43,7 +43,7 @@
 
         <Border BorderBrush="Black" BorderThickness=".5" Margin="0,5,0,5" CornerRadius="1.5" Padding="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top">
             <!--<local:PercentOfMeanUncertainty x:Name="FoundationHeightUncertainty" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Center" IsPercentOfMean="True" ParameterName="Variation in Foundation Height as %:"/>-->
-            <CACSup:PercentOfMeanUncertaintyWarning x:Name="FoundationHeightUncertainty" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Foundation Height as %:" ContinuousDistribution="{Binding SelectedOccType.FoundationHeightUncertainty}" />
+            <CACSup:PercentOfMeanUncertaintyWarning x:Name="FoundationHeightUncertainty" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Foundation Height as %:" /> <!-- ContinuousDistribution="{Binding SelectedOccType.FoundationHeightUncertainty}" />-->
         </Border>
 
         <TabControl Grid.Row="2" Grid.Column="0" Margin="0">

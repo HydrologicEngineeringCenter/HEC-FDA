@@ -29,23 +29,17 @@ namespace Fda.Plots
         {
             FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
             //clear the curve on the VM side
-            vm.PlotVM.Curve = null;
+            vm.PlotVM.Curve = null; // the curve change callback will update all the linkages
 
             //null the SelectedCurve on the control
             ContentControl parentControl = Plots.IndividualLinkedPlotControl.FindParent<ContentControl>(this);
             if (parentControl != null && parentControl.GetType() == typeof(IndividualLinkedPlotControl))
             {
                 ((IndividualLinkedPlotControl)parentControl).LinkedPlot = null;
-                ((IndividualLinkedPlotControl)parentControl).UpdateThePlots();
+               // ((IndividualLinkedPlotControl)parentControl).UpdateThePlots();
             }
-            
-
             //make the button reappear
             vm.ShowTheImportButton(this,new EventArgs());
-
-            //remove the isvisible so that the button will reapear?
-
-            //LinkedPlot = new IndividualLinkedPlot();
 
             LinkedPlot.OxyPlot1.Model.Series.Clear();
             LinkedPlot.OxyPlot1.Model.InvalidatePlot(true);

@@ -41,7 +41,7 @@
       <HintPath>..\Model\bin\Debug\FdaModel.dll</HintPath>
     </Reference>
     <Reference Include="Statistics">
-      <HintPath>..\..\..\..\Consequences\q0heccdm_Consequences_Main\ConsequenceToolLibraries\Output\Debug\Statistics.dll</HintPath>
+      <HintPath>..\lib\Statistics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

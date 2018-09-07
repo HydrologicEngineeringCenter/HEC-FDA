@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OxyPlot;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Fda.Plots;
+using System.Collections.ObjectModel;
 
 namespace Fda.Conditions
 {
@@ -20,7 +23,9 @@ namespace Fda.Conditions
     /// </summary>
     public partial class ConditionsPlotEditor : UserControl
     {
-       
+        private double _SpecifiedXValue;
+        private double _SpecifiedYValue;
+        private IndividualLinkedPlot _SelectedPlot;
 
         public bool HideTrackers { get; set; }
         public bool Plot1PoppedOut { get; set; }
@@ -29,9 +34,18 @@ namespace Fda.Conditions
         public bool Plot5DoesntExist { get; set; }
         public bool AreaPlotsHaveBeenRemoved { get; set; }
 
-        public List<Plots.ILinkedPlot> AddedPlots { get; set; }
+        public ObservableCollection<ILinkedPlot> TheAddedPlots
+        {
+            get;set;
+        }
 
-        
+        public ObservableCollection<IndividualLinkedPlot> ObservablePlots { get; set; }
+        public ObservableCollection<IndividualLinkedPlotControl> AddedPlotControls
+        {
+            get; set;
+        }
+
+
 
         public ConditionsPlotEditor()
         {
@@ -43,8 +57,8 @@ namespace Fda.Conditions
             Plot3Control.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
             DLMHorizontalControl.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
             Plot5Control.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
-
             Plot7Control.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
+            Plot8Control.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
 
 
             DLMControl.PopImporterIntoPlot1 += new EventHandler(PopPlot1ImporterOut);
@@ -55,7 +69,9 @@ namespace Fda.Conditions
 
             FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
 
-            AddedPlots = new List<Plots.ILinkedPlot>();
+            TheAddedPlots = new ObservableCollection<Plots.ILinkedPlot>();
+            AddedPlotControls = new ObservableCollection<IndividualLinkedPlotControl>();
+            ObservablePlots = new ObservableCollection<IndividualLinkedPlot>();
             //doubleLineModulator.PopOutThePlot += new EventHandler(PopPlot1Out);
             //DoubleLineHorizontal.PopOutThePlot += new EventHandler(PopPlot5Out);
 
@@ -69,7 +85,9 @@ namespace Fda.Conditions
         public void UpdateThePlotLinkages(object sender, EventArgs e)
         {
             UpdateTheListOfAddedCurves();
-            UpdateTheLinkages();
+            UpdateTheLinkages(TheAddedPlots.ToList());
+            SetTheSharedAxes();
+            
         }
         private void UpdateTheListOfAddedCurves()
         {
@@ -80,38 +98,54 @@ namespace Fda.Conditions
            
 
 
-            AddedPlots = new List<Plots.ILinkedPlot>();
+            TheAddedPlots = new ObservableCollection<Plots.ILinkedPlot>();
 
             if(Plot0Control.LinkedPlot != null)
             {
-                AddedPlots.Add(Plot0Control.LinkedPlot);
+                TheAddedPlots.Add(Plot0Control.LinkedPlot);
+                AddedPlotControls.Add(Plot0Control);
             }
             if (Plot1Control.LinkedPlot != null && Plot1PoppedOut == true)
             {
-                AddedPlots.Add(Plot1Control.LinkedPlot);
+                TheAddedPlots.Add(Plot1Control.LinkedPlot);
             }
             else if (DLMControl.LinkedPlot != null && Plot1PoppedOut == false)
             {
-                AddedPlots.Add(DLMControl.LinkedPlot);
+                TheAddedPlots.Add(DLMControl.LinkedPlot);
             }
 
             if (Plot3Control.LinkedPlot != null)
             {
-                AddedPlots.Add(Plot3Control.LinkedPlot);
+                TheAddedPlots.Add(Plot3Control.LinkedPlot);
             }
 
             if(Plot5Control.LinkedPlot != null && Plot5PoppedOut == true)
             {
-                AddedPlots.Add(Plot5Control.LinkedPlot);
+                TheAddedPlots.Add(Plot5Control.LinkedPlot);
             }
             else if (DLMHorizontalControl.LinkedPlot != null && Plot5PoppedOut == false)
             {
-                AddedPlots.Add(DLMHorizontalControl.LinkedPlot);
+                TheAddedPlots.Add(DLMHorizontalControl.LinkedPlot);
             }
 
             if (Plot7Control.LinkedPlot != null)
             {
-                AddedPlots.Add(Plot7Control.LinkedPlot);
+                TheAddedPlots.Add(Plot7Control.LinkedPlot);
+            }
+            if (Plot8Control.LinkedPlot != null)
+            {
+                TheAddedPlots.Add(Plot8Control.LinkedPlot);
+            }
+
+            //this is here to load the list of plots that displays in the combobox for the 
+            //specified point tool
+            ObservablePlots.Clear();
+            foreach(ILinkedPlot plot in TheAddedPlots)
+            {
+                if(plot.GetType() == typeof(IndividualLinkedPlot))
+                {
+                    ObservablePlots.Add((IndividualLinkedPlot)plot);
+                }
             }
         }
 
@@ -242,7 +276,8 @@ namespace Fda.Conditions
         private void btn_AddPlot8_Click(object sender, RoutedEventArgs e)
         {
             FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
-            vm.RunPreviewCompute();
+            vm.RunPreviewCompute(this, new EventArgs());
+            
 
         }
         #endregion
@@ -295,7 +330,8 @@ namespace Fda.Conditions
 
             //AddedPlots.Remove(DoubleLineHorizontal);
             //AddedPlots.Add(plot5);
-            UpdateTheLinkages();
+            UpdateThePlotLinkages(sender, e);
+            //UpdateTheLinkages(TheAddedPlots.ToList());
 
             mainGrid.ColumnDefinitions[0].Width = new GridLength(.45, GridUnitType.Star);
 
@@ -369,37 +405,37 @@ namespace Fda.Conditions
 
         private void btn_PopPlotsOut_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+            //FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
 
-            if (Plot1PoppedOut == false || Plot5PoppedOut == false)
-            {
-                if (vm.IsPlot1Visible == true)
-                {
-                    PopPlot1Out(sender, e);
-                }
-                if (vm.IsPlot5Visible == true)
-                {
-                    PopPlot5Out(sender, e);
-                }
-                //change the image to pop in and change the tooltip
-                //img_PopPlotsOut.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(new Uri(@"pack://application:,,,/Fda;component/Resources/PopDown.png"));
-                //btn_PopPlotsOut.ToolTip = "Pop Plots In";
-            }
-            else
-            {
-                if (vm.IsPlot1Visible == true)
-                {
-                    btn_CollapsePlot1_Click(sender, e);
-                }
-                if (vm.IsPlot5Visible == true)
-                {
-                    btn_CollapsePlot5_Click(sender, e);
-                }
-                //change the image to pop out and change the tooltip
-                //img_PopPlotsOut.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(new Uri(@"pack://application:,,,/Fda;component/Resources/PopUp.png"));
-                //btn_PopPlotsOut.ToolTip = "Pop Plots Out";
+            //if (Plot1PoppedOut == false || Plot5PoppedOut == false)
+            //{
+            //    if (vm.IsPlot1Visible == true)
+            //    {
+            //        PopPlot1Out(sender, e);
+            //    }
+            //    if (vm.IsPlot5Visible == true)
+            //    {
+            //        PopPlot5Out(sender, e);
+            //    }
+            //    //change the image to pop in and change the tooltip
+            //    //img_PopPlotsOut.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(new Uri(@"pack://application:,,,/Fda;component/Resources/PopDown.png"));
+            //    //btn_PopPlotsOut.ToolTip = "Pop Plots In";
+            //}
+            //else
+            //{
+            //    if (vm.IsPlot1Visible == true)
+            //    {
+            //        btn_CollapsePlot1_Click(sender, e);
+            //    }
+            //    if (vm.IsPlot5Visible == true)
+            //    {
+            //        btn_CollapsePlot5_Click(sender, e);
+            //    }
+            //    //change the image to pop out and change the tooltip
+            //    //img_PopPlotsOut.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(new Uri(@"pack://application:,,,/Fda;component/Resources/PopUp.png"));
+            //    //btn_PopPlotsOut.ToolTip = "Pop Plots Out";
 
-            }
+            //}
         }
 
         #endregion
@@ -451,27 +487,57 @@ namespace Fda.Conditions
         }
 
         #region Update the linkages
-        private void UpdateTheLinkages()
+        public static void UpdateTheLinkages(List<ILinkedPlot> linkedPlots)
         {
-            //FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
-            
 
-            if (AddedPlots.Count == 0) { return; }
-            List<Plots.ILinkedPlot> sortedList = AddedPlots.OrderBy(o => o.BaseFunction.FunctionType).ToList();
+            ////clear and then reset all the min max values for each plot
+            //foreach(Plots.ILinkedPlot plot in AddedPlots)
+            //{
+            //    plot.set
+            //}
 
-            //********  clear all the startnodes and endnodes  ************
-            foreach(Plots.ILinkedPlot p in sortedList)
+            if (linkedPlots.Count == 0) { return; }
+            List<Plots.ILinkedPlot> sortedList = linkedPlots.OrderBy(o => o.BaseFunction.FunctionType).ToList();
+
+            //once a compute has been done, the 0 becomes a 2 and so adding a 1 will no longer work
+            if (sortedList.Count > 1)
             {
-                p.ThisIsStartNode = false;
-                p.ThisIsEndNode = false;
+                //if you have a 1 and then a 2, switch them
+                if (sortedList[0].BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowOutflow
+                    && sortedList[1].BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.OutflowFrequency)
+                {
+                    Plots.ILinkedPlot tempPlot = sortedList[1];
+                    sortedList.RemoveAt(1);
+                    sortedList.Insert(0, tempPlot);
+                }
+            }
+
+            //********  clear all the startnodes and endnodes and reset min/max values ************
+            foreach (Plots.ILinkedPlot p in sortedList)
+            {
+                p.IsStartNode = false;
+                p.IsEndNode = false;
+                if (p.GetType() == typeof(IndividualLinkedPlot))
+                {
+                    ((IndividualLinkedPlot)p).RemoveAreaPlots();
+                    ((IndividualLinkedPlot)p).HasXAreaPlots = false;
+                    ((IndividualLinkedPlot)p).HasYAreaPlots = false;
+                    //For some reason the area plots get flipped around if the min max values get reset on plot8
+                    //I think it is already getting set somewhere? Either way, plot8 is a bit different because there is no
+                    //importer so i exclude it from resetting the min max values here.
+                    if (((IndividualLinkedPlot)p).BaseFunction.FunctionType != FdaModel.Functions.FunctionTypes.DamageFrequency)
+                    {
+                        IndividualLinkedPlot.SetMinMaxValues((IndividualLinkedPlot)p);
+                    }
+                }
             }
 
             // *******    set up the first plot *********
-            if(sortedList.Count == 0) { return; }
-            sortedList[0].ThisIsStartNode = true;
+            if (sortedList.Count == 0) { return; }
+            sortedList[0].IsStartNode = true;
             if (sortedList.Count == 1)
             {
-                sortedList[0].ThisIsEndNode=true;
+                sortedList[0].IsEndNode = true;
                 return;
             }
 
@@ -479,18 +545,20 @@ namespace Fda.Conditions
 
 
             //**********   set the linkages for all but the last plot
-            for(int i = 1;i<sortedList.Count-1;i++)
+            for (int i = 1; i < sortedList.Count - 1; i++)
             {
-               
-                sortedList[i].SetNextPlotLinkage(sortedList[i + 1],"","");
-                sortedList[i].SetPreviousPlotLinkage(sortedList[i-1]);
+
+                sortedList[i].SetNextPlotLinkage(sortedList[i + 1], "", "");
+                sortedList[i].SetPreviousPlotLinkage(sortedList[i - 1]);
 
             }
             //*********** set the last plot linkage
-            sortedList[sortedList.Count - 1].SetPreviousPlotLinkage(sortedList[sortedList.Count-2]);
-            sortedList[sortedList.Count - 1].ThisIsEndNode = true;
+            sortedList[sortedList.Count - 1].SetPreviousPlotLinkage(sortedList[sortedList.Count - 2]);
+            sortedList[sortedList.Count - 1].IsEndNode = true;
 
-           
+        }
+        private void SetTheSharedAxes()
+        { 
 
             //*********** set any shared axes
             if (IsThereAFlowFrequencyAndRatingCurves() == true)
@@ -502,13 +570,70 @@ namespace Fda.Conditions
             {
                 ((Plots.IndividualLinkedPlot)Plot3Control.LinkedPlot).SetSharedXAxisWithPlot((Plots.IndividualLinkedPlot)Plot7Control.LinkedPlot);
             }
-            
+            if(IsThereAStageDamageAndDamageFreq())
+            {
+                ((Plots.IndividualLinkedPlot)Plot7Control.LinkedPlot).SetSharedYAxisWithPlot((Plots.IndividualLinkedPlot)Plot8Control.LinkedPlot);
+            }
+            if (IsThereAFlowFreqAndDamageFreq())
+            {
+                ((Plots.IndividualLinkedPlot)Plot8Control.LinkedPlot).SetSharedXAxisWithPlot((Plots.IndividualLinkedPlot)Plot0Control.LinkedPlot);
+
+            }
+
         }
-        private bool IsThereAFlowFrequencyAndRatingCurves()
+        private  bool IsThereAStageDamageAndDamageFreq()
+        {
+            bool StageDamageExists = false;
+            bool DamageFreqExists = false;
+            foreach (ILinkedPlot p in TheAddedPlots)
+            {
+                if (p.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InteriorStageDamage)
+                {
+                    StageDamageExists = true;
+                }
+                else if (p.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+                {
+                    DamageFreqExists = true;
+                }
+            }
+            if (StageDamageExists == true && DamageFreqExists == true)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private  bool IsThereAFlowFreqAndDamageFreq()
+        {
+            bool flowFrequencyExists = false;
+            bool DamageFreqExists = false;
+            foreach (Plots.ILinkedPlot p in TheAddedPlots)
+            {
+                if (p.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency || p.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.OutflowFrequency)
+                {
+                    flowFrequencyExists = true;
+                }
+                else if (p.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+                {
+                    DamageFreqExists = true;
+                }
+            }
+            if (flowFrequencyExists == true && DamageFreqExists == true)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private  bool IsThereAFlowFrequencyAndRatingCurves()
         {
             bool flowFrequencyExists = false;
             bool ratingExists = false;
-            foreach (Plots.ILinkedPlot p in AddedPlots)
+            foreach (Plots.ILinkedPlot p in TheAddedPlots)
             {
                 if (p.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency)
                 {
@@ -530,11 +655,11 @@ namespace Fda.Conditions
         }
 
 
-        private bool IsThereARatingAndStageDamageCurve()
+        private  bool IsThereARatingAndStageDamageCurve()
         {
             bool stageDamageExists = false;
             bool ratingExists = false;
-            foreach (Plots.ILinkedPlot p in AddedPlots)
+            foreach (Plots.ILinkedPlot p in TheAddedPlots)
             {
                 if (p.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InteriorStageDamage)
                 {
@@ -586,5 +711,206 @@ namespace Fda.Conditions
             //    btn_ToggleAreaPlots.ToolTip = "Hide Area Plots";
             //}
         }
+
+        #region Plot Specific Point
+        private void btn_PlotSpecificPoint_Click(object sender, RoutedEventArgs e)
+        {
+            //if both the x and the y have values in them then just go with the x value
+            //if neither of them have anything then don't do anything
+            //message if value is not a double or is out of range
+
+            if (cmb_PlotNames.SelectedIndex == -1) { return; }
+            //_SelectedPlotControl = (Plots.IndividualLinkedPlotControl)cmb_PlotNames.SelectedItem; 
+            _SelectedPlot = (IndividualLinkedPlot)cmb_PlotNames.SelectedItem;
+           // double xValue = 0;
+            //double yValue = 0;
+
+
+
+
+            {
+                if (_SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency ||
+                    _SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.OutflowFrequency ||
+                    _SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+                {
+                    GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(true);
+                }
+                else
+                {
+                    GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(false);
+
+                }
+                ScreenPoint position = _SelectedPlot.OxyPlot1.Model.Axes[0].Transform(_SpecifiedXValue, _SpecifiedYValue, _SelectedPlot.OxyPlot1.Model.Axes[1]);
+
+                //if the trackers are already frozen, unfreeze them
+                if (_SelectedPlot.FreezeNextTracker == true)
+                {
+                    _SelectedPlot.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
+                }
+                _SelectedPlot.DisplayTheTrackers(position);
+                //now that the trackers are displayed, freeze them
+                if (_SelectedPlot.FreezeNextTracker == false)
+                {
+                    _SelectedPlot.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
+                }
+
+
+
+
+
+            }
+            //else if (cmb_PlotNames.SelectedItem.ToString() == plot1.Title)
+            //{
+            //    //plot1 is only plugged into the loop when it is popped out, otherwise it is the doublelineModulator that is plugged in
+            //    if (Plot1PoppedOut == true)
+            //    {
+            //        theSelectedPlotControl = plot1;
+            //        GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlotControl, false);
+
+            //    }
+            //    else
+            //    {
+            //        //since plot1 is not popped out, the xvalue (inflow) is the same as plot0's yvalue. just plot that.
+            //        if (txt_XValue.Text != null && txt_XValue.Text != "")
+            //        {
+            //            theSelectedPlotControl = plot0;
+            //            txt_YValue.Text = txt_XValue.Text;
+            //            txt_XValue.Text = "";
+            //            GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlotControl, true);
+            //            //above code works fine, but it is displaying the wrong x value for plot1(it is displaying plot0 x value)
+            //            txt_XValue.Text = ((IndividualLinkedPlot)plot1).GetPairedValue(yValue, false, plot1.OxyPlot1.Model, false).ToString();
+
+            //        }
+            //        // if it is the y value that is sought after, that is the same as the y from plot 3
+            //        else if (txt_YValue.Text != null && txt_YValue.Text != "")
+            //        {
+            //            theSelectedPlotControl = plot3;
+            //            GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlotControl, true);
+            //        }
+            //    }
+
+
+            //}
+            //else if (cmb_PlotNames.SelectedItem.ToString() == plot3.Title)
+            //{
+            //    theSelectedPlotControl = plot3;
+            //    GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlotControl, false);
+            //}
+            //else if (cmb_PlotNames.SelectedItem.ToString() == plot5.Title)
+            //{
+            //    //plot5 is only plugged into the loop when it is popped out, otherwise it is the horizontaldoublelineModulator that is plugged in
+            //    if (Plot1PoppedOut == true)
+            //    {
+            //        theSelectedPlotControl = plot5;
+            //        GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlotControl, false);
+            //    }
+            //}
+            //else if (cmb_PlotNames.SelectedItem.ToString() == plot7.Title)
+            //{
+            //    theSelectedPlotControl = plot7;
+            //    GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlotControl, false);
+            //}
+            //else if (cmb_PlotNames.SelectedItem.ToString() == plot8.Title)
+            //{
+            //    theSelectedPlotControl = plot8;
+            //    GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlotControl, true);
+            //}
+
+
+            //ScreenPoint position = theSelectedPlotControl.OxyPlot1.Model.Axes[0].Transform(xValue, yValue, theSelectedPlotControl.OxyPlot1.Model.Axes[1]);
+
+            ////if the trackers are already frozen, unfreeze them
+            //if (theSelectedPlotControl.FreezeNextTracker == true)
+            //{
+            //    theSelectedPlotControl.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
+            //}
+            //theSelectedPlotControl.DisplayTheTrackers(position);
+            ////now that the trackers are displayed, freeze them
+            //if (theSelectedPlotControl.FreezeNextTracker == false)
+            //{
+            //    theSelectedPlotControl.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
+            //}
+
+
+
+
+
+        }
+
+
+        private void GetAndValidateXAndYValuesForFreezingSpecificPlotPoint( bool isAxisReversed)
+        {
+            //try
+            //{
+            //if (_SelectedPlotControl)
+            //if(_SelectedPlotControl.Content.GetType() != typeof(ConditionsIndividualPlotWrapper)) { return; }
+            
+           // ConditionsIndividualPlotWrapper theSelectedPlotWrapper = ((ConditionsIndividualPlotWrapper)_SelectedPlotControl.Content);
+            //IndividualLinkedPlot theSelectedPlot = theSelectedPlotWrapper.LinkedPlot;
+
+            if (txt_XValue.Text == null || txt_XValue.Text == "")
+            {
+                if (txt_YValue.Text == null || txt_YValue.Text == "")
+                {
+                    //do nothing, there are no values
+                }
+                else
+                {
+                    //x has nothing, and y has some number
+                    _SpecifiedYValue = Convert.ToDouble(txt_YValue.Text);
+                    _SpecifiedXValue = _SelectedPlot.GetPairedValue(_SpecifiedYValue, false, _SelectedPlot.OxyPlot1.Model, isAxisReversed);
+                    if (_SpecifiedYValue > _SelectedPlot.OxyPlot1.Model.Axes[1].Maximum || _SpecifiedYValue < _SelectedPlot.OxyPlot1.Model.Axes[1].Minimum)
+                    {
+                        //FdaViewModel.Utilities.CustomMessageBoxVM vm = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "Y Value is out of range");
+                        MessageBox.Show("Y Value is out of range", "Out of Range");
+                        return;
+                    }
+                    txt_XValue.Text = Math.Round(_SpecifiedXValue, 3).ToString();
+                }
+            }
+            else
+            {
+                //x has a number and we don't care what y is
+                _SpecifiedXValue = Convert.ToDouble(txt_XValue.Text);
+
+                //I need a way to know which plot this is so that i can put the right arguments into this method
+                _SpecifiedYValue = ((IndividualLinkedPlot)_SelectedPlot).GetPairedValue(_SpecifiedXValue, true, _SelectedPlot.OxyPlot1.Model, isAxisReversed);
+                if (_SpecifiedXValue > _SelectedPlot.OxyPlot1.Model.Axes[0].Maximum || _SpecifiedXValue < _SelectedPlot.OxyPlot1.Model.Axes[0].Minimum)
+                {
+                    //FdaViewModel.Utilities.CustomMessageBoxVM vm = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "X Value is out of range");
+                    MessageBox.Show("X Value is out of range", "Out of Range");
+                    return;
+                }
+                txt_YValue.Text = Math.Round(_SpecifiedYValue, 3).ToString();
+            }
+
+        }
+
+
+        private void txt_XValue_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox box = (TextBox)sender;
+            double doubleValue = 0;
+            if (double.TryParse(box.Text, out doubleValue) == false && box.Text != "-" && box.Text != ".")
+            {
+                if (box.Text.Length == 1) { box.Text = ""; }
+            }
+
+
+        }
+
+        private void txt_XValue_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            TextBox tBox = (TextBox)sender;
+            if (!char.IsDigit(Convert.ToChar(e.Text))) { e.Handled = true; }//numeric only
+            if (Convert.ToChar(e.Text) == (char)8) { e.Handled = false; }//allow backspace
+            if (e.Text == " ") { e.Handled = true; }//don't allow spaces
+            if (e.Text == "-" && tBox.SelectionStart == 0 && tBox.Text.IndexOf("-") == -1) { e.Handled = false; }//allow negative
+            if (e.Text == "." && tBox.Text.IndexOf(".") == -1) { e.Handled = false; }//allow decimal
+
+
+        }
+
+        #endregion
     }
 }

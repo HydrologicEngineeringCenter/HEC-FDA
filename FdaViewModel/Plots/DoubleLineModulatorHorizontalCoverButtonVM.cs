@@ -37,11 +37,7 @@ namespace FdaViewModel.Plots
         #region Voids
         public void ButtonClicked()
         {
-
-            if (this.Clicked != null)
-            {
-                this.Clicked(this, new EventArgs());
-            }
+            this.Clicked?.Invoke(this, new EventArgs());
         }
         public override void AddValidationRules()
         {

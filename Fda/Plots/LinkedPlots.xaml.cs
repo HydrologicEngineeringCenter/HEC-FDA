@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
+using Fda.Output;
 
 namespace Fda.Plots
 {
@@ -35,114 +36,115 @@ namespace Fda.Plots
         {
             InitializeComponent();
 
+        }
+
+        private void SetTheLinkages()
+        {
+            FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+
+            doubleLineModulator.BaseFunction = plot1.BaseFunction;
+            DoubleLineHorizontal.BaseFunction = plot5.BaseFunction;
+
             doubleLineModulator.PopOutThePlot += new EventHandler(PopPlot1Out);
             DoubleLineHorizontal.PopOutThePlot += new EventHandler(PopPlot5Out);
-            //plot0.SetYAxisToLogarithmic = true;
 
-
-            //set up the linking. I might need to do some magic to handle if some of the plots aren't there
-
-            
+            //I am assuming that we will always have a valid plot 0 here?
             plot0.SetAsStartNode();
-            // plot0.SetNextPlotLinkage(plot1, "y", "x");
-             plot0.SetNextPlotLinkage(doubleLineModulator, "y", "x");
-
+            if (vm.Plot1VM.BaseFunction != null)
+            {
+                plot0.SetNextPlotLinkage(doubleLineModulator, "y", "x");
+                doubleLineModulator.SetNextPlotLinkage(plot3, "y", "y");
+                doubleLineModulator.SetPreviousPlotLinkage(plot0);
+            }
+            else
+            {
+                plot0.SetNextPlotLinkage(plot3, "y", "y");
+            }
             //plot0.SetPreviousPlotLinkage(plot8);
 
 
             //plot1.SetNextPlotLinkage(plot3, "y", "y");
             //plot1.SetPreviousPlotLinkage(plot0);
 
-            doubleLineModulator.SetNextPlotLinkage(plot3, "y", "y");
-            doubleLineModulator.SetPreviousPlotLinkage(plot0);
+            if (vm.Plot5VM.BaseFunction != null)
+            {
+                plot3.SetNextPlotLinkage(DoubleLineHorizontal, "x", "x");
+                if (vm.Plot1VM.BaseFunction != null)
+                {
+                    plot3.SetPreviousPlotLinkage(doubleLineModulator);
+                }
+                else
+                {
+                    plot3.SetPreviousPlotLinkage(plot0);
+                }
 
-            plot3.SetNextPlotLinkage(DoubleLineHorizontal, "x", "x");
-            plot3.SetPreviousPlotLinkage(doubleLineModulator);
+                DoubleLineHorizontal.SetNextPlotLinkage(plot7, "y", "x");
+                DoubleLineHorizontal.SetPreviousPlotLinkage(plot3);
+
+                plot7.SetPreviousPlotLinkage(DoubleLineHorizontal);
+
+            }
+            else
+            {
+
+                plot3.SetNextPlotLinkage(plot7, "x", "x");
+                if (vm.Plot1VM.BaseFunction != null)
+                {
+                    plot3.SetPreviousPlotLinkage(doubleLineModulator);
+                }
+                else
+                {
+                    plot3.SetPreviousPlotLinkage(plot0);
+                }
 
 
+                plot7.SetPreviousPlotLinkage(plot3);
+            }
 
-            DoubleLineHorizontal.SetNextPlotLinkage(plot7, "y", "x");
-            DoubleLineHorizontal.SetPreviousPlotLinkage(plot3);
-
-     
 
             plot7.SetNextPlotLinkage(plot8, "y", "y");
-            plot7.SetPreviousPlotLinkage(DoubleLineHorizontal);
 
-          
 
-           // plot8.SetNextPlotLinkage(plot0, "x", "x");
+
+            // plot8.SetNextPlotLinkage(plot0, "x", "x");
             plot8.SetPreviousPlotLinkage(plot7);
             //plot8.SetNextPlotLinkage(plot0, "x", "x");
             plot8.SetAsEndNode();
 
 
-          
 
+            //UpdatePlotVisibility();
+            //List<ILinkedPlot> includedPlots = new List<ILinkedPlot>() { plot0, plot3, plot7, plot8 };
+            //if(Plot1DoesntExist == false)
+            //{
+            //    includedPlots.Add(plot1);
+            //}
+            //if(Plot5DoesntExist == false)
+            //{
+            //    includedPlots.Add(plot5);
+            //}
+
+            //Conditions.ConditionsPlotEditor.UpdateTheLinkages(includedPlots);
+            //SetTheSharedAxes();
 
         }
 
-       
-       
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            
 
+            SetTheLinkages();
             //minimize plot 1 off the start
             //plot1.Visibility = Visibility.Collapsed;
             //mainGrid.RowDefinitions[0].Height = new GridLength(0);
             //mainGrid.RowDefinitions[1].Height = new GridLength(0);
 
             //sets the min and max values for the shared axes of the two shared plots
-            plot0.SetSharedXAxisWithPlot(plot8);
-            plot0.SetSharedYAxisWithPlot(plot3);
-            plot3.SetSharedXAxisWithPlot(plot7);
-            plot7.SetSharedYAxisWithPlot(plot8);
+            SetTheSharedAxes();
             //plot8.SetSharedXAxisWithPlot(plot0); // make sure you never double set. O was already setting with 8
 
-            if (plot0.Curve.Count == 0)
-            {
-                plot0.Visibility = Visibility.Collapsed;
-            }
-            if (plot1.Curve.Count == 0)
-            {
-                plot1.Visibility = Visibility.Collapsed;
-                Plot1DoesntExist = true;
-                // if there is no plot here, collapse the grid rows 0 and 1
-                //mainGrid.RowDefinitions[0].Height = new GridLength(0);
-                //mainGrid.RowDefinitions[1].Height = new GridLength(0);
 
-
-                //restructure the linking. Plot0 now goes to plot 3
-                plot0.SetNextPlotLinkage(plot3, "y", "y");
-                //set previous plot
-                plot3.SetPreviousPlotLinkage(plot0);
-                //turn off the doublelinemodulator
-                FourPlotGrid.ColumnDefinitions[2].Width = new GridLength(0);
-
-            }
-            if (plot3.Curve.Count == 0)
-            {
-                plot3.Visibility = Visibility.Collapsed;
-            }
-            if (plot5.Curve.Count == 0)
-            {
-                plot5.Visibility = Visibility.Collapsed;
-                Plot5DoesntExist = true;
-                //reset the linking. plot3 now goes to plot7
-                plot3.SetNextPlotLinkage(plot7, "x", "x");
-                plot7.SetPreviousPlotLinkage(plot3);
-                FourPlotGrid.RowDefinitions[2].Height = new GridLength(0);
-            }
-            if (plot7.Curve.Count == 0)
-            {
-                plot7.Visibility = Visibility.Collapsed;
-            }
-            if (plot8.Curve.Count == 0)
-            {
-                plot8.Visibility = Visibility.Collapsed;
-            }
-
+            UpdatePlotVisibility();
 
             cmb_PlotNames.Items.Add(plot0.Title);
             if (Plot1DoesntExist == false)
@@ -157,7 +159,61 @@ namespace Fda.Plots
             cmb_PlotNames.Items.Add(plot7.Title);
             cmb_PlotNames.Items.Add(plot8.Title);
 
+            plot8.PlotAreaUnderTheCurve();
+        }
 
+        private void SetTheSharedAxes()
+        {
+            plot0.SetSharedYAxisWithPlot(plot3);
+            plot3.SetSharedXAxisWithPlot(plot7);
+            plot7.SetSharedYAxisWithPlot(plot8);
+            plot8.SetSharedXAxisWithPlot(plot0);
+        }
+
+        private void UpdatePlotVisibility()
+        {
+            if (plot0.Curve.Count == 0)
+            {
+                plot0.Visibility = Visibility.Collapsed;
+            }
+            if (plot1.Curve.Count == 0)
+            {
+                plot1.Visibility = Visibility.Collapsed;
+                Plot1DoesntExist = true;
+                // if there is no plot here, collapse the grid rows 0 and 1
+                //mainGrid.RowDefinitions[0].Height = new GridLength(0);
+                //mainGrid.RowDefinitions[1].Height = new GridLength(0);
+
+
+                ////restructure the linking. Plot0 now goes to plot 3
+                //plot0.SetNextPlotLinkage(plot3, "y", "y");
+                ////set previous plot
+                //plot3.SetPreviousPlotLinkage(plot0);
+                //turn off the doublelinemodulator
+                FourPlotGrid.ColumnDefinitions[2].Width = new GridLength(0);
+
+            }
+            if (plot3.Curve.Count == 0)
+            {
+                plot3.Visibility = Visibility.Collapsed;
+            }
+            if (plot5.Curve.Count == 0)
+            {
+                plot5.Visibility = Visibility.Collapsed;
+                Plot5DoesntExist = true;
+                //reset the linking. plot3 now goes to plot7
+                //plot3.SetNextPlotLinkage(plot7, "x", "x");
+                //plot7.SetPreviousPlotLinkage(plot3);
+                FourPlotGrid.RowDefinitions[2].Height = new GridLength(0);
+            }
+            if (plot7.Curve.Count == 0)
+            {
+                plot7.Visibility = Visibility.Collapsed;
+            }
+            if (plot8.Curve.Count == 0)
+            {
+                plot8.Visibility = Visibility.Collapsed;
+            }
         }
 
         #region toolbar stuff
@@ -185,7 +241,7 @@ namespace Fda.Plots
 
         }
 
-        private void PopPlot5Out(object sender, EventArgs e)
+        public void PopPlot5Out(object sender, EventArgs e)
         {
             Plot5PoppedOut = true;
             //collapse the row the modulator is in
@@ -202,7 +258,7 @@ namespace Fda.Plots
             mainGrid.ColumnDefinitions[0].Width = new GridLength(.45, GridUnitType.Star);
 
             //move the toolbar over
-            Grid.SetColumn(tool_toolbar, 0);
+            Grid.SetColumn(grid_TopRow, 0);
 
 
         }
@@ -242,7 +298,7 @@ namespace Fda.Plots
             // expand the main grid column 0
             mainGrid.ColumnDefinitions[0].Width = new GridLength(0);
             //move the toolbar over
-            Grid.SetColumn(tool_toolbar, 1);
+            Grid.SetColumn(grid_TopRow, 1);
         }
 
         private void btn_PopPlotsOut_Click(object sender, RoutedEventArgs e)
@@ -295,13 +351,19 @@ namespace Fda.Plots
                 plot5.ShowTracker();
                 plot7.ShowTracker();
                 plot8.ShowTracker();
-                if (Plot1PoppedOut == false)
+                if (Plot1DoesntExist == false) //if plot 1 exists
                 {
-                    FourPlotGrid.ColumnDefinitions[2].Width = new GridLength(45);
+                    if (Plot1PoppedOut == false)
+                    {
+                        FourPlotGrid.ColumnDefinitions[2].Width = new GridLength(45);
+                    }
                 }
-                if (Plot5PoppedOut == false)
+                if (Plot5DoesntExist == false) //if plot 5 exists
                 {
-                    FourPlotGrid.RowDefinitions[2].Height = new GridLength(45);
+                    if (Plot5PoppedOut == false)
+                    {
+                        FourPlotGrid.RowDefinitions[2].Height = new GridLength(45);
+                    }
                 }
                 HideTrackers = false;
                 //change the tracker button image and change the tooltip
@@ -486,28 +548,217 @@ namespace Fda.Plots
         {
             if (AreaPlotsHaveBeenRemoved == false)
             {
-                plot0.RemoveAreaPlots();
-                plot3.RemoveAreaPlots();
-                plot7.RemoveAreaPlots();
-                plot8.RemoveAreaPlots();
-                AreaPlotsHaveBeenRemoved = true;
+                RemoveAreaPlotsFromButtonClick();
                 //change the image and change the tooltip
                 img_HideAreaPlots.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(new Uri(@"pack://application:,,,/Fda;component/Resources/ShowAreaPlots.png"));
                 btn_ToggleAreaPlots.ToolTip = "Show Area Plots";
             }
             else
             {
-                plot0.AddAreaPlots();
-                plot3.AddAreaPlots();
-                plot7.AddAreaPlots();
-                plot8.AddAreaPlots();
-                AreaPlotsHaveBeenRemoved = false;
+                AddAreaPlots();
                 //change the image and change the tooltip
                 img_HideAreaPlots.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(new Uri(@"pack://application:,,,/Fda;component/Resources/HideAreaPlots.png"));
                 btn_ToggleAreaPlots.ToolTip = "Hide Area Plots";
             }
         }
 
+        private void RemoveAreaPlotsFromButtonClick()
+        {
+            plot0.RemoveAreaPlotsFromButtonClick();
+            plot3.RemoveAreaPlotsFromButtonClick();
+            plot7.RemoveAreaPlotsFromButtonClick();
+            plot8.RemoveAreaPlotsFromButtonClick();
+            AreaPlotsHaveBeenRemoved = true;
+        }
+        private void RemoveAreaPlots()
+        {
+            plot0.RemoveAreaPlots();
+            plot3.RemoveAreaPlots();
+            plot7.RemoveAreaPlots();
+            plot8.RemoveAreaPlots();
+            AreaPlotsHaveBeenRemoved = true;
+        }
+
+        private void AddAreaPlots()
+        {
+            plot0.AddAreaPlots();
+            plot3.AddAreaPlots();
+            plot7.AddAreaPlots();
+            plot8.AddAreaPlots();
+            AreaPlotsHaveBeenRemoved = false;
+        }
+
         #endregion
+
+        private void btn_Prev_Click(object sender, RoutedEventArgs e)
+        {
+            FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+            //the current iteration is actually 1 less than what the vm returns because the value is bound
+            //to the vm and i want it to start with 1
+            int currentIteration = vm.IterationNumber-1;
+            int prevIteration = currentIteration - 1;
+            if (currentIteration >= 1)
+            {
+                vm.IterationNumber -= 1;
+                PlotIteration(prevIteration);
+            }
+            if (prevIteration == 0)
+            {
+                btn_Prev.IsEnabled = false;
+            }
+            if (prevIteration < vm.Result.Realizations.Count - 1)
+            {
+                btn_Next.IsEnabled = true;
+            }
+        }
+
+
+        private void btn_Next_Click(object sender, RoutedEventArgs e)
+        {
+            FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+            //the current iteration is actually 1 less than what the vm returns because the value is bound
+            //to the vm and i want it to start with 1
+            int currentIteration = vm.IterationNumber - 1;
+            
+            int nextIteration = currentIteration + 1;
+
+            if (currentIteration < vm.Result.Realizations.Count - 1)
+            {
+                vm.IterationNumber += 1;
+                PlotIteration(nextIteration);
+
+            }
+            if (nextIteration > 0)
+            {
+                btn_Prev.IsEnabled = true;
+            }
+            if (nextIteration == vm.Result.Realizations.Count - 1)
+            {
+                btn_Next.IsEnabled = false;
+            }
+        }
+
+
+        public void PlotIteration(int iteration)
+        {
+            //reasign the input functions
+            FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+            //InputFunctions = vm.Result.Realizations[iteration].Functions;
+
+            //clear all axes
+            //plot0.OxyPlot1.Model.Axes.Clear();
+            //plot1.OxyPlot1.Model.Axes.Clear();
+            //plot3.OxyPlot1.Model.Axes.Clear();
+            //plot5.OxyPlot1.Model.Axes.Clear();
+            //plot7.OxyPlot1.Model.Axes.Clear();
+            //plot8.OxyPlot1.Model.Axes.Clear();
+
+            ////OxyPlotModel.Axes.Clear();
+            ////OxyPlotModel2.Axes.Clear();
+            ////OxyPlotModel3.Axes.Clear();
+            ////OxyPlotModel4.Axes.Clear();
+
+
+            ////clear all series
+            //plot0.OxyPlot1.Model.Series.Clear();
+            //plot1.OxyPlot1.Model.Series.Clear();
+            //plot3.OxyPlot1.Model.Series.Clear();
+            //plot5.OxyPlot1.Model.Series.Clear();
+            //plot7.OxyPlot1.Model.Series.Clear();
+            //plot8.OxyPlot1.Model.Series.Clear();
+
+            //OxyPlotModel.Series.Clear();
+            //OxyPlotModel4.Series.Clear();
+            //OxyPlotModel2.Series.Clear();
+            //OxyPlotModel3.Series.Clear();
+            RemoveAreaPlots();
+            vm.UpdateCurvesToIteration(iteration);
+            //set the new axes values
+
+
+            //ResetMinMaxValues();
+            //IndividualLinkedPlot.FlipFreqAxis(plot8);// plot8.FlipFrequencyAxis = true;
+            //IndividualLinkedPlot.FlipFreqAxis(plot0);
+            SetTheSharedAxes();
+            SetTheLinkages();
+            UpdatePlotVisibility();
+
+
+            //SetAxesValues();
+
+            //create the new series
+            //setUpPlot1();
+            //setUpPlot2();
+            //setUpPlot3();
+            //setUpPlot4();
+
+            //redraw all plots
+            //plot0.OxyPlot1.Model.InvalidatePlot(true);
+            //plot1.OxyPlot1.Model.InvalidatePlot(true);
+            //plot3.OxyPlot1.Model.InvalidatePlot(true);
+            //plot5.OxyPlot1.Model.InvalidatePlot(true);
+            //plot7.OxyPlot1.Model.InvalidatePlot(true);
+            //plot8.OxyPlot1.Model.InvalidatePlot(true);
+
+            plot8.PlotAreaUnderTheCurve();
+
+            // AddAreaPlots();
+            plot0.OxyPlot1.InvalidatePlot(true);
+            plot1.OxyPlot1.InvalidatePlot(true);
+            plot3.OxyPlot1.InvalidatePlot(true);
+            plot5.OxyPlot1.InvalidatePlot(true);
+            plot7.OxyPlot1.InvalidatePlot(true);
+            plot8.OxyPlot1.InvalidatePlot(true);
+
+            //OxyPlotModel.InvalidatePlot(true);
+            //OxyPlotModel2.InvalidatePlot(true);
+            //OxyPlotModel3.InvalidatePlot(true);
+            //OxyPlotModel4.InvalidatePlot(true);
+
+            //lbl_IterationValues.Content = "AEP: " + Math.Round(1 - Result.Realizations[_CurrentIteration].AnnualExceedanceProbability, 3).ToString() + Environment.NewLine + "EAD: " + Math.Round(Result.Realizations[_CurrentIteration].ExpectedAnnualDamage, 0).ToString();
+
+
+        }
+
+        private void ResetMinMaxValues()
+        {
+            IndividualLinkedPlot.SetMinMaxValues(plot0);
+            IndividualLinkedPlot.SetMinMaxValues(plot1);
+            IndividualLinkedPlot.SetMinMaxValues(plot3);
+            IndividualLinkedPlot.SetMinMaxValues(plot5);
+            IndividualLinkedPlot.SetMinMaxValues(plot7);
+            IndividualLinkedPlot.SetMinMaxValues(plot8);
+        }
+
+        private void btn_ViewMeanAEP_Click(object sender, RoutedEventArgs e)
+        {
+            FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+            HistogramViewer hv = new HistogramViewer(vm.Result, false);
+            //hv.Owner = this;
+            hv.Show();
+        }
+
+        private void btn_ViewMeanEAD_Click(object sender, RoutedEventArgs e)
+        {
+            FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+            HistogramViewer hv = new HistogramViewer(vm.Result, true);
+            //hv.Owner = this;
+            hv.Show();
+        }
+
+        private void btn_DisplayIteration_Click(object sender, RoutedEventArgs e)
+        {
+            FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+            int iteration;
+            bool parseWorked = int.TryParse( txt_IterationNumber.Text, out iteration);
+            if (parseWorked && iteration > 0 && iteration <= vm.TotalRealizations)
+            {
+                PlotIteration(iteration-1);
+                //update the next and prev button visibility
+                btn_Prev.IsEnabled = (iteration > 1);
+                btn_Next.IsEnabled = (iteration < vm.TotalRealizations);
+
+            }
+        }
     }
 }

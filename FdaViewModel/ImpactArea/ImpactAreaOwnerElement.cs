@@ -53,23 +53,24 @@ namespace FdaViewModel.ImpactArea
         {
             List<string> paths = new List<string>();
             ShapefilePathsOfType(ref paths,Utilities.VectorFeatureType.Polygon);
-            System.Collections.ObjectModel.ObservableCollection<string> observpaths = new System.Collections.ObjectModel.ObservableCollection<string>();
+            ObservableCollection<string> observpaths = new ObservableCollection<string>();
             foreach(string s in paths)
             {
                 observpaths.Add(s);
             }
+            //i don't think the above code does anything usefull
             ImpactAreaImporterVM vm = new ImpactAreaImporterVM(observpaths);
             Navigate(vm,true,true,"Import Impact Areas");
             if (!vm.HasError & !vm.WasCancled)
             {
                 
                 if(vm.Description == null) { vm.Description = ""; }
-                LifeSimGIS.ShapefileReader shp = new LifeSimGIS.ShapefileReader(vm.SelectedPath);
-                LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)shp.ToFeatures();
+               // LifeSimGIS.ShapefileReader shp = new LifeSimGIS.ShapefileReader(vm.SelectedPath);
+                //LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)shp.ToFeatures();
 
-                ImpactAreaElement element = new ImpactAreaElement(vm.Name, vm.Description, vm.ListOfRows, this);
-                AddElement(element);
-                element.WriteImpactAreaTableToSqlite(polyFeatures);
+                ImpactAreaElement element = new ImpactAreaElement(vm.Name, vm.Description, vm.ListOfRows, vm.SelectedPath, this);
+                AddElement(element,true);
+                //element.WriteImpactAreaTableToSqlite(polyFeatures);
                 AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.CreateNew, "Impact Areas were created using the file " + vm.SelectedPath, nameof(ImpactAreaElement)));
 
             }

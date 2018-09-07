@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using FdaModel.Utilities.Attributes;
 using FdaModel.Utilities.Messager;
+using Statistics;
 
 namespace FdaModel.Functions.FrequencyFunctions
 {

@@ -21,6 +21,7 @@ namespace FdaViewModel.Plots
         private bool _IsEnabled;
         #endregion
         #region Properties
+        public string Content { get; set; }
         public bool IsEnabled
         {
             get { return _IsEnabled; }
@@ -29,9 +30,9 @@ namespace FdaViewModel.Plots
             public IndividualLinkedPlotControlVM Parent { get; set; }
         #endregion
         #region Constructors
-            public IndividualLinkedPlotCoverButtonVM():base()
+        public IndividualLinkedPlotCoverButtonVM(string buttonContent):base()
         {
-
+            Content = buttonContent;
         }
         public IndividualLinkedPlotCoverButtonVM(IndividualLinkedPlotControlVM parent)
         {
@@ -49,17 +50,19 @@ namespace FdaViewModel.Plots
                 this.Clicked(this, new EventArgs());
             }
         }
-        #endregion
-        #region Functions
-        #endregion
+
         public override void AddValidationRules()
         {
-           // throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
 
         public override void Save()
         {
             //throw new NotImplementedException();
         }
+        #endregion
+        #region Functions
+        #endregion
+
     }
 }

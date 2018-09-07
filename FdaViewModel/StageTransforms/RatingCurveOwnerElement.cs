@@ -91,8 +91,11 @@ namespace FdaViewModel.StageTransforms
 
         public override void AddElement(object[] rowData)
         {
+            //creates an empty curve
+            Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[2]));
 
-            RatingCurveElement rc = new RatingCurveElement((string)rowData[0], (string)rowData[1], new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[2])), this);
+            RatingCurveElement rc = new RatingCurveElement((string)rowData[0], (string)rowData[1], emptyCurve, this);
+            //loads the curve with the values from it's table
             rc.RatingCurve.fromSqliteTable(rc.TableName);
             AddElement(rc,false);
 

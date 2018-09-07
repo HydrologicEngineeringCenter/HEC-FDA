@@ -7,8 +7,7 @@ using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using Statistics;
 using FdaModel.Functions;
-
-
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.Conditions
 {
@@ -21,7 +20,7 @@ namespace FdaViewModel.Conditions
         #endregion
         #region Fields
         private ConditionsOwnerElement _owner;
-        private StageTransforms.ExteriorInteriorElement _SelectedExteriorInteriorStageElement;
+        //private StageTransforms.ExteriorInteriorElement _SelectedExteriorInteriorStageElement;
         private List<StageTransforms.ExteriorInteriorElement> _ListOfExteriorInteriorStageElements;
 
         public event EventHandler OKClickedEvent;
@@ -30,11 +29,17 @@ namespace FdaViewModel.Conditions
 
         #endregion
         #region Properties
-        public StageTransforms.ExteriorInteriorElement SelectedExteriorInteriorStageElement
+        //public StageTransforms.ExteriorInteriorElement SelectedExteriorInteriorStageElement
+        //{
+        //    get { return _SelectedExteriorInteriorStageElement; }
+        //    set { _SelectedExteriorInteriorStageElement = value; NotifyPropertyChanged(); }
+        //}
+        public OwnedElement SelectedElement
         {
-            get { return _SelectedExteriorInteriorStageElement; }
-            set { _SelectedExteriorInteriorStageElement = value; NotifyPropertyChanged(); }
+            get;set;
         }
+
+
         public List<StageTransforms.ExteriorInteriorElement> ListOfExteriorInteriorStageElements
         {
             get { return _ListOfExteriorInteriorStageElements; }
@@ -45,7 +50,10 @@ namespace FdaViewModel.Conditions
         {
             get
             {
-                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extInt = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)SelectedExteriorInteriorStageElement.ExteriorInteriorCurve, FdaModel.Functions.FunctionTypes.ExteriorInteriorStage);
+                UncertainCurveDataCollection curve = ((StageTransforms.ExteriorInteriorElement)SelectedElement).ExteriorInteriorCurve;
+
+                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extInt = 
+                    new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve,FunctionTypes.ExteriorInteriorStage);
                 List<double> ys = new List<double>();
                 List<double> xs = new List<double>();
                 foreach (double y in (extInt.GetOrdinatesFunction().Function.YValues))
@@ -56,7 +64,7 @@ namespace FdaViewModel.Conditions
                 {
                     xs.Add(x);
                 }
-                return new Statistics.CurveIncreasing(xs.ToArray(), ys.ToArray(), true, false);
+                return new CurveIncreasing(xs.ToArray(), ys.ToArray(), true, false);
             }
         }
 
@@ -72,7 +80,7 @@ namespace FdaViewModel.Conditions
         {
             get
             {
-                return SelectedExteriorInteriorStageElement.Name;
+                return SelectedElement.Name;
             }
         }
 
@@ -81,10 +89,16 @@ namespace FdaViewModel.Conditions
             get; set;
         }
 
+
+
         #endregion
         #region Constructors
-        public AddExteriorInteriorStageToConditionVM(List<StageTransforms.ExteriorInteriorElement> listOfExIntStage, ConditionsOwnerElement owner)
+        public AddExteriorInteriorStageToConditionVM(List<StageTransforms.ExteriorInteriorElement> listOfExIntStage, ConditionsOwnerElement owner):this(listOfExIntStage,null,owner)
         {
+        }
+        public AddExteriorInteriorStageToConditionVM(List<StageTransforms.ExteriorInteriorElement> listOfExIntStage, StageTransforms.ExteriorInteriorElement selectedElement, ConditionsOwnerElement owner):base()
+        {
+            SelectedElement = selectedElement;
             ListOfExteriorInteriorStageElements = listOfExIntStage;
             _owner = owner;
         }
@@ -112,7 +126,7 @@ namespace FdaViewModel.Conditions
                             }
                             ListOfExteriorInteriorStageElements = theNewList;
                             //ExteriorInteriorList.Add((StageTransforms.ExteriorInteriorElement)eles.FirstOrDefault().Elements.Last());
-                            SelectedExteriorInteriorStageElement = ListOfExteriorInteriorStageElements.Last();
+                            SelectedElement = ListOfExteriorInteriorStageElements.Last();
                         }
                     }
                 }

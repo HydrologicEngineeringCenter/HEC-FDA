@@ -28,8 +28,8 @@ namespace Fda.Plots
         public static readonly DependencyProperty CurveProperty = DependencyProperty.Register("Curve", typeof(Statistics.CurveIncreasing), typeof(DoubleLineModulator), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(CurveChangedCallBack)));
 
         private bool _FreezeTracker;
-        private int _NextPlotSharedAxisEnum = -1;
-        private int _PreviousPlotSharedAxisEnum = -1;
+        private SharedAxisEnum _NextPlotSharedAxisEnum = SharedAxisEnum.unknown;
+        private SharedAxisEnum _PreviousPlotSharedAxisEnum = SharedAxisEnum.unknown;
         private double _Height;
         private double _Width;
         private bool _FlipFreqAxis = false;
@@ -39,8 +39,12 @@ namespace Fda.Plots
 
 
         #region Properties
-        public bool ThisIsStartNode { get; set; }
-        public bool ThisIsEndNode { get; set; }
+        public double MaxX { get; set; }
+        public double MaxY { get; set; }
+        public double MinX { get; set; }
+        public double MinY { get; set; }
+        public bool IsStartNode { get; set; }
+        public bool IsEndNode { get; set; }
 
         public FdaModel.Functions.BaseFunction BaseFunction
         {
@@ -64,7 +68,7 @@ namespace Fda.Plots
                 _FreezeTracker = value;
                 if (value == true)
                 {
-                    if (ThisIsEndNode == false)
+                    if (IsEndNode == false)
                     {
                         NextPlot.FreezeNextTracker = true;
 
@@ -72,7 +76,7 @@ namespace Fda.Plots
                 }
                 else
                 {
-                    if (ThisIsEndNode == false)
+                    if (IsEndNode == false)
                     {
                         NextPlot.FreezeNextTracker = false;
 
@@ -99,7 +103,7 @@ namespace Fda.Plots
 
             }
         }
-        public int NextPlotSharedAxisEnum
+        public SharedAxisEnum NextPlotSharedAxisEnum
         {
             get { return _NextPlotSharedAxisEnum; }
             set { _NextPlotSharedAxisEnum = value; }
@@ -245,7 +249,7 @@ namespace Fda.Plots
             //this.SetNextPlotSharedAxis(thisAxis, linkedAxis);
 
 
-            if (ThisIsEndNode == true) { return; }
+            if (IsEndNode == true) { return; }
             thisAxis = "";
             linkedAxis = "";
 
@@ -272,19 +276,19 @@ namespace Fda.Plots
             string linkedAxisUpper = linkedAxis.ToUpper();
             if (thisAxisUpper == "X" && linkedAxisUpper == "X")  //enum 1
             {
-                _NextPlotSharedAxisEnum = 1;
+                _NextPlotSharedAxisEnum = SharedAxisEnum.XX;
             }
             else if (thisAxisUpper == "X" && linkedAxisUpper == "Y") //enum 2
             {
-                _NextPlotSharedAxisEnum = 2;
+                _NextPlotSharedAxisEnum = SharedAxisEnum.XY;
             }
             else if (thisAxisUpper == "Y" && linkedAxisUpper == "X")  // enum 3
             {
-                _NextPlotSharedAxisEnum = 3;
+                _NextPlotSharedAxisEnum = SharedAxisEnum.YX;
             }
             else if (thisAxisUpper == "Y" && linkedAxisUpper == "Y") // enum 4
             {
-                _NextPlotSharedAxisEnum = 4;
+                _NextPlotSharedAxisEnum = SharedAxisEnum.YY;
             }
         }
         /// <summary>
@@ -444,14 +448,14 @@ namespace Fda.Plots
 
         public void SetAsEndNode()
         {
-            ThisIsEndNode = true;
+            IsEndNode = true;
         }
         public void DisplayNextTracker(double x, double y)
         {
             //display my own stuff
             
             DisplayLines(x, y);
-            if (ThisIsEndNode == true) { return; }
+            if (IsEndNode == true) { return; }
             if(NextPlot == null || NextPlot.Curve == null) { return; }
 
             //get the x and y values for the next plot
@@ -461,7 +465,7 @@ namespace Fda.Plots
 
             switch (_NextPlotSharedAxisEnum)
             {
-                case 1:
+                case SharedAxisEnum.XX:
                     {
                         //otherValue = GetPairedValue(x, true, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
                         if (NextPlot.FlipFrequencyAxis == true)
@@ -478,7 +482,7 @@ namespace Fda.Plots
 
                         break;
                     }
-                case 2:
+                case SharedAxisEnum.XY:
                     {
                         //otherValue = GetPairedValue(x, false, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
 
@@ -494,7 +498,7 @@ namespace Fda.Plots
                         }
                         break;
                     }
-                case 3:
+                case SharedAxisEnum.YX:
                     {
                         //otherValue = GetPairedValue(y, true, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
                         if (NextPlot.FlipFrequencyAxis == true)
@@ -510,7 +514,7 @@ namespace Fda.Plots
                         NextPlot.DisplayNextTracker(y, otherValue);
                         break;
                     }
-                case 4:
+                case SharedAxisEnum.YY:
                     {
                         otherValue = NextPlot.Curve.GetXfromY(y);
                         //otherValue = GetPairedValue(y, false, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
@@ -536,7 +540,7 @@ namespace Fda.Plots
             double otherValue;
             switch (_PreviousPlotSharedAxisEnum)
             {
-                case 1:
+                case SharedAxisEnum.XX:
                     {
                         //otherValue = GetPairedValue(x, true, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
                         if (PreviousPlot.FlipFrequencyAxis == true)
@@ -553,7 +557,7 @@ namespace Fda.Plots
 
                         break;
                     }
-                case 2:
+                case SharedAxisEnum.XY:
                     {
                         //otherValue = GetPairedValue(dp.Y, true, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
                         if (PreviousPlot.FlipFrequencyAxis == true)
@@ -569,7 +573,7 @@ namespace Fda.Plots
 
                         break;
                     }
-                case 3:
+                case SharedAxisEnum.YX:
                     {
                         otherValue = PreviousPlot.Curve.GetXfromY(x);
                         //otherValue = GetPairedValue(dp.X, false, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
@@ -586,7 +590,7 @@ namespace Fda.Plots
 
                         break;
                     }
-                case 4:
+                case SharedAxisEnum.YY:
                     {
                         otherValue = PreviousPlot.Curve.GetXfromY(y);
                         //otherValue = GetPairedValue(y, false, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);

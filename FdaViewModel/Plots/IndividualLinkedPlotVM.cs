@@ -18,12 +18,14 @@ namespace FdaViewModel.Plots
         #region Fields
         private Statistics.CurveIncreasing _MyCurve;
         private bool _IsVisible;
+        //public event EventHandler CurveUpdated;
         #endregion
         #region Properties
         public Statistics.CurveIncreasing Curve
         {
             get { return _MyCurve; }
             set { _MyCurve = value; NotifyPropertyChanged(); }
+                //CurveUpdated?.Invoke(this, new EventArgs()); }
         }
        
         public string Title { get; set; }
@@ -37,35 +39,39 @@ namespace FdaViewModel.Plots
             set { _IsVisible = value; NotifyPropertyChanged(); }
         }
         public string SelectedElementName { get; set; }
+       
 
         public FdaModel.Functions.BaseFunction BaseFunction { get; set; }
         #endregion
         #region Constructors
-
         public IndividualLinkedPlotVM():base()
         {
-
         }
 
-        public IndividualLinkedPlotVM(FdaModel.Functions.BaseFunction baseFunction, Statistics.CurveIncreasing curve)
+        public IndividualLinkedPlotVM(FdaModel.Functions.BaseFunction baseFunction, Statistics.CurveIncreasing curve, string selectedElementName) : this(baseFunction,curve,"","","",selectedElementName)
         {
-            BaseFunction = baseFunction;
-            if(baseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency)
-            {
-                Curve = ((FdaModel.Functions.FrequencyFunctions.LogPearsonIII)baseFunction).GetOrdinatesFunction().Function;
-            }
-            else
-            {
-                Curve = ((FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction)baseFunction).Function;
-            }
+          
+            //BaseFunction = baseFunction;
+            //if(baseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency)
+            //{
+            //    Curve = ((FdaModel.Functions.FrequencyFunctions.LogPearsonIII)baseFunction).GetOrdinatesFunction().Function;
+            //}
+            //else if(BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InteriorStageDamage)
+            //{
+            //    Curve = TrimTrailingZeroes(((FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction)baseFunction).Function);
+            //}
+            //else
+            //{
+            //    Curve = ((FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction)baseFunction).Function;
+            //}
             
             //_MyCurve = curve;
         }
         public IndividualLinkedPlotVM(FdaModel.Functions.BaseFunction baseFunction, Statistics.CurveIncreasing curve,string title, string xAxisLabel,string yAxisLabel, string selectedElementName = "")
         {
             BaseFunction = baseFunction;
-           
             SelectedElementName = selectedElementName;
+            SubTitle = selectedElementName;
             if (baseFunction.GetType().BaseType == typeof(FdaModel.Functions.FrequencyFunctions.FrequencyFunction))
             {
                 //is it a 0,2,4,6,8
@@ -78,8 +84,14 @@ namespace FdaViewModel.Plots
             }
             else if(baseFunction.GetType() == typeof(FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction))
             {
-                Curve = ((FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction)baseFunction).Function;
-
+                if (BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InteriorStageDamage)
+                {
+                    Curve = TrimTrailingZeroes(((FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction)baseFunction).Function);
+                }
+                else
+                {
+                    Curve = ((FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction)baseFunction).Function;
+                }
             }
             else if(baseFunction.GetType() == typeof(FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction))
             {
@@ -96,15 +108,14 @@ namespace FdaViewModel.Plots
                 }
 
             }
-
-
-
-            //_MyCurve = curve;
            
             Title = title;
             XAxisLabel = xAxisLabel;
             YAxisLabel = yAxisLabel;
         }
+
+        #endregion
+        #region Voids
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
@@ -115,9 +126,22 @@ namespace FdaViewModel.Plots
             //throw new NotImplementedException();
         }
         #endregion
-        #region Voids
-        #endregion
         #region Functions
+
+        private Statistics.CurveIncreasing TrimTrailingZeroes(Statistics.CurveIncreasing curve)
+        {
+            if(curve.Count > 0 && curve.YValues[0] > 0) { return curve; }//early exit if there aren't any zeros at the beginning
+            Statistics.CurveIncreasing damageCurveWithNoZeroes = new Statistics.CurveIncreasing();
+            for (int i = 0; i < curve.Count; i++)
+            {
+                if (curve.YValues[i] != 0)
+                {
+                    damageCurveWithNoZeroes.Add(curve.XValues[i], curve.YValues[i]);
+                }
+            }
+
+            return damageCurveWithNoZeroes;
+        }
         #endregion
     }
 }

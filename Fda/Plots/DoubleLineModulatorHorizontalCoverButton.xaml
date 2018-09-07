@@ -176,7 +176,7 @@
 
     </UserControl.Resources>
     <Grid>
-        <Button Style="{StaticResource AddButtonHorizontalModulator}" Content="Inflow Outflow Curve" Margin="0,2,0,2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="{Binding IsEnabled}" Click="Button_Click" />
+        <Button Style="{StaticResource AddButtonHorizontalModulator}" Content="Ext Int Stage Curve" Margin="0,2,0,2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="{Binding IsEnabled}" Click="Button_Click" />
 
     </Grid>
 </UserControl>

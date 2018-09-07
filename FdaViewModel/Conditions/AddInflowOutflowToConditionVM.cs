@@ -7,6 +7,7 @@ using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using FdaModel.Functions;
 using Statistics;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.Conditions
 {
@@ -19,7 +20,7 @@ namespace FdaViewModel.Conditions
         #endregion
         #region Fields
 
-        private FlowTransforms.InflowOutflowElement _SelectedInflowOutflowElement;
+        //private FlowTransforms.InflowOutflowElement _SelectedInflowOutflowElement;
         private ConditionsOwnerElement _owner;
         private List<FlowTransforms.InflowOutflowElement> _ListOfInflowOutflowElements;
 
@@ -29,10 +30,15 @@ namespace FdaViewModel.Conditions
         #endregion
         #region Properties
 
-        public FlowTransforms.InflowOutflowElement SelectedInflowOutflowElement
+        //public FlowTransforms.InflowOutflowElement SelectedInflowOutflowElement
+        //{
+        //    get { return _SelectedInflowOutflowElement; }
+        //    set { _SelectedInflowOutflowElement = value; NotifyPropertyChanged(); }
+        //}
+
+        public OwnedElement SelectedElement
         {
-            get { return _SelectedInflowOutflowElement; }
-            set { _SelectedInflowOutflowElement = value; NotifyPropertyChanged(); }
+            get; set;
         }
 
         public List<FlowTransforms.InflowOutflowElement> ListOfInflowOutflowElements
@@ -45,7 +51,9 @@ namespace FdaViewModel.Conditions
         {
             get
             {
-                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction infOut = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)SelectedInflowOutflowElement.InflowOutflowCurve, FdaModel.Functions.FunctionTypes.InflowOutflow);
+                UncertainCurveDataCollection curve = ((FlowTransforms.InflowOutflowElement)SelectedElement).InflowOutflowCurve;
+                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction infOut = 
+                    new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InflowOutflow);
                 List<double> ys = new List<double>();
                 List<double> xs = new List<double>();
                 foreach (double y in (infOut.GetOrdinatesFunction().Function.YValues))
@@ -72,7 +80,7 @@ namespace FdaViewModel.Conditions
         {
             get
             {
-                return _SelectedInflowOutflowElement.Name;
+                return SelectedElement.Name;
             }
         }
 
@@ -80,14 +88,19 @@ namespace FdaViewModel.Conditions
         {
             get;set;
         }
+
+       
         #endregion
         #region Constructors
-        public AddInflowOutflowToConditionVM(List<FlowTransforms.InflowOutflowElement> listOfinOut, ConditionsOwnerElement owner)
+        public AddInflowOutflowToConditionVM(List<FlowTransforms.InflowOutflowElement> listOfinOut, ConditionsOwnerElement owner):this(listOfinOut,null,owner)
         {
+        }
 
+        public AddInflowOutflowToConditionVM(List<FlowTransforms.InflowOutflowElement> listOfinOut, FlowTransforms.InflowOutflowElement selectedElement, ConditionsOwnerElement owner):base()
+        {
+            SelectedElement = selectedElement;
             ListOfInflowOutflowElements = listOfinOut;
             _owner = owner;
-
         }
 
 
@@ -114,8 +127,7 @@ namespace FdaViewModel.Conditions
                             }
                             ListOfInflowOutflowElements = theNewList;
 
-                            SelectedInflowOutflowElement = ListOfInflowOutflowElements.Last();
-                            
+                            SelectedElement = ListOfInflowOutflowElements.Last();    
 
                         }
                     }
@@ -126,6 +138,7 @@ namespace FdaViewModel.Conditions
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
+
         }
 
         public override void Save()

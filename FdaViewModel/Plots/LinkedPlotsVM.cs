@@ -5,6 +5,7 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using FdaModel.Functions;
 
 namespace FdaViewModel.Plots
 {
@@ -17,12 +18,47 @@ namespace FdaViewModel.Plots
         // Created Date: 4/6/2017 2:48:04 PM
         #endregion
         #region Fields
-       
+        private int _IterationNumber;
+        private int _TotalNumberOfRealizations;
+
+        private double _EAD;
+        private double _AEP;
+        private double _MeanEAD;
+        private double _MeanAEP;
 
         #endregion
         #region Properties
-        public double EAD { get; set; }
-        public double AEP { get; set; }
+        public double EAD
+        {
+            get { return _EAD; }
+            set{ _EAD = value; NotifyPropertyChanged();}
+        }
+        public double AEP
+        {
+            get { return _AEP; }
+            set { _AEP = Math.Round(1 - value, 4);  NotifyPropertyChanged(); }
+        }
+        public double MeanAEP
+        {
+            get { return _MeanAEP; }
+            set { _MeanAEP = Math.Round(1 - value, 4);  NotifyPropertyChanged(); }
+        }
+        public double MeanEAD
+        {
+            get { return _MeanEAD; }
+            set { _MeanEAD =value;  NotifyPropertyChanged(); }
+        }
+        public int IterationNumber
+        {
+            get { return _IterationNumber + 1; }
+            set { _IterationNumber = value; NotifyPropertyChanged(); }
+        }
+
+        public int TotalRealizations
+        {
+            get { return _TotalNumberOfRealizations; }
+            set { _TotalNumberOfRealizations = value; NotifyPropertyChanged(); }
+        }
         
         public FdaModel.ComputationPoint.Outputs.Result Result { get; set; }
       
@@ -54,22 +90,83 @@ namespace FdaViewModel.Plots
             AssignTheCurvesToThePlots(realization.Functions);
 
             CheckIfAllPlotsExists();
-
-
         }
         public LinkedPlotsVM(FdaModel.ComputationPoint.Outputs.Result result)
         {
             Result = result;
+            MeanAEP = result.AEP.GetMean;
+            MeanEAD = result.EAD.GetMean;
+
             if(result.Realizations.Count>0)
             {
-                AssignTheCurvesToThePlots(result.Realizations[0].Functions);
+                FdaModel.ComputationPoint.Outputs.Realization realization = result.Realizations[0];
+                EAD = Math.Round(realization.ExpectedAnnualDamage, 3);
+                AEP = Math.Round(realization.AnnualExceedanceProbability, 3);
+                AssignTheCurvesToThePlots(realization.Functions);
                 CheckIfAllPlotsExists();
+                TotalRealizations = result.Realizations.Count;
+                IterationNumber = 0;
             }
         }
         #endregion
         #region Voids
 
-        
+        public void UpdateCurvesToIteration(int iteration)
+        {
+            if (Result.Realizations.Count > iteration)
+            {
+                FdaModel.ComputationPoint.Outputs.Realization realization = Result.Realizations[iteration];
+                //AssignTheCurvesToThePlots(realization.Functions);
+                //CheckIfAllPlotsExists();
+                UpdateCurves(realization.Functions);
+                IterationNumber = iteration;
+                EAD = Math.Round(realization.ExpectedAnnualDamage, 3);
+                AEP = Math.Round(realization.AnnualExceedanceProbability, 3);
+            }
+        }
+
+        private void UpdateCurves(List<BaseFunction> functions )
+        {
+            foreach (BaseFunction func in functions)
+            {
+                FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction ord = func.GetOrdinatesFunction();
+                switch(func.FunctionType)
+                {
+                    case FunctionTypes.InflowFrequency:
+                    case FunctionTypes.OutflowFrequency:
+                        Plot0VM.Curve = ord.Function;
+                        break;
+                    case FunctionTypes.InflowOutflow:
+                        Plot1VM.Curve = ord.Function;
+                        break;
+                    case FunctionTypes.Rating:
+                        //need to flip the xs and ys
+                        List<double> ys = new List<double>();
+                        List<double> xs = new List<double>();
+                        foreach (double y in ord.Function.YValues)
+                        {
+                            ys.Add(y);
+                        }
+                        foreach (double x in ord.Function.XValues)
+                        {
+                            xs.Add(x);
+                        }
+                        FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction rat = new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(func.GetOrdinatesFunction().Function.YValues, func.GetOrdinatesFunction().Function.XValues, FunctionTypes.Rating);
+                        Plot3VM.Curve = rat.Function;
+                        break;
+                    case FunctionTypes.ExteriorInteriorStage:
+                        Plot5VM.Curve = ord.Function;
+                        break;
+                    case FunctionTypes.InteriorStageDamage:
+                        Plot7VM.Curve = ord.Function;
+                        break;
+                    case FunctionTypes.DamageFrequency:
+                        Plot8VM.Curve = ord.Function;
+                        break;
+                }
+
+            }
+        }
 
         private void CheckIfAllPlotsExists()
         {
@@ -115,6 +212,7 @@ namespace FdaViewModel.Plots
                 if (func.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency || func.FunctionType == FdaModel.Functions.FunctionTypes.OutflowFrequency)
                 {
                     Plot0VM = new IndividualLinkedPlotVM(ord, ord.Function,"LP3","Probability","Inflow (cfs)");
+                    Plot0VM.Curve = ord.Function;
 
                     //Plot0Curve = ord.Function;
                 }
@@ -160,9 +258,6 @@ namespace FdaViewModel.Plots
 
             }
         }
-        #endregion
-        #region Functions
-        #endregion
         public override void AddValidationRules()
         {
             //AddRule(nameof(XValue), () => XValue < 0, "X value cannot be less than zero.");
@@ -173,5 +268,9 @@ namespace FdaViewModel.Plots
         {
             //throw new NotImplementedException();
         }
+        #endregion
+        #region Functions
+        #endregion
+
     }
 }

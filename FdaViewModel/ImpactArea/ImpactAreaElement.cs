@@ -35,7 +35,11 @@ namespace FdaViewModel.ImpactArea
         }
         #endregion
         #region Constructors
-        public ImpactAreaElement(string userdefinedname,string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows, ImpactAreaOwnerElement owner ) : base(owner)
+        public ImpactAreaElement(string userdefinedname, string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows,
+            ImpactAreaOwnerElement owner) : this(userdefinedname,description,collectionOfRows, "", owner)
+        {
+        }
+        public ImpactAreaElement(string userdefinedname,string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows, string selectedPath, ImpactAreaOwnerElement owner ) : base(owner)
         {
             Name = userdefinedname;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/ImpactAreas.png");
@@ -54,8 +58,8 @@ namespace FdaViewModel.ImpactArea
             //    ImpactAreaRows.Add(items as ImpactAreaRowItem);
 
             //}
-            
 
+            SelectedPath = selectedPath;
 
             Utilities.NamedAction edit = new Utilities.NamedAction();
             edit.Header = "Edit Impact Areas";
@@ -163,66 +167,13 @@ namespace FdaViewModel.ImpactArea
 
         public override void Save()
         {
-            //string[] colNames = { "Name", "IndexPoint" };
-            //Type[] colTypes = { typeof(string), typeof(double) };
-            //Storage.Connection.Instance.CreateTable(TableName, colNames, colTypes);
-            //string originalTableName = "Impact Area-" + _OriginalName;
-            //if (!Storage.Connection.Instance.IsConnectionNull)
-            //{
-            //    if (Storage.Connection.Instance.TableNames().Contains(TableName))
-            //    {
-            //        //temporarily get and store the geo data
-            //        DataBase_Reader.SqLiteReader sqr = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
-            //        LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(sqr);
-            //        LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)gpr.ConvertToGisFeatures(TableName);
-
-            //        ////already exists... delete?
-            //        WriteImpactAreaTableToSqlite(polyFeatures);
-
-            //        ////now create the new table with the new name
-            //        //LifeSimGIS.GeoPackageWriter gpw = new LifeSimGIS.GeoPackageWriter(sqr);
-
-
-            //        //System.Data.DataTable dt = new System.Data.DataTable(TableName);
-            //        //dt.Columns.Add("Name", typeof(string));
-            //        //dt.Columns.Add("IndexPoint", typeof(double));
-
-            //        //foreach (ImpactAreaRowItem row in ImpactAreaRows)
-            //        //{
-            //        //    dt.Rows.Add(row.Name, row.IndexPoint);
-
-            //        //}
-
-            //        //DataBase_Reader.InMemoryReader imr = new DataBase_Reader.InMemoryReader(dt);
-
-            //        //gpw.AddFeatures(TableName, polyFeatures, imr.GetTableManager(imr.TableNames[0]));
-
-            //        ////remove the row from the parent table with the original name and update with the new name
-
-
-            //    }
-
-            //}
-
-
+            LifeSimGIS.ShapefileReader shp = new LifeSimGIS.ShapefileReader(SelectedPath);
+            LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)shp.ToFeatures();
+            WriteImpactAreaTableToSqlite(polyFeatures);
         }
 
         private void UpdateExistingTable()
         {
-            //DataBase_Reader.SqLiteReader sqr = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
-            //LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(sqr);
-            //LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)gpr.ConvertToGisFeatures(TableName);
-            //if (!Storage.Connection.Instance.IsConnectionNull)
-            //{
-            //    if (Storage.Connection.Instance.TableNames().Contains(TableName))
-            //    {
-            //        //already exists... delete?
-            //        Storage.Connection.Instance.DeleteTable(TableName);
-
-
-            //    }
-            //    WriteImpactAreaTableToSqlite(polyFeatures);
-            //}
 
             DataBase_Reader.SqLiteReader sqlReader = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
             DataBase_Reader.DataTableView dtv = sqlReader.GetTableManager(TableName);
@@ -245,7 +196,7 @@ namespace FdaViewModel.ImpactArea
 
         }
 
-        public void WriteImpactAreaTableToSqlite(LifeSimGIS.PolygonFeatures polyFeatures)
+        private void WriteImpactAreaTableToSqlite(LifeSimGIS.PolygonFeatures polyFeatures)
         {
             if (!Storage.Connection.Instance.IsConnectionNull)
             {
@@ -288,7 +239,7 @@ namespace FdaViewModel.ImpactArea
         }
         public override bool SavesToTable()
         {
-            return true;
+            return true;   
         }
         #endregion
         #region Functions 

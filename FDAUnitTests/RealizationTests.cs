@@ -299,7 +299,7 @@ namespace FDAUnitTests
             }
 
                 //((FdaTester.ModelTester.UnitTests.Compute_Testing.BaseComputeTest)myRealization).WriteDataOut(((FdaTester.ModelTester.UnitTests.Compute_Testing.BaseComputeTest)temp).MyComputedObject, @"C:\Users\q0heccdm\Documents\HEC FDA\Compute Testing\Compute Test Results\Single Test_" + testName +".txt", errMesArray);
-            ComputeWriter.WriteRealization(myRealization, @"C:\Users\q0heccdm\Documents\HEC FDA\Compute Testing\Compute Test Results\Single Test_" + testName + ".txt", errMesArray);
+            ComputeWriter.WriteRealization(myRealization, @"..\Testing\Compute Testing\Compute Test Results\Single Test_" + testName + ".txt", errMesArray);
 
             // *********************  end writing ********************************************
             ////////////////////////////////////////////////////////////////////////////////////
