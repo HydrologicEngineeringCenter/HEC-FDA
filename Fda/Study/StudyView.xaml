@@ -27,7 +27,7 @@
         <Menu Grid.ColumnSpan="2" Name="MainMenu" VerticalAlignment="Stretch"/>
 
 
-        <TabControl Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1" Grid.RowSpan="2">
+        <TabControl Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1" Grid.RowSpan="2" SelectedIndex="{Binding SelectedTab, Mode=TwoWay}">
             <TabItem Header="Study Tree" Name="StudyTree">
                 <Grid>
                     <TreeView Name="StudyTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding MainStudyTree}" ><!---->
@@ -47,16 +47,36 @@
             </TabItem>
             <TabItem Header="Conditions Control" Name="ConditionsTab">
                     <Grid>
-                        <!--<TreeView Name="ConditionsTree" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding MainStudyTree[0].Elements[4].Elements}">
+                        <TreeView Name="ConditionsTree" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding ConditionsTree}">
                             <TreeView.ItemContainerStyle>
-                                <Style TargetType="{x:Type TreeViewItem}">
-                                    <Setter Property="Header" Value="{Binding Name, Mode=TwoWay}"/>
+                                <Style TargetType="{x:Type TreeViewItem}"> 
+                                    <Setter Property="Header" Value="{Binding CustomTreeViewHeader}"/>
                                     <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
-                                    <Setter Property="ItemsSource" Value="{Binding Elements}"/>
+                                    <!--<Setter Property="ItemsSource" Value="{Binding Name}"/>-->
+                                    <!--<Setter Property="FontSize" Value="{Binding FontSize}" />-->
+                                    <Setter Property="FontWeight" Value="{Binding IsBold,Converter={StaticResource BoolToBoldConverter}}" />
                                     <Setter Property="ContextMenu" Value="{Binding Actions, Converter={StaticResource converter }}"/>
+                                    <Setter Property="ToolTip" Value="{Binding Error}"/>
                                 </Style>
                             </TreeView.ItemContainerStyle>
-                        </TreeView>-->
+                            <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Elements}">
+                                <TextBlock Text="{Binding Path=Name}" />
+                                <!-- Conditions Element level-->
+                                <HierarchicalDataTemplate.ItemTemplate>
+                                    <HierarchicalDataTemplate ItemsSource="{Binding ConditionsTreeNodes}">
+                                        <utils:CustomHeader/>
+                                        <!-- Condition components level-->
+                                        <HierarchicalDataTemplate.ItemTemplate>
+                                            <DataTemplate>
+                                                <utils:CustomHeader/>
+                                            </DataTemplate>
+                                        </HierarchicalDataTemplate.ItemTemplate>
+                                    </HierarchicalDataTemplate>
+                                </HierarchicalDataTemplate.ItemTemplate>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                        </TreeView>
                     </Grid>
                 </TabItem>
                 <TabItem Name="Maps" Header="Map Layers">

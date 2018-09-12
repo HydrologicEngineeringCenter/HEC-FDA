@@ -1,4 +1,5 @@
 ﻿using FdaModel.Functions;
+using FdaViewModel.Utilities;
 using Statistics;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,10 @@ namespace FdaViewModel.Conditions
         #region Notes
         #endregion
         #region Fields
+        public event EventHandler EditConditionsTreeElement;
+        public event EventHandler RemoveConditionsTreeElement;
+        public event EventHandler RenameConditionsTreeElement;
+
         private const string _TableConstant = "Conditions - ";
 
 
@@ -43,10 +48,30 @@ namespace FdaViewModel.Conditions
         private bool _UseThreshold;
         private string _ThresholdType;//dollars or stage. need enum.
         private double _ThresholdValue;
-        private ConditionsOwnerElement _ConditionsOwnerElement;
+        private OwnerElement _ConditionsOwnerElement;
+        private List<BaseFdaElement> _ConditionsTreeNodes;
 
         #endregion
         #region Properties
+
+        public bool IsExpanded
+        {
+            get { return true; }
+        }
+        public bool IsBold
+        {
+            get { return false; }
+        }
+        public int FontSize
+        {
+            get { return 14; }
+        }
+        public List<BaseFdaElement> ConditionsTreeNodes
+        {
+            get { return _ConditionsTreeNodes; }
+            set { _ConditionsTreeNodes = value; NotifyPropertyChanged(); }
+        }
+
         public override string GetTableConstant()
         {
             return _TableConstant;
@@ -155,6 +180,105 @@ namespace FdaViewModel.Conditions
             get { return _ThresholdValue; }
             set { _ThresholdValue = value; NotifyPropertyChanged(); }
         }
+
+        /// <summary>
+        /// This should only be used in conjunction with the Conditions tree tab.
+        /// I use this copy constructor to create a new conditions element that is identical to
+        /// the conditions element in the study tree. This cond elem will be placed in the cond tree tab.
+        /// It will call events for rename, remove, edit that get handled by its owner which is the 
+        /// ConditionsTreeOwnerElement. These elements should never be saved. The identical version
+        /// in the study tree gets saved.
+        /// </summary>
+        /// <param name="elem"></param>
+        /// <param name="owner"></param>
+        public ConditionsElement(ConditionsElement elem, OwnerElement owner):base(owner)
+        {
+            Name = elem.Name;
+            _ConditionsOwnerElement = owner;
+            CustomTreeViewHeader = elem.CustomTreeViewHeader;
+
+            Description = elem.Description;
+            AnalysisYear = elem.AnalysisYear;
+            ImpactAreaElement = elem.ImpactAreaElement;
+            ImpactArea = elem.ImpactArea ;
+
+            UseAnalyiticalFlowFrequency = elem.UseAnalyiticalFlowFrequency;
+            AnalyticalFlowFrequency = elem.AnalyticalFlowFrequency;
+
+            UseInflowOutflow = elem.UseInflowOutflow;
+            InflowOutflowElement = elem.InflowOutflowElement;
+
+            UseRatingCurve = elem.UseRatingCurve;
+            RatingCurveElement = elem.RatingCurveElement;
+
+            UseExteriorInteriorStage = elem.UseExteriorInteriorStage;
+            ExteriorInteriorElement = elem.ExteriorInteriorElement;
+
+            UseLevee = elem.UseLevee;
+            LeveeElement = elem.LeveeElement;
+
+            UseFailureFunction = elem.UseFailureFunction;
+            FailureFunctionElement = elem.FailureFunctionElement;
+
+            UseAggregatedStageDamage = elem.UseAggregatedStageDamage;
+            StageDamageElement = elem.StageDamageElement;
+
+            UseThreshold = elem.UseThreshold;
+            ThresholdType = elem.ThresholdType;
+            ThresholdValue = elem.ThresholdValue;
+
+            NamedAction edit = new NamedAction();
+            edit.Header = "Edit Condition";
+            edit.Action = EditConditionsTreeElem;
+
+            NamedAction compute = new NamedAction();
+            compute.Header = "Compute Condition";
+            compute.Action = ComputeCondition;
+
+            NamedAction removeCondition = new NamedAction();
+            removeCondition.Header = "Remove";
+            removeCondition.Action = RemoveConditionsTreeElem;
+
+            NamedAction renameElement = new NamedAction();
+            renameElement.Header = "Rename";
+            renameElement.Action = RenameConditionsTreeElem;
+
+            List<NamedAction> localActions = new List<NamedAction>();
+            localActions.Add(edit);
+            localActions.Add(compute);
+            localActions.Add(removeCondition);
+            localActions.Add(renameElement);
+
+            Actions = localActions;
+            _ConditionsTreeNodes = new List<BaseFdaElement>() {ImpactAreaElement, AnalyticalFlowFrequency, InflowOutflowElement,
+                RatingCurveElement,ExteriorInteriorElement,StageDamageElement};
+
+        }
+
+        private void RenameConditionsTreeElem(object sender, EventArgs e)
+        {
+            if (RenameConditionsTreeElement != null)
+            {
+                RenameConditionsTreeElement.Invoke(this, e);
+            }
+        }
+        private void RemoveConditionsTreeElem(object sender, EventArgs e)
+        {
+            if(RemoveConditionsTreeElement != null)
+            {
+                RemoveConditionsTreeElement.Invoke(this, e);
+            }
+        }
+
+        private void EditConditionsTreeElem(object sender, EventArgs e)
+        {
+            if (EditConditionsTreeElement != null)
+            {
+                EditConditionsTreeElement.Invoke(this, e);
+            }
+        }
+       
+
         #endregion
         #region Constructors
         /// <summary>
@@ -196,7 +320,7 @@ namespace FdaViewModel.Conditions
             bool usesAnalyiticalFlowFrequency, FrequencyRelationships.AnalyticalFrequencyElement aFlowFreq, bool usesInflowOutflow, FlowTransforms.InflowOutflowElement inflowOutflowElement,
             bool useRating, StageTransforms.RatingCurveElement rc, bool useIntExtStage, StageTransforms.ExteriorInteriorElement extInt, bool useLevee, GeoTech.LeveeFeatureElement leveeElement,
             bool useFailureFunction, GeoTech.FailureFunctionElement failureFunctionElement, bool useAggStageDamage, AggregatedStageDamage.AggregatedStageDamageElement stageDamage,
-            bool useThreshold, string thresholdType, double thresholdValue, ConditionsOwnerElement owner) : base(owner)
+            bool useThreshold, string thresholdType, double thresholdValue, OwnerElement owner) : base(owner)
         {
             Name = name;
             _ConditionsOwnerElement = owner;
@@ -254,9 +378,8 @@ namespace FdaViewModel.Conditions
             localActions.Add(removeCondition);
             localActions.Add(renameElement);
 
-
-
             Actions = localActions;
+            _ConditionsTreeNodes = new List<BaseFdaElement>() { AnalyticalFlowFrequency,inflowOutflowElement};
         }
 
         #region BuildControlsFromElement
@@ -331,7 +454,7 @@ namespace FdaViewModel.Conditions
             return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Int Stage Damage Curve"), new AddStageDamageToConditionVM(listOfStageDamage, StageDamageElement, _ConditionsOwnerElement));
         }
         #endregion
-        private void EditCondition(object arg1, EventArgs arg2)
+        public void EditCondition(object arg1, EventArgs arg2)
         {
             List<ImpactArea.ImpactAreaElement> impactAreas = GetElementsOfType<ImpactArea.ImpactAreaElement>();
             List<FrequencyRelationships.AnalyticalFrequencyElement> freqeles = GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
@@ -521,10 +644,6 @@ namespace FdaViewModel.Conditions
             string leveeName = (LeveeElement == null) ? "" : LeveeElement.Name;
             string failureFuncName = (FailureFunctionElement == null) ? "" : FailureFunctionElement.Name;
             string stageDamageName = (StageDamageElement == null) ? "" : StageDamageElement.Name;
-            
-
-           
-
 
             return new object[] { Name, Description, AnalysisYear, ImpactAreaElement.Name,
                 UseAnalyiticalFlowFrequency, flowFreqName,

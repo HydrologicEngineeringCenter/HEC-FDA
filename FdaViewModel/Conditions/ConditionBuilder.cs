@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,10 +40,10 @@ namespace FdaViewModel.Conditions
         private string _thresholdType;
         private double _thresholdValue;
 
-        private ConditionsOwnerElement _owner;
+        private OwnerElement _owner;
 
         public ConditionBuilder(string name, string desc, int analysisYear, ImpactArea.ImpactAreaElement impactAreaElem, 
-            ImpactArea.ImpactAreaRowItem indexLocation, ConditionsOwnerElement owner)
+            ImpactArea.ImpactAreaRowItem indexLocation, OwnerElement owner)
         {
             _name = name;
             _description = desc;

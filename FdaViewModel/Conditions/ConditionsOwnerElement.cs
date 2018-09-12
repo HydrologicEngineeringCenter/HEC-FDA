@@ -28,13 +28,13 @@ namespace FdaViewModel.Conditions
         public ConditionsOwnerElement(BaseFdaElement owner) : base(owner)
         {
             Name = "Conditions";
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+            CustomTreeViewHeader = new CustomHeaderVM(Name);
 
-            Utilities.NamedAction addCondition = new Utilities.NamedAction();
+            NamedAction addCondition = new NamedAction();
             addCondition.Header = "Create New Condition";
             addCondition.Action = AddNewCondition;
 
-            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
+            List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addCondition);
 
             Actions = localActions;
@@ -51,7 +51,7 @@ namespace FdaViewModel.Conditions
         }
 
         #region BuildDefaultPlotControls
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultLP3Control(ConditionsOwnerElement ownerElement)
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultLP3Control(OwnerElement ownerElement)
         {
             List<FrequencyRelationships.AnalyticalFrequencyElement> listOfLp3 = ownerElement.GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
             AddFlowFrequencyToConditionVM lp3Importer = new AddFlowFrequencyToConditionVM(listOfLp3, ownerElement);
@@ -61,7 +61,7 @@ namespace FdaViewModel.Conditions
                 lp3Importer);
         }
 
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultInflowOutflowControl(ConditionsOwnerElement ownerElement)
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultInflowOutflowControl(OwnerElement ownerElement)
         {
             List<FlowTransforms.InflowOutflowElement> listOfInfOut = ownerElement.GetElementsOfType<FlowTransforms.InflowOutflowElement>();
             AddInflowOutflowToConditionVM inOutImporter = new AddInflowOutflowToConditionVM(listOfInfOut, ownerElement);
@@ -73,7 +73,7 @@ namespace FdaViewModel.Conditions
                 new Plots.DoubleLineModulatorWrapperVM());
         }
 
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultRatingControl(ConditionsOwnerElement ownerElement)
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultRatingControl(OwnerElement ownerElement)
         {
             List<StageTransforms.RatingCurveElement> listOfRatingCurves = ownerElement.GetElementsOfType<StageTransforms.RatingCurveElement>();
             AddRatingCurveToConditionVM ratImporter = new AddRatingCurveToConditionVM(listOfRatingCurves, ownerElement);
@@ -83,7 +83,7 @@ namespace FdaViewModel.Conditions
                 ratImporter);
         }
 
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultExtIntStageControl(ConditionsOwnerElement ownerElement)
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultExtIntStageControl(OwnerElement ownerElement)
         {
             List<StageTransforms.ExteriorInteriorElement> listOfExtIntElements = ownerElement.GetElementsOfType<StageTransforms.ExteriorInteriorElement>();
             AddExteriorInteriorStageToConditionVM extIntImporter = new AddExteriorInteriorStageToConditionVM(listOfExtIntElements, ownerElement);
@@ -95,7 +95,7 @@ namespace FdaViewModel.Conditions
                 new Plots.HorizontalDoubleLineModulatorWrapperVM());
         }
 
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultStageDamageControl(ConditionsOwnerElement ownerElement)
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultStageDamageControl(OwnerElement ownerElement)
         {
             List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamage = ownerElement.GetElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
             AddStageDamageToConditionVM stageDamageImporter = new AddStageDamageToConditionVM(listOfStageDamage, ownerElement);
@@ -105,7 +105,7 @@ namespace FdaViewModel.Conditions
                 stageDamageImporter);
         }
 
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultDamageFrequencyControl(ConditionsOwnerElement ownerElement)
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultDamageFrequencyControl(OwnerElement ownerElement)
         {
             return new Plots.IndividualLinkedPlotControlVM(
                 new Plots.ConditionsIndividualPlotWrapperVM(true, true, "Damage Frequency", "Probability", "Damage", false),
@@ -115,39 +115,17 @@ namespace FdaViewModel.Conditions
 
         #endregion
 
-        private void AddNewCondition(object arg1, EventArgs arg2)
+        public void AddNewCondition(object arg1, EventArgs arg2)
         {
             
             List<ImpactArea.ImpactAreaElement> impactAreas = GetElementsOfType<ImpactArea.ImpactAreaElement>();
-            //List<FrequencyRelationships.AnalyticalFrequencyElement> freqeles = GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
-            ////get a list of the inflow outflow curves
-            //List<FlowTransforms.InflowOutflowElement> inflowOutflowList = GetElementsOfType<FlowTransforms.InflowOutflowElement>();
-
-            //List<StageTransforms.RatingCurveElement> ratingeles = GetElementsOfType<StageTransforms.RatingCurveElement>();
-
-            ////get list of int ext stage curves
-            //List<StageTransforms.ExteriorInteriorElement> intExtList = GetElementsOfType<StageTransforms.ExteriorInteriorElement>();
-            ////get list of lateral structures
-            //List<GeoTech.LeveeFeatureElement> leveeList = GetElementsOfType<GeoTech.LeveeFeatureElement>();
-
-            ////get list of failure functions
-            //List<GeoTech.FailureFunctionElement> failureFunctionList = GetElementsOfType<GeoTech.FailureFunctionElement>();
-
-            ////get list of stage damage curves
-            //List<AggregatedStageDamage.AggregatedStageDamageElement> damageles = GetElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
+        
             if (impactAreas.Count == 0)
             {
                 ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("No Impact Area Sets have been defined.", FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel));
                 return;
             }
 
-            //List<ImpactArea.ImpactAreaElement> impAreas = GetElementsOfType<ImpactArea.ImpactAreaElement>();
-            //List<Inventory.InventoryElement> structInventories = GetElementsOfType<Inventory.InventoryElement>();
-
-            //List<ImpactArea.ImpactAreaOwnerElement> impactOwners = GetElementsOfType<ImpactArea.ImpactAreaOwnerElement>();
-
-
-            //ConditionsPlotEditorVM vm2 = new ConditionsPlotEditorVM(impAreas,structInventories, lp3VM,inOutVM, rat,stageDamage,extInt,impactOwners.FirstOrDefault());
             Plots.IndividualLinkedPlotControlVM lp3Control = BuildDefaultLP3Control(this);
 
             Plots.IndividualLinkedPlotControlVM inflowOutflowControl = BuildDefaultInflowOutflowControl(this);
@@ -160,14 +138,7 @@ namespace FdaViewModel.Conditions
 
             Plots.IndividualLinkedPlotControlVM DamageFrequencyControl = BuildDefaultDamageFrequencyControl(this);
 
-            //test.AddFlowFreqVM = new AddFlowFrequencyToConditionVM(listOfLp3, this);
-            //test.CoverButtonVM = new Plots.IndividualLinkedPlotCoverButtonVM(test);
-            //test.MyIndividualLinkedPlotVM = new Plots.IndividualLinkedPlotVM();
-            //test.CurrentVM = test.CoverButtonVM;
             ConditionsPlotEditorVM vm2 = new ConditionsPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl, StageDamageControl, DamageFrequencyControl);
-
-            //need to attach handlers in order to open the importers into their own windows.
-            //vm2.RequestNavigation += Navigate;
 
             Navigate(vm2);
 
@@ -176,15 +147,9 @@ namespace FdaViewModel.Conditions
                 if (!vm2.HasError)
                 {
                     ConditionsElement ce = ConditionFactory.BuildConditionsElement(vm2, this);
-                    //ConditionsElement ce = new ConditionsElement(vm2.Name,vm2.Description,vm2.Year,vm2.SelectedImpactArea,null,vm2.IsPlot0Visible,vm2.Plot0VM.)
-                    
-                        //ConditionsElement ce = new ConditionsElement(vm.Name,vm.Description,vm.AnalysisYear,vm.ImpactAreaSet,vm.ImpactArea,vm.UseAnalyticalFlowFrequency,vm.AnalyticalFlowFrequency, vm.UsesInflowOutflow,vm.InflowOutflowElement, vm.UseRatingCurve,vm.RatingCurve, vm.UsesExteriorInterior,vm.ExteriorInteriorElement,vm.UsesLevee,vm.LeveeElement,vm.UsesFailureFunction,vm.FailureFunctionElement, vm.UseAggregatedStageDamage,vm.StageDamage,vm.UseThreshold, vm.ThresholdType,vm.ThresholdValue,this);
                     AddElement(ce);
                 }
             }
-
-            //vm2.RequestNavigation -= Navigate;
-
         }
         #endregion
         #region Functions

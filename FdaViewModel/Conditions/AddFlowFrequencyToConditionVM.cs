@@ -5,6 +5,7 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.Conditions
 {
@@ -22,7 +23,7 @@ namespace FdaViewModel.Conditions
         public event EventHandler PopImporterOut;
 
         //private FrequencyRelationships.AnalyticalFrequencyElement _SelectedFlowFrequencyElement;
-        private ConditionsOwnerElement _owner;
+        private OwnerElement _owner;
         private List<FrequencyRelationships.AnalyticalFrequencyElement> _InflowFrequencyCurves;
         private Statistics.CurveIncreasing _SelectedCurve;
         private FdaModel.Functions.BaseFunction _BaseFunction;
@@ -64,11 +65,11 @@ namespace FdaViewModel.Conditions
         //{
 
         //}
-        public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves, ConditionsOwnerElement owner):this(lp3Curves,null,owner)
+        public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves, OwnerElement owner):this(lp3Curves,null,owner)
         {
             
         }
-        public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves, FrequencyRelationships.AnalyticalFrequencyElement selectedElement,ConditionsOwnerElement owner) : base()
+        public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves, FrequencyRelationships.AnalyticalFrequencyElement selectedElement, OwnerElement owner) : base()
         {
             SelectedElement = selectedElement;
             InflowFrequencyCurves = lp3Curves;

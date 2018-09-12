@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace FdaViewModel.Conditions
     class ConditionFactory
     {
 
-        public static ConditionsElement BuildConditionsElement(ConditionsPlotEditorVM vm, ConditionsOwnerElement owner)
+        public static ConditionsElement BuildConditionsElement(ConditionsPlotEditorVM vm, OwnerElement owner)
         {
             ConditionBuilder builder = new ConditionBuilder(vm.Name, vm.Description, vm.Year, vm.SelectedImpactArea, vm.IndexLocation, owner);
             

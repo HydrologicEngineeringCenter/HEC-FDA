@@ -23,7 +23,7 @@ namespace FdaViewModel.Conditions
         public event EventHandler CancelClickedEvent;
         public event EventHandler PopImporterOut;
 
-        private ConditionsOwnerElement _owner;
+        private OwnerElement _owner;
 
         //private AggregatedStageDamage.AggregatedStageDamageElement _StageDamageElement;
         private List<AggregatedStageDamage.AggregatedStageDamageElement> _ListOfStageDamageElements;
@@ -78,10 +78,10 @@ namespace FdaViewModel.Conditions
 
         #endregion
         #region Constructors
-        public AddStageDamageToConditionVM(List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamageElements, ConditionsOwnerElement owner):this(listOfStageDamageElements,null,owner)
+        public AddStageDamageToConditionVM(List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamageElements, OwnerElement owner):this(listOfStageDamageElements,null,owner)
         {
         }
-        public AddStageDamageToConditionVM(List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamageElements, AggregatedStageDamage.AggregatedStageDamageElement selectedElement, ConditionsOwnerElement owner):base()
+        public AddStageDamageToConditionVM(List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamageElements, AggregatedStageDamage.AggregatedStageDamageElement selectedElement, OwnerElement owner):base()
         {
             SelectedElement = selectedElement;
             ListOfStageDamageElements = listOfStageDamageElements;

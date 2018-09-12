@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FdaViewModel.Utilities.Transactions;
+using System.Collections.ObjectModel;
+using FdaViewModel.Conditions;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.Study
 {
@@ -12,17 +15,31 @@ namespace FdaViewModel.Study
         #region Notes
         #endregion
         #region Fields
-        private List<Utilities.OwnerElement> _MainStudyTree;
+        private List<OwnerElement> _MainStudyTree;
+        private ObservableCollection<OwnerElement> _ConditionsTree;
+        private StudyElement _StudyElement;
+        private int _SelectedTab = 0;
         #endregion
         #region Properties
+        
+        public int SelectedTab
+        {
+            get { return _SelectedTab; }
+            set { TabChangedEvent(value); }
+        }
         public override string GetTableConstant()
         {
             return TableName;
         }
-        public List<Utilities.OwnerElement> MainStudyTree
+        public List<OwnerElement> MainStudyTree
         {
             get { return _MainStudyTree; }
             set { _MainStudyTree = value;  NotifyPropertyChanged(nameof(MainStudyTree)); }
+        }
+        public ObservableCollection<OwnerElement> ConditionsTree
+        {
+            get { return _ConditionsTree; }
+            set { _ConditionsTree = value; NotifyPropertyChanged(); }
         }
 
         public override string TableName
@@ -36,21 +53,29 @@ namespace FdaViewModel.Study
         #region Constructors
         public FdaStudyVM(): base()
         {
+            //fill the main study tree
             _MainStudyTree = new List<Utilities.OwnerElement>();
-            StudyElement s = new StudyElement(this);
-            s.RequestNavigation += Navigate;
-            s.RequestShapefilePaths += ShapefilePaths;
-            s.RequestShapefilePathsOfType += ShapefilePathsOfType;
-            s.RequestAddToMapWindow += AddToMapWindow;
-            s.RequestRemoveFromMapWindow += RemoveFromMapWindow;
-            s.TransactionEvent += WriteTransactions;
+            _StudyElement = new StudyElement(this);
+            _StudyElement.RequestNavigation += Navigate;
+            _StudyElement.RequestShapefilePaths += ShapefilePaths;
+            _StudyElement.RequestShapefilePathsOfType += ShapefilePathsOfType;
+            _StudyElement.RequestAddToMapWindow += AddToMapWindow;
+            _StudyElement.RequestRemoveFromMapWindow += RemoveFromMapWindow;
+            _StudyElement.TransactionEvent += WriteTransactions;
+            _StudyElement.ClearStudy += ClearCurrentStudy;
             FdaModel.Utilities.Messager.Logger.Instance.RequestFlushLogFile += Instance_RequestFlushLogFile;
-            s.AddBaseElements();
-            _MainStudyTree.Add(s);
-            FdaModel.Utilities.Initialize.InitializeGDAL();
+            _StudyElement.AddBaseElements();
+            _MainStudyTree.Add(_StudyElement);
 
+            FdaModel.Utilities.Initialize.InitializeGDAL();
         }
 
+  
+
+        private void ClearCurrentStudy(object sender, EventArgs e)
+        {
+            _MainStudyTree[0].Elements.Clear();
+        }
         private void Instance_RequestFlushLogFile(object sender, EventArgs e)
         {
             if (!Storage.Connection.Instance.IsConnectionNull)
@@ -103,8 +128,6 @@ namespace FdaViewModel.Study
         #region Functions
         public override BaseFdaElement GetElementOfTypeAndName(Type t, string name)
         {
-            //check if the type is FdaStudyVM and if the name matches.
-            //check if the type is _MainStudyTree.GetType() and the name matches.
             return _MainStudyTree[0].GetElementOfTypeAndName(t,name);
         }
         public override List<T> GetElementsOfType<T>()
@@ -116,6 +139,67 @@ namespace FdaViewModel.Study
             FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
             FdaModel.Utilities.Initialize.DisposeGDAL();
         }
+
+        /// <summary>
+        /// The integer value will be 0 for the study tree tab
+        /// and 1 for the conditions tree tab
+        /// </summary>
+        /// <param name="value"></param>
+        public void TabChangedEvent(int value)
+        {
+            if (value == 1)
+            {
+                UpdateTheConditionsTree(this, new EventArgs());
+            }       
+        }
+
+        /// <summary>
+        /// The study tree tab shows in real time the state of the study.
+        /// When you switch to the conditions tab this method will grab the state of the 
+        /// study tree conditions and mirror that in the conditions tab.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UpdateTheConditionsTree(object sender, EventArgs e)
+        {
+            ObservableCollection<OwnedElement> conditions = new ObservableCollection<OwnedElement>();
+            //get all the current conditions
+            ConditionsOwnerElement studyTreeCondOwnerElement = null;
+            if (_StudyElement.Elements.Count > 0)
+            {
+                foreach (OwnerElement owner in _StudyElement.Elements)
+                {
+                    if (owner.GetType() == typeof(ConditionsOwnerElement))
+                    {
+                        conditions = owner.Elements;
+                        studyTreeCondOwnerElement = (ConditionsOwnerElement)owner;
+                    }
+                }
+            }
+
+            ConditionsTreeOwnerElement condTreeCondOwnerElement = new ConditionsTreeOwnerElement(studyTreeCondOwnerElement);
+            condTreeCondOwnerElement.RequestNavigation += Navigate;
+            condTreeCondOwnerElement.UpdateConditionsTree += UpdateTheConditionsTree;
+
+            if (conditions.Count > 0)
+            {
+                foreach (OwnedElement elem in conditions)
+                {
+                    //create a new conditions element and change the way it renames, removes, and edits. The parent node
+                    //will then tell the study tree what to do
+                    ConditionsElement condElem = new ConditionsElement((ConditionsElement)elem, condTreeCondOwnerElement);
+                    condElem.EditConditionsTreeElement += condTreeCondOwnerElement.EditCondition;
+                    condElem.RemoveConditionsTreeElement += condTreeCondOwnerElement.RemoveElement;
+                    condElem.RenameConditionsTreeElement += condTreeCondOwnerElement.RenameElement;
+                    condTreeCondOwnerElement.AddElement(condElem, false);
+                }
+
+            }
+
+            //have to make it new to call the notified prop changed
+            ConditionsTree = new ObservableCollection<OwnerElement>() { condTreeCondOwnerElement };
+        }
+
         #endregion
 
     }

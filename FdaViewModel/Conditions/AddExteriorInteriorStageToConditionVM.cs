@@ -19,7 +19,7 @@ namespace FdaViewModel.Conditions
         // Created Date: 12/6/2017 2:34:26 PM
         #endregion
         #region Fields
-        private ConditionsOwnerElement _owner;
+        private OwnerElement _owner;
         //private StageTransforms.ExteriorInteriorElement _SelectedExteriorInteriorStageElement;
         private List<StageTransforms.ExteriorInteriorElement> _ListOfExteriorInteriorStageElements;
 
@@ -93,10 +93,10 @@ namespace FdaViewModel.Conditions
 
         #endregion
         #region Constructors
-        public AddExteriorInteriorStageToConditionVM(List<StageTransforms.ExteriorInteriorElement> listOfExIntStage, ConditionsOwnerElement owner):this(listOfExIntStage,null,owner)
+        public AddExteriorInteriorStageToConditionVM(List<StageTransforms.ExteriorInteriorElement> listOfExIntStage, OwnerElement owner):this(listOfExIntStage,null,owner)
         {
         }
-        public AddExteriorInteriorStageToConditionVM(List<StageTransforms.ExteriorInteriorElement> listOfExIntStage, StageTransforms.ExteriorInteriorElement selectedElement, ConditionsOwnerElement owner):base()
+        public AddExteriorInteriorStageToConditionVM(List<StageTransforms.ExteriorInteriorElement> listOfExIntStage, StageTransforms.ExteriorInteriorElement selectedElement, OwnerElement owner):base()
         {
             SelectedElement = selectedElement;
             ListOfExteriorInteriorStageElements = listOfExIntStage;

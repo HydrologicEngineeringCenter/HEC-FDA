@@ -8,6 +8,7 @@ namespace FdaViewModel.Study
 {
     public class StudyElement : OwnerElement
     {
+        public event EventHandler ClearStudy;
         private List<string> _RegistryStudies = new List<string>();
 
         public override string TableName
@@ -26,8 +27,10 @@ namespace FdaViewModel.Study
         {
             return TableName;
         }
+
         #endregion
         #region Constructors
+
         public StudyElement(BaseFdaElement owner) : base(owner)
         {
             PopulateRecentStudies();
@@ -377,17 +380,22 @@ namespace FdaViewModel.Study
 
             UpdateRecentStudiesFile(path);
             
-                Storage.Connection.Instance.ProjectFile = path;
+            Storage.Connection.Instance.ProjectFile = path;
+            //there might already be a study open
+            //clear out its values
+            if (ClearStudy != null)
+            {
+                //ClearStudy.Invoke(this, new EventArgs());
+            }
 
-            
+
             Name = name;
             AddBaseElements();
             // add any children based on tables that exist.
             foreach (OwnedElement ele in Elements)
             {
                 if (ele is OwnerElement)
-                {
-
+                {             
                     ((OwnerElement)ele).AddChildrenFromTable();
                 }
             }
@@ -445,6 +453,7 @@ namespace FdaViewModel.Study
             }
         }
 
+       
         public override void AddBaseElements()
         {
 
@@ -456,6 +465,7 @@ namespace FdaViewModel.Study
             AddElement(i);
 
             WaterSurfaceElevation.WaterSurfaceElevationOwnerElement wse = new WaterSurfaceElevation.WaterSurfaceElevationOwnerElement(this);
+            
             AddElement(wse);
 
             FrequencyRelationships.FrequencyRelationshipsOwnerElement f = new FrequencyRelationships.FrequencyRelationshipsOwnerElement(this);

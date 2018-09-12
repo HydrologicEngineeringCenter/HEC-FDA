@@ -19,7 +19,7 @@ namespace FdaViewModel.Conditions
         // Created Date: 12/1/2017 3:35:31 PM
         #endregion
         #region Fields
-        private ConditionsOwnerElement _owner;
+        private OwnerElement _owner;
 
         //private StageTransforms.RatingCurveElement _SelectedRatingElement;
         private List<StageTransforms.RatingCurveElement> _ListOfRatingCurves;
@@ -84,12 +84,12 @@ namespace FdaViewModel.Conditions
         
         #endregion
         #region Constructors
-        public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves, ConditionsOwnerElement owner):this(listOfRatingCurves,null,owner)
+        public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves, OwnerElement owner):this(listOfRatingCurves,null,owner)
         {
             
         }
 
-        public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves, StageTransforms.RatingCurveElement selectedRatingElement, ConditionsOwnerElement owner):base()
+        public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves, StageTransforms.RatingCurveElement selectedRatingElement, OwnerElement owner):base()
         {
             SelectedElement = selectedRatingElement;
             _owner = owner;

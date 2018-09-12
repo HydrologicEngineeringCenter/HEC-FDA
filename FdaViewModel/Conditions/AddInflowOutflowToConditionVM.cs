@@ -21,7 +21,7 @@ namespace FdaViewModel.Conditions
         #region Fields
 
         //private FlowTransforms.InflowOutflowElement _SelectedInflowOutflowElement;
-        private ConditionsOwnerElement _owner;
+        private OwnerElement _owner;
         private List<FlowTransforms.InflowOutflowElement> _ListOfInflowOutflowElements;
 
         public event EventHandler OKClickedEvent;
@@ -92,11 +92,11 @@ namespace FdaViewModel.Conditions
        
         #endregion
         #region Constructors
-        public AddInflowOutflowToConditionVM(List<FlowTransforms.InflowOutflowElement> listOfinOut, ConditionsOwnerElement owner):this(listOfinOut,null,owner)
+        public AddInflowOutflowToConditionVM(List<FlowTransforms.InflowOutflowElement> listOfinOut, OwnerElement owner):this(listOfinOut,null,owner)
         {
         }
 
-        public AddInflowOutflowToConditionVM(List<FlowTransforms.InflowOutflowElement> listOfinOut, FlowTransforms.InflowOutflowElement selectedElement, ConditionsOwnerElement owner):base()
+        public AddInflowOutflowToConditionVM(List<FlowTransforms.InflowOutflowElement> listOfinOut, FlowTransforms.InflowOutflowElement selectedElement, OwnerElement owner):base()
         {
             SelectedElement = selectedElement;
             ListOfInflowOutflowElements = listOfinOut;

@@ -102,6 +102,7 @@
     <Compile Include="Conditions\ConditionsElement.cs" />
     <Compile Include="Conditions\ConditionsOwnerElement.cs" />
     <Compile Include="Conditions\ConditionsPlotEditorVM.cs" />
+    <Compile Include="Conditions\ConditionsTreeOwnerElement.cs" />
     <Compile Include="ExtentionMethods.cs" />
     <Compile Include="FlowTransforms\FlowTransformsOwnerElement.cs" />
     <Compile Include="FlowTransforms\InflowOutflowEditorVM.cs" />
