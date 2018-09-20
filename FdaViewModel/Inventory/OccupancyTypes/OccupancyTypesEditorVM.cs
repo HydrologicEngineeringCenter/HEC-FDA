@@ -713,15 +713,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         public override void Save()
         {
-            //foreach(OccupancyTypes.OccupancyTypesElement group in OccTypeGroups)
-            //{
-            //    foreach(Consequences_Assist.ComputableObjects.OccupancyType ot in group.ListOfOccupancyTypes)
-            //    {
-
-
-            //    }
-            //}
-            //throw new NotImplementedException();
+           
         }
     }
 }

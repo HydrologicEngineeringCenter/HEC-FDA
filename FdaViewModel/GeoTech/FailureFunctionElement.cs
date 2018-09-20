@@ -92,31 +92,24 @@ namespace FdaViewModel.GeoTech
         {
             //get the current list of levees
             List<LeveeFeatureElement> leveeList = GetElementsOfType<LeveeFeatureElement>();
-            Statistics.UncertainCurveDataCollection tmp = _Curve.Clone();//necessary because binding..
             FailureFunctionEditorVM vm = new FailureFunctionEditorVM(Name, Description, FailureFunctionCurve, SelectedLateralStructure, leveeList);
             Navigate(vm, true, true);
             if (!vm.WasCancled)
             {
                 if (!vm.HasError)
                 {
-                    //bool hasChanges = false;
-                    //if (tmp != FailureFunctionCurve)
-                    //{
-                    //    //has changes in the curve
-                    //    hasChanges = true;
-                    //}
-                    ////name changes etc.
-                    //if (hasChanges)
-                    //{
-                        AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.EditExisting, ""));
-                        Name = vm.Name;//should i disable this way of renaming? if not i need to check for name conflicts.
-                        CustomTreeViewHeader = new Utilities.CustomHeaderVM(vm.Name, "pack://application:,,,/Fda;component/Resources/FailureFunction.png");
-                        Description = vm.Description;//is binding two way? is this necessary?
-                        FailureFunctionCurve = vm.Curve;//is binding two way? is this necessary?
-                        SelectedLateralStructure = vm.SelectedLateralStructure;
-                        Save();
-                    //}
+                    string oldName = Name;
+                    Statistics.UncertainCurveDataCollection oldCurve = FailureFunctionCurve;
 
+                    Name = vm.Name;
+                    Description = vm.Description;
+                    FailureFunctionCurve = vm.Curve;
+                    SelectedLateralStructure = vm.SelectedLateralStructure;
+
+                    ((FailureFunctionOwnerElement)_Owner).UpdateTableRowIfModified(oldName, this);
+                    UpdateTableIfModified(oldName, oldCurve, FailureFunctionCurve);
+
+                    AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.EditExisting, ""));
                 }
             }
         }

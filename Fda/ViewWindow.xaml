@@ -10,7 +10,7 @@
         mc:Ignorable="d"
         Closing="Window_Closing"
         Loaded="Window_Loaded"
-        Title="ViewWindow"  WindowStyle="None" ResizeMode="CanResizeWithGrip" AllowsTransparency="false">
+        Title="ViewWindow" > <!--="None" ResizeMode="CanResizeWithGrip" AllowsTransparency="false">-->
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
         <Style x:Key="TransparentBBStyle" TargetType="{x:Type utils:BindableButton}">

@@ -21,7 +21,7 @@ namespace FdaViewModel.GeoTech
         private double _Elevation = 0;
         #endregion
         #region Properties
-        public bool IsInEditMode { get; set; }
+        //public bool IsInEditMode { get; set; }
         public string Name
         {
             get { return _Name; }
@@ -48,7 +48,7 @@ namespace FdaViewModel.GeoTech
             Name = name;
             Description = description;
             Elevation = elevation;
-            IsInEditMode = isInEditMode;
+            //IsInEditMode = isInEditMode;
         }
         #endregion
         #region Voids

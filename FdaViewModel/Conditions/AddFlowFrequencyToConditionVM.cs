@@ -108,30 +108,29 @@ namespace FdaViewModel.Conditions
 
         public void OKClicked()
         {
-            //raise event that we are done
-            if(this.OKClickedEvent != null)
+            Validate();
+            if (!HasFatalError)
             {
-                this.OKClickedEvent(this,new EventArgs());
+                this.OKClickedEvent?.Invoke(this, new EventArgs());
+            }
+            else
+            {
+                CustomMessageBoxVM custmb = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "A frequency Curve has not been selected.");
+                Navigate(custmb);
             }
         }
         public void CancelClicked()
         {
-            if (this.CancelClickedEvent != null)
-            {
-                this.CancelClickedEvent(this, new EventArgs());
-            }
+            this.CancelClickedEvent?.Invoke(this, new EventArgs());
         }
 
         public void PopTheImporterOut()
         {
-            if(PopImporterOut != null)
-            {
-                PopImporterOut(this, new EventArgs());
-            }
+            PopImporterOut?.Invoke(this, new EventArgs());
         }
         public override void AddValidationRules()
         {
-            //throw new NotImplementedException();
+            AddRule(nameof(SelectedElement), () => { return (SelectedElement != null); }, "A frequency Curve has not been selected.");
         }
 
         public override void Save()

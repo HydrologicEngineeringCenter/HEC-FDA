@@ -4,9 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Fda.Utilities"
-        mc:Ignorable="d"
-             
-         Height="200" Width="350">
+        mc:Ignorable="d" 
+             MinHeight="100" MinWidth="300">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
         <Style TargetType="Button">
@@ -20,17 +19,19 @@
         
         <Grid.RowDefinitions>
             <RowDefinition Height="*"  />
-            <RowDefinition Height="50" />
+            <RowDefinition Height="40" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
 
         </Grid.ColumnDefinitions>
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <TextBlock  Margin="5"  Text="{Binding Path=Message}" HorizontalAlignment="Stretch" TextWrapping="Wrap" />
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch">
+        <TextBlock  Margin="10"  Text="{Binding Path=Message}" FontSize="14" HorizontalAlignment="Stretch" TextWrapping="Wrap" />
         </ScrollViewer>
+        <Canvas Grid.Row="1" Background="WhiteSmoke" HorizontalAlignment="Stretch">
 
-        <StackPanel DockPanel.Dock="Bottom" Name="stack_Buttons" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" >
+        </Canvas>
+        <StackPanel DockPanel.Dock="Bottom" Name="stack_Buttons" Grid.Row="1" Orientation="Horizontal"  HorizontalAlignment="Right" Margin="0,0,10,0" >
 
             <Button  Name="btn_Yes" Content="Yes" Visibility="{Binding ButtonsDictionary[Yes], Converter={StaticResource BoolToVisConverter}}" />
             <Button Name="btn_No" Content="No" Visibility="{Binding ButtonsDictionary[No], Converter={StaticResource BoolToVisConverter}}"  />
@@ -43,5 +44,6 @@
             <Button  Name="btn_Ignore" Content="Ignore" Visibility="{Binding ButtonsDictionary[Ignore], Converter={StaticResource BoolToVisConverter}}"/>
 
         </StackPanel>
+        
     </Grid>
 </UserControl>

@@ -75,9 +75,15 @@ namespace FdaViewModel.StageTransforms
             {
                 if (!vm.HasError)
                 {
-                    Name = vm.Name;//should i disable this way of renaming? if not i need to check for name conflicts.
-                    Description = vm.Description;//is binding two way? is this necessary?
+                    string oldName = Name;
+                    Statistics.UncertainCurveDataCollection oldCurve = ExteriorInteriorCurve;
+
+                    Name = vm.Name;
+                    Description = vm.Description;
                     ExteriorInteriorCurve = vm.Curve;
+
+                    ((ExteriorInteriorOwnerElement)_Owner).UpdateTableRowIfModified(oldName, this);
+                    UpdateTableIfModified(oldName, oldCurve, ExteriorInteriorCurve);
                 }
             }
         }

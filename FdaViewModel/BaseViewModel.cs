@@ -104,25 +104,26 @@ namespace FdaViewModel
             _MessagesAction.IsVisible = false;
             _MessagesAction.Action = DisplayMessages;
 
-            Utilities.NamedAction ea = new Utilities.NamedAction();
-            ea.Header = "";
-            ea.IsEnabled = false;
-            ea.IsVisible = false;
-            ea.Action = DisplayErrors;
-            ErrorsAction = ea;
+            Utilities.NamedAction errorAction = new Utilities.NamedAction();
+            errorAction.Header = "";
+            errorAction.IsEnabled = false;
+            errorAction.IsVisible = false;
+            errorAction.Action = DisplayErrors;
+            ErrorsAction = errorAction;
 
-            Utilities.NamedAction ha = new Utilities.NamedAction();
-            ha.Header = "";
-            ha.IsEnabled = true;
-            ha.IsVisible = true;
-            ha.Action = DisplayHelp;
-            HelpAction = ha;
+            Utilities.NamedAction helpAction = new Utilities.NamedAction();
+            helpAction.Header = "";
+            helpAction.IsEnabled = true;
+            helpAction.IsVisible = true;
+            helpAction.Action = DisplayHelp;
+            HelpAction = helpAction;
         }
 
         private void DisplayErrors(object arg1, EventArgs arg2)
         {
             Utilities.MessageVM mvm = new Utilities.MessageVM(Error);
             Navigate(mvm, true, false, "Errors");
+
         }
         private void DisplayHelp(object arg1, EventArgs arg2)
         {

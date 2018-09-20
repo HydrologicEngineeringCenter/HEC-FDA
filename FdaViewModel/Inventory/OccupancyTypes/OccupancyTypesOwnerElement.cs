@@ -5,6 +5,7 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -89,9 +90,46 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                             }
                         }
                     }
+                    //now save the changes
+                    //CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "", "Loading...");
+
+                    SaveFilesOnBackgroundThread(this, new DoWorkEventArgs(ListOfOccupancyTypesGroups));
+                    //foreach(OccupancyTypesElement elem in ListOfOccupancyTypesGroups)
+                    //{
+                    //    elem.Save();
+                    //}
                 }
             }
 
+        }
+
+
+        private async void SaveFilesOnBackgroundThread(object sender, DoWorkEventArgs e)
+        {
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "", "Saving...");
+            List<Utilities.NamedAction> tempActions = new List<Utilities.NamedAction>(Actions);
+            Actions = new List<Utilities.NamedAction>();
+
+            object[] args = (object[])e.Argument;
+            List<OccupancyTypesElement> elementsToSave = (List<OccupancyTypesElement>)args[0];
+            List<Utilities.NamedAction> actions = (List < Utilities.NamedAction >) args[1];
+
+            actions.Clear();
+
+            await Task.Run(() =>
+            {
+                foreach (OccupancyTypesElement elem in elementsToSave)
+                {
+                    elem.Save();
+                }
+                    //owner.AddElement(ote);
+                    //AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ote.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(OccupancyTypesElement)));
+                
+            });
+
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+            SaveTableWithoutSavingElements();
+            Actions = tempActions;
         }
         private void ImportFromFile(object arg1, EventArgs arg2)
         {
@@ -102,7 +140,10 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             {
                 if (!vm.HasError)
                 {
+                    //object[] arguments = new object[] { vm, this };
 
+
+                    List<OccupancyTypesElement> elementsToSave = new List<OccupancyTypesElement>();
                     foreach (OccupancyTypesGroupRowItemVM row in vm.ListOfRowVMs)
                     {
                         //create a dummy tabs checked dictionary
@@ -115,12 +156,12 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
                         }
 
-                        OccupancyTypesElement ote = new OccupancyTypesElement(row.Name, row.ListOfOccTypes,_OcctypeTabsSelectedDictionary, this);
-                        OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(ote);
-                        AddElement(ote);
-                        AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ote.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(OccupancyTypesElement)));
-
+                        OccupancyTypesElement elem = new OccupancyTypesElement(row.Name, row.ListOfOccTypes, _OcctypeTabsSelectedDictionary, this);
+                        OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(elem);
+                        elementsToSave.Add(elem);
                     }
+                    object[] args = new object[] { elementsToSave, Actions};
+                    SaveFilesOnBackgroundThread(this, new DoWorkEventArgs(args));
                 }
             }
         }
@@ -140,6 +181,20 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
+        }
+
+        private void SaveTableWithoutSavingElements()
+        {
+            Storage.Connection.Instance.DeleteTable(TableName); // always delete owner tables, and rewrite them.  This simplifies checking for removal, sorting, or adding owned elements.
+            string[] names = new string[] { "Group Name" };
+            Type[] types = new Type[] { typeof(string) };
+            Storage.Connection.Instance.CreateTable(TableName, names, types);
+            DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
+            foreach (OccupancyTypesElement ele in ListOfOccupancyTypesGroups)
+            {
+                tbl.AddRow(new object[] { ele.Name });
+            }
+            tbl.ApplyEdits();
         }
 
         public override void Save()
@@ -174,6 +229,10 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             return new Type[] { typeof(string)};
         }
 
+        /// <summary>
+        /// This gets called when loading the study.
+        /// </summary>
+        /// <param name="rowData"></param>
         public override void AddElement(object[] rowData)
         {
             List<Consequences_Assist.ComputableObjects.OccupancyType> TempOccTypes = new List<Consequences_Assist.ComputableObjects.OccupancyType>();

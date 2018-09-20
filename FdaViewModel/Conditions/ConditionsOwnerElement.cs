@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FdaModel.ComputationPoint;
 
 namespace FdaViewModel.Conditions
 {
@@ -53,8 +54,9 @@ namespace FdaViewModel.Conditions
         #region BuildDefaultPlotControls
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultLP3Control(OwnerElement ownerElement)
         {
-            List<FrequencyRelationships.AnalyticalFrequencyElement> listOfLp3 = ownerElement.GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
+            List<AnalyticalFrequencyElement> listOfLp3 = ownerElement.GetElementsOfType<AnalyticalFrequencyElement>();
             AddFlowFrequencyToConditionVM lp3Importer = new AddFlowFrequencyToConditionVM(listOfLp3, ownerElement);
+            lp3Importer.RequestNavigation += ownerElement.Navigate;
             return new Plots.IndividualLinkedPlotControlVM(
                 new Plots.ConditionsIndividualPlotWrapperVM(true, true, "LP3", "Probability", "Inflow"),
                 new Plots.IndividualLinkedPlotCoverButtonVM("Flow Frequency Curve"),
@@ -63,8 +65,9 @@ namespace FdaViewModel.Conditions
 
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultInflowOutflowControl(OwnerElement ownerElement)
         {
-            List<FlowTransforms.InflowOutflowElement> listOfInfOut = ownerElement.GetElementsOfType<FlowTransforms.InflowOutflowElement>();
+            List<InflowOutflowElement> listOfInfOut = ownerElement.GetElementsOfType<InflowOutflowElement>();
             AddInflowOutflowToConditionVM inOutImporter = new AddInflowOutflowToConditionVM(listOfInfOut, ownerElement);
+            inOutImporter.RequestNavigation += ownerElement.Navigate;
             return new Plots.IndividualLinkedPlotControlVM(
                 new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Inflow Outflow", "Inflow", "OutFlow"),
                 new Plots.IndividualLinkedPlotCoverButtonVM("Inflow Outflow"),
@@ -75,8 +78,9 @@ namespace FdaViewModel.Conditions
 
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultRatingControl(OwnerElement ownerElement)
         {
-            List<StageTransforms.RatingCurveElement> listOfRatingCurves = ownerElement.GetElementsOfType<StageTransforms.RatingCurveElement>();
+            List<RatingCurveElement> listOfRatingCurves = ownerElement.GetElementsOfType<RatingCurveElement>();
             AddRatingCurveToConditionVM ratImporter = new AddRatingCurveToConditionVM(listOfRatingCurves, ownerElement);
+            ratImporter.RequestNavigation += ownerElement.Navigate;
             return new Plots.IndividualLinkedPlotControlVM(
                 new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Rating", "Exterior Stage", "OutFlow"),
                 new Plots.IndividualLinkedPlotCoverButtonVM("Rating Curve"),
@@ -87,6 +91,7 @@ namespace FdaViewModel.Conditions
         {
             List<StageTransforms.ExteriorInteriorElement> listOfExtIntElements = ownerElement.GetElementsOfType<StageTransforms.ExteriorInteriorElement>();
             AddExteriorInteriorStageToConditionVM extIntImporter = new AddExteriorInteriorStageToConditionVM(listOfExtIntElements, ownerElement);
+            extIntImporter.RequestNavigation += ownerElement.Navigate;
             return new Plots.IndividualLinkedPlotControlVM(
                 new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Exterior Interior Stage", "Exterior Stage", "Interior Stage"),
                 new Plots.IndividualLinkedPlotCoverButtonVM("Ext Int Stage Curve"),
@@ -99,6 +104,7 @@ namespace FdaViewModel.Conditions
         {
             List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamage = ownerElement.GetElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
             AddStageDamageToConditionVM stageDamageImporter = new AddStageDamageToConditionVM(listOfStageDamage, ownerElement);
+            stageDamageImporter.RequestNavigation += ownerElement.Navigate;
             return new Plots.IndividualLinkedPlotControlVM(
                 new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Stage Damage", "Interior Stage", "Damage"),
                 new Plots.IndividualLinkedPlotCoverButtonVM("Int Stage Damage Curve"),
@@ -169,19 +175,22 @@ namespace FdaViewModel.Conditions
                 "UseExtIntStage","ExtIntStage",
                 "UseLevee","Levee",
                 "UseFailureFunc","FailureFunc",
-                "UseStageDamage","StageDamage"};
+                "UseStageDamage","StageDamage",
+                "UseThreshold","ThresholdType","ThresholdValue"};
         }
 
         public override Type[] TableColumnTypes()
         {
             return new Type[] { typeof(string), typeof(string), typeof(int), typeof(string),
+                
                 typeof(bool), typeof(string),
                 typeof(bool), typeof(string),
                 typeof(bool), typeof(string),
                 typeof(bool), typeof(string),
                 typeof(bool), typeof(string),
                 typeof(bool), typeof(string),
-                typeof(bool), typeof(string)};
+                typeof(bool), typeof(string),
+                typeof(bool), typeof(string), typeof(double)};
         }
 
         public override void AddElement(object[] rowData)
@@ -206,11 +215,17 @@ namespace FdaViewModel.Conditions
                     //what do we do?
                 }
 
+                //threshold stuff
+                bool useThreshold = (bool)rowData[18];
+                PerformanceThresholdTypes thresholdType = PerformanceThresholdTypes.InteriorStage;
+                Enum.TryParse((string)rowData[19], out thresholdType);
+                double thresholdValue = (double)rowData[20];
 
                 //get the impAreaRowItem. What is this? do we need it?
                 ImpactArea.ImpactAreaRowItem indexLocation = new ImpactArea.ImpactAreaRowItem();
                 int analysisYear = Convert.ToInt32(rowData[2]);
-                ConditionBuilder builder = new ConditionBuilder((string)rowData[0], (string)rowData[1], analysisYear, selectedImpArea, indexLocation, this);
+                ConditionBuilder builder = new ConditionBuilder((string)rowData[0], (string)rowData[1], analysisYear, selectedImpArea, indexLocation,
+                     thresholdType,thresholdValue, this);
 
                 bool useFlowFreq = (bool)rowData[4];
                 if(useFlowFreq)

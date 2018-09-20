@@ -118,8 +118,9 @@ namespace FdaViewModel.Study
 
         private void OpenStudyFromRecent(object sender, EventArgs e)
         {
+            //ClearStudy?.Invoke(sender, e);
             string filePath = ((RecentFileNamedAction)sender).FilePath;
-            OpenStudyFromFilePath("test", filePath);
+            OpenStudyFromFilePath(System.IO.Path.GetFileNameWithoutExtension(filePath), filePath);
         }
 
         private void PopulateRecentStudies()
@@ -353,13 +354,14 @@ namespace FdaViewModel.Study
                     }
                     else if (action.Header == "Open Study")
                     {
-                        action.IsEnabled = false;
+                        action.IsEnabled = true;
                     }
                     else if (action.Header == "Create Study")
                     {
-                        action.IsEnabled = false;
+                        action.IsEnabled = true;
                     }
                 }
+                
                 AddBaseElements();
             }
         }
@@ -377,17 +379,11 @@ namespace FdaViewModel.Study
 
         private void OpenStudyFromFilePath(string name, string path)
         {
+            //Elements.Clear();//if there is already a study, clear it out
 
             UpdateRecentStudiesFile(path);
             
             Storage.Connection.Instance.ProjectFile = path;
-            //there might already be a study open
-            //clear out its values
-            if (ClearStudy != null)
-            {
-                //ClearStudy.Invoke(this, new EventArgs());
-            }
-
 
             Name = name;
             AddBaseElements();
@@ -415,11 +411,11 @@ namespace FdaViewModel.Study
                 }
                 else if (action.Header == "Open Study")
                 {
-                    action.IsEnabled = false;
+                    action.IsEnabled = true;
                 }
                 else if (action.Header == "Create Study")
                 {
-                    action.IsEnabled = false;
+                    action.IsEnabled = true;
                 }
             }
         }
@@ -456,7 +452,7 @@ namespace FdaViewModel.Study
        
         public override void AddBaseElements()
         {
-
+            Elements.Clear();//clear out any existing ones from an existing study
             if (Storage.Connection.Instance.IsConnectionNull) return;
             Watershed.TerrainOwnerElement t = new Watershed.TerrainOwnerElement(this);
             AddElement(t);

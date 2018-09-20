@@ -31,7 +31,7 @@
                 <RowDefinition Name="row_SelectUniqueName" Height="35" />
             </Grid.RowDefinitions>
             <Label Content="Impact Area Name:" Grid.Row="0" Margin="5"/>
-            <TextBox Text="{Binding Path=Name,ValidatesOnDataErrors=True}" IsReadOnly="{Binding IsNameReadOnly}" Margin="5" Name="TxtImpactAreaSetName" Grid.Row="0" Grid.Column="1"/>
+            <TextBox Text="{Binding Path=Name,ValidatesOnDataErrors=True}"  Margin="5" Name="TxtImpactAreaSetName" Grid.Row="0" Grid.Column="1"/>
 
             <Label Content="Description:" Grid.Row="1" Margin="5"/>
             <CA:TextBoxDescription Margin="5" Text="{Binding Path=Description}" Grid.Row="1" Grid.Column="1"/>

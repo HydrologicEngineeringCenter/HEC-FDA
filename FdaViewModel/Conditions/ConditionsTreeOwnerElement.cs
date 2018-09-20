@@ -38,12 +38,15 @@ namespace FdaViewModel.Conditions
 
 
         private void AddNewCondition(object arg1, EventArgs arg2)
-        {       
-            _StudyTreeConditionsOwnerElement.AddNewCondition(arg1, arg2);
-             
-            if(UpdateConditionsTree != null)
+        {
+            if (_StudyTreeConditionsOwnerElement != null)
             {
-                UpdateConditionsTree.Invoke(arg1,arg2);
+                _StudyTreeConditionsOwnerElement.AddNewCondition(arg1, arg2);
+
+                if (UpdateConditionsTree != null)
+                {
+                    UpdateConditionsTree.Invoke(arg1, arg2);
+                }
             }
         }
 

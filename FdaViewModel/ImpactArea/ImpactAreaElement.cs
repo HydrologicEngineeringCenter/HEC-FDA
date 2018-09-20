@@ -56,7 +56,6 @@ namespace FdaViewModel.ImpactArea
             //foreach (object o in items)
             //{
             //    ImpactAreaRows.Add(items as ImpactAreaRowItem);
-
             //}
 
             SelectedPath = selectedPath;
@@ -108,12 +107,15 @@ namespace FdaViewModel.ImpactArea
             {
                 if(a.Header.Equals("Add Impact Areas To Map Window")){
                     a.Header = "Remove Impact Areas from Map Window";
-                    a.Action = RemoveImpactAreasFromMapWindow;
+                    a.Action = RemoveElementFromMapWindow;
                 }
             }
 
         }
-        private void RemoveImpactAreasFromMapWindow(object arg1, EventArgs arg2)
+
+        
+
+        public override void RemoveElementFromMapWindow(object arg1, EventArgs arg2)
         {
             RemoveFromMapWindow(this, new Utilities.RemoveMapFeatureEventArgs(_featureNodeHash));
             //foreach (Utilities.NamedAction a in Actions)
@@ -149,12 +151,13 @@ namespace FdaViewModel.ImpactArea
 
             if (!vm.WasCancled)
             {
-                //this.Name = vm.Name;
+                string originalName = Name;
+                Name = vm.Name;
                 
                 this.Description = vm.Description;
                 ImpactAreaRows = vm.ListOfRows;
 
-                //update the data tables?
+                ((ImpactAreaOwnerElement)_Owner).UpdateTableRowIfModified(originalName, this);
                 UpdateExistingTable();
 
             }

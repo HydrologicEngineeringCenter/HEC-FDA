@@ -72,62 +72,45 @@ namespace FdaViewModel.GeoTech
         #region Voids
         public void EditLeveeFeature(object arg1, EventArgs arg2)
         {
-            LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(Name, Description, Elevation,true);
+            LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(Name, Description, Elevation, true);
             Navigate(vm, true, true);
             if (!vm.WasCancled)
             {
                 if (!vm.HasError)
                 {
-                    bool hasChanges = false;
-                    //if(vm.hasChanges)//does this actually reflect truth?
-                    if (Name != vm.Name)
-                    {
-                        //if it is renamed, make sure to tell the fragility curves that are assoicated to update their row items also...
-                        hasChanges = true;
-                        //throw new NotImplementedException("we need to update related elemtents so users do not have to force the save.");
-                        
+                    string oldName = Name;
+                    Name = vm.Name;
+                    Description = vm.Description;
+                    Elevation = vm.Elevation;
 
-                    }
-                    if (Description != vm.Description)
-                    {
-                        hasChanges = true;
-                    }
-                    if (Elevation != vm.Elevation)
-                    {
-                        hasChanges = true;
-                    }
-                    if (hasChanges)
-                    {
+                    ((LeveeFeatureOwnerElement)_Owner).UpdateTableRowIfModified(oldName, this);
+                    UpdateAndSaveFailureFunctionsWithNewLevee(oldName);
 
-                        List<FailureFunctionElement> ffList = GetElementsOfType<FailureFunctionElement>();
-
-                        foreach (FailureFunctionElement ffe in ffList)
-                        {
-                            if (ffe.SelectedLateralStructure.Name == Name)
-                            {
-                                ffe.SelectedLateralStructure = this;
-                                
-                            }
-                        }
-                        List<FailureFunctionOwnerElement> dummyList = GetElementsOfType<FailureFunctionOwnerElement>();
-
-                        if (dummyList.FirstOrDefault() != null)
-                        {                        
-                            dummyList.FirstOrDefault().Save();
-                        }
-
-                        string oldName = Name;
-                        Name = vm.Name;//should i disable this way of renaming? if not i need to check for name conflicts.
-                        Description = vm.Description;//is binding two way? is this necessary?
-                        Elevation = vm.Elevation;
-                        AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.EditExisting, "Previous Name: " + oldName + " Description: " + Description + " Elevation: " + Elevation));
-                        _Owner.Save();
-                        
-                      
-                    }
+                    AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.EditExisting, "Previous Name: " + oldName + " Description: " + Description + " Elevation: " + Elevation));
                 }
             }
         }
+
+        private void UpdateAndSaveFailureFunctionsWithNewLevee(string oldName)
+        {
+            //get the list of failure functions and update their selected levees
+            List<FailureFunctionElement> ffList = GetElementsOfType<FailureFunctionElement>();
+
+            foreach (FailureFunctionElement ffe in ffList)
+            {
+                if (ffe.SelectedLateralStructure.Name == oldName)
+                {
+                    ffe.SelectedLateralStructure = this;
+                }
+            }
+            //save the changes
+            List<FailureFunctionOwnerElement> ffOwners = GetElementsOfType<FailureFunctionOwnerElement>();
+            if (ffOwners.FirstOrDefault() != null)
+            {
+                ffOwners.FirstOrDefault().Save();
+            }
+        }
+
         public override string TableName
         {
             get

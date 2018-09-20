@@ -21,54 +21,57 @@ namespace FdaViewModel.Storage
         #region Properties
         public string ProjectFile
         {
-            get { return _SqliteReader.DataBasePath; }//check if _sqliteReader exists?
+            get { return _SqliteReader.DataBasePath; }
             set
             {
                 if (_SqliteReader == null)
                 {
-                    if (!System.IO.File.Exists(value)) 
+                    if (!System.IO.File.Exists(value))
                     {
-                        _ProjectDirectory = System.IO.Path.GetDirectoryName(value);
-                        if (!System.IO.Directory.Exists(ProjectDirectory)) { System.IO.Directory.CreateDirectory(ProjectDirectory); }
-                        if (!System.IO.Directory.Exists(TerrainDirectory)) { System.IO.Directory.CreateDirectory(TerrainDirectory); }
-                        if (!System.IO.Directory.Exists(HydraulicsDirectory)) { System.IO.Directory.CreateDirectory(HydraulicsDirectory); }
-                        DataBase_Reader.SqLiteReader.CreateSqLiteFile(value);
-                        _SqliteReader = new DataBase_Reader.SqLiteReader(value);
-                        _SqliteReader.EditsSaved += _SqliteReader_EditsSaved;
+                        SetUpForNewStudy(value);
                     }
                     else
                     {
-                        //do nothing.
-                        _ProjectDirectory = System.IO.Path.GetDirectoryName(value);
-                        if (!System.IO.Directory.Exists(ProjectDirectory)) { System.IO.Directory.CreateDirectory(ProjectDirectory); }
-                        if (!System.IO.Directory.Exists(TerrainDirectory)) { System.IO.Directory.CreateDirectory(TerrainDirectory); }
-                        if (!System.IO.Directory.Exists(HydraulicsDirectory)) { System.IO.Directory.CreateDirectory(HydraulicsDirectory); }
-                        _SqliteReader = new DataBase_Reader.SqLiteReader(value);
-                        _SqliteReader.EditsSaved += _SqliteReader_EditsSaved;
+                        SetUpForExistingStudy(value);
                     }
-
+                    _SqliteReader = new DataBase_Reader.SqLiteReader(value);
+                    _SqliteReader.EditsSaved += _SqliteReader_EditsSaved;
                 }
                 else
                 {
-                    //dispose of the old guy? and link to the new one?
-                    //if the filepath is new, and the old filepath existed should i perform the copy here?
                     if (!System.IO.File.Exists(value))
                     {
-                        //
-                        System.IO.File.Copy(_SqliteReader.DataBasePath, value);
-                        System.IO.File.Delete(_SqliteReader.DataBasePath);
-                        DataBase_Reader.SqLiteReader.CreateSqLiteFile(value);
-                        _SqliteReader = new DataBase_Reader.SqLiteReader(value);
-                        _SqliteReader.EditsSaved += _SqliteReader_EditsSaved;
+                        SetUpForNewStudy(value);
+                    
                     }
                     else
                     {
-                        //??
-                        //throw a message that the file already exists at the destination and gracefully continue...
+                        SetUpForExistingStudy(value);
+                        
                     }
+                        _SqliteReader = new DataBase_Reader.SqLiteReader(value);
+                        _SqliteReader.EditsSaved += _SqliteReader_EditsSaved;
                 }
             }
         }
+
+        private void SetUpForExistingStudy(string value)
+        {
+            _ProjectDirectory = System.IO.Path.GetDirectoryName(value);
+            if (!System.IO.Directory.Exists(ProjectDirectory)) { System.IO.Directory.CreateDirectory(ProjectDirectory); }
+            if (!System.IO.Directory.Exists(TerrainDirectory)) { System.IO.Directory.CreateDirectory(TerrainDirectory); }
+            if (!System.IO.Directory.Exists(HydraulicsDirectory)) { System.IO.Directory.CreateDirectory(HydraulicsDirectory); }
+        }
+        private void SetUpForNewStudy(string value)
+        {
+            _ProjectDirectory = System.IO.Path.GetDirectoryName(value);
+            if (!System.IO.Directory.Exists(ProjectDirectory)) { System.IO.Directory.CreateDirectory(ProjectDirectory); }
+            if (!System.IO.Directory.Exists(TerrainDirectory)) { System.IO.Directory.CreateDirectory(TerrainDirectory); }
+            if (!System.IO.Directory.Exists(HydraulicsDirectory)) { System.IO.Directory.CreateDirectory(HydraulicsDirectory); }
+            DataBase_Reader.SqLiteReader.CreateSqLiteFile(value);
+            
+        }
+
         public DataBase_Reader.SqLiteReader Reader
         {
             get { return _SqliteReader; }
@@ -94,18 +97,6 @@ namespace FdaViewModel.Storage
         #region Constructors
         private Connection()
         {
-            //create a temporary sqlite file
-
-            //if (_SqliteReader == null)
-            //{
-            //    //string tmpfile = createTempFile();
-            //    //if (System.IO.File.Exists(tmpfile)) System.IO.File.Delete(tmpfile);
-            //    //if (!System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(tmpfile))) System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(tmpfile));
-            //    //DataBase_Reader.SqLiteReader.CreateSqLiteFile(tmpfile);
-            //    //_SqliteReader = new DataBase_Reader.SqLiteReader(tmpfile);
-            //    //_SqliteReader.EditsSaved += _SqliteReader_EditsSaved;
-            //    //add a handler for datatable editing.
-            //}
         }
         #endregion
         #region Voids
@@ -117,12 +108,12 @@ namespace FdaViewModel.Storage
         {
             _SqliteReader.Close();
         }
-        public void RenameTable(string oldName, string newName)
+        public void RenameTable(string oldTableName, string newTableName)
         {
             //check table exists
-            if (_SqliteReader.TableNames.Contains(oldName))
+            if (_SqliteReader.TableNames.Contains(oldTableName))
             {
-                _SqliteReader.RenameTable(oldName, newName);
+                _SqliteReader.RenameTable(oldTableName, newTableName);
 
             }
         }

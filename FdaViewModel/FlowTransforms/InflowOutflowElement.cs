@@ -75,10 +75,15 @@ namespace FdaViewModel.FlowTransforms
             {
                 if (!vm.HasFatalError)
                 {
-                    Name = vm.Name;//should i disable this way of renaming? if not i need to check for name conflicts.
-                    Description = vm.Description;//is binding two way? is this necessary?
+                    string originalName = Name;
+                    Statistics.UncertainCurveDataCollection oldCurve = InflowOutflowCurve;
+
+                    Name = vm.Name;
+                    Description = vm.Description;
                     InflowOutflowCurve = vm.Curve;
-                 
+
+                    ((InflowOutflowOwnerElement)_Owner).UpdateTableRowIfModified(originalName, this);
+                    UpdateTableIfModified(originalName,oldCurve, InflowOutflowCurve);    
                 }
             }
         }

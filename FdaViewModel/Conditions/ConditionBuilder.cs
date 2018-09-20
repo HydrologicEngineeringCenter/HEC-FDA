@@ -37,19 +37,23 @@ namespace FdaViewModel.Conditions
         private AggregatedStageDamage.AggregatedStageDamageElement _stageDamageElem;
 
         private bool _usesThreshold = false;
-        private string _thresholdType;
+
+        private FdaModel.ComputationPoint.PerformanceThresholdTypes _thresholdType;
         private double _thresholdValue;
 
         private OwnerElement _owner;
 
         public ConditionBuilder(string name, string desc, int analysisYear, ImpactArea.ImpactAreaElement impactAreaElem, 
-            ImpactArea.ImpactAreaRowItem indexLocation, OwnerElement owner)
+            ImpactArea.ImpactAreaRowItem indexLocation, FdaModel.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue, OwnerElement owner)
         {
             _name = name;
             _description = desc;
             _analysisYear = analysisYear;
             _impactAreaElem = impactAreaElem;
             _indexLocation = indexLocation;
+            _thresholdType = thresholdType;
+            _thresholdValue = thresholdValue;
+            _usesThreshold = true;
             _owner = owner;
         }
 
@@ -102,13 +106,13 @@ namespace FdaViewModel.Conditions
             return this;
         }
 
-        public ConditionBuilder WithThreshold(string thresholdType, double thresholdValue)
-        {
-            _usesThreshold = true;
-            _thresholdType = thresholdType;
-            _thresholdValue = thresholdValue;
-            return this;
-        }
+        //public ConditionBuilder WithThreshold(string thresholdType, double thresholdValue)
+        //{
+        //    _usesThreshold = true;
+        //    _thresholdType = thresholdType;
+        //    _thresholdValue = thresholdValue;
+        //    return this;
+        //}
 
         public ConditionsElement build()
         {

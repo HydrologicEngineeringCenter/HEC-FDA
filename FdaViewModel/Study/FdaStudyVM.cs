@@ -42,6 +42,12 @@ namespace FdaViewModel.Study
             set { _ConditionsTree = value; NotifyPropertyChanged(); }
         }
 
+        public StudyElement StudyElement
+        {
+            get { return _StudyElement; }
+            set { _StudyElement = value; }
+        }
+
         public override string TableName
         {
             get
@@ -75,6 +81,7 @@ namespace FdaViewModel.Study
         private void ClearCurrentStudy(object sender, EventArgs e)
         {
             _MainStudyTree[0].Elements.Clear();
+            _StudyElement = new StudyElement(this);
         }
         private void Instance_RequestFlushLogFile(object sender, EventArgs e)
         {
@@ -117,7 +124,17 @@ namespace FdaViewModel.Study
       
         public override void AddValidationRules()
         {
-            
+            AddRule(nameof(StudyElement), () => { return AreConditionsValid(); }, GetConditionErrors());
+        }
+
+        private bool AreConditionsValid()
+        {
+            return false;
+        }
+
+        private string GetConditionErrors()
+        {
+            return "Condition 1 is in error\nCondition 2 is in error.";
         }
 
         public override void Save()

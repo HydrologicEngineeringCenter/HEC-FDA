@@ -12,7 +12,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="20" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="60" />
                 </Grid.ColumnDefinitions>
                 <Image Grid.Column="0" Name="image_Image" Source="{Binding Path=ImageSource}" />
                 <TextBlock Grid.Column="1" Name="txt_Name" Text="{Binding Path=Name}" Margin="5,0,0,0" />

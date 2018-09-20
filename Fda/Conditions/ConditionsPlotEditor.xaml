@@ -274,6 +274,10 @@
                         <Image Width="20" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
 
                     </Button>
+                    <Label Content="Threshold Type: " />
+                    <ComboBox Name="cmb_ThresholdType" Width="150" ItemsSource="{Binding ThresholdTypes}" SelectedItem="{Binding SelectedThresholdType}" Margin="2" />
+                    <Label Content="Value: " />
+                    <TextBox Name="txt_ThresholdValue" Width="100" Text="{Binding ThresholdValue}" Margin="0,0,10,0"/>
                 </StackPanel>
                 <!--<StackPanel Orientation="Horizontal" Grid.Column="2">
                 <Label Content="Structures:" />

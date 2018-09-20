@@ -56,10 +56,18 @@ namespace FdaViewModel.Conditions
         private int _Year;
         private ImpactArea.ImpactAreaElement _SelectedImpactArea;
 
+        private ObservableCollection<PerformanceThresholdTypes> _ThresholdTypes = new ObservableCollection<PerformanceThresholdTypes>();
 
         #endregion
         #region Properties
         //public List<Plots.IndividualLinkedPlotControlVM> ListOfLinkedPlots { get; set; }
+
+        public double ThresholdValue { get; set; }
+        public ObservableCollection<PerformanceThresholdTypes> ThresholdTypes
+        {
+            get { return _ThresholdTypes; }
+        }
+        public PerformanceThresholdTypes SelectedThresholdType { get; set; }
         public ObservableCollection<Plots.IndividualLinkedPlotControlVM> AddedPlots
         {
             get { return _AddedPlots; }
@@ -218,15 +226,30 @@ namespace FdaViewModel.Conditions
         //}
 
 
-
+            /// <summary>
+            /// This constructor is used when opening the editor up for editing a previously defined condition
+            /// </summary>
+            /// <param name="impAreas"></param>
+            /// <param name="indLinkedPlotControl0VM"></param>
+            /// <param name="control1VM"></param>
+            /// <param name="control3VM"></param>
+            /// <param name="control5VM"></param>
+            /// <param name="control7VM"></param>
+            /// <param name="control8VM"></param>
+            /// <param name="name"></param>
+            /// <param name="description"></param>
+            /// <param name="year"></param>
+            /// <param name="selectedImpArea"></param>
         public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas, Plots.IndividualLinkedPlotControlVM indLinkedPlotControl0VM, Plots.IndividualLinkedPlotControlVM control1VM,
             Plots.IndividualLinkedPlotControlVM control3VM, Plots.IndividualLinkedPlotControlVM control5VM, Plots.IndividualLinkedPlotControlVM control7VM, Plots.IndividualLinkedPlotControlVM control8VM,
-            string name, string description, int year, ImpactArea.ImpactAreaElement selectedImpArea) : this(impAreas, indLinkedPlotControl0VM, control1VM, control3VM, control5VM, control7VM, control8VM)
+            string name, string description, int year, ImpactArea.ImpactAreaElement selectedImpArea, PerformanceThresholdTypes thresholdType, double thresholdValue) : this(impAreas, indLinkedPlotControl0VM, control1VM, control3VM, control5VM, control7VM, control8VM)
         {
             Name = name;
             Description = description;
             Year = year;
             SelectedImpactArea = selectedImpArea;
+            SelectedThresholdType = thresholdType;
+            ThresholdValue = thresholdValue;
 
             if (Plot0ControlVM.CurveImporterVM != null && Plot0ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
             {
@@ -251,6 +274,16 @@ namespace FdaViewModel.Conditions
                 Plot7ControlVM.AddCurveToPlot(this, new EventArgs());
             }
         }
+        /// <summary>
+        /// This constructor is used when creating a new condition
+        /// </summary>
+        /// <param name="impAreas"></param>
+        /// <param name="indLinkedPlotControl0VM"></param>
+        /// <param name="control1VM"></param>
+        /// <param name="control3VM"></param>
+        /// <param name="control5VM"></param>
+        /// <param name="control7VM"></param>
+        /// <param name="control8VM"></param>
         public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas, Plots.IndividualLinkedPlotControlVM indLinkedPlotControl0VM, Plots.IndividualLinkedPlotControlVM control1VM, 
             Plots.IndividualLinkedPlotControlVM control3VM, Plots.IndividualLinkedPlotControlVM control5VM, Plots.IndividualLinkedPlotControlVM control7VM, Plots.IndividualLinkedPlotControlVM control8VM)
         {
@@ -267,12 +300,26 @@ namespace FdaViewModel.Conditions
             Plot8ControlVM = control8VM;
 
             AttachEventsToControls();
+            LoadThresholdTypes();
         }
 
+
+
+
+        #endregion
+        #region Voids
+        private void LoadThresholdTypes()
+        {
+            foreach (PerformanceThresholdTypes ptt in Enum.GetValues(typeof(PerformanceThresholdTypes)))
+            {
+                _ThresholdTypes.Add(ptt);
+            }
+        }
         private void AttachEventsToControls()
         {
             Plot0ControlVM.PlotIsShowing += Plot0IsShowing;
             Plot0ControlVM.PlotIsNotShowing += Plot0IsNotShowing;
+
             Plot0ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
 
             Plot1ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
@@ -296,11 +343,31 @@ namespace FdaViewModel.Conditions
             _Plot7ControlVM.RequestNavigation += Navigate;
             _Plot8ControlVM.RequestNavigation += Navigate;
 
+            AttachUpdatePreviewPlotEvents();
         }
 
+        private void AttachUpdatePreviewPlotEvents()
+        {
+            Plot0ControlVM.PlotIsNotShowing += UpdatePreviewComputePlot;
+            Plot0ControlVM.PlotIsShowing += UpdatePreviewComputePlot;
+            Plot0ControlVM.SelectedCurveUpdated += UpdatePreviewComputePlot;
 
-        #endregion
-        #region Voids
+            Plot1ControlVM.PlotIsNotShowing += UpdatePreviewComputePlot;
+            Plot1ControlVM.PlotIsShowing += UpdatePreviewComputePlot;
+            Plot1ControlVM.SelectedCurveUpdated += UpdatePreviewComputePlot;
+
+            Plot3ControlVM.PlotIsNotShowing += UpdatePreviewComputePlot;
+            Plot3ControlVM.PlotIsShowing += UpdatePreviewComputePlot;
+            Plot3ControlVM.SelectedCurveUpdated += UpdatePreviewComputePlot;
+
+            Plot5ControlVM.PlotIsNotShowing += UpdatePreviewComputePlot;
+            Plot5ControlVM.PlotIsShowing += UpdatePreviewComputePlot;
+            Plot5ControlVM.SelectedCurveUpdated += UpdatePreviewComputePlot;
+
+            Plot7ControlVM.PlotIsNotShowing += UpdatePreviewComputePlot;
+            Plot7ControlVM.PlotIsShowing += UpdatePreviewComputePlot;
+            Plot7ControlVM.SelectedCurveUpdated += UpdatePreviewComputePlot;
+        }
         private void Plot7IsShowing(object sender, EventArgs e)
         {
             Plot8ControlVM.ImportButtonVM.IsEnabled = true;
@@ -308,6 +375,7 @@ namespace FdaViewModel.Conditions
         private void Plot7IsNotShowing(object sender, EventArgs e)
         {
             Plot8ControlVM.ImportButtonVM.IsEnabled = false;
+
         }
         private void Plot3IsShowing(object sender, EventArgs e)
         {
@@ -356,13 +424,44 @@ namespace FdaViewModel.Conditions
             //figure out what to do here. It will depend on if plots already exist there or not.
             Plot3ControlVM.ImportButtonVM.IsEnabled = false;
             //_AddedPlots.Remove(Plot0ControlVM.IndividualPlotWrapperVM.PlotVM);
-            ClosePreviewComputePlot();
 
         }
 
-        private void ClosePreviewComputePlot()
+        /// <summary>
+        /// Any change to the other curves will make the preview plot go back to the
+        /// import button. If the conditions doesn't have what it needs to run
+        /// a compute, it will disable the compute button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UpdatePreviewComputePlot(object sender, EventArgs e)
         {
             Plot8ControlVM.SetCurrentViewToCoverButton();
+            //if plot 0,3,7 are showing then enable, else, disable the button
+            bool hasPlot0 = false;
+            bool hasPlot3 = false;
+            bool hasPlot7 = false;
+            if(Plot0ControlVM.CurrentVM.GetType() == typeof(Plots.ConditionsIndividualPlotWrapperVM))
+            {
+                hasPlot0 = true;
+            }
+            if (Plot3ControlVM.CurrentVM.GetType() == typeof(Plots.ConditionsIndividualPlotWrapperVM))
+            {
+                hasPlot3 = true;
+            }
+            if (Plot7ControlVM.CurrentVM.GetType() == typeof(Plots.ConditionsIndividualPlotWrapperVM))
+            {
+                hasPlot7 = true;
+            }
+
+            if (hasPlot0 && hasPlot3 && hasPlot7)
+            {
+                Plot8ControlVM.ImportButtonVM.IsEnabled = true;
+            }
+            else
+            {
+                Plot8ControlVM.ImportButtonVM.IsEnabled = false;
+            }
             //create a method to see if the compute would be valid?
             //then... if(condition.isValid){enable the button} else disable the button
         }
@@ -427,155 +526,7 @@ namespace FdaViewModel.Conditions
             }
 
         }
-        //public void LaunchAddInflowFrequencyCurve(object o,EventArgs e)
-        //{
-        //    Navigate(FlowFrequencyVM);
-        //    if (!FlowFrequencyVM.WasCancled)
-        //    {
-        //        if (!FlowFrequencyVM.HasError)
-        //        {
-        //            if(FlowFrequencyVM.SelectedFlowFrequencyElement != null)
-        //            {
-        //                FdaModel.Functions.FrequencyFunctions.LogPearsonIII lp3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(FlowFrequencyVM.SelectedFlowFrequencyElement.Distribution,FdaModel.Functions.FunctionTypes.InflowFrequency);
-
-        //                Plot0VM = new Plots.IndividualLinkedPlotVM( lp3,lp3.GetOrdinatesFunction().Function, "LP3", "Probability", "Inflow", FlowFrequencyVM.SelectedFlowFrequencyElement.Name);
-        //                if (Plot0VM.Curve.Count < 1)
-        //                {
-        //                    Utilities.CustomMessageBoxVM message = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "The selected curve contains zero points.");
-        //                    Navigate(message);
-        //                }
-        //                else
-        //                {
-        //                    //IsPlot0Visible = true;
-        //                    Plot0VM.IsVisible = true;
-        //                }
-        //            }   
-        //        }
-        //    }
-        //}
-
-       
-        //public void LaunchAddRatingCurve()
-        //{
-        //    Navigate(RatingCurveVM);
-        //    if (!RatingCurveVM.WasCancled)
-        //    {
-        //        if (!RatingCurveVM.HasError)
-        //        {
-        //            if (RatingCurveVM.SelectedRatingElement != null)
-        //            {
-        //                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)RatingCurveVM.SelectedRatingElement.RatingCurve, FdaModel.Functions.FunctionTypes.Rating);
-
-        //                List<double> ys = new List<double>();
-        //                List<double> xs = new List<double>();
-        //                foreach (double y in (rating.GetOrdinatesFunction().Function.YValues))
-        //                {
-        //                    ys.Add(y);
-        //                }
-        //                foreach (double x in (rating.GetOrdinatesFunction().Function.XValues))
-        //                {
-        //                    xs.Add(x);
-        //                }
-        //                Plot3VM = new Plots.IndividualLinkedPlotVM( rating,new Statistics.CurveIncreasing(ys.ToArray(), xs.ToArray(), true, false), "Rating", "Exterior Stage (ft)", "Outflow (cfs)",RatingCurveVM.SelectedRatingElement.Name);
-        //                if (Plot3VM.Curve.Count < 1)
-        //                {
-        //                    Utilities.CustomMessageBoxVM message = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "The selected curve contains zero points.");
-        //                    Navigate(message);
-        //                }
-        //                else
-        //                {
-        //                    IsPlot3Visible = true;
-        //                }
-                      
-        //            }
-        //        }
-        //    }
-        //}
-
-        //public void LaunchAddInflowOutflowCurve()
-        //{
-        //    Navigate(InflowOutflowVM);
-        //    if (!InflowOutflowVM.WasCancled)
-        //    {
-        //        if (!InflowOutflowVM.HasError)
-        //        {
-        //            if (InflowOutflowVM.SelectedInflowOutflowElement != null)
-        //            {
-        //                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction inflowOutflow = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)InflowOutflowVM.SelectedInflowOutflowElement.InflowOutflowCurve, FdaModel.Functions.FunctionTypes.InflowOutflow);
-                        
-        //                Plot1VM = new Plots.IndividualLinkedPlotVM(inflowOutflow, inflowOutflow.GetOrdinatesFunction().Function, "InflowOutflow", "Inflow (cfs)", "Outflow (cfs)", InflowOutflowVM.SelectedInflowOutflowElement.Name);
-        //                if (Plot1VM.Curve.Count < 1)
-        //                {
-        //                    Utilities.CustomMessageBoxVM message = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "The selected curve contains zero points.");
-        //                    Navigate(message);
-        //                }
-        //                else
-        //                {
-        //                    IsPlot1Visible = true;
-        //                }
-                        
-                        
-        //            }
-        //        }
-        //    }
-        //}
-
-        //public void LaunchAddStageDamageCurve()
-        //{
-        //    Navigate(StageDamageVM);
-        //    if (!StageDamageVM.WasCancled)
-        //    {
-        //        if (!StageDamageVM.HasError)
-        //        {
-        //            if (StageDamageVM.StageDamageElement != null)
-        //            {
-        //                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)StageDamageVM.StageDamageElement.Curve, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
-
-        //                Plot7VM = new Plots.IndividualLinkedPlotVM( stageDamage,stageDamage.GetOrdinatesFunction().Function, "StageDamage", "Stage (ft)", "Damage ($)",StageDamageVM.StageDamageElement.Name);
-
-        //                if (Plot7VM.Curve.Count < 1)
-        //                {
-        //                    Utilities.CustomMessageBoxVM message = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "The selected curve contains zero points.");
-        //                    Navigate(message);
-        //                }
-        //                else
-        //                {
-        //                    IsPlot7Visible = true;
-        //                }
-                       
-        //            }
-        //        }
-        //    }
-
-        //}
-
-        //public void LaunchAddExteriorInteriorCurve()
-        //{
-        //    Navigate(ExteriorInteriorVM);
-        //    if (!ExteriorInteriorVM.WasCancled)
-        //    {
-        //        if (!ExteriorInteriorVM.HasError)
-        //        {
-        //            if (ExteriorInteriorVM.SelectedExteriorInteriorStageElement != null)
-        //            {
-        //                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extIntStage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)ExteriorInteriorVM.SelectedExteriorInteriorStageElement.ExteriorInteriorCurve, FdaModel.Functions.FunctionTypes.ExteriorInteriorStage);
-
-        //                Plot5VM = new Plots.IndividualLinkedPlotVM(extIntStage, extIntStage.GetOrdinatesFunction().Function, "ExteriorInteriorStage", "Exterior Stage (ft)", "Interior Stage (ft)",ExteriorInteriorVM.SelectedExteriorInteriorStageElement.Name);
-        //                if (Plot5VM.Curve.Count < 1)
-        //                {
-        //                    Utilities.CustomMessageBoxVM message = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "The selected curve contains zero points.");
-        //                    Navigate(message);
-        //                }
-        //                else
-        //                {
-        //                    IsPlot5Visible = true;
-        //                }
-                        
-        //            }
-        //        }
-        //    }
-
-        //}
+   
 
         public void RunPreviewCompute(Object sender, EventArgs e)
         {
@@ -676,8 +627,6 @@ namespace FdaViewModel.Conditions
             AddRule(nameof(Name), () => { if (Name == null) { return false; } else { return !Name.Equals(""); } }, "Name cannot be blank");
             AddRule(nameof(Year), () => { if (Year < 1900 || Year > 3000) { return false; } else { return true; } }, "Invalid Year");
             AddRule(nameof(SelectedImpactArea), () => { if (SelectedImpactArea == null) { return false; } else { return true; } }, "No impact area selected");
-
-
         }
 
         public override void Save()

@@ -75,10 +75,7 @@ namespace FdaViewModel.StageTransforms
         #region Functions
         public override string TableName
         {
-            get
-            {
-                return "Rating Curves";
-            }
+            get  { return "Rating Curves";}
         }
         public override string[] TableColumnNames()
         {

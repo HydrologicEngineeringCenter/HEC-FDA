@@ -5,6 +5,8 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Collections.ObjectModel;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -16,9 +18,14 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         // Created Date: 7/11/2017 3:23:11 PM
         #endregion
         #region Fields
+        private const string STRUCTURE_DD_CURVE_NAME = " - StructDDCurve";
+        private const string CONTENT_DD_CURVE_NAME = " - ContDDCurve";
+        private const string VEHICLE_DD_CURVE_NAME = " - VehDDCurve";
+        private const string OTHER_DD_CURVE_NAME = " - OtherDDCurve";
+
         #endregion
         #region Properties
-            public Dictionary<string,bool[]> OccTypesSelectedTabsDictionary { get; set; }
+        public Dictionary<string,bool[]> OccTypesSelectedTabsDictionary { get; set; }
             //public string OccTypesGroupName { get; set; }
         public List<Consequences_Assist.ComputableObjects.OccupancyType> ListOfOccupancyTypes { get; set; }
 
@@ -47,486 +54,272 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             //throw new NotImplementedException();
         }
 
+        #region SaveTables
+        private void SaveNormalTable(System.Data.DataTable dtable, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        {
+            dtable.Columns.Add("X", typeof(double));
+            dtable.Columns.Add("Mean", typeof(double));
+            dtable.Columns.Add("StDev", typeof(double));
+
+            for (int j = 0; j < XValues.Count; j++)
+            {
+                object[] ddRow = new object[3];
+                ddRow[0] = XValues[j];
+                ddRow[1] = ((Statistics.Normal)YValues[j]).GetMean;
+                ddRow[2] = ((Statistics.Normal)YValues[j]).GetStDev;
+                dtable.Rows.Add(ddRow);
+            }
+            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
+        }
+
+        private void SaveTriangularTable(System.Data.DataTable dtable, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        {
+            dtable.Columns.Add("X", typeof(double));
+            dtable.Columns.Add("Min", typeof(double));
+            dtable.Columns.Add("Max", typeof(double));
+            dtable.Columns.Add("MostLikely", typeof(double));
+
+
+            for (int j = 0; j < XValues.Count; j++)
+            {
+                object[] ddRow = new object[4];
+                ddRow[0] = XValues[j];
+                ddRow[1] = ((Statistics.Triangular)YValues[j]).getMin;
+                ddRow[2] = ((Statistics.Triangular)YValues[j]).getMax;
+                ddRow[3] = ((Statistics.Triangular)YValues[j]).getMostlikely;
+
+                dtable.Rows.Add(ddRow);
+            }
+            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
+
+        }
+
+        private void SaveUniformTable(System.Data.DataTable dtable, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        {
+            dtable.Columns.Add("X", typeof(double));
+            dtable.Columns.Add("Min", typeof(double));
+            dtable.Columns.Add("Max", typeof(double));
+
+            for (int j = 0; j < XValues.Count; j++)
+            {
+                object[] ddRow = new object[3];
+                ddRow[0] = XValues[j];
+                ddRow[1] = ((Statistics.Uniform)YValues[j]).GetMin;
+                ddRow[2] = ((Statistics.Uniform)YValues[j]).GetMax;
+
+                dtable.Rows.Add(ddRow);
+            }
+            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
+        }
+
+        private void SaveNoneTable(System.Data.DataTable dtable, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        {
+            dtable.Columns.Add("X", typeof(double));
+            dtable.Columns.Add("Y", typeof(double));
+
+            for (int j = 0; j < XValues.Count; j++)
+            {
+                object[] ddRow = new object[4];
+                ddRow[0] = XValues[j];
+                //ddRow[1] = ((Statistics.None)YValues[j]);
+                ddRow[1] = YValues[j];
+
+                dtable.Rows.Add(ddRow);
+            }
+            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
+        }
+        
+        private void SaveDepthDamageTable(string tableName, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        {
+            //string strucTableName = Name + " - " + ot.Name + tableNameAppender;
+            System.Data.DataTable dtable = new System.Data.DataTable(tableName);
+            if (Storage.Connection.Instance.TableNames().Contains(tableName))
+            {
+                //already exists... delete?
+                Storage.Connection.Instance.DeleteTable(dtable.TableName);
+            }
+
+            if (YValues[0].GetType() == typeof(Statistics.Normal))
+            {
+                SaveNormalTable(dtable, XValues, YValues);
+            }
+            else if (YValues[0].GetType() == typeof(Statistics.Triangular))
+            {
+                SaveTriangularTable(dtable, XValues, YValues);
+            }
+            else if (YValues[0].GetType() == typeof(Statistics.Uniform))
+            {
+                SaveUniformTable(dtable, XValues, YValues);
+            }
+            else if (YValues[0].GetType() == typeof(Statistics.None))
+            {
+                SaveNoneTable(dtable, XValues, YValues);
+            }
+        }
+
+        #endregion
+        
+
         public override void Save()
         {
+            Stopwatch sw = new Stopwatch();
+            Stopwatch swTotal = new Stopwatch();
+            Stopwatch swApply = new Stopwatch();
+            swTotal.Start();
+
+
             if (!Storage.Connection.Instance.IsConnectionNull)
             {
+                Storage.Connection.Instance.Open();
                 if (Storage.Connection.Instance.TableNames().Contains(TableName))
                 {
                     //already exists... delete?
                     Storage.Connection.Instance.DeleteTable(TableName);
                 }
 
-                string[] colNames = new string[] { "Name", "Description", "DamageCategory","VarInFoundHtType","FdHtMin","FdHtMax","FdHtStDev","IsStructChecked","VarInStructValueType","StructMin","StructMax","StructStDev","StructDistType", "IsContChecked", "VarInContValueType", "ContMin", "ContMax", "ContStDev", "ContDistType", "IsVehChecked", "VarInVehValueType", "VehMin", "VehMax", "VehStDev", "VehDistType", "IsOtherChecked", "VarInOtherValueType", "OtherMin", "OtherMax", "OtherStDev", "OtherDistType","GroupName" };
-                Type[] colTypes = new Type[] { typeof(string), typeof(string), typeof(string), typeof(string), typeof(double), typeof(double), typeof(double), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),typeof(string) };
+                string[] colNames = new string[] { "Name", "Description", "DamageCategory","VarInFoundHtType","FdHtMin","FdHtMax","FdHtStDev",
+                    "IsStructChecked","VarInStructValueType","StructMin","StructMax","StructStDev","StructDistType", "IsContChecked",
+                    "VarInContValueType", "ContMin", "ContMax", "ContStDev", "ContDistType", "IsVehChecked", "VarInVehValueType",
+                    "VehMin", "VehMax", "VehStDev", "VehDistType", "IsOtherChecked", "VarInOtherValueType", "OtherMin", "OtherMax",
+                    "OtherStDev", "OtherDistType","GroupName" };
+                Type[] colTypes = new Type[] { typeof(string), typeof(string), typeof(string), typeof(string), typeof(double),
+                    typeof(double), typeof(double), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double),
+                    typeof(string), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),
+                    typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string), typeof(bool),
+                    typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),typeof(string) };
 
                 Storage.Connection.Instance.CreateTable(TableName, colNames, colTypes);
                 DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
 
                 List<object[]> rows = new List<object[]>();
-                List<object> rowsList = new List<object>();
 
-                int i = 0;
                 foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in ListOfOccupancyTypes)
                 {
-
-
-                    //write a table for this occtypes structure depth damage curve
-
-                    System.Data.DataTable dtable = new System.Data.DataTable(Name + " - " + ot.Name + " - StructDDCurve");
-                    if (Storage.Connection.Instance.TableNames().Contains(dtable.TableName))
-                    {
-                        //already exists... delete?
-                        Storage.Connection.Instance.DeleteTable(dtable.TableName);
-                    }
-
+                    //write table for structures
                     if (ot.GetStructurePercentDD.YValues.Count > 0)
                     {
-                        if (ot.GetStructurePercentDD.YValues[0].GetType() == typeof(Statistics.Normal))
-                        {
-                            dtable.Columns.Add("X", typeof(double));
-                            dtable.Columns.Add("Mean", typeof(double));
-                            dtable.Columns.Add("StDev", typeof(double));
-
-                            for (int j = 0; j < ot.GetStructurePercentDD.XValues.Count; j++)
-                            {
-                                object[] ddRow = new object[3];
-                                ddRow[0] = ot.GetStructurePercentDD.XValues[j];
-                                ddRow[1] = ((Statistics.Normal)ot.GetStructurePercentDD.YValues[j]).GetMean;
-                                ddRow[2] = ((Statistics.Normal)ot.GetStructurePercentDD.YValues[j]).GetStDev;
-                                dtable.Rows.Add(ddRow);
-                            }
-                            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-                        else if (ot.GetStructurePercentDD.YValues[0].GetType() == typeof(Statistics.Triangular))
-                        {
-                            dtable.Columns.Add("X", typeof(double));
-                            dtable.Columns.Add("Min", typeof(double));
-                            dtable.Columns.Add("Max", typeof(double));
-                            dtable.Columns.Add("MostLikely", typeof(double));
-
-
-                            for (int j = 0; j < ot.GetStructurePercentDD.XValues.Count; j++)
-                            {
-                                object[] ddRow = new object[4];
-                                ddRow[0] = ot.GetStructurePercentDD.XValues[j];
-                                ddRow[1] = ((Statistics.Triangular)ot.GetStructurePercentDD.YValues[j]).getMin;
-                                ddRow[2] = ((Statistics.Triangular)ot.GetStructurePercentDD.YValues[j]).getMax;
-                                ddRow[3] = ((Statistics.Triangular)ot.GetStructurePercentDD.YValues[j]).getMostlikely;
-
-                                dtable.Rows.Add(ddRow);
-                            }
-                            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-                        else if (ot.GetStructurePercentDD.YValues[0].GetType() == typeof(Statistics.Uniform))
-                        {
-                            dtable.Columns.Add("X", typeof(double));
-                            dtable.Columns.Add("Min", typeof(double));
-                            dtable.Columns.Add("Max", typeof(double));
-
-                            for (int j = 0; j < ot.GetStructurePercentDD.XValues.Count; j++)
-                            {
-                                object[] ddRow = new object[3];
-                                ddRow[0] = ot.GetStructurePercentDD.XValues[j];
-                                ddRow[1] = ((Statistics.Uniform)ot.GetStructurePercentDD.YValues[j]).GetMin;
-                                ddRow[2] = ((Statistics.Uniform)ot.GetStructurePercentDD.YValues[j]).GetMax;
-
-                                dtable.Rows.Add(ddRow);
-                            }
-                            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-                        else if (ot.GetStructurePercentDD.YValues[0].GetType() == typeof(Statistics.Uniform))
-                        {
-                            dtable.Columns.Add("X", typeof(double));
-                            dtable.Columns.Add("Min", typeof(double));
-                            dtable.Columns.Add("Max", typeof(double));
-
-                            for (int j = 0; j < ot.GetStructurePercentDD.XValues.Count; j++)
-                            {
-                                object[] ddRow = new object[3];
-                                ddRow[0] = ot.GetStructurePercentDD.XValues[j];
-                                ddRow[1] = ((Statistics.Uniform)ot.GetStructurePercentDD.YValues[j]).GetMin;
-                                ddRow[2] = ((Statistics.Uniform)ot.GetStructurePercentDD.YValues[j]).GetMax;
-
-                                dtable.Rows.Add(ddRow);
-                            }
-                            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-                        else if (ot.GetStructurePercentDD.YValues[0].GetType() == typeof(Statistics.None))
-                        {
-                            //dtable.Columns.Add("X", typeof(double));
-                            //dtable.Columns.Add("Y", typeof(double));
-
-                            //for (int j = 0; j < ot.GetStructurePercentDD.XValues.Count; j++)
-                            //{
-                            //    object[] ddRow = new object[4];
-                            //    ddRow[0] = ot.GetStructurePercentDD.XValues[j];
-                            //    ddRow[1] = ((Statistics.None)ot.GetStructurePercentDD.YValues[j]).;
-
-                            //    dtable.Rows.Add(ddRow);
-                            //}
-                            //Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-
+                        string strucTableName = Name + " - " + ot.Name + STRUCTURE_DD_CURVE_NAME;
+                        SaveDepthDamageTable(strucTableName, ot.GetStructurePercentDD.XValues, ot.GetStructurePercentDD.YValues);   
+                        //SaveStructureDepthDamage(ot);
                     }
 
                     //write a table for content dd curve
-
                     if (ot.GetContentPercentDD.YValues.Count > 0)
                     {
-                        dtable = new System.Data.DataTable(Name + " - " + ot.Name + " - ContDDCurve");
-                        if (Storage.Connection.Instance.TableNames().Contains(dtable.TableName))
-                        {
-                            //already exists... delete?
-                            Storage.Connection.Instance.DeleteTable(dtable.TableName);
-                        }
-
-                        if (ot.GetContentPercentDD.YValues[0].GetType() == typeof(Statistics.Normal))
-                        {
-                            dtable.Columns.Add("X", typeof(double));
-                            dtable.Columns.Add("Mean", typeof(double));
-                            dtable.Columns.Add("StDev", typeof(double));
-
-                            for (int j = 0; j < ot.GetContentPercentDD.XValues.Count; j++)
-                            {
-                                object[] ddRow = new object[3];
-                                ddRow[0] = ot.GetContentPercentDD.XValues[j];
-                                ddRow[1] = ((Statistics.Normal)ot.GetContentPercentDD.YValues[j]).GetMean;
-                                ddRow[2] = ((Statistics.Normal)ot.GetContentPercentDD.YValues[j]).GetStDev;
-                                dtable.Rows.Add(ddRow);
-                            }
-                            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-                        else if (ot.GetContentPercentDD.YValues[0].GetType() == typeof(Statistics.Triangular))
-                        {
-                            dtable.Columns.Add("X", typeof(double));
-                            dtable.Columns.Add("Min", typeof(double));
-                            dtable.Columns.Add("Max", typeof(double));
-                            dtable.Columns.Add("MostLikely", typeof(double));
-
-
-                            for (int j = 0; j < ot.GetContentPercentDD.XValues.Count; j++)
-                            {
-                                object[] ddRow = new object[4];
-                                ddRow[0] = ot.GetContentPercentDD.XValues[j];
-                                ddRow[1] = ((Statistics.Triangular)ot.GetContentPercentDD.YValues[j]).getMin;
-                                ddRow[2] = ((Statistics.Triangular)ot.GetContentPercentDD.YValues[j]).getMax;
-                                ddRow[3] = ((Statistics.Triangular)ot.GetContentPercentDD.YValues[j]).getMostlikely;
-
-                                dtable.Rows.Add(ddRow);
-                            }
-                            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-                        else if (ot.GetContentPercentDD.YValues[0].GetType() == typeof(Statistics.Uniform))
-                        {
-                            dtable.Columns.Add("X", typeof(double));
-                            dtable.Columns.Add("Min", typeof(double));
-                            dtable.Columns.Add("Max", typeof(double));
-
-                            for (int j = 0; j < ot.GetContentPercentDD.XValues.Count; j++)
-                            {
-                                object[] ddRow = new object[4];
-                                ddRow[0] = ot.GetContentPercentDD.XValues[j];
-                                ddRow[1] = ((Statistics.Uniform)ot.GetContentPercentDD.YValues[j]).GetMin;
-                                ddRow[2] = ((Statistics.Uniform)ot.GetContentPercentDD.YValues[j]).GetMax;
-
-                                dtable.Rows.Add(ddRow);
-                            }
-                            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-                        else if (ot.GetContentPercentDD.YValues[0].GetType() == typeof(Statistics.Uniform))
-                        {
-                            dtable.Columns.Add("X", typeof(double));
-                            dtable.Columns.Add("Min", typeof(double));
-                            dtable.Columns.Add("Max", typeof(double));
-
-                            for (int j = 0; j < ot.GetContentPercentDD.XValues.Count; j++)
-                            {
-                                object[] ddRow = new object[4];
-                                ddRow[0] = ot.GetContentPercentDD.XValues[j];
-                                ddRow[1] = ((Statistics.Uniform)ot.GetContentPercentDD.YValues[j]).GetMin;
-                                ddRow[2] = ((Statistics.Uniform)ot.GetContentPercentDD.YValues[j]).GetMax;
-
-                                dtable.Rows.Add(ddRow);
-                            }
-                            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-                        else if (ot.GetContentPercentDD.YValues[0].GetType() == typeof(Statistics.None))
-                        {
-                            //dtable.Columns.Add("X", typeof(double));
-                            //dtable.Columns.Add("Y", typeof(double));
-
-                            //for (int j = 0; j < ot.GetContentPercentDD.XValues.Count; j++)
-                            //{
-                            //    object[] ddRow = new object[4];
-                            //    ddRow[0] = ot.GetContentPercentDD.XValues[j];
-                            //    ddRow[1] = ((Statistics.None)ot.GetContentPercentDD.YValues[j]).;
-
-                            //    dtable.Rows.Add(ddRow);
-                            //}
-                            //Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
+                        string strucTableName = Name + " - " + ot.Name + CONTENT_DD_CURVE_NAME;
+                        SaveDepthDamageTable(strucTableName, ot.GetContentPercentDD.XValues, ot.GetContentPercentDD.YValues);
+                        //SaveContentDepthDamage(ot);
                     }
 
                     //write for vehicle dd curve
                     if (ot.GetVehiclePercentDD.YValues.Count > 0)
                     {
-
-                        dtable = new System.Data.DataTable(Name + " - " + ot.Name + " - VehDDCurve");
-                        if (Storage.Connection.Instance.TableNames().Contains(dtable.TableName))
-                        {
-                            //already exists... delete?
-                            Storage.Connection.Instance.DeleteTable(dtable.TableName);
-                        }
-
-                        if (ot.GetVehiclePercentDD.YValues[0].GetType() == typeof(Statistics.Normal))
-                        {
-                            dtable.Columns.Add("X", typeof(double));
-                            dtable.Columns.Add("Mean", typeof(double));
-                            dtable.Columns.Add("StDev", typeof(double));
-
-                            for (int j = 0; j < ot.GetVehiclePercentDD.XValues.Count; j++)
-                            {
-                                object[] ddRow = new object[3];
-                                ddRow[0] = ot.GetVehiclePercentDD.XValues[j];
-                                ddRow[1] = ((Statistics.Normal)ot.GetVehiclePercentDD.YValues[j]).GetMean;
-                                ddRow[2] = ((Statistics.Normal)ot.GetVehiclePercentDD.YValues[j]).GetStDev;
-                                dtable.Rows.Add(ddRow);
-                            }
-                            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-                        else if (ot.GetVehiclePercentDD.YValues[0].GetType() == typeof(Statistics.Triangular))
-                        {
-                            dtable.Columns.Add("X", typeof(double));
-                            dtable.Columns.Add("Min", typeof(double));
-                            dtable.Columns.Add("Max", typeof(double));
-                            dtable.Columns.Add("MostLikely", typeof(double));
-
-
-                            for (int j = 0; j < ot.GetVehiclePercentDD.XValues.Count; j++)
-                            {
-                                object[] ddRow = new object[4];
-                                ddRow[0] = ot.GetVehiclePercentDD.XValues[j];
-                                ddRow[1] = ((Statistics.Triangular)ot.GetVehiclePercentDD.YValues[j]).getMin;
-                                ddRow[2] = ((Statistics.Triangular)ot.GetVehiclePercentDD.YValues[j]).getMax;
-                                ddRow[3] = ((Statistics.Triangular)ot.GetVehiclePercentDD.YValues[j]).getMostlikely;
-
-                                dtable.Rows.Add(ddRow);
-                            }
-                            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-                        else if (ot.GetVehiclePercentDD.YValues[0].GetType() == typeof(Statistics.Uniform))
-                        {
-                            dtable.Columns.Add("X", typeof(double));
-                            dtable.Columns.Add("Min", typeof(double));
-                            dtable.Columns.Add("Max", typeof(double));
-
-                            for (int j = 0; j < ot.GetVehiclePercentDD.XValues.Count; j++)
-                            {
-                                object[] ddRow = new object[4];
-                                ddRow[0] = ot.GetVehiclePercentDD.XValues[j];
-                                ddRow[1] = ((Statistics.Uniform)ot.GetVehiclePercentDD.YValues[j]).GetMin;
-                                ddRow[2] = ((Statistics.Uniform)ot.GetVehiclePercentDD.YValues[j]).GetMax;
-
-                                dtable.Rows.Add(ddRow);
-                            }
-                            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-                        else if (ot.GetVehiclePercentDD.YValues[0].GetType() == typeof(Statistics.Uniform))
-                        {
-                            dtable.Columns.Add("X", typeof(double));
-                            dtable.Columns.Add("Min", typeof(double));
-                            dtable.Columns.Add("Max", typeof(double));
-
-                            for (int j = 0; j < ot.GetVehiclePercentDD.XValues.Count; j++)
-                            {
-                                object[] ddRow = new object[4];
-                                ddRow[0] = ot.GetVehiclePercentDD.XValues[j];
-                                ddRow[1] = ((Statistics.Uniform)ot.GetVehiclePercentDD.YValues[j]).GetMin;
-                                ddRow[2] = ((Statistics.Uniform)ot.GetVehiclePercentDD.YValues[j]).GetMax;
-
-                                dtable.Rows.Add(ddRow);
-                            }
-                            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-                        else if (ot.GetVehiclePercentDD.YValues[0].GetType() == typeof(Statistics.None))
-                        {
-                            //dtable.Columns.Add("X", typeof(double));
-                            //dtable.Columns.Add("Y", typeof(double));
-
-                            //for (int j = 0; j < ot.GetVehiclePercentDD.XValues.Count; j++)
-                            //{
-                            //    object[] ddRow = new object[4];
-                            //    ddRow[0] = ot.GetVehiclePercentDD.XValues[j];
-                            //    ddRow[1] = ((Statistics.None)ot.GetVehiclePercentDD.YValues[j]).;
-
-                            //    dtable.Rows.Add(ddRow);
-                            //}
-                            //Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-
+                        string strucTableName = Name + " - " + ot.Name + VEHICLE_DD_CURVE_NAME;
+                        SaveDepthDamageTable(strucTableName, ot.GetVehiclePercentDD.XValues, ot.GetVehiclePercentDD.YValues);
+                        //SaveVehicleDepthDamage(ot);
                     }
-
 
                     // other dd curve
-
                     if (ot.GetOtherPercentDD.YValues.Count > 0)
                     {
-                        dtable = new System.Data.DataTable(Name + " - " + ot.Name + " - OtherDDCurve");
-                        if (Storage.Connection.Instance.TableNames().Contains(dtable.TableName))
-                        {
-                            //already exists... delete?
-                            Storage.Connection.Instance.DeleteTable(dtable.TableName);
-                        }
+                        string strucTableName = Name + " - " + ot.Name + OTHER_DD_CURVE_NAME;
+                        SaveDepthDamageTable(strucTableName, ot.GetOtherPercentDD.XValues, ot.GetOtherPercentDD.YValues);
+                        //SaveOtherDepthDamage(ot);
+                    }                   
 
-                        if (ot.GetOtherPercentDD.YValues[0].GetType() == typeof(Statistics.Normal))
-                        {
-                            dtable.Columns.Add("X", typeof(double));
-                            dtable.Columns.Add("Mean", typeof(double));
-                            dtable.Columns.Add("StDev", typeof(double));
-
-                            for (int j = 0; j < ot.GetOtherPercentDD.XValues.Count; j++)
-                            {
-                                object[] ddRow = new object[3];
-                                ddRow[0] = ot.GetOtherPercentDD.XValues[j];
-                                ddRow[1] = ((Statistics.Normal)ot.GetOtherPercentDD.YValues[j]).GetMean;
-                                ddRow[2] = ((Statistics.Normal)ot.GetOtherPercentDD.YValues[j]).GetStDev;
-                                dtable.Rows.Add(ddRow);
-                            }
-                            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-                        else if (ot.GetOtherPercentDD.YValues[0].GetType() == typeof(Statistics.Triangular))
-                        {
-                            dtable.Columns.Add("X", typeof(double));
-                            dtable.Columns.Add("Min", typeof(double));
-                            dtable.Columns.Add("Max", typeof(double));
-                            dtable.Columns.Add("MostLikely", typeof(double));
-
-
-                            for (int j = 0; j < ot.GetOtherPercentDD.XValues.Count; j++)
-                            {
-                                object[] ddRow = new object[4];
-                                ddRow[0] = ot.GetOtherPercentDD.XValues[j];
-                                ddRow[1] = ((Statistics.Triangular)ot.GetOtherPercentDD.YValues[j]).getMin;
-                                ddRow[2] = ((Statistics.Triangular)ot.GetOtherPercentDD.YValues[j]).getMax;
-                                ddRow[3] = ((Statistics.Triangular)ot.GetOtherPercentDD.YValues[j]).getMostlikely;
-
-                                dtable.Rows.Add(ddRow);
-                            }
-                            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-                        else if (ot.GetOtherPercentDD.YValues[0].GetType() == typeof(Statistics.Uniform))
-                        {
-                            dtable.Columns.Add("X", typeof(double));
-                            dtable.Columns.Add("Min", typeof(double));
-                            dtable.Columns.Add("Max", typeof(double));
-
-                            for (int j = 0; j < ot.GetOtherPercentDD.XValues.Count; j++)
-                            {
-                                object[] ddRow = new object[4];
-                                ddRow[0] = ot.GetOtherPercentDD.XValues[j];
-                                ddRow[1] = ((Statistics.Uniform)ot.GetOtherPercentDD.YValues[j]).GetMin;
-                                ddRow[2] = ((Statistics.Uniform)ot.GetOtherPercentDD.YValues[j]).GetMax;
-
-                                dtable.Rows.Add(ddRow);
-                            }
-                            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-                        else if (ot.GetOtherPercentDD.YValues[0].GetType() == typeof(Statistics.Uniform))
-                        {
-                            dtable.Columns.Add("X", typeof(double));
-                            dtable.Columns.Add("Min", typeof(double));
-                            dtable.Columns.Add("Max", typeof(double));
-
-                            for (int j = 0; j < ot.GetOtherPercentDD.XValues.Count; j++)
-                            {
-                                object[] ddRow = new object[4];
-                                ddRow[0] = ot.GetOtherPercentDD.XValues[j];
-                                ddRow[1] = ((Statistics.Uniform)ot.GetOtherPercentDD.YValues[j]).GetMin;
-                                ddRow[2] = ((Statistics.Uniform)ot.GetOtherPercentDD.YValues[j]).GetMax;
-
-                                dtable.Rows.Add(ddRow);
-                            }
-                            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-                        else if (ot.GetOtherPercentDD.YValues[0].GetType() == typeof(Statistics.None))
-                        {
-                            //dtable.Columns.Add("X", typeof(double));
-                            //dtable.Columns.Add("Y", typeof(double));
-
-                            //for (int j = 0; j < ot.GetOtherPercentDD.XValues.Count; j++)
-                            //{
-                            //    object[] ddRow = new object[4];
-                            //    ddRow[0] = ot.GetOtherPercentDD.XValues[j];
-                            //    ddRow[1] = ((Statistics.None)ot.GetOtherPercentDD.YValues[j]).;
-
-                            //    dtable.Rows.Add(ddRow);
-                            //}
-                            //Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-                        }
-
-                    }
-
-                    rowsList.Clear();
-                    bool[] checkedTabs = new bool[4];
-                    if (OccTypesSelectedTabsDictionary.ContainsKey(ot.Name))
-                    {
-                        checkedTabs = OccTypesSelectedTabsDictionary[ot.Name];
-                    }
-                    else
-                    {
-                        //can't find the key in the dictionary
-                        throw new Exception();
-                    }
-
-                    foreach(object o in GetOccTypeInfoArray(ot))
-                    {
-                        rowsList.Add(o);
-                    }
-
-                    foreach (object o in GetContinuousDistributionArray(ot.FoundationHeightUncertainty))
-                    {
-                        rowsList.Add(o);
-                    }
-                    rowsList.Add(checkedTabs[0]);
-                    foreach (object o in GetContinuousDistributionArray(ot.StructureValueUncertainty))
-                    {
-                        rowsList.Add(o);
-                    }
-                    rowsList.Add(ot.GetStructurePercentDD.Distribution); //"Normal"); //how do i get this?
-                    rowsList.Add(checkedTabs[1]);
-                    foreach (object o in GetContinuousDistributionArray(ot.ContentValueUncertainty))
-                    {
-                        rowsList.Add(o);
-                    }
-                    rowsList.Add("Normal"); //how do i get this?
-                    rowsList.Add(checkedTabs[2]);
-                    foreach (object o in GetContinuousDistributionArray(ot.VehicleValueUncertainty))
-                    {
-                        rowsList.Add(o);
-                    }
-                    rowsList.Add("Normal"); //how do i get this?
-                    rowsList.Add(checkedTabs[3]);
-                    foreach (object o in GetContinuousDistributionArray(ot.OtherValueUncertainty))
-                    {
-                        rowsList.Add(o);
-                    }
-                    rowsList.Add("Normal"); //how do i get this?
-
-                    rowsList.Add(Name);
-                    rows.Add( rowsList.ToArray());
-
-                    i++;
-                }
-                //for (int j = 0; j < rows.Count(); j++)
-                //{
-                //    tbl.AddRow(rows[j]);
-                //}
+                    rows.Add(GetOccTypeRowForParentTable(ot).ToArray());
+                }             
                 tbl.AddRows(rows);
                 tbl.ApplyEdits();
-
-
+                Storage.Connection.Instance.Close();
+                swTotal.Stop();
+                Console.WriteLine("***************  total time to save: " + swTotal.Elapsed.ToString());
             }
+        }
+        /// <summary>
+        /// This method is used to create the row for the parent occtype table. 
+        /// This table has a lot of columns
+        /// </summary>
+        /// <param name="ot"></param>
+        /// <returns></returns>
+        private List<object> GetOccTypeRowForParentTable(Consequences_Assist.ComputableObjects.OccupancyType ot)
+        {
+            List<object> rowsList = new List<object>();
+            bool[] checkedTabs = new bool[4];
+            if (OccTypesSelectedTabsDictionary.ContainsKey(ot.Name))
+            {
+                checkedTabs = OccTypesSelectedTabsDictionary[ot.Name];
+            }
+            else
+            {
+                //can't find the key in the dictionary
+                throw new Exception();
+            }
+
+
+            //name, description, damacat name
+            foreach (object o in GetOccTypeInfoArray(ot))
+            {
+                rowsList.Add(o);
+            }
+
+            //found ht variation type, min, max, st dev
+            foreach (object o in GetContinuousDistributionArray(ot.FoundationHeightUncertainty))
+            {
+                rowsList.Add(o);
+            }
+
+            //is struct checked
+            rowsList.Add(checkedTabs[0]);
+
+            //structure variation in value type, min, max, st dev
+            foreach (object o in GetContinuousDistributionArray(ot.StructureValueUncertainty))
+            {
+                rowsList.Add(o);
+            }
+
+            //structure dist type
+            rowsList.Add(ot.GetStructurePercentDD.Distribution); 
+
+            //is content checked
+            rowsList.Add(checkedTabs[1]);
+
+            //content variation in value type, min, max, st dev
+            foreach (object o in GetContinuousDistributionArray(ot.ContentValueUncertainty))
+            {
+                rowsList.Add(o);
+            }
+
+            //cont dist type
+            rowsList.Add(ot.GetContentPercentDD.Distribution);
+
+            //is vehicle checked
+            rowsList.Add(checkedTabs[2]);
+
+            //vehicle variation in value type, min, max, st dev
+            foreach (object o in GetContinuousDistributionArray(ot.VehicleValueUncertainty))
+            {
+                rowsList.Add(o);
+            }
+
+            //vehicle dist type
+            rowsList.Add(ot.GetVehiclePercentDD.Distribution);
+
+            //is other checked
+            rowsList.Add(checkedTabs[3]);
+
+            //Other variation in value type, min, max, st dev
+            foreach (object o in GetContinuousDistributionArray(ot.OtherValueUncertainty))
+            {
+                rowsList.Add(o);
+            }
+
+            //other dist type
+            rowsList.Add(ot.GetOtherPercentDD.Distribution);
+
+            //damcats and occtypes group name
+            rowsList.Add(Name);
+            return rowsList;
         }
 
         private object[] GetOccTypeInfoArray(Consequences_Assist.ComputableObjects.OccupancyType ot)

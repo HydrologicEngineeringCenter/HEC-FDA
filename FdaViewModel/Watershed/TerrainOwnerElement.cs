@@ -52,20 +52,39 @@ namespace FdaViewModel.Watershed
         }
         private void AddNew(object arg1, EventArgs arg2)
         {
-            TerrainBrowserVM vm = new TerrainBrowserVM();
+            TerrainBrowserVM vm = new TerrainBrowserVM(this);
+            //vm.TerrainFileFinishedCopying += ReplaceTemporaryTerrainNode;
             Navigate(vm);
             if (!vm.WasCancled)
             {
                 if (!vm.HasFatalError)
                 {
-                    TerrainElement t = new TerrainElement(vm.TerrainName,System.IO.Path.GetFileName(vm.TerrainPath),this); // file extention?
+                    //disable the context menu until the terrain is fully copied over and put a decorator on it
+                    TerrainElement t = new TerrainElement(vm.TerrainName,System.IO.Path.GetFileName(vm.TerrainPath),this,true); // file extention?
                     //add to map window handler?
-                    AddElement(t);
+                    AddElement(t,false);//false-don't save this one
 
 
                     AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.TerrainName, Utilities.Transactions.TransactionEnum.CreateNew, "File " + vm.OriginalPath + " was saved as a terrain to " + vm.TerrainPath,nameof(TerrainElement)));
                 }
             }
+        }
+        private void ReplaceTemporaryTerrainNode(object sender, EventArgs e)
+        {
+            TerrainBrowserVM vm = (TerrainBrowserVM)sender;
+            string name = vm.TerrainName;
+
+            //remove the temporary node and replace it
+            foreach(Utilities.OwnedElement elem in Elements )
+            {
+                if(elem.Name.Equals(name))
+                {
+                    Elements.Remove(elem);
+                    break;
+                }
+            }
+            AddElement(new TerrainElement(name, System.IO.Path.GetFileName(vm.TerrainPath), this, false));
+
         }
         public override void AddBaseElements()
         {

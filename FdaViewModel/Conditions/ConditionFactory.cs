@@ -12,7 +12,9 @@ namespace FdaViewModel.Conditions
 
         public static ConditionsElement BuildConditionsElement(ConditionsPlotEditorVM vm, OwnerElement owner)
         {
-            ConditionBuilder builder = new ConditionBuilder(vm.Name, vm.Description, vm.Year, vm.SelectedImpactArea, vm.IndexLocation, owner);
+            if(vm.Description == null) { vm.Description = ""; }
+            ConditionBuilder builder = new ConditionBuilder(vm.Name, vm.Description, vm.Year, vm.SelectedImpactArea, vm.IndexLocation,
+                vm.SelectedThresholdType, vm.ThresholdValue, owner);
             
             foreach(Plots.IndividualLinkedPlotControlVM control in vm.AddedPlots)
             {
@@ -38,10 +40,43 @@ namespace FdaViewModel.Conditions
                         
                 }
             }
-            //builder.WithAnalyticalFreqElem(vm.a);
-
             return builder.build();
         }
 
+        public static void CopyConditionsElement(ConditionsElement fromElem, ConditionsElement toElem)
+        {
+
+            toElem.Name = fromElem.Name;
+            toElem.Description = fromElem.Description;
+            toElem.AnalysisYear = fromElem.AnalysisYear;
+            toElem.ImpactArea = fromElem.ImpactArea;
+            toElem.ImpactAreaElement = fromElem.ImpactAreaElement;
+
+            toElem.UseAnalyiticalFlowFrequency = fromElem.UseAnalyiticalFlowFrequency;
+            toElem.AnalyticalFlowFrequency = fromElem.AnalyticalFlowFrequency;
+
+            toElem.UseInflowOutflow = fromElem.UseInflowOutflow;
+            toElem.InflowOutflowElement = fromElem.InflowOutflowElement;
+
+            toElem.UseRatingCurve = fromElem.UseRatingCurve;
+            toElem.RatingCurveElement = fromElem.RatingCurveElement;
+
+            toElem.UseExteriorInteriorStage = fromElem.UseExteriorInteriorStage;
+            toElem.ExteriorInteriorElement = fromElem.ExteriorInteriorElement;
+
+            toElem.UseLevee = fromElem.UseLevee;
+            toElem.LeveeElement = fromElem.LeveeElement;
+
+            toElem.UseFailureFunction = fromElem.UseFailureFunction;
+            toElem.FailureFunctionElement = fromElem.FailureFunctionElement;
+
+            toElem.UseAggregatedStageDamage = fromElem.UseAggregatedStageDamage;
+            toElem.StageDamageElement = fromElem.StageDamageElement;
+
+            toElem.UseThreshold = fromElem.UseThreshold;
+            toElem.ThresholdType = fromElem.ThresholdType;
+            toElem.ThresholdValue = fromElem.ThresholdValue;
+
+        }
     }
 }

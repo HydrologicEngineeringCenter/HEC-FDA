@@ -48,11 +48,11 @@ namespace FdaViewModel
             {
                     if (HasError)
                     {
-                        CustomTreeViewHeader.Decoration = " (!)";
+                        //CustomTreeViewHeader.Decoration = " (!)";
                     }
                     else
                     {
-                        CustomTreeViewHeader.Decoration = "";
+                        //CustomTreeViewHeader.Decoration = "";
                     }
 
             }

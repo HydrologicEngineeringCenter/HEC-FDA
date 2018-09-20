@@ -26,13 +26,13 @@ namespace Fda.GeoTech
          
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            FdaViewModel.GeoTech.LeveeFeatureEditorVM vm = (FdaViewModel.GeoTech.LeveeFeatureEditorVM)this.DataContext;
-            if (vm.IsInEditMode == true)
-            {
-                txt_name.IsReadOnly = true;
-            }
-        }
+        //private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    FdaViewModel.GeoTech.LeveeFeatureEditorVM vm = (FdaViewModel.GeoTech.LeveeFeatureEditorVM)this.DataContext;
+        //    if (vm.IsInEditMode == true)
+        //    {
+        //        txt_name.IsReadOnly = true;
+        //    }
+        //}
     }
 }

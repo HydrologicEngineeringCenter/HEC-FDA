@@ -6,6 +6,7 @@ using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using FdaModel.Functions;
+using FdaModel.ComputationPoint;
 
 namespace FdaViewModel.Plots
 {
@@ -26,8 +27,22 @@ namespace FdaViewModel.Plots
         private double _MeanEAD;
         private double _MeanAEP;
 
+        PerformanceThresholdTypes _thresholdType;
+        double _thresholdValue;
+
         #endregion
         #region Properties
+        public PerformanceThresholdTypes ThresholdType
+        {
+            get { return _thresholdType; }
+            set { _thresholdType = value; NotifyPropertyChanged(); }
+        }
+
+        public double ThresholdValue
+        {
+            get { return _thresholdValue; }
+            set { _thresholdValue = value; NotifyPropertyChanged(); }
+        }
         public double EAD
         {
             get { return _EAD; }
@@ -91,11 +106,13 @@ namespace FdaViewModel.Plots
 
             CheckIfAllPlotsExists();
         }
-        public LinkedPlotsVM(FdaModel.ComputationPoint.Outputs.Result result)
+        public LinkedPlotsVM(FdaModel.ComputationPoint.Outputs.Result result, PerformanceThresholdTypes thresholdType, double thresholdValue)
         {
             Result = result;
             MeanAEP = result.AEP.GetMean;
             MeanEAD = result.EAD.GetMean;
+            ThresholdType = thresholdType;
+            ThresholdValue = thresholdValue;
 
             if(result.Realizations.Count>0)
             {

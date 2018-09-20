@@ -73,7 +73,6 @@ namespace FdaViewModel.Study
             //_Path = "C:\\temp\\FDA\\";
             //_StudyName = "Example";
             //_Description = "My description";
-            ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This is a message", FdaModel.Utilities.Messager.ErrorMessageEnum.Fatal));
         }
         #endregion
         #region Voids

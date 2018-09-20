@@ -147,11 +147,13 @@ namespace FdaViewModel.Inventory
                 if (a.Header.Equals("Add to Map Window"))
                 {
                     a.Header = "Remove from Map Window";
-                    a.Action = RemoveInventoryFromMapWindow;
+                    a.Action = RemoveElementFromMapWindow;
                 }
             }
         }
-        private void RemoveInventoryFromMapWindow(object arg1, EventArgs arg2)
+
+      
+        public override void RemoveElementFromMapWindow(object arg1, EventArgs arg2)
         {
             RemoveFromMapWindow(this,new Utilities.RemoveMapFeatureEventArgs(_featureHashCode));
             //foreach (Utilities.NamedAction a in Actions)

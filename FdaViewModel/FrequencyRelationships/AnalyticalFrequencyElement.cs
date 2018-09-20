@@ -74,24 +74,19 @@ namespace FdaViewModel.FrequencyRelationships
             {
                 if (!vm.HasError)
                 {
-                    //check for changes.
-                    bool hasChanges = false;
-                    if (Name != vm.Name) { hasChanges = true; }
-                    if (Description != vm.Description) { hasChanges = true; }
-                    if (Distribution != vm.Distribution) { hasChanges = true; }
-                    if (hasChanges)
-                    {
+                    string originalName = Name;
+                    Name = vm.Name;
+                    Description = vm.Description;
+                    Distribution = vm.Distribution;
 
-                        Description = vm.Description;
-                        Distribution = vm.Distribution;
-                        AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.EditExisting, "Previous Name " + Name + " Description: " + Description + " Mean: " + Distribution.GetMean + " Standard Deviation: " + Distribution.GetStDev + " Skew: " + Distribution.GetG + " EYOR: " + Distribution.GetSampleSize, nameof(AnalyticalFrequencyElement)));
-                        Name = vm.Name;//should i disable this way of renaming? if not i need to check for name conflicts.
-                        _Owner.Save();
-                    }
+                    ((AnalyticalFrequencyOwnerElement)_Owner).UpdateTableRowIfModified(originalName, this);
+
+                    AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.EditExisting, "Name " + Name + " Description: " + Description + " Mean: " + Distribution.GetMean + " Standard Deviation: " + Distribution.GetStDev + " Skew: " + Distribution.GetG + " EYOR: " + Distribution.GetSampleSize, nameof(AnalyticalFrequencyElement)));
                 }
             }
         }
-        public override void AddValidationRules()
+    
+    public override void AddValidationRules()
         {
             //throw new NotImplementedException();
         }

@@ -116,7 +116,7 @@ namespace FdaViewModel.Hydraulics
         }
         public override bool SavesToTable()
         {
-            return true;
+            return false;
         }
         #endregion
         #region Functions

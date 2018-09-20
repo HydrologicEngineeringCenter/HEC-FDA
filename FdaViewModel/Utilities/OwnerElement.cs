@@ -177,6 +177,72 @@ namespace FdaViewModel.Utilities
             }
             tbl.ApplyEdits();
         }
+
+        /// <summary>
+        /// This method is to be used after an editor has closed. If the user changed any information
+        /// that gets stored in this ownerElement row data, then we need to update it. If the user
+        /// changes the name of the element and that element saves to a table, then update that tables name.
+        /// </summary>
+        /// <param name="oldName">Name before editing. This is what is used to find the row in this owner's table</param>
+        /// <param name="elem"></param>
+        /// <param name="nameIndexInRow">This should always be zero, but if it is not, then just tell me what index in the row you are at.</param>
+        public void UpdateTableRowIfModified(string oldName, OwnedElement elem, int nameIndexInRow = 0)
+        {
+            if(elem.SavesToRow() == false) { return; }
+            DataBase_Reader.DataTableView tableView = Storage.Connection.Instance.GetTable(TableName);
+            int rowIndex = -1;
+            object[] elemRowValues = elem.RowData();
+            List<object[]> rows = tableView.GetRows(0, Elements.Count - 1);
+            //i need to get the row index. It is easy to get the row index based off the Elements of this owner, but
+            //i felt that if we later sort the elements or something that the database rows won't be in the same order
+            //as the elements list. So i look through the db for the old name. 
+            for(int i = 0;i<rows.Count;i++)
+            { 
+                if(  ((string)rows[i][nameIndexInRow]).Equals(oldName))
+                {
+                    rowIndex = i;
+                    break;
+                }
+            }
+            if (rowIndex != -1)
+            {
+
+                //is anything in this row modified from the original
+               // bool rowIsModified = false;
+                bool nameHasChanged = false;
+
+                //has the name changed
+                if (!oldName.Equals(elem.Name))
+                {
+                    nameHasChanged = true;
+                }
+
+                ////has anything else in the row changed
+                //if (rowIsModified == false)
+                //{
+                //    for (int j = 0; j < elemRowValues.Length; j++)
+                //    {
+                //        object[] dbRow = rows[rowIndex];
+                //        if (    (    dbRow[j])  .Equals(elemRowValues[j])     )
+                //        {
+                //            rowIsModified = true;
+                //            break;
+                //        }
+                //    }
+                //}
+
+                //if (rowIsModified)
+                {
+                    tableView.EditRow(rowIndex, elemRowValues);
+                    tableView.ApplyEdits();
+                    //possibly need to change the name in associated table
+                    if(nameHasChanged && elem.SavesToTable())
+                    {
+                        Storage.Connection.Instance.RenameTable(elem.GetTableConstant() + oldName, elem.TableName);
+                    }
+                }
+            }
+        }
         public virtual void SaveNewElement(OwnedElement element)
         {
             if (!element.SavesToRow()) return;

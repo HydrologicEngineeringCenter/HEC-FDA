@@ -87,10 +87,14 @@ namespace FdaViewModel.AggregatedStageDamage
             {
                 if (!vm.HasError)
                 {
-                    Name = vm.Name;//should i disable this way of renaming? if not i need to check for name conflicts.
-                    Description = vm.Description;//is binding two way? is this necessary?
-                    //DamageCategory = vm.DamageCategory;
+                    string oldName = Name;
+                    Statistics.UncertainCurveDataCollection oldCurve = Curve;
+                    Name = vm.Name;
+                    Description = vm.Description;
                     Curve = vm.Curve;
+
+                    ((AggregatedStageDamageOwnerElement)_Owner).UpdateTableRowIfModified(oldName, this);
+                    UpdateTableIfModified(oldName, oldCurve, Curve);
                 }
             }
         }

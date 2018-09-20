@@ -6,7 +6,7 @@ using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-
+using System.ComponentModel;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -233,7 +233,9 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         public override void Save()
         {
-            //throw new NotImplementedException();
+            
         }
+
+        
     }
 }

@@ -139,7 +139,7 @@ namespace FdaViewModel.Conditions
         }
         public override void AddValidationRules()
         {
-            //throw new NotImplementedException();
+            AddRule(nameof(SelectedElement), () => { return (SelectedElement != null); }, "A Stage Damage Curve has not been selected.");
         }
 
         public override void Save()
@@ -155,10 +155,15 @@ namespace FdaViewModel.Conditions
         }
         public void OKClicked()
         {
-            //raise event that we are done
-            if (this.OKClickedEvent != null)
+            Validate();
+            if (!HasFatalError)
             {
-                this.OKClickedEvent(this, new EventArgs());
+                this.OKClickedEvent?.Invoke(this, new EventArgs());
+            }
+            else
+            {
+                CustomMessageBoxVM custmb = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "A Stage Damage Curve has not been selected.");
+                Navigate(custmb);
             }
         }
         public void CancelClicked()

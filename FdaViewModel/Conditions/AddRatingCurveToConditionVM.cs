@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FdaModel.Functions;
 using Statistics;
 using FdaViewModel.Utilities;
+using System.Windows;
 
 namespace FdaViewModel.Conditions
 {
@@ -99,10 +100,15 @@ namespace FdaViewModel.Conditions
         #region Voids
         public void OKClicked()
         {
-            //raise event that we are done
-            if (this.OKClickedEvent != null)
+            Validate();
+            if (!HasFatalError)
             {
-                this.OKClickedEvent(this, new EventArgs());
+                this.OKClickedEvent?.Invoke(this, new EventArgs());
+            }
+            else
+            {
+                CustomMessageBoxVM custmb = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "A Rating Curve has not been selected.");
+                Navigate(custmb, true, true, "No Rating Curve");
             }
         }
         public void CancelClicked()
@@ -149,9 +155,10 @@ namespace FdaViewModel.Conditions
         #endregion
         #region Functions
         #endregion
+        
         public override void AddValidationRules()
         {
-            //throw new NotImplementedException();
+            AddRule(nameof(SelectedElement), () => { return (SelectedElement != null); }, "A Rating Curve has not been selected.");
         }
 
         public override void Save()

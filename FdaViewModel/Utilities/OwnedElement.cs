@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.WaterSurfaceElevation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -138,8 +139,97 @@ namespace FdaViewModel.Utilities
 
         }
 
-      
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="oldCurve"></param>
+        /// <param name="newCurve"></param>
+        public void UpdateTableIfModified(string oldName, Statistics.UncertainCurveDataCollection oldCurve, Statistics.UncertainCurveDataCollection newCurve)
+        {
+            bool isModified = AreCurvesEqual(oldCurve, newCurve);
+            if(isModified && SavesToTable())
+            {
+                //if the name has changed then we need to delete the old table
+                Storage.Connection.Instance.DeleteTable(TableName);
+                Save();
+            }
+        }
+        /// <summary>
+        ///this is basically just checking if the two are equal. This would be better if there was an overriden equals method on the objects themselves
+        /// </summary>
+        /// <param name="oldCurve"></param>
+        /// <param name="newCurve"></param>
+        /// <returns></returns>
+        private bool AreCurvesEqual(Statistics.UncertainCurveDataCollection oldCurve, Statistics.UncertainCurveDataCollection newCurve)
+        {
+            bool isModified = false;
+            if (oldCurve.Distribution != newCurve.Distribution) { isModified = true; }
+            if (oldCurve.Count != newCurve.Count) { isModified = true; }
+            if (oldCurve.GetType() != newCurve.GetType()) { isModified = true; }
+            //are all x values the same
+            for (int i = 0; i < oldCurve.XValues.Count(); i++)
+            {
+                if (oldCurve.XValues[i] != newCurve.XValues[i])
+                {
+                    isModified = true;
+                    break;
+                }
+            }
+            for (int i = 0; i < oldCurve.YValues.Count(); i++)
+            {
+                if (oldCurve.YValues[i] != newCurve.YValues[i])
+                {
+                    isModified = true;
+                    break;
+                }
+            }
+            return isModified;
+        }
 
+        private async void RemoveTerrainFileOnBackgroundThread(OwnerElement o)
+        {
+            try
+            {
+                await Task.Run(() =>
+                {               
+                    System.IO.File.Delete(((Watershed.TerrainElement)this).GetTerrainPath());
+                });          
+            }
+            catch(Exception e)
+            {
+                CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "Could not delete terrain file: " + ((Watershed.TerrainElement)this).GetTerrainPath());
+                Navigate(messageBox);
+                CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
+                return;
+            }
+            o.Elements.Remove(this);
+            //delete associated table?
+            RemoveElementFromTable();
+            o.Save();
+        }
+
+        private void RemoveWaterSurfElev(OwnerElement o)
+        {
+            try
+            {
+                foreach(PathAndProbability pap in ((WaterSurfaceElevationElement)this).RelativePathAndProbability)
+                {
+                    System.IO.File.Delete(Storage.Connection.Instance.HydraulicsDirectory + "\\" + pap.Path);
+                }
+                
+            }
+            catch (Exception e)
+            {
+                CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "Could not delete water surface elevation files");
+                Navigate(messageBox);
+                CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/WaterSurfaceElevation.png");
+                return;
+            }
+            o.Elements.Remove(this);
+            //delete associated table?
+            RemoveElementFromTable();
+            o.Save();
+        }
         public virtual void Remove(object sender, EventArgs e)
         {
             if (_Owner.GetType().BaseType == typeof(OwnerElement))
@@ -149,35 +239,46 @@ namespace FdaViewModel.Utilities
                 if (vm.ClickedButton == CustomMessageBoxVM.ButtonsEnum.OK)
                 {
                     OwnerElement o = (OwnerElement)_Owner;
-                    o.Elements.Remove(this);
-                    //delete associated table?
-                    if (this.SavesToTable())
+                    this.RemoveElementFromMapWindow(this, new EventArgs());
+
+                    //special logic for deleting the terrain file from the study directory
+                    if (this.GetType() == typeof(Watershed.TerrainElement))
                     {
-                        if (Storage.Connection.Instance.TableNames().Contains(TableName))
-                        {
-                            Storage.Connection.Instance.DeleteTable(TableName);
-                        }
+                        CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png", "...Deleting");
+                        this.Actions.Clear();           
+                        RemoveTerrainFileOnBackgroundThread(o);
                     }
-                    AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(Name, Utilities.Transactions.TransactionEnum.Delete, "",GetType().Name));
-                    o.Save();
+                    //special logic for deleting the terrain file from the study directory
+                    else if(this.GetType() == typeof(WaterSurfaceElevation.WaterSurfaceElevationElement))
+                    {
+                        //CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/WaterSurfaceElevation.png");
+                        //this.Actions.Clear();
+                        RemoveWaterSurfElev(o);
+                    }
+                    else
+                    {
+                        o.Elements.Remove(this);
+                        //delete associated table?
+                        RemoveElementFromTable();
+                        o.Save();
+                    }
                 }
                 
-            } else if (_Owner.GetType() == typeof(Study.FdaStudyVM))
-            {
-                //the sky is falling?
-            }
-            else
-            {
-                //the sky has fallen.
-            }
-
-            //check if this table exists in the sqlite file, and delete it.
-            //FdaModel.Utilities.FdaFileManager.Instance.ProjectFile = SqliteFile;//not sure this is necessary...
-            //if (FdaModel.Utilities.FdaFileManager.Instance.TableNames().Contains(TableName))
-            //{
-            //    FdaModel.Utilities.FdaFileManager.Instance.DeleteTable(TableName);
-            //}
+            } 
         }
+
+        private void RemoveElementFromTable()
+        {
+            if (this.SavesToTable())
+            {
+                if (Storage.Connection.Instance.TableNames().Contains(TableName))
+                {
+                    Storage.Connection.Instance.DeleteTable(TableName);
+                }
+            }
+            AddTransaction(this, new Transactions.TransactionEventArgs(Name, Transactions.TransactionEnum.Delete, "", GetType().Name));
+        }
+
         #endregion
         #region Functions
         public override BaseFdaElement GetElementOfTypeAndName(Type t, string name)
@@ -206,7 +307,11 @@ namespace FdaViewModel.Utilities
         public abstract object[] RowData();
         public abstract bool SavesToRow();
         public abstract bool SavesToTable();
-
+        /// <summary>
+        /// This exists so that the few elements that can be added/removed from the map window can override
+        /// it and be removed when removing the element from the study.
+        /// </summary>
+        public virtual void RemoveElementFromMapWindow(object sender, EventArgs e) { }
        
         #endregion
     }

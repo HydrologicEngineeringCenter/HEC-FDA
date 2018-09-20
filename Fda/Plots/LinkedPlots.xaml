@@ -80,6 +80,12 @@
                     <Label Name="lbl_MeanEAD" Content="{Binding MeanEAD}" Width="65" />
                     <Button Name="btn_ViewMeanEAD" Content="View" Width="40" Margin="2" Click="btn_ViewMeanEAD_Click"/>
                 </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Threshold Type: " />
+                    <Label Content="{Binding ThresholdType}" />
+                    <Label Content="Value: " />
+                    <Label Content="{Binding ThresholdValue}" />
+                </StackPanel>
 
             </StackPanel>
         </Grid>

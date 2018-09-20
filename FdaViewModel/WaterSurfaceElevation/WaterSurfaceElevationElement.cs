@@ -97,19 +97,22 @@ namespace FdaViewModel.WaterSurfaceElevation
 
         #endregion
         #region Voids
-        private void RemoveTerrainFromMapWindow(object arg1, EventArgs arg2)
+        
+        public override void RemoveElementFromMapWindow(object arg1, EventArgs arg2)
         {
-
-            foreach (int hash in _featureNodeHashs)
+            if (_featureNodeHashs != null)
             {
-                RemoveFromMapWindow(this,new Utilities.RemoveMapFeatureEventArgs(hash));
-            }
-            foreach (Utilities.NamedAction a in Actions)
-            {
-                if (a.Header.Equals("Remove from Map Window"))
+                foreach (int hash in _featureNodeHashs)
                 {
-                    a.Header = "Add to Map Window";
-                    a.Action = AddWSEToMapWindow;
+                    RemoveFromMapWindow(this, new Utilities.RemoveMapFeatureEventArgs(hash));
+                }
+                foreach (Utilities.NamedAction a in Actions)
+                {
+                    if (a.Header.Equals("Remove from Map Window"))
+                    {
+                        a.Header = "Add to Map Window";
+                        a.Action = AddWSEToMapWindow;
+                    }
                 }
             }
         }
@@ -146,7 +149,7 @@ namespace FdaViewModel.WaterSurfaceElevation
                 if (a.Header.Equals("Add to Map Window"))
                 {
                     a.Header = "Remove from Map Window";
-                    a.Action = RemoveTerrainFromMapWindow;
+                    a.Action = RemoveElementFromMapWindow;
                 }
             }
         }

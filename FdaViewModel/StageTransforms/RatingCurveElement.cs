@@ -13,6 +13,9 @@ namespace FdaViewModel.StageTransforms
         #region Fields
         private string _Description;
         private Statistics.UncertainCurveDataCollection _Curve;
+        private RatingCurveOwnerElement _Owner;
+        private const string TABLE_NAME_CONSTANT = "Rating Curve - ";
+
         #endregion
         #region Properties
         public string Description { get { return _Description; } set { _Description = value; NotifyPropertyChanged(); } }
@@ -26,6 +29,7 @@ namespace FdaViewModel.StageTransforms
         #region Constructors
         public RatingCurveElement(string userprovidedname, string desc, Statistics.UncertainCurveDataCollection ratingCurve,  BaseFdaElement owner) : base(owner)
         {
+            _Owner = (RatingCurveOwnerElement)owner;
             Name = userprovidedname;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/RatingCurve.png");
 
@@ -65,9 +69,17 @@ namespace FdaViewModel.StageTransforms
             {
                 if (!vm.HasError)
                 {
+                    // if the user has changed the name of the element then we need to update the parent table and the child table if there is one
+                    string originalName = Name;
+                    Statistics.UncertainCurveDataCollection originalRatingCurve = RatingCurve;
+
                     Name = vm.Name;//should i disable this way of renaming? if not i need to check for name conflicts.
                     Description = vm.Description;//is binding two way? is this necessary?
                     RatingCurve = vm.Curve;
+
+                    _Owner.UpdateTableRowIfModified(originalName, this);
+                    UpdateTableIfModified(originalName, originalRatingCurve, RatingCurve);
+
                 }
             }
         }
@@ -87,26 +99,27 @@ namespace FdaViewModel.StageTransforms
             return new object[] { Name, Description, RatingCurve.Distribution, RatingCurve.GetType() };
         }
 
-        public override string GetTableConstant()
-        {
-            return "Rating Curve - ";
-        }
-
         public override bool SavesToRow()
         {
-           return true;
+            return true;
         }
         public override bool SavesToTable()
         {
             return true;
         }
+        public override string GetTableConstant()
+        {
+            return TABLE_NAME_CONSTANT;
+        }
+
+       
         #endregion
         #region Functions
         public override string TableName
         {
             get
             {
-                return "Rating Curve - " + Name;
+                return TABLE_NAME_CONSTANT + Name;
             }
         }
         #endregion

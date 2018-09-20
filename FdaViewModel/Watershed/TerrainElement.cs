@@ -1,8 +1,8 @@
-﻿using System;
+﻿using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace FdaViewModel.Watershed
 {
@@ -15,6 +15,8 @@ namespace FdaViewModel.Watershed
         private const string _TableConstant = "Terrain - ";
         private string _FileName;
         private int _featureHashCode;
+        private const string TERRAIN_ICON = "pack://application:,,,/Fda;component/Resources/Terrain.png";
+        private TerrainOwnerElement _Owner;
         #endregion
         #region Properties
         public override string GetTableConstant()
@@ -28,38 +30,46 @@ namespace FdaViewModel.Watershed
         }
         #endregion
         #region Constructors
-        public TerrainElement(string name, string fileName, TerrainOwnerElement owner) : base(owner)
+        public TerrainElement(string name, string fileName, TerrainOwnerElement owner, bool isTemporaryNode = false) : base(owner)
         {
             //vrt and auxilary files?  hdf5?
-            Name = name; //System.IO.Path.GetFileNameWithoutExtension(filepath);
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
+                Name = name;
+                _FileName = fileName;
+            _Owner = owner;
 
-            _FileName = fileName;
+            if (isTemporaryNode)
+            {
+                CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, TERRAIN_ICON, "...Loading");
+            }
+            else
+            {
+                CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, TERRAIN_ICON);
 
-            //actions? properties? add to map window?
-            Utilities.NamedAction remove = new Utilities.NamedAction();
-            remove.Header = "Remove Terrain";
-            remove.Action = Remove;
+                Utilities.NamedAction remove = new Utilities.NamedAction();
+                remove.Header = "Remove Terrain";
+                remove.Action = Remove;
 
-            Utilities.NamedAction renameElement = new Utilities.NamedAction();
-            renameElement.Header = "Rename";
-            renameElement.Action = Rename;
+                Utilities.NamedAction renameElement = new Utilities.NamedAction();
+                renameElement.Header = "Rename";
+                renameElement.Action = Rename;
 
+                Utilities.NamedAction mapWindow = new Utilities.NamedAction();
+                mapWindow.Header = "Add to Map Window";
+                mapWindow.Action = AddTerrainToMapWindow;
 
+                List<Utilities.NamedAction> localactions = new List<Utilities.NamedAction>();
+                localactions.Add(remove);
+                localactions.Add(renameElement);
+                localactions.Add(mapWindow);
 
-            Utilities.NamedAction mapWindow = new Utilities.NamedAction();
-            mapWindow.Header = "Add to Map Window";
-            mapWindow.Action = AddTerrainToMapWindow;
-
-            List<Utilities.NamedAction> localactions = new List<Utilities.NamedAction>();
-            localactions.Add(remove);
-            localactions.Add(renameElement);
-            localactions.Add(mapWindow);
-
-            Actions = localactions;
+                Actions = localactions;
+            }
         }
 
-        private void RemoveTerrainFromMapWindow(object arg1, EventArgs arg2)
+
+
+
+        public override void RemoveElementFromMapWindow(object arg1, EventArgs arg2)
         {
             RemoveFromMapWindow(this, new Utilities.RemoveMapFeatureEventArgs(_featureHashCode));
             foreach (Utilities.NamedAction a in Actions)
@@ -98,7 +108,7 @@ namespace FdaViewModel.Watershed
                 if (a.Header.Equals("Add to Map Window"))
                 {
                     a.Header = "Remove from Map Window";
-                    a.Action = RemoveTerrainFromMapWindow;
+                    a.Action = RemoveElementFromMapWindow;
                 }
             }
         }
