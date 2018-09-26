@@ -9,11 +9,13 @@
              xmlns:CAC="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              mc:Ignorable="d" 
              d:DesignHeight="420" d:DesignWidth="610">
-    <Grid>
+    <Grid Name="grd_Main">
         <Grid.RowDefinitions>
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="70"/>
             <RowDefinition Height="35"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="80" Name="row_Log"/>
             <RowDefinition Height="35"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
@@ -21,8 +23,13 @@
                 <ColumnDefinition Width="120"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Name:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <TextBox Grid.Column="1" Text="{Binding Name, ValidatesOnDataErrors=True}" Margin="5"/>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35" />
+                <RowDefinition Height="35" />
+            </Grid.RowDefinitions>
+            <Utilities:SaveControl Grid.Row="0" Grid.ColumnSpan="2" />
+            <Label Grid.Row="1" Content="Name:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name, ValidatesOnDataErrors=True}" Margin="5"/>
         </Grid>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -33,6 +40,18 @@
             <CAC:TextBoxDescription Grid.Column="1" Text="{Binding Description}" Margin="5"/>
         </Grid>
         <CA:TableWithPlot MinHeight="300" MinWidth="600"  TableWidth="250"  Grid.Row="2" Margin="5" plotTitle="{Binding PlotTitle}" IsStrictX="True" xColumnHeader="Inflow" yColumnHeader="Outflow" xAxisLabel="Inflow (cfs)" yAxisLabel="Outflow (cfs)" IsReadOnly="{Binding ReadOnly}" Curve="{Binding Curve}" IsMonotonicallyIncreasing="True"  />
-        <Utilities:OKCloseControl Grid.Row="3"/>
+        <GridSplitter Grid.Row="3" Height="5" HorizontalAlignment="Stretch" />
+        <TabControl Grid.Row="4" TabStripPlacement="Bottom">
+            <TabItem Header="Log" MouseDown="TabItem_MouseDown">
+                <!--<ListBox ItemsSource="{Binding Transactions}" />-->
+                <DataGrid AutoGenerateColumns="true" ItemsSource="{Binding Transactions}"/>
+
+            </TabItem>
+            <TabItem Header="Messages" >
+                <DataGrid AutoGenerateColumns="true" ItemsSource="{Binding Messages}" />
+            </TabItem>
+        </TabControl>
+
+        <Utilities:OKCloseControl Grid.Row="5"/>
     </Grid>
 </UserControl>

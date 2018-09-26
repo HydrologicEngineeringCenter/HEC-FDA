@@ -114,6 +114,7 @@
       <HintPath>..\packages\System.Data.SQLite.Linq.1.0.105.2\..\lib\net451\System.Data.SQLite.Linq.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -347,6 +348,9 @@
     <Compile Include="Utilities\RadioButtonCheckedConverter.cs" />
     <Compile Include="Utilities\Rename.xaml.cs">
       <DependentUpon>Rename.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\SaveControl.xaml.cs">
+      <DependentUpon>SaveControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\TableWithPlotCurveConverter.cs" />
     <Compile Include="Utilities\TransactionView.xaml.cs">
@@ -634,6 +638,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Utilities\Rename.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Utilities\SaveControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

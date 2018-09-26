@@ -11,7 +11,7 @@
              d:DesignHeight="420" d:DesignWidth="610">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="70"/>
             <RowDefinition Height="35"/>
             <RowDefinition Height="35"/>
 
@@ -23,8 +23,13 @@
                 <ColumnDefinition Width="120"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Name:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <TextBox Grid.Column="1" Text="{Binding Name, ValidatesOnDataErrors=True}" Margin="5"/>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35" />
+                <RowDefinition Height="35" />
+            </Grid.RowDefinitions>
+            <Utilities:SaveControl Grid.Row="0" Grid.ColumnSpan="2" />
+            <Label Grid.Row="1" Content="Name:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name, ValidatesOnDataErrors=True}" Margin="5"/>
         </Grid>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>

@@ -154,7 +154,7 @@
                 <ColumnDefinition Width="20"/>
                 <ColumnDefinition Width="20"/>
             </Grid.ColumnDefinitions>
-            <utils:BindableButton Grid.Column="0"  Height="18" Width="18" NamedAction="{Binding ErrorsAction}" ButtonStyle="{StaticResource TransparentStyle}" ToolTip="Errors" UseImage="True">
+            <utils:BindableButton Grid.Column="0"  Height="18" Width="18" ButtonStyle="{StaticResource TransparentStyle}" NamedAction="{Binding ErrorsAction}" ToolTip="Errors" UseImage="True">
                 <utils:BindableButton.Image>
                     <Image  Source="pack://application:,,,/Fda;component/Resources/Error.png"/>
                 </utils:BindableButton.Image>
