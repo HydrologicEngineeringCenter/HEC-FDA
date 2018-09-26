@@ -6,6 +6,7 @@ using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.Inventory
 {
@@ -25,7 +26,7 @@ namespace FdaViewModel.Inventory
         }
         #endregion
         #region Constructors
-        public StructureInventoryOwnerElement(BaseFdaElement owner) : base(owner)
+        public StructureInventoryOwnerElement(Utilities.OwnerElement owner) : base(owner)
         {
             Name = "Structure Inventories";
             IsBold = false;
@@ -165,28 +166,23 @@ namespace FdaViewModel.Inventory
             return new Type[] { typeof(string),typeof(string) };
         }
 
-        public override void AddElement(object[] rowData)
+        public override OwnedElement CreateElementFromRowData(object[] rowData)
         {
             //name, path, description
-            if(StructureInventoryLibrary.SharedData.StudyDatabase == null)
+            if (StructureInventoryLibrary.SharedData.StudyDatabase == null)
             {
                 StructureInventoryLibrary.SharedData.StudyDatabase = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
 
 
             }
-            StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[0],(string)rowData[1]);
+            StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[0], (string)rowData[1]);
 
-            //DefineSIAttributesVM defSIVM = new DefineSIAttributesVM((string)rowData[1]);//path)
-
-            //list<string> occtypesinfile, list<occtypeelement> occtypeGroups, list<string> occtypeNamesFromStudy
-            //List<string> dummyList = new List<string>();
-            //List<string> occtypeNamesFromStudy = new List<string>();
-           // AttributeLinkingListVM attLinkListVM = new AttributeLinkingListVM(dummyList, OccupancyTypes.OccupancyTypesOwnedElement.ListOfOccupancyTypesGroups,occtypeNamesFromStudy);
-
-            InventoryElement invEle = new InventoryElement(baseElement,this);
-
-            AddElement(invEle,false);
-
+            InventoryElement invEle = new InventoryElement(baseElement, this);
+            return invEle;
+        }
+        public override void AddElement(object[] rowData)
+        {
+            AddElement(CreateElementFromRowData(rowData),false);
         }
     }
 }

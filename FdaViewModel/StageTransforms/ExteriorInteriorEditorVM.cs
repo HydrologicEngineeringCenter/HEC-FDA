@@ -42,6 +42,7 @@ namespace FdaViewModel.StageTransforms
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
         }
+        ExteriorInteriorElement CurrentElement { get; set; }
 
 
         #endregion
@@ -53,14 +54,52 @@ namespace FdaViewModel.StageTransforms
             Curve = new Statistics.UncertainCurveIncreasing(xs, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
         }
 
-        public ExteriorInteriorEditorVM(string name, string description, Statistics.UncertainCurveDataCollection curve):base()
+        public ExteriorInteriorEditorVM(ExteriorInteriorElement elem):base()// string name, string description, Statistics.UncertainCurveDataCollection curve):base()
         {
-            Name = name;
-            Description = description;
-            Curve = curve;
+            CurrentElement = elem;
+            CurrentElement.ChangeIndex = 0;
+            Name = elem.Name;
+            Description = elem.Description;
+            Curve = elem.ExteriorInteriorCurve;
+
         }
         #endregion
         #region Voids
+
+        public override void Undo()
+        {
+            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
+            if (CurrentElement.ChangeIndex < changeTableView.NumberOfRows - 1)
+            {
+                //disable the undo button somehow?
+                ExteriorInteriorElement prevElement = (ExteriorInteriorElement)CurrentElement.GetPreviousElementFromChangeTable(CurrentElement.ChangeIndex + 1);
+                if (prevElement != null)// null if out of range index
+                {
+                    Name = prevElement.Name;
+                    LastEditDate = prevElement.LastEditDate;
+                    Description = prevElement.Description;
+                    Curve = prevElement.ExteriorInteriorCurve;
+                    CurrentElement.ChangeIndex += 1;
+                }
+            }
+        }
+
+        public override void Redo()
+        {
+            //get the previous state
+            if (CurrentElement.ChangeIndex > 0)
+            {
+                ExteriorInteriorElement nextElement = (ExteriorInteriorElement)CurrentElement.GetNextElementFromChangeTable(CurrentElement.ChangeIndex - 1);
+                if (nextElement != null)// null if out of range index
+                {
+                    Name = nextElement.Name;
+                    LastEditDate = nextElement.LastEditDate;
+                    Description = nextElement.Description;
+                    Curve = nextElement.ExteriorInteriorCurve;
+                    CurrentElement.ChangeIndex -= 1;
+                }
+            }
+        }
         public override void AddValidationRules()
         {
             AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");

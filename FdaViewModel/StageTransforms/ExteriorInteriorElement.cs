@@ -35,8 +35,9 @@ namespace FdaViewModel.StageTransforms
         }
         #endregion
         #region Constructors
-        public ExteriorInteriorElement(string userProvidedName, string desc, Statistics.UncertainCurveDataCollection exteriorInteriorCurve, BaseFdaElement owner):base(owner)
+        public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, Statistics.UncertainCurveDataCollection exteriorInteriorCurve, Utilities.OwnerElement owner):base(owner)
         {
+            LastEditDate = lastEditDate;
             Name = userProvidedName;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/ExteriorInteriorStage.png");
 
@@ -61,20 +62,20 @@ namespace FdaViewModel.StageTransforms
             localActions.Add(removeExteriorInteriorCurve);
             localActions.Add(renameElement);
 
-
-
             Actions = localActions;
         }
         #endregion
         #region Voids
         public void EditExteriorInteriorCurve(object arg1, EventArgs arg2)
         {
-            RatingCurveEditorVM vm = new RatingCurveEditorVM(Name, Description, ExteriorInteriorCurve);
+            ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM(this);// Name, Description, ExteriorInteriorCurve, 0);
             Navigate(vm, true, true);
             if (!vm.WasCancled)
             {
                 if (!vm.HasError)
                 {
+                    LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+
                     string oldName = Name;
                     Statistics.UncertainCurveDataCollection oldCurve = ExteriorInteriorCurve;
 
@@ -94,7 +95,7 @@ namespace FdaViewModel.StageTransforms
         {
             get
             {
-                return GetTableConstant() + Name;
+                return GetTableConstant() + LastEditDate;
             }
         }
 
@@ -110,7 +111,7 @@ namespace FdaViewModel.StageTransforms
 
         public override object[] RowData()
         {
-            return new object[] { Name, Description, ExteriorInteriorCurve.Distribution };
+            return new object[] { Name, LastEditDate, Description, ExteriorInteriorCurve.Distribution };
         }
 
         public override bool SavesToRow()

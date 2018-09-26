@@ -28,6 +28,10 @@ namespace FdaViewModel
             get { return _Name; }
             set { _Name = value; UpdateTheTreeViewHeader(value); NotifyPropertyChanged(); }
         }
+        public string LastEditDate
+        {
+            get;set;
+        }
         public abstract string TableName { get; }
         public List<Utilities.NamedAction> Actions
         {

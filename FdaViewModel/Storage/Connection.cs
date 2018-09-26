@@ -129,7 +129,8 @@ namespace FdaViewModel.Storage
         {
             if (IsConnectionNull)
             {
-                FdaModel.Utilities.Messager.Logger.Instance.ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Saving edits failed, the directory and file name have not been set", FdaModel.Utilities.Messager.ErrorMessageEnum.Model | FdaModel.Utilities.Messager.ErrorMessageEnum.Minor));
+                FdaModel.Utilities.Messager.Logger.Instance.ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Saving edits failed, the directory and file name have not been set",
+                    FdaModel.Utilities.Messager.ErrorMessageEnum.Model | FdaModel.Utilities.Messager.ErrorMessageEnum.Minor));
             }
         }
         public void DeleteTable(string tableName)

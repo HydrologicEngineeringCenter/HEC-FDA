@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace FdaViewModel.AggregatedStageDamage
         }
         #endregion
         #region Constructors
-        public AggregatedStageDamageOwnerElement(BaseFdaElement owner) : base(owner)
+        public AggregatedStageDamageOwnerElement(Utilities.OwnerElement owner) : base(owner)
         {
             Name = "Aggregated Stage Damage Relationships";
             IsBold = false;
@@ -39,8 +40,6 @@ namespace FdaViewModel.AggregatedStageDamage
         public void AddNewDamageCurve(object arg1, EventArgs arg2)
         {
             List<Inventory.DamageCategory.DamageCategoryOwnedElement> damcateleements = GetElementsOfType<Inventory.DamageCategory.DamageCategoryOwnedElement>();
-            //Inventory.DamageCategory.DamageCategoryOwnedElement damcatelement = damcateleements.FirstOrDefault();
-            //if (damcatelement.DamageCategories.Count > 0)
             
             AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM();
             Navigate(vm, true, true);
@@ -48,15 +47,12 @@ namespace FdaViewModel.AggregatedStageDamage
             {
                 if (!vm.HasError)
                 {
-                    AggregatedStageDamageElement ele = new AggregatedStageDamageElement(this, vm.Name, vm.Description, vm.Curve, CreationMethodEnum.UserDefined);
+                    string creationDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+
+                    AggregatedStageDamageElement ele = new AggregatedStageDamageElement(this, vm.Name, creationDate, vm.Description, vm.Curve, CreationMethodEnum.UserDefined);
                     AddElement(ele);
                 }
-            }
-            
-            
-            
-
-            //throw new NotImplementedException();
+            }                   
         }
         public override void AddBaseElements()
         {
@@ -64,7 +60,6 @@ namespace FdaViewModel.AggregatedStageDamage
         }
         public override void AddValidationRules()
         {
-            //throw new NotImplementedException();
         }
         #endregion
         #region Functions
@@ -78,28 +73,24 @@ namespace FdaViewModel.AggregatedStageDamage
         
         public override string[] TableColumnNames()
         {
-            return new string[] { "Aggregated Stage Damage Relationship","Description", "Curve Uncertainty Type", "Creation Method" };
+            return new string[] { "Name","Last Edit Date","Description", "Curve Uncertainty Type", "Creation Method" };
         }
         public override Type[] TableColumnTypes()
         {
-            return new Type[] { typeof(string),typeof(string), typeof(string),typeof(string) };
+            return new Type[] { typeof(string), typeof(string), typeof(string), typeof(string),typeof(string) };
+        }
+
+        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        {
+            Statistics.UncertainCurveDataCollection emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
+            AggregatedStageDamageElement asd = new AggregatedStageDamageElement(this, (string)rowData[0],(string)rowData[1], (string)rowData[2], emptyCurve, (CreationMethodEnum)Enum.Parse(typeof(CreationMethodEnum), (string)rowData[4]));
+            asd.Curve.fromSqliteTable(asd.TableName);
+            return asd;
         }
 
         public override void AddElement(object[] rowData)
-        {
-            //Inventory.DamageCategory.DamageCategoryOwnedElement dce = (Inventory.DamageCategory.DamageCategoryOwnedElement)GetElementOfTypeAndName(typeof(Inventory.DamageCategory.DamageCategoryOwnedElement), "Damage Categories");
-            //Inventory.DamageCategory.DamageCategoryRowItem dcri = null;
-            //foreach(Inventory.DamageCategory.DamageCategoryRowItem d in dce.DamageCategories)
-            //{
-            //    if (d.Name == (string)rowData[2])
-            //    {
-            //        dcri = d;
-            //    }
-            //}
-            Statistics.UncertainCurveDataCollection emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[2]));
-            AggregatedStageDamageElement asd = new AggregatedStageDamageElement(this, (string)rowData[0], (string)rowData[1], emptyCurve, (CreationMethodEnum)Enum.Parse(typeof(CreationMethodEnum),(string)rowData[3]));
-            asd.Curve.fromSqliteTable(asd.TableName);
-            AddElement(asd,false);
+        { 
+            AddElement(CreateElementFromRowData(rowData),false);
         }
         #endregion
     }

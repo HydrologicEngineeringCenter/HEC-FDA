@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ namespace FdaViewModel.Utilities
         private bool _IsExpanded = true;
         private int _FontSize = 14;
         private bool _IsBold = true;
+        private const int MAX_CHANGE_NUMBER = 4;
         //private object _CustomTreeViewHeader;
         #endregion
         #region Properties
@@ -188,8 +190,14 @@ namespace FdaViewModel.Utilities
         /// <param name="nameIndexInRow">This should always be zero, but if it is not, then just tell me what index in the row you are at.</param>
         public void UpdateTableRowIfModified(string oldName, OwnedElement elem, int nameIndexInRow = 0)
         {
-            if(elem.SavesToRow() == false) { return; }
+
+            if (!Storage.Connection.Instance.IsOpen)
+            {
+                Storage.Connection.Instance.Open();
+            }
+            if (elem.SavesToRow() == false) { return; }
             DataBase_Reader.DataTableView tableView = Storage.Connection.Instance.GetTable(TableName);
+
             int rowIndex = -1;
             object[] elemRowValues = elem.RowData();
             List<object[]> rows = tableView.GetRows(0, Elements.Count - 1);
@@ -208,22 +216,36 @@ namespace FdaViewModel.Utilities
             {
 
                 //is anything in this row modified from the original
-               // bool rowIsModified = false;
+                bool rowIsModified = false;
                 bool nameHasChanged = false;
 
                 //has the name changed
                 if (!oldName.Equals(elem.Name))
                 {
                     nameHasChanged = true;
+                    rowIsModified = true;
                 }
 
-                ////has anything else in the row changed
+
+                //has anything else in the row changed
+                //Type[] colTypes = owner.TableColumnTypes();
                 //if (rowIsModified == false)
                 //{
+                //    object[] dbRow = rows[rowIndex];
                 //    for (int j = 0; j < elemRowValues.Length; j++)
                 //    {
-                //        object[] dbRow = rows[rowIndex];
-                //        if (    (    dbRow[j])  .Equals(elemRowValues[j])     )
+                //        Type t = rowTypes[j];
+                //        if(t == typeof(int))
+                //        {
+
+                //        }
+                //        (t)Convert.ChangeType(dbRow[j], typeof(t);
+
+                //        if(dbRow[j] is rowTypes[j])
+                //        {
+
+                //        }
+                //        if ((dbRow[j]).Equals(elemRowValues[j]))
                 //        {
                 //            rowIsModified = true;
                 //            break;
@@ -233,25 +255,257 @@ namespace FdaViewModel.Utilities
 
                 //if (rowIsModified)
                 {
+
                     tableView.EditRow(rowIndex, elemRowValues);
                     tableView.ApplyEdits();
                     //possibly need to change the name in associated table
-                    if(nameHasChanged && elem.SavesToTable())
+                    if(nameHasChanged)
                     {
-                        Storage.Connection.Instance.RenameTable(elem.GetTableConstant() + oldName, elem.TableName);
+                       // Storage.Connection.Instance.RenameTable(elem.GetTableConstant() + oldName, elem.TableName);
+                        Storage.Connection.Instance.RenameTable(elem.GetTableConstant() + oldName + "-ChangeTable", elem.ChangeTableName());
                     }
+
+
+                    RearangeElementChangeTable(elem.Name, elem);
+                  
+                    Storage.Connection.Instance.Close();
                 }
             }
         }
+        /// <summary>
+        /// This is where the re sorting and adding and deleting or rows occurs for the change table.
+        /// I use a data table to do all the rearanging because it is faster than dealing directly with the 
+        /// table in the database. If a row gets added and the elem saves to table, then it will save out its 
+        /// associated table as well. If a row gets deleted and the elem saves to table, then the associated
+        /// table will also get deleted.
+        /// </summary>
+        /// <param name="oldName"></param>
+        /// <param name="elem"></param>
+        private void RearangeElementChangeTable(string oldName, OwnedElement elem)
+        {
+            string changeTableName = elem.GetTableConstant() + oldName + "-ChangeTable";
+            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(changeTableName);
+            System.Data.DataTable table = changeTableView.ExportToDataTable();
+
+
+            //grab the currently selected row
+            DataRow row = table.NewRow();
+            for(int j = 0;j< table.Columns.Count;j++)
+            {
+                row[j] = table.Rows[elem.ChangeIndex][j];
+            }
+            
+            //remove the row from the table
+            table.Rows.RemoveAt(elem.ChangeIndex);
+            //insert this row back into table at 0
+            table.Rows.InsertAt(row, 0);
+
+            //now insert the new row at zero
+            object[] newRowData = elem.RowData();
+            DataRow newRow = table.NewRow();
+            for(int i = 0;i<newRowData.Length;i++)
+            {
+                newRow[i] = newRowData[i];
+            }
+            table.Rows.InsertAt(newRow, 0);
+
+            //if the table was full when we started, then there is one extra row.
+            //delete the last row
+
+            if (table.Rows.Count > MAX_CHANGE_NUMBER)
+            {
+                //delete the table associated with that row
+                if (elem.SavesToTable())
+                {
+                    string nameOfChangeTable = elem.GetTableConstant() + table.Rows[MAX_CHANGE_NUMBER][1].ToString();
+                    Storage.Connection.Instance.DeleteTable(nameOfChangeTable);
+                }
+                table.Rows.RemoveAt(MAX_CHANGE_NUMBER);
+            }
+
+            //*************************************
+            if (elem.SavesToTable())
+            {
+                elem.Save();
+            }
+
+            //now that we have the table where we want it. Replace the old change table with this data table
+            Storage.Connection.Instance.DeleteTable(changeTableName);
+            table.TableName = changeTableName;
+            Storage.Connection.Instance.Reader.SaveDataTable(table);
+            
+               
+            
+        }
+
+        /// <summary>
+        /// This is where the re sorting and adding and deleting or rows occurs for the change table.
+        /// </summary>
+        /// <param name="oldName"></param>
+        /// <param name="elem"></param>
+        //private void RearangeElementChangeTable_OldVer(string oldName, OwnedElement elem)
+        //{
+
+        //    string changeTableName = elem.GetTableConstant() + oldName + "-ChangeTable";
+        //    DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(changeTableName);
+
+        //    if (changeTableView.NumberOfRows == 0)//this should never be true
+        //    {
+        //        changeTableView.AddRow();
+        //        AddRowDataToChangeTableAtZero(changeTableView, elem);
+        //    }
+        //    else
+        //    {
+        //        MoveAllChangeTableRowsDown(changeTableView);
+        //        MoveChangeTableRowFromIndexToZero(changeTableView, elem.ChangeIndex + 1);
+        //        //remove elem.index +1
+        //        DeleteRowAtIndex(elem.ChangeIndex + 1, changeTableName);
+
+        //        //if(it was actually modified) then add the new one into 0
+        //        MoveAllChangeTableRowsDown(changeTableView);
+
+        //        //add the new row
+        //        AddRowDataToChangeTableAtZero(changeTableView, elem);
+
+        //        //if the table was full when we started, then there is one extra row.
+        //        //delete the last row
+        //        if (changeTableView.NumberOfRows > MAX_CHANGE_NUMBER)
+        //        {
+
+        //            //delete the table associated with that row
+        //            if (elem.SavesToTable())
+        //            {
+        //                string nameOfChangeTable = elem.GetTableConstant() + changeTableView.GetRow(MAX_CHANGE_NUMBER)[1].ToString();
+        //                Storage.Connection.Instance.DeleteTable(nameOfChangeTable);
+        //            }
+        //            //delete the last row in the change table
+        //            DeleteRowAtIndex(MAX_CHANGE_NUMBER, changeTableName);
+        //        }
+        //        changeTableView.ApplyEdits();
+        //    }
+            
+        //}
+        //private void DeleteRowAtIndex(int index, string tableName)
+        //{
+        //    DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(tableName);
+        //    changeTableView.DeleteRow(index);
+        //    changeTableView.ApplyEdits();
+        //}
+        //private void AddRowDataToChangeTableAtZero(DataBase_Reader.DataTableView table, OwnedElement elem)
+        //{
+        //    //object[] rowToAdd = elem.RowData();
+        //    //string lastEditDate = rowToAdd[1].ToString();
+        //    //rowToAdd[1] = elem.GetTableConstant() + lastEditDate;
+        //    table.EditRow(0, elem.RowData());
+        //    //table.ApplyEdits();
+
+        //    if(elem.SavesToTable())
+        //    {
+        //        elem.Save();
+        //    }
+        //}
+
+        //private void MoveChangeTableRowFromIndexToZero(DataBase_Reader.DataTableView table, int index)
+        //{
+        //    //open and close??
+        //    object[] rowToMove = table.GetRow(index);
+        //    table.EditRow(0, rowToMove);
+        //    //table.ApplyEdits();
+
+        //}
+
+       
+        //private void MoveAllChangeTableRowsDown(DataBase_Reader.DataTableView table)
+        //{
+            
+        //        table.AddRow();
+        //        table.ApplyEdits();
+            
+            
+        //    for (int i = table.NumberOfRows - 1; i > 0; i--)
+        //    {
+        //        table.EditRow(i, table.GetRow(i - 1));
+                
+        //    }
+        //    //table.ApplyEdits();
+        //}
+        //private void InsertRowIntoChangeTableAtZero(DataBase_Reader.DataTableView table, object[] rowToInsert)
+        //{
+        //    table.EditRow(0, rowToInsert);
+        //    table.ApplyEdits();
+        //    //if it isn't full then add a row to the end
+        //    int numRows = table.NumberOfRows;
+        //    if (numRows == MAX_CHANGE_NUMBER)
+        //    {
+        //        //since the table is full, we will need to delete one
+        //        //we will delete the last row unless the row that was modified was the last row. (index 4)
+        //        // in that case we would delete index 3
+        //        //delete the table associated with that row
+        //        if (elem.ChangeIndex == MAX_CHANGE_NUMBER - 1)
+        //        {
+        //            //delete max -2
+        //        }
+        //        else
+        //        {
+        //            //delete max -1
+
+        //        }
+
+        //        string nameOfChangeTable = changeTableView.GetRow(4)[0].ToString();
+        //        Storage.Connection.Instance.DeleteTable(elem.GetTableConstant() + nameOfChangeTable + 4);
+        //        //delete the last row in the change table
+        //        changeTableView.DeleteRow(4);
+        //        changeTableView.ApplyEdits();
+        //    }
+
+        //    changeTableView.AddRow();
+        //    numRows += 1;
+
+
+        //    int numRows = table.NumberOfRows;
+        //    for (int i = numRows - 1; i > 0; i--)
+        //    {
+        //        changeTableView.EditRow(i, changeTableView.GetRow(i - 1));
+        //        changeTableView.ApplyEdits();
+        //        if (elem.SavesToTable())
+        //        {
+        //            string nameOfChangeTable = changeTableView.GetRow(i)[0].ToString();
+        //            Storage.Connection.Instance.RenameTable(elem.GetTableConstant() + nameOfChangeTable + (i - 1).ToString(), elem.GetTableConstant() + nameOfChangeTable + i);
+        //        }
+        //    }
+        //}
+
+        public void UpdateExistingElement(OwnedElement element)
+        {
+            //find the row in the parent table that we are dealing with
+            //replace that row with the element.rowData
+            //if it saves to table then re write that table. Don't update the last edit date?
+        }
+
         public virtual void SaveNewElement(OwnedElement element)
         {
             if (!element.SavesToRow()) return;
+
+
             DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
             if (tbl == null)
             {
                 Storage.Connection.Instance.CreateTable(TableName, TableColumnNames(), TableColumnTypes());
                 tbl = Storage.Connection.Instance.GetTable(TableName);
             }
+
+            //create this objects change table
+            string changeTableName = element.ChangeTableName();
+            DataBase_Reader.DataTableView changeTable = Storage.Connection.Instance.GetTable(changeTableName);
+            if(changeTable == null)
+            {
+                Storage.Connection.Instance.CreateTable(changeTableName, TableColumnNames(), TableColumnTypes());
+                changeTable = Storage.Connection.Instance.GetTable(changeTableName);
+            }
+
+            changeTable.AddRow(element.RowData());
+            changeTable.ApplyEdits();
+
             tbl.AddRow(element.RowData());
             tbl.ApplyEdits();
             if (element.SavesToTable()) { element.Save(); }
@@ -328,6 +582,8 @@ namespace FdaViewModel.Utilities
         {
             throw new NotImplementedException();
         }
+        public virtual OwnedElement CreateElementFromRowData(object[] rowData) { return null; }
+      
         public abstract void AddElement(object[] rowData);
         public virtual void AddChildrenFromTable()
         {

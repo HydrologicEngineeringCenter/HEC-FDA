@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,13 +30,8 @@ namespace FdaViewModel.FlowTransforms
             addInflowOutflow.Header = "Create New Inflow Outflow Relationship";
             addInflowOutflow.Action = AddInflowOutflow;
 
-            //Utilities.NamedAction importFromAscii = new Utilities.NamedAction();
-            //importFromAscii.Header = "Import Inflow Outflow Relationship From ASCII";
-            //importFromAscii.Action = ImportFromASCII;
-
             List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
             localActions.Add(addInflowOutflow);
-            //localActions.Add(importFromAscii);
 
             Actions = localActions;
         }
@@ -57,7 +53,9 @@ namespace FdaViewModel.FlowTransforms
             {
                 if (!vm.HasFatalError)
                 {
-                    InflowOutflowElement ele = new FlowTransforms.InflowOutflowElement(vm.Name, vm.Description, vm.Curve, this);
+                    string creationDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+
+                    InflowOutflowElement ele = new InflowOutflowElement(vm.Name,creationDate, vm.Description, vm.Curve, this);
                     AddElement(ele);
                     AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ele.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(InflowOutflowElement)));
                     
@@ -85,19 +83,24 @@ namespace FdaViewModel.FlowTransforms
 
         public override string[] TableColumnNames()
         {
-            return new string[] { "Inflow Outflow Relationship", "Description" , "Curve Distribution Type"};
+            return new string[] { "Name","Last Edit Date", "Description" , "Curve Distribution Type"};
         }
         public override Type[] TableColumnTypes()
         {
-            return new Type[] { typeof(string), typeof(string), typeof(string) };
+            return new Type[] { typeof(string),typeof(string), typeof(string), typeof(string) };
         }
 
+        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        {
+            Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
+            InflowOutflowElement inout = new InflowOutflowElement((string)rowData[0], (string)rowData[1], (string)rowData[2], ucdc, this);
+            inout.InflowOutflowCurve.fromSqliteTable(inout.TableName);
+            return inout;
+        }
         public override void AddElement(object[] rowData)
         {
-            Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[2]));
-            InflowOutflowElement inout = new InflowOutflowElement((string)rowData[0], (string)rowData[1], ucdc, this);
-            inout.InflowOutflowCurve.fromSqliteTable(inout.TableName);
-            AddElement(inout,false);
+            
+            AddElement(CreateElementFromRowData(rowData),false);
         }
         #endregion
     }

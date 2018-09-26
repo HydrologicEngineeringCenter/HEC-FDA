@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace FdaViewModel
 {
@@ -37,8 +38,26 @@ namespace FdaViewModel
         private Utilities.NamedAction _MessagesAction;
         private Utilities.NamedAction _ErrorsAction;
         private Utilities.NamedAction _HelpAction;
+        private ICommand _UndoCommand;
+        private ICommand _RedoCommand;
+        private ICommand _SaveWhileEditing;
         #endregion
         #region Properties
+
+        public ICommand UndoCommand
+        {
+            get { return _UndoCommand ?? (_UndoCommand = new Utilities.CommandHandler(() => Undo(), true)); }
+        }
+        public ICommand RedoCommand
+        {
+            get { return _RedoCommand ?? (_RedoCommand = new Utilities.CommandHandler(() => Redo(), true)); }
+        }
+        public ICommand SaveWhileEditingCommand
+        {
+            get { return _SaveWhileEditing ?? (_SaveWhileEditing = new Utilities.CommandHandler(() => SaveWhileEditing(), true)); }
+        }
+        public string LastEditDate { get; set; }
+
         public bool TableContainsGeoData
         {
             get { return _TableContainsGeoData; }
@@ -97,12 +116,18 @@ namespace FdaViewModel
         #region Constructors
         public BaseViewModel()
         {
-            AddValidationRules();
             _MessagesAction = new Utilities.NamedAction();
-            _MessagesAction.Header = "";
-            _MessagesAction.IsEnabled = false;
-            _MessagesAction.IsVisible = false;
-            _MessagesAction.Action = DisplayMessages;
+            _ErrorsAction = new Utilities.NamedAction();
+            _HelpAction = new Utilities.NamedAction();
+
+            AddValidationRules();
+            Utilities.NamedAction messageAction = new Utilities.NamedAction();
+            //_MessagesAction = new Utilities.NamedAction();
+            messageAction.Header = "";
+            messageAction.IsEnabled = false;
+            messageAction.IsVisible = false;
+            messageAction.Action = DisplayMessages;
+            MessagesAction = messageAction;
 
             Utilities.NamedAction errorAction = new Utilities.NamedAction();
             errorAction.Header = "";
@@ -132,7 +157,9 @@ namespace FdaViewModel
         }
         private void DisplayMessages(object arg1, EventArgs arg2)
         {
-            Utilities.MessagesVM mvm = new Utilities.MessagesVM(_messages);
+            //Utilities.MessagesVM mvm = new Utilities.MessagesVM(_messages);
+            Utilities.MessagesVM mvm = new Utilities.MessagesVM();
+
             Navigate(mvm, true, false, "Messages");
         }
         #endregion
@@ -185,6 +212,10 @@ namespace FdaViewModel
                     {
                         _ErrorsAction.IsEnabled = true;
                         _ErrorsAction.IsVisible = true;
+
+                        _MessagesAction.IsEnabled = true;
+                        _MessagesAction.IsVisible = true;
+
                     }else
                     {
                         _ErrorsAction.IsEnabled = false;
@@ -302,6 +333,20 @@ namespace FdaViewModel
         {
             FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
         }
+
+        public virtual void Undo()
+        {
+            //this is here to be overriden by those that want to
+        }
+        public virtual void Redo()
+        {
+            //this is here to be overriden by those that want to
+        }
+        public virtual void SaveWhileEditing()
+        {
+            //this is here to be overriden by those that want to
+        }
+
         #endregion
         #region Functions
         #endregion

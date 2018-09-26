@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -75,6 +76,12 @@ namespace FdaViewModel.FrequencyRelationships
         {
             return new Type[] { typeof(string) };
         }
+
+        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        {
+            return null;
+        }
+
         public override void AddElement(object[] rowData)
         {
             //AddElement(new )

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace FdaViewModel.StageTransforms
         }
         #endregion
         #region Constructors
-        public ExteriorInteriorOwnerElement(BaseFdaElement owner) : base(owner)
+        public ExteriorInteriorOwnerElement(Utilities.OwnerElement owner) : base(owner)
         {
             Name = "Exterior Interior Relationships";
             IsBold = false;
@@ -54,7 +55,9 @@ namespace FdaViewModel.StageTransforms
             {
                 if (!vm.HasError)
                 {
-                    ExteriorInteriorElement ele = new ExteriorInteriorElement(vm.Name, vm.Description, vm.Curve, this);
+                    string creationDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+
+                    ExteriorInteriorElement ele = new ExteriorInteriorElement(vm.Name,creationDate, vm.Description, vm.Curve, this);
                     AddElement(ele);
                     AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ele.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(ExteriorInteriorElement)));
                 }
@@ -79,19 +82,23 @@ namespace FdaViewModel.StageTransforms
         }
         public override string[] TableColumnNames()
         {
-            return new string[] { "Interior Exterior Curve", "Description", "Curve Distribution Type" };
+            return new string[] { "Name","Last Edit Date", "Description", "Curve Distribution Type" };
         }
         public override Type[] TableColumnTypes()
         {
-            return new Type[] { typeof(string), typeof(string), typeof(string) };
+            return new Type[] { typeof(string),typeof(string), typeof(string), typeof(string) };
         }
-
+        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        {
+            Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
+            ExteriorInteriorElement ele = new ExteriorInteriorElement((string)rowData[0],(string)rowData[1], (string)rowData[2], ucdc, this);
+            ele.ExteriorInteriorCurve.fromSqliteTable(ele.TableName);
+            return ele;
+        }
         public override void AddElement(object[] rowData)
         {
-            Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[2]));
-            ExteriorInteriorElement ele = new ExteriorInteriorElement((string)rowData[0], (string)rowData[1],ucdc, this);
-            ele.ExteriorInteriorCurve.fromSqliteTable(ele.TableName);
-            AddElement(ele,false);
+            
+            AddElement(CreateElementFromRowData(rowData),false);
         }
         #endregion
     }

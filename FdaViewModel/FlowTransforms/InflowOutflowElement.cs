@@ -17,7 +17,7 @@ namespace FdaViewModel.FlowTransforms
         #endregion
         #region Fields
         private const string _TableConstant = "Inflow Outflow - ";
-
+        private InflowOutflowOwnerElement _OwnerNode;
         private string _Description;
         private Statistics.UncertainCurveDataCollection _Curve;
         #endregion
@@ -33,10 +33,15 @@ namespace FdaViewModel.FlowTransforms
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
         }
+
+        
+
         #endregion
         #region Constructors
-        public InflowOutflowElement(string userProvidedName, string description, Statistics.UncertainCurveDataCollection inflowOutflowCurve, BaseFdaElement owner):base(owner)
+        public InflowOutflowElement(string userProvidedName, string lastEditDate, string description, Statistics.UncertainCurveDataCollection inflowOutflowCurve, Utilities.OwnerElement owner):base(owner)
         {
+            _OwnerNode = (InflowOutflowOwnerElement)owner;
+            LastEditDate = lastEditDate;
             Name = userProvidedName;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/InflowOutflowCircle.png");
             
@@ -69,18 +74,28 @@ namespace FdaViewModel.FlowTransforms
         #region Voids
         public void EditInflowOutflowCurve(object arg1, EventArgs arg2)
         {
-            InflowOutflowEditorVM vm = new InflowOutflowEditorVM(Name, Description, InflowOutflowCurve);
+            AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(Name, Utilities.Transactions.TransactionEnum.EditExisting, 
+                "Openning " + Name + " for editing.",nameof(InflowOutflowElement)));
+
+            FdaModel.Utilities.Messager.ErrorMessage err = new FdaModel.Utilities.Messager.ErrorMessage("Test message when opening", FdaModel.Utilities.Messager.ErrorMessageEnum.Report, nameof(InflowOutflowElement));
+            FdaModel.Utilities.Messager.Logger.Instance.ReportMessage(err);
+
+            InflowOutflowEditorVM vm = new InflowOutflowEditorVM(this);
             Navigate(vm, true, true);
             if (!vm.WasCancled)
             {
                 if (!vm.HasFatalError)
                 {
+
+                    LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+
                     string originalName = Name;
                     Statistics.UncertainCurveDataCollection oldCurve = InflowOutflowCurve;
 
                     Name = vm.Name;
                     Description = vm.Description;
                     InflowOutflowCurve = vm.Curve;
+                    ChangeIndex = vm.ChangeIndex;
 
                     ((InflowOutflowOwnerElement)_Owner).UpdateTableRowIfModified(originalName, this);
                     UpdateTableIfModified(originalName,oldCurve, InflowOutflowCurve);    
@@ -94,8 +109,7 @@ namespace FdaViewModel.FlowTransforms
         {
             get
             {
-                
-                return GetTableConstant() + Name;
+                return GetTableConstant() + LastEditDate;
             }
         }
 
@@ -112,7 +126,7 @@ namespace FdaViewModel.FlowTransforms
         }
         public override object[] RowData()
         {
-            return new object[] { Name, Description, InflowOutflowCurve.Distribution };
+            return new object[] { Name, LastEditDate, Description, InflowOutflowCurve.Distribution };
         }
 
         public override bool SavesToRow()

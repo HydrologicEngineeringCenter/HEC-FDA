@@ -5,6 +5,7 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.GeoTech
 {
@@ -56,7 +57,9 @@ namespace FdaViewModel.GeoTech
             {
                 if (!vm.HasError)
                 {
-                    FailureFunctionElement ele = new FailureFunctionElement(vm.Name, vm.Description, vm.Curve,vm.SelectedLateralStructure , this);
+                    string creationDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+
+                    FailureFunctionElement ele = new FailureFunctionElement(vm.Name, creationDate,  vm.Description, vm.Curve,vm.SelectedLateralStructure , this);
                     AddElement(ele);
                     AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ele.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(FailureFunctionElement)));
                 }
@@ -85,29 +88,33 @@ namespace FdaViewModel.GeoTech
 
         public override string[] TableColumnNames()
         {
-            return new string[] { "Name", "Description", "Associated Levee Feature", "Curve Distribution Type" };
+            return new string[] { "Name", "Last Edit Date", "Description", "Associated Levee Feature", "Curve Distribution Type" };
         }
 
         public override Type[] TableColumnTypes()
         {
-            return new Type[] { typeof(string), typeof(string), typeof(string), typeof(string) };
+            return new Type[] { typeof(string),typeof(string), typeof(string), typeof(string), typeof(string) };
         }
-        public override void AddElement(object[] rowData)
-        {
 
+        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        {
             List<LeveeFeatureElement> ele = GetElementsOfType<LeveeFeatureElement>();
             LeveeFeatureElement lfe = null;
-            foreach(LeveeFeatureElement element in ele)
+            foreach (LeveeFeatureElement element in ele)
             {
-                if(element.Name == (string)rowData[2])
+                if (element.Name == (string)rowData[3])
                 {
                     lfe = element;
                 }
             }
-            Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
-            FailureFunctionElement failure = new FailureFunctionElement((string)rowData[0], (string)rowData[1], ucdc, lfe, this);
+            Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[4]));
+            FailureFunctionElement failure = new FailureFunctionElement((string)rowData[0],(string)rowData[1], (string)rowData[2], ucdc, lfe, this);
             failure.FailureFunctionCurve.fromSqliteTable(failure.TableName);
-            AddElement(failure, false);
+            return failure;
+        }
+        public override void AddElement(object[] rowData)
+        {
+            AddElement(CreateElementFromRowData(rowData), false);
         }
     }
 }

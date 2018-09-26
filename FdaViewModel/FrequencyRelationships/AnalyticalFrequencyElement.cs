@@ -15,6 +15,7 @@ namespace FdaViewModel.FrequencyRelationships
 
         private string _Description = "";
         private Statistics.LogPearsonIII _Distribution;
+        //private Utilities.OwnerElement _Owner;
         #endregion
         #region Properties
         public override string GetTableConstant()
@@ -33,8 +34,9 @@ namespace FdaViewModel.FrequencyRelationships
         }
         #endregion
         #region Constructors
-        public AnalyticalFrequencyElement(string name, string desc, Statistics.LogPearsonIII dist, BaseFdaElement owner) : base(owner)
+        public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, Statistics.LogPearsonIII dist, Utilities.OwnerElement owner) : base(owner)
         {
+            LastEditDate = lastEditDate;
             Name = name;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/FrequencyCurve.png");
 
@@ -68,16 +70,20 @@ namespace FdaViewModel.FrequencyRelationships
         #region Voids
         public void EditFlowFreq(object arg1, EventArgs arg2)
         {
-            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(Name, Distribution, Description);
+            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this, (AnalyticalFrequencyOwnerElement)_Owner);// Name, Distribution, Description, _Owner);
             Navigate(vm, true, true);
             if (!vm.WasCancled)
             {
                 if (!vm.HasError)
                 {
+
+                    LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+
                     string originalName = Name;
                     Name = vm.Name;
                     Description = vm.Description;
                     Distribution = vm.Distribution;
+                    ChangeIndex = vm.ChangeIndex;
 
                     ((AnalyticalFrequencyOwnerElement)_Owner).UpdateTableRowIfModified(originalName, this);
 
@@ -97,7 +103,7 @@ namespace FdaViewModel.FrequencyRelationships
 
         public override object[] RowData()
         {
-            return new object[] { Name, Description, Distribution.GetMean, Distribution.GetStDev, Distribution.GetG, Distribution.GetSampleSize };
+            return new object[] { Name, LastEditDate, Description, Distribution.GetMean, Distribution.GetStDev, Distribution.GetG, Distribution.GetSampleSize };
         }
 
         public override bool SavesToRow()

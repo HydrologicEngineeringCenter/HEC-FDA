@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,15 +34,12 @@ namespace FdaViewModel.AggregatedStageDamage
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
         }
-        //public Inventory.DamageCategory.DamageCategoryRowItem DamageCategory 
-        //{
-        //    get { return _DamageCategory; }
-        //    set { _DamageCategory = value;  NotifyPropertyChanged(); }
-        //}
+  
         #endregion
         #region Constructors
-        public AggregatedStageDamageElement(BaseFdaElement owner, string name , string description, Statistics.UncertainCurveDataCollection curve, CreationMethodEnum method) : base(owner)
+        public AggregatedStageDamageElement(OwnerElement owner, string name , string lastEditDate, string description, Statistics.UncertainCurveDataCollection curve, CreationMethodEnum method) : base(owner)
         {
+            LastEditDate = lastEditDate;
             Name = name;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/StageDamage.png");
 
@@ -81,12 +79,14 @@ namespace FdaViewModel.AggregatedStageDamage
         {
             List<Inventory.DamageCategory.DamageCategoryOwnedElement> damcateleements = GetElementsOfType<Inventory.DamageCategory.DamageCategoryOwnedElement>();
             Inventory.DamageCategory.DamageCategoryOwnedElement damcatelement = damcateleements.FirstOrDefault();
-            AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(Name, Description, Curve);
+            AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(this);
             Navigate(vm, true, true);
             if (!vm.WasCancled)
             {
                 if (!vm.HasError)
                 {
+                    LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+
                     string oldName = Name;
                     Statistics.UncertainCurveDataCollection oldCurve = Curve;
                     Name = vm.Name;
@@ -100,24 +100,12 @@ namespace FdaViewModel.AggregatedStageDamage
         }
         public override void Save()
         {
-            //throw new NotImplementedException();
             Curve.toSqliteTable(TableName);
         }
 
         public override object[] RowData()
         {
-            //delete this and actually fix the problem
-
-            //if(DamageCategory == null)
-            //{
-            //    return new object[] { Name, Description, "", Curve.Distribution, _Method };
-
-            //}
-            //else
-            //{
-            return new object[] { Name, Description, Curve.Distribution, _Method };
-
-           // }
+            return new object[] { Name,LastEditDate, Description, Curve.Distribution, _Method };
         }
 
         public override bool SavesToRow()
@@ -132,10 +120,7 @@ namespace FdaViewModel.AggregatedStageDamage
         #region Functions
         public override string TableName
         {
-            get
-            {
-                return GetTableConstant() + Name;
-            }
+            get   {  return GetTableConstant() + LastEditDate; }
         }
         #endregion
     }

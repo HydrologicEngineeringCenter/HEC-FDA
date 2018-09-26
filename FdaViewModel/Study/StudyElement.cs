@@ -332,7 +332,9 @@ namespace FdaViewModel.Study
                 }
                 else
                 {
-                    ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("A study with that name already exists.", FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.View));
+                    ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("A study with that name already exists.",
+                        FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.View));
+
                     Storage.Connection.Instance.ProjectFile = vm.Path + "\\" + vm.StudyName + "\\" + vm.StudyName + ".sqlite";
                 }
                 PropertiesVM properties = new PropertiesVM(vm.StudyName, vm.Path);
@@ -519,6 +521,10 @@ namespace FdaViewModel.Study
             return ret;
         }
 
+        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        {
+            return null;
+        }
         public override void AddElement(object[] rowData)
         {
             throw new NotImplementedException();

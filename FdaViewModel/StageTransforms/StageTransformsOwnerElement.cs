@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -73,6 +74,10 @@ namespace FdaViewModel.StageTransforms
         public override bool SavesToTable()
         {
             return false;
+        }
+        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        {
+            return null;
         }
         public override void AddElement(object[] rowData)
         {

@@ -199,6 +199,7 @@
     <Compile Include="Utilities\AddGriddedDataEventArgs.cs" />
     <Compile Include="Utilities\AddMapFeatureEventArgs.cs" />
     <Compile Include="Utilities\AddShapefileEventArgs.cs" />
+    <Compile Include="Utilities\CommandHandler.cs" />
     <Compile Include="Utilities\CustomHeaderVM.cs" />
     <Compile Include="Utilities\CustomMessageBoxVM.cs" />
     <Compile Include="Utilities\DatabaseColumn.cs" />

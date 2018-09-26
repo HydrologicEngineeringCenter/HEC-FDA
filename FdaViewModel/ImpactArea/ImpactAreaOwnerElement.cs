@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.ImpactArea
 {
@@ -34,7 +35,7 @@ namespace FdaViewModel.ImpactArea
         #endregion
         #region Functions
         #endregion
-        public ImpactAreaOwnerElement(BaseFdaElement owner) : base(owner)
+        public ImpactAreaOwnerElement(Utilities.OwnerElement owner) : base(owner)
         {
             Name = "Impact Areas";
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
@@ -96,7 +97,8 @@ namespace FdaViewModel.ImpactArea
             return new Type[] { typeof(string), typeof(string) };
         }
 
-        public override void AddElement(object[] rowData)
+
+        public override OwnedElement CreateElementFromRowData(object[] rowData)
         {
             ObservableCollection<ImpactAreaRowItem> dummyCollection = new ObservableCollection<ImpactAreaRowItem>();
 
@@ -105,14 +107,14 @@ namespace FdaViewModel.ImpactArea
             //LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(sqr);
             //LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)gpr.ConvertToGisFeatures("Impact Areas - " + rowData[0]);
 
-            ImpactAreaElement iae = new ImpactAreaElement((string)rowData[0], (string)rowData[1], dummyCollection , this);
+            ImpactAreaElement iae = new ImpactAreaElement((string)rowData[0], (string)rowData[1], dummyCollection, this);
 
             int lastRow = Storage.Connection.Instance.GetTable(iae.TableName).NumberOfRows - 1;
             ObservableCollection<object> tempCollection = new ObservableCollection<object>();
-            foreach (object[] row in Storage.Connection.Instance.GetTable(iae.TableName).GetRows(0,lastRow))
+            foreach (object[] row in Storage.Connection.Instance.GetTable(iae.TableName).GetRows(0, lastRow))
             {
                 //each row here should be a name and an index point
-                ImpactAreaRowItem ri = new ImpactAreaRowItem(row[2].ToString(),Convert.ToDouble(row[3]),tempCollection);
+                ImpactAreaRowItem ri = new ImpactAreaRowItem(row[2].ToString(), Convert.ToDouble(row[3]), tempCollection);
                 tempCollection.Add(ri);
             }
             ObservableCollection<ImpactAreaRowItem> items = new ObservableCollection<ImpactAreaRowItem>();
@@ -121,7 +123,12 @@ namespace FdaViewModel.ImpactArea
                 items.Add((ImpactAreaRowItem)row);
             }
             iae.ImpactAreaRows = items;
-            AddElement(iae,false);
+            return iae;
+        }
+        public override void AddElement(object[] rowData)
+        {
+            
+            AddElement(CreateElementFromRowData(rowData),false);
         }
     }
 }

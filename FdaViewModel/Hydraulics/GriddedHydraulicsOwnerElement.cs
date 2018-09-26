@@ -5,6 +5,7 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.Hydraulics
 {
@@ -81,7 +82,10 @@ namespace FdaViewModel.Hydraulics
         {
             throw new NotImplementedException();
         }
-
+        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        {
+            return null;
+        }
         public override void AddElement(object[] rowData)
         {
             //throw new NotImplementedException();

@@ -17,6 +17,7 @@ namespace FdaViewModel.Utilities
 
         #endregion
         #region Properties
+           // public OwnerElement Owner { get; }
         //public object CustomTreeViewHeader
         //{
         //    get { return _CustomTreeViewHeader; }
@@ -293,17 +294,62 @@ namespace FdaViewModel.Utilities
         }
         public override List<T> GetElementsOfType<T>()
         {
-            //List<BaseFdaElement> ret = new List<BaseFdaElement>();
-            //if (GetType() == t)
-            //{
-            //    ret.Add(this);
-            //    return ret;
-            //}
-            //else
-            //{
             return _Owner.GetElementsOfType<T>();
-            //}
         }
+
+        public virtual OwnedElement GetPreviousElementFromChangeTable(int changeTableIndex)
+        {
+            OwnedElement prevElement = null;
+            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(this.ChangeTableName());
+            if (changeTableIndex < changeTableView.NumberOfRows)
+            {
+                if (changeTableView != null)
+                {
+                    if (!Storage.Connection.Instance.IsOpen)
+                    {
+                        Storage.Connection.Instance.Open();
+                    }
+                    object[] rowData = changeTableView.GetRow(changeTableIndex);
+               
+                    prevElement = ((OwnerElement)this._Owner).CreateElementFromRowData(rowData);
+
+                    Storage.Connection.Instance.Close();
+                }
+            }
+            return prevElement;
+        }
+
+        public virtual OwnedElement GetNextElementFromChangeTable(int changeTableIndex)
+        {
+            OwnedElement nextElement = null;
+            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(this.ChangeTableName());
+            if (changeTableIndex >= 0)
+            {
+                if (changeTableView != null)
+                {
+                    if (!Storage.Connection.Instance.IsOpen)
+                    {
+                        Storage.Connection.Instance.Open();
+                    }
+                    object[] rowData = changeTableView.GetRow(changeTableIndex);
+
+                    nextElement = ((OwnerElement)this._Owner).CreateElementFromRowData(rowData);
+
+                    Storage.Connection.Instance.Close();
+                }
+            }
+            return nextElement;
+        }
+
+        public virtual int ChangeIndex { get; set; }
+        
+
+        public virtual string ChangeTableName()
+        {
+            return GetTableConstant() + Name + "-ChangeTable";
+        }
+
+
         public abstract object[] RowData();
         public abstract bool SavesToRow();
         public abstract bool SavesToTable();

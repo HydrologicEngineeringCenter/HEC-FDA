@@ -13,7 +13,7 @@ namespace FdaViewModel.StageTransforms
         #region Fields
         private string _Description;
         private Statistics.UncertainCurveDataCollection _Curve;
-        private RatingCurveOwnerElement _Owner;
+        private RatingCurveOwnerElement _OwnerNode;
         private const string TABLE_NAME_CONSTANT = "Rating Curve - ";
 
         #endregion
@@ -27,9 +27,11 @@ namespace FdaViewModel.StageTransforms
         }
         #endregion
         #region Constructors
-        public RatingCurveElement(string userprovidedname, string desc, Statistics.UncertainCurveDataCollection ratingCurve,  BaseFdaElement owner) : base(owner)
+       
+        public RatingCurveElement(string userprovidedname, string creationDate, string desc, Statistics.UncertainCurveDataCollection ratingCurve, Utilities.OwnerElement owner) : base(owner)
         {
-            _Owner = (RatingCurveOwnerElement)owner;
+            LastEditDate = creationDate;
+            _OwnerNode = (RatingCurveOwnerElement)owner;
             Name = userprovidedname;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/RatingCurve.png");
 
@@ -53,22 +55,24 @@ namespace FdaViewModel.StageTransforms
             localActions.Add(removeRatingCurve);
             localActions.Add(renameElement);
 
-
-
             Actions = localActions;
+
         }
 
+      
 
         #endregion
         #region Voids
         public void EditRatingCurve(object arg1, EventArgs arg2)
         {
-            RatingCurveEditorVM vm = new RatingCurveEditorVM(Name, Description, RatingCurve);
+            RatingCurveEditorVM vm = new RatingCurveEditorVM(this);
             Navigate(vm, true, true);
             if (!vm.WasCancled)
             {
                 if (!vm.HasError)
                 {
+                    LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+                   
                     // if the user has changed the name of the element then we need to update the parent table and the child table if there is one
                     string originalName = Name;
                     Statistics.UncertainCurveDataCollection originalRatingCurve = RatingCurve;
@@ -76,28 +80,44 @@ namespace FdaViewModel.StageTransforms
                     Name = vm.Name;//should i disable this way of renaming? if not i need to check for name conflicts.
                     Description = vm.Description;//is binding two way? is this necessary?
                     RatingCurve = vm.Curve;
+                    ChangeIndex = vm.ChangeIndex;
 
-                    _Owner.UpdateTableRowIfModified(originalName, this);
-                    UpdateTableIfModified(originalName, originalRatingCurve, RatingCurve);
-
+                    if (DidStateChange() == true)
+                    {
+                        _OwnerNode.UpdateTableRowIfModified(originalName, this);
+                        UpdateTableIfModified(originalName, originalRatingCurve, RatingCurve);
+                    }
                 }
             }
         }
+
+        private bool DidStateChange()
+        {
+            return true;
+        }
         public override void AddValidationRules()
         {
-            //throw new NotImplementedException();
-            AddRule(nameof(Name), () => Name != "asdf", "Name cannot be asdf.");
+            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
         }
 
+        //public override string ChangeTableName()
+        //{
+        //    return GetTableConstant() + Name + "-ChangeTable";
+        //}
         public override void Save()
         {
-            RatingCurve.toSqliteTable(TableName);
+            if (!Storage.Connection.Instance.IsOpen)
+            {
+                Storage.Connection.Instance.Open();
+            }
+            RatingCurve.toSqliteTable(TableName); //will be formatted like: 2/27/2009 12:12:22 PM
         }
 
         public override object[] RowData()
         {
-            return new object[] { Name, Description, RatingCurve.Distribution, RatingCurve.GetType() };
+            return new object[] { Name,LastEditDate, Description, RatingCurve.Distribution, RatingCurve.GetType() };
         }
+
 
         public override bool SavesToRow()
         {
@@ -119,7 +139,7 @@ namespace FdaViewModel.StageTransforms
         {
             get
             {
-                return TABLE_NAME_CONSTANT + Name;
+                return TABLE_NAME_CONSTANT + LastEditDate;
             }
         }
         #endregion

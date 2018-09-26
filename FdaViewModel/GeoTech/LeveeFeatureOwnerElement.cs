@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace FdaViewModel.GeoTech
         }
         #endregion
         #region Constructors
-        public LeveeFeatureOwnerElement(BaseFdaElement owner) : base(owner)
+        public LeveeFeatureOwnerElement(Utilities.OwnerElement owner) : base(owner)
         {
             Name = "Levee Features";
             IsBold = false;
@@ -76,9 +77,14 @@ namespace FdaViewModel.GeoTech
         {
             return new Type[] { typeof(string), typeof(string), typeof(double) };
         }
+        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        {
+            return new LeveeFeatureElement((string)rowData[0], (string)rowData[1], (double)rowData[2], this);
+        }
+
         public override void AddElement(object[] rowData)
         {
-            AddElement(new LeveeFeatureElement((string)rowData[0], (string)rowData[1], (double)rowData[2], this),false);
+            AddElement(CreateElementFromRowData(rowData),false);
         }
         #endregion
     }

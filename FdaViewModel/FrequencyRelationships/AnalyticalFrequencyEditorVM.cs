@@ -18,6 +18,10 @@ namespace FdaViewModel.FrequencyRelationships
         private System.Collections.ObjectModel.ObservableCollection<double> _Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>();
         private double _TestKnowledge = .9;
         private double _TestNatural = .01;
+        private AnalyticalFrequencyElement _savedElement;
+
+        private AnalyticalFrequencyOwnerElement _OwnerNode;
+
         #endregion
         #region Properties
         public string Name
@@ -25,6 +29,7 @@ namespace FdaViewModel.FrequencyRelationships
             get { return _Name; }
             set { _Name = value; NotifyPropertyChanged(); }
         }
+
         public string Description
         {
             get { return _Description; }
@@ -52,20 +57,26 @@ namespace FdaViewModel.FrequencyRelationships
         public double TestKnowledge { get { return _TestKnowledge; } set { _TestKnowledge = value; NotifyPropertyChanged(); NotifyPropertyChanged(nameof(Result)); } }
         public double TestNatural { get { return _TestNatural; } set { _TestNatural = value; NotifyPropertyChanged(); NotifyPropertyChanged(nameof(Result)); } }
         public double Result { get { return _Distribution.GetG; } }
+        public int ChangeIndex { get; set; }
+
+        public AnalyticalFrequencyElement CurrentElement { get; set; }
         #endregion
         #region Constructors
         public AnalyticalFrequencyEditorVM() : base()
         {
             Distribution = new Statistics.LogPearsonIII(4, .4, .5, 50);
             Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };
-
+            //_OwnerNode = owner;
         }
-        public AnalyticalFrequencyEditorVM(string name, Statistics.LogPearsonIII lpiii, string description) : base()
+        public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem, AnalyticalFrequencyOwnerElement owner):base()// string name, Statistics.LogPearsonIII lpiii, string description, Utilities.OwnerElement owner) : base()
         {
-            Distribution = lpiii;
+            ChangeIndex = 0;
+            CurrentElement = elem;
+            Distribution = elem.Distribution;
             Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };
-            Name = name;
-            Description = description;
+            Name = elem.Name;
+            Description = elem.Description;
+            _OwnerNode = owner;
         }
         #endregion
         #region Voids
@@ -125,6 +136,65 @@ namespace FdaViewModel.FrequencyRelationships
         public override void Save()
         {
             //throw new NotImplementedException();
+            if (_savedElement != null)
+            {
+                _savedElement.Remove(this, new EventArgs());
+            }
         }
+
+        public override void Undo()
+        {
+            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
+            if (ChangeIndex < changeTableView.NumberOfRows - 1)
+            {
+                //disable the undo button somehow?
+                AnalyticalFrequencyElement prevElement = (AnalyticalFrequencyElement)CurrentElement.GetPreviousElementFromChangeTable(ChangeIndex + 1);
+                if (prevElement != null)// null if out of range index
+                {
+                    Name = prevElement.Name;
+                    LastEditDate = prevElement.LastEditDate;
+                    Description = prevElement.Description;
+                    Distribution = prevElement.Distribution;
+
+                    Mean = prevElement.Distribution.GetMean;//???
+
+                    ChangeIndex += 1;
+                }
+            }
+        }
+        public override void Redo()
+        {  
+            //get the previous state
+            if (ChangeIndex > 0)
+            {
+                AnalyticalFrequencyElement nextElement = (AnalyticalFrequencyElement)CurrentElement.GetNextElementFromChangeTable(ChangeIndex - 1);
+                if (nextElement != null)// null if out of range index
+                {
+                    Name = nextElement.Name;
+                    LastEditDate = nextElement.LastEditDate;
+                    Description = nextElement.Description;
+                    Distribution = nextElement.Distribution;
+                    ChangeIndex -= 1;
+                }
+            }
+        }
+        public override void SaveWhileEditing()
+        {
+            if (_savedElement != null)
+            {
+                _savedElement.Remove(this, new EventArgs());
+            }
+            LastEditDate = DateTime.Now.ToString("G");
+            //create an element
+            Statistics.LogPearsonIII lpiii = new Statistics.LogPearsonIII(Mean, StandardDeviation, Skew, SampleSize);//are the default probabilities editable in the model?
+            AnalyticalFrequencyElement afe = new AnalyticalFrequencyElement(Name,LastEditDate, Description, lpiii, _OwnerNode);
+            _savedElement = afe;
+            //save the element
+            _OwnerNode.AddElement(afe);//this will add it as a new element and will therefore lose the undo redo history. no bueno
+            
+            //AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(afe.Name, Utilities.Transactions.TransactionEnum.CreateNew, "Initial Name: " + afe.Name + " Description: " + afe.Description + " Mean: " + afe.Distribution.GetMean + " Standard Deviation: " + afe.Distribution.GetStDev + " Skew: " + afe.Distribution.GetG + " EYOR: " + afe.Distribution.GetSampleSize, nameof(AnalyticalFrequencyElement)));
+
+        }
+
     }
 }

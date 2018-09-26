@@ -6,6 +6,7 @@ using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -34,7 +35,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         //}
         #endregion
         #region Constructors
-        public OccupancyTypesOwnerElement(BaseFdaElement owner):base(owner)
+        public OccupancyTypesOwnerElement(Utilities.OwnerElement owner):base(owner)
         {
             Name = "Occupancy Types";
             IsBold = false;
@@ -227,6 +228,11 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public override Type[] TableColumnTypes()
         {
             return new Type[] { typeof(string)};
+        }
+
+        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        {
+            return null;
         }
 
         /// <summary>

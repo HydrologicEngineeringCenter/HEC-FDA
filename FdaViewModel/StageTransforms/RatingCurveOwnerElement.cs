@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.StageTransforms
 {
@@ -20,7 +21,7 @@ namespace FdaViewModel.StageTransforms
         }
         #endregion
         #region Constructors
-        public RatingCurveOwnerElement(BaseFdaElement owner) : base(owner)
+        public RatingCurveOwnerElement(Utilities.OwnerElement owner) : base(owner)
         {
             Name = "Rating Curves";
             IsBold = false;
@@ -57,7 +58,12 @@ namespace FdaViewModel.StageTransforms
             {
                 if (!vm.HasError)
                 {
-                    RatingCurveElement ele = new RatingCurveElement(vm.Name, vm.Description, vm.Curve, this);
+                    string creationDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+
+                    RatingCurveElement ele = new RatingCurveElement(vm.Name, creationDate, vm.Description, vm.Curve, this);
+
+
+
                     AddElement(ele);
                     AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ele.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(RatingCurveElement)));
                 }
@@ -73,28 +79,32 @@ namespace FdaViewModel.StageTransforms
         }
         #endregion
         #region Functions
+       
         public override string TableName
         {
             get  { return "Rating Curves";}
         }
         public override string[] TableColumnNames()
         {
-            return new string[] { "Rating Curve Name", "Description", "Curve Distribution Type", "Curve Type" };
+            return new string[] { "Rating Curve Name", "Last Edit Date", "Description", "Curve Distribution Type", "Curve Type" };
         }
         public override Type[] TableColumnTypes()
         {
-            return new Type[] { typeof(string), typeof(string), typeof(string),typeof(string) };
+            return new Type[] { typeof(string), typeof(string), typeof(string), typeof(string),typeof(string) };
         }
 
-        public override void AddElement(object[] rowData)
+        public override OwnedElement CreateElementFromRowData(object[] rowData)
         {
-            //creates an empty curve
-            Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[2]));
-
-            RatingCurveElement rc = new RatingCurveElement((string)rowData[0], (string)rowData[1], emptyCurve, this);
+            Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
+            RatingCurveElement rc = new RatingCurveElement((string)rowData[0], (string)rowData[1], (string)rowData[2], emptyCurve, this);
             //loads the curve with the values from it's table
             rc.RatingCurve.fromSqliteTable(rc.TableName);
-            AddElement(rc,false);
+            return rc;
+        }
+        public override void AddElement(object[] rowData)
+        {
+            
+            AddElement(CreateElementFromRowData(rowData),false);
 
         }
         #endregion

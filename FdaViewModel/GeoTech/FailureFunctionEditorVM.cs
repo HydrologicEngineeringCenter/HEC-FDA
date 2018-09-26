@@ -53,6 +53,8 @@ namespace FdaViewModel.GeoTech
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
         }
+        FailureFunctionElement CurrentElement { get; set; }
+
         #endregion
         #region Constructors
         public FailureFunctionEditorVM(List<LeveeFeatureElement> leveeList):base()
@@ -63,19 +65,52 @@ namespace FdaViewModel.GeoTech
             LateralStructureList = leveeList;
         }
 
-        public FailureFunctionEditorVM(string name, string description, Statistics.UncertainCurveDataCollection curve,LeveeFeatureElement selectedLevee, List<LeveeFeatureElement> latStructList):base()
+        public FailureFunctionEditorVM(FailureFunctionElement elem, List<LeveeFeatureElement> latStructList) :base()// string name, string description, Statistics.UncertainCurveDataCollection curve,LeveeFeatureElement selectedLevee, List<LeveeFeatureElement> latStructList):base()
         {
-            Name = name;
-            Description = description;
-            Curve = curve;
+            CurrentElement = elem;
+            CurrentElement.ChangeIndex = 0;
+            Name = elem.Name;
+            Description = elem.Description;// description;
+            Curve = elem.FailureFunctionCurve;// curve;
             LateralStructureList = latStructList;
-            SelectedLateralStructure = selectedLevee;
+            SelectedLateralStructure = elem.SelectedLateralStructure;// selectedLevee;
         }
         #endregion
         #region Voids
-        #endregion
-        #region Functions
-        #endregion
+        public override void Undo()
+        {
+            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
+            if (CurrentElement.ChangeIndex < changeTableView.NumberOfRows - 1)
+            {
+                //disable the undo button somehow?
+                FailureFunctionElement prevElement = (FailureFunctionElement)CurrentElement.GetPreviousElementFromChangeTable(CurrentElement.ChangeIndex + 1);
+                if (prevElement != null)// null if out of range index
+                {
+                    Name = prevElement.Name;
+                    LastEditDate = prevElement.LastEditDate;
+                    Description = prevElement.Description;
+                    Curve = prevElement.FailureFunctionCurve;
+                    CurrentElement.ChangeIndex += 1;
+                }
+            }
+        }
+
+        public override void Redo()
+        {
+            //get the previous state
+            if (CurrentElement.ChangeIndex > 0)
+            {
+                FailureFunctionElement nextElement = (FailureFunctionElement)CurrentElement.GetNextElementFromChangeTable(CurrentElement.ChangeIndex - 1);
+                if (nextElement != null)// null if out of range index
+                {
+                    Name = nextElement.Name;
+                    LastEditDate = nextElement.LastEditDate;
+                    Description = nextElement.Description;
+                    Curve = nextElement.FailureFunctionCurve;
+                    CurrentElement.ChangeIndex -= 1;
+                }
+            }
+        }
         public override void AddValidationRules()
         {
             AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
@@ -85,5 +120,9 @@ namespace FdaViewModel.GeoTech
         {
             //throw new NotImplementedException();
         }
+        #endregion
+        #region Functions
+        #endregion
+
     }
 }

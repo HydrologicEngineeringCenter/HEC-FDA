@@ -170,7 +170,10 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
             if (!Storage.Connection.Instance.IsConnectionNull)
             {
-                Storage.Connection.Instance.Open();
+                if (!Storage.Connection.Instance.IsOpen)
+                {
+                    Storage.Connection.Instance.Open();
+                }
                 if (Storage.Connection.Instance.TableNames().Contains(TableName))
                 {
                     //already exists... delete?
