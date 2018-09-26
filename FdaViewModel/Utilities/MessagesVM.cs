@@ -20,12 +20,55 @@ namespace FdaViewModel.Utilities
         #endregion
         public MessagesVM(List<FdaModel.Utilities.Messager.ErrorMessage> messages)
         {
+            if(messages == null) { return; }
             List<MessageItem>_mess = new List<MessageItem>();
             foreach(FdaModel.Utilities.Messager.ErrorMessage m in messages)
             {
                 _mess.Add(new MessageItem(m.Message, m.ErrorLevel.ToString(), m.ReportedFrom, m.Date, m.User));
             }
             MessageList = _mess;
+        }
+
+        public MessagesVM()
+        {
+            MessageList = MessagesVM.GetMessages();
+        }
+
+        public static List<MessageItem> GetMessages()
+        {
+            List<MessageItem> allMessages = new List<MessageItem>();
+
+            if (!Storage.Connection.Instance.IsConnectionNull)
+            {
+                if (Storage.Connection.Instance.TableNames().Contains("Messages"))
+                {
+                    if (!Storage.Connection.Instance.IsOpen) { Storage.Connection.Instance.Open(); }
+                    DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable("Messages");
+                    object[] row = null;
+                    for (int i = 0; i < dtv.NumberOfRows; i++)
+                    {
+                        row = dtv.GetRow(i);
+                        allMessages.Add(new MessageItem((string)row[0],(string)row[1], (string)row[4], (string)row[3], (string)row[2]));
+                    }
+                }
+            }
+
+            return allMessages;
+        }
+
+        public static List<MessageItem> GetMessagesForElement(OwnedElement elem)
+        {
+            List<MessageItem> allMessages = MessagesVM.GetMessages();
+            List<MessageItem> messages = new List<MessageItem>();
+            foreach (MessageItem mes in allMessages)
+            {
+                if(mes.ReportedFrom == nameof(FlowTransforms.InflowOutflowElement))
+                {
+                    messages.Add(mes);
+                }
+            }
+            return messages;
+
         }
 
         public override void AddValidationRules()

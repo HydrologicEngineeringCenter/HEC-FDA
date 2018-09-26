@@ -38,6 +38,24 @@ namespace FdaViewModel.Utilities.Transactions
             }
         }
 
+        /// <summary>
+        /// This could be made into a static call and get rid of the constructor above
+        /// </summary>
+        /// <returns></returns>
+        public List<Transaction> GetTransactionsForElement(OwnedElement element)
+        {
+            List<Transaction> retVals = new List<Transaction>();
+            foreach(Transaction tran in _transactions)
+            {
+                if(tran.OriginatorName == element.Name && tran.OriginatorType == nameof(FlowTransforms.InflowOutflowElement))
+                {
+                    retVals.Add(tran);
+                }
+            }
+
+            return retVals;
+        }
+
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
