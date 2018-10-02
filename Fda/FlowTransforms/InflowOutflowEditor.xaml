@@ -15,7 +15,7 @@
             <RowDefinition Height="35"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="5"/>
-            <RowDefinition Height="80" Name="row_Log"/>
+            <RowDefinition Height="90" />
             <RowDefinition Height="35"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
@@ -41,16 +41,7 @@
         </Grid>
         <CA:TableWithPlot MinHeight="300" MinWidth="600"  TableWidth="250"  Grid.Row="2" Margin="5" plotTitle="{Binding PlotTitle}" IsStrictX="True" xColumnHeader="Inflow" yColumnHeader="Outflow" xAxisLabel="Inflow (cfs)" yAxisLabel="Outflow (cfs)" IsReadOnly="{Binding ReadOnly}" Curve="{Binding Curve}" IsMonotonicallyIncreasing="True"  />
         <GridSplitter Grid.Row="3" Height="5" HorizontalAlignment="Stretch" />
-        <TabControl Grid.Row="4" TabStripPlacement="Bottom">
-            <TabItem Header="Log" MouseDown="TabItem_MouseDown">
-                <!--<ListBox ItemsSource="{Binding Transactions}" />-->
-                <DataGrid AutoGenerateColumns="true" ItemsSource="{Binding Transactions}"/>
-
-            </TabItem>
-            <TabItem Header="Messages" >
-                <DataGrid AutoGenerateColumns="true" ItemsSource="{Binding Messages}" />
-            </TabItem>
-        </TabControl>
+        <Utilities:TransactionMessageControl Grid.Row="4" />
 
         <Utilities:OKCloseControl Grid.Row="5"/>
     </Grid>

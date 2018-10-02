@@ -68,23 +68,32 @@ namespace FdaViewModel.StageTransforms
         #region Voids
         public void EditExteriorInteriorCurve(object arg1, EventArgs arg2)
         {
-            ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM(this);// Name, Description, ExteriorInteriorCurve, 0);
+            ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM(this, (foo) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar));// Name, Description, ExteriorInteriorCurve, 0);
             Navigate(vm, true, true);
             if (!vm.WasCancled)
             {
                 if (!vm.HasError)
                 {
-                    LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+                    //LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
 
-                    string oldName = Name;
-                    Statistics.UncertainCurveDataCollection oldCurve = ExteriorInteriorCurve;
+                    //string oldName = Name;
+                    //Statistics.UncertainCurveDataCollection oldCurve = ExteriorInteriorCurve;
 
-                    Name = vm.Name;
-                    Description = vm.Description;
-                    ExteriorInteriorCurve = vm.Curve;
+                    //Name = vm.Name;
+                    //Description = vm.Description;
+                    //ExteriorInteriorCurve = vm.Curve;
 
-                    ((ExteriorInteriorOwnerElement)_Owner).UpdateTableRowIfModified(oldName, this);
-                    UpdateTableIfModified(oldName, oldCurve, ExteriorInteriorCurve);
+                    //if (vm.HasSaved == true)//just replace the row
+                    //{
+                    //    ((ExteriorInteriorOwnerElement)_Owner).UpdateExistingElement(oldName, this, 0, 1);
+                    //}
+                    //else
+                    //{
+                    //    ((ExteriorInteriorOwnerElement)_Owner).UpdateTableRowIfModified((Utilities.OwnerElement)_Owner, oldName, this);
+                    //    UpdateTableIfModified(oldName, oldCurve, ExteriorInteriorCurve);
+                    //}
+                    // ((ExteriorInteriorOwnerElement)_Owner).SaveElementWhileEditing((Utilities.ISaveUndoRedo)vm);
+                    vm.SaveWhileEditing();
                 }
             }
         }

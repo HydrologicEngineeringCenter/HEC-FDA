@@ -13,8 +13,9 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="70"/>
             <RowDefinition Height="35"/>
-            <!--<RowDefinition Height="35"/>-->
             <RowDefinition Height="*"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="90" />
             <RowDefinition Height="35"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
@@ -47,6 +48,8 @@
             <ComboBox Grid.Column="1" Margin="5" ItemsSource="{Binding DamageCategories}" SelectedItem="{Binding DamageCategory}" DisplayMemberPath="Name" />--><!--
         </Grid>-->
         <CA:TableWithPlot MinHeight="300" MinWidth="600" TableWidth="250"  MaxYValue="9999999999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Margin="5" plotTitle="{Binding PlotTitle}" IsStrictY="False" xAxisLabel="Stage" yAxisLabel="Damage ($)" xColumnHeader="Stage" yColumnHeader="Damage ($)" IsReadOnly="{Binding ReadOnly}" Curve="{Binding Curve}"/>
-        <Utilities:OKCloseControl Grid.Row="3"/>
+        <GridSplitter Grid.Row="3" Height="5" HorizontalAlignment="Stretch" />
+        <Utilities:TransactionMessageControl Grid.Row="4" />
+        <Utilities:OKCloseControl Grid.Row="5"/>
     </Grid>
 </UserControl>

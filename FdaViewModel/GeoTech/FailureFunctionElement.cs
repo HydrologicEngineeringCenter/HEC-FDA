@@ -93,26 +93,14 @@ namespace FdaViewModel.GeoTech
         {
             //get the current list of levees
             List<LeveeFeatureElement> leveeList = GetElementsOfType<LeveeFeatureElement>();
-            FailureFunctionEditorVM vm = new FailureFunctionEditorVM(this, leveeList);
+            FailureFunctionEditorVM vm = new FailureFunctionEditorVM(this, (foo) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar), leveeList);
             Navigate(vm, true, true);
             if (!vm.WasCancled)
             {
                 if (!vm.HasError)
                 {
-                    LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+                    vm.SaveWhileEditing();
 
-                    string oldName = Name;
-                    Statistics.UncertainCurveDataCollection oldCurve = FailureFunctionCurve;
-
-                    Name = vm.Name;
-                    Description = vm.Description;
-                    FailureFunctionCurve = vm.Curve;
-                    SelectedLateralStructure = vm.SelectedLateralStructure;
-
-                    ((FailureFunctionOwnerElement)_Owner).UpdateTableRowIfModified(oldName, this);
-                    UpdateTableIfModified(oldName, oldCurve, FailureFunctionCurve);
-
-                    AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.EditExisting, ""));
                 }
             }
         }

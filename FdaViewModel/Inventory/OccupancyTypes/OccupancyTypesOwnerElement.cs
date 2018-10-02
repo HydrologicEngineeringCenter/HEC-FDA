@@ -35,7 +35,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         //}
         #endregion
         #region Constructors
-        public OccupancyTypesOwnerElement(Utilities.OwnerElement owner):base(owner)
+        public OccupancyTypesOwnerElement(BaseFdaElement owner):base(owner)
         {
             Name = "Occupancy Types";
             IsBold = false;

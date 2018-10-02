@@ -65,28 +65,37 @@ namespace FdaViewModel.StageTransforms
         #region Voids
         public void EditRatingCurve(object arg1, EventArgs arg2)
         {
-            RatingCurveEditorVM vm = new RatingCurveEditorVM(this);
+            RatingCurveEditorVM vm = new RatingCurveEditorVM(this, (foo) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar));
             Navigate(vm, true, true);
             if (!vm.WasCancled)
             {
                 if (!vm.HasError)
                 {
-                    LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-                   
-                    // if the user has changed the name of the element then we need to update the parent table and the child table if there is one
-                    string originalName = Name;
-                    Statistics.UncertainCurveDataCollection originalRatingCurve = RatingCurve;
+                    //LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
 
-                    Name = vm.Name;//should i disable this way of renaming? if not i need to check for name conflicts.
-                    Description = vm.Description;//is binding two way? is this necessary?
-                    RatingCurve = vm.Curve;
-                    ChangeIndex = vm.ChangeIndex;
+                    //// if the user has changed the name of the element then we need to update the parent table and the child table if there is one
+                    //string originalName = Name;
+                    //Statistics.UncertainCurveDataCollection originalRatingCurve = RatingCurve;
 
-                    if (DidStateChange() == true)
-                    {
-                        _OwnerNode.UpdateTableRowIfModified(originalName, this);
-                        UpdateTableIfModified(originalName, originalRatingCurve, RatingCurve);
-                    }
+                    //Name = vm.Name;//should i disable this way of renaming? if not i need to check for name conflicts.
+                    //Description = vm.Description;//is binding two way? is this necessary?
+                    //RatingCurve = vm.Curve;
+
+                    //if (DidStateChange() == true)
+                    //{
+                    //    if (vm.HasSaved == true)//just replace the row
+                    //    {
+                    //        _OwnerNode.UpdateExistingElement(originalName, this, 0, 1);
+                    //    }
+                    //    else
+                    //    {
+                    //        _OwnerNode.UpdateTableRowIfModified((Utilities.OwnerElement)_Owner, originalName, this);
+                    //        UpdateTableIfModified(originalName, originalRatingCurve, RatingCurve);
+                    //    }
+                    //}
+                    vm.SaveWhileEditing();
+                    //((RatingCurveOwnerElement)_Owner).SaveElementWhileEditing((Utilities.ISaveUndoRedo)vm);
+
                 }
             }
         }

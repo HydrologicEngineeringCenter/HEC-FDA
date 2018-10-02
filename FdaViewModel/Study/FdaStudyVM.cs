@@ -25,7 +25,7 @@ namespace FdaViewModel.Study
         public int SelectedTab
         {
             get { return _SelectedTab; }
-            set { TabChangedEvent(value); }
+            set { _SelectedTab = value; TabChangedEvent(value); }
         }
         public override string GetTableConstant()
         {
@@ -208,6 +208,7 @@ namespace FdaViewModel.Study
                     condElem.EditConditionsTreeElement += condTreeCondOwnerElement.EditCondition;
                     condElem.RemoveConditionsTreeElement += condTreeCondOwnerElement.RemoveElement;
                     condElem.RenameConditionsTreeElement += condTreeCondOwnerElement.RenameElement;
+                    condElem.UpdateExpansionValueInTreeElement += condTreeCondOwnerElement.UpdateElementExpandedValue;
                     condTreeCondOwnerElement.AddElement(condElem, false);
                 }
 
@@ -216,6 +217,8 @@ namespace FdaViewModel.Study
             //have to make it new to call the notified prop changed
             ConditionsTree = new ObservableCollection<OwnerElement>() { condTreeCondOwnerElement };
         }
+
+
 
         #endregion
 

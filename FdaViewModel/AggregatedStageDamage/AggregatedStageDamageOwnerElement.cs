@@ -41,7 +41,7 @@ namespace FdaViewModel.AggregatedStageDamage
         {
             List<Inventory.DamageCategory.DamageCategoryOwnedElement> damcateleements = GetElementsOfType<Inventory.DamageCategory.DamageCategoryOwnedElement>();
             
-            AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM();
+            AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar));
             Navigate(vm, true, true);
             if (!vm.WasCancled)
             {
@@ -49,7 +49,7 @@ namespace FdaViewModel.AggregatedStageDamage
                 {
                     string creationDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
 
-                    AggregatedStageDamageElement ele = new AggregatedStageDamageElement(this, vm.Name, creationDate, vm.Description, vm.Curve, CreationMethodEnum.UserDefined);
+                    AggregatedStageDamageElement ele = new AggregatedStageDamageElement( vm.Name, creationDate, vm.Description, vm.Curve, CreationMethodEnum.UserDefined,this);
                     AddElement(ele);
                 }
             }                   
@@ -80,10 +80,15 @@ namespace FdaViewModel.AggregatedStageDamage
             return new Type[] { typeof(string), typeof(string), typeof(string), typeof(string),typeof(string) };
         }
 
+        public override OwnedElement CreateElementFromEditor(ISaveUndoRedo editorVM)
+        {
+            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            return new AggregatedStageDamageElement(editorVM.Name, editDate, ((AggregatedStageDamageEditorVM)editorVM).Description, ((AggregatedStageDamageEditorVM)editorVM).Curve, CreationMethodEnum.UserDefined, this);
+        }
         public override OwnedElement CreateElementFromRowData(object[] rowData)
         {
             Statistics.UncertainCurveDataCollection emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
-            AggregatedStageDamageElement asd = new AggregatedStageDamageElement(this, (string)rowData[0],(string)rowData[1], (string)rowData[2], emptyCurve, (CreationMethodEnum)Enum.Parse(typeof(CreationMethodEnum), (string)rowData[4]));
+            AggregatedStageDamageElement asd = new AggregatedStageDamageElement((string)rowData[0],(string)rowData[1], (string)rowData[2], emptyCurve, (CreationMethodEnum)Enum.Parse(typeof(CreationMethodEnum), (string)rowData[4]),this);
             asd.Curve.fromSqliteTable(asd.TableName);
             return asd;
         }

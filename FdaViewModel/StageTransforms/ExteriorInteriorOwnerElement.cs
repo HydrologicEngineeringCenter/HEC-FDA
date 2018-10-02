@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.StageTransforms
 {
-    class ExteriorInteriorOwnerElement : Utilities.OwnerElement
+    public class ExteriorInteriorOwnerElement : Utilities.OwnerElement
     {
         #region Notes
         #endregion
@@ -49,7 +49,7 @@ namespace FdaViewModel.StageTransforms
 
         public void AddNewExteriorInteriorCurve(object arg1, EventArgs arg2)
         {
-            ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM();
+            ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar));
             Navigate(vm);
             if (!vm.WasCancled)
             {
@@ -87,6 +87,11 @@ namespace FdaViewModel.StageTransforms
         public override Type[] TableColumnTypes()
         {
             return new Type[] { typeof(string),typeof(string), typeof(string), typeof(string) };
+        }
+        public override OwnedElement CreateElementFromEditor(ISaveUndoRedo editorVM)
+        {
+            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            return new ExteriorInteriorElement(editorVM.Name, editDate, ((ExteriorInteriorEditorVM)editorVM).Description, ((ExteriorInteriorEditorVM)editorVM).Curve, this);
         }
         public override OwnedElement CreateElementFromRowData(object[] rowData)
         {

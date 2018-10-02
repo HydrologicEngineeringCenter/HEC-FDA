@@ -1,5 +1,7 @@
-﻿using System;
+﻿using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,10 +42,29 @@ namespace FdaViewModel
         private Utilities.NamedAction _HelpAction;
         private ICommand _UndoCommand;
         private ICommand _RedoCommand;
-        private ICommand _SaveWhileEditing;
+        private ICommand _SaveWhileEditingCommand;
+        private bool _UndoEnabled = false;
+        private bool _RedoEnabled = false;
+        private string _Name;
+
         #endregion
         #region Properties
-
+        public virtual string Name
+        {
+            get { return _Name; }
+            set { _Name = value; NotifyPropertyChanged(); }
+        }
+        public bool UndoEnabled
+        {
+            get { return _UndoEnabled; }
+            set { _UndoEnabled = value; NotifyPropertyChanged(); }
+        }
+        public bool RedoEnabled
+        {
+            get { return _RedoEnabled; }
+            set { _RedoEnabled = value; NotifyPropertyChanged(); }
+        }
+        
         public ICommand UndoCommand
         {
             get { return _UndoCommand ?? (_UndoCommand = new Utilities.CommandHandler(() => Undo(), true)); }
@@ -54,7 +75,7 @@ namespace FdaViewModel
         }
         public ICommand SaveWhileEditingCommand
         {
-            get { return _SaveWhileEditing ?? (_SaveWhileEditing = new Utilities.CommandHandler(() => SaveWhileEditing(), true)); }
+            get { return _SaveWhileEditingCommand ?? (_SaveWhileEditingCommand = new Utilities.CommandHandler(() => SaveWhileEditing(), true)); }
         }
         public string LastEditDate { get; set; }
 
@@ -143,6 +164,35 @@ namespace FdaViewModel
             helpAction.Action = DisplayHelp;
             HelpAction = helpAction;
         }
+        #endregion
+        #region Voids
+   
+        public void UpdateUndoRedoVisibility(DataBase_Reader.DataTableView tableView, int currentIndex)
+        {
+            if(tableView == null) { return; }
+            int numRows = tableView.NumberOfRows;
+            //if only 0 or 1 rows, there is no back and forth
+            if(numRows<2)
+            {
+                UndoEnabled = false;
+                RedoEnabled = false;
+            }
+            else if(currentIndex == numRows-1)//we are at the oldest record
+            {
+                UndoEnabled = false;
+                RedoEnabled = true;
+            }
+            else if(currentIndex == 0)//at the newest record
+            {
+                UndoEnabled = true;
+                RedoEnabled = false;
+            }
+            else //we are in the middle somewhere
+            {
+                UndoEnabled = true;
+                RedoEnabled = true;
+            }
+        }
 
         private void DisplayErrors(object arg1, EventArgs arg2)
         {
@@ -162,8 +212,6 @@ namespace FdaViewModel
 
             Navigate(mvm, true, false, "Messages");
         }
-        #endregion
-        #region Voids
         abstract public void AddValidationRules();
         public void Validate()
         {
@@ -230,7 +278,7 @@ namespace FdaViewModel
             }
             this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
-        protected void AddRule(string PropertyName, Func<bool> ruleDelegate, string errorMessage, bool hasFatalError = true)
+        public void AddRule(string PropertyName, Func<bool> ruleDelegate, string errorMessage, bool hasFatalError = true)
         {
             if (ruleMap.ContainsKey(PropertyName))
             {
@@ -241,6 +289,7 @@ namespace FdaViewModel
                 ruleMap.Add(PropertyName, new PropertyRule(ruleDelegate, errorMessage, hasFatalError));
             }
         }
+     
         public void Navigate(BaseViewModel vm, bool newWindow = true, bool asDialog = true, string title = "FDA 2.0")
         {
             if (RequestNavigation != null)
@@ -325,6 +374,53 @@ namespace FdaViewModel
 
             }
         }
+
+        public void UndoElement(ISaveUndoRedo editorVM)
+        {
+            OwnedElement elem = editorVM.CurrentElement;
+            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(elem.ChangeTableName());
+            if (elem.ChangeIndex < changeTableView.NumberOfRows - 1)
+            {
+                OwnedElement prevElement = (OwnedElement)elem.GetPreviousElementFromChangeTable(elem.ChangeIndex + 1);
+                if (prevElement != null)// null if out of range index
+                {
+                    //cast to ISaveelement and tell it to assign its values
+                    editorVM.AssignValuesFromElementToEditor(prevElement);
+                    elem.ChangeIndex += 1;
+                }
+               // editorVM.UpdateUndoRedoButtons();
+               ((BaseViewModel)editorVM).UpdateUndoRedoVisibility(changeTableView, elem.ChangeIndex);
+            }
+        }
+
+        public void RedoElement(ISaveUndoRedo editorVM)
+        {
+            OwnedElement elem = editorVM.CurrentElement;
+            //get the previous state
+            if (elem.ChangeIndex > 0)
+            {
+                OwnedElement nextElement = (OwnedElement)elem.GetNextElementFromChangeTable(elem.ChangeIndex - 1);
+                if (nextElement != null)// null if out of range index
+                {
+                    editorVM.AssignValuesFromElementToEditor(nextElement);
+                    elem.ChangeIndex -= 1;
+                }
+                //editorVM.UpdateUndoRedoButtons();
+                DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(elem.ChangeTableName());
+                ((BaseViewModel)editorVM).UpdateUndoRedoVisibility(changeTableView, elem.ChangeIndex);
+
+            }
+        }
+
+        public ObservableCollection<UndoRedoRowItem> CreateUndoRedoRows(DataBase_Reader.DataTableView tableView, int nameIndex, int dateIndex)
+        {
+            ObservableCollection<UndoRedoRowItem> retVals = new ObservableCollection<UndoRedoRowItem>();
+            foreach (object[] row in tableView.GetRows(0, tableView.NumberOfRows - 1))
+            {
+                retVals.Add(new UndoRedoRowItem(row[nameIndex].ToString(), row[dateIndex].ToString()));
+            }
+            return retVals;
+        }
         public virtual void OnClosing(object sender, EventArgs e)
         {
             Dispose();
@@ -349,6 +445,7 @@ namespace FdaViewModel
 
         #endregion
         #region Functions
+
         #endregion
         #region InternalClasses
         protected class PropertyRule

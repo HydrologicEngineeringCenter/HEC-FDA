@@ -5,11 +5,14 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
+using FdaViewModel.Utilities;
+using Statistics;
 
 namespace FdaViewModel.FlowTransforms
 {
     //[Author(q0heccdm, 6 / 8 / 2017 9:48:25 AM)]
-    public class InflowOutflowEditorVM : BaseViewModel
+    public class InflowOutflowEditorVM : Utilities.Transactions.TransactionAndMessageBase,Utilities.ISaveUndoRedo
     {
         #region Notes
         // Created By: q0heccdm
@@ -20,11 +23,19 @@ namespace FdaViewModel.FlowTransforms
         private string _Description;
         private Statistics.UncertainCurveDataCollection _Curve;
         private string _PlotTitle = "Inflow-Outflow Curve";
-        private List<Utilities.Transactions.Transaction> _Transactions;
-
+        private List<Utilities.Transactions.TransactionRowItem> _Transactions;
+        private ObservableCollection<Utilities.UndoRedoRowItem> _UndoRedoRows;
         #endregion
         #region Properties
-        public InflowOutflowElement CurrentElement { get; set; }
+     
+        public ObservableCollection<Utilities.UndoRedoRowItem> UndoRedoRows
+        {
+            get { return _UndoRedoRows; }
+            set { _UndoRedoRows = value; NotifyPropertyChanged(); }
+        }
+
+
+        public OwnedElement CurrentElement { get; set; }
         public Statistics.UncertainCurveDataCollection Curve
         {
             get { return _Curve; }
@@ -35,104 +46,119 @@ namespace FdaViewModel.FlowTransforms
             get { return _PlotTitle; }
             set { _PlotTitle = value; NotifyPropertyChanged(); }
         }
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged(); }
-        }
+  
         public string Description
         {
             get { return _Description; }
             set { _Description = value; NotifyPropertyChanged(); }
         }
-        public List<Utilities.Transactions.Transaction> Transactions
-        {
-            get { return _Transactions; }
-            set { _Transactions = value; }
-        }
-        public int ChangeIndex { get; set; }
-
-        public List<Utilities.MessageItem> Messages { get; set; }
-        
+ 
         #endregion
         #region Constructors
-        public InflowOutflowEditorVM() : base()
+        public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
+
+        public InflowOutflowEditorVM(Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) : base()//InflowOutflowOwnerElement owner):base() //Action saveAction) : base()
         {
+
+            ownerValidationRules(this);
+     
             double[] xs = new double[] { 0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000 };
             //double[] ys = new double[] { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
             Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(2000), new Statistics.None(3000), new Statistics.None(4000), new Statistics.None(5000), new Statistics.None(6000), new Statistics.None(7000), new Statistics.None(8000), new Statistics.None(9000), new Statistics.None(10000), new Statistics.None(11000) };
 
+            SaveAction = saveAction;
             Curve = new Statistics.UncertainCurveIncreasing(xs, yValues, true, false,Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
         }
-        public InflowOutflowEditorVM(InflowOutflowElement elem) : base()
+        public InflowOutflowEditorVM(InflowOutflowElement elem, Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) : base(elem)
         {
+            ownerValidationRules(this);
+
             CurrentElement = elem;
-            Name = elem.Name;
-            Description = elem.Description;
-            Curve = elem.InflowOutflowCurve;
+            CurrentElement.ChangeIndex = 0;
 
-            //load the transactions log
-            Utilities.Transactions.TransactionVM logVM = new Utilities.Transactions.TransactionVM();
-            List<Utilities.Transactions.Transaction> transactions = logVM.GetTransactionsForElement(elem);
-            Transactions = transactions;
+            AssignValuesToThisFromElement(elem);
 
-            //load the messages log
-            List<Utilities.MessageItem> messages =  Utilities.MessagesVM.GetMessagesForElement(elem);
-            //i need to filter somehow
-            Messages = messages;
+            SaveAction = saveAction;
+
+            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
+
+            UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
+            UndoRedoRows = CreateUndoRedoRows(changeTableView,0,1);
 
         }
+
         #endregion
         #region Voids
+         
         public override void Undo()
         {
-            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
-            if (ChangeIndex < changeTableView.NumberOfRows - 1)
-            {
-                //disable the undo button somehow?
-                InflowOutflowElement prevElement = (InflowOutflowElement)CurrentElement.GetPreviousElementFromChangeTable(ChangeIndex + 1);
-                if (prevElement != null)// null if out of range index
-                {
-                    Name = prevElement.Name;
-                    LastEditDate = prevElement.LastEditDate;
-                    Description = prevElement.Description;
-                    Curve = prevElement.InflowOutflowCurve;
-                    ChangeIndex += 1;
-                }
-            }
+            UndoElement(this);
         }
 
         public override void Redo()
         {
-            //get the previous state
-            if (ChangeIndex > 0)
-            {
-                InflowOutflowElement nextElement = (InflowOutflowElement)CurrentElement.GetNextElementFromChangeTable(ChangeIndex - 1);
-                if (nextElement != null)// null if out of range index
-                {
-                    Name = nextElement.Name;
-                    LastEditDate = nextElement.LastEditDate;
-                    Description = nextElement.Description;
-                    Curve = nextElement.InflowOutflowCurve;
-                    ChangeIndex -= 1;
-                }
-            }
+            RedoElement(this);
+        }
+
+        public override void SaveWhileEditing()
+        {
+            SaveAction(this);
+
+        }
+
+        private void AssignValuesToThisFromElement(InflowOutflowElement elem)
+        {
+            Name = elem.Name;
+            LastEditDate = elem.LastEditDate;
+            Description = elem.Description;
+            Curve = elem.InflowOutflowCurve;
         }
 
         #endregion
-        #region Functions
-        #endregion
+            #region Functions
+            #endregion
+
         public override void AddValidationRules()
         {
+            
             AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
             AddRule(nameof(Name), () => Name != null, "Name cannot be blank.");
-            AddRule(nameof(Name), () => Name != "test", "Name cannot be test.",false);
 
         }
 
         public override void Save()
         {
             //throw new NotImplementedException();
+        }
+
+        public void AssignValuesFromElementToEditor(OwnedElement element)
+        {
+            InflowOutflowElement elem = (InflowOutflowElement)element;
+            Name = elem.Name;
+            LastEditDate = elem.LastEditDate;
+            Description = elem.Description;
+            Curve = elem.InflowOutflowCurve;
+        }
+        public void AssignValuesFromEditorToCurrentElement()
+        {
+            CurrentElement.LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            CurrentElement.Name = Name;
+            ((InflowOutflowElement)CurrentElement).Description = Description;
+            ((InflowOutflowElement)CurrentElement).InflowOutflowCurve = Curve;
+        }
+
+        public UncertainCurveDataCollection GetTheElementsCurve()
+        {
+            return ((InflowOutflowElement)CurrentElement).InflowOutflowCurve;
+        }
+
+        public UncertainCurveDataCollection GetTheEditorsCurve()
+        {
+            return Curve;
+        }
+        public void UpdateNameWithNewValue(string name)
+        {
+            Name = name;
         }
     }
 }

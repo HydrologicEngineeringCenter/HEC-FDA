@@ -157,7 +157,7 @@ namespace FdaViewModel.ImpactArea
                 this.Description = vm.Description;
                 ImpactAreaRows = vm.ListOfRows;
 
-                ((ImpactAreaOwnerElement)_Owner).UpdateTableRowIfModified(originalName, this);
+                ((ImpactAreaOwnerElement)_Owner).UpdateTableRowIfModified((Utilities.OwnerElement)_Owner, originalName, this);
                 UpdateExistingTable();
 
             }

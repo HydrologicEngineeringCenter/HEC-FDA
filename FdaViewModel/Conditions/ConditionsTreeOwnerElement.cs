@@ -49,7 +49,18 @@ namespace FdaViewModel.Conditions
                 }
             }
         }
-
+        public void UpdateElementExpandedValue(object sender, EventArgs e)
+        {
+            OwnedElement sendingElement = (OwnedElement)sender;
+            foreach (OwnedElement elem in _StudyTreeConditionsOwnerElement.Elements)
+            {
+                if (elem.Name.Equals((sendingElement).Name))
+                {
+                    ((ConditionsElement)elem).IsExpanded = ((ConditionsElement)sendingElement).IsExpanded; 
+                    return;
+                }
+            }
+        }
         public void EditCondition(object sender, EventArgs e)
         {
             foreach (OwnedElement elem in _StudyTreeConditionsOwnerElement.Elements)

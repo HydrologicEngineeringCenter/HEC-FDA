@@ -147,7 +147,7 @@ namespace FdaViewModel.Utilities
         /// <param name="newCurve"></param>
         public void UpdateTableIfModified(string oldName, Statistics.UncertainCurveDataCollection oldCurve, Statistics.UncertainCurveDataCollection newCurve)
         {
-            bool isModified = AreCurvesEqual(oldCurve, newCurve);
+            bool isModified = AreCurvesDifferent(oldCurve, newCurve);
             if(isModified && SavesToTable())
             {
                 //if the name has changed then we need to delete the old table
@@ -161,7 +161,7 @@ namespace FdaViewModel.Utilities
         /// <param name="oldCurve"></param>
         /// <param name="newCurve"></param>
         /// <returns></returns>
-        private bool AreCurvesEqual(Statistics.UncertainCurveDataCollection oldCurve, Statistics.UncertainCurveDataCollection newCurve)
+        private bool AreCurvesDifferent(Statistics.UncertainCurveDataCollection oldCurve, Statistics.UncertainCurveDataCollection newCurve)
         {
             bool isModified = false;
             if (oldCurve.Distribution != newCurve.Distribution) { isModified = true; }
@@ -296,7 +296,7 @@ namespace FdaViewModel.Utilities
         {
             return _Owner.GetElementsOfType<T>();
         }
-
+     
         public virtual OwnedElement GetPreviousElementFromChangeTable(int changeTableIndex)
         {
             OwnedElement prevElement = null;

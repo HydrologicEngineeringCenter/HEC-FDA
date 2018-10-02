@@ -80,25 +80,14 @@ namespace FdaViewModel.FlowTransforms
             FdaModel.Utilities.Messager.ErrorMessage err = new FdaModel.Utilities.Messager.ErrorMessage("Test message when opening", FdaModel.Utilities.Messager.ErrorMessageEnum.Report, nameof(InflowOutflowElement));
             FdaModel.Utilities.Messager.Logger.Instance.ReportMessage(err);
 
-            InflowOutflowEditorVM vm = new InflowOutflowEditorVM(this);
+            InflowOutflowEditorVM vm = new InflowOutflowEditorVM(this, (foo)=>((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar));
             Navigate(vm, true, true);
             if (!vm.WasCancled)
             {
                 if (!vm.HasFatalError)
                 {
-
-                    LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-
-                    string originalName = Name;
-                    Statistics.UncertainCurveDataCollection oldCurve = InflowOutflowCurve;
-
-                    Name = vm.Name;
-                    Description = vm.Description;
-                    InflowOutflowCurve = vm.Curve;
-                    ChangeIndex = vm.ChangeIndex;
-
-                    ((InflowOutflowOwnerElement)_Owner).UpdateTableRowIfModified(originalName, this);
-                    UpdateTableIfModified(originalName,oldCurve, InflowOutflowCurve);    
+                    vm.SaveWhileEditing();
+                    
                 }
             }
         }

@@ -83,7 +83,7 @@ namespace FdaViewModel.GeoTech
                     Description = vm.Description;
                     Elevation = vm.Elevation;
 
-                    ((LeveeFeatureOwnerElement)_Owner).UpdateTableRowIfModified(oldName, this);
+                    ((LeveeFeatureOwnerElement)_Owner).UpdateTableRowIfModified((Utilities.OwnerElement)_Owner, oldName, this);
                     UpdateAndSaveFailureFunctionsWithNewLevee(oldName);
 
                     AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.EditExisting, "Previous Name: " + oldName + " Description: " + Description + " Elevation: " + Elevation));

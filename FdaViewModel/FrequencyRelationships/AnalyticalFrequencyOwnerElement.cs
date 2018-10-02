@@ -90,6 +90,11 @@ namespace FdaViewModel.FrequencyRelationships
         {
             return new Type[] { typeof(string),typeof(string), typeof(string), typeof(double), typeof(double), typeof(double), typeof(int) };
         }
+        public override OwnedElement CreateElementFromEditor(ISaveUndoRedo editorVM)
+        {
+            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            return new AnalyticalFrequencyElement(editorVM.Name, editDate, ((AnalyticalFrequencyEditorVM)editorVM).Description, ((AnalyticalFrequencyEditorVM)editorVM).Distribution, this);
+        }
         public override OwnedElement CreateElementFromRowData(object[] rowData)
         {
             double mean = (double)rowData[3];

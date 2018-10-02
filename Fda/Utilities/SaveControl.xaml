@@ -6,19 +6,123 @@
              xmlns:local="clr-namespace:Fda.Utilities"
              mc:Ignorable="d" 
              xmlns:cmds="clr-namespace:Fda.Commands"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="80" d:DesignWidth="300">
     <UserControl.Resources>
         <cmds:HasErrorConverter x:Key="HasErrorConverter"/>
+
+        <Style TargetType="{x:Type Button}" x:Key="AddButton">
+
+            <Setter Property="Background" Value="LightGray" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border CornerRadius="2" BorderBrush="Black" BorderThickness="0">
+                            <Grid Background="{TemplateBinding Background}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <!--<RowDefinition Height="*" />-->
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <!--<Image Style="{StaticResource PlusImage}" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                                    </Image>-->
+                                    <ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0" />
+                                </StackPanel>
+
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="LightBlue" />
+                                <Setter Property="Foreground" Value="Black" />
+                                <!--<Setter TargetName="PathIcon" Property="Fill" Value="Black" />-->
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="LightSkyBlue" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <!--<Setter Property="Background" Value="LightGray" />-->
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--<Style TargetType="{x:Type ComboBox}" x:Key="ComboBoxStyle">
+
+            <Setter Property="Background" Value="LightGray" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBox}">
+                        <Border CornerRadius="2" BorderBrush="Black" BorderThickness="0">
+                            <Grid Background="{TemplateBinding Background}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    --><!--<RowDefinition Height="*" />--><!--
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    --><!--<Image Style="{StaticResource PlusImage}" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                                    </Image>--><!--
+                                    <ContentPresenter x:Name="MyContentPresenter2"  Content="{TemplateBinding SelectionBoxItem}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0" />
+                                </StackPanel>
+
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="LightBlue" />
+                                <Setter Property="Foreground" Value="Black" />
+                                --><!--<Setter TargetName="PathIcon" Property="Fill" Value="Black" />--><!--
+                            </Trigger>
+
+                            --><!--<Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="LightSkyBlue" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>--><!--
+                            <Trigger Property="IsEnabled" Value="False">
+                                --><!--<Setter Property="Background" Value="LightGray" />--><!--
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>-->
+        
     </UserControl.Resources>
-    <Grid>
+    <Grid >
         <!--<Grid.ColumnDefinitions>
             <ColumnDefinition Width=""
         </Grid.ColumnDefinitions>-->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Name="btn_Undo" Content="Undo" Width="50" Margin="5" Command="{Binding UndoCommand}"/>
-            <Button Name="btn_Redo" Content="Redo" Width="50" Margin="5" Command="{Binding RedoCommand}"/>
-            <Button Name="btn_Save" Content="Save" Width="50" Margin="5" Command="{Binding SaveWhileEditing}"  IsEnabled="{Binding Path=HasFatalError, Converter={StaticResource HasErrorConverter}, UpdateSourceTrigger=PropertyChanged}" Background="LightGreen"/>
-            
+        <StackPanel Background="LightGray" HorizontalAlignment="Stretch" >
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"  >
+                <Button Name="btn_Undo" Style="{StaticResource AddButton}" Content="Undo" Width="50" Margin="5,5,0,5" Command="{Binding UndoCommand}" IsEnabled="{Binding UndoEnabled}" />
+                <ComboBox  Width="18" ItemsSource="{Binding UndoRedoRows}" DisplayMemberPath="Name" Margin="0,5,5,5">
+                    <ComboBox.Style>
+                        <Style TargetType="ComboBox" >
+                            <Setter Property="Popup.FlowDirection" Value="RightToLeft"/>
+                            <Setter Property="Background" Value="LightGray" />
+                        </Style>
+                    </ComboBox.Style>
+                </ComboBox>
+                <Button Name="btn_Redo" Style="{StaticResource AddButton}" Content="Redo" Width="50" Margin="5" Command="{Binding RedoCommand}" IsEnabled="{Binding RedoEnabled}"/>
+                <Button Name="btn_Save" Content="Save" Width="50" Margin="5" Command="{Binding SaveWhileEditingCommand}"  IsEnabled="{Binding Path=HasFatalError, Converter={StaticResource HasErrorConverter}, UpdateSourceTrigger=PropertyChanged}" Background="LightGreen"/>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </UserControl>

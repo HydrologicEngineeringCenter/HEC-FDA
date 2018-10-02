@@ -20,6 +20,8 @@
             <RowDefinition Height="35"/>
             <RowDefinition Height="140"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="90" />
             <RowDefinition Height="35"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
@@ -31,7 +33,7 @@
                 <RowDefinition Height="35"/>
                 <RowDefinition Height="35" />
             </Grid.RowDefinitions>
-            <Utilities:SaveControl Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Right"/>
+            <Utilities:SaveControl Grid.Row="0" Grid.ColumnSpan="2"/>
             <!--<Button Name="btn_Save" Grid.Row="0" Grid.ColumnSpan="2" Content="Save" HorizontalAlignment="Stretch" IsEnabled="{Binding Path=HasFatalError, Converter={StaticResource HasErrorConverter}, UpdateSourceTrigger=PropertyChanged}" Background="LightGreen" Click="btn_Save_Click" Margin="5,0,5,0" />-->
             <Label Grid.Row="1" Content="Name:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name, ValidatesOnDataErrors=True}" Margin="5"/>
@@ -119,7 +121,8 @@
             </Ca:ExpandedOxyPlot>
 
         </Grid>
-        
-        <Utilities:OKCloseControl Grid.Row="4"/>
+        <GridSplitter Grid.Row="4" Height="5" HorizontalAlignment="Stretch" />
+        <Utilities:TransactionMessageControl Grid.Row="5" />
+        <Utilities:OKCloseControl Grid.Row="6"/>
     </Grid>
 </UserControl>

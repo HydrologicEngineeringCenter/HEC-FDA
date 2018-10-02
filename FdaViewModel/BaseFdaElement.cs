@@ -84,7 +84,8 @@ namespace FdaViewModel
             if (_CustomTreeViewHeader == null) { return; }
             string image = _CustomTreeViewHeader.ImageSource;
             string decoration = _CustomTreeViewHeader.Decoration;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(newName, image, decoration);
+            bool gifVisible = _CustomTreeViewHeader.GifVisible;
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(newName, image, decoration,gifVisible);
         }
         #endregion
         #region Functions

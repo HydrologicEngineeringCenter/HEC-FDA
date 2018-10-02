@@ -10,7 +10,7 @@ using FdaViewModel.Utilities;
 namespace FdaViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 2:00:01 PM)]
-    class FailureFunctionOwnerElement : Utilities.OwnerElement
+    public class FailureFunctionOwnerElement : Utilities.OwnerElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -51,7 +51,7 @@ namespace FdaViewModel.GeoTech
         public void AddNewFailureFunction(object arg1, EventArgs arg2)
         {
             List<LeveeFeatureElement> leveeList = GetElementsOfType<LeveeFeatureElement>();
-            FailureFunctionEditorVM vm = new FailureFunctionEditorVM(leveeList);
+            FailureFunctionEditorVM vm = new FailureFunctionEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar), leveeList);
             Navigate(vm);
             if (!vm.WasCancled)
             {
@@ -95,7 +95,11 @@ namespace FdaViewModel.GeoTech
         {
             return new Type[] { typeof(string),typeof(string), typeof(string), typeof(string), typeof(string) };
         }
-
+        public override OwnedElement CreateElementFromEditor(ISaveUndoRedo editorVM)
+        {
+            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            return new FailureFunctionElement(editorVM.Name, editDate, ((FailureFunctionEditorVM)editorVM).Description, ((FailureFunctionEditorVM)editorVM).Curve, ((FailureFunctionEditorVM)editorVM).SelectedLateralStructure, this);
+        }
         public override OwnedElement CreateElementFromRowData(object[] rowData)
         {
             List<LeveeFeatureElement> ele = GetElementsOfType<LeveeFeatureElement>();

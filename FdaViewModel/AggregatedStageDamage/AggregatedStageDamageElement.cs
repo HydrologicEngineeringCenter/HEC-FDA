@@ -37,7 +37,7 @@ namespace FdaViewModel.AggregatedStageDamage
   
         #endregion
         #region Constructors
-        public AggregatedStageDamageElement(OwnerElement owner, string name , string lastEditDate, string description, Statistics.UncertainCurveDataCollection curve, CreationMethodEnum method) : base(owner)
+        public AggregatedStageDamageElement( string name , string lastEditDate, string description, Statistics.UncertainCurveDataCollection curve, CreationMethodEnum method, OwnerElement owner) : base(owner)
         {
             LastEditDate = lastEditDate;
             Name = name;
@@ -79,22 +79,13 @@ namespace FdaViewModel.AggregatedStageDamage
         {
             List<Inventory.DamageCategory.DamageCategoryOwnedElement> damcateleements = GetElementsOfType<Inventory.DamageCategory.DamageCategoryOwnedElement>();
             Inventory.DamageCategory.DamageCategoryOwnedElement damcatelement = damcateleements.FirstOrDefault();
-            AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(this);
+            AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(this, (foo) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar));
             Navigate(vm, true, true);
             if (!vm.WasCancled)
             {
                 if (!vm.HasError)
                 {
-                    LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-
-                    string oldName = Name;
-                    Statistics.UncertainCurveDataCollection oldCurve = Curve;
-                    Name = vm.Name;
-                    Description = vm.Description;
-                    Curve = vm.Curve;
-
-                    ((AggregatedStageDamageOwnerElement)_Owner).UpdateTableRowIfModified(oldName, this);
-                    UpdateTableIfModified(oldName, oldCurve, Curve);
+                    vm.SaveWhileEditing();
                 }
             }
         }

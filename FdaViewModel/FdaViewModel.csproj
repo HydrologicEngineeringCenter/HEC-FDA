@@ -206,7 +206,9 @@
     <Compile Include="Utilities\DatabaseTable.cs" />
     <Compile Include="ImpactArea\ImpactAreaRowItem.cs" />
     <Compile Include="Utilities\IRowItem.cs" />
+    <Compile Include="Utilities\ISaveUndoRedo.cs" />
     <Compile Include="Utilities\MessageItem.cs" />
+    <Compile Include="Utilities\MessageRowItem.cs" />
     <Compile Include="Utilities\MessagesVM.cs" />
     <Compile Include="Utilities\MessageVM.cs" />
     <Compile Include="Utilities\NamedAction.cs" />
@@ -217,9 +219,13 @@
     <Compile Include="Utilities\RenameVM.cs" />
     <Compile Include="Utilities\RowItem.cs" />
     <Compile Include="Utilities\Transactions\Transaction.cs" />
+    <Compile Include="Utilities\Transactions\TransactionAndMessageBase.cs" />
     <Compile Include="Utilities\Transactions\TransactionEnum.cs" />
     <Compile Include="Utilities\Transactions\TransactionEventArgs.cs" />
+    <Compile Include="Utilities\Transactions\TransactionHelper.cs" />
+    <Compile Include="Utilities\Transactions\TransactionRowItem.cs" />
     <Compile Include="Utilities\Transactions\TransactionVM.cs" />
+    <Compile Include="Utilities\UndoRedoRowItem.cs" />
     <Compile Include="Utilities\VectorFeatureType.cs" />
     <Compile Include="Utilities\WindowVM.cs" />
     <Compile Include="Watershed\TerrainBrowserVM.cs" />

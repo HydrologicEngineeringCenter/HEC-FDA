@@ -7,7 +7,7 @@ using FdaViewModel.Utilities;
 
 namespace FdaViewModel.StageTransforms
 {
-    class RatingCurveOwnerElement : Utilities.OwnerElement
+    public class RatingCurveOwnerElement : Utilities.OwnerElement
     {
         #region Notes
         #endregion
@@ -52,7 +52,7 @@ namespace FdaViewModel.StageTransforms
 
         public void AddNewRatingCurve(object arg1, EventArgs arg2)
         {
-            RatingCurveEditorVM vm = new RatingCurveEditorVM();
+            RatingCurveEditorVM vm = new RatingCurveEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar));
             Navigate(vm);
             if (!vm.WasCancled)
             {
@@ -92,7 +92,11 @@ namespace FdaViewModel.StageTransforms
         {
             return new Type[] { typeof(string), typeof(string), typeof(string), typeof(string),typeof(string) };
         }
-
+        public override OwnedElement CreateElementFromEditor(ISaveUndoRedo editorVM)
+        {
+            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            return new RatingCurveElement(editorVM.Name, editDate, ((RatingCurveEditorVM)editorVM).Description, ((RatingCurveEditorVM)editorVM).Curve, this);
+        }
         public override OwnedElement CreateElementFromRowData(object[] rowData)
         {
             Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));

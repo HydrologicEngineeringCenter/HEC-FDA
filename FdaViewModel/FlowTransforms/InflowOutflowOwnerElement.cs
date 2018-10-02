@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.FlowTransforms
 {
-    class InflowOutflowOwnerElement : Utilities.OwnerElement
+    public class InflowOutflowOwnerElement : Utilities.OwnerElement
     {
         #region Notes
         #endregion
@@ -46,18 +46,16 @@ namespace FdaViewModel.FlowTransforms
 
         public void AddInflowOutflow(object arg1, EventArgs arg2)
         {
-            InflowOutflowEditorVM vm = new InflowOutflowEditorVM();
+
+            InflowOutflowEditorVM vm = new InflowOutflowEditorVM((foo)=> SaveNewElement(foo), (bar)=>AddOwnerRules(bar));
             
             Navigate(vm);
             if (!vm.WasCancled)
             {
                 if (!vm.HasFatalError)
                 {
-                    string creationDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-
-                    InflowOutflowElement ele = new InflowOutflowElement(vm.Name,creationDate, vm.Description, vm.Curve, this);
-                    AddElement(ele);
-                    AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ele.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(InflowOutflowElement)));
+                    
+                    vm.SaveWhileEditing();
                     
                 }
             }
@@ -69,6 +67,8 @@ namespace FdaViewModel.FlowTransforms
         }
         public override void AddValidationRules()
         {
+            //AddRule(nameof(Name), () => Name != "test", "Name cannot be test.");
+
             //throw new NotImplementedException();
         }
         #endregion
@@ -89,7 +89,11 @@ namespace FdaViewModel.FlowTransforms
         {
             return new Type[] { typeof(string),typeof(string), typeof(string), typeof(string) };
         }
-
+        public override OwnedElement CreateElementFromEditor(ISaveUndoRedo editorVM)
+        {
+            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            return new InflowOutflowElement(editorVM.Name, editDate, ((InflowOutflowEditorVM)editorVM).Description, ((InflowOutflowEditorVM)editorVM).Curve, this);
+        }
         public override OwnedElement CreateElementFromRowData(object[] rowData)
         {
             Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));

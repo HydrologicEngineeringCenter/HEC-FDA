@@ -5,11 +5,13 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using FdaViewModel.Utilities;
+using Statistics;
 
 namespace FdaViewModel.StageTransforms
 {
     //[Author(q0heccdm, 6 / 8 / 2017 10:57:35 AM)]
-    public class ExteriorInteriorEditorVM:BaseViewModel
+    public class ExteriorInteriorEditorVM:Utilities.Transactions.TransactionAndMessageBase, Utilities.ISaveUndoRedo
     {
         #region Notes
         // Created By: q0heccdm
@@ -21,13 +23,13 @@ namespace FdaViewModel.StageTransforms
         private readonly string _Title = "Exterior-Interior Curve";
 
         private Statistics.UncertainCurveDataCollection _Curve;
+
+
         #endregion
         #region Properties
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged(); }
-        }
+        public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
+  
+
         public string Description
         {
             get { return _Description; }
@@ -42,25 +44,35 @@ namespace FdaViewModel.StageTransforms
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
         }
-        ExteriorInteriorElement CurrentElement { get; set; }
+        public OwnedElement CurrentElement { get; set; }
 
 
         #endregion
         #region Constructors
-        public ExteriorInteriorEditorVM():base()
+        public ExteriorInteriorEditorVM(Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) :base()
         {
+            ownerValidationRules(this);
+
             double[] xs = new double[] { 90, 100, 105, 110, 112, 115, 116, 117, 118, 130 };
             Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(100), new Statistics.None(105), new Statistics.None(106), new Statistics.None(107), new Statistics.None(113), new Statistics.None(119), new Statistics.None(120), new Statistics.None(130) };
             Curve = new Statistics.UncertainCurveIncreasing(xs, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-        }
+            SaveAction = saveAction;
 
-        public ExteriorInteriorEditorVM(ExteriorInteriorElement elem):base()// string name, string description, Statistics.UncertainCurveDataCollection curve):base()
+         }
+
+        public ExteriorInteriorEditorVM(ExteriorInteriorElement elem, Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) :base()// string name, string description, Statistics.UncertainCurveDataCollection curve):base()
         {
+            ownerValidationRules(this);
+
             CurrentElement = elem;
             CurrentElement.ChangeIndex = 0;
-            Name = elem.Name;
-            Description = elem.Description;
-            Curve = elem.ExteriorInteriorCurve;
+
+            AssignValuesFromElementToEditor(elem);
+
+            SaveAction = saveAction;
+
+            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
+            UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
 
         }
         #endregion
@@ -68,37 +80,17 @@ namespace FdaViewModel.StageTransforms
 
         public override void Undo()
         {
-            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
-            if (CurrentElement.ChangeIndex < changeTableView.NumberOfRows - 1)
-            {
-                //disable the undo button somehow?
-                ExteriorInteriorElement prevElement = (ExteriorInteriorElement)CurrentElement.GetPreviousElementFromChangeTable(CurrentElement.ChangeIndex + 1);
-                if (prevElement != null)// null if out of range index
-                {
-                    Name = prevElement.Name;
-                    LastEditDate = prevElement.LastEditDate;
-                    Description = prevElement.Description;
-                    Curve = prevElement.ExteriorInteriorCurve;
-                    CurrentElement.ChangeIndex += 1;
-                }
-            }
+            UndoElement(this);
         }
 
         public override void Redo()
         {
-            //get the previous state
-            if (CurrentElement.ChangeIndex > 0)
-            {
-                ExteriorInteriorElement nextElement = (ExteriorInteriorElement)CurrentElement.GetNextElementFromChangeTable(CurrentElement.ChangeIndex - 1);
-                if (nextElement != null)// null if out of range index
-                {
-                    Name = nextElement.Name;
-                    LastEditDate = nextElement.LastEditDate;
-                    Description = nextElement.Description;
-                    Curve = nextElement.ExteriorInteriorCurve;
-                    CurrentElement.ChangeIndex -= 1;
-                }
-            }
+            RedoElement(this);
+        }
+        public override void SaveWhileEditing()
+        {
+            SaveAction(this);
+            //_OwnerNode.SaveElementWhileEditing(this);
         }
         public override void AddValidationRules()
         {
@@ -108,6 +100,37 @@ namespace FdaViewModel.StageTransforms
         public override void Save()
         {
             //throw new NotImplementedException();
+        }
+
+        public void AssignValuesFromElementToEditor(OwnedElement element)
+        {
+            ExteriorInteriorElement elem = (ExteriorInteriorElement)element;
+            Name = elem.Name;
+            LastEditDate = elem.LastEditDate;
+            Description = elem.Description;
+            Curve = elem.ExteriorInteriorCurve;
+        }
+
+        public UncertainCurveDataCollection GetTheElementsCurve()
+        {
+            return ((ExteriorInteriorElement)CurrentElement).ExteriorInteriorCurve;
+        }
+
+        public UncertainCurveDataCollection GetTheEditorsCurve()
+        {
+            return Curve;
+        }
+
+        public void AssignValuesFromEditorToCurrentElement()
+        {
+            CurrentElement.LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            CurrentElement.Name = Name;
+            ((ExteriorInteriorElement)CurrentElement).Description = Description;
+            ((ExteriorInteriorElement)CurrentElement).ExteriorInteriorCurve = Curve;
+        }
+        public void UpdateNameWithNewValue(string name)
+        {
+            Name = name;
         }
         #endregion
         #region Functions

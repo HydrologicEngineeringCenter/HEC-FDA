@@ -1,0 +1,61 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FdaViewModel.Utilities.Transactions
+{
+    public class TransactionHelper
+    {
+        public static List<Transaction> GetAllTransactions()
+        {
+            List<Transaction> transactions = new List<Transaction>();
+            if (!Storage.Connection.Instance.IsConnectionNull)
+            {
+                if (Storage.Connection.Instance.TableNames().Contains("Transactions"))
+                {
+                    if (!Storage.Connection.Instance.IsOpen) { Storage.Connection.Instance.Open(); }
+                    DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable("Transactions");
+                    object[] row = null;
+                    for (int i = 0; i < dtv.NumberOfRows; i++)
+                    {
+                        row = dtv.GetRow(i);
+                        transactions.Add(new Transaction((string)row[0], (TransactionEnum)Enum.Parse(typeof(TransactionEnum), (string)row[2]), (string)row[5], (string)row[1], (string)row[3], (string)row[4]));
+                    }
+                }
+            }
+            return transactions;
+        }
+
+        public static List<Transaction> GetTransactionsForElement(OwnedElement element)
+        {
+            List<Transaction> retVals = new List<Transaction>();
+            List<Transaction> allTransactions = GetAllTransactions();
+            foreach (Transaction tran in allTransactions)
+            {
+                string fullType = element.GetType().ToString();
+                string originatorType = fullType.Substring(fullType.LastIndexOf(".") + 1);
+                if (tran.OriginatorName == element.Name && tran.OriginatorType == originatorType) //FlowTransforms.InflowOutflowElement))
+                {
+                    retVals.Add(tran);
+                }
+            }
+
+            return retVals;
+        }
+
+        public static List<TransactionRowItem> GetTransactionRowItemsForElement(OwnedElement element)
+        {
+            List<TransactionRowItem> retval = new List<TransactionRowItem>();
+            List<Transaction> transactionsForElement = GetTransactionsForElement(element);
+            foreach(Transaction t in transactionsForElement)
+            {
+                retval.Add(new TransactionRowItem(t.TransactionDate, t.Notes, t.User));
+            }
+            return retval;
+        }
+
+
+    }
+}

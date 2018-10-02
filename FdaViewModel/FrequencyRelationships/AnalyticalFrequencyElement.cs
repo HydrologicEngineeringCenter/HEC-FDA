@@ -15,7 +15,6 @@ namespace FdaViewModel.FrequencyRelationships
 
         private string _Description = "";
         private Statistics.LogPearsonIII _Distribution;
-        //private Utilities.OwnerElement _Owner;
         #endregion
         #region Properties
         public override string GetTableConstant()
@@ -60,8 +59,6 @@ namespace FdaViewModel.FrequencyRelationships
             localActions.Add(removeflowfreq);
             localActions.Add(renameElement);
 
-
-
             Actions = localActions;
         }
 
@@ -70,24 +67,13 @@ namespace FdaViewModel.FrequencyRelationships
         #region Voids
         public void EditFlowFreq(object arg1, EventArgs arg2)
         {
-            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this, (AnalyticalFrequencyOwnerElement)_Owner);// Name, Distribution, Description, _Owner);
+            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this);// Name, Distribution, Description, _Owner);
             Navigate(vm, true, true);
             if (!vm.WasCancled)
             {
                 if (!vm.HasError)
                 {
-
-                    LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-
-                    string originalName = Name;
-                    Name = vm.Name;
-                    Description = vm.Description;
-                    Distribution = vm.Distribution;
-                    ChangeIndex = vm.ChangeIndex;
-
-                    ((AnalyticalFrequencyOwnerElement)_Owner).UpdateTableRowIfModified(originalName, this);
-
-                    AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.EditExisting, "Name " + Name + " Description: " + Description + " Mean: " + Distribution.GetMean + " Standard Deviation: " + Distribution.GetStDev + " Skew: " + Distribution.GetG + " EYOR: " + Distribution.GetSampleSize, nameof(AnalyticalFrequencyElement)));
+                    vm.SaveWhileEditing();
                 }
             }
         }

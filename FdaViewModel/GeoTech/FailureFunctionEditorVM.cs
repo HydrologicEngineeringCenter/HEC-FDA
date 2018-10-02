@@ -5,11 +5,13 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using FdaViewModel.Utilities;
+using Statistics;
 
 namespace FdaViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 2:11:22 PM)]
-    public class FailureFunctionEditorVM : BaseViewModel
+    public class FailureFunctionEditorVM : Utilities.Transactions.TransactionAndMessageBase, Utilities.ISaveUndoRedo
     {
         #region Notes
         // Created By: q0heccdm
@@ -22,8 +24,14 @@ namespace FdaViewModel.GeoTech
         private Statistics.UncertainCurveDataCollection _Curve;
         private List<LeveeFeatureElement> _LateralStructureList;
         private LeveeFeatureElement _SelectedLateralStructure;
+
         #endregion
         #region Properties
+        public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
+
+      
+
+    
         public LeveeFeatureElement SelectedLateralStructure
         {
             get { return _SelectedLateralStructure; }
@@ -34,11 +42,7 @@ namespace FdaViewModel.GeoTech
             get { return _LateralStructureList; }
             set { _LateralStructureList = value; NotifyPropertyChanged(); }
         }
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged(); }
-        }
+      
         public string Description
         {
             get { return _Description; }
@@ -53,63 +57,53 @@ namespace FdaViewModel.GeoTech
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
         }
-        FailureFunctionElement CurrentElement { get; set; }
+        public OwnedElement CurrentElement { get; set; }
+
+
 
         #endregion
         #region Constructors
-        public FailureFunctionEditorVM(List<LeveeFeatureElement> leveeList):base()
+        public FailureFunctionEditorVM(Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules, List<LeveeFeatureElement> leveeList):base()
         {
             double[] xValues = new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15 };
             Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(0), new Statistics.None(.1), new Statistics.None(.2), new Statistics.None(.3), new Statistics.None(.4), new Statistics.None(.5), new Statistics.None(.6), new Statistics.None(.7), new Statistics.None(.8), new Statistics.None(.9), new Statistics.None(.95), new Statistics.None(.99) };
             Curve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
             LateralStructureList = leveeList;
+            SaveAction = saveAction;
+            ownerValidationRules(this);
+
+
+
         }
 
-        public FailureFunctionEditorVM(FailureFunctionElement elem, List<LeveeFeatureElement> latStructList) :base()// string name, string description, Statistics.UncertainCurveDataCollection curve,LeveeFeatureElement selectedLevee, List<LeveeFeatureElement> latStructList):base()
+        public FailureFunctionEditorVM(FailureFunctionElement elem, Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules, List<LeveeFeatureElement> latStructList) :base()// string name, string description, Statistics.UncertainCurveDataCollection curve,LeveeFeatureElement selectedLevee, List<LeveeFeatureElement> latStructList):base()
         {
             CurrentElement = elem;
             CurrentElement.ChangeIndex = 0;
-            Name = elem.Name;
-            Description = elem.Description;// description;
-            Curve = elem.FailureFunctionCurve;// curve;
+            SaveAction = saveAction;
             LateralStructureList = latStructList;
-            SelectedLateralStructure = elem.SelectedLateralStructure;// selectedLevee;
+            ownerValidationRules(this);
+
+            AssignValuesFromElementToEditor(elem);
+
+            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
+            UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
         }
         #endregion
         #region Voids
         public override void Undo()
         {
-            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
-            if (CurrentElement.ChangeIndex < changeTableView.NumberOfRows - 1)
-            {
-                //disable the undo button somehow?
-                FailureFunctionElement prevElement = (FailureFunctionElement)CurrentElement.GetPreviousElementFromChangeTable(CurrentElement.ChangeIndex + 1);
-                if (prevElement != null)// null if out of range index
-                {
-                    Name = prevElement.Name;
-                    LastEditDate = prevElement.LastEditDate;
-                    Description = prevElement.Description;
-                    Curve = prevElement.FailureFunctionCurve;
-                    CurrentElement.ChangeIndex += 1;
-                }
-            }
+            UndoElement(this);
         }
 
         public override void Redo()
         {
-            //get the previous state
-            if (CurrentElement.ChangeIndex > 0)
-            {
-                FailureFunctionElement nextElement = (FailureFunctionElement)CurrentElement.GetNextElementFromChangeTable(CurrentElement.ChangeIndex - 1);
-                if (nextElement != null)// null if out of range index
-                {
-                    Name = nextElement.Name;
-                    LastEditDate = nextElement.LastEditDate;
-                    Description = nextElement.Description;
-                    Curve = nextElement.FailureFunctionCurve;
-                    CurrentElement.ChangeIndex -= 1;
-                }
-            }
+            RedoElement(this);
+        }
+        public override void SaveWhileEditing()
+        {
+            SaveAction(this);
+           // _OwnerNode.SaveElementWhileEditing(this);
         }
         public override void AddValidationRules()
         {
@@ -120,6 +114,39 @@ namespace FdaViewModel.GeoTech
         {
             //throw new NotImplementedException();
         }
+
+        public void AssignValuesFromElementToEditor(OwnedElement element)
+        {
+            FailureFunctionElement elem = (FailureFunctionElement)element;
+            Name = elem.Name;
+            SelectedLateralStructure = elem.SelectedLateralStructure;
+            LastEditDate = elem.LastEditDate;
+            Description = elem.Description;
+            Curve = elem.FailureFunctionCurve;
+        }
+        public void AssignValuesFromEditorToCurrentElement()
+        {
+            CurrentElement.LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            CurrentElement.Name = Name;
+            ((FailureFunctionElement)CurrentElement).SelectedLateralStructure = SelectedLateralStructure;
+            ((FailureFunctionElement)CurrentElement).Description = Description;
+            ((FailureFunctionElement)CurrentElement).FailureFunctionCurve = Curve;
+        }
+
+        public UncertainCurveDataCollection GetTheElementsCurve()
+        {
+            return ((FailureFunctionElement)CurrentElement).FailureFunctionCurve;
+        }
+
+        public UncertainCurveDataCollection GetTheEditorsCurve()
+        {
+            return Curve;
+        }
+        public void UpdateNameWithNewValue(string name)
+        {
+            Name = name;
+        }
+
         #endregion
         #region Functions
         #endregion

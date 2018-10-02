@@ -47,11 +47,13 @@
             </TabItem>
             <TabItem Header="Conditions Control" Name="ConditionsTab">
                     <Grid>
-                        <TreeView Name="ConditionsTree" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding ConditionsTree}">
+                        <TreeView Name="ConditionsTree" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding ConditionsTree}" >
                             <TreeView.ItemContainerStyle>
-                                <Style TargetType="{x:Type TreeViewItem}"> 
+                                <Style TargetType="{x:Type TreeViewItem}" > 
                                     <Setter Property="Header" Value="{Binding CustomTreeViewHeader}"/>
-                                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                                    <!--<Setter Property="Expanded" Value="{Binding RenameConditionsTreeElem, Mode=TwoWay}"/>-->
+
                                     <!--<Setter Property="ItemsSource" Value="{Binding Name}"/>-->
                                     <!--<Setter Property="FontSize" Value="{Binding FontSize}" />-->
                                     <Setter Property="FontWeight" Value="{Binding IsBold,Converter={StaticResource BoolToBoldConverter}}" />

@@ -39,7 +39,7 @@ namespace FdaViewModel.Watershed
 
             if (isTemporaryNode)
             {
-                CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, TERRAIN_ICON, "...Loading");
+                CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, TERRAIN_ICON, " -Saving",true);
             }
             else
             {

@@ -56,15 +56,15 @@ namespace FdaViewModel.Utilities
             return allMessages;
         }
 
-        public static List<MessageItem> GetMessagesForElement(OwnedElement elem)
+        public static List<MessageRowItem> GetMessageRowsForElement(OwnedElement elem)
         {
             List<MessageItem> allMessages = MessagesVM.GetMessages();
-            List<MessageItem> messages = new List<MessageItem>();
+            List<MessageRowItem> messages = new List<MessageRowItem>();
             foreach (MessageItem mes in allMessages)
             {
                 if(mes.ReportedFrom == nameof(FlowTransforms.InflowOutflowElement))
                 {
-                    messages.Add(mes);
+                    messages.Add(new MessageRowItem(mes.Date,mes.Message,mes.User));
                 }
             }
             return messages;

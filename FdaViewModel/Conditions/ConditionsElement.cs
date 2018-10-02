@@ -17,6 +17,7 @@ namespace FdaViewModel.Conditions
         public event EventHandler EditConditionsTreeElement;
         public event EventHandler RemoveConditionsTreeElement;
         public event EventHandler RenameConditionsTreeElement;
+        public event EventHandler UpdateExpansionValueInTreeElement;
 
         private const string _TableConstant = "Conditions - ";
 
@@ -50,13 +51,14 @@ namespace FdaViewModel.Conditions
         private double _ThresholdValue;
         private OwnerElement _ConditionsOwnerElement;
         private List<BaseFdaElement> _ConditionsTreeNodes;
-
+        private bool _IsExpanded;
         #endregion
         #region Properties
 
         public bool IsExpanded
         {
-            get { return true; }
+            get { return _IsExpanded; }
+            set { _IsExpanded = value; UpdateIsElementExpanded(this, new EventArgs()); }
         }
         public bool IsBold
         {
@@ -197,6 +199,7 @@ namespace FdaViewModel.Conditions
         /// <param name="owner"></param>
         public ConditionsElement(ConditionsElement elem, OwnerElement owner) : base(owner)
         {
+            IsExpanded = elem.IsExpanded;
             Name = elem.Name;
             _ConditionsOwnerElement = owner;
             CustomTreeViewHeader = elem.CustomTreeViewHeader;
@@ -254,8 +257,8 @@ namespace FdaViewModel.Conditions
             localActions.Add(renameElement);
 
             Actions = localActions;
-            _ConditionsTreeNodes = new List<BaseFdaElement>() {ImpactAreaElement, AnalyticalFlowFrequency, InflowOutflowElement,
-                RatingCurveElement,ExteriorInteriorElement,StageDamageElement};
+
+            LoadTheTreeNodes();
 
         }
 
@@ -543,7 +546,7 @@ namespace FdaViewModel.Conditions
                     ConditionsElement newElem = ConditionFactory.BuildConditionsElement(vm, _ConditionsOwnerElement);
                     ConditionFactory.CopyConditionsElement(newElem, this);
 
-                    ((ConditionsOwnerElement)_Owner).UpdateTableRowIfModified(oldName, this);
+                    ((ConditionsOwnerElement)_Owner).UpdateTableRowIfModified((OwnerElement)_Owner, oldName, this);
                    
                 }
             }
@@ -613,7 +616,41 @@ namespace FdaViewModel.Conditions
         }
         #endregion
         #region Voids
-
+        private void LoadTheTreeNodes()
+        {
+            _ConditionsTreeNodes = new List<BaseFdaElement>();
+            if(ImpactAreaElement != null)
+            {
+                _ConditionsTreeNodes.Add(ImpactAreaElement);
+            }
+            if (AnalyticalFlowFrequency != null)
+            {
+                _ConditionsTreeNodes.Add(AnalyticalFlowFrequency);
+            }
+            if (InflowOutflowElement != null)
+            {
+                _ConditionsTreeNodes.Add(InflowOutflowElement);
+            }
+            if (RatingCurveElement != null)
+            {
+                _ConditionsTreeNodes.Add(RatingCurveElement);
+            }
+            if (ExteriorInteriorElement != null)
+            {
+                _ConditionsTreeNodes.Add(ExteriorInteriorElement);
+            }
+            if (StageDamageElement != null)
+            {
+                _ConditionsTreeNodes.Add(StageDamageElement);
+            }
+        }
+        private void UpdateIsElementExpanded(object sender, EventArgs e)
+        {
+            if(UpdateExpansionValueInTreeElement != null)
+            {
+                UpdateExpansionValueInTreeElement.Invoke(this, e);
+            }
+        }
         private void RenameConditionsTreeElem(object sender, EventArgs e)
         {
             if (RenameConditionsTreeElement != null)

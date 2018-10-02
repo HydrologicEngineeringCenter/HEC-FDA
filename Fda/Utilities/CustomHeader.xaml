@@ -4,8 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Fda.Utilities"
+             xmlns:gif="http://wpfanimatedgif.codeplex.com"
+             xmlns:utils="clr-namespace:Fda.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="25" d:DesignWidth="300">
+    <UserControl.Resources>
+        <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
     <Grid>
         <StackPanel Orientation="Horizontal" >
             <Grid>
@@ -13,10 +18,13 @@
                     <ColumnDefinition Width="20" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="30" />
+
                 </Grid.ColumnDefinitions>
                 <Image Grid.Column="0" Name="image_Image" Source="{Binding Path=ImageSource}" />
                 <TextBlock Grid.Column="1" Name="txt_Name" Text="{Binding Path=Name}" Margin="5,0,0,0" />
                 <TextBlock Grid.Column="2" Name="txt_Decoration" Text="{Binding Path=Decoration}" Foreground="Red" />
+                <Image Grid.Column="3" VerticalAlignment="Center" Height="24" Visibility="{Binding GifVisible,Converter={StaticResource BoolToVisibilityConverter}}" gif:ImageBehavior.AnimatedSource="pack://application:,,,/Fda;component/Resources/Saving2.gif" /> 
             </Grid>
             
         </StackPanel>

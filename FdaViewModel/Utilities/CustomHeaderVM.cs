@@ -19,8 +19,14 @@ namespace FdaViewModel.Utilities
         private string _Name;
         private string _Decoration;
         private string _ImageSource;
+        private bool _GifVisible = false;
         #endregion
         #region Properties
+        public bool GifVisible
+        {
+            get { return _GifVisible; }
+            set { _GifVisible = value; NotifyPropertyChanged(); }
+        }
         public string Name
         {
             get { return _Name; }
@@ -39,14 +45,13 @@ namespace FdaViewModel.Utilities
         }
         #endregion
         #region Constructors
-           public CustomHeaderVM(string name, string imageSource="", string decoration = "")
+        public CustomHeaderVM(string name, string imageSource = "", string decoration = "", bool gifVisible = false)
         {
-            
-
             Name = name;
             Decoration = decoration;
-            ImageSource = imageSource; 
-                }
+            ImageSource = imageSource;
+            GifVisible = gifVisible;
+        }
         #endregion
         #region Voids
         #endregion
