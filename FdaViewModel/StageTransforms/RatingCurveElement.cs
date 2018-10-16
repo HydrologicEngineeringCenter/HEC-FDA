@@ -18,13 +18,13 @@ namespace FdaViewModel.StageTransforms
 
         #endregion
         #region Properties
-        public string Description { get { return _Description; } set { _Description = value; NotifyPropertyChanged(); } }
+        //public string Description { get { return _Description; } set { _Description = value; NotifyPropertyChanged(); } }
 
-        public Statistics.UncertainCurveDataCollection RatingCurve
-        {
-            get { return _Curve; }
-            set { _Curve = value;  NotifyPropertyChanged(); }
-        }
+        //public Statistics.UncertainCurveDataCollection RatingCurve
+        //{
+        //    get { return _Curve; }
+        //    set { _Curve = value;  NotifyPropertyChanged(); }
+        //}
         #endregion
         #region Constructors
        
@@ -35,7 +35,7 @@ namespace FdaViewModel.StageTransforms
             Name = userprovidedname;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/RatingCurve.png");
 
-            RatingCurve = ratingCurve;
+            Curve = ratingCurve;
             Description = desc;
             if (Description == null) Description = "";
             Utilities.NamedAction editRatingCurve = new Utilities.NamedAction();
@@ -65,9 +65,23 @@ namespace FdaViewModel.StageTransforms
         #region Voids
         public void EditRatingCurve(object arg1, EventArgs arg2)
         {
-            RatingCurveEditorVM vm = new RatingCurveEditorVM(this, (foo) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar));
-            Navigate(vm, true, true);
-            if (!vm.WasCancled)
+
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper((helper, elem) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(helper, elem), ChangeTableName());
+
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                .WithOwnerValidationRules((editorVM, oldName) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(editorVM, oldName))
+                .WithSaveUndoRedo(saveHelper, (editorVM) => ((Utilities.OwnerElement)_Owner).CreateElementFromEditor(editorVM),
+                (editorVM, element) => ((Utilities.OwnerElement)_Owner).AssignValuesFromElementToEditor(editorVM, element),
+                 (editorVM, elem) => ((Utilities.OwnerElement)_Owner).AssignValuesFromEditorToElement(editorVM, elem));
+
+
+
+            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
+
+
+            //RatingCurveEditorVM vm = new RatingCurveEditorVM(this, (foo) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar));
+            Navigate(vm, false, true, "Edit " + vm.Name);
+            if (!vm.WasCanceled)
             {
                 if (!vm.HasError)
                 {
@@ -119,12 +133,12 @@ namespace FdaViewModel.StageTransforms
             {
                 Storage.Connection.Instance.Open();
             }
-            RatingCurve.toSqliteTable(TableName); //will be formatted like: 2/27/2009 12:12:22 PM
+            Curve.toSqliteTable(TableName); //will be formatted like: 2/27/2009 12:12:22 PM
         }
 
         public override object[] RowData()
         {
-            return new object[] { Name,LastEditDate, Description, RatingCurve.Distribution, RatingCurve.GetType() };
+            return new object[] { Name,LastEditDate, Description, Curve.Distribution, Curve.GetType() };
         }
 
 

@@ -8,6 +8,7 @@
         xmlns:ViewModel="clr-namespace:FdaViewModel.Utilities;assembly=FdaViewModel"
         xmlns:qh="clr-namespace:QuickHelp;assembly=QuickHelp"
         mc:Ignorable="d"
+        Icon="FDA.ico"
         Closing="Window_Closing"
         Loaded="Window_Loaded"
         Title="ViewWindow" > <!--="None" ResizeMode="CanResizeWithGrip" AllowsTransparency="false">-->
@@ -78,58 +79,15 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <!--<Style x:Key="LeftScrollOffsetHorizontalViewer" TargetType="{x:Type ScrollViewer}">
-            <Setter Property="OverridesDefaultStyle" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="65"/>
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Border Grid.Column="0" Grid.ColumnSpan="3" BorderThickness="0,1,1,1">
-                                <Border.BorderBrush>
-                                    <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
-                                </Border.BorderBrush>
-                                <ScrollContentPresenter />
-                            </Border>
-                            <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Column="4" Grid.RowSpan="2" Value="{TemplateBinding VerticalOffset}" Maximum="{TemplateBinding ScrollableHeight}" ViewportSize="{TemplateBinding ViewportHeight}" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
-                            <ScrollBar x:Name="PART_HorizontalScrollBar" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Value="{TemplateBinding HorizontalOffset}" Maximum="{TemplateBinding ScrollableWidth}" ViewportSize="{TemplateBinding ViewportWidth}" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
-                            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left">
-                                --><!--<ScrollBar x:Name="PART_HorizontalScrollBar" Width="100" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Value="{TemplateBinding HorizontalOffset}" Maximum="{TemplateBinding ScrollableWidth}" ViewportSize="{TemplateBinding ViewportWidth}" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>--><!--
-                                <Slider Grid.Row="1" Grid.Column="1" Width="150" Visibility="{Binding Scalable, Converter={StaticResource BoolToVis}}" Value="{Binding InitialScaleFactor}" Minimum="{Binding MinimumScaleFactor}" Maximum="{Binding MaximumScaleFactor}"/>
-                                <Label  Grid.Row="1" Grid.Column="2" Width="65" HorizontalAlignment="Left" Visibility="{Binding Scalable, Converter={StaticResource BoolToVis}}" Content="{Binding CurrentScaleFactor}"/>
-                            </StackPanel>
-
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>-->
+       
     </Window.Resources>
     <Window.DataContext>
         <ViewModel:WindowVM/>
     </Window.DataContext>
-    <!--<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Style="{StaticResource ResourceKey=LeftScrollOffsetHorizontalViewer}">
-        <Grid>
-            <DockPanel Grid.Row="0">
-                <DockPanel.LayoutTransform>
-                    <ScaleTransform CenterX="0" CenterY="0" ScaleX="{Binding InitialScaleFactor}" ScaleY="{Binding InitialScaleFactor}"/>
-                </DockPanel.LayoutTransform>
-                <ContentControl Name="masterControl" Content="{Binding CurrentView}"/>
-            </DockPanel>
-        </Grid>
-    </ScrollViewer>-->
+    
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="27"/>
+            <!--<RowDefinition Height="27"/>-->
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Border Grid.Column="0" Grid.RowSpan="2" BorderThickness="2,2,2,2">
@@ -138,58 +96,6 @@
             </Border.BorderBrush>
         </Border>
         <ContentControl Grid.Row="1" Name="masterControl" Content="{Binding CurrentView}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        <Thumb Grid.Row="0" ToolTip="Move" Style="{StaticResource TransparentThumbStyle}" HorizontalAlignment="Stretch" Cursor="SizeAll" VerticalAlignment="Stretch" Background="Transparent" BorderBrush="Transparent" DragDelta="Thumb_DragDelta"/>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="8,0,0,0">
-            <Image Height="20" Source="pack://application:,,,/Fda;component/Resources/FDA.ico" MouseLeftButtonDown="Image_MouseLeftButtonDown" MouseRightButtonDown="Image_MouseRightButtonDown"/>
-        </StackPanel>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
-            <Label Content="{Binding Title}" IsHitTestVisible="False"/>
-        </StackPanel>
-        <Grid Grid.Row="0" DataContext="{Binding CurrentView}" HorizontalAlignment="Right" Margin="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition Width="20"/>
-            </Grid.ColumnDefinitions>
-            <utils:BindableButton Grid.Column="0"  Height="18" Width="18" ButtonStyle="{StaticResource TransparentStyle}" NamedAction="{Binding ErrorsAction}" ToolTip="Errors" UseImage="True">
-                <utils:BindableButton.Image>
-                    <Image  Source="pack://application:,,,/Fda;component/Resources/Error.png"/>
-                </utils:BindableButton.Image>
-            </utils:BindableButton>
-            <utils:BindableButton Grid.Column="1" Height="18" Width="18" ButtonStyle="{StaticResource TransparentStyle}" NamedAction="{Binding MessagesAction}" ToolTip="Messages" UseImage="True">
-                <utils:BindableButton.Image>
-                    <Image  Source="pack://application:,,,/Fda;component/Resources/Message.png"/>
-                </utils:BindableButton.Image>
-            </utils:BindableButton>
-            <utils:BindableButton Grid.Column="2" Height="18" Width="18" ButtonStyle="{StaticResource TransparentStyle}" NamedAction="{Binding HelpAction}" ToolTip="Get Help." UseImage="True">
-                <utils:BindableButton.Image>
-                    <Image  Source="pack://application:,,,/Fda;component/Resources/help.png"/>
-                </utils:BindableButton.Image>
-            </utils:BindableButton>
-            <Button Grid.Column="3" Click="MinimizeWindow" Style="{StaticResource TransparentStyle}" ToolTip="Minimize">
-                <Polyline VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" Stroke="#FF646464" StrokeThickness="3" StrokeEndLineCap="Square" StrokeStartLineCap="Square" Points="3,10 10,10" IsHitTestVisible="false"/>
-            </Button>
-            <Button Grid.Column="4" Name="MaximizeButton" Height="14" Click="MaximizeWindow" Style="{StaticResource TransparentStyle}" ToolTip="Maximize">
-                <Image Source="pack://application:,,,/Fda;component/Resources/Maximize.png"/>
-            </Button>
-            <Button Grid.Column="5" Click="CloseWindow" Style="{StaticResource TransparentStyle}" ToolTip="Close">
-                <Grid Name="XGrid" HorizontalAlignment="Right" Background="Transparent" VerticalAlignment="Top" Height="16" Width="16" IsHitTestVisible="false">
-                    <Polyline Name="X1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" Stroke="#FF646464" StrokeThickness="2" StrokeEndLineCap="Triangle" StrokeStartLineCap="Triangle" Points="3,3 10,10" IsHitTestVisible="false"/>
-                    <Polyline Name="X2" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" Stroke="#FF646464" StrokeThickness="2" StrokeEndLineCap="Triangle" StrokeStartLineCap="Triangle" Points="10,3 3,10" IsHitTestVisible="false"/>
-                </Grid>
-            </Button>
+       
         </Grid>
-        <!--<TabControl Grid.Row="1" Margin="5">
-            <TabItem Header="Errors" DataContext="{Binding CurrentView}" Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}">
-                <TextBox  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Text="{Binding Error, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}"/>
-            </TabItem>
-            <TabItem Header="Messages">
-                <TextBlock HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DataContext="{Binding CurrentView}" Text="{Binding Messages}"/>
-            </TabItem>
-        </TabControl>
-        <GridSplitter Grid.Row="0"  Margin="0" Background="Gray" BorderBrush="DarkGray" BorderThickness="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="3"/>--> <!--DataContext="{Binding CurrentView}" Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}"/>-->
-    </Grid>
 </Window>

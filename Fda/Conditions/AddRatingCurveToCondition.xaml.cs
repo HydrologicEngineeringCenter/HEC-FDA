@@ -37,7 +37,7 @@ namespace Fda.Conditions
             if (vm.IsPoppedOut == true)
             {
                 var window = Window.GetWindow(this);
-                vm.WasCancled = true;
+                vm.WasCanceled = true;
                 window.Close();
             }
             vm.OKClicked();
@@ -58,7 +58,7 @@ namespace Fda.Conditions
             if (vm.IsPoppedOut == true)
             {
                 var window = Window.GetWindow(this);
-                vm.WasCancled = true;
+                vm.WasCanceled = true;
                 window.Close();
             }
             vm.CancelClicked();

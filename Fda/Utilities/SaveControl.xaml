@@ -10,7 +10,8 @@
     <UserControl.Resources>
         <cmds:HasErrorConverter x:Key="HasErrorConverter"/>
 
-        <Style TargetType="{x:Type Button}" x:Key="AddButton">
+        
+        <Style TargetType="{x:Type RepeatButton}" x:Key="UndoButton">
 
             <Setter Property="Background" Value="LightGray" />
             <Setter Property="Foreground" Value="Black" />
@@ -19,7 +20,7 @@
 
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
                         <Border CornerRadius="2" BorderBrush="Black" BorderThickness="0">
                             <Grid Background="{TemplateBinding Background}">
                                 <Grid.RowDefinitions>
@@ -27,10 +28,8 @@
                                     <!--<RowDefinition Height="*" />-->
                                 </Grid.RowDefinitions>
                                 <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <!--<Image Style="{StaticResource PlusImage}" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center">
-
-                                    </Image>-->
-                                    <ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0" />
+                                    <Image Name="img_UndoButton" Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/left-arrow.png"/>
+                                    <!--<ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0" />-->
                                 </StackPanel>
 
                             </Grid>
@@ -48,9 +47,117 @@
                                 <Setter Property="Foreground" Value="White" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <!--<Setter Property="Background" Value="LightGray" />-->
-                                <Setter Property="Foreground" Value="White"/>
+                                <Setter TargetName="img_UndoButton" Property="Visibility" Value="Hidden"/>
                             </Trigger>
+                            <Trigger Property="IsEnabled" Value="True">
+                                <Setter TargetName="img_UndoButton" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type RepeatButton}" x:Key="RedoButton">
+
+            <Setter Property="Background" Value="LightGray" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Border CornerRadius="2" BorderBrush="Black" BorderThickness="0">
+                            <Grid Background="{TemplateBinding Background}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <!--<RowDefinition Height="*" />-->
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Image Name="img_RedoButton"  Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/right-arrow.png"/>
+                                    <!--<ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0" />-->
+                                </StackPanel>
+
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="LightBlue" />
+                                <Setter Property="Foreground" Value="Black" />
+                                <!--<Setter TargetName="PathIcon" Property="Fill" Value="Black" />-->
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="LightSkyBlue" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="img_RedoButton" Property="Visibility" Value="Hidden"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="True">
+                                <Setter TargetName="img_RedoButton" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type Button}" x:Key="SaveButton">
+
+            <Setter Property="Background" Value="LightGray" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border CornerRadius="2" BorderBrush="Black" BorderThickness="0">
+                            <Grid Background="{TemplateBinding Background}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <!--<RowDefinition Height="*" />-->
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Grid>
+                                        <Image x:Name="img_saveEnabled"  Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/save_enabled.png"/>
+                                        <Image x:Name="img_saveDisabled"  Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/save_disabled.png"/>
+
+                                    </Grid>
+                                    
+                                    <!--<ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0" />-->
+                                </StackPanel>
+
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="LightBlue" />
+                                <Setter Property="Foreground" Value="Black" />
+                                <!--<Setter TargetName="PathIcon" Property="Fill" Value="Black" />-->
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="LightSkyBlue" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="LightGray" />
+                                <Setter TargetName="img_saveDisabled" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="img_saveEnabled" Property="Visibility" Value="Hidden"/>
+
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="True">
+                                <Setter Property="Background" Value="LightGray" />
+                                <Setter TargetName="img_saveEnabled" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="img_saveDisabled" Property="Visibility" Value="Hidden"/>
+
+                            </Trigger>
+                            
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -110,9 +217,10 @@
             <ColumnDefinition Width=""
         </Grid.ColumnDefinitions>-->
         <StackPanel Background="LightGray" HorizontalAlignment="Stretch" >
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"  >
-                <Button Name="btn_Undo" Style="{StaticResource AddButton}" Content="Undo" Width="50" Margin="5,5,0,5" Command="{Binding UndoCommand}" IsEnabled="{Binding UndoEnabled}" />
-                <ComboBox  Width="18" ItemsSource="{Binding UndoRedoRows}" DisplayMemberPath="Name" Margin="0,5,5,5">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left"  >
+                <RepeatButton Name="btn_Undo" Style="{StaticResource UndoButton}" Width="40" Margin="5,5,0,5" Delay="400"  IsEnabled="{Binding ActionManager.SaveUndoRedoHelper.UndoEnabled}" Click="btn_Undo_Click" PreviewMouseLeftButtonDown="btn_Undo_MouseDown" PreviewMouseLeftButtonUp="btn_Undo_PreviewMouseUp"  MouseRightButtonUp="btn_Undo_MouseRightButtonUp" >
+                </RepeatButton>
+                <ComboBox Name="cmb_UndoDropDown" Width="0" ItemsSource="{Binding ActionManager.SaveUndoRedoHelper.UndoRows}" DisplayMemberPath="Name" Margin="0,5,5,5" SelectedIndex="{Binding UndoRowsSelectedIndex}">
                     <ComboBox.Style>
                         <Style TargetType="ComboBox" >
                             <Setter Property="Popup.FlowDirection" Value="RightToLeft"/>
@@ -120,8 +228,24 @@
                         </Style>
                     </ComboBox.Style>
                 </ComboBox>
-                <Button Name="btn_Redo" Style="{StaticResource AddButton}" Content="Redo" Width="50" Margin="5" Command="{Binding RedoCommand}" IsEnabled="{Binding RedoEnabled}"/>
-                <Button Name="btn_Save" Content="Save" Width="50" Margin="5" Command="{Binding SaveWhileEditingCommand}"  IsEnabled="{Binding Path=HasFatalError, Converter={StaticResource HasErrorConverter}, UpdateSourceTrigger=PropertyChanged}" Background="LightGreen"/>
+
+
+
+                <ComboBox Name="cmb_RedoDropDown" Width="0" ItemsSource="{Binding ActionManager.SaveUndoRedoHelper.RedoRows}" DisplayMemberPath="Name" Margin="0,5,5,5" SelectedIndex="{Binding RedoRowsSelectedIndex}">
+                    <ComboBox.Style>
+                        <Style TargetType="ComboBox" >
+                            <Setter Property="Popup.FlowDirection" Value="LeftToRight"/>
+                            <Setter Property="Background" Value="LightGray" />
+                        </Style>
+                    </ComboBox.Style>
+                </ComboBox>
+                <RepeatButton Name="btn_Redo" Style="{StaticResource RedoButton}" Width="40" Margin="5" Delay="400"  IsEnabled="{Binding ActionManager.SaveUndoRedoHelper.RedoEnabled}" Click="btn_Redo_Click" PreviewMouseLeftButtonDown="btn_Redo_PreviewMouseDown" PreviewMouseLeftButtonUp="btn_Redo_PreviewMouseUp" MouseRightButtonUp="btn_Redo_MouseRightButtonUp" >
+                </RepeatButton>
+
+                <Button Name="btn_Save" Style="{StaticResource SaveButton}" BorderThickness="0" Width="50" Margin="5"   IsEnabled="{Binding Path=HasFatalError, Converter={StaticResource HasErrorConverter}, UpdateSourceTrigger=PropertyChanged}" Click="btn_Save_Click" >
+                    <!--<Image Name="img_saveEnabled"  Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/save_enabled.png"/>-->
+                </Button>
+                <Label Name="lbl_Saving" Content="{Binding SavingText}"/>
             </StackPanel>
         </StackPanel>
     </Grid>

@@ -77,17 +77,17 @@ namespace FdaViewModel.AggregatedStageDamage
         }
         public void EditDamageCurve(object arg1, EventArgs arg2)
         {
-            List<Inventory.DamageCategory.DamageCategoryOwnedElement> damcateleements = GetElementsOfType<Inventory.DamageCategory.DamageCategoryOwnedElement>();
-            Inventory.DamageCategory.DamageCategoryOwnedElement damcatelement = damcateleements.FirstOrDefault();
-            AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(this, (foo) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar));
-            Navigate(vm, true, true);
-            if (!vm.WasCancled)
-            {
-                if (!vm.HasError)
-                {
-                    vm.SaveWhileEditing();
-                }
-            }
+            //List<Inventory.DamageCategory.DamageCategoryOwnedElement> damcateleements = GetElementsOfType<Inventory.DamageCategory.DamageCategoryOwnedElement>();
+            //Inventory.DamageCategory.DamageCategoryOwnedElement damcatelement = damcateleements.FirstOrDefault();
+            //AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(this, (foo) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar));
+            //Navigate(vm, true, true);
+            //if (!vm.WasCancled)
+            //{
+            //    if (!vm.HasError)
+            //    {
+            //        vm.SaveWhileEditing();
+            //    }
+            //}
         }
         public override void Save()
         {

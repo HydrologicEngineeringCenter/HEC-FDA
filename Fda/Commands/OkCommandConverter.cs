@@ -23,8 +23,15 @@ namespace Fda.Commands
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             FdaViewModel.BaseViewModel vm = (FdaViewModel.BaseViewModel)values[0];
-            vm.Validate();
-            return values.Clone();
+            if (vm != null)
+            {
+                vm.Validate();
+                return values.Clone();
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

@@ -52,7 +52,7 @@ namespace FdaViewModel.FrequencyRelationships
         {
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM();
             Navigate(vm);
-            if (!vm.WasCancled)
+            if (!vm.WasCanceled)
             {
                 if (!vm.HasError)
                 {
@@ -90,10 +90,11 @@ namespace FdaViewModel.FrequencyRelationships
         {
             return new Type[] { typeof(string),typeof(string), typeof(string), typeof(double), typeof(double), typeof(double), typeof(int) };
         }
-        public override OwnedElement CreateElementFromEditor(ISaveUndoRedo editorVM)
+        public override OwnedElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
         {
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            return new AnalyticalFrequencyElement(editorVM.Name, editDate, ((AnalyticalFrequencyEditorVM)editorVM).Description, ((AnalyticalFrequencyEditorVM)editorVM).Distribution, this);
+            //return new AnalyticalFrequencyElement(editorVM.Name, editDate, editorVM.Description, editorVM.Distribution, this);
+            return null;
         }
         public override OwnedElement CreateElementFromRowData(object[] rowData)
         {

@@ -32,8 +32,9 @@ namespace FdaViewModel.ImpactArea
         }
         #endregion
         #region Constructors
-        public ImpactAreaEditorVM(List<ImpactAreaRowItem> ialist)
+        public ImpactAreaEditorVM(List<ImpactAreaRowItem> ialist, Action<BaseViewModel> ownerValidationRules)
         {
+            ownerValidationRules(this);
             IAList = ialist;
         }
         #endregion

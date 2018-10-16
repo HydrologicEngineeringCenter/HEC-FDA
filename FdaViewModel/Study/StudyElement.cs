@@ -3,14 +3,24 @@ using System.Collections.Generic;
 using FdaViewModel.Utilities;
 using FdaModel.ComputationPoint;
 using FdaModel.Functions.OrdinatesFunctions;
+using System.Collections.ObjectModel;
+using FdaViewModel.Conditions;
 
 namespace FdaViewModel.Study
 {
     public class StudyElement : OwnerElement
     {
-        public event EventHandler ClearStudy;
+        public event EventHandler UpdateTransactionsAndMessages;
+        public event EventHandler LoadMapLayers;
         private List<string> _RegistryStudies = new List<string>();
+        private ObservableCollection<OwnerElement> _ConditionsTree;
 
+
+        #region Notes
+        #endregion
+        #region Fields
+        #endregion
+        #region Properties
         public override string TableName
         {
             get
@@ -18,11 +28,11 @@ namespace FdaViewModel.Study
                 return "";
             }
         }
-        #region Notes
-        #endregion
-        #region Fields
-        #endregion
-        #region Properties
+        public ObservableCollection<OwnerElement> ConditionsTree
+        {
+            get { return _ConditionsTree; }
+            set { _ConditionsTree = value; NotifyPropertyChanged(); }
+        }
         public override string GetTableConstant()
         {
             return TableName;
@@ -388,6 +398,7 @@ namespace FdaViewModel.Study
             Storage.Connection.Instance.ProjectFile = path;
 
             Name = name;
+            UpdateTreeViewHeader(name);
             AddBaseElements();
             // add any children based on tables that exist.
             foreach (OwnedElement ele in Elements)
@@ -425,7 +436,7 @@ namespace FdaViewModel.Study
         {
             Study.ExistingStudyVM ESVM = new ExistingStudyVM();
             Navigate(ESVM, true, true, "Open Existing Study");
-            if (!ESVM.WasCancled)
+            if (!ESVM.WasCanceled)
             {
                 if (!ESVM.HasError)
                 {
@@ -497,6 +508,10 @@ namespace FdaViewModel.Study
 
             Conditions.ConditionsOwnerElement c = new Conditions.ConditionsOwnerElement(this);
             AddElement(c);
+
+            UpdateTheConditionsTree(this, new EventArgs());
+            UpdateTransactionsAndMessages?.Invoke(this, new EventArgs());
+            LoadMapLayers?.Invoke(this, new EventArgs());
         }
 
         public override string[] TableColumnNames()
@@ -508,6 +523,61 @@ namespace FdaViewModel.Study
         {
             throw new NotImplementedException();
         }
+
+
+        /// <summary>
+        /// The study tree tab shows in real time the state of the study.
+        /// When you switch to the conditions tab this method will grab the state of the 
+        /// study tree conditions and mirror that in the conditions tab.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void UpdateTheConditionsTree(object sender, EventArgs e)
+        {
+            ObservableCollection<OwnedElement> conditions = new ObservableCollection<OwnedElement>();
+            //get all the current conditions
+            ConditionsOwnerElement studyTreeCondOwnerElement = null;
+            if (Elements.Count > 0)
+            {
+                foreach (OwnerElement owner in Elements)
+                {
+                    if (owner.GetType() == typeof(ConditionsOwnerElement))
+                    {
+                        conditions = owner.Elements;
+                        studyTreeCondOwnerElement = (ConditionsOwnerElement)owner;
+                    }
+                }
+            }
+            else
+            {
+                return;
+            }
+
+            ConditionsTreeOwnerElement condTreeCondOwnerElement = new ConditionsTreeOwnerElement(studyTreeCondOwnerElement);
+            condTreeCondOwnerElement.RequestNavigation += Navigate;
+            condTreeCondOwnerElement.UpdateConditionsTree += UpdateTheConditionsTree;
+
+            if (conditions.Count > 0)
+            {
+                foreach (OwnedElement elem in conditions)
+                {
+                    //create a new conditions element and change the way it renames, removes, and edits. The parent node
+                    //will then tell the study tree what to do
+                    ConditionsElement condElem = new ConditionsElement((ConditionsElement)elem, condTreeCondOwnerElement);
+                    condElem.EditConditionsTreeElement += condTreeCondOwnerElement.EditCondition;
+                    condElem.RemoveConditionsTreeElement += condTreeCondOwnerElement.RemoveElement;
+                    condElem.RenameConditionsTreeElement += condTreeCondOwnerElement.RenameElement;
+                    condElem.UpdateExpansionValueInTreeElement += condTreeCondOwnerElement.UpdateElementExpandedValue;
+                    condTreeCondOwnerElement.AddElement(condElem, false);
+                }
+
+            }
+
+            //have to make it new to call the notified prop changed
+            ConditionsTree = new ObservableCollection<OwnerElement>() { condTreeCondOwnerElement };
+        }
+
+
 
         #endregion
         #region Functions

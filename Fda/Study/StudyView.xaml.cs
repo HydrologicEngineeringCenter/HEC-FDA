@@ -20,71 +20,145 @@ namespace Fda.Study
     /// </summary>
     public partial class StudyView : UserControl
     {
+
+
+       
+
         public StudyView()
         {
+
+
             InitializeComponent();
-            MapWindow.MapWindow.TreeView = MapTreeView;
-            MapTreeView.MapWindow = MapWindow.MapWindow;
-            MapToolBar.MapWindow = MapWindow.MapWindow;
-            MapToolBar.MapTree = MapTreeView;
-            SelectableLayers.MapTree = MapTreeView;
-            SelectableLayers.MapWindow = MapWindow.MapWindow;
-            FeatureEditorToolbar.MapWindow = MapWindow.MapWindow;
-            FeatureEditorToolbar.MapTree = MapTreeView;
-            StatusBorder.Child = new OpenGLMapping.MapStatusBar(MapWindow.MapWindow);
 
-            RadioButton ArrowTool = (RadioButton)MapToolBar.Items[0];
-            ArrowTool.IsChecked = true;
-            MapToolBar.RadioChecked += MapToolBar_RadioChecked;
+            
 
-            //event handlers
+            //MapWindow.MapWindow.TreeView = MapTreeView;
+            //MapTreeView.MapWindow = MapWindow.MapWindow;
 
-            //MapTreeView.LayerAdded += MapTreeView_LayerAdded; //adds menu item to the remove Layer menu item items.
-            //MapTreeView.LayerRemoved += MapTreeView_LayerRemoved; //Removes menu item for layer from the Remove Layer menu item items.
-            //MapTreeView.LayerMoved += MapTreeView_LayerMoved;//reorders main menu item for RemoveLayer
+            //MapToolBar.MapTree = MapTreeView;
+            //SelectableLayers.MapTree = MapTreeView;
 
-            FeatureEditorToolbar.RadioChecked += FeatureEditorToolbar_RadioChecked;
+            //FeatureEditorToolbar.MapTree = MapTreeView;
 
-            MapWindow.MapWindow.MouseLeave += MapWindow_Mouse;
-            MapWindow.MapWindow.MouseEnter += MapWindow_Mouse;
+            //////////////////////////////////////////
+
+            //MapToolBar.MapWindow = MapWindow.MapWindow;
+
+            //SelectableLayers.MapWindow = MapWindow.MapWindow;
+            //FeatureEditorToolbar.MapWindow = MapWindow.MapWindow;
+            //StatusBorder.Child = new OpenGLMapping.MapStatusBar(MapWindow.MapWindow);
+
+            //RadioButton ArrowTool = (RadioButton)MapToolBar.Items[0];
+            //ArrowTool.IsChecked = true;
+            //MapToolBar.RadioChecked += MapToolBar_RadioChecked;
+
+            //FeatureEditorToolbar.RadioChecked += FeatureEditorToolbar_RadioChecked;
+
+            //MapWindow.MapWindow.MouseLeave += MapWindow_Mouse;
+            //MapWindow.MapWindow.MouseEnter += MapWindow_Mouse;
         }
 
-        private void MapToolBar_RadioChecked(RadioButton buttonChecked)
+        //private void MapToolBar_RadioChecked(RadioButton buttonChecked)
+        //{
+        //    foreach (object item in FeatureEditorToolbar.Items)
+        //    {
+        //        RadioButton r = item as RadioButton;
+        //        if (r != null)
+        //        {
+        //            r.IsChecked = false;
+        //        }
+        //    }
+        //}
+
+        //private void MapWindow_Mouse(object sender, EventArgs e)
+        //{
+        //    FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+        //    vm.MapTreeView = MapTreeView;
+        //    vm.MapWindow = MapWindow.MapWindow;
+
+        //    MapWindow.MapWindow.TreeView = vm.MapTreeView;
+        //    MapTreeView.MapWindow = vm.MapWindow;//MapWindow.MapWindow;
+
+        //    MapToolBar.MapTree = vm.MapTreeView;
+        //    SelectableLayers.MapTree = vm.MapTreeView;
+
+        //    FeatureEditorToolbar.MapTree = vm.MapTreeView;
+
+
+
+        //    object fe = FocusManager.GetFocusedElement(this);
+        //    if (fe == null) return;
+        //    if (fe.GetType() == typeof(OpenGLMapping.WinFormsHostControl)) { MapWindow.MapWindow.Focus(); }
+
+
+
+
+        //}
+        //private void FeatureEditorToolbar_RadioChecked(RadioButton buttonChecked)
+        //{
+        //    if (buttonChecked == null)
+        //    {
+        //        MapToolBar.SelectChecked();
+        //    }
+        //    else
+        //    {
+        //        foreach (object item in MapToolBar.Items)
+        //        {
+        //            RadioButton r = item as RadioButton;
+        //            if (r != null)
+        //            {
+        //                r.IsChecked = false;
+        //            }
+        //        }
+        //    }
+        //}
+
+        private void btn_CloseTab_Click(object sender, RoutedEventArgs e)
         {
-            foreach (object item in FeatureEditorToolbar.Items)
+            DependencyObject currentControl = (DependencyObject)sender;
+            Type targetType = typeof(TabItem);
+
+            while (currentControl != null)
             {
-                RadioButton r = item as RadioButton;
-                if (r != null)
+                if(currentControl.GetType() == targetType)
                 {
-                    r.IsChecked = false;
+                    DynamicTabControl.SelectedItem = currentControl;
+                }
+                else
+                {
+                    currentControl = LogicalTreeHelper.GetParent(currentControl);
                 }
             }
+            FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+            if (vm.Tabs[DynamicTabControl.SelectedIndex].CanDelete == true)
+            {
+                vm.Tabs.RemoveAt(DynamicTabControl.SelectedIndex);
+            }
+
         }
 
-        private void MapWindow_Mouse(object sender, EventArgs e)
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            object fe = FocusManager.GetFocusedElement(this);
-            if (fe == null) return;
-            if (fe.GetType() == typeof(OpenGLMapping.WinFormsHostControl)) { MapWindow.MapWindow.Focus(); }
-        }
-        private void FeatureEditorToolbar_RadioChecked(RadioButton buttonChecked)
-        {
-            if (buttonChecked == null)
-            {
-                MapToolBar.SelectChecked();
-            }
-            else
-            {
-                foreach (object item in MapToolBar.Items)
-                {
-                    RadioButton r = item as RadioButton;
-                    if (r != null)
-                    {
-                        r.IsChecked = false;
-                    }
-                }
-            }
+            FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+            //vm.MWMTVConn. MapTreeView = MapTreeView;
+            vm.AddMapsTab(MapTreeView);
         }
 
+        private void lbl_Study_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+            //lbl_Study.ContextMenu = vm.StudyElement.Actions;
+            lbl_Study.ContextMenu.IsOpen = true;
+        }
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+            //vm.MWMTVConn. MapTreeView = MapTreeView;
+            if (vm.MWMTVConn != null)
+            {
+                vm.MWMTVConn.UpdateMapWindow();
+            }
+        }
     }
 }

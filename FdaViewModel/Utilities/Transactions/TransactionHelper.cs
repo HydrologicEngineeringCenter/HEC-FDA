@@ -57,5 +57,18 @@ namespace FdaViewModel.Utilities.Transactions
         }
 
 
+        public static void LoadTransactionsAndMessages(ITransactionsAndMessages editor, OwnedElement element)
+        {
+            //load the transactions log
+            editor.TransactionRows = Utilities.Transactions.TransactionHelper.GetTransactionRowItemsForElement(element);
+
+            //load the messages log
+            editor.MessageRows = Utilities.MessagesVM.GetMessageRowsForElement(element);
+            // if(TransactionRows.Count>0 || MessageRows.Count > 0)
+            {
+                editor.TransactionsMessagesVisible = true;
+            }
+        }
+
     }
 }

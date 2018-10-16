@@ -8,7 +8,7 @@ using Statistics;
 
 namespace FdaViewModel.FrequencyRelationships
 {
-    public class AnalyticalFrequencyEditorVM : Utilities.Transactions.TransactionAndMessageBase, Utilities.ISaveUndoRedo
+    public class AnalyticalFrequencyEditorVM : Utilities.Transactions.TransactionAndMessageBase
     {
         #region Notes
         #endregion
@@ -25,9 +25,12 @@ namespace FdaViewModel.FrequencyRelationships
         #region Properties
         public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
 
-      
-       
-     
+
+        public int SelectedIndexInUndoList
+        {
+            set { CurrentElement.ChangeIndex += value + 1; Undo(); }
+        }
+
 
         public string Description
         {
@@ -78,7 +81,7 @@ namespace FdaViewModel.FrequencyRelationships
             AssignValuesFromElementToEditor(elem);
 
             DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
-            UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
+            //UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
 
         }
         #endregion
@@ -147,18 +150,27 @@ namespace FdaViewModel.FrequencyRelationships
 
         public override void Undo()
         {
-            UndoElement(this);
+           // UndoElement(this);
         }
         public override void Redo()
         {
-            RedoElement(this);
+           // RedoElement(this);
         }
         public override void SaveWhileEditing()
         {
-            SaveAction(this);
+            //SaveAction(this);
         }
 
-       
+        public void UpdateTheUndoRedoRowItems()
+        {
+            //int currentIndex = CurrentElement.ChangeIndex;
+            //RedoRows.Clear();
+            //for (int i = currentIndex + 1; i < UndoRedoRows.Count; i++)
+            //{
+            //    RedoRows.Add(UndoRedoRows[i]);
+            //}
+
+        }
 
         public void AssignValuesFromElementToEditor(OwnedElement element)
         {

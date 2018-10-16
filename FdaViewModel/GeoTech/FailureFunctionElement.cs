@@ -17,8 +17,8 @@ namespace FdaViewModel.GeoTech
         #endregion
         #region Fields
         private const string _TableConstant = "Failure Function - ";
-        private string _Description;
-        private Statistics.UncertainCurveDataCollection _Curve;
+        //private string _Description;
+       // private Statistics.UncertainCurveDataCollection _Curve;
         //private List<LeveeFeatureElement> _LateralStructureList;
         private LeveeFeatureElement _SelectedLateralStructure;
 
@@ -39,13 +39,13 @@ namespace FdaViewModel.GeoTech
         //    get { return _LateralStructureList; }
         //    set { _LateralStructureList = value; NotifyPropertyChanged(); }
         //}
-        public string Description { get { return _Description; } set { _Description = value; NotifyPropertyChanged(); } }
+        //public string Description { get { return _Description; } set { _Description = value; NotifyPropertyChanged(); } }
 
-        public Statistics.UncertainCurveDataCollection FailureFunctionCurve
-        {
-            get { return _Curve; }
-            set { _Curve = value; NotifyPropertyChanged(); }
-        }
+        //public Statistics.UncertainCurveDataCollection FailureFunctionCurve
+        //{
+        //    get { return _Curve; }
+        //    set { _Curve = value; NotifyPropertyChanged(); }
+        //}
         #endregion
         #region Constructors
         public FailureFunctionElement(string userProvidedName, string lastEditDate, string description, Statistics.UncertainCurveDataCollection failureFunctionCurve, LeveeFeatureElement selectedLatStructure, BaseFdaElement owner) : base(owner)
@@ -56,7 +56,7 @@ namespace FdaViewModel.GeoTech
 
             Description = description;
             if (Description == null) Description = "";
-            FailureFunctionCurve = failureFunctionCurve;
+            Curve = failureFunctionCurve;
             if (selectedLatStructure == null)
             {
                 SelectedLateralStructure = new LeveeFeatureElement("", "", 0, this);
@@ -93,9 +93,24 @@ namespace FdaViewModel.GeoTech
         {
             //get the current list of levees
             List<LeveeFeatureElement> leveeList = GetElementsOfType<LeveeFeatureElement>();
-            FailureFunctionEditorVM vm = new FailureFunctionEditorVM(this, (foo) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar), leveeList);
+
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper((helper, elem) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(helper, elem), ChangeTableName());
+
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+
+                .WithOwnerValidationRules((editorVM, oldName) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(editorVM, oldName))
+                .WithSaveUndoRedo(saveHelper, (editorVM) => ((Utilities.OwnerElement)_Owner).CreateElementFromEditor(editorVM),
+                (editorVM, element) => ((Utilities.OwnerElement)_Owner).AssignValuesFromElementToEditor(editorVM, element),
+                 (editorVM, elem) => ((Utilities.OwnerElement)_Owner).AssignValuesFromEditorToElement(editorVM, elem));
+
+
+
+            Editors.FailureFunctionCurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(this, leveeList, actionManager);
+
+
+            //FailureFunctionEditorVM vm = new FailureFunctionEditorVM(this, (foo) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar), leveeList);
             Navigate(vm, true, true);
-            if (!vm.WasCancled)
+            if (!vm.WasCanceled)
             {
                 if (!vm.HasError)
                 {
@@ -122,12 +137,12 @@ namespace FdaViewModel.GeoTech
 
         public override void Save()
         {
-            _Curve.toSqliteTable(TableName);
+            Curve.toSqliteTable(TableName);
         }
 
         public override object[] RowData()
         {
-            return new object[] { Name, LastEditDate, Description, _SelectedLateralStructure.Name, FailureFunctionCurve.Distribution };
+            return new object[] { Name, LastEditDate, Description, _SelectedLateralStructure.Name, Curve.Distribution };
         }
 
         public override bool SavesToRow()

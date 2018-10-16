@@ -4,6 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using OpenGLMapping;
+using System.IO;
+using System.Xml;
 
 namespace Fda
 {
@@ -50,7 +52,7 @@ namespace Fda
                 }
 
             }
-            else if(args.GetType().Name == nameof(FdaViewModel.Utilities.AddShapefileEventArgs))
+            else if (args.GetType().Name == nameof(FdaViewModel.Utilities.AddShapefileEventArgs))
             {
                 FdaViewModel.Utilities.AddShapefileEventArgs sargs = args as FdaViewModel.Utilities.AddShapefileEventArgs;
 
@@ -80,6 +82,8 @@ namespace Fda
 
             }
 
+            
+           
 
         }
 
@@ -158,7 +162,7 @@ namespace Fda
         }
         private void WindowSpawner(FdaViewModel.Utilities.WindowVM newvm, bool asDialogue)
         {
-            newvm.WasCancled = true;
+            newvm.WasCanceled = true;
             FdaViewModel.Output.LinkedPlotsVM test = newvm.CurrentView as FdaViewModel.Output.LinkedPlotsVM;
 
             if (test != null)
@@ -185,8 +189,14 @@ namespace Fda
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            FdaViewModel.Utilities.WindowVM vm = (FdaViewModel.Utilities.WindowVM)this.DataContext;
+           
 
+            FdaViewModel.Utilities.WindowVM vm = (FdaViewModel.Utilities.WindowVM)this.DataContext;
+            if(vm.CurrentView.GetType() == typeof(FdaViewModel.Study.FdaStudyVM))
+            {
+                FdaViewModel.Study.FdaStudyVM studyVM = (FdaViewModel.Study.FdaStudyVM)vm.CurrentView;
+                studyVM.Dispose();
+            }
             vm.Dispose();
         }
 
@@ -219,18 +229,18 @@ namespace Fda
         }
         private void MaximizeWindow(object sender, RoutedEventArgs e)
         {
-            if (this.WindowState == WindowState.Maximized)
-            {
-                this.WindowState = System.Windows.WindowState.Normal;
-                MaximizeButton.Content = new Image() { Source = new System.Windows.Media.Imaging.BitmapImage(new System.Uri("pack://application:,,,/Fda;component/Resources/Maximize.png")) };
-                MaximizeButton.ToolTip = "Maximize";
-            }
-            else
-            {
-                this.WindowState = System.Windows.WindowState.Maximized;
-                MaximizeButton.ToolTip = "Restore";
-                MaximizeButton.Content = new Image() { Source = new System.Windows.Media.Imaging.BitmapImage(new System.Uri("pack://application:,,,/Fda;component/Resources/Restore.png")) };
-            }
+            //if (this.WindowState == WindowState.Maximized)
+            //{
+            //    this.WindowState = System.Windows.WindowState.Normal;
+            //    MaximizeButton.Content = new Image() { Source = new System.Windows.Media.Imaging.BitmapImage(new System.Uri("pack://application:,,,/Fda;component/Resources/Maximize.png")) };
+            //    MaximizeButton.ToolTip = "Maximize";
+            //}
+            //else
+            //{
+            //    this.WindowState = System.Windows.WindowState.Maximized;
+            //    MaximizeButton.ToolTip = "Restore";
+            //    MaximizeButton.Content = new Image() { Source = new System.Windows.Media.Imaging.BitmapImage(new System.Uri("pack://application:,,,/Fda;component/Resources/Restore.png")) };
+            //}
 
         }
         private void MinimizeWindow(object sender, RoutedEventArgs e)

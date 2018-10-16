@@ -21,12 +21,6 @@ namespace FdaViewModel.GeoTech
         private double _Elevation = 0;
         #endregion
         #region Properties
-        //public bool IsInEditMode { get; set; }
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged(); }
-        }
         public string Description
         {
             get { return _Description; }
@@ -39,12 +33,15 @@ namespace FdaViewModel.GeoTech
         }
         #endregion
         #region Constructors
-        public LeveeFeatureEditorVM():base()
+        public LeveeFeatureEditorVM(Action<BaseViewModel> ownerValidationRules) :base()
         {
+            ownerValidationRules(this);
 
         }
-        public LeveeFeatureEditorVM(string name, string description, double elevation,bool isInEditMode = false):base()
+        public LeveeFeatureEditorVM(string name, string description, double elevation, Action<BaseViewModel> ownerValidationRules):base()
         {
+            ownerValidationRules(this);
+
             Name = name;
             Description = description;
             Elevation = elevation;
@@ -58,6 +55,7 @@ namespace FdaViewModel.GeoTech
         public override void AddValidationRules()
         {
             AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
+            AddRule(nameof(Name), () => Name != null, "Name cannot be null.");
         }
 
         public override void Save()

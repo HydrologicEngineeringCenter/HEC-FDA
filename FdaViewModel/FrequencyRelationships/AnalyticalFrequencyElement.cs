@@ -69,7 +69,7 @@ namespace FdaViewModel.FrequencyRelationships
         {
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this);// Name, Distribution, Description, _Owner);
             Navigate(vm, true, true);
-            if (!vm.WasCancled)
+            if (!vm.WasCanceled)
             {
                 if (!vm.HasError)
                 {

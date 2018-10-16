@@ -8,7 +8,7 @@ using FdaViewModel.Utilities;
 
 namespace FdaViewModel.StageTransforms
 {
-    public class RatingCurveEditorVM : Utilities.Transactions.TransactionAndMessageBase, ISaveUndoRedo
+    public class RatingCurveEditorVM : Utilities.Transactions.TransactionAndMessageBase
     {
         #region Notes
         #endregion
@@ -28,8 +28,11 @@ namespace FdaViewModel.StageTransforms
         #endregion
         #region Properties
         public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
+        public int SelectedIndexInUndoList
+        {
+            set { CurrentElement.ChangeIndex += value + 1; Undo(); }
+        }
 
-         
         //public string Name
         //{
         //    get { return _Name; }
@@ -93,29 +96,38 @@ namespace FdaViewModel.StageTransforms
             AssignValuesFromElementToEditor(elem);
 
             DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
-            UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
+            //UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
 
         }
         #endregion
         #region Voids
         public override void Undo()
         {
-            UndoElement(this);
+           // UndoElement(this);
         }
        
     
 
         public override void Redo()
         {
-            RedoElement(this);
+            //RedoElement(this);
             
         }
 
         public override void SaveWhileEditing()
         {
-            SaveAction(this);
+            //SaveAction(this);
      }
+        public void UpdateTheUndoRedoRowItems()
+        {
+            //int currentIndex = CurrentElement.ChangeIndex;
+            //RedoRows.Clear();
+            //for (int i = currentIndex + 1; i < UndoRedoRows.Count; i++)
+            //{
+            //    RedoRows.Add(UndoRedoRows[i]);
+            //}
 
+        }
         public override void AddValidationRules()
         {
             AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
@@ -131,7 +143,7 @@ namespace FdaViewModel.StageTransforms
             Name = elem.Name;
             LastEditDate = elem.LastEditDate;
             Description = elem.Description;
-            Curve = elem.RatingCurve;
+            Curve = elem.Curve;
         }
 
         public void AssignValuesFromEditorToCurrentElement()
@@ -139,7 +151,7 @@ namespace FdaViewModel.StageTransforms
             CurrentElement.LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             CurrentElement.Name = Name;
            ((RatingCurveElement) CurrentElement).Description = Description;
-            ((RatingCurveElement)CurrentElement).RatingCurve = Curve;
+            ((RatingCurveElement)CurrentElement).Curve = Curve;
         }
 
         //public OwnedElement CreateNewElement()
@@ -151,7 +163,7 @@ namespace FdaViewModel.StageTransforms
       
         public Statistics.UncertainCurveDataCollection GetTheElementsCurve()
         {
-            return ((RatingCurveElement)CurrentElement).RatingCurve;
+            return ((RatingCurveElement)CurrentElement).Curve;
         }
         public Statistics.UncertainCurveDataCollection GetTheEditorsCurve()
         {

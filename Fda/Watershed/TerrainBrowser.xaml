@@ -21,7 +21,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Content="Terrain Name" Grid.Row="0" Grid.Column="0" Margin="5"/>
-        <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5" Text="{Binding Path=TerrainName, Mode=TwoWay,ValidatesOnDataErrors=True}" />
+        <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5" Text="{Binding Path=Name, Mode=TwoWay,ValidatesOnDataErrors=True}" />
 
             <Label Content="Terrain Path" Grid.Row="1" Grid.Column="0" Margin="5"/>
         <CA:ComboBoxWithBrowser ItemsSource="{Binding Path=AvailablePaths}"  SelectedPath="{Binding OriginalPath}" Filter="Grid files (*.vrt;*.tif;*.flt)|*.vrt;*.tif;*.flt|All files (*.*) |*.*" ValidateToShapeTypes="False" Margin="5" Name="cmb_Path" Grid.Row="1" Grid.Column="1" CmbSelectionMade="cmb_Path_CmbSelectionMade"/>

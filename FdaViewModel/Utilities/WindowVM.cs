@@ -23,6 +23,9 @@ namespace FdaViewModel.Utilities
         public event LaunchNewWindowHandler LaunchNewWindow;
         #endregion
         #region Properties
+
+        public Study.FdaStudyVM StudyVM { get; set; }
+
         public BaseViewModel CurrentView
         {
             get { return _currentViewModel; }
@@ -86,7 +89,8 @@ namespace FdaViewModel.Utilities
         #region Constructors
         public WindowVM()
         {
-            CurrentView = new Study.FdaStudyVM();
+            StudyVM = new Study.FdaStudyVM();
+            CurrentView = StudyVM;
             Title = "FDA 2.0";
         }
         public WindowVM(BaseViewModel vm)
@@ -109,7 +113,13 @@ namespace FdaViewModel.Utilities
                 }
                 else
                 {
-                    CurrentView = vm;
+                    if(StudyVM.Tabs == null)
+                    {
+                        StudyVM.Tabs = new System.Collections.ObjectModel.ObservableCollection<DynamicTabVM>();
+                    }
+                    StudyVM.Tabs.Add(new DynamicTabVM(title, vm));
+                    StudyVM.SelectedTabIndex = StudyVM.Tabs.Count - 1;
+                    //CurrentView = vm;
                 }
             }else
             {

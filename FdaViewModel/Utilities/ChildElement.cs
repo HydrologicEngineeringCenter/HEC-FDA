@@ -14,10 +14,24 @@ namespace FdaViewModel.Utilities
         #region Fields
         protected BaseFdaElement _Owner;
         //private object _CustomTreeViewHeader;
+        private string _Description;
+        private Statistics.UncertainCurveDataCollection _Curve;
+
 
         #endregion
         #region Properties
-           // public OwnerElement Owner { get; }
+        public Statistics.UncertainCurveDataCollection Curve
+        {
+            get { return _Curve; }
+            set { _Curve = value; NotifyPropertyChanged(); }
+        }
+        public string Description
+        {
+            get { return _Description; }
+            set { _Description = value; NotifyPropertyChanged(); }
+        }
+
+        // public OwnerElement Owner { get; }
         //public object CustomTreeViewHeader
         //{
         //    get { return _CustomTreeViewHeader; }
@@ -35,7 +49,7 @@ namespace FdaViewModel.Utilities
         {
             RenameVM renameViewModel = new RenameVM(Name);
             Navigate(renameViewModel, true, true, "Rename");
-            if(renameViewModel.WasCancled == true) { return; }
+            if(renameViewModel.WasCanceled == true) { return; }
             if (CheckForNameConflict(renameViewModel.Name) == true)
             {
                 string newName;
@@ -52,7 +66,7 @@ namespace FdaViewModel.Utilities
                 {
                     renameViewModel = new RenameVM(newName);
                     Navigate(renameViewModel, true, true);
-                    if (renameViewModel.WasCancled)
+                    if (renameViewModel.WasCanceled)
                     {
                         //user aborted
                         return;
@@ -245,7 +259,7 @@ namespace FdaViewModel.Utilities
                     //special logic for deleting the terrain file from the study directory
                     if (this.GetType() == typeof(Watershed.TerrainElement))
                     {
-                        CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png", "...Deleting");
+                        CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png", " -Deleting",true);
                         this.Actions.Clear();           
                         RemoveTerrainFileOnBackgroundThread(o);
                     }

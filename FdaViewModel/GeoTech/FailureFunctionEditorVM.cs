@@ -11,7 +11,7 @@ using Statistics;
 namespace FdaViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 2:11:22 PM)]
-    public class FailureFunctionEditorVM : Utilities.Transactions.TransactionAndMessageBase, Utilities.ISaveUndoRedo
+    public class FailureFunctionEditorVM : Utilities.Transactions.TransactionAndMessageBase
     {
         #region Notes
         // Created By: q0heccdm
@@ -29,9 +29,12 @@ namespace FdaViewModel.GeoTech
         #region Properties
         public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
 
-      
 
-    
+        public int SelectedIndexInUndoList
+        {
+            set { CurrentElement.ChangeIndex += value + 1; Undo(); }
+        }
+
         public LeveeFeatureElement SelectedLateralStructure
         {
             get { return _SelectedLateralStructure; }
@@ -87,22 +90,22 @@ namespace FdaViewModel.GeoTech
             AssignValuesFromElementToEditor(elem);
 
             DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
-            UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
+            //UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
         }
         #endregion
         #region Voids
         public override void Undo()
         {
-            UndoElement(this);
+           // UndoElement(this);
         }
 
         public override void Redo()
         {
-            RedoElement(this);
+            //RedoElement(this);
         }
         public override void SaveWhileEditing()
         {
-            SaveAction(this);
+            //SaveAction(this);
            // _OwnerNode.SaveElementWhileEditing(this);
         }
         public override void AddValidationRules()
@@ -114,7 +117,16 @@ namespace FdaViewModel.GeoTech
         {
             //throw new NotImplementedException();
         }
+        public void UpdateTheUndoRedoRowItems()
+        {
+            //int currentIndex = CurrentElement.ChangeIndex;
+            //RedoRows.Clear();
+            //for (int i = currentIndex + 1; i < UndoRedoRows.Count; i++)
+            //{
+            //    RedoRows.Add(UndoRedoRows[i]);
+            //}
 
+        }
         public void AssignValuesFromElementToEditor(OwnedElement element)
         {
             FailureFunctionElement elem = (FailureFunctionElement)element;
@@ -122,7 +134,7 @@ namespace FdaViewModel.GeoTech
             SelectedLateralStructure = elem.SelectedLateralStructure;
             LastEditDate = elem.LastEditDate;
             Description = elem.Description;
-            Curve = elem.FailureFunctionCurve;
+            Curve = elem.Curve;
         }
         public void AssignValuesFromEditorToCurrentElement()
         {
@@ -130,12 +142,12 @@ namespace FdaViewModel.GeoTech
             CurrentElement.Name = Name;
             ((FailureFunctionElement)CurrentElement).SelectedLateralStructure = SelectedLateralStructure;
             ((FailureFunctionElement)CurrentElement).Description = Description;
-            ((FailureFunctionElement)CurrentElement).FailureFunctionCurve = Curve;
+            ((FailureFunctionElement)CurrentElement).Curve = Curve;
         }
 
         public UncertainCurveDataCollection GetTheElementsCurve()
         {
-            return ((FailureFunctionElement)CurrentElement).FailureFunctionCurve;
+            return ((FailureFunctionElement)CurrentElement).Curve;
         }
 
         public UncertainCurveDataCollection GetTheEditorsCurve()

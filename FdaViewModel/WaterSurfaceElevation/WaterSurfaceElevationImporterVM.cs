@@ -32,11 +32,7 @@ namespace FdaViewModel.WaterSurfaceElevation
         }
         public List<string> ListOfOriginalPaths { get; set; } //this is only for messaging out in the transaction log
         public Utilities.OwnerElement ParentElement { get; set; }
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged(); }
-        }
+   
         public string Description
         {
             get { return _Description; }
@@ -54,11 +50,12 @@ namespace FdaViewModel.WaterSurfaceElevation
             set { _ListOfRows = value; NotifyPropertyChanged(); }
         }
 
-        public bool HasFatalError { get; internal set; }
+        //public bool HasFatalError { get; internal set; }
         #endregion
         #region Constructors
-        public WaterSurfaceElevationImporterVM(Utilities.OwnerElement ownerElement)
+        public WaterSurfaceElevationImporterVM(Utilities.OwnerElement ownerElement, Action<BaseViewModel> ownerValidationRules)
         {
+            ownerValidationRules(this);
             _ListOfRows = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
             ParentElement = ownerElement;
         }
@@ -79,22 +76,22 @@ namespace FdaViewModel.WaterSurfaceElevation
             AddRule(nameof(Name), () => Name != null, "Name cannot be null.");
             AddRule(nameof(Name), () => Name != "", "Name cannot be null.");
            
-            //don't allow clicking with a name that already exists
-            AddRule(nameof(Name), () =>
-            {
+            ////don't allow clicking with a name that already exists
+            //AddRule(nameof(Name), () =>
+            //{
                 
-                foreach (Utilities.OwnedElement ele in ParentElement.Elements)
-                {
-                    if(Name == ele.Name)
-                    {
-                        return false;
-                    }
-                }
+            //    foreach (Utilities.OwnedElement ele in ParentElement.Elements)
+            //    {
+            //        if(Name == ele.Name)
+            //        {
+            //            return false;
+            //        }
+            //    }
 
-                    return true;
+            //        return true;
                 
 
-            }, "A water surface profile with that name already exists.");
+            //}, "A water surface profile with that name already exists.");
 
 
 

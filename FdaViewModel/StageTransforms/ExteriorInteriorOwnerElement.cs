@@ -49,19 +49,19 @@ namespace FdaViewModel.StageTransforms
 
         public void AddNewExteriorInteriorCurve(object arg1, EventArgs arg2)
         {
-            ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar));
-            Navigate(vm);
-            if (!vm.WasCancled)
-            {
-                if (!vm.HasError)
-                {
-                    string creationDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            //ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar));
+            //Navigate(vm);
+            //if (!vm.WasCancled)
+            //{
+            //    if (!vm.HasError)
+            //    {
+            //        string creationDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
 
-                    ExteriorInteriorElement ele = new ExteriorInteriorElement(vm.Name,creationDate, vm.Description, vm.Curve, this);
-                    AddElement(ele);
-                    AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ele.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(ExteriorInteriorElement)));
-                }
-            }
+            //        ExteriorInteriorElement ele = new ExteriorInteriorElement(vm.Name,creationDate, vm.Description, vm.Curve, this);
+            //        AddElement(ele);
+            //        AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ele.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(ExteriorInteriorElement)));
+            //    }
+            //}
         }
         public override void AddBaseElements()
         {
@@ -88,10 +88,11 @@ namespace FdaViewModel.StageTransforms
         {
             return new Type[] { typeof(string),typeof(string), typeof(string), typeof(string) };
         }
-        public override OwnedElement CreateElementFromEditor(ISaveUndoRedo editorVM)
+        public override OwnedElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
         {
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            return new ExteriorInteriorElement(editorVM.Name, editDate, ((ExteriorInteriorEditorVM)editorVM).Description, ((ExteriorInteriorEditorVM)editorVM).Curve, this);
+            //return new ExteriorInteriorElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve, this);
+            return null;
         }
         public override OwnedElement CreateElementFromRowData(object[] rowData)
         {

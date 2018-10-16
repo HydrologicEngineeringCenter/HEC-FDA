@@ -398,7 +398,7 @@ namespace FdaViewModel.Conditions
         private Plots.IndividualLinkedPlotControlVM BuildRatingControlFromElement()
         {
             List<StageTransforms.RatingCurveElement> listOfRatingCurves = GetElementsOfType<StageTransforms.RatingCurveElement>();
-            UncertainCurveDataCollection curve = RatingCurveElement.RatingCurve;
+            UncertainCurveDataCollection curve = RatingCurveElement.Curve;
             FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction ratFunc =
                 new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.Rating);
 
@@ -531,13 +531,13 @@ namespace FdaViewModel.Conditions
              //   UseAnalyiticalFlowFrequency, UseInflowOutflow, UseRatingCurve,UseExteriorInteriorStage,UseAggregatedStageDamage);
 
             ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, infOutControl, ratingControl, extIntStageControl, stageDamageControl, damageFrequencyControl,
-                Name,Description,AnalysisYear,ImpactAreaElement, ThresholdType, ThresholdValue);
+                Name,Description,AnalysisYear,ImpactAreaElement, ThresholdType, ThresholdValue, (editorVM) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(editorVM));
             ///////////////////////////////////////
 
 
             //ConditionsEditorVM vm = new ConditionsEditorVM(Name,Description, AnalysisYear, impactAreas,ImpactAreaSet,ImpactArea, UseAnalyiticalFlowFrequency, freqeles, AnalyticalFlowFrequency, UseInflowOutflow, inflowOutflowList,InflowOutflowElement,UseRatingCurve, ratingeles,RatingCurve, UseExteriorInteriorStage, extIntList,ExteriorInteriorElement,UseLevee,leveeList,LeveeElement,UseFailureFunction,failureFunctionList,FailureFunctionElement,UseAggregatedStageDamage, damageles, StageDamage,UseThreshold,ThresholdType,ThresholdValue, (ConditionsOwnerElement)_Owner);
             Navigate(vm);
-            if (!vm.WasCancled)
+            if (!vm.WasCanceled)
             {
                 if (!vm.HasError)
                 {
@@ -571,7 +571,7 @@ namespace FdaViewModel.Conditions
 
            // listOfBaseFunctions.Add(inflowOutflow);
 
-            FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)RatingCurveElement.RatingCurve, FdaModel.Functions.FunctionTypes.Rating);
+            FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)RatingCurveElement.Curve, FdaModel.Functions.FunctionTypes.Rating);
 
             listOfBaseFunctions.Add(rating);
 

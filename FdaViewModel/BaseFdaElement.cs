@@ -9,29 +9,36 @@ namespace FdaViewModel
         #region Notes
         #endregion
         #region Fields
-        private string _Name;
+        //private string _Name;
         private List<Utilities.NamedAction> _Actions;
         private Utilities.CustomHeaderVM _CustomTreeViewHeader;
+        private bool _TableContainsGeoData = false;
 
         #endregion
         #region Events
         public TransactionEventHandler TransactionEvent;
         #endregion
         #region Properties
+        public bool TableContainsGeoData
+        {
+            get { return _TableContainsGeoData; }
+            set { _TableContainsGeoData = value; }
+        }
         public Utilities.CustomHeaderVM CustomTreeViewHeader
         {
             get { return _CustomTreeViewHeader; }
             set { _CustomTreeViewHeader = value; NotifyPropertyChanged(nameof(CustomTreeViewHeader)); }
         }
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; UpdateTheTreeViewHeader(value); NotifyPropertyChanged(); }
-        }
-        public string LastEditDate
-        {
-            get;set;
-        }
+        //public string Name
+        //{
+        //    get { return _Name; }
+        //    set { _Name = value; UpdateTheTreeViewHeader(value); NotifyPropertyChanged(); }
+        //}
+
+        //public string LastEditDate
+        //{
+        //    get;set;
+        //}
         public abstract string TableName { get; }
         public List<Utilities.NamedAction> Actions
         {
@@ -79,7 +86,7 @@ namespace FdaViewModel
         {
             TransactionEvent?.Invoke(this, transaction);
         }
-        private void UpdateTheTreeViewHeader(string newName)
+        public void UpdateTreeViewHeader(string newName)
         {
             if (_CustomTreeViewHeader == null) { return; }
             string image = _CustomTreeViewHeader.ImageSource;

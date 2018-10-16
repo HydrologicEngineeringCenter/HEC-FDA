@@ -183,11 +183,6 @@ namespace FdaViewModel.Conditions
 
         public string Description { get;
             set; }
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged(); }
-        }
            
         public int Year
         {
@@ -242,8 +237,10 @@ namespace FdaViewModel.Conditions
             /// <param name="selectedImpArea"></param>
         public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas, Plots.IndividualLinkedPlotControlVM indLinkedPlotControl0VM, Plots.IndividualLinkedPlotControlVM control1VM,
             Plots.IndividualLinkedPlotControlVM control3VM, Plots.IndividualLinkedPlotControlVM control5VM, Plots.IndividualLinkedPlotControlVM control7VM, Plots.IndividualLinkedPlotControlVM control8VM,
-            string name, string description, int year, ImpactArea.ImpactAreaElement selectedImpArea, PerformanceThresholdTypes thresholdType, double thresholdValue) : this(impAreas, indLinkedPlotControl0VM, control1VM, control3VM, control5VM, control7VM, control8VM)
+            string name, string description, int year, ImpactArea.ImpactAreaElement selectedImpArea, PerformanceThresholdTypes thresholdType, double thresholdValue, Action<BaseViewModel> ownerValidationRules) : this(impAreas, indLinkedPlotControl0VM, control1VM, control3VM, control5VM, control7VM, control8VM, ownerValidationRules)
         {
+            ownerValidationRules(this);
+
             Name = name;
             Description = description;
             Year = year;
@@ -285,8 +282,10 @@ namespace FdaViewModel.Conditions
         /// <param name="control7VM"></param>
         /// <param name="control8VM"></param>
         public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas, Plots.IndividualLinkedPlotControlVM indLinkedPlotControl0VM, Plots.IndividualLinkedPlotControlVM control1VM, 
-            Plots.IndividualLinkedPlotControlVM control3VM, Plots.IndividualLinkedPlotControlVM control5VM, Plots.IndividualLinkedPlotControlVM control7VM, Plots.IndividualLinkedPlotControlVM control8VM)
+            Plots.IndividualLinkedPlotControlVM control3VM, Plots.IndividualLinkedPlotControlVM control5VM, Plots.IndividualLinkedPlotControlVM control7VM, Plots.IndividualLinkedPlotControlVM control8VM, Action<BaseViewModel> ownerValidationRules)
         {
+            ownerValidationRules(this);
+
             ImpactAreas = impAreas;
 
             Plot0ControlVM = indLinkedPlotControl0VM;

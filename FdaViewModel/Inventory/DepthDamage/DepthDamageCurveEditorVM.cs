@@ -182,7 +182,7 @@ namespace FdaViewModel.Inventory.DepthDamage
             OccupancyTypes.CreateNewDamCatVM vm = new OccupancyTypes.CreateNewDamCatVM();
 
             Navigate(vm, true, true, "Enter Depth Damage Curve Name");
-            if (vm.WasCancled == false)
+            if (vm.WasCanceled == false)
             {
                 if (vm.HasError == false)
                 {
@@ -199,7 +199,7 @@ namespace FdaViewModel.Inventory.DepthDamage
             OccupancyTypes.CreateNewDamCatVM vm = new OccupancyTypes.CreateNewDamCatVM();
 
             Navigate(vm, true, true, "Enter Depth Damage Curve Name");
-            if (vm.WasCancled == false)
+            if (vm.WasCanceled == false)
             {
                 if (vm.HasError == false)
                 {

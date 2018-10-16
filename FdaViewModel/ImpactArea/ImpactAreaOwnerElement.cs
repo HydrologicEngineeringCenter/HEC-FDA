@@ -60,9 +60,9 @@ namespace FdaViewModel.ImpactArea
                 observpaths.Add(s);
             }
             //i don't think the above code does anything usefull
-            ImpactAreaImporterVM vm = new ImpactAreaImporterVM(observpaths);
+            ImpactAreaImporterVM vm = new ImpactAreaImporterVM(observpaths, (editorVM) => AddOwnerRules(editorVM));
             Navigate(vm,true,true,"Import Impact Areas");
-            if (!vm.HasError & !vm.WasCancled)
+            if (!vm.HasError & !vm.WasCanceled)
             {
                 
                 if(vm.Description == null) { vm.Description = ""; }

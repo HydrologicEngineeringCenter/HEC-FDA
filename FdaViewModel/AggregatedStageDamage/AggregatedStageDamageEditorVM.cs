@@ -8,7 +8,7 @@ using Statistics;
 
 namespace FdaViewModel.AggregatedStageDamage
 {
-    public class AggregatedStageDamageEditorVM:Utilities.Transactions.TransactionAndMessageBase, Utilities.ISaveUndoRedo
+    public class AggregatedStageDamageEditorVM:Utilities.Transactions.TransactionAndMessageBase
     {
         #region Notes
         #endregion
@@ -24,8 +24,11 @@ namespace FdaViewModel.AggregatedStageDamage
         public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
 
 
-   
-       
+        public int SelectedIndexInUndoList
+        {
+            set { CurrentElement.ChangeIndex += value + 1; Undo(); }
+        }
+
         public string Description
         {
             get { return _Description; }
@@ -80,17 +83,26 @@ namespace FdaViewModel.AggregatedStageDamage
         #region Voids
         public override void Undo()
         {
-            UndoElement(this);
+            //UndoElement(this);
         }
+        public void UpdateTheUndoRedoRowItems()
+        {
+            //int currentIndex = CurrentElement.ChangeIndex;
+            //RedoRows.Clear();
+            //for (int i = currentIndex + 1; i < UndoRedoRows.Count; i++)
+            //{
+            //    RedoRows.Add(UndoRedoRows[i]);
+            //}
 
+        }
         public override void Redo()
         {
-            RedoElement(this);
+            //RedoElement(this);
         }
 
         public override void SaveWhileEditing()
         {
-            SaveAction(this);
+            //SaveAction(this);
             //_OwnerNode.SaveElementWhileEditing(this);
         }
         public override void AddValidationRules()

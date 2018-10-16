@@ -7,6 +7,7 @@ using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
+using System.Xml.Linq;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -55,114 +56,187 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         }
 
         #region SaveTables
-        private void SaveNormalTable(System.Data.DataTable dtable, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
-        {
-            dtable.Columns.Add("X", typeof(double));
-            dtable.Columns.Add("Mean", typeof(double));
-            dtable.Columns.Add("StDev", typeof(double));
+        //private void SaveNormalTable(System.Data.DataTable dtable, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        //{
+        //    dtable.Columns.Add("X", typeof(double));
+        //    dtable.Columns.Add("Mean", typeof(double));
+        //    dtable.Columns.Add("StDev", typeof(double));
 
+        //    for (int j = 0; j < XValues.Count; j++)
+        //    {
+        //        object[] ddRow = new object[3];
+        //        ddRow[0] = XValues[j];
+        //        ddRow[1] = ((Statistics.Normal)YValues[j]).GetMean;
+        //        ddRow[2] = ((Statistics.Normal)YValues[j]).GetStDev;
+        //        dtable.Rows.Add(ddRow);
+        //    }
+        //    Storage.Connection.Instance.Reader.SaveDataTable(dtable);
+        //}
+
+        private string CreateNormalDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        {
+            XElement xElement = new XElement("NormalDistribution");
             for (int j = 0; j < XValues.Count; j++)
             {
-                object[] ddRow = new object[3];
-                ddRow[0] = XValues[j];
-                ddRow[1] = ((Statistics.Normal)YValues[j]).GetMean;
-                ddRow[2] = ((Statistics.Normal)YValues[j]).GetStDev;
-                dtable.Rows.Add(ddRow);
+                XElement ordinateElement = new XElement("Ordinate");
+
+                ordinateElement.SetAttributeValue("x", XValues[j]);
+                ordinateElement.SetAttributeValue("mean", ((Statistics.Normal)YValues[j]).GetMean);
+                ordinateElement.SetAttributeValue("stDev", ((Statistics.Normal)YValues[j]).GetStDev);
+
+                xElement.Add(ordinateElement);
             }
-            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
+            return xElement.ToString();
         }
 
-        private void SaveTriangularTable(System.Data.DataTable dtable, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        //private void SaveTriangularTable(System.Data.DataTable dtable, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        //{
+        //    dtable.Columns.Add("X", typeof(double));
+        //    dtable.Columns.Add("Min", typeof(double));
+        //    dtable.Columns.Add("Max", typeof(double));
+        //    dtable.Columns.Add("MostLikely", typeof(double));
+
+
+        //    for (int j = 0; j < XValues.Count; j++)
+        //    {
+        //        object[] ddRow = new object[4];
+        //        ddRow[0] = XValues[j];
+        //        ddRow[1] = ((Statistics.Triangular)YValues[j]).getMin;
+        //        ddRow[2] = ((Statistics.Triangular)YValues[j]).getMax;
+        //        ddRow[3] = ((Statistics.Triangular)YValues[j]).getMostlikely;
+
+        //        dtable.Rows.Add(ddRow);
+        //    }
+        //    Storage.Connection.Instance.Reader.SaveDataTable(dtable);
+
+        //}
+        private string CreateTriangularDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
         {
-            dtable.Columns.Add("X", typeof(double));
-            dtable.Columns.Add("Min", typeof(double));
-            dtable.Columns.Add("Max", typeof(double));
-            dtable.Columns.Add("MostLikely", typeof(double));
-
-
+            XElement xElement = new XElement("TriangularDistribution");
             for (int j = 0; j < XValues.Count; j++)
             {
-                object[] ddRow = new object[4];
-                ddRow[0] = XValues[j];
-                ddRow[1] = ((Statistics.Triangular)YValues[j]).getMin;
-                ddRow[2] = ((Statistics.Triangular)YValues[j]).getMax;
-                ddRow[3] = ((Statistics.Triangular)YValues[j]).getMostlikely;
+                XElement ordinateElement = new XElement("Ordinate");
 
-                dtable.Rows.Add(ddRow);
+                ordinateElement.SetAttributeValue("x", XValues[j]);
+                ordinateElement.SetAttributeValue("min", ((Statistics.Triangular)YValues[j]).getMin);
+                ordinateElement.SetAttributeValue("max", ((Statistics.Triangular)YValues[j]).getMax);
+                ordinateElement.SetAttributeValue("mostLikely", ((Statistics.Triangular)YValues[j]).getMostlikely);
+
+                xElement.Add(ordinateElement);
             }
-            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-
+            return xElement.ToString();
         }
 
-        private void SaveUniformTable(System.Data.DataTable dtable, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
-        {
-            dtable.Columns.Add("X", typeof(double));
-            dtable.Columns.Add("Min", typeof(double));
-            dtable.Columns.Add("Max", typeof(double));
 
+        //private void SaveUniformTable(System.Data.DataTable dtable, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        //{
+        //    dtable.Columns.Add("X", typeof(double));
+        //    dtable.Columns.Add("Min", typeof(double));
+        //    dtable.Columns.Add("Max", typeof(double));
+
+        //    for (int j = 0; j < XValues.Count; j++)
+        //    {
+        //        object[] ddRow = new object[3];
+        //        ddRow[0] = XValues[j];
+        //        ddRow[1] = ((Statistics.Uniform)YValues[j]).GetMin;
+        //        ddRow[2] = ((Statistics.Uniform)YValues[j]).GetMax;
+
+        //        dtable.Rows.Add(ddRow);
+        //    }
+        //    Storage.Connection.Instance.Reader.SaveDataTable(dtable);
+        //}
+
+        private string CreateUniformDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        {
+            XElement xElement = new XElement("UniformDistribution");
             for (int j = 0; j < XValues.Count; j++)
             {
-                object[] ddRow = new object[3];
-                ddRow[0] = XValues[j];
-                ddRow[1] = ((Statistics.Uniform)YValues[j]).GetMin;
-                ddRow[2] = ((Statistics.Uniform)YValues[j]).GetMax;
+                XElement ordinateElement = new XElement("Ordinate");
 
-                dtable.Rows.Add(ddRow);
+                ordinateElement.SetAttributeValue("x", XValues[j]);
+                ordinateElement.SetAttributeValue("min", ((Statistics.Uniform)YValues[j]).GetMin);
+                ordinateElement.SetAttributeValue("max", ((Statistics.Uniform)YValues[j]).GetMax);
+
+                xElement.Add(ordinateElement);
             }
-            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
+            return xElement.ToString();
         }
 
-        private void SaveNoneTable(System.Data.DataTable dtable, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
-        {
-            dtable.Columns.Add("X", typeof(double));
-            dtable.Columns.Add("Y", typeof(double));
+        //private void SaveNoneTable(System.Data.DataTable dtable, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        //{
+        //    dtable.Columns.Add("X", typeof(double));
+        //    dtable.Columns.Add("Y", typeof(double));
 
+        //    for (int j = 0; j < XValues.Count; j++)
+        //    {
+        //        object[] ddRow = new object[4];
+        //        ddRow[0] = XValues[j];
+        //        //ddRow[1] = ((Statistics.None)YValues[j]);
+        //        ddRow[1] = YValues[j];
+
+        //        dtable.Rows.Add(ddRow);
+        //    }
+        //    Storage.Connection.Instance.Reader.SaveDataTable(dtable);
+        //}
+
+        private string CreateNoneDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        {
+            
+            XElement xElement = new XElement("NoneDistribution");
             for (int j = 0; j < XValues.Count; j++)
             {
-                object[] ddRow = new object[4];
-                ddRow[0] = XValues[j];
-                //ddRow[1] = ((Statistics.None)YValues[j]);
-                ddRow[1] = YValues[j];
+                XElement ordinateElement = new XElement("Ordinate");
 
-                dtable.Rows.Add(ddRow);
-            }
-            Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-        }
-        
-        private void SaveDepthDamageTable(string tableName, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
-        {
-            //string strucTableName = Name + " - " + ot.Name + tableNameAppender;
-            System.Data.DataTable dtable = new System.Data.DataTable(tableName);
-            if (Storage.Connection.Instance.TableNames().Contains(tableName))
-            {
-                //already exists... delete?
-                Storage.Connection.Instance.DeleteTable(dtable.TableName);
-            }
+                ordinateElement.SetAttributeValue("x", XValues[j]);
+                ordinateElement.SetAttributeValue("y", ((Statistics.None)YValues[j]).GetCentralTendency);
 
-            if (YValues[0].GetType() == typeof(Statistics.Normal))
-            {
-                SaveNormalTable(dtable, XValues, YValues);
+                xElement.Add(ordinateElement);
             }
-            else if (YValues[0].GetType() == typeof(Statistics.Triangular))
-            {
-                SaveTriangularTable(dtable, XValues, YValues);
-            }
-            else if (YValues[0].GetType() == typeof(Statistics.Uniform))
-            {
-                SaveUniformTable(dtable, XValues, YValues);
-            }
-            else if (YValues[0].GetType() == typeof(Statistics.None))
-            {
-                SaveNoneTable(dtable, XValues, YValues);
-            }
+            return xElement.ToString();
         }
+
+        //private void SaveDepthDamageTable(string tableName, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        //{
+        //    Stopwatch sw = new Stopwatch();
+        //    sw.Start();
+
+        //    //string strucTableName = Name + " - " + ot.Name + tableNameAppender;
+        //    System.Data.DataTable dtable = new System.Data.DataTable(tableName);
+        //    if (Storage.Connection.Instance.TableNames().Contains(tableName))
+        //    {
+        //        //already exists... delete?
+        //        Storage.Connection.Instance.DeleteTable(dtable.TableName);
+        //    }
+
+        //    if (YValues[0].GetType() == typeof(Statistics.Normal))
+        //    {
+        //        SaveNormalTable(dtable, XValues, YValues);
+        //    }
+        //    else if (YValues[0].GetType() == typeof(Statistics.Triangular))
+        //    {
+        //        SaveTriangularTable(dtable, XValues, YValues);
+        //    }
+        //    else if (YValues[0].GetType() == typeof(Statistics.Uniform))
+        //    {
+        //        SaveUniformTable(dtable, XValues, YValues);
+        //    }
+        //    else if (YValues[0].GetType() == typeof(Statistics.None))
+        //    {
+        //        SaveNoneTable(dtable, XValues, YValues);
+        //    }
+
+        //    sw.Stop();
+        //    Console.WriteLine("**  time per depth damage table: " + sw.Elapsed.ToString());
+        //    sw.Reset();
+
+        //}
 
         #endregion
-        
+
 
         public override void Save()
         {
-            Stopwatch sw = new Stopwatch();
+            Stopwatch swEachOccType = new Stopwatch();
             Stopwatch swTotal = new Stopwatch();
             Stopwatch swApply = new Stopwatch();
             swTotal.Start();
@@ -184,12 +258,13 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                     "IsStructChecked","VarInStructValueType","StructMin","StructMax","StructStDev","StructDistType", "IsContChecked",
                     "VarInContValueType", "ContMin", "ContMax", "ContStDev", "ContDistType", "IsVehChecked", "VarInVehValueType",
                     "VehMin", "VehMax", "VehStDev", "VehDistType", "IsOtherChecked", "VarInOtherValueType", "OtherMin", "OtherMax",
-                    "OtherStDev", "OtherDistType","GroupName" };
+                    "OtherStDev", "OtherDistType","GroupName", "StructureCurve","ContentCurve","VehicleCurve","OtherCurve" };
                 Type[] colTypes = new Type[] { typeof(string), typeof(string), typeof(string), typeof(string), typeof(double),
                     typeof(double), typeof(double), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double),
                     typeof(string), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),
                     typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string), typeof(bool),
-                    typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),typeof(string) };
+                    typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),typeof(string),typeof(string),
+                    typeof(string),typeof(string),typeof(string)};
 
                 Storage.Connection.Instance.CreateTable(TableName, colNames, colTypes);
                 DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
@@ -198,43 +273,52 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
                 foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in ListOfOccupancyTypes)
                 {
-                    //write table for structures
-                    if (ot.GetStructurePercentDD.YValues.Count > 0)
-                    {
-                        string strucTableName = Name + " - " + ot.Name + STRUCTURE_DD_CURVE_NAME;
-                        SaveDepthDamageTable(strucTableName, ot.GetStructurePercentDD.XValues, ot.GetStructurePercentDD.YValues);   
-                        //SaveStructureDepthDamage(ot);
-                    }
+                    swEachOccType.Start();
 
-                    //write a table for content dd curve
-                    if (ot.GetContentPercentDD.YValues.Count > 0)
-                    {
-                        string strucTableName = Name + " - " + ot.Name + CONTENT_DD_CURVE_NAME;
-                        SaveDepthDamageTable(strucTableName, ot.GetContentPercentDD.XValues, ot.GetContentPercentDD.YValues);
-                        //SaveContentDepthDamage(ot);
-                    }
+                    ////write table for structures
+                    //if (ot.GetStructurePercentDD.YValues.Count > 0)
+                    //{
+                    //    string strucTableName = Name + " - " + ot.Name + STRUCTURE_DD_CURVE_NAME;
+                       // SaveDepthDamageTable(strucTableName, ot.GetStructurePercentDD.XValues, ot.GetStructurePercentDD.YValues);   
+                    //    //SaveStructureDepthDamage(ot);
+                    //}
 
-                    //write for vehicle dd curve
-                    if (ot.GetVehiclePercentDD.YValues.Count > 0)
-                    {
-                        string strucTableName = Name + " - " + ot.Name + VEHICLE_DD_CURVE_NAME;
-                        SaveDepthDamageTable(strucTableName, ot.GetVehiclePercentDD.XValues, ot.GetVehiclePercentDD.YValues);
-                        //SaveVehicleDepthDamage(ot);
-                    }
+                    ////write a table for content dd curve
+                    //if (ot.GetContentPercentDD.YValues.Count > 0)
+                    //{
+                    //    string contTableName = Name + " - " + ot.Name + CONTENT_DD_CURVE_NAME;
+                    //    SaveDepthDamageTable(contTableName, ot.GetContentPercentDD.XValues, ot.GetContentPercentDD.YValues);
+                    //    //SaveContentDepthDamage(ot);
+                    //}
 
-                    // other dd curve
-                    if (ot.GetOtherPercentDD.YValues.Count > 0)
-                    {
-                        string strucTableName = Name + " - " + ot.Name + OTHER_DD_CURVE_NAME;
-                        SaveDepthDamageTable(strucTableName, ot.GetOtherPercentDD.XValues, ot.GetOtherPercentDD.YValues);
-                        //SaveOtherDepthDamage(ot);
-                    }                   
+                    ////write for vehicle dd curve
+                    //if (ot.GetVehiclePercentDD.YValues.Count > 0)
+                    //{
+                    //    string vehicleTableName = Name + " - " + ot.Name + VEHICLE_DD_CURVE_NAME;
+                    //    SaveDepthDamageTable(vehicleTableName, ot.GetVehiclePercentDD.XValues, ot.GetVehiclePercentDD.YValues);
+                    //    //SaveVehicleDepthDamage(ot);
+                    //}
+
+                    //// other dd curve
+                    //if (ot.GetOtherPercentDD.YValues.Count > 0)
+                    //{
+                    //    string otherTableName = Name + " - " + ot.Name + OTHER_DD_CURVE_NAME;
+                    //    SaveDepthDamageTable(otherTableName, ot.GetOtherPercentDD.XValues, ot.GetOtherPercentDD.YValues);
+                    //    //SaveOtherDepthDamage(ot);
+                    //}                   
+
+
+                    swEachOccType.Stop();
+                    Console.WriteLine("****  time per OT: " + swEachOccType.Elapsed.ToString());
+                    swEachOccType.Reset();
 
                     rows.Add(GetOccTypeRowForParentTable(ot).ToArray());
-                }             
+                }
                 tbl.AddRows(rows);
                 tbl.ApplyEdits();
                 Storage.Connection.Instance.Close();
+
+
                 swTotal.Stop();
                 Console.WriteLine("***************  total time to save: " + swTotal.Elapsed.ToString());
             }
@@ -322,8 +406,40 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
             //damcats and occtypes group name
             rowsList.Add(Name);
+
+
+            //structure curve xml
+            rowsList.Add(CreateXMLCurveString(ot.GetStructurePercentDD.Distribution, ot.GetStructurePercentDD.XValues, ot.GetStructurePercentDD.YValues));
+
+            //content curve xml
+            rowsList.Add(CreateXMLCurveString(ot.GetContentPercentDD.Distribution, ot.GetContentPercentDD.XValues, ot.GetContentPercentDD.YValues));
+            //vehicle curve xml
+            rowsList.Add(CreateXMLCurveString(ot.GetVehiclePercentDD.Distribution, ot.GetVehiclePercentDD.XValues, ot.GetVehiclePercentDD.YValues));
+            //other curve xml
+            rowsList.Add(CreateXMLCurveString(ot.GetOtherPercentDD.Distribution, ot.GetOtherPercentDD.XValues, ot.GetOtherPercentDD.YValues));
+
+
             return rowsList;
         }
+
+        private string CreateXMLCurveString(Statistics.UncertainCurveDataCollection.DistributionsEnum distType, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        {
+            switch(distType)
+            {
+                case Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal:
+                    return CreateNormalDistributionXML(XValues, YValues);
+                case Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular:
+                    return CreateTriangularDistributionXML(XValues, YValues);
+                case Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform:
+                    return CreateUniformDistributionXML(XValues, YValues);
+                case Statistics.UncertainCurveDataCollection.DistributionsEnum.None:
+                    return CreateNoneDistributionXML(XValues, YValues);
+
+            }
+            return "";
+        }
+
+        
 
         private object[] GetOccTypeInfoArray(Consequences_Assist.ComputableObjects.OccupancyType ot)
         {

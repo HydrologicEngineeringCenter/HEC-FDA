@@ -60,8 +60,34 @@ namespace Fda.Commands
                 vm.Save();
             }
 
-            vm.WasCancled = false;
-            window.Close();
+            vm.WasCanceled = false;
+
+            if (window is ViewWindow)
+            {
+                
+                FdaViewModel.Utilities.WindowVM winVM = (FdaViewModel.Utilities.WindowVM)window.DataContext;
+                if(winVM.StudyVM != null)
+                {
+                    if(winVM.StudyVM.SelectedTabIndex != -1)
+                    {
+                        winVM.StudyVM.Tabs.RemoveAt(winVM.StudyVM.SelectedTabIndex);
+                    }
+                    else
+                    {
+                        window.Close();
+                    }
+                }
+                else
+                {
+                    window.Close();
+                }
+
+            }
+            else
+            {
+                window.Close();
+            }
+
         }
         #endregion
         #region Functions

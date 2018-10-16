@@ -144,11 +144,11 @@ namespace FdaViewModel.Conditions
 
             Plots.IndividualLinkedPlotControlVM DamageFrequencyControl = BuildDefaultDamageFrequencyControl(this);
 
-            ConditionsPlotEditorVM vm2 = new ConditionsPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl, StageDamageControl, DamageFrequencyControl);
+            ConditionsPlotEditorVM vm2 = new ConditionsPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl, StageDamageControl, DamageFrequencyControl, (editorVM) => AddOwnerRules(editorVM));
 
             Navigate(vm2);
 
-            if (!vm2.WasCancled)
+            if (!vm2.WasCanceled)
             {
                 if (!vm2.HasError)
                 {

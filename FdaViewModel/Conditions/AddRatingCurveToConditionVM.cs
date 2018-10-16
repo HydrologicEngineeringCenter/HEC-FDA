@@ -56,7 +56,7 @@ namespace FdaViewModel.Conditions
         {
             get
             {
-                UncertainCurveDataCollection curve = ((StageTransforms.RatingCurveElement)SelectedElement).RatingCurve;
+                UncertainCurveDataCollection curve = ((StageTransforms.RatingCurveElement)SelectedElement).Curve;
                 FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = 
                     new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.Rating);
 

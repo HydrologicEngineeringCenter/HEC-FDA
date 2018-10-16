@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -52,27 +53,30 @@ namespace FdaViewModel.Watershed
         }
         private void AddNew(object arg1, EventArgs arg2)
         {
-            TerrainBrowserVM vm = new TerrainBrowserVM(this);
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                .WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName));
+
+            TerrainBrowserVM vm = new TerrainBrowserVM(this, actionManager);
             //vm.TerrainFileFinishedCopying += ReplaceTemporaryTerrainNode;
-            Navigate(vm);
-            if (!vm.WasCancled)
+            Navigate(vm, false,true,"Import Terrain");
+            if (!vm.WasCanceled)
             {
                 if (!vm.HasFatalError)
                 {
                     //disable the context menu until the terrain is fully copied over and put a decorator on it
-                    TerrainElement t = new TerrainElement(vm.TerrainName,System.IO.Path.GetFileName(vm.TerrainPath),this,true); // file extention?
+                    TerrainElement t = new TerrainElement(vm.Name,System.IO.Path.GetFileName(vm.TerrainPath),this,true); // file extention?
                     //add to map window handler?
                     AddElement(t,false);//false-don't save this one
 
 
-                    AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.TerrainName, Utilities.Transactions.TransactionEnum.CreateNew, "File " + vm.OriginalPath + " was saved as a terrain to " + vm.TerrainPath,nameof(TerrainElement)));
+                    AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.CreateNew, "File " + vm.OriginalPath + " was saved as a terrain to " + vm.TerrainPath,nameof(TerrainElement)));
                 }
             }
         }
         private void ReplaceTemporaryTerrainNode(object sender, EventArgs e)
         {
             TerrainBrowserVM vm = (TerrainBrowserVM)sender;
-            string name = vm.TerrainName;
+            string name = vm.Name;
 
             //remove the temporary node and replace it
             foreach(Utilities.OwnedElement elem in Elements )
@@ -109,6 +113,14 @@ namespace FdaViewModel.Watershed
         {
             return false;
         }
+
+        //public override OwnedElement CreateElementFromEditor(Editors.BaseEditorVM vm)
+        //{
+        //    TerrainBrowserVM editorVM = (TerrainBrowserVM)vm;
+        //    //Editors.CurveEditorVM vm = (Editors.CurveEditorVM)editorVM;
+        //    //string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+        //    return new TerrainElement(editorVM.Name,editorVM.TerrainPath,this);
+        //}
 
         public override void AddElement(object[] rowData)
         {

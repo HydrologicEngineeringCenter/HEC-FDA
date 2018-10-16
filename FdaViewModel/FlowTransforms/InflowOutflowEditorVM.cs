@@ -24,16 +24,34 @@ namespace FdaViewModel.FlowTransforms
         private Statistics.UncertainCurveDataCollection _Curve;
         private string _PlotTitle = "Inflow-Outflow Curve";
         private List<Utilities.Transactions.TransactionRowItem> _Transactions;
-        private ObservableCollection<Utilities.UndoRedoRowItem> _UndoRedoRows;
+        private ObservableCollection<Utilities.UndoRedoRowItem> _UndoRedoRows = new ObservableCollection<UndoRedoRowItem>();
+        private ObservableCollection<Utilities.UndoRedoRowItem> _UndoRows;
+        private ObservableCollection<Utilities.UndoRedoRowItem> _RedoRows;
+
         #endregion
         #region Properties
-     
+
         public ObservableCollection<Utilities.UndoRedoRowItem> UndoRedoRows
         {
             get { return _UndoRedoRows; }
             set { _UndoRedoRows = value; NotifyPropertyChanged(); }
         }
-
+        public ObservableCollection<Utilities.UndoRedoRowItem> UndoRows
+        {
+            get { return _UndoRows; }
+            set { _UndoRows = value; NotifyPropertyChanged(); }
+        }
+        public ObservableCollection<Utilities.UndoRedoRowItem> RedoRows
+        {
+            get { return _RedoRows; }
+            set { _RedoRows = value; NotifyPropertyChanged(); }
+        }
+        public int SelectedIndexInUndoList
+        {
+            get { return 0; }
+            set { if (value == -1) { return; } CurrentElement.ChangeIndex += value; Undo(); }
+        }
+        public int SelectedIndexInRedoList { get; set; }
 
         public OwnedElement CurrentElement { get; set; }
         public Statistics.UncertainCurveDataCollection Curve
@@ -52,10 +70,10 @@ namespace FdaViewModel.FlowTransforms
             get { return _Description; }
             set { _Description = value; NotifyPropertyChanged(); }
         }
+        public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
  
         #endregion
         #region Constructors
-        public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
 
         public InflowOutflowEditorVM(Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) : base()//InflowOutflowOwnerElement owner):base() //Action saveAction) : base()
         {
@@ -69,9 +87,9 @@ namespace FdaViewModel.FlowTransforms
             SaveAction = saveAction;
             Curve = new Statistics.UncertainCurveIncreasing(xs, yValues, true, false,Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
         }
-        public InflowOutflowEditorVM(InflowOutflowElement elem, Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) : base(elem)
+        public InflowOutflowEditorVM(InflowOutflowElement elem, Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel,string> ownerValidationRules) : base(elem)
         {
-            ownerValidationRules(this);
+            ownerValidationRules(this,elem.Name);
 
             CurrentElement = elem;
             CurrentElement.ChangeIndex = 0;
@@ -82,26 +100,41 @@ namespace FdaViewModel.FlowTransforms
 
             DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
 
-            UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
-            UndoRedoRows = CreateUndoRedoRows(changeTableView,0,1);
+            //UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
+            //UndoRedoRows = CreateUndoRedoRows(changeTableView,0,1);
+            UpdateTheUndoRedoRowItems();
 
         }
 
         #endregion
         #region Voids
-         
+        public void UpdateTheUndoRedoRowItems()
+        {
+            //UndoRows = new ObservableCollection<UndoRedoRowItem>();
+            //RedoRows = new ObservableCollection<UndoRedoRowItem>();
+            //int currentIndex = CurrentElement.ChangeIndex;
+            
+            //for(int i = currentIndex+1;i<UndoRedoRows.Count;i++)
+            //{
+            //    UndoRows.Add(UndoRedoRows[i]);
+            //}
+
+        }
         public override void Undo()
         {
-            UndoElement(this);
+           // UndoElement(this);
         }
 
         public override void Redo()
         {
-            RedoElement(this);
+            //RedoElement(this);
         }
 
         public override void SaveWhileEditing()
         {
+            
+            UndoRedoRows.Insert(0, new UndoRedoRowItem(Name, DateTime.Now.ToString("G")));
+            UpdateTheUndoRedoRowItems();
             SaveAction(this);
 
         }
@@ -159,6 +192,11 @@ namespace FdaViewModel.FlowTransforms
         public void UpdateNameWithNewValue(string name)
         {
             Name = name;
+        }
+
+        public void LoadInitialStateForUndoRedo()
+        {
+            throw new NotImplementedException();
         }
     }
 }

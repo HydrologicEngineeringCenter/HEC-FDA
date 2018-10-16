@@ -91,7 +91,7 @@ namespace Fda.WaterSurfaceElevation
             if( vm.OKButtonClicked() == true) //this runs some validation and returns true if everything was good
             {
                 var window = Window.GetWindow(this);
-                vm.WasCancled = false;
+                vm.WasCanceled = false;
                 window.Close();
             }
         }

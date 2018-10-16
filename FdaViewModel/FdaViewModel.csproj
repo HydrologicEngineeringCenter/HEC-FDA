@@ -53,12 +53,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\OpenTK.dll</HintPath>
     </Reference>
+    <Reference Include="OpenTK.GLControl, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4" />
     <Reference Include="OxyPlot">
       <HintPath>..\lib\OxyPlot.dll</HintPath>
     </Reference>
     <Reference Include="OxyPlot.Wpf">
       <HintPath>..\lib\OxyPlot.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="Statistics">
       <HintPath>..\lib\Statistics.dll</HintPath>
@@ -77,12 +79,14 @@
     <Reference Include="System.Data.SQLite.Linq">
       <HintPath>..\lib\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AggregatedStageDamage\AggregatedStageDamageEditorVM.cs" />
@@ -103,6 +107,13 @@
     <Compile Include="Conditions\ConditionsOwnerElement.cs" />
     <Compile Include="Conditions\ConditionsPlotEditorVM.cs" />
     <Compile Include="Conditions\ConditionsTreeOwnerElement.cs" />
+    <Compile Include="Editors\BaseEditorVM.cs" />
+    <Compile Include="Editors\CurveEditorFactory.cs" />
+    <Compile Include="Editors\CurveEditorVM.cs" />
+    <Compile Include="Editors\EditorActionManager.cs" />
+    <Compile Include="Editors\FailureFunctionCurveEditorVM.cs" />
+    <Compile Include="Editors\SaveUndoRedoHelper.cs" />
+    <Compile Include="Editors\UndoRedoManager.cs" />
     <Compile Include="ExtentionMethods.cs" />
     <Compile Include="FlowTransforms\FlowTransformsOwnerElement.cs" />
     <Compile Include="FlowTransforms\InflowOutflowEditorVM.cs" />
@@ -205,8 +216,11 @@
     <Compile Include="Utilities\DatabaseColumn.cs" />
     <Compile Include="Utilities\DatabaseTable.cs" />
     <Compile Include="ImpactArea\ImpactAreaRowItem.cs" />
+    <Compile Include="Utilities\DynamicTabVM.cs" />
     <Compile Include="Utilities\IRowItem.cs" />
     <Compile Include="Utilities\ISaveUndoRedo.cs" />
+    <Compile Include="Utilities\MapWindowControlVM.cs" />
+    <Compile Include="Utilities\MapWindowMapTreeViewConnector.cs" />
     <Compile Include="Utilities\MessageItem.cs" />
     <Compile Include="Utilities\MessageRowItem.cs" />
     <Compile Include="Utilities\MessagesVM.cs" />
@@ -218,6 +232,7 @@
     <Compile Include="Utilities\RemoveMapFeatureEventArgs.cs" />
     <Compile Include="Utilities\RenameVM.cs" />
     <Compile Include="Utilities\RowItem.cs" />
+    <Compile Include="Utilities\Transactions\ITransactionsAndMessages.cs" />
     <Compile Include="Utilities\Transactions\Transaction.cs" />
     <Compile Include="Utilities\Transactions\TransactionAndMessageBase.cs" />
     <Compile Include="Utilities\Transactions\TransactionEnum.cs" />
@@ -239,6 +254,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

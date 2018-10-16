@@ -40,9 +40,9 @@ namespace FdaViewModel.GeoTech
         #region Voids
         public void AddNewLeveeFeature(object arg1, EventArgs arg2)
         {
-            LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM();
+            LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM((editorVM) => AddOwnerRules(editorVM));
             Navigate(vm);
-            if (!vm.WasCancled)
+            if (!vm.WasCanceled)
             {
                 if (!vm.HasError)
                 {

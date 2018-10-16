@@ -35,16 +35,14 @@ namespace FdaViewModel
         private bool _HasFatalError;
         private bool _WasCanceled;
         private bool _HasChanges;
-        private bool _TableContainsGeoData = false;
         private List<FdaModel.Utilities.Messager.ErrorMessage> _messages;
         private Utilities.NamedAction _MessagesAction;
         private Utilities.NamedAction _ErrorsAction;
         private Utilities.NamedAction _HelpAction;
-        private ICommand _UndoCommand;
-        private ICommand _RedoCommand;
-        private ICommand _SaveWhileEditingCommand;
-        private bool _UndoEnabled = false;
-        private bool _RedoEnabled = false;
+
+
+
+
         private string _Name;
 
         #endregion
@@ -54,36 +52,13 @@ namespace FdaViewModel
             get { return _Name; }
             set { _Name = value; NotifyPropertyChanged(); }
         }
-        public bool UndoEnabled
-        {
-            get { return _UndoEnabled; }
-            set { _UndoEnabled = value; NotifyPropertyChanged(); }
-        }
-        public bool RedoEnabled
-        {
-            get { return _RedoEnabled; }
-            set { _RedoEnabled = value; NotifyPropertyChanged(); }
-        }
-        
-        public ICommand UndoCommand
-        {
-            get { return _UndoCommand ?? (_UndoCommand = new Utilities.CommandHandler(() => Undo(), true)); }
-        }
-        public ICommand RedoCommand
-        {
-            get { return _RedoCommand ?? (_RedoCommand = new Utilities.CommandHandler(() => Redo(), true)); }
-        }
-        public ICommand SaveWhileEditingCommand
-        {
-            get { return _SaveWhileEditingCommand ?? (_SaveWhileEditingCommand = new Utilities.CommandHandler(() => SaveWhileEditing(), true)); }
-        }
+
+    
+
+
         public string LastEditDate { get; set; }
 
-        public bool TableContainsGeoData
-        {
-            get { return _TableContainsGeoData; }
-            set { _TableContainsGeoData = value; }
-        }
+        
         public string this[string columnName]
         {
             get
@@ -127,7 +102,7 @@ namespace FdaViewModel
         public bool HasError { get { return _HasError; } }
         public bool HasFatalError { get { return _HasFatalError; } }
         public bool HasChanges { get { return _HasChanges; } }
-        public bool WasCancled
+        public bool WasCanceled
         {
             get { return _WasCanceled; }
             set { _WasCanceled = value; } //NotifyPropertyChanged(nameof(WasCancled)); }    
@@ -167,32 +142,7 @@ namespace FdaViewModel
         #endregion
         #region Voids
    
-        public void UpdateUndoRedoVisibility(DataBase_Reader.DataTableView tableView, int currentIndex)
-        {
-            if(tableView == null) { return; }
-            int numRows = tableView.NumberOfRows;
-            //if only 0 or 1 rows, there is no back and forth
-            if(numRows<2)
-            {
-                UndoEnabled = false;
-                RedoEnabled = false;
-            }
-            else if(currentIndex == numRows-1)//we are at the oldest record
-            {
-                UndoEnabled = false;
-                RedoEnabled = true;
-            }
-            else if(currentIndex == 0)//at the newest record
-            {
-                UndoEnabled = true;
-                RedoEnabled = false;
-            }
-            else //we are in the middle somewhere
-            {
-                UndoEnabled = true;
-                RedoEnabled = true;
-            }
-        }
+       
 
         private void DisplayErrors(object arg1, EventArgs arg2)
         {
@@ -294,7 +244,7 @@ namespace FdaViewModel
         {
             if (RequestNavigation != null)
             {
-                vm.WasCancled = true;
+                vm.WasCanceled = true;
                 RequestNavigation(vm, newWindow, asDialog, title);
             }
             else
@@ -375,52 +325,46 @@ namespace FdaViewModel
             }
         }
 
-        public void UndoElement(ISaveUndoRedo editorVM)
-        {
-            OwnedElement elem = editorVM.CurrentElement;
-            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(elem.ChangeTableName());
-            if (elem.ChangeIndex < changeTableView.NumberOfRows - 1)
-            {
-                OwnedElement prevElement = (OwnedElement)elem.GetPreviousElementFromChangeTable(elem.ChangeIndex + 1);
-                if (prevElement != null)// null if out of range index
-                {
-                    //cast to ISaveelement and tell it to assign its values
-                    editorVM.AssignValuesFromElementToEditor(prevElement);
-                    elem.ChangeIndex += 1;
-                }
-               // editorVM.UpdateUndoRedoButtons();
-               ((BaseViewModel)editorVM).UpdateUndoRedoVisibility(changeTableView, elem.ChangeIndex);
-            }
-        }
+        //public void UndoElement(ISaveUndoRedo editorVM)
+        //{
+        //    OwnedElement elem = editorVM.CurrentElement;
+        //    DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(elem.ChangeTableName());
+        //    if (elem.ChangeIndex < changeTableView.NumberOfRows - 1)
+        //    {
+        //        OwnedElement prevElement = (OwnedElement)elem.GetPreviousElementFromChangeTable(elem.ChangeIndex + 1);
+        //        if (prevElement != null)// null if out of range index
+        //        {
+        //            //cast to ISaveelement and tell it to assign its values
+        //            editorVM.AssignValuesFromElementToEditor(prevElement);
+        //            elem.ChangeIndex += 1;
+        //        }
+        //       // editorVM.UpdateUndoRedoButtons();
+        //       ((BaseViewModel)editorVM).UpdateUndoRedoVisibility(changeTableView, elem.ChangeIndex);
+        //        editorVM.UpdateTheUndoRedoRowItems();
+        //    }
+        //}
 
-        public void RedoElement(ISaveUndoRedo editorVM)
-        {
-            OwnedElement elem = editorVM.CurrentElement;
-            //get the previous state
-            if (elem.ChangeIndex > 0)
-            {
-                OwnedElement nextElement = (OwnedElement)elem.GetNextElementFromChangeTable(elem.ChangeIndex - 1);
-                if (nextElement != null)// null if out of range index
-                {
-                    editorVM.AssignValuesFromElementToEditor(nextElement);
-                    elem.ChangeIndex -= 1;
-                }
-                //editorVM.UpdateUndoRedoButtons();
-                DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(elem.ChangeTableName());
-                ((BaseViewModel)editorVM).UpdateUndoRedoVisibility(changeTableView, elem.ChangeIndex);
+        //public void RedoElement(ISaveUndoRedo editorVM)
+        //{
+        //    OwnedElement elem = editorVM.CurrentElement;
+        //    //get the previous state
+        //    if (elem.ChangeIndex > 0)
+        //    {
+        //        OwnedElement nextElement = (OwnedElement)elem.GetNextElementFromChangeTable(elem.ChangeIndex - 1);
+        //        if (nextElement != null)// null if out of range index
+        //        {
+        //            editorVM.AssignValuesFromElementToEditor(nextElement);
+        //            elem.ChangeIndex -= 1;
+        //        }
+        //        //editorVM.UpdateUndoRedoButtons();
+        //        DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(elem.ChangeTableName());
+        //        ((BaseViewModel)editorVM).UpdateUndoRedoVisibility(changeTableView, elem.ChangeIndex);
+        //        editorVM.UpdateTheUndoRedoRowItems();
 
-            }
-        }
+        //    }
+        //}
 
-        public ObservableCollection<UndoRedoRowItem> CreateUndoRedoRows(DataBase_Reader.DataTableView tableView, int nameIndex, int dateIndex)
-        {
-            ObservableCollection<UndoRedoRowItem> retVals = new ObservableCollection<UndoRedoRowItem>();
-            foreach (object[] row in tableView.GetRows(0, tableView.NumberOfRows - 1))
-            {
-                retVals.Add(new UndoRedoRowItem(row[nameIndex].ToString(), row[dateIndex].ToString()));
-            }
-            return retVals;
-        }
+     
         public virtual void OnClosing(object sender, EventArgs e)
         {
             Dispose();

@@ -60,9 +60,9 @@ namespace FdaViewModel.Inventory
             // get any point shapefiles from the map window
             //List<string> pointShapePaths = new List<string>();
             //ShapefilePathsOfType(ref pointShapePaths, Utilities.VectorFeatureType.Point);
-            ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM();
+            ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM((editorVM) => AddOwnerRules(editorVM));
             Navigate(vm);
-            if (!vm.WasCancled)
+            if (!vm.WasCanceled)
             {
                 if (!vm.HasError)
                 {

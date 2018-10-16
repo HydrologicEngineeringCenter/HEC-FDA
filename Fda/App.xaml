@@ -2,6 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              
+             xmlns:EditorsVM ="clr-namespace:FdaViewModel.Editors;assembly=FdaViewModel"
+             
              xmlns:FrequencyRelationshipsVM ="clr-namespace:FdaViewModel.FrequencyRelationships;assembly=FdaViewModel"
              xmlns:FrequencyRelationshipsView ="clr-namespace:Fda.FrequencyRelationships"
              
@@ -91,6 +93,15 @@
                 </Trigger> 
             </Style.Triggers> 
         </Style>
+        
+        
+        <!--Editors Region-->
+        <DataTemplate DataType="{x:Type EditorsVM:CurveEditorVM }" >
+            <StageTransformsView:RatingCurveEditor/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type EditorsVM:FailureFunctionCurveEditorVM }" >
+            <GeoTechView:FailureFunctionEditor/>
+        </DataTemplate>
         
         <!--Aggrgated Region-->
         <DataTemplate DataType="{x:Type AggregatedVM:AggregatedStageDamageEditorVM }" >
@@ -276,6 +287,10 @@
             <WatershedView:TerrainBrowser/>
         </DataTemplate>
         <!--utilites region-->
+        <DataTemplate DataType="{x:Type UtilitiesVM:MapWindowControlVM }" >
+            <UtilitiesView:MapWindowWrapper/>
+        </DataTemplate>
+        
         <DataTemplate DataType="{x:Type UtilitiesVM:RenameVM }" >
             <UtilitiesView:Rename/>
         </DataTemplate>

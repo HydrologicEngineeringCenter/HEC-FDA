@@ -436,7 +436,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             if(_SelectedOccType == null) { return; }
             CreateNewDamCatVM vm = new CreateNewDamCatVM();
             Navigate(vm, true, true, "Enter New Damage Category Name");
-            if(vm.WasCancled == false)
+            if(vm.WasCanceled == false)
             {
                 if(vm.HasError == false)
                 {
@@ -454,7 +454,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         {
             CreateNewDamCatVM vm = new CreateNewDamCatVM();
             Navigate(vm, true, true, "Enter New Occupancy Type Name");
-            if (vm.WasCancled == false)
+            if (vm.WasCanceled == false)
             {
                 if (vm.HasError == false)
                 {
@@ -493,7 +493,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             if(_SelectedOccType == null) { return; }
             CreateNewDamCatVM vm = new CreateNewDamCatVM(SelectedOccType.Name + "_Copy");
             Navigate(vm, true, true, "Name of New Occupancy Type");
-            if (vm.WasCancled == false)
+            if (vm.WasCanceled == false)
             {
                 if (vm.HasError == false)
                 {
@@ -679,7 +679,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         {
             DepthDamage.DepthDamageCurveEditorVM vm = new DepthDamage.DepthDamageCurveEditorVM();
             Navigate(vm, true, true, "Depth Damage Curve Editor");
-            if (vm.WasCancled == false)
+            if (vm.WasCanceled == false)
             {
                 if (vm.HasError == false)
                 {

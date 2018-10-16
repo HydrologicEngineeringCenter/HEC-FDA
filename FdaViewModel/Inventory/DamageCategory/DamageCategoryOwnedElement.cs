@@ -61,7 +61,7 @@ namespace FdaViewModel.Inventory.DamageCategory
                 vm = new DamageCategoriesVM();
             }
             Navigate(vm,true,true,"Damage Category Editor");
-            if (!vm.WasCancled)
+            if (!vm.WasCanceled)
             {
                 if (vm.HasChanges)
                 {

@@ -55,11 +55,7 @@ namespace FdaViewModel.ImpactArea
             get { return _UniqueFields; }
             set { _UniqueFields = value; NotifyPropertyChanged(); }
         }
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged(); }
-        }
+  
         public string Description
         {
             get { return _Description; }
@@ -73,22 +69,19 @@ namespace FdaViewModel.ImpactArea
         public string SelectedUniqueName { get; set; }
         #endregion
         #region Constructors
-        public ImpactAreaImporterVM(ObservableCollection<string> PolygonPaths)
+        public ImpactAreaImporterVM(ObservableCollection<string> PolygonPaths, Action<BaseViewModel> ownerValidationRules)
         {
-            AvailablePaths = PolygonPaths;
-            
+            ownerValidationRules(this);
+            AvailablePaths = PolygonPaths;   
         }
 
-        public ImpactAreaImporterVM(string name, string description, ObservableCollection<ImpactAreaRowItem> impactAreaRows)
+        public ImpactAreaImporterVM(string name, string description, ObservableCollection<ImpactAreaRowItem> impactAreaRows, Action<BaseViewModel> ownerValidationRules)
         {
+            ownerValidationRules(this);
             Name = name;
             ListOfRows = impactAreaRows;
             Description = description;
             IsNameReadOnly = true;
-
-            //AvailablePaths = otherPaths;
-            
-           
 
         }
         #endregion
@@ -157,11 +150,13 @@ namespace FdaViewModel.ImpactArea
         #endregion
         public override void AddValidationRules()
         {
+            AddRule(nameof(Name), () => Name != null, "Name cannot be null.");
+            AddRule(nameof(Name), () => Name != "", "Name cannot be null.");
             //AddRule(nameof(Name), () => { if (Name == null) { return false; } else { return !Name.Equals(""); } }, "Name cannot be blank.");
-            if (IsNameReadOnly == false)
-            {
+            //if (IsNameReadOnly == false)
+           // {
               //  AddRule(nameof(SelectedPath), () => SelectedPath != null, "You must select a shapefile");
-            }
+           // }
             //AddRule(nameof(SelectedImpactAreaUniqueNameSet), () => SelectedImpactAreaUniqueNameSet != null, "You must select a unique name.");
 
 

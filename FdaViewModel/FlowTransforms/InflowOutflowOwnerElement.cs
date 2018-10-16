@@ -47,18 +47,18 @@ namespace FdaViewModel.FlowTransforms
         public void AddInflowOutflow(object arg1, EventArgs arg2)
         {
 
-            InflowOutflowEditorVM vm = new InflowOutflowEditorVM((foo)=> SaveNewElement(foo), (bar)=>AddOwnerRules(bar));
+            //InflowOutflowEditorVM vm = new InflowOutflowEditorVM((foo)=> SaveNewElement(foo), (editorVM)=>AddOwnerRules(editorVM));
             
-            Navigate(vm);
-            if (!vm.WasCancled)
-            {
-                if (!vm.HasFatalError)
-                {
+            //Navigate(vm);
+            //if (!vm.WasCancled)
+            //{
+            //    if (!vm.HasFatalError)
+            //    {
                     
-                    vm.SaveWhileEditing();
+            //        vm.SaveWhileEditing();
                     
-                }
-            }
+            //    }
+            //}
 
         }
         public override void AddBaseElements()
@@ -89,10 +89,11 @@ namespace FdaViewModel.FlowTransforms
         {
             return new Type[] { typeof(string),typeof(string), typeof(string), typeof(string) };
         }
-        public override OwnedElement CreateElementFromEditor(ISaveUndoRedo editorVM)
+        public override OwnedElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
         {
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            return new InflowOutflowElement(editorVM.Name, editDate, ((InflowOutflowEditorVM)editorVM).Description, ((InflowOutflowEditorVM)editorVM).Curve, this);
+                                                          // return new InflowOutflowElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve, this);
+            return null;
         }
         public override OwnedElement CreateElementFromRowData(object[] rowData)
         {

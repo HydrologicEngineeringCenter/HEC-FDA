@@ -146,10 +146,10 @@ namespace FdaViewModel.ImpactArea
             //create an observable collection of all the available paths
 
 
-            ImpactAreaImporterVM vm = new ImpactAreaImporterVM(Name, Description, ImpactAreaRows);
+            ImpactAreaImporterVM vm = new ImpactAreaImporterVM(Name, Description, ImpactAreaRows, (editorVM) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(editorVM));
             Navigate(vm);
 
-            if (!vm.WasCancled)
+            if (!vm.WasCanceled)
             {
                 string originalName = Name;
                 Name = vm.Name;

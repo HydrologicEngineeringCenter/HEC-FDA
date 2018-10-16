@@ -49,9 +49,9 @@ namespace FdaViewModel.WaterSurfaceElevation
         #region Voids
         public void ImportWaterSurfaceElevations(object arg1, EventArgs arg2)
         {
-            WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(this);
+            WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(this, (editorVM) => AddOwnerRules(editorVM));
             Navigate(vm);
-            if (!vm.WasCancled)
+            if (!vm.WasCanceled)
             {
                 if (!vm.HasFatalError)
                 {

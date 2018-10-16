@@ -80,16 +80,16 @@ namespace FdaViewModel.FlowTransforms
             FdaModel.Utilities.Messager.ErrorMessage err = new FdaModel.Utilities.Messager.ErrorMessage("Test message when opening", FdaModel.Utilities.Messager.ErrorMessageEnum.Report, nameof(InflowOutflowElement));
             FdaModel.Utilities.Messager.Logger.Instance.ReportMessage(err);
 
-            InflowOutflowEditorVM vm = new InflowOutflowEditorVM(this, (foo)=>((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar));
-            Navigate(vm, true, true);
-            if (!vm.WasCancled)
-            {
-                if (!vm.HasFatalError)
-                {
-                    vm.SaveWhileEditing();
+            //InflowOutflowEditorVM vm = new InflowOutflowEditorVM(this, (editorVM) =>((Utilities.OwnerElement)_Owner).SaveExistingElement(editorVM), (editorVM,oldName) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(editorVM,oldName));
+            //Navigate(vm, true, true);
+            //if (!vm.WasCancled)
+            //{
+            //    if (!vm.HasFatalError)
+            //    {
+            //        vm.SaveWhileEditing();
                     
-                }
-            }
+            //    }
+            //}
         }
         #endregion
         #region Functions

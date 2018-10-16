@@ -105,7 +105,7 @@ namespace FdaViewModel.Plots
             ShowPreviousVM(sender, e);
 
             Navigate((BaseViewModel)CurveImporterVM);
-            if (((BaseViewModel)CurveImporterVM).WasCancled == true)
+            if (((BaseViewModel)CurveImporterVM).WasCanceled == true)
             {
                 CurveImporterVM.IsPoppedOut = false;
             }

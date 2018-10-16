@@ -61,7 +61,7 @@ namespace Fda.Inventory
                 if (NextButton.Content.ToString() == "Finish")
                 {
                     var window = Window.GetWindow(this);
-                    vm.WasCancled = false;
+                    vm.WasCanceled = false;
                     window.Close();
                 }
                 else
@@ -90,7 +90,7 @@ namespace Fda.Inventory
         {
             FdaViewModel.Inventory.ImportStructuresFromShapefileVM vm = (FdaViewModel.Inventory.ImportStructuresFromShapefileVM)this.DataContext;
             //vm.CancelButtonClicked();
-            vm.WasCancled = true;
+            vm.WasCanceled = true;
             var window = Window.GetWindow(this);
             window.Close();
         }

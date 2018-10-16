@@ -74,12 +74,6 @@ namespace FdaViewModel.Inventory
             set { _SelectedPath = value; NotifyPropertyChanged(); }
         }
 
-
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged(); }
-        }
         public ObservableCollection<string> AvailablePaths
         {
             get { return _AvailablePaths; }
@@ -87,8 +81,10 @@ namespace FdaViewModel.Inventory
         }
         #endregion
         #region Constructors
-        public ImportStructuresFromShapefileVM():base()
+        public ImportStructuresFromShapefileVM(Action<BaseViewModel> ownerValidationRules) :base()
         {
+            ownerValidationRules(this);
+
             //get the list of paths that exist in the map window
             ObservableCollection<string> collectionOfPointFiles = new ObservableCollection<string>();
             List<string> pointShapePaths = new List<string>();

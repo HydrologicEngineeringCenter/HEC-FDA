@@ -54,7 +54,7 @@ namespace FdaViewModel.Hydraulics
             
             GridImporterVM vm = new GridImporterVM(TerrainList,2001,2002);
             Navigate(vm);
-            if(!vm.HasError & !vm.WasCancled)
+            if(!vm.HasError & !vm.WasCanceled)
             {
                 //create a child and add it
                 GriddedHydraulicsElement element = new GriddedHydraulicsElement(this, vm);

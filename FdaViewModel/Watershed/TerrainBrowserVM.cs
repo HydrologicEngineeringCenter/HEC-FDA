@@ -10,7 +10,7 @@ using System.ComponentModel;
 namespace FdaViewModel.Watershed
 {
     //[Author("q0heccdm", "10 / 11 / 2016 11:13:25 AM")]
-    public class TerrainBrowserVM:BaseViewModel
+    public class TerrainBrowserVM:Editors.BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
@@ -19,7 +19,6 @@ namespace FdaViewModel.Watershed
         #region Fields
         //public event EventHandler TerrainFileFinishedCopying;
 
-        private string _TerrainName;
         private string _TerrainPath;
         private string _OriginalPath;
         private TerrainOwnerElement _Owner;
@@ -44,15 +43,15 @@ namespace FdaViewModel.Watershed
 
         
 
-        public string TerrainName
-        {
-            get { return _TerrainName; }
-            set
-            {
-                _TerrainName = value; CreateNewPathName(); NotifyPropertyChanged();
+        //public string Name
+        //{
+        //    get { return _TerrainName; }
+        //    set
+        //    {
+        //        _TerrainName = value; CreateNewPathName(); NotifyPropertyChanged();
 
-            }
-        }
+        //    }
+        //}
         /// <summary>
         /// This is the new location for the terrain file. We are copying the original file and placing it within the study directory.
         /// </summary>
@@ -67,23 +66,24 @@ namespace FdaViewModel.Watershed
         }
         #endregion
         #region Constructors
-        public TerrainBrowserVM(TerrainOwnerElement owner):base()
+        //public TerrainBrowserVM(TerrainOwnerElement owner, Action<BaseViewModel> ownerValidationRules) :base()
+        public TerrainBrowserVM(TerrainOwnerElement owner, Editors.EditorActionManager actionManager) : base(actionManager)
         {
+            //ownerValidationRules(this);
             _Owner = owner;
-           // bw.DoWork += new DoWorkEventHandler( CopyFileOnBackgroundThread);
         }
 
         
 
         public override void AddValidationRules()
         {
-            AddRule(nameof(TerrainName), () => TerrainName != null, "Terrain Name cannot be empty.");
-            AddRule(nameof(TerrainName), () => TerrainName != "", "Terrain Name cannot be empty.");
+            AddRule(nameof(Name), () => Name != null, "Terrain Name cannot be empty.");
+            AddRule(nameof(Name), () => Name != "", "Terrain Name cannot be empty.");
 
             AddRule(nameof(OriginalPath), () => OriginalPath != null, "Path cannot be null.");
             AddRule(nameof(OriginalPath), () => OriginalPath != "", "Path cannot be null.");
 
-            AddRule(nameof(TerrainName), () =>
+            AddRule(nameof(Name), () =>
             { return System.IO.File.Exists(TerrainPath) != true;}, "A file with this name already exists.");
 
         }
@@ -109,7 +109,7 @@ namespace FdaViewModel.Watershed
             await Task.Run(() => System.IO.File.Copy(pathNames[0], pathNames[1]));
             //TerrainFileFinishedCopying?.Invoke(sender, e);
             TerrainBrowserVM vm = (TerrainBrowserVM)sender;
-            string name = vm.TerrainName;
+            string name = vm.Name;
 
             //remove the temporary node and replace it
             foreach (Utilities.OwnedElement elem in vm.TerrainOwnerElement.Elements)
@@ -129,10 +129,10 @@ namespace FdaViewModel.Watershed
         #region Voids
         private void CreateNewPathName()
         {
-            if(TerrainName == null || TerrainName == "") { return; }
+            if(Name == null || Name == "") { return; }
             if(OriginalPath == null || OriginalPath == "") { return; }
             string originalExtension = System.IO.Path.GetExtension(OriginalPath);
-            string destinationFilePath = Storage.Connection.Instance.TerrainDirectory + "\\" + TerrainName + originalExtension;
+            string destinationFilePath = Storage.Connection.Instance.TerrainDirectory + "\\" + Name + originalExtension;
             TerrainPath = destinationFilePath;
         }
         #endregion

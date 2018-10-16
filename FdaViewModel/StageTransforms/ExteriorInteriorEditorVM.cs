@@ -11,7 +11,7 @@ using Statistics;
 namespace FdaViewModel.StageTransforms
 {
     //[Author(q0heccdm, 6 / 8 / 2017 10:57:35 AM)]
-    public class ExteriorInteriorEditorVM:Utilities.Transactions.TransactionAndMessageBase, Utilities.ISaveUndoRedo
+    public class ExteriorInteriorEditorVM:Utilities.Transactions.TransactionAndMessageBase
     {
         #region Notes
         // Created By: q0heccdm
@@ -28,8 +28,11 @@ namespace FdaViewModel.StageTransforms
         #endregion
         #region Properties
         public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
-  
 
+        public int SelectedIndexInUndoList
+        {
+            set { CurrentElement.ChangeIndex += value + 1; Undo(); }
+        }
         public string Description
         {
             get { return _Description; }
@@ -72,7 +75,7 @@ namespace FdaViewModel.StageTransforms
             SaveAction = saveAction;
 
             DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
-            UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
+            //UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
 
         }
         #endregion
@@ -80,16 +83,16 @@ namespace FdaViewModel.StageTransforms
 
         public override void Undo()
         {
-            UndoElement(this);
+            //UndoElement(this);
         }
 
         public override void Redo()
         {
-            RedoElement(this);
+            //RedoElement(this);
         }
         public override void SaveWhileEditing()
         {
-            SaveAction(this);
+           // SaveAction(this);
             //_OwnerNode.SaveElementWhileEditing(this);
         }
         public override void AddValidationRules()
@@ -127,6 +130,16 @@ namespace FdaViewModel.StageTransforms
             CurrentElement.Name = Name;
             ((ExteriorInteriorElement)CurrentElement).Description = Description;
             ((ExteriorInteriorElement)CurrentElement).ExteriorInteriorCurve = Curve;
+        }
+        public void UpdateTheUndoRedoRowItems()
+        {
+            //int currentIndex = CurrentElement.ChangeIndex;
+            //RedoRows.Clear();
+            //for (int i = currentIndex + 1; i < UndoRedoRows.Count; i++)
+            //{
+            //    RedoRows.Add(UndoRedoRows[i]);
+            //}
+
         }
         public void UpdateNameWithNewValue(string name)
         {
