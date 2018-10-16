@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FdaViewModel.WaterSurfaceElevation
 {
     //[Author(q0heccdm, 9 / 6 / 2017 9:47:42 AM)]
-    public class WaterSurfaceElevationElement : Utilities.OwnedElement
+    public class WaterSurfaceElevationElement : Utilities.ChildElement
     {
         #region Notes
         // Created By: q0heccdm

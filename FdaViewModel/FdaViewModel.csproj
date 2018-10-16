@@ -226,8 +226,8 @@
     <Compile Include="Utilities\MessagesVM.cs" />
     <Compile Include="Utilities\MessageVM.cs" />
     <Compile Include="Utilities\NamedAction.cs" />
-    <Compile Include="Utilities\OwnedElement.cs" />
-    <Compile Include="Utilities\OwnerElement.cs" />
+    <Compile Include="Utilities\ChildElement.cs" />
+    <Compile Include="Utilities\ParentElement.cs" />
     <Compile Include="Utilities\RecentFileNamedAction.cs" />
     <Compile Include="Utilities\RemoveMapFeatureEventArgs.cs" />
     <Compile Include="Utilities\RenameVM.cs" />

@@ -31,7 +31,7 @@ namespace FdaViewModel.WaterSurfaceElevation
             set { _ListOfRelativePaths = value; NotifyPropertyChanged(); }
         }
         public List<string> ListOfOriginalPaths { get; set; } //this is only for messaging out in the transaction log
-        public Utilities.OwnerElement ParentElement { get; set; }
+        public Utilities.ParentElement ParentElement { get; set; }
    
         public string Description
         {
@@ -53,7 +53,7 @@ namespace FdaViewModel.WaterSurfaceElevation
         //public bool HasFatalError { get; internal set; }
         #endregion
         #region Constructors
-        public WaterSurfaceElevationImporterVM(Utilities.OwnerElement ownerElement, Action<BaseViewModel> ownerValidationRules)
+        public WaterSurfaceElevationImporterVM(Utilities.ParentElement ownerElement, Action<BaseViewModel> ownerValidationRules)
         {
             ownerValidationRules(this);
             _ListOfRows = new ObservableCollection<WaterSurfaceElevationRowItemVM>();

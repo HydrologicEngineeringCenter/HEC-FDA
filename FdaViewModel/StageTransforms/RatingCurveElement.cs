@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.StageTransforms
 {
-    public class RatingCurveElement : Utilities.OwnedElement
+    public class RatingCurveElement : Utilities.ChildElement
     {
         #region Notes
         #endregion
@@ -28,7 +28,7 @@ namespace FdaViewModel.StageTransforms
         #endregion
         #region Constructors
        
-        public RatingCurveElement(string userprovidedname, string creationDate, string desc, Statistics.UncertainCurveDataCollection ratingCurve, Utilities.OwnerElement owner) : base(owner)
+        public RatingCurveElement(string userprovidedname, string creationDate, string desc, Statistics.UncertainCurveDataCollection ratingCurve, Utilities.ParentElement owner) : base(owner)
         {
             LastEditDate = creationDate;
             _OwnerNode = (RatingCurveOwnerElement)owner;
@@ -66,13 +66,13 @@ namespace FdaViewModel.StageTransforms
         public void EditRatingCurve(object arg1, EventArgs arg2)
         {
 
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper((helper, elem) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(helper, elem), ChangeTableName());
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper((helper, elem) => ((Utilities.ParentElement)_Owner).SaveExistingElement(helper, elem), ChangeTableName());
 
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithOwnerValidationRules((editorVM, oldName) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(editorVM, oldName))
-                .WithSaveUndoRedo(saveHelper, (editorVM) => ((Utilities.OwnerElement)_Owner).CreateElementFromEditor(editorVM),
-                (editorVM, element) => ((Utilities.OwnerElement)_Owner).AssignValuesFromElementToEditor(editorVM, element),
-                 (editorVM, elem) => ((Utilities.OwnerElement)_Owner).AssignValuesFromEditorToElement(editorVM, elem));
+                .WithOwnerValidationRules((editorVM, oldName) => ((Utilities.ParentElement)_Owner).AddOwnerRules(editorVM, oldName))
+                .WithSaveUndoRedo(saveHelper, (editorVM) => ((Utilities.ParentElement)_Owner).CreateElementFromEditor(editorVM),
+                (editorVM, element) => ((Utilities.ParentElement)_Owner).AssignValuesFromElementToEditor(editorVM, element),
+                 (editorVM, elem) => ((Utilities.ParentElement)_Owner).AssignValuesFromEditorToElement(editorVM, elem));
 
 
 

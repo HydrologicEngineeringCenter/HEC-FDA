@@ -60,7 +60,7 @@ namespace FdaViewModel.GeoTech
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
         }
-        public OwnedElement CurrentElement { get; set; }
+        public ChildElement CurrentElement { get; set; }
 
 
 
@@ -127,7 +127,7 @@ namespace FdaViewModel.GeoTech
             //}
 
         }
-        public void AssignValuesFromElementToEditor(OwnedElement element)
+        public void AssignValuesFromElementToEditor(ChildElement element)
         {
             FailureFunctionElement elem = (FailureFunctionElement)element;
             Name = elem.Name;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Inventory.DamageCategory
 {
-    class DamageCategoryOwnedElement : Utilities.OwnedElement
+    class DamageCategoryOwnedElement : Utilities.ChildElement
     {
         #region Notes
         #endregion

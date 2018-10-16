@@ -98,7 +98,7 @@ namespace FdaViewModel
         #region Functions
         public abstract string GetTableConstant();
         public abstract BaseFdaElement GetElementOfTypeAndName(Type t, string name);
-        public abstract List<T> GetElementsOfType<T>() where T : Utilities.OwnedElement;
+        public abstract List<T> GetElementsOfType<T>() where T : Utilities.ChildElement;
         //public abstract List<string> GetShapefiles
         #endregion
 

@@ -15,13 +15,13 @@ namespace FdaViewModel.Utilities.Transactions
         {
 
         }
-        public TransactionAndMessageBase(OwnedElement element):base()
+        public TransactionAndMessageBase(ChildElement element):base()
         {
             if(element == null) { return; }       
             LoadTransactionsAndMessages(element);
         }
 
-        private void LoadTransactionsAndMessages(Utilities.OwnedElement element)
+        private void LoadTransactionsAndMessages(Utilities.ChildElement element)
         {
             //load the transactions log
             TransactionRows = Utilities.Transactions.TransactionHelper.GetTransactionRowItemsForElement(element);

@@ -61,7 +61,7 @@ namespace FdaViewModel.FrequencyRelationships
         public double TestNatural { get { return _TestNatural; } set { _TestNatural = value; NotifyPropertyChanged(); NotifyPropertyChanged(nameof(Result)); } }
         public double Result { get { return _Distribution.GetG; } }
 
-        public OwnedElement CurrentElement { get; set; }
+        public ChildElement CurrentElement { get; set; }
 
        
         #endregion
@@ -172,7 +172,7 @@ namespace FdaViewModel.FrequencyRelationships
 
         }
 
-        public void AssignValuesFromElementToEditor(OwnedElement element)
+        public void AssignValuesFromElementToEditor(ChildElement element)
         {
             AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)element;
             Name = elem.Name;

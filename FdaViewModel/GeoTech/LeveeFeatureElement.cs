@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FdaViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 1:11:19 PM)]
-    public class LeveeFeatureElement:Utilities.OwnedElement
+    public class LeveeFeatureElement:Utilities.ChildElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -72,7 +72,7 @@ namespace FdaViewModel.GeoTech
         #region Voids
         public void EditLeveeFeature(object arg1, EventArgs arg2)
         {
-            LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(Name, Description, Elevation, (editorVM) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(editorVM));
+            LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(Name, Description, Elevation, (editorVM) => ((Utilities.ParentElement)_Owner).AddOwnerRules(editorVM));
             Navigate(vm, true, true);
             if (!vm.WasCanceled)
             {
@@ -83,7 +83,7 @@ namespace FdaViewModel.GeoTech
                     Description = vm.Description;
                     Elevation = vm.Elevation;
 
-                    ((LeveeFeatureOwnerElement)_Owner).UpdateTableRowIfModified((Utilities.OwnerElement)_Owner, oldName, this);
+                    ((LeveeFeatureOwnerElement)_Owner).UpdateTableRowIfModified((Utilities.ParentElement)_Owner, oldName, this);
                     UpdateAndSaveFailureFunctionsWithNewLevee(oldName);
 
                     AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.EditExisting, "Previous Name: " + oldName + " Description: " + Description + " Elevation: " + Elevation));

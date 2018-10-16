@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FdaViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 2:04:38 PM)]
-    public class FailureFunctionElement : Utilities.OwnedElement
+    public class FailureFunctionElement : Utilities.ChildElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -94,14 +94,14 @@ namespace FdaViewModel.GeoTech
             //get the current list of levees
             List<LeveeFeatureElement> leveeList = GetElementsOfType<LeveeFeatureElement>();
 
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper((helper, elem) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(helper, elem), ChangeTableName());
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper((helper, elem) => ((Utilities.ParentElement)_Owner).SaveExistingElement(helper, elem), ChangeTableName());
 
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
 
-                .WithOwnerValidationRules((editorVM, oldName) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(editorVM, oldName))
-                .WithSaveUndoRedo(saveHelper, (editorVM) => ((Utilities.OwnerElement)_Owner).CreateElementFromEditor(editorVM),
-                (editorVM, element) => ((Utilities.OwnerElement)_Owner).AssignValuesFromElementToEditor(editorVM, element),
-                 (editorVM, elem) => ((Utilities.OwnerElement)_Owner).AssignValuesFromEditorToElement(editorVM, elem));
+                .WithOwnerValidationRules((editorVM, oldName) => ((Utilities.ParentElement)_Owner).AddOwnerRules(editorVM, oldName))
+                .WithSaveUndoRedo(saveHelper, (editorVM) => ((Utilities.ParentElement)_Owner).CreateElementFromEditor(editorVM),
+                (editorVM, element) => ((Utilities.ParentElement)_Owner).AssignValuesFromElementToEditor(editorVM, element),
+                 (editorVM, elem) => ((Utilities.ParentElement)_Owner).AssignValuesFromEditorToElement(editorVM, elem));
 
 
 

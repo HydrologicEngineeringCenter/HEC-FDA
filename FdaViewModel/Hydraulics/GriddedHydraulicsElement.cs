@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Hydraulics
 {
-    class GriddedHydraulicsElement : Utilities.OwnedElement
+    class GriddedHydraulicsElement : Utilities.ChildElement
     {
         #region Notes
         #endregion

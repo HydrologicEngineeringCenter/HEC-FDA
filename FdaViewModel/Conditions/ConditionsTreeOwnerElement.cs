@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Conditions
 {
-    public class ConditionsTreeOwnerElement : OwnerElement
+    public class ConditionsTreeOwnerElement : ParentElement
     {
         public event EventHandler UpdateConditionsTree;
 
@@ -51,8 +51,8 @@ namespace FdaViewModel.Conditions
         }
         public void UpdateElementExpandedValue(object sender, EventArgs e)
         {
-            OwnedElement sendingElement = (OwnedElement)sender;
-            foreach (OwnedElement elem in _StudyTreeConditionsOwnerElement.Elements)
+            ChildElement sendingElement = (ChildElement)sender;
+            foreach (ChildElement elem in _StudyTreeConditionsOwnerElement.Elements)
             {
                 if (elem.Name.Equals((sendingElement).Name))
                 {
@@ -63,9 +63,9 @@ namespace FdaViewModel.Conditions
         }
         public void EditCondition(object sender, EventArgs e)
         {
-            foreach (OwnedElement elem in _StudyTreeConditionsOwnerElement.Elements)
+            foreach (ChildElement elem in _StudyTreeConditionsOwnerElement.Elements)
             {
-                if (elem.Name.Equals(((OwnedElement)sender).Name))
+                if (elem.Name.Equals(((ChildElement)sender).Name))
                 {
                     ((ConditionsElement)elem).EditCondition(sender, e);
                     UpdateTree();
@@ -76,9 +76,9 @@ namespace FdaViewModel.Conditions
 
         public void RemoveElement(object sender, EventArgs e)
         {
-            foreach (OwnedElement elem in _StudyTreeConditionsOwnerElement.Elements)
+            foreach (ChildElement elem in _StudyTreeConditionsOwnerElement.Elements)
             {
-                if (elem.Name.Equals(((OwnedElement)sender).Name))
+                if (elem.Name.Equals(((ChildElement)sender).Name))
                 {
                     ((ConditionsElement)elem).Remove(sender, e);
                     UpdateTree();
@@ -89,9 +89,9 @@ namespace FdaViewModel.Conditions
 
         public void RenameElement(object sender, EventArgs e)
         {
-            foreach (OwnedElement elem in _StudyTreeConditionsOwnerElement.Elements)
+            foreach (ChildElement elem in _StudyTreeConditionsOwnerElement.Elements)
             {
-                if (elem.Name.Equals(((OwnedElement)sender).Name))
+                if (elem.Name.Equals(((ChildElement)sender).Name))
                 {
                     ((ConditionsElement)elem).Rename(sender, e);
                     UpdateTree();

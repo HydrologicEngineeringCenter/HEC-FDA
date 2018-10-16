@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FdaViewModel.FlowTransforms
 {
     //[Author(q0heccdm, 6 / 8 / 2017 10:33:22 AM)]
-    public class InflowOutflowElement : Utilities.OwnedElement
+    public class InflowOutflowElement : Utilities.ChildElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -38,7 +38,7 @@ namespace FdaViewModel.FlowTransforms
 
         #endregion
         #region Constructors
-        public InflowOutflowElement(string userProvidedName, string lastEditDate, string description, Statistics.UncertainCurveDataCollection inflowOutflowCurve, Utilities.OwnerElement owner):base(owner)
+        public InflowOutflowElement(string userProvidedName, string lastEditDate, string description, Statistics.UncertainCurveDataCollection inflowOutflowCurve, Utilities.ParentElement owner):base(owner)
         {
             _OwnerNode = (InflowOutflowOwnerElement)owner;
             LastEditDate = lastEditDate;

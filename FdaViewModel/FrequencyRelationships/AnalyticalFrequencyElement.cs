@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.FrequencyRelationships
 {
-    public class AnalyticalFrequencyElement : Utilities.OwnedElement
+    public class AnalyticalFrequencyElement : Utilities.ChildElement
     {
         #region Notes
         #endregion
@@ -33,7 +33,7 @@ namespace FdaViewModel.FrequencyRelationships
         }
         #endregion
         #region Constructors
-        public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, Statistics.LogPearsonIII dist, Utilities.OwnerElement owner) : base(owner)
+        public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, Statistics.LogPearsonIII dist, Utilities.ParentElement owner) : base(owner)
         {
             LastEditDate = lastEditDate;
             Name = name;

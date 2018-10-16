@@ -49,7 +49,7 @@ namespace FdaViewModel.AggregatedStageDamage
             get { return _Curve; }
             set { _Curve = value;  NotifyPropertyChanged(); }
         }
-        public OwnedElement CurrentElement { get; set; }
+        public ChildElement CurrentElement { get; set; }
 
 
 
@@ -116,7 +116,7 @@ namespace FdaViewModel.AggregatedStageDamage
             //throw new NotImplementedException();
         }
 
-        public void AssignValuesFromElementToEditor(OwnedElement element)
+        public void AssignValuesFromElementToEditor(ChildElement element)
         {
             AggregatedStageDamageElement elem = (AggregatedStageDamageElement)element;
             Name = elem.Name;

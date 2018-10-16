@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.FrequencyRelationships
 {
-    class GraphicalFrequencyOwnerElement : Utilities.OwnerElement
+    class GraphicalFrequencyOwnerElement : Utilities.ParentElement
     {
         #region Notes
         #endregion

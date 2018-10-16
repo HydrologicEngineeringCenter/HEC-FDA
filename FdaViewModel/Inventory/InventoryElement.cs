@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FdaViewModel.Inventory
 {
     //[Author(q0heccdm, 12 / 1 / 2016 2:21:18 PM)]
-    public class InventoryElement : Utilities.OwnedElement
+    public class InventoryElement : Utilities.ChildElement
     {
 
         #region Notes

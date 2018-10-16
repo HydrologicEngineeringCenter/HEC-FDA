@@ -42,7 +42,7 @@ namespace FdaViewModel.Utilities.Transactions
         /// This could be made into a static call and get rid of the constructor above
         /// </summary>
         /// <returns></returns>
-        public List<Transaction> GetTransactionsForElement(OwnedElement element)
+        public List<Transaction> GetTransactionsForElement(ChildElement element)
         {
             List<Transaction> retVals = new List<Transaction>();
             foreach(Transaction tran in _transactions)

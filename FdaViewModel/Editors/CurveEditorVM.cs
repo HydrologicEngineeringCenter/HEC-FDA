@@ -24,7 +24,7 @@ namespace FdaViewModel.Editors
                 {
                     return;
                 }
-                OwnedElement prevElement = ActionManager.SaveUndoRedoHelper.SelectedIndexInUndoList(value, CurrentElement);
+                ChildElement prevElement = ActionManager.SaveUndoRedoHelper.SelectedIndexInUndoList(value, CurrentElement);
                 AssignValuesFromElementToEditor(prevElement);
                 UndoRowsSelectedIndex = -1;//this should clear the selection after the choice is made
 
@@ -39,7 +39,7 @@ namespace FdaViewModel.Editors
                 {
                     return;
                 }
-                OwnedElement nextElement = ActionManager.SaveUndoRedoHelper.SelectedIndexInRedoList(value, CurrentElement);
+                ChildElement nextElement = ActionManager.SaveUndoRedoHelper.SelectedIndexInRedoList(value, CurrentElement);
                 AssignValuesFromElementToEditor(nextElement);
                 RedoRowsSelectedIndex = -1;//this should clear the selection after the choice is made
 
@@ -82,7 +82,7 @@ namespace FdaViewModel.Editors
             PlotTitle = "Curve";
         }
 
-        public CurveEditorVM(Utilities.OwnedElement elem, EditorActionManager actionManager) :base(elem, actionManager)
+        public CurveEditorVM(Utilities.ChildElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
             SavingText = " Last saved at: " + elem.LastEditDate;
             TransactionHelper.LoadTransactionsAndMessages(this, elem);
@@ -95,7 +95,7 @@ namespace FdaViewModel.Editors
         #region voids
         public override void Undo()
         {
-            OwnedElement prevElement = ActionManager.SaveUndoRedoHelper.UndoElement(CurrentElement);
+            ChildElement prevElement = ActionManager.SaveUndoRedoHelper.UndoElement(CurrentElement);
             if (prevElement != null)
             {
                 AssignValuesFromElementToEditor(prevElement);
@@ -104,7 +104,7 @@ namespace FdaViewModel.Editors
 
         public override void Redo()
         {
-            OwnedElement nextElement = ActionManager.SaveUndoRedoHelper.RedoElement(CurrentElement);
+            ChildElement nextElement = ActionManager.SaveUndoRedoHelper.RedoElement(CurrentElement);
             if(nextElement != null)
             {
                 AssignValuesFromElementToEditor(nextElement);
@@ -114,7 +114,7 @@ namespace FdaViewModel.Editors
         public override void SaveWhileEditing()
         {
             SavingText = " Saving...";
-            OwnedElement elementToSave = ActionManager.CreateElementFromEditorAction(this);
+            ChildElement elementToSave = ActionManager.CreateElementFromEditorAction(this);
             if(CurrentElement == null)
             {
                 CurrentElement = elementToSave;
@@ -137,7 +137,7 @@ namespace FdaViewModel.Editors
             ActionManager.AssignValuesFromEditorToElementAction(this,CurrentElement);
         }
 
-        public void AssignValuesFromElementToEditor(OwnedElement element)
+        public void AssignValuesFromElementToEditor(ChildElement element)
         {
             ActionManager.AssignValuesFromElementToEditorAction(this, element);
         }

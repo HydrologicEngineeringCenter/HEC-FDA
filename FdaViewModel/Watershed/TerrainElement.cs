@@ -6,7 +6,7 @@ using System.Text;
 
 namespace FdaViewModel.Watershed
 {
-    public class TerrainElement : Utilities.OwnedElement
+    public class TerrainElement : Utilities.ChildElement
     {
 
         #region Notes

@@ -11,7 +11,7 @@ using FdaViewModel.Utilities;
 namespace FdaViewModel.Inventory
 {
     //[Author(q0heccdm, 6 / 14 / 2017 3:38:41 PM)]
-    public class StructureInventoryOwnerElement : Utilities.OwnerElement
+    public class StructureInventoryOwnerElement : Utilities.ParentElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -26,7 +26,7 @@ namespace FdaViewModel.Inventory
         }
         #endregion
         #region Constructors
-        public StructureInventoryOwnerElement(Utilities.OwnerElement owner) : base(owner)
+        public StructureInventoryOwnerElement(Utilities.ParentElement owner) : base(owner)
         {
             Name = "Structure Inventories";
             IsBold = false;
@@ -166,7 +166,7 @@ namespace FdaViewModel.Inventory
             return new Type[] { typeof(string),typeof(string) };
         }
 
-        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             //name, path, description
             if (StructureInventoryLibrary.SharedData.StudyDatabase == null)

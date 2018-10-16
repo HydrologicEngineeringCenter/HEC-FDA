@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.GeoTech
 {
-    class LeveeFeatureOwnerElement : Utilities.OwnerElement
+    class LeveeFeatureOwnerElement : Utilities.ParentElement
     {
         #region Notes
         #endregion
@@ -20,7 +20,7 @@ namespace FdaViewModel.GeoTech
         }
         #endregion
         #region Constructors
-        public LeveeFeatureOwnerElement(Utilities.OwnerElement owner) : base(owner)
+        public LeveeFeatureOwnerElement(Utilities.ParentElement owner) : base(owner)
         {
             Name = "Levee Features";
             IsBold = false;
@@ -77,7 +77,7 @@ namespace FdaViewModel.GeoTech
         {
             return new Type[] { typeof(string), typeof(string), typeof(double) };
         }
-        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             return new LeveeFeatureElement((string)rowData[0], (string)rowData[1], (double)rowData[2], this);
         }

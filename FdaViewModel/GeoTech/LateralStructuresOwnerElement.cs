@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FdaViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 9:36:00 AM)]
-    class LateralStructuresOwnerElement : Utilities.OwnerElement
+    class LateralStructuresOwnerElement : Utilities.ParentElement
     {
         #region Notes
         // Created By: q0heccdm

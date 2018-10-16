@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Conditions
 {
-    public class ConditionsElement : Utilities.OwnedElement
+    public class ConditionsElement : Utilities.ChildElement
     {
         #region Notes
         #endregion
@@ -49,7 +49,7 @@ namespace FdaViewModel.Conditions
         private bool _UseThreshold;
         private FdaModel.ComputationPoint.PerformanceThresholdTypes _ThresholdType;//dollars or stage. need enum.
         private double _ThresholdValue;
-        private OwnerElement _ConditionsOwnerElement;
+        private ParentElement _ConditionsOwnerElement;
         private List<BaseFdaElement> _ConditionsTreeNodes;
         private bool _IsExpanded;
         #endregion
@@ -197,7 +197,7 @@ namespace FdaViewModel.Conditions
         /// </summary>
         /// <param name="elem"></param>
         /// <param name="owner"></param>
-        public ConditionsElement(ConditionsElement elem, OwnerElement owner) : base(owner)
+        public ConditionsElement(ConditionsElement elem, ParentElement owner) : base(owner)
         {
             IsExpanded = elem.IsExpanded;
             Name = elem.Name;
@@ -301,7 +301,7 @@ namespace FdaViewModel.Conditions
             bool usesAnalyiticalFlowFrequency, FrequencyRelationships.AnalyticalFrequencyElement aFlowFreq, bool usesInflowOutflow, FlowTransforms.InflowOutflowElement inflowOutflowElement,
             bool useRating, StageTransforms.RatingCurveElement rc, bool useIntExtStage, StageTransforms.ExteriorInteriorElement extInt, bool useLevee, GeoTech.LeveeFeatureElement leveeElement,
             bool useFailureFunction, GeoTech.FailureFunctionElement failureFunctionElement, bool useAggStageDamage, AggregatedStageDamage.AggregatedStageDamageElement stageDamage,
-            bool useThreshold, FdaModel.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue, OwnerElement owner) : base(owner)
+            bool useThreshold, FdaModel.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue, ParentElement owner) : base(owner)
         {
             Name = name;
             _ConditionsOwnerElement = owner;
@@ -531,7 +531,7 @@ namespace FdaViewModel.Conditions
              //   UseAnalyiticalFlowFrequency, UseInflowOutflow, UseRatingCurve,UseExteriorInteriorStage,UseAggregatedStageDamage);
 
             ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, infOutControl, ratingControl, extIntStageControl, stageDamageControl, damageFrequencyControl,
-                Name,Description,AnalysisYear,ImpactAreaElement, ThresholdType, ThresholdValue, (editorVM) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(editorVM));
+                Name,Description,AnalysisYear,ImpactAreaElement, ThresholdType, ThresholdValue, (editorVM) => ((Utilities.ParentElement)_Owner).AddOwnerRules(editorVM));
             ///////////////////////////////////////
 
 
@@ -546,7 +546,7 @@ namespace FdaViewModel.Conditions
                     ConditionsElement newElem = ConditionFactory.BuildConditionsElement(vm, _ConditionsOwnerElement);
                     ConditionFactory.CopyConditionsElement(newElem, this);
 
-                    ((ConditionsOwnerElement)_Owner).UpdateTableRowIfModified((OwnerElement)_Owner, oldName, this);
+                    ((ConditionsOwnerElement)_Owner).UpdateTableRowIfModified((ParentElement)_Owner, oldName, this);
                    
                 }
             }

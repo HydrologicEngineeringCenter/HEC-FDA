@@ -11,7 +11,7 @@ using FdaViewModel.Editors;
 namespace FdaViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 2:00:01 PM)]
-    public class FailureFunctionOwnerElement : Utilities.OwnerElement
+    public class FailureFunctionOwnerElement : Utilities.ParentElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -115,7 +115,7 @@ namespace FdaViewModel.GeoTech
             return new Type[] { typeof(string),typeof(string), typeof(string), typeof(string), typeof(string) };
         }
 
-        public override void AssignValuesFromEditorToElement(BaseEditorVM editorVM, OwnedElement element)
+        public override void AssignValuesFromEditorToElement(BaseEditorVM editorVM, ChildElement element)
         {
             FailureFunctionCurveEditorVM vm = (FailureFunctionCurveEditorVM)editorVM;
             FailureFunctionElement elem = (FailureFunctionElement)element;
@@ -129,7 +129,7 @@ namespace FdaViewModel.GeoTech
             elem.UpdateTreeViewHeader(vm.Name);
         }
 
-        public override void AssignValuesFromElementToEditor(BaseEditorVM editorVM, OwnedElement element)
+        public override void AssignValuesFromElementToEditor(BaseEditorVM editorVM, ChildElement element)
         {
             FailureFunctionCurveEditorVM vm = (FailureFunctionCurveEditorVM)editorVM;
             FailureFunctionElement elem = (FailureFunctionElement)element;
@@ -141,7 +141,7 @@ namespace FdaViewModel.GeoTech
             vm.SelectedLateralStructure = elem.SelectedLateralStructure;
         }
 
-        public override OwnedElement CreateElementFromEditor(Editors.BaseEditorVM vm)
+        public override ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
         {
             Editors.FailureFunctionCurveEditorVM editorVM = (Editors.FailureFunctionCurveEditorVM)vm;
 
@@ -149,7 +149,7 @@ namespace FdaViewModel.GeoTech
             return new FailureFunctionElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve, editorVM.SelectedLateralStructure, this);
             //return null;
         }
-        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             List<LeveeFeatureElement> ele = GetElementsOfType<LeveeFeatureElement>();
             LeveeFeatureElement lfe = null;

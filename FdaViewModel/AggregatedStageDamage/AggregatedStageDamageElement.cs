@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.AggregatedStageDamage
 {
-    public class AggregatedStageDamageElement : Utilities.OwnedElement
+    public class AggregatedStageDamageElement : Utilities.ChildElement
     {
         #region Notes
         #endregion
@@ -37,7 +37,7 @@ namespace FdaViewModel.AggregatedStageDamage
   
         #endregion
         #region Constructors
-        public AggregatedStageDamageElement( string name , string lastEditDate, string description, Statistics.UncertainCurveDataCollection curve, CreationMethodEnum method, OwnerElement owner) : base(owner)
+        public AggregatedStageDamageElement( string name , string lastEditDate, string description, Statistics.UncertainCurveDataCollection curve, CreationMethodEnum method, ParentElement owner) : base(owner)
         {
             LastEditDate = lastEditDate;
             Name = name;

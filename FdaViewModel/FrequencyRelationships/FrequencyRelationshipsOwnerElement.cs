@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.FrequencyRelationships
 {
-    class FrequencyRelationshipsOwnerElement : Utilities.OwnerElement
+    class FrequencyRelationshipsOwnerElement : Utilities.ParentElement
     {
         #region Notes
         #endregion
@@ -60,7 +60,7 @@ namespace FdaViewModel.FrequencyRelationships
         }
         public override void Save()
         {
-            foreach (Utilities.OwnedElement ele in _Elements)
+            foreach (Utilities.ChildElement ele in _Elements)
             {
                 ele.Save();
             }

@@ -56,7 +56,7 @@ namespace FdaViewModel.Utilities
             return allMessages;
         }
 
-        public static List<MessageRowItem> GetMessageRowsForElement(OwnedElement elem)
+        public static List<MessageRowItem> GetMessageRowsForElement(ChildElement elem)
         {
             List<MessageItem> allMessages = MessagesVM.GetMessages();
             List<MessageRowItem> messages = new List<MessageRowItem>();

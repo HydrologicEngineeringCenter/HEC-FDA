@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.FrequencyRelationships
 {
-    class StageFrequencyOwnerElement : Utilities.OwnerElement
+    class StageFrequencyOwnerElement : Utilities.ParentElement
     {
         #region Notes
         #endregion
@@ -77,7 +77,7 @@ namespace FdaViewModel.FrequencyRelationships
             return new Type[] { typeof(string) };
         }
 
-        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             return null;
         }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FdaViewModel.FlowTransforms
 {
     //[Author(q0heccdm, 6 / 8 / 2017 9:23:47 AM)]
-    class FlowTransformsOwnerElement : Utilities.OwnerElement
+    class FlowTransformsOwnerElement : Utilities.ParentElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -49,7 +49,7 @@ namespace FdaViewModel.FlowTransforms
         }
         public override void Save()
         {
-            foreach (Utilities.OwnedElement ele in _Elements)
+            foreach (Utilities.ChildElement ele in _Elements)
             {
                 ele.Save();
             }

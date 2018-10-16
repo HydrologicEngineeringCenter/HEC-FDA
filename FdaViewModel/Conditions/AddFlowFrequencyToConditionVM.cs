@@ -23,7 +23,7 @@ namespace FdaViewModel.Conditions
         public event EventHandler PopImporterOut;
 
         //private FrequencyRelationships.AnalyticalFrequencyElement _SelectedFlowFrequencyElement;
-        private OwnerElement _owner;
+        private ParentElement _owner;
         private List<FrequencyRelationships.AnalyticalFrequencyElement> _InflowFrequencyCurves;
         private Statistics.CurveIncreasing _SelectedCurve;
         private FdaModel.Functions.BaseFunction _BaseFunction;
@@ -35,7 +35,7 @@ namespace FdaViewModel.Conditions
         {
             get { if (SelectedElement != null) { return SelectedElement.Name; } else { return ""; } }
         }
-        public Utilities.OwnedElement SelectedElement { get;
+        public Utilities.ChildElement SelectedElement { get;
             set; }
         public Statistics.CurveIncreasing SelectedCurve
         {
@@ -65,11 +65,11 @@ namespace FdaViewModel.Conditions
         //{
 
         //}
-        public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves, OwnerElement owner):this(lp3Curves,null,owner)
+        public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves, ParentElement owner):this(lp3Curves,null,owner)
         {
             
         }
-        public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves, FrequencyRelationships.AnalyticalFrequencyElement selectedElement, OwnerElement owner) : base()
+        public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves, FrequencyRelationships.AnalyticalFrequencyElement selectedElement, ParentElement owner) : base()
         {
             SelectedElement = selectedElement;
             InflowFrequencyCurves = lp3Curves;

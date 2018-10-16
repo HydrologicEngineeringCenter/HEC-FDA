@@ -29,7 +29,7 @@ namespace FdaViewModel.Editors
             LateralStructureList = latStructList;
 
         }
-        public FailureFunctionCurveEditorVM(OwnedElement element, List<LeveeFeatureElement> latStructList, EditorActionManager actionManager) : base(element, actionManager)
+        public FailureFunctionCurveEditorVM(ChildElement element, List<LeveeFeatureElement> latStructList, EditorActionManager actionManager) : base(element, actionManager)
         {
             LateralStructureList = latStructList;
         }

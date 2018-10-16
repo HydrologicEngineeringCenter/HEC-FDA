@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.StageTransforms
 {
-    public class ExteriorInteriorOwnerElement : Utilities.OwnerElement
+    public class ExteriorInteriorOwnerElement : Utilities.ParentElement
     {
         #region Notes
         #endregion
@@ -20,7 +20,7 @@ namespace FdaViewModel.StageTransforms
         }
         #endregion
         #region Constructors
-        public ExteriorInteriorOwnerElement(Utilities.OwnerElement owner) : base(owner)
+        public ExteriorInteriorOwnerElement(Utilities.ParentElement owner) : base(owner)
         {
             Name = "Exterior Interior Relationships";
             IsBold = false;
@@ -88,13 +88,13 @@ namespace FdaViewModel.StageTransforms
         {
             return new Type[] { typeof(string),typeof(string), typeof(string), typeof(string) };
         }
-        public override OwnedElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
+        public override ChildElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
         {
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             //return new ExteriorInteriorElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve, this);
             return null;
         }
-        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
             ExteriorInteriorElement ele = new ExteriorInteriorElement((string)rowData[0],(string)rowData[1], (string)rowData[2], ucdc, this);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Watershed
 {
-    public class TerrainOwnerElement : Utilities.OwnerElement
+    public class TerrainOwnerElement : Utilities.ParentElement
     {
         public override string TableName
         {
@@ -79,7 +79,7 @@ namespace FdaViewModel.Watershed
             string name = vm.Name;
 
             //remove the temporary node and replace it
-            foreach(Utilities.OwnedElement elem in Elements )
+            foreach(Utilities.ChildElement elem in Elements )
             {
                 if(elem.Name.Equals(name))
                 {

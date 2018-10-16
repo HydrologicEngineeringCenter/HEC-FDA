@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.StageTransforms
 {
-    class StageTransformsOwnerElement: Utilities.OwnerElement
+    class StageTransformsOwnerElement: Utilities.ParentElement
     {
         #region Notes
         #endregion
@@ -58,7 +58,7 @@ namespace FdaViewModel.StageTransforms
         }
         public override void Save()
         {
-            foreach(Utilities.OwnedElement ele in _Elements)
+            foreach(Utilities.ChildElement ele in _Elements)
             {
                 ele.Save();
             }
@@ -75,7 +75,7 @@ namespace FdaViewModel.StageTransforms
         {
             return false;
         }
-        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             return null;
         }

@@ -47,7 +47,7 @@ namespace FdaViewModel.StageTransforms
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
         }
-        public OwnedElement CurrentElement { get; set; }
+        public ChildElement CurrentElement { get; set; }
 
 
         #endregion
@@ -105,7 +105,7 @@ namespace FdaViewModel.StageTransforms
             //throw new NotImplementedException();
         }
 
-        public void AssignValuesFromElementToEditor(OwnedElement element)
+        public void AssignValuesFromElementToEditor(ChildElement element)
         {
             ExteriorInteriorElement elem = (ExteriorInteriorElement)element;
             Name = elem.Name;

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FdaViewModel.StageTransforms
 {
     //[Author(q0heccdm, 6 / 8 / 2017 11:31:34 AM)]
-    public class ExteriorInteriorElement : Utilities.OwnedElement
+    public class ExteriorInteriorElement : Utilities.ChildElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -35,7 +35,7 @@ namespace FdaViewModel.StageTransforms
         }
         #endregion
         #region Constructors
-        public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, Statistics.UncertainCurveDataCollection exteriorInteriorCurve, Utilities.OwnerElement owner):base(owner)
+        public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, Statistics.UncertainCurveDataCollection exteriorInteriorCurve, Utilities.ParentElement owner):base(owner)
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;

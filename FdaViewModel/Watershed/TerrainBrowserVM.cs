@@ -112,7 +112,7 @@ namespace FdaViewModel.Watershed
             string name = vm.Name;
 
             //remove the temporary node and replace it
-            foreach (Utilities.OwnedElement elem in vm.TerrainOwnerElement.Elements)
+            foreach (Utilities.ChildElement elem in vm.TerrainOwnerElement.Elements)
             {
                 if (elem.Name.Equals(name))
                 {

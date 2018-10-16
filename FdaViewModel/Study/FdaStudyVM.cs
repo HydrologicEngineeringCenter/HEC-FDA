@@ -18,7 +18,7 @@ namespace FdaViewModel.Study
         #region Notes
         #endregion
         #region Fields
-        private List<OwnerElement> _MainStudyTree;
+        private List<ParentElement> _MainStudyTree;
         private StudyElement _StudyElement;
         private int _SelectedTab = 0;
         private int _SelectedTabIndex;
@@ -68,7 +68,7 @@ namespace FdaViewModel.Study
         {
             return TableName;
         }
-        public List<OwnerElement> MainStudyTree
+        public List<ParentElement> MainStudyTree
         {
             get { return _MainStudyTree; }
             set { _MainStudyTree = value;  NotifyPropertyChanged(nameof(MainStudyTree)); }
@@ -113,7 +113,7 @@ namespace FdaViewModel.Study
             
             
             //fill the main study tree
-            _MainStudyTree = new List<Utilities.OwnerElement>();
+            _MainStudyTree = new List<Utilities.ParentElement>();
             StudyElement = new StudyElement(this);
             _StudyElement.RequestNavigation += Navigate;
             _StudyElement.RequestShapefilePaths += ShapefilePaths;
@@ -145,7 +145,7 @@ namespace FdaViewModel.Study
 
         public FdaStudyVM(string filepath) : base()
         {
-            _MainStudyTree = new List<Utilities.OwnerElement>();
+            _MainStudyTree = new List<Utilities.ParentElement>();
             StudyElement s = new StudyElement(this);
             s.RequestNavigation += Navigate;
             s.RequestShapefilePaths += ShapefilePaths;

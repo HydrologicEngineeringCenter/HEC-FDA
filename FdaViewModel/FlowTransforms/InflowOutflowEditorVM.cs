@@ -53,7 +53,7 @@ namespace FdaViewModel.FlowTransforms
         }
         public int SelectedIndexInRedoList { get; set; }
 
-        public OwnedElement CurrentElement { get; set; }
+        public ChildElement CurrentElement { get; set; }
         public Statistics.UncertainCurveDataCollection Curve
         {
             get { return _Curve; }
@@ -164,7 +164,7 @@ namespace FdaViewModel.FlowTransforms
             //throw new NotImplementedException();
         }
 
-        public void AssignValuesFromElementToEditor(OwnedElement element)
+        public void AssignValuesFromElementToEditor(ChildElement element)
         {
             InflowOutflowElement elem = (InflowOutflowElement)element;
             Name = elem.Name;

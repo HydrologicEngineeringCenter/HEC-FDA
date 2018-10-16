@@ -13,9 +13,9 @@ namespace FdaViewModel.Editors
         public bool HasSaveHelper { get; set; }
         public SaveUndoRedoHelper SaveUndoRedoHelper { get; set; }
 
-        public Func<BaseEditorVM, OwnedElement> CreateElementFromEditorAction { get; set; }
-        public Action<BaseEditorVM,OwnedElement> AssignValuesFromElementToEditorAction { get; set; }
-        public Action<BaseEditorVM, OwnedElement> AssignValuesFromEditorToElementAction { get; set; }
+        public Func<BaseEditorVM, ChildElement> CreateElementFromEditorAction { get; set; }
+        public Action<BaseEditorVM,ChildElement> AssignValuesFromElementToEditorAction { get; set; }
+        public Action<BaseEditorVM, ChildElement> AssignValuesFromEditorToElementAction { get; set; }
 
         public bool HasOwnerValidationRules { get; set; }
         public Action<BaseViewModel, string> OwnerValidationRules { get; set; }
@@ -41,7 +41,7 @@ namespace FdaViewModel.Editors
             return this;
         }
 
-        public EditorActionManager WithSaveUndoRedo(SaveUndoRedoHelper helper, Func<BaseEditorVM, OwnedElement> createElementFromEditorAction, Action<BaseEditorVM, OwnedElement> assignValuesFromElementToEditorAction, Action<BaseEditorVM, OwnedElement> assignValuesFromEditorToElementAction)
+        public EditorActionManager WithSaveUndoRedo(SaveUndoRedoHelper helper, Func<BaseEditorVM, ChildElement> createElementFromEditorAction, Action<BaseEditorVM, ChildElement> assignValuesFromElementToEditorAction, Action<BaseEditorVM, ChildElement> assignValuesFromEditorToElementAction)
         {
             HasSaveHelper = true;
             AssignValuesFromElementToEditorAction = assignValuesFromElementToEditorAction;

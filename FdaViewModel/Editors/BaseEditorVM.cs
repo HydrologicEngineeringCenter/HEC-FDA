@@ -20,7 +20,7 @@ namespace FdaViewModel.Editors
 
         public EditorActionManager ActionManager { get; set; }
 
-        public OwnedElement CurrentElement { get; set; }
+        public ChildElement CurrentElement { get; set; }
 
 
         public BaseEditorVM(EditorActionManager actionManager)
@@ -33,7 +33,7 @@ namespace FdaViewModel.Editors
             }
         }
 
-        public BaseEditorVM(Utilities.OwnedElement elem, EditorActionManager actionManager)
+        public BaseEditorVM(Utilities.ChildElement elem, EditorActionManager actionManager)
         {
             CurrentElement = elem;
 

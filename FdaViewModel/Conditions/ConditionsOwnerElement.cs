@@ -13,7 +13,7 @@ using FdaModel.ComputationPoint;
 
 namespace FdaViewModel.Conditions
 {
-    public class ConditionsOwnerElement : Utilities.OwnerElement
+    public class ConditionsOwnerElement : Utilities.ParentElement
     {
         #region Notes
         #endregion
@@ -52,7 +52,7 @@ namespace FdaViewModel.Conditions
         }
 
         #region BuildDefaultPlotControls
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultLP3Control(OwnerElement ownerElement)
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultLP3Control(ParentElement ownerElement)
         {
             List<AnalyticalFrequencyElement> listOfLp3 = ownerElement.GetElementsOfType<AnalyticalFrequencyElement>();
             AddFlowFrequencyToConditionVM lp3Importer = new AddFlowFrequencyToConditionVM(listOfLp3, ownerElement);
@@ -63,7 +63,7 @@ namespace FdaViewModel.Conditions
                 lp3Importer);
         }
 
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultInflowOutflowControl(OwnerElement ownerElement)
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultInflowOutflowControl(ParentElement ownerElement)
         {
             List<InflowOutflowElement> listOfInfOut = ownerElement.GetElementsOfType<InflowOutflowElement>();
             AddInflowOutflowToConditionVM inOutImporter = new AddInflowOutflowToConditionVM(listOfInfOut, ownerElement);
@@ -76,7 +76,7 @@ namespace FdaViewModel.Conditions
                 new Plots.DoubleLineModulatorWrapperVM());
         }
 
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultRatingControl(OwnerElement ownerElement)
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultRatingControl(ParentElement ownerElement)
         {
             List<RatingCurveElement> listOfRatingCurves = ownerElement.GetElementsOfType<RatingCurveElement>();
             AddRatingCurveToConditionVM ratImporter = new AddRatingCurveToConditionVM(listOfRatingCurves, ownerElement);
@@ -87,7 +87,7 @@ namespace FdaViewModel.Conditions
                 ratImporter);
         }
 
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultExtIntStageControl(OwnerElement ownerElement)
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultExtIntStageControl(ParentElement ownerElement)
         {
             List<StageTransforms.ExteriorInteriorElement> listOfExtIntElements = ownerElement.GetElementsOfType<StageTransforms.ExteriorInteriorElement>();
             AddExteriorInteriorStageToConditionVM extIntImporter = new AddExteriorInteriorStageToConditionVM(listOfExtIntElements, ownerElement);
@@ -100,7 +100,7 @@ namespace FdaViewModel.Conditions
                 new Plots.HorizontalDoubleLineModulatorWrapperVM());
         }
 
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultStageDamageControl(OwnerElement ownerElement)
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultStageDamageControl(ParentElement ownerElement)
         {
             List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamage = ownerElement.GetElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
             AddStageDamageToConditionVM stageDamageImporter = new AddStageDamageToConditionVM(listOfStageDamage, ownerElement);
@@ -111,7 +111,7 @@ namespace FdaViewModel.Conditions
                 stageDamageImporter);
         }
 
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultDamageFrequencyControl(OwnerElement ownerElement)
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultDamageFrequencyControl(ParentElement ownerElement)
         {
             return new Plots.IndividualLinkedPlotControlVM(
                 new Plots.ConditionsIndividualPlotWrapperVM(true, true, "Damage Frequency", "Probability", "Damage", false),
@@ -288,7 +288,7 @@ namespace FdaViewModel.Conditions
 
         }
 
-        private T GetSelectedElementOfType<T>(string name) where T:OwnedElement
+        private T GetSelectedElementOfType<T>(string name) where T:ChildElement
         {
             List<T> elems = GetElementsOfType<T>();
             foreach(T elem in elems)

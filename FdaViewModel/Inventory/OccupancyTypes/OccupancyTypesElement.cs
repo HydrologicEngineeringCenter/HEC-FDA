@@ -12,7 +12,7 @@ using System.Xml.Linq;
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 11 / 2017 3:23:11 PM)]
-    public class OccupancyTypesElement : Utilities.OwnedElement
+    public class OccupancyTypesElement : Utilities.ChildElement
     {
         #region Notes
         // Created By: q0heccdm

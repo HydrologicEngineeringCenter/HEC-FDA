@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Inventory
 {
-    class InventoryOwnerElement : Utilities.OwnerElement
+    class InventoryOwnerElement : Utilities.ParentElement
     {
         #region Notes
         #endregion
@@ -58,7 +58,7 @@ namespace FdaViewModel.Inventory
         }
         public override void Save()
         {
-            foreach (Utilities.OwnedElement ele in _Elements)
+            foreach (Utilities.ChildElement ele in _Elements)
             {
                 ele.Save();
             }

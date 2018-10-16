@@ -13,7 +13,7 @@ using System.Xml;
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 6 / 2017 10:22:36 AM)]
-    public class OccupancyTypesOwnerElement : Utilities.OwnerElement
+    public class OccupancyTypesOwnerElement : Utilities.ParentElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -232,7 +232,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             return new Type[] { typeof(string)};
         }
 
-        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             return null;
         }

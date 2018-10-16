@@ -41,10 +41,10 @@ namespace FdaViewModel.Conditions
         private FdaModel.ComputationPoint.PerformanceThresholdTypes _thresholdType;
         private double _thresholdValue;
 
-        private OwnerElement _owner;
+        private ParentElement _owner;
 
         public ConditionBuilder(string name, string desc, int analysisYear, ImpactArea.ImpactAreaElement impactAreaElem, 
-            ImpactArea.ImpactAreaRowItem indexLocation, FdaModel.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue, OwnerElement owner)
+            ImpactArea.ImpactAreaRowItem indexLocation, FdaModel.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue, ParentElement owner)
         {
             _name = name;
             _description = desc;

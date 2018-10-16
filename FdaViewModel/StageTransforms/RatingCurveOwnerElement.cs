@@ -8,7 +8,7 @@ using FdaViewModel.Utilities;
 
 namespace FdaViewModel.StageTransforms
 {
-    public class RatingCurveOwnerElement : Utilities.OwnerElement
+    public class RatingCurveOwnerElement : Utilities.ParentElement
     {
         #region Notes
         #endregion
@@ -22,7 +22,7 @@ namespace FdaViewModel.StageTransforms
         }
         #endregion
         #region Constructors
-        public RatingCurveOwnerElement(Utilities.OwnerElement owner) : base(owner)
+        public RatingCurveOwnerElement(Utilities.ParentElement owner) : base(owner)
         {
             Name = "Rating Curves";
             IsBold = false;
@@ -116,7 +116,7 @@ namespace FdaViewModel.StageTransforms
             return new Type[] { typeof(string), typeof(string), typeof(string), typeof(string),typeof(string) };
         }
 
-        public override void AssignValuesFromEditorToElement(BaseEditorVM editorVM, OwnedElement element)
+        public override void AssignValuesFromEditorToElement(BaseEditorVM editorVM, ChildElement element)
         {
             CurveEditorVM vm = (CurveEditorVM)editorVM;
             element.Name = vm.Name;
@@ -125,7 +125,7 @@ namespace FdaViewModel.StageTransforms
             element.UpdateTreeViewHeader(vm.Name);
         }
 
-        public override void AssignValuesFromElementToEditor(BaseEditorVM editorVM, OwnedElement element)
+        public override void AssignValuesFromElementToEditor(BaseEditorVM editorVM, ChildElement element)
         {
             CurveEditorVM vm = (CurveEditorVM)editorVM;
 
@@ -134,7 +134,7 @@ namespace FdaViewModel.StageTransforms
             vm.Curve = element.Curve;
         }
 
-        public override OwnedElement CreateElementFromEditor(Editors.BaseEditorVM vm)
+        public override ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
         {
             Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
             //Editors.CurveEditorVM vm = (Editors.CurveEditorVM)editorVM;
@@ -143,7 +143,7 @@ namespace FdaViewModel.StageTransforms
         }
 
 
-        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
             RatingCurveElement rc = new RatingCurveElement((string)rowData[0], (string)rowData[1], (string)rowData[2], emptyCurve, this);

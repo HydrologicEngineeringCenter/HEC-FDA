@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Hydraulics
 {
-    class WaterSurfaceProfileOwnerElement : Utilities.OwnerElement
+    class WaterSurfaceProfileOwnerElement : Utilities.ParentElement
     {
         #region Notes
         #endregion
@@ -69,7 +69,7 @@ namespace FdaViewModel.Hydraulics
             throw new NotImplementedException();
         }
 
-        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             return null;
         }

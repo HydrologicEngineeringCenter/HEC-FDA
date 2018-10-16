@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Utilities
 {
-    public abstract class OwnedElement : BaseFdaElement
+    public abstract class ChildElement : BaseFdaElement
     {
         #region Notes
         #endregion
@@ -39,7 +39,7 @@ namespace FdaViewModel.Utilities
         //}
         #endregion
         #region Constructors
-        public OwnedElement(BaseFdaElement owner)
+        public ChildElement(BaseFdaElement owner)
         {
             _Owner = owner;
         }
@@ -138,7 +138,7 @@ namespace FdaViewModel.Utilities
 
 
                 this.Name = newName;
-            ((OwnerElement)_Owner).UpdateParentTable();
+            ((ParentElement)_Owner).UpdateParentTable();
 
         }
 
@@ -146,7 +146,7 @@ namespace FdaViewModel.Utilities
         private bool CheckForNameConflict(string newName)
         {
 
-            foreach (OwnedElement o in ((OwnerElement)_Owner).Elements)
+            foreach (ChildElement o in ((ParentElement)_Owner).Elements)
             {
                 if (o.Name.Equals(newName)) { return true; }
             }
@@ -201,7 +201,7 @@ namespace FdaViewModel.Utilities
             return isModified;
         }
 
-        private async void RemoveTerrainFileOnBackgroundThread(OwnerElement o)
+        private async void RemoveTerrainFileOnBackgroundThread(ParentElement o)
         {
             try
             {
@@ -223,7 +223,7 @@ namespace FdaViewModel.Utilities
             o.Save();
         }
 
-        private void RemoveWaterSurfElev(OwnerElement o)
+        private void RemoveWaterSurfElev(ParentElement o)
         {
             try
             {
@@ -247,13 +247,13 @@ namespace FdaViewModel.Utilities
         }
         public virtual void Remove(object sender, EventArgs e)
         {
-            if (_Owner.GetType().BaseType == typeof(OwnerElement))
+            if (_Owner.GetType().BaseType == typeof(ParentElement))
             {
                 Utilities.CustomMessageBoxVM vm = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK_Cancel, "Are you sure you want to delete this element?\r\n" + Name);
                 Navigate(vm);
                 if (vm.ClickedButton == CustomMessageBoxVM.ButtonsEnum.OK)
                 {
-                    OwnerElement o = (OwnerElement)_Owner;
+                    ParentElement o = (ParentElement)_Owner;
                     this.RemoveElementFromMapWindow(this, new EventArgs());
 
                     //special logic for deleting the terrain file from the study directory
@@ -311,9 +311,9 @@ namespace FdaViewModel.Utilities
             return _Owner.GetElementsOfType<T>();
         }
      
-        public virtual OwnedElement GetPreviousElementFromChangeTable(int changeTableIndex)
+        public virtual ChildElement GetPreviousElementFromChangeTable(int changeTableIndex)
         {
-            OwnedElement prevElement = null;
+            ChildElement prevElement = null;
             DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(this.ChangeTableName());
             if (changeTableIndex < changeTableView.NumberOfRows)
             {
@@ -325,7 +325,7 @@ namespace FdaViewModel.Utilities
                     }
                     object[] rowData = changeTableView.GetRow(changeTableIndex);
                
-                    prevElement = ((OwnerElement)this._Owner).CreateElementFromRowData(rowData);
+                    prevElement = ((ParentElement)this._Owner).CreateElementFromRowData(rowData);
 
                     Storage.Connection.Instance.Close();
                 }
@@ -333,9 +333,9 @@ namespace FdaViewModel.Utilities
             return prevElement;
         }
 
-        public virtual OwnedElement GetNextElementFromChangeTable(int changeTableIndex)
+        public virtual ChildElement GetNextElementFromChangeTable(int changeTableIndex)
         {
-            OwnedElement nextElement = null;
+            ChildElement nextElement = null;
             DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(this.ChangeTableName());
             if (changeTableIndex >= 0)
             {
@@ -347,7 +347,7 @@ namespace FdaViewModel.Utilities
                     }
                     object[] rowData = changeTableView.GetRow(changeTableIndex);
 
-                    nextElement = ((OwnerElement)this._Owner).CreateElementFromRowData(rowData);
+                    nextElement = ((ParentElement)this._Owner).CreateElementFromRowData(rowData);
 
                     Storage.Connection.Instance.Close();
                 }

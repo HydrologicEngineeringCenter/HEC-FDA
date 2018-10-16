@@ -8,7 +8,7 @@ using FdaViewModel.Utilities;
 
 namespace FdaViewModel.ImpactArea
 {
-    public class ImpactAreaOwnerElement : Utilities.OwnerElement
+    public class ImpactAreaOwnerElement : Utilities.ParentElement
     {
         #region Notes
         #endregion
@@ -35,7 +35,7 @@ namespace FdaViewModel.ImpactArea
         #endregion
         #region Functions
         #endregion
-        public ImpactAreaOwnerElement(Utilities.OwnerElement owner) : base(owner)
+        public ImpactAreaOwnerElement(Utilities.ParentElement owner) : base(owner)
         {
             Name = "Impact Areas";
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
@@ -98,7 +98,7 @@ namespace FdaViewModel.ImpactArea
         }
 
 
-        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             ObservableCollection<ImpactAreaRowItem> dummyCollection = new ObservableCollection<ImpactAreaRowItem>();
 

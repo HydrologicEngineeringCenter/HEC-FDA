@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace FdaViewModel.ImpactArea
 {
-    public class ImpactAreaElement : Utilities.OwnedElement
+    public class ImpactAreaElement : Utilities.ChildElement
     {
         #region Notes
         #endregion
@@ -146,7 +146,7 @@ namespace FdaViewModel.ImpactArea
             //create an observable collection of all the available paths
 
 
-            ImpactAreaImporterVM vm = new ImpactAreaImporterVM(Name, Description, ImpactAreaRows, (editorVM) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(editorVM));
+            ImpactAreaImporterVM vm = new ImpactAreaImporterVM(Name, Description, ImpactAreaRows, (editorVM) => ((Utilities.ParentElement)_Owner).AddOwnerRules(editorVM));
             Navigate(vm);
 
             if (!vm.WasCanceled)
@@ -157,7 +157,7 @@ namespace FdaViewModel.ImpactArea
                 this.Description = vm.Description;
                 ImpactAreaRows = vm.ListOfRows;
 
-                ((ImpactAreaOwnerElement)_Owner).UpdateTableRowIfModified((Utilities.OwnerElement)_Owner, originalName, this);
+                ((ImpactAreaOwnerElement)_Owner).UpdateTableRowIfModified((Utilities.ParentElement)_Owner, originalName, this);
                 UpdateExistingTable();
 
             }

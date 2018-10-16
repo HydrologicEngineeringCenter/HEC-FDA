@@ -8,12 +8,12 @@ using FdaViewModel.Conditions;
 
 namespace FdaViewModel.Study
 {
-    public class StudyElement : OwnerElement
+    public class StudyElement : ParentElement
     {
         public event EventHandler UpdateTransactionsAndMessages;
         public event EventHandler LoadMapLayers;
         private List<string> _RegistryStudies = new List<string>();
-        private ObservableCollection<OwnerElement> _ConditionsTree;
+        private ObservableCollection<ParentElement> _ConditionsTree;
 
 
         #region Notes
@@ -28,7 +28,7 @@ namespace FdaViewModel.Study
                 return "";
             }
         }
-        public ObservableCollection<OwnerElement> ConditionsTree
+        public ObservableCollection<ParentElement> ConditionsTree
         {
             get { return _ConditionsTree; }
             set { _ConditionsTree = value; NotifyPropertyChanged(); }
@@ -48,7 +48,7 @@ namespace FdaViewModel.Study
             FontSize = 18;
             Name = "Study";
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
-            _Elements = new System.Collections.ObjectModel.ObservableCollection<OwnedElement>();
+            _Elements = new System.Collections.ObjectModel.ObservableCollection<ChildElement>();
 
             NamedAction open = new NamedAction();
             open.Header = "Open Study";
@@ -401,11 +401,11 @@ namespace FdaViewModel.Study
             UpdateTreeViewHeader(name);
             AddBaseElements();
             // add any children based on tables that exist.
-            foreach (OwnedElement ele in Elements)
+            foreach (ChildElement ele in Elements)
             {
-                if (ele is OwnerElement)
+                if (ele is ParentElement)
                 {             
-                    ((OwnerElement)ele).AddChildrenFromTable();
+                    ((ParentElement)ele).AddChildrenFromTable();
                 }
             }
             foreach (NamedAction action in Actions)
@@ -456,7 +456,7 @@ namespace FdaViewModel.Study
 
         public override void Save()
         {
-            foreach (OwnedElement o in Elements)
+            foreach (ChildElement o in Elements)
             {
                 o.Save();
             }
@@ -534,12 +534,12 @@ namespace FdaViewModel.Study
         /// <param name="e"></param>
         public void UpdateTheConditionsTree(object sender, EventArgs e)
         {
-            ObservableCollection<OwnedElement> conditions = new ObservableCollection<OwnedElement>();
+            ObservableCollection<ChildElement> conditions = new ObservableCollection<ChildElement>();
             //get all the current conditions
             ConditionsOwnerElement studyTreeCondOwnerElement = null;
             if (Elements.Count > 0)
             {
-                foreach (OwnerElement owner in Elements)
+                foreach (ParentElement owner in Elements)
                 {
                     if (owner.GetType() == typeof(ConditionsOwnerElement))
                     {
@@ -559,7 +559,7 @@ namespace FdaViewModel.Study
 
             if (conditions.Count > 0)
             {
-                foreach (OwnedElement elem in conditions)
+                foreach (ChildElement elem in conditions)
                 {
                     //create a new conditions element and change the way it renames, removes, and edits. The parent node
                     //will then tell the study tree what to do
@@ -574,7 +574,7 @@ namespace FdaViewModel.Study
             }
 
             //have to make it new to call the notified prop changed
-            ConditionsTree = new ObservableCollection<OwnerElement>() { condTreeCondOwnerElement };
+            ConditionsTree = new ObservableCollection<ParentElement>() { condTreeCondOwnerElement };
         }
 
 
@@ -584,14 +584,14 @@ namespace FdaViewModel.Study
         public override List<T> GetElementsOfType<T>()
         {
             List<T> ret = new List<T>();
-            foreach (OwnerElement ele in _Elements)
+            foreach (ParentElement ele in _Elements)
             {
                 ret.AddRange(ele.GetOwnedElementsOfType<T>());
             }
             return ret;
         }
 
-        public override OwnedElement CreateElementFromRowData(object[] rowData)
+        public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             return null;
         }

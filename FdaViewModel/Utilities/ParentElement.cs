@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Utilities
 {
-    public abstract class OwnerElement: OwnedElement
+    public abstract class ParentElement: ChildElement
     {
         #region Notes
         #endregion
         #region Fields
-        protected ObservableCollection<OwnedElement> _Elements;
+        protected ObservableCollection<ChildElement> _Elements;
         private bool _IsExpanded = true;
         private int _FontSize = 14;
         private bool _IsBold = true;
@@ -22,7 +22,7 @@ namespace FdaViewModel.Utilities
         #endregion
         #region Properties
      
-        public ObservableCollection<OwnedElement> Elements
+        public ObservableCollection<ChildElement> Elements
         {
             get { return _Elements; }
             set { _Elements = value;  NotifyPropertyChanged(nameof(Elements)); }
@@ -44,16 +44,16 @@ namespace FdaViewModel.Utilities
         }
         #endregion
         #region Constructors
-        public OwnerElement(BaseFdaElement owner): base(owner)
+        public ParentElement(BaseFdaElement owner): base(owner)
         {
-            _Elements = new ObservableCollection<OwnedElement>();
+            _Elements = new ObservableCollection<ChildElement>();
         }
         #endregion
         #region Voids
 
         public virtual void Rename(object sender, EventArgs e)
         {
-            OwnedElement ele = (OwnedElement)sender;
+            ChildElement ele = (ChildElement)sender;
             string newName = ele.Name;
             RenameLoopLogic(ref newName);
         }
@@ -107,7 +107,7 @@ namespace FdaViewModel.Utilities
             return isNameUnique;
         }
 
-        public void AddElement(OwnedElement ele, bool newElement = true)
+        public void AddElement(ChildElement ele, bool newElement = true)
         {
             string newName = ele.Name;
             if( HandleNameConflict(ref newName) == false)
@@ -143,7 +143,7 @@ namespace FdaViewModel.Utilities
             Type[] types = TableColumnTypes();
             Storage.Connection.Instance.CreateTable(TableName, names, types);
             DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
-            foreach (OwnedElement ele in Elements)
+            foreach (ChildElement ele in Elements)
             {
                 if (ele.SavesToRow()) { tbl.AddRow(ele.RowData()); }
                 if (ele.TableContainsGeoData == false)
@@ -163,7 +163,7 @@ namespace FdaViewModel.Utilities
                 excludeOldNameFromSearch = true;
             }
             List<string> existingElements = new List<string>();
-            foreach (OwnedElement elem in Elements)
+            foreach (ChildElement elem in Elements)
             {
                 if (excludeOldNameFromSearch == true && elem.Name.Equals(originalName))
                 {
@@ -190,16 +190,16 @@ namespace FdaViewModel.Utilities
         /// </summary>
         /// <param name="editorVM"></param>
         /// <returns></returns>
-        public virtual OwnedElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
+        public virtual ChildElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
         {
             return null;
         }
 
-        public virtual void AssignValuesFromElementToEditor(Editors.BaseEditorVM editorVM, OwnedElement element)
+        public virtual void AssignValuesFromElementToEditor(Editors.BaseEditorVM editorVM, ChildElement element)
         {
             //return null;
         }
-        public virtual void AssignValuesFromEditorToElement(Editors.BaseEditorVM editorVM, OwnedElement element)
+        public virtual void AssignValuesFromEditorToElement(Editors.BaseEditorVM editorVM, ChildElement element)
         {
             //return null;
         }
@@ -226,7 +226,7 @@ namespace FdaViewModel.Utilities
         //    editorVM.SaveAction = (foo) => SaveExistingElement(foo);
         //}
 
-        public void SaveNewElement(Editors.SaveUndoRedoHelper saveHelper, OwnedElement element)
+        public void SaveNewElement(Editors.SaveUndoRedoHelper saveHelper, ChildElement element)
         {
             //editorVM.CreateNewElement();
             //this is wierd because "AddElement" will run the same repeat name check, but i need to be able to grab
@@ -278,7 +278,7 @@ namespace FdaViewModel.Utilities
         //    ((BaseViewModel)editorVM).UpdateUndoRedoVisibility(changeTableView, editorVM.CurrentElement.ChangeIndex);
         //}
 
-        public void SaveExistingElement(Editors.SaveUndoRedoHelper saveHelper, OwnedElement element)
+        public void SaveExistingElement(Editors.SaveUndoRedoHelper saveHelper, ChildElement element)
         {
             //only need to check for name conflict if the name has changed. We will always fail if
             //we check with the original name because the original name is already in the elements list.
@@ -326,7 +326,7 @@ namespace FdaViewModel.Utilities
             Type[] types = TableColumnTypes();
             Storage.Connection.Instance.CreateTable(TableName, names, types);
             DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
-            foreach (OwnedElement ele in Elements)
+            foreach (ChildElement ele in Elements)
             {
                 if (ele.SavesToRow()) { tbl.AddRow(ele.RowData()); }
             }
@@ -359,7 +359,7 @@ namespace FdaViewModel.Utilities
         /// <param name="oldName">Name before editing. This is what is used to find the row in this owner's table</param>
         /// <param name="elem"></param>
         /// <param name="nameIndexInTheRow">This should always be zero, but if it is not, then just tell me what index in the row you are at.</param>
-        public void UpdateTableRowIfModified(OwnerElement owner, string oldName, OwnedElement elem, int nameIndexInTheRow = 0)
+        public void UpdateTableRowIfModified(ParentElement owner, string oldName, ChildElement elem, int nameIndexInTheRow = 0)
         {
             if (!Storage.Connection.Instance.IsOpen)  {Storage.Connection.Instance.Open();  }
             if (elem.SavesToRow() == false) { return; }
@@ -433,7 +433,7 @@ namespace FdaViewModel.Utilities
         /// </summary>
         /// <param name="oldName"></param>
         /// <param name="elem"></param>
-        private void RearangeElementChangeTable(string oldName, OwnedElement elem)
+        private void RearangeElementChangeTable(string oldName, ChildElement elem)
         {
             string changeTableName = elem.GetTableConstant() + oldName + "-ChangeTable";
             DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(changeTableName);
@@ -489,7 +489,7 @@ namespace FdaViewModel.Utilities
         }
 
 
-        public virtual void SaveNewElement(OwnedElement element)
+        public virtual void SaveNewElement(ChildElement element)
         {
             if (!element.SavesToRow()) return;
 
@@ -525,7 +525,7 @@ namespace FdaViewModel.Utilities
         public bool CheckForNameConflict(string newName)
         {
 
-            foreach (OwnedElement o in _Elements)
+            foreach (ChildElement o in _Elements)
             {
                 if (o.Name.Equals(newName)) { return true; }
             }
@@ -546,31 +546,31 @@ namespace FdaViewModel.Utilities
         {
             List<T> ret = new List<T>();
             BaseFdaElement root = this as BaseFdaElement;
-            OwnerElement owner = _Owner as OwnerElement;
+            ParentElement owner = _Owner as ParentElement;
             do
             {
-                if (root.GetType().BaseType == typeof(OwnerElement))//this element may not have any, but its kids may be owners who have some..
+                if (root.GetType().BaseType == typeof(ParentElement))//this element may not have any, but its kids may be owners who have some..
                 {
                     root = owner as BaseFdaElement;
-                    owner = owner._Owner as OwnerElement; 
+                    owner = owner._Owner as ParentElement; 
                 }
             } while (owner != null);
             ret.AddRange(root.GetElementsOfType<T>());// i may not have any, but my parent may have kids who are owners who have some.
             return ret;
         }
-        public List<T> GetOwnedElementsOfType<T>() where T: OwnedElement
+        public List<T> GetOwnedElementsOfType<T>() where T: ChildElement
         {
             List<T> ret = new List<T>();
-            foreach (OwnedElement ele in _Elements)
+            foreach (ChildElement ele in _Elements)
             {
                 T casetedEle = ele as T;
                 if (!(casetedEle == null))
                 {
                     ret.Add(casetedEle);
                 }
-                else if (ele.GetType().BaseType == typeof(OwnerElement))//this element may not have any, but its kids may be owners who have some..
+                else if (ele.GetType().BaseType == typeof(ParentElement))//this element may not have any, but its kids may be owners who have some..
                 {
-                    OwnerElement owner = ele as OwnerElement;
+                    ParentElement owner = ele as ParentElement;
                     ret.AddRange(owner.GetOwnedElementsOfType<T>());
                 }
             }
@@ -589,7 +589,7 @@ namespace FdaViewModel.Utilities
         {
             throw new NotImplementedException();
         }
-        public virtual OwnedElement CreateElementFromRowData(object[] rowData) { return null; }
+        public virtual ChildElement CreateElementFromRowData(object[] rowData) { return null; }
       
         public abstract void AddElement(object[] rowData);
         public virtual void AddChildrenFromTable()
@@ -610,11 +610,11 @@ namespace FdaViewModel.Utilities
             }
             else
             {
-                foreach (OwnedElement ele in Elements)
+                foreach (ChildElement ele in Elements)
                 {
-                    if(ele is OwnerElement)
+                    if(ele is ParentElement)
                     {
-                        ((OwnerElement)ele).AddChildrenFromTable();
+                        ((ParentElement)ele).AddChildrenFromTable();
                     }
                 }
             }

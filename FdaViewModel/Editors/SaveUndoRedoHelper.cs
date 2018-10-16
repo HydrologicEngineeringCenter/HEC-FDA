@@ -47,14 +47,14 @@ namespace FdaViewModel.Editors
             get { return _RedoRows; }
             set { _RedoRows = value; NotifyPropertyChanged(); }
         }
-        public OwnedElement SelectedIndexInRedoList(int index, OwnedElement element)
+        public ChildElement SelectedIndexInRedoList(int index, ChildElement element)
         {
 
             ChangeIndex -= index;
             return RedoElement(element);
         }
 
-        public OwnedElement SelectedIndexInUndoList(int index, OwnedElement element)
+        public ChildElement SelectedIndexInUndoList(int index, ChildElement element)
         {
                 ChangeIndex += index;
                 return UndoElement(element);            
@@ -63,12 +63,12 @@ namespace FdaViewModel.Editors
         public string OldName { get; set; }
         public Statistics.UncertainCurveDataCollection OldCurve { get; set; }
         //public OwnedElement SaveElement { get; set; } 
-        public Action<SaveUndoRedoHelper,OwnedElement> SaveAction { get; set; }
+        public Action<SaveUndoRedoHelper,ChildElement> SaveAction { get; set; }
 
 
         #region Constructors
 
-        public SaveUndoRedoHelper( Action<SaveUndoRedoHelper, OwnedElement> savingAction)
+        public SaveUndoRedoHelper( Action<SaveUndoRedoHelper, ChildElement> savingAction)
         {
             SaveAction = savingAction;
             UndoRedoRows = new ObservableCollection<UndoRedoRowItem>();
@@ -80,7 +80,7 @@ namespace FdaViewModel.Editors
         /// </summary>
         /// <param name="savingAction"></param>
         /// <param name="changeTableName"></param>
-        public SaveUndoRedoHelper(Action<SaveUndoRedoHelper, OwnedElement> savingAction, string changeTableName)
+        public SaveUndoRedoHelper(Action<SaveUndoRedoHelper, ChildElement> savingAction, string changeTableName)
         {
             SaveAction = savingAction;
             LoadInitialStateOfUndoRedoValues(changeTableName);
@@ -98,7 +98,7 @@ namespace FdaViewModel.Editors
         #endregion
 
         //there should just be one save here. The two save options in the owner element should just take an OwnedElement and save that. Name pre processing should happen here
-        public void Save(string oldName, Statistics.UncertainCurveDataCollection oldCurve, OwnedElement elementToSave)
+        public void Save(string oldName, Statistics.UncertainCurveDataCollection oldCurve, ChildElement elementToSave)
         {
 
             //if (SaveElement == null)//then this is a new element and first time saving
@@ -179,9 +179,9 @@ namespace FdaViewModel.Editors
             }
         }
 
-        public OwnedElement UndoElement(OwnedElement element)
+        public ChildElement UndoElement(ChildElement element)
         {
-            OwnedElement prevElement = null;
+            ChildElement prevElement = null;
             if (Storage.Connection.Instance.IsOpen != true)
             {
                 Storage.Connection.Instance.Open();
@@ -200,9 +200,9 @@ namespace FdaViewModel.Editors
             return prevElement;
         }
 
-        public OwnedElement RedoElement(OwnedElement element)
+        public ChildElement RedoElement(ChildElement element)
         {
-            OwnedElement nextElement = null;
+            ChildElement nextElement = null;
             if (Storage.Connection.Instance.IsOpen != true)
             {
                 Storage.Connection.Instance.Open();
@@ -213,7 +213,7 @@ namespace FdaViewModel.Editors
                 //get the previous state
                 if (ChangeIndex > 0)
                 {
-                    nextElement = (OwnedElement)element.GetNextElementFromChangeTable(ChangeIndex - 1);
+                    nextElement = (ChildElement)element.GetNextElementFromChangeTable(ChangeIndex - 1);
                     if (nextElement != null)// null if out of range index
                     {
                         ChangeIndex -= 1;
