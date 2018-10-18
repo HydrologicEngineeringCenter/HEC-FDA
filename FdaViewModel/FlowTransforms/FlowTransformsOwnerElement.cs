@@ -42,7 +42,7 @@ namespace FdaViewModel.FlowTransforms
             }
         }
 
-        public override void AddBaseElements()
+        public  void AddBaseElements()
         {
             InflowOutflowOwnerElement io = new InflowOutflowOwnerElement(this);
             AddElement(io);
@@ -74,7 +74,7 @@ namespace FdaViewModel.FlowTransforms
             return false;
         }
 
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             //throw new NotImplementedException();
         }

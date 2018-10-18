@@ -36,7 +36,7 @@ namespace FdaViewModel.ImpactArea
         #endregion
         #region Constructors
         public ImpactAreaElement(string userdefinedname, string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows,
-            ImpactAreaOwnerElement owner) : this(userdefinedname,description,collectionOfRows, "", owner)
+            ImpactAreaOwnerElement owner = null) : this(userdefinedname,description,collectionOfRows, "", owner)
         {
         }
         public ImpactAreaElement(string userdefinedname,string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows, string selectedPath, ImpactAreaOwnerElement owner ) : base(owner)

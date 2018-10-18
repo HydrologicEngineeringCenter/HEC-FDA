@@ -19,31 +19,31 @@ namespace FdaViewModel.Utilities
         private string _Name;
         #endregion
         #region Properties
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; }
-        }
+
         #endregion
         #region Constructors
         public RenameVM():base()
         { 
             
         }
-        public RenameVM(string name)
+        public RenameVM(string name, ChildElement element)
         {
             Name = name;
+            StudyCache.AddSiblingRules(this, element);
+
         }
 
         public override void AddValidationRules()
         {
-            //throw new NotImplementedException();
+            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
         }
 
         public override void Save()
         {
             //throw new NotImplementedException();
         }
+
+     
         #endregion
         #region Voids
         #endregion

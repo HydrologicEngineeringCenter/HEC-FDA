@@ -51,9 +51,15 @@ namespace FdaViewModel.Inventory
             //localActions.Add(ImportFromAscii);
 
             Actions = localActions;
+
+            StudyCache.StructureInventoryAdded += AddStructureInventoryElement;
         }
         #endregion
         #region Voids
+        private void AddStructureInventoryElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            AddElement(e.Element);
+        }
         public void AddStructureInventory(object arg1, EventArgs arg2)
         {
             //ImportFromShapefileVM vm = new ImportFromShapefileVM();
@@ -144,10 +150,7 @@ namespace FdaViewModel.Inventory
             }
         }
 
-        public override void AddBaseElements()
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public override void AddValidationRules()
         {
@@ -180,7 +183,7 @@ namespace FdaViewModel.Inventory
             InventoryElement invEle = new InventoryElement(baseElement, this);
             return invEle;
         }
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             AddElement(CreateElementFromRowData(rowData),false);
         }

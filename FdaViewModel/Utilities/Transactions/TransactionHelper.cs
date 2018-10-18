@@ -28,7 +28,7 @@ namespace FdaViewModel.Utilities.Transactions
             return transactions;
         }
 
-        public static List<Transaction> GetTransactionsForElement(ChildElement element)
+        public static List<Transaction> GetTransactionsForElement(BaseFdaElement element)
         {
             List<Transaction> retVals = new List<Transaction>();
             List<Transaction> allTransactions = GetAllTransactions();
@@ -45,7 +45,7 @@ namespace FdaViewModel.Utilities.Transactions
             return retVals;
         }
 
-        public static List<TransactionRowItem> GetTransactionRowItemsForElement(ChildElement element)
+        public static List<TransactionRowItem> GetTransactionRowItemsForElement(BaseFdaElement element)
         {
             List<TransactionRowItem> retval = new List<TransactionRowItem>();
             List<Transaction> transactionsForElement = GetTransactionsForElement(element);
@@ -57,7 +57,7 @@ namespace FdaViewModel.Utilities.Transactions
         }
 
 
-        public static void LoadTransactionsAndMessages(ITransactionsAndMessages editor, ChildElement element)
+        public static void LoadTransactionsAndMessages(ITransactionsAndMessages editor, BaseFdaElement element)
         {
             //load the transactions log
             editor.TransactionRows = Utilities.Transactions.TransactionHelper.GetTransactionRowItemsForElement(element);

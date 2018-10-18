@@ -9,20 +9,19 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Utilities
 {
-    public abstract class ParentElement: ChildElement
+    public abstract class ParentElement: BaseFdaElement
     {
         #region Notes
         #endregion
         #region Fields
-        protected ObservableCollection<ChildElement> _Elements;
+        protected ObservableCollection<BaseFdaElement> _Elements;
         private bool _IsExpanded = true;
         private int _FontSize = 14;
         private bool _IsBold = true;
         private const int MAX_CHANGE_NUMBER = 4;
         #endregion
         #region Properties
-     
-        public ObservableCollection<ChildElement> Elements
+        public ObservableCollection<BaseFdaElement> Elements
         {
             get { return _Elements; }
             set { _Elements = value;  NotifyPropertyChanged(nameof(Elements)); }
@@ -44,121 +43,17 @@ namespace FdaViewModel.Utilities
         }
         #endregion
         #region Constructors
-        public ParentElement(BaseFdaElement owner): base(owner)
+        public ParentElement(BaseFdaElement parent = null): base(parent)
         {
-            _Elements = new ObservableCollection<ChildElement>();
+            _Elements = new ObservableCollection<BaseFdaElement>();
         }
         #endregion
         #region Voids
 
-        public virtual void Rename(object sender, EventArgs e)
-        {
-            ChildElement ele = (ChildElement)sender;
-            string newName = ele.Name;
-            RenameLoopLogic(ref newName);
-        }
-        /// <summary>
-        /// Returns a boolean that indicates if the user clicked cancel or not.
-        /// Essentially the bool tells you if the name is unique. 
-        /// </summary>
-        /// <param name="ele"></param>
-        /// <returns></returns>
-        private bool RenameLoopLogic(ref string newName)
-        {
-            do
-            {
-                FdaModel.Utilities.Messager.ErrorMessage error = new FdaModel.Utilities.Messager.ErrorMessage("An element with name " + newName + " was attempted to be added to " + Name + " but " + Name + " already has an element with that name.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Major);
-                ReportMessage(error);
-                int i = 1;
-                string prevname = newName;
-                do
-                {
-                    newName = prevname + "_" + i;
-                    i++;
-                } while (CheckForNameConflict(newName));
-                RenameVM renameViewModel = new RenameVM(newName);
-                Navigate(renameViewModel, true, true);
-                if (renameViewModel.WasCanceled)
-                {
-                    //user aborted
-                    return false;
-                }
-                else
-                {
-                    newName = renameViewModel.Name;
-                }
-            }
-            while (CheckForNameConflict(newName));
-            return true;
-        }
-        /// <summary>
-        /// bool tells you if the name is unique.
-        /// </summary>
-        /// <param name="newName"></param>
-        /// <returns></returns>
-        public bool HandleNameConflict(ref string newName)
-        {
-            bool isNameUnique = true;
-            if (CheckForNameConflict(newName))
-            {
-                // give user opportunity to rename.
-                isNameUnique = RenameLoopLogic(ref newName);
-            }
-            return isNameUnique;
-        }
-
-        public void AddElement(ChildElement ele, bool newElement = true)
-        {
-            string newName = ele.Name;
-            if( HandleNameConflict(ref newName) == false)
-            {
-                //user canceled the rename
-                return;
-            }
-            else
-            {
-                //the name possibly changed so assign it to the element
-            ele.Name = newName;
-            }
-            ele.RequestNavigation += Navigate;
-            ele.RequestShapefilePaths += ShapefilePaths;
-            ele.RequestShapefilePathsOfType += ShapefilePathsOfType;
-            ele.RequestAddToMapWindow += AddToMapWindow;
-            ele.RequestRemoveFromMapWindow += RemoveFromMapWindow;
-            ele.TransactionEvent += AddTransaction;
-            Elements.Add(ele);
-            if (newElement)
-            {
-                SaveNewElement(ele);
-            }
-
-            IsExpanded = true;
-            
-        }
-        public abstract void AddBaseElements();
-        public override void Save()
-        {
-            Storage.Connection.Instance.DeleteTable(TableName); // always delete owner tables, and rewrite them.  This simplifies checking for removal, sorting, or adding owned elements.
-            string[] names = TableColumnNames();
-            Type[] types = TableColumnTypes();
-            Storage.Connection.Instance.CreateTable(TableName, names, types);
-            DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
-            foreach (ChildElement ele in Elements)
-            {
-                if (ele.SavesToRow()) { tbl.AddRow(ele.RowData()); }
-                if (ele.TableContainsGeoData == false)
-                {
-                    if (ele.SavesToTable()) { ele.Save(); }
-                }
-                
-            }
-            tbl.ApplyEdits();
-        }
-
         public void AddOwnerRules(BaseViewModel editorVM, string originalName = null)
         {
             bool excludeOldNameFromSearch = false;
-            if(originalName != null)
+            if (originalName != null)
             {
                 excludeOldNameFromSearch = true;
             }
@@ -185,140 +80,62 @@ namespace FdaViewModel.Utilities
             }
 
         }
-        /// <summary>
-        /// This is here to be overridden by all the editors that can save while editing. 
-        /// </summary>
-        /// <param name="editorVM"></param>
-        /// <returns></returns>
-        public virtual ChildElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
+
+
+        public void AddElement(BaseFdaElement ele, bool newElement = true)
         {
-            return null;
-        }
-
-        public virtual void AssignValuesFromElementToEditor(Editors.BaseEditorVM editorVM, ChildElement element)
-        {
-            //return null;
-        }
-        public virtual void AssignValuesFromEditorToElement(Editors.BaseEditorVM editorVM, ChildElement element)
-        {
-            //return null;
-        }
-
-        //public void SaveNewElement(ISaveUndoRedo editorVM)
-        //{
-        //    string newName = editorVM.Name;
-        //    bool isNameUnique = HandleNameConflict(ref newName);
-        //    if (isNameUnique == false)
-        //    {
-        //        return;
-        //    }
-        //    else
-        //    {
-        //        editorVM.UpdateNameWithNewValue(newName);
-        //    }
-
-        //    editorVM.CurrentElement = CreateElementFromEditor(editorVM);//editorVM.CreateNewElement();
-        //    //this is wierd because "AddElement" will run the same repeat name check, but i need to be able to grab
-        //    //the new name chosen and update the editor, so i do it beforehand.
-
-
-        //    AddElement(editorVM.CurrentElement);//this will save it and add it to its parent
-        //    editorVM.SaveAction = (foo) => SaveExistingElement(foo);
-        //}
-
-        public void SaveNewElement(Editors.SaveUndoRedoHelper saveHelper, ChildElement element)
-        {
-            //editorVM.CreateNewElement();
-            //this is wierd because "AddElement" will run the same repeat name check, but i need to be able to grab
-            //the new name chosen and update the editor, so i do it beforehand.
-
-
-            AddElement(element);//this will save it and add it to its parent
-            saveHelper.SaveAction = (helper,elem) => SaveExistingElement(helper,elem);
-        }
-
-        //public void SaveExistingElement(ISaveUndoRedo editorVM)
-        //{
-        //    //only need to check for name conflict if the name has changed. We will always fail if
-        //    //we check with the original name because the original name is already in the elements list.
-        //    //if it is a new name, then we need to make sure that it is an available name.
-        //    string newName = editorVM.Name;
-        //    string originalName = editorVM.CurrentElement.Name;
-        //    bool nameHasChanged = !originalName.Equals(newName);
-
-        //    if (nameHasChanged)
-        //    {
-
-        //        {
-        //            bool isNameUnique = HandleNameConflict(ref newName);
-        //            if (isNameUnique == false)
-        //            {
-        //                return;
-        //            }
-        //            else
-        //            {
-        //                editorVM.UpdateNameWithNewValue(newName);
-        //            }
-        //        }
-        //    }
-
-        //    Statistics.UncertainCurveDataCollection oldInflowOutflowCurve = editorVM.GetTheElementsCurve();
-        //    //capture the current state
-        //    editorVM.AssignValuesFromEditorToCurrentElement();
-        //    //update parent table row
-        //    UpdateTableRowIfModified(this, originalName, editorVM.CurrentElement);
-        //    //update its own table
-        //    if (editorVM.CurrentElement.SavesToTable())
-        //    {
-        //        editorVM.CurrentElement.UpdateTableIfModified(originalName, oldInflowOutflowCurve, editorVM.GetTheEditorsCurve());
-        //    }
-
-        //    //editorVM.UpdateUndoRedoButtons();
-        //    DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(editorVM.CurrentElement.ChangeTableName());
-        //    ((BaseViewModel)editorVM).UpdateUndoRedoVisibility(changeTableView, editorVM.CurrentElement.ChangeIndex);
-        //}
-
-        public void SaveExistingElement(Editors.SaveUndoRedoHelper saveHelper, ChildElement element)
-        {
-            //only need to check for name conflict if the name has changed. We will always fail if
-            //we check with the original name because the original name is already in the elements list.
-            //if it is a new name, then we need to make sure that it is an available name.
-            //string newName = editorVM.Name;
-            //string originalName = editorVM.CurrentElement.Name;
-            //bool nameHasChanged = !originalName.Equals(newName);
-
-            //if (nameHasChanged)
-            //{
-
-            //    {
-            //        bool isNameUnique = HandleNameConflict(ref newName);
-            //        if (isNameUnique == false)
-            //        {
-            //            return;
-            //        }
-            //        else
-            //        {
-            //            editorVM.UpdateNameWithNewValue(newName);
-            //        }
-            //    }
-            //}
-
-            //Statistics.UncertainCurveDataCollection oldInflowOutflowCurve = editorVM.GetTheElementsCurve();
-            ////capture the current state
-            //editorVM.AssignValuesFromEditorToCurrentElement();
-            //update parent table row
-            UpdateTableRowIfModified(this, saveHelper.OldName, element);
-            //update its own table
-            if (element.SavesToTable())
+            //string newName = ele.Name;
+            
+                //the name possibly changed so assign it to the element
+            
+            ele.RequestNavigation += Navigate;
+            ele.RequestShapefilePaths += ShapefilePaths;
+            ele.RequestShapefilePathsOfType += ShapefilePathsOfType;
+            ele.RequestAddToMapWindow += AddToMapWindow;
+            ele.RequestRemoveFromMapWindow += RemoveFromMapWindow;
+            ele.TransactionEvent += AddTransaction;
+            Elements.Add(ele);
+            if (newElement)
             {
-                element.UpdateTableIfModified(saveHelper.OldName, saveHelper.OldCurve, element.Curve);
+                //SaveNewElement(ele);
             }
 
-            //editorVM.UpdateUndoRedoButtons();
-            //DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(saveHelper.SaveElement.ChangeTableName());
-            //((BaseViewModel)editorVM).UpdateUndoRedoVisibility(changeTableView, saveHelper.SaveElement.ChangeIndex);
+            IsExpanded = true;
+            
         }
+        //public abstract void AddBaseElements();
 
+        #endregion
+
+        #region Save
+        public virtual void SaveNewElement(ChildElement element)
+        {
+            if (!element.SavesToRow()) return;
+
+
+            DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
+            if (tbl == null)
+            {
+                Storage.Connection.Instance.CreateTable(TableName, TableColumnNames(), TableColumnTypes());
+                tbl = Storage.Connection.Instance.GetTable(TableName);
+            }
+
+            //create this objects change table
+            string changeTableName = element.ChangeTableName();
+            DataBase_Reader.DataTableView changeTable = Storage.Connection.Instance.GetTable(changeTableName);
+            if (changeTable == null)
+            {
+                Storage.Connection.Instance.CreateTable(changeTableName, TableColumnNames(), TableColumnTypes());
+                changeTable = Storage.Connection.Instance.GetTable(changeTableName);
+            }
+
+            changeTable.AddRow(element.RowData());
+            changeTable.ApplyEdits();
+
+            tbl.AddRow(element.RowData());
+            tbl.ApplyEdits();
+            if (element.SavesToTable()) { element.Save(); }
+        }
         public void UpdateParentTable()
         {
             Storage.Connection.Instance.DeleteTable(TableName); // always delete owner tables, and rewrite them.  This simplifies checking for removal, sorting, or adding owned elements.
@@ -361,12 +178,12 @@ namespace FdaViewModel.Utilities
         /// <param name="nameIndexInTheRow">This should always be zero, but if it is not, then just tell me what index in the row you are at.</param>
         public void UpdateTableRowIfModified(ParentElement owner, string oldName, ChildElement elem, int nameIndexInTheRow = 0)
         {
-            if (!Storage.Connection.Instance.IsOpen)  {Storage.Connection.Instance.Open();  }
+            if (!Storage.Connection.Instance.IsOpen) { Storage.Connection.Instance.Open(); }
             if (elem.SavesToRow() == false) { return; }
 
             DataBase_Reader.DataTableView tableView = Storage.Connection.Instance.GetTable(TableName);
 
-            int rowIndex = GetElementIndexInTable(tableView,oldName,nameIndexInTheRow);
+            int rowIndex = GetElementIndexInTable(tableView, oldName, nameIndexInTheRow);
             if (rowIndex != -1)
             {
 
@@ -389,16 +206,16 @@ namespace FdaViewModel.Utilities
                 {
 
                     //possibly need to change the name in associated table
-                    if(nameHasChanged)
-                    {                    
+                    if (nameHasChanged)
+                    {
                         Storage.Connection.Instance.RenameTable(elem.GetTableConstant() + oldName + "-ChangeTable", elem.ChangeTableName());
                     }
 
-                    tableView.EditRow(rowIndex,elem.RowData());
+                    tableView.EditRow(rowIndex, elem.RowData());
                     tableView.ApplyEdits();
 
                     RearangeElementChangeTable(elem.Name, elem);
-                  
+
                     //Storage.Connection.Instance.Close();
                 }
             }
@@ -407,15 +224,15 @@ namespace FdaViewModel.Utilities
         private bool AreListsDifferent(object[] a, object[] b)
         {
 
-            for(int i = 0;i<a.Length;i++)
+            for (int i = 0; i < a.Length; i++)
             {
                 //don't evaluate the last edit time which is the second one
-                if(i == 1) { continue; }
-                if(a[i] == null)
+                if (i == 1) { continue; }
+                if (a[i] == null)
                 {
                     a[i] = "";
                 }
-                if(!a[i].ToString().Equals(b[i].ToString()))
+                if (!a[i].ToString().Equals(b[i].ToString()))
                 {
                     return true;
                 }
@@ -442,11 +259,11 @@ namespace FdaViewModel.Utilities
 
             //grab the currently selected row
             DataRow row = table.NewRow();
-            for(int j = 0;j< table.Columns.Count;j++)
+            for (int j = 0; j < table.Columns.Count; j++)
             {
                 row[j] = table.Rows[elem.ChangeIndex][j];
             }
-            
+
             //remove the row from the table
             table.Rows.RemoveAt(elem.ChangeIndex);
             //insert this row back into table at 0
@@ -455,7 +272,7 @@ namespace FdaViewModel.Utilities
             //now insert the new row at zero
             object[] newRowData = elem.RowData();
             DataRow newRow = table.NewRow();
-            for(int i = 0;i<newRowData.Length;i++)
+            for (int i = 0; i < newRowData.Length; i++)
             {
                 newRow[i] = newRowData[i];
             }
@@ -485,83 +302,203 @@ namespace FdaViewModel.Utilities
             Storage.Connection.Instance.DeleteTable(changeTableName);
             table.TableName = changeTableName;
             Storage.Connection.Instance.Reader.SaveDataTable(table);
-            
+
+        }
+        public void SaveNewElement(Editors.SaveUndoRedoHelper saveHelper, BaseFdaElement element)
+        {
+            //editorVM.CreateNewElement();
+            //this is wierd because "AddElement" will run the same repeat name check, but i need to be able to grab
+            //the new name chosen and update the editor, so i do it beforehand.
+
+
+            AddElement(element);//this will save it and add it to its parent
+            //saveHelper.SaveAction = (helper, elem) => SaveExistingElement(helper, elem);
         }
 
+       
 
-        public virtual void SaveNewElement(ChildElement element)
+        public void SaveExistingElement(Editors.SaveUndoRedoHelper saveHelper, ChildElement element)
         {
-            if (!element.SavesToRow()) return;
+            //only need to check for name conflict if the name has changed. We will always fail if
+            //we check with the original name because the original name is already in the elements list.
+            //if it is a new name, then we need to make sure that it is an available name.
+           
+            //update parent table row
+            UpdateTableRowIfModified(this, saveHelper.OldName, element);
+            //update its own table
+            if (element.SavesToTable())
+            {
+                element.UpdateTableIfModified(saveHelper.OldName, saveHelper.OldCurve, element.Curve);
+            }
 
-
+        }
+        public override void Save()
+        {
+            Storage.Connection.Instance.DeleteTable(TableName); // always delete owner tables, and rewrite them.  This simplifies checking for removal, sorting, or adding owned elements.
+            string[] names = TableColumnNames();
+            Type[] types = TableColumnTypes();
+            Storage.Connection.Instance.CreateTable(TableName, names, types);
             DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
-            if (tbl == null)
+            foreach (ChildElement ele in Elements)
             {
-                Storage.Connection.Instance.CreateTable(TableName, TableColumnNames(), TableColumnTypes());
-                tbl = Storage.Connection.Instance.GetTable(TableName);
+                if (ele.SavesToRow()) { tbl.AddRow(ele.RowData()); }
+                if (ele.TableContainsGeoData == false)
+                {
+                    if (ele.SavesToTable()) { ele.Save(); }
+                }
+
             }
-
-            //create this objects change table
-            string changeTableName = element.ChangeTableName();
-            DataBase_Reader.DataTableView changeTable = Storage.Connection.Instance.GetTable(changeTableName);
-            if(changeTable == null)
-            {
-                Storage.Connection.Instance.CreateTable(changeTableName, TableColumnNames(), TableColumnTypes());
-                changeTable = Storage.Connection.Instance.GetTable(changeTableName);
-            }
-
-            changeTable.AddRow(element.RowData());
-            changeTable.ApplyEdits();
-
-            tbl.AddRow(element.RowData());
             tbl.ApplyEdits();
-            if (element.SavesToTable()) { element.Save(); }
         }
         #endregion
-        #region Functions
-        public abstract string[] TableColumnNames();
-        public abstract Type[] TableColumnTypes();
-    
-        public bool CheckForNameConflict(string newName)
-        {
 
-            foreach (ChildElement o in _Elements)
-            {
-                if (o.Name.Equals(newName)) { return true; }
-            }
-            return false;
-        }
-        public override BaseFdaElement GetElementOfTypeAndName(Type t, string name)
+
+
+        #region Rename
+        //public virtual void Rename(object sender, EventArgs e)
+        //{
+        //    ChildElement ele = (ChildElement)sender;
+        //    string newName = ele.Name;
+        //    RenameLoopLogic(ref newName);
+        //}
+        /// <summary>
+        /// Returns a boolean that indicates if the user clicked cancel or not.
+        /// Essentially the bool tells you if the name is unique. 
+        /// </summary>
+        /// <param name="ele"></param>
+        /// <returns></returns>
+        //private bool RenameLoopLogic(ref string newName)
+        //{
+        //    //do
+        //    //{
+        //    //    FdaModel.Utilities.Messager.ErrorMessage error = new FdaModel.Utilities.Messager.ErrorMessage("An element with name " + newName + " was attempted to be added to " + Name + " but " + Name + " already has an element with that name.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Major);
+        //    //    ReportMessage(error);
+        //    //    int i = 1;
+        //    //    string prevname = newName;
+        //    //    do
+        //    //    {
+        //    //        newName = prevname + "_" + i;
+        //    //        i++;
+        //    //    } while (CheckForNameConflict(newName));
+        //    //    RenameVM renameViewModel = new RenameVM(newName);
+        //    //    Navigate(renameViewModel, true, true);
+        //    //    if (renameViewModel.WasCanceled)
+        //    //    {
+        //    //        //user aborted
+        //    //        return false;
+        //    //    }
+        //    //    else
+        //    //    {
+        //    //        newName = renameViewModel.Name;
+        //    //    }
+        //    //}
+        //    //while (CheckForNameConflict(newName));
+        //    return true;
+        //}
+        /// <summary>
+        /// bool tells you if the name is unique.
+        /// </summary>
+        /// <param name="newName"></param>
+        /// <returns></returns>
+        //public bool HandleNameConflict(ref string newName)
+        //{
+        //    bool isNameUnique = true;
+        //    if (CheckForNameConflict(newName))
+        //    {
+        //        // give user opportunity to rename.
+        //        isNameUnique = RenameLoopLogic(ref newName);
+        //    }
+        //    return isNameUnique;
+        //}
+        //public bool CheckForNameConflict(string newName)
+        //{
+
+        //    foreach (BaseFdaElement o in _Elements)
+        //    {
+        //        if (o.Name.Equals(newName)) { return true; }
+        //    }
+        //    return false;
+        //}
+        #endregion
+
+        #region Functions
+
+
+
+
+        public override bool SavesToTable()
         {
-            foreach(BaseFdaElement ele in _Elements)
+            return true;
+        }
+        
+
+
+        public void AddChildrenFromTable()
+        {
+            if (SavesToTable())
             {
-                if(ele.GetType()==t & ele.Name.Equals(name))
+                DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(TableName);
+                if (dtv != null)
+                {
+                    //add an element based on a row element;
+                    if (!Storage.Connection.Instance.IsOpen) Storage.Connection.Instance.Open();
+                    for(int i = 0; i < dtv.NumberOfRows; i++)
+                    {
+                        AddElementFromRowData(dtv.GetRow(i));
+                    }
+                    if (Storage.Connection.Instance.IsOpen) Storage.Connection.Instance.Close();
+                }
+            }
+            else
+            {
+                foreach (BaseFdaElement ele in Elements)
+                {
+                    if(ele is ParentElement)
+                    {
+                        ((ParentElement)ele).AddChildrenFromTable();
+                    }
+                }
+            }
+
+        }
+
+
+
+        #endregion
+
+        #region GetElementsOfType
+        public virtual BaseFdaElement GetElementOfTypeAndName(Type t, string name)
+        {
+            foreach (BaseFdaElement ele in _Elements)
+            {
+                if (ele.GetType() == t & ele.Name.Equals(name))
                 {
                     return ele;
                 }
             }
-            return _Owner.GetElementOfTypeAndName(t, name);
+            return null;// _Owner.GetElementOfTypeAndName(t, name);
         }
-        public override List<T> GetElementsOfType<T>()
+        public virtual List<T> GetElementsOfType<T>()
+        {
+            //List<T> ret = new List<T>();
+            //BaseFdaElement root = this as BaseFdaElement;
+            //ParentElement owner = _Owner as ParentElement;
+            //do
+            //{
+            //    if (root.GetType().BaseType == typeof(ParentElement))//this element may not have any, but its kids may be owners who have some..
+            //    {
+            //        root = owner as BaseFdaElement;
+            //        owner = owner._Owner as ParentElement;
+            //    }
+            //} while (owner != null);
+            //ret.AddRange(root.GetElementsOfType<T>());// i may not have any, but my parent may have kids who are owners who have some.
+            //return ret;
+            return null;
+        }
+        public List<T> GetOwnedElementsOfType<T>() where T : ChildElement
         {
             List<T> ret = new List<T>();
-            BaseFdaElement root = this as BaseFdaElement;
-            ParentElement owner = _Owner as ParentElement;
-            do
-            {
-                if (root.GetType().BaseType == typeof(ParentElement))//this element may not have any, but its kids may be owners who have some..
-                {
-                    root = owner as BaseFdaElement;
-                    owner = owner._Owner as ParentElement; 
-                }
-            } while (owner != null);
-            ret.AddRange(root.GetElementsOfType<T>());// i may not have any, but my parent may have kids who are owners who have some.
-            return ret;
-        }
-        public List<T> GetOwnedElementsOfType<T>() where T: ChildElement
-        {
-            List<T> ret = new List<T>();
-            foreach (ChildElement ele in _Elements)
+            foreach (BaseFdaElement ele in _Elements)
             {
                 T casetedEle = ele as T;
                 if (!(casetedEle == null))
@@ -577,49 +514,39 @@ namespace FdaViewModel.Utilities
             //ret.AddRange(_Owner.GetElementsOfType<T>());// i may not have any, but my parent may have kids who are owners who have some.
             return ret;
         }
-        public override bool SavesToRow()
-        {
-            return false;
-        }
-        public override bool SavesToTable()
-        {
-            return true;
-        }
-        public override object[] RowData()
+
+        #endregion
+
+        #region Abstracts/Virtual
+
+        public virtual object[] RowData()
         {
             throw new NotImplementedException();
         }
-        public virtual ChildElement CreateElementFromRowData(object[] rowData) { return null; }
-      
-        public abstract void AddElement(object[] rowData);
-        public virtual void AddChildrenFromTable()
-        {
-            if (SavesToTable())
-            {
-                DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(TableName);
-                if (dtv != null)
-                {
-                    //add an element based on a row element;
-                    if (!Storage.Connection.Instance.IsOpen) Storage.Connection.Instance.Open();
-                    for(int i = 0; i < dtv.NumberOfRows; i++)
-                    {
-                        AddElement(dtv.GetRow(i));
-                    }
-                    if (Storage.Connection.Instance.IsOpen) Storage.Connection.Instance.Close();
-                }
-            }
-            else
-            {
-                foreach (ChildElement ele in Elements)
-                {
-                    if(ele is ParentElement)
-                    {
-                        ((ParentElement)ele).AddChildrenFromTable();
-                    }
-                }
-            }
 
+        public virtual bool SavesToRow()
+        {
+            return false;
         }
+        public abstract string[] TableColumnNames();
+        public abstract Type[] TableColumnTypes();
+        public virtual ChildElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
+        {
+            return null;
+        }
+
+        public virtual void AssignValuesFromElementToEditor(Editors.BaseEditorVM editorVM, ChildElement element)
+        {
+            //return null;
+        }
+        public virtual void AssignValuesFromEditorToElement(Editors.BaseEditorVM editorVM, ChildElement element)
+        {
+            //return null;
+        }
+        public virtual ChildElement CreateElementFromRowData(object[] rowData) { return null; }
+
+        public abstract void AddElementFromRowData(object[] rowData);
+
         #endregion
     }
 }

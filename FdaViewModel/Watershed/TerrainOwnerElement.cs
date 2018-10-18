@@ -41,9 +41,15 @@ namespace FdaViewModel.Watershed
             List<Utilities.NamedAction> localactions = new List<Utilities.NamedAction>();
             localactions.Add(add);
             Actions = localactions;
+
+            StudyCache.TerrainAdded += AddTerrainElement;
         }
         #endregion
         #region Voids
+        private void AddTerrainElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            AddElement(e.Element);
+        }
         #endregion
         #region Functions
         #endregion
@@ -53,25 +59,25 @@ namespace FdaViewModel.Watershed
         }
         private void AddNew(object arg1, EventArgs arg2)
         {
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName));
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager();
+                //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName));
 
             TerrainBrowserVM vm = new TerrainBrowserVM(this, actionManager);
             //vm.TerrainFileFinishedCopying += ReplaceTemporaryTerrainNode;
             Navigate(vm, false,true,"Import Terrain");
-            if (!vm.WasCanceled)
-            {
-                if (!vm.HasFatalError)
-                {
-                    //disable the context menu until the terrain is fully copied over and put a decorator on it
-                    TerrainElement t = new TerrainElement(vm.Name,System.IO.Path.GetFileName(vm.TerrainPath),this,true); // file extention?
-                    //add to map window handler?
-                    AddElement(t,false);//false-don't save this one
+            //if (!vm.WasCanceled)
+            //{
+            //    if (!vm.HasFatalError)
+            //    {
+            //        //disable the context menu until the terrain is fully copied over and put a decorator on it
+            //        TerrainElement t = new TerrainElement(vm.Name,System.IO.Path.GetFileName(vm.TerrainPath),this,true); // file extention?
+            //        //add to map window handler?
+            //        AddElement(t,false);//false-don't save this one
 
 
-                    AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.CreateNew, "File " + vm.OriginalPath + " was saved as a terrain to " + vm.TerrainPath,nameof(TerrainElement)));
-                }
-            }
+            //        AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.CreateNew, "File " + vm.OriginalPath + " was saved as a terrain to " + vm.TerrainPath,nameof(TerrainElement)));
+            //    }
+            //}
         }
         private void ReplaceTemporaryTerrainNode(object sender, EventArgs e)
         {
@@ -90,10 +96,11 @@ namespace FdaViewModel.Watershed
             AddElement(new TerrainElement(name, System.IO.Path.GetFileName(vm.TerrainPath), this, false));
 
         }
-        public override void AddBaseElements()
-        {
-            //throw new NotImplementedException();
-        }
+        //public override void AddBaseElements()
+        //{
+            
+        //    //throw new NotImplementedException();
+        //}
 
         public override string[] TableColumnNames()
         {
@@ -122,7 +129,7 @@ namespace FdaViewModel.Watershed
         //    return new TerrainElement(editorVM.Name,editorVM.TerrainPath,this);
         //}
 
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             AddElement(new TerrainElement((string)rowData[0], (string)rowData[1],this),false);
         }

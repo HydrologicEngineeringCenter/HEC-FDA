@@ -38,10 +38,11 @@ namespace FdaViewModel.Editors
             CurrentElement = elem;
 
             ActionManager = actionManager;
-            if (actionManager.HasOwnerValidationRules)
-            {
-                actionManager.OwnerValidationRules.Invoke(this, elem.Name);
-            }
+            //if (actionManager.HasOwnerValidationRules)
+            //{
+            //    actionManager.OwnerValidationRules.Invoke(this, elem.Name);
+            //}
+            StudyCache.AddSiblingRules(this, elem);
 
             actionManager.AssignValuesFromElementToEditorAction(this, elem);
         }

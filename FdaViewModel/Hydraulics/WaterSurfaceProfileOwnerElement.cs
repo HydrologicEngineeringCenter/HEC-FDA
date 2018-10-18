@@ -53,10 +53,7 @@ namespace FdaViewModel.Hydraulics
         {
             //throw new NotImplementedException();
         }
-        public override void AddBaseElements()
-        {
-            throw new NotImplementedException();
-        }
+        
         #endregion
         #region Functions
         public override string[] TableColumnNames()
@@ -74,7 +71,7 @@ namespace FdaViewModel.Hydraulics
             return null;
         }
 
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             //throw new NotImplementedException();
         }

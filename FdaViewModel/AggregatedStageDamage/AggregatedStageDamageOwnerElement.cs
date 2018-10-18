@@ -34,9 +34,15 @@ namespace FdaViewModel.AggregatedStageDamage
             localActions.Add(addDamageCurve);
 
             Actions = localActions;
+
+            StudyCache.StageDamageAdded += AddStageDamageElement;
         }
         #endregion
         #region Voids
+        private void AddStageDamageElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            AddElement(e.Element);
+        }
         public void AddNewDamageCurve(object arg1, EventArgs arg2)
         {
             List<Inventory.DamageCategory.DamageCategoryOwnedElement> damcateleements = GetElementsOfType<Inventory.DamageCategory.DamageCategoryOwnedElement>();
@@ -54,10 +60,10 @@ namespace FdaViewModel.AggregatedStageDamage
             //    }
             //}                   
         }
-        public override void AddBaseElements()
-        {
+        //public override void AddBaseElements()
+        //{
             
-        }
+        //}
         public override void AddValidationRules()
         {
         }
@@ -94,7 +100,7 @@ namespace FdaViewModel.AggregatedStageDamage
             return asd;
         }
 
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         { 
             AddElement(CreateElementFromRowData(rowData),false);
         }

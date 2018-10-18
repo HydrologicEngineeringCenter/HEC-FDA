@@ -48,7 +48,7 @@ namespace FdaViewModel.GeoTech
         //}
         #endregion
         #region Constructors
-        public FailureFunctionElement(string userProvidedName, string lastEditDate, string description, Statistics.UncertainCurveDataCollection failureFunctionCurve, LeveeFeatureElement selectedLatStructure, BaseFdaElement owner) : base(owner)
+        public FailureFunctionElement(string userProvidedName, string lastEditDate, string description, Statistics.UncertainCurveDataCollection failureFunctionCurve, LeveeFeatureElement selectedLatStructure, BaseFdaElement owner = null) : base(owner)
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
@@ -91,33 +91,33 @@ namespace FdaViewModel.GeoTech
         #region Voids
         public void EditFailureFunctionCurve(object arg1, EventArgs arg2)
         {
-            //get the current list of levees
-            List<LeveeFeatureElement> leveeList = GetElementsOfType<LeveeFeatureElement>();
+            ////get the current list of levees
+            //List<LeveeFeatureElement> leveeList = GetElementsOfType<LeveeFeatureElement>();
 
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper((helper, elem) => ((Utilities.ParentElement)_Owner).SaveExistingElement(helper, elem), ChangeTableName());
+            //Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper((helper, elem) => ((Utilities.ParentElement)_Owner).SaveExistingElement(helper, elem), ChangeTableName());
 
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+            //Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
 
-                .WithOwnerValidationRules((editorVM, oldName) => ((Utilities.ParentElement)_Owner).AddOwnerRules(editorVM, oldName))
-                .WithSaveUndoRedo(saveHelper, (editorVM) => ((Utilities.ParentElement)_Owner).CreateElementFromEditor(editorVM),
-                (editorVM, element) => ((Utilities.ParentElement)_Owner).AssignValuesFromElementToEditor(editorVM, element),
-                 (editorVM, elem) => ((Utilities.ParentElement)_Owner).AssignValuesFromEditorToElement(editorVM, elem));
-
-
-
-            Editors.FailureFunctionCurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(this, leveeList, actionManager);
+            //    .WithOwnerValidationRules((editorVM, oldName) => ((Utilities.ParentElement)_Owner).AddOwnerRules(editorVM, oldName))
+            //    .WithSaveUndoRedo(saveHelper, (editorVM) => ((Utilities.ParentElement)_Owner).CreateElementFromEditor(editorVM),
+            //    (editorVM, element) => ((Utilities.ParentElement)_Owner).AssignValuesFromElementToEditor(editorVM, element),
+            //     (editorVM, elem) => ((Utilities.ParentElement)_Owner).AssignValuesFromEditorToElement(editorVM, elem));
 
 
-            //FailureFunctionEditorVM vm = new FailureFunctionEditorVM(this, (foo) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar), leveeList);
-            Navigate(vm, true, true);
-            if (!vm.WasCanceled)
-            {
-                if (!vm.HasError)
-                {
-                    vm.SaveWhileEditing();
 
-                }
-            }
+            //Editors.FailureFunctionCurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(this, leveeList, actionManager);
+
+
+            ////FailureFunctionEditorVM vm = new FailureFunctionEditorVM(this, (foo) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar), leveeList);
+            //Navigate(vm, true, true);
+            //if (!vm.WasCanceled)
+            //{
+            //    if (!vm.HasError)
+            //    {
+            //        vm.SaveWhileEditing();
+
+            //    }
+            //}
         }
         #endregion
         #region Functions

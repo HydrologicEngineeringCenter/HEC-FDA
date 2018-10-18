@@ -15,12 +15,12 @@ namespace FdaViewModel.Study
         private List<string> _RegistryStudies = new List<string>();
         private ObservableCollection<ParentElement> _ConditionsTree;
 
-
         #region Notes
         #endregion
         #region Fields
         #endregion
         #region Properties
+
         public override string TableName
         {
             get
@@ -41,14 +41,14 @@ namespace FdaViewModel.Study
         #endregion
         #region Constructors
 
-        public StudyElement(BaseFdaElement owner) : base(owner)
+        public StudyElement() : base()
         {
             PopulateRecentStudies();
 
             FontSize = 18;
             Name = "Study";
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
-            _Elements = new System.Collections.ObjectModel.ObservableCollection<ChildElement>();
+            _Elements = new System.Collections.ObjectModel.ObservableCollection<BaseFdaElement>();
 
             NamedAction open = new NamedAction();
             open.Header = "Open Study";
@@ -401,11 +401,11 @@ namespace FdaViewModel.Study
             UpdateTreeViewHeader(name);
             AddBaseElements();
             // add any children based on tables that exist.
-            foreach (ChildElement ele in Elements)
+            foreach (BaseFdaElement ele in Elements)
             {
                 if (ele is ParentElement)
                 {             
-                    ((ParentElement)ele).AddChildrenFromTable();
+                    //((ParentElement)ele).AddChildrenFromTable();
                 }
             }
             foreach (NamedAction action in Actions)
@@ -463,10 +463,14 @@ namespace FdaViewModel.Study
         }
 
        
-        public override void AddBaseElements()
+        public void AddBaseElements()
         {
+
             Elements.Clear();//clear out any existing ones from an existing study
             if (Storage.Connection.Instance.IsConnectionNull) return;
+
+            StudyCache = FDACache.Create();
+
             Watershed.TerrainOwnerElement t = new Watershed.TerrainOwnerElement(this);
             AddElement(t);
 
@@ -509,9 +513,12 @@ namespace FdaViewModel.Study
             Conditions.ConditionsOwnerElement c = new Conditions.ConditionsOwnerElement(this);
             AddElement(c);
 
+            StudyCache.LoadFDACache();
+
             UpdateTheConditionsTree(this, new EventArgs());
             UpdateTransactionsAndMessages?.Invoke(this, new EventArgs());
             LoadMapLayers?.Invoke(this, new EventArgs());
+
         }
 
         public override string[] TableColumnNames()
@@ -534,7 +541,7 @@ namespace FdaViewModel.Study
         /// <param name="e"></param>
         public void UpdateTheConditionsTree(object sender, EventArgs e)
         {
-            ObservableCollection<ChildElement> conditions = new ObservableCollection<ChildElement>();
+            ObservableCollection<BaseFdaElement> conditions = new ObservableCollection<BaseFdaElement>();
             //get all the current conditions
             ConditionsOwnerElement studyTreeCondOwnerElement = null;
             if (Elements.Count > 0)
@@ -584,10 +591,10 @@ namespace FdaViewModel.Study
         public override List<T> GetElementsOfType<T>()
         {
             List<T> ret = new List<T>();
-            foreach (ParentElement ele in _Elements)
-            {
-                ret.AddRange(ele.GetOwnedElementsOfType<T>());
-            }
+            //foreach (ParentElement ele in _Elements)
+            //{
+            //    ret.AddRange(ele.GetOwnedElementsOfType<T>());
+            //}
             return ret;
         }
 
@@ -595,7 +602,7 @@ namespace FdaViewModel.Study
         {
             return null;
         }
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             throw new NotImplementedException();
         }

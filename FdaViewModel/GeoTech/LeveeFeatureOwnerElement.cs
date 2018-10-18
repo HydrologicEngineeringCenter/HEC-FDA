@@ -35,9 +35,14 @@ namespace FdaViewModel.GeoTech
             localActions.Add(add);
 
             Actions = localActions;
+            StudyCache.LeveeAdded += AddLeveeElement;
         }
         #endregion
         #region Voids
+        private void AddLeveeElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            AddElement(e.Element);
+        }
         public void AddNewLeveeFeature(object arg1, EventArgs arg2)
         {
             LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM((editorVM) => AddOwnerRules(editorVM));
@@ -52,10 +57,7 @@ namespace FdaViewModel.GeoTech
                 }
             }
         }
-        public override void AddBaseElements()
-        {
-            //throw new NotImplementedException();
-        }
+       
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
@@ -82,7 +84,7 @@ namespace FdaViewModel.GeoTech
             return new LeveeFeatureElement((string)rowData[0], (string)rowData[1], (double)rowData[2], this);
         }
 
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             AddElement(CreateElementFromRowData(rowData),false);
         }

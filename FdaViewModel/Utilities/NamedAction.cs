@@ -42,6 +42,8 @@ namespace FdaViewModel.Utilities
             get { return _Click; }
             set { _Click = value; NotifyPropertyChanged(nameof(Action)); }
         }
+        public Utilities.ChildElement Element { get; set; }
+
         #endregion
         public NamedAction()
         {
@@ -52,6 +54,12 @@ namespace FdaViewModel.Utilities
         {
             _Path = path;
             Header = "Default Header Name";
+            _Click = delegate (object sender, EventArgs e) { System.Console.WriteLine("To Do: Implement Me!"); };
+        }
+        public NamedAction(Utilities.ChildElement element)
+        {
+            Header = "Default Header Name";
+            Element = element;
             _Click = delegate (object sender, EventArgs e) { System.Console.WriteLine("To Do: Implement Me!"); };
         }
         protected void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)

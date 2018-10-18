@@ -35,7 +35,7 @@ namespace FdaViewModel.StageTransforms
         }
         #endregion
         #region Constructors
-        public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, Statistics.UncertainCurveDataCollection exteriorInteriorCurve, Utilities.ParentElement owner):base(owner)
+        public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, Statistics.UncertainCurveDataCollection exteriorInteriorCurve, Utilities.ParentElement owner = null):base(owner)
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;

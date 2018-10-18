@@ -12,6 +12,10 @@ namespace FdaViewModel.Utilities
         #region Notes
         #endregion
         #region Fields
+
+        public delegate void AddElementEventHandler(object sender, Saving.ElementAddedEventArgs args);
+
+
         protected BaseFdaElement _Owner;
         //private object _CustomTreeViewHeader;
         private string _Description;
@@ -47,9 +51,28 @@ namespace FdaViewModel.Utilities
         #region Voids
         public virtual void Rename(object sender, EventArgs e)
         {
-            RenameVM renameViewModel = new RenameVM(Name);
+            //NamedAction act = (NamedAction)sender;
+            //ChildElement elem = (ChildElement)act.Element;
+            string oldName = Name;
+            //List<BaseFdaElement> siblings = StudyCache.GetSiblings(elem);
+
+            RenameVM renameViewModel = new RenameVM(Name, this);
+            //StudyCache.AddSiblingRules(renameViewModel, this);
+
             Navigate(renameViewModel, true, true, "Rename");
-            if(renameViewModel.WasCanceled == true) { return; }
+            if(renameViewModel.WasCanceled == true)
+            {
+                return;
+            }
+            else
+            {
+                Name = renameViewModel.Name;
+                Saving.IPersistable savingManager = Saving.PersistenceFactory.GetElementManager(this, StudyCache);
+                //savingManager.Edit(this,oldName,)
+            }
+
+
+
             if (CheckForNameConflict(renameViewModel.Name) == true)
             {
                 string newName;
@@ -64,7 +87,7 @@ namespace FdaViewModel.Utilities
 
                 do
                 {
-                    renameViewModel = new RenameVM(newName);
+                    renameViewModel = new RenameVM(newName, this);
                     Navigate(renameViewModel, true, true);
                     if (renameViewModel.WasCanceled)
                     {
@@ -296,19 +319,19 @@ namespace FdaViewModel.Utilities
 
         #endregion
         #region Functions
-        public override BaseFdaElement GetElementOfTypeAndName(Type t, string name)
+        public  BaseFdaElement GetElementOfTypeAndName(Type t, string name)
         {
             if(GetType()==t & Name.Equals(name))
             {
                 return this;
             }else
             {
-                return _Owner.GetElementOfTypeAndName(t,name);
+                return null;// _Owner.GetElementOfTypeAndName(t,name);
             }
         }
-        public override List<T> GetElementsOfType<T>()
+        public  List<T> GetElementsOfType<T>()
         {
-            return _Owner.GetElementsOfType<T>();
+            return null;// _Owner.GetElementsOfType<T>();
         }
      
         public virtual ChildElement GetPreviousElementFromChangeTable(int changeTableIndex)
@@ -366,7 +389,7 @@ namespace FdaViewModel.Utilities
 
         public abstract object[] RowData();
         public abstract bool SavesToRow();
-        public abstract bool SavesToTable();
+        
         /// <summary>
         /// This exists so that the few elements that can be added/removed from the map window can override
         /// it and be removed when removing the element from the study.

@@ -42,10 +42,7 @@ namespace FdaViewModel.Conditions
         }
         #endregion
         #region Voids
-        public override void AddBaseElements()
-        {
-            //throw new NotImplementedException();
-        }
+    
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
@@ -193,7 +190,7 @@ namespace FdaViewModel.Conditions
                 typeof(bool), typeof(string), typeof(double)};
         }
 
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             //this is when it loads
 

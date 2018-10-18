@@ -34,11 +34,17 @@ namespace FdaViewModel.FlowTransforms
             localActions.Add(addInflowOutflow);
 
             Actions = localActions;
+
+            StudyCache.InflowOutflowAdded += AddInflowOutflowElement;
         }
 
 
         #endregion
         #region Voids
+        private void AddInflowOutflowElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            AddElement(e.Element);
+        }
         private void ImportFromASCII(object arg1, EventArgs arg2)
         {
             throw new NotImplementedException();
@@ -61,10 +67,7 @@ namespace FdaViewModel.FlowTransforms
             //}
 
         }
-        public override void AddBaseElements()
-        {
-            //throw new NotImplementedException();
-        }
+      
         public override void AddValidationRules()
         {
             //AddRule(nameof(Name), () => Name != "test", "Name cannot be test.");
@@ -102,7 +105,7 @@ namespace FdaViewModel.FlowTransforms
             inout.InflowOutflowCurve.fromSqliteTable(inout.TableName);
             return inout;
         }
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             
             AddElement(CreateElementFromRowData(rowData),false);

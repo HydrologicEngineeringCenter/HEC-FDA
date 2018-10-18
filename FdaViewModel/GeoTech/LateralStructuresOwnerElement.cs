@@ -42,7 +42,7 @@ namespace FdaViewModel.GeoTech
             }
         }
 
-        public override void AddBaseElements()
+        public  void AddBaseElements()
         {
             LeveeFeatureOwnerElement lf = new LeveeFeatureOwnerElement(this);
             AddElement(lf);
@@ -51,7 +51,7 @@ namespace FdaViewModel.GeoTech
             AddElement(ff);
         }
 
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             throw new NotImplementedException();
         }

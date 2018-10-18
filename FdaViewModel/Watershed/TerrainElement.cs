@@ -30,7 +30,7 @@ namespace FdaViewModel.Watershed
         }
         #endregion
         #region Constructors
-        public TerrainElement(string name, string fileName, TerrainOwnerElement owner, bool isTemporaryNode = false) : base(owner)
+        public TerrainElement(string name, string fileName, TerrainOwnerElement owner = null, bool isTemporaryNode = false) : base(owner)
         {
             //vrt and auxilary files?  hdf5?
                 Name = name;
@@ -49,7 +49,7 @@ namespace FdaViewModel.Watershed
                 remove.Header = "Remove Terrain";
                 remove.Action = Remove;
 
-                Utilities.NamedAction renameElement = new Utilities.NamedAction();
+                Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
                 renameElement.Header = "Rename";
                 renameElement.Action = Rename;
 

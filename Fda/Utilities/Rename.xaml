@@ -21,7 +21,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <TextBox Name="txt_name" Grid.Row="0" Grid.Column="1" Margin="5" Text="{Binding Path=Name}" />
+        <TextBox Name="txt_name" Grid.Row="0" Grid.Column="1" Margin="5" Text="{Binding Path=Name, ValidatesOnDataErrors=True}" />
         <Label Content="New Name:" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="0" />
         <OkClose:OKCloseControl Grid.Row="1" Grid.Column="1" />
     </Grid>

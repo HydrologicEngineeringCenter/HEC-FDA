@@ -41,7 +41,7 @@ namespace FdaViewModel.Inventory
         {
 
         }
-        public override void AddBaseElements()
+        public void AddBaseElements()
         {
             //DamageCategory.DamageCategoryOwnedElement d = new DamageCategory.DamageCategoryOwnedElement(this);
             //this.AddElement(d);
@@ -79,7 +79,7 @@ namespace FdaViewModel.Inventory
             return new Type[] { typeof(string) };
         }
 
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             //throw new NotImplementedException();
         }

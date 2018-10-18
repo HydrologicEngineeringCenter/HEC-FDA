@@ -39,7 +39,7 @@ namespace FdaViewModel.Hydraulics
         {
             
         }
-        public override void AddBaseElements()
+        public  void AddBaseElements()
         {
             GriddedHydraulicsOwnerElement h = new GriddedHydraulicsOwnerElement(this);
             this.AddElement(h);
@@ -62,7 +62,7 @@ namespace FdaViewModel.Hydraulics
         {
             return null;
         }
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             //throw new NotImplementedException();
         }

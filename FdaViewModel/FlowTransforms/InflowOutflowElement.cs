@@ -38,7 +38,7 @@ namespace FdaViewModel.FlowTransforms
 
         #endregion
         #region Constructors
-        public InflowOutflowElement(string userProvidedName, string lastEditDate, string description, Statistics.UncertainCurveDataCollection inflowOutflowCurve, Utilities.ParentElement owner):base(owner)
+        public InflowOutflowElement(string userProvidedName, string lastEditDate, string description, Statistics.UncertainCurveDataCollection inflowOutflowCurve, Utilities.ParentElement owner = null):base(owner)
         {
             _OwnerNode = (InflowOutflowOwnerElement)owner;
             LastEditDate = lastEditDate;

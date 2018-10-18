@@ -46,43 +46,48 @@ namespace FdaViewModel.GeoTech
 
             Actions = localActions;
 
+            StudyCache.FailureFunctionAdded += AddFailureFunctionElement;
         }
         #endregion
         #region Voids
+        private void AddFailureFunctionElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            AddElement(e.Element);
+        }
         public void AddNewFailureFunction(object arg1, EventArgs arg2)
         {
-            List<LeveeFeatureElement> leveeList = GetElementsOfType<LeveeFeatureElement>();
+            //List<LeveeFeatureElement> leveeList = GetElementsOfType<LeveeFeatureElement>();
 
 
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper((editorVM, elem) => SaveNewElement(editorVM, elem));
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
-                .WithSaveUndoRedo(saveHelper, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
-                (editor, element) => AssignValuesFromEditorToElement(editor, element));
+            //Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper((editorVM, elem) => SaveNewElement(editorVM, elem));
+            //Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+            //    .WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
+            //    .WithSaveUndoRedo(saveHelper, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
+            //    (editor, element) => AssignValuesFromEditorToElement(editor, element));
 
-            double[] xValues = new double[] { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
-            Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(97), new Statistics.None(99), new Statistics.None(104), new Statistics.None(109), new Statistics.None(110), new Statistics.None(114), new Statistics.None(116), new Statistics.None(119), new Statistics.None(120), new Statistics.None(121) };
-            Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-
-
-            Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(defaultCurve, leveeList, actionManager);
+            //double[] xValues = new double[] { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            //Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(97), new Statistics.None(99), new Statistics.None(104), new Statistics.None(109), new Statistics.None(110), new Statistics.None(114), new Statistics.None(116), new Statistics.None(119), new Statistics.None(120), new Statistics.None(121) };
+            //Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
 
-            //FailureFunctionEditorVM vm = new FailureFunctionEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar), leveeList);
-            Navigate(vm);
-            if (!vm.WasCanceled)
-            {
-                if (!vm.HasError)
-                {
-                    //string creationDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            //Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(defaultCurve, leveeList, actionManager);
 
-                    //FailureFunctionElement ele = new FailureFunctionElement(vm.Name, creationDate, vm.Description, vm.Curve, vm.SelectedLateralStructure, this);
-                    //AddElement(ele);
-                    //AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ele.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(FailureFunctionElement)));
-                    vm.SaveWhileEditing();
 
-                }
-            }
+            ////FailureFunctionEditorVM vm = new FailureFunctionEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar), leveeList);
+            //Navigate(vm);
+            //if (!vm.WasCanceled)
+            //{
+            //    if (!vm.HasError)
+            //    {
+            //        //string creationDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+
+            //        //FailureFunctionElement ele = new FailureFunctionElement(vm.Name, creationDate, vm.Description, vm.Curve, vm.SelectedLateralStructure, this);
+            //        //AddElement(ele);
+            //        //AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ele.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(FailureFunctionElement)));
+            //        vm.SaveWhileEditing();
+
+            //    }
+            //}
         }
         #endregion
         #region Functions
@@ -95,10 +100,7 @@ namespace FdaViewModel.GeoTech
             }
         }
 
-        public override void AddBaseElements()
-        {
-            
-        }
+      
 
         public override void AddValidationRules()
         {
@@ -165,7 +167,7 @@ namespace FdaViewModel.GeoTech
             failure.Curve.fromSqliteTable(failure.TableName);
             return failure;
         }
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             AddElement(CreateElementFromRowData(rowData), false);
         }

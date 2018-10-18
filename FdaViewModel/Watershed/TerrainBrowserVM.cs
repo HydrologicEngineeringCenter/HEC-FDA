@@ -83,8 +83,8 @@ namespace FdaViewModel.Watershed
             AddRule(nameof(OriginalPath), () => OriginalPath != null, "Path cannot be null.");
             AddRule(nameof(OriginalPath), () => OriginalPath != "", "Path cannot be null.");
 
-            AddRule(nameof(Name), () =>
-            { return System.IO.File.Exists(TerrainPath) != true;}, "A file with this name already exists.");
+            AddRule(nameof(TerrainPath), () =>
+            { return System.IO.File.Exists(TerrainPath) != true; }, "A file with this name already exists.");
 
         }
 
@@ -94,9 +94,10 @@ namespace FdaViewModel.Watershed
 
             if (TerrainPath != null && TerrainPath != "")
             {            
-                    string[] pathNames = new string[] { OriginalPath, TerrainPath };
-                 CopyFileOnBackgroundThread(this, new DoWorkEventArgs(pathNames));  
-                //bw.RunWorkerAsync(pathNames);              
+                 string[] pathNames = new string[] { OriginalPath, TerrainPath };
+                 CopyFileOnBackgroundThread(this, new DoWorkEventArgs(pathNames));
+                TerrainElement newElement = new TerrainElement(Name, TerrainPath);
+                Saving.PersistenceFactory.GetTerrainManager(StudyCache).SaveNew(newElement);
             }
             
             

@@ -44,9 +44,15 @@ namespace FdaViewModel.WaterSurfaceElevation
             //localActions.Add(importFromAscii);
 
             Actions = localActions;
+
+            StudyCache.WaterSurfaceElevationAdded += AddWaterSurfaceElevationElement;
         }
         #endregion
         #region Voids
+        private void AddWaterSurfaceElevationElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            AddElement(e.Element);
+        }
         public void ImportWaterSurfaceElevations(object arg1, EventArgs arg2)
         {
             WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(this, (editorVM) => AddOwnerRules(editorVM));
@@ -85,10 +91,7 @@ namespace FdaViewModel.WaterSurfaceElevation
             }
         }
 
-        public override void AddBaseElements()
-        {
-            //throw new NotImplementedException();
-        }
+      
 
         public override void AddValidationRules()
         {
@@ -105,7 +108,7 @@ namespace FdaViewModel.WaterSurfaceElevation
         {
             return new Type[] { typeof(string),typeof(string),typeof(bool) };
         }
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
 
             List<PathAndProbability> ppList = new List<PathAndProbability>();

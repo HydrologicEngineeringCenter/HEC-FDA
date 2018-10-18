@@ -38,11 +38,17 @@ namespace FdaViewModel.FrequencyRelationships
             //localActions.Add(ImportRatingCurve);
 
             Actions = localActions;
+            StudyCache.FlowFrequencyAdded += AddFlowFrequencyElement;
         }
 
 
         #endregion
         #region Voids
+        private void AddFlowFrequencyElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            AddElement(e.Element);
+        }
+
         private void ImportRatingCurvefromAscii(object arg1, EventArgs arg2)
         {
             throw new NotImplementedException();
@@ -65,10 +71,7 @@ namespace FdaViewModel.FrequencyRelationships
                 }
             }
         }
-        public override void AddBaseElements()
-        {
-            //throw new NotImplementedException();
-        }
+       
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
@@ -106,7 +109,7 @@ namespace FdaViewModel.FrequencyRelationships
 
         }
 
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             AddElement(CreateElementFromRowData(rowData),false);
         }

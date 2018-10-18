@@ -1,4 +1,5 @@
-﻿using FdaViewModel.Utilities;
+﻿using FdaViewModel.Study;
+using FdaViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -47,6 +48,8 @@ namespace FdaViewModel
 
         #endregion
         #region Properties
+        public static FDACache StudyCache { get; set; }
+
         public virtual string Name
         {
             get { return _Name; }

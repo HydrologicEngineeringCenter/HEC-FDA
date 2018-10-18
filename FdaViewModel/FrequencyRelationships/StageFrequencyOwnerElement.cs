@@ -51,10 +51,7 @@ namespace FdaViewModel.FrequencyRelationships
         {
             throw new NotImplementedException();
         }
-        public override void AddBaseElements()
-        {
-            //throw new NotImplementedException();
-        }
+        
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
@@ -82,7 +79,7 @@ namespace FdaViewModel.FrequencyRelationships
             return null;
         }
 
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             //AddElement(new )
         }

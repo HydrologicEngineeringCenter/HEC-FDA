@@ -41,11 +41,17 @@ namespace FdaViewModel.StageTransforms
             //localActions.Add(ImportRatingCurve);
 
             Actions = localActions;
+
+            StudyCache.RatingAdded += AddRatingCurveElement;
         }
 
 
         #endregion
         #region Voids
+        private void AddRatingCurveElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            AddElement(e.Element);
+        }
         private void ImportRatingCurvefromAscii(object arg1, EventArgs arg2)
         {
             throw new NotImplementedException();
@@ -62,40 +68,21 @@ namespace FdaViewModel.StageTransforms
             Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper( (editorVM, elem) => SaveNewElement(editorVM,elem));
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper( Saving.PersistenceFactory.GetRatingManager(StudyCache));
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
+                //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
                 .WithSaveUndoRedo(saveHelper, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
                 (editor, element) => AssignValuesFromEditorToElement(editor, element));
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
 
-            //editorFactory. CreateEditor(defaultCurve)
-            //  .withUndoRedo(saveAction)
-            //  .withTransactions
-
-
-            //RatingCurveEditorVM vm = new RatingCurveEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar));
             Navigate(vm, false, true, "Create Rating Curve");
-            if (!vm.WasCanceled)
-            {
-                if (!vm.HasError)
-                {
-                   // string creationDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-
-                   // RatingCurveElement ele = new RatingCurveElement(vm.Name, creationDate, vm.Description, vm.Curve, this);
-
-                    vm.SaveWhileEditing();
-
-                   // AddElement(ele);
-                    //AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ele.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(RatingCurveElement)));
-                }
-            }
+            
         }
-        public override void AddBaseElements()
-        {
-            //throw new NotImplementedException();
-        }
+        //public override void AddBaseElements()
+        //{
+        //    //throw new NotImplementedException();
+        //}
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
@@ -151,7 +138,7 @@ namespace FdaViewModel.StageTransforms
             rc.Curve.fromSqliteTable(rc.TableName);
             return rc;
         }
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             
             AddElement(CreateElementFromRowData(rowData),false);

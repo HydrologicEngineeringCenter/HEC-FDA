@@ -37,7 +37,7 @@ namespace FdaViewModel.AggregatedStageDamage
   
         #endregion
         #region Constructors
-        public AggregatedStageDamageElement( string name , string lastEditDate, string description, Statistics.UncertainCurveDataCollection curve, CreationMethodEnum method, ParentElement owner) : base(owner)
+        public AggregatedStageDamageElement( string name , string lastEditDate, string description, Statistics.UncertainCurveDataCollection curve, CreationMethodEnum method, ParentElement owner = null) : base(owner)
         {
             LastEditDate = lastEditDate;
             Name = name;

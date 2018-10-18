@@ -35,7 +35,7 @@ namespace FdaViewModel.StageTransforms
         }
         #endregion
         #region Voids
-        public override void AddBaseElements()
+        public  void AddBaseElements()
         {
             RatingCurveOwnerElement r = new RatingCurveOwnerElement(this);
             AddElement(r);
@@ -79,7 +79,7 @@ namespace FdaViewModel.StageTransforms
         {
             return null;
         }
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             
         }

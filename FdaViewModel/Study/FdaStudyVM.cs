@@ -110,11 +110,13 @@ namespace FdaViewModel.Study
         #region Constructors
         public FdaStudyVM(): base()
         {
-            
+            //load elements
+            //put elements in cent repo
+            //pass repo to studyelement
             
             //fill the main study tree
             _MainStudyTree = new List<Utilities.ParentElement>();
-            StudyElement = new StudyElement(this);
+            StudyElement = new StudyElement();
             _StudyElement.RequestNavigation += Navigate;
             _StudyElement.RequestShapefilePaths += ShapefilePaths;
             _StudyElement.RequestShapefilePathsOfType += ShapefilePathsOfType;
@@ -136,26 +138,28 @@ namespace FdaViewModel.Study
             {
                 Tabs = new ObservableCollection<DynamicTabVM>();
             }
-            //add the map window tab
-            //MapWindow = MapWindowControlVM.MapWindow 
-            
 
-
-        }
-
-        public FdaStudyVM(string filepath) : base()
-        {
-            _MainStudyTree = new List<Utilities.ParentElement>();
-            StudyElement s = new StudyElement(this);
-            s.RequestNavigation += Navigate;
-            s.RequestShapefilePaths += ShapefilePaths;
-            s.RequestShapefilePathsOfType += ShapefilePathsOfType;
-            s.RequestAddToMapWindow += AddToMapWindow;
-            s.RequestRemoveFromMapWindow += RemoveFromMapWindow;
-            s.AddBaseElements();
-            _MainStudyTree.Add(s);
+            //load the cent repo
+            //CentralRepository.Instance().RatingCurveElements = 
+           // CentralRepository.Create(StudyElement);
 
         }
+
+       
+
+        //public FdaStudyVM(string filepath) : base()
+        //{
+        //    _MainStudyTree = new List<Utilities.ParentElement>();
+        //    StudyElement s = new StudyElement(this);
+        //    s.RequestNavigation += Navigate;
+        //    s.RequestShapefilePaths += ShapefilePaths;
+        //    s.RequestShapefilePathsOfType += ShapefilePathsOfType;
+        //    s.RequestAddToMapWindow += AddToMapWindow;
+        //    s.RequestRemoveFromMapWindow += RemoveFromMapWindow;
+        //    s.AddBaseElements();
+        //    _MainStudyTree.Add(s);
+
+        //}
         #endregion
         #region Voids
 
@@ -192,7 +196,7 @@ namespace FdaViewModel.Study
         public void LoadMapLayers(object sender, EventArgs e)
         {
             string path = Storage.Connection.Instance.ProjectDirectory + "\\MapLayers.xml";
-            if (File.Exists(path))
+            if (File.Exists(path) && _MWMTVConn != null)
             {
 
                 XElement mapLayers = XElement.Load(path);
@@ -201,7 +205,7 @@ namespace FdaViewModel.Study
                         
             }
         }
-
+        
         private void UpdateTransactionsAndMessages(object sender, EventArgs e)
         {
             AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(_StudyElement.Name, TransactionEnum.EditExisting,
@@ -259,14 +263,14 @@ namespace FdaViewModel.Study
         }
         #endregion
         #region Functions
-        public override BaseFdaElement GetElementOfTypeAndName(Type t, string name)
-        {
-            return _MainStudyTree[0].GetElementOfTypeAndName(t,name);
-        }
-        public override List<T> GetElementsOfType<T>()
-        {
-            return _MainStudyTree[0].GetElementsOfType<T>();
-        }
+        //public override BaseFdaElement GetElementOfTypeAndName(Type t, string name)
+        //{
+        //    return _MainStudyTree[0].GetElementOfTypeAndName(t,name);
+        //}
+        //public override List<T> GetElementsOfType<T>()
+        //{
+        //    return _MainStudyTree[0].GetElementsOfType<T>();
+        //}
         public override void Dispose()
         {
             FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
@@ -287,7 +291,12 @@ namespace FdaViewModel.Study
             }       
         }
 
-        
+        public override bool SavesToTable()
+        {
+            throw new NotImplementedException();
+        }
+
+
 
 
         #endregion

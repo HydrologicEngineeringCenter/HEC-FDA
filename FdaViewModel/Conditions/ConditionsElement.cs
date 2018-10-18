@@ -349,7 +349,7 @@ namespace FdaViewModel.Conditions
             removeCondition.Header = "Remove";
             removeCondition.Action = Remove;
 
-            Utilities.NamedAction renameElement = new Utilities.NamedAction();
+            Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
             renameElement.Header = "Rename";
             renameElement.Action = Rename;
 

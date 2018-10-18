@@ -57,7 +57,7 @@ namespace FdaViewModel.WaterSurfaceElevation
         #endregion
         #region Constructors
         
-        public WaterSurfaceElevationElement(string name, string description, List<PathAndProbability> relativePathAndProbabilities,bool isDepthGrids, BaseFdaElement owner) : base(owner)
+        public WaterSurfaceElevationElement(string name, string description, List<PathAndProbability> relativePathAndProbabilities,bool isDepthGrids, BaseFdaElement owner = null) : base(owner)
         {
             Name = name;
             Description = description;

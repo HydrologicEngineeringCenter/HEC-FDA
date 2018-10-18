@@ -39,9 +39,15 @@ namespace FdaViewModel.StageTransforms
             //localActions.Add(ImportFromAscii);
 
             Actions = localActions;
+
+            StudyCache.ExteriorInteriorAdded += AddExteriorInteriorElement;
         }
         #endregion
         #region Voids
+        private void AddExteriorInteriorElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            AddElement(e.Element);
+        }
         private void ImportFromASCII(object arg1, EventArgs arg2)
         {
             throw new NotImplementedException();
@@ -63,10 +69,7 @@ namespace FdaViewModel.StageTransforms
             //    }
             //}
         }
-        public override void AddBaseElements()
-        {
-            //throw new NotImplementedException();
-        }
+       
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
@@ -101,7 +104,7 @@ namespace FdaViewModel.StageTransforms
             ele.ExteriorInteriorCurve.fromSqliteTable(ele.TableName);
             return ele;
         }
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             
             AddElement(CreateElementFromRowData(rowData),false);

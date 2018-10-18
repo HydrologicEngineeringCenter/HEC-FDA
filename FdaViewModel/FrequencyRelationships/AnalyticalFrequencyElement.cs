@@ -33,7 +33,7 @@ namespace FdaViewModel.FrequencyRelationships
         }
         #endregion
         #region Constructors
-        public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, Statistics.LogPearsonIII dist, Utilities.ParentElement owner) : base(owner)
+        public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, Statistics.LogPearsonIII dist, Utilities.ParentElement owner = null) : base(owner)
         {
             LastEditDate = lastEditDate;
             Name = name;

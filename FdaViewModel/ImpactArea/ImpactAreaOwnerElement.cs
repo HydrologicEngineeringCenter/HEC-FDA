@@ -30,11 +30,6 @@ namespace FdaViewModel.ImpactArea
         }
         #endregion
         #region Constructors
-        #endregion
-        #region Voids
-        #endregion
-        #region Functions
-        #endregion
         public ImpactAreaOwnerElement(Utilities.ParentElement owner) : base(owner)
         {
             Name = "Impact Areas";
@@ -42,14 +37,26 @@ namespace FdaViewModel.ImpactArea
             Utilities.NamedAction add = new Utilities.NamedAction();
             add.Header = "Import Impact Areas";
             add.Action = AddNew;
-            
+
 
             List<Utilities.NamedAction> localactions = new List<Utilities.NamedAction>();
             localactions.Add(add);
 
             Actions = localactions;
 
+            StudyCache.ImpactAreaAdded += AddImpactAreaElement;
+
         }
+        #endregion
+        #region Voids
+        private void AddImpactAreaElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            AddElement(e.Element);
+        }
+        #endregion
+        #region Functions
+        #endregion
+
         public void AddNew(object arg1, EventArgs arg2)
         {
             List<string> paths = new List<string>();
@@ -77,10 +84,10 @@ namespace FdaViewModel.ImpactArea
             }
         }
 
-        public override void AddBaseElements()
-        {
-            throw new NotImplementedException();
-        }
+        //public override void AddBaseElements()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public override void AddValidationRules()
         {
@@ -125,7 +132,7 @@ namespace FdaViewModel.ImpactArea
             iae.ImpactAreaRows = items;
             return iae;
         }
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             
             AddElement(CreateElementFromRowData(rowData),false);

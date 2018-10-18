@@ -217,10 +217,10 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
       
 
-        public override void AddBaseElements()
-        {
-            throw new NotImplementedException();
-        }
+        //public override void AddBaseElements()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public override string[] TableColumnNames()
         {
@@ -303,7 +303,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         /// This gets called when loading the study.
         /// </summary>
         /// <param name="rowData"></param>
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             List<Consequences_Assist.ComputableObjects.OccupancyType> TempOccTypes = new List<Consequences_Assist.ComputableObjects.OccupancyType>();
             Dictionary<string, bool[]> dummyDictionary = new Dictionary<string, bool[]>();

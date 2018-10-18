@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FdaViewModel.Editors;
+using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,7 +30,7 @@ namespace FdaViewModel.StageTransforms
         #endregion
         #region Constructors
        
-        public RatingCurveElement(string userprovidedname, string creationDate, string desc, Statistics.UncertainCurveDataCollection ratingCurve, Utilities.ParentElement owner) : base(owner)
+        public RatingCurveElement(string userprovidedname, string creationDate, string desc, Statistics.UncertainCurveDataCollection ratingCurve, Utilities.ParentElement owner = null) : base(owner)
         {
             LastEditDate = creationDate;
             _OwnerNode = (RatingCurveOwnerElement)owner;
@@ -66,13 +68,13 @@ namespace FdaViewModel.StageTransforms
         public void EditRatingCurve(object arg1, EventArgs arg2)
         {
 
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper((helper, elem) => ((Utilities.ParentElement)_Owner).SaveExistingElement(helper, elem), ChangeTableName());
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetRatingManager(StudyCache), ChangeTableName());
 
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithOwnerValidationRules((editorVM, oldName) => ((Utilities.ParentElement)_Owner).AddOwnerRules(editorVM, oldName))
-                .WithSaveUndoRedo(saveHelper, (editorVM) => ((Utilities.ParentElement)_Owner).CreateElementFromEditor(editorVM),
-                (editorVM, element) => ((Utilities.ParentElement)_Owner).AssignValuesFromElementToEditor(editorVM, element),
-                 (editorVM, elem) => ((Utilities.ParentElement)_Owner).AssignValuesFromEditorToElement(editorVM, elem));
+                //.WithOwnerValidationRules((editorVM, oldName) => ((Utilities.ParentElement)_Owner).AddOwnerRules(editorVM, oldName))
+                .WithSaveUndoRedo(saveHelper, (editorVM) => CreateElementFromEditor(editorVM),
+                (editorVM, element) => AssignValuesFromElementToEditor(editorVM, element),
+                 (editorVM, elem) => AssignValuesFromEditorToElement(editorVM, elem));
 
 
 
@@ -114,6 +116,32 @@ namespace FdaViewModel.StageTransforms
             }
         }
 
+        public  void AssignValuesFromEditorToElement(BaseEditorVM editorVM, ChildElement element)
+        {
+            CurveEditorVM vm = (CurveEditorVM)editorVM;
+            element.Name = vm.Name;
+            element.Description = vm.Description;
+            element.Curve = vm.Curve;
+            element.UpdateTreeViewHeader(vm.Name);
+        }
+
+        public  void AssignValuesFromElementToEditor(BaseEditorVM editorVM, ChildElement element)
+        {
+            CurveEditorVM vm = (CurveEditorVM)editorVM;
+
+            vm.Name = element.Name;
+            vm.Description = element.Description;
+            vm.Curve = element.Curve;
+        }
+
+        public  ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
+        {
+            Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
+            //Editors.CurveEditorVM vm = (Editors.CurveEditorVM)editorVM;
+            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            return new RatingCurveElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
+        }
+
         private bool DidStateChange()
         {
             return true;
@@ -133,12 +161,12 @@ namespace FdaViewModel.StageTransforms
             {
                 Storage.Connection.Instance.Open();
             }
-            Curve.toSqliteTable(TableName); //will be formatted like: 2/27/2009 12:12:22 PM
+            Curve.toSqliteTable(TableName); 
         }
 
         public override object[] RowData()
         {
-            return new object[] { Name,LastEditDate, Description, Curve.Distribution, Curve.GetType() };
+            return new object[] { Name, LastEditDate, Description, Curve.Distribution, Curve.GetType() };
         }
 
 

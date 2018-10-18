@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 
 namespace FdaViewModel.Editors
 {
-    public class SaveUndoRedoHelper:BaseViewModel
+    public class SaveUndoRedoHelper  : BaseViewModel 
     {
 
         private ObservableCollection<Utilities.UndoRedoRowItem> _UndoRedoRows = new ObservableCollection<UndoRedoRowItem>();
@@ -16,7 +16,8 @@ namespace FdaViewModel.Editors
         private ObservableCollection<Utilities.UndoRedoRowItem> _RedoRows;
         private bool _UndoEnabled = false;
         private bool _RedoEnabled = false;
-        
+        private bool _IsImporter = false;
+        private bool _IsFirstSave = true;
 
         public int ChangeIndex { get; set; }
         public ObservableCollection<Utilities.UndoRedoRowItem> UndoRedoRows
@@ -49,7 +50,6 @@ namespace FdaViewModel.Editors
         }
         public ChildElement SelectedIndexInRedoList(int index, ChildElement element)
         {
-
             ChangeIndex -= index;
             return RedoElement(element);
         }
@@ -63,14 +63,17 @@ namespace FdaViewModel.Editors
         public string OldName { get; set; }
         public Statistics.UncertainCurveDataCollection OldCurve { get; set; }
         //public OwnedElement SaveElement { get; set; } 
-        public Action<SaveUndoRedoHelper,ChildElement> SaveAction { get; set; }
-
+        //public Action<ChildElement> SaveAction { get; set; }
+        public Saving.IPersistable SavingManager { get; set; }
 
         #region Constructors
 
-        public SaveUndoRedoHelper( Action<SaveUndoRedoHelper, ChildElement> savingAction)
+        public SaveUndoRedoHelper(Saving.IPersistable savingManager)
         {
-            SaveAction = savingAction;
+            _IsImporter = true;
+
+            //SaveAction = savingAction;
+            SavingManager = savingManager;
             UndoRedoRows = new ObservableCollection<UndoRedoRowItem>();
 
             //LoadInitialStateOfUndoRedoValues();
@@ -80,9 +83,9 @@ namespace FdaViewModel.Editors
         /// </summary>
         /// <param name="savingAction"></param>
         /// <param name="changeTableName"></param>
-        public SaveUndoRedoHelper(Action<SaveUndoRedoHelper, ChildElement> savingAction, string changeTableName)
+        public SaveUndoRedoHelper(Saving.IPersistable savingManager, string changeTableName)
         {
-            SaveAction = savingAction;
+            SavingManager = savingManager;
             LoadInitialStateOfUndoRedoValues(changeTableName);
         }
 
@@ -114,7 +117,16 @@ namespace FdaViewModel.Editors
 
             elementToSave.ChangeIndex = ChangeIndex;
             //SaveElement = elementToSave;
-            SaveAction.Invoke(this, elementToSave);
+            // SaveAction.Invoke( (T)elementToSave);
+            if (_IsImporter && _IsFirstSave)
+            {
+                SavingManager.SaveNew(elementToSave);
+                _IsFirstSave = false;
+            }
+            else
+            {
+                SavingManager.SaveExisting(elementToSave, OldName, OldCurve);
+            }
 
             ChangeIndex = 0;
             //add a row to the undoredorows

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Study;
+using System;
 using System.Collections.Generic;
 
 namespace FdaViewModel
@@ -19,6 +20,9 @@ namespace FdaViewModel
         public TransactionEventHandler TransactionEvent;
         #endregion
         #region Properties
+
+
+        public BaseFdaElement Parent { get; set; }
         public bool TableContainsGeoData
         {
             get { return _TableContainsGeoData; }
@@ -45,11 +49,17 @@ namespace FdaViewModel
             get { return _Actions; }
             set { _Actions = value; NotifyPropertyChanged(nameof(Actions)); }
         }
+
+        public abstract bool SavesToTable();
         #endregion
         #region Constructors
         public BaseFdaElement()
         {
             PropertyChanged += BaseFdaElement_PropertyChanged;
+        }
+        public BaseFdaElement(BaseFdaElement parent):base()
+        {
+            Parent = parent;
         }
 
         private void BaseFdaElement_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -81,7 +91,8 @@ namespace FdaViewModel
         }
         #endregion
         #region Voids
-       
+
+
         public void AddTransaction(object sender, Utilities.Transactions.TransactionEventArgs transaction)
         {
             TransactionEvent?.Invoke(this, transaction);
@@ -97,8 +108,8 @@ namespace FdaViewModel
         #endregion
         #region Functions
         public abstract string GetTableConstant();
-        public abstract BaseFdaElement GetElementOfTypeAndName(Type t, string name);
-        public abstract List<T> GetElementsOfType<T>() where T : Utilities.ChildElement;
+        //public abstract BaseFdaElement GetElementOfTypeAndName(Type t, string name);
+        //public abstract List<T> GetElementsOfType<T>() where T : Utilities.ChildElement;
         //public abstract List<string> GetShapefiles
         #endregion
 

@@ -34,7 +34,7 @@ namespace FdaViewModel.FrequencyRelationships
         }
         #endregion
         #region Voids
-        public override void AddBaseElements()
+        public  void AddBaseElements()
         {
             AnalyticalFrequencyOwnerElement r = new AnalyticalFrequencyOwnerElement(this);
             AddElement(r);
@@ -74,7 +74,7 @@ namespace FdaViewModel.FrequencyRelationships
         {
             throw new NotImplementedException();
         }
-        public override void AddElement(object[] rowData)
+        public override void AddElementFromRowData(object[] rowData)
         {
             //AddElement(new InflowOutflowElement((string)rowData[0], (string)rowData[1], new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None), this));
         }
