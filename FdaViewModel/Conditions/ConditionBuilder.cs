@@ -41,10 +41,8 @@ namespace FdaViewModel.Conditions
         private FdaModel.ComputationPoint.PerformanceThresholdTypes _thresholdType;
         private double _thresholdValue;
 
-        private ParentElement _owner;
-
         public ConditionBuilder(string name, string desc, int analysisYear, ImpactArea.ImpactAreaElement impactAreaElem, 
-            ImpactArea.ImpactAreaRowItem indexLocation, FdaModel.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue, ParentElement owner = null)
+            ImpactArea.ImpactAreaRowItem indexLocation, FdaModel.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue)
         {
             _name = name;
             _description = desc;
@@ -54,7 +52,6 @@ namespace FdaViewModel.Conditions
             _thresholdType = thresholdType;
             _thresholdValue = thresholdValue;
             _usesThreshold = true;
-            _owner = owner;
         }
 
         public ConditionBuilder WithAnalyticalFreqElem(FrequencyRelationships.AnalyticalFrequencyElement analyticalFreqElem)
@@ -119,7 +116,7 @@ namespace FdaViewModel.Conditions
             return new ConditionsElement(_name, _description,_analysisYear,_impactAreaElem,_indexLocation,_usesAnalyticalFlowFreq,
                 _analyticalFreqElem,_usesInflowOutflow,_inflowOutflowElem,_usesRating,_ratingElem,_usesExtIntStage,_extIntElem,
                 _usesLevee,_leveeElem,_usesFailureFunction,_failureFunctionElem,_usesAggStageDamage,_stageDamageElem,
-                _usesThreshold,_thresholdType,_thresholdValue,_owner);
+                _usesThreshold,_thresholdType,_thresholdValue);
         }
 
     }

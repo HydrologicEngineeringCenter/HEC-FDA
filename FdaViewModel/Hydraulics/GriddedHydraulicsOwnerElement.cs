@@ -47,7 +47,7 @@ namespace FdaViewModel.Hydraulics
             if(!vm.HasError & !vm.WasCanceled)
             {
                 //create a child and add it
-                GriddedHydraulicsElement element = new GriddedHydraulicsElement(this, vm);
+                GriddedHydraulicsElement element = new GriddedHydraulicsElement( vm);
                 element.RequestNavigation += Navigate;
                 AddElement(element);
 

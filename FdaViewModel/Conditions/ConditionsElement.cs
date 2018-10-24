@@ -203,7 +203,7 @@ namespace FdaViewModel.Conditions
         /// </summary>
         /// <param name="elem"></param>
         /// <param name="owner"></param>
-        public ConditionsElement(ConditionsElement elem, ParentElement owner = null) : base(owner)
+        public ConditionsElement(ConditionsElement elem) : base()
         {
             IsExpanded = elem.IsExpanded;
             Name = elem.Name;
@@ -307,7 +307,7 @@ namespace FdaViewModel.Conditions
             bool usesAnalyiticalFlowFrequency, FrequencyRelationships.AnalyticalFrequencyElement aFlowFreq, bool usesInflowOutflow, FlowTransforms.InflowOutflowElement inflowOutflowElement,
             bool useRating, StageTransforms.RatingCurveElement rc, bool useIntExtStage, StageTransforms.ExteriorInteriorElement extInt, bool useLevee, GeoTech.LeveeFeatureElement leveeElement,
             bool useFailureFunction, GeoTech.FailureFunctionElement failureFunctionElement, bool useAggStageDamage, AggregatedStageDamage.AggregatedStageDamageElement stageDamage,
-            bool useThreshold, FdaModel.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue, ParentElement owner) : base(owner)
+            bool useThreshold, FdaModel.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue ) : base()
         {
             Name = name;
            // _ConditionsOwnerElement = owner;

@@ -559,7 +559,7 @@ namespace FdaViewModel.Study
                 {
                     //create a new conditions element and change the way it renames, removes, and edits. The parent node
                     //will then tell the study tree what to do
-                    ConditionsElement condElem = new ConditionsElement((ConditionsElement)elem, condTreeCondOwnerElement);
+                    ConditionsElement condElem = new ConditionsElement((ConditionsElement)elem);
                     condElem.EditConditionsTreeElement += condTreeCondOwnerElement.EditCondition;
                     condElem.RemoveConditionsTreeElement += condTreeCondOwnerElement.RemoveElement;
                     condElem.RenameConditionsTreeElement += condTreeCondOwnerElement.RenameElement;

@@ -103,7 +103,7 @@ namespace FdaViewModel.Watershed
                     break;
                 }
             }
-            AddElement(new TerrainElement(name, System.IO.Path.GetFileName(vm.TerrainPath), this, false));
+            AddElement(new TerrainElement(name, System.IO.Path.GetFileName(vm.TerrainPath), false));
 
         }
         //public override void AddBaseElements()

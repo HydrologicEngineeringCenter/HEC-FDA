@@ -16,7 +16,6 @@ namespace FdaViewModel.Watershed
         private string _FileName;
         private int _featureHashCode;
         private const string TERRAIN_ICON = "pack://application:,,,/Fda;component/Resources/Terrain.png";
-        private TerrainOwnerElement _Owner;
         #endregion
         #region Properties
         //public override string GetTableConstant()
@@ -30,12 +29,11 @@ namespace FdaViewModel.Watershed
         }
         #endregion
         #region Constructors
-        public TerrainElement(string name, string fileName, TerrainOwnerElement owner = null, bool isTemporaryNode = false) : base(owner)
+        public TerrainElement(string name, string fileName, bool isTemporaryNode = false) : base()
         {
             //vrt and auxilary files?  hdf5?
                 Name = name;
                 _FileName = fileName;
-            _Owner = owner;
 
             if (isTemporaryNode)
             {

@@ -18,9 +18,7 @@ namespace FdaViewModel.FlowTransforms
         #endregion
         #region Fields
         private const string _TableConstant = "Inflow Outflow - ";
-        private InflowOutflowOwnerElement _OwnerNode;
-        private string _Description;
-        private Statistics.UncertainCurveDataCollection _Curve;
+   
         #endregion
         #region Properties
         //public override string GetTableConstant()
@@ -35,9 +33,8 @@ namespace FdaViewModel.FlowTransforms
 
         #endregion
         #region Constructors
-        public InflowOutflowElement(string userProvidedName, string lastEditDate, string description, Statistics.UncertainCurveDataCollection inflowOutflowCurve, Utilities.ParentElement owner = null):base(owner)
+        public InflowOutflowElement(string userProvidedName, string lastEditDate, string description, Statistics.UncertainCurveDataCollection inflowOutflowCurve ):base()
         {
-            _OwnerNode = (InflowOutflowOwnerElement)owner;
             LastEditDate = lastEditDate;
             Name = userProvidedName;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/InflowOutflowCircle.png");
@@ -95,16 +92,7 @@ namespace FdaViewModel.FlowTransforms
             StudyCache.AddSiblingRules(vm, this);
             Navigate(vm, false, false, "Edit Inflow Outflow");
 
-            //InflowOutflowEditorVM vm = new InflowOutflowEditorVM(this, (editorVM) =>((Utilities.OwnerElement)_Owner).SaveExistingElement(editorVM), (editorVM,oldName) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(editorVM,oldName));
-            //Navigate(vm, true, true);
-            //if (!vm.WasCancled)
-            //{
-            //    if (!vm.HasFatalError)
-            //    {
-            //        vm.SaveWhileEditing();
-
-            //    }
-            //}
+       
         }
 
         #endregion

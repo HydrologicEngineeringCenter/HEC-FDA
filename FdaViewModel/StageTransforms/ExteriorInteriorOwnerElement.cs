@@ -124,7 +124,7 @@ namespace FdaViewModel.StageTransforms
             Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
 
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            return new ExteriorInteriorElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve, this);
+            return new ExteriorInteriorElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
             //return null;
         }
         //public override ChildElement CreateElementFromRowData(object[] rowData)

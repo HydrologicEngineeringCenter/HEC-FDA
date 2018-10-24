@@ -60,7 +60,7 @@ namespace FdaViewModel.Hydraulics
     
         #endregion
         #region Constructors
-        public GriddedHydraulicsElement(BaseFdaElement owner, GridImporterVM vm) : base(owner)
+        public GriddedHydraulicsElement( GridImporterVM vm) : base()
         {
             Name = vm.Name;
             HydraulicsName = vm.Name;

@@ -29,7 +29,7 @@ namespace FdaViewModel.StageTransforms
         
         #endregion
         #region Constructors
-        public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, Statistics.UncertainCurveDataCollection exteriorInteriorCurve, Utilities.ParentElement owner = null):base(owner)
+        public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, Statistics.UncertainCurveDataCollection exteriorInteriorCurve):base()
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
@@ -85,16 +85,7 @@ namespace FdaViewModel.StageTransforms
             StudyCache.AddSiblingRules(vm, this);
 
             Navigate(vm, false, true, "Create Exterior Interior");
-            //ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM(this, (foo) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar));// Name, Description, ExteriorInteriorCurve, 0);
-            //Navigate(vm, true, true);
-            //if (!vm.WasCancled)
-            //{
-            //    if (!vm.HasError)
-            //    {
-
-            //        vm.SaveWhileEditing();
-            //    }
-            //}
+            
         }
         #endregion
         #region Functions

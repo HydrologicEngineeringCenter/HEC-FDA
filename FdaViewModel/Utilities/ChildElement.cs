@@ -17,7 +17,6 @@ namespace FdaViewModel.Utilities
         public delegate void AddElementEventHandler(object sender, Saving.ElementAddedEventArgs args);
 
 
-        protected BaseFdaElement _Owner;
         //private object _CustomTreeViewHeader;
         private string _Description;
         private Statistics.UncertainCurveDataCollection _Curve;
@@ -61,9 +60,8 @@ namespace FdaViewModel.Utilities
         //}
         #endregion
         #region Constructors
-        public ChildElement(BaseFdaElement owner)
+        public ChildElement()
         {
-            _Owner = owner;
         }
         #endregion
         #region Voids

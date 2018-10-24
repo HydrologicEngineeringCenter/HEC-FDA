@@ -156,7 +156,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
                         }
 
-                        OccupancyTypesElement elem = new OccupancyTypesElement(row.Name, row.ListOfOccTypes, _OcctypeTabsSelectedDictionary, this);
+                        OccupancyTypesElement elem = new OccupancyTypesElement(row.Name, row.ListOfOccTypes, _OcctypeTabsSelectedDictionary);
                         OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(elem);
                         elementsToSave.Add(elem);
                     }

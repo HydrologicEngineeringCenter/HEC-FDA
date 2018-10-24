@@ -165,7 +165,7 @@ namespace FdaViewModel.ImpactArea
         public override void Save()
         {
             if(Description == null) { Description = ""; }
-                ImpactAreaElement elementToSave = new ImpactAreaElement(Name, Description, ListOfRows,SelectedPath,null);
+                ImpactAreaElement elementToSave = new ImpactAreaElement(Name, Description, ListOfRows,SelectedPath);
             Saving.PersistenceManagers.ImpactAreaPersistenceManager manager = Saving.PersistenceFactory.GetImpactAreaManager(StudyCache);
             if (IsImporter && HasSaved == false)
             {

@@ -117,12 +117,12 @@ namespace FdaViewModel.Inventory
 
                     }
 
-                    OccupancyTypes.OccupancyTypesElement newOccTypeGroup = new OccupancyTypes.OccupancyTypesElement(groupName, newListOfOccType,_OcctypeTabsSelectedDictionary, this);
+                    OccupancyTypes.OccupancyTypesElement newOccTypeGroup = new OccupancyTypes.OccupancyTypesElement(groupName, newListOfOccType,_OcctypeTabsSelectedDictionary);
                     OccupancyTypes.OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(newOccTypeGroup);
 
                     // i think this is the place i should create the SI base object;
                     StructureInventoryBaseElement SIBase = new StructureInventoryBaseElement(vm.Name,vm.Description); 
-                    InventoryElement ele = new InventoryElement(SIBase, this);
+                    InventoryElement ele = new InventoryElement(SIBase);
                     AddElement(ele);
                 }
             }

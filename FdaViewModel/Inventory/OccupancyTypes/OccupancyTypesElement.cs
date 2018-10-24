@@ -35,11 +35,11 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         #endregion
         #region Constructors
-        public OccupancyTypesElement(BaseFdaElement owner):base(owner)
+        public OccupancyTypesElement():base()
         {
 
         }
-        public OccupancyTypesElement(string occTypesGroupName, List<Consequences_Assist.ComputableObjects.OccupancyType> listOfOccTypes, Dictionary<string,bool[]> occtypesSelectedTabs, BaseFdaElement owner):base(owner)
+        public OccupancyTypesElement(string occTypesGroupName, List<Consequences_Assist.ComputableObjects.OccupancyType> listOfOccTypes, Dictionary<string,bool[]> occtypesSelectedTabs):base()
         {
             Name = occTypesGroupName;
             OccTypesSelectedTabsDictionary = occtypesSelectedTabs;

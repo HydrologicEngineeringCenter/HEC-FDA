@@ -37,7 +37,7 @@ namespace FdaViewModel.GeoTech
 
         #endregion
         #region Constructors
-        public LeveeFeatureElement(string userProvidedName, string description, double elevation, BaseFdaElement owner = null) : base(owner)
+        public LeveeFeatureElement(string userProvidedName, string description, double elevation) : base()
         {
             Name = userProvidedName;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/LeveeFeature.png");

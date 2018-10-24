@@ -37,7 +37,7 @@ namespace FdaViewModel.Inventory
       
         #endregion
         #region Constructors
-        public InventoryElement(StructureInventoryBaseElement structureInventory, DefineSIAttributesVM defSIAttributes, AttributeLinkingListVM attLinkVM, BaseFdaElement owner = null) : base(owner)
+        public InventoryElement(StructureInventoryBaseElement structureInventory, DefineSIAttributesVM defSIAttributes, AttributeLinkingListVM attLinkVM) : base()
         {
             //Name = structureInventory.Name;
             //CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/StructureInventory.png");
@@ -75,7 +75,7 @@ namespace FdaViewModel.Inventory
 
         }
 
-        public InventoryElement(StructureInventoryBaseElement structInventoryBaseElement, BaseFdaElement owner = null) : base(owner)
+        public InventoryElement(StructureInventoryBaseElement structInventoryBaseElement) : base()
         {
             
             Name = structInventoryBaseElement.Name;

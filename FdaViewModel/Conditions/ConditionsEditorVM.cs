@@ -37,7 +37,6 @@ namespace FdaViewModel.Conditions
         private bool _UseThreshold;
         private List<string> _ThresholdTypes = new List<string>() { "Dollars", "Stage" };//dollars or stage. need enum. should be based on users selection of inclusion of stage element or damage elements.
         private double _ThresholdValue;
-        private ConditionsOwnerElement _owner;
 
         private List<FlowTransforms.InflowOutflowElement> _InflowOutflowList;
         private bool _UsesInflowOutflow;
@@ -296,7 +295,6 @@ namespace FdaViewModel.Conditions
             }
             StructureInventoryElement = StructureInventoryList.FirstOrDefault();
 
-            _owner = owner;
 
         }
         public ConditionsEditorVM(String name, String description, int analysisYear, List<ImpactArea.ImpactAreaElement> impactAreaElements, ImpactArea.ImpactAreaElement IAElement, ImpactArea.ImpactAreaRowItem IARowItem, bool useAnalyticalFrequency, List<FrequencyRelationships.AnalyticalFrequencyElement> analyiticalFrequencyRelationships, FrequencyRelationships.AnalyticalFrequencyElement AFElement, bool useInflowOutflow, List<FlowTransforms.InflowOutflowElement> inflowOutflowList,FlowTransforms.InflowOutflowElement inflowOutflowElement, bool useRatingCurve, List<StageTransforms.RatingCurveElement> ratingCurveRelationships, StageTransforms.RatingCurveElement RCElement, bool useExteriorInterior, List<StageTransforms.ExteriorInteriorElement> exteriorInteriorList,StageTransforms.ExteriorInteriorElement exteriorInteriorElement, bool useLevee, List<GeoTech.LeveeFeatureElement> leveeList,GeoTech.LeveeFeatureElement leveeElement, bool useFailureFunction, List<GeoTech.FailureFunctionElement> failureFunctionList,GeoTech.FailureFunctionElement failureFunctionElement, bool useStageDamage, List<AggregatedStageDamage.AggregatedStageDamageElement> damageFunctions, AggregatedStageDamage.AggregatedStageDamageElement DamageElement, bool useThreshold,string thresholdType,double thresholdValue, ConditionsOwnerElement owner)
@@ -342,7 +340,6 @@ namespace FdaViewModel.Conditions
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;
             
-            _owner = owner;
 
         }
         #endregion

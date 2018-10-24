@@ -21,17 +21,13 @@ namespace FdaViewModel.Watershed
 
         private string _TerrainPath;
         private string _OriginalPath;
-        private TerrainOwnerElement _Owner;
 
        // private BackgroundWorker bw = new BackgroundWorker();
 
         #endregion
         #region Properties
 
-        public TerrainOwnerElement TerrainOwnerElement
-        {
-            get { return _Owner;  }
-        }
+      
         /// <summary>
         /// This is the original path that the user selected.
         /// </summary>
@@ -69,8 +65,7 @@ namespace FdaViewModel.Watershed
         //public TerrainBrowserVM(TerrainOwnerElement owner, Action<BaseViewModel> ownerValidationRules) :base()
         public TerrainBrowserVM(TerrainOwnerElement owner, Editors.EditorActionManager actionManager) : base(actionManager)
         {
-            //ownerValidationRules(this);
-            _Owner = owner;
+            
         }
 
         
@@ -98,7 +93,7 @@ namespace FdaViewModel.Watershed
                 // CopyFileOnBackgroundThread(this, new DoWorkEventArgs(pathNames));
 
                 //add a dummy element to the parent
-                TerrainElement t = new TerrainElement(Name,System.IO.Path.GetFileName(TerrainPath),null,true); // file extention?
+                TerrainElement t = new TerrainElement(Name,System.IO.Path.GetFileName(TerrainPath),true); // file extention?
                 StudyCache.TerrainParent.AddElement(t);
                 TerrainElement newElement = new TerrainElement(Name, TerrainPath);
 
@@ -110,28 +105,28 @@ namespace FdaViewModel.Watershed
             
         }
 
-        private async  void CopyFileOnBackgroundThread(object sender, DoWorkEventArgs e)
-        {
-            string[] pathNames = (string[])e.Argument;
-            //System.IO.File.Copy(pathNames[0], pathNames[1]);
-            await Task.Run(() => System.IO.File.Copy(pathNames[0], pathNames[1]));
-            //TerrainFileFinishedCopying?.Invoke(sender, e);
-            TerrainBrowserVM vm = (TerrainBrowserVM)sender;
-            string name = vm.Name;
+        //private async  void CopyFileOnBackgroundThread(object sender, DoWorkEventArgs e)
+        //{
+        //    string[] pathNames = (string[])e.Argument;
+        //    //System.IO.File.Copy(pathNames[0], pathNames[1]);
+        //    await Task.Run(() => System.IO.File.Copy(pathNames[0], pathNames[1]));
+        //    //TerrainFileFinishedCopying?.Invoke(sender, e);
+        //    TerrainBrowserVM vm = (TerrainBrowserVM)sender;
+        //    string name = vm.Name;
 
-            //remove the temporary node and replace it
-            foreach (Utilities.ChildElement elem in vm.TerrainOwnerElement.Elements)
-            {
-                if (elem.Name.Equals(name))
-                {
-                    vm.TerrainOwnerElement.Elements.Remove(elem);
-                    break;
-                }
-            }
-            vm.TerrainOwnerElement.AddElement(new TerrainElement(name, System.IO.Path.GetFileName(vm.TerrainPath), vm.TerrainOwnerElement, false));
+        //    //remove the temporary node and replace it
+        //    foreach (Utilities.ChildElement elem in vm.TerrainOwnerElement.Elements)
+        //    {
+        //        if (elem.Name.Equals(name))
+        //        {
+        //            vm.TerrainOwnerElement.Elements.Remove(elem);
+        //            break;
+        //        }
+        //    }
+        //    vm.TerrainOwnerElement.AddElement(new TerrainElement(name, System.IO.Path.GetFileName(vm.TerrainPath), false));
 
 
-        }
+        //}
 
         #endregion
         #region Voids

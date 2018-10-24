@@ -10,11 +10,11 @@ namespace FdaViewModel.Conditions
     class ConditionFactory
     {
 
-        public static ConditionsElement BuildConditionsElement(ConditionsPlotEditorVM vm, ParentElement owner = null)
+        public static ConditionsElement BuildConditionsElement(ConditionsPlotEditorVM vm)
         {
             if(vm.Description == null) { vm.Description = ""; }
             ConditionBuilder builder = new ConditionBuilder(vm.Name, vm.Description, vm.Year, vm.SelectedImpactArea, vm.IndexLocation,
-                vm.SelectedThresholdType, vm.ThresholdValue, owner);
+                vm.SelectedThresholdType, vm.ThresholdValue);
             
             foreach(Plots.IndividualLinkedPlotControlVM control in vm.AddedPlots)
             {

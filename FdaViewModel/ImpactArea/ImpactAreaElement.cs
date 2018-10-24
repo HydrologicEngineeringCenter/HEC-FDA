@@ -32,11 +32,10 @@ namespace FdaViewModel.ImpactArea
         }
         #endregion
         #region Constructors
-        public ImpactAreaElement(string userdefinedname, string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows,
-            ImpactAreaOwnerElement owner = null) : this(userdefinedname,description,collectionOfRows, "", owner)
+        public ImpactAreaElement(string userdefinedname, string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows) : this(userdefinedname,description,collectionOfRows, "")
         {
         }
-        public ImpactAreaElement(string userdefinedname,string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows, string selectedPath, ImpactAreaOwnerElement owner ) : base(owner)
+        public ImpactAreaElement(string userdefinedname,string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows, string selectedPath ) : base()
         {
             Name = userdefinedname;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/ImpactAreas.png");
@@ -153,19 +152,7 @@ namespace FdaViewModel.ImpactArea
             ImpactAreaImporterVM vm = new ImpactAreaImporterVM(this, ImpactAreaRows);
             Navigate(vm, false,false,"Edit Impact Area");
 
-            //if (!vm.WasCanceled)
-            //{
-            //    string originalName = Name;
-            //    Name = vm.Name;
-                
-            //    this.Description = vm.Description;
-            //    ImpactAreaRows = vm.ListOfRows;
-
-            //    ((ImpactAreaOwnerElement)_Owner).UpdateTableRowIfModified((Utilities.ParentElement)_Owner, originalName, this);
-            //    UpdateExistingTable();
-
-            //}
-            //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Under Construction.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
+         
         }
         public override void AddValidationRules()
         {
@@ -246,7 +233,7 @@ namespace FdaViewModel.ImpactArea
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             ImpactAreaElement elem = (ImpactAreaElement)elementToClone;
-            return new ImpactAreaElement(elem.Name, elem.Description,elem.ImpactAreaRows,elem.SelectedPath,null);
+            return new ImpactAreaElement(elem.Name, elem.Description,elem.ImpactAreaRows,elem.SelectedPath);
         }
         #endregion
 

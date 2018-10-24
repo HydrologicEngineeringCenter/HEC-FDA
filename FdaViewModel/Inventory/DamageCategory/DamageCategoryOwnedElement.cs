@@ -23,7 +23,7 @@ namespace FdaViewModel.Inventory.DamageCategory
         }
         #endregion
         #region Constructors
-        public DamageCategoryOwnedElement(BaseFdaElement owner) : base(owner)
+        public DamageCategoryOwnedElement() : base()
         {
             Name = "Damage Categories";
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);

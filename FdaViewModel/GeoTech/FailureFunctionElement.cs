@@ -47,7 +47,7 @@ namespace FdaViewModel.GeoTech
         //}
         #endregion
         #region Constructors
-        public FailureFunctionElement(string userProvidedName, string lastEditDate, string description, Statistics.UncertainCurveDataCollection failureFunctionCurve, LeveeFeatureElement selectedLatStructure, BaseFdaElement owner = null) : base(owner)
+        public FailureFunctionElement(string userProvidedName, string lastEditDate, string description, Statistics.UncertainCurveDataCollection failureFunctionCurve, LeveeFeatureElement selectedLatStructure) : base()
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
@@ -58,7 +58,7 @@ namespace FdaViewModel.GeoTech
             Curve = failureFunctionCurve;
             if (selectedLatStructure == null)
             {
-                SelectedLateralStructure = new LeveeFeatureElement("", "", 0, this);
+                SelectedLateralStructure = new LeveeFeatureElement("", "", 0);
             }
             else
             {
