@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -234,94 +235,48 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         #endregion
 
 
-        public override void Save()
+        public  void Save()
         {
-            Stopwatch swEachOccType = new Stopwatch();
-            Stopwatch swTotal = new Stopwatch();
-            Stopwatch swApply = new Stopwatch();
-            swTotal.Start();
+            
+            //if (!Storage.Connection.Instance.IsConnectionNull)
+            //{
+            //    if (!Storage.Connection.Instance.IsOpen)
+            //    {
+            //        Storage.Connection.Instance.Open();
+            //    }
+            //    if (Storage.Connection.Instance.TableNames().Contains(TableName))
+            //    {
+            //        //already exists... delete?
+            //        Storage.Connection.Instance.DeleteTable(TableName);
+            //    }
 
+            //    string[] colNames = new string[] { "Name", "Description", "DamageCategory","VarInFoundHtType","FdHtMin","FdHtMax","FdHtStDev",
+            //        "IsStructChecked","VarInStructValueType","StructMin","StructMax","StructStDev","StructDistType", "IsContChecked",
+            //        "VarInContValueType", "ContMin", "ContMax", "ContStDev", "ContDistType", "IsVehChecked", "VarInVehValueType",
+            //        "VehMin", "VehMax", "VehStDev", "VehDistType", "IsOtherChecked", "VarInOtherValueType", "OtherMin", "OtherMax",
+            //        "OtherStDev", "OtherDistType","GroupName", "StructureCurve","ContentCurve","VehicleCurve","OtherCurve" };
+            //    Type[] colTypes = new Type[] { typeof(string), typeof(string), typeof(string), typeof(string), typeof(double),
+            //        typeof(double), typeof(double), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double),
+            //        typeof(string), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),
+            //        typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string), typeof(bool),
+            //        typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),typeof(string),typeof(string),
+            //        typeof(string),typeof(string),typeof(string)};
 
-            if (!Storage.Connection.Instance.IsConnectionNull)
-            {
-                if (!Storage.Connection.Instance.IsOpen)
-                {
-                    Storage.Connection.Instance.Open();
-                }
-                if (Storage.Connection.Instance.TableNames().Contains(TableName))
-                {
-                    //already exists... delete?
-                    Storage.Connection.Instance.DeleteTable(TableName);
-                }
+            //    Storage.Connection.Instance.CreateTable(TableName, colNames, colTypes);
+            //    DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
 
-                string[] colNames = new string[] { "Name", "Description", "DamageCategory","VarInFoundHtType","FdHtMin","FdHtMax","FdHtStDev",
-                    "IsStructChecked","VarInStructValueType","StructMin","StructMax","StructStDev","StructDistType", "IsContChecked",
-                    "VarInContValueType", "ContMin", "ContMax", "ContStDev", "ContDistType", "IsVehChecked", "VarInVehValueType",
-                    "VehMin", "VehMax", "VehStDev", "VehDistType", "IsOtherChecked", "VarInOtherValueType", "OtherMin", "OtherMax",
-                    "OtherStDev", "OtherDistType","GroupName", "StructureCurve","ContentCurve","VehicleCurve","OtherCurve" };
-                Type[] colTypes = new Type[] { typeof(string), typeof(string), typeof(string), typeof(string), typeof(double),
-                    typeof(double), typeof(double), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double),
-                    typeof(string), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),
-                    typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string), typeof(bool),
-                    typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),typeof(string),typeof(string),
-                    typeof(string),typeof(string),typeof(string)};
+            //    List<object[]> rows = new List<object[]>();
 
-                Storage.Connection.Instance.CreateTable(TableName, colNames, colTypes);
-                DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
+            //    foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in ListOfOccupancyTypes)
+            //    {
 
-                List<object[]> rows = new List<object[]>();
+            //        rows.Add(GetOccTypeRowForParentTable(ot).ToArray());
+            //    }
+            //    tbl.AddRows(rows);
+            //    tbl.ApplyEdits();
+            //    Storage.Connection.Instance.Close();
 
-                foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in ListOfOccupancyTypes)
-                {
-                    swEachOccType.Start();
-
-                    ////write table for structures
-                    //if (ot.GetStructurePercentDD.YValues.Count > 0)
-                    //{
-                    //    string strucTableName = Name + " - " + ot.Name + STRUCTURE_DD_CURVE_NAME;
-                       // SaveDepthDamageTable(strucTableName, ot.GetStructurePercentDD.XValues, ot.GetStructurePercentDD.YValues);   
-                    //    //SaveStructureDepthDamage(ot);
-                    //}
-
-                    ////write a table for content dd curve
-                    //if (ot.GetContentPercentDD.YValues.Count > 0)
-                    //{
-                    //    string contTableName = Name + " - " + ot.Name + CONTENT_DD_CURVE_NAME;
-                    //    SaveDepthDamageTable(contTableName, ot.GetContentPercentDD.XValues, ot.GetContentPercentDD.YValues);
-                    //    //SaveContentDepthDamage(ot);
-                    //}
-
-                    ////write for vehicle dd curve
-                    //if (ot.GetVehiclePercentDD.YValues.Count > 0)
-                    //{
-                    //    string vehicleTableName = Name + " - " + ot.Name + VEHICLE_DD_CURVE_NAME;
-                    //    SaveDepthDamageTable(vehicleTableName, ot.GetVehiclePercentDD.XValues, ot.GetVehiclePercentDD.YValues);
-                    //    //SaveVehicleDepthDamage(ot);
-                    //}
-
-                    //// other dd curve
-                    //if (ot.GetOtherPercentDD.YValues.Count > 0)
-                    //{
-                    //    string otherTableName = Name + " - " + ot.Name + OTHER_DD_CURVE_NAME;
-                    //    SaveDepthDamageTable(otherTableName, ot.GetOtherPercentDD.XValues, ot.GetOtherPercentDD.YValues);
-                    //    //SaveOtherDepthDamage(ot);
-                    //}                   
-
-
-                    swEachOccType.Stop();
-                    Console.WriteLine("****  time per OT: " + swEachOccType.Elapsed.ToString());
-                    swEachOccType.Reset();
-
-                    rows.Add(GetOccTypeRowForParentTable(ot).ToArray());
-                }
-                tbl.AddRows(rows);
-                tbl.ApplyEdits();
-                Storage.Connection.Instance.Close();
-
-
-                swTotal.Stop();
-                Console.WriteLine("***************  total time to save: " + swTotal.Elapsed.ToString());
-            }
+            //}
         }
         /// <summary>
         /// This method is used to create the row for the parent occtype table. 
@@ -478,31 +433,38 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             return rowItems;
         }
 
-        public override object[] RowData()
+        //public override object[] RowData()
+        //{
+        //    return new object[] { Name };
+        //}
+
+        //public override bool SavesToRow()
+        //{
+        //    return true;
+        //}
+
+        //public override bool SavesToTable()
+        //{
+        //    return true;
+        //}
+
+        //public override string GetTableConstant()
+        //{
+        //    return "OccType - ";
+        //}
+        //public override string TableName
+        //{
+        //    get
+        //    {
+        //        return GetTableConstant() + Name;
+        //    }
+        //}
+
+
+        public override ChildElement CloneElement(ChildElement elementToClone)
         {
-            return new object[] { Name };
+            return null;
         }
 
-        public override bool SavesToRow()
-        {
-            return true;
-        }
-
-        public override bool SavesToTable()
-        {
-            return true;
-        }
-
-        public override string GetTableConstant()
-        {
-            return "OccType - ";
-        }
-        public override string TableName
-        {
-            get
-            {
-                return GetTableConstant() + Name;
-            }
-        }
     }
 }

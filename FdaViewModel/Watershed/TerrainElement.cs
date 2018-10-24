@@ -19,10 +19,10 @@ namespace FdaViewModel.Watershed
         private TerrainOwnerElement _Owner;
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return _TableConstant;
-        }
+        //public override string GetTableConstant()
+        //{
+        //    return _TableConstant;
+        //}
         public string FileName
         {
             get { return _FileName; }
@@ -47,7 +47,7 @@ namespace FdaViewModel.Watershed
 
                 Utilities.NamedAction remove = new Utilities.NamedAction();
                 remove.Header = "Remove Terrain";
-                remove.Action = Remove;
+                remove.Action = RemoveElement;
 
                 Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
                 renameElement.Header = "Rename";
@@ -66,8 +66,14 @@ namespace FdaViewModel.Watershed
             }
         }
 
-
-
+        public override ChildElement CloneElement(ChildElement elementToClone)
+        {
+            return new TerrainElement(elementToClone.Name, ((TerrainElement)elementToClone).FileName);
+        }
+        public void RemoveElement(object sender, EventArgs e)
+        {
+            Saving.PersistenceFactory.GetTerrainManager(StudyCache).Remove(this);
+        }
 
         public override void RemoveElementFromMapWindow(object arg1, EventArgs arg2)
         {
@@ -134,13 +140,13 @@ namespace FdaViewModel.Watershed
         //    }
         //}
 
-        public override string TableName
-        {
-            get
-            {
-                throw new NotSupportedException("There is no terrain table. look for a Terrains table"); // these are not the droids you are looking for...
-            }
-        }
+        //public override string TableName
+        //{
+        //    get
+        //    {
+        //        throw new NotSupportedException("There is no terrain table. look for a Terrains table"); // these are not the droids you are looking for...
+        //    }
+        //}
         #endregion
         #region Voids
         #endregion
@@ -151,22 +157,22 @@ namespace FdaViewModel.Watershed
             //throw new NotImplementedException();
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+        //public override void Save()
+        //{
+        //    //throw new NotImplementedException();
+        //}
 
-        public override object[] RowData()
-        {
-            return new object[] { Name, FileName };
-        }
-        public override bool SavesToRow()
-        {
-            return true;
-        }
-        public override bool SavesToTable()
-        {
-            return false;
-        }
+        //public override object[] RowData()
+        //{
+        //    return new object[] { Name, FileName };
+        //}
+        //public override bool SavesToRow()
+        //{
+        //    return true;
+        //}
+        //public override bool SavesToTable()
+        //{
+        //    return false;
+        //}
     }
 }

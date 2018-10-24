@@ -81,9 +81,9 @@ namespace FdaViewModel.Inventory
         }
         #endregion
         #region Constructors
-        public ImportStructuresFromShapefileVM(Action<BaseViewModel> ownerValidationRules) :base()
+        public ImportStructuresFromShapefileVM() :base()
         {
-            ownerValidationRules(this);
+            
 
             //get the list of paths that exist in the map window
             ObservableCollection<string> collectionOfPointFiles = new ObservableCollection<string>();
@@ -618,10 +618,7 @@ namespace FdaViewModel.Inventory
 
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+        
         #endregion
         #region Functions
         #endregion

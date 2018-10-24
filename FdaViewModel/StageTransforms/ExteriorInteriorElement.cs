@@ -5,6 +5,7 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.StageTransforms
 {
@@ -18,21 +19,14 @@ namespace FdaViewModel.StageTransforms
         #region Fields
         private const string _TableConstant = "Exterior Interior - ";
 
-        private string _Description;
-        private Statistics.UncertainCurveDataCollection _Curve;
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return _TableConstant;
-        }
-        public string Description { get { return _Description; } set { _Description = value; NotifyPropertyChanged(); } }
+        //public override string GetTableConstant()
+        //{
+        //    return _TableConstant;
+        //}
 
-        public Statistics.UncertainCurveDataCollection ExteriorInteriorCurve
-        {
-            get { return _Curve; }
-            set { _Curve = value; NotifyPropertyChanged(); }
-        }
+        
         #endregion
         #region Constructors
         public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, Statistics.UncertainCurveDataCollection exteriorInteriorCurve, Utilities.ParentElement owner = null):base(owner)
@@ -43,7 +37,7 @@ namespace FdaViewModel.StageTransforms
 
             Description = desc;
             if (Description == null) Description = "";
-            ExteriorInteriorCurve = exteriorInteriorCurve;
+            Curve = exteriorInteriorCurve;
 
             Utilities.NamedAction editExteriorInteriorCurve = new Utilities.NamedAction();
             editExteriorInteriorCurve.Header = "Edit Exterior Interior Curve";
@@ -51,9 +45,9 @@ namespace FdaViewModel.StageTransforms
 
             Utilities.NamedAction removeExteriorInteriorCurve = new Utilities.NamedAction();
             removeExteriorInteriorCurve.Header = "Remove";
-            removeExteriorInteriorCurve.Action = Remove;
+            removeExteriorInteriorCurve.Action = RemoveElement;
 
-            Utilities.NamedAction renameElement = new Utilities.NamedAction();
+            Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
             renameElement.Header = "Rename";
             renameElement.Action = Rename;
 
@@ -66,52 +60,83 @@ namespace FdaViewModel.StageTransforms
         }
         #endregion
         #region Voids
+        public override ChildElement CloneElement(ChildElement elementToClone)
+        {
+            ExteriorInteriorElement elem = (ExteriorInteriorElement)elementToClone;
+            return new ExteriorInteriorElement(elem.Name, elem.LastEditDate, elem.Description, elem.Curve);
+        }
+        public void RemoveElement(object sender, EventArgs e)
+        {
+            Saving.PersistenceFactory.GetExteriorInteriorManager(StudyCache).Remove(this);
+        }
         public void EditExteriorInteriorCurve(object arg1, EventArgs arg2)
         {
+          
+            //create save helper
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetExteriorInteriorManager(StudyCache)
+                ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
+                (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
+            //create action manager
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
+                .WithSaveUndoRedo(saveHelper);
+
+            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
+            StudyCache.AddSiblingRules(vm, this);
+
+            Navigate(vm, false, true, "Create Exterior Interior");
             //ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM(this, (foo) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar));// Name, Description, ExteriorInteriorCurve, 0);
             //Navigate(vm, true, true);
             //if (!vm.WasCancled)
             //{
             //    if (!vm.HasError)
             //    {
-                  
+
             //        vm.SaveWhileEditing();
             //    }
             //}
         }
         #endregion
         #region Functions
-        #endregion
-        public override string TableName
+        public ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
         {
-            get
-            {
-                return GetTableConstant() + LastEditDate;
-            }
+            Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
+
+            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            return new ExteriorInteriorElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
+            //return null;
         }
+        #endregion
+        //public override string TableName
+        //{
+        //    get
+        //    {
+        //        return GetTableConstant() + LastEditDate;
+        //    }
+        //}
 
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
         }
 
-        public override void Save()
-        {
-            _Curve.toSqliteTable(TableName);
-        }
+        //public override void Save()
+        //{
+        //    _Curve.toSqliteTable(TableName);
+        //}
 
-        public override object[] RowData()
-        {
-            return new object[] { Name, LastEditDate, Description, ExteriorInteriorCurve.Distribution };
-        }
+        //public override object[] RowData()
+        //{
+        //    return new object[] { Name, LastEditDate, Description, ExteriorInteriorCurve.Distribution };
+        //}
 
-        public override bool SavesToRow()
-        {
-            return true;
-        }
-        public override bool SavesToTable()
-        {
-            return true;
-        }
+        //public override bool SavesToRow()
+        //{
+        //    return true;
+        //}
+        //public override bool SavesToTable()
+        //{
+        //    return true;
+        //}
     }
 }

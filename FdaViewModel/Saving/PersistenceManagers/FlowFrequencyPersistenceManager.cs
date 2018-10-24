@@ -8,61 +8,28 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Saving.PersistenceManagers
 {
-    public class FlowFrequencyPersistenceManager :SavingBase, IPersistable
+    public class FlowFrequencyPersistenceManager :SavingBase, IPersistableWithUndoRedo
     {
-        public string TableName  {   get { return "Analyitical Frequency Curves"; } }
-        public string[] TableColumnNames()
-        {
-            return new string[] { "Name", "Last Edit Date", "Description", "Mean (of Log)", "Standard Deviation (of Log)", "Skew (of Log)", "Equivalent Years of Record" };
-        }
-        private const string _TableConstant = "Analytical Frequency - ";
 
-        public Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string), typeof(string), typeof(string), typeof(double), typeof(double), typeof(double), typeof(int) };
-        }
+        private const string TableName = "Analyitical Frequency Curves";
+        internal override string ChangeTableConstant { get { return "Analytical Frequency - "; } }
+        private static readonly string[] TableColumnNames = { "Name", "Last Edit Date", "Description", "Mean (of Log)", "Standard Deviation (of Log)", "Skew (of Log)", "Equivalent Years of Record" };
+        private static readonly Type[] TableColumnTypes = { typeof(string), typeof(string), typeof(string), typeof(double), typeof(double), typeof(double), typeof(int) };
+
+
 
         public FlowFrequencyPersistenceManager(Study.FDACache studyCache)
         {
             StudyCache = studyCache;
         }
 
-
-        public void SaveNew(ChildElement element)
+        #region utilities
+        private object[] GetRowDataFromElement(AnalyticalFrequencyElement element)
         {
-            if (element.GetType() == typeof(AnalyticalFrequencyElement))
-            {
-                string editDate = DateTime.Now.ToString("G");
-                element.LastEditDate = editDate;
-                SaveNewElementToParentTable(element, TableName, TableColumnNames(), TableColumnTypes());
-                //save the individual table
-                SaveFlowFreqCurveTable((AnalyticalFrequencyElement)element, editDate);
-                //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCache.AddFlowFrequencyElement((AnalyticalFrequencyElement)element);
-            }
+            return new object[] { element.Name, element.LastEditDate, element.Description, element.Distribution.GetMean, element.Distribution.GetStDev, element.Distribution.GetG, element.Distribution.GetSampleSize };
         }
 
-        public void SaveExisting(Utilities.ChildElement element, string oldName, Statistics.UncertainCurveDataCollection oldCurve)
-        {
-            SaveExistingElement(oldName, oldCurve, element, TableName);
-        }
-
-        public List<ChildElement> Load()
-        {
-            return CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
-        }
-
-
-        private void SaveFlowFreqCurveTable(AnalyticalFrequencyElement element, string lastEditDate)
-        {
-            if (!Storage.Connection.Instance.IsOpen)
-            {
-                Storage.Connection.Instance.Open();
-            }
-            element.Curve.toSqliteTable(_TableConstant + lastEditDate);
-        }
-
-        public  ChildElement CreateElementFromRowData(object[] rowData)
+        public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             double mean = (double)rowData[3];
             double stdev = (double)rowData[4];
@@ -71,7 +38,55 @@ namespace FdaViewModel.Saving.PersistenceManagers
             return new AnalyticalFrequencyElement((string)rowData[0], (string)rowData[1], (string)rowData[2], new Statistics.LogPearsonIII(mean, stdev, skew, (int)n));
 
         }
+        #endregion
+        /// <summary>
+        /// Flow frequency doesn not save to its own table. All is contained in the parent row
+        /// </summary>
+        /// <param name="element"></param>
+        public void SaveNew(ChildElement element)
+        {
+            if (element.GetType() == typeof(AnalyticalFrequencyElement))
+            {
+                string editDate = DateTime.Now.ToString("G");
+                element.LastEditDate = editDate;
 
+                SaveNewElementToParentTable(GetRowDataFromElement((AnalyticalFrequencyElement)element), TableName, TableColumnNames, TableColumnTypes);
+                SaveElementToChangeTable(element.Name, GetRowDataFromElement((AnalyticalFrequencyElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
+                //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
+                //add the rating element to the cache which then raises event that adds it to the owner element
+                StudyCache.AddFlowFrequencyElement((AnalyticalFrequencyElement)element);
+            }
+        }
 
+        public void Remove(ChildElement element)
+        {
+            RemoveFromParentTable(element, TableName);
+            DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
+            StudyCache.RemoveFlowFrequencyElement((AnalyticalFrequencyElement)element);
+
+        }
+
+        public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex )
+        {
+            string editDate = DateTime.Now.ToString("G");
+            elementToSave.LastEditDate = editDate;
+
+            if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((AnalyticalFrequencyElement)elementToSave), oldElement.Name, TableName) )
+            {
+                UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((AnalyticalFrequencyElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
+               // SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
+                StudyCache.UpdateFlowFrequencyElement((AnalyticalFrequencyElement)oldElement, (AnalyticalFrequencyElement)elementToSave);
+            }
+        }
+
+        public List<ChildElement> Load()
+        {
+            return CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
+        }
+
+        public override void AddValidationRules()
+        {
+           // throw new NotImplementedException();
+        }
     }
 }

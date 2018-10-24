@@ -18,10 +18,7 @@ namespace FdaViewModel.WaterSurfaceElevation
         #region Fields
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+       
         #endregion
         #region Constructors
         public WaterSurfaceElevationOwnerElement(BaseFdaElement owner):base(owner)
@@ -46,50 +43,54 @@ namespace FdaViewModel.WaterSurfaceElevation
             Actions = localActions;
 
             StudyCache.WaterSurfaceElevationAdded += AddWaterSurfaceElevationElement;
+            StudyCache.WaterSurfaceElevationRemoved += RemoveWaterSurfaceElevationElement;
+            StudyCache.WaterSurfaceElevationUpdated += UpdateWaterSurfaceElevationElement;
         }
         #endregion
         #region Voids
+        private void UpdateWaterSurfaceElevationElement(object sender, Saving.ElementUpdatedEventArgs e)
+        {
+            UpdateElement(e.OldElement, e.NewElement);
+        }
+        private void RemoveWaterSurfaceElevationElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            RemoveElement(e.Element);
+        }
         private void AddWaterSurfaceElevationElement(object sender, Saving.ElementAddedEventArgs e)
         {
             AddElement(e.Element);
         }
         public void ImportWaterSurfaceElevations(object arg1, EventArgs arg2)
         {
-            WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(this, (editorVM) => AddOwnerRules(editorVM));
-            Navigate(vm);
-            if (!vm.WasCanceled)
-            {
-                if (!vm.HasFatalError)
-                {
-                    //add the element
-                    WaterSurfaceElevationElement ele = new WaterSurfaceElevationElement(vm.Name, vm.Description, vm.ListOfRelativePaths,vm.IsDepthGridChecked, this);
+            WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(this);
+            Navigate(vm, false,false,"Import Water Surface Elevation");
+            //if (!vm.WasCanceled)
+            //{
+            //    if (!vm.HasFatalError)
+            //    {
+            //        //add the element
+            //        WaterSurfaceElevationElement ele = new WaterSurfaceElevationElement(vm.Name, vm.Description, vm.ListOfRelativePaths,vm.IsDepthGridChecked, this);
 
-                    AddElement(ele);
-                    //add a transaction for each file copied over?
-                    //i need to make sure that there is the same number of original paths as new paths.
-                    if(vm.ListOfOriginalPaths.Count == vm.ListOfRelativePaths.Count)
-                    {
-                        for(int i = 0;i<vm.ListOfRelativePaths.Count;i++)
-                        {
-                            //AddTransaction(new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.CreateNew, "File " + vm.ListOfOriginalPaths[i]+ " was saved to " + vm.ListOfRelativePaths[i], nameof(WaterSurfaceElevationElement)));
+            //        AddElement(ele);
+            //        //add a transaction for each file copied over?
+            //        //i need to make sure that there is the same number of original paths as new paths.
+            //        if(vm.ListOfOriginalPaths.Count == vm.ListOfRelativePaths.Count)
+            //        {
+            //            for(int i = 0;i<vm.ListOfRelativePaths.Count;i++)
+            //            {
+            //                //AddTransaction(new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.CreateNew, "File " + vm.ListOfOriginalPaths[i]+ " was saved to " + vm.ListOfRelativePaths[i], nameof(WaterSurfaceElevationElement)));
 
-                        }
-                    }
+            //            }
+            //        }
 
-                }
-            }
+            //    }
+            //}
 
         }
         #endregion
         #region Functions
         #endregion
-        public override string TableName
-        {
-            get
-            {
-                return "Water Surface Elevations";
-            }
-        }
+       
 
       
 
@@ -99,30 +100,7 @@ namespace FdaViewModel.WaterSurfaceElevation
         }
 
 
-        public override string[] TableColumnNames()
-        {
-            return new string[] { "Name","Description","IsDepthGrids" };
-        }
-
-        public override Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string),typeof(string),typeof(bool) };
-        }
-        public override void AddElementFromRowData(object[] rowData)
-        {
-
-            List<PathAndProbability> ppList = new List<PathAndProbability>();
-
-
-            WaterSurfaceElevationElement wse = new WaterSurfaceElevationElement((string)rowData[0], (string)rowData[1], ppList, (bool)rowData[2], this);
-
-            int lastRow = Storage.Connection.Instance.GetTable(wse.TableName).NumberOfRows - 1;
-            foreach (object[] row in Storage.Connection.Instance.GetTable(wse.TableName).GetRows(0, lastRow))
-            {
-                wse.RelativePathAndProbability.Add(new PathAndProbability(row[0].ToString(), Convert.ToDouble(row[1])));
-            }
-
-            AddElement(wse, false);
-        }
+        
+     
     }
 }

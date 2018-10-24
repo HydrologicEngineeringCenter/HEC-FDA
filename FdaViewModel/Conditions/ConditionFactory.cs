@@ -10,7 +10,7 @@ namespace FdaViewModel.Conditions
     class ConditionFactory
     {
 
-        public static ConditionsElement BuildConditionsElement(ConditionsPlotEditorVM vm, ParentElement owner)
+        public static ConditionsElement BuildConditionsElement(ConditionsPlotEditorVM vm, ParentElement owner = null)
         {
             if(vm.Description == null) { vm.Description = ""; }
             ConditionBuilder builder = new ConditionBuilder(vm.Name, vm.Description, vm.Year, vm.SelectedImpactArea, vm.IndexLocation,

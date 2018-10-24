@@ -52,9 +52,6 @@ namespace FdaViewModel.Study
             AddRule(nameof(MostLikelyFuture), () => MostLikelyFuture >= BaseYear, "The Most Likely Future must happen after the Base Year.");
         }
 
-        public override void Save()
-        {
-
-        }
+      
     }
 }

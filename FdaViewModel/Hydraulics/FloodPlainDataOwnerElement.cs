@@ -15,17 +15,17 @@ namespace FdaViewModel.Hydraulics
         private const string _TableName = "Floodplain Data";
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
-        public override string TableName
-        {
-            get
-            {
-                return _TableName;
-            }
-        }
+        //public override string GetTableConstant()
+        //{
+        //    return TableName;
+        //}
+        //public override string TableName
+        //{
+        //    get
+        //    {
+        //        return _TableName;
+        //    }
+        //}
         #endregion
         #region Constructors
         public FloodPlainDataOwnerElement(BaseFdaElement owner):base(owner)
@@ -49,23 +49,23 @@ namespace FdaViewModel.Hydraulics
         }
         #endregion
         #region Functions
-        public override string[] TableColumnNames()
-        {
-            throw new NotImplementedException();
-        }
+        //public override string[] TableColumnNames()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public override Type[] TableColumnTypes()
-        {
-            throw new NotImplementedException();
-        }
-        public override ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            return null;
-        }
-        public override void AddElementFromRowData(object[] rowData)
-        {
-            //throw new NotImplementedException();
-        }
+        //public override Type[] TableColumnTypes()
+        //{
+        //    throw new NotImplementedException();
+        //}
+        //public override ChildElement CreateElementFromRowData(object[] rowData)
+        //{
+        //    return null;
+        //}
+        //public override void AddElementFromRowData(object[] rowData)
+        //{
+        //    //throw new NotImplementedException();
+        //}
 
         #endregion
     }

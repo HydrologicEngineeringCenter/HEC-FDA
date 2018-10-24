@@ -13,21 +13,11 @@ namespace FdaViewModel.ImpactArea
         #region Notes
         #endregion
         #region Fields
-        private const string _TableName = "Impact Areas";
 
-        public override string TableName
-        {
-            get
-            {
-               return _TableName;
-            }
-        }
+       
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+        
         #endregion
         #region Constructors
         public ImpactAreaOwnerElement(Utilities.ParentElement owner) : base(owner)
@@ -45,13 +35,23 @@ namespace FdaViewModel.ImpactArea
             Actions = localactions;
 
             StudyCache.ImpactAreaAdded += AddImpactAreaElement;
+            StudyCache.ImpactAreaRemoved += RemoveImpactAreaElement;
+            StudyCache.ImpactAreaUpdated += UpdateImpactAreaElement;
 
         }
         #endregion
         #region Voids
+        private void UpdateImpactAreaElement(object sender, Saving.ElementUpdatedEventArgs e)
+        {
+            UpdateElement(e.OldElement, e.NewElement);
+        }
         private void AddImpactAreaElement(object sender, Saving.ElementAddedEventArgs e)
         {
             AddElement(e.Element);
+        }
+        private void RemoveImpactAreaElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            RemoveElement(e.Element);
         }
         #endregion
         #region Functions
@@ -67,21 +67,21 @@ namespace FdaViewModel.ImpactArea
                 observpaths.Add(s);
             }
             //i don't think the above code does anything usefull
-            ImpactAreaImporterVM vm = new ImpactAreaImporterVM(observpaths, (editorVM) => AddOwnerRules(editorVM));
-            Navigate(vm,true,true,"Import Impact Areas");
-            if (!vm.HasError & !vm.WasCanceled)
-            {
+            ImpactAreaImporterVM vm = new ImpactAreaImporterVM(observpaths);
+            Navigate(vm,false,false,"Import Impact Areas");
+            //if (!vm.HasError & !vm.WasCanceled)
+            //{
                 
-                if(vm.Description == null) { vm.Description = ""; }
-               // LifeSimGIS.ShapefileReader shp = new LifeSimGIS.ShapefileReader(vm.SelectedPath);
-                //LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)shp.ToFeatures();
+            //    if(vm.Description == null) { vm.Description = ""; }
+            //   // LifeSimGIS.ShapefileReader shp = new LifeSimGIS.ShapefileReader(vm.SelectedPath);
+            //    //LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)shp.ToFeatures();
 
-                ImpactAreaElement element = new ImpactAreaElement(vm.Name, vm.Description, vm.ListOfRows, vm.SelectedPath, this);
-                AddElement(element,true);
-                //element.WriteImpactAreaTableToSqlite(polyFeatures);
-                AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.CreateNew, "Impact Areas were created using the file " + vm.SelectedPath, nameof(ImpactAreaElement)));
+            //    ImpactAreaElement element = new ImpactAreaElement(vm.Name, vm.Description, vm.ListOfRows, vm.SelectedPath, this);
+            //    AddElement(element,true);
+            //    //element.WriteImpactAreaTableToSqlite(polyFeatures);
+            //    AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.CreateNew, "Impact Areas were created using the file " + vm.SelectedPath, nameof(ImpactAreaElement)));
 
-            }
+            //}
         }
 
         //public override void AddBaseElements()
@@ -94,48 +94,48 @@ namespace FdaViewModel.ImpactArea
             //throw new NotImplementedException();
         }
 
-        public override string[] TableColumnNames()
-        {
-            return new string[] {"Impact Area Set Name","Description"};
-        }
+        //public override string[] TableColumnNames()
+        //{
+        //    return new string[] {"Impact Area Set Name","Description"};
+        //}
 
-        public override Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string), typeof(string) };
-        }
+        //public override Type[] TableColumnTypes()
+        //{
+        //    return new Type[] { typeof(string), typeof(string) };
+        //}
 
 
-        public override ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            ObservableCollection<ImpactAreaRowItem> dummyCollection = new ObservableCollection<ImpactAreaRowItem>();
+        //public override ChildElement CreateElementFromRowData(object[] rowData)
+        //{
+        //    ObservableCollection<ImpactAreaRowItem> dummyCollection = new ObservableCollection<ImpactAreaRowItem>();
 
-            //i need to read from the sqlite table and get the polygon features and pass it to the new element
-            //DataBase_Reader.SqLiteReader sqr = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
-            //LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(sqr);
-            //LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)gpr.ConvertToGisFeatures("Impact Areas - " + rowData[0]);
+        //    //i need to read from the sqlite table and get the polygon features and pass it to the new element
+        //    //DataBase_Reader.SqLiteReader sqr = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
+        //    //LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(sqr);
+        //    //LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)gpr.ConvertToGisFeatures("Impact Areas - " + rowData[0]);
 
-            ImpactAreaElement iae = new ImpactAreaElement((string)rowData[0], (string)rowData[1], dummyCollection, this);
+        //    ImpactAreaElement iae = new ImpactAreaElement((string)rowData[0], (string)rowData[1], dummyCollection, this);
 
-            int lastRow = Storage.Connection.Instance.GetTable(iae.TableName).NumberOfRows - 1;
-            ObservableCollection<object> tempCollection = new ObservableCollection<object>();
-            foreach (object[] row in Storage.Connection.Instance.GetTable(iae.TableName).GetRows(0, lastRow))
-            {
-                //each row here should be a name and an index point
-                ImpactAreaRowItem ri = new ImpactAreaRowItem(row[2].ToString(), Convert.ToDouble(row[3]), tempCollection);
-                tempCollection.Add(ri);
-            }
-            ObservableCollection<ImpactAreaRowItem> items = new ObservableCollection<ImpactAreaRowItem>();
-            foreach (object row in tempCollection)
-            {
-                items.Add((ImpactAreaRowItem)row);
-            }
-            iae.ImpactAreaRows = items;
-            return iae;
-        }
-        public override void AddElementFromRowData(object[] rowData)
-        {
+        //    int lastRow = Storage.Connection.Instance.GetTable(iae.TableName).NumberOfRows - 1;
+        //    ObservableCollection<object> tempCollection = new ObservableCollection<object>();
+        //    foreach (object[] row in Storage.Connection.Instance.GetTable(iae.TableName).GetRows(0, lastRow))
+        //    {
+        //        //each row here should be a name and an index point
+        //        ImpactAreaRowItem ri = new ImpactAreaRowItem(row[2].ToString(), Convert.ToDouble(row[3]), tempCollection);
+        //        tempCollection.Add(ri);
+        //    }
+        //    ObservableCollection<ImpactAreaRowItem> items = new ObservableCollection<ImpactAreaRowItem>();
+        //    foreach (object row in tempCollection)
+        //    {
+        //        items.Add((ImpactAreaRowItem)row);
+        //    }
+        //    iae.ImpactAreaRows = items;
+        //    return iae;
+        //}
+        //public override void AddElementFromRowData(object[] rowData)
+        //{
             
-            AddElement(CreateElementFromRowData(rowData),false);
-        }
+        //    AddElement(CreateElementFromRowData(rowData),false);
+        //}
     }
 }

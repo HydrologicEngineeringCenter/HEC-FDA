@@ -406,219 +406,219 @@ namespace FdaViewModel.Conditions
 
         public void NewInflowOutflowCurve(object sender, EventArgs e)
         {
-            if (_owner != null)
-            {
-                List<FlowTransforms.InflowOutflowOwnerElement> eles = _owner.GetElementsOfType<FlowTransforms.InflowOutflowOwnerElement>();
-                if (eles.Count > 0)
-                {
-                    eles.FirstOrDefault().AddInflowOutflow(sender, e);
-                    //need to determine what the most recent element is and see if we already have it.
-                    if (eles.FirstOrDefault().Elements.Count > 0)
-                    {
-                        if (eles.FirstOrDefault().Elements.Count > InflowOutflowList.Count)
-                        {
-                            //InflowOutflowList.Add((FlowTransforms.InflowOutflowElement)eles.FirstOrDefault().Elements.Last());
-                            List<FlowTransforms.InflowOutflowElement> theNewList = new List<FlowTransforms.InflowOutflowElement>();
-                            for(int i =0;i<eles.FirstOrDefault().Elements.Count;i++)
-                            {
-                                theNewList.Add((FlowTransforms.InflowOutflowElement)eles.FirstOrDefault().Elements[i]);
-                            }
-                            InflowOutflowList = theNewList;
+            //if (_owner != null)
+            //{
+            //    List<FlowTransforms.InflowOutflowOwnerElement> eles = _owner.GetElementsOfType<FlowTransforms.InflowOutflowOwnerElement>();
+            //    if (eles.Count > 0)
+            //    {
+            //        eles.FirstOrDefault().AddInflowOutflow(sender, e);
+            //        //need to determine what the most recent element is and see if we already have it.
+            //        if (eles.FirstOrDefault().Elements.Count > 0)
+            //        {
+            //            if (eles.FirstOrDefault().Elements.Count > InflowOutflowList.Count)
+            //            {
+            //                //InflowOutflowList.Add((FlowTransforms.InflowOutflowElement)eles.FirstOrDefault().Elements.Last());
+            //                List<FlowTransforms.InflowOutflowElement> theNewList = new List<FlowTransforms.InflowOutflowElement>();
+            //                for(int i =0;i<eles.FirstOrDefault().Elements.Count;i++)
+            //                {
+            //                    theNewList.Add((FlowTransforms.InflowOutflowElement)eles.FirstOrDefault().Elements[i]);
+            //                }
+            //                InflowOutflowList = theNewList;
 
-                            InflowOutflowElement = InflowOutflowList.Last();
-                        }
-                    }
-                }
-            }
+            //                InflowOutflowElement = InflowOutflowList.Last();
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         public void NewExtIntStageCurve(object sender, EventArgs e)
         {
-            if (_owner != null)
-            {
-                List<StageTransforms.ExteriorInteriorOwnerElement> eles = _owner.GetElementsOfType<StageTransforms.ExteriorInteriorOwnerElement>();
-                if (eles.Count > 0)
-                {
-                    eles.FirstOrDefault().AddNewExteriorInteriorCurve(sender, e);
-                    //need to determine what the most recent element is and see if we already have it.
-                    if (eles.FirstOrDefault().Elements.Count > 0)
-                    {
-                        if (eles.FirstOrDefault().Elements.Count > ExteriorInteriorList.Count)
-                        {
+            //if (_owner != null)
+            //{
+            //    List<StageTransforms.ExteriorInteriorOwnerElement> eles = _owner.GetElementsOfType<StageTransforms.ExteriorInteriorOwnerElement>();
+            //    if (eles.Count > 0)
+            //    {
+            //        eles.FirstOrDefault().AddNewExteriorInteriorCurve(sender, e);
+            //        //need to determine what the most recent element is and see if we already have it.
+            //        if (eles.FirstOrDefault().Elements.Count > 0)
+            //        {
+            //            if (eles.FirstOrDefault().Elements.Count > ExteriorInteriorList.Count)
+            //            {
 
-                            List<StageTransforms.ExteriorInteriorElement> theNewList = new List<StageTransforms.ExteriorInteriorElement>();
-                            for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-                            {
-                                theNewList.Add((StageTransforms.ExteriorInteriorElement)eles.FirstOrDefault().Elements[i]);
-                            }
-                            ExteriorInteriorList = theNewList;
-                            //ExteriorInteriorList.Add((StageTransforms.ExteriorInteriorElement)eles.FirstOrDefault().Elements.Last());
-                            ExteriorInteriorElement = ExteriorInteriorList.Last();
-                        }
-                    }
-                }
-            }
+            //                List<StageTransforms.ExteriorInteriorElement> theNewList = new List<StageTransforms.ExteriorInteriorElement>();
+            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
+            //                {
+            //                    theNewList.Add((StageTransforms.ExteriorInteriorElement)eles.FirstOrDefault().Elements[i]);
+            //                }
+            //                ExteriorInteriorList = theNewList;
+            //                //ExteriorInteriorList.Add((StageTransforms.ExteriorInteriorElement)eles.FirstOrDefault().Elements.Last());
+            //                ExteriorInteriorElement = ExteriorInteriorList.Last();
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         public void NewLeveeFeature(object sender, EventArgs e)
         {
-            if (_owner != null)
-            {
-                List<GeoTech.LeveeFeatureOwnerElement> eles = _owner.GetElementsOfType<GeoTech.LeveeFeatureOwnerElement>();
-                if (eles.Count > 0)
-                {
-                    eles.FirstOrDefault().AddNewLeveeFeature(sender, e);
-                    //need to determine what the most recent element is and see if we already have it.
-                    if (eles.FirstOrDefault().Elements.Count > 0)
-                    {
-                        if (eles.FirstOrDefault().Elements.Count > LeveeList.Count)
-                        {
+            //if (_owner != null)
+            //{
+            //    List<GeoTech.LeveeFeatureOwnerElement> eles = _owner.GetElementsOfType<GeoTech.LeveeFeatureOwnerElement>();
+            //    if (eles.Count > 0)
+            //    {
+            //        eles.FirstOrDefault().AddNewLeveeFeature(sender, e);
+            //        //need to determine what the most recent element is and see if we already have it.
+            //        if (eles.FirstOrDefault().Elements.Count > 0)
+            //        {
+            //            if (eles.FirstOrDefault().Elements.Count > LeveeList.Count)
+            //            {
 
-                            List<GeoTech.LeveeFeatureElement> theNewList = new List<GeoTech.LeveeFeatureElement>();
-                            for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-                            {
-                                theNewList.Add((GeoTech.LeveeFeatureElement)eles.FirstOrDefault().Elements[i]);
-                            }
-                            LeveeList = theNewList;
-                            //LeveeList.Add((GeoTech.LeveeFeatureElement)eles.FirstOrDefault().Elements.Last());
-                            LeveeElement = LeveeList.Last();
-                        }
-                    }
-                }
-            }
+            //                List<GeoTech.LeveeFeatureElement> theNewList = new List<GeoTech.LeveeFeatureElement>();
+            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
+            //                {
+            //                    theNewList.Add((GeoTech.LeveeFeatureElement)eles.FirstOrDefault().Elements[i]);
+            //                }
+            //                LeveeList = theNewList;
+            //                //LeveeList.Add((GeoTech.LeveeFeatureElement)eles.FirstOrDefault().Elements.Last());
+            //                LeveeElement = LeveeList.Last();
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         public void NewFailureFunctionCurve(object sender, EventArgs e)
         {
-            if (_owner != null)
-            {
-                List<GeoTech.FailureFunctionOwnerElement> eles = _owner.GetElementsOfType<GeoTech.FailureFunctionOwnerElement>();
-                if (eles.Count > 0)
-                {
-                    eles.FirstOrDefault().AddNewFailureFunction(sender, e);
-                    //need to determine what the most recent element is and see if we already have it.
-                    if (eles.FirstOrDefault().Elements.Count > 0)
-                    {
-                        if (eles.FirstOrDefault().Elements.Count > FailureFunctionList.Count)
-                        {
-                            List<GeoTech.FailureFunctionElement> theNewList = new List<GeoTech.FailureFunctionElement>();
-                            for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-                            {
-                                theNewList.Add((GeoTech.FailureFunctionElement)eles.FirstOrDefault().Elements[i]);
-                            }
-                            FailureFunctionList = theNewList;
-                            //FailureFunctionList.Add((GeoTech.FailureFunctionElement)eles.FirstOrDefault().Elements.Last());
-                            FailureFunctionElement = FailureFunctionList.Last();
-                        }
-                    }
-                }
-            }
+            //if (_owner != null)
+            //{
+            //    List<GeoTech.FailureFunctionOwnerElement> eles = _owner.GetElementsOfType<GeoTech.FailureFunctionOwnerElement>();
+            //    if (eles.Count > 0)
+            //    {
+            //        eles.FirstOrDefault().AddNewFailureFunction(sender, e);
+            //        //need to determine what the most recent element is and see if we already have it.
+            //        if (eles.FirstOrDefault().Elements.Count > 0)
+            //        {
+            //            if (eles.FirstOrDefault().Elements.Count > FailureFunctionList.Count)
+            //            {
+            //                List<GeoTech.FailureFunctionElement> theNewList = new List<GeoTech.FailureFunctionElement>();
+            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
+            //                {
+            //                    theNewList.Add((GeoTech.FailureFunctionElement)eles.FirstOrDefault().Elements[i]);
+            //                }
+            //                FailureFunctionList = theNewList;
+            //                //FailureFunctionList.Add((GeoTech.FailureFunctionElement)eles.FirstOrDefault().Elements.Last());
+            //                FailureFunctionElement = FailureFunctionList.Last();
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         public void NewFrequencyCurve(object sender, EventArgs e)
         {
-            if (_owner != null)
-            {
-                List<FrequencyRelationships.AnalyticalFrequencyOwnerElement> eles = _owner.GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyOwnerElement>();
-                if (eles.Count > 0)
-                {
-                    eles.FirstOrDefault().AddNewFlowFrequencyCurve(sender, e);
-                    //need to determine what the most recent element is and see if we already have it.
-                    if (eles.FirstOrDefault().Elements.Count > 0)
-                    {
-                        if (eles.FirstOrDefault().Elements.Count > AnalyiticalRelationships.Count)
-                        {
-                            List<FrequencyRelationships.AnalyticalFrequencyElement> theNewList = new List<FrequencyRelationships.AnalyticalFrequencyElement>();
-                            for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-                            {
-                                theNewList.Add((FrequencyRelationships.AnalyticalFrequencyElement)eles.FirstOrDefault().Elements[i]);
-                            }
-                            AnalyiticalRelationships = theNewList;
-                            //AnalyiticalRelationships.Add((FrequencyRelationships.AnalyticalFrequencyElement)eles.FirstOrDefault().Elements.Last());
-                            AnalyticalFlowFrequency = AnalyiticalRelationships.Last();
-                        }
-                    }
-                }
-            }
+            //if (_owner != null)
+            //{
+            //    List<FrequencyRelationships.AnalyticalFrequencyOwnerElement> eles = _owner.GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyOwnerElement>();
+            //    if (eles.Count > 0)
+            //    {
+            //        eles.FirstOrDefault().AddNewFlowFrequencyCurve(sender, e);
+            //        //need to determine what the most recent element is and see if we already have it.
+            //        if (eles.FirstOrDefault().Elements.Count > 0)
+            //        {
+            //            if (eles.FirstOrDefault().Elements.Count > AnalyiticalRelationships.Count)
+            //            {
+            //                List<FrequencyRelationships.AnalyticalFrequencyElement> theNewList = new List<FrequencyRelationships.AnalyticalFrequencyElement>();
+            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
+            //                {
+            //                    theNewList.Add((FrequencyRelationships.AnalyticalFrequencyElement)eles.FirstOrDefault().Elements[i]);
+            //                }
+            //                AnalyiticalRelationships = theNewList;
+            //                //AnalyiticalRelationships.Add((FrequencyRelationships.AnalyticalFrequencyElement)eles.FirstOrDefault().Elements.Last());
+            //                AnalyticalFlowFrequency = AnalyiticalRelationships.Last();
+            //            }
+            //        }
+            //    }
+            //}
         }
         public void NewRatingCurve(object sender, EventArgs e)
         {
-            if (_owner != null)
-            {
-                List<StageTransforms.RatingCurveOwnerElement> eles = _owner.GetElementsOfType<StageTransforms.RatingCurveOwnerElement>();
-                if (eles.Count > 0)
-                {
-                    eles.FirstOrDefault().AddNewRatingCurve(sender, e);
-                    //need to determine what the most recent element is and see if we already have it.
-                    if (eles.FirstOrDefault().Elements.Count > 0)
-                    {
-                        if (eles.FirstOrDefault().Elements.Count > RatingCurveRelationships.Count)
-                        {
-                            List<StageTransforms.RatingCurveElement> theNewList = new List<StageTransforms.RatingCurveElement>();
-                            for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-                            {
-                                theNewList.Add((StageTransforms.RatingCurveElement)eles.FirstOrDefault().Elements[i]);
-                            }
-                            RatingCurveRelationships = theNewList;
-                            //RatingCurveRelationships.Add((StageTransforms.RatingCurveElement)eles.FirstOrDefault().Elements.Last());
-                            RatingCurve = RatingCurveRelationships.Last();
-                        }
-                    }
-                }
-            }
+            //if (_owner != null)
+            //{
+            //    List<StageTransforms.RatingCurveOwnerElement> eles = _owner.GetElementsOfType<StageTransforms.RatingCurveOwnerElement>();
+            //    if (eles.Count > 0)
+            //    {
+            //        eles.FirstOrDefault().AddNewRatingCurve(sender, e);
+            //        //need to determine what the most recent element is and see if we already have it.
+            //        if (eles.FirstOrDefault().Elements.Count > 0)
+            //        {
+            //            if (eles.FirstOrDefault().Elements.Count > RatingCurveRelationships.Count)
+            //            {
+            //                List<StageTransforms.RatingCurveElement> theNewList = new List<StageTransforms.RatingCurveElement>();
+            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
+            //                {
+            //                    theNewList.Add((StageTransforms.RatingCurveElement)eles.FirstOrDefault().Elements[i]);
+            //                }
+            //                RatingCurveRelationships = theNewList;
+            //                //RatingCurveRelationships.Add((StageTransforms.RatingCurveElement)eles.FirstOrDefault().Elements.Last());
+            //                RatingCurve = RatingCurveRelationships.Last();
+            //            }
+            //        }
+            //    }
+            //}
         }
         public void NewDamageCurve(object sender, EventArgs e)
         {
-            if (_owner != null)
-            {
-                List<AggregatedStageDamage.AggregatedStageDamageOwnerElement> eles = _owner.GetElementsOfType<AggregatedStageDamage.AggregatedStageDamageOwnerElement>();
-                if (eles.Count > 0)
-                {
-                    eles.FirstOrDefault().AddNewDamageCurve(sender, e);
-                    //need to determine what the most recent element is and see if we already have it.
-                    if (eles.FirstOrDefault().Elements.Count > 0)
-                    {
-                        if (eles.FirstOrDefault().Elements.Count > StageDamageRelationships.Count)
-                        {
-                            List<AggregatedStageDamage.AggregatedStageDamageElement> theNewList = new List<AggregatedStageDamage.AggregatedStageDamageElement>();
-                            for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-                            {
-                                theNewList.Add((AggregatedStageDamage.AggregatedStageDamageElement)eles.FirstOrDefault().Elements[i]);
-                            }
-                            StageDamageRelationships = theNewList;
-                            //StageDamageRelationships.Add((AggregatedStageDamage.AggregatedStageDamageElement)eles.FirstOrDefault().Elements.Last());
-                            StageDamage = StageDamageRelationships.Last();
-                        }
-                    }
-                }
-            }
+            //if (_owner != null)
+            //{
+            //    List<AggregatedStageDamage.AggregatedStageDamageOwnerElement> eles = _owner.GetElementsOfType<AggregatedStageDamage.AggregatedStageDamageOwnerElement>();
+            //    if (eles.Count > 0)
+            //    {
+            //        eles.FirstOrDefault().AddNewDamageCurve(sender, e);
+            //        //need to determine what the most recent element is and see if we already have it.
+            //        if (eles.FirstOrDefault().Elements.Count > 0)
+            //        {
+            //            if (eles.FirstOrDefault().Elements.Count > StageDamageRelationships.Count)
+            //            {
+            //                List<AggregatedStageDamage.AggregatedStageDamageElement> theNewList = new List<AggregatedStageDamage.AggregatedStageDamageElement>();
+            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
+            //                {
+            //                    theNewList.Add((AggregatedStageDamage.AggregatedStageDamageElement)eles.FirstOrDefault().Elements[i]);
+            //                }
+            //                StageDamageRelationships = theNewList;
+            //                //StageDamageRelationships.Add((AggregatedStageDamage.AggregatedStageDamageElement)eles.FirstOrDefault().Elements.Last());
+            //                StageDamage = StageDamageRelationships.Last();
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         public void NewStructureInventory(object sender, EventArgs e)
         {
-            if (_owner != null)
-            {
-                List<Inventory.StructureInventoryOwnerElement> eles = _owner.GetElementsOfType<Inventory.StructureInventoryOwnerElement>();
-                if (eles.Count > 0)
-                {
-                    eles.FirstOrDefault().AddStructureInventory(sender, e);
-                    //need to determine what the most recent element is and see if we already have it.
-                    if (eles.FirstOrDefault().Elements.Count > 0)
-                    {
-                        if (eles.FirstOrDefault().Elements.Count > StructureInventoryList.Count)
-                        {
-                            List<Inventory.InventoryElement> theNewList = new List<Inventory.InventoryElement>();
-                            for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-                            {
-                                theNewList.Add((Inventory.InventoryElement)eles.FirstOrDefault().Elements[i]);
-                            }
-                            StructureInventoryList = theNewList;
-                            //StageDamageRelationships.Add((AggregatedStageDamage.AggregatedStageDamageElement)eles.FirstOrDefault().Elements.Last());
-                            StructureInventoryElement = StructureInventoryList.Last();
-                        }
-                    }
-                }
-            }
+            //if (_owner != null)
+            //{
+            //    List<Inventory.StructureInventoryOwnerElement> eles = _owner.GetElementsOfType<Inventory.StructureInventoryOwnerElement>();
+            //    if (eles.Count > 0)
+            //    {
+            //        eles.FirstOrDefault().AddStructureInventory(sender, e);
+            //        //need to determine what the most recent element is and see if we already have it.
+            //        if (eles.FirstOrDefault().Elements.Count > 0)
+            //        {
+            //            if (eles.FirstOrDefault().Elements.Count > StructureInventoryList.Count)
+            //            {
+            //                List<Inventory.InventoryElement> theNewList = new List<Inventory.InventoryElement>();
+            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
+            //                {
+            //                    theNewList.Add((Inventory.InventoryElement)eles.FirstOrDefault().Elements[i]);
+            //                }
+            //                StructureInventoryList = theNewList;
+            //                //StageDamageRelationships.Add((AggregatedStageDamage.AggregatedStageDamageElement)eles.FirstOrDefault().Elements.Last());
+            //                StructureInventoryElement = StructureInventoryList.Last();
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         #endregion
@@ -633,9 +633,6 @@ namespace FdaViewModel.Conditions
             //must have a threshold stage or dollars.
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+      
     }
 }

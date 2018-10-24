@@ -177,9 +177,5 @@ namespace FdaViewModel.Output
             //throw new NotImplementedException();
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
     }
 }

@@ -8,22 +8,15 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Saving.PersistenceManagers
 {
-    public class StageDamagePersistenceManager : SavingBase, IPersistable
+    public class StageDamagePersistenceManager : SavingBase, IPersistableWithUndoRedo
     {
-        private const string _TableConstant = "Aggregated Stage Damage Function - ";
-        public  string TableName
-        {
-            get {  return "Aggregated Stage Damage Relationships"; }
-        }
 
-        public  string[] TableColumnNames()
-        {
-            return new string[] { "Name", "Last Edit Date", "Description", "Curve Uncertainty Type", "Creation Method" };
-        }
-        public  Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
-        }
+
+        private const string TableName = "Aggregated Stage Damage Relationships";
+        internal override string ChangeTableConstant { get { return "Aggregated Stage Damage Function - "; } }
+        private static readonly string[] TableColumnNames = { "Name", "Last Edit Date", "Description", "Curve Uncertainty Type", "Creation Method" };
+        private static readonly Type[] TableColumnTypes = { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
+
 
         public StageDamagePersistenceManager(Study.FDACache studyCache)
         {
@@ -31,23 +24,58 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
 
 
+
+        #region utilities
+        private object[] GetRowDataFromElement(AggregatedStageDamageElement element)
+        {
+            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.Distribution, element.Method };
+
+        }
+        public override ChildElement CreateElementFromRowData(object[] rowData)
+        {
+            Statistics.UncertainCurveDataCollection emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
+            AggregatedStageDamageElement asd = new AggregatedStageDamageElement((string)rowData[0], (string)rowData[1], (string)rowData[2], emptyCurve, (CreationMethodEnum)Enum.Parse(typeof(CreationMethodEnum), (string)rowData[4]));
+            asd.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
+            return asd;
+        }
+        #endregion
+
+
         public void SaveNew(ChildElement element)
         {
             if (element.GetType() == typeof(AggregatedStageDamageElement))
             {
+                if(element.Description == null) { element.Description = ""; }
                 string editDate = DateTime.Now.ToString("G");
                 element.LastEditDate = editDate;
-                SaveNewElementToParentTable(element, TableName, TableColumnNames(), TableColumnTypes());
-                //save the individual table
-                SaveFlowFreqCurveTable((AggregatedStageDamageElement)element, editDate);
+
+                SaveNewElementToParentTable(GetRowDataFromElement((AggregatedStageDamageElement)element), TableName, TableColumnNames, TableColumnTypes);
+                SaveElementToChangeTable(element.Name, GetRowDataFromElement((AggregatedStageDamageElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
+                SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
                 //add the rating element to the cache which then raises event that adds it to the owner element
                 StudyCache.AddStageDamageElement((AggregatedStageDamageElement)element);
             }
         }
-
-        public void SaveExisting(Utilities.ChildElement element, string oldName, Statistics.UncertainCurveDataCollection oldCurve)
+        public void Remove(ChildElement element)
         {
-            SaveExistingElement(oldName, oldCurve, element, TableName);
+            RemoveFromParentTable(element, TableName);
+            DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
+            StudyCache.RemoveStageDamageElement((AggregatedStageDamageElement)element);
+        }
+        public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex)
+        {
+            if (elementToSave.Description == null) { elementToSave.Description = ""; }
+
+            string editDate = DateTime.Now.ToString("G");
+            elementToSave.LastEditDate = editDate;
+
+            if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((AggregatedStageDamageElement)elementToSave), oldElement.Name, TableName) || AreCurvesDifferent(oldElement.Curve, elementToSave.Curve))
+            {
+                UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((AggregatedStageDamageElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
+                SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
+                // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
+                StudyCache.UpdateStageDamageElement((AggregatedStageDamageElement)oldElement, (AggregatedStageDamageElement)elementToSave);
+            }
         }
 
         public List<ChildElement> Load()
@@ -55,26 +83,9 @@ namespace FdaViewModel.Saving.PersistenceManagers
             return CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
         }
 
-
-        private void SaveFlowFreqCurveTable(AggregatedStageDamageElement element, string lastEditDate)
+        public override void AddValidationRules()
         {
-            if (!Storage.Connection.Instance.IsOpen)
-            {
-                Storage.Connection.Instance.Open();
-            }
-            element.Curve.toSqliteTable(_TableConstant + lastEditDate);
+            //throw new NotImplementedException();
         }
-
-
-
-
-        public  ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            Statistics.UncertainCurveDataCollection emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
-            AggregatedStageDamageElement asd = new AggregatedStageDamageElement((string)rowData[0], (string)rowData[1], (string)rowData[2], emptyCurve, (CreationMethodEnum)Enum.Parse(typeof(CreationMethodEnum), (string)rowData[4]));
-            asd.Curve.fromSqliteTable(asd.TableName);
-            return asd;
-        }
-
     }
 }

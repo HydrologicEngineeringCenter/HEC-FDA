@@ -13,12 +13,17 @@ using FdaViewModel.FlowTransforms;
 using FdaViewModel.GeoTech;
 using FdaViewModel.AggregatedStageDamage;
 using FdaViewModel.Inventory;
+using FdaViewModel.Conditions;
 
 namespace FdaViewModel.Study
 {
     public class FDACache
     {
         public delegate void AddElementEventHandler(object sender, Saving.ElementAddedEventArgs args);
+        public delegate void UpdateElementEventHandler(object sender, Saving.ElementUpdatedEventArgs args);
+
+
+        //private static FDACache _Instance;
 
         public AddElementEventHandler RatingAdded;
         public AddElementEventHandler TerrainAdded;
@@ -31,7 +36,33 @@ namespace FdaViewModel.Study
         public AddElementEventHandler FailureFunctionAdded;
         public AddElementEventHandler StageDamageAdded;
         public AddElementEventHandler StructureInventoryAdded;
+        public AddElementEventHandler ConditionsElementAdded;
 
+        public AddElementEventHandler RatingRemoved;
+        public AddElementEventHandler TerrainRemoved;
+        public AddElementEventHandler ImpactAreaRemoved;
+        public AddElementEventHandler WaterSurfaceElevationRemoved;
+        public AddElementEventHandler FlowFrequencyRemoved;
+        public AddElementEventHandler InflowOutflowRemoved;
+        public AddElementEventHandler ExteriorInteriorRemoved;
+        public AddElementEventHandler LeveeRemoved;
+        public AddElementEventHandler FailureFunctionRemoved;
+        public AddElementEventHandler StageDamageRemoved;
+        public AddElementEventHandler StructureInventoryRemoved;
+        public AddElementEventHandler ConditionsElementRemoved;
+
+        public UpdateElementEventHandler RatingUpdated;
+        public UpdateElementEventHandler TerrainUpdated;
+        public UpdateElementEventHandler ImpactAreaUpdated;
+        public UpdateElementEventHandler WaterSurfaceElevationUpdated;
+        public UpdateElementEventHandler FlowFrequencyUpdated;
+        public UpdateElementEventHandler InflowOutflowUpdated;
+        public UpdateElementEventHandler ExteriorInteriorUpdated;
+        public UpdateElementEventHandler LeveeUpdated;
+        public UpdateElementEventHandler FailureFunctionUpdated;
+        public UpdateElementEventHandler StageDamageUpdated;
+        public UpdateElementEventHandler StructureInventoryUpdated;
+        public UpdateElementEventHandler ConditionsElementUpdated;
 
         private List<RatingCurveElement> _Ratings = new List<RatingCurveElement>();
         private List<TerrainElement> _Terrains = new List<TerrainElement>();
@@ -44,6 +75,7 @@ namespace FdaViewModel.Study
         private List<FailureFunctionElement> _Failures = new List<FailureFunctionElement>();
         private List<AggregatedStageDamageElement> _StageDamages = new List<AggregatedStageDamageElement>();
         private List<InventoryElement> _Structures = new List<InventoryElement>();
+        private List<ConditionsElement> _Conditions = new List<ConditionsElement>();
 
 
         public List<RatingCurveElement> RatingCurveElements { get { return _Ratings; }  }
@@ -57,6 +89,12 @@ namespace FdaViewModel.Study
         public List<FailureFunctionElement> FailureFunctionElements { get { return _Failures; } }
         public List<AggregatedStageDamageElement> StageDamageElements { get { return _StageDamages; } }
         public List<InventoryElement> StructureInventoryElements { get { return _Structures; } }
+        public List<ConditionsElement> ConditionsElements { get { return _Conditions; } }
+
+        #region ParentElements
+        public TerrainOwnerElement TerrainParent { get; set; }
+        public ConditionsOwnerElement ConditionsParent { get; set; }
+        #endregion
 
         private FDACache()
         {
@@ -67,9 +105,21 @@ namespace FdaViewModel.Study
         {
             //FDACache cr = new FDACache();
 
-                return new FDACache();
-
+            return new FDACache();
         }
+
+        //public static FDACache Instance
+        //{
+        //    get
+        //    {
+        //        if(_Instance == null)
+        //        {
+        //            _Instance = new FDACache();
+                    
+        //        }
+        //        return _Instance;
+        //    }
+        //}
 
         public void LoadFDACache()
         {
@@ -84,6 +134,7 @@ namespace FdaViewModel.Study
             LoadFailureFunctions();
             LoadStageDamages();
             LoadStructureInventories();
+            LoadConditions();
         }
 
         #region load elements
@@ -190,8 +241,87 @@ namespace FdaViewModel.Study
                 AddStructureInventoryElement(elem);
             }
         }
+        private void LoadConditions()
+        {
+            List<Utilities.ChildElement> conditions = Saving.PersistenceFactory.GetConditionsManager(this).Load();
+
+            foreach (ConditionsElement elem in conditions)
+            {
+                AddConditionsElement(elem);
+            }
+        }
         #endregion
 
+        #region Remove Elements
+        public void RemoveRatingElement(RatingCurveElement elem)
+        {
+            foreach(RatingCurveElement element in RatingCurveElements)
+            {
+                if(element.Name.Equals(elem.Name))
+                {
+                    RatingCurveElements.Remove(element);
+                    RatingRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(element));
+                    return;
+                }
+            }
+        }
+        public void RemoveInflowOutflowElement(InflowOutflowElement elem)
+        {
+            InflowOutflowElements.Remove(elem);
+            InflowOutflowRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+        }
+        public void RemoveExteriorInteriorElement(ExteriorInteriorElement elem)
+        {
+            ExteriorInteriorElements.Remove(elem);
+            ExteriorInteriorRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+        }
+        public void RemoveStageDamageElement(AggregatedStageDamageElement elem)
+        {
+            StageDamageElements.Remove(elem);
+            StageDamageRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+        }
+        public void RemoveFailureFunctionElement(FailureFunctionElement elem)
+        {
+            FailureFunctionElements.Remove(elem);
+            FailureFunctionRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+        }
+        public void RemoveFlowFrequencyElement(AnalyticalFrequencyElement elem)
+        {
+            FlowFrequencyElements.Remove(elem);
+            FlowFrequencyRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+        }
+        public void RemoveLeveeElement(LeveeFeatureElement elem)
+        {
+            LeveeElements.Remove(elem);
+            LeveeRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+        }
+        public void RemoveStructureInventoryElement(InventoryElement elem)
+        {
+            StructureInventoryElements.Remove(elem);
+            StructureInventoryRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+        }
+
+        public void RemoveWaterSurfaceElevationElement(WaterSurfaceElevationElement elem)
+        {
+            WaterSurfaceElements.Remove(elem);
+            WaterSurfaceElevationRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+        }
+        public void RemoveConditionsElement(ConditionsElement elem)
+        {
+            ConditionsElements.Remove(elem);
+            ConditionsElementRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+        }
+        public void RemoveImpactAreaElement(ImpactAreaElement elem)
+        {
+            ImpactAreaElements.Remove(elem);
+            ImpactAreaRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+        }
+        public void RemoveTerrainElement(TerrainElement elem)
+        {
+            TerrainElements.Remove(elem);
+            TerrainRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+        }
+        #endregion
 
         #region add elements
 
@@ -254,8 +384,216 @@ namespace FdaViewModel.Study
             StructureInventoryElements.Add(elem);
             StructureInventoryAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
         }
+        public void AddConditionsElement(ConditionsElement elem)
+        {
+            ConditionsElements.Add(elem);
+            ConditionsElementAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+        }
         #endregion
 
+
+      
+
+        #region UpdateElements
+        public void UpdateTerrain(TerrainElement oldElement, TerrainElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < TerrainElements.Count; i++)
+            {
+                if (TerrainElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                TerrainElements.RemoveAt(index);
+                TerrainElements.Insert(index, newElement);
+                TerrainUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
+        public void UpdateRatingCurve(RatingCurveElement oldElement, RatingCurveElement newElement)
+        {
+            int index = -1;
+            for(int i = 0;i<RatingCurveElements.Count;i++)
+            {
+                if(RatingCurveElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if(index != -1)
+            {
+                RatingCurveElements.RemoveAt(index);
+                RatingCurveElements.Insert(index, newElement);
+                RatingUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
+        public void UpdateImpactAreaElement(ImpactAreaElement oldElement, ImpactAreaElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < ImpactAreaElements.Count; i++)
+            {
+                if (ImpactAreaElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                ImpactAreaElements.RemoveAt(index);
+                ImpactAreaElements.Insert(index, newElement);
+                ImpactAreaUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
+        public void UpdateWaterSurfaceElevationElement(WaterSurfaceElevationElement oldElement, WaterSurfaceElevationElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < WaterSurfaceElements.Count; i++)
+            {
+                if (WaterSurfaceElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                WaterSurfaceElements.RemoveAt(index);
+                WaterSurfaceElements.Insert(index, newElement);
+                WaterSurfaceElevationUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
+        public void UpdateFlowFrequencyElement(AnalyticalFrequencyElement oldElement, AnalyticalFrequencyElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < FlowFrequencyElements.Count; i++)
+            {
+                if (FlowFrequencyElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                FlowFrequencyElements.RemoveAt(index);
+                FlowFrequencyElements.Insert(index, newElement);
+                FlowFrequencyUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
+        public void UpdateInflowOutflowElement(InflowOutflowElement oldElement, InflowOutflowElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < InflowOutflowElements.Count; i++)
+            {
+                if (InflowOutflowElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                InflowOutflowElements.RemoveAt(index);
+                InflowOutflowElements.Insert(index, newElement);
+                InflowOutflowUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
+        public void UpdateExteriorInteriorElement(ExteriorInteriorElement oldElement, ExteriorInteriorElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < ExteriorInteriorElements.Count; i++)
+            {
+                if (ExteriorInteriorElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                ExteriorInteriorElements.RemoveAt(index);
+                ExteriorInteriorElements.Insert(index, newElement);
+                ExteriorInteriorUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
+        public void UpdateLeveeElement(LeveeFeatureElement oldElement, LeveeFeatureElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < LeveeElements.Count; i++)
+            {
+                if (LeveeElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                LeveeElements.RemoveAt(index);
+                LeveeElements.Insert(index, newElement);
+                LeveeUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
+        public void UpdateFailureFunctionElement(FailureFunctionElement oldElement, FailureFunctionElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < FailureFunctionElements.Count; i++)
+            {
+                if (FailureFunctionElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                FailureFunctionElements.RemoveAt(index);
+                FailureFunctionElements.Insert(index, newElement);
+                FailureFunctionUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
+        public void UpdateStageDamageElement(AggregatedStageDamageElement oldElement, AggregatedStageDamageElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < StageDamageElements.Count; i++)
+            {
+                if (StageDamageElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                StageDamageElements.RemoveAt(index);
+                StageDamageElements.Insert(index, newElement);
+                StageDamageUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
+        public void UpdateConditionsElement(ConditionsElement oldElement, ConditionsElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < ConditionsElements.Count; i++)
+            {
+                if (ConditionsElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                ConditionsElements.RemoveAt(index);
+                ConditionsElements.Insert(index, newElement);
+                ConditionsElementUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
+        #endregion
 
         #region Rename
 
@@ -283,6 +621,25 @@ namespace FdaViewModel.Study
                 }
 
             }
+            else if(element.GetType().BaseType == typeof(Utilities.ParentElement))
+            {
+                if (element.GetType() == typeof(TerrainOwnerElement))
+                {
+                    foreach (BaseFdaElement elem in TerrainElements)
+                    {
+                        retVal.Add(elem);
+                    }
+                    return retVal;
+                }
+                if (element.GetType() == typeof(RatingCurveOwnerElement))
+                {
+                    foreach (BaseFdaElement elem in RatingCurveElements)
+                    {
+                        retVal.Add(elem);
+                    }
+                    return retVal;
+                }
+            }
             return new List<BaseFdaElement>();
         }
 
@@ -299,7 +656,8 @@ namespace FdaViewModel.Study
             string originalName = element.Name;
            
             List<string> existingElements = new List<string>();
-            foreach (BaseFdaElement elem in GetSiblings(element))
+            List<BaseFdaElement> siblings = GetSiblings(element);
+            foreach (BaseFdaElement elem in siblings)
             {
                 if (elem.Name.Equals(originalName))
                 {

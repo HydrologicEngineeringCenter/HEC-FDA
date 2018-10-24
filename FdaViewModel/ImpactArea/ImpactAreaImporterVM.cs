@@ -11,7 +11,7 @@ using System.Collections.ObjectModel;
 namespace FdaViewModel.ImpactArea
 {
     //[Author("q0heccdm", "10 / 13 / 2016 11:38:36 AM")]
-    public class ImpactAreaImporterVM : BaseViewModel
+    public class ImpactAreaImporterVM : Editors.BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
@@ -56,11 +56,11 @@ namespace FdaViewModel.ImpactArea
             set { _UniqueFields = value; NotifyPropertyChanged(); }
         }
   
-        public string Description
-        {
-            get { return _Description; }
-            set { _Description = value; NotifyPropertyChanged(); }
-        }
+        //public string Description
+        //{
+        //    get { return _Description; }
+        //    set { _Description = value; NotifyPropertyChanged(); }
+        //}
         //public ImpactAreaUniqueNameSet SelectedImpactAreaUniqueNameSet
         //{
         //    get { return _SelectedImpactAreaUniqueNameSet; }
@@ -69,18 +69,16 @@ namespace FdaViewModel.ImpactArea
         public string SelectedUniqueName { get; set; }
         #endregion
         #region Constructors
-        public ImpactAreaImporterVM(ObservableCollection<string> PolygonPaths, Action<BaseViewModel> ownerValidationRules)
+        public ImpactAreaImporterVM(ObservableCollection<string> PolygonPaths):base(null)
         {
-            ownerValidationRules(this);
             AvailablePaths = PolygonPaths;   
         }
 
-        public ImpactAreaImporterVM(string name, string description, ObservableCollection<ImpactAreaRowItem> impactAreaRows, Action<BaseViewModel> ownerValidationRules)
+        public ImpactAreaImporterVM(ImpactAreaElement element, ObservableCollection<ImpactAreaRowItem> impactAreaRows):base(element,null)
         {
-            ownerValidationRules(this);
-            Name = name;
+            Name = element.Name;
             ListOfRows = impactAreaRows;
-            Description = description;
+            Description = element.Description;
             IsNameReadOnly = true;
 
         }
@@ -166,7 +164,19 @@ namespace FdaViewModel.ImpactArea
 
         public override void Save()
         {
-            //throw new NotImplementedException();
+            if(Description == null) { Description = ""; }
+                ImpactAreaElement elementToSave = new ImpactAreaElement(Name, Description, ListOfRows,SelectedPath,null);
+            Saving.PersistenceManagers.ImpactAreaPersistenceManager manager = Saving.PersistenceFactory.GetImpactAreaManager(StudyCache);
+            if (IsImporter && HasSaved == false)
+            {
+                manager.SaveNew(elementToSave);
+                HasSaved = true;
+                OriginalElement = elementToSave;
+            }
+            else
+            {
+                manager.SaveExisting((ImpactAreaElement)OriginalElement, elementToSave, 0);
+            }
         }
     }
 }

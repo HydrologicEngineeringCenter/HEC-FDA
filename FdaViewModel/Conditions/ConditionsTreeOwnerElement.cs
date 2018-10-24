@@ -76,15 +76,15 @@ namespace FdaViewModel.Conditions
 
         public void RemoveElement(object sender, EventArgs e)
         {
-            foreach (ChildElement elem in _StudyTreeConditionsOwnerElement.Elements)
-            {
-                if (elem.Name.Equals(((ChildElement)sender).Name))
-                {
-                    ((ConditionsElement)elem).Remove(sender, e);
-                    UpdateTree();
-                    return;
-                }
-            }
+            //foreach (ChildElement elem in _StudyTreeConditionsOwnerElement.Elements)
+            //{
+            //    if (elem.Name.Equals(((ChildElement)sender).Name))
+            //    {
+            //        ((ConditionsElement)elem).Remove(sender, e);
+            //        UpdateTree();
+            //        return;
+            //    }
+            //}
         }
 
         public void RenameElement(object sender, EventArgs e)
@@ -109,12 +109,9 @@ namespace FdaViewModel.Conditions
             }
         }
 
-        public override void Save()
-        {
-            //do nothing
-        }
+      
 
-        public override string TableName
+        public  string TableName
         {
             get
             {
@@ -127,29 +124,20 @@ namespace FdaViewModel.Conditions
         //    //throw new NotImplementedException();
         //}
 
-        public override void AddElementFromRowData(object[] rowData)
-        {
-            //throw new NotImplementedException();
-        }
+        //public override void AddElementFromRowData(object[] rowData)
+        //{
+        //    //throw new NotImplementedException();
+        //}
 
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
         }
 
-        public override string GetTableConstant()
-        {
-            return "";
-        }
+       
 
-        public override string[] TableColumnNames()
-        {
-            return new string[0];
-        }
+       
 
-        public override Type[] TableColumnTypes()
-        {
-            return new Type[0];
-        }
+      
     }
 }

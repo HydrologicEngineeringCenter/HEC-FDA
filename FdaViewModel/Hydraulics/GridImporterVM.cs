@@ -91,10 +91,7 @@ namespace FdaViewModel.Hydraulics
 
         }
 
-        public override void Save()
-        {
-            throw new NotImplementedException();
-        }
+       
         #endregion
         #region Functions
         #endregion

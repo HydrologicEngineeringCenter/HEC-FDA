@@ -8,7 +8,7 @@ using Statistics;
 
 namespace FdaViewModel.AggregatedStageDamage
 {
-    public class AggregatedStageDamageEditorVM:Utilities.Transactions.TransactionAndMessageBase
+    public class AggregatedStageDamageEditorVM:Utilities.Transactions.TransactionAndMessageBase, ISaveUndoRedo
     {
         #region Notes
         #endregion
@@ -24,10 +24,10 @@ namespace FdaViewModel.AggregatedStageDamage
         public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
 
 
-        public int SelectedIndexInUndoList
-        {
-            set { CurrentElement.ChangeIndex += value + 1; Undo(); }
-        }
+        //public int SelectedIndexInUndoList
+        //{
+        //    set { CurrentElement.ChangeIndex += value + 1; Undo(); }
+        //}
 
         public string Description
         {
@@ -66,14 +66,14 @@ namespace FdaViewModel.AggregatedStageDamage
             Curve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
         }
 
-        public AggregatedStageDamageEditorVM(AggregatedStageDamageElement elem, Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) :base()
+        public AggregatedStageDamageEditorVM(AggregatedStageDamageElement elem, Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) :base(elem)
         {
             ownerValidationRules(this);
 
             SaveAction = saveAction;
 
             CurrentElement = elem;
-            CurrentElement.ChangeIndex = 0;
+            //CurrentElement.ChangeIndex = 0;
 
             AssignValuesFromElementToEditor(elem);
 
@@ -81,7 +81,11 @@ namespace FdaViewModel.AggregatedStageDamage
         }
         #endregion
         #region Voids
-        public override void Undo()
+        public override void Save()
+        {
+            throw new NotImplementedException();
+        }
+        public  void Undo()
         {
             //UndoElement(this);
         }
@@ -95,12 +99,12 @@ namespace FdaViewModel.AggregatedStageDamage
             //}
 
         }
-        public override void Redo()
+        public  void Redo()
         {
             //RedoElement(this);
         }
 
-        public override void SaveWhileEditing()
+        public  void SaveWhileEditing()
         {
             //SaveAction(this);
             //_OwnerNode.SaveElementWhileEditing(this);
@@ -111,10 +115,7 @@ namespace FdaViewModel.AggregatedStageDamage
             AddRule(nameof(Name), () => { if (Name == null) { return false; } else { return !Name.Equals(""); } }, "Name cannot be blank");
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+        
 
         public void AssignValuesFromElementToEditor(ChildElement element)
         {

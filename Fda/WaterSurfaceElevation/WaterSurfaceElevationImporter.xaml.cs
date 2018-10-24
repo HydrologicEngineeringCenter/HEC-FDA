@@ -85,15 +85,16 @@ namespace Fda.WaterSurfaceElevation
 
         }
 
-        private void btn_OK_Click(object sender, RoutedEventArgs e)
-        {
-            FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
-            if( vm.OKButtonClicked() == true) //this runs some validation and returns true if everything was good
-            {
-                var window = Window.GetWindow(this);
-                vm.WasCanceled = false;
-                window.Close();
-            }
-        }
+        //private void btn_OK_Click(object sender, RoutedEventArgs e)
+        //{
+        //    FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
+        //    bool validationIsGood = vm.OKButtonClicked();
+        //    if(validationIsGood) //this runs some validation and returns true if everything was good
+        //    {
+        //        var window = Window.GetWindow(this);
+        //        vm.WasCanceled = false;
+        //        window.Close();
+        //    }
+        //}
     }
 }

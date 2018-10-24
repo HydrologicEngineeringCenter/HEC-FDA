@@ -30,10 +30,10 @@ namespace FdaViewModel.GeoTech
         public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
 
 
-        public int SelectedIndexInUndoList
-        {
-            set { CurrentElement.ChangeIndex += value + 1; Undo(); }
-        }
+        //public int SelectedIndexInUndoList
+        //{
+        //    set { CurrentElement.ChangeIndex += value + 1; Undo(); }
+        //}
 
         public LeveeFeatureElement SelectedLateralStructure
         {
@@ -79,31 +79,35 @@ namespace FdaViewModel.GeoTech
 
         }
 
-        public FailureFunctionEditorVM(FailureFunctionElement elem, Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules, List<LeveeFeatureElement> latStructList) :base()// string name, string description, Statistics.UncertainCurveDataCollection curve,LeveeFeatureElement selectedLevee, List<LeveeFeatureElement> latStructList):base()
+        public FailureFunctionEditorVM(FailureFunctionElement elem, Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules, List<LeveeFeatureElement> latStructList) :base(elem)// string name, string description, Statistics.UncertainCurveDataCollection curve,LeveeFeatureElement selectedLevee, List<LeveeFeatureElement> latStructList):base()
         {
             CurrentElement = elem;
-            CurrentElement.ChangeIndex = 0;
+            //CurrentElement.ChangeIndex = 0;
             SaveAction = saveAction;
             LateralStructureList = latStructList;
             ownerValidationRules(this);
 
             AssignValuesFromElementToEditor(elem);
 
-            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
+           // DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
             //UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
         }
         #endregion
         #region Voids
-        public override void Undo()
+        public override void Save()
+        {
+            throw new NotImplementedException();
+        }
+        public  void Undo()
         {
            // UndoElement(this);
         }
 
-        public override void Redo()
+        public  void Redo()
         {
             //RedoElement(this);
         }
-        public override void SaveWhileEditing()
+        public  void SaveWhileEditing()
         {
             //SaveAction(this);
            // _OwnerNode.SaveElementWhileEditing(this);
@@ -113,10 +117,7 @@ namespace FdaViewModel.GeoTech
             AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+        
         public void UpdateTheUndoRedoRowItems()
         {
             //int currentIndex = CurrentElement.ChangeIndex;

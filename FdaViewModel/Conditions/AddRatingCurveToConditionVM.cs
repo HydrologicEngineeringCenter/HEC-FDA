@@ -20,7 +20,6 @@ namespace FdaViewModel.Conditions
         // Created Date: 12/1/2017 3:35:31 PM
         #endregion
         #region Fields
-        private ParentElement _owner;
 
         //private StageTransforms.RatingCurveElement _SelectedRatingElement;
         private List<StageTransforms.RatingCurveElement> _ListOfRatingCurves;
@@ -85,15 +84,14 @@ namespace FdaViewModel.Conditions
         
         #endregion
         #region Constructors
-        public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves, ParentElement owner):this(listOfRatingCurves,null,owner)
+        public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves ):this(listOfRatingCurves,null)
         {
             
         }
 
-        public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves, StageTransforms.RatingCurveElement selectedRatingElement, ParentElement owner):base()
+        public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves, StageTransforms.RatingCurveElement selectedRatingElement ):base()
         {
             SelectedElement = selectedRatingElement;
-            _owner = owner;
             ListOfRatingCurves = listOfRatingCurves;
         }
         #endregion
@@ -127,29 +125,29 @@ namespace FdaViewModel.Conditions
         }
         public void LaunchNewRatingCurve(object sender, EventArgs e)
         {
-            if (_owner != null)
-            {
-                List<StageTransforms.RatingCurveOwnerElement> eles = _owner.GetElementsOfType<StageTransforms.RatingCurveOwnerElement>();
-                if (eles.Count > 0)
-                {
-                    eles.FirstOrDefault().AddNewRatingCurve(sender, e);
-                    //need to determine what the most recent element is and see if we already have it.
-                    if (eles.FirstOrDefault().Elements.Count > 0)
-                    {
-                        if (eles.FirstOrDefault().Elements.Count > ListOfRatingCurves.Count)
-                        {
-                            List<StageTransforms.RatingCurveElement> theNewList = new List<StageTransforms.RatingCurveElement>();
-                            for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-                            {
-                                theNewList.Add((StageTransforms.RatingCurveElement)eles.FirstOrDefault().Elements[i]);
-                            }
-                            ListOfRatingCurves = theNewList;
-                            //RatingCurveRelationships.Add((StageTransforms.RatingCurveElement)eles.FirstOrDefault().Elements.Last());
-                            SelectedElement = ListOfRatingCurves.Last();
-                        }
-                    }
-                }
-            }
+            //if (_owner != null)
+            //{
+            //    List<StageTransforms.RatingCurveOwnerElement> eles = _owner.GetElementsOfType<StageTransforms.RatingCurveOwnerElement>();
+            //    if (eles.Count > 0)
+            //    {
+            //        eles.FirstOrDefault().AddNewRatingCurve(sender, e);
+            //        //need to determine what the most recent element is and see if we already have it.
+            //        if (eles.FirstOrDefault().Elements.Count > 0)
+            //        {
+            //            if (eles.FirstOrDefault().Elements.Count > ListOfRatingCurves.Count)
+            //            {
+            //                List<StageTransforms.RatingCurveElement> theNewList = new List<StageTransforms.RatingCurveElement>();
+            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
+            //                {
+            //                    theNewList.Add((StageTransforms.RatingCurveElement)eles.FirstOrDefault().Elements[i]);
+            //                }
+            //                ListOfRatingCurves = theNewList;
+            //                //RatingCurveRelationships.Add((StageTransforms.RatingCurveElement)eles.FirstOrDefault().Elements.Last());
+            //                SelectedElement = ListOfRatingCurves.Last();
+            //            }
+            //        }
+            //    }
+            //}
 
         }
         #endregion
@@ -161,9 +159,6 @@ namespace FdaViewModel.Conditions
             AddRule(nameof(SelectedElement), () => { return (SelectedElement != null); }, "A Rating Curve has not been selected.");
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+       
     }
 }

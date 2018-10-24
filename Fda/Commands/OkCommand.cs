@@ -57,7 +57,14 @@ namespace Fda.Commands
                         return;
                     }
                 }
-                vm.Save();
+                //call save if its an editor?
+                if (vm.GetType().IsSubclassOf(typeof(FdaViewModel.Editors.BaseEditorVM)))
+                {
+                    if (((FdaViewModel.Editors.BaseEditorVM)vm).RunSpecialValidation() == true)
+                    {
+                        ((FdaViewModel.Editors.BaseEditorVM)vm).Save();
+                    }
+                }
             }
 
             vm.WasCanceled = false;

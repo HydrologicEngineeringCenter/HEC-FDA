@@ -5,11 +5,12 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 1:11:19 PM)]
-    public class LeveeFeatureElement:Utilities.ChildElement
+    public class LeveeFeatureElement : Utilities.ChildElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -22,11 +23,10 @@ namespace FdaViewModel.GeoTech
         private double _Elevation;
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return _TableConstant;
-        }
-        public string Description { get { return _Description; } set { _Description = value; NotifyPropertyChanged(); } }
+        //public override string GetTableConstant()
+        //{
+        //    return _TableConstant;
+        //}
 
         public double Elevation
         {
@@ -37,7 +37,7 @@ namespace FdaViewModel.GeoTech
 
         #endregion
         #region Constructors
-        public LeveeFeatureElement(string userProvidedName, string description, double elevation, BaseFdaElement owner = null):base(owner)
+        public LeveeFeatureElement(string userProvidedName, string description, double elevation, BaseFdaElement owner = null) : base(owner)
         {
             Name = userProvidedName;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/LeveeFeature.png");
@@ -52,9 +52,9 @@ namespace FdaViewModel.GeoTech
 
             Utilities.NamedAction removeLeveeFeature = new Utilities.NamedAction();
             removeLeveeFeature.Header = "Remove";
-            removeLeveeFeature.Action = Remove;
+            removeLeveeFeature.Action = RemoveElement;
 
-            Utilities.NamedAction renameElement = new Utilities.NamedAction();
+            Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
             renameElement.Header = "Rename";
             renameElement.Action = Rename;
 
@@ -70,80 +70,92 @@ namespace FdaViewModel.GeoTech
         }
         #endregion
         #region Voids
+        public void RemoveElement(object sender, EventArgs e)
+        {
+            Saving.PersistenceFactory.GetLeveeManager(StudyCache).Remove(this);
+        }
         public void EditLeveeFeature(object arg1, EventArgs arg2)
         {
-            LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(Name, Description, Elevation, (editorVM) => ((Utilities.ParentElement)_Owner).AddOwnerRules(editorVM));
-            Navigate(vm, true, true);
-            if (!vm.WasCanceled)
-            {
-                if (!vm.HasError)
-                {
-                    string oldName = Name;
-                    Name = vm.Name;
-                    Description = vm.Description;
-                    Elevation = vm.Elevation;
+            LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(this);
+            Navigate(vm, false,false,"Edit Levee");
+            //if (!vm.WasCanceled)
+            //{
+            //    if (!vm.HasError)
+            //    {
+            //        string oldName = Name;
+            //        Name = vm.Name;
+            //        Description = vm.Description;
+            //        Elevation = vm.Elevation;
 
-                    ((LeveeFeatureOwnerElement)_Owner).UpdateTableRowIfModified((Utilities.ParentElement)_Owner, oldName, this);
-                    UpdateAndSaveFailureFunctionsWithNewLevee(oldName);
+            //        ((LeveeFeatureOwnerElement)_Owner).UpdateTableRowIfModified((Utilities.ParentElement)_Owner, oldName, this);
+            //        UpdateAndSaveFailureFunctionsWithNewLevee(oldName);
 
-                    AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.EditExisting, "Previous Name: " + oldName + " Description: " + Description + " Elevation: " + Elevation));
-                }
-            }
+            //        AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.EditExisting, "Previous Name: " + oldName + " Description: " + Description + " Elevation: " + Elevation));
+            //    }
+            //}
         }
 
         private void UpdateAndSaveFailureFunctionsWithNewLevee(string oldName)
         {
-            //get the list of failure functions and update their selected levees
-            List<FailureFunctionElement> ffList = GetElementsOfType<FailureFunctionElement>();
+            ////get the list of failure functions and update their selected levees
+            //List<FailureFunctionElement> ffList = GetElementsOfType<FailureFunctionElement>();
 
-            foreach (FailureFunctionElement ffe in ffList)
-            {
-                if (ffe.SelectedLateralStructure.Name == oldName)
-                {
-                    ffe.SelectedLateralStructure = this;
-                }
-            }
-            //save the changes
-            List<FailureFunctionOwnerElement> ffOwners = GetElementsOfType<FailureFunctionOwnerElement>();
-            if (ffOwners.FirstOrDefault() != null)
-            {
-                ffOwners.FirstOrDefault().Save();
-            }
+            //foreach (FailureFunctionElement ffe in ffList)
+            //{
+            //    if (ffe.SelectedLateralStructure.Name == oldName)
+            //    {
+            //        ffe.SelectedLateralStructure = this;
+            //    }
+            //}
+            ////save the changes
+            //List<FailureFunctionOwnerElement> ffOwners = GetElementsOfType<FailureFunctionOwnerElement>();
+            //if (ffOwners.FirstOrDefault() != null)
+            //{
+            //    ffOwners.FirstOrDefault().Save();
+            //}
         }
 
-        public override string TableName
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        //public override string TableName
+        //{
+        //    get
+        //    {
+        //        throw new NotImplementedException();
+        //    }
+        //}
 
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
         }
 
-        public override void Save()
-        {
-            throw new NotImplementedException();
-        }
+        //public override void Save()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public override object[] RowData()
-        {
-            return new object[] { Name , Description, Elevation};
-        }
+        //public override object[] RowData()
+        //{
+        //    return new object[] { Name , Description, Elevation};
+        //}
 
-        public override bool SavesToRow()
-        {
-            return true;
-        }
-        public override bool SavesToTable()
-        {
-            return false;
-        }
-    }
+        //public override bool SavesToRow()
+        //{
+        //    return true;
+        //}
+        //public override bool SavesToTable()
+        //{
+        //    return false;
+        //}
+
         #endregion
         #region Functions
+        public override ChildElement CloneElement(ChildElement elementToClone)
+        {
+            LeveeFeatureElement elem = (LeveeFeatureElement)elementToClone;
+            return new LeveeFeatureElement(elem.Name, elem.Description, elem.Elevation);
+        }
         #endregion
     }
+
+
+}

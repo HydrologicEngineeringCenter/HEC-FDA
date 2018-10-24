@@ -23,7 +23,7 @@ namespace FdaViewModel.Conditions
         public event EventHandler PopImporterOut;
 
         //private FrequencyRelationships.AnalyticalFrequencyElement _SelectedFlowFrequencyElement;
-        private ParentElement _owner;
+       // private ParentElement _owner;
         private List<FrequencyRelationships.AnalyticalFrequencyElement> _InflowFrequencyCurves;
         private Statistics.CurveIncreasing _SelectedCurve;
         private FdaModel.Functions.BaseFunction _BaseFunction;
@@ -65,15 +65,15 @@ namespace FdaViewModel.Conditions
         //{
 
         //}
-        public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves, ParentElement owner):this(lp3Curves,null,owner)
+        public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves):this(lp3Curves,null)
         {
             
         }
-        public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves, FrequencyRelationships.AnalyticalFrequencyElement selectedElement, ParentElement owner) : base()
+        public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves, FrequencyRelationships.AnalyticalFrequencyElement selectedElement) : base()
         {
             SelectedElement = selectedElement;
             InflowFrequencyCurves = lp3Curves;
-            _owner = owner;
+            //_owner = owner;
         }
 
 
@@ -81,29 +81,29 @@ namespace FdaViewModel.Conditions
         #region Voids
         public void LauchNewFlowFrequency(object sender, EventArgs e)
         {
-            if (_owner != null)
-            {
-                List<FrequencyRelationships.AnalyticalFrequencyOwnerElement> eles = _owner.GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyOwnerElement>();
-                if (eles.Count > 0)
-                {
-                    eles.FirstOrDefault().AddNewFlowFrequencyCurve(sender, e);
-                    //need to determine what the most recent element is and see if we already have it.
-                    if (eles.FirstOrDefault().Elements.Count > 0)
-                    {
-                        if (eles.FirstOrDefault().Elements.Count > InflowFrequencyCurves.Count)
-                        {
-                            List<FrequencyRelationships.AnalyticalFrequencyElement> theNewList = new List<FrequencyRelationships.AnalyticalFrequencyElement>();
-                            for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-                            {
-                                theNewList.Add((FrequencyRelationships.AnalyticalFrequencyElement)eles.FirstOrDefault().Elements[i]);
-                            }
-                            InflowFrequencyCurves = theNewList;
-                            //AnalyiticalRelationships.Add((FrequencyRelationships.AnalyticalFrequencyElement)eles.FirstOrDefault().Elements.Last());
-                            SelectedElement = InflowFrequencyCurves.Last();
-                        }
-                    }
-                }
-            }
+            //if (_owner != null)
+            //{
+            //    List<FrequencyRelationships.AnalyticalFrequencyOwnerElement> eles = _owner.GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyOwnerElement>();
+            //    if (eles.Count > 0)
+            //    {
+            //        eles.FirstOrDefault().AddNewFlowFrequencyCurve(sender, e);
+            //        //need to determine what the most recent element is and see if we already have it.
+            //        if (eles.FirstOrDefault().Elements.Count > 0)
+            //        {
+            //            if (eles.FirstOrDefault().Elements.Count > InflowFrequencyCurves.Count)
+            //            {
+            //                List<FrequencyRelationships.AnalyticalFrequencyElement> theNewList = new List<FrequencyRelationships.AnalyticalFrequencyElement>();
+            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
+            //                {
+            //                    theNewList.Add((FrequencyRelationships.AnalyticalFrequencyElement)eles.FirstOrDefault().Elements[i]);
+            //                }
+            //                InflowFrequencyCurves = theNewList;
+            //                //AnalyiticalRelationships.Add((FrequencyRelationships.AnalyticalFrequencyElement)eles.FirstOrDefault().Elements.Last());
+            //                SelectedElement = InflowFrequencyCurves.Last();
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         public void OKClicked()
@@ -133,10 +133,7 @@ namespace FdaViewModel.Conditions
             AddRule(nameof(SelectedElement), () => { return (SelectedElement != null); }, "A frequency Curve has not been selected.");
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+       
         #endregion
         #region Functions
         #endregion

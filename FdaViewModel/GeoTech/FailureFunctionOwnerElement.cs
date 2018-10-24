@@ -20,10 +20,7 @@ namespace FdaViewModel.GeoTech
         #region Fields
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+        
         #endregion
         #region Constructors
         public FailureFunctionOwnerElement(BaseFdaElement owner):base(owner)
@@ -47,34 +44,46 @@ namespace FdaViewModel.GeoTech
             Actions = localActions;
 
             StudyCache.FailureFunctionAdded += AddFailureFunctionElement;
+            StudyCache.FailureFunctionRemoved += RemoveFailureFunctionElement;
+            StudyCache.FailureFunctionUpdated += UpdateFailureFunctionElement;
         }
         #endregion
         #region Voids
+        private void UpdateFailureFunctionElement(object sender, Saving.ElementUpdatedEventArgs e)
+        {
+            UpdateElement(e.OldElement, e.NewElement);
+        }
         private void AddFailureFunctionElement(object sender, Saving.ElementAddedEventArgs e)
         {
             AddElement(e.Element);
         }
+        private void RemoveFailureFunctionElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            RemoveElement(e.Element);
+        }
         public void AddNewFailureFunction(object arg1, EventArgs arg2)
         {
-            //List<LeveeFeatureElement> leveeList = GetElementsOfType<LeveeFeatureElement>();
+            List<LeveeFeatureElement> leveeList = StudyCache.LeveeElements;
 
 
-            //Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper((editorVM, elem) => SaveNewElement(editorVM, elem));
-            //Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-            //    .WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
-            //    .WithSaveUndoRedo(saveHelper, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
-            //    (editor, element) => AssignValuesFromEditorToElement(editor, element));
-
-            //double[] xValues = new double[] { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
-            //Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(97), new Statistics.None(99), new Statistics.None(104), new Statistics.None(109), new Statistics.None(110), new Statistics.None(114), new Statistics.None(116), new Statistics.None(119), new Statistics.None(120), new Statistics.None(121) };
-            //Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            double[] xValues = new double[] { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(97), new Statistics.None(99), new Statistics.None(104), new Statistics.None(109), new Statistics.None(110), new Statistics.None(114), new Statistics.None(116), new Statistics.None(119), new Statistics.None(120), new Statistics.None(121) };
+            Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
 
-            //Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(defaultCurve, leveeList, actionManager);
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFailureFunctionManager(StudyCache)
+                , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
+                (editor, element) => AssignValuesFromEditorToElement(editor, element));
+            //create action manager
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
+                .WithSaveUndoRedo(saveHelper);
 
+            Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(defaultCurve, leveeList, actionManager);
+            StudyCache.AddSiblingRules(vm, this);
 
-            ////FailureFunctionEditorVM vm = new FailureFunctionEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar), leveeList);
-            //Navigate(vm);
+            Navigate(vm, false, false, "Create Failure Function");
+            //FailureFunctionEditorVM vm = new FailureFunctionEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar), leveeList);
             //if (!vm.WasCanceled)
             //{
             //    if (!vm.HasError)
@@ -92,14 +101,7 @@ namespace FdaViewModel.GeoTech
         #endregion
         #region Functions
         #endregion
-        public override string TableName
-        {
-            get
-            {
-                return "Failure Functions";
-            }
-        }
-
+       
       
 
         public override void AddValidationRules()
@@ -107,69 +109,69 @@ namespace FdaViewModel.GeoTech
             //throw new NotImplementedException();
         }
 
-        public override string[] TableColumnNames()
-        {
-            return new string[] { "Name", "Last Edit Date", "Description", "Associated Levee Feature", "Curve Distribution Type" };
-        }
+     
 
-        public override Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string),typeof(string), typeof(string), typeof(string), typeof(string) };
-        }
+        //public override void AssignValuesFromCurveEditorToElement(BaseEditorVM editorVM, ChildElement element)
+        //{
+        //    FailureFunctionCurveEditorVM vm = (FailureFunctionCurveEditorVM)editorVM;
+        //    FailureFunctionElement elem = (FailureFunctionElement)element;
 
-        public override void AssignValuesFromEditorToElement(BaseEditorVM editorVM, ChildElement element)
-        {
-            FailureFunctionCurveEditorVM vm = (FailureFunctionCurveEditorVM)editorVM;
-            FailureFunctionElement elem = (FailureFunctionElement)element;
-
-            elem.Name = vm.Name;
-            elem.Description = vm.Description;
-            elem.Curve = vm.Curve;
-            elem.SelectedLateralStructure = vm.SelectedLateralStructure;
+        //    elem.Name = vm.Name;
+        //    elem.Description = vm.Description;
+        //    elem.Curve = vm.Curve;
+        //    elem.SelectedLateralStructure = vm.SelectedLateralStructure;
             
 
-            elem.UpdateTreeViewHeader(vm.Name);
-        }
+        //    elem.UpdateTreeViewHeader(vm.Name);
+        //}
 
-        public override void AssignValuesFromElementToEditor(BaseEditorVM editorVM, ChildElement element)
-        {
-            FailureFunctionCurveEditorVM vm = (FailureFunctionCurveEditorVM)editorVM;
-            FailureFunctionElement elem = (FailureFunctionElement)element;
+        //public override void AssignValuesFromElementToCurveEditor(BaseEditorVM editorVM, ChildElement element)
+        //{
+        //    FailureFunctionCurveEditorVM vm = (FailureFunctionCurveEditorVM)editorVM;
+        //    FailureFunctionElement elem = (FailureFunctionElement)element;
 
 
-            vm.Name = element.Name;
-            vm.Description = element.Description;
-            vm.Curve = element.Curve;
-            vm.SelectedLateralStructure = elem.SelectedLateralStructure;
-        }
+        //    vm.Name = element.Name;
+        //    vm.Description = element.Description;
+        //    vm.Curve = element.Curve;
+        //    vm.SelectedLateralStructure = elem.SelectedLateralStructure;
+        //}
 
-        public override ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
+        public  ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
         {
             Editors.FailureFunctionCurveEditorVM editorVM = (Editors.FailureFunctionCurveEditorVM)vm;
 
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            return new FailureFunctionElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve, editorVM.SelectedLateralStructure, this);
+            return new FailureFunctionElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve, editorVM.SelectedLateralStructure);
             //return null;
         }
-        public override ChildElement CreateElementFromRowData(object[] rowData)
+
+        public void AssignValuesFromEditorToElement(BaseEditorVM editorVM, ChildElement elem)
         {
-            List<LeveeFeatureElement> ele = GetElementsOfType<LeveeFeatureElement>();
-            LeveeFeatureElement lfe = null;
-            foreach (LeveeFeatureElement element in ele)
-            {
-                if (element.Name == (string)rowData[3])
-                {
-                    lfe = element;
-                }
-            }
-            Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[4]));
-            FailureFunctionElement failure = new FailureFunctionElement((string)rowData[0],(string)rowData[1], (string)rowData[2], ucdc, lfe, this);
-            failure.Curve.fromSqliteTable(failure.TableName);
-            return failure;
+            FailureFunctionCurveEditorVM vm = (FailureFunctionCurveEditorVM)editorVM;
+            FailureFunctionElement element = (FailureFunctionElement)elem;
+
+            element.Name = vm.Name;
+            element.Description = vm.Description;
+            element.Curve = vm.Curve;
+            element.SelectedLateralStructure = vm.SelectedLateralStructure;
+            element.UpdateTreeViewHeader(vm.Name);
         }
-        public override void AddElementFromRowData(object[] rowData)
+
+        public void AssignValuesFromElementToEditor(BaseEditorVM editorVM, ChildElement elem)
         {
-            AddElement(CreateElementFromRowData(rowData), false);
+            FailureFunctionCurveEditorVM vm = (FailureFunctionCurveEditorVM)editorVM;
+            FailureFunctionElement element = (FailureFunctionElement)elem;
+
+            vm.Name = element.Name;
+            vm.Description = element.Description;
+            vm.Curve = element.Curve;
+            vm.SelectedLateralStructure = element.SelectedLateralStructure;
         }
+
+        //public override void AddElementFromRowData(object[] rowData)
+        //{
+        //    AddElement(CreateElementFromRowData(rowData), false);
+        //}
     }
 }

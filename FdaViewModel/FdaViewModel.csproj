@@ -107,6 +107,7 @@
     <Compile Include="Conditions\ConditionsOwnerElement.cs" />
     <Compile Include="Conditions\ConditionsPlotEditorVM.cs" />
     <Compile Include="Conditions\ConditionsTreeOwnerElement.cs" />
+    <Compile Include="Editors\AnalyticalFrequencyCurveEditor.cs" />
     <Compile Include="Editors\BaseEditorVM.cs" />
     <Compile Include="Editors\CurveEditorFactory.cs" />
     <Compile Include="Editors\CurveEditorVM.cs" />
@@ -193,7 +194,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Saving\ElementAddedEventArgs.cs" />
     <Compile Include="Saving\IPersistable.cs" />
+    <Compile Include="Saving\IPersistableWithUndoRedo.cs" />
     <Compile Include="Saving\LoadingManager.cs" />
+    <Compile Include="Saving\PersistenceManagers\ConditionsPersistenceManager.cs" />
     <Compile Include="Saving\PersistenceManagers\ExteriorInteriorPersistenceManager.cs" />
     <Compile Include="Saving\PersistenceManagers\FailureFunctionPersistenceManager.cs" />
     <Compile Include="Saving\PersistenceManagers\FlowFrequencyPersistenceManager.cs" />

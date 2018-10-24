@@ -159,7 +159,7 @@ namespace FdaViewModel.Study
             AddRule(nameof(UpdatedYear), () => UpdatedYear <= DateTime.Now.Year, "The Updated Year must not be in the future.");
             AddRule(nameof(UpdatedYear), () => UpdatedYear >= SurveyedYear, "The Updated Year must happen after the Surveyed Year.");
         }
-        public override void Save()
+        public  void Save()
         {
             if (!Storage.Connection.Instance.TableNames().Contains(TableName))
             {

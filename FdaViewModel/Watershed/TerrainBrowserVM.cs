@@ -93,11 +93,18 @@ namespace FdaViewModel.Watershed
            
 
             if (TerrainPath != null && TerrainPath != "")
-            {            
-                 string[] pathNames = new string[] { OriginalPath, TerrainPath };
-                 CopyFileOnBackgroundThread(this, new DoWorkEventArgs(pathNames));
+            {
+                // string[] pathNames = new string[] { OriginalPath, TerrainPath };
+                // CopyFileOnBackgroundThread(this, new DoWorkEventArgs(pathNames));
+
+                //add a dummy element to the parent
+                TerrainElement t = new TerrainElement(Name,System.IO.Path.GetFileName(TerrainPath),null,true); // file extention?
+                StudyCache.TerrainParent.AddElement(t);
                 TerrainElement newElement = new TerrainElement(Name, TerrainPath);
-                Saving.PersistenceFactory.GetTerrainManager(StudyCache).SaveNew(newElement);
+
+                Saving.PersistenceManagers.TerrainElementPersistenceManager manager = Saving.PersistenceFactory.GetTerrainManager(StudyCache);
+                manager.OriginalTerrainPath = OriginalPath;
+                manager.SaveNew(newElement);
             }
             
             

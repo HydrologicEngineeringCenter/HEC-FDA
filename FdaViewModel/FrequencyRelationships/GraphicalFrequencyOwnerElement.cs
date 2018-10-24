@@ -13,10 +13,10 @@ namespace FdaViewModel.FrequencyRelationships
         #region Fields
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+        //public override string GetTableConstant()
+        //{
+        //    return TableName;
+        //}
         #endregion
         #region Constructors
         public GraphicalFrequencyOwnerElement(BaseFdaElement owner) : base(owner)
@@ -57,26 +57,26 @@ namespace FdaViewModel.FrequencyRelationships
         }
         #endregion
         #region Functions
-        public override string TableName
-        {
-            get
-            {
-                return "Graphical Flow Frequency Curves";
-            }
-        }
+        //public override string TableName
+        //{
+        //    get
+        //    {
+        //        return "Graphical Flow Frequency Curves";
+        //    }
+        //}
 
-        public override string[] TableColumnNames()
-        {
-            return new string[] { "Graphical Flow Frequency Curve" };
-        }
-        public override Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string) };
-        }
-        public override void AddElementFromRowData(object[] rowData)
-        {
-            //
-        }
+        //public override string[] TableColumnNames()
+        //{
+        //    return new string[] { "Graphical Flow Frequency Curve" };
+        //}
+        //public override Type[] TableColumnTypes()
+        //{
+        //    return new Type[] { typeof(string) };
+        //}
+        //public override void AddElementFromRowData(object[] rowData)
+        //{
+        //    //
+        //}
         #endregion
     }
 }

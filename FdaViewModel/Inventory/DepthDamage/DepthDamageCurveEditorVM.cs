@@ -222,9 +222,6 @@ namespace FdaViewModel.Inventory.DepthDamage
             //throw new NotImplementedException();
         }
 
-        public override void Save()
-        {        
-            //throw new NotImplementedException();
-        }
+      
     }
 }

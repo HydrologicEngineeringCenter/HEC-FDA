@@ -27,11 +27,11 @@ namespace FdaViewModel.Utilities
             get { return _GifVisible; }
             set { _GifVisible = value; NotifyPropertyChanged(); }
         }
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged(); }
-        }
+        //public string Name
+        //{
+        //    get { return _Name; }
+        //    set { _Name = value; NotifyPropertyChanged(); }
+        //}
         public string Decoration
         {
             get { return _Decoration; }
@@ -62,9 +62,6 @@ namespace FdaViewModel.Utilities
             //throw new NotImplementedException();
         }
 
-        public override void Save()
-        {
-            throw new NotImplementedException();
-        }
+      
     }
 }

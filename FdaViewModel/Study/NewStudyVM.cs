@@ -102,10 +102,7 @@ namespace FdaViewModel.Study
             //notes can be null.
         }
 
-        public override void Save()
-        {
-            //create a new database via the model?
-        }
+     
         #endregion
         #region Functions
         #endregion

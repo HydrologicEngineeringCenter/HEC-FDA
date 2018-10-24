@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 namespace FdaViewModel.WaterSurfaceElevation
 {
     //[Author(q0heccdm, 9 / 1 / 2017 8:31:13 AM)]
-    public class WaterSurfaceElevationImporterVM:BaseViewModel
+    public class WaterSurfaceElevationImporterVM:Editors.BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
@@ -53,9 +53,8 @@ namespace FdaViewModel.WaterSurfaceElevation
         //public bool HasFatalError { get; internal set; }
         #endregion
         #region Constructors
-        public WaterSurfaceElevationImporterVM(Utilities.ParentElement ownerElement, Action<BaseViewModel> ownerValidationRules)
+        public WaterSurfaceElevationImporterVM(Utilities.ParentElement ownerElement):base(null)
         {
-            ownerValidationRules(this);
             _ListOfRows = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
             ParentElement = ownerElement;
         }
@@ -175,20 +174,20 @@ namespace FdaViewModel.WaterSurfaceElevation
 
 
 
-        public override void Save()
-        {
-            //load the list of relative paths
-            //   WHEN DOES THIS GET CALLED??????
-            _ListOfRelativePaths = new List<PathAndProbability>();
-            foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
-            {
-                if (row.IsChecked)
-                {
-                    string relativePath = System.IO.Path.GetDirectoryName(row.Path) + "\\" + System.IO.Path.GetFileName(row.Path);
-                    _ListOfRelativePaths.Add(new PathAndProbability(relativePath, row.Probability));
-                }
-            }
-        }
+        //public override void Save()
+        //{
+        //    //load the list of relative paths
+        //    //   WHEN DOES THIS GET CALLED??????
+        //    _ListOfRelativePaths = new List<PathAndProbability>();
+        //    foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
+        //    {
+        //        if (row.IsChecked)
+        //        {
+        //            string relativePath = System.IO.Path.GetDirectoryName(row.Path) + "\\" + System.IO.Path.GetFileName(row.Path);
+        //            _ListOfRelativePaths.Add(new PathAndProbability(relativePath, row.Probability));
+        //        }
+        //    }
+        //}
         private void StoreTheOriginalPaths()
         {
             ListOfOriginalPaths = new List<string>();
@@ -203,7 +202,7 @@ namespace FdaViewModel.WaterSurfaceElevation
             }
         }
       
-        public bool OKButtonClicked()
+        public override bool RunSpecialValidation()
         {
            
 
@@ -397,6 +396,22 @@ namespace FdaViewModel.WaterSurfaceElevation
             //string relativePath = System.IO.Path.GetDirectoryName(destinationFilePath) + "\\" + System.IO.Path.GetFileName(destinationFilePath);
             ListOfRelativePaths.Add(new PathAndProbability(Name + "\\" + nameWithExtension, probability));
             return true;
+        }
+
+        public override void Save()
+        {
+            WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, ListOfRelativePaths, IsDepthGridChecked);
+            Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager(StudyCache);
+            if (IsImporter && HasSaved == false)
+            {
+                manager.SaveNew(elementToSave);
+                HasSaved = true;
+                OriginalElement = elementToSave;
+            }
+            else
+            {
+                manager.SaveExisting((WaterSurfaceElevationElement)OriginalElement, elementToSave, 0);
+            }
         }
         #endregion
         #region Functions

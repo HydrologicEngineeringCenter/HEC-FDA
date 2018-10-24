@@ -163,15 +163,7 @@ namespace Fda
         private void WindowSpawner(FdaViewModel.Utilities.WindowVM newvm, bool asDialogue)
         {
             newvm.WasCanceled = true;
-            FdaViewModel.Output.LinkedPlotsVM test = newvm.CurrentView as FdaViewModel.Output.LinkedPlotsVM;
-
-            if (test != null)
-            {
-                Output.LinkedPlots lp = new Output.LinkedPlots(test.Result);
-                lp.Owner = this;
-                lp.ShowDialog();
-                return;
-            }
+            
             newvm.Scalable = false;
             ViewWindow newwindow = new ViewWindow(newvm);
 

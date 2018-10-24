@@ -2,75 +2,96 @@
 using FdaViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FdaViewModel.Saving.PersistenceManagers
 {
-    public class RatingElementPersistenceManager :SavingBase, IPersistable
+    public class RatingElementPersistenceManager :SavingBase, IPersistableWithUndoRedo
     {
         private const string TableName = "Rating Curves";
-        private const string ChangeTableName = "RATING_CHANGE_TABLE";
-        private const string TABLE_NAME_CONSTANT = "Rating Curve - ";
-
-        public static string[] TableColumnNames()
-        {
-            return new string[] { "Rating Curve Name", "Last Edit Date", "Description", "Curve Distribution Type", "Curve Type" };
-        }
-        public static Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
-        }
+        internal override string ChangeTableConstant { get { return "Rating Curve - "; } }    
+        private static readonly string[] TableColumnNames =  { "Rating Curve Name", "Last Edit Date", "Description", "Curve Distribution Type", "Curve Type" };   
+        private static readonly Type[] TableColumnTypes = { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
 
 
+        #region constructor
         public RatingElementPersistenceManager(Study.FDACache studyCache)
         {
             StudyCache = studyCache;
         }
 
+        #endregion
+
+        #region utilities
+        private object[] GetRowDataFromElement(RatingCurveElement element)
+        {
+            if(element.Description == null)
+            {
+                element.Description = "";
+            }
+            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.Distribution, element.Curve.GetType() };
+
+        }
+
+        public override ChildElement CreateElementFromRowData(object[] rowData)
+        {
+            Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
+            RatingCurveElement rc = new RatingCurveElement((string)rowData[0], (string)rowData[1], (string)rowData[2], emptyCurve);
+            //loads the curve with the values from it's table
+            rc.Curve.fromSqliteTable(ChangeTableConstant+ (string)rowData[1]);
+            return rc;
+        }
+
+        #endregion
 
         public void SaveNew(ChildElement element)
         {
             if (element.GetType() == typeof(RatingCurveElement))
             {
-            string editDate = DateTime.Now.ToString("G");
+                 string editDate = DateTime.Now.ToString("G");
                 element.LastEditDate = editDate;
-                SaveNewElementToParentTable(element, TableName, TableColumnNames(), TableColumnTypes());
-                //save the individual table
-                SaveRatingCurveTable((RatingCurveElement)element, editDate);
+
+                SaveNewElementToParentTable(GetRowDataFromElement((RatingCurveElement)element), TableName, TableColumnNames, TableColumnTypes);
+                SaveElementToChangeTable(element.Name, GetRowDataFromElement((RatingCurveElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
+                SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
                 //add the rating element to the cache which then raises event that adds it to the owner element
                 StudyCache.AddRatingElement((RatingCurveElement)element);
             }
         }
-
-        public void SaveExisting(Utilities.ChildElement element, string oldName, Statistics.UncertainCurveDataCollection oldCurve)
+        
+        public void Remove(ChildElement element)
         {
-            SaveExistingElement(oldName, oldCurve, element, TableName);
+            //RequestNavigation += Navigate;
+           
+                RemoveFromParentTable(element, TableName);
+                DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
+                StudyCache.RemoveRatingElement((RatingCurveElement)element);
+            
+
+        }
+
+        public void SaveExisting(ChildElement oldElement, ChildElement elementToSave,int changeTableIndex )
+        {
+            string editDate = DateTime.Now.ToString("G");
+            elementToSave.LastEditDate = editDate;
+
+            if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((RatingCurveElement)elementToSave), oldElement.Name, TableName) || AreCurvesDifferent(oldElement.Curve,elementToSave.Curve))
+            {
+                UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((RatingCurveElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
+                SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
+                // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
+                StudyCache.UpdateRatingCurve((RatingCurveElement)oldElement, (RatingCurveElement)elementToSave);
+            }
+
         }
 
         public List<ChildElement> Load()
         {
             return CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
         }
-
-        private void SaveRatingCurveTable(RatingCurveElement element, string lastEditDate)
-        {
-            if (!Storage.Connection.Instance.IsOpen)
-            {
-                Storage.Connection.Instance.Open();
-            }
-            element.Curve.toSqliteTable(TABLE_NAME_CONSTANT + lastEditDate); 
-        }
-
-        public ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
-            RatingCurveElement rc = new RatingCurveElement((string)rowData[0], (string)rowData[1], (string)rowData[2], emptyCurve);
-            //loads the curve with the values from it's table
-            rc.Curve.fromSqliteTable(rc.TableName);
-            return rc;
-        }
-
+      
     }
 }

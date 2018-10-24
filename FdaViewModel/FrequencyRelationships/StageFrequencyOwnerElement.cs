@@ -14,10 +14,10 @@ namespace FdaViewModel.FrequencyRelationships
         #region Fields
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+        //public override string GetTableConstant()
+        //{
+        //    return TableName;
+        //}
         #endregion
         #region Constructors
         public StageFrequencyOwnerElement(BaseFdaElement owner) : base(owner)
@@ -58,31 +58,31 @@ namespace FdaViewModel.FrequencyRelationships
         }
         #endregion
         #region Functions
-        public override string TableName
-        {
-            get
-            {
-                return "Stage Frequency Curves";
-            }
-        }
-        public override string[] TableColumnNames()
-        {
-            return new string[] { "Stage Frequency Curve" };
-        }
-        public override Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string) };
-        }
+        //public override string TableName
+        //{
+        //    get
+        //    {
+        //        return "Stage Frequency Curves";
+        //    }
+        //}
+        //public override string[] TableColumnNames()
+        //{
+        //    return new string[] { "Stage Frequency Curve" };
+        //}
+        //public override Type[] TableColumnTypes()
+        //{
+        //    return new Type[] { typeof(string) };
+        //}
 
-        public override ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            return null;
-        }
+        //public override ChildElement CreateElementFromRowData(object[] rowData)
+        //{
+        //    return null;
+        //}
 
-        public override void AddElementFromRowData(object[] rowData)
-        {
-            //AddElement(new )
-        }
+        //public override void AddElementFromRowData(object[] rowData)
+        //{
+        //    //AddElement(new )
+        //}
         #endregion
     }
 }

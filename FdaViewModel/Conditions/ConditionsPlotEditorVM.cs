@@ -12,7 +12,7 @@ using System.Collections.ObjectModel;
 namespace FdaViewModel.Conditions
 {
     //[Author(q0heccdm, 12 / 1 / 2017 11:23:15 AM)]
-    public class ConditionsPlotEditorVM : BaseViewModel
+    public class ConditionsPlotEditorVM : Editors.BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
@@ -237,16 +237,28 @@ namespace FdaViewModel.Conditions
             /// <param name="selectedImpArea"></param>
         public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas, Plots.IndividualLinkedPlotControlVM indLinkedPlotControl0VM, Plots.IndividualLinkedPlotControlVM control1VM,
             Plots.IndividualLinkedPlotControlVM control3VM, Plots.IndividualLinkedPlotControlVM control5VM, Plots.IndividualLinkedPlotControlVM control7VM, Plots.IndividualLinkedPlotControlVM control8VM,
-            string name, string description, int year, ImpactArea.ImpactAreaElement selectedImpArea, PerformanceThresholdTypes thresholdType, double thresholdValue, Action<BaseViewModel> ownerValidationRules) : this(impAreas, indLinkedPlotControl0VM, control1VM, control3VM, control5VM, control7VM, control8VM, ownerValidationRules)
+           ConditionsElement element) : base(element,null)
         {
-            ownerValidationRules(this);
+            ImpactAreas = impAreas;
 
-            Name = name;
-            Description = description;
-            Year = year;
-            SelectedImpactArea = selectedImpArea;
-            SelectedThresholdType = thresholdType;
-            ThresholdValue = thresholdValue;
+            Plot0ControlVM = indLinkedPlotControl0VM;
+            //start with only plot0 button enabled
+            Plot0ControlVM.ImportButtonVM.IsEnabled = true;
+
+            Plot1ControlVM = control1VM;
+            Plot3ControlVM = control3VM;
+            Plot5ControlVM = control5VM;
+            Plot7ControlVM = control7VM;
+            Plot8ControlVM = control8VM;
+
+            AttachEventsToControls();
+            LoadThresholdTypes();
+            Name = element.Name;
+            Description = element.Description;
+            Year = element.AnalysisYear;
+            SelectedImpactArea = element.ImpactAreaElement;
+            SelectedThresholdType = element.ThresholdType;
+            ThresholdValue = element.ThresholdValue;
 
             if (Plot0ControlVM.CurveImporterVM != null && Plot0ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
             {
@@ -270,33 +282,37 @@ namespace FdaViewModel.Conditions
             {
                 Plot7ControlVM.AddCurveToPlot(this, new EventArgs());
             }
+
+
+            
+
         }
         /// <summary>
         /// This constructor is used when creating a new condition
         /// </summary>
         /// <param name="impAreas"></param>
-        /// <param name="indLinkedPlotControl0VM"></param>
-        /// <param name="control1VM"></param>
-        /// <param name="control3VM"></param>
-        /// <param name="control5VM"></param>
-        /// <param name="control7VM"></param>
-        /// <param name="control8VM"></param>
-        public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas, Plots.IndividualLinkedPlotControlVM indLinkedPlotControl0VM, Plots.IndividualLinkedPlotControlVM control1VM, 
-            Plots.IndividualLinkedPlotControlVM control3VM, Plots.IndividualLinkedPlotControlVM control5VM, Plots.IndividualLinkedPlotControlVM control7VM, Plots.IndividualLinkedPlotControlVM control8VM, Action<BaseViewModel> ownerValidationRules)
+        /// <param name="defaultControl0VM"></param>
+        /// <param name="defaultControl1VM"></param>
+        /// <param name="defaultControl3VM"></param>
+        /// <param name="defaultControl5VM"></param>
+        /// <param name="DefaultControl7VM"></param>
+        /// <param name="DefaultControl8VM"></param>
+        public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas, Plots.IndividualLinkedPlotControlVM defaultControl0VM, Plots.IndividualLinkedPlotControlVM defaultControl1VM, 
+            Plots.IndividualLinkedPlotControlVM defaultControl3VM, Plots.IndividualLinkedPlotControlVM defaultControl5VM, Plots.IndividualLinkedPlotControlVM DefaultControl7VM, Plots.IndividualLinkedPlotControlVM DefaultControl8VM):base(null)
         {
-            ownerValidationRules(this);
+            //ownerValidationRules(this);
 
             ImpactAreas = impAreas;
 
-            Plot0ControlVM = indLinkedPlotControl0VM;
+            Plot0ControlVM = defaultControl0VM;
             //start with only plot0 button enabled
             Plot0ControlVM.ImportButtonVM.IsEnabled = true;
 
-            Plot1ControlVM = control1VM;       
-            Plot3ControlVM = control3VM;
-            Plot5ControlVM = control5VM;
-            Plot7ControlVM = control7VM;
-            Plot8ControlVM = control8VM;
+            Plot1ControlVM = defaultControl1VM;       
+            Plot3ControlVM = defaultControl3VM;
+            Plot5ControlVM = defaultControl5VM;
+            Plot7ControlVM = DefaultControl7VM;
+            Plot8ControlVM = DefaultControl8VM;
 
             AttachEventsToControls();
             LoadThresholdTypes();
@@ -499,30 +515,31 @@ namespace FdaViewModel.Conditions
 
         public void LaunchNewImpactArea(object sender, EventArgs e)
         {
-            if (_ImpactAreaOwner != null)
-            {
-                List<ImpactArea.ImpactAreaOwnerElement> eles = _ImpactAreaOwner.GetElementsOfType<ImpactArea.ImpactAreaOwnerElement>();
-                if (eles.Count > 0)
-                {
-                    eles.FirstOrDefault().AddNew(sender, e);
-                    //need to determine what the most recent element is and see if we already have it.
-                    if (eles.FirstOrDefault().Elements.Count > 0)
-                    {
-                        if (eles.FirstOrDefault().Elements.Count > ImpactAreas.Count)
-                        {
-                            List<ImpactArea.ImpactAreaElement> theNewList = new List<ImpactArea.ImpactAreaElement>();
-                            for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-                            {
-                                theNewList.Add((ImpactArea.ImpactAreaElement)eles.FirstOrDefault().Elements[i]);
-                            }
-                            ImpactAreas = theNewList;
-                            //AnalyiticalRelationships.Add((FrequencyRelationships.AnalyticalFrequencyElement)eles.FirstOrDefault().Elements.Last());
-                            SelectedImpactArea = ImpactAreas.Last();
-                        }
-                    }
-                }
+            //if (_ImpactAreaOwner != null)
+            //{
+            //    List<ImpactArea.ImpactAreaOwnerElement> eles = StudyCache;// _ImpactAreaOwner.GetElementsOfType<ImpactArea.ImpactAreaOwnerElement>();
+            //    if (eles.Count > 0)
+            //    {
+            //        //after finding the parent, then it launches the add impact area dialog
+            //        eles.FirstOrDefault().AddNew(sender, e);
+            //        //need to determine what the most recent element is and see if we already have it.
+            //        if (eles.FirstOrDefault().Elements.Count > 0)
+            //        {
+            //            if (eles.FirstOrDefault().Elements.Count > ImpactAreas.Count)
+            //            {
+            //                List<ImpactArea.ImpactAreaElement> theNewList = new List<ImpactArea.ImpactAreaElement>();
+            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
+            //                {
+            //                    theNewList.Add((ImpactArea.ImpactAreaElement)eles.FirstOrDefault().Elements[i]);
+            //                }
+            //                ImpactAreas = theNewList;
+            //                //AnalyiticalRelationships.Add((FrequencyRelationships.AnalyticalFrequencyElement)eles.FirstOrDefault().Elements.Last());
+            //                SelectedImpactArea = ImpactAreas.Last();
+            //            }
+            //        }
+            //    }
 
-            }
+            //}
 
         }
    
@@ -630,10 +647,24 @@ namespace FdaViewModel.Conditions
 
         public override void Save()
         {
-            //throw new NotImplementedException();
+            if (Description == null) { Description = ""; }
+            ConditionsElement elementToSave = ConditionFactory.BuildConditionsElement(this);
+            Saving.PersistenceManagers.ConditionsPersistenceManager manager = Saving.PersistenceFactory.GetConditionsManager(StudyCache);
+            if (IsImporter && HasSaved == false)
+            {
+                manager.SaveNew(elementToSave);
+                HasSaved = true;
+                OriginalElement = elementToSave;
+            }
+            else
+            {
+                manager.SaveExisting((ConditionsElement)OriginalElement, elementToSave, 0);
+            }
         }
 
-      
+
+
+
         #endregion
         #region Functions
         #endregion

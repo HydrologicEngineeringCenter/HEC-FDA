@@ -295,7 +295,7 @@ namespace FdaViewModel.Inventory
 
         }
 
-        public override void Save()
+        public  void Save()
         {
             //this file will already be created somewhere else. It will be our main FDA study file
             DataBase_Reader.SqLiteReader.CreateSqLiteFile(System.IO.Path.GetDirectoryName(Path) + "\\codyTest.sqlite");

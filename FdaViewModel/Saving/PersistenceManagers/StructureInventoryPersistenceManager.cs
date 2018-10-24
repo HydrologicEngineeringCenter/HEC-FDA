@@ -10,20 +10,12 @@ namespace FdaViewModel.Saving.PersistenceManagers
 {
     public class StructureInventoryPersistenceManager : SavingBase, IPersistable
     {
-        private const string _TableConstant = "Structure Inventory - ";
-        public  string TableName
-        {
-            get   {       return "Structure Inventories";   }
-        }
-        public  string[] TableColumnNames()
-        {
-            return new string[] { "Name", "Description" };
-        }
 
-        public  Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string), typeof(string) };
-        }
+
+        private const string TableName = "Structure Inventories";
+        internal override string ChangeTableConstant { get { return "Structure Inventory - "; } }
+        private static readonly string[] TableColumnNames = { "Name", "Description" };
+        private static readonly Type[] TableColumnTypes = { typeof(string), typeof(string) };
 
 
 
@@ -32,43 +24,62 @@ namespace FdaViewModel.Saving.PersistenceManagers
             StudyCache = studyCache;
         }
 
-        public void SaveNew(ChildElement element)
+
+        #region utilities
+        private object[] GetRowDataFromElement(InventoryElement element)
         {
-            if (element.GetType() == typeof(InventoryElement))
-            {
-                SaveNewElementToParentTable(element, TableName, TableColumnNames(), TableColumnTypes());
-                StudyCache.AddStructureInventoryElement((InventoryElement)element);
-            }
+            return new object[] { element.Name, element.Description };
+
         }
-
-        public void SaveExisting(Utilities.ChildElement element, string oldName, Statistics.UncertainCurveDataCollection oldCurve)
-        {
-            //does not have an editor
-        }
-
-        public List<ChildElement> Load()
-        {
-            return CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
-        }
-
-
-
-
-        public  ChildElement CreateElementFromRowData(object[] rowData)
+        public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             //name, path, description
             if (StructureInventoryLibrary.SharedData.StudyDatabase == null)
             {
                 StructureInventoryLibrary.SharedData.StudyDatabase = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
-
-
             }
             StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[0], (string)rowData[1]);
 
             InventoryElement invEle = new InventoryElement(baseElement);
             return invEle;
         }
+        #endregion
 
 
+        public void Remove(ChildElement element)
+        {
+            RemoveFromParentTable(element, TableName);
+            StudyCache.RemoveStructureInventoryElement((InventoryElement)element);
+
+        }
+
+
+
+        public void SaveNew(ChildElement element)
+        {
+            if (element.GetType() == typeof(InventoryElement))
+            {
+
+                SaveNewElementToParentTable(GetRowDataFromElement((InventoryElement)element), TableName, TableColumnNames, TableColumnTypes);
+                StudyCache.AddStructureInventoryElement((InventoryElement)element);
+            }
+        }
+
+       
+
+        public List<ChildElement> Load()
+        {
+            return CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
+        }
+
+        public void SaveExisting(ChildElement oldElement, ChildElement element, int changeTableIndex )
+        {
+            //does not have an editor
+        }
+
+        public override void AddValidationRules()
+        {
+            //throw new NotImplementedException();
+        }
     }
 }

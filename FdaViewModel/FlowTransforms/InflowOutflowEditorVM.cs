@@ -46,11 +46,11 @@ namespace FdaViewModel.FlowTransforms
             get { return _RedoRows; }
             set { _RedoRows = value; NotifyPropertyChanged(); }
         }
-        public int SelectedIndexInUndoList
-        {
-            get { return 0; }
-            set { if (value == -1) { return; } CurrentElement.ChangeIndex += value; Undo(); }
-        }
+        //public int SelectedIndexInUndoList
+        //{
+        //    get { return 0; }
+        //    set { if (value == -1) { return; } CurrentElement.ChangeIndex += value; Undo(); }
+        //}
         public int SelectedIndexInRedoList { get; set; }
 
         public ChildElement CurrentElement { get; set; }
@@ -92,13 +92,13 @@ namespace FdaViewModel.FlowTransforms
             ownerValidationRules(this,elem.Name);
 
             CurrentElement = elem;
-            CurrentElement.ChangeIndex = 0;
+            //CurrentElement.ChangeIndex = 0;
 
             AssignValuesToThisFromElement(elem);
 
             SaveAction = saveAction;
 
-            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
+            //DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
 
             //UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
             //UndoRedoRows = CreateUndoRedoRows(changeTableView,0,1);
@@ -108,6 +108,10 @@ namespace FdaViewModel.FlowTransforms
 
         #endregion
         #region Voids
+        public override void Save()
+        {
+            throw new NotImplementedException();
+        }
         public void UpdateTheUndoRedoRowItems()
         {
             //UndoRows = new ObservableCollection<UndoRedoRowItem>();
@@ -120,17 +124,17 @@ namespace FdaViewModel.FlowTransforms
             //}
 
         }
-        public override void Undo()
+        public  void Undo()
         {
            // UndoElement(this);
         }
 
-        public override void Redo()
+        public  void Redo()
         {
             //RedoElement(this);
         }
 
-        public override void SaveWhileEditing()
+        public  void SaveWhileEditing()
         {
             
             UndoRedoRows.Insert(0, new UndoRedoRowItem(Name, DateTime.Now.ToString("G")));
@@ -144,7 +148,7 @@ namespace FdaViewModel.FlowTransforms
             Name = elem.Name;
             LastEditDate = elem.LastEditDate;
             Description = elem.Description;
-            Curve = elem.InflowOutflowCurve;
+            Curve = elem.Curve;
         }
 
         #endregion
@@ -159,10 +163,7 @@ namespace FdaViewModel.FlowTransforms
 
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+      
 
         public void AssignValuesFromElementToEditor(ChildElement element)
         {
@@ -170,19 +171,19 @@ namespace FdaViewModel.FlowTransforms
             Name = elem.Name;
             LastEditDate = elem.LastEditDate;
             Description = elem.Description;
-            Curve = elem.InflowOutflowCurve;
+            Curve = elem.Curve;
         }
         public void AssignValuesFromEditorToCurrentElement()
         {
             CurrentElement.LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             CurrentElement.Name = Name;
             ((InflowOutflowElement)CurrentElement).Description = Description;
-            ((InflowOutflowElement)CurrentElement).InflowOutflowCurve = Curve;
+            ((InflowOutflowElement)CurrentElement).Curve = Curve;
         }
 
         public UncertainCurveDataCollection GetTheElementsCurve()
         {
-            return ((InflowOutflowElement)CurrentElement).InflowOutflowCurve;
+            return ((InflowOutflowElement)CurrentElement).Curve;
         }
 
         public UncertainCurveDataCollection GetTheEditorsCurve()

@@ -71,10 +71,7 @@ namespace FdaViewModel.Output
             AddRule(nameof(Name), () => !(Name == null), "The Name cannot be blank.");
         }
 
-        public override void Save()
-        {
-            throw new NotImplementedException();
-        }
+     
         #endregion
         #region Functions
         #endregion

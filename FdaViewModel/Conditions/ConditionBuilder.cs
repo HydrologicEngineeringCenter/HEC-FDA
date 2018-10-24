@@ -44,7 +44,7 @@ namespace FdaViewModel.Conditions
         private ParentElement _owner;
 
         public ConditionBuilder(string name, string desc, int analysisYear, ImpactArea.ImpactAreaElement impactAreaElem, 
-            ImpactArea.ImpactAreaRowItem indexLocation, FdaModel.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue, ParentElement owner)
+            ImpactArea.ImpactAreaRowItem indexLocation, FdaModel.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue, ParentElement owner = null)
         {
             _name = name;
             _description = desc;

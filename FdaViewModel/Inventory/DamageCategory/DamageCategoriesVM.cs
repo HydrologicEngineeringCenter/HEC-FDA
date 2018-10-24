@@ -109,9 +109,6 @@ namespace FdaViewModel.Inventory.DamageCategory
             }
             return true;
         }
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+        
     }
 }

@@ -16,10 +16,7 @@ namespace FdaViewModel.StageTransforms
 
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+        
         #endregion
         #region Constructors
         public RatingCurveOwnerElement(Utilities.ParentElement owner) : base(owner)
@@ -43,14 +40,24 @@ namespace FdaViewModel.StageTransforms
             Actions = localActions;
 
             StudyCache.RatingAdded += AddRatingCurveElement;
+            StudyCache.RatingRemoved += RemoveRatingCurveElement;
+            StudyCache.RatingUpdated += UpdateRatingCurveElement;
         }
 
 
         #endregion
         #region Voids
+        private void UpdateRatingCurveElement(object sender, Saving.ElementUpdatedEventArgs e)
+        {
+            UpdateElement(e.OldElement, e.NewElement);
+        }
         private void AddRatingCurveElement(object sender, Saving.ElementAddedEventArgs e)
         {
             AddElement(e.Element);
+        }
+        private void RemoveRatingCurveElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            RemoveElement(e.Element);        
         }
         private void ImportRatingCurvefromAscii(object arg1, EventArgs arg2)
         {
@@ -62,19 +69,21 @@ namespace FdaViewModel.StageTransforms
         public void AddNewRatingCurve(object arg1, EventArgs arg2)
         {
 
-            //create the default curve: xs[]= ys[]=
+            //create the default curve: 
             double[] xValues = new double[] { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(97), new Statistics.None(99), new Statistics.None(104), new Statistics.None(109), new Statistics.None(110), new Statistics.None(114), new Statistics.None(116), new Statistics.None(119), new Statistics.None(120), new Statistics.None(121) };
             Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper( Saving.PersistenceFactory.GetRatingManager(StudyCache));
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper( Saving.PersistenceFactory.GetRatingManager(StudyCache)
+                , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
+                (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
+            //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
-                .WithSaveUndoRedo(saveHelper, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
-                (editor, element) => AssignValuesFromEditorToElement(editor, element));
+                .WithSaveUndoRedo(saveHelper);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
+            StudyCache.AddSiblingRules(vm,this);
 
             Navigate(vm, false, true, "Create Rating Curve");
             
@@ -90,38 +99,19 @@ namespace FdaViewModel.StageTransforms
         #endregion
         #region Functions
        
-        public override string TableName
-        {
-            get  { return "Rating Curves";}
-        }
-        public override string[] TableColumnNames()
-        {
-            return new string[] { "Rating Curve Name", "Last Edit Date", "Description", "Curve Distribution Type", "Curve Type" };
-        }
-        public override Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string), typeof(string), typeof(string), typeof(string),typeof(string) };
-        }
+       
+        //public override string[] TableColumnNames()
+        //{
+        //    return new string[] { "Rating Curve Name", "Last Edit Date", "Description", "Curve Distribution Type", "Curve Type" };
+        //}
+        //public override Type[] TableColumnTypes()
+        //{
+        //    return new Type[] { typeof(string), typeof(string), typeof(string), typeof(string),typeof(string) };
+        //}
 
-        public override void AssignValuesFromEditorToElement(BaseEditorVM editorVM, ChildElement element)
-        {
-            CurveEditorVM vm = (CurveEditorVM)editorVM;
-            element.Name = vm.Name;
-            element.Description = vm.Description;
-            element.Curve = vm.Curve;
-            element.UpdateTreeViewHeader(vm.Name);
-        }
+       
 
-        public override void AssignValuesFromElementToEditor(BaseEditorVM editorVM, ChildElement element)
-        {
-            CurveEditorVM vm = (CurveEditorVM)editorVM;
-
-            vm.Name = element.Name;
-            vm.Description = element.Description;
-            vm.Curve = element.Curve;
-        }
-
-        public override ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
+        public  ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
         {
             Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
             //Editors.CurveEditorVM vm = (Editors.CurveEditorVM)editorVM;
@@ -130,20 +120,20 @@ namespace FdaViewModel.StageTransforms
         }
 
 
-        public override ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
-            RatingCurveElement rc = new RatingCurveElement((string)rowData[0], (string)rowData[1], (string)rowData[2], emptyCurve, this);
-            //loads the curve with the values from it's table
-            rc.Curve.fromSqliteTable(rc.TableName);
-            return rc;
-        }
-        public override void AddElementFromRowData(object[] rowData)
-        {
+        //public override ChildElement CreateElementFromRowData(object[] rowData)
+        //{
+        //    Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
+        //    RatingCurveElement rc = new RatingCurveElement((string)rowData[0], (string)rowData[1], (string)rowData[2], emptyCurve, this);
+        //    //loads the curve with the values from it's table
+        //    rc.Curve.fromSqliteTable(rc.TableName);
+        //    return rc;
+        //}
+        //public override void AddElementFromRowData(object[] rowData)
+        //{
             
-            AddElement(CreateElementFromRowData(rowData),false);
+        //    AddElement(CreateElementFromRowData(rowData),false);
 
-        }
+        //}
         #endregion
     }
 }

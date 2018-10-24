@@ -21,22 +21,13 @@ namespace FdaViewModel.Study
         #endregion
         #region Properties
 
-        public override string TableName
-        {
-            get
-            {
-                return "";
-            }
-        }
+    
         public ObservableCollection<ParentElement> ConditionsTree
         {
             get { return _ConditionsTree; }
             set { _ConditionsTree = value; NotifyPropertyChanged(); }
         }
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+     
 
         #endregion
         #region Constructors
@@ -113,7 +104,7 @@ namespace FdaViewModel.Study
 
             Actions = localactions;
 
-            Save();
+            //Save();
         }
 
         private void ViewTransactions(object arg1, EventArgs arg2)
@@ -322,7 +313,7 @@ namespace FdaViewModel.Study
 
         private void SaveStudy(object arg1, EventArgs arg2)
         {
-            Save();
+           // Save();
         }
         private void CreateStudy(object arg1, EventArgs arg2)
         {
@@ -454,13 +445,7 @@ namespace FdaViewModel.Study
             //throw new NotImplementedException();
         }
 
-        public override void Save()
-        {
-            foreach (ChildElement o in Elements)
-            {
-                o.Save();
-            }
-        }
+     
 
        
         public void AddBaseElements()
@@ -469,10 +454,16 @@ namespace FdaViewModel.Study
             Elements.Clear();//clear out any existing ones from an existing study
             if (Storage.Connection.Instance.IsConnectionNull) return;
 
-            StudyCache = FDACache.Create();
+            bool loadStudyCache = false;
+            if (StudyCache == null)
+            {
+                loadStudyCache = true;
+                StudyCache = FDACache.Create();
+            }
 
             Watershed.TerrainOwnerElement t = new Watershed.TerrainOwnerElement(this);
             AddElement(t);
+            if (loadStudyCache) { StudyCache.TerrainParent = t; }
 
             ImpactArea.ImpactAreaOwnerElement i = new ImpactArea.ImpactAreaOwnerElement(this);
             AddElement(i);
@@ -512,8 +503,12 @@ namespace FdaViewModel.Study
 
             Conditions.ConditionsOwnerElement c = new Conditions.ConditionsOwnerElement(this);
             AddElement(c);
+            if (loadStudyCache) { StudyCache.ConditionsParent = c; }
 
-            StudyCache.LoadFDACache();
+            if (loadStudyCache == true)
+            {
+                StudyCache.LoadFDACache();
+            }
 
             UpdateTheConditionsTree(this, new EventArgs());
             UpdateTransactionsAndMessages?.Invoke(this, new EventArgs());
@@ -521,15 +516,9 @@ namespace FdaViewModel.Study
 
         }
 
-        public override string[] TableColumnNames()
-        {
-            throw new NotImplementedException();
-        }
+      
 
-        public override Type[] TableColumnTypes()
-        {
-            throw new NotImplementedException();
-        }
+   
 
 
         /// <summary>
@@ -588,24 +577,7 @@ namespace FdaViewModel.Study
 
         #endregion
         #region Functions
-        public override List<T> GetElementsOfType<T>()
-        {
-            List<T> ret = new List<T>();
-            //foreach (ParentElement ele in _Elements)
-            //{
-            //    ret.AddRange(ele.GetOwnedElementsOfType<T>());
-            //}
-            return ret;
-        }
-
-        public override ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            return null;
-        }
-        public override void AddElementFromRowData(object[] rowData)
-        {
-            throw new NotImplementedException();
-        }
+  
         #endregion
 
 

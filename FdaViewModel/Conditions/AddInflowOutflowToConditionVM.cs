@@ -21,7 +21,6 @@ namespace FdaViewModel.Conditions
         #region Fields
 
         //private FlowTransforms.InflowOutflowElement _SelectedInflowOutflowElement;
-        private ParentElement _owner;
         private List<FlowTransforms.InflowOutflowElement> _ListOfInflowOutflowElements;
 
         public event EventHandler OKClickedEvent;
@@ -51,7 +50,7 @@ namespace FdaViewModel.Conditions
         {
             get
             {
-                UncertainCurveDataCollection curve = ((FlowTransforms.InflowOutflowElement)SelectedElement).InflowOutflowCurve;
+                UncertainCurveDataCollection curve = ((FlowTransforms.InflowOutflowElement)SelectedElement).Curve;
                 FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction infOut = 
                     new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InflowOutflow);
                 List<double> ys = new List<double>();
@@ -92,15 +91,14 @@ namespace FdaViewModel.Conditions
        
         #endregion
         #region Constructors
-        public AddInflowOutflowToConditionVM(List<FlowTransforms.InflowOutflowElement> listOfinOut, ParentElement owner):this(listOfinOut,null,owner)
+        public AddInflowOutflowToConditionVM(List<FlowTransforms.InflowOutflowElement> listOfinOut ):this(listOfinOut,null)
         {
         }
 
-        public AddInflowOutflowToConditionVM(List<FlowTransforms.InflowOutflowElement> listOfinOut, FlowTransforms.InflowOutflowElement selectedElement, ParentElement owner):base()
+        public AddInflowOutflowToConditionVM(List<FlowTransforms.InflowOutflowElement> listOfinOut, FlowTransforms.InflowOutflowElement selectedElement ):base()
         {
             SelectedElement = selectedElement;
             ListOfInflowOutflowElements = listOfinOut;
-            _owner = owner;
         }
 
 
@@ -108,31 +106,31 @@ namespace FdaViewModel.Conditions
         #region Voids
         public void NewInflowOutflowCurve(object sender, EventArgs e)
         {
-            if (_owner != null)
-            {
-                List<FlowTransforms.InflowOutflowOwnerElement> eles = _owner.GetElementsOfType<FlowTransforms.InflowOutflowOwnerElement>();
-                if (eles.Count > 0)
-                {
-                    eles.FirstOrDefault().AddInflowOutflow(sender, e);
-                    //need to determine what the most recent element is and see if we already have it.
-                    if (eles.FirstOrDefault().Elements.Count > 0)
-                    {
-                        if (eles.FirstOrDefault().Elements.Count > ListOfInflowOutflowElements.Count)
-                        {
-                            //InflowOutflowList.Add((FlowTransforms.InflowOutflowElement)eles.FirstOrDefault().Elements.Last());
-                            List<FlowTransforms.InflowOutflowElement> theNewList = new List<FlowTransforms.InflowOutflowElement>();
-                            for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-                            {
-                                theNewList.Add((FlowTransforms.InflowOutflowElement)eles.FirstOrDefault().Elements[i]);
-                            }
-                            ListOfInflowOutflowElements = theNewList;
+            //if (_owner != null)
+            //{
+            //    List<FlowTransforms.InflowOutflowOwnerElement> eles = _owner.GetElementsOfType<FlowTransforms.InflowOutflowOwnerElement>();
+            //    if (eles.Count > 0)
+            //    {
+            //        eles.FirstOrDefault().AddInflowOutflow(sender, e);
+            //        //need to determine what the most recent element is and see if we already have it.
+            //        if (eles.FirstOrDefault().Elements.Count > 0)
+            //        {
+            //            if (eles.FirstOrDefault().Elements.Count > ListOfInflowOutflowElements.Count)
+            //            {
+            //                //InflowOutflowList.Add((FlowTransforms.InflowOutflowElement)eles.FirstOrDefault().Elements.Last());
+            //                List<FlowTransforms.InflowOutflowElement> theNewList = new List<FlowTransforms.InflowOutflowElement>();
+            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
+            //                {
+            //                    theNewList.Add((FlowTransforms.InflowOutflowElement)eles.FirstOrDefault().Elements[i]);
+            //                }
+            //                ListOfInflowOutflowElements = theNewList;
 
-                            SelectedElement = ListOfInflowOutflowElements.Last();    
+            //                SelectedElement = ListOfInflowOutflowElements.Last();    
 
-                        }
-                    }
-                }
-            }
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         public override void AddValidationRules()
@@ -140,10 +138,7 @@ namespace FdaViewModel.Conditions
             AddRule(nameof(SelectedElement), () => { return (SelectedElement != null); }, "An Inflow Outflow Curve has not been selected.");
         }
 
-        public override void Save()
-        {
-           // throw new NotImplementedException();
-        }
+       
 
         public void OKClicked()
         {

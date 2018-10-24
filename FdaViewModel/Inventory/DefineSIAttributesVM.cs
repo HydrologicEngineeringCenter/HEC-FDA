@@ -489,9 +489,6 @@ namespace FdaViewModel.Inventory
             //throw new NotImplementedException();
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+       
     }
 }

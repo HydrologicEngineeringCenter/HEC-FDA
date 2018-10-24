@@ -10,32 +10,54 @@ namespace FdaViewModel.Saving.PersistenceManagers
 {
     public class LeveePersistenceManager : SavingBase, IPersistable
     {
-        public  string TableName
+
+        private const string TableName = "Levee Features";
+        private static readonly string[] TableColumnNames = { "Levee Feature", "Description", "Elevation" };
+        private static readonly Type[] TableColumnTypes = { typeof(string), typeof(string), typeof(double) };
+
+        internal override string ChangeTableConstant
         {
-            get { return "Levee Features";  }
-        }
-        public  string[] TableColumnNames()
-        {
-            return new string[] { "Levee Feature", "Description", "Elevation" };
-        }
-        public  Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string), typeof(string), typeof(double) };
+           get { return ""; }
         }
 
+        public LeveePersistenceManager(Study.FDACache studyCache)
+        {
+            StudyCache = studyCache;
+        }
+
+        #region utilities
+        private object[] GetRowDataFromElement(LeveeFeatureElement element)
+        {
+            return new object[] { element.Name, element.Description, element.Elevation };
+
+        }
+        public override ChildElement CreateElementFromRowData(object[] rowData)
+        {
+            return new LeveeFeatureElement((string)rowData[0], (string)rowData[1], (double)rowData[2]);
+        }
+        #endregion
 
         public void SaveNew(ChildElement element)
         {
             if (element.GetType() == typeof(LeveeFeatureElement))
             {
-                SaveNewElementToParentTable(element, TableName, TableColumnNames(), TableColumnTypes());
+                SaveNewElementToParentTable(GetRowDataFromElement((LeveeFeatureElement)element), TableName, TableColumnNames, TableColumnTypes);
                 StudyCache.AddLeveeElement((LeveeFeatureElement)element);
             }
         }
-
-        public void SaveExisting(Utilities.ChildElement element, string oldName, Statistics.UncertainCurveDataCollection oldCurve)
+        public void Remove(ChildElement element)
         {
-            SaveExistingElement(oldName, oldCurve, element, TableName);
+            RemoveFromParentTable(element, TableName);
+            StudyCache.RemoveLeveeElement((LeveeFeatureElement)element);
+
+        }
+        public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )
+        {
+            if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((LeveeFeatureElement)elementToSave), oldElement.Name, TableName))
+            {
+                UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((LeveeFeatureElement)elementToSave), oldElement.Name, TableName, false, ChangeTableConstant);
+                StudyCache.UpdateLeveeElement((LeveeFeatureElement)oldElement, (LeveeFeatureElement)elementToSave);
+            }
         }
 
         public List<ChildElement> Load()
@@ -43,18 +65,9 @@ namespace FdaViewModel.Saving.PersistenceManagers
             return CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
         }
 
-
-
-        public LeveePersistenceManager(Study.FDACache studyCache)
+        public override void AddValidationRules()
         {
-            StudyCache = studyCache;
+            //throw new NotImplementedException();
         }
-
-
-        public  ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            return new LeveeFeatureElement((string)rowData[0], (string)rowData[1], (double)rowData[2]);
-        }
-
     }
 }

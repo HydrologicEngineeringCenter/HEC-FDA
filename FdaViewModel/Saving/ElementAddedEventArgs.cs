@@ -16,4 +16,19 @@ namespace FdaViewModel.Saving
         }
 
     }
+
+    public class ElementUpdatedEventArgs : EventArgs
+    {
+
+        public BaseFdaElement OldElement { get; set; }
+        public BaseFdaElement NewElement { get; set; }
+
+        public ElementUpdatedEventArgs(BaseFdaElement oldElement, BaseFdaElement newElement)
+        {
+            OldElement = oldElement;
+            NewElement = newElement;
+        }
+
+    }
+
 }

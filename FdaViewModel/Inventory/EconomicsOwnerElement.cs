@@ -13,19 +13,10 @@ namespace FdaViewModel.Inventory
         #region Fields
         private const string _TableName = "Economics";
 
-        public override string TableName
-        {
-            get
-            {
-                return _TableName;
-            }
-        }
+     
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+       
         #endregion
         #region Constructors
         public InventoryOwnerElement(BaseFdaElement owner) : base(owner)
@@ -56,33 +47,27 @@ namespace FdaViewModel.Inventory
             this.AddElement(a);
 
         }
-        public override void Save()
-        {
-            foreach (Utilities.ChildElement ele in _Elements)
-            {
-                ele.Save();
-            }
-        }
+       
         #endregion
         #region Functions
-        public override bool SavesToTable()
-        {
-            return false;
-        }
-        public override string[] TableColumnNames()
-        {
-            return new string[] { "Name" };
-        }
+        //public override bool SavesToTable()
+        //{
+        //    return false;
+        //}
+        //public override string[] TableColumnNames()
+        //{
+        //    return new string[] { "Name" };
+        //}
 
-        public override Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string) };
-        }
+        //public override Type[] TableColumnTypes()
+        //{
+        //    return new Type[] { typeof(string) };
+        //}
 
-        public override void AddElementFromRowData(object[] rowData)
-        {
-            //throw new NotImplementedException();
-        }
+        //public override void AddElementFromRowData(object[] rowData)
+        //{
+        //    //throw new NotImplementedException();
+        //}
         #endregion
     }
 }

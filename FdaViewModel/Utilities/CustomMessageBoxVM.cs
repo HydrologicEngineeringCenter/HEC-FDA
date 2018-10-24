@@ -66,6 +66,7 @@ namespace FdaViewModel.Utilities
         }
         public CustomMessageBoxVM(ButtonsEnum buttonEnum, string message):base()
         {
+           // RequestNavigation += Navigate;
             Message = message;
 
             _ButtonsDictionary = new Dictionary<string, bool>();
@@ -117,10 +118,7 @@ namespace FdaViewModel.Utilities
             //throw new NotImplementedException();
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+   
         #endregion
         #region Voids
         #endregion

@@ -25,10 +25,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         #region Properties
         //private Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary;
 
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+       
         public static List<OccupancyTypesElement> ListOfOccupancyTypesGroups { get; set; } = new List<OccupancyTypesElement>();
         //public static List<Consequences_Assist.ComputableObjects.OccupancyType> ListOfOccupancyTypes
         //{
@@ -173,7 +170,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         #endregion
         #region Functions
         #endregion
-        public override string TableName
+        public  string TableName
         {
             get
             {
@@ -200,7 +197,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             tbl.ApplyEdits();
         }
 
-        public override void Save()
+        public  void Save()
         {
             Storage.Connection.Instance.DeleteTable(TableName); // always delete owner tables, and rewrite them.  This simplifies checking for removal, sorting, or adding owned elements.
             string[] names =new string[] { "Group Name" };
@@ -222,20 +219,20 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         //    throw new NotImplementedException();
         //}
 
-        public override string[] TableColumnNames()
-        {
-            return new string[] { "Occtype Group Name" };
-        }
+        //public override string[] TableColumnNames()
+        //{
+        //    return new string[] { "Occtype Group Name" };
+        //}
 
-        public override Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string)};
-        }
+        //public override Type[] TableColumnTypes()
+        //{
+        //    return new Type[] { typeof(string)};
+        //}
 
-        public override ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            return null;
-        }
+        //public override ChildElement CreateElementFromRowData(object[] rowData)
+        //{
+        //    return null;
+        //}
 
         private Statistics.UncertainCurveIncreasing GetNormalDistributionFromXML(string xmlString)
         {
@@ -303,281 +300,281 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         /// This gets called when loading the study.
         /// </summary>
         /// <param name="rowData"></param>
-        public override void AddElementFromRowData(object[] rowData)
-        {
-            List<Consequences_Assist.ComputableObjects.OccupancyType> TempOccTypes = new List<Consequences_Assist.ComputableObjects.OccupancyType>();
-            Dictionary<string, bool[]> dummyDictionary = new Dictionary<string, bool[]>();
-            OccupancyTypesElement ele = new OccupancyTypesElement(rowData[0].ToString(), TempOccTypes,dummyDictionary, this);
+        //public  void AddElementFromRowData(object[] rowData)
+        //{
+        //    List<Consequences_Assist.ComputableObjects.OccupancyType> TempOccTypes = new List<Consequences_Assist.ComputableObjects.OccupancyType>();
+        //    Dictionary<string, bool[]> dummyDictionary = new Dictionary<string, bool[]>();
+        //    OccupancyTypesElement ele = new OccupancyTypesElement(rowData[0].ToString(), TempOccTypes,dummyDictionary, this);
 
-            int lastRow = Storage.Connection.Instance.GetTable(ele.TableName).NumberOfRows - 1;
+        //    int lastRow = Storage.Connection.Instance.GetTable(ele.TableName).NumberOfRows - 1;
 
         
-            Dictionary<string, bool[]> selectedTabsDictionary = new Dictionary<string, bool[]>();    
+        //    Dictionary<string, bool[]> selectedTabsDictionary = new Dictionary<string, bool[]>();    
 
 
-        List<Consequences_Assist.ComputableObjects.OccupancyType> listOfOccTypes = new List<Consequences_Assist.ComputableObjects.OccupancyType>();
+        //List<Consequences_Assist.ComputableObjects.OccupancyType> listOfOccTypes = new List<Consequences_Assist.ComputableObjects.OccupancyType>();
 
-            foreach (object[] row in Storage.Connection.Instance.GetTable(ele.TableName).GetRows(0, lastRow))
-            {
-                bool[] selectedTabs = new bool[] { Convert.ToBoolean(row[7]), Convert.ToBoolean(row[13]), Convert.ToBoolean(row[19]), Convert.ToBoolean(row[25]) };
-                selectedTabsDictionary.Add(row[0].ToString(), selectedTabs);
-                //ele.RelativePathAndProbability.Add(new PathAndProbability(row[0].ToString(), Convert.ToDouble(row[1])));
-                Consequences_Assist.ComputableObjects.OccupancyType ot = new Consequences_Assist.ComputableObjects.OccupancyType();
-                ot.Name = row[0].ToString();
-                ot.Description = row[1].ToString();
-                ot.DamageCategoryName = row[2].ToString();
+        //    foreach (object[] row in Storage.Connection.Instance.GetTable(ele.TableName).GetRows(0, lastRow))
+        //    {
+        //        bool[] selectedTabs = new bool[] { Convert.ToBoolean(row[7]), Convert.ToBoolean(row[13]), Convert.ToBoolean(row[19]), Convert.ToBoolean(row[25]) };
+        //        selectedTabsDictionary.Add(row[0].ToString(), selectedTabs);
+        //        //ele.RelativePathAndProbability.Add(new PathAndProbability(row[0].ToString(), Convert.ToDouble(row[1])));
+        //        Consequences_Assist.ComputableObjects.OccupancyType ot = new Consequences_Assist.ComputableObjects.OccupancyType();
+        //        ot.Name = row[0].ToString();
+        //        ot.Description = row[1].ToString();
+        //        ot.DamageCategoryName = row[2].ToString();
                 
-                ot.FoundationHeightUncertainty = CreateContinuousDistributionFromRow(row, 3, 6);
+        //        ot.FoundationHeightUncertainty = CreateContinuousDistributionFromRow(row, 3, 6);
 
-                //***************************
-                //structures
-                //*****************************
+        //        //***************************
+        //        //structures
+        //        //*****************************
 
-               // if(Convert.ToBoolean(row[7]) == true) // if structures tab is checked
-                {
-                    ot.StructureValueUncertainty = CreateContinuousDistributionFromRow(row, 8, 11);
-                    if (row[12].ToString() == "Normal")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = GetNormalDistributionFromXML(row[32].ToString());
-                        ot.SetStructurePercentDD = uci;
-                    }
-                    else if (row[12].ToString() == "None")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = GetNoneDistributionFromXML(row[32].ToString());
-                        ot.SetStructurePercentDD = uci;
-                    }
-                    else if (row[12].ToString() == "Triangular")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = GetTriangularDistributionFromXML(row[32].ToString());
-                        ot.SetStructurePercentDD = uci;
-                    }
-                    else if (row[12].ToString() == "Uniform")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = GetUniformDistributionFromXML(row[32].ToString());
-                        ot.SetStructurePercentDD = uci;
-                    }
+        //       // if(Convert.ToBoolean(row[7]) == true) // if structures tab is checked
+        //        {
+        //            ot.StructureValueUncertainty = CreateContinuousDistributionFromRow(row, 8, 11);
+        //            if (row[12].ToString() == "Normal")
+        //            {
+        //                Statistics.UncertainCurveIncreasing uci = GetNormalDistributionFromXML(row[32].ToString());
+        //                ot.SetStructurePercentDD = uci;
+        //            }
+        //            else if (row[12].ToString() == "None")
+        //            {
+        //                Statistics.UncertainCurveIncreasing uci = GetNoneDistributionFromXML(row[32].ToString());
+        //                ot.SetStructurePercentDD = uci;
+        //            }
+        //            else if (row[12].ToString() == "Triangular")
+        //            {
+        //                Statistics.UncertainCurveIncreasing uci = GetTriangularDistributionFromXML(row[32].ToString());
+        //                ot.SetStructurePercentDD = uci;
+        //            }
+        //            else if (row[12].ToString() == "Uniform")
+        //            {
+        //                Statistics.UncertainCurveIncreasing uci = GetUniformDistributionFromXML(row[32].ToString());
+        //                ot.SetStructurePercentDD = uci;
+        //            }
 
-                }
-
-
-
-                //*****************************
-                //content
-                //*****************************
-
-                //if (Convert.ToBoolean(row[13]) == true) // if content tab is checked
-                {
-                    ot.ContentValueUncertainty = CreateContinuousDistributionFromRow(row, 14, 17);
-                    if (row[18].ToString() == "Normal")
-                    {
-                        DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - ContDDCurve");
-                        if (dtv != null)
-                        {
-                            List<object> listOfXValues = dtv.GetColumn(0).ToList();
-                            List<double> listOfXValuesAsDoubles = new List<double>();
-                            foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
-                            List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
-                            for (int k = 0; k < dtv.NumberOfRows; k++)
-                            {
-                                ys.Add(new Statistics.Normal(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k))));
-                            }
-                            Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal);
-                            ot.SetContentPercentDD = uci;
-                            //ot.SetContentPercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal);
-                        }
-                    }
-                    else if (row[18].ToString() == "None")
-                    {
-                        ot.SetContentPercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-
-                    }
-                    else if (row[18].ToString() == "Triangular")
-                    {
-                        DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - ContDDCurve");
-                        if (dtv != null)
-                        {
-                            List<object> listOfXValues = dtv.GetColumn(0).ToList();
-                            List<double> listOfXValuesAsDoubles = new List<double>();
-                            foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
-                            List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
-                            for (int k = 0; k < dtv.NumberOfRows; k++)
-                            {
-                                ys.Add(new Statistics.Triangular(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k)), 0));
-                            }
-                            Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
-                            ot.SetContentPercentDD = uci;
-                            //ot.SetContentPercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
-                        }
-                    }
-                    else if (row[18].ToString() == "Uniform")
-                    {
-                        DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - ContDDCurve");
-                        if (dtv != null)
-                        {
-                            List<object> listOfXValues = dtv.GetColumn(0).ToList();
-                            List<double> listOfXValuesAsDoubles = new List<double>();
-                            foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
-                            List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
-                            for (int k = 0; k < dtv.NumberOfRows; k++)
-                            {
-                                ys.Add(new Statistics.Uniform(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k))));
-                            }
-                            Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
-                            ot.SetContentPercentDD = uci;
-                            //ot.SetContentPercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
-                        }
-                    }
-
-                }
+        //        }
 
 
 
-                //*****************************
-                //vehicle
-                //*****************************
+        //        //*****************************
+        //        //content
+        //        //*****************************
 
-                //if (Convert.ToBoolean(row[19]) == true) // if vehicle tab is checked
-                {
-                    ot.VehicleValueUncertainty = CreateContinuousDistributionFromRow(row, 20, 23);
-                    if (row[24].ToString() == "Normal")
-                    {
-                        DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - VehDDCurve");
-                        if (dtv != null)
-                        {
-                            List<object> listOfXValues = dtv.GetColumn(0).ToList();
-                            List<double> listOfXValuesAsDoubles = new List<double>();
-                            foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
-                            List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
-                            for (int k = 0; k < dtv.NumberOfRows; k++)
-                            {
-                                ys.Add(new Statistics.Normal(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k))));
-                            }
-                            Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal);
-                            ot.SetVehiclePercentDD = uci;
-                            //ot.SetVehiclePercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal);
-                        }
-                    }
-                    else if (row[24].ToString() == "None")
-                    {
-                        ot.SetVehiclePercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+        //        //if (Convert.ToBoolean(row[13]) == true) // if content tab is checked
+        //        {
+        //            ot.ContentValueUncertainty = CreateContinuousDistributionFromRow(row, 14, 17);
+        //            if (row[18].ToString() == "Normal")
+        //            {
+        //                DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - ContDDCurve");
+        //                if (dtv != null)
+        //                {
+        //                    List<object> listOfXValues = dtv.GetColumn(0).ToList();
+        //                    List<double> listOfXValuesAsDoubles = new List<double>();
+        //                    foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
+        //                    List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
+        //                    for (int k = 0; k < dtv.NumberOfRows; k++)
+        //                    {
+        //                        ys.Add(new Statistics.Normal(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k))));
+        //                    }
+        //                    Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal);
+        //                    ot.SetContentPercentDD = uci;
+        //                    //ot.SetContentPercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal);
+        //                }
+        //            }
+        //            else if (row[18].ToString() == "None")
+        //            {
+        //                ot.SetContentPercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
-                    }
-                    else if (row[24].ToString() == "Triangular")
-                    {
-                        DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - VehDDCurve");
-                        if (dtv != null)
-                        {
-                            List<object> listOfXValues = dtv.GetColumn(0).ToList();
-                            List<double> listOfXValuesAsDoubles = new List<double>();
-                            foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
-                            List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
-                            for (int k = 0; k < dtv.NumberOfRows; k++)
-                            {
-                                ys.Add(new Statistics.Triangular(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k)), 0));
-                            }
-                            Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
-                            ot.SetVehiclePercentDD = uci;
-                            //ot.SetVehiclePercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
-                        }
-                    }
-                    else if (row[24].ToString() == "Uniform")
-                    {
-                        DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - VehDDCurve");
-                        if (dtv != null)
-                        {
-                            List<object> listOfXValues = dtv.GetColumn(0).ToList();
-                            List<double> listOfXValuesAsDoubles = new List<double>();
-                            foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
-                            List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
-                            for (int k = 0; k < dtv.NumberOfRows; k++)
-                            {
-                                ys.Add(new Statistics.Uniform(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k))));
-                            }
-                            Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
-                            ot.SetVehiclePercentDD = uci;
-                            //ot.SetVehiclePercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
-                        }
-                    }
+        //            }
+        //            else if (row[18].ToString() == "Triangular")
+        //            {
+        //                DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - ContDDCurve");
+        //                if (dtv != null)
+        //                {
+        //                    List<object> listOfXValues = dtv.GetColumn(0).ToList();
+        //                    List<double> listOfXValuesAsDoubles = new List<double>();
+        //                    foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
+        //                    List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
+        //                    for (int k = 0; k < dtv.NumberOfRows; k++)
+        //                    {
+        //                        ys.Add(new Statistics.Triangular(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k)), 0));
+        //                    }
+        //                    Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
+        //                    ot.SetContentPercentDD = uci;
+        //                    //ot.SetContentPercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
+        //                }
+        //            }
+        //            else if (row[18].ToString() == "Uniform")
+        //            {
+        //                DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - ContDDCurve");
+        //                if (dtv != null)
+        //                {
+        //                    List<object> listOfXValues = dtv.GetColumn(0).ToList();
+        //                    List<double> listOfXValuesAsDoubles = new List<double>();
+        //                    foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
+        //                    List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
+        //                    for (int k = 0; k < dtv.NumberOfRows; k++)
+        //                    {
+        //                        ys.Add(new Statistics.Uniform(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k))));
+        //                    }
+        //                    Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
+        //                    ot.SetContentPercentDD = uci;
+        //                    //ot.SetContentPercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
+        //                }
+        //            }
 
-                }
+        //        }
 
 
-                //*****************************
-                //Other
-                //*****************************
 
-                //if (Convert.ToBoolean(row[25]) == true) // if other tab is checked
-                {
-                    ot.VehicleValueUncertainty = CreateContinuousDistributionFromRow(row, 26, 29);
-                    if (row[30].ToString() == "Normal")
-                    {
-                        DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - OtherDDCurve");
-                        if (dtv != null)
-                        {
-                            List<object> listOfXValues = dtv.GetColumn(0).ToList();
-                            List<double> listOfXValuesAsDoubles = new List<double>();
-                            foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
-                            List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
-                            for (int k = 0; k < dtv.NumberOfRows; k++)
-                            {
-                                ys.Add(new Statistics.Normal(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k))));
-                            }
-                            Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal);
-                            ot.SetOtherPercentDD = uci;
-                            //ot.SetVehiclePercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal);
-                        }
-                    }
-                    else if (row[30].ToString() == "None")
-                    {
-                        ot.SetOtherPercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+        //        //*****************************
+        //        //vehicle
+        //        //*****************************
 
-                    }
-                    else if (row[30].ToString() == "Triangular")
-                    {
-                        DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - OtherDDCurve");
-                        if (dtv != null)
-                        {
-                            List<object> listOfXValues = dtv.GetColumn(0).ToList();
-                            List<double> listOfXValuesAsDoubles = new List<double>();
-                            foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
-                            List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
-                            for (int k = 0; k < dtv.NumberOfRows; k++)
-                            {
-                                ys.Add(new Statistics.Triangular(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k)), 0));
-                            }
-                            Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
-                            ot.SetOtherPercentDD = uci;
-                            //ot.SetVehiclePercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
-                        }
-                    }
-                    else if (row[30].ToString() == "Uniform")
-                    {
-                        DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - OtherDDCurve");
-                        if (dtv != null)
-                        {
-                            List<object> listOfXValues = dtv.GetColumn(0).ToList();
-                            List<double> listOfXValuesAsDoubles = new List<double>();
-                            foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
-                            List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
-                            for (int k = 0; k < dtv.NumberOfRows; k++)
-                            {
-                                ys.Add(new Statistics.Uniform(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k))));
-                            }
-                            Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
-                            ot.SetOtherPercentDD = uci;
-                            //ot.SetVehiclePercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
-                        }
-                    }
+        //        //if (Convert.ToBoolean(row[19]) == true) // if vehicle tab is checked
+        //        {
+        //            ot.VehicleValueUncertainty = CreateContinuousDistributionFromRow(row, 20, 23);
+        //            if (row[24].ToString() == "Normal")
+        //            {
+        //                DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - VehDDCurve");
+        //                if (dtv != null)
+        //                {
+        //                    List<object> listOfXValues = dtv.GetColumn(0).ToList();
+        //                    List<double> listOfXValuesAsDoubles = new List<double>();
+        //                    foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
+        //                    List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
+        //                    for (int k = 0; k < dtv.NumberOfRows; k++)
+        //                    {
+        //                        ys.Add(new Statistics.Normal(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k))));
+        //                    }
+        //                    Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal);
+        //                    ot.SetVehiclePercentDD = uci;
+        //                    //ot.SetVehiclePercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal);
+        //                }
+        //            }
+        //            else if (row[24].ToString() == "None")
+        //            {
+        //                ot.SetVehiclePercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
-                }
+        //            }
+        //            else if (row[24].ToString() == "Triangular")
+        //            {
+        //                DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - VehDDCurve");
+        //                if (dtv != null)
+        //                {
+        //                    List<object> listOfXValues = dtv.GetColumn(0).ToList();
+        //                    List<double> listOfXValuesAsDoubles = new List<double>();
+        //                    foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
+        //                    List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
+        //                    for (int k = 0; k < dtv.NumberOfRows; k++)
+        //                    {
+        //                        ys.Add(new Statistics.Triangular(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k)), 0));
+        //                    }
+        //                    Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
+        //                    ot.SetVehiclePercentDD = uci;
+        //                    //ot.SetVehiclePercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
+        //                }
+        //            }
+        //            else if (row[24].ToString() == "Uniform")
+        //            {
+        //                DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - VehDDCurve");
+        //                if (dtv != null)
+        //                {
+        //                    List<object> listOfXValues = dtv.GetColumn(0).ToList();
+        //                    List<double> listOfXValuesAsDoubles = new List<double>();
+        //                    foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
+        //                    List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
+        //                    for (int k = 0; k < dtv.NumberOfRows; k++)
+        //                    {
+        //                        ys.Add(new Statistics.Uniform(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k))));
+        //                    }
+        //                    Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
+        //                    ot.SetVehiclePercentDD = uci;
+        //                    //ot.SetVehiclePercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
+        //                }
+        //            }
 
-                listOfOccTypes.Add(ot);
-            }
-            ele.ListOfOccupancyTypes = listOfOccTypes;
-            ele.OccTypesSelectedTabsDictionary = selectedTabsDictionary;
-            ListOfOccupancyTypesGroups.Add(ele);
-            //AddElement(ele,false);
-        }
+        //        }
+
+
+        //        //*****************************
+        //        //Other
+        //        //*****************************
+
+        //        //if (Convert.ToBoolean(row[25]) == true) // if other tab is checked
+        //        {
+        //            ot.VehicleValueUncertainty = CreateContinuousDistributionFromRow(row, 26, 29);
+        //            if (row[30].ToString() == "Normal")
+        //            {
+        //                DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - OtherDDCurve");
+        //                if (dtv != null)
+        //                {
+        //                    List<object> listOfXValues = dtv.GetColumn(0).ToList();
+        //                    List<double> listOfXValuesAsDoubles = new List<double>();
+        //                    foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
+        //                    List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
+        //                    for (int k = 0; k < dtv.NumberOfRows; k++)
+        //                    {
+        //                        ys.Add(new Statistics.Normal(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k))));
+        //                    }
+        //                    Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal);
+        //                    ot.SetOtherPercentDD = uci;
+        //                    //ot.SetVehiclePercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal);
+        //                }
+        //            }
+        //            else if (row[30].ToString() == "None")
+        //            {
+        //                ot.SetOtherPercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+
+        //            }
+        //            else if (row[30].ToString() == "Triangular")
+        //            {
+        //                DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - OtherDDCurve");
+        //                if (dtv != null)
+        //                {
+        //                    List<object> listOfXValues = dtv.GetColumn(0).ToList();
+        //                    List<double> listOfXValuesAsDoubles = new List<double>();
+        //                    foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
+        //                    List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
+        //                    for (int k = 0; k < dtv.NumberOfRows; k++)
+        //                    {
+        //                        ys.Add(new Statistics.Triangular(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k)), 0));
+        //                    }
+        //                    Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
+        //                    ot.SetOtherPercentDD = uci;
+        //                    //ot.SetVehiclePercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
+        //                }
+        //            }
+        //            else if (row[30].ToString() == "Uniform")
+        //            {
+        //                DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(row[31] + " - " + ot.Name + " - OtherDDCurve");
+        //                if (dtv != null)
+        //                {
+        //                    List<object> listOfXValues = dtv.GetColumn(0).ToList();
+        //                    List<double> listOfXValuesAsDoubles = new List<double>();
+        //                    foreach (object o in listOfXValues) { listOfXValuesAsDoubles.Add(Convert.ToDouble(o)); }
+        //                    List<Statistics.ContinuousDistribution> ys = new List<Statistics.ContinuousDistribution>();
+        //                    for (int k = 0; k < dtv.NumberOfRows; k++)
+        //                    {
+        //                        ys.Add(new Statistics.Uniform(Convert.ToDouble(dtv.GetCell(1, k)), Convert.ToDouble(dtv.GetCell(2, k))));
+        //                    }
+        //                    Statistics.UncertainCurveIncreasing uci = new Statistics.UncertainCurveIncreasing(listOfXValuesAsDoubles, ys, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
+        //                    ot.SetOtherPercentDD = uci;
+        //                    //ot.SetVehiclePercentDD = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
+        //                }
+        //            }
+
+        //        }
+
+        //        listOfOccTypes.Add(ot);
+        //    }
+        //    ele.ListOfOccupancyTypes = listOfOccTypes;
+        //    ele.OccTypesSelectedTabsDictionary = selectedTabsDictionary;
+        //    ListOfOccupancyTypesGroups.Add(ele);
+        //    //AddElement(ele,false);
+        //}
 
        
         private Statistics.ContinuousDistribution CreateContinuousDistributionFromRow(object[] row,int start, int end)

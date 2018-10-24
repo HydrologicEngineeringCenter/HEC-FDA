@@ -69,10 +69,7 @@ namespace FdaViewModel.Plots
             //throw new NotImplementedException();
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+     
         #endregion
         #region Voids
         #endregion

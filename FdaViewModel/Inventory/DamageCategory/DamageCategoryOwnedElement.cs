@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,10 +15,7 @@ namespace FdaViewModel.Inventory.DamageCategory
         private List<DamageCategoryRowItem> _DamageCategories;
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+       
         public List<DamageCategoryRowItem> DamageCategories
         {
             get { return _DamageCategories; }
@@ -42,7 +40,10 @@ namespace FdaViewModel.Inventory.DamageCategory
 
             Actions = localActions;
         }
-
+        public override ChildElement CloneElement(ChildElement elementToClone)
+        {
+            return null;
+        }
         private void EditDamageCategories(object arg1, EventArgs arg2)
         {
             //throw new NotImplementedException();
@@ -84,36 +85,33 @@ namespace FdaViewModel.Inventory.DamageCategory
         #endregion
         #region Functions
         #endregion
-        public override string TableName
-        {
-            get
-            {
-                return "DamageCategories";
-            }
-        }
+        //public override string TableName
+        //{
+        //    get
+        //    {
+        //        return "DamageCategories";
+        //    }
+        //}
 
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
         }
 
-        public override object[] RowData()
-        {
-            return new object[] { Name };
-        }
+        //public override object[] RowData()
+        //{
+        //    return new object[] { Name };
+        //}
 
-        public override bool SavesToRow()
-        {
-            return true;
-        }
+        //public override bool SavesToRow()
+        //{
+        //    return true;
+        //}
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
-        public override bool SavesToTable()
-        {
-            return true;
-        }
+      
+        //public override bool SavesToTable()
+        //{
+        //    return true;
+        //}
     }
 }

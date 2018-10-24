@@ -9,23 +9,18 @@ using System.Threading.Tasks;
 namespace FdaViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 1:20:23 PM)]
-    public class LeveeFeatureEditorVM : BaseViewModel
+    public class LeveeFeatureEditorVM : Editors.BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
         // Created Date: 6/8/2017 1:20:23 PM
         #endregion
         #region Fields
-        private string _Name = "";
-        private string _Description = "";
+      
         private double _Elevation = 0;
         #endregion
         #region Properties
-        public string Description
-        {
-            get { return _Description; }
-            set { _Description = value; NotifyPropertyChanged(); }
-        }
+       
         public double Elevation
         {
             get { return _Elevation; }
@@ -33,18 +28,16 @@ namespace FdaViewModel.GeoTech
         }
         #endregion
         #region Constructors
-        public LeveeFeatureEditorVM(Action<BaseViewModel> ownerValidationRules) :base()
+        public LeveeFeatureEditorVM() :base(null)
         {
-            ownerValidationRules(this);
 
         }
-        public LeveeFeatureEditorVM(string name, string description, double elevation, Action<BaseViewModel> ownerValidationRules):base()
+        public LeveeFeatureEditorVM(LeveeFeatureElement element):base(element,null)
         {
-            ownerValidationRules(this);
 
-            Name = name;
-            Description = description;
-            Elevation = elevation;
+            Name = element.Name;
+            Description = element.Description;
+            Elevation = element.Elevation;
             //IsInEditMode = isInEditMode;
         }
         #endregion
@@ -60,7 +53,24 @@ namespace FdaViewModel.GeoTech
 
         public override void Save()
         {
-            //throw new NotImplementedException();
+            if (Description == null) { Description = ""; }
+            LeveeFeatureElement elementToSave = new LeveeFeatureElement(Name,Description,Elevation);
+            Saving.PersistenceManagers.LeveePersistenceManager manager = Saving.PersistenceFactory.GetLeveeManager(StudyCache);
+            if (IsImporter && HasSaved == false)
+            {
+                manager.SaveNew(elementToSave);
+                HasSaved = true;
+                OriginalElement = elementToSave;
+            }
+            else
+            {
+                manager.SaveExisting((LeveeFeatureElement)OriginalElement, elementToSave, 0);
+            }
         }
+
+        //public override void Save()
+        //{
+        //    //throw new NotImplementedException();
+        //}
     }
 }

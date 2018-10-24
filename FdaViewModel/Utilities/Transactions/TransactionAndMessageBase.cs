@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Utilities.Transactions
 {
-    public abstract class TransactionAndMessageBase:BaseViewModel
+    public abstract class TransactionAndMessageBase:Editors.BaseEditorVM
     {    
         public List<Utilities.Transactions.TransactionRowItem> TransactionRows { get; set; }
         public List<Utilities.MessageRowItem> MessageRows { get; set; }
 
-        public TransactionAndMessageBase():base()
+        public TransactionAndMessageBase():base(null)
         {
 
         }
-        public TransactionAndMessageBase(ChildElement element):base()
+        public TransactionAndMessageBase(ChildElement element):base(element,null)
         {
             if(element == null) { return; }       
             LoadTransactionsAndMessages(element);

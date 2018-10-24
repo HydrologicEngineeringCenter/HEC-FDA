@@ -1,4 +1,5 @@
-﻿using FdaViewModel.Utilities;
+﻿using FdaViewModel.Editors;
+using FdaViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,7 @@ namespace FdaViewModel.FrequencyRelationships
         #region Fields
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+       
         #endregion
         #region Constructors
         public AnalyticalFrequencyOwnerElement(Utilities.ParentElement owner) : base(owner)
@@ -38,12 +36,23 @@ namespace FdaViewModel.FrequencyRelationships
             //localActions.Add(ImportRatingCurve);
 
             Actions = localActions;
+
             StudyCache.FlowFrequencyAdded += AddFlowFrequencyElement;
+            StudyCache.FlowFrequencyRemoved += RemoveFlowFrequencyElement;
+            StudyCache.FlowFrequencyUpdated += UpdateFlowFrequencyElement;
         }
 
 
         #endregion
         #region Voids
+        private void UpdateFlowFrequencyElement(object sender, Saving.ElementUpdatedEventArgs e)
+        {
+            UpdateElement(e.OldElement, e.NewElement);
+        }
+        private void RemoveFlowFrequencyElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            RemoveElement(e.Element);
+        }
         private void AddFlowFrequencyElement(object sender, Saving.ElementAddedEventArgs e)
         {
             AddElement(e.Element);
@@ -56,20 +65,29 @@ namespace FdaViewModel.FrequencyRelationships
 
         public void AddNewFlowFrequencyCurve(object arg1, EventArgs arg2)
         {
-            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM();
-            Navigate(vm);
-            if (!vm.WasCanceled)
-            {
-                if (!vm.HasError)
-                {
-                    string creationDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
 
-                    Statistics.LogPearsonIII lpiii = new Statistics.LogPearsonIII(vm.Mean, vm.StandardDeviation, vm.Skew, vm.SampleSize);//are the default probabilities editable in the model?
-                    AnalyticalFrequencyElement afe = new AnalyticalFrequencyElement(vm.Name, creationDate, vm.Description, lpiii, this);
-                    AddElement(afe);
-                    AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(afe.Name, Utilities.Transactions.TransactionEnum.CreateNew, "Initial Name: " + afe.Name + " Description: " + afe.Description + " Mean: " + afe.Distribution.GetMean + " Standard Deviation: " + afe.Distribution.GetStDev + " Skew: " + afe.Distribution.GetG + " EYOR: " + afe.Distribution.GetSampleSize, nameof(AnalyticalFrequencyElement)));
-                }
-            }
+            //create save helper
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFlowFrequencyManager(StudyCache)
+                , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
+                (editor, element) => AssignValuesFromEditorToElement(editor, element));
+            //create action manager
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                .WithSaveUndoRedo(saveHelper);
+
+            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(actionManager);
+            Navigate(vm,false,false,"Import Frequency");
+            //if (!vm.WasCanceled)
+            //{
+            //    if (!vm.HasError)
+            //    {
+            //        string creationDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+
+            //        Statistics.LogPearsonIII lpiii = new Statistics.LogPearsonIII(vm.Mean, vm.StandardDeviation, vm.Skew, vm.SampleSize);//are the default probabilities editable in the model?
+            //        AnalyticalFrequencyElement afe = new AnalyticalFrequencyElement(vm.Name, creationDate, vm.Description, lpiii, this);
+            //        AddElement(afe);
+            //        AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(afe.Name, Utilities.Transactions.TransactionEnum.CreateNew, "Initial Name: " + afe.Name + " Description: " + afe.Description + " Mean: " + afe.Distribution.GetMean + " Standard Deviation: " + afe.Distribution.GetStDev + " Skew: " + afe.Distribution.GetG + " EYOR: " + afe.Distribution.GetSampleSize, nameof(AnalyticalFrequencyElement)));
+            //    }
+            //}
         }
        
         public override void AddValidationRules()
@@ -78,41 +96,40 @@ namespace FdaViewModel.FrequencyRelationships
         }
         #endregion
         #region Functions
-        public override string TableName
+
+        public void AssignValuesFromEditorToElement(BaseEditorVM editorVM, ChildElement elem)
         {
-            get
-            {
-                return "Analyitical Frequency Curves";
-            }
+            AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)editorVM;
+            AnalyticalFrequencyElement element = (AnalyticalFrequencyElement)elem;
+            element.Name = vm.Name;
+            element.Description = vm.Description;
+            element.Distribution = vm.Distribution;
+            element.UpdateTreeViewHeader(vm.Name);
         }
-        public override string[] TableColumnNames()
+
+        public void AssignValuesFromElementToEditor(BaseEditorVM editorVM, ChildElement elem)
         {
-            return new string[] { "Name","Last Edit Date", "Description", "Mean (of Log)", "Standard Deviation (of Log)", "Skew (of Log)", "Equivalent Years of Record" };
+            AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)editorVM;
+            AnalyticalFrequencyElement element = (AnalyticalFrequencyElement)elem;
+
+            vm.Name = element.Name;
+            vm.Description = element.Description;
+            vm.Distribution = element.Distribution;
+           
         }
-        public override Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string),typeof(string), typeof(string), typeof(double), typeof(double), typeof(double), typeof(int) };
-        }
-        public override ChildElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
+
+        public  ChildElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
         {
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            //return new AnalyticalFrequencyElement(editorVM.Name, editDate, editorVM.Description, editorVM.Distribution, this);
-            return null;
+            return new AnalyticalFrequencyElement(editorVM.Name, editDate, editorVM.Description, ((AnalyticalFrequencyEditorVM)editorVM).Distribution);
+            //return null;
         }
-        public override ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            double mean = (double)rowData[3];
-            double stdev = (double)rowData[4];
-            double skew = (double)rowData[5];
-            Int64 n = (Int64)rowData[6];
-            return new AnalyticalFrequencyElement((string)rowData[0], (string)rowData[1], (string)rowData[2], new Statistics.LogPearsonIII(mean, stdev, skew, (int)n), this);
+       
 
-        }
-
-        public override void AddElementFromRowData(object[] rowData)
-        {
-            AddElement(CreateElementFromRowData(rowData),false);
-        }
+        //public override void AddElementFromRowData(object[] rowData)
+        //{
+        //    AddElement(CreateElementFromRowData(rowData),false);
+        //}
         #endregion
     }
 }

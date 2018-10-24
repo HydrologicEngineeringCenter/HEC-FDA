@@ -5,11 +5,12 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using FdaViewModel.Editors;
 
 namespace FdaViewModel.Utilities
 {
     //[Author(q0heccdm, 11 / 22 / 2016 9:05:37 AM)]
-    public class RenameVM:BaseViewModel
+    public class RenameVM:BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
@@ -19,17 +20,20 @@ namespace FdaViewModel.Utilities
         private string _Name;
         #endregion
         #region Properties
+        public ChildElement OldElement { get; set; }
+        public ChildElement ElementToSave { get; set; }
+
+        public Func<ChildElement, ChildElement> CreateElementFromEditorAction { get; set; }
 
         #endregion
         #region Constructors
-        public RenameVM():base()
-        { 
-            
-        }
-        public RenameVM(string name, ChildElement element)
+
+        public RenameVM( ChildElement element, Func<ChildElement,ChildElement> createElementFromEditorAction) :base(element,null)
         {
-            Name = name;
+            Name = element.Name;
+            OldElement = element;
             StudyCache.AddSiblingRules(this, element);
+            CreateElementFromEditorAction = createElementFromEditorAction;
 
         }
 
@@ -40,8 +44,17 @@ namespace FdaViewModel.Utilities
 
         public override void Save()
         {
-            //throw new NotImplementedException();
+            ElementToSave = CreateElementFromEditorAction(OldElement);
+            ElementToSave.Name = Name;
+            ElementToSave.UpdateTreeViewHeader(Name);
+
+            Saving.IPersistable savingManager = Saving.PersistenceFactory.GetElementManager(OldElement, StudyCache);
+            if (savingManager != null)
+            {
+                savingManager.SaveExisting(OldElement, ElementToSave, 0);
+            }
         }
+
 
      
         #endregion

@@ -5,6 +5,7 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.WaterSurfaceElevation
 {
@@ -24,10 +25,7 @@ namespace FdaViewModel.WaterSurfaceElevation
         private List<int> _featureNodeHashs;
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return _TableConstant;
-        }
+     
         public bool IsDepthGrids { get; set; }
         
         //public override string Name
@@ -35,24 +33,14 @@ namespace FdaViewModel.WaterSurfaceElevation
         //    get { return _Name; }
         //    set { _Name = value; }
         //}
-        public string Description
-        {
-            get { return _Description; }
-            set { _Description = value;  }
-        }
+       
         public List<PathAndProbability> RelativePathAndProbability
         {
             get { return _RelativePathAndProbability; }
             set { _RelativePathAndProbability = value;  }
         }
 
-        public override string TableName
-        {
-            get
-            {
-                return GetTableConstant() + Name;
-            }
-        }
+     
 
         #endregion
         #region Constructors
@@ -72,9 +60,9 @@ namespace FdaViewModel.WaterSurfaceElevation
 
             Utilities.NamedAction remove = new Utilities.NamedAction();
             remove.Header = "Remove";
-            remove.Action = Remove;
+            remove.Action = RemoveElement;
 
-            Utilities.NamedAction renameElement = new Utilities.NamedAction();
+            Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
             renameElement.Header = "Rename";
             renameElement.Action = Rename;
 
@@ -97,7 +85,10 @@ namespace FdaViewModel.WaterSurfaceElevation
 
         #endregion
         #region Voids
-        
+        public void RemoveElement(object sender, EventArgs e)
+        {
+            Saving.PersistenceFactory.GetWaterSurfaceManager(StudyCache).Remove(this);
+        }
         public override void RemoveElementFromMapWindow(object arg1, EventArgs arg2)
         {
             if (_featureNodeHashs != null)
@@ -135,7 +126,7 @@ namespace FdaViewModel.WaterSurfaceElevation
             foreach (PathAndProbability file in RelativePathAndProbability)
             {
 
-                LifeSimGIS.RasterFeatures r = new LifeSimGIS.RasterFeatures(Storage.Connection.Instance.HydraulicsDirectory + "\\"+file.Path);
+                LifeSimGIS.RasterFeatures r = new LifeSimGIS.RasterFeatures(Storage.Connection.Instance.HydraulicsDirectory + "\\" + file.Path);
                 OpenGLMapping.ColorRamp c = new OpenGLMapping.ColorRamp(OpenGLMapping.ColorRamp.RampType.LightBlueDarkBlue, r.GridReader.Max, r.GridReader.Min, r.GridReader.Mean, r.GridReader.StdDev);
                 Utilities.AddGriddedDataEventArgs args = new Utilities.AddGriddedDataEventArgs(r, c);
                 args.FeatureName = Name;
@@ -143,6 +134,7 @@ namespace FdaViewModel.WaterSurfaceElevation
 
                 _featureNodeHashs.Add(args.MapFeatureHash);
             }
+
 
             foreach (Utilities.NamedAction a in Actions)
             {
@@ -154,61 +146,52 @@ namespace FdaViewModel.WaterSurfaceElevation
             }
         }
 
-       
+
         #endregion
         #region Functions
+        public override ChildElement CloneElement(ChildElement elementToClone)
+        {
+            WaterSurfaceElevationElement elem = (WaterSurfaceElevationElement)elementToClone;
+            return new WaterSurfaceElevationElement(elem.Name, elem.Description,elem.RelativePathAndProbability,elem.IsDepthGrids);
+        }
         #endregion
-        public override object[] RowData()
-        {
-            return new object[] { Name, Description,IsDepthGrids };
-        }
-
-        public override bool SavesToRow()
-        {
-            return true;
-        }
-
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
-
-        public override void Save()
-        {
-            //gets called if savestotable is true
-            if (!Storage.Connection.Instance.IsConnectionNull)
-            {
-                if (Storage.Connection.Instance.TableNames().Contains(TableName))
-                {
-                    //already exists... delete?
-                    Storage.Connection.Instance.DeleteTable(TableName);
-                }
-
-                string[] colNames = new string[] { "Name", "Probability", "LastEdited" };
-                Type[] colTypes = new Type[] { typeof(string), typeof(string), typeof(string) };
-
-                Storage.Connection.Instance.CreateTable(TableName, colNames, colTypes);
-                DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
-
-                object[][] rows = new object[RelativePathAndProbability.Count][];
-                int i = 0;
-                foreach (PathAndProbability p in RelativePathAndProbability)
-                {
-                    rows[i] = new object[] { p.Path, p.Probability, DateTime.Now.ToString() };
-                    i++;
-                }
-                for (int j = 0; j < rows.Count(); j++)
-                {
-                    tbl.AddRow(rows[j]);
-                }
-                tbl.ApplyEdits();
 
 
-            }
-        }
-        public override bool SavesToTable()
-        {
-            return true;
-        }
+  
+
+        //public override void Save()
+        //{
+        //    //gets called if savestotable is true
+        //    if (!Storage.Connection.Instance.IsConnectionNull)
+        //    {
+        //        if (Storage.Connection.Instance.TableNames().Contains(TableName))
+        //        {
+        //            //already exists... delete?
+        //            Storage.Connection.Instance.DeleteTable(TableName);
+        //        }
+
+        //        string[] colNames = new string[] { "Name", "Probability", "LastEdited" };
+        //        Type[] colTypes = new Type[] { typeof(string), typeof(string), typeof(string) };
+
+        //        Storage.Connection.Instance.CreateTable(TableName, colNames, colTypes);
+        //        DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
+
+        //        object[][] rows = new object[RelativePathAndProbability.Count][];
+        //        int i = 0;
+        //        foreach (PathAndProbability p in RelativePathAndProbability)
+        //        {
+        //            rows[i] = new object[] { p.Path, p.Probability, DateTime.Now.ToString() };
+        //            i++;
+        //        }
+        //        for (int j = 0; j < rows.Count(); j++)
+        //        {
+        //            tbl.AddRow(rows[j]);
+        //        }
+        //        tbl.ApplyEdits();
+
+
+        //    }
+        //}
+       
     }
 }

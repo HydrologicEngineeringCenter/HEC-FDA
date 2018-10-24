@@ -17,17 +17,7 @@ namespace FdaViewModel.Hydraulics
         private const string _TableName = "Gridded Water Surface Profiles";
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
-        public override string TableName
-        {
-            get
-            {
-                return _TableName;
-            }
-        }
+   
 
         #endregion
         #region Constructors
@@ -49,7 +39,7 @@ namespace FdaViewModel.Hydraulics
         #region Voids
         private void AddNewGriddedHydraulics(object arg1, EventArgs arg2)
         {
-            List<Watershed.TerrainElement> TerrainList = GetElementsOfType<Watershed.TerrainElement>();
+            List<Watershed.TerrainElement> TerrainList = StudyCache.TerrainElements;// GetElementsOfType<Watershed.TerrainElement>();
             
             
             GridImporterVM vm = new GridImporterVM(TerrainList,2001,2002);
@@ -70,23 +60,7 @@ namespace FdaViewModel.Hydraulics
      
         #endregion
         #region Functions
-        public override string[] TableColumnNames()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Type[] TableColumnTypes()
-        {
-            throw new NotImplementedException();
-        }
-        public override ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            return null;
-        }
-        public override void AddElementFromRowData(object[] rowData)
-        {
-            //throw new NotImplementedException();
-        }
+ 
         #endregion
     }
 }

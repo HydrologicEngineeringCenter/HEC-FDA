@@ -1,4 +1,6 @@
-﻿using FdaViewModel.Study;
+﻿using FdaViewModel.Editors;
+using FdaViewModel.Study;
+using FdaViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 
@@ -17,7 +19,6 @@ namespace FdaViewModel
 
         #endregion
         #region Events
-        public TransactionEventHandler TransactionEvent;
         #endregion
         #region Properties
 
@@ -43,14 +44,14 @@ namespace FdaViewModel
         //{
         //    get;set;
         //}
-        public abstract string TableName { get; }
+        //public abstract string TableName { get; }
         public List<Utilities.NamedAction> Actions
         {
             get { return _Actions; }
             set { _Actions = value; NotifyPropertyChanged(nameof(Actions)); }
         }
 
-        public abstract bool SavesToTable();
+        //public abstract bool SavesToTable();
         #endregion
         #region Constructors
         public BaseFdaElement()
@@ -93,10 +94,7 @@ namespace FdaViewModel
         #region Voids
 
 
-        public void AddTransaction(object sender, Utilities.Transactions.TransactionEventArgs transaction)
-        {
-            TransactionEvent?.Invoke(this, transaction);
-        }
+      
         public void UpdateTreeViewHeader(string newName)
         {
             if (_CustomTreeViewHeader == null) { return; }
@@ -105,9 +103,29 @@ namespace FdaViewModel
             bool gifVisible = _CustomTreeViewHeader.GifVisible;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(newName, image, decoration,gifVisible);
         }
+
+
+        public void AssignValuesFromCurveEditorToElement(BaseEditorVM editorVM, ChildElement element)
+        {
+            CurveEditorVM vm = (CurveEditorVM)editorVM;
+            element.Name = vm.Name;
+            element.Description = vm.Description;
+            element.Curve = vm.Curve;
+            element.UpdateTreeViewHeader(vm.Name);
+        }
+
+        public void AssignValuesFromElementToCurveEditor(BaseEditorVM editorVM, ChildElement element)
+        {
+            CurveEditorVM vm = (CurveEditorVM)editorVM;
+
+            vm.Name = element.Name;
+            vm.Description = element.Description;
+            vm.Curve = element.Curve;
+        }
+
         #endregion
         #region Functions
-        public abstract string GetTableConstant();
+        //public abstract string GetTableConstant();
         //public abstract BaseFdaElement GetElementOfTypeAndName(Type t, string name);
         //public abstract List<T> GetElementsOfType<T>() where T : Utilities.ChildElement;
         //public abstract List<string> GetShapefiles

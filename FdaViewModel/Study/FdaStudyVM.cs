@@ -13,7 +13,7 @@ using System.Xml.Linq;
 
 namespace FdaViewModel.Study
 {
-    public class FdaStudyVM : BaseFdaElement, IDisposable, Utilities.Transactions.ITransactionsAndMessages
+    public class FdaStudyVM : BaseViewModel, IDisposable, Utilities.Transactions.ITransactionsAndMessages
     {
         #region Notes
         #endregion
@@ -64,10 +64,7 @@ namespace FdaViewModel.Study
             get { return _SelectedTab; }
             set { _SelectedTab = value; TabChangedEvent(value); }
         }
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+     
         public List<ParentElement> MainStudyTree
         {
             get { return _MainStudyTree; }
@@ -81,13 +78,7 @@ namespace FdaViewModel.Study
             set { _StudyElement = value; NotifyPropertyChanged(); }
         }
 
-        public override string TableName
-        {
-            get
-            {
-                return "";
-            }
-        }
+      
 
         public List<TransactionRowItem> TransactionRows
         {
@@ -244,23 +235,20 @@ namespace FdaViewModel.Study
         }
         public override void AddValidationRules()
         {
-            AddRule(nameof(StudyElement), () => { return AreConditionsValid(); }, GetConditionErrors());
+            //AddRule(nameof(StudyElement), () => { return AreConditionsValid(); }, GetConditionErrors());
         }
 
-        private bool AreConditionsValid()
-        {
-            return false;
-        }
+        //private bool AreConditionsValid()
+        //{
+        //    return false;
+        //}
 
-        private string GetConditionErrors()
-        {
-            return "Condition 1 is in error\nCondition 2 is in error.";
-        }
+        //private string GetConditionErrors()
+        //{
+        //    return "Condition 1 is in error\nCondition 2 is in error.";
+        //}
 
-        public override void Save()
-        {
-            throw new NotImplementedException();
-        }
+       
         #endregion
         #region Functions
         //public override BaseFdaElement GetElementOfTypeAndName(Type t, string name)
@@ -291,10 +279,7 @@ namespace FdaViewModel.Study
             }       
         }
 
-        public override bool SavesToTable()
-        {
-            throw new NotImplementedException();
-        }
+      
 
 
 

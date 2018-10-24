@@ -20,10 +20,10 @@ namespace FdaViewModel.Conditions
         #region Fields
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+        //public override string GetTableConstant()
+        //{
+        //    return TableName;
+        //}
         #endregion
         #region Constructors
         public ConditionsOwnerElement(BaseFdaElement owner) : base(owner)
@@ -39,10 +39,26 @@ namespace FdaViewModel.Conditions
             localActions.Add(addCondition);
 
             Actions = localActions;
+            StudyCache.ConditionsElementAdded += AddConditionsElement;
+            StudyCache.ConditionsElementRemoved += RemoveConditionsElement;
+            StudyCache.ConditionsElementUpdated += UpdateConditionsElement;
+
         }
         #endregion
         #region Voids
-    
+        private void UpdateConditionsElement(object sender, Saving.ElementUpdatedEventArgs e)
+        {
+            UpdateElement(e.OldElement, e.NewElement);
+        }
+        private void AddConditionsElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            AddElement(e.Element);
+        }
+        private void RemoveConditionsElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            RemoveElement(e.Element);
+        }
+
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
@@ -51,8 +67,8 @@ namespace FdaViewModel.Conditions
         #region BuildDefaultPlotControls
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultLP3Control(ParentElement ownerElement)
         {
-            List<AnalyticalFrequencyElement> listOfLp3 = ownerElement.GetElementsOfType<AnalyticalFrequencyElement>();
-            AddFlowFrequencyToConditionVM lp3Importer = new AddFlowFrequencyToConditionVM(listOfLp3, ownerElement);
+            List<AnalyticalFrequencyElement> listOfLp3 = StudyCache.FlowFrequencyElements;// ownerElement.GetElementsOfType<AnalyticalFrequencyElement>();
+            AddFlowFrequencyToConditionVM lp3Importer = new AddFlowFrequencyToConditionVM(listOfLp3);
             lp3Importer.RequestNavigation += ownerElement.Navigate;
             return new Plots.IndividualLinkedPlotControlVM(
                 new Plots.ConditionsIndividualPlotWrapperVM(true, true, "LP3", "Probability", "Inflow"),
@@ -62,8 +78,8 @@ namespace FdaViewModel.Conditions
 
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultInflowOutflowControl(ParentElement ownerElement)
         {
-            List<InflowOutflowElement> listOfInfOut = ownerElement.GetElementsOfType<InflowOutflowElement>();
-            AddInflowOutflowToConditionVM inOutImporter = new AddInflowOutflowToConditionVM(listOfInfOut, ownerElement);
+            List<InflowOutflowElement> listOfInfOut = StudyCache.InflowOutflowElements;//ownerElement.GetElementsOfType<InflowOutflowElement>();
+            AddInflowOutflowToConditionVM inOutImporter = new AddInflowOutflowToConditionVM(listOfInfOut);
             inOutImporter.RequestNavigation += ownerElement.Navigate;
             return new Plots.IndividualLinkedPlotControlVM(
                 new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Inflow Outflow", "Inflow", "OutFlow"),
@@ -75,8 +91,8 @@ namespace FdaViewModel.Conditions
 
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultRatingControl(ParentElement ownerElement)
         {
-            List<RatingCurveElement> listOfRatingCurves = ownerElement.GetElementsOfType<RatingCurveElement>();
-            AddRatingCurveToConditionVM ratImporter = new AddRatingCurveToConditionVM(listOfRatingCurves, ownerElement);
+            List<RatingCurveElement> listOfRatingCurves = StudyCache.RatingCurveElements;// ownerElement.GetElementsOfType<RatingCurveElement>();
+            AddRatingCurveToConditionVM ratImporter = new AddRatingCurveToConditionVM(listOfRatingCurves);
             ratImporter.RequestNavigation += ownerElement.Navigate;
             return new Plots.IndividualLinkedPlotControlVM(
                 new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Rating", "Exterior Stage", "OutFlow"),
@@ -86,8 +102,8 @@ namespace FdaViewModel.Conditions
 
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultExtIntStageControl(ParentElement ownerElement)
         {
-            List<StageTransforms.ExteriorInteriorElement> listOfExtIntElements = ownerElement.GetElementsOfType<StageTransforms.ExteriorInteriorElement>();
-            AddExteriorInteriorStageToConditionVM extIntImporter = new AddExteriorInteriorStageToConditionVM(listOfExtIntElements, ownerElement);
+            List<StageTransforms.ExteriorInteriorElement> listOfExtIntElements = StudyCache.ExteriorInteriorElements;// ownerElement.GetElementsOfType<StageTransforms.ExteriorInteriorElement>();
+            AddExteriorInteriorStageToConditionVM extIntImporter = new AddExteriorInteriorStageToConditionVM(listOfExtIntElements);
             extIntImporter.RequestNavigation += ownerElement.Navigate;
             return new Plots.IndividualLinkedPlotControlVM(
                 new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Exterior Interior Stage", "Exterior Stage", "Interior Stage"),
@@ -99,8 +115,8 @@ namespace FdaViewModel.Conditions
 
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultStageDamageControl(ParentElement ownerElement)
         {
-            List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamage = ownerElement.GetElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
-            AddStageDamageToConditionVM stageDamageImporter = new AddStageDamageToConditionVM(listOfStageDamage, ownerElement);
+            List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamage = StudyCache.StageDamageElements;// ownerElement.GetElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
+            AddStageDamageToConditionVM stageDamageImporter = new AddStageDamageToConditionVM(listOfStageDamage);
             stageDamageImporter.RequestNavigation += ownerElement.Navigate;
             return new Plots.IndividualLinkedPlotControlVM(
                 new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Stage Damage", "Interior Stage", "Damage"),
@@ -121,13 +137,7 @@ namespace FdaViewModel.Conditions
         public void AddNewCondition(object arg1, EventArgs arg2)
         {
             
-            List<ImpactArea.ImpactAreaElement> impactAreas = GetElementsOfType<ImpactArea.ImpactAreaElement>();
-        
-            if (impactAreas.Count == 0)
-            {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("No Impact Area Sets have been defined.", FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel));
-                return;
-            }
+            List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.ImpactAreaElements;//GetElementsOfType<ImpactArea.ImpactAreaElement>();
 
             Plots.IndividualLinkedPlotControlVM lp3Control = BuildDefaultLP3Control(this);
 
@@ -141,162 +151,162 @@ namespace FdaViewModel.Conditions
 
             Plots.IndividualLinkedPlotControlVM DamageFrequencyControl = BuildDefaultDamageFrequencyControl(this);
 
-            ConditionsPlotEditorVM vm2 = new ConditionsPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl, StageDamageControl, DamageFrequencyControl, (editorVM) => AddOwnerRules(editorVM));
+            ConditionsPlotEditorVM vm2 = new ConditionsPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl, StageDamageControl, DamageFrequencyControl);
 
-            Navigate(vm2);
+            Navigate(vm2, false, false,"Create Condition");
 
-            if (!vm2.WasCanceled)
-            {
-                if (!vm2.HasError)
-                {
-                    ConditionsElement ce = ConditionFactory.BuildConditionsElement(vm2, this);
-                    AddElement(ce);
-                }
-            }
+            //if (!vm2.WasCanceled)
+            //{
+            //    if (!vm2.HasError)
+            //    {
+            //        ConditionsElement ce = ConditionFactory.BuildConditionsElement(vm2, this);
+            //        AddElement(ce);
+            //    }
+            //}
         }
         #endregion
         #region Functions
-        public override string TableName
-        {
-            get
-            {
-                return "Conditions";
-            }
-        }
-        public override string[] TableColumnNames()
-        {
-            return new string[] { "Name", "Description", "AnalysisYear", "ImpactArea",
-                "UseFlowFreq","FlowFreq",
-                "UseInOutFlow","InOutFlow",
-                "UseRating","Rating",
-                "UseExtIntStage","ExtIntStage",
-                "UseLevee","Levee",
-                "UseFailureFunc","FailureFunc",
-                "UseStageDamage","StageDamage",
-                "UseThreshold","ThresholdType","ThresholdValue"};
-        }
+        //public override string TableName
+        //{
+        //    get
+        //    {
+        //        return "Conditions";
+        //    }
+        //}
+        //public override string[] TableColumnNames()
+        //{
+        //    return new string[] { "Name", "Description", "AnalysisYear", "ImpactArea",
+        //        "UseFlowFreq","FlowFreq",
+        //        "UseInOutFlow","InOutFlow",
+        //        "UseRating","Rating",
+        //        "UseExtIntStage","ExtIntStage",
+        //        "UseLevee","Levee",
+        //        "UseFailureFunc","FailureFunc",
+        //        "UseStageDamage","StageDamage",
+        //        "UseThreshold","ThresholdType","ThresholdValue"};
+        //}
 
-        public override Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string), typeof(string), typeof(int), typeof(string),
+        //public override Type[] TableColumnTypes()
+        //{
+        //    return new Type[] { typeof(string), typeof(string), typeof(int), typeof(string),
                 
-                typeof(bool), typeof(string),
-                typeof(bool), typeof(string),
-                typeof(bool), typeof(string),
-                typeof(bool), typeof(string),
-                typeof(bool), typeof(string),
-                typeof(bool), typeof(string),
-                typeof(bool), typeof(string),
-                typeof(bool), typeof(string), typeof(double)};
-        }
+        //        typeof(bool), typeof(string),
+        //        typeof(bool), typeof(string),
+        //        typeof(bool), typeof(string),
+        //        typeof(bool), typeof(string),
+        //        typeof(bool), typeof(string),
+        //        typeof(bool), typeof(string),
+        //        typeof(bool), typeof(string),
+        //        typeof(bool), typeof(string), typeof(double)};
+        //}
 
-        public override void AddElementFromRowData(object[] rowData)
-        {
-            //this is when it loads
+        //public override void AddElementFromRowData(object[] rowData)
+        //{
+        //    //this is when it loads
 
-            if (rowData.Length >= 18)
-            {
-                //get the impact area
-                string selectedImpAreaName = (string)rowData[3];
-                ImpactArea.ImpactAreaElement selectedImpArea = null;
-                List<ImpactArea.ImpactAreaElement> impactAreas = GetElementsOfType<ImpactArea.ImpactAreaElement>();
-                foreach(ImpactArea.ImpactAreaElement impArea in impactAreas)
-                {
-                    if(impArea.Name.Equals(selectedImpAreaName))
-                    {
-                        selectedImpArea = impArea;
-                    }
-                }
-                if (selectedImpArea == null)
-                {
-                    //what do we do?
-                }
+        //    if (rowData.Length >= 18)
+        //    {
+        //        //get the impact area
+        //        string selectedImpAreaName = (string)rowData[3];
+        //        ImpactArea.ImpactAreaElement selectedImpArea = null;
+        //        List<ImpactArea.ImpactAreaElement> impactAreas = GetElementsOfType<ImpactArea.ImpactAreaElement>();
+        //        foreach(ImpactArea.ImpactAreaElement impArea in impactAreas)
+        //        {
+        //            if(impArea.Name.Equals(selectedImpAreaName))
+        //            {
+        //                selectedImpArea = impArea;
+        //            }
+        //        }
+        //        if (selectedImpArea == null)
+        //        {
+        //            //what do we do?
+        //        }
 
-                //threshold stuff
-                bool useThreshold = (bool)rowData[18];
-                PerformanceThresholdTypes thresholdType = PerformanceThresholdTypes.InteriorStage;
-                Enum.TryParse((string)rowData[19], out thresholdType);
-                double thresholdValue = (double)rowData[20];
+        //        //threshold stuff
+        //        bool useThreshold = (bool)rowData[18];
+        //        PerformanceThresholdTypes thresholdType = PerformanceThresholdTypes.InteriorStage;
+        //        Enum.TryParse((string)rowData[19], out thresholdType);
+        //        double thresholdValue = (double)rowData[20];
 
-                //get the impAreaRowItem. What is this? do we need it?
-                ImpactArea.ImpactAreaRowItem indexLocation = new ImpactArea.ImpactAreaRowItem();
-                int analysisYear = Convert.ToInt32(rowData[2]);
-                ConditionBuilder builder = new ConditionBuilder((string)rowData[0], (string)rowData[1], analysisYear, selectedImpArea, indexLocation,
-                     thresholdType,thresholdValue, this);
+        //        //get the impAreaRowItem. What is this? do we need it?
+        //        ImpactArea.ImpactAreaRowItem indexLocation = new ImpactArea.ImpactAreaRowItem();
+        //        int analysisYear = Convert.ToInt32(rowData[2]);
+        //        ConditionBuilder builder = new ConditionBuilder((string)rowData[0], (string)rowData[1], analysisYear, selectedImpArea, indexLocation,
+        //             thresholdType,thresholdValue, this);
 
-                bool useFlowFreq = (bool)rowData[4];
-                if(useFlowFreq)
-                {
-                    string flowFreqName = (string)rowData[5];
-                    AnalyticalFrequencyElement flowFreqElem = GetSelectedElementOfType<AnalyticalFrequencyElement>(flowFreqName);
-                    builder.WithAnalyticalFreqElem(flowFreqElem);
-                }
+        //        bool useFlowFreq = (bool)rowData[4];
+        //        if(useFlowFreq)
+        //        {
+        //            string flowFreqName = (string)rowData[5];
+        //            AnalyticalFrequencyElement flowFreqElem = GetSelectedElementOfType<AnalyticalFrequencyElement>(flowFreqName);
+        //            builder.WithAnalyticalFreqElem(flowFreqElem);
+        //        }
 
-                bool useInflowOutflow = (bool)rowData[6];
-                if (useInflowOutflow)
-                {
-                    string infOutName = (string)rowData[7];
-                    InflowOutflowElement inOutElem = GetSelectedElementOfType<InflowOutflowElement>(infOutName);
-                    builder.WithInflowOutflowElem(inOutElem);
-                }
+        //        bool useInflowOutflow = (bool)rowData[6];
+        //        if (useInflowOutflow)
+        //        {
+        //            string infOutName = (string)rowData[7];
+        //            InflowOutflowElement inOutElem = GetSelectedElementOfType<InflowOutflowElement>(infOutName);
+        //            builder.WithInflowOutflowElem(inOutElem);
+        //        }
 
-                bool useRating = (bool)rowData[8];
-                if (useRating)
-                {
-                    string ratingName = (string)rowData[9];
-                    RatingCurveElement ratingElem = GetSelectedElementOfType<RatingCurveElement>(ratingName);
-                    builder.WithRatingCurveElem(ratingElem);
-                }
+        //        bool useRating = (bool)rowData[8];
+        //        if (useRating)
+        //        {
+        //            string ratingName = (string)rowData[9];
+        //            RatingCurveElement ratingElem = GetSelectedElementOfType<RatingCurveElement>(ratingName);
+        //            builder.WithRatingCurveElem(ratingElem);
+        //        }
 
-                bool useIntExt = (bool)rowData[10];
-                if (useIntExt)
-                {
-                    string extIntName = (string)rowData[11];
-                    ExteriorInteriorElement extIntElem = GetSelectedElementOfType<ExteriorInteriorElement>(extIntName);
-                    builder.WithExtIntStageElem(extIntElem);
-                }
+        //        bool useIntExt = (bool)rowData[10];
+        //        if (useIntExt)
+        //        {
+        //            string extIntName = (string)rowData[11];
+        //            ExteriorInteriorElement extIntElem = GetSelectedElementOfType<ExteriorInteriorElement>(extIntName);
+        //            builder.WithExtIntStageElem(extIntElem);
+        //        }
 
-                bool useLevee = (bool)rowData[12];
-                if (useLevee)
-                {
-                    string leveeName = (string)rowData[13];
-                    LeveeFeatureElement leveeElem = GetSelectedElementOfType<LeveeFeatureElement>(leveeName);
-                    builder.WithLevee(leveeElem);
-                }
+        //        bool useLevee = (bool)rowData[12];
+        //        if (useLevee)
+        //        {
+        //            string leveeName = (string)rowData[13];
+        //            LeveeFeatureElement leveeElem = GetSelectedElementOfType<LeveeFeatureElement>(leveeName);
+        //            builder.WithLevee(leveeElem);
+        //        }
 
-                bool useFailure = (bool)rowData[14];
-                if (useFailure)
-                {
-                    string failureName = (string)rowData[15];
-                    FailureFunctionElement failureElem = GetSelectedElementOfType<FailureFunctionElement>(failureName);
-                    builder.WithFailureFunctionElem(failureElem);
-                }
+        //        bool useFailure = (bool)rowData[14];
+        //        if (useFailure)
+        //        {
+        //            string failureName = (string)rowData[15];
+        //            FailureFunctionElement failureElem = GetSelectedElementOfType<FailureFunctionElement>(failureName);
+        //            builder.WithFailureFunctionElem(failureElem);
+        //        }
 
-                bool useStageDam = (bool)rowData[16];
-                if (useStageDam)
-                {
-                    string stageDamName = (string)rowData[17];
-                    AggregatedStageDamageElement stageDamElem = GetSelectedElementOfType<AggregatedStageDamageElement>(stageDamName);
-                    builder.WithAggStageDamageElem(stageDamElem);
-                }
+        //        bool useStageDam = (bool)rowData[16];
+        //        if (useStageDam)
+        //        {
+        //            string stageDamName = (string)rowData[17];
+        //            AggregatedStageDamageElement stageDamElem = GetSelectedElementOfType<AggregatedStageDamageElement>(stageDamName);
+        //            builder.WithAggStageDamageElem(stageDamElem);
+        //        }
 
-                AddElement(builder.build(), false);
-            }
+        //        AddElement(builder.build(), false);
+        //    }
 
-        }
+        //}
 
-        private T GetSelectedElementOfType<T>(string name) where T:ChildElement
-        {
-            List<T> elems = GetElementsOfType<T>();
-            foreach(T elem in elems)
-            {
-                if(elem.Name.Equals(name))
-                {
-                    return elem;
-                }
-            }
-            return null;
-        }
+        //private T GetSelectedElementOfType<T>(string name) where T:ChildElement
+        //{
+        //    List<T> elems = GetElementsOfType<T>();
+        //    foreach(T elem in elems)
+        //    {
+        //        if(elem.Name.Equals(name))
+        //        {
+        //            return elem;
+        //        }
+        //    }
+        //    return null;
+        //}
         #endregion
     }
 }

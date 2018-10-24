@@ -8,28 +8,37 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Saving.PersistenceManagers
 {
-    public class InflowOutflowPersistenceManager : SavingBase, IPersistable
+    public class InflowOutflowPersistenceManager : SavingBase, IPersistableWithUndoRedo
     {
-        private const string _TableConstant = "Inflow Outflow - ";
-        public  string TableName
-        {
-            get { return "Inflow Outflow Relationships";   }
-        }
 
-        public string[] TableColumnNames()
-        {
-            return new string[] { "Name", "Last Edit Date", "Description", "Curve Distribution Type" };
-        }
-        public Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string), typeof(string), typeof(string), typeof(string) };
-        }
+
+        private const string TableName = "Inflow Outflow Relationships";
+        internal override string ChangeTableConstant { get { return "Inflow Outflow - "; } }
+        private static readonly string[] TableColumnNames = { "Name", "Last Edit Date", "Description", "Curve Distribution Type" };
+        public static readonly Type[] TableColumnTypes = { typeof(string), typeof(string), typeof(string), typeof(string) };
+
 
         public InflowOutflowPersistenceManager(Study.FDACache studyCache)
         {
             StudyCache = studyCache;
         }
 
+
+        #region utilities
+        private object[] GetRowDataFromElement(InflowOutflowElement element)
+        {
+            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.Distribution };
+
+        }
+        public override ChildElement CreateElementFromRowData(object[] rowData)
+        {
+            Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
+            InflowOutflowElement inout = new InflowOutflowElement((string)rowData[0], (string)rowData[1], (string)rowData[2], ucdc);
+            inout.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
+            return inout;
+        }
+
+        #endregion
 
 
         public void SaveNew(ChildElement element)
@@ -38,17 +47,34 @@ namespace FdaViewModel.Saving.PersistenceManagers
             {
                 string editDate = DateTime.Now.ToString("G");
                 element.LastEditDate = editDate;
-                SaveNewElementToParentTable(element, TableName, TableColumnNames(), TableColumnTypes());
-                //save the individual table
-                SaveFlowFreqCurveTable((InflowOutflowElement)element, editDate);
+
+                SaveNewElementToParentTable(GetRowDataFromElement((InflowOutflowElement)element), TableName, TableColumnNames, TableColumnTypes);
+                SaveElementToChangeTable(element.Name, GetRowDataFromElement((InflowOutflowElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
+                SaveCurveTable(element.Curve, ChangeTableConstant, editDate);                //save the individual table
                 //add the rating element to the cache which then raises event that adds it to the owner element
                 StudyCache.AddInflowOutflowElement((InflowOutflowElement)element);
             }
         }
 
-        public void SaveExisting(Utilities.ChildElement element, string oldName, Statistics.UncertainCurveDataCollection oldCurve)
+        public void Remove(ChildElement element)
         {
-            SaveExistingElement(oldName, oldCurve, element, TableName);
+            RemoveFromParentTable(element, TableName);
+            DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
+            StudyCache.RemoveInflowOutflowElement((InflowOutflowElement)element);
+        }
+
+        public void SaveExisting(ChildElement oldElement, Utilities.ChildElement elementToSave, int changeTableIndex  )
+        {
+            string editDate = DateTime.Now.ToString("G");
+            elementToSave.LastEditDate = editDate;
+
+            if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((InflowOutflowElement)elementToSave), oldElement.Name, TableName) || AreCurvesDifferent(oldElement.Curve, elementToSave.Curve))
+            {
+                UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((InflowOutflowElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
+                SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
+                // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
+                StudyCache.UpdateInflowOutflowElement((InflowOutflowElement)oldElement, (InflowOutflowElement)elementToSave);
+            }
         }
 
         public List<ChildElement> Load()
@@ -56,26 +82,21 @@ namespace FdaViewModel.Saving.PersistenceManagers
             return CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
         }
 
-
+      
         private void SaveFlowFreqCurveTable(InflowOutflowElement element, string lastEditDate)
         {
             if (!Storage.Connection.Instance.IsOpen)
             {
                 Storage.Connection.Instance.Open();
             }
-            element.Curve.toSqliteTable(_TableConstant + lastEditDate);
+            element.Curve.toSqliteTable(ChangeTableConstant + lastEditDate);
         }
 
+    
 
-
-
-        public ChildElement CreateElementFromRowData(object[] rowData)
+        public override void AddValidationRules()
         {
-            Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
-            InflowOutflowElement inout = new InflowOutflowElement((string)rowData[0], (string)rowData[1], (string)rowData[2], ucdc);
-            inout.InflowOutflowCurve.fromSqliteTable(inout.TableName);
-            return inout;
+           // throw new NotImplementedException();
         }
-
     }
 }

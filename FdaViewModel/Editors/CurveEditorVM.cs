@@ -77,7 +77,6 @@ namespace FdaViewModel.Editors
         #region constructors
         public CurveEditorVM(Statistics.UncertainCurveDataCollection defaultCurve, EditorActionManager actionManager) :base(actionManager)
         {
-
             Curve = defaultCurve;
             PlotTitle = "Curve";
         }
@@ -93,7 +92,7 @@ namespace FdaViewModel.Editors
 
 
         #region voids
-        public override void Undo()
+        public  void Undo()
         {
             ChildElement prevElement = ActionManager.SaveUndoRedoHelper.UndoElement(CurrentElement);
             if (prevElement != null)
@@ -102,7 +101,7 @@ namespace FdaViewModel.Editors
             }
         }
 
-        public override void Redo()
+        public  void Redo()
         {
             ChildElement nextElement = ActionManager.SaveUndoRedoHelper.RedoElement(CurrentElement);
             if(nextElement != null)
@@ -111,10 +110,10 @@ namespace FdaViewModel.Editors
             }
         }
 
-        public override void SaveWhileEditing()
+        public  void SaveWhileEditing()
         {
             SavingText = " Saving...";
-            ChildElement elementToSave = ActionManager.CreateElementFromEditorAction(this);
+            ChildElement elementToSave = ActionManager.SaveUndoRedoHelper.CreateElementFromEditorAction(this);
             if(CurrentElement == null)
             {
                 CurrentElement = elementToSave;
@@ -122,7 +121,7 @@ namespace FdaViewModel.Editors
             LastEditDate = DateTime.Now.ToString("G");
             elementToSave.LastEditDate = LastEditDate;
             CurrentElement.LastEditDate = LastEditDate;
-            ActionManager.SaveUndoRedoHelper.Save(CurrentElement.Name,CurrentElement.Curve, elementToSave);
+            ActionManager.SaveUndoRedoHelper.Save(CurrentElement.Name,CurrentElement, elementToSave);
             //saving puts all the right values in the db but does not update the owned element in the tree. (in memory values)
             // i need to update those properties here
             AssignValuesFromEditorToCurrentElement();
@@ -132,19 +131,26 @@ namespace FdaViewModel.Editors
             SavingText = " Saved at " + DateTime.Now.ToShortTimeString();
         }
 
-        private void AssignValuesFromEditorToCurrentElement()
-        {
-            ActionManager.AssignValuesFromEditorToElementAction(this,CurrentElement);
-        }
-
-        public void AssignValuesFromElementToEditor(ChildElement element)
-        {
-            ActionManager.AssignValuesFromElementToEditorAction(this, element);
-        }
         public override void Save()
         {
             SaveWhileEditing();
         }
+
+        private void AssignValuesFromEditorToCurrentElement()
+        {
+            ActionManager.SaveUndoRedoHelper.AssignValuesFromEditorToElementAction(this,CurrentElement);
+        }
+
+        /// <summary>
+        /// This is used with the undo redo stuff. The undo/redo returns an element, and then this is able to load
+        /// the editor with its values
+        /// </summary>
+        /// <param name="element"></param>
+        public void AssignValuesFromElementToEditor(ChildElement element)
+        {
+            ActionManager.SaveUndoRedoHelper.AssignValuesFromElementToEditorAction(this, element);
+        }
+   
 
         
 

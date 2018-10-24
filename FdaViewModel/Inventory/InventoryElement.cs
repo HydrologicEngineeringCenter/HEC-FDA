@@ -5,6 +5,7 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.Inventory
 {
@@ -25,13 +26,9 @@ namespace FdaViewModel.Inventory
         //private string _Name;
         #endregion
         #region Properties
-        public string Description { get; set; }
         public DefineSIAttributesVM DefineSIAttributes { get; set; }
         public AttributeLinkingListVM AttributeLinkingList { get; set; }
-        public override string GetTableConstant()
-        {
-            return _TableConstant;
-        }
+       
         public StructureInventoryBaseElement StructureInventory
         {
             get { return _StructureInventory; }
@@ -100,9 +97,9 @@ namespace FdaViewModel.Inventory
 
             Utilities.NamedAction removeInventory = new Utilities.NamedAction();
             removeInventory.Header = "Remove";
-            removeInventory.Action = Remove;
+            removeInventory.Action = RemoveElement;
 
-            Utilities.NamedAction renameElement = new Utilities.NamedAction();
+            Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
             renameElement.Header = "Rename";
             renameElement.Action = Rename;
 
@@ -122,7 +119,10 @@ namespace FdaViewModel.Inventory
         }
         #endregion
         #region Voids
-
+        public void RemoveElement(object sender, EventArgs e)
+        {
+            Saving.PersistenceFactory.GetStructureInventoryManager(StudyCache).Remove(this);
+        }
         private void InventoryToMapWindow(object arg1, EventArgs arg2)
         {
             //DataBase_Reader.SqLiteReader sqr = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
@@ -167,46 +167,45 @@ namespace FdaViewModel.Inventory
         }
         //public void Edit(object arg1, EventArgs arg2)
         //{
-            ////List<string> myStrings = new List<string>();
+        ////List<string> myStrings = new List<string>();
 
-            //ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(_StructureInventory.Name, _StructureInventory.Description,_StructureInventory.Path, DefineSIAttributes, AttributeLinkingList);
+        //ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(_StructureInventory.Name, _StructureInventory.Description,_StructureInventory.Path, DefineSIAttributes, AttributeLinkingList);
 
-            //Navigate(vm, true, true);
-            ////if (!vm.WasCancled)
-            //{
-            //  //  if (!vm.HasError)
-            //    {
-            //        StructureInventoryBaseElement SIBase = new StructureInventoryBaseElement(vm.Name , vm.Description);
-            //        this.StructureInventory = SIBase;
-            //        this.DefineSIAttributes = vm.DefineSIAttributes;
-            //        CustomTreeViewHeader = new Utilities.CustomHeaderVM(vm.Name, "pack://application:,,,/Fda;component/Resources/StructureInventory.png");
+        //Navigate(vm, true, true);
+        ////if (!vm.WasCancled)
+        //{
+        //  //  if (!vm.HasError)
+        //    {
+        //        StructureInventoryBaseElement SIBase = new StructureInventoryBaseElement(vm.Name , vm.Description);
+        //        this.StructureInventory = SIBase;
+        //        this.DefineSIAttributes = vm.DefineSIAttributes;
+        //        CustomTreeViewHeader = new Utilities.CustomHeaderVM(vm.Name, "pack://application:,,,/Fda;component/Resources/StructureInventory.png");
 
 
-            //    }
-            //}
+        //    }
+        //}
 
         //}
         #endregion
         #region Functions
-        #endregion
-        public override string TableName
+        public override ChildElement CloneElement(ChildElement elementToClone)
         {
-            get
-            {
-                return _TableConstant + Name;
-            }
+            InventoryElement elem = (InventoryElement)elementToClone;
+            return new InventoryElement(elem.StructureInventory);
         }
+        #endregion
+
 
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-            //RenameDetailedInventoryTable();
-        }
+        //public override void Save()
+        //{
+        //    //throw new NotImplementedException();
+        //    //RenameDetailedInventoryTable();
+        //}
         //protected override void RenameTable(string oldName, string newName, string tableConstant)
         //{
         //    string PreviousTableName = "Structure Inventory-" + oldName;
@@ -246,18 +245,18 @@ namespace FdaViewModel.Inventory
             }
         }
        
-        public override object[] RowData()
-        {
-            return new object[] { Name,Description };
-        }
+        //public override object[] RowData()
+        //{
+        //    return new object[] { Name,Description };
+        //}
 
-        public override bool SavesToRow()
-        {
-            return true;
-        }
-        public override bool SavesToTable()
-        {
-            return true;
-        }
+        //public override bool SavesToRow()
+        //{
+        //    return true;
+        //}
+        //public override bool SavesToTable()
+        //{
+        //    return true;
+        //}
     }
 }

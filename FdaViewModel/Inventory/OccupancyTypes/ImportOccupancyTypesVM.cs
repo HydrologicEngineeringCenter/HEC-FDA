@@ -231,10 +231,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             }, "No occupancy type groups have been added for import.", false);
         }
 
-        public override void Save()
-        {
-            
-        }
+       
 
         
     }

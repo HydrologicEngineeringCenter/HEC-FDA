@@ -23,7 +23,6 @@ namespace FdaViewModel.Conditions
         public event EventHandler CancelClickedEvent;
         public event EventHandler PopImporterOut;
 
-        private ParentElement _owner;
 
         //private AggregatedStageDamage.AggregatedStageDamageElement _StageDamageElement;
         private List<AggregatedStageDamage.AggregatedStageDamageElement> _ListOfStageDamageElements;
@@ -78,43 +77,42 @@ namespace FdaViewModel.Conditions
 
         #endregion
         #region Constructors
-        public AddStageDamageToConditionVM(List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamageElements, ParentElement owner):this(listOfStageDamageElements,null,owner)
+        public AddStageDamageToConditionVM(List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamageElements ):this(listOfStageDamageElements,null)
         {
         }
-        public AddStageDamageToConditionVM(List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamageElements, AggregatedStageDamage.AggregatedStageDamageElement selectedElement, ParentElement owner):base()
+        public AddStageDamageToConditionVM(List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamageElements, AggregatedStageDamage.AggregatedStageDamageElement selectedElement ):base()
         {
             SelectedElement = selectedElement;
             ListOfStageDamageElements = listOfStageDamageElements;
-            _owner = owner;
 
         }
         #endregion
         #region Voids
         public void LaunchNewStageDamage(object sender, EventArgs e)
         {
-            if (_owner != null)
-            {
-                List<AggregatedStageDamage.AggregatedStageDamageOwnerElement> eles = _owner.GetElementsOfType<AggregatedStageDamage.AggregatedStageDamageOwnerElement>();
-                if (eles.Count > 0)
-                {
-                    eles.FirstOrDefault().AddNewDamageCurve(sender, e);
-                    //need to determine what the most recent element is and see if we already have it.
-                    if (eles.FirstOrDefault().Elements.Count > 0)
-                    {
-                        if (eles.FirstOrDefault().Elements.Count > ListOfStageDamageElements.Count)
-                        {
-                            List<AggregatedStageDamage.AggregatedStageDamageElement> theNewList = new List<AggregatedStageDamage.AggregatedStageDamageElement>();
-                            for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-                            {
-                                theNewList.Add((AggregatedStageDamage.AggregatedStageDamageElement)eles.FirstOrDefault().Elements[i]);
-                            }
-                            ListOfStageDamageElements = theNewList;
-                            //StageDamageRelationships.Add((AggregatedStageDamage.AggregatedStageDamageElement)eles.FirstOrDefault().Elements.Last());
-                            SelectedElement = ListOfStageDamageElements.Last();
-                        }
-                    }
-                }
-            }
+            //if (_owner != null)
+            //{
+            //    List<AggregatedStageDamage.AggregatedStageDamageOwnerElement> eles = _owner.GetElementsOfType<AggregatedStageDamage.AggregatedStageDamageOwnerElement>();
+            //    if (eles.Count > 0)
+            //    {
+            //        eles.FirstOrDefault().AddNewDamageCurve(sender, e);
+            //        //need to determine what the most recent element is and see if we already have it.
+            //        if (eles.FirstOrDefault().Elements.Count > 0)
+            //        {
+            //            if (eles.FirstOrDefault().Elements.Count > ListOfStageDamageElements.Count)
+            //            {
+            //                List<AggregatedStageDamage.AggregatedStageDamageElement> theNewList = new List<AggregatedStageDamage.AggregatedStageDamageElement>();
+            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
+            //                {
+            //                    theNewList.Add((AggregatedStageDamage.AggregatedStageDamageElement)eles.FirstOrDefault().Elements[i]);
+            //                }
+            //                ListOfStageDamageElements = theNewList;
+            //                //StageDamageRelationships.Add((AggregatedStageDamage.AggregatedStageDamageElement)eles.FirstOrDefault().Elements.Last());
+            //                SelectedElement = ListOfStageDamageElements.Last();
+            //            }
+            //        }
+            //    }
+            //}
         }
         public void LaunchNewWaterSurfaceElevation()
         {
@@ -142,10 +140,7 @@ namespace FdaViewModel.Conditions
             AddRule(nameof(SelectedElement), () => { return (SelectedElement != null); }, "A Stage Damage Curve has not been selected.");
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+       
         public void PopTheImporterOut()
         {
             if (PopImporterOut != null)

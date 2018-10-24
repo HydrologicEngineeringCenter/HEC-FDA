@@ -77,9 +77,6 @@ namespace FdaViewModel.Utilities
             //AddRule(nameof(MessageList), () => MessageList.Count < 0, "Message List must have 0 elements!");
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+       
     }
 }

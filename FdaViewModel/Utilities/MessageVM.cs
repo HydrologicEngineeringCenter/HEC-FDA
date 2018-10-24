@@ -24,7 +24,7 @@ namespace FdaViewModel.Utilities
         public MessageVM(string message):base()
         {
             Message = message;
-            HelpAction.IsVisible = false;
+            //HelpAction.IsVisible = false;
         }
         
 
@@ -33,9 +33,6 @@ namespace FdaViewModel.Utilities
             //throw new NotImplementedException();
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+     
     }
 }

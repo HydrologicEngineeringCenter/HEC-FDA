@@ -19,7 +19,6 @@ namespace FdaViewModel.Conditions
         // Created Date: 12/6/2017 2:34:26 PM
         #endregion
         #region Fields
-        private ParentElement _owner;
         //private StageTransforms.ExteriorInteriorElement _SelectedExteriorInteriorStageElement;
         private List<StageTransforms.ExteriorInteriorElement> _ListOfExteriorInteriorStageElements;
 
@@ -50,7 +49,7 @@ namespace FdaViewModel.Conditions
         {
             get
             {
-                UncertainCurveDataCollection curve = ((StageTransforms.ExteriorInteriorElement)SelectedElement).ExteriorInteriorCurve;
+                UncertainCurveDataCollection curve = ((StageTransforms.ExteriorInteriorElement)SelectedElement).Curve;
 
                 FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extInt = 
                     new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve,FunctionTypes.ExteriorInteriorStage);
@@ -93,54 +92,50 @@ namespace FdaViewModel.Conditions
 
         #endregion
         #region Constructors
-        public AddExteriorInteriorStageToConditionVM(List<StageTransforms.ExteriorInteriorElement> listOfExIntStage, ParentElement owner):this(listOfExIntStage,null,owner)
+        public AddExteriorInteriorStageToConditionVM(List<StageTransforms.ExteriorInteriorElement> listOfExIntStage ):this(listOfExIntStage,null)
         {
         }
-        public AddExteriorInteriorStageToConditionVM(List<StageTransforms.ExteriorInteriorElement> listOfExIntStage, StageTransforms.ExteriorInteriorElement selectedElement, ParentElement owner):base()
+        public AddExteriorInteriorStageToConditionVM(List<StageTransforms.ExteriorInteriorElement> listOfExIntStage, StageTransforms.ExteriorInteriorElement selectedElement ):base()
         {
             SelectedElement = selectedElement;
             ListOfExteriorInteriorStageElements = listOfExIntStage;
-            _owner = owner;
         }
         #endregion
         #region Voids
 
         public void LaunchNewExteriorInteriorStage(object sender,EventArgs e)
         {
-            if (_owner != null)
-            {
-                List<StageTransforms.ExteriorInteriorOwnerElement> eles = _owner.GetElementsOfType<StageTransforms.ExteriorInteriorOwnerElement>();
-                if (eles.Count > 0)
-                {
-                    eles.FirstOrDefault().AddNewExteriorInteriorCurve(sender, e);
-                    //need to determine what the most recent element is and see if we already have it.
-                    if (eles.FirstOrDefault().Elements.Count > 0)
-                    {
-                        if (eles.FirstOrDefault().Elements.Count > ListOfExteriorInteriorStageElements.Count)
-                        {
+            //if (_owner != null)
+            //{
+            //    List<StageTransforms.ExteriorInteriorOwnerElement> eles = _owner.GetElementsOfType<StageTransforms.ExteriorInteriorOwnerElement>();
+            //    if (eles.Count > 0)
+            //    {
+            //        eles.FirstOrDefault().AddNewExteriorInteriorCurve(sender, e);
+            //        //need to determine what the most recent element is and see if we already have it.
+            //        if (eles.FirstOrDefault().Elements.Count > 0)
+            //        {
+            //            if (eles.FirstOrDefault().Elements.Count > ListOfExteriorInteriorStageElements.Count)
+            //            {
 
-                            List<StageTransforms.ExteriorInteriorElement> theNewList = new List<StageTransforms.ExteriorInteriorElement>();
-                            for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-                            {
-                                theNewList.Add((StageTransforms.ExteriorInteriorElement)eles.FirstOrDefault().Elements[i]);
-                            }
-                            ListOfExteriorInteriorStageElements = theNewList;
-                            //ExteriorInteriorList.Add((StageTransforms.ExteriorInteriorElement)eles.FirstOrDefault().Elements.Last());
-                            SelectedElement = ListOfExteriorInteriorStageElements.Last();
-                        }
-                    }
-                }
-            }
+            //                List<StageTransforms.ExteriorInteriorElement> theNewList = new List<StageTransforms.ExteriorInteriorElement>();
+            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
+            //                {
+            //                    theNewList.Add((StageTransforms.ExteriorInteriorElement)eles.FirstOrDefault().Elements[i]);
+            //                }
+            //                ListOfExteriorInteriorStageElements = theNewList;
+            //                //ExteriorInteriorList.Add((StageTransforms.ExteriorInteriorElement)eles.FirstOrDefault().Elements.Last());
+            //                SelectedElement = ListOfExteriorInteriorStageElements.Last();
+            //            }
+            //        }
+            //    }
+            //}
         }
         public override void AddValidationRules()
         {
             AddRule(nameof(SelectedElement), () => { return (SelectedElement != null); }, "An Exterior Interior Curve has not been selected.");
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+       
         public void OKClicked()
         {
             Validate();

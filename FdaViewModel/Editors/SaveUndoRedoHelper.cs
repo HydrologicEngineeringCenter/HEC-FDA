@@ -18,14 +18,24 @@ namespace FdaViewModel.Editors
         private bool _RedoEnabled = false;
         private bool _IsImporter = false;
         private bool _IsFirstSave = true;
+        private int _ChangeTableIndex = 0;
 
-        public int ChangeIndex { get; set; }
+
+        public Func<BaseEditorVM, ChildElement> CreateElementFromEditorAction { get; set; }
+        public Action<BaseEditorVM, ChildElement> AssignValuesFromElementToEditorAction { get; set; }
+        public Action<BaseEditorVM, ChildElement> AssignValuesFromEditorToElementAction { get; set; }
+        public int ChangeIndex
+        {
+            get { return _ChangeTableIndex; }
+            set { _ChangeTableIndex = value;  }
+        }
         public ObservableCollection<Utilities.UndoRedoRowItem> UndoRedoRows
         {
             get { return _UndoRedoRows; }
             set { _UndoRedoRows = value;  }
         }
 
+        public string ChangeTableName { get; set; }
         public bool UndoEnabled
         {
             get { return _UndoEnabled; }
@@ -64,29 +74,50 @@ namespace FdaViewModel.Editors
         public Statistics.UncertainCurveDataCollection OldCurve { get; set; }
         //public OwnedElement SaveElement { get; set; } 
         //public Action<ChildElement> SaveAction { get; set; }
-        public Saving.IPersistable SavingManager { get; set; }
+        public Saving.IPersistableWithUndoRedo SavingManager { get; set; }
 
         #region Constructors
 
-        public SaveUndoRedoHelper(Saving.IPersistable savingManager)
-        {
-            _IsImporter = true;
+        //public SaveUndoRedoHelper(Saving.IPersistable savingManager)
+        //{
+        //    _IsImporter = true;
 
-            //SaveAction = savingAction;
-            SavingManager = savingManager;
-            UndoRedoRows = new ObservableCollection<UndoRedoRowItem>();
+        //    //SaveAction = savingAction;
+        //    SavingManager = savingManager;
+        //    UndoRedoRows = new ObservableCollection<UndoRedoRowItem>();
 
-            //LoadInitialStateOfUndoRedoValues();
-        }
+        //    //LoadInitialStateOfUndoRedoValues();
+        //}
         /// <summary>
-        /// This one is for opening and existing element to edit
+        /// This one is for opening an existing element to edit
         /// </summary>
         /// <param name="savingAction"></param>
         /// <param name="changeTableName"></param>
-        public SaveUndoRedoHelper(Saving.IPersistable savingManager, string changeTableName)
+        public SaveUndoRedoHelper(Saving.IPersistableWithUndoRedo savingManager, Func<BaseEditorVM, ChildElement> createElementFromEditorAction, Action<BaseEditorVM, ChildElement> assignValuesFromElementToEditorAction, Action<BaseEditorVM, ChildElement> assignValuesFromEditorToElementAction)
         {
+            //SavingManager.ChangeTableIndexChanged += UpdateStuff;
+            _IsImporter = true;
+            ChangeIndex = 0;
+            //ChangeTableName = changeTableName;
             SavingManager = savingManager;
-            LoadInitialStateOfUndoRedoValues(changeTableName);
+            AssignValuesFromElementToEditorAction = assignValuesFromElementToEditorAction;
+            AssignValuesFromEditorToElementAction = assignValuesFromEditorToElementAction;
+            CreateElementFromEditorAction = createElementFromEditorAction;
+            //if (_IsImporter == false)
+            //{
+            //    LoadInitialStateOfUndoRedoValues(changeTableName);
+            //}
+        }
+        public SaveUndoRedoHelper(Saving.IPersistableWithUndoRedo savingManager, ChildElement element, Func<BaseEditorVM, ChildElement> createElementFromEditorAction, Action<BaseEditorVM, ChildElement> assignValuesFromElementToEditorAction, Action<BaseEditorVM, ChildElement> assignValuesFromEditorToElementAction)
+        {
+            _IsImporter = false;
+            SavingManager = savingManager;
+            ChangeIndex = 0;
+            //ChangeTableName = savingManager.ChangeTableConstant + element.Name + "-ChangeTable";        
+            LoadInitialStateOfUndoRedoValues(element);
+            AssignValuesFromElementToEditorAction = assignValuesFromElementToEditorAction;
+            AssignValuesFromEditorToElementAction = assignValuesFromEditorToElementAction;
+            CreateElementFromEditorAction = createElementFromEditorAction;
         }
 
         //public SaveUndoRedoHelper( Action<SaveUndoRedoHelper> savingAction)
@@ -100,8 +131,14 @@ namespace FdaViewModel.Editors
 
         #endregion
 
+        private void UpdateUndoRedo()
+        {
+            UpdateIndividualUndoRedoRows();
+            UpdateUndoRedoVisibility(ChangeIndex);
+        }
+
         //there should just be one save here. The two save options in the owner element should just take an OwnedElement and save that. Name pre processing should happen here
-        public void Save(string oldName, Statistics.UncertainCurveDataCollection oldCurve, ChildElement elementToSave)
+        public void Save(string oldName, ChildElement oldElement, ChildElement elementToSave)
         {
 
             //if (SaveElement == null)//then this is a new element and first time saving
@@ -113,9 +150,9 @@ namespace FdaViewModel.Editors
             //should i check if the row and the curve has changed here?
             OldName = oldName;
             string newName = elementToSave.Name;
-            OldCurve = oldCurve;
+            OldCurve = oldElement.Curve;// oldCurve;
 
-            elementToSave.ChangeIndex = ChangeIndex;
+            //elementToSave.ChangeIndex = ChangeIndex;
             //SaveElement = elementToSave;
             // SaveAction.Invoke( (T)elementToSave);
             if (_IsImporter && _IsFirstSave)
@@ -125,19 +162,18 @@ namespace FdaViewModel.Editors
             }
             else
             {
-                SavingManager.SaveExisting(elementToSave, OldName, OldCurve);
+                SavingManager.SaveExisting(oldElement, elementToSave,ChangeIndex);
             }
 
             ChangeIndex = 0;
             //add a row to the undoredorows
-            UndoRedoRows = CreateUndoRedoRows(elementToSave.ChangeTableName());
-            UpdateIndividualUndoRedoRows();
-            UpdateUndoRedoVisibility(0, elementToSave.ChangeTableName());
+            UndoRedoRows = SavingManager.CreateUndoRedoRows(elementToSave);
+            UpdateUndoRedo();
         }
 
         #region Undo/Redo
 
-        public void LoadInitialStateOfUndoRedoValues(string changeTableName)
+        public void LoadInitialStateOfUndoRedoValues(ChildElement element)
         {
             //if (SaveElement == null)
             //{
@@ -145,31 +181,16 @@ namespace FdaViewModel.Editors
             //}
             //else
             //{
-                UndoRedoRows = CreateUndoRedoRows(changeTableName);
-                UpdateIndividualUndoRedoRows();
-                UpdateUndoRedoVisibility(0, changeTableName);
-           // }
+                 UndoRedoRows = SavingManager.CreateUndoRedoRows(element);// CreateUndoRedoRows();
+            UpdateUndoRedo();
+
+            // }
         }
 
-        public ObservableCollection<UndoRedoRowItem> CreateUndoRedoRows(string changeTableName)
-        {
-            if(Storage.Connection.Instance.IsOpen != true)
-            {
-                Storage.Connection.Instance.Open();
-            }
-
-            DataBase_Reader.DataTableView tableView = Storage.Connection.Instance.GetTable(changeTableName);
-            if (tableView == null) { return new ObservableCollection<UndoRedoRowItem>(); }
-
-            int nameIndex = 0;
-            int dateIndex = 1;
-            ObservableCollection<UndoRedoRowItem> retVals = new ObservableCollection<UndoRedoRowItem>();
-            foreach (object[] row in tableView.GetRows(0, tableView.NumberOfRows - 1))
-            {
-                retVals.Add(new UndoRedoRowItem(row[nameIndex].ToString(), row[dateIndex].ToString()));
-            }
-            return retVals;
-        }
+        //public ObservableCollection<UndoRedoRowItem> CreateUndoRedoRows()
+        //{
+        //    return SavingManager.CreateUndoRedoRows();
+        //}
 
         private void UpdateIndividualUndoRedoRows()
         {
@@ -177,15 +198,15 @@ namespace FdaViewModel.Editors
             UndoRows = new ObservableCollection<UndoRedoRowItem>();
            RedoRows = new ObservableCollection<UndoRedoRowItem>();
 
-            int currentIndex = ChangeIndex;
+            //int currentIndex = SavingManager.ChangeTableIndex;
             //load the undo rows
-            for (int i = currentIndex + 1; i < UndoRedoRows.Count; i++)
+            for (int i = ChangeIndex + 1; i < UndoRedoRows.Count; i++)
             {
                 UndoRows.Add(UndoRedoRows[i]);
             }
 
             //load the redo rows
-            for(int j=currentIndex -1;j>=0;j--)
+            for(int j= ChangeIndex - 1;j>=0;j--)
             {
                 RedoRows.Add(UndoRedoRows[j]);
             }
@@ -193,61 +214,69 @@ namespace FdaViewModel.Editors
 
         public ChildElement UndoElement(ChildElement element)
         {
-            ChildElement prevElement = null;
-            if (Storage.Connection.Instance.IsOpen != true)
-            {
-                Storage.Connection.Instance.Open();
-            }
-            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(element.ChangeTableName());
-            if (ChangeIndex < changeTableView.NumberOfRows - 1)
-            {
-                prevElement = element.GetPreviousElementFromChangeTable(ChangeIndex + 1);
-                if (prevElement != null)// null if out of range index
-                {
-                    ChangeIndex += 1;
-                    UpdateUndoRedoVisibility(ChangeIndex, element.ChangeTableName());
-                    UpdateIndividualUndoRedoRows();
-                }
-            }
+            //ChildElement prevElement = null;
+            //if (Storage.Connection.Instance.IsOpen != true)
+            //{
+            //    Storage.Connection.Instance.Open();
+            //}
+            //DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(ChangeTableName);
+            //if (ChangeIndex < changeTableView.NumberOfRows - 1)
+            //{
+            //    prevElement = element.GetPreviousElementFromChangeTable(ChangeIndex + 1);
+            //    if (prevElement != null)// null if out of range index
+            //    {
+            //        ChangeIndex += 1;
+            //        UpdateUndoRedoVisibility(ChangeIndex, ChangeTableName);
+            //        UpdateIndividualUndoRedoRows();
+            //    }
+            //}
+            //return prevElement;
+            ChildElement prevElement = SavingManager.Undo(element, ChangeIndex);
+            ChangeIndex += 1;
+            UpdateUndoRedo();
             return prevElement;
         }
 
         public ChildElement RedoElement(ChildElement element)
         {
-            ChildElement nextElement = null;
-            if (Storage.Connection.Instance.IsOpen != true)
-            {
-                Storage.Connection.Instance.Open();
-            }
-            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(element.ChangeTableName());
-            if (changeTableView != null)
-            {
-                //get the previous state
-                if (ChangeIndex > 0)
-                {
-                    nextElement = (ChildElement)element.GetNextElementFromChangeTable(ChangeIndex - 1);
-                    if (nextElement != null)// null if out of range index
-                    {
-                        ChangeIndex -= 1;
-                        UpdateUndoRedoVisibility(ChangeIndex, element.ChangeTableName());
-                        UpdateIndividualUndoRedoRows();
-                    }
-                }
-            }
+            //ChildElement nextElement = null;
+            //if (Storage.Connection.Instance.IsOpen != true)
+            //{
+            //    Storage.Connection.Instance.Open();
+            //}
+            //DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(ChangeTableName);
+            //if (changeTableView != null)
+            //{
+            //    //get the previous state
+            //    if (ChangeIndex > 0)
+            //    {
+            //        nextElement = (ChildElement)element.GetNextElementFromChangeTable(ChangeIndex - 1);
+            //        if (nextElement != null)// null if out of range index
+            //        {
+            //            ChangeIndex -= 1;
+            //            UpdateUndoRedoVisibility(ChangeIndex, ChangeTableName);
+            //            UpdateIndividualUndoRedoRows();
+            //        }
+            //    }
+            //}
+            //return nextElement;
+            ChildElement nextElement = SavingManager.Redo(element, ChangeIndex);
+            ChangeIndex -= 1;
+            UpdateUndoRedo();
             return nextElement;
         }
 
 
-        public void UpdateUndoRedoVisibility( int currentIndex, string changeTableName)
+        public void UpdateUndoRedoVisibility( int currentIndex)
         {
             if (Storage.Connection.Instance.IsOpen != true)
             {
                 Storage.Connection.Instance.Open();
             }
-            DataBase_Reader.DataTableView tableView = Storage.Connection.Instance.GetTable(changeTableName);
-            if (tableView == null) { return; }
+            //DataBase_Reader.DataTableView tableView = Storage.Connection.Instance.GetTable(changeTableName);
+            //if (tableView == null) { return; }
 
-            int numRows = tableView.NumberOfRows;
+            int numRows = UndoRedoRows.Count;
             //if only 0 or 1 rows, there is no back and forth
             if (numRows < 2)
             {
@@ -276,10 +305,7 @@ namespace FdaViewModel.Editors
             //throw new NotImplementedException();
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+      
 
         #endregion
 

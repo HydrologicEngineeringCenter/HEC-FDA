@@ -29,10 +29,10 @@ namespace FdaViewModel.StageTransforms
         #region Properties
         public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
 
-        public int SelectedIndexInUndoList
-        {
-            set { CurrentElement.ChangeIndex += value + 1; Undo(); }
-        }
+        //public int SelectedIndexInUndoList
+        //{
+        //    set { CurrentElement.ChangeIndex += value + 1; Undo(); }
+        //}
         public string Description
         {
             get { return _Description; }
@@ -63,34 +63,37 @@ namespace FdaViewModel.StageTransforms
 
          }
 
-        public ExteriorInteriorEditorVM(ExteriorInteriorElement elem, Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) :base()// string name, string description, Statistics.UncertainCurveDataCollection curve):base()
+        public ExteriorInteriorEditorVM(ExteriorInteriorElement elem, Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) :base(elem)// string name, string description, Statistics.UncertainCurveDataCollection curve):base()
         {
             ownerValidationRules(this);
 
             CurrentElement = elem;
-            CurrentElement.ChangeIndex = 0;
+            //CurrentElement.ChangeIndex = 0;
 
             AssignValuesFromElementToEditor(elem);
 
             SaveAction = saveAction;
 
-            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
+            //DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
             //UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
 
         }
         #endregion
         #region Voids
-
-        public override void Undo()
+        public override void Save()
+        {
+            throw new NotImplementedException();
+        }
+        public  void Undo()
         {
             //UndoElement(this);
         }
 
-        public override void Redo()
+        public  void Redo()
         {
             //RedoElement(this);
         }
-        public override void SaveWhileEditing()
+        public  void SaveWhileEditing()
         {
            // SaveAction(this);
             //_OwnerNode.SaveElementWhileEditing(this);
@@ -100,10 +103,7 @@ namespace FdaViewModel.StageTransforms
             AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+      
 
         public void AssignValuesFromElementToEditor(ChildElement element)
         {
@@ -111,12 +111,12 @@ namespace FdaViewModel.StageTransforms
             Name = elem.Name;
             LastEditDate = elem.LastEditDate;
             Description = elem.Description;
-            Curve = elem.ExteriorInteriorCurve;
+            Curve = elem.Curve;
         }
 
         public UncertainCurveDataCollection GetTheElementsCurve()
         {
-            return ((ExteriorInteriorElement)CurrentElement).ExteriorInteriorCurve;
+            return ((ExteriorInteriorElement)CurrentElement).Curve;
         }
 
         public UncertainCurveDataCollection GetTheEditorsCurve()
@@ -129,7 +129,7 @@ namespace FdaViewModel.StageTransforms
             CurrentElement.LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             CurrentElement.Name = Name;
             ((ExteriorInteriorElement)CurrentElement).Description = Description;
-            ((ExteriorInteriorElement)CurrentElement).ExteriorInteriorCurve = Curve;
+            ((ExteriorInteriorElement)CurrentElement).Curve = Curve;
         }
         public void UpdateTheUndoRedoRowItems()
         {

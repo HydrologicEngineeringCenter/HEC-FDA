@@ -60,10 +60,7 @@ namespace FdaViewModel.ImpactArea
 
         }
 
-        public override void Save()
-        {
-            throw new NotImplementedException();
-        }
+    
         #endregion
         #region Voids
         #endregion

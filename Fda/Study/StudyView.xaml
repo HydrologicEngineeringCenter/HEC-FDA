@@ -79,13 +79,13 @@
             
             <TabItem Header="Study Tree" Name="StudyTree">
                 <Grid>
-                    <TreeView Name="StudyTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding StudyElement.Elements}" >
+                    <TreeView Name="StudyTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding StudyElement.Elements, Mode=TwoWay}" >
                         <!---->
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}"> 
                                 <Setter Property="Header" Value="{Binding CustomTreeViewHeader}"/>
                                 <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
-                                <Setter Property="ItemsSource" Value="{Binding Elements}"/>
+                                <Setter Property="ItemsSource" Value="{Binding Elements, Mode=TwoWay}"/>
                                 <Setter Property="FontSize" Value="{Binding FontSize}" />
                                 <Setter Property="FontWeight" Value="{Binding IsBold,Converter={StaticResource BoolToBoldConverter}}" />
                                 <Setter Property="ContextMenu" Value="{Binding Actions, Converter={StaticResource converter }}"/>

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FdaViewModel.Editors;
+using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,15 +19,7 @@ namespace FdaViewModel.FrequencyRelationships
         private Statistics.LogPearsonIII _Distribution;
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return _TableConstant;
-        }
-        public string Description
-        {
-            get { return _Description; }
-            set { _Description = value; NotifyPropertyChanged(); }
-        }
+      
         public Statistics.LogPearsonIII Distribution
         {
             get { return _Distribution; }
@@ -48,7 +42,7 @@ namespace FdaViewModel.FrequencyRelationships
 
             Utilities.NamedAction removeflowfreq = new Utilities.NamedAction();
             removeflowfreq.Header = "Remove";
-            removeflowfreq.Action = Remove;
+            removeflowfreq.Action = RemoveElement;
 
             Utilities.NamedAction renameElement = new Utilities.NamedAction();
             renameElement.Header = "Rename";
@@ -65,50 +59,92 @@ namespace FdaViewModel.FrequencyRelationships
 
         #endregion
         #region Voids
+        public void RemoveElement(object sender, EventArgs e)
+        {
+            Saving.PersistenceFactory.GetFlowFrequencyManager(StudyCache).Remove(this);
+        }
         public void EditFlowFreq(object arg1, EventArgs arg2)
         {
-            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this);// Name, Distribution, Description, _Owner);
-            Navigate(vm, true, true);
-            if (!vm.WasCanceled)
-            {
-                if (!vm.HasError)
-                {
-                    vm.SaveWhileEditing();
-                }
-            }
-        }
-    
-    public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
-        public override void Save()
-        {
-            throw new NotImplementedException();
+
+            //create save helper
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFlowFrequencyManager(StudyCache)
+                ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
+                (editor, element) => AssignValuesFromEditorToElement(editor, element));
+            //create action manager
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                .WithSaveUndoRedo(saveHelper);
+
+            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this, actionManager);// Name, Distribution, Description, _Owner);
+            Navigate(vm, false, false, "Edit Frequency");
+            //if (!vm.WasCanceled)
+            //{
+            //    if (!vm.HasError)
+            //    {
+            //        vm.SaveWhileEditing();
+            //    }
+            //}
         }
 
-        public override object[] RowData()
+        public override ChildElement CloneElement(ChildElement elementToClone)
         {
-            return new object[] { Name, LastEditDate, Description, Distribution.GetMean, Distribution.GetStDev, Distribution.GetG, Distribution.GetSampleSize };
+            AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)elementToClone;
+            return new AnalyticalFrequencyElement(elem.Name, elem.LastEditDate, elem.Description,elem.Distribution);
         }
 
-        public override bool SavesToRow()
+        public void AssignValuesFromEditorToElement(BaseEditorVM editorVM, ChildElement elem)
         {
-            return true;
+            AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)editorVM;
+            AnalyticalFrequencyElement element = (AnalyticalFrequencyElement)elem;
+            element.Name = vm.Name;
+            element.Description = vm.Description;
+            element.Distribution = vm.Distribution;
+            element.UpdateTreeViewHeader(vm.Name);
         }
-        public override bool SavesToTable()
+
+        public void AssignValuesFromElementToEditor(BaseEditorVM editorVM, ChildElement elem)
         {
-            return false;
+            AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)editorVM;
+            AnalyticalFrequencyElement element = (AnalyticalFrequencyElement)elem;
+
+            vm.Name = element.Name;
+            vm.Description = element.Description;
+            vm.Distribution = element.Distribution;
+
         }
-        #endregion
-        #region Functions
-        public override string TableName
+
+        public ChildElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            return new AnalyticalFrequencyElement(editorVM.Name, editDate, editorVM.Description, ((AnalyticalFrequencyEditorVM)editorVM).Distribution);
+            //return null;
         }
+        //public override void Save()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public override object[] RowData()
+        //{
+        //    return new object[] { Name, LastEditDate, Description, Distribution.GetMean, Distribution.GetStDev, Distribution.GetG, Distribution.GetSampleSize };
+        //}
+
+        //public override bool SavesToRow()
+        //{
+        //    return true;
+        //}
+        //public override bool SavesToTable()
+        //{
+        //    return false;
+        //}
+        //#endregion
+        //#region Functions
+        //public override string TableName
+        //{
+        //    get
+        //    {
+        //        throw new NotImplementedException();
+        //    }
+        //}
         #endregion
 
     }

@@ -18,10 +18,7 @@ namespace FdaViewModel.FlowTransforms
         #region Fields
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+       
         #endregion
         #region Constructors
         public FlowTransformsOwnerElement(BaseFdaElement owner) : base(owner)
@@ -34,49 +31,49 @@ namespace FdaViewModel.FlowTransforms
         #endregion
         #region Functions
         #endregion
-        public override string TableName
-        {
-            get
-            {
-                return "Flow Transforms";
-            }
-        }
+        //public override string TableName
+        //{
+        //    get
+        //    {
+        //        return "Flow Transforms";
+        //    }
+        //}
 
         public  void AddBaseElements()
         {
             InflowOutflowOwnerElement io = new InflowOutflowOwnerElement(this);
             AddElement(io);
         }
-        public override void Save()
-        {
-            foreach (Utilities.ChildElement ele in _Elements)
-            {
-                ele.Save();
-            }
-        }
+        //public override void Save()
+        //{
+        //    foreach (Utilities.ChildElement ele in _Elements)
+        //    {
+        //        ele.Save();
+        //    }
+        //}
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
         }
 
 
-        public override string[] TableColumnNames()
-        {
-            throw new NotImplementedException();
-        }
+        //public override string[] TableColumnNames()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public override Type[] TableColumnTypes()
-        {
-            throw new NotImplementedException();
-        }
-        public override bool SavesToTable()
-        {
-            return false;
-        }
+        //public override Type[] TableColumnTypes()
+        //{
+        //    throw new NotImplementedException();
+        //}
+        //public override bool SavesToTable()
+        //{
+        //    return false;
+        //}
 
-        public override void AddElementFromRowData(object[] rowData)
-        {
-            //throw new NotImplementedException();
-        }
+        //public override void AddElementFromRowData(object[] rowData)
+        //{
+        //    //throw new NotImplementedException();
+        //}
     }
 }

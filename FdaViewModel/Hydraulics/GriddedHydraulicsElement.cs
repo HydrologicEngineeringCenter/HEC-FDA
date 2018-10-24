@@ -5,6 +5,7 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.Hydraulics
 {
@@ -23,10 +24,7 @@ namespace FdaViewModel.Hydraulics
         private List<string> _AvailableGrids;
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return _TableConstant;
-        }
+      
         public List<string> AvailableGrids
         {
             get { return _AvailableGrids; }
@@ -59,13 +57,7 @@ namespace FdaViewModel.Hydraulics
             set { _Description = value; NotifyPropertyChanged(); }
         }
 
-        public override string TableName
-        {
-            get
-            {
-                return GetTableConstant() + Name;
-            }
-        }
+    
         #endregion
         #region Constructors
         public GriddedHydraulicsElement(BaseFdaElement owner, GridImporterVM vm) : base(owner)
@@ -100,26 +92,21 @@ namespace FdaViewModel.Hydraulics
             //throw new NotImplementedException();
         }
 
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
 
-        public override object[] RowData()
-        {
-            return new object[] { Name };
-        }
 
-        public override bool SavesToRow()
-        {
-            return true;
-        }
-        public override bool SavesToTable()
-        {
-            return false;
-        }
+        //public override object[] RowData()
+        //{
+        //    return new object[] { Name };
+        //}
+
+
+
         #endregion
         #region Functions
+        public override ChildElement CloneElement(ChildElement elementToClone)
+        {
+            return null;
+        }
         #endregion
 
     }

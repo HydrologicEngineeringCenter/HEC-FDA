@@ -5,6 +5,8 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using FdaViewModel.Utilities;
+using FdaViewModel.Editors;
 
 namespace FdaViewModel.GeoTech
 {
@@ -25,10 +27,7 @@ namespace FdaViewModel.GeoTech
 
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return _TableConstant;
-        }
+       
         public LeveeFeatureElement SelectedLateralStructure
         {
             get { return _SelectedLateralStructure; }
@@ -72,9 +71,9 @@ namespace FdaViewModel.GeoTech
 
             Utilities.NamedAction removeFailureFunctionCurve = new Utilities.NamedAction();
             removeFailureFunctionCurve.Header = "Remove";
-            removeFailureFunctionCurve.Action = Remove;
+            removeFailureFunctionCurve.Action = RemoveElement;
 
-            Utilities.NamedAction renameElement = new Utilities.NamedAction();
+            Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
             renameElement.Header = "Rename";
             renameElement.Action = Rename;
 
@@ -89,8 +88,27 @@ namespace FdaViewModel.GeoTech
         }
         #endregion
         #region Voids
+
+        public void RemoveElement(object sender, EventArgs e)
+        {
+            Saving.PersistenceFactory.GetFailureFunctionManager(StudyCache).Remove(this);
+        }
         public void EditFailureFunctionCurve(object arg1, EventArgs arg2)
         {
+            List<LeveeFeatureElement> leveeList = StudyCache.LeveeElements;
+
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFailureFunctionManager(StudyCache)
+                ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
+                (editor, element) => AssignValuesFromEditorToElement(editor, element));
+            //create action manager
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
+                .WithSaveUndoRedo(saveHelper);
+
+            Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(this, leveeList, actionManager);
+            StudyCache.AddSiblingRules(vm, this);
+
+            Navigate(vm, false, false, "Edit Failure Function");
             ////get the current list of levees
             //List<LeveeFeatureElement> leveeList = GetElementsOfType<LeveeFeatureElement>();
 
@@ -121,37 +139,50 @@ namespace FdaViewModel.GeoTech
         }
         #endregion
         #region Functions
-        #endregion
-        public override string TableName
+        public override ChildElement CloneElement(ChildElement elementToClone)
         {
-            get
-            {
-                return GetTableConstant() + LastEditDate;
-            }
+            FailureFunctionElement elem = (FailureFunctionElement)elementToClone;
+            return new FailureFunctionElement(elem.Name, elem.LastEditDate, elem.Description, elem.Curve, elem.SelectedLateralStructure);
         }
+        public ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
+        {
+            Editors.FailureFunctionCurveEditorVM editorVM = (Editors.FailureFunctionCurveEditorVM)vm;
+
+            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            return new FailureFunctionElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve, editorVM.SelectedLateralStructure);
+            //return null;
+        }
+
+        public void AssignValuesFromEditorToElement(BaseEditorVM editorVM, ChildElement elem)
+        {
+            FailureFunctionCurveEditorVM vm = (FailureFunctionCurveEditorVM)editorVM;
+            FailureFunctionElement element = (FailureFunctionElement)elem;
+
+            element.Name = vm.Name;
+            element.Description = vm.Description;
+            element.Curve = vm.Curve;
+            element.SelectedLateralStructure = vm.SelectedLateralStructure;
+            element.UpdateTreeViewHeader(vm.Name);
+        }
+
+        public void AssignValuesFromElementToEditor(BaseEditorVM editorVM, ChildElement elem)
+        {
+            FailureFunctionCurveEditorVM vm = (FailureFunctionCurveEditorVM)editorVM;
+            FailureFunctionElement element = (FailureFunctionElement)elem;
+
+            vm.Name = element.Name;
+            vm.Description = element.Description;
+            vm.Curve = element.Curve;
+            vm.SelectedLateralStructure = element.SelectedLateralStructure;
+        }
+        #endregion
+
 
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
         }
 
-        public override void Save()
-        {
-            Curve.toSqliteTable(TableName);
-        }
-
-        public override object[] RowData()
-        {
-            return new object[] { Name, LastEditDate, Description, _SelectedLateralStructure.Name, Curve.Distribution };
-        }
-
-        public override bool SavesToRow()
-        {
-            return true;
-        }
-        public override bool SavesToTable()
-        {
-            return true;
-        }
+      
     }
 }

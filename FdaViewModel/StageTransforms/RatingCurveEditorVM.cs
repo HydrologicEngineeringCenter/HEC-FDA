@@ -28,21 +28,21 @@ namespace FdaViewModel.StageTransforms
         #endregion
         #region Properties
         public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
-        public int SelectedIndexInUndoList
-        {
-            set { CurrentElement.ChangeIndex += value + 1; Undo(); }
-        }
+        //public int SelectedIndexInUndoList
+        //{
+        //    set { CurrentElement.ChangeIndex += value + 1; Undo(); }
+        //}
 
         //public string Name
         //{
         //    get { return _Name; }
         //    set { _Name = value; NotifyPropertyChanged(); }
         //}
-        public string Description
-        {
-            get { return _Description; }
-            set { _Description = value; NotifyPropertyChanged(); }
-        }
+        //public string Description
+        //{
+        //    get { return _Description; }
+        //    set { _Description = value; NotifyPropertyChanged(); }
+        //}
         public bool ReadOnly
         {
             get { return _ReadOnly; }
@@ -57,7 +57,7 @@ namespace FdaViewModel.StageTransforms
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
         }
-        public ChildElement CurrentElement { get; set; }
+        //public ChildElement CurrentElement { get; set; }
 
         //public RatingCurveOwnerElement OwnerNode { get; set; }
 
@@ -92,29 +92,33 @@ namespace FdaViewModel.StageTransforms
             SaveAction = savingAction;
 
             CurrentElement = elem;
-            CurrentElement.ChangeIndex = 0;// elem.ChangeIndex; 
+           // CurrentElement.ChangeIndex = 0;// elem.ChangeIndex; 
             AssignValuesFromElementToEditor(elem);
 
-            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
+            //DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
             //UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
 
         }
         #endregion
         #region Voids
-        public override void Undo()
+        public override void Save()
+        {
+            //throw new NotImplementedException();
+        }
+        public  void Undo()
         {
            // UndoElement(this);
         }
        
     
 
-        public override void Redo()
+        public  void Redo()
         {
             //RedoElement(this);
             
         }
 
-        public override void SaveWhileEditing()
+        public  void SaveWhileEditing()
         {
             //SaveAction(this);
      }
@@ -132,10 +136,7 @@ namespace FdaViewModel.StageTransforms
         {
             AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
         }
-        public override void Save()
-        {
-            //throw new NotImplementedException();
-        }
+      
 
         public void AssignValuesFromElementToEditor(ChildElement element)
         {
@@ -161,19 +162,19 @@ namespace FdaViewModel.StageTransforms
           
         //}
       
-        public Statistics.UncertainCurveDataCollection GetTheElementsCurve()
-        {
-            return ((RatingCurveElement)CurrentElement).Curve;
-        }
-        public Statistics.UncertainCurveDataCollection GetTheEditorsCurve()
-        {
-            return Curve;
-        }
+        //public Statistics.UncertainCurveDataCollection GetTheElementsCurve()
+        //{
+        //    return ((RatingCurveElement)CurrentElement).Curve;
+        //}
+        //public Statistics.UncertainCurveDataCollection GetTheEditorsCurve()
+        //{
+        //    return Curve;
+        //}
 
-        public void UpdateNameWithNewValue(string name)
-        {
-            Name = name;
-        }
+        //public void UpdateNameWithNewValue(string name)
+        //{
+        //    Name = name;
+        //}
         #endregion
     }
 }

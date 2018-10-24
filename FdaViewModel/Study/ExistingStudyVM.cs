@@ -114,10 +114,7 @@ namespace FdaViewModel.Study
             }, "This file does not exist or is not the right file type.");
         }
 
-        public override void Save()
-        {
-            //create a new database via the model?
-        }
+     
         #endregion
         #region Functions
         #endregion

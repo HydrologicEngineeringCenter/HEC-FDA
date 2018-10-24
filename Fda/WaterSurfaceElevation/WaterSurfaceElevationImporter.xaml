@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Utilities="clr-namespace:Fda.Utilities"
              xmlns:local="clr-namespace:Fda.WaterSurfaceElevation"
              mc:Ignorable="d" 
                           xmlns:Util="clr-namespace:Fda.Utilities"
@@ -175,8 +176,8 @@
         </ListView>
         <Label Grid.Row="8" Grid.Column="0" Content="* An associated terrain will need to be defined before computing." />
 
-        <Button Name="btn_OK" Content="OK" Width="50" Height="22" Margin="5" Grid.Row="8" Grid.Column="1" HorizontalAlignment="Right" Click="btn_OK_Click"/>
-        <!--<Util:OKCloseControl HorizontalAlignment="Right" Grid.Row="8" Grid.Column="1" />-->
+        <!--<Button Name="btn_OK" Content="OK" Width="50" Height="22" Margin="5" Grid.Row="8" Grid.Column="1" HorizontalAlignment="Right" Click="btn_OK_Click"/>-->
+        <Util:OKCloseControl HorizontalAlignment="Right" Grid.Row="8" Grid.Column="1" />
 
     </Grid>
 </UserControl>

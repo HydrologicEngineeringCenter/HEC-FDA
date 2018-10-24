@@ -18,10 +18,7 @@ namespace FdaViewModel.GeoTech
         #region Fields
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+       
         #endregion
         #region Constructors
         public LateralStructuresOwnerElement(BaseFdaElement owner) : base(owner)
@@ -34,13 +31,13 @@ namespace FdaViewModel.GeoTech
         #endregion
         #region Functions
         #endregion
-        public override string TableName
-        {
-            get
-            {
-                return "Lateral Structures";
-            }
-        }
+        //public override string TableName
+        //{
+        //    get
+        //    {
+        //        return "Lateral Structures";
+        //    }
+        //}
 
         public  void AddBaseElements()
         {
@@ -51,28 +48,28 @@ namespace FdaViewModel.GeoTech
             AddElement(ff);
         }
 
-        public override void AddElementFromRowData(object[] rowData)
-        {
-            throw new NotImplementedException();
-        }
+        //public override void AddElementFromRowData(object[] rowData)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
         }
 
-        public override string[] TableColumnNames()
-        {
-            return new string[] { "Name" };
-        }
+        //public override string[] TableColumnNames()
+        //{
+        //    return new string[] { "Name" };
+        //}
 
-        public override Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string) };
-        }
-        public override bool SavesToTable()
-        {
-            return false;
-        }
+        //public override Type[] TableColumnTypes()
+        //{
+        //    return new Type[] { typeof(string) };
+        //}
+        //public override bool SavesToTable()
+        //{
+        //    return false;
+        //}
     }
 }

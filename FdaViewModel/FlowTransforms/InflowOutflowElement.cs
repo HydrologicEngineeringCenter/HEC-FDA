@@ -5,6 +5,7 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.FlowTransforms
 {
@@ -22,17 +23,13 @@ namespace FdaViewModel.FlowTransforms
         private Statistics.UncertainCurveDataCollection _Curve;
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return _TableConstant;
-        }
-        public string Description { get { return _Description; } set { _Description = value; NotifyPropertyChanged(); } }
+        //public override string GetTableConstant()
+        //{
+        //    return _TableConstant;
+        //}
+        //public string Description { get { return _Description; } set { _Description = value; NotifyPropertyChanged(); } }
 
-        public Statistics.UncertainCurveDataCollection InflowOutflowCurve
-        {
-            get { return _Curve; }
-            set { _Curve = value; NotifyPropertyChanged(); }
-        }
+      
 
         
 
@@ -47,7 +44,7 @@ namespace FdaViewModel.FlowTransforms
             
             Description = description;
             if (Description == null) Description = "";
-            InflowOutflowCurve = inflowOutflowCurve;
+            Curve = inflowOutflowCurve;
 
             Utilities.NamedAction editInflowOutflowCurve = new Utilities.NamedAction();
             editInflowOutflowCurve.Header = "Edit Inflow-Outflow Curve";
@@ -55,9 +52,9 @@ namespace FdaViewModel.FlowTransforms
 
             Utilities.NamedAction removeInflowOutflowCurve = new Utilities.NamedAction();
             removeInflowOutflowCurve.Header = "Remove";
-            removeInflowOutflowCurve.Action = Remove;
+            removeInflowOutflowCurve.Action = RemoveElement;
 
-            Utilities.NamedAction renameInflowOutflowCurve = new Utilities.NamedAction();
+            Utilities.NamedAction renameInflowOutflowCurve = new Utilities.NamedAction(this);
             renameInflowOutflowCurve.Header = "Rename";
             renameInflowOutflowCurve.Action = Rename;
 
@@ -72,6 +69,10 @@ namespace FdaViewModel.FlowTransforms
         }
         #endregion
         #region Voids
+        public void RemoveElement(object sender, EventArgs e)
+        {
+            Saving.PersistenceFactory.GetInflowOutflowManager(StudyCache).Remove(this);
+        }
         public void EditInflowOutflowCurve(object arg1, EventArgs arg2)
         {
             AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(Name, Utilities.Transactions.TransactionEnum.EditExisting, 
@@ -80,6 +81,20 @@ namespace FdaViewModel.FlowTransforms
             FdaModel.Utilities.Messager.ErrorMessage err = new FdaModel.Utilities.Messager.ErrorMessage("Test message when opening", FdaModel.Utilities.Messager.ErrorMessageEnum.Report, nameof(InflowOutflowElement));
             FdaModel.Utilities.Messager.Logger.Instance.ReportMessage(err);
 
+           
+            //create save helper
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetInflowOutflowManager(StudyCache)
+                ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
+                (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
+            //create action manager
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
+                .WithSaveUndoRedo(saveHelper);
+
+            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
+            StudyCache.AddSiblingRules(vm, this);
+            Navigate(vm, false, false, "Edit Inflow Outflow");
+
             //InflowOutflowEditorVM vm = new InflowOutflowEditorVM(this, (editorVM) =>((Utilities.OwnerElement)_Owner).SaveExistingElement(editorVM), (editorVM,oldName) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(editorVM,oldName));
             //Navigate(vm, true, true);
             //if (!vm.WasCancled)
@@ -87,20 +102,34 @@ namespace FdaViewModel.FlowTransforms
             //    if (!vm.HasFatalError)
             //    {
             //        vm.SaveWhileEditing();
-                    
+
             //    }
             //}
         }
+
         #endregion
         #region Functions
-        #endregion
-        public override string TableName
+        public ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
         {
-            get
-            {
-                return GetTableConstant() + LastEditDate;
-            }
+            Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
+
+            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            return new InflowOutflowElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
+            // return null;
         }
+        public override ChildElement CloneElement(ChildElement elementToClone)
+        {
+            InflowOutflowElement elem = (InflowOutflowElement)elementToClone;
+            return new InflowOutflowElement(elem.Name, elem.LastEditDate,elem.Description,elem.Curve);
+        }
+        #endregion
+        //public override string TableName
+        //{
+        //    get
+        //    {
+        //        return GetTableConstant() + LastEditDate;
+        //    }
+        //}
 
         public override void AddValidationRules()
         {
@@ -109,23 +138,23 @@ namespace FdaViewModel.FlowTransforms
             AddRule(nameof(Name), () => Name != "test", "Name cannot be test.", false);
         }
 
-        public override void Save()
-        {
-            _Curve.toSqliteTable(TableName);
-        }
-        public override object[] RowData()
-        {
-            return new object[] { Name, LastEditDate, Description, InflowOutflowCurve.Distribution };
-        }
+        //public override void Save()
+        //{
+        //    _Curve.toSqliteTable(TableName);
+        //}
+        //public override object[] RowData()
+        //{
+        //    return new object[] { Name, LastEditDate, Description, InflowOutflowCurve.Distribution };
+        //}
 
-        public override bool SavesToRow()
-        {
-            return true;
-        }
+        //public override bool SavesToRow()
+        //{
+        //    return true;
+        //}
 
-        public override bool SavesToTable()
-        {
-            return true;
-        }
+        //public override bool SavesToTable()
+        //{
+        //    return true;
+        //}
     }
 }

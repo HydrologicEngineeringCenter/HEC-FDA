@@ -20,10 +20,7 @@ namespace FdaViewModel.Inventory
         #region Fields
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+        
         #endregion
         #region Constructors
         public StructureInventoryOwnerElement(Utilities.ParentElement owner) : base(owner)
@@ -53,9 +50,20 @@ namespace FdaViewModel.Inventory
             Actions = localActions;
 
             StudyCache.StructureInventoryAdded += AddStructureInventoryElement;
+            StudyCache.StructureInventoryRemoved += RemoveStructureInventoryElement;
+            StudyCache.StructureInventoryUpdated += UpdateStructureInventoryElement;
         }
         #endregion
         #region Voids
+        private void UpdateStructureInventoryElement(object sender, Saving.ElementUpdatedEventArgs e)
+        {
+            UpdateElement(e.OldElement, e.NewElement);
+        }
+
+        private void RemoveStructureInventoryElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            RemoveElement(e.Element);
+        }
         private void AddStructureInventoryElement(object sender, Saving.ElementAddedEventArgs e)
         {
             AddElement(e.Element);
@@ -66,7 +74,7 @@ namespace FdaViewModel.Inventory
             // get any point shapefiles from the map window
             //List<string> pointShapePaths = new List<string>();
             //ShapefilePathsOfType(ref pointShapePaths, Utilities.VectorFeatureType.Point);
-            ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM((editorVM) => AddOwnerRules(editorVM));
+            ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM();
             Navigate(vm);
             if (!vm.WasCanceled)
             {
@@ -142,13 +150,7 @@ namespace FdaViewModel.Inventory
         #endregion
         #region Functions
         #endregion
-        public override string TableName
-        {
-            get
-            {
-                return "Structure Inventories";
-            }
-        }
+      
 
        
 
@@ -159,33 +161,33 @@ namespace FdaViewModel.Inventory
 
         
 
-        public override string[] TableColumnNames()
-        {
-            return new string[] { "Name" , "Description"};
-        }
+        //public override string[] TableColumnNames()
+        //{
+        //    return new string[] { "Name" , "Description"};
+        //}
 
-        public override Type[] TableColumnTypes()
-        {
-            return new Type[] { typeof(string),typeof(string) };
-        }
+        //public override Type[] TableColumnTypes()
+        //{
+        //    return new Type[] { typeof(string),typeof(string) };
+        //}
 
-        public override ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            //name, path, description
-            if (StructureInventoryLibrary.SharedData.StudyDatabase == null)
-            {
-                StructureInventoryLibrary.SharedData.StudyDatabase = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
+        //public override ChildElement CreateElementFromRowData(object[] rowData)
+        //{
+        //    //name, path, description
+        //    if (StructureInventoryLibrary.SharedData.StudyDatabase == null)
+        //    {
+        //        StructureInventoryLibrary.SharedData.StudyDatabase = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
 
 
-            }
-            StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[0], (string)rowData[1]);
+        //    }
+        //    StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[0], (string)rowData[1]);
 
-            InventoryElement invEle = new InventoryElement(baseElement, this);
-            return invEle;
-        }
-        public override void AddElementFromRowData(object[] rowData)
-        {
-            AddElement(CreateElementFromRowData(rowData),false);
-        }
+        //    InventoryElement invEle = new InventoryElement(baseElement, this);
+        //    return invEle;
+        //}
+        //public override void AddElementFromRowData(object[] rowData)
+        //{
+        //    AddElement(CreateElementFromRowData(rowData),false);
+        //}
     }
 }

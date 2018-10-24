@@ -26,6 +26,8 @@ namespace FdaViewModel
         public event RequestShapefilePathsOfTypeHandler RequestShapefilePathsOfType;
         public event RequestAddToMapWindowHandler RequestAddToMapWindow;
         public event RequestRemoveFromMapWindowHandler RequestRemoveFromMapWindow;
+        public TransactionEventHandler TransactionEvent;
+
         #endregion
         #region Fields
         /// <summary>
@@ -37,9 +39,9 @@ namespace FdaViewModel
         private bool _WasCanceled;
         private bool _HasChanges;
         private List<FdaModel.Utilities.Messager.ErrorMessage> _messages;
-        private Utilities.NamedAction _MessagesAction;
-        private Utilities.NamedAction _ErrorsAction;
-        private Utilities.NamedAction _HelpAction;
+        //private Utilities.NamedAction _MessagesAction;
+        //private Utilities.NamedAction _ErrorsAction;
+        //private Utilities.NamedAction _HelpAction;
 
 
 
@@ -82,21 +84,21 @@ namespace FdaViewModel
             get;
             set;
         }
-        public Utilities.NamedAction MessagesAction
-        {
-            get { return _MessagesAction; }
-            set { _MessagesAction = value; NotifyPropertyChanged(); }
-        }
-        public Utilities.NamedAction ErrorsAction
-        {
-            get { return _ErrorsAction; }
-            set { _ErrorsAction = value; NotifyPropertyChanged(); }
-        }
-        public Utilities.NamedAction HelpAction
-        {
-            get { return _HelpAction; }
-            set { _HelpAction = value; NotifyPropertyChanged(); }
-        }
+        //public Utilities.NamedAction MessagesAction
+        //{
+        //    get { return _MessagesAction; }
+        //    set { _MessagesAction = value; NotifyPropertyChanged(); }
+        //}
+        //public Utilities.NamedAction ErrorsAction
+        //{
+        //    get { return _ErrorsAction; }
+        //    set { _ErrorsAction = value; NotifyPropertyChanged(); }
+        //}
+        //public Utilities.NamedAction HelpAction
+        //{
+        //    get { return _HelpAction; }
+        //    set { _HelpAction = value; NotifyPropertyChanged(); }
+        //}
         public List<FdaModel.Utilities.Messager.ErrorMessage> Messages
         {
             get { return _messages; }
@@ -115,57 +117,60 @@ namespace FdaViewModel
         #region Constructors
         public BaseViewModel()
         {
-            _MessagesAction = new Utilities.NamedAction();
-            _ErrorsAction = new Utilities.NamedAction();
-            _HelpAction = new Utilities.NamedAction();
+            //_MessagesAction = new Utilities.NamedAction();
+            //_ErrorsAction = new Utilities.NamedAction();
+            //_HelpAction = new Utilities.NamedAction();
 
             AddValidationRules();
-            Utilities.NamedAction messageAction = new Utilities.NamedAction();
-            //_MessagesAction = new Utilities.NamedAction();
-            messageAction.Header = "";
-            messageAction.IsEnabled = false;
-            messageAction.IsVisible = false;
-            messageAction.Action = DisplayMessages;
-            MessagesAction = messageAction;
+            //Utilities.NamedAction messageAction = new Utilities.NamedAction();
+            ////_MessagesAction = new Utilities.NamedAction();
+            //messageAction.Header = "";
+            //messageAction.IsEnabled = false;
+            //messageAction.IsVisible = false;
+            //messageAction.Action = DisplayMessages;
+            //MessagesAction = messageAction;
 
-            Utilities.NamedAction errorAction = new Utilities.NamedAction();
-            errorAction.Header = "";
-            errorAction.IsEnabled = false;
-            errorAction.IsVisible = false;
-            errorAction.Action = DisplayErrors;
-            ErrorsAction = errorAction;
+            //Utilities.NamedAction errorAction = new Utilities.NamedAction();
+            //errorAction.Header = "";
+            //errorAction.IsEnabled = false;
+            //errorAction.IsVisible = false;
+            //errorAction.Action = DisplayErrors;
+            //ErrorsAction = errorAction;
 
-            Utilities.NamedAction helpAction = new Utilities.NamedAction();
-            helpAction.Header = "";
-            helpAction.IsEnabled = true;
-            helpAction.IsVisible = true;
-            helpAction.Action = DisplayHelp;
-            HelpAction = helpAction;
+            //Utilities.NamedAction helpAction = new Utilities.NamedAction();
+            //helpAction.Header = "";
+            //helpAction.IsEnabled = true;
+            //helpAction.IsVisible = true;
+            //helpAction.Action = DisplayHelp;
+            //HelpAction = helpAction;
         }
         #endregion
         #region Voids
-   
-       
 
-        private void DisplayErrors(object arg1, EventArgs arg2)
+        public void AddTransaction(object sender, Utilities.Transactions.TransactionEventArgs transaction)
         {
-            Utilities.MessageVM mvm = new Utilities.MessageVM(Error);
-            Navigate(mvm, true, false, "Errors");
+            TransactionEvent?.Invoke(this, transaction);
+        }
 
-        }
-        private void DisplayHelp(object arg1, EventArgs arg2)
-        {
-            Utilities.MessageVM mvm = new Utilities.MessageVM("Help");
-            Navigate(mvm, true, false, "Help for " + GetType().Name);
-        }
-        private void DisplayMessages(object arg1, EventArgs arg2)
-        {
-            //Utilities.MessagesVM mvm = new Utilities.MessagesVM(_messages);
-            Utilities.MessagesVM mvm = new Utilities.MessagesVM();
+        //private void DisplayErrors(object arg1, EventArgs arg2)
+        //{
+        //    Utilities.MessageVM mvm = new Utilities.MessageVM(Error);
+        //    Navigate(mvm, true, false, "Errors");
 
-            Navigate(mvm, true, false, "Messages");
-        }
-        abstract public void AddValidationRules();
+        //}
+        //private void DisplayHelp(object arg1, EventArgs arg2)
+        //{
+        //    Utilities.MessageVM mvm = new Utilities.MessageVM("Help");
+        //    Navigate(mvm, true, false, "Help for " + GetType().Name);
+        //}
+        //private void DisplayMessages(object arg1, EventArgs arg2)
+        //{
+        //    //Utilities.MessagesVM mvm = new Utilities.MessagesVM(_messages);
+        //    Utilities.MessagesVM mvm = new Utilities.MessagesVM();
+
+        //    Navigate(mvm, true, false, "Messages");
+        //}
+        virtual public void AddValidationRules() { }
         public void Validate()
         {
             _HasError = false;
@@ -198,7 +203,7 @@ namespace FdaViewModel
                 Error = null;
             }
         }
-        abstract public void Save();
+        //virtual public void Save() { }
         
         protected void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
@@ -207,22 +212,22 @@ namespace FdaViewModel
             if (propertyName.Equals(nameof(HasError)) || propertyName.Equals(nameof(HasFatalError)) || propertyName.Equals(nameof(Error)) || propertyName.Equals(nameof(Messages)))
             {
                 //do nothing
-                if (propertyName.Equals(nameof(HasError)))
-                {
-                    if (HasError)
-                    {
-                        _ErrorsAction.IsEnabled = true;
-                        _ErrorsAction.IsVisible = true;
+                //if (propertyName.Equals(nameof(HasError)))
+                //{
+                //    if (HasError)
+                //    {
+                //       // _ErrorsAction.IsEnabled = true;
+                //       // _ErrorsAction.IsVisible = true;
 
-                        _MessagesAction.IsEnabled = true;
-                        _MessagesAction.IsVisible = true;
+                //        //_MessagesAction.IsEnabled = true;
+                //       // _MessagesAction.IsVisible = true;
 
-                    }else
-                    {
-                        _ErrorsAction.IsEnabled = false;
-                        _ErrorsAction.IsVisible = false;
-                    }
-                }
+                //    }else
+                //    {
+                //        //_ErrorsAction.IsEnabled = false;
+                //       // _ErrorsAction.IsVisible = false;
+                //    }
+                //}
             }
             else
             {
@@ -314,8 +319,8 @@ namespace FdaViewModel
                     _messages.Add(error);
                 }
                 NotifyPropertyChanged(nameof(Messages));
-                _MessagesAction.IsEnabled = true;
-                _MessagesAction.IsVisible = true;
+                //_MessagesAction.IsEnabled = true;
+                //_MessagesAction.IsVisible = true;
             }
             if ((error.ErrorLevel & FdaModel.Utilities.Messager.ErrorMessageEnum.Report) > 0)
             {
@@ -377,18 +382,7 @@ namespace FdaViewModel
             FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
         }
 
-        public virtual void Undo()
-        {
-            //this is here to be overriden by those that want to
-        }
-        public virtual void Redo()
-        {
-            //this is here to be overriden by those that want to
-        }
-        public virtual void SaveWhileEditing()
-        {
-            //this is here to be overriden by those that want to
-        }
+        
 
         #endregion
         #region Functions

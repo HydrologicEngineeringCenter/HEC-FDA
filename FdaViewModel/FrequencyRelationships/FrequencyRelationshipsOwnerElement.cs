@@ -13,10 +13,10 @@ namespace FdaViewModel.FrequencyRelationships
         #region Fields
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+        //public override string GetTableConstant()
+        //{
+        //    return TableName;
+        //}
         #endregion
         #region Constructors
         public FrequencyRelationshipsOwnerElement(BaseFdaElement owner) : base(owner)
@@ -51,37 +51,37 @@ namespace FdaViewModel.FrequencyRelationships
         }
         #endregion
         #region Functions
-        public override string TableName
-        {
-            get
-            {
-                return "";
-            }
-        }
-        public override void Save()
-        {
-            foreach (Utilities.ChildElement ele in _Elements)
-            {
-                ele.Save();
-            }
-        }
+        //public override string TableName
+        //{
+        //    get
+        //    {
+        //        return "";
+        //    }
+        //}
+        //public override void Save()
+        //{
+        //    foreach (Utilities.ChildElement ele in _Elements)
+        //    {
+        //        ele.Save();
+        //    }
+        //}
 
-        public override string[] TableColumnNames()
-        {
-            throw new NotImplementedException();
-        }
-        public override Type[] TableColumnTypes()
-        {
-            throw new NotImplementedException();
-        }
-        public override void AddElementFromRowData(object[] rowData)
-        {
-            //AddElement(new InflowOutflowElement((string)rowData[0], (string)rowData[1], new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None), this));
-        }
-        public override bool SavesToTable()
-        {
-            return false;
-        }
+        //public override string[] TableColumnNames()
+        //{
+        //    throw new NotImplementedException();
+        //}
+        //public override Type[] TableColumnTypes()
+        //{
+        //    throw new NotImplementedException();
+        //}
+        //public override void AddElementFromRowData(object[] rowData)
+        //{
+        //    //AddElement(new InflowOutflowElement((string)rowData[0], (string)rowData[1], new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None), this));
+        //}
+        //public override bool SavesToTable()
+        //{
+        //    return false;
+        //}
         #endregion
     }
 }

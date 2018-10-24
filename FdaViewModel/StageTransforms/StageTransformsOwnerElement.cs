@@ -14,10 +14,7 @@ namespace FdaViewModel.StageTransforms
         #region Fields
         #endregion
         #region Properties
-        public override string GetTableConstant()
-        {
-            return TableName;
-        }
+     
         #endregion
         #region Constructors
         public StageTransformsOwnerElement(BaseFdaElement owner) : base(owner)
@@ -49,40 +46,8 @@ namespace FdaViewModel.StageTransforms
         }
         #endregion
         #region Functions
-        public override string TableName
-        {
-            get
-            {
-                return "";
-            }
-        }
-        public override void Save()
-        {
-            foreach(Utilities.ChildElement ele in _Elements)
-            {
-                ele.Save();
-            }
-        }
-        public override string[] TableColumnNames()
-        {
-            throw new NotImplementedException();
-        }
-        public override Type[] TableColumnTypes()
-        {
-            throw new NotImplementedException();
-        }
-        public override bool SavesToTable()
-        {
-            return false;
-        }
-        public override ChildElement CreateElementFromRowData(object[] rowData)
-        {
-            return null;
-        }
-        public override void AddElementFromRowData(object[] rowData)
-        {
-            
-        }
+ 
+     
         #endregion
     }
 }
