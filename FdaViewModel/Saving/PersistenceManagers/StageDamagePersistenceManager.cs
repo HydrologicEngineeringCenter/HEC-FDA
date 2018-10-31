@@ -14,8 +14,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         private const string TableName = "Aggregated Stage Damage Relationships";
         internal override string ChangeTableConstant { get { return "Aggregated Stage Damage Function - "; } }
-        private static readonly string[] TableColumnNames = { "Name", "Last Edit Date", "Description", "Curve Uncertainty Type", "Creation Method" };
-        private static readonly Type[] TableColumnTypes = { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
+        private static readonly string[] TableColumnNames = { "Name", "Last Edit Date", "Description", "Curve Uncertainty Type", "Creation Method", "Curve" };
+        private static readonly Type[] TableColumnTypes = { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
 
 
         public StageDamagePersistenceManager(Study.FDACache studyCache)
@@ -28,14 +28,15 @@ namespace FdaViewModel.Saving.PersistenceManagers
         #region utilities
         private object[] GetRowDataFromElement(AggregatedStageDamageElement element)
         {
-            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.Distribution, element.Method };
+            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.Distribution, element.Method, ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues) };
 
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             Statistics.UncertainCurveDataCollection emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
             AggregatedStageDamageElement asd = new AggregatedStageDamageElement((string)rowData[0], (string)rowData[1], (string)rowData[2], emptyCurve, (CreationMethodEnum)Enum.Parse(typeof(CreationMethodEnum), (string)rowData[4]));
-            asd.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
+            //asd.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
+            asd.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[5], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
             return asd;
         }
         #endregion
@@ -51,7 +52,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
                 SaveNewElementToParentTable(GetRowDataFromElement((AggregatedStageDamageElement)element), TableName, TableColumnNames, TableColumnTypes);
                 SaveElementToChangeTable(element.Name, GetRowDataFromElement((AggregatedStageDamageElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
-                SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
+                //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
                 //add the rating element to the cache which then raises event that adds it to the owner element
                 StudyCache.AddStageDamageElement((AggregatedStageDamageElement)element);
             }
@@ -72,7 +73,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((AggregatedStageDamageElement)elementToSave), oldElement.Name, TableName) || AreCurvesDifferent(oldElement.Curve, elementToSave.Curve))
             {
                 UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((AggregatedStageDamageElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
-                SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
+                //SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
                 // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
                 StudyCache.UpdateStageDamageElement((AggregatedStageDamageElement)oldElement, (AggregatedStageDamageElement)elementToSave);
             }

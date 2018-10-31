@@ -14,115 +14,119 @@ namespace FdaViewModel.Saving
 {
     public class PersistenceFactory
     {
+        public static Study.FDACache StudyCacheForSaving { get; set; }
+        public PersistenceFactory(Study.FDACache cache)
+        {
+            StudyCacheForSaving = cache;
+        }
 
-
-        public static IPersistable GetElementManager(Utilities.ChildElement element, Study.FDACache studyCache)
+        public static IPersistable GetElementManager(Utilities.ChildElement element)
         {
 
             if (element.GetType() == typeof(TerrainElement))
             {
-                return new TerrainElementPersistenceManager(studyCache);
+                return new TerrainElementPersistenceManager(StudyCacheForSaving);
             }
             else if(element.GetType() == typeof(RatingCurveElement))
             {
-                return new RatingElementPersistenceManager(studyCache);
+                return new RatingElementPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(RatingCurveElement))
             {
-                return new RatingElementPersistenceManager(studyCache);
+                return new RatingElementPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(ExteriorInteriorElement))
             {
-                return new ExteriorInteriorPersistenceManager(studyCache);
+                return new ExteriorInteriorPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(ImpactAreaElement))
             {
-                return new ImpactAreaPersistenceManager(studyCache);
+                return new ImpactAreaPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(WaterSurfaceElevationElement))
             {
-                return new WaterSurfaceAreaPersistenceManager(studyCache);
+                return new WaterSurfaceAreaPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(AnalyticalFrequencyElement))
             {
-                return new FlowFrequencyPersistenceManager(studyCache);
+                return new FlowFrequencyPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(FlowTransforms.InflowOutflowElement))
             {
-                return new InflowOutflowPersistenceManager(studyCache);
+                return new InflowOutflowPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(GeoTech.LeveeFeatureElement))
             {
-                return new LeveePersistenceManager(studyCache);
+                return new LeveePersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(GeoTech.FailureFunctionElement))
             {
-                return new FailureFunctionPersistenceManager(studyCache);
+                return new FailureFunctionPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(Inventory.InventoryElement))
             {
-                return new StructureInventoryPersistenceManager(studyCache);
+                return new StructureInventoryPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(AggregatedStageDamage.AggregatedStageDamageElement))
             {
-                return new StageDamagePersistenceManager(studyCache);
+                return new StageDamagePersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(Conditions.ConditionsElement))
             {
-                return new ConditionsPersistenceManager(studyCache);
+                return new ConditionsPersistenceManager(StudyCacheForSaving);
             }
             return null;
         }
 
-        public static RatingElementPersistenceManager GetRatingManager(Study.FDACache studyCache)
+        public static RatingElementPersistenceManager GetRatingManager()
         {
-            RatingElementPersistenceManager manager = new RatingElementPersistenceManager(studyCache);
+            RatingElementPersistenceManager manager = new RatingElementPersistenceManager(StudyCacheForSaving);
             return manager;
         }
        
-        public static TerrainElementPersistenceManager GetTerrainManager(Study.FDACache studyCache)
+        public static TerrainElementPersistenceManager GetTerrainManager()
         {
-            return new TerrainElementPersistenceManager(studyCache);
+            return new TerrainElementPersistenceManager(StudyCacheForSaving);
         }
-        public static  ImpactAreaPersistenceManager GetImpactAreaManager(Study.FDACache studyCache)
+        public static  ImpactAreaPersistenceManager GetImpactAreaManager( )
         {
-            return new ImpactAreaPersistenceManager(studyCache);
+            return new ImpactAreaPersistenceManager(StudyCacheForSaving);
         }
-        public static WaterSurfaceAreaPersistenceManager GetWaterSurfaceManager(Study.FDACache studyCache)
+        public static WaterSurfaceAreaPersistenceManager GetWaterSurfaceManager( )
         {
-            return new WaterSurfaceAreaPersistenceManager(studyCache);
+            return new WaterSurfaceAreaPersistenceManager(StudyCacheForSaving);
         }
-        public static FlowFrequencyPersistenceManager GetFlowFrequencyManager(Study.FDACache studyCache)
+        public static FlowFrequencyPersistenceManager GetFlowFrequencyManager( )
         {
-            return new FlowFrequencyPersistenceManager(studyCache);
+            return new FlowFrequencyPersistenceManager(StudyCacheForSaving);
         }
-        public static InflowOutflowPersistenceManager GetInflowOutflowManager(Study.FDACache studyCache)
+        public static InflowOutflowPersistenceManager GetInflowOutflowManager( )
         {
-            return new InflowOutflowPersistenceManager(studyCache);
+            return new InflowOutflowPersistenceManager(StudyCacheForSaving);
         }
-        public static ExteriorInteriorPersistenceManager GetExteriorInteriorManager(Study.FDACache studyCache)
+        public static ExteriorInteriorPersistenceManager GetExteriorInteriorManager( )
         {
-            return new ExteriorInteriorPersistenceManager(studyCache);
+            return new ExteriorInteriorPersistenceManager(StudyCacheForSaving);
         }
-        public static LeveePersistenceManager GetLeveeManager(Study.FDACache studyCache)
+        public static LeveePersistenceManager GetLeveeManager( )
         {
-            return new LeveePersistenceManager(studyCache);
+            return new LeveePersistenceManager(StudyCacheForSaving);
         }
-        public static FailureFunctionPersistenceManager GetFailureFunctionManager(Study.FDACache studyCache)
+        public static FailureFunctionPersistenceManager GetFailureFunctionManager( )
         {
-            return new FailureFunctionPersistenceManager(studyCache);
+            return new FailureFunctionPersistenceManager(StudyCacheForSaving);
         }
-        public static StageDamagePersistenceManager GetStageDamageManager(Study.FDACache studyCache)
+        public static StageDamagePersistenceManager GetStageDamageManager( )
         {
-            return new StageDamagePersistenceManager(studyCache);
+            return new StageDamagePersistenceManager(StudyCacheForSaving);
         }
-        public static StructureInventoryPersistenceManager GetStructureInventoryManager(Study.FDACache studyCache)
+        public static StructureInventoryPersistenceManager GetStructureInventoryManager( )
         {
-            return new StructureInventoryPersistenceManager(studyCache);
+            return new StructureInventoryPersistenceManager(StudyCacheForSaving);
         }
-        public static ConditionsPersistenceManager GetConditionsManager(Study.FDACache studyCache)
+        public static ConditionsPersistenceManager GetConditionsManager( )
         {
-            return new ConditionsPersistenceManager(studyCache);
+            return new ConditionsPersistenceManager(StudyCacheForSaving);
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Windows.Media;
 using OpenGLMapping;
 using System.IO;
 using System.Xml;
+using FdaViewModel.Utilities;
 
 namespace Fda
 {
@@ -27,6 +28,9 @@ namespace Fda
             test.RequestRemoveFromMapWindow += RequestRemoveFromMapWindow;
             vm.LaunchNewWindow += WindowSpawner;
             Closing += vm.OnClosing;
+
+            //hide the top row with the pop in button if this vm doesn't support that
+            MainGrid.RowDefinitions[0].Height = new GridLength(0);            
         }
 
        
@@ -160,14 +164,29 @@ namespace Fda
             newvm.LaunchNewWindow += WindowSpawner;
             Closing += newvm.OnClosing;
         }
+        private void btn_PopWindowInToTabs_Click(object sender, RoutedEventArgs e)
+        {
+            FdaViewModel.Utilities.WindowVM vm = (FdaViewModel.Utilities.WindowVM)this.DataContext;
+            FdaViewModel.BaseViewModel vmToPopIn = vm.CurrentView;
+            vmToPopIn.AddThisToTabs(new DynamicTabVM(vm.Title,vmToPopIn,true), true);         
+            Close();
+        }
+
+
         private void WindowSpawner(FdaViewModel.Utilities.WindowVM newvm, bool asDialogue)
         {
             newvm.WasCanceled = true;
             
             newvm.Scalable = false;
             ViewWindow newwindow = new ViewWindow(newvm);
-
             newwindow.Owner = this;
+
+            //hide the top row with the pop in button if this vm doesn't support that
+            if(newvm.CurrentView.CanPopIn == false)
+            {
+                newwindow.MainGrid.RowDefinitions[0].Height = new GridLength(0);
+            }
+
             if (asDialogue)
             {
                 newwindow.ShowDialog();
@@ -188,6 +207,11 @@ namespace Fda
             {
                 FdaViewModel.Study.FdaStudyVM studyVM = (FdaViewModel.Study.FdaStudyVM)vm.CurrentView;
                 studyVM.Dispose();
+            }
+            if (vm.CurrentView.RemoveFromTabsDictionary != null)
+            {
+
+                vm.CurrentView.RemoveFromTabsDictionary(vm.CurrentView.TabUniqueID);
             }
             vm.Dispose();
         }
@@ -286,5 +310,7 @@ namespace Fda
             this.ContextMenu = c;
 
         }
+
+       
     }
 }

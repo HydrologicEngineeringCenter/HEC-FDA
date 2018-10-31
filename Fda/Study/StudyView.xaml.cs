@@ -113,35 +113,36 @@ namespace Fda.Study
         //    }
         //}
 
-        private void btn_CloseTab_Click(object sender, RoutedEventArgs e)
-        {
-            DependencyObject currentControl = (DependencyObject)sender;
-            Type targetType = typeof(TabItem);
+        //private void btn_CloseTab_Click(object sender, RoutedEventArgs e)
+        //{
+        //    DependencyObject currentControl = (DependencyObject)sender;
+        //    Type targetType = typeof(TabItem);
 
-            while (currentControl != null)
-            {
-                if(currentControl.GetType() == targetType)
-                {
-                    DynamicTabControl.SelectedItem = currentControl;
-                }
-                else
-                {
-                    currentControl = LogicalTreeHelper.GetParent(currentControl);
-                }
-            }
-            FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
-            if (vm.Tabs[DynamicTabControl.SelectedIndex].CanDelete == true)
-            {
-                vm.Tabs.RemoveAt(DynamicTabControl.SelectedIndex);
-            }
+        //    while (currentControl != null)
+        //    {
+        //        if(currentControl.GetType() == targetType)
+        //        {
+        //            DynamicTabControl.SelectedItem = currentControl;
+        //        }
+        //        else
+        //        {
+        //            currentControl = LogicalTreeHelper.GetParent(currentControl);
+        //        }
+        //    }
+        //    FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+        //    if (vm.Tabs[DynamicTabControl.SelectedIndex].CanDelete == true)
+        //    {
+        //        //vm.Tabs.RemoveAt(DynamicTabControl.SelectedIndex);
+        //    }
 
-        }
+        //}
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
             //vm.MWMTVConn. MapTreeView = MapTreeView;
             vm.AddMapsTab(MapTreeView);
+            vm.AddCreateNewStudyTab();
         }
 
         private void lbl_Study_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -159,6 +160,21 @@ namespace Fda.Study
             {
                 vm.MWMTVConn.UpdateMapWindow();
             }
+        }
+
+
+        public bool WasXClicked { get; set; } = false;
+        public bool WasPopOutClicked { get; set; } = false;
+        private void TextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            WasXClicked = true;
+        }
+
+      
+
+        private void txt_PopOut_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            WasPopOutClicked = true;
         }
     }
 }

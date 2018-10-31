@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Study
 {
-    public class NewStudyVM : BaseViewModel
+    public class NewStudyVM : Editors.BaseEditorVM
     {
         #region Notes
         #endregion
@@ -39,23 +39,20 @@ namespace FdaViewModel.Study
 
             }
         }
-        public string Description
-        {
-            get { return _Description; }
-            set
-            {
-                if (!_Description.Equals(value))
-                {
-                    _Description = value;
-                    NotifyPropertyChanged();
-                }
 
-            }
-        }
+        private StudyElement _StudyElement;
         #endregion
         #region Constructors
-        public NewStudyVM() : base()
+        public NewStudyVM() : base(null)
         {
+            _Path = "C:\\temp\\FDA\\";
+            _StudyName = "Example";
+            _Description = "My description";
+        }
+
+        public NewStudyVM(StudyElement studyElement) : base(null)
+        {
+            _StudyElement = studyElement;
             _Path = "C:\\temp\\FDA\\";
             _StudyName = "Example";
             _Description = "My description";
@@ -102,7 +99,12 @@ namespace FdaViewModel.Study
             //notes can be null.
         }
 
-     
+        public override void Save()
+        {
+            _StudyElement.CreateStudyFromViewModel(this);
+        }
+
+
         #endregion
         #region Functions
         #endregion

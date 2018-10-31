@@ -96,6 +96,7 @@ namespace FdaViewModel.Saving
                 Storage.Connection.Instance.Open();
             }
             curve.toSqliteTable(changeTableConstant + lastEditDate);
+            
         }
 
 

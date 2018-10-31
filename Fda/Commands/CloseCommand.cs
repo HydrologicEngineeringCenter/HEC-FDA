@@ -33,7 +33,7 @@ namespace Fda.Commands
                 {
                     if (winVM.StudyVM.SelectedTabIndex != -1)
                     {
-                        winVM.StudyVM.Tabs.RemoveAt(winVM.StudyVM.SelectedTabIndex);
+                        winVM.StudyVM.RemoveTabAtIndex(winVM.StudyVM.SelectedTabIndex);
                     }
                     else
                     {

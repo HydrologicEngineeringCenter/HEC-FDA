@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace FdaViewModel
 {
@@ -146,7 +148,187 @@ namespace FdaViewModel
         }
 
 
+        #region write curve to xml
+        public static string CreateXMLCurveString(Statistics.UncertainCurveDataCollection.DistributionsEnum distType, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        {
+            switch (distType)
+            {
+                case Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal:
+                    return ExtentionMethods.CreateNormalDistributionXML(XValues, YValues);
+                case Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular:
+                    return ExtentionMethods.CreateTriangularDistributionXML(XValues, YValues);
+                case Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform:
+                    return ExtentionMethods.CreateUniformDistributionXML(XValues, YValues);
+                case Statistics.UncertainCurveDataCollection.DistributionsEnum.None:
+                    return ExtentionMethods.CreateNoneDistributionXML(XValues, YValues);
 
+            }
+            return "";
+        }
+
+
+        public static string CreateNormalDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        {
+            XElement xElement = new XElement("NormalDistribution");
+            for (int j = 0; j < XValues.Count; j++)
+            {
+                XElement ordinateElement = new XElement("Ordinate");
+
+                ordinateElement.SetAttributeValue("x", XValues[j]);
+                ordinateElement.SetAttributeValue("mean", ((Statistics.Normal)YValues[j]).GetMean);
+                ordinateElement.SetAttributeValue("stDev", ((Statistics.Normal)YValues[j]).GetStDev);
+
+                xElement.Add(ordinateElement);
+            }
+            return xElement.ToString();
+        }
+
+
+        public static string CreateTriangularDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        {
+            XElement xElement = new XElement("TriangularDistribution");
+            for (int j = 0; j < XValues.Count; j++)
+            {
+                XElement ordinateElement = new XElement("Ordinate");
+
+                ordinateElement.SetAttributeValue("x", XValues[j]);
+                ordinateElement.SetAttributeValue("min", ((Statistics.Triangular)YValues[j]).getMin);
+                ordinateElement.SetAttributeValue("max", ((Statistics.Triangular)YValues[j]).getMax);
+                ordinateElement.SetAttributeValue("mostLikely", ((Statistics.Triangular)YValues[j]).getMostlikely);
+
+                xElement.Add(ordinateElement);
+            }
+            return xElement.ToString();
+        }
+
+
+
+
+        public static string CreateUniformDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        {
+            XElement xElement = new XElement("UniformDistribution");
+            for (int j = 0; j < XValues.Count; j++)
+            {
+                XElement ordinateElement = new XElement("Ordinate");
+
+                ordinateElement.SetAttributeValue("x", XValues[j]);
+                ordinateElement.SetAttributeValue("min", ((Statistics.Uniform)YValues[j]).GetMin);
+                ordinateElement.SetAttributeValue("max", ((Statistics.Uniform)YValues[j]).GetMax);
+
+                xElement.Add(ordinateElement);
+            }
+            return xElement.ToString();
+        }
+
+
+        public static string CreateNoneDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        {
+
+            XElement xElement = new XElement("NoneDistribution");
+            for (int j = 0; j < XValues.Count; j++)
+            {
+                XElement ordinateElement = new XElement("Ordinate");
+
+                ordinateElement.SetAttributeValue("x", XValues[j]);
+                ordinateElement.SetAttributeValue("y", ((Statistics.None)YValues[j]).GetCentralTendency);
+
+                xElement.Add(ordinateElement);
+            }
+            return xElement.ToString();
+        }
+
+        #endregion
+
+
+        #region read curve from xml string
+
+
+        public static Statistics.UncertainCurveIncreasing GetCurveFromXMLString(string xmlString, Statistics.UncertainCurveDataCollection.DistributionsEnum distType)
+        {
+            
+                if (distType == Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal )
+                {
+                    return GetNormalDistributionFromXML(xmlString);
+                }
+                else if (distType == Statistics.UncertainCurveDataCollection.DistributionsEnum.None)
+                {
+                    return  GetNoneDistributionFromXML(xmlString);
+                }
+                else if (distType == Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular)
+                {
+                    return GetTriangularDistributionFromXML(xmlString);
+                }
+                else if (distType == Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform)
+                {
+                    return GetUniformDistributionFromXML(xmlString);
+                }
+            return null;
+            
+        }
+
+        public static Statistics.UncertainCurveIncreasing GetNormalDistributionFromXML(string xmlString)
+        {
+            List<double> xValues = new List<double>();
+            List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
+
+            XDocument xDoc = XDocument.Parse(xmlString);
+            XElement normalElement = xDoc.Element("NormalDistribution");
+            foreach (XElement ele in normalElement.Elements("Ordinate"))
+            {
+                xValues.Add((double)ele.Attribute("x"));
+                yValues.Add(new Statistics.Normal(Convert.ToDouble(ele.Attribute("mean").Value), Convert.ToDouble(ele.Attribute("stDev").Value)));
+
+            }
+
+            return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal);
+        }
+
+        public static Statistics.UncertainCurveIncreasing GetTriangularDistributionFromXML(string xmlString)
+        {
+            List<double> xValues = new List<double>();
+            List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
+
+            XDocument xDoc = XDocument.Parse(xmlString);
+            XElement normalElement = xDoc.Element("TriangularDistribution");
+            foreach (XElement ele in normalElement.Elements("Ordinate"))
+            {
+                xValues.Add((double)ele.Attribute("x"));
+                yValues.Add(new Statistics.Triangular(Convert.ToDouble(ele.Attribute("min").Value), Convert.ToDouble(ele.Attribute("max").Value), Convert.ToDouble(ele.Attribute("mostLikely").Value)));
+            }
+            return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
+        }
+
+        public static Statistics.UncertainCurveIncreasing GetUniformDistributionFromXML(string xmlString)
+        {
+            List<double> xValues = new List<double>();
+            List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
+
+            XDocument xDoc = XDocument.Parse(xmlString);
+            XElement normalElement = xDoc.Element("UniformDistribution");
+            foreach (XElement ele in normalElement.Elements("Ordinate"))
+            {
+                xValues.Add((double)ele.Attribute("x"));
+                yValues.Add(new Statistics.Uniform(Convert.ToDouble(ele.Attribute("min").Value), Convert.ToDouble(ele.Attribute("max").Value)));
+            }
+            return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
+        }
+
+        public static Statistics.UncertainCurveIncreasing GetNoneDistributionFromXML(string xmlString)
+        {
+            List<double> xValues = new List<double>();
+            List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
+
+            XDocument xDoc = XDocument.Parse(xmlString);
+            XElement normalElement = xDoc.Element("NoneDistribution");
+            foreach (XElement ele in normalElement.Elements("Ordinate"))
+            {
+                xValues.Add((double)ele.Attribute("x"));
+                yValues.Add(new Statistics.None(Convert.ToDouble(ele.Attribute("y").Value)));
+            }
+            return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+        }
+
+        #endregion
 
 
     }

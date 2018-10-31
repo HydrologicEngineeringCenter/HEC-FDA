@@ -85,9 +85,9 @@
         <ViewModel:WindowVM/>
     </Window.DataContext>
     
-    <Grid>
+    <Grid Name="MainGrid">
         <Grid.RowDefinitions>
-            <!--<RowDefinition Height="27"/>-->
+            <RowDefinition Height="27"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Border Grid.Column="0" Grid.RowSpan="2" BorderThickness="2,2,2,2">
@@ -95,6 +95,9 @@
                 <SolidColorBrush Color="AliceBlue" />
             </Border.BorderBrush>
         </Border>
+        <Button Name="btn_PopWindowInToTabs" Background="Transparent" ToolTip="Move To Tabs" BorderThickness="0" Margin="5,0,5,0" HorizontalAlignment="Left"  Click="btn_PopWindowInToTabs_Click" >
+            <Image Width="15" Height="14" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/PopIn.png"/>
+        </Button>
         <ContentControl Grid.Row="1" Name="masterControl" Content="{Binding CurrentView}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
        
         </Grid>

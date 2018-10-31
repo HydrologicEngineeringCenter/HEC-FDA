@@ -15,8 +15,8 @@ namespace FdaViewModel.Editors
 
    
 
-        public bool HasOwnerValidationRules { get; set; }
-        public Action<BaseViewModel, string> OwnerValidationRules { get; set; }
+        //public bool HasOwnerValidationRules { get; set; }
+       // public Action<BaseViewModel, string> OwnerValidationRules { get; set; }
 
 
         /// <summary>

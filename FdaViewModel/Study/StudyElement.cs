@@ -10,6 +10,7 @@ namespace FdaViewModel.Study
 {
     public class StudyElement : ParentElement
     {
+        public event EventHandler SaveTheOpenTabs;
         public event EventHandler UpdateTransactionsAndMessages;
         public event EventHandler LoadMapLayers;
         private List<string> _RegistryStudies = new List<string>();
@@ -47,7 +48,7 @@ namespace FdaViewModel.Study
 
             NamedAction create = new NamedAction();
             create.Header = "Create Study";
-            create.Action = CreateStudy;
+            create.Action = CreateStudyFromWindow;
 
             NamedAction properties = new NamedAction();
             properties.Header = "Study Properties";
@@ -313,61 +314,71 @@ namespace FdaViewModel.Study
 
         private void SaveStudy(object arg1, EventArgs arg2)
         {
-           // Save();
+            // Save();
+            SaveTheOpenTabs?.Invoke(arg1, arg2);
+
         }
-        private void CreateStudy(object arg1, EventArgs arg2)
+        private void CreateStudyFromWindow(object arg1, EventArgs arg2)
         {
             NewStudyVM vm = new NewStudyVM();
             Navigate(vm, true, true);
             if (!vm.HasError)
             {
-
-                Name = vm.StudyName;
-                //check if file exists.
-                string newStudyPath = vm.Path + "\\" + vm.StudyName + "\\" + vm.StudyName + ".sqlite";
-                if (!System.IO.File.Exists(newStudyPath))
-                {
-                    Storage.Connection.Instance.ProjectFile = newStudyPath;
-                    UpdateRecentStudiesFile(newStudyPath);
-
-                }
-                else
-                {
-                    ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("A study with that name already exists.",
-                        FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.View));
-
-                    Storage.Connection.Instance.ProjectFile = vm.Path + "\\" + vm.StudyName + "\\" + vm.StudyName + ".sqlite";
-                }
-                PropertiesVM properties = new PropertiesVM(vm.StudyName, vm.Path);
-                properties.Save();
-                AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.StudyName, Utilities.Transactions.TransactionEnum.CreateNew, "Initialize study"));
-                foreach (NamedAction action in Actions)
-                {
-                    if (action.Header == "Save Study")
-                    {
-                        action.IsEnabled = true;
-                    }
-                    else if (action.Header == "Study Properties")
-                    {
-                        action.IsEnabled = true;
-                    }
-                    else if (action.Header == "View Transactions")
-                    {
-                        action.IsEnabled = true;
-                    }
-                    else if (action.Header == "Open Study")
-                    {
-                        action.IsEnabled = true;
-                    }
-                    else if (action.Header == "Create Study")
-                    {
-                        action.IsEnabled = true;
-                    }
-                }
+                CreateStudyFromViewModel(vm);
                 
-                AddBaseElements();
             }
         }
+
+      
+
+        public void CreateStudyFromViewModel(NewStudyVM vm)
+        {
+            Name = vm.StudyName;
+            //check if file exists.
+            string newStudyPath = vm.Path + "\\" + vm.StudyName + "\\" + vm.StudyName + ".sqlite";
+            if (!System.IO.File.Exists(newStudyPath))
+            {
+                Storage.Connection.Instance.ProjectFile = newStudyPath;
+                UpdateRecentStudiesFile(newStudyPath);
+
+            }
+            else
+            {
+                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("A study with that name already exists.",
+                    FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.View));
+
+                Storage.Connection.Instance.ProjectFile = vm.Path + "\\" + vm.StudyName + "\\" + vm.StudyName + ".sqlite";
+            }
+            PropertiesVM properties = new PropertiesVM(vm.StudyName, vm.Path);
+            properties.Save();
+            AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.StudyName, Utilities.Transactions.TransactionEnum.CreateNew, "Initialize study"));
+            foreach (NamedAction action in Actions)
+            {
+                if (action.Header == "Save Study")
+                {
+                    action.IsEnabled = true;
+                }
+                else if (action.Header == "Study Properties")
+                {
+                    action.IsEnabled = true;
+                }
+                else if (action.Header == "View Transactions")
+                {
+                    action.IsEnabled = true;
+                }
+                else if (action.Header == "Open Study")
+                {
+                    action.IsEnabled = true;
+                }
+                else if (action.Header == "Create Study")
+                {
+                    action.IsEnabled = true;
+                }
+            }
+
+            AddBaseElements();
+        }
+
         private void StudyProperties(object arg1, EventArgs arg2)
         {
             if (!Storage.Connection.Instance.IsConnectionNull)
@@ -422,6 +433,9 @@ namespace FdaViewModel.Study
                     action.IsEnabled = true;
                 }
             }
+
+            StudyStatusBar.SaveStatus = "Study Loaded: " + DateTime.Now.ToString("G");
+
         }
         private void OpenStudy(object sender, EventArgs e)
         {
@@ -458,7 +472,9 @@ namespace FdaViewModel.Study
             if (StudyCache == null)
             {
                 loadStudyCache = true;
-                StudyCache = FDACache.Create();
+                Study.FDACache cache = FDACache.Create();
+                StudyCache = cache;
+                PersistenceFactory = new Saving.PersistenceFactory(cache);
             }
 
             Watershed.TerrainOwnerElement t = new Watershed.TerrainOwnerElement(this);
@@ -480,22 +496,20 @@ namespace FdaViewModel.Study
             ft.AddBaseElements();
             AddElement(ft);
 
-            //InflowOutflow.InflowOutflowOwnerElement inout = new InflowOutflow.InflowOutflowOwnerElement(this);
-            //AddElement(inout);
+           
 
             StageTransforms.StageTransformsOwnerElement s = new StageTransforms.StageTransformsOwnerElement(this);
             s.AddBaseElements();
             AddElement(s);
 
-            Hydraulics.FloodPlainDataOwnerElement h = new Hydraulics.FloodPlainDataOwnerElement(this);
+            //Hydraulics.FloodPlainDataOwnerElement h = new Hydraulics.FloodPlainDataOwnerElement(this);
             //this.AddElement(h);
 
             GeoTech.LateralStructuresOwnerElement ls = new GeoTech.LateralStructuresOwnerElement(this);
             ls.AddBaseElements();
             AddElement(ls);
 
-            //GeoTech.LeveeFeatureOwnerElement l = new GeoTech.LeveeFeatureOwnerElement(this);
-            //this.AddElement(l);
+     
 
             Inventory.InventoryOwnerElement inv = new Inventory.InventoryOwnerElement(this);
             inv.AddBaseElements();
@@ -513,7 +527,6 @@ namespace FdaViewModel.Study
             UpdateTheConditionsTree(this, new EventArgs());
             UpdateTransactionsAndMessages?.Invoke(this, new EventArgs());
             LoadMapLayers?.Invoke(this, new EventArgs());
-
         }
 
       

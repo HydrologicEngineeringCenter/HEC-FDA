@@ -13,8 +13,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
     {
         private const string TableName = "Rating Curves";
         internal override string ChangeTableConstant { get { return "Rating Curve - "; } }    
-        private static readonly string[] TableColumnNames =  { "Rating Curve Name", "Last Edit Date", "Description", "Curve Distribution Type", "Curve Type" };   
-        private static readonly Type[] TableColumnTypes = { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
+        private static readonly string[] TableColumnNames =  { "Rating Curve Name", "Last Edit Date", "Description", "Curve Distribution Type", "Curve Type", "Curve" };   
+        private static readonly Type[] TableColumnTypes = { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
 
 
         #region constructor
@@ -32,16 +32,19 @@ namespace FdaViewModel.Saving.PersistenceManagers
             {
                 element.Description = "";
             }
-            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.Distribution, element.Curve.GetType() };
+            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.Distribution, element.Curve.GetType(), ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues) };
 
         }
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
+            //Statistics.UncertainCurveIncreasing ratingCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]),);
+
             RatingCurveElement rc = new RatingCurveElement((string)rowData[0], (string)rowData[1], (string)rowData[2], emptyCurve);
             //loads the curve with the values from it's table
-            rc.Curve.fromSqliteTable(ChangeTableConstant+ (string)rowData[1]);
+            //rc.Curve.fromSqliteTable(ChangeTableConstant+ (string)rowData[1]);
+            rc.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[5], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
             return rc;
         }
 
@@ -54,9 +57,12 @@ namespace FdaViewModel.Saving.PersistenceManagers
                  string editDate = DateTime.Now.ToString("G");
                 element.LastEditDate = editDate;
 
+
                 SaveNewElementToParentTable(GetRowDataFromElement((RatingCurveElement)element), TableName, TableColumnNames, TableColumnTypes);
                 SaveElementToChangeTable(element.Name, GetRowDataFromElement((RatingCurveElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
-                SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
+                //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
+
+
                 //add the rating element to the cache which then raises event that adds it to the owner element
                 StudyCache.AddRatingElement((RatingCurveElement)element);
             }
@@ -69,8 +75,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 RemoveFromParentTable(element, TableName);
                 DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
                 StudyCache.RemoveRatingElement((RatingCurveElement)element);
-            
-
+           
         }
 
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave,int changeTableIndex )
@@ -81,7 +86,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((RatingCurveElement)elementToSave), oldElement.Name, TableName) || AreCurvesDifferent(oldElement.Curve,elementToSave.Curve))
             {
                 UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((RatingCurveElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
-                SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
+                //SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
                 // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
                 StudyCache.UpdateRatingCurve((RatingCurveElement)oldElement, (RatingCurveElement)elementToSave);
             }
@@ -93,5 +98,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             return CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
         }
       
+
+
     }
 }

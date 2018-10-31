@@ -87,7 +87,7 @@ namespace FdaViewModel.WaterSurfaceElevation
         #region Voids
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetWaterSurfaceManager(StudyCache).Remove(this);
+            Saving.PersistenceFactory.GetWaterSurfaceManager().Remove(this);
         }
         public override void RemoveElementFromMapWindow(object arg1, EventArgs arg2)
         {

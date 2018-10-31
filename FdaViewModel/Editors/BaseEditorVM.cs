@@ -53,7 +53,9 @@ namespace FdaViewModel.Editors
             //{
             //    actionManager.OwnerValidationRules.Invoke(this, elem.Name);
             //}
-            StudyCache.AddSiblingRules(this, elem);
+            //StudyCache.AddSiblingRules(this, elem);
+            AddSiblingRules(elem);
+
 
             if (actionManager != null && actionManager.SaveUndoRedoHelper != null)
             {
@@ -73,9 +75,74 @@ namespace FdaViewModel.Editors
             AddRule(nameof(Name), () => Name != null, "Name cannot be blank.");
         }
 
-   
+        /// <summary>
+        /// This is used to add rules that the name cannot be the same as a sibling. 
+        /// This method is to be called for editors. It will exclude the original name
+        /// from the list of banned words.
+        /// </summary>
+        /// <param name="editorVM"></param>
+        /// <param name="element"></param>
+        public void AddSiblingRules( ChildElement element)
+        {
+            //child elements need to exclude thier own name from the list of banned words
+            bool isChild = false;
+            if (element.GetType().IsSubclassOf(typeof(ChildElement)))
+            {
+                isChild = true;
+            }
+
+            List<string> existingElements = new List<string>();
+            List<BaseFdaElement> siblings = StudyCache.GetSiblings(element);
+
+            string originalName = element.Name;
+
+            foreach (BaseFdaElement elem in siblings)
+            {
+                if (isChild && elem.Name.Equals(originalName))
+                {
+                    continue;
+                }
+                else
+                {
+                    existingElements.Add(elem.Name);
+                }
+            }
+
+            foreach (string existingName in existingElements)
+            {
+                AddRule(nameof(Name), () =>
+                {
+                    return Name != existingName;
+                }, "This name is already used. Names must be unique.");
+            }
+
+        }
+
+        /// <summary>
+        /// This is used to add rules that the name cannot be the same as a sibling. 
+        /// This method is to be called for importers. 
+        /// </summary>
+        /// <param name="editorVM"></param>
+        /// <param name="element"></param>
+        public void AddSiblingRules( ParentElement element)
+        {
+            List<string> existingElements = new List<string>();
+            foreach (BaseFdaElement elem in StudyCache.GetSiblings(element))
+            {
+                existingElements.Add(elem.Name);
+            }
+
+            foreach (string existingName in existingElements)
+            {
+                AddRule(nameof(Name), () =>
+                {
+                    return Name != existingName;
+                }, "This name is already used. Names must be unique.");
+            }
+
+        }
 
         //public abstract void AssignValuesFromElementToEditor(OwnedElement element);
-       
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace FdaViewModel.Utilities.Transactions
 {
     public abstract class TransactionAndMessageBase:Editors.BaseEditorVM
     {    
-        public List<Utilities.Transactions.TransactionRowItem> TransactionRows { get; set; }
+        public ObservableCollection<Utilities.Transactions.TransactionRowItem> TransactionRows { get; set; }
         public List<Utilities.MessageRowItem> MessageRows { get; set; }
 
         public TransactionAndMessageBase():base(null)

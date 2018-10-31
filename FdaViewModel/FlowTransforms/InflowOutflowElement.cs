@@ -68,7 +68,7 @@ namespace FdaViewModel.FlowTransforms
         #region Voids
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetInflowOutflowManager(StudyCache).Remove(this);
+            Saving.PersistenceFactory.GetInflowOutflowManager().Remove(this);
         }
         public void EditInflowOutflowCurve(object arg1, EventArgs arg2)
         {
@@ -80,7 +80,7 @@ namespace FdaViewModel.FlowTransforms
 
            
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetInflowOutflowManager(StudyCache)
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetInflowOutflowManager()
                 ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
@@ -89,7 +89,7 @@ namespace FdaViewModel.FlowTransforms
                 .WithSaveUndoRedo(saveHelper);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
-            StudyCache.AddSiblingRules(vm, this);
+            //StudyCache.AddSiblingRules(vm, this);
             Navigate(vm, false, false, "Edit Inflow Outflow");
 
        

@@ -67,14 +67,29 @@ namespace FdaViewModel.StageTransforms
             //Navigate(vm);
             //if (vm.ClickedButton == CustomMessageBoxVM.ButtonsEnum.OK)
             //{
-                Saving.PersistenceFactory.GetRatingManager(StudyCache).Remove(this);
+                Saving.PersistenceFactory.GetRatingManager().Remove(this);
             
         }
 
         public void EditRatingCurve(object arg1, EventArgs arg2)
         {
+            //foreach (Utilities.NamedAction a in Actions)
+            //{
+            //    if (a.Header.Equals("Edit Rating Curve"))
+            //    {
+            //        a.IsEnabled = false;
+            //    }
+            //}
 
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetRatingManager(StudyCache),this, (editorVM) => CreateElementFromEditor(editorVM),
+            if(IsOpenInTabOrWindow == true)
+            {
+                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage(Name + " is already open for editing",FdaModel.Utilities.Messager.ErrorMessageEnum.Fatal));
+                return;
+            }
+
+            IsOpenInTabOrWindow = true;
+
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetRatingManager(),this, (editorVM) => CreateElementFromEditor(editorVM),
                 (editorVM, element) => AssignValuesFromElementToCurveEditor(editorVM, element),
                  (editorVM, elem) => AssignValuesFromCurveEditorToElement(editorVM, elem));
 

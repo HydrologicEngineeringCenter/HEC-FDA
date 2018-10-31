@@ -287,6 +287,10 @@
             <WatershedView:TerrainBrowser/>
         </DataTemplate>
         <!--utilites region-->
+        <DataTemplate DataType="{x:Type UtilitiesVM:DynamicTabVM }" >
+            <UtilitiesView:TabHeaderControl/>
+        </DataTemplate>
+        
         <DataTemplate DataType="{x:Type UtilitiesVM:MapWindowControlVM }" >
             <UtilitiesView:MapWindowWrapper/>
         </DataTemplate>

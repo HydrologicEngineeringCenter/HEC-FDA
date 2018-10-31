@@ -57,187 +57,86 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         }
 
         #region SaveTables
-        //private void SaveNormalTable(System.Data.DataTable dtable, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
-        //{
-        //    dtable.Columns.Add("X", typeof(double));
-        //    dtable.Columns.Add("Mean", typeof(double));
-        //    dtable.Columns.Add("StDev", typeof(double));
+        
 
+        //public static string CreateNormalDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        //{
+        //    XElement xElement = new XElement("NormalDistribution");
         //    for (int j = 0; j < XValues.Count; j++)
         //    {
-        //        object[] ddRow = new object[3];
-        //        ddRow[0] = XValues[j];
-        //        ddRow[1] = ((Statistics.Normal)YValues[j]).GetMean;
-        //        ddRow[2] = ((Statistics.Normal)YValues[j]).GetStDev;
-        //        dtable.Rows.Add(ddRow);
+        //        XElement ordinateElement = new XElement("Ordinate");
+
+        //        ordinateElement.SetAttributeValue("x", XValues[j]);
+        //        ordinateElement.SetAttributeValue("mean", ((Statistics.Normal)YValues[j]).GetMean);
+        //        ordinateElement.SetAttributeValue("stDev", ((Statistics.Normal)YValues[j]).GetStDev);
+
+        //        xElement.Add(ordinateElement);
         //    }
-        //    Storage.Connection.Instance.Reader.SaveDataTable(dtable);
+        //    return xElement.ToString();
         //}
 
-        private string CreateNormalDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
-        {
-            XElement xElement = new XElement("NormalDistribution");
-            for (int j = 0; j < XValues.Count; j++)
-            {
-                XElement ordinateElement = new XElement("Ordinate");
-
-                ordinateElement.SetAttributeValue("x", XValues[j]);
-                ordinateElement.SetAttributeValue("mean", ((Statistics.Normal)YValues[j]).GetMean);
-                ordinateElement.SetAttributeValue("stDev", ((Statistics.Normal)YValues[j]).GetStDev);
-
-                xElement.Add(ordinateElement);
-            }
-            return xElement.ToString();
-        }
-
-        //private void SaveTriangularTable(System.Data.DataTable dtable, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+    
+        //private string CreateTriangularDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
         //{
-        //    dtable.Columns.Add("X", typeof(double));
-        //    dtable.Columns.Add("Min", typeof(double));
-        //    dtable.Columns.Add("Max", typeof(double));
-        //    dtable.Columns.Add("MostLikely", typeof(double));
-
-
+        //    XElement xElement = new XElement("TriangularDistribution");
         //    for (int j = 0; j < XValues.Count; j++)
         //    {
-        //        object[] ddRow = new object[4];
-        //        ddRow[0] = XValues[j];
-        //        ddRow[1] = ((Statistics.Triangular)YValues[j]).getMin;
-        //        ddRow[2] = ((Statistics.Triangular)YValues[j]).getMax;
-        //        ddRow[3] = ((Statistics.Triangular)YValues[j]).getMostlikely;
+        //        XElement ordinateElement = new XElement("Ordinate");
 
-        //        dtable.Rows.Add(ddRow);
+        //        ordinateElement.SetAttributeValue("x", XValues[j]);
+        //        ordinateElement.SetAttributeValue("min", ((Statistics.Triangular)YValues[j]).getMin);
+        //        ordinateElement.SetAttributeValue("max", ((Statistics.Triangular)YValues[j]).getMax);
+        //        ordinateElement.SetAttributeValue("mostLikely", ((Statistics.Triangular)YValues[j]).getMostlikely);
+
+        //        xElement.Add(ordinateElement);
         //    }
-        //    Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-
+        //    return xElement.ToString();
         //}
-        private string CreateTriangularDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
-        {
-            XElement xElement = new XElement("TriangularDistribution");
-            for (int j = 0; j < XValues.Count; j++)
-            {
-                XElement ordinateElement = new XElement("Ordinate");
-
-                ordinateElement.SetAttributeValue("x", XValues[j]);
-                ordinateElement.SetAttributeValue("min", ((Statistics.Triangular)YValues[j]).getMin);
-                ordinateElement.SetAttributeValue("max", ((Statistics.Triangular)YValues[j]).getMax);
-                ordinateElement.SetAttributeValue("mostLikely", ((Statistics.Triangular)YValues[j]).getMostlikely);
-
-                xElement.Add(ordinateElement);
-            }
-            return xElement.ToString();
-        }
 
 
-        //private void SaveUniformTable(System.Data.DataTable dtable, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+   
+
+        //private string CreateUniformDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
         //{
-        //    dtable.Columns.Add("X", typeof(double));
-        //    dtable.Columns.Add("Min", typeof(double));
-        //    dtable.Columns.Add("Max", typeof(double));
-
+        //    XElement xElement = new XElement("UniformDistribution");
         //    for (int j = 0; j < XValues.Count; j++)
         //    {
-        //        object[] ddRow = new object[3];
-        //        ddRow[0] = XValues[j];
-        //        ddRow[1] = ((Statistics.Uniform)YValues[j]).GetMin;
-        //        ddRow[2] = ((Statistics.Uniform)YValues[j]).GetMax;
+        //        XElement ordinateElement = new XElement("Ordinate");
 
-        //        dtable.Rows.Add(ddRow);
+        //        ordinateElement.SetAttributeValue("x", XValues[j]);
+        //        ordinateElement.SetAttributeValue("min", ((Statistics.Uniform)YValues[j]).GetMin);
+        //        ordinateElement.SetAttributeValue("max", ((Statistics.Uniform)YValues[j]).GetMax);
+
+        //        xElement.Add(ordinateElement);
         //    }
-        //    Storage.Connection.Instance.Reader.SaveDataTable(dtable);
+        //    return xElement.ToString();
         //}
 
-        private string CreateUniformDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
-        {
-            XElement xElement = new XElement("UniformDistribution");
-            for (int j = 0; j < XValues.Count; j++)
-            {
-                XElement ordinateElement = new XElement("Ordinate");
 
-                ordinateElement.SetAttributeValue("x", XValues[j]);
-                ordinateElement.SetAttributeValue("min", ((Statistics.Uniform)YValues[j]).GetMin);
-                ordinateElement.SetAttributeValue("max", ((Statistics.Uniform)YValues[j]).GetMax);
-
-                xElement.Add(ordinateElement);
-            }
-            return xElement.ToString();
-        }
-
-        //private void SaveNoneTable(System.Data.DataTable dtable, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        //private string CreateNoneDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
         //{
-        //    dtable.Columns.Add("X", typeof(double));
-        //    dtable.Columns.Add("Y", typeof(double));
-
-        //    for (int j = 0; j < XValues.Count; j++)
-        //    {
-        //        object[] ddRow = new object[4];
-        //        ddRow[0] = XValues[j];
-        //        //ddRow[1] = ((Statistics.None)YValues[j]);
-        //        ddRow[1] = YValues[j];
-
-        //        dtable.Rows.Add(ddRow);
-        //    }
-        //    Storage.Connection.Instance.Reader.SaveDataTable(dtable);
-        //}
-
-        private string CreateNoneDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
-        {
             
-            XElement xElement = new XElement("NoneDistribution");
-            for (int j = 0; j < XValues.Count; j++)
-            {
-                XElement ordinateElement = new XElement("Ordinate");
-
-                ordinateElement.SetAttributeValue("x", XValues[j]);
-                ordinateElement.SetAttributeValue("y", ((Statistics.None)YValues[j]).GetCentralTendency);
-
-                xElement.Add(ordinateElement);
-            }
-            return xElement.ToString();
-        }
-
-        //private void SaveDepthDamageTable(string tableName, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
-        //{
-        //    Stopwatch sw = new Stopwatch();
-        //    sw.Start();
-
-        //    //string strucTableName = Name + " - " + ot.Name + tableNameAppender;
-        //    System.Data.DataTable dtable = new System.Data.DataTable(tableName);
-        //    if (Storage.Connection.Instance.TableNames().Contains(tableName))
+        //    XElement xElement = new XElement("NoneDistribution");
+        //    for (int j = 0; j < XValues.Count; j++)
         //    {
-        //        //already exists... delete?
-        //        Storage.Connection.Instance.DeleteTable(dtable.TableName);
-        //    }
+        //        XElement ordinateElement = new XElement("Ordinate");
 
-        //    if (YValues[0].GetType() == typeof(Statistics.Normal))
-        //    {
-        //        SaveNormalTable(dtable, XValues, YValues);
-        //    }
-        //    else if (YValues[0].GetType() == typeof(Statistics.Triangular))
-        //    {
-        //        SaveTriangularTable(dtable, XValues, YValues);
-        //    }
-        //    else if (YValues[0].GetType() == typeof(Statistics.Uniform))
-        //    {
-        //        SaveUniformTable(dtable, XValues, YValues);
-        //    }
-        //    else if (YValues[0].GetType() == typeof(Statistics.None))
-        //    {
-        //        SaveNoneTable(dtable, XValues, YValues);
-        //    }
+        //        ordinateElement.SetAttributeValue("x", XValues[j]);
+        //        ordinateElement.SetAttributeValue("y", ((Statistics.None)YValues[j]).GetCentralTendency);
 
-        //    sw.Stop();
-        //    Console.WriteLine("**  time per depth damage table: " + sw.Elapsed.ToString());
-        //    sw.Reset();
-
+        //        xElement.Add(ordinateElement);
+        //    }
+        //    return xElement.ToString();
         //}
+
+      
 
         #endregion
 
 
         public  void Save()
         {
-            
+
             //if (!Storage.Connection.Instance.IsConnectionNull)
             //{
             //    if (!Storage.Connection.Instance.IsOpen)
@@ -364,35 +263,35 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
 
             //structure curve xml
-            rowsList.Add(CreateXMLCurveString(ot.GetStructurePercentDD.Distribution, ot.GetStructurePercentDD.XValues, ot.GetStructurePercentDD.YValues));
+            rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetStructurePercentDD.Distribution, ot.GetStructurePercentDD.XValues, ot.GetStructurePercentDD.YValues));
 
             //content curve xml
-            rowsList.Add(CreateXMLCurveString(ot.GetContentPercentDD.Distribution, ot.GetContentPercentDD.XValues, ot.GetContentPercentDD.YValues));
+            rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetContentPercentDD.Distribution, ot.GetContentPercentDD.XValues, ot.GetContentPercentDD.YValues));
             //vehicle curve xml
-            rowsList.Add(CreateXMLCurveString(ot.GetVehiclePercentDD.Distribution, ot.GetVehiclePercentDD.XValues, ot.GetVehiclePercentDD.YValues));
+            rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetVehiclePercentDD.Distribution, ot.GetVehiclePercentDD.XValues, ot.GetVehiclePercentDD.YValues));
             //other curve xml
-            rowsList.Add(CreateXMLCurveString(ot.GetOtherPercentDD.Distribution, ot.GetOtherPercentDD.XValues, ot.GetOtherPercentDD.YValues));
+            rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetOtherPercentDD.Distribution, ot.GetOtherPercentDD.XValues, ot.GetOtherPercentDD.YValues));
 
 
             return rowsList;
         }
 
-        private string CreateXMLCurveString(Statistics.UncertainCurveDataCollection.DistributionsEnum distType, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
-        {
-            switch(distType)
-            {
-                case Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal:
-                    return CreateNormalDistributionXML(XValues, YValues);
-                case Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular:
-                    return CreateTriangularDistributionXML(XValues, YValues);
-                case Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform:
-                    return CreateUniformDistributionXML(XValues, YValues);
-                case Statistics.UncertainCurveDataCollection.DistributionsEnum.None:
-                    return CreateNoneDistributionXML(XValues, YValues);
+        //private string CreateXMLCurveString(Statistics.UncertainCurveDataCollection.DistributionsEnum distType, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
+        //{
+        //    switch(distType)
+        //    {
+        //        case Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal:
+        //            return ExtentionMethods.CreateNormalDistributionXML(XValues, YValues);
+        //        case Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular:
+        //            return ExtentionMethods.CreateTriangularDistributionXML(XValues, YValues);
+        //        case Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform:
+        //            return ExtentionMethods.CreateUniformDistributionXML(XValues, YValues);
+        //        case Statistics.UncertainCurveDataCollection.DistributionsEnum.None:
+        //            return ExtentionMethods.CreateNoneDistributionXML(XValues, YValues);
 
-            }
-            return "";
-        }
+        //    }
+        //    return "";
+        //}
 
         
 

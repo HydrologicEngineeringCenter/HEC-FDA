@@ -401,7 +401,7 @@ namespace FdaViewModel.WaterSurfaceElevation
         public override void Save()
         {
             WaterSurfaceElevationElement elementToSave = new WaterSurfaceElevationElement(Name, Description, ListOfRelativePaths, IsDepthGridChecked);
-            Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager(StudyCache);
+            Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager manager = Saving.PersistenceFactory.GetWaterSurfaceManager();
             if (IsImporter && HasSaved == false)
             {
                 manager.SaveNew(elementToSave);

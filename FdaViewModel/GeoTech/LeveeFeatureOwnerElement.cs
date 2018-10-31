@@ -14,10 +14,7 @@ namespace FdaViewModel.GeoTech
         #region Fields
         #endregion
         #region Properties
-        //public override string GetTableConstant()
-        //{
-        //    return TableName;
-        //}
+      
         #endregion
         #region Constructors
         public LeveeFeatureOwnerElement(Utilities.ParentElement owner) : base(owner)
@@ -58,48 +55,16 @@ namespace FdaViewModel.GeoTech
         public void AddNewLeveeFeature(object arg1, EventArgs arg2)
         {
             LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM();
+            //StudyCache.AddSiblingRules(vm, this);
+            vm.AddSiblingRules(this);
+
             Navigate(vm, false, false, "Create Levee");
-            //if (!vm.WasCanceled)
-            //{
-            //    if (!vm.HasError)
-            //    {
-            //        LeveeFeatureElement ele = new LeveeFeatureElement(vm.Name, vm.Description, vm.Elevation, this);
-            //        AddElement(ele);
-            //        AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ele.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(LeveeFeatureElement)));
-            //    }
-            //}
+          
         }
        
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
         #endregion
         #region Functions
-        //public override string TableName
-        //{
-        //    get
-        //    {
-        //        return "Levee Features";
-        //    }
-        //}
-        //public override string[] TableColumnNames()
-        //{
-        //    return new string[] { "Levee Feature", "Description", "Elevation" };
-        //}
-        //public override Type[] TableColumnTypes()
-        //{
-        //    return new Type[] { typeof(string), typeof(string), typeof(double) };
-        //}
-        //public override ChildElement CreateElementFromRowData(object[] rowData)
-        //{
-        //    return new LeveeFeatureElement((string)rowData[0], (string)rowData[1], (double)rowData[2], this);
-        //}
-
-        //public override void AddElementFromRowData(object[] rowData)
-        //{
-        //    AddElement(CreateElementFromRowData(rowData),false);
-        //}
+       
         #endregion
     }
 }

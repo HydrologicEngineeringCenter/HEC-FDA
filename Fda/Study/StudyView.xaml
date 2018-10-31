@@ -8,6 +8,7 @@
              xmlns:ViewModel="clr-namespace:FdaViewModel.Study;assembly=FdaViewModel"
              xmlns:OpenGL="clr-namespace:OpenGLMapping;assembly=OpenGLMapping"
              xmlns:VMUtils="clr-namespace:FdaViewModel.Utilities;assembly=FdaViewModel"
+             xmlns:study="clr-namespace:FdaViewModel.Study;assembly=FdaViewModel"
              Loaded="UserControl_Loaded"
              SizeChanged="UserControl_SizeChanged"
              mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1200">
@@ -27,6 +28,8 @@
             <RowDefinition Height="500*" />
             <RowDefinition Height="5" />
             <RowDefinition Height="27" MinHeight="27"/>
+            <RowDefinition Height="27" MinHeight="27"/>
+
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300" />
@@ -34,14 +37,14 @@
         </Grid.ColumnDefinitions>
         <!--<Menu Grid.ColumnSpan="2" Name="MainMenu" VerticalAlignment="Stretch"/>-->
 
-        <Label Name="lbl_Study" Grid.Row="0"  Content="{Binding StudyElement.CustomTreeViewHeader}" FontSize="14" MouseRightButtonDown="lbl_Study_MouseRightButtonDown"  ContextMenu="{Binding StudyElement.Actions, Converter={StaticResource converter }}"/>
+        <Label Name="lbl_Study" Grid.Row="0"  Content="{Binding CurrentStudyElement.CustomTreeViewHeader}" FontSize="14" MouseRightButtonDown="lbl_Study_MouseRightButtonDown"  ContextMenu="{Binding CurrentStudyElement.Actions, Converter={StaticResource converter }}"/>
 
 
         <TabControl Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"  SelectedIndex="{Binding SelectedTab, Mode=TwoWay}">
 
             <TabItem Header="Conditions Control" Name="ConditionsTab">
                 <Grid>
-                    <TreeView Name="ConditionsTree" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding StudyElement.ConditionsTree}" >
+                    <TreeView Name="ConditionsTree" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding CurrentStudyElement.ConditionsTree}" >
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}" >
                                 <Setter Property="Header" Value="{Binding CustomTreeViewHeader}"/>
@@ -75,11 +78,11 @@
                     </TreeView>
                 </Grid>
             </TabItem>
-            
-            
+
+
             <TabItem Header="Study Tree" Name="StudyTree">
                 <Grid>
-                    <TreeView Name="StudyTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding StudyElement.Elements, Mode=TwoWay}" >
+                    <TreeView Name="StudyTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding CurrentStudyElement.Elements, Mode=TwoWay}" >
                         <!---->
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}"> 
@@ -103,16 +106,51 @@
         </TabControl>
 
         
-      <TabControl Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1"   ItemsSource="{Binding Tabs}" SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}" MinWidth="500" MinHeight="600" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+      <TabControl Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding Tabs}" SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}"  MinWidth="500" MinHeight="600" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
         
-          <TabControl.ItemTemplate>
+          <!--<TabControl.ItemContainerStyle>
+        <Style TargetType="TabItem">
+            <Setter Property="Header" Value=/>
+        </Style>
+    </TabControl.ItemContainerStyle>-->
+          
+      <TabControl.ItemTemplate>
         <DataTemplate DataType="VMUtils:DynamicTabVM">
-            <StackPanel Orientation="Horizontal" >
+                                <utils:TabHeaderControl/>
+                                <!--<StackPanel Orientation="Horizontal" >
+                
+                <TextBlock Name="txt_PopOut" Text="pop" VerticalAlignment="Top" HorizontalAlignment="Center" MouseLeftButtonDown="txt_PopOut_MouseLeftButtonDown" Width="7" Margin="6,0,0,0" Foreground="Black" >
+                    <TextBlock.Style>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="LightBlue"/>
+                        </Trigger>
+                    </Style.Triggers>  
+                </Style>
+            </TextBlock.Style> 
+                    </TextBlock>
+                
+                
             <TextBlock Text="{Binding Header}"/>
                 <Button Name="btn_CloseTab" Width="15"  Content="x" Click="btn_CloseTab_Click" FontSize="12" Margin="3,0,0,0" Background="White" Foreground="Red" BorderThickness="0" VerticalAlignment="Top" Visibility="{Binding CanDelete,Converter={StaticResource BoolToVisibilityConverter}}" />
-            </StackPanel>
+                <TextBlock Text="x" VerticalAlignment="Top" HorizontalAlignment="Center" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Width="7" Margin="6,0,0,0" Foreground="Black" >
+                    <TextBlock.Style>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="LightBlue"/>
+                        </Trigger>
+                    </Style.Triggers>  
+                </Style>
+            </TextBlock.Style> 
+                    </TextBlock>
+            </StackPanel>-->
         </DataTemplate>
     </TabControl.ItemTemplate>
+          
+          
+          
     <TabControl.ContentTemplate>
         <DataTemplate DataType="VMUtils:DynamicTabVM">
             <ContentControl Name="masterControl" Content="{Binding BaseVM}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
@@ -144,6 +182,12 @@
 
                         <GridSplitter Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" />
                         <utils:TransactionMessageControl Grid.Row="3" Grid.ColumnSpan="2" />
-
-                </Grid>
+        <Grid Grid.Row="4" Grid.ColumnSpan="2" Background="LightBlue">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="250" />
+            </Grid.ColumnDefinitions>
+                <Label Grid.Column="1" Content="{Binding SaveStatus}" HorizontalAlignment="Right" Margin="0,0,5,0" FontSize="10" />
+        </Grid>
+    </Grid>
 </UserControl>

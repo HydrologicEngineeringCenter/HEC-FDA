@@ -26,6 +26,7 @@ namespace FdaViewModel.Utilities
 
         #endregion
         #region Properties
+        public bool IsOpenInTabOrWindow { get; set; }
         public bool IsExpanded
         {
             get { return _IsExpanded; }

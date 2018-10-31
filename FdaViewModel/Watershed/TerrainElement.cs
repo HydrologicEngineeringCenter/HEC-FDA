@@ -70,7 +70,7 @@ namespace FdaViewModel.Watershed
         }
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetTerrainManager(StudyCache).Remove(this);
+            Saving.PersistenceFactory.GetTerrainManager().Remove(this);
         }
 
         public override void RemoveElementFromMapWindow(object arg1, EventArgs arg2)

@@ -71,7 +71,7 @@ namespace FdaViewModel.GeoTech
             Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
 
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFailureFunctionManager(StudyCache)
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFailureFunctionManager()
                 , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
                 (editor, element) => AssignValuesFromEditorToElement(editor, element));
             //create action manager
@@ -80,7 +80,8 @@ namespace FdaViewModel.GeoTech
                 .WithSaveUndoRedo(saveHelper);
 
             Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(defaultCurve, leveeList, actionManager);
-            StudyCache.AddSiblingRules(vm, this);
+            //StudyCache.AddSiblingRules(vm, this);
+            vm.AddSiblingRules(this);
 
             Navigate(vm, false, false, "Create Failure Function");
             //FailureFunctionEditorVM vm = new FailureFunctionEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar), leveeList);

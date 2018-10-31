@@ -97,7 +97,7 @@ namespace FdaViewModel.Watershed
                 StudyCache.TerrainParent.AddElement(t);
                 TerrainElement newElement = new TerrainElement(Name, TerrainPath);
 
-                Saving.PersistenceManagers.TerrainElementPersistenceManager manager = Saving.PersistenceFactory.GetTerrainManager(StudyCache);
+                Saving.PersistenceManagers.TerrainElementPersistenceManager manager = Saving.PersistenceFactory.GetTerrainManager();
                 manager.OriginalTerrainPath = OriginalPath;
                 manager.SaveNew(newElement);
             }

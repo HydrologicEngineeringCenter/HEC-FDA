@@ -59,7 +59,7 @@ namespace FdaViewModel.Editors
             set { _SavingText = value; NotifyPropertyChanged(); }
         }
 
-        public List<TransactionRowItem> TransactionRows
+        public ObservableCollection<TransactionRowItem> TransactionRows
         {
             get;set;
         }
@@ -77,7 +77,7 @@ namespace FdaViewModel.Editors
         #region constructors
         public CurveEditorVM(Statistics.UncertainCurveDataCollection defaultCurve, EditorActionManager actionManager) :base(actionManager)
         {
-            Curve = defaultCurve;
+            _Curve = defaultCurve;
             PlotTitle = "Curve";
         }
 

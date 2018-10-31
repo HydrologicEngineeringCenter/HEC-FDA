@@ -63,6 +63,9 @@ namespace FdaViewModel.WaterSurfaceElevation
         public void ImportWaterSurfaceElevations(object arg1, EventArgs arg2)
         {
             WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(this);
+            //StudyCache.AddSiblingRules(vm, this);
+            vm.AddSiblingRules(this);
+
             Navigate(vm, false,false,"Import Water Surface Elevation");
             //if (!vm.WasCanceled)
             //{

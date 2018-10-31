@@ -1,6 +1,7 @@
 ﻿using FdaViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,7 @@ namespace FdaViewModel.StageTransforms
         {
             RatingCurveOwnerElement r = new RatingCurveOwnerElement(this);
             AddElement(r);
+
 
             ExteriorInteriorOwnerElement i = new ExteriorInteriorOwnerElement(this);
             AddElement(i);

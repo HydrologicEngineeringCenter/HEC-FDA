@@ -13,8 +13,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         private const string TableName = "Interior Exterior Curves";
         internal override string ChangeTableConstant { get { return "Exterior Interior - "; } }
-        private static readonly string[] TableColumnNames = { "Name", "Last Edit Date", "Description", "Curve Distribution Type" };
-        private static readonly Type[] TableColumnTypes = { typeof(string), typeof(string), typeof(string), typeof(string) };
+        private static readonly string[] TableColumnNames = { "Name", "Last Edit Date", "Description", "Curve Distribution Type", "Curve" };
+        private static readonly Type[] TableColumnTypes = { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
 
 
 
@@ -27,13 +27,14 @@ namespace FdaViewModel.Saving.PersistenceManagers
         #region utilities
         private object[] GetRowDataFromElement(ExteriorInteriorElement element)
         {
-            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.Distribution };
+            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.Distribution, ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues) };
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
             ExteriorInteriorElement ele = new ExteriorInteriorElement((string)rowData[0], (string)rowData[1], (string)rowData[2], ucdc);
-            ele.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
+            //ele.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
+            ele.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[4], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
             return ele;
         }
         #endregion
@@ -48,7 +49,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
                 SaveNewElementToParentTable(GetRowDataFromElement((ExteriorInteriorElement)element), TableName, TableColumnNames, TableColumnTypes);
                 SaveElementToChangeTable(element.Name, GetRowDataFromElement((ExteriorInteriorElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
-                SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
+                //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
 
                 //add the rating element to the cache which then raises event that adds it to the owner element
                 StudyCache.AddExteriorInteriorElement((ExteriorInteriorElement)element);
@@ -72,7 +73,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((ExteriorInteriorElement)elementToSave), oldElement.Name, TableName) || AreCurvesDifferent(oldElement.Curve, elementToSave.Curve))
             {
                 UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((ExteriorInteriorElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
-                SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
+                //SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
                 // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
                 StudyCache.UpdateExteriorInteriorElement((ExteriorInteriorElement)oldElement, (ExteriorInteriorElement)elementToSave);
             }

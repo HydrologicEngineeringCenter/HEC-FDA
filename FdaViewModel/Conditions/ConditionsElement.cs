@@ -371,7 +371,7 @@ namespace FdaViewModel.Conditions
 
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetConditionsManager(StudyCache).Remove(this);
+            Saving.PersistenceFactory.GetConditionsManager().Remove(this);
         }
 
         #region BuildControlsFromElement
@@ -466,7 +466,7 @@ namespace FdaViewModel.Conditions
             List<GeoTech.FailureFunctionElement> failureFunctionList = StudyCache.FailureFunctionElements;// GetElementsOfType<GeoTech.FailureFunctionElement>();
 
 
-            List<AggregatedStageDamage.AggregatedStageDamageElement> damageles = StudyCache.StageDamageElements;// GetElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
+            List<AggregatedStageDamage.AggregatedStageDamageElement> damageles = StudyCache.StageDamageElements;// StageDamageElements;// GetElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
             //if (impactAreas.Count == 0)
             //{
             //    ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("No Impact Area Sets have been defined.", FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel));

@@ -68,7 +68,7 @@ namespace FdaViewModel.FlowTransforms
             Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetInflowOutflowManager(StudyCache)
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetInflowOutflowManager()
                 , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
@@ -77,7 +77,8 @@ namespace FdaViewModel.FlowTransforms
                 .WithSaveUndoRedo(saveHelper);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
-            StudyCache.AddSiblingRules(vm, this);
+            //StudyCache.AddSiblingRules(vm, this);
+            vm.AddSiblingRules(this);
 
             Navigate(vm, false, false, "Create Inflow Outflow");
             //if (!vm.WasCancled)
@@ -100,22 +101,7 @@ namespace FdaViewModel.FlowTransforms
         }
         #endregion
         #region Functions
-        //public override string TableName
-        //{
-        //    get
-        //    {
-        //        return "Inflow Outflow Relationships";
-        //    }
-        //}
-
-        //public override string[] TableColumnNames()
-        //{
-        //    return new string[] { "Name","Last Edit Date", "Description" , "Curve Distribution Type"};
-        //}
-        //public override Type[] TableColumnTypes()
-        //{
-        //    return new Type[] { typeof(string),typeof(string), typeof(string), typeof(string) };
-        //}
+    
         public  ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
         {
             Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;

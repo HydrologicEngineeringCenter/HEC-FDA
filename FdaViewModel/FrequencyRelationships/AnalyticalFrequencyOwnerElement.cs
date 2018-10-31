@@ -67,7 +67,7 @@ namespace FdaViewModel.FrequencyRelationships
         {
 
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFlowFrequencyManager(StudyCache)
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFlowFrequencyManager()
                 , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
                 (editor, element) => AssignValuesFromEditorToElement(editor, element));
             //create action manager
@@ -75,6 +75,9 @@ namespace FdaViewModel.FrequencyRelationships
                 .WithSaveUndoRedo(saveHelper);
 
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(actionManager);
+            //StudyCache.AddSiblingRules(vm, this);
+            vm.AddSiblingRules(this);
+
             Navigate(vm,false,false,"Import Frequency");
             //if (!vm.WasCanceled)
             //{
@@ -90,10 +93,7 @@ namespace FdaViewModel.FrequencyRelationships
             //}
         }
        
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
+       
         #endregion
         #region Functions
 
@@ -125,11 +125,6 @@ namespace FdaViewModel.FrequencyRelationships
             //return null;
         }
        
-
-        //public override void AddElementFromRowData(object[] rowData)
-        //{
-        //    AddElement(CreateElementFromRowData(rowData),false);
-        //}
         #endregion
     }
 }

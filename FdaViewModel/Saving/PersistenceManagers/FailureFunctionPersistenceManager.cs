@@ -13,8 +13,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         private const string TableName = "Failure Functions";
         internal override string ChangeTableConstant { get { return "Failure Function - "; } }
-        private static readonly string[] TableColumnNames = { "Name", "Last Edit Date", "Description", "Associated Levee Feature", "Curve Distribution Type" };
-        private static readonly Type[] TableColumnTypes = { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
+        private static readonly string[] TableColumnNames = { "Name", "Last Edit Date", "Description", "Associated Levee Feature", "Curve Distribution Type", "Curve" };
+        private static readonly Type[] TableColumnTypes = { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
 
 
         public FailureFunctionPersistenceManager(Study.FDACache studyCache)
@@ -25,7 +25,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         #region utilities
         private object[] GetRowDataFromElement(FailureFunctionElement element)
         {
-            return new object[] { element.Name, element.LastEditDate, element.Description, element.SelectedLateralStructure.Name, element.Curve.Distribution };
+            return new object[] { element.Name, element.LastEditDate, element.Description, element.SelectedLateralStructure.Name, element.Curve.Distribution, ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues) };
 
         }
 
@@ -42,7 +42,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
             Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[4]));
             FailureFunctionElement failure = new FailureFunctionElement((string)rowData[0], (string)rowData[1], (string)rowData[2], ucdc, lfe);
-            failure.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
+            //failure.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
+            failure.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[5], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[4]));
             return failure;
         }
         #endregion
@@ -58,7 +59,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
                 SaveNewElementToParentTable(GetRowDataFromElement((FailureFunctionElement)element), TableName, TableColumnNames, TableColumnTypes);
                 SaveElementToChangeTable(element.Name, GetRowDataFromElement((FailureFunctionElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
-                SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
+                //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
                 //add the rating element to the cache which then raises event that adds it to the owner element
                 StudyCache.AddFailureFunctionElement((FailureFunctionElement)element);
             }
@@ -78,7 +79,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((FailureFunctionElement)elementToSave), oldElement.Name, TableName) || AreCurvesDifferent(oldElement.Curve, elementToSave.Curve))
             {
                 UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((FailureFunctionElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
-                SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
+               // SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
                 // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
                 StudyCache.UpdateFailureFunctionElement((FailureFunctionElement)oldElement, (FailureFunctionElement)elementToSave);
             }

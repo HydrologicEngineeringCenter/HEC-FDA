@@ -55,7 +55,7 @@ namespace FdaViewModel.GeoTech
         {
             if (Description == null) { Description = ""; }
             LeveeFeatureElement elementToSave = new LeveeFeatureElement(Name,Description,Elevation);
-            Saving.PersistenceManagers.LeveePersistenceManager manager = Saving.PersistenceFactory.GetLeveeManager(StudyCache);
+            Saving.PersistenceManagers.LeveePersistenceManager manager = Saving.PersistenceFactory.GetLeveeManager();
             if (IsImporter && HasSaved == false)
             {
                 manager.SaveNew(elementToSave);

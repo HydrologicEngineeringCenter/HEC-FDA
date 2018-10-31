@@ -61,13 +61,13 @@ namespace FdaViewModel.FrequencyRelationships
         #region Voids
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetFlowFrequencyManager(StudyCache).Remove(this);
+            Saving.PersistenceFactory.GetFlowFrequencyManager().Remove(this);
         }
         public void EditFlowFreq(object arg1, EventArgs arg2)
         {
 
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFlowFrequencyManager(StudyCache)
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFlowFrequencyManager()
                 ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
                 (editor, element) => AssignValuesFromEditorToElement(editor, element));
             //create action manager

@@ -649,7 +649,7 @@ namespace FdaViewModel.Conditions
         {
             if (Description == null) { Description = ""; }
             ConditionsElement elementToSave = ConditionFactory.BuildConditionsElement(this);
-            Saving.PersistenceManagers.ConditionsPersistenceManager manager = Saving.PersistenceFactory.GetConditionsManager(StudyCache);
+            Saving.PersistenceManagers.ConditionsPersistenceManager manager = Saving.PersistenceFactory.GetConditionsManager();
             if (IsImporter && HasSaved == false)
             {
                 manager.SaveNew(elementToSave);

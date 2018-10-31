@@ -363,6 +363,9 @@
     <Compile Include="Utilities\SaveControl.xaml.cs">
       <DependentUpon>SaveControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\TabHeaderControl.xaml.cs">
+      <DependentUpon>TabHeaderControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\TableWithPlotCurveConverter.cs" />
     <Compile Include="Utilities\TransactionMessageControl.xaml.cs">
       <DependentUpon>TransactionMessageControl.xaml</DependentUpon>
@@ -664,6 +667,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Utilities\SaveControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Utilities\TabHeaderControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

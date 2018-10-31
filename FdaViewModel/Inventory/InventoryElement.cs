@@ -121,7 +121,7 @@ namespace FdaViewModel.Inventory
         #region Voids
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetStructureInventoryManager(StudyCache).Remove(this);
+            Saving.PersistenceFactory.GetStructureInventoryManager().Remove(this);
         }
         private void InventoryToMapWindow(object arg1, EventArgs arg2)
         {

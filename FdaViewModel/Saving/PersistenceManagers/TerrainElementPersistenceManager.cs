@@ -110,9 +110,5 @@ namespace FdaViewModel.Saving.PersistenceManagers
             StudyCache.UpdateTerrain((TerrainElement)oldElement, (TerrainElement)element);
         }
 
-        public override void AddValidationRules()
-        {
-           // throw new NotImplementedException();
-        }
     }
 }

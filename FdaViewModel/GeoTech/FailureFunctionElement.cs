@@ -91,13 +91,13 @@ namespace FdaViewModel.GeoTech
 
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetFailureFunctionManager(StudyCache).Remove(this);
+            Saving.PersistenceFactory.GetFailureFunctionManager().Remove(this);
         }
         public void EditFailureFunctionCurve(object arg1, EventArgs arg2)
         {
             List<LeveeFeatureElement> leveeList = StudyCache.LeveeElements;
 
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFailureFunctionManager(StudyCache)
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFailureFunctionManager()
                 ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
                 (editor, element) => AssignValuesFromEditorToElement(editor, element));
             //create action manager
@@ -106,7 +106,7 @@ namespace FdaViewModel.GeoTech
                 .WithSaveUndoRedo(saveHelper);
 
             Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(this, leveeList, actionManager);
-            StudyCache.AddSiblingRules(vm, this);
+            //StudyCache.AddSiblingRules(vm, this);
 
             Navigate(vm, false, false, "Edit Failure Function");
             ////get the current list of levees

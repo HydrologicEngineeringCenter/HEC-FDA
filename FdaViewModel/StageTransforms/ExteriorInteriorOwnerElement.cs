@@ -70,7 +70,7 @@ namespace FdaViewModel.StageTransforms
             Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetExteriorInteriorManager(StudyCache)
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetExteriorInteriorManager()
                 , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
@@ -79,7 +79,8 @@ namespace FdaViewModel.StageTransforms
                 .WithSaveUndoRedo(saveHelper);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
-            StudyCache.AddSiblingRules(vm, this);
+            //StudyCache.AddSiblingRules(vm, this);
+            vm.AddSiblingRules(this);
 
             Navigate(vm, false, true, "Create Exterior Interior");
 

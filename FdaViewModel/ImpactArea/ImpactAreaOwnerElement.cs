@@ -66,8 +66,10 @@ namespace FdaViewModel.ImpactArea
             {
                 observpaths.Add(s);
             }
-            //i don't think the above code does anything usefull
             ImpactAreaImporterVM vm = new ImpactAreaImporterVM(observpaths);
+            //StudyCache.AddSiblingRules(vm, this);
+            vm.AddSiblingRules(this);
+
             Navigate(vm,false,false,"Import Impact Areas");
             //if (!vm.HasError & !vm.WasCanceled)
             //{

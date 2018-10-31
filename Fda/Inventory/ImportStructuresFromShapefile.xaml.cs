@@ -61,8 +61,33 @@ namespace Fda.Inventory
                 if (NextButton.Content.ToString() == "Finish")
                 {
                     var window = Window.GetWindow(this);
-                    vm.WasCanceled = false;
-                    window.Close();
+                    //vm.WasCanceled = false;
+                    //window.Close();
+                    if (window is ViewWindow)
+                    {
+
+                        FdaViewModel.Utilities.WindowVM winVM = (FdaViewModel.Utilities.WindowVM)window.DataContext;
+                        if (winVM.StudyVM != null)
+                        {
+                            if (winVM.StudyVM.SelectedTabIndex != -1)
+                            {
+                                winVM.StudyVM.RemoveTabAtIndex(winVM.StudyVM.SelectedTabIndex);
+                            }
+                            else
+                            {
+                                window.Close();
+                            }
+                        }
+                        else
+                        {
+                            window.Close();
+                        }
+
+                    }
+                    else
+                    {
+                        window.Close();
+                    }
                 }
                 else
                 {

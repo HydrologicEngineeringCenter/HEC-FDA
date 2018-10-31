@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Utilities
 {
-    public class DynamicTabVM:BaseViewModel
+    public class DynamicTabVM:BaseViewModel, IDynamicTab
     {
+
+        public event EventHandler RemoveEvent;
+        public event EventHandler PopTabOutEvent;
+
         private BaseViewModel _BaseVM;
         private string _Header;
         
@@ -23,6 +27,7 @@ namespace FdaViewModel.Utilities
             get { return _BaseVM;  }
             set { _BaseVM = value; NotifyPropertyChanged(); }
         }
+      
 
         public DynamicTabVM(string header, BaseViewModel baseVM, bool canDelete = true)
         {
@@ -30,12 +35,36 @@ namespace FdaViewModel.Utilities
             Header = header;
             BaseVM = baseVM;
         }
-
-        public override void AddValidationRules()
+        
+        public void PopTabOut()
         {
-           // throw new NotImplementedException();
+            PopTabOutEvent?.Invoke(this, new EventArgs());
+        }
+        public void RemoveTab()
+        {
+            RemoveEvent?.Invoke(this, new EventArgs());
         }
 
-      
+        //public void DisableEditContextMenuItem()
+        //{
+        //    foreach (Utilities.NamedAction a in ((BaseFdaElement)BaseVM).Actions)
+        //    {
+        //        if (a.Header.Equals(EditString))
+        //        {
+        //            a.IsEnabled = false;
+        //        }
+        //    }
+        //}
+
+        //public void EnableEditContextMenuItem()
+        //{
+        //    foreach (Utilities.NamedAction a in ((BaseFdaElement)BaseVM).Actions)
+        //    {
+        //        if (a.Header.Equals(EditString))
+        //        {
+        //            a.IsEnabled = true;
+        //        }
+        //    }
+        //}
     }
 }

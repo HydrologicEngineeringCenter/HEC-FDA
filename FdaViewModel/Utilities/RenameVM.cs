@@ -32,7 +32,9 @@ namespace FdaViewModel.Utilities
         {
             Name = element.Name;
             OldElement = element;
-            StudyCache.AddSiblingRules(this, element);
+            //StudyCache.AddSiblingRules(this, element);
+            AddSiblingRules(element);
+
             CreateElementFromEditorAction = createElementFromEditorAction;
 
         }
@@ -48,7 +50,7 @@ namespace FdaViewModel.Utilities
             ElementToSave.Name = Name;
             ElementToSave.UpdateTreeViewHeader(Name);
 
-            Saving.IPersistable savingManager = Saving.PersistenceFactory.GetElementManager(OldElement, StudyCache);
+            Saving.IPersistable savingManager = Saving.PersistenceFactory.GetElementManager(OldElement);
             if (savingManager != null)
             {
                 savingManager.SaveExisting(OldElement, ElementToSave, 0);

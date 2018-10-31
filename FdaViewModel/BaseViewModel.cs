@@ -10,7 +10,7 @@ using System.Windows.Input;
 
 namespace FdaViewModel
 {
-    public delegate void RequestNavigationHandler(BaseViewModel vm, bool newWindow, bool asDialog, string title);
+    public delegate void RequestNavigationHandler( BaseViewModel vm, bool newWindow, bool asDialog, string title);
     public delegate void RequestShapefilePathsHandler(ref List<string> files);
     public delegate void RequestShapefilePathsOfTypeHandler(ref List<string> files, Utilities.VectorFeatureType type);
     public delegate void RequestAddToMapWindowHandler(object sender, Utilities.AddMapFeatureEventArgs args);//needs to be capable of passing a geopackage connection??
@@ -27,6 +27,7 @@ namespace FdaViewModel
         public event RequestAddToMapWindowHandler RequestAddToMapWindow;
         public event RequestRemoveFromMapWindowHandler RequestRemoveFromMapWindow;
         public TransactionEventHandler TransactionEvent;
+
 
         #endregion
         #region Fields
@@ -51,6 +52,7 @@ namespace FdaViewModel
         #endregion
         #region Properties
         public static FDACache StudyCache { get; set; }
+        public static Saving.PersistenceFactory PersistenceFactory{get;set;}
 
         public virtual string Name
         {
@@ -147,6 +149,20 @@ namespace FdaViewModel
         #endregion
         #region Voids
 
+        public Action<DynamicTabVM, bool> AddThisToTabs { get; set; }
+        public Action<Guid> RemoveFromTabsDictionary { get; set; }
+        public Guid TabUniqueID { get; set; }
+        /// <summary>
+        /// This is used to tell the ui if there should be a top row with the pop in button
+        /// </summary>
+        public bool CanPopIn { get; set; } = false;
+        public bool CanOpenMultipleTimes { get; set; } = false;
+        public void AddPopThisIntoATabAction( Action<DynamicTabVM,bool> addTab)
+        {
+            AddThisToTabs = addTab;
+            CanPopIn = true;
+        }
+
         public void AddTransaction(object sender, Utilities.Transactions.TransactionEventArgs transaction)
         {
             TransactionEvent?.Invoke(this, transaction);
@@ -209,6 +225,7 @@ namespace FdaViewModel
         {
             _HasChanges = true;
 
+
             if (propertyName.Equals(nameof(HasError)) || propertyName.Equals(nameof(HasFatalError)) || propertyName.Equals(nameof(Error)) || propertyName.Equals(nameof(Messages)))
             {
                 //do nothing
@@ -248,7 +265,7 @@ namespace FdaViewModel
             }
         }
      
-        public void Navigate(BaseViewModel vm, bool newWindow = true, bool asDialog = true, string title = "FDA 2.0")
+        public void Navigate( BaseViewModel vm, bool newWindow = true, bool asDialog = true, string title = "FDA 2.0")
         {
             if (RequestNavigation != null)
             {
@@ -322,12 +339,12 @@ namespace FdaViewModel
                 //_MessagesAction.IsEnabled = true;
                 //_MessagesAction.IsVisible = true;
             }
-            if ((error.ErrorLevel & FdaModel.Utilities.Messager.ErrorMessageEnum.Report) > 0)
+            //if ((error.ErrorLevel & FdaModel.Utilities.Messager.ErrorMessageEnum.Report) > 0)
             {
                 //Utilities.WindowVM
                 Navigate(new Utilities.MessageVM(error.Message), true, true, "Error Report");
             }
-            else
+            //else
             {
 
             }
@@ -380,6 +397,8 @@ namespace FdaViewModel
         public virtual void Dispose()
         {
             FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
+            
+            
         }
 
         

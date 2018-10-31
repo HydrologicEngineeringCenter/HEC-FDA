@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,9 +46,9 @@ namespace FdaViewModel.Utilities.Transactions
             return retVals;
         }
 
-        public static List<TransactionRowItem> GetTransactionRowItemsForElement(BaseFdaElement element)
+        public static ObservableCollection<TransactionRowItem> GetTransactionRowItemsForElement(BaseFdaElement element)
         {
-            List<TransactionRowItem> retval = new List<TransactionRowItem>();
+            ObservableCollection<TransactionRowItem> retval = new ObservableCollection<TransactionRowItem>();
             List<Transaction> transactionsForElement = GetTransactionsForElement(element);
             foreach(Transaction t in transactionsForElement)
             {

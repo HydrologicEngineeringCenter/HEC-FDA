@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
         <TabControl Grid.Row="0" TabStripPlacement="Top" Visibility="{Binding TransactionsMessagesVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <TabItem Header="Log" >
-                <DataGrid AutoGenerateColumns="true" ItemsSource="{Binding TransactionRows}" ColumnWidth="*" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
+                <DataGrid AutoGenerateColumns="true" ItemsSource="{Binding TransactionRows, Mode=TwoWay}" ColumnWidth="*" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
             </TabItem>
             <TabItem Header="Messages" >
                 <DataGrid AutoGenerateColumns="true" ItemsSource="{Binding MessageRows}" />

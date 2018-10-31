@@ -8,14 +8,7 @@ using System.Threading.Tasks;
 namespace FdaViewModel.Watershed
 {
     public class TerrainOwnerElement : Utilities.ParentElement
-    {
-        //public override string TableName
-        //{
-        //    get
-        //    {
-        //        return "Terrains";
-        //    }
-        //}
+    {    
 
         #region Notes
         #endregion
@@ -24,10 +17,7 @@ namespace FdaViewModel.Watershed
 
         #endregion
         #region Properties
-        //public override string GetTableConstant()
-        //{
-        //    return TableName;
-        //}
+        
         #endregion
         #region Constructors
         public TerrainOwnerElement(BaseFdaElement owner) : base(owner)
@@ -63,16 +53,16 @@ namespace FdaViewModel.Watershed
         #endregion
         #region Functions
         #endregion
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
+       
         private void AddNew(object arg1, EventArgs arg2)
         {
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager();
                 //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName));
 
             TerrainBrowserVM vm = new TerrainBrowserVM(this, actionManager);
+            //StudyCache.AddSiblingRules(vm, this);
+            vm.AddSiblingRules(this);
+
             //vm.TerrainFileFinishedCopying += ReplaceTemporaryTerrainNode;
             Navigate(vm, false,true,"Import Terrain");
             //if (!vm.WasCanceled)
@@ -106,30 +96,7 @@ namespace FdaViewModel.Watershed
             AddElement(new TerrainElement(name, System.IO.Path.GetFileName(vm.TerrainPath), false));
 
         }
-        //public override void AddBaseElements()
-        //{
-            
-        //    //throw new NotImplementedException();
-        //}
-
-        //public override string[] TableColumnNames()
-        //{
-        //    return new string[] { "Terrain Name", "Path Name" };
-        //}
-
-        //public override Type[] TableColumnTypes()
-        //{
-        //    return new Type[] { typeof(string), typeof(string)};
-        //}
-        //public override object[] RowData()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public override bool SavesToRow()
-        //{
-        //    return false;
-        //}
+     
 
         //public override OwnedElement CreateElementFromEditor(Editors.BaseEditorVM vm)
         //{
@@ -139,9 +106,5 @@ namespace FdaViewModel.Watershed
         //    return new TerrainElement(editorVM.Name,editorVM.TerrainPath,this);
         //}
 
-        //public override void AddElementFromRowData(object[] rowData)
-        //{
-        //    AddElement(new TerrainElement((string)rowData[0], (string)rowData[1],this),false);
-        //}
     }
 }

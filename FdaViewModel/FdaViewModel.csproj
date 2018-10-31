@@ -222,10 +222,12 @@
     <Compile Include="Study\FDACache.cs" />
     <Compile Include="Study\ExistingStudyVM.cs" />
     <Compile Include="Study\FdaStudyVM.cs" />
+    <Compile Include="Study\IStudyCache.cs" />
     <Compile Include="Study\MonetaryUnitsEnum.cs" />
     <Compile Include="Study\NewStudyVM.cs" />
     <Compile Include="Study\PropertiesVM.cs" />
     <Compile Include="Study\StudyElement.cs" />
+    <Compile Include="Study\StudyStatusBar.cs" />
     <Compile Include="Study\UnitsSystemEnum.cs" />
     <Compile Include="Utilities\AddGriddedDataEventArgs.cs" />
     <Compile Include="Utilities\AddMapFeatureEventArgs.cs" />
@@ -237,6 +239,7 @@
     <Compile Include="Utilities\DatabaseTable.cs" />
     <Compile Include="ImpactArea\ImpactAreaRowItem.cs" />
     <Compile Include="Utilities\DynamicTabVM.cs" />
+    <Compile Include="Utilities\IDynamicTab.cs" />
     <Compile Include="Utilities\IRowItem.cs" />
     <Compile Include="Utilities\ISaveUndoRedo.cs" />
     <Compile Include="Utilities\MapWindowControlVM.cs" />
@@ -275,6 +278,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

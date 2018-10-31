@@ -86,7 +86,7 @@ namespace FdaViewModel.ImpactArea
 
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetImpactAreaManager(StudyCache).Remove(this);
+            Saving.PersistenceFactory.GetImpactAreaManager().Remove(this);
         }
 
         private void ImpactAreasToMapWindow(object arg1, EventArgs arg2)
@@ -104,7 +104,7 @@ namespace FdaViewModel.ImpactArea
             //Utilities.AddShapefileEventArgs args = new Utilities.AddShapefileEventArgs(Name, features, dtv, ogldi);
             //AddToMapWindow(this, args);
             //_featureNodeHash = args.MapFeatureHash;
-            Saving.PersistenceFactory.GetImpactAreaManager(StudyCache).ImpactAreasToMapWindow(this);
+            Saving.PersistenceFactory.GetImpactAreaManager().ImpactAreasToMapWindow(this);
             foreach (Utilities.NamedAction a in Actions)
             {
                 if (a.Header.Equals("Add Impact Areas To Map Window"))

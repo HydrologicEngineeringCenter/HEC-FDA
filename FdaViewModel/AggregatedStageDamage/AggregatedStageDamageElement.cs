@@ -81,7 +81,7 @@ namespace FdaViewModel.AggregatedStageDamage
         }
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetStageDamageManager(StudyCache).Remove(this);
+            Saving.PersistenceFactory.GetStageDamageManager().Remove(this);
         }
         public override void AddValidationRules()
         {
@@ -91,7 +91,7 @@ namespace FdaViewModel.AggregatedStageDamage
         public void EditDamageCurve(object arg1, EventArgs arg2)
         {
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetStageDamageManager(StudyCache)
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetStageDamageManager()
                 ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
@@ -99,7 +99,7 @@ namespace FdaViewModel.AggregatedStageDamage
                 .WithSaveUndoRedo(saveHelper);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
-            StudyCache.AddSiblingRules(vm, this);
+            vm.AddSiblingRules( this);
 
             Navigate(vm, false, true, "Create Stage Damage");
             //List<Inventory.DamageCategory.DamageCategoryOwnedElement> damcateleements = GetElementsOfType<Inventory.DamageCategory.DamageCategoryOwnedElement>();

@@ -67,13 +67,13 @@ namespace FdaViewModel.StageTransforms
         }
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetExteriorInteriorManager(StudyCache).Remove(this);
+            Saving.PersistenceFactory.GetExteriorInteriorManager().Remove(this);
         }
         public void EditExteriorInteriorCurve(object arg1, EventArgs arg2)
         {
           
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetExteriorInteriorManager(StudyCache)
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetExteriorInteriorManager()
                 ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
@@ -82,7 +82,7 @@ namespace FdaViewModel.StageTransforms
                 .WithSaveUndoRedo(saveHelper);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
-            StudyCache.AddSiblingRules(vm, this);
+            //StudyCache.AddSiblingRules(vm, this);
 
             Navigate(vm, false, true, "Create Exterior Interior");
             

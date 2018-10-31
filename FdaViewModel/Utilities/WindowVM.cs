@@ -100,7 +100,7 @@ namespace FdaViewModel.Utilities
         }
         #endregion
         #region Voids
-        private void CurrentView_RequestNavigation(BaseViewModel vm, bool newWindow, bool asDialog, string title = "FDA 2.0")
+        private void CurrentView_RequestNavigation( BaseViewModel vm, bool newWindow, bool asDialog, string title = "FDA 2.0")
         {
             if (LaunchNewWindow != null)
             {
@@ -113,12 +113,15 @@ namespace FdaViewModel.Utilities
                 }
                 else
                 {
-                    if(StudyVM.Tabs == null)
-                    {
-                        StudyVM.Tabs = new System.Collections.ObjectModel.ObservableCollection<DynamicTabVM>();
-                    }
-                    StudyVM.Tabs.Add(new DynamicTabVM(title, vm));
-                    StudyVM.SelectedTabIndex = StudyVM.Tabs.Count - 1;
+                    //if(StudyVM.Tabs == null)
+                    //{
+                    //    StudyVM.Tabs = new System.Collections.ObjectModel.ObservableCollection<IDynamicTab>();
+                    //}
+                   
+                        StudyVM.AddTab(new DynamicTabVM(title, vm,true));
+                   
+                    
+                    // StudyVM.SelectedTabIndex = StudyVM.Tabs.Count - 1;
                     //CurrentView = vm;
                 }
             }else
@@ -127,10 +130,7 @@ namespace FdaViewModel.Utilities
             }
 
         }
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
+     
 
        
         #endregion

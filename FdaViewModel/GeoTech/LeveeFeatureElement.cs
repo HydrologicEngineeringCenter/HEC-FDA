@@ -23,10 +23,7 @@ namespace FdaViewModel.GeoTech
         private double _Elevation;
         #endregion
         #region Properties
-        //public override string GetTableConstant()
-        //{
-        //    return _TableConstant;
-        //}
+       
 
         public double Elevation
         {
@@ -63,8 +60,6 @@ namespace FdaViewModel.GeoTech
             localActions.Add(removeLeveeFeature);
             localActions.Add(renameElement);
 
-
-
             Actions = localActions;
 
         }
@@ -72,7 +67,7 @@ namespace FdaViewModel.GeoTech
         #region Voids
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetLeveeManager(StudyCache).Remove(this);
+            Saving.PersistenceFactory.GetLeveeManager().Remove(this);
         }
         public void EditLeveeFeature(object arg1, EventArgs arg2)
         {
@@ -123,10 +118,7 @@ namespace FdaViewModel.GeoTech
         //    }
         //}
 
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
+       
 
         //public override void Save()
         //{
