@@ -45,7 +45,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         #region constructor
         public ConditionsPersistenceManager(Study.FDACache studyCache)
         {
-            StudyCache = studyCache;
+            StudyCacheForSaving = studyCache;
         }
 
         #endregion
@@ -92,7 +92,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 //get the impact area
                 string selectedImpAreaName = (string)rowData[3];
                 ImpactArea.ImpactAreaElement selectedImpArea = null;
-                List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.ImpactAreaElements; //GetElementsOfType<ImpactArea.ImpactAreaElement>();
+                List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.GetChildElementsOfType<ImpactArea.ImpactAreaElement>();
                 foreach (ImpactArea.ImpactAreaElement impArea in impactAreas)
                 {
                     if (impArea.Name.Equals(selectedImpAreaName))
@@ -121,7 +121,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 if (useFlowFreq)
                 {
                     string flowFreqName = (string)rowData[5];
-                    AnalyticalFrequencyElement flowFreqElem = GetSelectedElementOfType<AnalyticalFrequencyElement>(StudyCache.FlowFrequencyElements, flowFreqName);
+                    AnalyticalFrequencyElement flowFreqElem = GetSelectedElementOfType<AnalyticalFrequencyElement>(StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>(), flowFreqName);
                     builder.WithAnalyticalFreqElem(flowFreqElem);
                 }
 
@@ -129,7 +129,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 if (useInflowOutflow)
                 {
                     string infOutName = (string)rowData[7];
-                    InflowOutflowElement inOutElem = GetSelectedElementOfType<InflowOutflowElement>(StudyCache.InflowOutflowElements, infOutName);
+                    InflowOutflowElement inOutElem = GetSelectedElementOfType<InflowOutflowElement>(StudyCache.GetChildElementsOfType<InflowOutflowElement>(), infOutName);
                     builder.WithInflowOutflowElem(inOutElem);
                 }
 
@@ -137,7 +137,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 if (useRating)
                 {
                     string ratingName = (string)rowData[9];
-                    RatingCurveElement ratingElem = GetSelectedElementOfType<RatingCurveElement>(StudyCache.RatingCurveElements, ratingName);
+                    RatingCurveElement ratingElem = GetSelectedElementOfType<RatingCurveElement>(StudyCache.GetChildElementsOfType<RatingCurveElement>(), ratingName);
                     builder.WithRatingCurveElem(ratingElem);
                 }
 
@@ -145,7 +145,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 if (useIntExt)
                 {
                     string extIntName = (string)rowData[11];
-                    ExteriorInteriorElement extIntElem = GetSelectedElementOfType<ExteriorInteriorElement>(StudyCache.ExteriorInteriorElements, extIntName);
+                    ExteriorInteriorElement extIntElem = GetSelectedElementOfType<ExteriorInteriorElement>(StudyCache.GetChildElementsOfType<ExteriorInteriorElement>(), extIntName);
                     builder.WithExtIntStageElem(extIntElem);
                 }
 
@@ -153,7 +153,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 if (useLevee)
                 {
                     string leveeName = (string)rowData[13];
-                    LeveeFeatureElement leveeElem = GetSelectedElementOfType<LeveeFeatureElement>(StudyCache.LeveeElements, leveeName);
+                    LeveeFeatureElement leveeElem = GetSelectedElementOfType<LeveeFeatureElement>(StudyCache.GetChildElementsOfType<LeveeFeatureElement>(), leveeName);
                     builder.WithLevee(leveeElem);
                 }
 
@@ -161,7 +161,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 if (useFailure)
                 {
                     string failureName = (string)rowData[15];
-                    FailureFunctionElement failureElem = GetSelectedElementOfType<FailureFunctionElement>(StudyCache.FailureFunctionElements, failureName);
+                    FailureFunctionElement failureElem = GetSelectedElementOfType<FailureFunctionElement>(StudyCache.GetChildElementsOfType<FailureFunctionElement>(), failureName);
                     builder.WithFailureFunctionElem(failureElem);
                 }
 
@@ -169,7 +169,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 if (useStageDam)
                 {
                     string stageDamName = (string)rowData[17];
-                    AggregatedStageDamage.AggregatedStageDamageElement stageDamElem = GetSelectedElementOfType<AggregatedStageDamageElement>(StudyCache.StageDamageElements, stageDamName);
+                    AggregatedStageDamage.AggregatedStageDamageElement stageDamElem = GetSelectedElementOfType<AggregatedStageDamageElement>(StudyCache.GetChildElementsOfType<AggregatedStageDamageElement>(), stageDamName);
                     builder.WithAggStageDamageElem(stageDamElem);
                 }
 
@@ -207,7 +207,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 //SaveElementToChangeTable(element.Name, GetRowDataFromElement((ConditionsElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
                 //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
                 //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCache.AddConditionsElement((ConditionsElement)element);
+                StudyCacheForSaving.AddConditionsElement((ConditionsElement)element);
+                
             }
         }
 
@@ -215,7 +216,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             RemoveFromParentTable(element, TableName);
             //DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCache.RemoveRatingElement((RatingCurveElement)element);
+            StudyCacheForSaving.RemoveRatingElement((RatingCurveElement)element);
 
         }
 
@@ -224,7 +225,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             if (DidParentTableRowValuesChange(element, GetRowDataFromElement((ConditionsElement)element), oldElement.Name, TableName))
             {
                 UpdateParentTableRow(element.Name, changeTableIndex, GetRowDataFromElement((ConditionsElement)element), oldElement.Name, TableName, false, ChangeTableConstant);
-                StudyCache.UpdateConditionsElement((ConditionsElement)oldElement, (ConditionsElement)element);
+                StudyCacheForSaving.UpdateConditionsElement((ConditionsElement)oldElement, (ConditionsElement)element);
             }
         }
 

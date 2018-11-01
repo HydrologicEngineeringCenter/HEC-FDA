@@ -19,7 +19,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public FailureFunctionPersistenceManager(Study.FDACache studyCache)
         {
-            StudyCache = studyCache;
+            StudyCacheForSaving = studyCache;
         }
 
         #region utilities
@@ -31,7 +31,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            List<LeveeFeatureElement> ele = StudyCache.LeveeElements;
+            List<LeveeFeatureElement> ele = StudyCacheForSaving.LeveeElements;
             LeveeFeatureElement lfe = null;
             foreach (LeveeFeatureElement element in ele)
             {
@@ -61,14 +61,14 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 SaveElementToChangeTable(element.Name, GetRowDataFromElement((FailureFunctionElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
                 //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
                 //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCache.AddFailureFunctionElement((FailureFunctionElement)element);
+                StudyCacheForSaving.AddFailureFunctionElement((FailureFunctionElement)element);
             }
         }
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
             DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCache.RemoveFailureFunctionElement((FailureFunctionElement)element);
+            StudyCacheForSaving.RemoveFailureFunctionElement((FailureFunctionElement)element);
 
         }
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )
@@ -79,9 +79,9 @@ namespace FdaViewModel.Saving.PersistenceManagers
             if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((FailureFunctionElement)elementToSave), oldElement.Name, TableName) || AreCurvesDifferent(oldElement.Curve, elementToSave.Curve))
             {
                 UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((FailureFunctionElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
-               // SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
+                // SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
                 // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
-                StudyCache.UpdateFailureFunctionElement((FailureFunctionElement)oldElement, (FailureFunctionElement)elementToSave);
+                StudyCacheForSaving.UpdateFailureFunctionElement((FailureFunctionElement)oldElement, (FailureFunctionElement)elementToSave);
             }
         }
 

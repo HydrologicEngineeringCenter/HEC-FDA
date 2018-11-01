@@ -18,7 +18,7 @@ using System.Collections.ObjectModel;
 
 namespace FdaViewModel.Study
 {
-    public class FDACache
+    public class FDACache: IStudyCache
     {
         public delegate void AddElementEventHandler(object sender, Saving.ElementAddedEventArgs args);
         public delegate void UpdateElementEventHandler(object sender, Saving.ElementUpdatedEventArgs args);
@@ -26,44 +26,44 @@ namespace FdaViewModel.Study
 
         //private static FDACache _Instance;
 
-        public AddElementEventHandler RatingAdded;
-        public AddElementEventHandler TerrainAdded;
-        public AddElementEventHandler ImpactAreaAdded;
-        public AddElementEventHandler WaterSurfaceElevationAdded;
-        public AddElementEventHandler FlowFrequencyAdded;
-        public AddElementEventHandler InflowOutflowAdded;
-        public AddElementEventHandler ExteriorInteriorAdded;
-        public AddElementEventHandler LeveeAdded;
-        public AddElementEventHandler FailureFunctionAdded;
-        public AddElementEventHandler StageDamageAdded;
-        public AddElementEventHandler StructureInventoryAdded;
-        public AddElementEventHandler ConditionsElementAdded;
+        public event AddElementEventHandler RatingAdded;
+        public event AddElementEventHandler TerrainAdded;
+        public event AddElementEventHandler ImpactAreaAdded;
+        public event AddElementEventHandler WaterSurfaceElevationAdded;
+        public event AddElementEventHandler FlowFrequencyAdded;
+        public event AddElementEventHandler InflowOutflowAdded;
+        public event AddElementEventHandler ExteriorInteriorAdded;
+        public event AddElementEventHandler LeveeAdded;
+        public event AddElementEventHandler FailureFunctionAdded;
+        public event AddElementEventHandler StageDamageAdded;
+        public event AddElementEventHandler StructureInventoryAdded;
+        public event AddElementEventHandler ConditionsElementAdded;
 
-        public AddElementEventHandler RatingRemoved;
-        public AddElementEventHandler TerrainRemoved;
-        public AddElementEventHandler ImpactAreaRemoved;
-        public AddElementEventHandler WaterSurfaceElevationRemoved;
-        public AddElementEventHandler FlowFrequencyRemoved;
-        public AddElementEventHandler InflowOutflowRemoved;
-        public AddElementEventHandler ExteriorInteriorRemoved;
-        public AddElementEventHandler LeveeRemoved;
-        public AddElementEventHandler FailureFunctionRemoved;
-        public AddElementEventHandler StageDamageRemoved;
-        public AddElementEventHandler StructureInventoryRemoved;
-        public AddElementEventHandler ConditionsElementRemoved;
+        public event AddElementEventHandler RatingRemoved;
+        public event AddElementEventHandler TerrainRemoved;
+        public event AddElementEventHandler ImpactAreaRemoved;
+        public event AddElementEventHandler WaterSurfaceElevationRemoved;
+        public event AddElementEventHandler FlowFrequencyRemoved;
+        public event AddElementEventHandler InflowOutflowRemoved;
+        public event AddElementEventHandler ExteriorInteriorRemoved;
+        public event AddElementEventHandler LeveeRemoved;
+        public event AddElementEventHandler FailureFunctionRemoved;
+        public event AddElementEventHandler StageDamageRemoved;
+        public event AddElementEventHandler StructureInventoryRemoved;
+        public event AddElementEventHandler ConditionsElementRemoved;
 
-        public UpdateElementEventHandler RatingUpdated;
-        public UpdateElementEventHandler TerrainUpdated;
-        public UpdateElementEventHandler ImpactAreaUpdated;
-        public UpdateElementEventHandler WaterSurfaceElevationUpdated;
-        public UpdateElementEventHandler FlowFrequencyUpdated;
-        public UpdateElementEventHandler InflowOutflowUpdated;
-        public UpdateElementEventHandler ExteriorInteriorUpdated;
-        public UpdateElementEventHandler LeveeUpdated;
-        public UpdateElementEventHandler FailureFunctionUpdated;
-        public UpdateElementEventHandler StageDamageUpdated;
-        public UpdateElementEventHandler StructureInventoryUpdated;
-        public UpdateElementEventHandler ConditionsElementUpdated;
+        public event UpdateElementEventHandler RatingUpdated;
+        public event UpdateElementEventHandler TerrainUpdated;
+        public event UpdateElementEventHandler ImpactAreaUpdated;
+        public event UpdateElementEventHandler WaterSurfaceElevationUpdated;
+        public event UpdateElementEventHandler FlowFrequencyUpdated;
+        public event UpdateElementEventHandler InflowOutflowUpdated;
+        public event UpdateElementEventHandler ExteriorInteriorUpdated;
+        public event UpdateElementEventHandler LeveeUpdated;
+        public event UpdateElementEventHandler FailureFunctionUpdated;
+        public event UpdateElementEventHandler StageDamageUpdated;
+        public event UpdateElementEventHandler StructureInventoryUpdated;
+        public event UpdateElementEventHandler ConditionsElementUpdated;
 
         private List<RatingCurveElement> _Ratings = new List<RatingCurveElement>();
         private List<TerrainElement> _Terrains = new List<TerrainElement>();
@@ -620,115 +620,6 @@ namespace FdaViewModel.Study
 
         #region UpdateElements
 
-        public void UpdateElement(ChildElement element)
-        {
-            //if (element.GetType() == typeof(TerrainElement))
-            //{
-            //    foreach (BaseFdaElement elem in TerrainElements)
-            //    {
-            //        retVal.Add(elem);
-            //    }
-            //    return retVal;
-            //}
-            //if (element.GetType() == typeof(ImpactAreaElement))
-            //{
-            //    foreach (BaseFdaElement elem in ImpactAreaElements)
-            //    {
-            //        retVal.Add(elem);
-            //    }
-            //    return retVal;
-            //}
-            //if (element.GetType() == typeof(WaterSurfaceElevationElement))
-            //{
-            //    foreach (BaseFdaElement elem in WaterSurfaceElements)
-            //    {
-            //        retVal.Add(elem);
-            //    }
-            //    return retVal;
-            //}
-            //if (element.GetType() == typeof(AnalyticalFrequencyElement))
-            //{
-            //    foreach (BaseFdaElement elem in FlowFrequencyElements)
-            //    {
-            //        retVal.Add(elem);
-            //    }
-            //    return retVal;
-            //}
-            //if (element.GetType() == typeof(InflowOutflowElement))
-            //{
-            //    foreach (BaseFdaElement elem in InflowOutflowElements)
-            //    {
-            //        retVal.Add(elem);
-            //    }
-            //    return retVal;
-            //}
-            //if (element.GetType() == typeof(RatingCurveElement))
-            //{
-            //    foreach (BaseFdaElement elem in RatingCurveElements)
-            //    {
-            //        retVal.Add(elem);
-            //    }
-            //    return retVal;
-            //}
-            //if (element.GetType() == typeof(ExteriorInteriorElement))
-            //{
-            //    foreach (BaseFdaElement elem in ExteriorInteriorElements)
-            //    {
-            //        retVal.Add(elem);
-            //    }
-            //    return retVal;
-            //}
-            //if (element.GetType() == typeof(LeveeFeatureElement))
-            //{
-            //    foreach (BaseFdaElement elem in LeveeElements)
-            //    {
-            //        retVal.Add(elem);
-            //    }
-            //    return retVal;
-            //}
-            //if (element.GetType() == typeof(FailureFunctionElement))
-            //{
-            //    foreach (BaseFdaElement elem in FailureFunctionElements)
-            //    {
-            //        retVal.Add(elem);
-            //    }
-            //    return retVal;
-            //}
-            ////if (element.GetType() == typeof(Inventory.OccupancyTypes.OccupancyTypesElement))
-            ////{
-            ////    foreach (BaseFdaElement elem in o)
-            ////    {
-            ////        retVal.Add(elem);
-            ////    }
-            ////    return retVal;
-            ////}
-            //if (element.GetType() == typeof(InventoryElement))
-            //{
-            //    foreach (BaseFdaElement elem in StructureInventoryElements)
-            //    {
-            //        retVal.Add(elem);
-            //    }
-            //    return retVal;
-            //}
-            //if (element.GetType() == typeof(AggregatedStageDamageElement))
-            //{
-            //    foreach (BaseFdaElement elem in StageDamageElements)
-            //    {
-            //        retVal.Add(elem);
-            //    }
-            //    return retVal;
-            //}
-            //if (element.GetType() == typeof(ConditionsElement))
-            //{
-            //    foreach (BaseFdaElement elem in ConditionsElements)
-            //    {
-            //        retVal.Add(elem);
-            //    }
-            //    return retVal;
-            //}
-
-        }
-
 
         public void UpdateTerrain(TerrainElement oldElement, TerrainElement newElement)
         {
@@ -949,538 +840,309 @@ namespace FdaViewModel.Study
         #endregion
 
         #region Rename
-
-        public List<BaseFdaElement> GetSiblings(BaseFdaElement element)
+        /// <summary>
+        /// Gets all the child siblings. Either a child element or a parent element should be passed in. 
+        /// If it is a child element then the child's siblings will be returned including itself.
+        /// If a parent is passed in then all of its children will be returned.
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        public List<ChildElement> GetSiblingsOfChild(ChildElement element)
         {
-            List<BaseFdaElement> retVal = new List<BaseFdaElement>();
-            ////////////////////////////
-            //        child elements
-            ////////////////////////////
-            if(element.GetType().BaseType == typeof(Utilities.ChildElement))
-            {
-                if (element.GetType() == typeof(TerrainElement))
-                {
-                    foreach(BaseFdaElement elem in TerrainElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(ImpactAreaElement))
-                {
-                    foreach (BaseFdaElement elem in ImpactAreaElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(WaterSurfaceElevationElement))
-                {
-                    foreach (BaseFdaElement elem in WaterSurfaceElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(AnalyticalFrequencyElement))
-                {
-                    foreach (BaseFdaElement elem in FlowFrequencyElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(InflowOutflowElement))
-                {
-                    foreach (BaseFdaElement elem in InflowOutflowElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(RatingCurveElement))
-                {
-                    foreach (BaseFdaElement elem in RatingCurveElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(ExteriorInteriorElement))
-                {
-                    foreach (BaseFdaElement elem in ExteriorInteriorElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(LeveeFeatureElement))
-                {
-                    foreach (BaseFdaElement elem in LeveeElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(FailureFunctionElement))
-                {
-                    foreach (BaseFdaElement elem in FailureFunctionElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                //if (element.GetType() == typeof(Inventory.OccupancyTypes.OccupancyTypesElement))
-                //{
-                //    foreach (BaseFdaElement elem in o)
-                //    {
-                //        retVal.Add(elem);
-                //    }
-                //    return retVal;
-                //}
-                if (element.GetType() == typeof(InventoryElement))
-                {
-                    foreach (BaseFdaElement elem in StructureInventoryElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(AggregatedStageDamageElement))
-                {
-                    foreach (BaseFdaElement elem in StageDamageElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(ConditionsElement))
-                {
-                    foreach (BaseFdaElement elem in ConditionsElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-
-            }
-            ////////////////////////////
-            //        parent elements
-            ////////////////////////////
-            else if (element.GetType().BaseType == typeof(Utilities.ParentElement))
-            {
-                if (element.GetType() == typeof(TerrainOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in TerrainElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(ImpactAreaOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in ImpactAreaElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(WaterSurfaceElevationOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in WaterSurfaceElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(AnalyticalFrequencyOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in FlowFrequencyElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(InflowOutflowOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in InflowOutflowElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(RatingCurveOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in RatingCurveElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(ExteriorInteriorOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in ExteriorInteriorElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(LeveeFeatureOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in LeveeElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(FailureFunctionOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in FailureFunctionElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                //if (element.GetType() == typeof(occtype))
-                //{
-                //    foreach (BaseFdaElement elem in ImpactAreaElements)
-                //    {
-                //        retVal.Add(elem);
-                //    }
-                //    return retVal;
-                //}
-                if (element.GetType() == typeof(StructureInventoryOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in StructureInventoryElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(AggregatedStageDamageOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in StageDamageElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (element.GetType() == typeof(ConditionsOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in ConditionsElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-            }
-            return new List<BaseFdaElement>();
+            List<ChildElement> retVal = new List<ChildElement>();         
+            retVal = GetChildElementsOfType<ChildElement>();          
+            return retVal;
         }
 
-        public List<BaseFdaElement> GetElementsOfType(Type T)
+        public List<ChildElement> GetChildrenOfParent(ParentElement element)
         {
-            List<BaseFdaElement> retVal = new List<BaseFdaElement>();
-            ////////////////////////////
-            //        child elements
-            ////////////////////////////
-            if (T.BaseType == typeof(Utilities.ChildElement))
+            List<ChildElement> retVal = new List<ChildElement>();
+            if (element.GetType() == typeof(TerrainOwnerElement))
             {
-                if (T == typeof(TerrainElement))
+                foreach (ChildElement elem in TerrainElements)
                 {
-                    foreach (BaseFdaElement elem in TerrainElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
+                    retVal.Add(elem);
                 }
-                if (T == typeof(ImpactAreaElement))
+                return retVal;
+            }
+            if (element.GetType() == typeof(ImpactAreaOwnerElement))
+            {
+                foreach (ChildElement elem in ImpactAreaElements)
                 {
-                    foreach (BaseFdaElement elem in ImpactAreaElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
+                    retVal.Add(elem);
                 }
-                if (T == typeof(WaterSurfaceElevationElement))
+                return retVal;
+            }
+            if (element.GetType() == typeof(WaterSurfaceElevationOwnerElement))
+            {
+                foreach (ChildElement elem in WaterSurfaceElements)
                 {
-                    foreach (BaseFdaElement elem in WaterSurfaceElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
+                    retVal.Add(elem);
                 }
-                if (T == typeof(AnalyticalFrequencyElement))
+                return retVal;
+            }
+            if (element.GetType() == typeof(AnalyticalFrequencyOwnerElement))
+            {
+                foreach (ChildElement elem in FlowFrequencyElements)
                 {
-                    foreach (BaseFdaElement elem in FlowFrequencyElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
+                    retVal.Add(elem);
                 }
-                if (T == typeof(InflowOutflowElement))
+                return retVal;
+            }
+            if (element.GetType() == typeof(InflowOutflowOwnerElement))
+            {
+                foreach (ChildElement elem in InflowOutflowElements)
                 {
-                    foreach (BaseFdaElement elem in InflowOutflowElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
+                    retVal.Add(elem);
                 }
-                if (T == typeof(RatingCurveElement))
+                return retVal;
+            }
+            if (element.GetType() == typeof(RatingCurveOwnerElement))
+            {
+                foreach (ChildElement elem in RatingCurveElements)
                 {
-                    foreach (BaseFdaElement elem in RatingCurveElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
+                    retVal.Add(elem);
                 }
-                if (T == typeof(ExteriorInteriorElement))
+                return retVal;
+            }
+            if (element.GetType() == typeof(ExteriorInteriorOwnerElement))
+            {
+                foreach (ChildElement elem in ExteriorInteriorElements)
                 {
-                    foreach (BaseFdaElement elem in ExteriorInteriorElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
+                    retVal.Add(elem);
                 }
-                if (T == typeof(LeveeFeatureElement))
+                return retVal;
+            }
+            if (element.GetType() == typeof(LeveeFeatureOwnerElement))
+            {
+                foreach (ChildElement elem in LeveeElements)
                 {
-                    foreach (BaseFdaElement elem in LeveeElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
+                    retVal.Add(elem);
                 }
-                if (T == typeof(FailureFunctionElement))
+                return retVal;
+            }
+            if (element.GetType() == typeof(FailureFunctionOwnerElement))
+            {
+                foreach (ChildElement elem in FailureFunctionElements)
                 {
-                    foreach (BaseFdaElement elem in FailureFunctionElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
+                    retVal.Add(elem);
                 }
-                //if (element.GetType() == typeof(Inventory.OccupancyTypes.OccupancyTypesElement))
-                //{
-                //    foreach (BaseFdaElement elem in o)
-                //    {
-                //        retVal.Add(elem);
-                //    }
-                //    return retVal;
-                //}
-                if (T == typeof(InventoryElement))
+                return retVal;
+            }
+            //if (element.GetType() == typeof(occtype))
+            //{
+            //    foreach (BaseFdaElement elem in ImpactAreaElements)
+            //    {
+            //        retVal.Add(elem);
+            //    }
+            //    return retVal;
+            //}
+            if (element.GetType() == typeof(StructureInventoryOwnerElement))
+            {
+                foreach (ChildElement elem in StructureInventoryElements)
                 {
-                    foreach (BaseFdaElement elem in StructureInventoryElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
+                    retVal.Add(elem);
                 }
-                if (T == typeof(AggregatedStageDamageElement))
+                return retVal;
+            }
+            if (element.GetType() == typeof(AggregatedStageDamageOwnerElement))
+            {
+                foreach (ChildElement elem in StageDamageElements)
                 {
-                    foreach (BaseFdaElement elem in StageDamageElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
+                    retVal.Add(elem);
                 }
-                if (T == typeof(ConditionsElement))
+                return retVal;
+            }
+            if (element.GetType() == typeof(ConditionsOwnerElement))
+            {
+                foreach (ChildElement elem in ConditionsElements)
                 {
-                    foreach (BaseFdaElement elem in ConditionsElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
+                    retVal.Add(elem);
                 }
+                return retVal;
+            }
+            return retVal;
 
-            }
-            ////////////////////////////
-            //        parent elements
-            ////////////////////////////
-            else if (T.BaseType == typeof(Utilities.ParentElement))
-            {
-                if (T == typeof(TerrainOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in TerrainElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (T == typeof(ImpactAreaOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in ImpactAreaElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (T == typeof(WaterSurfaceElevationOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in WaterSurfaceElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (T == typeof(AnalyticalFrequencyOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in FlowFrequencyElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (T == typeof(InflowOutflowOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in InflowOutflowElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (T == typeof(RatingCurveOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in RatingCurveElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (T == typeof(ExteriorInteriorOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in ExteriorInteriorElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (T == typeof(LeveeFeatureOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in LeveeElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (T == typeof(FailureFunctionOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in FailureFunctionElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                //if (element.GetType() == typeof(occtype))
-                //{
-                //    foreach (BaseFdaElement elem in ImpactAreaElements)
-                //    {
-                //        retVal.Add(elem);
-                //    }
-                //    return retVal;
-                //}
-                if (T == typeof(StructureInventoryOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in StructureInventoryElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (T == typeof(AggregatedStageDamageOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in StageDamageElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-                if (T == typeof(ConditionsOwnerElement))
-                {
-                    foreach (BaseFdaElement elem in ConditionsElements)
-                    {
-                        retVal.Add(elem);
-                    }
-                    return retVal;
-                }
-            }
-            return new List<BaseFdaElement>();
         }
 
-        ///// <summary>
-        ///// This is used to add rules that the name cannot be the same as a sibling. 
-        ///// This method is to be called for editors. It will exclude the original name
-        ///// from the list of banned words.
-        ///// </summary>
-        ///// <param name="editorVM"></param>
-        ///// <param name="element"></param>
-        //public void AddSiblingRules(BaseViewModel editorVM, BaseFdaElement element)
-        //{
-        //    //child elements need to exclude thier own name from the list of banned words
-        //    bool isChild = false;
-        //    if (element.GetType().IsSubclassOf(typeof(ChildElement)))
-        //    {
-        //        isChild = true;
-        //    }
+        public T GetParentElementOfType<T>() where T:ParentElement
+        {
+            var parentType = typeof(T);
+            if (parentType == typeof(TerrainOwnerElement))
+            {
+                return TerrainParent as T;
 
-        //    List<string> existingElements = new List<string>();
-        //    List<BaseFdaElement> siblings = GetSiblings(element);
+            }
+            if (parentType == typeof(ImpactAreaOwnerElement))
+            {
 
-        //    string originalName = element.Name;
+            }
+            if (parentType == typeof(WaterSurfaceElevationOwnerElement))
+            {
 
-        //    foreach (BaseFdaElement elem in siblings)
-        //    {
-        //        if (isChild && elem.Name.Equals(originalName))
-        //        {
-        //            continue;
-        //        }
-        //        else
-        //        {
-        //            existingElements.Add(elem.Name);
-        //        }
-        //    }
+            }
+            if (parentType == typeof(AnalyticalFrequencyOwnerElement))
+            {
 
-        //    foreach (string existingName in existingElements)
-        //    {
-        //        editorVM.AddRule(nameof(editorVM.Name), () =>
-        //        {
-        //            return editorVM.Name != existingName;
-        //        }, "This name is already used. Names must be unique.");
-        //    }
+            }
+            if (parentType == typeof(InflowOutflowOwnerElement))
+            {
 
-        //}
+            }
+            if (parentType == typeof(RatingCurveOwnerElement))
+            {
 
-        ///// <summary>
-        ///// This is used to add rules that the name cannot be the same as a sibling. 
-        ///// This method is to be called for importers. 
-        ///// </summary>
-        ///// <param name="editorVM"></param>
-        ///// <param name="element"></param>
-        //public void AddSiblingRules(BaseViewModel editorVM, ParentElement element)
-        //{
-        //    List<string> existingElements = new List<string>();
-        //    foreach (BaseFdaElement elem in GetSiblings(element))
-        //    {
-        //            existingElements.Add(elem.Name);
-        //    }
+            }
+            if (parentType == typeof(ExteriorInteriorOwnerElement))
+            {
 
-        //    foreach (string existingName in existingElements)
-        //    {
-        //        editorVM.AddRule(nameof(editorVM.Name), () =>
-        //        {
-        //            return editorVM.Name != existingName;
-        //        }, "This name is already used. Names must be unique.");
-        //    }
+            }
+            if (parentType == typeof(LeveeFeatureOwnerElement))
+            {
 
-        //}
+            }
+            if (parentType == typeof(FailureFunctionOwnerElement))
+            {
+
+            }
+            //if (element.GetType() == typeof(occtype))
+            //{
+            //    foreach (BaseFdaElement elem in ImpactAreaElements)
+            //    {
+            //        retVal.Add(elem);
+            //    }
+            //    return retVal;
+            //}
+            if (parentType == typeof(StructureInventoryOwnerElement))
+            {
+
+            }
+            if (parentType == typeof(AggregatedStageDamageOwnerElement))
+            {
+
+            }
+            if (parentType == typeof(ConditionsOwnerElement))
+            {
+                return ConditionsParent as T;
+            }
+            return null;
+        }
 
 
-        //public void RenameElement(BaseFdaElement element)
-        //{
-        //    if(element.GetType() == typeof(StageTransforms.RatingCurveElement))
-        //    {
-        //        //foreach(rat
-        //    }
-        //}
+        public List<T> GetChildElementsOfType<T>() where T : ChildElement
+        {
+            List<T> retVal = new List<T>();
+            var childElementType = typeof(T);
 
 
+            if (childElementType == typeof(TerrainElement))
+            {
+                foreach (ChildElement elem in TerrainElements)
+                {
+                    retVal.Add(elem as T);
+                }
+                return retVal;
+            }
+            if (childElementType == typeof(ImpactAreaElement))
+            {
+                foreach (ChildElement elem in ImpactAreaElements)
+                {
+                    retVal.Add(elem as T);
+                }
+                return retVal;
+            }
+            if (childElementType == typeof(WaterSurfaceElevationElement))
+            {
+                foreach (ChildElement elem in WaterSurfaceElements)
+                {
+                    retVal.Add(elem as T);
+                }
+                return retVal;
+            }
+            if (childElementType == typeof(AnalyticalFrequencyElement))
+            {
+                foreach (ChildElement elem in FlowFrequencyElements)
+                {
+                    retVal.Add(elem as T);
+                }
+                return retVal;
+            }
+            if (childElementType == typeof(InflowOutflowElement))
+            {
+                foreach (ChildElement elem in InflowOutflowElements)
+                {
+                    retVal.Add(elem as T);
+                }
+                return retVal;
+            }
+            if (childElementType == typeof(RatingCurveElement))
+            {
+                foreach (ChildElement elem in RatingCurveElements)
+                {
+                    retVal.Add(elem as T);
+                }
+                return retVal;
+            }
+            if (childElementType == typeof(ExteriorInteriorElement))
+            {
+                foreach (ChildElement elem in ExteriorInteriorElements)
+                {
+                    retVal.Add(elem as T);
+                }
+                return retVal;
+            }
+            if (childElementType == typeof(LeveeFeatureElement))
+            {
+                foreach (ChildElement elem in LeveeElements)
+                {
+                    retVal.Add(elem as T);
+                }
+                return retVal;
+            }
+            if (childElementType == typeof(FailureFunctionElement))
+            {
+                foreach (ChildElement elem in FailureFunctionElements)
+                {
+                    retVal.Add(elem as T);
+                }
+                return retVal;
+            }
+            //if (element.GetType() == typeof(Inventory.OccupancyTypes.OccupancyTypesElement))
+            //{
+            //    foreach (BaseFdaElement elem in o)
+            //    {
+            //        retVal.Add(elem);
+            //    }
+            //    return retVal;
+            //}
+            if (childElementType == typeof(InventoryElement))
+            {
+                foreach (ChildElement elem in StructureInventoryElements)
+                {
+                    retVal.Add(elem as T);
+                }
+                return retVal;
+            }
+            if (childElementType == typeof(AggregatedStageDamageElement))
+            {
+                foreach (ChildElement elem in StageDamageElements)
+                {
+                    retVal.Add(elem as T);
+                }
+                return retVal;
+            }
+            if (childElementType == typeof(ConditionsElement))
+            {
+                foreach (ChildElement elem in ConditionsElements)
+                {
+                    retVal.Add(elem as T);
+                }
+                return retVal;
+            }
+            return retVal;
+        }
+
+        
         #endregion
 
     }

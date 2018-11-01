@@ -469,17 +469,18 @@ namespace FdaViewModel.Study
             if (Storage.Connection.Instance.IsConnectionNull) return;
 
             bool loadStudyCache = false;
+            FDACache cache = null;
             if (StudyCache == null)
             {
                 loadStudyCache = true;
-                Study.FDACache cache = FDACache.Create();
+                cache = FDACache.Create();
                 StudyCache = cache;
                 PersistenceFactory = new Saving.PersistenceFactory(cache);
             }
 
             Watershed.TerrainOwnerElement t = new Watershed.TerrainOwnerElement(this);
             AddElement(t);
-            if (loadStudyCache) { StudyCache.TerrainParent = t; }
+            if (loadStudyCache) { cache.TerrainParent = t; }
 
             ImpactArea.ImpactAreaOwnerElement i = new ImpactArea.ImpactAreaOwnerElement(this);
             AddElement(i);
@@ -517,11 +518,11 @@ namespace FdaViewModel.Study
 
             Conditions.ConditionsOwnerElement c = new Conditions.ConditionsOwnerElement(this);
             AddElement(c);
-            if (loadStudyCache) { StudyCache.ConditionsParent = c; }
+            if (loadStudyCache) { cache.ConditionsParent = c; }
 
             if (loadStudyCache == true)
             {
-                StudyCache.LoadFDACache();
+                cache.LoadFDACache();
             }
 
             UpdateTheConditionsTree(this, new EventArgs());

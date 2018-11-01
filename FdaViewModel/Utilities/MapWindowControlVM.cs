@@ -9,14 +9,14 @@ namespace FdaViewModel.Utilities
     public class MapWindowControlVM : BaseViewModel
     {
 
-        public event EventHandler SetMapWindowProperty;
+        //public event EventHandler SetMapWindowProperty;
 
-        private MapWindowMapTreeViewConnector _MWMTVConn;
+        //private MapWindowMapTreeViewConnector _MWMTVConn;
 
 
         public MapWindowMapTreeViewConnector MWMTVConn
         {
-            get;set;
+            get; set;
         }
 
         //private OpenGLMapping.MapTreeView _MapTreeView;
@@ -40,14 +40,16 @@ namespace FdaViewModel.Utilities
         //    }
         //}
 
-        public MapWindowControlVM(MapWindowMapTreeViewConnector conn)
+        public event EventHandler SetTheMapWindow;
+
+        public MapWindowControlVM(ref MapWindowMapTreeViewConnector conn)
         {
             MWMTVConn = conn;
         }
 
-        public override void AddValidationRules()
+       public void SetMapWindow(OpenGLMapping.OpenGLMapWindow mapWindow)
         {
-            //throw new NotImplementedException();
+            SetTheMapWindow?.Invoke(mapWindow, new EventArgs());
         }
 
       

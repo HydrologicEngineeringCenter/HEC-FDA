@@ -31,9 +31,9 @@ namespace Fda.Commands
                 FdaViewModel.Utilities.WindowVM winVM = (FdaViewModel.Utilities.WindowVM)window.DataContext;
                 if (winVM.StudyVM != null)
                 {
-                    if (winVM.StudyVM.SelectedTabIndex != -1)
+                    if (winVM.StudyVM.SelectedDynamicTabIndex != -1)
                     {
-                        winVM.StudyVM.RemoveTabAtIndex(winVM.StudyVM.SelectedTabIndex);
+                        winVM.StudyVM.RemoveTabAtIndex(winVM.StudyVM.SelectedDynamicTabIndex);
                     }
                     else
                     {

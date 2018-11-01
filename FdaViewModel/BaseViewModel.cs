@@ -51,7 +51,7 @@ namespace FdaViewModel
 
         #endregion
         #region Properties
-        public static FDACache StudyCache { get; set; }
+        public static IStudyCache StudyCache { get; set; }
         public static Saving.PersistenceFactory PersistenceFactory{get;set;}
 
         public virtual string Name

@@ -39,9 +39,9 @@ namespace FdaViewModel.Hydraulics
         #region Voids
         private void AddNewGriddedHydraulics(object arg1, EventArgs arg2)
         {
-            List<Watershed.TerrainElement> TerrainList = StudyCache.TerrainElements;// GetElementsOfType<Watershed.TerrainElement>();
-            
-            
+            List<Watershed.TerrainElement> TerrainList = StudyCache.GetChildElementsOfType<Watershed.TerrainElement>();
+
+
             GridImporterVM vm = new GridImporterVM(TerrainList,2001,2002);
             Navigate(vm);
             if(!vm.HasError & !vm.WasCanceled)

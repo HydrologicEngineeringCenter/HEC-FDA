@@ -377,7 +377,7 @@ namespace FdaViewModel.Conditions
         #region BuildControlsFromElement
         private Plots.IndividualLinkedPlotControlVM BuildLP3ControlFromElement()
         {
-            List<FrequencyRelationships.AnalyticalFrequencyElement> listOfLp3 = StudyCache.FlowFrequencyElements;// GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
+            List<FrequencyRelationships.AnalyticalFrequencyElement> listOfLp3 = StudyCache.GetChildElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();// StudyCache.FlowFrequencyElements;// GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
                 FdaModel.Functions.FrequencyFunctions.LogPearsonIII lp3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(AnalyticalFlowFrequency.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
                 Statistics.CurveIncreasing curve = lp3.GetOrdinatesFunction().Function;
                 Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(lp3, curve, AnalyticalFlowFrequency.Name);
@@ -390,7 +390,7 @@ namespace FdaViewModel.Conditions
 
         private Plots.IndividualLinkedPlotControlVM BuildInflowOutflowControlFromElement()
         {
-            List<FlowTransforms.InflowOutflowElement> listOfInfOut = StudyCache.InflowOutflowElements;// GetElementsOfType<FlowTransforms.InflowOutflowElement>();
+            List<FlowTransforms.InflowOutflowElement> listOfInfOut = StudyCache.GetChildElementsOfType<FlowTransforms.InflowOutflowElement>();
             UncertainCurveDataCollection curve = InflowOutflowElement.Curve;
             FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction infOut =
                 new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InflowOutflow);
@@ -408,7 +408,7 @@ namespace FdaViewModel.Conditions
 
         private Plots.IndividualLinkedPlotControlVM BuildRatingControlFromElement()
         {
-            List<StageTransforms.RatingCurveElement> listOfRatingCurves = StudyCache.RatingCurveElements;// GetElementsOfType<StageTransforms.RatingCurveElement>();
+            List<StageTransforms.RatingCurveElement> listOfRatingCurves = StudyCache.GetChildElementsOfType<StageTransforms.RatingCurveElement>();
             UncertainCurveDataCollection curve = RatingCurveElement.Curve;
             FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction ratFunc =
                 new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.Rating);
@@ -424,7 +424,7 @@ namespace FdaViewModel.Conditions
 
         private Plots.IndividualLinkedPlotControlVM BuildExtIntControlFromElement()
         {
-            List<StageTransforms.ExteriorInteriorElement> listOfExtIntElements = StudyCache.ExteriorInteriorElements;// GetElementsOfType<StageTransforms.ExteriorInteriorElement>();
+            List<StageTransforms.ExteriorInteriorElement> listOfExtIntElements = StudyCache.GetChildElementsOfType<StageTransforms.ExteriorInteriorElement>();
             UncertainCurveDataCollection curve = ExteriorInteriorElement.Curve;
             FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extIntCurve =
                 new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.ExteriorInteriorStage);
@@ -441,7 +441,7 @@ namespace FdaViewModel.Conditions
         }
         private Plots.IndividualLinkedPlotControlVM BuildStageDamageControlFromElement()
         {
-            List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamage = StudyCache.StageDamageElements;// GetElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
+            List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamage = StudyCache.GetChildElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
             UncertainCurveDataCollection curve = StageDamageElement.Curve;
             FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamageCurve =
                 new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InteriorStageDamage);
@@ -456,17 +456,17 @@ namespace FdaViewModel.Conditions
         #endregion
         public void EditCondition(object arg1, EventArgs arg2)
         {
-            List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.ImpactAreaElements;// GetElementsOfType<ImpactArea.ImpactAreaElement>();
-            List<FrequencyRelationships.AnalyticalFrequencyElement> freqeles = StudyCache.FlowFrequencyElements;// GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
-            List<FlowTransforms.InflowOutflowElement> inflowOutflowList = StudyCache.InflowOutflowElements;// GetElementsOfType<FlowTransforms.InflowOutflowElement>();
-            List<StageTransforms.RatingCurveElement> ratingeles = StudyCache.RatingCurveElements;// GetElementsOfType<StageTransforms.RatingCurveElement>();
+            List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.GetChildElementsOfType<ImpactArea.ImpactAreaElement>();
+            List<FrequencyRelationships.AnalyticalFrequencyElement> freqeles = StudyCache.GetChildElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
+            List<FlowTransforms.InflowOutflowElement> inflowOutflowList = StudyCache.GetChildElementsOfType<FlowTransforms.InflowOutflowElement>();
+            List<StageTransforms.RatingCurveElement> ratingeles = StudyCache.GetChildElementsOfType<StageTransforms.RatingCurveElement>();
 
-            List<StageTransforms.ExteriorInteriorElement> extIntList = StudyCache.ExteriorInteriorElements;// GetElementsOfType<StageTransforms.ExteriorInteriorElement>();
-            List<GeoTech.LeveeFeatureElement> leveeList = StudyCache.LeveeElements;// GetElementsOfType<GeoTech.LeveeFeatureElement>();
-            List<GeoTech.FailureFunctionElement> failureFunctionList = StudyCache.FailureFunctionElements;// GetElementsOfType<GeoTech.FailureFunctionElement>();
+            List<StageTransforms.ExteriorInteriorElement> extIntList = StudyCache.GetChildElementsOfType<StageTransforms.ExteriorInteriorElement>();
+            List<GeoTech.LeveeFeatureElement> leveeList = StudyCache.GetChildElementsOfType<GeoTech.LeveeFeatureElement>();
+            List<GeoTech.FailureFunctionElement> failureFunctionList = StudyCache.GetChildElementsOfType<GeoTech.FailureFunctionElement>();
 
 
-            List<AggregatedStageDamage.AggregatedStageDamageElement> damageles = StudyCache.StageDamageElements;// StageDamageElements;// GetElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
+            List<AggregatedStageDamage.AggregatedStageDamageElement> damageles = StudyCache.GetChildElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
             //if (impactAreas.Count == 0)
             //{
             //    ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("No Impact Area Sets have been defined.", FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel));
@@ -488,7 +488,7 @@ namespace FdaViewModel.Conditions
             }
             else
             {
-                lp3Control = ConditionsOwnerElement.BuildDefaultLP3Control(StudyCache.ConditionsParent);
+                lp3Control = ConditionsOwnerElement.BuildDefaultLP3Control(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
             }
 
             if (UseInflowOutflow)
@@ -497,7 +497,7 @@ namespace FdaViewModel.Conditions
             }
             else
             {
-                infOutControl = ConditionsOwnerElement.BuildDefaultInflowOutflowControl(StudyCache.ConditionsParent);
+                infOutControl = ConditionsOwnerElement.BuildDefaultInflowOutflowControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
             }
 
             if (UseRatingCurve)
@@ -506,7 +506,7 @@ namespace FdaViewModel.Conditions
             }
             else
             {
-                ratingControl = ConditionsOwnerElement.BuildDefaultRatingControl(StudyCache.ConditionsParent);
+                ratingControl = ConditionsOwnerElement.BuildDefaultRatingControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
             }
 
             if (UseExteriorInteriorStage)
@@ -515,7 +515,7 @@ namespace FdaViewModel.Conditions
             }
             else
             {
-                extIntStageControl = ConditionsOwnerElement.BuildDefaultExtIntStageControl(StudyCache.ConditionsParent);
+                extIntStageControl = ConditionsOwnerElement.BuildDefaultExtIntStageControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
             }
 
             if (_UseAggregatedStageDamage)
@@ -524,10 +524,10 @@ namespace FdaViewModel.Conditions
             }
             else
             {
-                stageDamageControl = ConditionsOwnerElement.BuildDefaultStageDamageControl(StudyCache.ConditionsParent);
+                stageDamageControl = ConditionsOwnerElement.BuildDefaultStageDamageControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
             }
 
-            damageFrequencyControl = ConditionsOwnerElement.BuildDefaultDamageFrequencyControl(StudyCache.ConditionsParent);
+            damageFrequencyControl = ConditionsOwnerElement.BuildDefaultDamageFrequencyControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
 
 
 

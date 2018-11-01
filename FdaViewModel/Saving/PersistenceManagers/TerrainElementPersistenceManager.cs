@@ -24,7 +24,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public TerrainElementPersistenceManager(Study.FDACache studyCache)
         {
-            StudyCache = studyCache;
+            StudyCacheForSaving = studyCache;
         }
 
         #region utilities
@@ -49,15 +49,15 @@ namespace FdaViewModel.Saving.PersistenceManagers
             await Task.Run(() => System.IO.File.Copy(OriginalTerrainPath, element.FileName)); //pathNames[0], pathNames[1]));
             string name = element.Name;
             //remove the temporary node and replace it
-            foreach (Utilities.ChildElement elem in StudyCache.TerrainParent.Elements)
+            foreach (Utilities.ChildElement elem in StudyCache.GetChildElementsOfType<TerrainElement>())
             {
                 if (elem.Name.Equals(name))
                 {
-                    StudyCache.TerrainParent.Elements.Remove(elem);
+                    StudyCache.GetParentElementOfType<TerrainOwnerElement>().Elements.Remove(elem);
                     break;
                 }
             }
-            StudyCache.AddTerrainElement(element);
+            StudyCacheForSaving.AddTerrainElement(element);
         }
         private async void RemoveTerrainFileOnBackgroundThread(TerrainElement element)
         {
@@ -78,7 +78,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
                 return;
             }
-            StudyCache.RemoveTerrainElement((TerrainElement)element);
+            StudyCacheForSaving.RemoveTerrainElement((TerrainElement)element);
 
         }
 
@@ -107,7 +107,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         public void SaveExisting(ChildElement oldElement, ChildElement element, int changeTableIndex)
         {
             UpdateParentTableRow(element.Name, changeTableIndex, GetRowDataFromElement((TerrainElement)element), oldElement.Name, TableName, false, ChangeTableConstant);
-            StudyCache.UpdateTerrain((TerrainElement)oldElement, (TerrainElement)element);
+            StudyCacheForSaving.UpdateTerrain((TerrainElement)oldElement, (TerrainElement)element);
         }
 
     }

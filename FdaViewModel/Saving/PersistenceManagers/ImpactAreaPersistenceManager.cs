@@ -23,7 +23,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public ImpactAreaPersistenceManager(Study.FDACache studyCache)
         {
-            StudyCache = studyCache;
+            StudyCacheForSaving = studyCache;
         }
 
         #region utilities
@@ -145,7 +145,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 //SaveElementToChangeTable(element.Name, GetRowDataFromElement((ImpactAreaElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
                 SaveImpactAreaTable((ImpactAreaElement)element);
                 //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCache.AddImpactAreaElement((ImpactAreaElement)element);
+                StudyCacheForSaving.AddImpactAreaElement((ImpactAreaElement)element);
             }
         }
 
@@ -154,7 +154,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             RemoveFromParentTable(element, TableName);
             DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCache.RemoveImpactAreaElement((ImpactAreaElement)element);
+            StudyCacheForSaving.RemoveImpactAreaElement((ImpactAreaElement)element);
 
         }
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )
@@ -172,7 +172,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 }
                 UpdateExistingTable((ImpactAreaElement)elementToSave);
                 // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
-                StudyCache.UpdateImpactAreaElement((ImpactAreaElement)oldElement, (ImpactAreaElement)elementToSave);
+                StudyCacheForSaving.UpdateImpactAreaElement((ImpactAreaElement)oldElement, (ImpactAreaElement)elementToSave);
             }
         }
 

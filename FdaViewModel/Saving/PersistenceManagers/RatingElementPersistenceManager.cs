@@ -20,7 +20,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         #region constructor
         public RatingElementPersistenceManager(Study.FDACache studyCache)
         {
-            StudyCache = studyCache;
+            StudyCacheForSaving = studyCache;
         }
 
         #endregion
@@ -64,7 +64,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
 
                 //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCache.AddRatingElement((RatingCurveElement)element);
+                StudyCacheForSaving.AddRatingElement((RatingCurveElement)element);
             }
         }
         
@@ -74,7 +74,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
            
                 RemoveFromParentTable(element, TableName);
                 DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-                StudyCache.RemoveRatingElement((RatingCurveElement)element);
+            StudyCacheForSaving.RemoveRatingElement((RatingCurveElement)element);
            
         }
 
@@ -88,7 +88,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((RatingCurveElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
                 //SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
                 // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
-                StudyCache.UpdateRatingCurve((RatingCurveElement)oldElement, (RatingCurveElement)elementToSave);
+                StudyCacheForSaving.UpdateRatingCurve((RatingCurveElement)oldElement, (RatingCurveElement)elementToSave);
             }
 
         }

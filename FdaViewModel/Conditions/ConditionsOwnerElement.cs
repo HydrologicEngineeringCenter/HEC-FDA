@@ -67,7 +67,7 @@ namespace FdaViewModel.Conditions
         #region BuildDefaultPlotControls
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultLP3Control(ParentElement ownerElement)
         {
-            List<AnalyticalFrequencyElement> listOfLp3 = StudyCache.FlowFrequencyElements;// ownerElement.GetElementsOfType<AnalyticalFrequencyElement>();
+            List<AnalyticalFrequencyElement> listOfLp3 = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
             AddFlowFrequencyToConditionVM lp3Importer = new AddFlowFrequencyToConditionVM(listOfLp3);
             lp3Importer.RequestNavigation += ownerElement.Navigate;
             return new Plots.IndividualLinkedPlotControlVM(
@@ -78,7 +78,7 @@ namespace FdaViewModel.Conditions
 
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultInflowOutflowControl(ParentElement ownerElement)
         {
-            List<InflowOutflowElement> listOfInfOut = StudyCache.InflowOutflowElements;//ownerElement.GetElementsOfType<InflowOutflowElement>();
+            List<InflowOutflowElement> listOfInfOut = StudyCache.GetChildElementsOfType<InflowOutflowElement>();
             AddInflowOutflowToConditionVM inOutImporter = new AddInflowOutflowToConditionVM(listOfInfOut);
             inOutImporter.RequestNavigation += ownerElement.Navigate;
             return new Plots.IndividualLinkedPlotControlVM(
@@ -91,7 +91,7 @@ namespace FdaViewModel.Conditions
 
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultRatingControl(ParentElement ownerElement)
         {
-            List<RatingCurveElement> listOfRatingCurves = StudyCache.RatingCurveElements;// ownerElement.GetElementsOfType<RatingCurveElement>();
+            List<RatingCurveElement> listOfRatingCurves = StudyCache.GetChildElementsOfType<RatingCurveElement>();
             AddRatingCurveToConditionVM ratImporter = new AddRatingCurveToConditionVM(listOfRatingCurves);
             ratImporter.RequestNavigation += ownerElement.Navigate;
             return new Plots.IndividualLinkedPlotControlVM(
@@ -102,7 +102,7 @@ namespace FdaViewModel.Conditions
 
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultExtIntStageControl(ParentElement ownerElement)
         {
-            List<StageTransforms.ExteriorInteriorElement> listOfExtIntElements = StudyCache.ExteriorInteriorElements;// ownerElement.GetElementsOfType<StageTransforms.ExteriorInteriorElement>();
+            List<StageTransforms.ExteriorInteriorElement> listOfExtIntElements = StudyCache.GetChildElementsOfType<ExteriorInteriorElement>();
             AddExteriorInteriorStageToConditionVM extIntImporter = new AddExteriorInteriorStageToConditionVM(listOfExtIntElements);
             extIntImporter.RequestNavigation += ownerElement.Navigate;
             return new Plots.IndividualLinkedPlotControlVM(
@@ -115,7 +115,7 @@ namespace FdaViewModel.Conditions
 
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultStageDamageControl(ParentElement ownerElement)
         {
-            List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamage = StudyCache.StageDamageElements;// ownerElement.GetElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
+            List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamage = StudyCache.GetChildElementsOfType<AggregatedStageDamageElement>();
             AddStageDamageToConditionVM stageDamageImporter = new AddStageDamageToConditionVM(listOfStageDamage);
             stageDamageImporter.RequestNavigation += ownerElement.Navigate;
             return new Plots.IndividualLinkedPlotControlVM(
@@ -137,7 +137,7 @@ namespace FdaViewModel.Conditions
         public void AddNewCondition(object arg1, EventArgs arg2)
         {
             
-            List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.ImpactAreaElements;//GetElementsOfType<ImpactArea.ImpactAreaElement>();
+            List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.GetChildElementsOfType<ImpactArea.ImpactAreaElement>();
 
             Plots.IndividualLinkedPlotControlVM lp3Control = BuildDefaultLP3Control(this);
 

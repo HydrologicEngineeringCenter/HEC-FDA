@@ -13,6 +13,8 @@ namespace FdaViewModel.Saving
     {
         private const int MAX_CHANGE_NUMBER = 4;
 
+        public Study.FDACache StudyCacheForSaving { get; set; }
+
         #region Utilities
         public List<ChildElement> CreateElementsFromRows(string tableName, Func<object[], ChildElement> createElemsFromRowDataAction)
         {

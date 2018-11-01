@@ -143,6 +143,14 @@ namespace Fda.Study
             //vm.MWMTVConn. MapTreeView = MapTreeView;
             vm.AddMapsTab(MapTreeView);
             vm.AddCreateNewStudyTab();
+            for(int i = 0;i<vm.Tabs.Count;i++)
+            {
+                DynamicTabControl.SelectedIndex = i;
+                UpdateLayout();
+                
+            }
+           
+
         }
 
         private void lbl_Study_MouseRightButtonDown(object sender, MouseButtonEventArgs e)

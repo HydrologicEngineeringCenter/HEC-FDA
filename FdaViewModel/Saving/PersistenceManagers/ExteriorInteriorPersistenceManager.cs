@@ -20,7 +20,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public ExteriorInteriorPersistenceManager(Study.FDACache studyCache)
         {
-            StudyCache = studyCache;
+            StudyCacheForSaving = studyCache;
         }
 
 
@@ -52,7 +52,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
 
                 //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCache.AddExteriorInteriorElement((ExteriorInteriorElement)element);
+                StudyCacheForSaving.AddExteriorInteriorElement((ExteriorInteriorElement)element);
             }
         }
 
@@ -60,7 +60,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             RemoveFromParentTable(element, TableName);
             DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCache.RemoveExteriorInteriorElement((ExteriorInteriorElement)element);
+            StudyCacheForSaving.RemoveExteriorInteriorElement((ExteriorInteriorElement)element);
 
         }
 
@@ -75,7 +75,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((ExteriorInteriorElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
                 //SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
                 // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
-                StudyCache.UpdateExteriorInteriorElement((ExteriorInteriorElement)oldElement, (ExteriorInteriorElement)elementToSave);
+                StudyCacheForSaving.UpdateExteriorInteriorElement((ExteriorInteriorElement)oldElement, (ExteriorInteriorElement)elementToSave);
             }
         }
 

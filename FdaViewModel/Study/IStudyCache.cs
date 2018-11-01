@@ -10,13 +10,15 @@ namespace FdaViewModel.Study
     public interface IStudyCache
     {
 
-        void RemoveElement(ChildElement element);
-        void AddElement(ChildElement element);
-        void UpdateElement(ChildElement oldElement, ChildElement newElement);
+        //void RemoveElement(ChildElement element);
+        //void AddElement(ChildElement element);
+        //void UpdateElement(ChildElement oldElement, ChildElement newElement);
 
-        List<BaseFdaElement> GetSiblings(BaseFdaElement element);
-        List<BaseFdaElement> GetElementsOfType(Type T);
-        Conditions.ConditionsOwnerElement ConditionsParent();
+        List<ChildElement> GetSiblingsOfChild(ChildElement element);
+        List<ChildElement> GetChildrenOfParent(ParentElement element);
+        List<T> GetChildElementsOfType<T>() where T : ChildElement ;
+        T GetParentElementOfType<T>() where T : ParentElement;
+        //Conditions.ConditionsOwnerElement ConditionsParent { get; }
 
         //right now there will be a bunch of errors surrounding the three events that get attached in the owner's ctors.
         //I can get around all this if I just set the lists of the owners to be the study cach lists. Then the only adding and removing

@@ -22,7 +22,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public LeveePersistenceManager(Study.FDACache studyCache)
         {
-            StudyCache = studyCache;
+            StudyCacheForSaving = studyCache;
         }
 
         #region utilities
@@ -42,13 +42,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
             if (element.GetType() == typeof(LeveeFeatureElement))
             {
                 SaveNewElementToParentTable(GetRowDataFromElement((LeveeFeatureElement)element), TableName, TableColumnNames, TableColumnTypes);
-                StudyCache.AddLeveeElement((LeveeFeatureElement)element);
+                StudyCacheForSaving.AddLeveeElement((LeveeFeatureElement)element);
             }
         }
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
-            StudyCache.RemoveLeveeElement((LeveeFeatureElement)element);
+            StudyCacheForSaving.RemoveLeveeElement((LeveeFeatureElement)element);
 
         }
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )
@@ -56,7 +56,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((LeveeFeatureElement)elementToSave), oldElement.Name, TableName))
             {
                 UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((LeveeFeatureElement)elementToSave), oldElement.Name, TableName, false, ChangeTableConstant);
-                StudyCache.UpdateLeveeElement((LeveeFeatureElement)oldElement, (LeveeFeatureElement)elementToSave);
+                StudyCacheForSaving.UpdateLeveeElement((LeveeFeatureElement)oldElement, (LeveeFeatureElement)elementToSave);
             }
         }
 

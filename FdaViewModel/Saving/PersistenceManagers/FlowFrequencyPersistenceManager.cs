@@ -20,7 +20,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public FlowFrequencyPersistenceManager(Study.FDACache studyCache)
         {
-            StudyCache = studyCache;
+            StudyCacheForSaving = studyCache;
         }
 
         #region utilities
@@ -54,7 +54,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 SaveElementToChangeTable(element.Name, GetRowDataFromElement((AnalyticalFrequencyElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
                 //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
                 //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCache.AddFlowFrequencyElement((AnalyticalFrequencyElement)element);
+                StudyCacheForSaving.AddFlowFrequencyElement((AnalyticalFrequencyElement)element);
             }
         }
 
@@ -62,7 +62,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             RemoveFromParentTable(element, TableName);
             DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCache.RemoveFlowFrequencyElement((AnalyticalFrequencyElement)element);
+            StudyCacheForSaving.RemoveFlowFrequencyElement((AnalyticalFrequencyElement)element);
 
         }
 
@@ -74,8 +74,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
             if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((AnalyticalFrequencyElement)elementToSave), oldElement.Name, TableName) )
             {
                 UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((AnalyticalFrequencyElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
-               // SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
-                StudyCache.UpdateFlowFrequencyElement((AnalyticalFrequencyElement)oldElement, (AnalyticalFrequencyElement)elementToSave);
+                // SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
+                StudyCacheForSaving.UpdateFlowFrequencyElement((AnalyticalFrequencyElement)oldElement, (AnalyticalFrequencyElement)elementToSave);
             }
         }
 

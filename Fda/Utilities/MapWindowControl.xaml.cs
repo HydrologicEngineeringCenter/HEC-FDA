@@ -67,10 +67,7 @@ namespace Fda.Utilities
             MapWindow.MapWindow.MouseEnter += MapWindow_Mouse;
 
 
-
-
-          
-
+           
 
         }
 
@@ -140,7 +137,7 @@ namespace Fda.Utilities
             FdaViewModel.Utilities.MapWindowControlVM vm = (FdaViewModel.Utilities.MapWindowControlVM)this.DataContext;
             vm.MWMTVConn.MapWindow = MapWindow.MapWindow;
 
-            MapWindow.MapWindow.TreeView = vm.MWMTVConn. MapTreeView;
+            MapWindow.MapWindow.TreeView = vm.MWMTVConn.MapTreeView;
             vm.MWMTVConn.MapTreeView.MapWindow = MapWindow.MapWindow;
 
             MapToolBar.MapTree = vm.MWMTVConn.MapTreeView;
@@ -151,8 +148,7 @@ namespace Fda.Utilities
 
             MapWindow.MapWindow.PlotFeatures();
 
-            //MapTreeView.MapWindow = MapWindow.MapWindow;
-            //vm.MapWindow = MapWindow.MapWindow;
+
         }
     }
 }

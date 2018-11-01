@@ -94,7 +94,7 @@ namespace FdaViewModel.Watershed
 
                 //add a dummy element to the parent
                 TerrainElement t = new TerrainElement(Name,System.IO.Path.GetFileName(TerrainPath),true); // file extention?
-                StudyCache.TerrainParent.AddElement(t);
+                StudyCache.GetParentElementOfType<TerrainOwnerElement>().AddElement(t);
                 TerrainElement newElement = new TerrainElement(Name, TerrainPath);
 
                 Saving.PersistenceManagers.TerrainElementPersistenceManager manager = Saving.PersistenceFactory.GetTerrainManager();

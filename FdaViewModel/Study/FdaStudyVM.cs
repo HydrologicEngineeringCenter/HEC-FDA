@@ -55,7 +55,7 @@ namespace FdaViewModel.Study
         }
 
 
-        public int SelectedTabIndex
+        public int SelectedDynamicTabIndex
         {
             get { return _SelectedTabIndex; }
             set
@@ -181,7 +181,10 @@ namespace FdaViewModel.Study
         #endregion
 
         #region Voids
-
+            private void SetMapWindowInConnector(object sender, EventArgs e)
+        {
+            //OpenGLMapping.OpenGLMapWindow mapWindow = 
+        }
             private void UpdateSaveStatus(object sender, EventArgs e)
         {
             SaveStatus = (string)sender;
@@ -245,19 +248,20 @@ namespace FdaViewModel.Study
             _MWMTVConn = MapWindowMapTreeViewConnector.Instance;
             _MWMTVConn.MapTreeView = mapTreeView;
 
-            MapWindowControlVM vm = new MapWindowControlVM(_MWMTVConn);
+            MapWindowControlVM vm = new MapWindowControlVM(ref _MWMTVConn);
             //vm.SetMapWindowProperty += SetMapWindowProperty;
             vm.Name = "map window vm";
             DynamicTabVM mapTabVM = new DynamicTabVM("Map", vm, false);
             Tabs.Add(mapTabVM);
+            SelectedDynamicTabIndex = Tabs.Count - 1;
         }
         public void AddCreateNewStudyTab()
         {
-            
+
             NewStudyVM vm = new NewStudyVM(CurrentStudyElement);
             DynamicTabVM newStudyTab = new DynamicTabVM("Create New Study", vm, true);
             AddTab(newStudyTab);
-            SelectedTabIndex = Tabs.Count - 1;
+            SelectedDynamicTabIndex = Tabs.Count - 1;
         }
 
         public DynamicTabVM SelectedDynamicTab { get; set; }
@@ -271,7 +275,7 @@ namespace FdaViewModel.Study
                 {
                     if (tab.Header.Equals(dynamicTabVM.Header))
                     {
-                        SelectedTabIndex = Tabs.IndexOf(tab);
+                        SelectedDynamicTabIndex = Tabs.IndexOf(tab);
                         return;
                     }
                 }
@@ -304,7 +308,7 @@ namespace FdaViewModel.Study
             dynamicTabVM.BaseVM.AddPopThisIntoATabAction((dynamicTab, isPoppingIn) => AddTab(dynamicTab, isPoppingIn));
             Tabs.Add(dynamicTabVM);
             _TabsDictionary.Add(uniqueID, dynamicTabVM);
-            SelectedTabIndex = Tabs.Count-1;//I want to make the tab we just added be selected. But some crazy stuff
+            SelectedDynamicTabIndex = Tabs.Count-1;//I want to make the tab we just added be selected. But some crazy stuff
             //happens and it magically sets the selected tab to be count -2. Maybe its an order thing and the tab isn't actually 
             //in yet or something.
         }

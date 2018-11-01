@@ -106,7 +106,7 @@
         </TabControl>
 
         
-      <TabControl Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding Tabs}" SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}"  MinWidth="500" MinHeight="600" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+      <TabControl Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding Tabs}" SelectedIndex="{Binding SelectedDynamicTabIndex, Mode=TwoWay}"  MinWidth="500" MinHeight="600" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
         
           <!--<TabControl.ItemContainerStyle>
         <Style TargetType="TabItem">

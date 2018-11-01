@@ -95,7 +95,7 @@ namespace FdaViewModel.GeoTech
         }
         public void EditFailureFunctionCurve(object arg1, EventArgs arg2)
         {
-            List<LeveeFeatureElement> leveeList = StudyCache.LeveeElements;
+            List<LeveeFeatureElement> leveeList = StudyCache.GetChildElementsOfType<LeveeFeatureElement>();
 
             Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFailureFunctionManager()
                 ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),

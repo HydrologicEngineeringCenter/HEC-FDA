@@ -119,7 +119,8 @@ namespace FdaViewModel.Watershed
 
         public string GetTerrainPath()
         {
-            return Storage.Connection.Instance.TerrainDirectory + "\\" + FileName;
+            //return Storage.Connection.Instance.TerrainDirectory + "\\" + FileName;
+            return  FileName;
 
         }
 

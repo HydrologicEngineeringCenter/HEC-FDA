@@ -20,7 +20,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public StageDamagePersistenceManager(Study.FDACache studyCache)
         {
-            StudyCache = studyCache;
+            StudyCacheForSaving = studyCache;
         }
 
 
@@ -54,14 +54,14 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 SaveElementToChangeTable(element.Name, GetRowDataFromElement((AggregatedStageDamageElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
                 //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
                 //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCache.AddStageDamageElement((AggregatedStageDamageElement)element);
+                StudyCacheForSaving.AddStageDamageElement((AggregatedStageDamageElement)element);
             }
         }
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
             DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCache.RemoveStageDamageElement((AggregatedStageDamageElement)element);
+            StudyCacheForSaving.RemoveStageDamageElement((AggregatedStageDamageElement)element);
         }
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex)
         {
@@ -75,7 +75,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((AggregatedStageDamageElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
                 //SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
                 // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
-                StudyCache.UpdateStageDamageElement((AggregatedStageDamageElement)oldElement, (AggregatedStageDamageElement)elementToSave);
+                StudyCacheForSaving.UpdateStageDamageElement((AggregatedStageDamageElement)oldElement, (AggregatedStageDamageElement)elementToSave);
             }
         }
 

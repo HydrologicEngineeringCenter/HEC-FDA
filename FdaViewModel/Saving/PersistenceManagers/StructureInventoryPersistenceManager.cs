@@ -21,7 +21,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public StructureInventoryPersistenceManager(Study.FDACache studyCache)
         {
-            StudyCache = studyCache;
+            StudyCacheForSaving = studyCache;
         }
 
 
@@ -49,7 +49,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
-            StudyCache.RemoveStructureInventoryElement((InventoryElement)element);
+            StudyCacheForSaving.RemoveStructureInventoryElement((InventoryElement)element);
 
         }
 
@@ -62,7 +62,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
                 SaveNewElementToParentTable(GetRowDataFromElement((InventoryElement)element), TableName, TableColumnNames, TableColumnTypes);
                 WriteAttributeTable(((InventoryElement)element).DefineSIAttributes, ((InventoryElement)element).AttributeLinkingList, ((InventoryElement)element).DefineSIAttributes.Path);
-                StudyCache.AddStructureInventoryElement((InventoryElement)element);
+                StudyCacheForSaving.AddStructureInventoryElement((InventoryElement)element);
             }
         }
 
@@ -80,7 +80,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((InventoryElement)elementToSave), oldElement.Name, TableName, false, ChangeTableConstant);
                 //SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
                 // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
-                StudyCache.UpdateStructureInventoryElement((InventoryElement)oldElement, (InventoryElement)elementToSave);
+                StudyCacheForSaving.UpdateStructureInventoryElement((InventoryElement)oldElement, (InventoryElement)elementToSave);
             }
         }
 

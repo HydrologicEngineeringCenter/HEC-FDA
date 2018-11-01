@@ -20,7 +20,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public InflowOutflowPersistenceManager(Study.FDACache studyCache)
         {
-            StudyCache = studyCache;
+            StudyCacheForSaving = studyCache;
         }
 
 
@@ -53,7 +53,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 SaveElementToChangeTable(element.Name, GetRowDataFromElement((InflowOutflowElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
                 //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);                //save the individual table
                 //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCache.AddInflowOutflowElement((InflowOutflowElement)element);
+                StudyCacheForSaving.AddInflowOutflowElement((InflowOutflowElement)element);
             }
         }
 
@@ -61,7 +61,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             RemoveFromParentTable(element, TableName);
             DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCache.RemoveInflowOutflowElement((InflowOutflowElement)element);
+            StudyCacheForSaving.RemoveInflowOutflowElement((InflowOutflowElement)element);
         }
 
         public void SaveExisting(ChildElement oldElement, Utilities.ChildElement elementToSave, int changeTableIndex  )
@@ -75,7 +75,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 //
                 SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
                 // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
-                StudyCache.UpdateInflowOutflowElement((InflowOutflowElement)oldElement, (InflowOutflowElement)elementToSave);
+                StudyCacheForSaving.UpdateInflowOutflowElement((InflowOutflowElement)oldElement, (InflowOutflowElement)elementToSave);
             }
         }
 

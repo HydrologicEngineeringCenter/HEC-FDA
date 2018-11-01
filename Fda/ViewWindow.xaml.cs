@@ -38,6 +38,9 @@ namespace Fda
         {
             Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
             if (sv == null) { return; }
+
+            //FdaViewModel.Study.FdaStudyVM studyVM = (FdaViewModel.Study.FdaStudyVM)sv.DataContext;
+
             OpenGLMapping.MapTreeView mtv = sv.MapTreeView;
             if (args.GetType().Name == nameof(FdaViewModel.Utilities.AddGriddedDataEventArgs))
             {

@@ -85,20 +85,20 @@ namespace FdaViewModel.Editors
         public void AddSiblingRules( ChildElement element)
         {
             //child elements need to exclude thier own name from the list of banned words
-            bool isChild = false;
-            if (element.GetType().IsSubclassOf(typeof(ChildElement)))
-            {
-                isChild = true;
-            }
+            //bool isChild = false;
+            //if (element.GetType().IsSubclassOf(typeof(ChildElement)))
+            //{
+            //    isChild = true;
+            //}
 
             List<string> existingElements = new List<string>();
-            List<BaseFdaElement> siblings = StudyCache.GetSiblings(element);
+            List<ChildElement> siblings = StudyCache.GetSiblingsOfChild(element);
 
             string originalName = element.Name;
 
-            foreach (BaseFdaElement elem in siblings)
+            foreach (ChildElement elem in siblings)
             {
-                if (isChild && elem.Name.Equals(originalName))
+                if ( elem.Name.Equals(originalName))
                 {
                     continue;
                 }
@@ -127,7 +127,7 @@ namespace FdaViewModel.Editors
         public void AddSiblingRules( ParentElement element)
         {
             List<string> existingElements = new List<string>();
-            foreach (BaseFdaElement elem in StudyCache.GetSiblings(element))
+            foreach (ChildElement elem in StudyCache.GetChildrenOfParent(element))
             {
                 existingElements.Add(elem.Name);
             }

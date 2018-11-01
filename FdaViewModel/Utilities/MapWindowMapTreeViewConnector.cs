@@ -54,19 +54,12 @@ namespace FdaViewModel.Utilities
         {
             if (_MapWindow != null)
             {
+
+                _MapTreeView.MapWindow = _MapWindow;
+                _MapWindow.TreeView = _MapTreeView;
+
                 _MapWindow.PlotFeatures();
             }
-        }
-
-
-
-
-
-
-
-        public override void AddValidationRules()
-        {
-           // throw new NotImplementedException();
         }
 
        

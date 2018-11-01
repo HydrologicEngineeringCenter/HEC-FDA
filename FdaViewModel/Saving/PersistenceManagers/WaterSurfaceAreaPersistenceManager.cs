@@ -22,7 +22,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public WaterSurfaceAreaPersistenceManager(Study.FDACache studyCache)
         {
-            StudyCache = studyCache;
+            StudyCacheForSaving = studyCache;
         }
 
 
@@ -131,7 +131,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
                 SaveNewElementToParentTable(GetRowDataFromElement((WaterSurfaceElevationElement)element), TableName, TableColumnNames, TableColumnTypes);
                 SavePathAndProbabilitiesTable((WaterSurfaceElevationElement)element);
-                StudyCache.AddWaterSurfaceElevationElement((WaterSurfaceElevationElement)element);
+                StudyCacheForSaving.AddWaterSurfaceElevationElement((WaterSurfaceElevationElement)element);
             }
         }
 
@@ -140,7 +140,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             RemoveFromParentTable(element, TableName);
             Storage.Connection.Instance.DeleteTable(PathAndProbTableConstant + element.Name);
             RemoveWaterSurfElevFiles((WaterSurfaceElevationElement)element);
-            StudyCache.RemoveWaterSurfaceElevationElement((WaterSurfaceElevationElement)element);
+            StudyCacheForSaving.RemoveWaterSurfaceElevationElement((WaterSurfaceElevationElement)element);
 
         }
 
@@ -149,7 +149,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             UpdateParentTableRow(element.Name, changeTableIndex, GetRowDataFromElement((WaterSurfaceElevationElement)element), oldElement.Name, TableName, false, ChangeTableConstant);
             Storage.Connection.Instance.RenameTable(PathAndProbTableConstant + oldElement.Name, PathAndProbTableConstant + element.Name);
             SavePathAndProbabilitiesTable((WaterSurfaceElevationElement)element);
-            StudyCache.UpdateWaterSurfaceElevationElement((WaterSurfaceElevationElement)oldElement, (WaterSurfaceElevationElement)element);
+            StudyCacheForSaving.UpdateWaterSurfaceElevationElement((WaterSurfaceElevationElement)oldElement, (WaterSurfaceElevationElement)element);
 
         }
 

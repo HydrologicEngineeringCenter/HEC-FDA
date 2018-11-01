@@ -75,9 +75,9 @@ namespace Fda.Commands
                 FdaViewModel.Utilities.WindowVM winVM = (FdaViewModel.Utilities.WindowVM)window.DataContext;
                 if(winVM.StudyVM != null) //then it is a tab not a seperate window
                 {
-                    if(winVM.StudyVM.SelectedTabIndex != -1)
+                    if(winVM.StudyVM.SelectedDynamicTabIndex != -1)
                     {
-                        winVM.StudyVM.RemoveTabAtIndex(winVM.StudyVM.SelectedTabIndex);
+                        winVM.StudyVM.RemoveTabAtIndex(winVM.StudyVM.SelectedDynamicTabIndex);
                     }
                     else
                     {
