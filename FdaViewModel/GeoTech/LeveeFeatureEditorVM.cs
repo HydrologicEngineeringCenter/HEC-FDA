@@ -28,11 +28,11 @@ namespace FdaViewModel.GeoTech
         }
         #endregion
         #region Constructors
-        public LeveeFeatureEditorVM() :base(null)
+        public LeveeFeatureEditorVM(Editors.EditorActionManager actionManager) : base(actionManager)
         {
 
         }
-        public LeveeFeatureEditorVM(LeveeFeatureElement element):base(element,null)
+        public LeveeFeatureEditorVM(LeveeFeatureElement element, Editors.EditorActionManager actionManager) : base(element,actionManager)
         {
 
             Name = element.Name;

@@ -36,6 +36,8 @@ namespace FdaViewModel.GeoTech
             StudyCache.LeveeAdded += AddLeveeElement;
             StudyCache.LeveeRemoved += RemoveLeveeElement;
             StudyCache.LeveeUpdated += UpdateLeveeElement;
+            GUID = Guid.NewGuid();
+
         }
         #endregion
         #region Voids
@@ -54,9 +56,14 @@ namespace FdaViewModel.GeoTech
         }
         public void AddNewLeveeFeature(object arg1, EventArgs arg2)
         {
-            LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM();
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                .WithSiblingRules(this)
+               .WithParentGuid(this.GUID)
+               .WithCanOpenMultipleTimes(true);
+
+            LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(actionManager);
             //StudyCache.AddSiblingRules(vm, this);
-            vm.AddSiblingRules(this);
+            //vm.AddSiblingRules(this);
 
             Navigate(vm, false, false, "Create Levee");
           

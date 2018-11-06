@@ -240,6 +240,7 @@
     <Compile Include="ImpactArea\ImpactAreaRowItem.cs" />
     <Compile Include="Utilities\DynamicTabVM.cs" />
     <Compile Include="Utilities\IDynamicTab.cs" />
+    <Compile Include="Utilities\IImport.cs" />
     <Compile Include="Utilities\IRowItem.cs" />
     <Compile Include="Utilities\ISaveUndoRedo.cs" />
     <Compile Include="Utilities\MapWindowControlVM.cs" />

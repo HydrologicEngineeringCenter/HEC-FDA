@@ -113,24 +113,24 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
 
 
-        public void ImpactAreasToMapWindow(ImpactAreaElement element)
-        {
-            DataBase_Reader.SqLiteReader sqr = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
-            LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(sqr);
-            LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)gpr.ConvertToGisFeatures(IndexPointTableNameConstant + element.Name);
-            LifeSimGIS.VectorFeatures features = polyFeatures;
-            //read from table.
-            DataBase_Reader.DataTableView dtv = sqr.GetTableManager(IndexPointTableNameConstant + element.Name);
-            int[] geometryColumns = { 0, 1 };
-            dtv.DeleteColumns(geometryColumns);
+        //public void ImpactAreasToMapWindow(ImpactAreaElement element)
+        //{
+        //    DataBase_Reader.SqLiteReader sqr = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
+        //    LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(sqr);
+        //    LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)gpr.ConvertToGisFeatures(IndexPointTableNameConstant + element.Name);
+        //    LifeSimGIS.VectorFeatures features = polyFeatures;
+        //    //read from table.
+        //    DataBase_Reader.DataTableView dtv = sqr.GetTableManager(IndexPointTableNameConstant + element.Name);
+        //    int[] geometryColumns = { 0, 1 };
+        //    dtv.DeleteColumns(geometryColumns);
 
-            OpenGLMapping.OpenGLDrawInfo ogldi = new OpenGLMapping.OpenGLDrawInfo(true, new OpenTK.Graphics.Color4((byte)255, 0, 0, 255), 1, true, new OpenTK.Graphics.Color4((byte)0, 255, 0, 200));
-            Utilities.AddShapefileEventArgs args = new Utilities.AddShapefileEventArgs(Name, features, dtv, ogldi);
-            element.AddToMapWindow(this, args);
-            //_featureNodeHash = args.MapFeatureHash;
+        //    OpenGLMapping.OpenGLDrawInfo ogldi = new OpenGLMapping.OpenGLDrawInfo(true, new OpenTK.Graphics.Color4((byte)255, 0, 0, 255), 1, true, new OpenTK.Graphics.Color4((byte)0, 255, 0, 200));
+        //    Utilities.AddShapefileEventArgs args = new Utilities.AddShapefileEventArgs(Name, features, dtv, ogldi);
+        //    element.AddToMapWindow(this, args);
+        //    //_featureNodeHash = args.MapFeatureHash;
            
 
-        }
+        //}
 
         #endregion
 

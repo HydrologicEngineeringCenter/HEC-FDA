@@ -103,7 +103,10 @@ namespace FdaViewModel.GeoTech
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
-                .WithSaveUndoRedo(saveHelper);
+                .WithSaveUndoRedo(saveHelper)
+                 .WithSiblingRules(this)
+               .WithParentGuid(this.GUID)
+               .WithCanOpenMultipleTimes(false);
 
             Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(this, leveeList, actionManager);
             //StudyCache.AddSiblingRules(vm, this);

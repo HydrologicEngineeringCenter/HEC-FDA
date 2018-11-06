@@ -52,6 +52,8 @@ namespace FdaViewModel.Inventory
             StudyCache.StructureInventoryAdded += AddStructureInventoryElement;
             StudyCache.StructureInventoryRemoved += RemoveStructureInventoryElement;
             StudyCache.StructureInventoryUpdated += UpdateStructureInventoryElement;
+            GUID = Guid.NewGuid();
+
         }
         #endregion
         #region Voids
@@ -74,9 +76,24 @@ namespace FdaViewModel.Inventory
             // get any point shapefiles from the map window
             //List<string> pointShapePaths = new List<string>();
             //ShapefilePathsOfType(ref pointShapePaths, Utilities.VectorFeatureType.Point);
-            ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM();
+
+            //get the list of paths that exist in the map window
+            ObservableCollection<string> collectionOfPointFiles = new ObservableCollection<string>();
+            List<string> pointShapePaths = new List<string>();
+            ShapefilePathsOfType(ref pointShapePaths, Utilities.VectorFeatureType.Point);
+            foreach (string path in pointShapePaths)
+            {
+                collectionOfPointFiles.Add(path);
+            }
+
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                 .WithSiblingRules(this)
+               .WithParentGuid(this.GUID)
+               .WithCanOpenMultipleTimes(true);
+
+            ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(collectionOfPointFiles, actionManager);
             // StudyCache.AddSiblingRules(vm, this);
-            vm.AddSiblingRules(this);
+            //vm.AddSiblingRules(this);
 
             Navigate(vm, false, false,"Import Structure Inventory");
            // if (!vm.WasCanceled)

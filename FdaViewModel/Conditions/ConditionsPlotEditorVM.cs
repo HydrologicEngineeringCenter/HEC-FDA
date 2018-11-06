@@ -189,14 +189,19 @@ namespace FdaViewModel.Conditions
             get { return _Year; }
             set { _Year = value; NotifyPropertyChanged(); }
         }
-            
+
         //public AddFlowFrequencyToConditionVM FlowFrequencyVM { get; set; }
         //public AddInflowOutflowToConditionVM InflowOutflowVM { get; set; }
         //public AddRatingCurveToConditionVM RatingCurveVM { get; set; }
         //public AddExteriorInteriorStageToConditionVM ExteriorInteriorVM { get; set; }
         //public AddStageDamageToConditionVM StageDamageVM { get; set; }
-
-        public List<ImpactArea.ImpactAreaElement> ImpactAreas { get; set; }
+        private List<ImpactArea.ImpactAreaElement> _ImpactAreas;
+        public List<ImpactArea.ImpactAreaElement> ImpactAreas
+        {
+            get { return _ImpactAreas; }
+            set { _ImpactAreas = value;NotifyPropertyChanged(); }
+            
+        }
         public ImpactArea.ImpactAreaElement SelectedImpactArea
         {
             get { return _SelectedImpactArea; }
@@ -237,7 +242,7 @@ namespace FdaViewModel.Conditions
             /// <param name="selectedImpArea"></param>
         public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas, Plots.IndividualLinkedPlotControlVM indLinkedPlotControl0VM, Plots.IndividualLinkedPlotControlVM control1VM,
             Plots.IndividualLinkedPlotControlVM control3VM, Plots.IndividualLinkedPlotControlVM control5VM, Plots.IndividualLinkedPlotControlVM control7VM, Plots.IndividualLinkedPlotControlVM control8VM,
-           ConditionsElement element) : base(element,null)
+           ConditionsElement element, Editors.EditorActionManager actionManager) : base(element,actionManager)
         {
             ImpactAreas = impAreas;
 
@@ -284,7 +289,8 @@ namespace FdaViewModel.Conditions
             }
 
 
-            
+            AddEvents();
+
 
         }
         /// <summary>
@@ -298,10 +304,10 @@ namespace FdaViewModel.Conditions
         /// <param name="DefaultControl7VM"></param>
         /// <param name="DefaultControl8VM"></param>
         public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas, Plots.IndividualLinkedPlotControlVM defaultControl0VM, Plots.IndividualLinkedPlotControlVM defaultControl1VM, 
-            Plots.IndividualLinkedPlotControlVM defaultControl3VM, Plots.IndividualLinkedPlotControlVM defaultControl5VM, Plots.IndividualLinkedPlotControlVM DefaultControl7VM, Plots.IndividualLinkedPlotControlVM DefaultControl8VM):base(null)
+            Plots.IndividualLinkedPlotControlVM defaultControl3VM, Plots.IndividualLinkedPlotControlVM defaultControl5VM, Plots.IndividualLinkedPlotControlVM DefaultControl7VM, Plots.IndividualLinkedPlotControlVM DefaultControl8VM, Editors.EditorActionManager actionManager) :base(actionManager)
         {
             //ownerValidationRules(this);
-
+            
             ImpactAreas = impAreas;
 
             Plot0ControlVM = defaultControl0VM;
@@ -316,10 +322,20 @@ namespace FdaViewModel.Conditions
 
             AttachEventsToControls();
             LoadThresholdTypes();
+            AddEvents();
         }
 
+        private void AddEvents()
+        {
+            StudyCache.ImpactAreaAdded += ImpactAreaAdded;
+        }
 
-
+        private void ImpactAreaAdded(object sender, Saving.ElementAddedEventArgs e)
+        {
+            List<ImpactArea.ImpactAreaElement> tempList = ImpactAreas;
+            tempList.Add((ImpactArea.ImpactAreaElement)e.Element);
+            ImpactAreas = tempList;//this is to hit the notify prop changed
+        }
 
         #endregion
         #region Voids

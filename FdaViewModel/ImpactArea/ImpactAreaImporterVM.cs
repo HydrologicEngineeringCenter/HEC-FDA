@@ -6,7 +6,7 @@ using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-
+using FdaViewModel.Editors;
 
 namespace FdaViewModel.ImpactArea
 {
@@ -32,7 +32,7 @@ namespace FdaViewModel.ImpactArea
             public bool IsNameReadOnly
         {
             get { return _IsNameReadOnly; }
-            set { _IsNameReadOnly = value; }
+            set { _IsNameReadOnly = value; NotifyPropertyChanged(); }
         }
         public ObservableCollection<string> AvailablePaths
         {
@@ -69,12 +69,13 @@ namespace FdaViewModel.ImpactArea
         public string SelectedUniqueName { get; set; }
         #endregion
         #region Constructors
-        public ImpactAreaImporterVM(ObservableCollection<string> PolygonPaths):base(null)
+        public ImpactAreaImporterVM(ObservableCollection<string> PolygonPaths, EditorActionManager actionManager):base(actionManager)
         {
-            AvailablePaths = PolygonPaths;   
+            AvailablePaths = PolygonPaths;
+            IsNameReadOnly = false;
         }
 
-        public ImpactAreaImporterVM(ImpactAreaElement element, ObservableCollection<ImpactAreaRowItem> impactAreaRows):base(element,null)
+        public ImpactAreaImporterVM(ImpactAreaElement element, ObservableCollection<ImpactAreaRowItem> impactAreaRows, EditorActionManager actionManager) :base(element, actionManager)
         {
             Name = element.Name;
             ListOfRows = impactAreaRows;

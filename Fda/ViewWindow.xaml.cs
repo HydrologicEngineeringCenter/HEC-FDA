@@ -66,7 +66,7 @@ namespace Fda
                 //if (sender.GetType().Name == nameof(FdaViewModel.ImpactArea.ImpactAreaElement))
                 if (sargs.Features.GetType() == typeof(LifeSimGIS.PolygonFeatures))
                 {
-                    VectorFeatureNode vfn = new VectorFeatureNode(new MapPolygons((LifeSimGIS.PolygonFeatures)sargs.Features, sargs.Attributes, sargs.FeatureName, new OpenGLMapping.OpenGLDrawSingle(sargs.DrawInfo), mtv.MapWindow), sargs.FeatureName);
+                   VectorFeatureNode vfn = new VectorFeatureNode(new MapPolygons((LifeSimGIS.PolygonFeatures)sargs.Features, sargs.Attributes, sargs.FeatureName, new OpenGLMapping.OpenGLDrawSingle(sargs.DrawInfo), mtv.MapWindow), sargs.FeatureName);
 
                     mtv.AddGisData(vfn, 0, true);
                     args.MapFeatureHash = vfn.GetHashCode();
@@ -214,7 +214,7 @@ namespace Fda
             if (vm.CurrentView.RemoveFromTabsDictionary != null)
             {
 
-                vm.CurrentView.RemoveFromTabsDictionary(vm.CurrentView.TabUniqueID);
+                vm.CurrentView.RemoveFromTabsDictionary(vm.CurrentView);
             }
             vm.Dispose();
         }

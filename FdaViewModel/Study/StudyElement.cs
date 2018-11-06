@@ -13,6 +13,7 @@ namespace FdaViewModel.Study
         public event EventHandler SaveTheOpenTabs;
         public event EventHandler UpdateTransactionsAndMessages;
         public event EventHandler LoadMapLayers;
+        public event EventHandler RemoveCreateNewStudyTab;
         private List<string> _RegistryStudies = new List<string>();
         private ObservableCollection<ParentElement> _ConditionsTree;
 
@@ -110,7 +111,7 @@ namespace FdaViewModel.Study
 
         private void ViewTransactions(object arg1, EventArgs arg2)
         {
-            Navigate(new Utilities.Transactions.TransactionVM());
+            Navigate( new Utilities.Transactions.TransactionVM());
         }
 
 
@@ -299,7 +300,7 @@ namespace FdaViewModel.Study
             //Output.LinkedPlotsVM vm2 = new Output.LinkedPlotsVM(simpleTestResult);
             Plots.LinkedPlotsVM vm = new Plots.LinkedPlotsVM(simpleTestResult);
 
-            Navigate(vm, true, true);
+            Navigate( vm, true, true);
 
 
 
@@ -320,13 +321,13 @@ namespace FdaViewModel.Study
         }
         private void CreateStudyFromWindow(object arg1, EventArgs arg2)
         {
-            NewStudyVM vm = new NewStudyVM();
-            Navigate(vm, true, true);
-            if (!vm.HasError)
-            {
-                CreateStudyFromViewModel(vm);
+            NewStudyVM vm = new NewStudyVM(this);
+            Navigate( vm, false,false,"Create New Study");
+            //if (!vm.HasError)
+            //{
+            //    CreateStudyFromViewModel(vm);
                 
-            }
+            //}
         }
 
       
@@ -334,6 +335,7 @@ namespace FdaViewModel.Study
         public void CreateStudyFromViewModel(NewStudyVM vm)
         {
             Name = vm.StudyName;
+            UpdateTreeViewHeader(Name);
             //check if file exists.
             string newStudyPath = vm.Path + "\\" + vm.StudyName + "\\" + vm.StudyName + ".sqlite";
             if (!System.IO.File.Exists(newStudyPath))
@@ -375,7 +377,7 @@ namespace FdaViewModel.Study
                     action.IsEnabled = true;
                 }
             }
-
+            StudyCache = null;
             AddBaseElements();
         }
 
@@ -383,7 +385,7 @@ namespace FdaViewModel.Study
         {
             if (!Storage.Connection.Instance.IsConnectionNull)
             {
-                Navigate(new PropertiesVM(Storage.Connection.Instance.GetTable(PropertiesVM.TableName)), true, true);
+                Navigate( new PropertiesVM(Storage.Connection.Instance.GetTable(PropertiesVM.TableName)), true, true);
             }
             else
             {
@@ -393,7 +395,8 @@ namespace FdaViewModel.Study
 
         private void OpenStudyFromFilePath(string name, string path)
         {
-            //Elements.Clear();//if there is already a study, clear it out
+            //if a study is opened and the create new study tab is still in the tabs, then remove it
+            RemoveCreateNewStudyTab?.Invoke(this, new EventArgs());
 
             UpdateRecentStudiesFile(path);
             
@@ -401,6 +404,7 @@ namespace FdaViewModel.Study
 
             Name = name;
             UpdateTreeViewHeader(name);
+            StudyCache = null;
             AddBaseElements();
             // add any children based on tables that exist.
             foreach (BaseFdaElement ele in Elements)
@@ -440,7 +444,7 @@ namespace FdaViewModel.Study
         private void OpenStudy(object sender, EventArgs e)
         {
             Study.ExistingStudyVM ESVM = new ExistingStudyVM();
-            Navigate(ESVM, true, true, "Open Existing Study");
+            Navigate( ESVM, true, true, "Open Existing Study");
             if (!ESVM.WasCanceled)
             {
                 if (!ESVM.HasError)

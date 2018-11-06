@@ -46,6 +46,8 @@ namespace FdaViewModel.GeoTech
             StudyCache.FailureFunctionAdded += AddFailureFunctionElement;
             StudyCache.FailureFunctionRemoved += RemoveFailureFunctionElement;
             StudyCache.FailureFunctionUpdated += UpdateFailureFunctionElement;
+            GUID = Guid.NewGuid();
+
         }
         #endregion
         #region Voids
@@ -76,12 +78,13 @@ namespace FdaViewModel.GeoTech
                 (editor, element) => AssignValuesFromEditorToElement(editor, element));
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
-                .WithSaveUndoRedo(saveHelper);
+                .WithSaveUndoRedo(saveHelper)
+                 .WithSiblingRules(this)
+               .WithParentGuid(this.GUID)
+               .WithCanOpenMultipleTimes(true);
 
             Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(defaultCurve, leveeList, actionManager);
-            //StudyCache.AddSiblingRules(vm, this);
-            vm.AddSiblingRules(this);
+            
 
             Navigate(vm, false, false, "Create Failure Function");
             //FailureFunctionEditorVM vm = new FailureFunctionEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar), leveeList);

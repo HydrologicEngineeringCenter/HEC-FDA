@@ -14,9 +14,9 @@ namespace FdaViewModel.AggregatedStageDamage
         #region Fields
         private const string _TableConstant = "Aggregated Stage Damage Function - ";
 
-        private string _Description = "";
-        private Statistics.UncertainCurveDataCollection _Curve;
-        private Inventory.DamageCategory.DamageCategoryRowItem _DamageCategory;
+        //private string _Description = "";
+        //private Statistics.UncertainCurveDataCollection _Curve;
+        //private Inventory.DamageCategory.DamageCategoryRowItem _DamageCategory;
         private readonly CreationMethodEnum _Method;
         #endregion
         #region Properties
@@ -96,7 +96,10 @@ namespace FdaViewModel.AggregatedStageDamage
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSaveUndoRedo(saveHelper);
+                .WithSaveUndoRedo(saveHelper)
+                 .WithSiblingRules(this)
+               .WithParentGuid(this.GUID)
+               .WithCanOpenMultipleTimes(false);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
             vm.AddSiblingRules( this);

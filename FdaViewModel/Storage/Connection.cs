@@ -1,6 +1,7 @@
 ﻿using FdaViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -83,6 +84,18 @@ namespace FdaViewModel.Storage
         public string TerrainDirectory
         {
             get { return _ProjectDirectory + "\\" + _TerrainFolderName; }
+        }
+        public string GetTerrainFile(string name)
+        {
+            string[] files = Directory.GetFiles(Storage.Connection.Instance.TerrainDirectory, name + ".*");
+            if (files.Length > 0)
+            {
+                return files[0];
+            }
+            else
+            {
+                return null;
+            }
         }
         public string HydraulicsDirectory
         {

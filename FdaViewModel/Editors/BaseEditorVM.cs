@@ -32,10 +32,11 @@ namespace FdaViewModel.Editors
         {
             IsImporter = true;
             ActionManager = actionManager;
-            //if (actionManager != null && actionManager.HasOwnerValidationRules)
-            //{
-            //    actionManager.OwnerValidationRules.Invoke(this, null);
-            //}
+            if (actionManager != null )
+            {
+                SetActionManagerValues();
+            }
+
         }
         /// <summary>
         /// Call this one when editing an existing element
@@ -54,12 +55,39 @@ namespace FdaViewModel.Editors
             //    actionManager.OwnerValidationRules.Invoke(this, elem.Name);
             //}
             //StudyCache.AddSiblingRules(this, elem);
-            AddSiblingRules(elem);
+            //AddSiblingRules(elem);
 
 
-            if (actionManager != null && actionManager.SaveUndoRedoHelper != null)
+            if (actionManager != null)
             {
-                actionManager.SaveUndoRedoHelper.AssignValuesFromElementToEditorAction(this, elem);
+                SetActionManagerValues();
+                if (actionManager.SaveUndoRedoHelper != null)
+                {
+                    actionManager.SaveUndoRedoHelper.AssignValuesFromElementToEditorAction(this, elem);
+                }
+            }
+        }
+
+        private void SetActionManagerValues()
+        {
+            if(ActionManager.HasSiblingRules)
+            {
+                if(ActionManager.SiblingElement.GetType().BaseType == typeof(ChildElement))
+                {
+                    AddSiblingRules((ChildElement)ActionManager.SiblingElement);
+                }
+                else if(ActionManager.SiblingElement.GetType().BaseType == typeof(ParentElement))
+                {
+                    AddSiblingRules((ParentElement)ActionManager.SiblingElement);
+                }
+            }
+            if(ActionManager.HasCanOpenMultipleTimes)
+            {
+                this.CanOpenMultipleTimes = ActionManager.CanOpenMultipleTimes;
+            }
+            if(ActionManager.HasParentGuid)
+            {
+                this.ParentGUID = ActionManager.ParentGuid;
             }
         }
 

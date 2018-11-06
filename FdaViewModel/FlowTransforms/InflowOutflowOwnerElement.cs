@@ -38,6 +38,8 @@ namespace FdaViewModel.FlowTransforms
             StudyCache.InflowOutflowAdded += AddInflowOutflowElement;
             StudyCache.InflowOutflowRemoved += RemoveInflowOutflowElement;
             StudyCache.InflowOutflowUpdated += UpdateInflowOutflowElement;
+            GUID = Guid.NewGuid();
+
         }
 
 
@@ -74,13 +76,17 @@ namespace FdaViewModel.FlowTransforms
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
-                .WithSaveUndoRedo(saveHelper);
+                .WithSaveUndoRedo(saveHelper)
+                .WithSiblingRules(this)
+               .WithParentGuid(this.GUID)
+               .WithCanOpenMultipleTimes(true);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
+            vm.ParentGUID = this.GUID;
             //StudyCache.AddSiblingRules(vm, this);
             vm.AddSiblingRules(this);
 
-            Navigate(vm, false, false, "Create Inflow Outflow");
+            Navigate( vm, false, false, "Create Inflow Outflow");
             //if (!vm.WasCancled)
             //{
             //    if (!vm.HasFatalError)

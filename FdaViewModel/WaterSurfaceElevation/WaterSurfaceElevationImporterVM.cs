@@ -6,6 +6,7 @@ using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using FdaViewModel.Editors;
 
 namespace FdaViewModel.WaterSurfaceElevation
 {
@@ -31,13 +32,9 @@ namespace FdaViewModel.WaterSurfaceElevation
             set { _ListOfRelativePaths = value; NotifyPropertyChanged(); }
         }
         public List<string> ListOfOriginalPaths { get; set; } //this is only for messaging out in the transaction log
-        public Utilities.ParentElement ParentElement { get; set; }
+       // public Utilities.ParentElement ParentElement { get; set; }
    
-        public string Description
-        {
-            get { return _Description; }
-            set { _Description = value; NotifyPropertyChanged(); }
-        }
+      
 
         public bool IsDepthGridChecked
         {
@@ -53,10 +50,9 @@ namespace FdaViewModel.WaterSurfaceElevation
         //public bool HasFatalError { get; internal set; }
         #endregion
         #region Constructors
-        public WaterSurfaceElevationImporterVM(Utilities.ParentElement ownerElement):base(null)
+        public WaterSurfaceElevationImporterVM(EditorActionManager actionManager):base(actionManager)
         {
             _ListOfRows = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
-            ParentElement = ownerElement;
         }
 
 

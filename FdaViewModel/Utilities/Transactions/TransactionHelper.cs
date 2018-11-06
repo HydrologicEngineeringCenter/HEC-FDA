@@ -60,10 +60,17 @@ namespace FdaViewModel.Utilities.Transactions
 
         public static void LoadTransactionsAndMessages(ITransactionsAndMessages editor, BaseFdaElement element)
         {
-            //load the transactions log
-            editor.TransactionRows = Utilities.Transactions.TransactionHelper.GetTransactionRowItemsForElement(element);
+            //load the transactions log, but reverse the order so that the newest ones are first
+            ObservableCollection<TransactionRowItem> rowsOldestToNewest = TransactionHelper.GetTransactionRowItemsForElement(element);
+            ObservableCollection<TransactionRowItem> rowsNewestToOldest = new ObservableCollection<TransactionRowItem>();
+            foreach(TransactionRowItem row in rowsOldestToNewest)
+            {
+                rowsNewestToOldest.Add(row);
+            }
+            editor.TransactionRows = rowsNewestToOldest;
 
             //load the messages log
+            
             editor.MessageRows = Utilities.MessagesVM.GetMessageRowsForElement(element);
             // if(TransactionRows.Count>0 || MessageRows.Count > 0)
             {

@@ -24,5 +24,32 @@ namespace Fda.Utilities
         {
             InitializeComponent();
         }
+
+        private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            FdaViewModel.Utilities.Transactions.ITransactionsAndMessages vm = (FdaViewModel.Utilities.Transactions.ITransactionsAndMessages)this.DataContext;
+            if (vm != null)
+            {
+                if (vm.TransactionRows != null)
+                {
+                    vm.TransactionRows.CollectionChanged += NotifyTransactionAdded;
+                }
+            }
+        }
+
+        private void NotifyTransactionAdded(object sender, EventArgs e)
+        {
+            //TransactionsAndMessagesTabControl.items
+            //Tab_TransactionLog.Background = Brushes.Red;
+            Tab_TransactionLog.Header += "!";
+            //Tab_TransactionLog.cont
+            //DataGrid_TransactionLog.rows
+            //double height = MainGrid.ActualHeight;
+            //if(height < 200)
+            //{
+            //    MainGrid.Height += 30;
+            //}
+        }
+
     }
 }

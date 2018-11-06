@@ -16,6 +16,8 @@ namespace FdaViewModel
         private List<Utilities.NamedAction> _Actions;
         private Utilities.CustomHeaderVM _CustomTreeViewHeader;
         private bool _TableContainsGeoData = false;
+        public Guid GUID { get; set; }
+
 
         #endregion
         #region Events
@@ -93,7 +95,15 @@ namespace FdaViewModel
         #endregion
         #region Voids
 
-
+        public void ExtendEventsToImporter(BaseViewModel vm)
+        {
+            vm.RequestNavigation += Navigate;
+            vm.RequestShapefilePaths += ShapefilePaths;
+            vm.RequestShapefilePathsOfType += ShapefilePathsOfType;
+            vm.RequestAddToMapWindow += AddToMapWindow;
+            vm.RequestRemoveFromMapWindow += RemoveFromMapWindow;
+            vm.TransactionEvent += AddTransaction;
+        }
       
         public void UpdateTreeViewHeader(string newName)
         {

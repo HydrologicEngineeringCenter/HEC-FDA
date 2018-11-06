@@ -150,8 +150,8 @@ namespace FdaViewModel
         #region Voids
 
         public Action<DynamicTabVM, bool> AddThisToTabs { get; set; }
-        public Action<Guid> RemoveFromTabsDictionary { get; set; }
-        public Guid TabUniqueID { get; set; }
+        public Action<BaseViewModel> RemoveFromTabsDictionary { get; set; }
+        public Guid ParentGUID { get; set; }
         /// <summary>
         /// This is used to tell the ui if there should be a top row with the pop in button
         /// </summary>
@@ -270,7 +270,7 @@ namespace FdaViewModel
             if (RequestNavigation != null)
             {
                 vm.WasCanceled = true;
-                RequestNavigation(vm, newWindow, asDialog, title);
+                RequestNavigation( vm, newWindow, asDialog, title);
             }
             else
             {
@@ -342,7 +342,7 @@ namespace FdaViewModel
             //if ((error.ErrorLevel & FdaModel.Utilities.Messager.ErrorMessageEnum.Report) > 0)
             {
                 //Utilities.WindowVM
-                Navigate(new Utilities.MessageVM(error.Message), true, true, "Error Report");
+                Navigate( new Utilities.MessageVM(error.Message), true, true, "Error Report");
             }
             //else
             {

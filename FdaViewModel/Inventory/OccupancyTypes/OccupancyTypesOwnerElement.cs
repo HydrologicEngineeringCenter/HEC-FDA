@@ -54,9 +54,11 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             localActions.Add(editOccupancyTypes);
 
             Actions = localActions;
+            GUID = Guid.NewGuid();
+
         }
 
-       
+
 
 
         #endregion

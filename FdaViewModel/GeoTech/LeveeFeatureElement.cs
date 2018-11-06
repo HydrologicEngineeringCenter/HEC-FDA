@@ -71,7 +71,12 @@ namespace FdaViewModel.GeoTech
         }
         public void EditLeveeFeature(object arg1, EventArgs arg2)
         {
-            LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(this);
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                .WithSiblingRules(this)
+               .WithParentGuid(this.GUID)
+               .WithCanOpenMultipleTimes(false);
+
+            LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(this, actionManager);
             Navigate(vm, false,false,"Edit Levee");
             //if (!vm.WasCanceled)
             //{

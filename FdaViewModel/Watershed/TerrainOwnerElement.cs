@@ -35,6 +35,7 @@ namespace FdaViewModel.Watershed
             StudyCache.TerrainAdded += AddTerrainElement;
             StudyCache.TerrainRemoved += RemoveTerrainElement;
             StudyCache.TerrainUpdated += UpdateTerrainElement;
+            GUID = Guid.NewGuid();
         }
         #endregion
         #region Voids
@@ -56,15 +57,19 @@ namespace FdaViewModel.Watershed
        
         private void AddNew(object arg1, EventArgs arg2)
         {
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager();
-                //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName));
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                .WithSiblingRules(this)
+                .WithParentGuid(this.GUID)
+                .WithCanOpenMultipleTimes(true);
 
             TerrainBrowserVM vm = new TerrainBrowserVM(this, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
-            vm.AddSiblingRules(this);
-
+            ExtendEventsToImporter(vm);
+            //vm.AddSiblingRules(this);
+            //vm.CanOpenMultipleTimes = true;
+            //vm.ParentGUID = this.GUID;
             //vm.TerrainFileFinishedCopying += ReplaceTemporaryTerrainNode;
-            Navigate(vm, false,true,"Import Terrain");
+            Navigate( vm, false,true,"Import Terrain");
             //if (!vm.WasCanceled)
             //{
             //    if (!vm.HasFatalError)

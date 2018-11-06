@@ -16,8 +16,9 @@ namespace FdaViewModel.Utilities
         //bool CanEdit { get; set; }
         //void DisableEditContextMenuItem();
         //void EnableEditContextMenuItem();
+         event EventHandler RemoveEvent;
+         event EventHandler PopTabOutEvent;
 
-        
         void PopTabOut();
         void RemoveTab();
     }

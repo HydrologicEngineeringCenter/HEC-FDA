@@ -125,7 +125,7 @@ namespace FdaViewModel.Utilities
             //string newName = ele.Name;
 
             //the name possibly changed so assign it to the element
-
+            ele.ParentGUID = GUID;
             ele.RequestNavigation += Navigate;
             ele.RequestShapefilePaths += ShapefilePaths;
             ele.RequestShapefilePathsOfType += ShapefilePathsOfType;
@@ -141,9 +141,10 @@ namespace FdaViewModel.Utilities
         public void AddElement(BaseFdaElement ele, bool newElement = true)
         {
             //string newName = ele.Name;
-            
-                //the name possibly changed so assign it to the element
-            
+
+            //the name possibly changed so assign it to the element
+            ele.ParentGUID = GUID;
+            ele.GUID = Guid.NewGuid();
             ele.RequestNavigation += Navigate;
             ele.RequestShapefilePaths += ShapefilePaths;
             ele.RequestShapefilePathsOfType += ShapefilePathsOfType;

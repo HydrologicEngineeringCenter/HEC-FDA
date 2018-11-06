@@ -37,7 +37,18 @@ namespace Fda.ImpactArea
             vm.LoadTheRows();
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        //private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    FdaViewModel.ImpactArea.ImpactAreaImporterVM vm = (FdaViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
+        //    if (vm == null) { return; }
+        //    if (vm.IsNameReadOnly)
+        //    {
+        //        row_SelectPath.Height = new GridLength(0);
+        //        row_SelectUniqueName.Height = new GridLength(0);
+        //    }
+        //}
+
+        private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             FdaViewModel.ImpactArea.ImpactAreaImporterVM vm = (FdaViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
             if (vm == null) { return; }
@@ -45,6 +56,11 @@ namespace Fda.ImpactArea
             {
                 row_SelectPath.Height = new GridLength(0);
                 row_SelectUniqueName.Height = new GridLength(0);
+            }
+            else
+            {
+                row_SelectPath.Height = new GridLength(35);
+                row_SelectUniqueName.Height = new GridLength(35);
             }
         }
     }

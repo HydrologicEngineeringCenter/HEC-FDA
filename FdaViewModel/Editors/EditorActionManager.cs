@@ -13,11 +13,12 @@ namespace FdaViewModel.Editors
         public bool HasSaveHelper { get; set; }
         public SaveUndoRedoHelper SaveUndoRedoHelper { get; set; }
 
-   
-
-        //public bool HasOwnerValidationRules { get; set; }
-       // public Action<BaseViewModel, string> OwnerValidationRules { get; set; }
-
+        public bool HasSiblingRules { get; set; }
+        public BaseFdaElement SiblingElement { get; set; }//this can be a parent element or a sibling
+        public bool HasCanOpenMultipleTimes { get; set; }
+        public bool CanOpenMultipleTimes { get; set; }
+        public bool HasParentGuid { get; set; }
+        public Guid ParentGuid { get; set; }
 
         /// <summary>
         /// It is conveivable to me that the createElementFromEditor and the assign values from editor to element could be the same thing. The reason for these two 
@@ -32,17 +33,27 @@ namespace FdaViewModel.Editors
             
         }
 
-        //public EditorActionManager WithSiblingValidationRules()
-        //{
-        //    HasOwnerValidationRules = true;
-        //    OwnerValidationRules = ownerValidationRules;
-        //    return this;
-        //}
-
+        public EditorActionManager WithParentGuid(Guid parentGuid)
+        {
+            HasParentGuid = true;
+            ParentGuid = parentGuid;
+            return this;
+        }
+        public EditorActionManager WithCanOpenMultipleTimes(bool canOpenMultipleTimes)
+        {
+            HasCanOpenMultipleTimes = true;
+            CanOpenMultipleTimes = canOpenMultipleTimes;
+            return this;
+        }
+        public EditorActionManager WithSiblingRules(BaseFdaElement element)
+        {
+            HasSiblingRules = true;
+            SiblingElement = element;
+            return this;
+        }
         public EditorActionManager WithSaveUndoRedo(SaveUndoRedoHelper helper)
         {
-            HasSaveHelper = true;
-            
+            HasSaveHelper = true;         
             SaveUndoRedoHelper = helper;
             return this;
         }

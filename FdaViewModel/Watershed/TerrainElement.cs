@@ -100,7 +100,9 @@ namespace FdaViewModel.Watershed
         {
 
             //OpenGLMapping.MapRasters rfn = new OpenGLMapping.MapRasters() 
-            LifeSimGIS.RasterFeatures r = new LifeSimGIS.RasterFeatures(GetTerrainPath());
+            string filePath = Storage.Connection.Instance.GetTerrainFile(Name);
+            if(filePath == null) { return; }
+            LifeSimGIS.RasterFeatures r = new LifeSimGIS.RasterFeatures(filePath);
 
             OpenGLMapping.ColorRamp c = new OpenGLMapping.ColorRamp(OpenGLMapping.ColorRamp.RampType.Terrain, r.GridReader.Max, r.GridReader.Min, r.GridReader.Mean, r.GridReader.StdDev);
             Utilities.AddGriddedDataEventArgs args = new Utilities.AddGriddedDataEventArgs(r, c);
@@ -119,8 +121,8 @@ namespace FdaViewModel.Watershed
 
         public string GetTerrainPath()
         {
-            //return Storage.Connection.Instance.TerrainDirectory + "\\" + FileName;
-            return  FileName;
+            return Storage.Connection.Instance.TerrainDirectory + "\\" + Name + ".tif";
+            //return  FileName;
 
         }
 

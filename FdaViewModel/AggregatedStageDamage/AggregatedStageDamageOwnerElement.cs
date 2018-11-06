@@ -35,6 +35,8 @@ namespace FdaViewModel.AggregatedStageDamage
             StudyCache.StageDamageAdded += AddStageDamageElement;
             StudyCache.StageDamageRemoved += RemoveStageDamageElement;
             StudyCache.StageDamageUpdated += UpdateStageDamageElement;
+            GUID = Guid.NewGuid();
+
         }
         #endregion
         #region Voids
@@ -62,11 +64,14 @@ namespace FdaViewModel.AggregatedStageDamage
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSaveUndoRedo(saveHelper);
+                .WithSaveUndoRedo(saveHelper)
+                 .WithSiblingRules(this)
+               .WithParentGuid(this.GUID)
+               .WithCanOpenMultipleTimes(true);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
-            vm.AddSiblingRules(this);
+            //vm.AddSiblingRules(this);
 
             Navigate(vm, false, true, "Create Stage Damage");
 

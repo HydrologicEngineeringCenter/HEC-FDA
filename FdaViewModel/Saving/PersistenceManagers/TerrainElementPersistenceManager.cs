@@ -3,6 +3,7 @@ using FdaViewModel.Watershed;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,11 +50,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
             await Task.Run(() => System.IO.File.Copy(OriginalTerrainPath, element.FileName)); //pathNames[0], pathNames[1]));
             string name = element.Name;
             //remove the temporary node and replace it
-            foreach (Utilities.ChildElement elem in StudyCache.GetChildElementsOfType<TerrainElement>())
+            TerrainOwnerElement terrainParent = StudyCache.GetParentElementOfType<TerrainOwnerElement>();
+
+            for (int i = 0;i< terrainParent.Elements.Count;i++)
             {
-                if (elem.Name.Equals(name))
+                if (terrainParent.Elements[i].Name.Equals(name))
                 {
-                    StudyCache.GetParentElementOfType<TerrainOwnerElement>().Elements.Remove(elem);
+                    terrainParent.Elements.Remove(terrainParent.Elements[i]);
                     break;
                 }
             }
@@ -65,9 +68,9 @@ namespace FdaViewModel.Saving.PersistenceManagers
             {
                 await Task.Run(() =>
                 {
-                    if (System.IO.File.Exists(element.FileName))
+                    if (System.IO.File.Exists(Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name))
                     {
-                        System.IO.File.Delete(element.FileName);
+                        System.IO.File.Delete(Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name);
                     }
                 });
             }
@@ -80,6 +83,30 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
             StudyCacheForSaving.RemoveTerrainElement((TerrainElement)element);
 
+        }
+
+        private void RenameTheTerrainFile(string oldName, string newName)
+        {
+            if (!newName.Equals(oldName))
+            {
+                string oldFilePath = Storage.Connection.Instance.GetTerrainFile(oldName);
+                if(oldFilePath != null)
+                {
+                    // at least one matching file exists
+                    try
+                    {
+                        FileInfo currentFile = new FileInfo(oldFilePath);                     
+                        currentFile.MoveTo(currentFile.Directory.FullName + "\\" + newName + currentFile.Extension);
+                        //System.IO.File.Move(files[0], Storage.Connection.Instance.TerrainDirectory + "\\" + newName);
+                    }
+                    catch (Exception e)
+                    {
+                        CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "Could not rename the terrain file at location: " + Storage.Connection.Instance.TerrainDirectory + "\\" + oldName);
+                        Navigate(messageBox);
+                    }
+                }
+               
+            }
         }
 
         #endregion
@@ -106,6 +133,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
         public void SaveExisting(ChildElement oldElement, ChildElement element, int changeTableIndex)
         {
+            RenameTheTerrainFile(oldElement.Name, element.Name);
             UpdateParentTableRow(element.Name, changeTableIndex, GetRowDataFromElement((TerrainElement)element), oldElement.Name, TableName, false, ChangeTableConstant);
             StudyCacheForSaving.UpdateTerrain((TerrainElement)oldElement, (TerrainElement)element);
         }

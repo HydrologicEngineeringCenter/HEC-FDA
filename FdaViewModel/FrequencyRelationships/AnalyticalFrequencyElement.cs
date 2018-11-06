@@ -15,7 +15,6 @@ namespace FdaViewModel.FrequencyRelationships
         #region Fields
         private const string _TableConstant = "Analytical Frequency - ";
 
-        private string _Description = "";
         private Statistics.LogPearsonIII _Distribution;
         #endregion
         #region Properties
@@ -72,7 +71,10 @@ namespace FdaViewModel.FrequencyRelationships
                 (editor, element) => AssignValuesFromEditorToElement(editor, element));
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSaveUndoRedo(saveHelper);
+                .WithSaveUndoRedo(saveHelper)
+                .WithSiblingRules(this)
+               .WithParentGuid(this.GUID)
+               .WithCanOpenMultipleTimes(false);
 
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this, actionManager);// Name, Distribution, Description, _Owner);
             Navigate(vm, false, false, "Edit Frequency");

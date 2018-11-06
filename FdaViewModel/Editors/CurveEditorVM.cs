@@ -83,7 +83,7 @@ namespace FdaViewModel.Editors
 
         public CurveEditorVM(Utilities.ChildElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
-            SavingText = " Last saved at: " + elem.LastEditDate;
+            SavingText = elem.Name + " last saved: " + elem.LastEditDate;
             TransactionHelper.LoadTransactionsAndMessages(this, elem);
             PlotTitle = Name;
         }
@@ -98,6 +98,8 @@ namespace FdaViewModel.Editors
             if (prevElement != null)
             {
                 AssignValuesFromElementToEditor(prevElement);
+                SavingText = prevElement.Name + " last saved: " + prevElement.LastEditDate;
+                TransactionRows.Insert(0, new TransactionRowItem(DateTime.Now.ToString("G"), "Previously saved values", "me"));
             }
         }
 
@@ -107,12 +109,14 @@ namespace FdaViewModel.Editors
             if(nextElement != null)
             {
                 AssignValuesFromElementToEditor(nextElement);
+                SavingText = nextElement.Name + " last saved: " + nextElement.LastEditDate;
+
             }
         }
 
         public  void SaveWhileEditing()
         {
-            SavingText = " Saving...";
+            //SavingText = " Saving...";
             ChildElement elementToSave = ActionManager.SaveUndoRedoHelper.CreateElementFromEditorAction(this);
             if(CurrentElement == null)
             {
@@ -128,7 +132,7 @@ namespace FdaViewModel.Editors
 
             //update the rules to exclude the new name from the banned list
             //OwnerValidationRules.Invoke(this, _CurrentElement.Name);  
-            SavingText = " Saved at " + DateTime.Now.ToShortTimeString();
+            SavingText = elementToSave.Name + " last saved: " + elementToSave.LastEditDate;
         }
 
         public override void Save()

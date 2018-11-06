@@ -77,19 +77,10 @@ namespace FdaViewModel.Inventory
         }
         #endregion
         #region Constructors
-        public ImportStructuresFromShapefileVM() :base(null)
-        {
-            
+        public ImportStructuresFromShapefileVM(ObservableCollection<string> pointFiles, Editors.EditorActionManager actionManager) :base(actionManager)
+        {           
 
-            //get the list of paths that exist in the map window
-            ObservableCollection<string> collectionOfPointFiles = new ObservableCollection<string>();
-            List<string> pointShapePaths = new List<string>();
-            ShapefilePathsOfType(ref pointShapePaths, Utilities.VectorFeatureType.Point);
-            foreach (string path in pointShapePaths)
-            {
-                collectionOfPointFiles.Add(path);
-            }
-            AvailablePaths = collectionOfPointFiles;
+            AvailablePaths = pointFiles;
 
             _DefineSIAttributes = new DefineSIAttributesVM(SelectedPath);
             _AttributeLinkingList = new AttributeLinkingListVM();
@@ -160,7 +151,7 @@ namespace FdaViewModel.Inventory
                 string errorMessage = null;
                 if (ValidateSIAttributes(ref errorMessage) == false)
                 {
-                    Navigate(new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK,errorMessage));
+                    Navigate( new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK,errorMessage));
                     return false;
                 }
 
@@ -653,7 +644,6 @@ namespace FdaViewModel.Inventory
 
             OccupancyTypes.OccupancyTypesElement newOccTypeGroup = new OccupancyTypes.OccupancyTypesElement(groupName, newListOfOccType, _OcctypeTabsSelectedDictionary);
             OccupancyTypes.OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(newOccTypeGroup);
-
 
             StructureInventoryBaseElement SIBase = new StructureInventoryBaseElement(Name, Description);
             InventoryElement elementToSave = new InventoryElement(SIBase);

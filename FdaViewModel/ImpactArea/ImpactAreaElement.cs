@@ -91,20 +91,20 @@ namespace FdaViewModel.ImpactArea
 
         private void ImpactAreasToMapWindow(object arg1, EventArgs arg2)
         {
-            //DataBase_Reader.SqLiteReader sqr = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
-            //LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(sqr);
-            //LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)gpr.ConvertToGisFeatures(GetTableConstant() + this.Name);
-            //LifeSimGIS.VectorFeatures features = polyFeatures;
-            ////read from table.
-            //DataBase_Reader.DataTableView dtv = sqr.GetTableManager(GetTableConstant() + this.Name);
-            //int[] geometryColumns = { 0, 1 };
-            //dtv.DeleteColumns(geometryColumns);
+            DataBase_Reader.SqLiteReader sqr = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
+            LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(sqr);
+            LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)gpr.ConvertToGisFeatures("IndexPointTable -" + this.Name);
+            LifeSimGIS.VectorFeatures features = polyFeatures;
+            //read from table.
+            DataBase_Reader.DataTableView dtv = sqr.GetTableManager("IndexPointTable -" + this.Name);
+            int[] geometryColumns = { 0, 1 };
+            dtv.DeleteColumns(geometryColumns);
 
-            //OpenGLMapping.OpenGLDrawInfo ogldi = new OpenGLMapping.OpenGLDrawInfo(true, new OpenTK.Graphics.Color4((byte)255, 0, 0, 255), 1, true, new OpenTK.Graphics.Color4((byte)0, 255, 0, 200));
-            //Utilities.AddShapefileEventArgs args = new Utilities.AddShapefileEventArgs(Name, features, dtv, ogldi);
-            //AddToMapWindow(this, args);
-            //_featureNodeHash = args.MapFeatureHash;
-            Saving.PersistenceFactory.GetImpactAreaManager().ImpactAreasToMapWindow(this);
+            OpenGLMapping.OpenGLDrawInfo ogldi = new OpenGLMapping.OpenGLDrawInfo(true, new OpenTK.Graphics.Color4((byte)255, 0, 0, 255), 1, true, new OpenTK.Graphics.Color4((byte)0, 255, 0, 200));
+            Utilities.AddShapefileEventArgs args = new Utilities.AddShapefileEventArgs(Name, features, dtv, ogldi);
+            AddToMapWindow(this, args);
+            _featureNodeHash = args.MapFeatureHash;
+            //Saving.PersistenceFactory.GetImpactAreaManager().ImpactAreasToMapWindow(this);
             foreach (Utilities.NamedAction a in Actions)
             {
                 if (a.Header.Equals("Add Impact Areas To Map Window"))
@@ -147,9 +147,14 @@ namespace FdaViewModel.ImpactArea
         private void Edit(object arg1, EventArgs arg2)
         {
             //create an observable collection of all the available paths
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                .WithSiblingRules(this)
+                .WithParentGuid(this.GUID)
+                .WithCanOpenMultipleTimes(false);
 
-
-            ImpactAreaImporterVM vm = new ImpactAreaImporterVM(this, ImpactAreaRows);
+            ImpactAreaImporterVM vm = new ImpactAreaImporterVM(this, ImpactAreaRows, actionManager);
+            //vm.AddSiblingRules(this);
+            //vm.ParentGUID = this.GUID;
             Navigate(vm, false,false,"Edit Impact Area");
 
          

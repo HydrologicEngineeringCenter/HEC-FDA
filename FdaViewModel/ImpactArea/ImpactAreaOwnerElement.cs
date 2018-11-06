@@ -37,6 +37,7 @@ namespace FdaViewModel.ImpactArea
             StudyCache.ImpactAreaAdded += AddImpactAreaElement;
             StudyCache.ImpactAreaRemoved += RemoveImpactAreaElement;
             StudyCache.ImpactAreaUpdated += UpdateImpactAreaElement;
+            GUID = Guid.NewGuid();
 
         }
         #endregion
@@ -66,11 +67,19 @@ namespace FdaViewModel.ImpactArea
             {
                 observpaths.Add(s);
             }
-            ImpactAreaImporterVM vm = new ImpactAreaImporterVM(observpaths);
-            //StudyCache.AddSiblingRules(vm, this);
-            vm.AddSiblingRules(this);
 
-            Navigate(vm,false,false,"Import Impact Areas");
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                .WithSiblingRules(this)
+                .WithParentGuid(this.GUID)
+                .WithCanOpenMultipleTimes(true);
+
+            ImpactAreaImporterVM vm = new ImpactAreaImporterVM(observpaths, actionManager);
+            ExtendEventsToImporter(vm);
+            //vm.AddSiblingRules(this);
+            //vm.ParentGUID = this.GUID;
+            //vm.CanOpenMultipleTimes = true;
+
+            Navigate( vm,false,false,"Import Impact Areas");
             //if (!vm.HasError & !vm.WasCanceled)
             //{
                 

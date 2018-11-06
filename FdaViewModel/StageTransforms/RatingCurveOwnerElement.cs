@@ -42,6 +42,8 @@ namespace FdaViewModel.StageTransforms
             StudyCache.RatingAdded += AddRatingCurveElement;
             StudyCache.RatingRemoved += RemoveRatingCurveElement;
             StudyCache.RatingUpdated += UpdateRatingCurveElement;
+            GUID = Guid.NewGuid();
+
         }
 
         #endregion
@@ -79,11 +81,14 @@ namespace FdaViewModel.StageTransforms
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSaveUndoRedo(saveHelper);
+                .WithSaveUndoRedo(saveHelper)
+                .WithSiblingRules(this)
+               .WithParentGuid(this.GUID)
+               .WithCanOpenMultipleTimes(true);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
             //StudyCache.AddSiblingRules(vm,this);
-            vm.AddSiblingRules(this);
+            //vm.AddSiblingRules(this);
 
             Navigate(vm, false, true, "Create Rating Curve");
             

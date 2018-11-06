@@ -40,6 +40,8 @@ namespace FdaViewModel.FrequencyRelationships
             StudyCache.FlowFrequencyAdded += AddFlowFrequencyElement;
             StudyCache.FlowFrequencyRemoved += RemoveFlowFrequencyElement;
             StudyCache.FlowFrequencyUpdated += UpdateFlowFrequencyElement;
+            GUID = Guid.NewGuid();
+
         }
 
 
@@ -72,11 +74,14 @@ namespace FdaViewModel.FrequencyRelationships
                 (editor, element) => AssignValuesFromEditorToElement(editor, element));
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSaveUndoRedo(saveHelper);
+                .WithSaveUndoRedo(saveHelper)
+               .WithSiblingRules(this)
+               .WithParentGuid(this.GUID)
+               .WithCanOpenMultipleTimes(true);
 
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(actionManager);
             //StudyCache.AddSiblingRules(vm, this);
-            vm.AddSiblingRules(this);
+            //vm.AddSiblingRules(this);
 
             Navigate(vm,false,false,"Import Frequency");
             //if (!vm.WasCanceled)

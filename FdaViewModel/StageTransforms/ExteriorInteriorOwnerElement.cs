@@ -43,6 +43,8 @@ namespace FdaViewModel.StageTransforms
             StudyCache.ExteriorInteriorAdded += AddExteriorInteriorElement;
             StudyCache.ExteriorInteriorRemoved += RemoveExteriorInteriorElement;
             StudyCache.ExteriorInteriorUpdated += UpdateExteriorInteriorElement;
+            GUID = Guid.NewGuid();
+
         }
         #endregion
         #region Voids
@@ -75,12 +77,14 @@ namespace FdaViewModel.StageTransforms
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
-                .WithSaveUndoRedo(saveHelper);
+                .WithSaveUndoRedo(saveHelper)
+                .WithSiblingRules(this)
+               .WithParentGuid(this.GUID)
+               .WithCanOpenMultipleTimes(true);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
-            vm.AddSiblingRules(this);
+            //vm.AddSiblingRules(this);
 
             Navigate(vm, false, true, "Create Exterior Interior");
 

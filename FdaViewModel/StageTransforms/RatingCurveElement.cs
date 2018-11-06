@@ -81,28 +81,27 @@ namespace FdaViewModel.StageTransforms
             //    }
             //}
 
-            if(IsOpenInTabOrWindow == true)
-            {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage(Name + " is already open for editing",FdaModel.Utilities.Messager.ErrorMessageEnum.Fatal));
-                return;
-            }
+            //if(IsOpenInTabOrWindow == true)
+            //{
+            //    ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage(Name + " is already open for editing",FdaModel.Utilities.Messager.ErrorMessageEnum.Fatal));
+            //    return;
+            //}
 
-            IsOpenInTabOrWindow = true;
+            //IsOpenInTabOrWindow = true;
 
             Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetRatingManager(),this, (editorVM) => CreateElementFromEditor(editorVM),
                 (editorVM, element) => AssignValuesFromElementToCurveEditor(editorVM, element),
                  (editorVM, elem) => AssignValuesFromCurveEditorToElement(editorVM, elem));
 
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSaveUndoRedo(saveHelper);
-
-
+                .WithSaveUndoRedo(saveHelper)
+                .WithSiblingRules(this)
+               .WithParentGuid(this.GUID)
+               .WithCanOpenMultipleTimes(false);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
 
-
-            Navigate(vm,false, false, "Edit " + vm.Name);
-         
+            Navigate(vm,false, false, "Edit " + vm.Name);   
         }
 
         //public  void AssignValuesFromEditorToElement(BaseEditorVM editorVM, ChildElement element)

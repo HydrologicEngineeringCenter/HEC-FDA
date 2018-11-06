@@ -42,6 +42,7 @@ namespace FdaViewModel.Conditions
             StudyCache.ConditionsElementAdded += AddConditionsElement;
             StudyCache.ConditionsElementRemoved += RemoveConditionsElement;
             StudyCache.ConditionsElementUpdated += UpdateConditionsElement;
+            GUID = Guid.NewGuid();
 
         }
         #endregion
@@ -151,9 +152,14 @@ namespace FdaViewModel.Conditions
 
             Plots.IndividualLinkedPlotControlVM DamageFrequencyControl = BuildDefaultDamageFrequencyControl(this);
 
-            ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl, StageDamageControl, DamageFrequencyControl);
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                 .WithSiblingRules(this)
+               .WithParentGuid(this.GUID)
+               .WithCanOpenMultipleTimes(true);
+
+            ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl, StageDamageControl, DamageFrequencyControl, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
-            vm.AddSiblingRules(this);
+            //vm.AddSiblingRules(this);
 
             Navigate(vm, false, false,"Create Condition");
 

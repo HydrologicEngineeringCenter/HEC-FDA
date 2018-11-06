@@ -245,7 +245,7 @@
                 <Button Name="btn_Save" Style="{StaticResource SaveButton}" BorderThickness="0" Width="50" Margin="5"   IsEnabled="{Binding Path=HasFatalError, Converter={StaticResource HasErrorConverter}, UpdateSourceTrigger=PropertyChanged}" Click="btn_Save_Click" >
                     <!--<Image Name="img_saveEnabled"  Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/save_enabled.png"/>-->
                 </Button>
-                <Label Name="lbl_Saving" Content="{Binding SavingText}"/>
+                <Label Name="lbl_Saving" Content="{Binding SavingText}" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="10"/>
             </StackPanel>
         </StackPanel>
     </Grid>

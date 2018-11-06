@@ -43,12 +43,12 @@ namespace FdaViewModel.Study
         private StudyElement _StudyElement;
         #endregion
         #region Constructors
-        public NewStudyVM() : base(null)
-        {
-            _Path = "C:\\temp\\FDA\\";
-            _StudyName = "Example";
-            _Description = "My description";
-        }
+        //public NewStudyVM() : base(null)
+        //{
+        //    _Path = "C:\\temp\\FDA\\";
+        //    _StudyName = "Example";
+        //    _Description = "My description";
+        //}
 
         public NewStudyVM(StudyElement studyElement) : base(null)
         {

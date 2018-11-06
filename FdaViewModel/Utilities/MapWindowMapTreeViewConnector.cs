@@ -59,6 +59,7 @@ namespace FdaViewModel.Utilities
                 _MapWindow.TreeView = _MapTreeView;
 
                 _MapWindow.PlotFeatures();
+                _MapTreeView.UpdateLayout();
             }
         }
 

@@ -45,6 +45,8 @@ namespace FdaViewModel.WaterSurfaceElevation
             StudyCache.WaterSurfaceElevationAdded += AddWaterSurfaceElevationElement;
             StudyCache.WaterSurfaceElevationRemoved += RemoveWaterSurfaceElevationElement;
             StudyCache.WaterSurfaceElevationUpdated += UpdateWaterSurfaceElevationElement;
+            GUID = Guid.NewGuid();
+
         }
         #endregion
         #region Voids
@@ -62,9 +64,14 @@ namespace FdaViewModel.WaterSurfaceElevation
         }
         public void ImportWaterSurfaceElevations(object arg1, EventArgs arg2)
         {
-            WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(this);
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+               .WithSiblingRules(this)
+               .WithParentGuid(this.GUID)
+               .WithCanOpenMultipleTimes(true);
+
+            WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(actionManager);
             //StudyCache.AddSiblingRules(vm, this);
-            vm.AddSiblingRules(this);
+            //vm.AddSiblingRules(this);
 
             Navigate(vm, false,false,"Import Water Surface Elevation");
             //if (!vm.WasCanceled)
