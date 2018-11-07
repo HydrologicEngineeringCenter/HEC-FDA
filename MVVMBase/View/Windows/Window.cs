@@ -34,10 +34,10 @@ namespace View.Windows
             {
                 Base.Implementations.MessageHub.Subscribe(bvm as Base.Interfaces.IRecieveMessages);
             }
-            //if (bvm is ViewModel.Interfaces.IClose)
-            //{
-            //    ((ViewModel.Interfaces.IClose)bvm).CloseEvent += wb_Close;
-            //}
+            if (bvm is ViewModel.Interfaces.IClose)
+            {
+                ((ViewModel.Interfaces.IClose)bvm).CloseEvent += CloseProgram;
+            }
         }
         protected virtual void RemoveHandlers(ViewModel.Implementations.BaseViewModel bvm)
         {
@@ -110,134 +110,23 @@ namespace View.Windows
                 //throw an error.
             }
         }
-        //protected void Wb_Close(object sender, ViewModel.Events.RequestCloseEventArgs e)
-        //{
-            //if (e.AllowCancel)//check if the user wants to, and set the cancel parameter in e.
-            //{
-            //    ViewModelBase.BaseViewModel bvm = sender as ViewModelBase.BaseViewModel;
-            //    if (bvm == null)
-            //    {
-            //        _ClosedByRedX = false;
-            //        Close();
-            //    }
-            //    if (e.CheckErrors)
-            //    {
-            //        if (e.CheckChanges)
-            //        {
-            //            //errors
-            //            //changes
-            //            if (bvm.HasErrors)
-            //            {
-            //                if (bvm.HasChanges)
-            //                {
-            //                    ViewModelBase.MessageBox m = new ViewModelBase.MessageBox("Changes and Errors exist, are you sure you wish to close?", ViewModelBase.Enumerations.MessageBoxOptionsEnum.YesNo);
-            //                    Vm_RequestNavigation(this, new ViewModelBase.Events.RequestNavigationEventArgs(m, ViewModelBase.Enumerations.NavigationEnum.NewScalableDialog, "Do you wish to close?"));
-            //                    if ((m.Result & ViewModelBase.Enumerations.MessageBoxOptionsEnum.Yes) > 0)
-            //                    {
-            //                        _ClosedByRedX = false;
-            //                        Close();
-            //                    }
-            //                }
-            //                else
-            //                {
-            //                    ViewModelBase.MessageBox m = new ViewModelBase.MessageBox("Errors exist, are you sure you wish to close?", ViewModelBase.Enumerations.MessageBoxOptionsEnum.YesNo);
-            //                    Vm_RequestNavigation(this, new ViewModelBase.Events.RequestNavigationEventArgs(m, ViewModelBase.Enumerations.NavigationEnum.NewScalableDialog, "Do you wish to close?"));
-            //                    if ((m.Result & ViewModelBase.Enumerations.MessageBoxOptionsEnum.Yes) > 0)
-            //                    {
-            //                        _ClosedByRedX = false;
-            //                        Close();
-            //                    }
-            //                }
+        protected void CloseProgram(object sender, ViewModel.Events.CloseEventArgs e)
+        {
+            if (!e.ForceClose)//check if the user wants to, and set the cancel parameter in e.
+            {
+                Close();
+            }
+            else
+            {
+                Close();
+            }
 
-            //            }
-            //            else
-            //            {
-            //                if (bvm.HasChanges)
-            //                {
-            //                    ViewModelBase.MessageBox m = new ViewModelBase.MessageBox("Changes exist, are you sure you wish to close?", ViewModelBase.Enumerations.MessageBoxOptionsEnum.YesNo);
-            //                    Vm_RequestNavigation(this, new ViewModelBase.Events.RequestNavigationEventArgs(m, ViewModelBase.Enumerations.NavigationEnum.NewScalableDialog, "Do you wish to close?"));
-            //                    if ((m.Result & ViewModelBase.Enumerations.MessageBoxOptionsEnum.Yes) > 0)
-            //                    {
-            //                        _ClosedByRedX = false;
-            //                        Close();
-            //                    }
-            //                }
-            //                else
-            //                {
-            //                    _ClosedByRedX = false;
-            //                    Close();
-            //                }
-            //            }
-            //        }
-            //        else
-            //        {
-            //            //errors
-            //            //no changes
-            //            if (bvm.HasErrors)
-            //            {
-            //                ViewModelBase.MessageBox m = new ViewModelBase.MessageBox("Errors exist, are you sure you wish to close?", ViewModelBase.Enumerations.MessageBoxOptionsEnum.YesNo);
-            //                Vm_RequestNavigation(this, new ViewModelBase.Events.RequestNavigationEventArgs(m, ViewModelBase.Enumerations.NavigationEnum.NewScalableDialog, "Do you wish to close?"));
-            //                if ((m.Result & ViewModelBase.Enumerations.MessageBoxOptionsEnum.Yes) > 0)
-            //                {
-            //                    _ClosedByRedX = false;
-            //                    Close();
-            //                }
-            //            }
-            //            else
-            //            {
-            //                _ClosedByRedX = false;
-            //                Close();
-            //            }
-            //        }
-            //    }
-            //    else
-            //    {
-            //        if (e.CheckChanges)
-            //        {
-            //            //no errors
-            //            //changes
-            //            if (bvm.HasChanges)
-            //            {
-            //                ViewModelBase.MessageBox m = new ViewModelBase.MessageBox("Changes exist, are you sure you wish to close?", ViewModelBase.Enumerations.MessageBoxOptionsEnum.YesNo);
-            //                Vm_RequestNavigation(this, new ViewModelBase.Events.RequestNavigationEventArgs(m, ViewModelBase.Enumerations.NavigationEnum.NewScalableDialog, "Do you wish to close?"));
-            //                if ((m.Result & ViewModelBase.Enumerations.MessageBoxOptionsEnum.Yes) > 0)
-            //                {
-            //                    _ClosedByRedX = false;
-            //                    Close();
-            //                }
-            //            }
-            //            else
-            //            {
-            //                _ClosedByRedX = false;
-            //                Close();
-            //            }
-            //        }
-            //        else
-            //        {
-            //            //no errors
-            //            //no changes
-            //            ViewModelBase.MessageBox m = new ViewModelBase.MessageBox("Are you sure you wish to close?", ViewModelBase.Enumerations.MessageBoxOptionsEnum.YesNo);
-            //            Vm_RequestNavigation(this, new ViewModelBase.Events.RequestNavigationEventArgs(m, ViewModelBase.Enumerations.NavigationEnum.NewScalableDialog, "Do you wish to close?"));
-            //            if ((m.Result & ViewModelBase.Enumerations.MessageBoxOptionsEnum.Yes) > 0)
-            //            {
-            //                _ClosedByRedX = false;
-            //                Close();
-            //            }
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    _ClosedByRedX = false;
-            //    Close();
-            //}
-            //e.Cancel = true;
-        //}
+        }
         protected void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             //if (_ClosedByRedX)
             //{
-            //    ViewModelBase.WindowBase wb = DataContext as ViewModelBase.WindowBase;
+            //    ViewModel.WindowBase wb = DataContext as ViewModelBase.WindowBase;
             //    ViewModelBase.BaseViewModel bvm = wb.CurrentView;
             //    if (bvm == null)
             //    {
@@ -245,7 +134,7 @@ namespace View.Windows
             //    }
             //    if (bvm.HasChanges)
             //    {
-            //        ViewModelBase.MessageBox m = new ViewModelBase.MessageBox("Changes exist, are you sure you wish to close?", ViewModelBase.Enumerations.MessageBoxOptionsEnum.YesNo);
+            //        ViewModel.MessageBox m = new ViewModel.MessageBox("Changes exist, are you sure you wish to close?", ViewModelBase.Enumerations.MessageBoxOptionsEnum.YesNo);
             //        Vm_RequestNavigation(this, new ViewModelBase.Events.RequestNavigationEventArgs(m, ViewModelBase.Enumerations.NavigationEnum.NewScalableDialog, "Do you wish to close?"));
             //        if ((m.Result & ViewModelBase.Enumerations.MessageBoxOptionsEnum.Yes) > 0)
             //        {
@@ -265,10 +154,10 @@ namespace View.Windows
         }
         protected void Window_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            //this.Height = this.DesiredSize.Height;
-            //this.MinHeight = this.DesiredSize.Height;
-            //this.MinWidth = this.DesiredSize.Width;
-            //this.Width = this.DesiredSize.Width;
+            this.Height = this.DesiredSize.Height;
+            this.MinHeight = this.DesiredSize.Height;
+            this.MinWidth = this.DesiredSize.Width;
+            this.Width = this.DesiredSize.Width;
             //need to figure out how to set max widths and heights.
         }
     }

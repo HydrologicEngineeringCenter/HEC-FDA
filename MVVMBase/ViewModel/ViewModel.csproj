@@ -47,6 +47,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\CloseEventArgs.cs" />
     <Compile Include="Implementations\BaseViewModel.cs" />
     <Compile Include="Enumerations\NavigationOptionsEnum.cs" />
     <Compile Include="Events\NavigationEventArgs.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="Implementations\SelectableMessageViewModel.cs" />
     <Compile Include="Implementations\SubscriberMessageViewModel.cs" />
     <Compile Include="Interfaces\IBaseViewModel.cs" />
+    <Compile Include="Interfaces\IClose.cs" />
     <Compile Include="Interfaces\IDisplayableNamedAction.cs" />
     <Compile Include="Interfaces\IDisplayToUI.cs" />
     <Compile Include="Interfaces\IExpandable.cs" />
