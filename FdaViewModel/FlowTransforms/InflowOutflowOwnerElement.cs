@@ -82,9 +82,9 @@ namespace FdaViewModel.FlowTransforms
                .WithCanOpenMultipleTimes(true);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
-            vm.ParentGUID = this.GUID;
+            //vm.ParentGUID = this.GUID;
             //StudyCache.AddSiblingRules(vm, this);
-            vm.AddSiblingRules(this);
+            //vm.AddSiblingRules(this);
 
             Navigate( vm, false, false, "Create Inflow Outflow");
             //if (!vm.WasCancled)

@@ -117,8 +117,8 @@ namespace FdaViewModel.Utilities
                     //{
                     //    StudyVM.Tabs = new System.Collections.ObjectModel.ObservableCollection<IDynamicTab>();
                     //}
-                   
-                        StudyVM.AddTab(new DynamicTabVM(title, vm,true));
+                    DynamicTabVM tab = new DynamicTabVM(title, vm, true);
+                        StudyVM.AddTab(tab);
                    
                     
                     // StudyVM.SelectedTabIndex = StudyVM.Tabs.Count - 1;
@@ -130,9 +130,9 @@ namespace FdaViewModel.Utilities
             }
 
         }
-     
 
-       
+        
+
         #endregion
         #region Functions
         #endregion

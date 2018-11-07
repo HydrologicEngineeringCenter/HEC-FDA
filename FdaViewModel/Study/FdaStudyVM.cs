@@ -34,7 +34,7 @@ namespace FdaViewModel.Study
 
         private MapWindowMapTreeViewConnector _MWMTVConn;
 
-        private Dictionary<Guid, List<IDynamicTab>> _TabsDictionary;
+        public static Dictionary<Guid, List<IDynamicTab>> _TabsDictionary;
         private string _SaveStatus;
         #endregion
         #region Properties
@@ -217,7 +217,21 @@ namespace FdaViewModel.Study
             {
                 if (_TabsDictionary.ContainsKey(tab.BaseVM.ParentGUID))
                 {
-                    _TabsDictionary[tab.BaseVM.ParentGUID].Remove(tab);
+
+                    if (_TabsDictionary[tab.BaseVM.ParentGUID].Contains(tab))
+                    {
+                        _TabsDictionary[tab.BaseVM.ParentGUID].Remove(tab);
+                    }
+                    else
+                    {
+                        for(int i = 0;i< _TabsDictionary[tab.BaseVM.ParentGUID].Count;i++)
+                        {
+                            if(_TabsDictionary[tab.BaseVM.ParentGUID][i].BaseVM == tab.BaseVM)
+                            {
+                                _TabsDictionary[tab.BaseVM.ParentGUID].RemoveAt(i);
+                            }
+                        }
+                    }
                     Tabs.Remove(tab);
                 }
             }
@@ -247,8 +261,6 @@ namespace FdaViewModel.Study
                             _TabsDictionary[vm.ParentGUID].Remove(_TabsDictionary[vm.ParentGUID][i]);
                         }
                     }
-
-
                 }
                 //RemoveTabFromDictionary(parentElement);
             }
@@ -270,6 +282,8 @@ namespace FdaViewModel.Study
         {
             _MWMTVConn = MapWindowMapTreeViewConnector.Instance;
             _MWMTVConn.MapTreeView = mapTreeView;
+
+            
 
             MapWindowControlVM vm = new MapWindowControlVM(ref _MWMTVConn);
             //vm.SetMapWindowProperty += SetMapWindowProperty;
@@ -312,7 +326,19 @@ namespace FdaViewModel.Study
 
         public DynamicTabVM SelectedDynamicTab { get; set; }
 
+        private int GetIndexInTabs(IDynamicTab dynamicTab)
+        {
+            int index = -1;
+            foreach (IDynamicTab tab in Tabs)
+            {
+                if (tab.BaseVM.GetType() == dynamicTab.BaseVM.GetType()) //might have to do tab.gettype == dynamicTabVM.gettype
+                {
 
+                }
+            }
+
+                    return index;
+        }
 
         public void AddTab(IDynamicTab dynamicTabVM, bool poppingIn = false)
         {
@@ -327,7 +353,13 @@ namespace FdaViewModel.Study
                         {
                             if (tab.BaseVM.GetType() == dynamicTabVM.BaseVM.GetType()) //might have to do tab.gettype == dynamicTabVM.gettype
                             {
-                                //we have a duplicate
+                                //we have a duplicate, select the open one
+                                int index = Tabs.IndexOf(tab);
+                                if(index != -1)
+                                {
+                                    SelectedDynamicTabIndex = index;
+                                }
+                       
                                 return;
                             }
                         }

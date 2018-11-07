@@ -11,6 +11,7 @@
         Icon="FDA.ico"
         Closing="Window_Closing"
         Loaded="Window_Loaded"
+        StateChanged="Window_StateChanged"
         Title="ViewWindow" > <!--="None" ResizeMode="CanResizeWithGrip" AllowsTransparency="false">-->
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>

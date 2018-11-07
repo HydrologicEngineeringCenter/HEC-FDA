@@ -149,7 +149,33 @@ namespace Fda.Study
                 UpdateLayout();
                 
             }
-           
+
+            //MapToolBar.MapWindow = MapWindowControl.MapWindow;
+
+            //SelectableLayers.MapWindow = MapWindowControl.MapWindow;
+            //FeatureEditorToolbar.MapWindow = MapWindowControl.MapWindow;
+            //StatusBorder.Child = new OpenGLMapping.MapStatusBar(MapWindowControl.MapWindow);
+
+            //RadioButton ArrowTool = (RadioButton)MapToolBar.Items[0];
+            //ArrowTool.IsChecked = true;
+            //MapToolBar.RadioChecked += MapToolBar_RadioChecked;
+
+            //FeatureEditorToolbar.RadioChecked += FeatureEditorToolbar_RadioChecked;
+
+            //MapWindow.MapWindow.MouseLeave += MapWindow_Mouse;
+            //MapWindow.MapWindow.MouseEnter += MapWindow_Mouse;
+
+            //FdaViewModel.Utilities.MapWindowControlVM vm = (FdaViewModel.Utilities.MapWindowControlVM)this.DataContext;
+            //vm.MWMTVConn.MapWindow = MapWindowControl.MapWindow;
+
+            //MapWindowControl.MapWindow.TreeView = vm.MWMTVConn.MapTreeView;
+            //vm.MWMTVConn.MapTreeView.MapWindow = MapWindowControl.MapWindow;
+
+            //MapToolBar.MapTree = vm.MWMTVConn.MapTreeView;
+            //SelectableLayers.MapTree = vm.MWMTVConn.MapTreeView;
+
+            //FeatureEditorToolbar.MapTree = vm.MWMTVConn.MapTreeView;
+
 
         }
 
@@ -184,5 +210,17 @@ namespace Fda.Study
         {
             WasPopOutClicked = true;
         }
+
+        //private void btn_MapView_Click(object sender, RoutedEventArgs e)
+        //{
+        //    mapwindowgrid.Visibility = Visibility.Visible;
+        //    DynamicTabControl.Visibility = Visibility.Hidden;
+        //}
+
+        //private void btn_TabsView_Click(object sender, RoutedEventArgs e)
+        //{
+        //    mapwindowgrid.Visibility = Visibility.Hidden;
+        //    DynamicTabControl.Visibility = Visibility.Visible;
+        //}
     }
 }

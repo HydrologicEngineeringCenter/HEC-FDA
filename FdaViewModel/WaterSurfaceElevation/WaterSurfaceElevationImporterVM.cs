@@ -197,47 +197,47 @@ namespace FdaViewModel.WaterSurfaceElevation
                 }
             }
         }
-      
+
         public override bool RunSpecialValidation()
         {
-           
+
 
             StoreTheOriginalPaths();
             ListOfRelativePaths = new List<PathAndProbability>();
-            
-                bool atLeastOneFileIsVRT = false;
-                bool atLeastOneFileIsTif = false;
-                bool atLeastOneFileIsFlt = false;
+
+            bool atLeastOneFileIsVRT = false;
+            bool atLeastOneFileIsTif = false;
+            bool atLeastOneFileIsFlt = false;
 
             int numberOfSelectedRows = 0;
 
             string rowExtension;
-                foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
-                {
-                    if(row.IsChecked == false) { continue; }
+            foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
+            {
+                if (row.IsChecked == false) { continue; }
 
                 numberOfSelectedRows++;
-                    rowExtension = System.IO.Path.GetExtension(row.Path);
-                    switch(rowExtension)
-                    {
-                        case ".vrt":
-                            {
-                                atLeastOneFileIsVRT = true;
-                                break;
-                            }
-                        case ".flt":
-                            {
-                                atLeastOneFileIsFlt = true;
-                                break;
-                            }
-                        case ".tif":
-                            {
-                                atLeastOneFileIsTif = true;
-                                break;
-                            }
-                    }
-
+                rowExtension = System.IO.Path.GetExtension(row.Path);
+                switch (rowExtension)
+                {
+                    case ".vrt":
+                        {
+                            atLeastOneFileIsVRT = true;
+                            break;
+                        }
+                    case ".flt":
+                        {
+                            atLeastOneFileIsFlt = true;
+                            break;
+                        }
+                    case ".tif":
+                        {
+                            atLeastOneFileIsTif = true;
+                            break;
+                        }
                 }
+
+            }
 
 
             if (atLeastOneFileIsVRT == true)
@@ -245,77 +245,10 @@ namespace FdaViewModel.WaterSurfaceElevation
                 if (atLeastOneFileIsFlt == true || atLeastOneFileIsTif == true)
                 {
                     Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "Cannot mix .vrt and other file types.\nAll files need to be .vrt or .tif.");
-                    Navigate(msgBoxVM,true,true,"Incompatible File Types");
+                    Navigate(msgBoxVM, true, true, "Incompatible File Types");
                     return false;
                 }
-                else if(numberOfSelectedRows<8)
-                {
-                    Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.Yes_No, "You have only selected " + numberOfSelectedRows + " files. You will get better results with 8 or more files.\n\nDo you want to continue?");
-                    Navigate(msgBoxVM, true, true, "Small Number of Files Selected");
-                    if(msgBoxVM.ClickedButton == Utilities.CustomMessageBoxVM.ButtonsEnum.Yes)
-                    {
-                        //close the form and save the wse's
-                        if (HasFatalError == true)
-                        {
-                            return false;
-                        }
-                        else
-                        {
-                            //i need to copy the files over to the new location
-                            foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
-                            {
-                                if (row.IsChecked == true)
-                                {
-                                    if (CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name,row.Probability) == false) { return false; }
-                                }
-                            }
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    //close the form and save the wse's
-                    if (HasFatalError == true)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        //i need to copy the files over to the new location
-                        foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
-                        {
-                            if (row.IsChecked == true)
-                            {
-                                if (CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name, row.Probability) == false) { return false; }
-                            }
-                        }
-                        return true;
-                    }
-                    
-                }
-            }
-
-            if(atLeastOneFileIsFlt == true)
-            {
-                Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.Yes_No, "At least one of your files has an extension of *.flt. HEC-Fda only accepts all *.vrt files or all *.tif files.\n\nWould you like to convert your *.flt files to *.tif files?");
-                Navigate(msgBoxVM, true, true, "Change flt to tif");
-                if(msgBoxVM.ClickedButton == Utilities.CustomMessageBoxVM.ButtonsEnum.Yes)
-                {
-                    //change flt to tif and proceed somehow
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            if(atLeastOneFileIsTif == true)
-            {
-                if(numberOfSelectedRows<8)
+                else if (numberOfSelectedRows < 8)
                 {
                     Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.Yes_No, "You have only selected " + numberOfSelectedRows + " files. You will get better results with 8 or more files.\n\nDo you want to continue?");
                     Navigate(msgBoxVM, true, true, "Small Number of Files Selected");
@@ -354,11 +287,78 @@ namespace FdaViewModel.WaterSurfaceElevation
                     else
                     {
                         //i need to copy the files over to the new location
-                        foreach(WaterSurfaceElevationRowItemVM row in ListOfRows)
+                        foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
                         {
-                            if(row.IsChecked == true)
+                            if (row.IsChecked == true)
                             {
-                                if (CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name,row.Probability) == false) { return false; }
+                                if (CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name, row.Probability) == false) { return false; }
+                            }
+                        }
+                        return true;
+                    }
+
+                }
+            }
+
+            if (atLeastOneFileIsFlt == true)
+            {
+                Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.Yes_No, "At least one of your files has an extension of *.flt. HEC-Fda only accepts all *.vrt files or all *.tif files.\n\nWould you like to convert your *.flt files to *.tif files?");
+                Navigate(msgBoxVM, true, true, "Change flt to tif");
+                if (msgBoxVM.ClickedButton == Utilities.CustomMessageBoxVM.ButtonsEnum.Yes)
+                {
+                    //change flt to tif and proceed somehow
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            if (atLeastOneFileIsTif == true)
+            {
+                if (numberOfSelectedRows < 8)
+                {
+                    Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.Yes_No, "You have only selected " + numberOfSelectedRows + " files. You will get better results with 8 or more files.\n\nDo you want to continue?");
+                    Navigate(msgBoxVM, true, true, "Small Number of Files Selected");
+                    if (msgBoxVM.ClickedButton == Utilities.CustomMessageBoxVM.ButtonsEnum.Yes)
+                    {
+                        //close the form and save the wse's
+                        if (HasFatalError == true)
+                        {
+                            return false;
+                        }
+                        else
+                        {
+                            //i need to copy the files over to the new location
+                            foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
+                            {
+                                if (row.IsChecked == true)
+                                {
+                                    if (CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name, row.Probability) == false) { return false; }
+                                }
+                            }
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    //close the form and save the wse's
+                    if (HasFatalError == true)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        //i need to copy the files over to the new location
+                        foreach (WaterSurfaceElevationRowItemVM row in ListOfRows)
+                        {
+                            if (row.IsChecked == true)
+                            {
+                                if (CopyWaterSurfaceFilesToStudyDirectory(row.Path, row.Name, row.Probability) == false) { return false; }
                             }
                         }
                         return true;
@@ -368,14 +368,14 @@ namespace FdaViewModel.WaterSurfaceElevation
 
 
             return false;//shouldn't ever get to here unless nothing was selected.
-            
+
         }
 
         private bool CopyWaterSurfaceFilesToStudyDirectory(string path, string nameWithExtension,double probability)
         {
             string destinationFilePath = Storage.Connection.Instance.HydraulicsDirectory + "\\"+ Name + "\\" + nameWithExtension;
             string destinationDirectory = Storage.Connection.Instance.HydraulicsDirectory + "\\" + Name;
-            if (!System.IO.File.Exists(destinationDirectory))
+            if (!System.IO.Directory.Exists(destinationDirectory))
             {
                 System.IO.Directory.CreateDirectory(destinationDirectory);
             }

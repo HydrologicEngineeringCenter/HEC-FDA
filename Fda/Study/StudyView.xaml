@@ -11,6 +11,7 @@
              xmlns:study="clr-namespace:FdaViewModel.Study;assembly=FdaViewModel"
              Loaded="UserControl_Loaded"
              SizeChanged="UserControl_SizeChanged"
+             
              mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1200">
     <UserControl.Resources>
         <utils:ContextMenuConverter x:Key="converter"/>
@@ -38,8 +39,17 @@
         <!--<Menu Grid.ColumnSpan="2" Name="MainMenu" VerticalAlignment="Stretch"/>-->
 
         <Label Name="lbl_Study" Grid.Row="0"  Content="{Binding CurrentStudyElement.CustomTreeViewHeader}" FontSize="14" MouseRightButtonDown="lbl_Study_MouseRightButtonDown"  ContextMenu="{Binding CurrentStudyElement.Actions, Converter={StaticResource converter }}"/>
-
-
+        
+        <!--<StackPanel Name="stack_MapViewTabView" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal">
+        <Button Name="btn_MapView" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Click="btn_MapView_Click" >
+            Map View
+        </Button>
+        <Button Name="btn_TabsView" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Click="btn_TabsView_Click">
+            Tab View
+        </Button>
+        </StackPanel>-->
+        
+        
         <TabControl Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"  SelectedIndex="{Binding SelectedTab, Mode=TwoWay}">
 
             <TabItem Header="Conditions Control" Name="ConditionsTab">
@@ -106,8 +116,13 @@
         </TabControl>
 
         
-      <TabControl Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding Tabs}" SelectedIndex="{Binding SelectedDynamicTabIndex, Mode=TwoWay}"  MinWidth="500" MinHeight="600" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+        <!--<Grid Name="mapwindowgrid"  Grid.Row="1" Grid.Column="1" Margin="0,30,5,5" >
+            <OpenGL:WPFMapWindow x:Name="MapWindowControl" />
+        </Grid>-->
         
+        
+      <TabControl Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding Tabs}" SelectedIndex="{Binding SelectedDynamicTabIndex, Mode=TwoWay}"  MinWidth="500" MinHeight="600" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+    
           <!--<TabControl.ItemContainerStyle>
         <Style TargetType="TabItem">
             <Setter Property="Header" Value=/>

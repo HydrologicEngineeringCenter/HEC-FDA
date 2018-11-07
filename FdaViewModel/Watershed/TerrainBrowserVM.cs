@@ -21,6 +21,7 @@ namespace FdaViewModel.Watershed
 
         private string _TerrainPath;
         private string _OriginalPath;
+        private List<string> _AvailablePaths;
 
        // private BackgroundWorker bw = new BackgroundWorker();
 
@@ -37,7 +38,11 @@ namespace FdaViewModel.Watershed
             set { _OriginalPath = value; CreateNewPathName(); NotifyPropertyChanged(); }
         }
 
-        
+        public List<string> AvailablePaths
+        {
+            get { return _AvailablePaths; }
+            set { _AvailablePaths = value; NotifyPropertyChanged(); }
+        }
 
         //public string Name
         //{
@@ -63,9 +68,9 @@ namespace FdaViewModel.Watershed
         #endregion
         #region Constructors
         //public TerrainBrowserVM(TerrainOwnerElement owner, Action<BaseViewModel> ownerValidationRules) :base()
-        public TerrainBrowserVM(TerrainOwnerElement owner, Editors.EditorActionManager actionManager) : base(actionManager)
+        public TerrainBrowserVM(List<string> availablePaths, Editors.EditorActionManager actionManager) : base(actionManager)
         {
-            
+            AvailablePaths = availablePaths;
         }
 
         

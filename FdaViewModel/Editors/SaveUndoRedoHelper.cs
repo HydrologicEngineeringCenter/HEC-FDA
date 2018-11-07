@@ -10,6 +10,7 @@ namespace FdaViewModel.Editors
 {
     public class SaveUndoRedoHelper  : BaseViewModel 
     {
+        public event EventHandler RemoveFromTabsDictionary;
 
         private ObservableCollection<Utilities.UndoRedoRowItem> _UndoRedoRows = new ObservableCollection<UndoRedoRowItem>();
         private ObservableCollection<Utilities.UndoRedoRowItem> _UndoRows;
@@ -131,6 +132,11 @@ namespace FdaViewModel.Editors
 
         #endregion
 
+        private void RemoveAndReplaceFromTabsDictionary(ChildElement element)
+        {
+            RemoveFromTabsDictionary?.Invoke(element, new EventArgs());
+        }
+
         private void UpdateUndoRedo()
         {
             UpdateIndividualUndoRedoRows();
@@ -152,13 +158,19 @@ namespace FdaViewModel.Editors
             string newName = elementToSave.Name;
             OldCurve = oldElement.Curve;// oldCurve;
 
+            elementToSave.GUID = Guid.NewGuid();
             //elementToSave.ChangeIndex = ChangeIndex;
             //SaveElement = elementToSave;
             // SaveAction.Invoke( (T)elementToSave);
             if (_IsImporter && _IsFirstSave)
             {
+                RemoveAndReplaceFromTabsDictionary(elementToSave);
                 SavingManager.SaveNew(elementToSave);
                 _IsFirstSave = false;
+                if (Study.FdaStudyVM._TabsDictionary.ContainsKey(ParentGUID))
+                {
+                    //Study.FdaStudyVM._TabsDictionary.Remove
+                }
             }
             else
             {

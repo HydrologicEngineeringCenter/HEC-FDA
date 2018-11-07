@@ -115,6 +115,8 @@ namespace FdaViewModel.Utilities
             }
             if (index != -1)
             {
+                newElement.GUID = oldElement.GUID;
+                newElement.ParentGUID = oldElement.ParentGUID;
                 Elements.RemoveAt(index);
                 InsertElement(index, newElement);
             }
@@ -144,7 +146,10 @@ namespace FdaViewModel.Utilities
 
             //the name possibly changed so assign it to the element
             ele.ParentGUID = GUID;
-            ele.GUID = Guid.NewGuid();
+            if (ele.GUID == Guid.Empty)
+            {
+                ele.GUID = Guid.NewGuid();
+            }
             ele.RequestNavigation += Navigate;
             ele.RequestShapefilePaths += ShapefilePaths;
             ele.RequestShapefilePathsOfType += ShapefilePathsOfType;

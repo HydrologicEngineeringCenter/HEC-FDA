@@ -154,11 +154,18 @@ namespace FdaViewModel.Editors
         {
             ActionManager.SaveUndoRedoHelper.AssignValuesFromElementToEditorAction(this, element);
         }
-   
 
-        
+        public override void OnClosing(object sender, EventArgs e)
+        {
+            base.OnClosing(sender, e);
+        }
+        public override void Dispose()
+        {
+            base.Dispose();
+        }
 
-        #endregion 
+
+        #endregion
 
     }
 }

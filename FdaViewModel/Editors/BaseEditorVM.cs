@@ -67,10 +67,38 @@ namespace FdaViewModel.Editors
                 }
             }
         }
+        /// <summary>
+        /// This needs to happen when the importer save button gets clicked. 
+        /// I need to switch it over to being a dictionary
+        /// </summary>
+        private void RemoveFromTabsDictionaryAndAddElementEditor(object sender, EventArgs e)
+        {
+            ChildElement element = (ChildElement)sender;
+
+            if(Study.FdaStudyVM._TabsDictionary.ContainsKey(ParentGUID))
+            {
+                for(int i = 0;i< Study.FdaStudyVM._TabsDictionary[ParentGUID].Count;i++)
+                {
+                    if(Study.FdaStudyVM._TabsDictionary[ParentGUID][i].BaseVM == this)
+                    {
+                        Study.FdaStudyVM._TabsDictionary[ParentGUID].RemoveAt(i);
+                        DynamicTabVM newTab = new DynamicTabVM("", this);
+                        newTab.CanOpenMultipleTimes = false;
+                        Study.FdaStudyVM._TabsDictionary.Add(element.GUID, new List<IDynamicTab>() { newTab });
+                        this.ParentGUID = element.GUID;
+                        break;
+                    }
+                }
+            }
+        }
 
         private void SetActionManagerValues()
         {
-            if(ActionManager.HasSiblingRules)
+            if (ActionManager.SaveUndoRedoHelper != null)
+            {
+                ActionManager.SaveUndoRedoHelper.RemoveFromTabsDictionary += RemoveFromTabsDictionaryAndAddElementEditor;
+            }
+            if (ActionManager.HasSiblingRules)
             {
                 if(ActionManager.SiblingElement.GetType().BaseType == typeof(ChildElement))
                 {

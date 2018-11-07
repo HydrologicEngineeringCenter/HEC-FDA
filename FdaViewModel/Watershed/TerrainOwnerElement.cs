@@ -62,7 +62,9 @@ namespace FdaViewModel.Watershed
                 .WithParentGuid(this.GUID)
                 .WithCanOpenMultipleTimes(true);
 
-            TerrainBrowserVM vm = new TerrainBrowserVM(this, actionManager);
+            List<string> availableVRTPaths = new List<string>();
+            ShapefilePaths(ref availableVRTPaths);
+            TerrainBrowserVM vm = new TerrainBrowserVM(availableVRTPaths, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
             ExtendEventsToImporter(vm);
             //vm.AddSiblingRules(this);
