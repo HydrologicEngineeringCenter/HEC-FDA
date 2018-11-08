@@ -39,10 +39,11 @@ namespace FdaViewModel.FlowTransforms
         //    }
         //}
 
-        public  void AddBaseElements()
+        public  void AddBaseElements(Study.FDACache cache)
         {
             InflowOutflowOwnerElement io = new InflowOutflowOwnerElement(this);
             AddElement(io);
+            cache.InflowOutflowParent = io;
         }
         //public override void Save()
         //{

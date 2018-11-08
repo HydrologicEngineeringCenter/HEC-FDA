@@ -33,14 +33,16 @@ namespace FdaViewModel.StageTransforms
         }
         #endregion
         #region Voids
-        public  void AddBaseElements()
+        public  void AddBaseElements(Study.FDACache cache)
         {
             RatingCurveOwnerElement r = new RatingCurveOwnerElement(this);
             AddElement(r);
+            cache.RatingCurveParent = r;
 
 
             ExteriorInteriorOwnerElement i = new ExteriorInteriorOwnerElement(this);
             AddElement(i);
+            cache.ExteriorInteriorParent = i;
         }
         public override void AddValidationRules()
         {

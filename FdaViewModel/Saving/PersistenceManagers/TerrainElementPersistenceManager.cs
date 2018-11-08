@@ -85,23 +85,29 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         }
 
-        private void RenameTheTerrainFile(string oldName, string newName)
+        private async void RenameTheTerrainFileOnBackgroundThread(ChildElement oldElement, ChildElement newElement)
         {
-            if (!newName.Equals(oldName))
+            if (!newElement.Name.Equals(oldElement.Name))
             {
-                string oldFilePath = Storage.Connection.Instance.GetTerrainFile(oldName);
+                string oldFilePath = Storage.Connection.Instance.GetTerrainFile(oldElement.Name);
                 if(oldFilePath != null)
                 {
                     // at least one matching file exists
+                    newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name, "pack://application:,,,/Fda;component/Resources/Terrain.png",  " -Renaming File", true);
                     try
                     {
-                        FileInfo currentFile = new FileInfo(oldFilePath);                     
-                        currentFile.MoveTo(currentFile.Directory.FullName + "\\" + newName + currentFile.Extension);
+                        await Task.Run(() =>
+                        {
+                            FileInfo currentFile = new FileInfo(oldFilePath);
+                            currentFile.MoveTo(currentFile.Directory.FullName + "\\" + newElement.Name + currentFile.Extension);
+                            newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
+                        });
                         //System.IO.File.Move(files[0], Storage.Connection.Instance.TerrainDirectory + "\\" + newName);
+
                     }
                     catch (Exception e)
                     {
-                        CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "Could not rename the terrain file at location: " + Storage.Connection.Instance.TerrainDirectory + "\\" + oldName);
+                        CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "Could not rename the terrain file at location: " + Storage.Connection.Instance.TerrainDirectory + "\\" + oldElement.Name);
                         Navigate(messageBox);
                     }
                 }
@@ -133,7 +139,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
         public void SaveExisting(ChildElement oldElement, ChildElement element, int changeTableIndex)
         {
-            RenameTheTerrainFile(oldElement.Name, element.Name);
+            RenameTheTerrainFileOnBackgroundThread(oldElement, element);
             UpdateParentTableRow(element.Name, changeTableIndex, GetRowDataFromElement((TerrainElement)element), oldElement.Name, TableName, false, ChangeTableConstant);
             StudyCacheForSaving.UpdateTerrain((TerrainElement)oldElement, (TerrainElement)element);
         }

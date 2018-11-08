@@ -10,6 +10,7 @@ namespace FdaViewModel.Study
 {
     public class StudyElement : ParentElement
     {
+        public event EventHandler RenameTreeViewElement;
         public event EventHandler SaveTheOpenTabs;
         public event EventHandler UpdateTransactionsAndMessages;
         public event EventHandler LoadMapLayers;
@@ -480,31 +481,34 @@ namespace FdaViewModel.Study
                 cache = FDACache.Create();
                 StudyCache = cache;
                 PersistenceFactory = new Saving.PersistenceFactory(cache);
-            }
+            
 
             Watershed.TerrainOwnerElement t = new Watershed.TerrainOwnerElement(this);
             AddElement(t);
-            if (loadStudyCache) { cache.TerrainParent = t; }
+            t.RenameMapTreeViewElement += RenameTreeViewElement;
+            cache.TerrainParent = t; 
 
             ImpactArea.ImpactAreaOwnerElement i = new ImpactArea.ImpactAreaOwnerElement(this);
             AddElement(i);
+            cache.ImpactAreaParent = i; 
+                
 
             WaterSurfaceElevation.WaterSurfaceElevationOwnerElement wse = new WaterSurfaceElevation.WaterSurfaceElevationOwnerElement(this);
             
             AddElement(wse);
 
             FrequencyRelationships.FrequencyRelationshipsOwnerElement f = new FrequencyRelationships.FrequencyRelationshipsOwnerElement(this);
-            f.AddBaseElements();
+            f.AddBaseElements(cache);
             AddElement(f);
 
             FlowTransforms.FlowTransformsOwnerElement ft = new FlowTransforms.FlowTransformsOwnerElement(this);
-            ft.AddBaseElements();
+            ft.AddBaseElements(cache);
             AddElement(ft);
 
            
 
             StageTransforms.StageTransformsOwnerElement s = new StageTransforms.StageTransformsOwnerElement(this);
-            s.AddBaseElements();
+            s.AddBaseElements(cache);
             AddElement(s);
 
             //Hydraulics.FloodPlainDataOwnerElement h = new Hydraulics.FloodPlainDataOwnerElement(this);
@@ -517,7 +521,7 @@ namespace FdaViewModel.Study
      
 
             Inventory.InventoryOwnerElement inv = new Inventory.InventoryOwnerElement(this);
-            inv.AddBaseElements();
+            inv.AddBaseElements(cache);
             AddElement(inv);
 
             Conditions.ConditionsOwnerElement c = new Conditions.ConditionsOwnerElement(this);
@@ -532,11 +536,12 @@ namespace FdaViewModel.Study
             UpdateTheConditionsTree(this, new EventArgs());
             UpdateTransactionsAndMessages?.Invoke(this, new EventArgs());
             LoadMapLayers?.Invoke(this, new EventArgs());
+            }
         }
 
       
+       
 
-   
 
 
         /// <summary>

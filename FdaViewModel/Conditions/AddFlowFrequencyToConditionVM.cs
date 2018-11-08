@@ -67,13 +67,14 @@ namespace FdaViewModel.Conditions
         //}
         public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves):this(lp3Curves,null)
         {
-            
+
         }
         public AddFlowFrequencyToConditionVM(List<FrequencyRelationships.AnalyticalFrequencyElement> lp3Curves, FrequencyRelationships.AnalyticalFrequencyElement selectedElement) : base()
         {
             SelectedElement = selectedElement;
             InflowFrequencyCurves = lp3Curves;
-            //_owner = owner;
+            StudyCache.FlowFrequencyAdded += FlowFrequencyAdded;
+
         }
 
 
@@ -81,29 +82,16 @@ namespace FdaViewModel.Conditions
         #region Voids
         public void LauchNewFlowFrequency(object sender, EventArgs e)
         {
-            //if (_owner != null)
-            //{
-            //    List<FrequencyRelationships.AnalyticalFrequencyOwnerElement> eles = _owner.GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyOwnerElement>();
-            //    if (eles.Count > 0)
-            //    {
-            //        eles.FirstOrDefault().AddNewFlowFrequencyCurve(sender, e);
-            //        //need to determine what the most recent element is and see if we already have it.
-            //        if (eles.FirstOrDefault().Elements.Count > 0)
-            //        {
-            //            if (eles.FirstOrDefault().Elements.Count > InflowFrequencyCurves.Count)
-            //            {
-            //                List<FrequencyRelationships.AnalyticalFrequencyElement> theNewList = new List<FrequencyRelationships.AnalyticalFrequencyElement>();
-            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-            //                {
-            //                    theNewList.Add((FrequencyRelationships.AnalyticalFrequencyElement)eles.FirstOrDefault().Elements[i]);
-            //                }
-            //                InflowFrequencyCurves = theNewList;
-            //                //AnalyiticalRelationships.Add((FrequencyRelationships.AnalyticalFrequencyElement)eles.FirstOrDefault().Elements.Last());
-            //                SelectedElement = InflowFrequencyCurves.Last();
-            //            }
-            //        }
-            //    }
-            //}
+            FrequencyRelationships.AnalyticalFrequencyOwnerElement flowFreqParent = StudyCache.GetParentElementOfType<FrequencyRelationships.AnalyticalFrequencyOwnerElement>();
+            flowFreqParent.AddNewFlowFrequencyCurve(sender, e);
+          
+        }
+
+        private void FlowFrequencyAdded(object sender, Saving.ElementAddedEventArgs e)
+        {
+            List<FrequencyRelationships.AnalyticalFrequencyElement> tempList = InflowFrequencyCurves;
+            tempList.Add((FrequencyRelationships.AnalyticalFrequencyElement)e.Element);
+            InflowFrequencyCurves = tempList;//this is to hit the notify prop changed
         }
 
         public void OKClicked()

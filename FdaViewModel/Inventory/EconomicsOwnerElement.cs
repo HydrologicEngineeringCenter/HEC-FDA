@@ -32,7 +32,7 @@ namespace FdaViewModel.Inventory
         {
 
         }
-        public void AddBaseElements()
+        public void AddBaseElements(Study.FDACache cache)
         {
             //DamageCategory.DamageCategoryOwnedElement d = new DamageCategory.DamageCategoryOwnedElement(this);
             //this.AddElement(d);
@@ -45,6 +45,7 @@ namespace FdaViewModel.Inventory
 
             AggregatedStageDamage.AggregatedStageDamageOwnerElement a = new AggregatedStageDamage.AggregatedStageDamageOwnerElement(this);
             this.AddElement(a);
+            cache.StageDamageParent = a;
 
         }
        

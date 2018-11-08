@@ -342,7 +342,7 @@ namespace FdaViewModel
             //if ((error.ErrorLevel & FdaModel.Utilities.Messager.ErrorMessageEnum.Report) > 0)
             {
                 //Utilities.WindowVM
-                Navigate( new Utilities.MessageVM(error.Message), true, true, "Error Report");
+                //Navigate( new Utilities.MessageVM(error.Message), true, true, "Error Report");
             }
             //else
             {

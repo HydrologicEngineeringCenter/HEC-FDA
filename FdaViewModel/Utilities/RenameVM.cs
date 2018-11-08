@@ -50,6 +50,11 @@ namespace FdaViewModel.Utilities
             ElementToSave.Name = Name;
             ElementToSave.UpdateTreeViewHeader(Name);
 
+            //here i need to do some stuff with the tree view
+            //renaming an element needs to rename the same element in the tree view
+            //if it is in the map window then i need to take it out and put it back in so i can modify the file
+            OldElement.RenameMapTreeViewItem(OldElement, new EventArgs());
+
             Saving.IPersistable savingManager = Saving.PersistenceFactory.GetElementManager(OldElement);
             if (savingManager != null)
             {
@@ -57,7 +62,7 @@ namespace FdaViewModel.Utilities
             }
         }
 
-
+     
      
         #endregion
         #region Voids

@@ -9,6 +9,7 @@ using FdaModel.Functions;
 using Statistics;
 using FdaViewModel.Utilities;
 using System.Windows;
+using FdaViewModel.StageTransforms;
 
 namespace FdaViewModel.Conditions
 {
@@ -86,13 +87,15 @@ namespace FdaViewModel.Conditions
         #region Constructors
         public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves ):this(listOfRatingCurves,null)
         {
-            
+
         }
 
         public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves, StageTransforms.RatingCurveElement selectedRatingElement ):base()
         {
             SelectedElement = selectedRatingElement;
             ListOfRatingCurves = listOfRatingCurves;
+            StudyCache.RatingAdded += RatingAdded;
+
         }
         #endregion
         #region Voids
@@ -125,35 +128,21 @@ namespace FdaViewModel.Conditions
         }
         public void LaunchNewRatingCurve(object sender, EventArgs e)
         {
-            //if (_owner != null)
-            //{
-            //    List<StageTransforms.RatingCurveOwnerElement> eles = _owner.GetElementsOfType<StageTransforms.RatingCurveOwnerElement>();
-            //    if (eles.Count > 0)
-            //    {
-            //        eles.FirstOrDefault().AddNewRatingCurve(sender, e);
-            //        //need to determine what the most recent element is and see if we already have it.
-            //        if (eles.FirstOrDefault().Elements.Count > 0)
-            //        {
-            //            if (eles.FirstOrDefault().Elements.Count > ListOfRatingCurves.Count)
-            //            {
-            //                List<StageTransforms.RatingCurveElement> theNewList = new List<StageTransforms.RatingCurveElement>();
-            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-            //                {
-            //                    theNewList.Add((StageTransforms.RatingCurveElement)eles.FirstOrDefault().Elements[i]);
-            //                }
-            //                ListOfRatingCurves = theNewList;
-            //                //RatingCurveRelationships.Add((StageTransforms.RatingCurveElement)eles.FirstOrDefault().Elements.Last());
-            //                SelectedElement = ListOfRatingCurves.Last();
-            //            }
-            //        }
-            //    }
-            //}
+            RatingCurveOwnerElement ratingParent = StudyCache.GetParentElementOfType<RatingCurveOwnerElement>();
+            ratingParent.AddNewRatingCurve(sender, e);
+            
 
+        }
+        private void RatingAdded(object sender, Saving.ElementAddedEventArgs e)
+        {
+            List<RatingCurveElement> tempList = ListOfRatingCurves;
+            tempList.Add((RatingCurveElement)e.Element);
+            ListOfRatingCurves = tempList;//this is to hit the notify prop changed
         }
         #endregion
         #region Functions
         #endregion
-        
+
         public override void AddValidationRules()
         {
             AddRule(nameof(SelectedElement), () => { return (SelectedElement != null); }, "A Rating Curve has not been selected.");

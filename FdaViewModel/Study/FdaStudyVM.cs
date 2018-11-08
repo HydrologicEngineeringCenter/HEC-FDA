@@ -36,6 +36,9 @@ namespace FdaViewModel.Study
 
         public static Dictionary<Guid, List<IDynamicTab>> _TabsDictionary;
         private string _SaveStatus;
+
+        private bool _MapViewVisible;
+        private bool _TabsViewVisible;
         #endregion
         #region Properties
         //public static readonly DependencyProperty FilterStringProperty = DependencyProperty.Register("SaveStatus", typeof(string), typeof(FdaStudyVM), new UIPropertyMetadata("no version!"));
@@ -44,6 +47,16 @@ namespace FdaViewModel.Study
         //    get { return (string)GetValue(FilterStringProperty); }
         //    set { SetValue(FilterStringProperty, value); }
         //}
+        public bool MapViewVisible
+        {
+            get { return _MapViewVisible; }
+            set { _MapViewVisible = value;NotifyPropertyChanged(); }
+        }
+        public bool TabsViewVisible
+        {
+            get { return _TabsViewVisible; }
+            set { _TabsViewVisible = value; NotifyPropertyChanged(); }
+        }
         public string SaveStatus
         {
             get { return _SaveStatus; }
@@ -62,11 +75,11 @@ namespace FdaViewModel.Study
             set
             {
                 _SelectedTabIndex = value; NotifyPropertyChanged();
-                if (_SelectedTabIndex == 0)
-                {
-                    _MWMTVConn.UpdateMapWindow();
-                    //UpdateMapWindow();
-                }
+                //if (_SelectedTabIndex == 0)
+                //{
+                //    _MWMTVConn.UpdateMapWindow();
+                //    //UpdateMapWindow();
+                //}
             }
         }
 
@@ -134,6 +147,7 @@ namespace FdaViewModel.Study
             _MainStudyTree = new List<Utilities.ParentElement>();
             CurrentStudyElement = new StudyElement();
             CurrentStudyElement.GUID = Guid.NewGuid();
+            _StudyElement.RenameTreeViewElement += RenameTheMapTreeViewItem;
             _StudyElement.RemoveCreateNewStudyTab += RemoveCreateNewStudyTab;
             _StudyElement.SaveTheOpenTabs += SaveTheTabs;
             _StudyElement.RequestNavigation += Navigate;
@@ -184,6 +198,36 @@ namespace FdaViewModel.Study
         #endregion
 
         #region Voids
+        private void RenameTheMapTreeViewItem(object sender, EventArgs e)
+        {
+            ChildElement elem = (ChildElement)sender;
+
+            if(elem.GetType() == typeof(Watershed.TerrainElement))
+            {
+                List<OpenGLMapping.RasterFeatureNode> rasters = _MWMTVConn.MapTreeView.GetRasterFeatureNodes();
+                foreach(OpenGLMapping.RasterFeatureNode raster in rasters)
+                {
+                    if(raster.DisplayName.Equals(elem.Name))
+                    {
+                        //then we found it
+                        raster.RemoveLayerEventRaiser(true);
+                        
+                        //raster.SetDisplayName("cody");
+                        //OpenGLMapping.MapRasters mr = (OpenGLMapping.MapRasters)raster.GetBaseFeature;
+                        //OpenGLMapping.RasterFeatureNode newNode = new OpenGLMapping.RasterFeatureNode(mr, "new Name");
+                        //_MWMTVConn.MapTreeView.AddGisData(newNode);
+                    }
+                }
+            }
+            List<OpenGLMapping.FeatureNodeHeader> headers = _MWMTVConn.MapTreeView.GetAllFeatureNodes();//loop through and change the name
+            foreach(OpenGLMapping.FeatureNodeHeader header in headers)
+            {
+                if(header.DisplayName.Equals(elem.Name))
+                {
+                    header.SetDisplayName("cody");
+                }
+            }
+        }
         private void SetMapWindowInConnector(object sender, EventArgs e)
         {
             //OpenGLMapping.OpenGLMapWindow mapWindow = 
@@ -285,12 +329,12 @@ namespace FdaViewModel.Study
 
             
 
-            MapWindowControlVM vm = new MapWindowControlVM(ref _MWMTVConn);
-            //vm.SetMapWindowProperty += SetMapWindowProperty;
-            vm.Name = "map window vm";
-            DynamicTabVM mapTabVM = new DynamicTabVM("Map", vm, false);
-            Tabs.Add(mapTabVM);
-            SelectedDynamicTabIndex = Tabs.Count - 1;
+            //MapWindowControlVM vm = new MapWindowControlVM(ref _MWMTVConn);
+            ////vm.SetMapWindowProperty += SetMapWindowProperty;
+            //vm.Name = "map window vm";
+            //DynamicTabVM mapTabVM = new DynamicTabVM("Map", vm, false);
+            //Tabs.Add(mapTabVM);
+            //SelectedDynamicTabIndex = Tabs.Count - 1;
         }
 
         public void RemoveCreateNewStudyTab(object sender, EventArgs e)
@@ -343,7 +387,7 @@ namespace FdaViewModel.Study
         public void AddTab(IDynamicTab dynamicTabVM, bool poppingIn = false)
         {
 
-            if (dynamicTabVM.BaseVM.CanOpenMultipleTimes == false)
+            //if (dynamicTabVM.BaseVM.CanOpenMultipleTimes == false)
             {
                 if (dynamicTabVM.BaseVM.ParentGUID != null)
                 {
@@ -438,12 +482,23 @@ namespace FdaViewModel.Study
 
         private void SaveTheTabs(object sender, EventArgs e)
         {
-            bool allTabsSaved = true;
+            List<Guid> keys = new List<Guid>();
             foreach (KeyValuePair<Guid,List<IDynamicTab>> entry in _TabsDictionary)
             {
-                foreach (IDynamicTab tab in entry.Value)
+                keys.Add(entry.Key);
+            }
+
+
+            bool allTabsSaved = true;
+            int tabsCount = _TabsDictionary.Count;
+            for(int j = 0;j<tabsCount;j++)
+            //foreach (KeyValuePair<Guid,List<IDynamicTab>> entry in _TabsDictionary)
+            {
+                List<IDynamicTab> tabsForKey = _TabsDictionary[keys[j]];
+                for(int i = 0;i< tabsForKey.Count;i++)
+                //foreach (IDynamicTab tab in entry.Value)
                 {
-                    
+                    IDynamicTab tab = tabsForKey[i];
                     if (tab.BaseVM.GetType().BaseType == typeof(Editors.BaseEditorVM))
                     {
                         tab.BaseVM.Validate();

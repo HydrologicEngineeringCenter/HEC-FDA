@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FdaModel.Functions;
 using Statistics;
 using FdaViewModel.Utilities;
+using FdaViewModel.FlowTransforms;
 
 namespace FdaViewModel.Conditions
 {
@@ -93,12 +94,15 @@ namespace FdaViewModel.Conditions
         #region Constructors
         public AddInflowOutflowToConditionVM(List<FlowTransforms.InflowOutflowElement> listOfinOut ):this(listOfinOut,null)
         {
+
         }
 
         public AddInflowOutflowToConditionVM(List<FlowTransforms.InflowOutflowElement> listOfinOut, FlowTransforms.InflowOutflowElement selectedElement ):base()
         {
             SelectedElement = selectedElement;
             ListOfInflowOutflowElements = listOfinOut;
+            StudyCache.FlowFrequencyAdded += InflowOutflowAdded;
+
         }
 
 
@@ -106,31 +110,15 @@ namespace FdaViewModel.Conditions
         #region Voids
         public void NewInflowOutflowCurve(object sender, EventArgs e)
         {
-            //if (_owner != null)
-            //{
-            //    List<FlowTransforms.InflowOutflowOwnerElement> eles = _owner.GetElementsOfType<FlowTransforms.InflowOutflowOwnerElement>();
-            //    if (eles.Count > 0)
-            //    {
-            //        eles.FirstOrDefault().AddInflowOutflow(sender, e);
-            //        //need to determine what the most recent element is and see if we already have it.
-            //        if (eles.FirstOrDefault().Elements.Count > 0)
-            //        {
-            //            if (eles.FirstOrDefault().Elements.Count > ListOfInflowOutflowElements.Count)
-            //            {
-            //                //InflowOutflowList.Add((FlowTransforms.InflowOutflowElement)eles.FirstOrDefault().Elements.Last());
-            //                List<FlowTransforms.InflowOutflowElement> theNewList = new List<FlowTransforms.InflowOutflowElement>();
-            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-            //                {
-            //                    theNewList.Add((FlowTransforms.InflowOutflowElement)eles.FirstOrDefault().Elements[i]);
-            //                }
-            //                ListOfInflowOutflowElements = theNewList;
-
-            //                SelectedElement = ListOfInflowOutflowElements.Last();    
-
-            //            }
-            //        }
-            //    }
-            //}
+            InflowOutflowOwnerElement infOutParent = StudyCache.GetParentElementOfType<InflowOutflowOwnerElement>();
+            infOutParent.AddInflowOutflow(sender, e);
+           
+        }
+        private void InflowOutflowAdded(object sender, Saving.ElementAddedEventArgs e)
+        {
+            List<InflowOutflowElement> tempList = ListOfInflowOutflowElements;
+            tempList.Add((InflowOutflowElement)e.Element);
+            ListOfInflowOutflowElements = tempList;//this is to hit the notify prop changed
         }
 
         public override void AddValidationRules()

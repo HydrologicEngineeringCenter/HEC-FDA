@@ -14,6 +14,9 @@ namespace FdaViewModel.Utilities
         #region Notes
         #endregion
         #region Fields
+        public event EventHandler RenameMapTreeViewElement;
+
+
         protected ObservableCollection<BaseFdaElement> _Elements;
         private bool _IsExpanded = true;
         private int _FontSize = 14;
@@ -128,6 +131,7 @@ namespace FdaViewModel.Utilities
 
             //the name possibly changed so assign it to the element
             ele.ParentGUID = GUID;
+            ele.RenameMapTreeViewElement += RenameMapTreeViewElement;
             ele.RequestNavigation += Navigate;
             ele.RequestShapefilePaths += ShapefilePaths;
             ele.RequestShapefilePathsOfType += ShapefilePathsOfType;
@@ -150,6 +154,7 @@ namespace FdaViewModel.Utilities
             {
                 ele.GUID = Guid.NewGuid();
             }
+            ele.RenameMapTreeViewElement += RenameMapTreeViewElement;
             ele.RequestNavigation += Navigate;
             ele.RequestShapefilePaths += ShapefilePaths;
             ele.RequestShapefilePathsOfType += ShapefilePathsOfType;
@@ -414,6 +419,7 @@ namespace FdaViewModel.Utilities
         //}
         #endregion
 
+        
 
 
         #region Rename

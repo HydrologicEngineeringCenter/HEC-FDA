@@ -34,10 +34,11 @@ namespace FdaViewModel.FrequencyRelationships
         }
         #endregion
         #region Voids
-        public  void AddBaseElements()
+        public  void AddBaseElements(Study.FDACache cache)
         {
             AnalyticalFrequencyOwnerElement r = new AnalyticalFrequencyOwnerElement(this);
             AddElement(r);
+            cache.FlowFrequencyParent = r;
 
             GraphicalFrequencyOwnerElement i = new GraphicalFrequencyOwnerElement(this);
             //AddElement(i);

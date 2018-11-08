@@ -94,6 +94,14 @@ namespace FdaViewModel.Study
 
         #region ParentElements
         public TerrainOwnerElement TerrainParent { get; set; }
+        public ImpactAreaOwnerElement ImpactAreaParent { get; set; }
+        public AnalyticalFrequencyOwnerElement FlowFrequencyParent { get; set; }
+        public InflowOutflowOwnerElement InflowOutflowParent { get; set; }
+        public RatingCurveOwnerElement RatingCurveParent { get; set; }
+        public ExteriorInteriorOwnerElement ExteriorInteriorParent { get; set; }
+        public AggregatedStageDamageOwnerElement StageDamageParent { get; set; }
+        
+
         public ConditionsOwnerElement ConditionsParent { get; set; }
         #endregion
 
@@ -975,7 +983,7 @@ namespace FdaViewModel.Study
             }
             if (parentType == typeof(ImpactAreaOwnerElement))
             {
-
+                return ImpactAreaParent as T;
             }
             if (parentType == typeof(WaterSurfaceElevationOwnerElement))
             {
@@ -983,19 +991,19 @@ namespace FdaViewModel.Study
             }
             if (parentType == typeof(AnalyticalFrequencyOwnerElement))
             {
-
+                return FlowFrequencyParent as T;
             }
             if (parentType == typeof(InflowOutflowOwnerElement))
             {
-
+                return InflowOutflowParent as T;
             }
             if (parentType == typeof(RatingCurveOwnerElement))
             {
-
+                return RatingCurveParent as T;
             }
             if (parentType == typeof(ExteriorInteriorOwnerElement))
             {
-
+                return ExteriorInteriorParent as T;
             }
             if (parentType == typeof(LeveeFeatureOwnerElement))
             {
@@ -1019,7 +1027,7 @@ namespace FdaViewModel.Study
             }
             if (parentType == typeof(AggregatedStageDamageOwnerElement))
             {
-
+                return StageDamageParent as T;
             }
             if (parentType == typeof(ConditionsOwnerElement))
             {

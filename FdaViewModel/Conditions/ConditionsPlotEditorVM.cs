@@ -337,6 +337,8 @@ namespace FdaViewModel.Conditions
             ImpactAreas = tempList;//this is to hit the notify prop changed
         }
 
+       
+
         #endregion
         #region Voids
         private void LoadThresholdTypes()
@@ -531,6 +533,9 @@ namespace FdaViewModel.Conditions
 
         public void LaunchNewImpactArea(object sender, EventArgs e)
         {
+
+            ImpactArea.ImpactAreaOwnerElement parent =  StudyCache.GetParentElementOfType<ImpactArea.ImpactAreaOwnerElement>();
+            parent.AddNew(sender, e);
             //if (_ImpactAreaOwner != null)
             //{
             //    List<ImpactArea.ImpactAreaOwnerElement> eles = StudyCache;// _ImpactAreaOwner.GetElementsOfType<ImpactArea.ImpactAreaOwnerElement>();

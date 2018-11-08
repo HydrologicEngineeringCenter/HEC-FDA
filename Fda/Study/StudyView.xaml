@@ -40,14 +40,14 @@
 
         <Label Name="lbl_Study" Grid.Row="0"  Content="{Binding CurrentStudyElement.CustomTreeViewHeader}" FontSize="14" MouseRightButtonDown="lbl_Study_MouseRightButtonDown"  ContextMenu="{Binding CurrentStudyElement.Actions, Converter={StaticResource converter }}"/>
         
-        <!--<StackPanel Name="stack_MapViewTabView" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal">
+        <StackPanel Name="stack_MapViewTabView" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal">
         <Button Name="btn_MapView" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Click="btn_MapView_Click" >
             Map View
         </Button>
         <Button Name="btn_TabsView" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Click="btn_TabsView_Click">
             Tab View
         </Button>
-        </StackPanel>-->
+        </StackPanel>
         
         
         <TabControl Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"  SelectedIndex="{Binding SelectedTab, Mode=TwoWay}">
@@ -115,7 +115,7 @@
             </TabItem>
         </TabControl>
 
-        
+        <utils:MapWindowControl x:Name="MapWindowControl" Grid.Row="1" Grid.Column="1" Margin="0,25,5,0" Visibility="Hidden"/>
         <!--<Grid Name="mapwindowgrid"  Grid.Row="1" Grid.Column="1" Margin="0,30,5,5" >
             <OpenGL:WPFMapWindow x:Name="MapWindowControl" />
         </Grid>-->

@@ -21,6 +21,11 @@ namespace FdaViewModel
 
         #endregion
         #region Events
+        public event EventHandler RenameMapTreeViewElement;
+        public void RenameMapTreeViewItem(object sender, EventArgs e)
+        {
+            RenameMapTreeViewElement?.Invoke(sender, e);
+        }
         #endregion
         #region Properties
 

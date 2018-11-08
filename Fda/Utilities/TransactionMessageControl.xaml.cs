@@ -27,12 +27,15 @@ namespace Fda.Utilities
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            FdaViewModel.Utilities.Transactions.ITransactionsAndMessages vm = (FdaViewModel.Utilities.Transactions.ITransactionsAndMessages)this.DataContext;
-            if (vm != null)
+            if (this.DataContext is FdaViewModel.Utilities.Transactions.ITransactionsAndMessages)
             {
-                if (vm.TransactionRows != null)
+                FdaViewModel.Utilities.Transactions.ITransactionsAndMessages vm = (FdaViewModel.Utilities.Transactions.ITransactionsAndMessages)this.DataContext;
+                if (vm != null)
                 {
-                    vm.TransactionRows.CollectionChanged += NotifyTransactionAdded;
+                    if (vm.TransactionRows != null)
+                    {
+                        vm.TransactionRows.CollectionChanged += NotifyTransactionAdded;
+                    }
                 }
             }
         }

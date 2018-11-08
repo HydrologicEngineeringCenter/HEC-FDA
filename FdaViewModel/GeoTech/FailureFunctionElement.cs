@@ -7,6 +7,7 @@ using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using FdaViewModel.Utilities;
 using FdaViewModel.Editors;
+using System.Collections.ObjectModel;
 
 namespace FdaViewModel.GeoTech
 {
@@ -96,6 +97,11 @@ namespace FdaViewModel.GeoTech
         public void EditFailureFunctionCurve(object arg1, EventArgs arg2)
         {
             List<LeveeFeatureElement> leveeList = StudyCache.GetChildElementsOfType<LeveeFeatureElement>();
+            ObservableCollection<LeveeFeatureElement> leveeCollection = new ObservableCollection<LeveeFeatureElement>();
+            foreach (LeveeFeatureElement elem in leveeList)
+            {
+                leveeCollection.Add(elem);
+            }
 
             Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFailureFunctionManager()
                 ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
@@ -108,7 +114,7 @@ namespace FdaViewModel.GeoTech
                .WithParentGuid(this.GUID)
                .WithCanOpenMultipleTimes(false);
 
-            Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(this, leveeList, actionManager);
+            Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(this, leveeCollection, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
 
             Navigate(vm, false, false, "Edit Failure Function");

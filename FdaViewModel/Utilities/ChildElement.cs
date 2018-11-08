@@ -98,6 +98,8 @@ namespace FdaViewModel.Utilities
             }
         }
 
+     
+
         public abstract ChildElement CloneElement(ChildElement elementToClone);
 
         //    if (CheckForNameConflict(renameViewModel.Name) == true)

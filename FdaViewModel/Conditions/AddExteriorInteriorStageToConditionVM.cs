@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Statistics;
 using FdaModel.Functions;
 using FdaViewModel.Utilities;
+using FdaViewModel.StageTransforms;
 
 namespace FdaViewModel.Conditions
 {
@@ -94,41 +95,29 @@ namespace FdaViewModel.Conditions
         #region Constructors
         public AddExteriorInteriorStageToConditionVM(List<StageTransforms.ExteriorInteriorElement> listOfExIntStage ):this(listOfExIntStage,null)
         {
+
         }
         public AddExteriorInteriorStageToConditionVM(List<StageTransforms.ExteriorInteriorElement> listOfExIntStage, StageTransforms.ExteriorInteriorElement selectedElement ):base()
         {
             SelectedElement = selectedElement;
             ListOfExteriorInteriorStageElements = listOfExIntStage;
+            StudyCache.ExteriorInteriorAdded += ExteriorInteriorAdded;
+
         }
         #endregion
         #region Voids
 
         public void LaunchNewExteriorInteriorStage(object sender,EventArgs e)
         {
-            //if (_owner != null)
-            //{
-            //    List<StageTransforms.ExteriorInteriorOwnerElement> eles = _owner.GetElementsOfType<StageTransforms.ExteriorInteriorOwnerElement>();
-            //    if (eles.Count > 0)
-            //    {
-            //        eles.FirstOrDefault().AddNewExteriorInteriorCurve(sender, e);
-            //        //need to determine what the most recent element is and see if we already have it.
-            //        if (eles.FirstOrDefault().Elements.Count > 0)
-            //        {
-            //            if (eles.FirstOrDefault().Elements.Count > ListOfExteriorInteriorStageElements.Count)
-            //            {
-
-            //                List<StageTransforms.ExteriorInteriorElement> theNewList = new List<StageTransforms.ExteriorInteriorElement>();
-            //                for (int i = 0; i < eles.FirstOrDefault().Elements.Count; i++)
-            //                {
-            //                    theNewList.Add((StageTransforms.ExteriorInteriorElement)eles.FirstOrDefault().Elements[i]);
-            //                }
-            //                ListOfExteriorInteriorStageElements = theNewList;
-            //                //ExteriorInteriorList.Add((StageTransforms.ExteriorInteriorElement)eles.FirstOrDefault().Elements.Last());
-            //                SelectedElement = ListOfExteriorInteriorStageElements.Last();
-            //            }
-            //        }
-            //    }
-            //}
+            ExteriorInteriorOwnerElement extIntParent = StudyCache.GetParentElementOfType<ExteriorInteriorOwnerElement>();
+            extIntParent.AddNewExteriorInteriorCurve(sender, e);
+            
+        }
+        private void ExteriorInteriorAdded(object sender, Saving.ElementAddedEventArgs e)
+        {
+            List<ExteriorInteriorElement> tempList = ListOfExteriorInteriorStageElements;
+            tempList.Add((ExteriorInteriorElement)e.Element);
+            ListOfExteriorInteriorStageElements = tempList;//this is to hit the notify prop changed
         }
         public override void AddValidationRules()
         {
