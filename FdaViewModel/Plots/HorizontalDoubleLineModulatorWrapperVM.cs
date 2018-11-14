@@ -16,6 +16,7 @@ namespace FdaViewModel.Plots
         // Created Date: 1/19/2018 11:18:59 AM
         #endregion
         #region Fields
+
         public event EventHandler ShowImportButton;
         public event EventHandler ShowTheImporter;
         public event EventHandler CurveUpdated;

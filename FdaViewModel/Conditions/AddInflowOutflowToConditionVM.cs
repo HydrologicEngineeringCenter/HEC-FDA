@@ -86,7 +86,8 @@ namespace FdaViewModel.Conditions
 
         public bool IsPoppedOut
         {
-            get;set;
+            get;
+            set;
         }
 
        

@@ -11,6 +11,7 @@ namespace FdaViewModel.Plots
         event EventHandler ShowImportButton;
         event EventHandler ShowTheImporter;
         event EventHandler CurveUpdated;
+        //event EventHandler TrackerIsOutsideRange;
         string SubTitle { get; set; }
         IndividualLinkedPlotVM PlotVM { get; set; }
 

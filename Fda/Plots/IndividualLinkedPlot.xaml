@@ -6,10 +6,16 @@
              xmlns:local="clr-namespace:Fda.Plots"
              xmlns:oxy="http://oxyplot.org/wpf"
              mc:Ignorable="d" 
+                          xmlns:utils="clr-namespace:Fda.Utilities"
+
              Loaded="UserControl_Loaded"
              MinWidth="100"
              MinHeight="100"
              d:DesignHeight="700" d:DesignWidth="700">
+    <UserControl.Resources>
+        <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -55,7 +61,10 @@
                 </oxy:PlotView.DefaultTrackerTemplate>
                 
             </oxy:PlotView>
+
+
         </Border>
+        <TextBlock Text="OUT OF RANGE" Background="Red" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding Path=DisplayOutOfRange,Converter={StaticResource BoolToVisibilityConverter}}"/>
         
     </Grid>
 </UserControl>

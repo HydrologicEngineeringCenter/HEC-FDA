@@ -81,21 +81,21 @@ namespace FdaViewModel.Utilities
             //StudyCache.AddSiblingRules(renameViewModel, this);
             renameViewModel.ParentGUID = this.GUID;
             Navigate( renameViewModel, false, true, "Rename");
-            if (renameViewModel.WasCanceled == true)
-            {
-                return;
-            }
-            else
-            {
-               //// renameViewModel.ElementToSave.Name = renameViewModel.Name;
-               // UpdateTreeViewHeader(Name);
-               // ChildElement oldElement = renameViewModel.OldElement;
-               // Saving.IPersistable savingManager = Saving.PersistenceFactory.GetElementManager(this, StudyCache);
-               // if (savingManager != null)
-               // {
-               //     savingManager.SaveExisting(renameViewModel.OldElement,renameViewModel.ElementToSave, 0, oldName);
-               // }
-            }
+            //if (renameViewModel.WasCanceled == true)
+            //{
+            //    return;
+            //}
+            //else
+            //{
+            //   //// renameViewModel.ElementToSave.Name = renameViewModel.Name;
+            //   // UpdateTreeViewHeader(Name);
+            //   // ChildElement oldElement = renameViewModel.OldElement;
+            //   // Saving.IPersistable savingManager = Saving.PersistenceFactory.GetElementManager(this, StudyCache);
+            //   // if (savingManager != null)
+            //   // {
+            //   //     savingManager.SaveExisting(renameViewModel.OldElement,renameViewModel.ElementToSave, 0, oldName);
+            //   // }
+            //}
         }
 
      

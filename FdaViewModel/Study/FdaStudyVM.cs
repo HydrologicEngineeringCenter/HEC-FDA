@@ -148,6 +148,7 @@ namespace FdaViewModel.Study
             CurrentStudyElement = new StudyElement();
             CurrentStudyElement.GUID = Guid.NewGuid();
             _StudyElement.RenameTreeViewElement += RenameTheMapTreeViewItem;
+            _StudyElement.AddBackInTreeViewElement += AddTheMapTreeViewItemBackIn;
             _StudyElement.RemoveCreateNewStudyTab += RemoveCreateNewStudyTab;
             _StudyElement.SaveTheOpenTabs += SaveTheTabs;
             _StudyElement.RequestNavigation += Navigate;
@@ -198,6 +199,12 @@ namespace FdaViewModel.Study
         #endregion
 
         #region Voids
+        private void AddTheMapTreeViewItemBackIn(object sender, EventArgs e)
+        {
+            OpenGLMapping.RasterFeatureNode newNode = (OpenGLMapping.RasterFeatureNode)sender;
+            _MWMTVConn.MapTreeView.AddGisData(newNode);
+
+        }
         private void RenameTheMapTreeViewItem(object sender, EventArgs e)
         {
             ChildElement elem = (ChildElement)sender;
@@ -210,12 +217,18 @@ namespace FdaViewModel.Study
                     if(raster.DisplayName.Equals(elem.Name))
                     {
                         //then we found it
-                        raster.RemoveLayerEventRaiser(true);
                         
-                        //raster.SetDisplayName("cody");
-                        //OpenGLMapping.MapRasters mr = (OpenGLMapping.MapRasters)raster.GetBaseFeature;
-                        //OpenGLMapping.RasterFeatureNode newNode = new OpenGLMapping.RasterFeatureNode(mr, "new Name");
+                        raster.RemoveLayerEventRaiser(true);
+
+                        if (elem.GetType() == typeof(Watershed.TerrainElement))
+                        {
+
+                        raster.SetDisplayName("cody");
+                        OpenGLMapping.MapRasters mr = (OpenGLMapping.MapRasters)raster.GetBaseFeature;
+                        OpenGLMapping.RasterFeatureNode newNode = new OpenGLMapping.RasterFeatureNode(mr, "new Name");
+                            ((Watershed.TerrainElement)elem).NodeToAddBackToMapWindow = newNode;
                         //_MWMTVConn.MapTreeView.AddGisData(newNode);
+                        }
                     }
                 }
             }

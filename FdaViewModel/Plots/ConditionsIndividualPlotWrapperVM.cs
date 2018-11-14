@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FdaViewModel.Plots
 {
     //[Author(q0heccdm, 12 / 20 / 2017 1:24:49 PM)]
-    public class ConditionsIndividualPlotWrapperVM:BaseViewModel,IIndividualLinkedPlotWrapper
+    public class ConditionsIndividualPlotWrapperVM : BaseViewModel, IIndividualLinkedPlotWrapper
     {
         #region Notes
         // Created By: q0heccdm
@@ -30,8 +30,16 @@ namespace FdaViewModel.Plots
         public event EventHandler CurveUpdated;
 
         private IndividualLinkedPlotVM _PlotVM;
+
+        private bool _OutOfRange;
         #endregion
         #region Properties
+        public bool DisplayOutOfRange
+        {
+            get { return _OutOfRange; }
+            set { _OutOfRange = value;NotifyPropertyChanged(); }
+        }
+
         public bool DisplayImportButton
         {
             get { return _DisplayImportButton; }
@@ -90,7 +98,7 @@ namespace FdaViewModel.Plots
             XAxisLabel = xAxisLabel;
             YAxisLabel = yAxisLabel;
             
-        }
+        }        
 
         #endregion
         #region Voids
@@ -103,6 +111,14 @@ namespace FdaViewModel.Plots
             ShowImportButton?.Invoke(sender, e);
         }
 
+        public void PlotIsInsideRange(object sender, EventArgs e)
+        {
+            DisplayOutOfRange = false;
+        }
+        public void PlotIsOutsideRange(object sender, EventArgs e)
+        {
+            DisplayOutOfRange = true;
+        }
         public void ShowTheImporterForm(object sender, EventArgs e)
         {
             ShowTheImporter?.Invoke(sender, e);

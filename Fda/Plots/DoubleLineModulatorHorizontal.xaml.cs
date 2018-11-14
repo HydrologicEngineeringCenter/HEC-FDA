@@ -37,6 +37,8 @@ namespace Fda.Plots
         private ILinkedPlot _PreviousPlot;
 
         #region Properties
+        public bool TrackerIsOutsideTheCurveRange { get; set; }
+
         public double MaxX { get; set; }
         public double MaxY { get; set; }
         public double MinX { get; set; }
@@ -414,14 +416,29 @@ namespace Fda.Plots
 
 
             }
+           
 
 
         }
 
         public void DisplayNextTracker(double x, double y)
         {
-            //display my own stuff
 
+            if (PreviousPlot.TrackerIsOutsideTheCurveRange == true)
+            {
+
+                this.TrackerIsOutsideTheCurveRange = true;
+                myCanvas.Children.Clear();
+                _NextPlot.DisplayNextTracker(0, 0);//values don't matter here
+                return;
+            }
+            else
+            {
+                this.TrackerIsOutsideTheCurveRange = false;
+
+            }
+
+            //display my own stuff
             DisplayLines(x, y);
 
             if (NextPlot == null || NextPlot.Curve == null) { return; }

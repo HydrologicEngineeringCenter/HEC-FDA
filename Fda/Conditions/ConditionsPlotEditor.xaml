@@ -11,6 +11,7 @@
              MinWidth="600"
              MinHeight="700"
              mc:Ignorable="d" 
+             Loaded="ConditionsPlotEditorWindow_Loaded"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />

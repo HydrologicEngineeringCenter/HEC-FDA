@@ -912,5 +912,25 @@ namespace Fda.Conditions
         }
 
         #endregion
+
+        private void ConditionsPlotEditorWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            ////anything that is popped out is getting popped back in when tabs change or when popping back in from being a popped out window
+            //FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+            //if (vm.Plot1ControlVM.CurrentVM.GetType() == typeof(FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM))
+            //{
+            //    PopPlot1Out(this, new EventArgs());
+            //}
+            //else if (vm.Plot1ControlVM.CurrentVM.GetType() == typeof(FdaViewModel.Conditions.AddInflowOutflowToConditionVM))
+            //{
+            //    PopPlot1ImporterOut(this, new EventArgs());
+            //}
+            //else if (vm.Plot1ControlVM.CurrentVM.GetType() == typeof(FdaViewModel.Plots.IndividualLinkedPlotCoverButtonVM))
+            //{
+            //    FourPlotGrid.ColumnDefinitions[2].Width = new GridLength(0);
+
+            //    mainGrid.RowDefinitions[1].Height = new GridLength(.4, GridUnitType.Star);
+            //}
+        }
     }
 }

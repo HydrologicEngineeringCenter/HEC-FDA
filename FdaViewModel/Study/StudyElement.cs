@@ -11,6 +11,8 @@ namespace FdaViewModel.Study
     public class StudyElement : ParentElement
     {
         public event EventHandler RenameTreeViewElement;
+        public event EventHandler AddBackInTreeViewElement;
+
         public event EventHandler SaveTheOpenTabs;
         public event EventHandler UpdateTransactionsAndMessages;
         public event EventHandler LoadMapLayers;
@@ -486,6 +488,7 @@ namespace FdaViewModel.Study
             Watershed.TerrainOwnerElement t = new Watershed.TerrainOwnerElement(this);
             AddElement(t);
             t.RenameMapTreeViewElement += RenameTreeViewElement;
+                t.AddMapTreeViewElementBackIn += AddBackInTreeViewElement;
             cache.TerrainParent = t; 
 
             ImpactArea.ImpactAreaOwnerElement i = new ImpactArea.ImpactAreaOwnerElement(this);

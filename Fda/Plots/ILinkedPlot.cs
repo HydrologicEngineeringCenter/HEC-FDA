@@ -18,7 +18,7 @@ namespace Fda.Plots
         bool IsEndNode { get; set; }
         bool FreezeNextTracker { get; set; }
         bool FreezePreviousTracker { get; set; }
-
+        bool TrackerIsOutsideTheCurveRange { get; set; }
         bool FlipFrequencyAxis { get; set; }
         Statistics.CurveIncreasing Curve { get; set; }
         void DisplayNextTracker(double x, double y);

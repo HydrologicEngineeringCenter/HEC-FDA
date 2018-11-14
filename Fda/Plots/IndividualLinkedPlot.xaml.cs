@@ -59,6 +59,8 @@ namespace Fda.Plots
 
 
         #region Properties
+        public bool TrackerIsOutsideTheCurveRange { get; set; }
+
         public string TestName
         {
             get
@@ -994,10 +996,39 @@ namespace Fda.Plots
         /// <param name="y"></param>
         public void DisplayNextTracker(double x, double y)
         {
+            FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+
+            if (PreviousPlot.TrackerIsOutsideTheCurveRange == true)
+            {
+
+                this.TrackerIsOutsideTheCurveRange = true;
+                vm.PlotIsOutsideRange(this, new EventArgs());
+
+                HideTracker();
+                _NextPlot.DisplayNextTracker(0, 0);//values don't matter here
+                return;
+            }
+            else
+            {
+                this.TrackerIsOutsideTheCurveRange = false;
+                vm.PlotIsInsideRange(this, new EventArgs());
+                ShowTracker();
+            }
+
             //only display to the top and bottom of curve?
-            if (x > MaxX || y > MaxY || x < MinX || y < MinY) { return; } //this is checking if the point will be somewhere in the entire plot window
-            if (x > Curve.XValues.Max() || y > Curve.YValues.Max()) { DisplayMaxOutOfRangeTracker(); return; } //this checks if the point is out of the range of the curve
-            if (x < Curve.XValues.Min() || y < Curve.YValues.Min()) { DisplayMinOutOfRangeTracker(); return; }
+            if (x > MaxX || y > MaxY || x < MinX || y < MinY)
+
+            {
+                TrackerOutsideRangeFromDisplayNextTracker();
+
+                return; } //this is checking if the point will be somewhere in the entire plot window
+            if (x > Curve.XValues.Max() || y > Curve.YValues.Max()) { DisplayMaxOutOfRangeTracker();
+                TrackerOutsideRangeFromDisplayNextTracker();
+                return; } //this checks if the point is out of the range of the curve
+            if (x < Curve.XValues.Min() || y < Curve.YValues.Min()) { DisplayMinOutOfRangeTracker();
+                TrackerOutsideRangeFromDisplayNextTracker();
+
+                return; }
 
             DataPoint dp = new DataPoint(x, y);
 
@@ -1018,6 +1049,26 @@ namespace Fda.Plots
             {
                 //it wasn't able to get the point from getPreviousTrackerDataPoint because it was out of the range of the curve. I don't think i care.
             }
+        }
+
+        private void TrackerOutsideRangeFromDisplayNextTracker()
+        {
+            this.TrackerIsOutsideTheCurveRange = true;
+            FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+            vm.PlotIsOutsideRange(this, new EventArgs());
+
+            HideTracker();
+            _NextPlot.DisplayNextTracker(0, 0);//values don't matter here
+        }
+
+        private void TrackerOutsideRangeFromDisplayPreviousTracker()
+        {
+            this.TrackerIsOutsideTheCurveRange = true;
+            FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+            vm.PlotIsOutsideRange(this, new EventArgs());
+
+            HideTracker();
+            _PreviousPlot.DisplayPreviousTracker(0, 0);//values don't matter here
         }
 
         private DataPoint GetNextTrackerDataPoint(SharedAxisEnum nextPlotSharedAxis, DataPoint currentDataPoint)
@@ -1081,10 +1132,38 @@ namespace Fda.Plots
         public void DisplayPreviousTracker(double x, double y)
         {
 
+            FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+
+            if (NextPlot.TrackerIsOutsideTheCurveRange == true)
+            {
+
+                this.TrackerIsOutsideTheCurveRange = true;
+                vm.PlotIsOutsideRange(this, new EventArgs());
+
+                HideTracker();
+                _PreviousPlot.DisplayPreviousTracker(0, 0);//values don't matter here
+                return;
+            }
+            else
+            {
+                this.TrackerIsOutsideTheCurveRange = false;
+                vm.PlotIsInsideRange(this, new EventArgs());
+                ShowTracker();
+            }
+
+
             //only display to the top and bottom of the curve my cursor is on?
-            if (x > MaxX || y > MaxY || x < MinX || y < MinY) { return; } //this is checking if the point will be somewhere in the entire plot window
-            if (x > Curve.XValues.Max() || y > Curve.YValues.Max()) { DisplayMaxOutOfRangeTracker(); return; } //this checks if the point is out of the range of the curve
-            if (x < Curve.XValues.Min() || y < Curve.YValues.Min()) { DisplayMinOutOfRangeTracker(); return; }
+            if (x > MaxX || y > MaxY || x < MinX || y < MinY) {
+                TrackerOutsideRangeFromDisplayPreviousTracker();
+                return; } //this is checking if the point will be somewhere in the entire plot window
+            if (x > Curve.XValues.Max() || y > Curve.YValues.Max()) { DisplayMaxOutOfRangeTracker();
+                TrackerOutsideRangeFromDisplayPreviousTracker();
+
+                return; } //this checks if the point is out of the range of the curve
+            if (x < Curve.XValues.Min() || y < Curve.YValues.Min()) { DisplayMinOutOfRangeTracker();
+                TrackerOutsideRangeFromDisplayPreviousTracker();
+
+                return; }
 
             DataPoint dp = new DataPoint(x, y);
 
@@ -1129,6 +1208,13 @@ namespace Fda.Plots
 
         private void Model_MouseMove(object sender, OxyMouseEventArgs e)
         {
+            if(this.TrackerIsOutsideTheCurveRange == true && _FreezeTracker == false)
+            {
+                this.TrackerIsOutsideTheCurveRange = false;
+                FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+                vm.PlotIsInsideRange(this, new EventArgs());
+                ShowTracker();
+            }
             DisplayTheTrackers(e.Position);
         }
 

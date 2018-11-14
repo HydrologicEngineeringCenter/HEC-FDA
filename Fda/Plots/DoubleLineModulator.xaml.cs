@@ -36,7 +36,7 @@ namespace Fda.Plots
         private ILinkedPlot _NextPlot;
         private ILinkedPlot _PreviousPlot;
 
-
+        public bool TrackerIsOutsideTheCurveRange { get; set; }
 
         #region Properties
         public double MaxX { get; set; }
@@ -311,12 +311,18 @@ namespace Fda.Plots
             {
                 sharedPlot = PreviousPlot;
             }
-            
 
-            if (inflow >= ((IndividualLinkedPlot)sharedPlot).MinY && inflow <= ((IndividualLinkedPlot)sharedPlot).MaxY)
 
-            {
-                myCanvas.Children.Clear();
+            //if (inflow >= ((IndividualLinkedPlot)sharedPlot).MinY && inflow <= ((IndividualLinkedPlot)sharedPlot).MaxY)
+            double myMinX = Curve.XValues.First();
+            double myMaxX = Curve.XValues.Last();
+            double myMinY = Curve.YValues.First();
+            double myMaxY = Curve.YValues.Last();
+
+                if (inflow >= myMinX && inflow <= myMaxX && outflow >= myMinY && outflow <= myMaxY)
+
+                {
+                    myCanvas.Children.Clear();
 
                 double canvasHeight = myCanvas.ActualHeight;
                 double totalRectangleHeight = RectRight.ActualHeight;
@@ -439,8 +445,14 @@ namespace Fda.Plots
 
                 myCanvas.Children.Add(rightCircle);
                 myCanvas.Children.Add(leftCircle);
-          
 
+                TrackerIsOutsideTheCurveRange = false;
+            }
+            else
+            {
+                //we are out of range
+                myCanvas.Children.Clear();
+                TrackerIsOutsideTheCurveRange = true;
             }
 
 
@@ -452,11 +464,28 @@ namespace Fda.Plots
         }
         public void DisplayNextTracker(double x, double y)
         {
+            //if prev plot is outside the range then there is nothing for me to track
+            if ( PreviousPlot.TrackerIsOutsideTheCurveRange)
+            {
+                myCanvas.Children.Clear();
+                NextPlot.DisplayNextTracker(0, 0);
+                return;
+            }
+
             //display my own stuff
-            
+
             DisplayLines(x, y);
+
             if (IsEndNode == true) { return; }
-            if(NextPlot == null || NextPlot.Curve == null) { return; }
+
+            //if my tracker would be out of range...
+            if(TrackerIsOutsideTheCurveRange)
+            {
+                NextPlot.DisplayNextTracker(0, 0);
+                return;
+            }
+
+            if (NextPlot == null || NextPlot.Curve == null) { return; }
 
             //get the x and y values for the next plot
             double otherValue;
@@ -534,8 +563,23 @@ namespace Fda.Plots
 
         public void DisplayPreviousTracker(double x, double y)
         {
+
+            if (NextPlot.TrackerIsOutsideTheCurveRange)
+            {
+                myCanvas.Children.Clear();
+                PreviousPlot.DisplayPreviousTracker(0, 0);
+                return;
+            }
+
             DisplayLines(x, y);
-            if(PreviousPlot == null || PreviousPlot.Curve == null) { return; }
+
+            if (TrackerIsOutsideTheCurveRange)
+            {
+                PreviousPlot.DisplayPreviousTracker(0, 0);
+                return;
+            }
+
+            if (PreviousPlot == null || PreviousPlot.Curve == null) { return; }
             //get the x and y values for the previous plot
             double otherValue;
             switch (_PreviousPlotSharedAxisEnum)

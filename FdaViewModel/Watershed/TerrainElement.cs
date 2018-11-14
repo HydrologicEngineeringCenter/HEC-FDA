@@ -22,6 +22,11 @@ namespace FdaViewModel.Watershed
         //{
         //    return _TableConstant;
         //}
+        public OpenGLMapping.RasterFeatureNode NodeToAddBackToMapWindow
+        {
+            get;set;
+        }
+
         public string FileName
         {
             get { return _FileName; }
@@ -153,10 +158,7 @@ namespace FdaViewModel.Watershed
         #endregion
         #region Functions
         #endregion
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
+       
 
         //public override void Save()
         //{

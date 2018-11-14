@@ -22,6 +22,12 @@ namespace FdaViewModel
         #endregion
         #region Events
         public event EventHandler RenameMapTreeViewElement;
+        public event EventHandler AddMapTreeViewElementBackIn;
+
+        public void AddMapTreeViewItemBackIn(object sender, EventArgs e)
+        {
+            AddMapTreeViewElementBackIn?.Invoke(sender, e);
+        }
         public void RenameMapTreeViewItem(object sender, EventArgs e)
         {
             RenameMapTreeViewElement?.Invoke(sender, e);

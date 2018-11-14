@@ -54,6 +54,7 @@ namespace FdaViewModel.Plots
             IndividualPlotWrapperVM = indLinkedPlotWrapperVM;
             IndividualPlotWrapperVM.ShowImportButton += new EventHandler(ShowTheImportButton);
             IndividualPlotWrapperVM.ShowTheImporter += new EventHandler(ImportButtonClicked);
+            //IndividualPlotWrapperVM.TrackerIsOutsideRange += new EventHandler(TrackerIsOutsideCurveRange);
             //IndividualPlotWrapperVM.CurveUpdated += SelectedCurveUpdated;
 
             ImportButtonVM = coverButton;
@@ -143,6 +144,13 @@ namespace FdaViewModel.Plots
         {
             CurrentVM = PreviousVM;
         }
+
+        //public void TrackerIsOutsideCurveRange(object sender, EventArgs e)
+        //{
+        //    int test = 0;
+        //    //CurrentVM = (BaseViewModel)ImportButtonVM;
+        //    //PlotIsNotShowingAnymore(sender, e);
+        //}
         /// <summary>
         /// this gets called when the user clicks the delete button on the plot wrapper
         /// </summary>

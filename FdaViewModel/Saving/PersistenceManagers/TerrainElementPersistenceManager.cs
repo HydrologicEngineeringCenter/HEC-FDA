@@ -68,9 +68,9 @@ namespace FdaViewModel.Saving.PersistenceManagers
             {
                 await Task.Run(() =>
                 {
-                    if (System.IO.File.Exists(Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name))
+                    if (System.IO.File.Exists(element.FileName))//System.IO.File.Exists(Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name))
                     {
-                        System.IO.File.Delete(Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name);
+                        System.IO.File.Delete(element.FileName);//Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name);
                     }
                 });
             }
@@ -93,6 +93,12 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 if(oldFilePath != null)
                 {
                     // at least one matching file exists
+                    List<NamedAction> actions = new List<NamedAction>();
+                    foreach(NamedAction act in newElement.Actions)
+                    {
+                        actions.Add(act);
+                    }
+                    newElement.Actions.Clear();
                     newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name, "pack://application:,,,/Fda;component/Resources/Terrain.png",  " -Renaming File", true);
                     try
                     {
@@ -101,6 +107,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
                             FileInfo currentFile = new FileInfo(oldFilePath);
                             currentFile.MoveTo(currentFile.Directory.FullName + "\\" + newElement.Name + currentFile.Extension);
                             newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
+                            newElement.Actions = actions;
+                           // newElement.AddToMapWindow
                         });
                         //System.IO.File.Move(files[0], Storage.Connection.Instance.TerrainDirectory + "\\" + newName);
 
@@ -142,6 +150,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             RenameTheTerrainFileOnBackgroundThread(oldElement, element);
             UpdateParentTableRow(element.Name, changeTableIndex, GetRowDataFromElement((TerrainElement)element), oldElement.Name, TableName, false, ChangeTableConstant);
             StudyCacheForSaving.UpdateTerrain((TerrainElement)oldElement, (TerrainElement)element);
+            oldElement.AddMapTreeViewItemBackIn(((TerrainElement)oldElement).NodeToAddBackToMapWindow, new EventArgs());
         }
 
     }

@@ -15,7 +15,7 @@ namespace FdaViewModel.Utilities
         #endregion
         #region Fields
         public event EventHandler RenameMapTreeViewElement;
-
+        public event EventHandler AddMapTreeViewElementBackIn;
 
         protected ObservableCollection<BaseFdaElement> _Elements;
         private bool _IsExpanded = true;
@@ -132,6 +132,7 @@ namespace FdaViewModel.Utilities
             //the name possibly changed so assign it to the element
             ele.ParentGUID = GUID;
             ele.RenameMapTreeViewElement += RenameMapTreeViewElement;
+            ele.AddMapTreeViewElementBackIn += AddMapTreeViewElementBackIn;
             ele.RequestNavigation += Navigate;
             ele.RequestShapefilePaths += ShapefilePaths;
             ele.RequestShapefilePathsOfType += ShapefilePathsOfType;
@@ -155,6 +156,7 @@ namespace FdaViewModel.Utilities
                 ele.GUID = Guid.NewGuid();
             }
             ele.RenameMapTreeViewElement += RenameMapTreeViewElement;
+            ele.AddMapTreeViewElementBackIn += AddMapTreeViewElementBackIn;
             ele.RequestNavigation += Navigate;
             ele.RequestShapefilePaths += ShapefilePaths;
             ele.RequestShapefilePathsOfType += ShapefilePathsOfType;
