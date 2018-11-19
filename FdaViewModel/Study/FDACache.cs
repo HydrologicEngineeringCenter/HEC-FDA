@@ -103,6 +103,7 @@ namespace FdaViewModel.Study
         
 
         public ConditionsOwnerElement ConditionsParent { get; set; }
+        public ConditionsTreeOwnerElement ConditionsTreeParent { get; set; }
         #endregion
 
         private FDACache()

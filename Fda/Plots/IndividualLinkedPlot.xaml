@@ -9,8 +9,7 @@
                           xmlns:utils="clr-namespace:Fda.Utilities"
 
              Loaded="UserControl_Loaded"
-             MinWidth="100"
-             MinHeight="100"
+             
              d:DesignHeight="700" d:DesignWidth="700">
     <UserControl.Resources>
         <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
@@ -64,7 +63,14 @@
 
 
         </Border>
-        <TextBlock Text="OUT OF RANGE" Background="Red" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding Path=DisplayOutOfRange,Converter={StaticResource BoolToVisibilityConverter}}"/>
-        
+        <TextBlock Text="OUT OF RANGE" FontSize="16"  VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding Path=DisplayOutOfRange,Converter={StaticResource BoolToVisibilityConverter}}">
+            <TextBlock.Background>
+                <SolidColorBrush Opacity="0" />
+            </TextBlock.Background>
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="Red"/>
+            </TextBlock.Foreground>
+        </TextBlock>
+
     </Grid>
 </UserControl>

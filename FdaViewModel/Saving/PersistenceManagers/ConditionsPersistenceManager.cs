@@ -216,7 +216,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             RemoveFromParentTable(element, TableName);
             //DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCacheForSaving.RemoveRatingElement((RatingCurveElement)element);
+            StudyCacheForSaving.RemoveConditionsElement((ConditionsElement)element);// RemoveRatingElement((RatingCurveElement)element);
 
         }
 

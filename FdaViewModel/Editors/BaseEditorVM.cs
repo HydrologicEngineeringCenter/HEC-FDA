@@ -3,7 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FdaViewModel.AggregatedStageDamage;
+using FdaViewModel.Conditions;
+using FdaViewModel.FlowTransforms;
+using FdaViewModel.FrequencyRelationships;
+using FdaViewModel.GeoTech;
+using FdaViewModel.ImpactArea;
+using FdaViewModel.Inventory;
+using FdaViewModel.StageTransforms;
 using FdaViewModel.Utilities;
+using FdaViewModel.Watershed;
+using FdaViewModel.WaterSurfaceElevation;
 using Statistics;
 
 namespace FdaViewModel.Editors
@@ -172,6 +182,92 @@ namespace FdaViewModel.Editors
                 }, "This name is already used. Names must be unique.");
             }
 
+            AddSiblingUpdatedEvents(element);         
+        }
+        private void AddSiblingUpdatedEvents(ChildElement element)
+        {
+            var childElementType = element.GetType();
+
+            if (childElementType == typeof(TerrainElement))
+            {
+                StudyCache.TerrainAdded += SiblingWasAdded;
+                StudyCache.TerrainUpdated += SiblingNameChanged;
+            }
+            if (childElementType == typeof(ImpactAreaElement))
+            {
+                StudyCache.ImpactAreaAdded += SiblingWasAdded;
+                StudyCache.ImpactAreaUpdated += SiblingNameChanged;
+            }
+            if (childElementType == typeof(WaterSurfaceElevationElement))
+            {
+                StudyCache.WaterSurfaceElevationAdded += SiblingWasAdded;
+                StudyCache.WaterSurfaceElevationUpdated += SiblingNameChanged;
+            }
+            if (childElementType == typeof(AnalyticalFrequencyElement))
+            {
+                StudyCache.FlowFrequencyAdded += SiblingWasAdded;
+                StudyCache.FlowFrequencyUpdated += SiblingNameChanged;
+            }
+            if (childElementType == typeof(InflowOutflowElement))
+            {
+                StudyCache.InflowOutflowAdded += SiblingWasAdded;
+                StudyCache.InflowOutflowUpdated += SiblingNameChanged;
+            }
+            if (childElementType == typeof(RatingCurveElement))
+            {
+                StudyCache.RatingAdded += SiblingWasAdded;
+                StudyCache.RatingUpdated += SiblingNameChanged;
+            }
+            if (childElementType == typeof(ExteriorInteriorElement))
+            {
+                StudyCache.ExteriorInteriorAdded += SiblingWasAdded;
+                StudyCache.ExteriorInteriorUpdated += SiblingNameChanged;
+            }
+            if (childElementType == typeof(LeveeFeatureElement))
+            {
+                StudyCache.LeveeAdded += SiblingWasAdded;
+                StudyCache.LeveeUpdated += SiblingNameChanged;
+            }
+            if (childElementType == typeof(FailureFunctionElement))
+            {
+                StudyCache.FailureFunctionAdded += SiblingWasAdded;
+                StudyCache.FailureFunctionUpdated += SiblingNameChanged;
+            }
+            //if (element.GetType() == typeof(Inventory.OccupancyTypes.OccupancyTypesElement))
+            //{
+            
+            //}
+            if (childElementType == typeof(InventoryElement))
+            {
+                StudyCache.StructureInventoryAdded += SiblingWasAdded;
+                StudyCache.StructureInventoryUpdated += SiblingNameChanged;
+            }
+            if (childElementType == typeof(AggregatedStageDamageElement))
+            {
+                StudyCache.StageDamageAdded += SiblingWasAdded;
+                StudyCache.StageDamageUpdated += SiblingNameChanged;
+            }
+            if (childElementType == typeof(ConditionsElement))
+            {
+                StudyCache.ConditionsElementAdded += SiblingWasAdded;
+                StudyCache.ConditionsElementUpdated += SiblingNameChanged;
+            }
+
+        }
+        private void SiblingNameChanged(object sender, Saving.ElementUpdatedEventArgs args)
+        {
+            AddRule(nameof(Name), () =>
+            {
+                return Name != args.NewElement.Name;
+            }, "This name is already used. Names must be unique.");
+        }
+
+        private void SiblingWasAdded(object sender, Saving.ElementAddedEventArgs args)
+        {
+            AddRule(nameof(Name), () =>
+            {
+                return Name != args.Element.Name;
+            }, "This name is already used. Names must be unique.");
         }
 
         /// <summary>

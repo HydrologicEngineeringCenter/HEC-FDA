@@ -36,7 +36,6 @@ namespace FdaViewModel.Conditions
             Actions = localActions;
         }
 
-
         private void AddNewCondition(object arg1, EventArgs arg2)
         {
             if (_StudyTreeConditionsOwnerElement != null)
@@ -68,7 +67,7 @@ namespace FdaViewModel.Conditions
                 if (elem.Name.Equals(((ChildElement)sender).Name))
                 {
                     ((ConditionsElement)elem).EditCondition(sender, e);
-                    UpdateTree();
+                    //UpdateTree(); I need to update the tree but only after the editor is closed
                     return;
                 }
             }
@@ -76,15 +75,18 @@ namespace FdaViewModel.Conditions
 
         public void RemoveElement(object sender, EventArgs e)
         {
-            //foreach (ChildElement elem in _StudyTreeConditionsOwnerElement.Elements)
-            //{
-            //    if (elem.Name.Equals(((ChildElement)sender).Name))
-            //    {
-            //        ((ConditionsElement)elem).Remove(sender, e);
-            //        UpdateTree();
-            //        return;
-            //    }
-            //}
+            foreach (ChildElement elem in _StudyTreeConditionsOwnerElement.Elements)
+            {
+                if (elem.Name.Equals(((ChildElement)sender).Name))
+                {
+                    ((ConditionsElement)elem).RemoveElement(sender, e);
+                    UpdateTree();
+                    return;
+                }
+            }
+
+            
+
         }
 
         public void RenameElement(object sender, EventArgs e)

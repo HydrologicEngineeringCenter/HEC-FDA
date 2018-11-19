@@ -17,6 +17,9 @@ namespace FdaViewModel.Plots
         #endregion
         #region Fields
         private bool _FlipXAxis;
+        private bool _TrackerVisible = true;
+        private bool _AreaPlotVisible = true;
+
         private bool _SetYAxisToLog;
         private string _Title;
         private string _XAxisLabel;
@@ -34,6 +37,16 @@ namespace FdaViewModel.Plots
         private bool _OutOfRange;
         #endregion
         #region Properties
+        public bool AreaPlotVisible
+        {
+            get { return _AreaPlotVisible; }
+            set { _AreaPlotVisible = value;NotifyPropertyChanged(); }
+        }
+        public bool TrackerVisible
+        {
+            get { return _TrackerVisible; }
+            set { _TrackerVisible = value;NotifyPropertyChanged(); }
+        }
         public bool DisplayOutOfRange
         {
             get { return _OutOfRange; }

@@ -150,33 +150,33 @@ namespace Fda.Study
                 
             }
 
-            MapWindowControl.MapToolBar.MapWindow = MapWindowControl.MapWindow.MapWindow;
+            //MapWindowControl.MapToolBar.MapWindow = MapWindowControl.MapWindow.MapWindow;
 
-            MapWindowControl.SelectableLayers.MapWindow = MapWindowControl.MapWindow.MapWindow;
-            MapWindowControl.FeatureEditorToolbar.MapWindow = MapWindowControl.MapWindow.MapWindow ;
-            MapWindowControl.StatusBorder.Child = new OpenGLMapping.MapStatusBar(MapWindowControl.MapWindow.MapWindow);
+            //MapWindowControl.SelectableLayers.MapWindow = MapWindowControl.MapWindow.MapWindow;
+            //MapWindowControl.FeatureEditorToolbar.MapWindow = MapWindowControl.MapWindow.MapWindow;
+            //MapWindowControl.StatusBorder.Child = new OpenGLMapping.MapStatusBar(MapWindowControl.MapWindow.MapWindow);
 
-            RadioButton ArrowTool = (RadioButton)MapWindowControl.MapToolBar.Items[0];
-            ArrowTool.IsChecked = true;
-            MapWindowControl.MapToolBar.RadioChecked += MapWindowControl.MapToolBar_RadioChecked;
+            //RadioButton ArrowTool = (RadioButton)MapWindowControl.MapToolBar.Items[0];
+            //ArrowTool.IsChecked = true;
+            //MapWindowControl.MapToolBar.RadioChecked += MapWindowControl.MapToolBar_RadioChecked;
 
-            MapWindowControl.FeatureEditorToolbar.RadioChecked += MapWindowControl.FeatureEditorToolbar_RadioChecked;
+            //MapWindowControl.FeatureEditorToolbar.RadioChecked += MapWindowControl.FeatureEditorToolbar_RadioChecked;
 
-            MapWindowControl.MapWindow.MapWindow.MouseLeave += MapWindowControl.MapWindow_Mouse;
-            MapWindowControl.MapWindow.MapWindow.MouseEnter += MapWindowControl.MapWindow_Mouse;
+            //MapWindowControl.MapWindow.MapWindow.MouseLeave += MapWindowControl.MapWindow_Mouse;
+            //MapWindowControl.MapWindow.MapWindow.MouseEnter += MapWindowControl.MapWindow_Mouse;
 
-            //FdaViewModel.Utilities.MapWindowControlVM vm = (FdaViewModel.Utilities.MapWindowControlVM)this.DataContext;
-            // vm.MWMTVConn.MapWindow = MapWindowControl.MapWindow;
+            ////FdaViewModel.Utilities.MapWindowControlVM vm = (FdaViewModel.Utilities.MapWindowControlVM)this.DataContext;
+            //// vm.MWMTVConn.MapWindow = MapWindowControl.MapWindow;
 
-            // MapWindowControl.MapWindow.TreeView = vm.MWMTVConn.MapTreeView;
-            MapWindowControl.MapWindow.MapWindow.TreeView = MapTreeView;
-            MapTreeView.MapWindow = MapWindowControl.MapWindow.MapWindow;
-            //vm.MWMTVConn.MapTreeView.MapWindow = MapWindowControl.MapWindow;
-            
-            MapWindowControl. MapToolBar.MapTree = MapTreeView;
-            MapWindowControl.SelectableLayers.MapTree = MapTreeView;
+            //// MapWindowControl.MapWindow.TreeView = vm.MWMTVConn.MapTreeView;
+            //MapWindowControl.MapWindow.MapWindow.TreeView = MapTreeView;
+            //MapTreeView.MapWindow = MapWindowControl.MapWindow.MapWindow;
+            ////vm.MWMTVConn.MapTreeView.MapWindow = MapWindowControl.MapWindow;
 
-            MapWindowControl. FeatureEditorToolbar.MapTree = MapTreeView;
+            //MapWindowControl.MapToolBar.MapTree = MapTreeView;
+            //MapWindowControl.SelectableLayers.MapTree = MapTreeView;
+
+            //MapWindowControl.FeatureEditorToolbar.MapTree = MapTreeView;
 
 
         }
@@ -215,15 +215,15 @@ namespace Fda.Study
 
         private void btn_MapView_Click(object sender, RoutedEventArgs e)
         {
-            MapWindowControl .Visibility = Visibility.Visible;
-            MapWindowControl.MapWindow.MapWindow.PlotFeatures();
-            DynamicTabControl.Visibility = Visibility.Hidden;
+            //MapWindowControl .Visibility = Visibility.Visible;
+           //MapWindowControl.MapWindow.MapWindow.PlotFeatures();
+            //DynamicTabControl.Visibility = Visibility.Hidden;
         }
 
         private void btn_TabsView_Click(object sender, RoutedEventArgs e)
         {
-            MapWindowControl.Visibility = Visibility.Hidden;
-            DynamicTabControl.Visibility = Visibility.Visible;
+            //MapWindowControl.Visibility = Visibility.Hidden;
+            //DynamicTabControl.Visibility = Visibility.Visible;
         }
     }
 }

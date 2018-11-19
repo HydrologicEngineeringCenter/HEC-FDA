@@ -75,11 +75,11 @@ namespace FdaViewModel.Study
             set
             {
                 _SelectedTabIndex = value; NotifyPropertyChanged();
-                //if (_SelectedTabIndex == 0)
-                //{
-                //    _MWMTVConn.UpdateMapWindow();
-                //    //UpdateMapWindow();
-                //}
+                if (_SelectedTabIndex == 0)
+                {
+                    _MWMTVConn.UpdateMapWindow();
+                    //UpdateMapWindow();
+                }
             }
         }
 
@@ -89,6 +89,11 @@ namespace FdaViewModel.Study
         {
             get { return _Tabs; }
             set { _Tabs = value; NotifyPropertyChanged(); }
+        }
+
+        public List<BaseViewModel> Avalon
+        {
+            get;set;
         }
 
         //public ObservableCollection<Utilities.DynamicTabVM> PoppedOutTabs
@@ -171,6 +176,7 @@ namespace FdaViewModel.Study
             if (Tabs == null)
             {
                 Tabs = new ObservableCollection<IDynamicTab>();
+                Avalon = new List<BaseViewModel>();
                 _TabsDictionary = new Dictionary<Guid, List<IDynamicTab>>();
             }
 
@@ -340,14 +346,14 @@ namespace FdaViewModel.Study
             _MWMTVConn = MapWindowMapTreeViewConnector.Instance;
             _MWMTVConn.MapTreeView = mapTreeView;
 
-            
 
-            //MapWindowControlVM vm = new MapWindowControlVM(ref _MWMTVConn);
-            ////vm.SetMapWindowProperty += SetMapWindowProperty;
-            //vm.Name = "map window vm";
-            //DynamicTabVM mapTabVM = new DynamicTabVM("Map", vm, false);
-            //Tabs.Add(mapTabVM);
-            //SelectedDynamicTabIndex = Tabs.Count - 1;
+
+            MapWindowControlVM vm = new MapWindowControlVM(ref _MWMTVConn);
+            //vm.SetMapWindowProperty += SetMapWindowProperty;
+            vm.Name = "map window vm";
+            DynamicTabVM mapTabVM = new DynamicTabVM("Map", vm, false);
+            Tabs.Add(mapTabVM);
+            SelectedDynamicTabIndex = Tabs.Count - 1;
         }
 
         public void RemoveCreateNewStudyTab(object sender, EventArgs e)
@@ -473,6 +479,7 @@ namespace FdaViewModel.Study
             dynamicTabVM.PopTabOutEvent += PopTabOut;
             dynamicTabVM.BaseVM.AddPopThisIntoATabAction((dynamicTab, isPoppingIn) => AddTab(dynamicTab, isPoppingIn));
             Tabs.Add(dynamicTabVM);
+            Avalon.Add(dynamicTabVM.BaseVM);
 
             AddTabToTabsDictionary(dynamicTabVM);
             //_TabsDictionary.Add(uniqueID, dynamicTabVM);

@@ -1,4 +1,5 @@
 ﻿using FdaModel.Functions;
+using FdaViewModel.StageTransforms;
 using FdaViewModel.Utilities;
 using Statistics;
 using System;
@@ -367,8 +368,9 @@ namespace FdaViewModel.Conditions
 
             Actions = localActions;
             _ConditionsTreeNodes = new List<BaseFdaElement>() { AnalyticalFlowFrequency,inflowOutflowElement};
-        }
 
+        }
+       
         public void RemoveElement(object sender, EventArgs e)
         {
             Saving.PersistenceFactory.GetConditionsManager().Remove(this);

@@ -9,6 +9,9 @@
              xmlns:OpenGL="clr-namespace:OpenGLMapping;assembly=OpenGLMapping"
              xmlns:VMUtils="clr-namespace:FdaViewModel.Utilities;assembly=FdaViewModel"
              xmlns:study="clr-namespace:FdaViewModel.Study;assembly=FdaViewModel"
+             xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"        
+               xmlns:dockctrl="clr-namespace:Xceed.Wpf.AvalonDock.Controls;assembly=Xceed.Wpf.AvalonDock"
+
              Loaded="UserControl_Loaded"
              SizeChanged="UserControl_SizeChanged"
              
@@ -20,7 +23,35 @@
         <!--<Style TargetType="{x:Type Label}">
             <Setter Property="ContextMenu" Value="{Binding Actions, Converter={StaticResource converter }}"/>
         </Style>-->
-
+        <Style TargetType="{x:Type utils:CustomTabControl}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabControl}">
+                        <Grid Background="{TemplateBinding Background}" ClipToBounds="True" KeyboardNavigation.TabNavigation="Local" SnapsToDevicePixels="True">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition x:Name="ColumnDefinition0" />
+                                <ColumnDefinition x:Name="ColumnDefinition1" Width="0" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition x:Name="RowDefinition0" Height="Auto" />
+                                <RowDefinition x:Name="RowDefinition1" Height="*" />
+                            </Grid.RowDefinitions>
+                            <DockPanel Margin="2,2,0,0" LastChildFill="False">
+                                <TabPanel x:Name="HeaderPanel" Margin="0,0,0,-1" VerticalAlignment="Bottom" Panel.ZIndex="1" DockPanel.Dock="Left"
+                                  IsItemsHost="True" KeyboardNavigation.TabIndex="1" />
+                            </DockPanel>
+                            <Border x:Name="ContentPanel" Grid.Row="1" Grid.Column="0"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            KeyboardNavigation.DirectionalNavigation="Contained" KeyboardNavigation.TabIndex="2" KeyboardNavigation.TabNavigation="Local">
+                                <Grid x:Name="PART_ItemsHolder" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -33,7 +64,7 @@
 
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="200" MinWidth="100" />
             <ColumnDefinition Width="100*"/>
         </Grid.ColumnDefinitions>
         <!--<Menu Grid.ColumnSpan="2" Name="MainMenu" VerticalAlignment="Stretch"/>-->
@@ -50,7 +81,8 @@
         </StackPanel>
         
         
-        <TabControl Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"  SelectedIndex="{Binding SelectedTab, Mode=TwoWay}">
+        
+        <TabControl Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"  SelectedIndex="{Binding SelectedTab, Mode=TwoWay}" MinWidth="80">
 
             <TabItem Header="Conditions Control" Name="ConditionsTab">
                 <Grid>
@@ -115,15 +147,15 @@
             </TabItem>
         </TabControl>
 
-        <utils:MapWindowControl x:Name="MapWindowControl" Grid.Row="1" Grid.Column="1" Margin="0,25,5,0" Visibility="Hidden"/>
+        <!--<utils:MapWindowControl x:Name="MapWindowControl" Grid.Row="1" Grid.Column="1" Margin="0,25,5,0" Visibility="Hidden"/>-->
         <!--<Grid Name="mapwindowgrid"  Grid.Row="1" Grid.Column="1" Margin="0,30,5,5" >
             <OpenGL:WPFMapWindow x:Name="MapWindowControl" />
         </Grid>-->
         
         
-      <TabControl Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding Tabs}" SelectedIndex="{Binding SelectedDynamicTabIndex, Mode=TwoWay}"  MinWidth="500" MinHeight="600" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-    
-          <!--<TabControl.ItemContainerStyle>
+      <utils:CustomTabControl x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding Tabs}" SelectedIndex="{Binding SelectedDynamicTabIndex, Mode=TwoWay}"  MinWidth="500" MinHeight="600" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                           
+                            <!--<TabControl.ItemContainerStyle>
         <Style TargetType="TabItem">
             <Setter Property="Header" Value=/>
         </Style>
@@ -172,7 +204,19 @@
         </DataTemplate>
     </TabControl.ContentTemplate>
           
-      </TabControl>
+      </utils:CustomTabControl>
+
+                        <xcad:DockingManager Grid.Row="1" Grid.Column="1" DocumentsSource="{Binding Avalon}">
+
+                            <xcad:DockingManager.LayoutItemContainerStyle>
+                                <!-- you can add additional bindings from the layoutitem to the DockWindowViewModel -->
+                                <Style TargetType="{x:Type dockctrl:LayoutItem}">
+                                    <Setter Property="Title" Value="{Binding Name}" />
+                                    <!--<Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
+                                    <Setter Property="CanClose" Value="{Binding Model.CanClose}" />-->
+                                </Style>
+                            </xcad:DockingManager.LayoutItemContainerStyle>
+                        </xcad:DockingManager>
 
 
                         <!--<DockPanel Grid.Row="1" Grid.Column="1" Name="ToolPanel">

@@ -36,6 +36,8 @@ namespace Fda.Plots
         public static readonly DependencyProperty SetYAxisToLogarithmicProperty = DependencyProperty.Register("SetYAxisToLogarithmic", typeof(bool), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(SetYAxisToLogarithmicCallBack)));
         public static readonly DependencyProperty FlipFrequencyAxisProperty = DependencyProperty.Register("FlipFrequencyAxis", typeof(bool), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(FlipFrequencyAxisCallBack)));
         //public static readonly DependencyProperty MaxXProperty = DependencyProperty.Register("MaxX", typeof(double), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(0, new PropertyChangedCallback(MaxXCallBack)));
+        public static readonly DependencyProperty TrackerVisibleProperty = DependencyProperty.Register("TrackerVisible", typeof(bool), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(TrackerVisibleCallBack)));
+        public static readonly DependencyProperty AreaPlotVisibleProperty = DependencyProperty.Register("AreaPlotVisible", typeof(bool), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(AreaPlotVisibleCallBack)));
 
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -61,17 +63,17 @@ namespace Fda.Plots
         #region Properties
         public bool TrackerIsOutsideTheCurveRange { get; set; }
 
-        public string TestName
-        {
-            get
-            {
-                return _SelectedName;
-            }
-            set { _SelectedName = value; }
-        }
+        //public string TestName
+        //{
+        //    get
+        //    {
+        //        return "Cody";
+        //    }
+        //    set { _SelectedName = value; }
+        //}
         public bool HasYAreaPlots { get; set; }
         public bool HasXAreaPlots { get; set; }
-        public bool OutOfRange { get; set; }
+        //public bool OutOfRange { get; set; }
 
         List<AreaSeries> ListOfRemovedAreaSeries { get; set; }
         public bool FreezeNextTracker
@@ -192,7 +194,20 @@ namespace Fda.Plots
         public string SubTitle
         {
             get { return (string)GetValue(SubTitleProperty); }
-            set { SetValue(SubTitleProperty, value); }
+            set { SetValue(SubTitleProperty, value);  }
+        }
+
+        
+
+        public bool TrackerVisible
+        {
+            get { return (bool)GetValue(TrackerVisibleProperty); }
+            set { SetValue(TrackerVisibleProperty, value); }
+        }
+        public bool AreaPlotVisible
+        {
+            get { return (bool)GetValue(AreaPlotVisibleProperty); }
+            set { SetValue(AreaPlotVisibleProperty, value); }
         }
         #endregion
 
@@ -222,10 +237,38 @@ namespace Fda.Plots
         //{
         //    IndividualLinkedPlot owner = d as IndividualLinkedPlot;
         //    double maxX = Convert.ToDouble(e.NewValue);
-            
+
         //        owner.MaxX = maxX;
-          
+
         //}
+        private static void AreaPlotVisibleCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            IndividualLinkedPlot owner = d as IndividualLinkedPlot;
+            bool trackerVisible = Convert.ToBoolean(e.NewValue);
+            if (trackerVisible == true)
+            {
+                owner.AddAreaPlots();
+                
+            }
+            else
+            {
+                owner.RemoveAreaPlotsFromButtonClick();
+            }
+        }
+        private static void TrackerVisibleCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            IndividualLinkedPlot owner = d as IndividualLinkedPlot;
+            bool trackerVisible = Convert.ToBoolean(e.NewValue);
+            if (trackerVisible == true)
+            {
+                owner.ShowTracker();
+            }
+            else
+            {
+                owner.HideTracker();
+            }
+        }
+
         private static void SetYAxisToLogarithmicCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             IndividualLinkedPlot owner = d as IndividualLinkedPlot;
@@ -253,7 +296,7 @@ namespace Fda.Plots
         private static void SubTitleChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             IndividualLinkedPlot owner = d as IndividualLinkedPlot;
-            owner.TestName = e.NewValue as string;
+           // owner.TestName = e.NewValue as string;
 
             //owner.OxyPlot1.Model.Title += " - " + subTitle;
 
@@ -471,8 +514,13 @@ namespace Fda.Plots
         #region Hide/show tracker
         public void HideTracker()
         {
-            if(OxyPlot1.Model.Series.Count == 0) { return; }
-            double largeNegativeNumber =  -100000000; // just a big number that should be off every plot
+            TurnTrackerOff();
+            _HideTracker = true;
+        }
+        private void TurnTrackerOff()
+        {
+            if (OxyPlot1.Model.Series.Count == 0) { return; }
+            double largeNegativeNumber = -100000000; // just a big number that should be off every plot
             DataPoint dp = new DataPoint(largeNegativeNumber, largeNegativeNumber);
             ScreenPoint position = OxyPlot1.Model.Axes[0].Transform(largeNegativeNumber, largeNegativeNumber, OxyPlot1.Model.Axes[1]);
             //ScreenPoint sp = new ScreenPoint(position.X, position.Y);
@@ -482,9 +530,7 @@ namespace Fda.Plots
             thr.Position = position;
             //thr.Text = XAxisLabel + ": " + Math.Round(dp.X, 3).ToString() + Environment.NewLine + YAxisLabel + ": " + Math.Round(dp.Y, 3).ToString();
             OxyPlot1.ShowTracker(thr);
-            _HideTracker = true;
         }
-
         public void ShowTracker()
         {
             _HideTracker = false;
@@ -517,17 +563,25 @@ namespace Fda.Plots
                 double incrementValue = .001;
                 double startValue = 1 - thisLineSeries.Points[0].X;
                 double endValue = 1 - thisLineSeries.Points[thisLineSeries.Points.Count - 1].X;
-                //double startValue = MinX + incrementValue;
-                while (startValue < endValue)//&& startValue > MinX)
-                {
-                    DataPoint dp = new DataPoint(startValue, GetPairedValue(startValue, true, this.OxyPlot1.Model, true));
-                    if (dp.Y != -1)
 
+                foreach (DataPoint dp in thisLineSeries.Points)
+                {
                     AreaUnderTheCurveSeries.Points.Add(dp);
                     AreaUnderTheCurveSeries.Points2.Add(new DataPoint(dp.X, MinY));//can't do zero y because log axis will lose its mind
 
-                    startValue += incrementValue;
                 }
+
+
+                //while (startValue < endValue)//&& startValue > MinX)
+                //{
+                //    DataPoint dp = new DataPoint(startValue, GetPairedValue(startValue, true, this.OxyPlot1.Model, true));
+                //    if (dp.Y != -1)
+
+                //        AreaUnderTheCurveSeries.Points.Add(dp);
+                //    AreaUnderTheCurveSeries.Points2.Add(new DataPoint(dp.X, MinY));//can't do zero y because log axis will lose its mind
+
+                //    startValue += incrementValue;
+                //}
 
                 //AreaUnderTheCurveSeries.Points.Add(new DataPoint(MinX, .01));
                 //AreaUnderTheCurveSeries.Points.Add(new DataPoint(HigherMinX, .01));
@@ -854,9 +908,14 @@ namespace Fda.Plots
                 plotToCompareWith.OxyPlot1.Model.Axes[0].Maximum = MaxX;
                 plotToCompareWith.OxyPlot1.Model.Axes[0].Minimum = MinX;
 
+            
 
-            //UpdateYAxisAreaPlots();
-            RemoveAreaPlots();
+
+            if (AreaPlotVisible)
+            {
+
+                //UpdateYAxisAreaPlots();
+                RemoveAreaPlots();
             plotToCompareWith.RemoveAreaPlots();
 
             if (HasYAreaPlots)
@@ -869,21 +928,23 @@ namespace Fda.Plots
                 plotToCompareWith.PlotLowerYAreaPlot();
                 plotToCompareWith.PlotHigherYAreaPlot();
             }
-            //draw the area plot under the curve of plot8
-            if (BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
-            {
-                PlotAreaUnderTheCurve();
-            }
-            else if(plotToCompareWith.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
-            {
-                plotToCompareWith.PlotAreaUnderTheCurve();
-            }
+           
 
-            PlotLowerXAreaPlot();
-            PlotHigherXAreaPlot();
-            plotToCompareWith.PlotLowerXAreaPlot();
-            plotToCompareWith.PlotHigherXAreaPlot();
-
+           
+                PlotLowerXAreaPlot();
+                PlotHigherXAreaPlot();
+                plotToCompareWith.PlotLowerXAreaPlot();
+                plotToCompareWith.PlotHigherXAreaPlot();
+                //draw the area plot under the curve of plot8
+                if (BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+                {
+                    PlotAreaUnderTheCurve();
+                }
+                else if (plotToCompareWith.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+                {
+                    plotToCompareWith.PlotAreaUnderTheCurve();
+                }
+            }
 
             this.OxyPlot1.InvalidatePlot(true);
             plotToCompareWith.OxyPlot1.InvalidatePlot(true);
@@ -938,8 +999,12 @@ namespace Fda.Plots
             plotToCompareWith.OxyPlot1.Model.Axes[1].Maximum = MaxY;
             plotToCompareWith.OxyPlot1.Model.Axes[1].Minimum = MinY;
 
-            //UpdateXAxisAreaPlots();
-            RemoveAreaPlots();
+            
+
+            if (AreaPlotVisible)
+            {
+                //UpdateXAxisAreaPlots();
+                RemoveAreaPlots();
             plotToCompareWith.RemoveAreaPlots();
 
             if (HasXAreaPlots)
@@ -952,21 +1017,23 @@ namespace Fda.Plots
                 plotToCompareWith.PlotLowerXAreaPlot();
                 plotToCompareWith.PlotHigherXAreaPlot();
             }
-            //draw the area plot under the curve of plot8
-            if (BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
-            {
-                PlotAreaUnderTheCurve();
-            }
-            else if (plotToCompareWith.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
-            {
-                plotToCompareWith.PlotAreaUnderTheCurve();
-            }
+            
 
-            PlotLowerYAreaPlot();
-            PlotHigherYAreaPlot();
-            plotToCompareWith.PlotLowerYAreaPlot();
-            plotToCompareWith.PlotHigherYAreaPlot();
-
+          
+                PlotLowerYAreaPlot();
+                PlotHigherYAreaPlot();
+                plotToCompareWith.PlotLowerYAreaPlot();
+                plotToCompareWith.PlotHigherYAreaPlot();
+                //draw the area plot under the curve of plot8
+                if (BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+                {
+                    PlotAreaUnderTheCurve();
+                }
+                else if (plotToCompareWith.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+                {
+                    plotToCompareWith.PlotAreaUnderTheCurve();
+                }
+            }
 
             this.OxyPlot1.InvalidatePlot(true);
             plotToCompareWith.OxyPlot1.InvalidatePlot(true);
@@ -1004,7 +1071,7 @@ namespace Fda.Plots
                 this.TrackerIsOutsideTheCurveRange = true;
                 vm.PlotIsOutsideRange(this, new EventArgs());
 
-                HideTracker();
+                TurnTrackerOff();
                 _NextPlot.DisplayNextTracker(0, 0);//values don't matter here
                 return;
             }
@@ -1057,7 +1124,7 @@ namespace Fda.Plots
             FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
             vm.PlotIsOutsideRange(this, new EventArgs());
 
-            HideTracker();
+            TurnTrackerOff();
             _NextPlot.DisplayNextTracker(0, 0);//values don't matter here
         }
 
@@ -1067,7 +1134,7 @@ namespace Fda.Plots
             FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
             vm.PlotIsOutsideRange(this, new EventArgs());
 
-            HideTracker();
+            TurnTrackerOff();
             _PreviousPlot.DisplayPreviousTracker(0, 0);//values don't matter here
         }
 
@@ -1140,7 +1207,7 @@ namespace Fda.Plots
                 this.TrackerIsOutsideTheCurveRange = true;
                 vm.PlotIsOutsideRange(this, new EventArgs());
 
-                HideTracker();
+                TurnTrackerOff();
                 _PreviousPlot.DisplayPreviousTracker(0, 0);//values don't matter here
                 return;
             }
@@ -1208,14 +1275,20 @@ namespace Fda.Plots
 
         private void Model_MouseMove(object sender, OxyMouseEventArgs e)
         {
-            if(this.TrackerIsOutsideTheCurveRange == true && _FreezeTracker == false)
+            if (_HideTracker)
+            {
+                return;
+            }
+            if ( _FreezeTracker == false)
             {
                 this.TrackerIsOutsideTheCurveRange = false;
-                FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
-                vm.PlotIsInsideRange(this, new EventArgs());
-                ShowTracker();
+                //FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+                //vm.PlotIsInsideRange(this, new EventArgs());
             }
+
+
             DisplayTheTrackers(e.Position);
+
         }
 
         public void DisplayTheTrackers(ScreenPoint sp)
@@ -1266,23 +1339,23 @@ namespace Fda.Plots
             }
         }
 
-        private bool CheckForOutsideTheRange(double value)
-        {
-            double previousPlotHighestXValue = 0;
-            foreach(Series s in ((IndividualLinkedPlot)PreviousPlot).OxyPlot1.Model.Series)
-            {
-                if(s.GetType() == typeof(LineSeries))
-                {
-                    previousPlotHighestXValue = ((LineSeries)s).Points.Last().X;
-                }
-            }
-            if(previousPlotHighestXValue<value) //turn this into a property on the ilinkedplot so that it will work with the double line modulators. that way i dont have to cast here
-            {
-                ((IndividualLinkedPlot)PreviousPlot).OutOfRange = true;
-                return true;
-            }
-            return false;
-        }
+        //private bool CheckForOutsideTheRange(double value)
+        //{
+        //    double previousPlotHighestXValue = 0;
+        //    foreach(Series s in ((IndividualLinkedPlot)PreviousPlot).OxyPlot1.Model.Series)
+        //    {
+        //        if(s.GetType() == typeof(LineSeries))
+        //        {
+        //            previousPlotHighestXValue = ((LineSeries)s).Points.Last().X;
+        //        }
+        //    }
+        //    if(previousPlotHighestXValue<value) //turn this into a property on the ilinkedplot so that it will work with the double line modulators. that way i dont have to cast here
+        //    {
+        //        ((IndividualLinkedPlot)PreviousPlot).OutOfRange = true;
+        //        return true;
+        //    }
+        //    return false;
+        //}
 
         public void DisplayMaxOutOfRangeTracker()
         {

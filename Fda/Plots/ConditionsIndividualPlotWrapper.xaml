@@ -12,7 +12,7 @@
         <utils:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
         </UserControl.Resources>
     <Grid>
-        <local:IndividualLinkedPlot x:Name="LinkedPlot" Visibility="{Binding IsPlotVisible,Converter={StaticResource BoolToVisibilityConverter}}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=PlotVM.Curve}" BaseFunction="{Binding Path=PlotVM.BaseFunction}" Title="{Binding Path=Title}" SubTitle="{Binding Path=SubTitle}"  XAxisLabel="{Binding XAxisLabel}" YAxisLabel="{Binding YAxisLabel}"  SetYAxisToLogarithmic="{Binding SetYAxisToLog}" FlipFrequencyAxis="{Binding FlipXAxis}" />
+        <local:IndividualLinkedPlot x:Name="LinkedPlot" Visibility="{Binding IsPlotVisible,Converter={StaticResource BoolToVisibilityConverter}}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2"  Curve="{Binding Path=PlotVM.Curve}" BaseFunction="{Binding Path=PlotVM.BaseFunction}" Title="{Binding Path=Title}" SubTitle="{Binding Path=SubTitle}"  XAxisLabel="{Binding XAxisLabel}" YAxisLabel="{Binding YAxisLabel}"  SetYAxisToLogarithmic="{Binding SetYAxisToLog}" FlipFrequencyAxis="{Binding FlipXAxis}" TrackerVisible="{Binding TrackerVisible}" AreaPlotVisible="{Binding AreaPlotVisible}" />
         <Label Content="{Binding SubTitle}" HorizontalAlignment="Center" FontSize="11" Margin="42,26,0,0" />
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5">
 

@@ -8,8 +8,8 @@
              xmlns:plot="clr-namespace:Fda.Plots"
              x:Name="ConditionsPlotEditorWindow"
              xmlns:Cac="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
-             MinWidth="600"
-             MinHeight="700"
+             MinWidth="550"
+             MinHeight="550"
              mc:Ignorable="d" 
              Loaded="ConditionsPlotEditorWindow_Loaded"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -17,179 +17,17 @@
         <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <utils:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
 
-        
-        <!--<Style TargetType="{x:Type Image}" x:Key="PlusImage">
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Source" Value="pack://application:,,,/Fda;component/Resources/AddDisabled.png" />
-                </Trigger>
-                <Trigger Property="IsEnabled" Value="True">
-                    <Setter Property="Source" Value="pack://application:,,,/Fda;component/Resources/Add.png" />
-                </Trigger>
-               
-            </Style.Triggers>
-        </Style>
-        
-        
-
-        <Style TargetType="{x:Type Button}" x:Key="AddButton">
-            
-            <Setter Property="Background" Value="LightGreen" />
-            <Setter Property="Foreground" Value="Black" />
-            <Setter Property="FontSize" Value="22" />
-            <Setter Property="SnapsToDevicePixels" Value="True" />
-
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border CornerRadius="2" BorderBrush="Black" BorderThickness="3">
-                            <Grid Background="{TemplateBinding Background}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    --><!--<RowDefinition Height="*" />--><!--
-                                </Grid.RowDefinitions>
-                                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Image Style="{StaticResource PlusImage}" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                        
-                                    </Image> 
-                                    <ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0" />
-                                </StackPanel>
-
-                            </Grid>
-                        </Border>
-
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="Green" />
-                                <Setter Property="Foreground" Value="White" />
-                                --><!--<Setter TargetName="PathIcon" Property="Fill" Value="Black" />--><!--
-                            </Trigger>
-
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="Green" />
-                                <Setter Property="Foreground" Value="White" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Background" Value="LightGray" />
-
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style TargetType="{x:Type Button}" x:Key="AddButtonVerticalModulator">
-
-            <Setter Property="Background" Value="LightGreen" />
-            <Setter Property="Foreground" Value="Black" />
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="SnapsToDevicePixels" Value="True" />
-            <Setter Property="LayoutTransform">
-                <Setter.Value>
-                    <RotateTransform Angle="-90"/>
-                </Setter.Value>
-            </Setter>
-
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        
-                        <Border CornerRadius="2"  BorderBrush="Black" BorderThickness="3">
-                            <Grid Background="{TemplateBinding Background}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Image Style="{StaticResource PlusImage}" Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                    <ContentPresenter x:Name="MyContentPresenter" Grid.Row="0" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="10,0,0,0" />
-
-                                </StackPanel>
-                                    
-                                --><!--<Image Grid.Row="1" Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>--><!--
-
-                            </Grid>
-                        </Border>
-
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="Green" />
-                                <Setter Property="Foreground" Value="White" />
-                                --><!--<Setter TargetName="PathIcon" Property="Fill" Value="Black" />--><!--
-                            </Trigger>
-
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="Green" />
-                                <Setter Property="Foreground" Value="White" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Background" Value="LightGray" />
-
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        
-        
-        <Style TargetType="{x:Type Button}" x:Key="AddButtonHorizontalModulator">
-
-            <Setter Property="Background" Value="LightGreen" />
-            <Setter Property="Foreground" Value="Black" />
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="SnapsToDevicePixels" Value="True" />
-            
-
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-
-                        <Border CornerRadius="2"  BorderBrush="Black" BorderThickness="3">
-                            <Grid Background="{TemplateBinding Background}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Image Style="{StaticResource PlusImage}" Grid.Row="1" Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                    <ContentPresenter x:Name="MyContentPresenter" Grid.Row="0" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="10,0,0,0" />
-
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="Green" />
-                                <Setter Property="Foreground" Value="White" />
-                                --><!--<Setter TargetName="PathIcon" Property="Fill" Value="Black" />--><!--
-                            </Trigger>
-
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="Green" />
-                                <Setter Property="Foreground" Value="White" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Background" Value="LightGray" />
-
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>-->
-
     </UserControl.Resources>
     
     
     
     
-    <Grid Name="mainGrid">
+    <Grid Name="mainGrid" >
         <Grid.RowDefinitions>
-            <RowDefinition Height="90" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="0" />
             <RowDefinition Height="*"/>
-            <RowDefinition Height="45"/>
+            <RowDefinition Height="40"/>
 
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -200,8 +38,8 @@
         <Grid Name="grid_TopRow" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="22"/>
-                <RowDefinition Height="34"/>
-                <RowDefinition Height="30" />
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Menu Grid.Row="0">
                 <MenuItem Name="mi_Edit" Header="Edit">
@@ -235,12 +73,14 @@
             </ToolBar>
             <ToolBar>
                 <Label Content="Plot:" />
-                    <ComboBox Name="cmb_PlotNames" Width="150" ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}},Path=ObservablePlots}" DisplayMemberPath="TestName"  />
-                <Label Content="X:"/>
-                <TextBox Name="txt_XValue" Width="60"  />
+                    <!--<ComboBox Name="cmb_PlotNames" Width="150" ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}},Path=ObservablePlots}" DisplayMemberPath="TestName"  />-->
+                    <ComboBox Name="cmb_PlotNames" Width="150" ItemsSource="{Binding AddedPlots}" DisplayMemberPath="CurveImporterVM.SelectedElementName"  />
+
+                    <Label Content="X:"/>
+                    <utils:NumericTextBoxWithClickHighlighting x:Name="txt_XValue" Width="60" Height="20" LostFocus="txt_XValue_LostFocus"    />
                 <Label Content="Y:"/>
-                <TextBox Name="txt_YValue" Width="60" />
-                    <Button Name="btn_PlotSpecificPoint" Content="Display"  Click="btn_PlotSpecificPoint_Click"/>
+                    <utils:NumericTextBoxWithClickHighlighting x:Name="txt_YValue" Width="60" Height="20" LostFocus="txt_YValue_LostFocus" />
+                    <!--<Button Name="btn_PlotSpecificPoint" Content="Display"  Click="btn_PlotSpecificPoint_Click"/>-->
                 <!--<Separator Margin="10,0,10,0"/>-->
             </ToolBar>
             <!--<ToolBar>
@@ -254,8 +94,9 @@
                 <Label Content="LP3: "/>
                 <Label Name="lbl_LP3"  Visibility="{Binding IsPlot0Visible,Converter={StaticResource BoolToVisibilityConverter}}" Content="{Binding Plot0VM.SelectedElementName}"/>
             </StackPanel>-->
-            <StackPanel Grid.Row="3" Orientation="Horizontal" Height="25">
-                
+            <Expander Grid.Row="2" Header="Condition Properties" IsExpanded="True">
+            <WrapPanel  Orientation="Horizontal" Margin="5">
+              <!--<StackPanel Orientation="Horizontal">-->
                 <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="10,0,0,0">
                     <Label  Content="Name:" />
                     <TextBox Name="txt_Name" Width="175" Text="{Binding Name, ValidatesOnDataErrors=True}" Margin="2" />
@@ -268,24 +109,31 @@
                     <Label Content="Year:"/>
                     <TextBox Name="txt_year" Width="40" Text="{Binding Year}" Margin="2"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Grid.Column="3" Margin="10,0,0,0">
+              <!--</StackPanel>-->
+
+               <!--<StackPanel Orientation="Horizontal">-->
+                 <StackPanel Orientation="Horizontal" Grid.Column="3" Margin="10,0,0,0">
                     <Label Content="Impact Area:" />
                     <ComboBox Name="cmb_ImpAreas" Width="210" ItemsSource="{Binding ImpactAreas}" SelectedItem="{Binding SelectedImpactArea}" Margin="2" />
                     <Button Name="btn_AddImpactAreas" Width="30" Height="20" Click="btn_AddImpactAreas_Click" Margin="10,0,10,0" >
                         <Image Width="20" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
 
                     </Button>
+                    </StackPanel>
+                        <StackPanel Orientation="Horizontal">
                     <Label Content="Threshold Type: " />
                     <ComboBox Name="cmb_ThresholdType" Width="150" ItemsSource="{Binding ThresholdTypes}" SelectedItem="{Binding SelectedThresholdType}" Margin="2" />
                     <Label Content="Value: " />
                     <TextBox Name="txt_ThresholdValue" Width="100" Text="{Binding ThresholdValue}" Margin="0,0,10,0"/>
-                </StackPanel>
-                <!--<StackPanel Orientation="Horizontal" Grid.Column="2">
+                        </StackPanel>
+               <!--</StackPanel>-->
+                    <!--<StackPanel Orientation="Horizontal" Grid.Column="2">
                 <Label Content="Structures:" />
                 <ComboBox Name="cmb_Structures" Width="150" ItemsSource="{Binding StructureInventories}" DisplayMemberPath="{Binding Name}"/>
                     
                 </StackPanel>-->
-            </StackPanel>
+            </WrapPanel>
+            </Expander>
 
         </Grid>
         <Grid Name="plot1Grid" Grid.Row="1" Grid.Column="1">
@@ -303,7 +151,7 @@
 
 
             </Grid.ColumnDefinitions>
-            <plot:IndividualLinkedPlotControl x:Name="Plot1Control" DataContext="{Binding Plot1ControlVM}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Content="{Binding CurrentVM}"/>
+            <plot:IndividualLinkedPlotControl x:Name="Plot1Control" DataContext="{Binding Plot1ControlVM}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="2" MinWidth="80" MinHeight="100" Content="{Binding CurrentVM}"/>
 
             <Button Name="btn_CollapsePlot1"  Width="26" Height="26" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="White" BorderBrush="White" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,1,0,0" Click="btn_CollapsePlot1_Click" >
                 <Image Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/PopDown.png"/>
@@ -332,7 +180,7 @@
 
             </Grid.ColumnDefinitions>
 
-            <plot:IndividualLinkedPlotControl x:Name="Plot5Control" DataContext="{Binding Plot5ControlVM}" Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Content="{Binding CurrentVM}"/>
+            <plot:IndividualLinkedPlotControl x:Name="Plot5Control" DataContext="{Binding Plot5ControlVM}" Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2"  Content="{Binding CurrentVM}"/>
 
             <Button Name="btn_CollapsePlot5" Width="26" Height="26" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Background="White" BorderBrush="White" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="1,0,0,0" Click="btn_CollapsePlot5_Click" >
                 <Image Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/PopRight.png"/>
@@ -385,7 +233,7 @@
 
             <!--<plot:IndividualLinkedPlot  x:Name="plot0"  Visibility="{Binding IsVisible,Converter={StaticResource BoolToVisibilityConverter}}" Grid.Row="10" Grid.RowSpan="2" Grid.Column="10" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Curve}" BaseFunction="{Binding Path=BaseFunction}" Title="{Binding Path=Title}"  XAxisLabel="{Binding XAxisLabel}" YAxisLabel="{Binding YAxisLabel}"  SetYAxisToLogarithmic="True" FlipFrequencyAxis="True" />-->
             <!--<Button Style="{StaticResource AddButton}" Content="Flow Frequency Curve" Visibility="{Binding Plot0VM.IsVisible,Converter={StaticResource BoolToInverseVisibilityConverter}}"  Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Click="btn_AddPlot0_Click" />-->
-            <plot:IndividualLinkedPlotControl x:Name="Plot0Control" DataContext="{Binding Plot0ControlVM}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Content="{Binding CurrentVM}" />
+            <plot:IndividualLinkedPlotControl x:Name="Plot0Control" DataContext="{Binding Plot0ControlVM}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2"  Content="{Binding CurrentVM}" />
 
             <!--<plot:DoubleLineModulator x:Name="doubleLineModulator" Visibility="{Binding IsPlot1Visible,Converter={StaticResource BoolToVisibilityConverter}}" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Curve="{Binding Path=Plot1VM.Curve}" BaseFunction="{Binding Path=Plot1VM.BaseFunction}" />-->
             <!--<Button Style="{StaticResource AddButtonVerticalModulator}" Name="btn_AddPlot1" IsEnabled="{Binding IsPlot0Visible}" Visibility="{Binding IsPlot1Visible,Converter={StaticResource BoolToInverseVisibilityConverter}}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Content="Inflow Outflow" Click="btn_AddPlot1_Click"/>-->
@@ -393,7 +241,7 @@
 
             <!--<plot:IndividualLinkedPlot x:Name="plot3" Visibility="{Binding IsPlot3Visible,Converter={StaticResource BoolToVisibilityConverter}}" Grid.Row="10" Grid.RowSpan="2" Grid.Column="10" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot3VM.Curve}" BaseFunction="{Binding Path=Plot3VM.BaseFunction}" Title="{Binding Path=Plot3VM.Title}"  XAxisLabel="{Binding Plot3VM.XAxisLabel}" YAxisLabel="{Binding Plot3VM.YAxisLabel}"  SetYAxisToLogarithmic="True" />-->
             <!--<Button Name="btn_AddPlot3" Style="{StaticResource AddButton}" IsEnabled="{Binding IsPlot0Visible}" Visibility="{Binding IsPlot3Visible,Converter={StaticResource BoolToInverseVisibilityConverter}}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Content="Rating Curve" Click="btn_AddPlot3_Click"/>-->
-            <plot:IndividualLinkedPlotControl x:Name="Plot3Control" DataContext="{Binding Plot3ControlVM}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Content="{Binding CurrentVM}" />
+            <plot:IndividualLinkedPlotControl x:Name="Plot3Control" DataContext="{Binding Plot3ControlVM}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2"  Content="{Binding CurrentVM}" />
 
 
             <!--<local:FailureFunctionPlot x:Name="plot5" Grid.Row="4" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot5Curve}" Title="{Binding Path=Plot5Title}"  />-->
@@ -405,9 +253,9 @@
 
             <!--<plot:IndividualLinkedPlot x:Name="plot7" Visibility="{Binding IsPlot7Visible,Converter={StaticResource BoolToVisibilityConverter}}" Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot7VM.Curve}" BaseFunction="{Binding Path=Plot7VM.BaseFunction}" Title="{Binding Path=Plot7VM.Title}"  XAxisLabel="{Binding Plot7VM.XAxisLabel}" YAxisLabel="{Binding Plot7VM.YAxisLabel}"  SetYAxisToLogarithmic="True"/>-->
             <!--<Button Name="btn_AddPlot7" Style="{StaticResource AddButton}" IsEnabled="{Binding IsPlot3Visible}" Visibility="{Binding IsPlot7Visible,Converter={StaticResource BoolToInverseVisibilityConverter}}" Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Content="Depth Damage Curve" Click="btn_AddPlot7_Click"/>-->
-            <plot:IndividualLinkedPlotControl x:Name="Plot7Control" DataContext="{Binding Plot7ControlVM}" Content="{Binding CurrentVM}" Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" />
+            <plot:IndividualLinkedPlotControl x:Name="Plot7Control" DataContext="{Binding Plot7ControlVM}" Content="{Binding CurrentVM}" Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2"  />
 
-            <plot:IndividualLinkedPlotControl x:Name="Plot8Control" DataContext="{Binding Plot8ControlVM}" Content="{Binding CurrentVM}" Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" />
+            <plot:IndividualLinkedPlotControl x:Name="Plot8Control" DataContext="{Binding Plot8ControlVM}" Content="{Binding CurrentVM}" Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" />
 
             <!--<plot:IndividualLinkedPlot x:Name="plot8" Visibility="{Binding IsPlot8Visible,Converter={StaticResource BoolToVisibilityConverter}}" Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot8VM.Curve}" BaseFunction="{Binding Path=Plot8VM.BaseFunction}" Title="{Binding Path=Plot8VM.Title}"  XAxisLabel="{Binding Plot8VM.XAxisLabel}" YAxisLabel="{Binding Plot8VM.YAxisLabel}"  FlipFrequencyAxis="True" SetYAxisToLogarithmic="True"/>-->
             <!--<Button Name="btn_AddPlot8" Style="{StaticResource AddButton}" IsEnabled="{Binding IsPlot7Visible}" Visibility="{Binding IsPlot8Visible,Converter={StaticResource BoolToInverseVisibilityConverter}}"  Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Content="Preview Compute" Click="btn_AddPlot8_Click"/>-->
@@ -421,7 +269,7 @@
         <local:ArrowPolygon Grid.Row="5" Grid.Column="2" Rotate="135" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
         </Grid>
 
-        <utils:OKCloseControl Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="2"/>
+        <utils:OKCloseControl Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,5,0"/>
        
         
         <!--<plot:IndividualLinkedPlot x:Name="plot5" Grid.Row="0" Grid.RowSpan="1" Grid.Column="0" Grid.ColumnSpan="1" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot5VM.Curve}" BaseFunction="{Binding Path=Plot5VM.BaseFunction}" Title="{Binding Path=Plot5VM.Title}" XAxisLabel="{Binding Plot5VM.XAxisLabel}" YAxisLabel="{Binding Plot5VM.YAxisLabel}"   />-->

@@ -37,6 +37,7 @@ namespace Fda.Plots
         private ILinkedPlot _PreviousPlot;
 
         #region Properties
+      
         public bool TrackerIsOutsideTheCurveRange { get; set; }
 
         public double MaxX { get; set; }
@@ -303,7 +304,14 @@ namespace Fda.Plots
             }
             double xAxisMinimum = ((IndividualLinkedPlot)sharedPlot).MinX;
             double xAxisMaximum = ((IndividualLinkedPlot)sharedPlot).MaxX;
-            if (exteriorStage >= xAxisMinimum && exteriorStage <= xAxisMaximum)
+
+            double myMinX = Curve.XValues.First();
+            double myMaxX = Curve.XValues.Last();
+            double myMinY = Curve.YValues.First();
+            double myMaxY = Curve.YValues.Last();
+
+            //if (exteriorStage >= xAxisMinimum && exteriorStage <= xAxisMaximum)
+            if (exteriorStage >= myMinX && exteriorStage <= myMaxX && interiorStage >= myMinY && interiorStage <= myMaxY)
             {
                 myCanvas.Children.Clear();
 
@@ -412,11 +420,13 @@ namespace Fda.Plots
                 myCanvas.Children.Add(bottomCircle);
 
 
-               
-
-
             }
-           
+            else
+            {
+                //we are out of range
+                myCanvas.Children.Clear();
+                TrackerIsOutsideTheCurveRange = true;
+            }
 
 
         }

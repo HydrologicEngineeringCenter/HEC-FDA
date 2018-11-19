@@ -310,8 +310,9 @@ namespace FdaViewModel.Saving
 
             for (int i = 0; i < a.Length; i++)
             {
-                //don't evaluate the last edit time which is the second one
-                if (i == 1) { continue; }
+                //don't evaluate the last edit time which is the second one. - i am getting rid of this which means it will always save because
+                //the conditions (1) is the description.
+               // if (i == 1) { continue; }
                 if (a[i] == null)
                 {
                     a[i] = "";

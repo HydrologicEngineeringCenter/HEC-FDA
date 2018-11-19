@@ -15,6 +15,8 @@ namespace FdaViewModel.Plots
         string SubTitle { get; set; }
         IndividualLinkedPlotVM PlotVM { get; set; }
 
+        bool TrackerVisible { get; set; }
+        bool AreaPlotVisible { get; set; }
 
     }
 }

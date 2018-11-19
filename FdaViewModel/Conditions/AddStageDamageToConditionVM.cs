@@ -97,6 +97,8 @@ namespace FdaViewModel.Conditions
             stageDamageParent.AddNewDamageCurve(sender, e);
            
         }
+
+      
         private void StageDamageAdded(object sender, Saving.ElementAddedEventArgs e)
         {
             List<AggregatedStageDamageElement> tempList = ListOfStageDamageElements;

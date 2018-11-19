@@ -21,8 +21,21 @@ namespace FdaViewModel.Plots
         public event EventHandler ShowTheImporter;
         public event EventHandler CurveUpdated;
 
+        private bool _TrackerVisible = true;
+        private bool _AreaPlotVisible = true;
+
         #endregion
         #region Properties
+        public bool AreaPlotVisible
+        {
+            get { return _AreaPlotVisible; }
+            set { _AreaPlotVisible = value; NotifyPropertyChanged(); }
+        }
+        public bool TrackerVisible
+        {
+            get { return _TrackerVisible; }
+            set { _TrackerVisible = value; NotifyPropertyChanged(); }
+        }
         public IndividualLinkedPlotVM PlotVM
         {
             get;

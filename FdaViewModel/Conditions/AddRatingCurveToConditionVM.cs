@@ -95,7 +95,7 @@ namespace FdaViewModel.Conditions
             SelectedElement = selectedRatingElement;
             ListOfRatingCurves = listOfRatingCurves;
             StudyCache.RatingAdded += RatingAdded;
-
+            StudyCache.RatingUpdated += RatingWasUpdated;
         }
         #endregion
         #region Voids
@@ -130,8 +130,46 @@ namespace FdaViewModel.Conditions
         {
             RatingCurveOwnerElement ratingParent = StudyCache.GetParentElementOfType<RatingCurveOwnerElement>();
             ratingParent.AddNewRatingCurve(sender, e);
-            
+        }
 
+        public void EditRatingCurve(object sender, EventArgs e)
+        {
+            RatingCurveOwnerElement ratingParent = StudyCache.GetParentElementOfType<RatingCurveOwnerElement>();
+            foreach(RatingCurveElement elem in ratingParent.Elements)
+            {
+                if (elem.Name.Equals(SelectedElement.Name))
+                {
+                    elem.EditRatingCurve(sender, e);
+                }
+            }
+            //List<RatingCurveElement> ratings = StudyCache.GetChildElementsOfType<RatingCurveElement>();
+            // foreach(RatingCurveElement elem in ratings)
+            // {
+            //     if(elem.Name.Equals(SelectedElement.Name))
+            //     {
+            //         elem.EditRatingCurve(sender, e);
+            //     }
+            // }
+            //((RatingCurveElement)SelectedElement).EditRatingCurve(sender, e);
+            //ratingParent.AddNewRatingCurve(sender, e);
+        }
+        private void RatingWasUpdated(object sender, Saving.ElementUpdatedEventArgs args)
+        {
+            ////i need to swap out the old element for the new one
+            //AggregatedStageDamageElement oldElem = (AggregatedStageDamageElement)args.OldElement;
+            //AggregatedStageDamageElement newElem = (AggregatedStageDamageElement)args.NewElement;
+            //int i;
+            //for (i=0;i<ListOfStageDamageElements.Count;i++)
+            //{
+            //    if(ListOfStageDamageElements[i].Name.Equals(oldElem.Name))
+            //    {
+            //        break;                   
+            //    }
+            //}
+            //ListOfStageDamageElements.RemoveAt(i);
+
+            List<RatingCurveElement> tempList = StudyCache.GetChildElementsOfType<RatingCurveElement>();
+            ListOfRatingCurves = tempList;//this is to hit the notify prop changed
         }
         private void RatingAdded(object sender, Saving.ElementAddedEventArgs e)
         {

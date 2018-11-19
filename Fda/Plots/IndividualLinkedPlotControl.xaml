@@ -8,7 +8,9 @@
              
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <!--<local:IndividualLinkedPlot Curve="{Binding TestCurve}" />-->
-        <ContentControl Name="linkedPlotContentControl" Content="{Binding CurrentVM}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
-    </Grid>
+            <!--<local:IndividualLinkedPlot Curve="{Binding TestCurve}" />-->
+            <ContentControl Name="linkedPlotContentControl" Content="{Binding CurrentVM}" BorderBrush="Red" BorderThickness="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  >
+             
+            </ContentControl>
+        </Grid>
 </UserControl>

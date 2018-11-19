@@ -119,34 +119,34 @@ namespace Fda.Utilities
         //}
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            //MapToolBar.MapWindow = MapWindow.MapWindow;
+            MapToolBar.MapWindow = MapWindow.MapWindow;
 
-            //SelectableLayers.MapWindow = MapWindow.MapWindow;
-            //FeatureEditorToolbar.MapWindow = MapWindow.MapWindow;
-            //StatusBorder.Child = new OpenGLMapping.MapStatusBar(MapWindow.MapWindow);
+            SelectableLayers.MapWindow = MapWindow.MapWindow;
+            FeatureEditorToolbar.MapWindow = MapWindow.MapWindow;
+            StatusBorder.Child = new OpenGLMapping.MapStatusBar(MapWindow.MapWindow);
 
-            //RadioButton ArrowTool = (RadioButton)MapToolBar.Items[0];
-            //ArrowTool.IsChecked = true;
-            //MapToolBar.RadioChecked += MapToolBar_RadioChecked;
+            RadioButton ArrowTool = (RadioButton)MapToolBar.Items[0];
+            ArrowTool.IsChecked = true;
+            MapToolBar.RadioChecked += MapToolBar_RadioChecked;
 
-            //FeatureEditorToolbar.RadioChecked += FeatureEditorToolbar_RadioChecked;
+            FeatureEditorToolbar.RadioChecked += FeatureEditorToolbar_RadioChecked;
 
-            //MapWindow.MapWindow.MouseLeave += MapWindow_Mouse;
-            //MapWindow.MapWindow.MouseEnter += MapWindow_Mouse;
+            MapWindow.MapWindow.MouseLeave += MapWindow_Mouse;
+            MapWindow.MapWindow.MouseEnter += MapWindow_Mouse;
 
-            //FdaViewModel.Utilities.MapWindowControlVM vm = (FdaViewModel.Utilities.MapWindowControlVM)this.DataContext;
-            //vm.MWMTVConn.MapWindow = MapWindow.MapWindow;
+            FdaViewModel.Utilities.MapWindowControlVM vm = (FdaViewModel.Utilities.MapWindowControlVM)this.DataContext;
+            vm.MWMTVConn.MapWindow = MapWindow.MapWindow;
 
-            //MapWindow.MapWindow.TreeView = vm.MWMTVConn.MapTreeView;
-            //vm.MWMTVConn.MapTreeView.MapWindow = MapWindow.MapWindow;
+            MapWindow.MapWindow.TreeView = vm.MWMTVConn.MapTreeView;
+            vm.MWMTVConn.MapTreeView.MapWindow = MapWindow.MapWindow;
 
-            //MapToolBar.MapTree = vm.MWMTVConn.MapTreeView;
-            //SelectableLayers.MapTree = vm.MWMTVConn.MapTreeView;
+            MapToolBar.MapTree = vm.MWMTVConn.MapTreeView;
+            SelectableLayers.MapTree = vm.MWMTVConn.MapTreeView;
 
-            //FeatureEditorToolbar.MapTree = vm.MWMTVConn.MapTreeView;
+            FeatureEditorToolbar.MapTree = vm.MWMTVConn.MapTreeView;
 
 
-            //vm.MWMTVConn.MapTreeView.UpdateMapWindow();
+            vm.MWMTVConn.MapTreeView.UpdateMapWindow();
 
         }
     }

@@ -24,6 +24,7 @@ namespace Fda.Plots
         void DisplayNextTracker(double x, double y);
 
         void DisplayPreviousTracker(double x , double y);
+
         //void SetAsStartNode();
         //void SetAsEndNode();
 

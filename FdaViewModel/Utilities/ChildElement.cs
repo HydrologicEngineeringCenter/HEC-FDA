@@ -27,11 +27,11 @@ namespace FdaViewModel.Utilities
         #endregion
         #region Properties
         public bool IsOpenInTabOrWindow { get; set; }
-        public bool IsExpanded
-        {
-            get { return _IsExpanded; }
-            set { _IsExpanded = value; NotifyPropertyChanged(nameof(IsExpanded)); }
-        }
+        //public bool IsExpanded
+        //{
+        //    get { return _IsExpanded; }
+        //    set { _IsExpanded = value; NotifyPropertyChanged(nameof(IsExpanded)); }
+        //}
         public int FontSize
         {
             get { return _FontSize; }

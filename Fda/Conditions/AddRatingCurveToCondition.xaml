@@ -17,16 +17,22 @@
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150" />
+            <!--<ColumnDefinition Width="150" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="60" />
+            <ColumnDefinition Width="60" />-->
         </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Height="24" >
         <Label Content="Rating Curve:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Right" />
-        <ComboBox Grid.Row="1" Grid.Column="1" Height="30" Width="170" VerticalAlignment="Top" ItemsSource="{Binding ListOfRatingCurves}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedElement}" />
-        <Button Grid.Row="1" Grid.Column="2" Name="btn_NewRatingCurve" VerticalAlignment="Top" Width="24" Height="24" Margin="0,0,10,0" ToolTip="Create New Rating Curve" Click="btn_NewRatingCurve_Click">
-            <Image  Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
-        </Button>
-        <!--<Utils:OKCloseControl Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right"/>-->
+        <ComboBox  Grid.Row="1" Grid.Column="1" Height="30" Width="170" VerticalAlignment="Top" ItemsSource="{Binding ListOfRatingCurves}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedElement}" />
+
+                <Button Grid.Row="1" Grid.Column="2" Name="btn_EditRatingCurve" VerticalAlignment="Center" Width="24" Height="24" Margin="0,0,10,0" ToolTip="Edit Existing Rating Curve" Click="btn_EditRatingCurve_Click">
+                    <Image  Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Edit.png"/>
+                </Button>
+                <Button Grid.Row="1" Grid.Column="2" Name="btn_NewRatingCurve" VerticalAlignment="Top" Width="24" Height="24" Margin="0,0,10,0" ToolTip="Create New Rating Curve" Click="btn_NewRatingCurve_Click">
+                    <Image  Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
+                </Button>
+                </StackPanel>
+                <!--<Utils:OKCloseControl Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right"/>-->
         <Button Name="btn_OK" Content="OK" Width="50" Height="22" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="5,5,60,5" Click="btn_OK_Click"/>
                 <Button Name="btn_Cancel" Content="Cancel" Width="50" Height="22" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="5" Click="btn_Cancel_Click"/>
                 <Button Name="btn_PopOut"  Grid.Row="3" Grid.Column="1" Content="^" HorizontalAlignment="Left" Width="50" Height="22" Click="btn_PopOut_Click" />

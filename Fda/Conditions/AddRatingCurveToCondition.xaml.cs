@@ -69,5 +69,11 @@ namespace Fda.Conditions
             FdaViewModel.Conditions.AddRatingCurveToConditionVM vm = (FdaViewModel.Conditions.AddRatingCurveToConditionVM)this.DataContext;
             vm.PopTheImporterOut();
         }
+
+        private void btn_EditRatingCurve_Click(object sender, RoutedEventArgs e)
+        {
+            FdaViewModel.Conditions.AddRatingCurveToConditionVM vm = (FdaViewModel.Conditions.AddRatingCurveToConditionVM)this.DataContext;
+            vm.EditRatingCurve(sender, e);
+        }
     }
 }
