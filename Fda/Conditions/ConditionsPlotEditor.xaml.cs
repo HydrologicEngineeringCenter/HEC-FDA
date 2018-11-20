@@ -36,7 +36,8 @@ namespace Fda.Conditions
 
         public ObservableCollection<ILinkedPlot> TheAddedPlots
         {
-            get;set;
+            get;
+            set;
         }
 
         public ObservableCollection<IndividualLinkedPlot> ObservablePlots { get; set; }
@@ -95,10 +96,10 @@ namespace Fda.Conditions
             // i think maybe i should move this list to the VM side of things?
             // instead of looking at the ".selectedCurve" i should maybe have a bool or something
             //that way when i have plot 1 and DLM i can set one to "don't use" and the other to "Use".
-           
 
 
-            TheAddedPlots = new ObservableCollection<Plots.ILinkedPlot>();
+
+            TheAddedPlots.Clear();// = new ObservableCollection<Plots.ILinkedPlot>();
 
             if(Plot0Control.LinkedPlot != null)
             {
@@ -147,6 +148,9 @@ namespace Fda.Conditions
                     ObservablePlots.Add((IndividualLinkedPlot)plot);
                 }
             }
+            //FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+            //vm.AvailablePlots = TheAddedPlots;
+
         }
 
 
@@ -813,64 +817,64 @@ namespace Fda.Conditions
         //}
 
 
-        private void GetAndValidateXAndYValuesForFreezingSpecificPlotPoint( bool isAxisReversed, bool plotBasedOnXValue)
-        {
-            //try
-            //{
-            //if (_SelectedPlotControl)
-            //if(_SelectedPlotControl.Content.GetType() != typeof(ConditionsIndividualPlotWrapper)) { return; }
+        //private void GetAndValidateXAndYValuesForFreezingSpecificPlotPoint( bool isAxisReversed, bool plotBasedOnXValue)
+        //{
+        //    //try
+        //    //{
+        //    //if (_SelectedPlotControl)
+        //    //if(_SelectedPlotControl.Content.GetType() != typeof(ConditionsIndividualPlotWrapper)) { return; }
 
-            // ConditionsIndividualPlotWrapper theSelectedPlotWrapper = ((ConditionsIndividualPlotWrapper)_SelectedPlotControl.Content);
-            //IndividualLinkedPlot theSelectedPlot = theSelectedPlotWrapper.LinkedPlot;
+        //    // ConditionsIndividualPlotWrapper theSelectedPlotWrapper = ((ConditionsIndividualPlotWrapper)_SelectedPlotControl.Content);
+        //    //IndividualLinkedPlot theSelectedPlot = theSelectedPlotWrapper.LinkedPlot;
 
-            //if (txt_XValue.Text == null || txt_XValue.Text == "")
-            if (plotBasedOnXValue == false)
-            {
-                //if (txt_YValue.Text == null || txt_YValue.Text == "")
-                {
-                    //do nothing, there are no values
-                }
-               // else
-                {
-                    //x has nothing, and y has some number
-                    if(Double.TryParse(txt_YValue.Text, out _SpecifiedYValue) == false) { return; }
-                    //_SpecifiedYValue = Convert.ToDouble(txt_YValue.Text);
-                    _SpecifiedXValue = _SelectedPlot.GetPairedValue(_SpecifiedYValue, false, _SelectedPlot.OxyPlot1.Model, isAxisReversed);
-                    if (_SpecifiedYValue > _SelectedPlot.OxyPlot1.Model.Axes[1].Maximum || _SpecifiedYValue < _SelectedPlot.OxyPlot1.Model.Axes[1].Minimum)
-                    {
-                        //FdaViewModel.Utilities.CustomMessageBoxVM vm = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "Y Value is out of range");
-                        MessageBox.Show("Y Value is out of range", "Out of Range");
-                        txt_YValue.Text = "";
-                        return;
-                    }
-                    txt_XValue.Text = Math.Round(_SpecifiedXValue, 3).ToString();
-                }
-            }
-            else
-            {
-                //x has a number and we don't care what y is
+        //    //if (txt_XValue.Text == null || txt_XValue.Text == "")
+        //    if (plotBasedOnXValue == false)
+        //    {
+        //        //if (txt_YValue.Text == null || txt_YValue.Text == "")
+        //        {
+        //            //do nothing, there are no values
+        //        }
+        //       // else
+        //        {
+        //            //x has nothing, and y has some number
+        //            if(Double.TryParse(txt_YValue.Text, out _SpecifiedYValue) == false) { return; }
+        //            //_SpecifiedYValue = Convert.ToDouble(txt_YValue.Text);
+        //            _SpecifiedXValue = _SelectedPlot.GetPairedValue(_SpecifiedYValue, false, _SelectedPlot.OxyPlot1.Model, isAxisReversed);
+        //            if (_SpecifiedYValue > _SelectedPlot.OxyPlot1.Model.Axes[1].Maximum || _SpecifiedYValue < _SelectedPlot.OxyPlot1.Model.Axes[1].Minimum)
+        //            {
+        //                //FdaViewModel.Utilities.CustomMessageBoxVM vm = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "Y Value is out of range");
+        //                MessageBox.Show("Y Value is out of range", "Out of Range");
+        //                txt_YValue.Text = "";
+        //                return;
+        //            }
+        //            txt_XValue.Text = Math.Round(_SpecifiedXValue, 3).ToString();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //x has a number and we don't care what y is
                 
-                if(Double.TryParse(txt_XValue.Text,out _SpecifiedXValue) == false)
-                {
-                    //MessageBox.Show("X Value is not a valid number", "Not A Number");
-                    txt_XValue.Text = "";
-                    return;
-                }
-                //_SpecifiedXValue = Convert.ToDouble(txt_XValue.Text);
+        //        if(Double.TryParse(txt_XValue.Text,out _SpecifiedXValue) == false)
+        //        {
+        //            //MessageBox.Show("X Value is not a valid number", "Not A Number");
+        //            txt_XValue.Text = "";
+        //            return;
+        //        }
+        //        //_SpecifiedXValue = Convert.ToDouble(txt_XValue.Text);
 
-                //I need a way to know which plot this is so that i can put the right arguments into this method
-                _SpecifiedYValue = ((IndividualLinkedPlot)_SelectedPlot).GetPairedValue(_SpecifiedXValue, true, _SelectedPlot.OxyPlot1.Model, isAxisReversed);
-                if (_SpecifiedXValue > _SelectedPlot.OxyPlot1.Model.Axes[0].Maximum || _SpecifiedXValue < _SelectedPlot.OxyPlot1.Model.Axes[0].Minimum)
-                {
-                    //FdaViewModel.Utilities.CustomMessageBoxVM vm = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "X Value is out of range");
-                    MessageBox.Show("X Value is out of range", "Out of Range");
-                    txt_XValue.Text = "";
-                    return;
-                }
-                txt_YValue.Text = Math.Round(_SpecifiedYValue, 3).ToString();
-            }
+        //        //I need a way to know which plot this is so that i can put the right arguments into this method
+        //        _SpecifiedYValue = ((IndividualLinkedPlot)_SelectedPlot).GetPairedValue(_SpecifiedXValue, true, _SelectedPlot.OxyPlot1.Model, isAxisReversed);
+        //        if (_SpecifiedXValue > _SelectedPlot.OxyPlot1.Model.Axes[0].Maximum || _SpecifiedXValue < _SelectedPlot.OxyPlot1.Model.Axes[0].Minimum)
+        //        {
+        //            //FdaViewModel.Utilities.CustomMessageBoxVM vm = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "X Value is out of range");
+        //            MessageBox.Show("X Value is out of range", "Out of Range");
+        //            txt_XValue.Text = "";
+        //            return;
+        //        }
+        //        txt_YValue.Text = Math.Round(_SpecifiedYValue, 3).ToString();
+        //    }
 
-        }
+        //}
 
 
         //private void txt_XValue_TextChanged(object sender, TextChangedEventArgs e)
@@ -906,115 +910,111 @@ namespace Fda.Conditions
 
             //    mainGrid.RowDefinitions[1].Height = new GridLength(.4, GridUnitType.Star);
             //}
+            PlotSpecificPointTool.AvailablePlotsFromView = TheAddedPlots;
         }
 
-        private void txt_XValue_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if(cmb_PlotNames.SelectedItem == null) { return; }
-            FdaViewModel.Plots.IndividualLinkedPlotControlVM control = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)cmb_PlotNames.SelectedItem;
-            //i need to find the corresponding individualLinkedPlot
-            foreach(ILinkedPlot plot in TheAddedPlots)
-            {
-                if(plot.BaseFunction.FunctionType ==  control.IndividualPlotWrapperVM.PlotVM.BaseFunction.FunctionType)
-                {
-                    _SelectedPlot = (IndividualLinkedPlot)plot;
-                    break;
-                }
-            }
+        //private void txt_XValue_LostFocus(object sender, RoutedEventArgs e)
+        //{
+        //    if(cmb_PlotNames.SelectedItem == null) { return; }
+        //    FdaViewModel.Plots.IndividualLinkedPlotControlVM control = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)cmb_PlotNames.SelectedItem;
+        //    //i need to find the corresponding individualLinkedPlot
+        //    foreach(ILinkedPlot plot in TheAddedPlots)
+        //    {
+        //        if(plot.BaseFunction.FunctionType ==  control.IndividualPlotWrapperVM.PlotVM.BaseFunction.FunctionType)
+        //        {
+        //            _SelectedPlot = (IndividualLinkedPlot)plot;
+        //            break;
+        //        }
+        //    }
 
-            if(_SelectedPlot == null) { return; }
-            // if (cmb_PlotNames.SelectedIndex == -1) { return; }
-            //_SelectedPlot = (IndividualLinkedPlot)cmb_PlotNames.SelectedItem;
-           // _SelectedPlot.TrackerIsOutsideTheCurveRange = false;
-            _SelectedPlot.TurnOutsideOfRangeOff();
-            FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)_SelectedPlot.DataContext;
-            vm.PlotIsInsideRange(this, new EventArgs());
+        //    if(_SelectedPlot == null) { return; }
+        //    // if (cmb_PlotNames.SelectedIndex == -1) { return; }
+        //    //_SelectedPlot = (IndividualLinkedPlot)cmb_PlotNames.SelectedItem;
+        //   // _SelectedPlot.TrackerIsOutsideTheCurveRange = false;
+        //    _SelectedPlot.TurnOutsideOfRangeOff();
+        //    FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)_SelectedPlot.DataContext;
+        //    vm.PlotIsInsideRange(this, new EventArgs());
 
-            if (_SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency ||
-                    _SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.OutflowFrequency ||
-                    _SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
-                {
-                    GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(true, true);
-                }
-                else
-                {
-                    GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(false, true);
+        //    if (_SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency ||
+        //            _SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.OutflowFrequency ||
+        //            _SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+        //        {
+        //            GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(true, true);
+        //        }
+        //        else
+        //        {
+        //            GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(false, true);
 
-                }
-                ScreenPoint position = _SelectedPlot.OxyPlot1.Model.Axes[0].Transform(_SpecifiedXValue, _SpecifiedYValue, _SelectedPlot.OxyPlot1.Model.Axes[1]);
+        //        }
+        //        ScreenPoint position = _SelectedPlot.OxyPlot1.Model.Axes[0].Transform(_SpecifiedXValue, _SpecifiedYValue, _SelectedPlot.OxyPlot1.Model.Axes[1]);
 
-                //if the trackers are already frozen, unfreeze them
-                if (_SelectedPlot.FreezeNextTracker == true)
-                {
-                    _SelectedPlot.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
-                }
-                _SelectedPlot.DisplayTheTrackers(position);
-                //now that the trackers are displayed, freeze them
-                if (_SelectedPlot.FreezeNextTracker == false)
-                {
-                    _SelectedPlot.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
-                }
+        //        //if the trackers are already frozen, unfreeze them
+        //        if (_SelectedPlot.FreezeNextTracker == true)
+        //        {
+        //            _SelectedPlot.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
+        //        }
+        //        _SelectedPlot.DisplayTheTrackers(position);
+        //        //now that the trackers are displayed, freeze them
+        //        if (_SelectedPlot.FreezeNextTracker == false)
+        //        {
+        //            _SelectedPlot.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
+        //        }
 
 
 
 
 
             
-        }
+        //}
 
-        private void txt_YValue_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (cmb_PlotNames.SelectedItem == null) { return; }
+        //private void txt_YValue_LostFocus(object sender, RoutedEventArgs e)
+        //{
+        //    if (cmb_PlotNames.SelectedItem == null) { return; }
 
-            // if (cmb_PlotNames.SelectedIndex == -1) { return; }
-            //_SelectedPlot = (IndividualLinkedPlot)cmb_PlotNames.SelectedItem;
-            FdaViewModel.Plots.IndividualLinkedPlotControlVM control = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)cmb_PlotNames.SelectedItem;
-            //i need to find the corresponding individualLinkedPlot
-            foreach (ILinkedPlot plot in TheAddedPlots)
-            {
-                if (plot.BaseFunction.FunctionType == control.IndividualPlotWrapperVM.PlotVM.BaseFunction.FunctionType)
-                {
-                    _SelectedPlot = (IndividualLinkedPlot)plot;
-                    break;
-                }
-            }
+        //    // if (cmb_PlotNames.SelectedIndex == -1) { return; }
+        //    //_SelectedPlot = (IndividualLinkedPlot)cmb_PlotNames.SelectedItem;
+        //    FdaViewModel.Plots.IndividualLinkedPlotControlVM control = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)cmb_PlotNames.SelectedItem;
+        //    //i need to find the corresponding individualLinkedPlot
+        //    foreach (ILinkedPlot plot in TheAddedPlots)
+        //    {
+        //        if (plot.BaseFunction.FunctionType == control.IndividualPlotWrapperVM.PlotVM.BaseFunction.FunctionType)
+        //        {
+        //            _SelectedPlot = (IndividualLinkedPlot)plot;
+        //            break;
+        //        }
+        //    }
 
-            if (_SelectedPlot == null) { return; }
-            _SelectedPlot.TrackerIsOutsideTheCurveRange = false;
-            FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)_SelectedPlot.DataContext;
-            vm.PlotIsInsideRange(this, new EventArgs());
+        //    if (_SelectedPlot == null) { return; }
+        //    _SelectedPlot.TrackerIsOutsideTheCurveRange = false;
+        //    FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)_SelectedPlot.DataContext;
+        //    vm.PlotIsInsideRange(this, new EventArgs());
 
-            if (_SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency ||
-                    _SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.OutflowFrequency ||
-                    _SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
-                {
-                    GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(true, false);
-                }
-                else
-                {
-                    GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(false, false);
+        //    if (_SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency ||
+        //            _SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.OutflowFrequency ||
+        //            _SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+        //        {
+        //            GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(true, false);
+        //        }
+        //        else
+        //        {
+        //            GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(false, false);
 
-                }
-                ScreenPoint position = _SelectedPlot.OxyPlot1.Model.Axes[0].Transform(_SpecifiedXValue, _SpecifiedYValue, _SelectedPlot.OxyPlot1.Model.Axes[1]);
+        //        }
+        //        ScreenPoint position = _SelectedPlot.OxyPlot1.Model.Axes[0].Transform(_SpecifiedXValue, _SpecifiedYValue, _SelectedPlot.OxyPlot1.Model.Axes[1]);
 
-                //if the trackers are already frozen, unfreeze them
-                if (_SelectedPlot.FreezeNextTracker == true)
-                {
-                    _SelectedPlot.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
-                }
-                _SelectedPlot.DisplayTheTrackers(position);
-                //now that the trackers are displayed, freeze them
-                if (_SelectedPlot.FreezeNextTracker == false)
-                {
-                    _SelectedPlot.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
-                }
-
-
-
-
-
+        //        //if the trackers are already frozen, unfreeze them
+        //        if (_SelectedPlot.FreezeNextTracker == true)
+        //        {
+        //            _SelectedPlot.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
+        //        }
+        //        _SelectedPlot.DisplayTheTrackers(position);
+        //        //now that the trackers are displayed, freeze them
+        //        if (_SelectedPlot.FreezeNextTracker == false)
+        //        {
+        //            _SelectedPlot.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
+        //        }
             
-        }
+        //}
 
        
     }

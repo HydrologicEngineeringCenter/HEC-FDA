@@ -61,6 +61,8 @@ namespace Fda.Plots
 
 
         #region Properties
+        public string SelectedElementName { get; set; } = "cody test";
+
         public bool TrackerIsOutsideTheCurveRange { get; set; }
 
         //public string TestName

@@ -39,7 +39,8 @@ namespace Fda.Plots
         public bool TrackerIsOutsideTheCurveRange { get; set; }
 
         #region Properties
-      
+        public string SelectedElementName { get; set; } = "cody test";
+
         public double MaxX { get; set; }
         public double MaxY { get; set; }
         public double MinX { get; set; }

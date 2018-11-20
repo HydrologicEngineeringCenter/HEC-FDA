@@ -17,6 +17,7 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using Fda.Output;
+using System.Collections.ObjectModel;
 
 namespace Fda.Plots
 {
@@ -146,20 +147,41 @@ namespace Fda.Plots
 
             UpdatePlotVisibility();
 
-            cmb_PlotNames.Items.Add(plot0.Title);
-            if (Plot1DoesntExist == false)
-            {
-                cmb_PlotNames.Items.Add(plot1.Title);
-            }
-            cmb_PlotNames.Items.Add(plot3.Title);
-            if (Plot5DoesntExist == false)
-            {
-                cmb_PlotNames.Items.Add(plot5.Title);
-            }
-            cmb_PlotNames.Items.Add(plot7.Title);
-            cmb_PlotNames.Items.Add(plot8.Title);
+            
 
             plot8.PlotAreaUnderTheCurve();
+
+            
+
+            ObservableCollection<ILinkedPlot> availablePlots = new ObservableCollection<ILinkedPlot>();           
+
+            availablePlots.Add(plot0);
+            if (Plot1DoesntExist == false)
+            {
+                availablePlots.Add(plot1);
+            }
+            availablePlots.Add(plot3);
+            if (Plot5DoesntExist == false)
+            {
+                availablePlots.Add(plot5);
+            }
+            availablePlots.Add(plot7);
+            availablePlots.Add(plot8);
+            
+            PlotSpecificPoint.AvailablePlotsFromView = availablePlots;
+
+            //this is all kinds of bad i think. The whole system of getting the names into the vm and into here
+            //needs work i think. but for now...
+            FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+            List<string> selectedElementNames = vm.SelectedElementNames;
+            if(availablePlots.Count == selectedElementNames.Count)
+            {
+                for(int i = 0;i<selectedElementNames.Count;i++)
+                {
+                    ((IndividualLinkedPlot)availablePlots[i]).OxyPlot1.Model.Subtitle = selectedElementNames[i];
+                }
+            }
+
         }
 
         private void SetTheSharedAxes()
@@ -301,26 +323,26 @@ namespace Fda.Plots
             Grid.SetColumn(grid_TopRow, 1);
         }
 
-        private void btn_PopPlotsOut_Click(object sender, RoutedEventArgs e)
-        {
-            if (Plot1PoppedOut == false || Plot5PoppedOut == false)
-            {
-                PopPlot1Out(sender, e);
-                PopPlot5Out(sender, e);
-                //change the image to pop in and change the tooltip
-                img_PopPlotsOut.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(new Uri(@"pack://application:,,,/Fda;component/Resources/PopDown.png"));
-                btn_PopPlotsOut.ToolTip = "Pop Plots In";
-            }
-            else
-            {
-                btn_CollapsePlot1_Click(sender, e);
-                btn_CollapsePlot5_Click(sender, e);
-                //change the image to pop out and change the tooltip
-                img_PopPlotsOut.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(new Uri(@"pack://application:,,,/Fda;component/Resources/PopUp.png"));
-                btn_PopPlotsOut.ToolTip = "Pop Plots Out";
+        //private void btn_PopPlotsOut_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (Plot1PoppedOut == false || Plot5PoppedOut == false)
+        //    {
+        //        PopPlot1Out(sender, e);
+        //        PopPlot5Out(sender, e);
+        //        //change the image to pop in and change the tooltip
+        //        img_PopPlotsOut.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(new Uri(@"pack://application:,,,/Fda;component/Resources/PopDown.png"));
+        //        btn_PopPlotsOut.ToolTip = "Pop Plots In";
+        //    }
+        //    else
+        //    {
+        //        btn_CollapsePlot1_Click(sender, e);
+        //        btn_CollapsePlot5_Click(sender, e);
+        //        //change the image to pop out and change the tooltip
+        //        img_PopPlotsOut.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(new Uri(@"pack://application:,,,/Fda;component/Resources/PopUp.png"));
+        //        btn_PopPlotsOut.ToolTip = "Pop Plots Out";
 
-            }
-        }
+        //    }
+        //}
 
         #endregion
 
@@ -375,140 +397,140 @@ namespace Fda.Plots
 
 
         #region Plot Specific Point
-        private void btn_PlotSpecificPoint_Click(object sender, RoutedEventArgs e)
-        {
-            //if both the x and the y have values in them then just go with the x value
-            //if neither of them have anything then don't do anything
-            //message if value is not a double or is out of range
+        //private void btn_PlotSpecificPoint_Click(object sender, RoutedEventArgs e)
+        //{
+        //    //if both the x and the y have values in them then just go with the x value
+        //    //if neither of them have anything then don't do anything
+        //    //message if value is not a double or is out of range
 
-            if(cmb_PlotNames.SelectedIndex == -1) { return; }
+        //    if(cmb_PlotNames.SelectedIndex == -1) { return; }
 
-            IndividualLinkedPlot theSelectedPlot = new IndividualLinkedPlot() ;
-            double xValue = 0;
-            double yValue = 0;
+        //    IndividualLinkedPlot theSelectedPlot = new IndividualLinkedPlot() ;
+        //    double xValue = 0;
+        //    double yValue = 0;
 
-            if (cmb_PlotNames.SelectedItem.ToString() == plot0.Title)
-            {
-                theSelectedPlot = plot0;
-                GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlot, true);
+        //    if (cmb_PlotNames.SelectedItem.ToString() == plot0.Title)
+        //    {
+        //        theSelectedPlot = plot0;
+        //        GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlot, true);
 
-            }
-            else if (cmb_PlotNames.SelectedItem.ToString() == plot1.Title)
-            {
-                //plot1 is only plugged into the loop when it is popped out, otherwise it is the doublelineModulator that is plugged in
-                if (Plot1PoppedOut == true)
-                {
-                    theSelectedPlot = plot1;
-                    GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlot, false);
+        //    }
+        //    else if (cmb_PlotNames.SelectedItem.ToString() == plot1.Title)
+        //    {
+        //        //plot1 is only plugged into the loop when it is popped out, otherwise it is the doublelineModulator that is plugged in
+        //        if (Plot1PoppedOut == true)
+        //        {
+        //            theSelectedPlot = plot1;
+        //            GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlot, false);
 
-                }
-                else
-                {
-                    //since plot1 is not popped out, the xvalue (inflow) is the same as plot0's yvalue. just plot that.
-                    if(txt_XValue.Text != null && txt_XValue.Text != "")
-                    {
-                        theSelectedPlot = plot0;
-                        txt_YValue.Text = txt_XValue.Text;
-                        txt_XValue.Text = "";
-                        GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlot, true);
-                        //above code works fine, but it is displaying the wrong x value for plot1(it is displaying plot0 x value)
-                        txt_XValue.Text = ((IndividualLinkedPlot)plot1).GetPairedValue(yValue, false, plot1.OxyPlot1.Model, false).ToString();
+        //        }
+        //        else
+        //        {
+        //            //since plot1 is not popped out, the xvalue (inflow) is the same as plot0's yvalue. just plot that.
+        //            if(txt_XValue.Text != null && txt_XValue.Text != "")
+        //            {
+        //                theSelectedPlot = plot0;
+        //                txt_YValue.Text = txt_XValue.Text;
+        //                txt_XValue.Text = "";
+        //                GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlot, true);
+        //                //above code works fine, but it is displaying the wrong x value for plot1(it is displaying plot0 x value)
+        //                txt_XValue.Text = ((IndividualLinkedPlot)plot1).GetPairedValue(yValue, false, plot1.OxyPlot1.Model, false).ToString();
 
-                    }
-                    // if it is the y value that is sought after, that is the same as the y from plot 3
-                    else if (txt_YValue.Text != null && txt_YValue.Text != "")
-                    {
-                        theSelectedPlot = plot3;
-                        GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlot, true);
-                    }
-                }
+        //            }
+        //            // if it is the y value that is sought after, that is the same as the y from plot 3
+        //            else if (txt_YValue.Text != null && txt_YValue.Text != "")
+        //            {
+        //                theSelectedPlot = plot3;
+        //                GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlot, true);
+        //            }
+        //        }
               
                 
-            }
-            else if (cmb_PlotNames.SelectedItem.ToString() == plot3.Title)
-            {
-                theSelectedPlot = plot3;
-                GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlot, false);
-            }
-            else if (cmb_PlotNames.SelectedItem.ToString() == plot5.Title)
-            {
-                //plot5 is only plugged into the loop when it is popped out, otherwise it is the horizontaldoublelineModulator that is plugged in
-                if (Plot1PoppedOut == true)
-                {
-                    theSelectedPlot = plot5;
-                    GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlot, false);
-                }
-            }
-            else if (cmb_PlotNames.SelectedItem.ToString() == plot7.Title)
-            {
-                theSelectedPlot = plot7;
-                GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlot, false);
-            }
-            else if (cmb_PlotNames.SelectedItem.ToString() == plot8.Title)
-            {
-                theSelectedPlot = plot8;
-                GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlot, true);
-            }
+        //    }
+        //    else if (cmb_PlotNames.SelectedItem.ToString() == plot3.Title)
+        //    {
+        //        theSelectedPlot = plot3;
+        //        GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlot, false);
+        //    }
+        //    else if (cmb_PlotNames.SelectedItem.ToString() == plot5.Title)
+        //    {
+        //        //plot5 is only plugged into the loop when it is popped out, otherwise it is the horizontaldoublelineModulator that is plugged in
+        //        if (Plot1PoppedOut == true)
+        //        {
+        //            theSelectedPlot = plot5;
+        //            GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlot, false);
+        //        }
+        //    }
+        //    else if (cmb_PlotNames.SelectedItem.ToString() == plot7.Title)
+        //    {
+        //        theSelectedPlot = plot7;
+        //        GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlot, false);
+        //    }
+        //    else if (cmb_PlotNames.SelectedItem.ToString() == plot8.Title)
+        //    {
+        //        theSelectedPlot = plot8;
+        //        GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref xValue, ref yValue, theSelectedPlot, true);
+        //    }
 
 
-            ScreenPoint position = theSelectedPlot.OxyPlot1.Model.Axes[0].Transform(xValue, yValue, theSelectedPlot.OxyPlot1.Model.Axes[1]);
+        //    ScreenPoint position = theSelectedPlot.OxyPlot1.Model.Axes[0].Transform(xValue, yValue, theSelectedPlot.OxyPlot1.Model.Axes[1]);
 
-            //if the trackers are already frozen, unfreeze them
-           if( theSelectedPlot.FreezeNextTracker == true)
-            {
-                theSelectedPlot.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
-            }
-            theSelectedPlot.DisplayTheTrackers(position);
-            //now that the trackers are displayed, freeze them
-            if (theSelectedPlot.FreezeNextTracker == false)
-            {
-                theSelectedPlot.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
-            }
+        //    //if the trackers are already frozen, unfreeze them
+        //   if( theSelectedPlot.FreezeNextTracker == true)
+        //    {
+        //        theSelectedPlot.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
+        //    }
+        //    theSelectedPlot.DisplayTheTrackers(position);
+        //    //now that the trackers are displayed, freeze them
+        //    if (theSelectedPlot.FreezeNextTracker == false)
+        //    {
+        //        theSelectedPlot.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
+        //    }
 
          
 
 
 
-        }
+        //}
 
 
-        private void GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref double xValue,ref double yValue,IndividualLinkedPlot theSelectedPlot,bool isAxisReversed)
-        {
-            if (txt_XValue.Text == null || txt_XValue.Text == "")
-            {
-                if (txt_YValue.Text == null || txt_YValue.Text == "")
-                {
-                    //do nothing, there are no values
-                }
-                else
-                {
-                    //x has nothing, and y has some number
-                    yValue = Convert.ToDouble(txt_YValue.Text);
-                    xValue = ((IndividualLinkedPlot)theSelectedPlot).GetPairedValue(yValue, false, theSelectedPlot.OxyPlot1.Model, isAxisReversed);
-                    if (yValue > theSelectedPlot.OxyPlot1.Model.Axes[1].Maximum || yValue < theSelectedPlot.OxyPlot1.Model.Axes[1].Minimum)
-                    {
-                        //FdaViewModel.Utilities.CustomMessageBoxVM vm = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "Y Value is out of range");
-                        MessageBox.Show("Y Value is out of range", "Out of Range");
-                        return;
-                    }
-                    txt_XValue.Text = Math.Round(xValue, 3).ToString();
-                }
-            }
-            else
-            {
-                //x has a number and we don't care what y is
-                xValue = Convert.ToDouble(txt_XValue.Text);
-                yValue = ((IndividualLinkedPlot)theSelectedPlot).GetPairedValue(xValue, true, theSelectedPlot.OxyPlot1.Model, isAxisReversed);
-                if (xValue > theSelectedPlot.OxyPlot1.Model.Axes[0].Maximum || xValue < theSelectedPlot.OxyPlot1.Model.Axes[0].Minimum)
-                {
-                    //FdaViewModel.Utilities.CustomMessageBoxVM vm = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "X Value is out of range");
-                    MessageBox.Show("X Value is out of range", "Out of Range");
-                    return;
-                }
-                txt_YValue.Text = Math.Round(yValue, 3).ToString();
-            }
+        //private void GetAndValidateXAndYValuesForFreezingSpecificPlotPoint(ref double xValue,ref double yValue,IndividualLinkedPlot theSelectedPlot,bool isAxisReversed)
+        //{
+        //    if (txt_XValue.Text == null || txt_XValue.Text == "")
+        //    {
+        //        if (txt_YValue.Text == null || txt_YValue.Text == "")
+        //        {
+        //            //do nothing, there are no values
+        //        }
+        //        else
+        //        {
+        //            //x has nothing, and y has some number
+        //            yValue = Convert.ToDouble(txt_YValue.Text);
+        //            xValue = ((IndividualLinkedPlot)theSelectedPlot).GetPairedValue(yValue, false, theSelectedPlot.OxyPlot1.Model, isAxisReversed);
+        //            if (yValue > theSelectedPlot.OxyPlot1.Model.Axes[1].Maximum || yValue < theSelectedPlot.OxyPlot1.Model.Axes[1].Minimum)
+        //            {
+        //                //FdaViewModel.Utilities.CustomMessageBoxVM vm = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "Y Value is out of range");
+        //                MessageBox.Show("Y Value is out of range", "Out of Range");
+        //                return;
+        //            }
+        //            txt_XValue.Text = Math.Round(xValue, 3).ToString();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //x has a number and we don't care what y is
+        //        xValue = Convert.ToDouble(txt_XValue.Text);
+        //        yValue = ((IndividualLinkedPlot)theSelectedPlot).GetPairedValue(xValue, true, theSelectedPlot.OxyPlot1.Model, isAxisReversed);
+        //        if (xValue > theSelectedPlot.OxyPlot1.Model.Axes[0].Maximum || xValue < theSelectedPlot.OxyPlot1.Model.Axes[0].Minimum)
+        //        {
+        //            //FdaViewModel.Utilities.CustomMessageBoxVM vm = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "X Value is out of range");
+        //            MessageBox.Show("X Value is out of range", "Out of Range");
+        //            return;
+        //        }
+        //        txt_YValue.Text = Math.Round(yValue, 3).ToString();
+        //    }
 
-        }
+        //}
 
 
         private void txt_XValue_TextChanged(object sender, TextChangedEventArgs e)
@@ -775,14 +797,29 @@ namespace Fda.Plots
             hv.Show();
         }
 
-        private void btn_DisplayIteration_Click(object sender, RoutedEventArgs e)
+        //private void btn_DisplayIteration_Click(object sender, RoutedEventArgs e)
+        //{
+        //    FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+        //    int iteration;
+        //    bool parseWorked = int.TryParse( txt_IterationNumber.Text, out iteration);
+        //    if (parseWorked && iteration > 0 && iteration <= vm.TotalRealizations)
+        //    {
+        //        PlotIteration(iteration-1);
+        //        //update the next and prev button visibility
+        //        btn_Prev.IsEnabled = (iteration > 1);
+        //        btn_Next.IsEnabled = (iteration < vm.TotalRealizations);
+
+        //    }
+        //}
+
+        private void txt_IterationNumber_LostFocus(object sender, RoutedEventArgs e)
         {
             FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
             int iteration;
-            bool parseWorked = int.TryParse( txt_IterationNumber.Text, out iteration);
+            bool parseWorked = int.TryParse(txt_IterationNumber.Text, out iteration);
             if (parseWorked && iteration > 0 && iteration <= vm.TotalRealizations)
             {
-                PlotIteration(iteration-1);
+                PlotIteration(iteration - 1);
                 //update the next and prev button visibility
                 btn_Prev.IsEnabled = (iteration > 1);
                 btn_Next.IsEnabled = (iteration < vm.TotalRealizations);

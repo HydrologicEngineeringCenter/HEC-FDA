@@ -71,7 +71,7 @@
 
 
             </ToolBar>
-            <ToolBar>
+            <!--<ToolBar>
                 <Label Content="Plot:" />
                     <ComboBox Name="cmb_PlotNames" Width="150" ItemsSource="{Binding AddedPlots}" DisplayMemberPath="CurveImporterVM.SelectedElementName"  />
 
@@ -80,8 +80,10 @@
                 <Label Content="Y:"/>
                     <utils:NumericTextBoxWithClickHighlighting x:Name="txt_YValue" Width="60" Height="20" LostFocus="txt_YValue_LostFocus" />
                   
-            </ToolBar>
-                <!--<plot:LinkedPlotSpecificPointTool />-->
+            </ToolBar>-->
+                <ToolBar>
+                    <plot:LinkedPlotSpecificPointTool x:Name="PlotSpecificPointTool" AvailablePlotsFromVM="{Binding AvailablePlots}" />
+                </ToolBar>
 
 
                 <!--<ToolBar>

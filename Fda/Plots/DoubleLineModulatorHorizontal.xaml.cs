@@ -37,7 +37,8 @@ namespace Fda.Plots
         private ILinkedPlot _PreviousPlot;
 
         #region Properties
-      
+        public string SelectedElementName { get; set; } = "cody test";
+
         public bool TrackerIsOutsideTheCurveRange { get; set; }
 
         public double MaxX { get; set; }

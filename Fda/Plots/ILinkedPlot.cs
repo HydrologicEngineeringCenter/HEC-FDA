@@ -27,7 +27,7 @@ namespace Fda.Plots
 
         //void SetAsStartNode();
         //void SetAsEndNode();
-
+        string SelectedElementName { get; set; }
 
         void SetNextPlotLinkage(ILinkedPlot plot, string thisAxis, string theirAxis);
         void SetPreviousPlotLinkage(ILinkedPlot plot);

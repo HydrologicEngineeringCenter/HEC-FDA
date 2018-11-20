@@ -623,9 +623,14 @@ namespace FdaViewModel.Conditions
 
             FdaModel.ComputationPoint.Outputs.Result result = new FdaModel.ComputationPoint.Outputs.Result(condition, 10);
 
-
+            List<string> selectedElementNames = new List<string>();
+            selectedElementNames.Add(AnalyticalFlowFrequency.Name);
+            selectedElementNames.Add(RatingCurveElement.Name);
+            selectedElementNames.Add(ExteriorInteriorElement.Name);
+            selectedElementNames.Add(StageDamageElement.Name);
+            selectedElementNames.Add("Computed Stage Frequency");
             // write out results for testing purposes.
-            Plots.LinkedPlotsVM vem = new Plots.LinkedPlotsVM(result, ThresholdType, ThresholdValue);
+            Plots.LinkedPlotsVM vem = new Plots.LinkedPlotsVM(result, ThresholdType, ThresholdValue, selectedElementNames);
             Navigate( vem, false, false, "Computed Condition");
             //Output.LinkedPlotsVM vm = new Output.LinkedPlotsVM(result);
             //Navigate(vm);

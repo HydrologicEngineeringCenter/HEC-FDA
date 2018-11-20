@@ -5,19 +5,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Fda.Plots"
              xmlns:utils="clr-namespace:Fda.Utilities"
-
              mc:Ignorable="d" 
+             Loaded="UserControl_Loaded"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <ToolBar>
-            <Label Content="Plot:" />
-            <ComboBox Name="cmb_PlotNames" Width="150" ItemsSource="{Binding AddedPlots}" DisplayMemberPath="CurveImporterVM.SelectedElementName"  />
-
-            <Label Content="X:"/>
-            <utils:NumericTextBoxWithClickHighlighting x:Name="txt_XValue" Width="60" Height="20" LostFocus="txt_XValue_LostFocus"    />
-            <Label Content="Y:"/>
-            <utils:NumericTextBoxWithClickHighlighting x:Name="txt_YValue" Width="60" Height="20" LostFocus="txt_YValue_LostFocus" />
-           
-        </ToolBar>
+    <Grid Name="SpecificPointGrid">
+        <StackPanel Orientation="Horizontal">
+        <Label Content="Plot:" VerticalAlignment="Center"/>
+            <ComboBox Name="cmb_PlotNames" Width="150"  DisplayMemberPath="SelectedElementName" Height="20" VerticalAlignment="Center"/>
+            <Label Content="X:" VerticalAlignment="Center"/>
+            <utils:NumericTextBoxWithClickHighlighting x:Name="txt_XValue" Width="60" Height="20" LostFocus="txt_XValue_LostFocus" VerticalAlignment="Center"   />
+            <Label Content="Y:" VerticalAlignment="Center"/>
+            <utils:NumericTextBoxWithClickHighlighting x:Name="txt_YValue" Width="60" Height="20" LostFocus="txt_YValue_LostFocus" VerticalAlignment="Center"/>
+        </StackPanel>
     </Grid>
 </UserControl>

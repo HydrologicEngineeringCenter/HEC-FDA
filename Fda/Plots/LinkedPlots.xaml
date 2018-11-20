@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Fda.Plots"
+             xmlns:utils="clr-namespace:Fda.Utilities"
              xmlns:oxy="http://oxyplot.org/wpf"
              
              mc:Ignorable="d" 
@@ -24,18 +25,18 @@
         <Grid Name="grid_TopRow" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="25" />
+                <RowDefinition Height="28" />
             </Grid.RowDefinitions>
-        <ToolBarTray Grid.Row="0"  Grid.ColumnSpan="2" Name="tool_toolbar"  Margin="5">
-        <ToolBar  Margin="5" >
+        <ToolBarTray Grid.Row="0"  Grid.ColumnSpan="2" Name="tool_toolbar"  Margin="0">
+        <ToolBar  Margin="0" >
             <Button Name="btn_HideTrackers" ToolTip="Hide Trackers" Width="40" Click="btn_HideTrackers_Click" >
                 <Image Name="img_HideTrackers" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/HideTrackers.png"/>
 
             </Button>
-            <Button Name="btn_PopPlotsOut" Width="40" ToolTip="Pop Plots Out" Click="btn_PopPlotsOut_Click">
+            <!--<Button Name="btn_PopPlotsOut" Width="40" ToolTip="Pop Plots Out" Click="btn_PopPlotsOut_Click">
                 <Image Name="img_PopPlotsOut" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/PopUp.png"/>
 
-            </Button>
+            </Button>-->
             <Button Name="btn_ToggleAreaPlots" Width="40" ToolTip="Hide Area Plots" Click="btn_ToggleAreaPlots_Click" >
                 <Image Name="img_HideAreaPlots" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/HideAreaPlots.png"/>
 
@@ -46,23 +47,24 @@
                        
         </ToolBar>
             <ToolBar>
-                <Label Content="Plot:" VerticalAlignment="Center"/>
+                    <local:LinkedPlotSpecificPointTool x:Name="PlotSpecificPoint" AvailablePlotsFromVM="{Binding AvailablePlots}" />
+                    <!--<Label Content="Plot:" VerticalAlignment="Center"/>
                 <ComboBox Name="cmb_PlotNames" Width="150" />
                 <Label Content="X:" VerticalAlignment="Center"/>
                 <TextBox Name="txt_XValue" Width="60"  TextChanged="txt_XValue_TextChanged" PreviewTextInput="txt_XValue_PreviewTextInput" />
                 <Label Content="Y:" VerticalAlignment="Center"/>
                 <TextBox Name="txt_YValue" Width="60" />
                 <Button Name="btn_PlotSpecificPoint" Content="Display" Click="btn_PlotSpecificPoint_Click" Background="Gray"  />
-                <Separator Margin="10,0,10,0"/>
+                <Separator Margin="10,0,10,0"/>-->
             </ToolBar>
             <ToolBar>
                     <Button Name="btn_Prev" Width="40" Content="Prev" Background="Gray" IsEnabled="False" Click="btn_Prev_Click"/>
                     <Button Name="btn_Next" Width="40" Content="Next" Background="Gray" Click="btn_Next_Click"/>
                     <Label Content="Iteration " HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBox Name="txt_IterationNumber" Width="50" Text="{Binding IterationNumber,Mode=OneWay}"/>
+                    <utils:NumericTextBoxWithClickHighlighting  x:Name="txt_IterationNumber" Width="50" Text="{Binding IterationNumber,Mode=OneWay}" LostFocus="txt_IterationNumber_LostFocus"/>
                     <Label Content="of " VerticalAlignment="Center" />
                     <Label Name="lbl_IterationTotal" Content="{Binding TotalRealizations}" VerticalAlignment="Center"/>
-                    <Button Name="btn_DisplayIteration" Content="Display" Click="btn_DisplayIteration_Click" Background="Gray"/>
+                    <!--<Button Name="btn_DisplayIteration" Content="Display" Click="btn_DisplayIteration_Click" Background="Gray"/>-->
                     <Label Content="AEP:" VerticalAlignment="Center" Margin="5,0,0,0"/>
                 <Label Content="{Binding AEP}" VerticalAlignment="Center" />
                 <Label Content="EAD:" VerticalAlignment="Center"/>
@@ -73,12 +75,12 @@
             <StackPanel Name="stk_MeanAEP" Orientation="Horizontal">
                 <Label Content="Mean Annual Exceedance Probability: "/>
                 <Label Name="lbl_MeanAEP" Content="{Binding MeanAEP}" Width="50" />
-                <Button Name="btn_ViewMeanAEP" Content="View" Width="40" Margin="2" Click="btn_ViewMeanAEP_Click"/>
+                <Button Name="btn_ViewMeanAEP" Content="View" Width="40" Height="20" Margin="2" Click="btn_ViewMeanAEP_Click"/>
             </StackPanel>
                 <StackPanel Name="stk_MeanEAD" Orientation="Horizontal">
                     <Label Content="Mean Expected Annual Damage: "/>
                     <Label Name="lbl_MeanEAD" Content="{Binding MeanEAD}" Width="65" />
-                    <Button Name="btn_ViewMeanEAD" Content="View" Width="40" Margin="2" Click="btn_ViewMeanEAD_Click"/>
+                    <Button Name="btn_ViewMeanEAD" Content="View" Width="40" Height="20" Margin="2" Click="btn_ViewMeanEAD_Click"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Threshold Type: " />

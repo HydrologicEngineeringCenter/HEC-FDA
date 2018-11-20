@@ -7,6 +7,7 @@ using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using FdaModel.Functions;
 using FdaModel.ComputationPoint;
+using System.Collections.ObjectModel;
 
 namespace FdaViewModel.Plots
 {
@@ -29,9 +30,15 @@ namespace FdaViewModel.Plots
 
         PerformanceThresholdTypes _thresholdType;
         double _thresholdValue;
+        private ObservableCollection<Plots.IndividualLinkedPlotVM> _AvailablePlots = new ObservableCollection<Plots.IndividualLinkedPlotVM>();
 
         #endregion
         #region Properties
+        public ObservableCollection<Plots.IndividualLinkedPlotVM> AvailablePlots
+        {
+            get { return _AvailablePlots; }
+            set { _AvailablePlots = value; NotifyPropertyChanged(); }
+        }
         public PerformanceThresholdTypes ThresholdType
         {
             get { return _thresholdType; }
@@ -91,6 +98,8 @@ namespace FdaViewModel.Plots
         public IndividualLinkedPlotVM Plot8VM { get; set; }
         //public Statistics.CurveIncreasing Plot8Curve { get; set; }
 
+
+            public List<string> SelectedElementNames { get; set; }
         #endregion
         #region Constructors
         public LinkedPlotsVM() : base()
@@ -106,8 +115,9 @@ namespace FdaViewModel.Plots
 
             CheckIfAllPlotsExists();
         }
-        public LinkedPlotsVM(FdaModel.ComputationPoint.Outputs.Result result, PerformanceThresholdTypes thresholdType, double thresholdValue)
+        public LinkedPlotsVM(FdaModel.ComputationPoint.Outputs.Result result, PerformanceThresholdTypes thresholdType, double thresholdValue, List<string> selectedElementNames)
         {
+            SelectedElementNames = selectedElementNames;
             Result = result;
             MeanAEP = result.AEP.GetMean;
             MeanEAD = result.EAD.GetMean;
@@ -228,8 +238,9 @@ namespace FdaViewModel.Plots
                 FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction ord = func.GetOrdinatesFunction();
                 if (func.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency || func.FunctionType == FdaModel.Functions.FunctionTypes.OutflowFrequency)
                 {
-                    Plot0VM = new IndividualLinkedPlotVM(ord, ord.Function,"LP3","Probability","Inflow (cfs)");
+                    Plot0VM = new IndividualLinkedPlotVM(ord, ord.Function,"LP3","Probability","Outflow (cfs)");
                     Plot0VM.Curve = ord.Function;
+                    AvailablePlots.Add(Plot0VM);
 
                     //Plot0Curve = ord.Function;
                 }
@@ -237,6 +248,7 @@ namespace FdaViewModel.Plots
                 {
                     Plot1VM = new IndividualLinkedPlotVM(ord,ord.Function,"Inflow-Outflow","Inflow (cfs)", "Outflow (cfs)");
                     //Plot1Curve = ord.Function;
+                    AvailablePlots.Add(Plot1VM);
                 }
                 if (func.FunctionType == FdaModel.Functions.FunctionTypes.Rating)
                 {
@@ -254,24 +266,38 @@ namespace FdaViewModel.Plots
                     FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction rat = new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(func.GetOrdinatesFunction().Function.YValues, func.GetOrdinatesFunction().Function.XValues, FdaModel.Functions.FunctionTypes.Rating);
                     Plot3VM = new IndividualLinkedPlotVM(rat,new Statistics.CurveIncreasing(ys.ToArray(), xs.ToArray(), true, false), "Rating", "Exterior Stage (ft)", "Outflow (cfs)");
                     //Plot3Curve = new Statistics.CurveIncreasing(ys.ToArray(), xs.ToArray(), true, false);
-                    
+                    AvailablePlots.Add(Plot3VM);
+
                 }
                 if (func.FunctionType == FdaModel.Functions.FunctionTypes.InteriorStageDamage)
                 {
                     Plot7VM = new IndividualLinkedPlotVM(func,ord.Function, "Interior Stage Damage", "Interior Stage (ft)", "Damage ($)");
                     //Plot7Curve = ord.Function;
+                    AvailablePlots.Add(Plot7VM);
+
                 }
                 if (func.FunctionType == FdaModel.Functions.FunctionTypes.ExteriorInteriorStage)
                 {
                     Plot5VM = new IndividualLinkedPlotVM(func,ord.Function, "Exterior-Interior Stage", "Exterior Stage (ft)", "Interior Stage (ft)");
                     //Plot5Curve = ord.Function;
+                    AvailablePlots.Add(Plot5VM);
+
                 }
                 if (func.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
                 {
                     Plot8VM = new IndividualLinkedPlotVM(func,ord.Function, "Damage Frequency", "Probability", "Damage ($)");
                     //Plot8Curve = ord.Function;
+                    AvailablePlots.Add(Plot8VM);
+
                 }
 
+                if(AvailablePlots.Count == SelectedElementNames.Count)
+                {
+                    for(int i = 0;i<AvailablePlots.Count;i++)
+                    {
+                        AvailablePlots[i].SelectedElementName = SelectedElementNames[i];
+                    }
+                }
 
             }
         }

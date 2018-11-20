@@ -51,6 +51,7 @@ namespace FdaViewModel.Conditions
 
 
         private ObservableCollection<Plots.IndividualLinkedPlotControlVM> _AddedPlots = new ObservableCollection<Plots.IndividualLinkedPlotControlVM>();
+        private ObservableCollection<Plots.IndividualLinkedPlotVM> _AvailablePlots = new ObservableCollection<Plots.IndividualLinkedPlotVM>();
 
         private string _Name;
         private int _Year;
@@ -68,11 +69,15 @@ namespace FdaViewModel.Conditions
             get { return _ThresholdTypes; }
         }
         public PerformanceThresholdTypes SelectedThresholdType { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public ObservableCollection<Plots.IndividualLinkedPlotControlVM> AddedPlots
         {
             get { return _AddedPlots; }
             set { _AddedPlots = value; NotifyPropertyChanged(); }
         }
+
 
         public ImpactArea.ImpactAreaRowItem IndexLocation { get; set; }
 
@@ -180,6 +185,12 @@ namespace FdaViewModel.Conditions
         //    set { _Plot8VM = value; NotifyPropertyChanged(); }
         //}
         #endregion
+
+            public ObservableCollection<Plots.IndividualLinkedPlotVM> AvailablePlots
+        {
+            get { return _AvailablePlots; }
+            set { _AvailablePlots = value;NotifyPropertyChanged(); }
+        }
 
         public string Description { get;
             set; }
@@ -341,6 +352,18 @@ namespace FdaViewModel.Conditions
 
         #endregion
         #region Voids
+        /// <summary>
+        /// This updates the available plots collection whos entire purpose is to work with the plot specific point tool
+        /// </summary>
+        private void UpdateAvailablePlots()
+        {
+            AvailablePlots.Clear();
+            foreach(Plots.IndividualLinkedPlotControlVM plot in AddedPlots)
+            {
+                AvailablePlots.Add(plot.IndividualPlotWrapperVM.PlotVM);
+            }
+        }
+
         private void LoadThresholdTypes()
         {
             foreach (PerformanceThresholdTypes ptt in Enum.GetValues(typeof(PerformanceThresholdTypes)))
@@ -523,11 +546,11 @@ namespace FdaViewModel.Conditions
             {
                 _AddedPlots.Add(Plot7ControlVM);
             }
-            //if (Plot8ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
-            //{
-            //    _AddedPlots.Add(Plot8ControlVM.IndividualPlotWrapperVM.PlotVM);
-            //}
-
+            if (Plot8ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot8ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            {
+                _AddedPlots.Add(Plot8ControlVM);
+            }
+            UpdateAvailablePlots();
 
         }
 
@@ -615,24 +638,28 @@ namespace FdaViewModel.Conditions
             LateralStructure myLateralStruct = new LateralStructure(10);
 
             //create the condition
-            Condition simpleTest = new Condition(2008, Name, myListOfBaseFunctions, threshold, myLateralStruct); //bool call Validate
+            Condition simpleTest = new Condition(2008, Name, myListOfBaseFunctions, threshold, null); //bool call Validate
+
+            FdaModel.ComputationPoint.Outputs.Result result = new FdaModel.ComputationPoint.Outputs.Result(simpleTest,1);
 
             //create random number gen
-            Random randomNumberGenerator = new Random(0);
+            //Random randomNumberGenerator = new Random(0);
 
             //create the realization
-            FdaModel.ComputationPoint.Outputs.Realization simpleTestRealization = new FdaModel.ComputationPoint.Outputs.Realization(simpleTest, false, false); //bool oldCompute, bool performance only
+            //FdaModel.ComputationPoint.Outputs.Realization simpleTestRealization = new FdaModel.ComputationPoint.Outputs.Realization(simpleTest, false, false); //bool oldCompute, bool performance only
 
             //compute
-            simpleTestRealization.Compute(randomNumberGenerator);
+            //simpleTestRealization.Compute(randomNumberGenerator);
 
             //if it was successful, plot number 8. if not then message why not
 
-            foreach (FdaModel.Functions.BaseFunction bf in simpleTestRealization.Functions)
+            foreach (FdaModel.Functions.BaseFunction bf in result.Realizations.First().Functions)
             {
                 if (bf.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
                 {
-                    //Plot8VM = new Plots.IndividualLinkedPlotVM(bf, bf.GetOrdinatesFunction().Function, "Damage Frequency", "Frequency", "Damage ($)");
+                   Plot8ControlVM.IndividualPlotWrapperVM.PlotVM = new Plots.IndividualLinkedPlotVM(bf, bf.GetOrdinatesFunction().Function, "Damage Frequency", "Frequency", "Damage ($)");
+                    //Plot8ControlVM.AddCurveToPlot(this, new EventArgs());
+                    Plot8ControlVM.CurrentVM = (BaseViewModel)Plot8ControlVM.IndividualPlotWrapperVM;
                     //IsPlot8Visible = true;
 
 
@@ -651,12 +678,12 @@ namespace FdaViewModel.Conditions
 
 
             //the compute isn't working right now so i am going to just throw a random 8 at it.
-            double[] x5 = new double[] { .2f, .3f, .4f, .5f, .6f, .7f, .8f, .9f };
-            double[] y5 = new double[] { 2, 200, 300, 600, 1100, 2000, 3000, 4000 };
-            OrdinatesFunction eight = new OrdinatesFunction(x5, y5, FdaModel.Functions.FunctionTypes.DamageFrequency);
+            //double[] x5 = new double[] { .2f, .3f, .4f, .5f, .6f, .7f, .8f, .9f };
+            //double[] y5 = new double[] { 2, 200, 300, 600, 1100, 2000, 3000, 4000 };
+            //OrdinatesFunction eight = new OrdinatesFunction(x5, y5, FdaModel.Functions.FunctionTypes.DamageFrequency);
 
-            Plot8ControlVM.IndividualPlotWrapperVM.PlotVM = new Plots.IndividualLinkedPlotVM(eight,eight.GetOrdinatesFunction().Function,"Cody test");
-            Plot8ControlVM.CurrentVM = (FdaViewModel.BaseViewModel)Plot8ControlVM.IndividualPlotWrapperVM;
+            //Plot8ControlVM.IndividualPlotWrapperVM.PlotVM = new Plots.IndividualLinkedPlotVM(eight,eight.GetOrdinatesFunction().Function,"Cody test");
+            //Plot8ControlVM.CurrentVM = (FdaViewModel.BaseViewModel)Plot8ControlVM.IndividualPlotWrapperVM;
         }
 
         public override void AddValidationRules()
