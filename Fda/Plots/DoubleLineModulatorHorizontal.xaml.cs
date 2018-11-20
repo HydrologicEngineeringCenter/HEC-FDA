@@ -313,6 +313,8 @@ namespace Fda.Plots
             //if (exteriorStage >= xAxisMinimum && exteriorStage <= xAxisMaximum)
             if (exteriorStage >= myMinX && exteriorStage <= myMaxX && interiorStage >= myMinY && interiorStage <= myMaxY)
             {
+                TurnOutsideOfRangeOff();
+
                 myCanvas.Children.Clear();
 
                 double canvasWidth = myCanvas.ActualWidth;
@@ -424,8 +426,8 @@ namespace Fda.Plots
             else
             {
                 //we are out of range
-                myCanvas.Children.Clear();
-                TrackerIsOutsideTheCurveRange = true;
+                TurnOutsideOfRangeOn();
+
             }
 
 
@@ -633,6 +635,23 @@ namespace Fda.Plots
                 }
             }
 
+
+        }
+
+        public void TurnOutsideOfRangeOn()
+        {
+            myCanvas.Children.Clear();
+            TrackerIsOutsideTheCurveRange = true;
+
+
+        }
+        public void TurnOutsideOfRangeOff()
+        {
+
+            //txt_OutsideOfRange.Visibility = Visibility.Hidden;
+
+            this.TrackerIsOutsideTheCurveRange = false;
+            //ShowTracker();
 
         }
 

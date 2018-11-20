@@ -626,7 +626,7 @@ namespace FdaViewModel.Conditions
 
             // write out results for testing purposes.
             Plots.LinkedPlotsVM vem = new Plots.LinkedPlotsVM(result, ThresholdType, ThresholdValue);
-            Navigate( vem);
+            Navigate( vem, false, false, "Computed Condition");
             //Output.LinkedPlotsVM vm = new Output.LinkedPlotsVM(result);
             //Navigate(vm);
         }

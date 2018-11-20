@@ -28,10 +28,15 @@ namespace Fda.Plots
         //void SetAsStartNode();
         //void SetAsEndNode();
 
+
         void SetNextPlotLinkage(ILinkedPlot plot, string thisAxis, string theirAxis);
         void SetPreviousPlotLinkage(ILinkedPlot plot);
 
-        
+        void TurnOutsideOfRangeOn();
+        void TurnOutsideOfRangeOff();
+
+
+
 
     }
 }

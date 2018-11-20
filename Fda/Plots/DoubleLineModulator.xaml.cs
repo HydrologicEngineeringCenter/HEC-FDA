@@ -323,7 +323,8 @@ namespace Fda.Plots
                 if (inflow >= myMinX && inflow <= myMaxX && outflow >= myMinY && outflow <= myMaxY)
 
                 {
-                    myCanvas.Children.Clear();
+                TurnOutsideOfRangeOff();
+                myCanvas.Children.Clear();
 
                 double canvasHeight = myCanvas.ActualHeight;
                 double totalRectangleHeight = RectRight.ActualHeight;
@@ -452,8 +453,7 @@ namespace Fda.Plots
             else
             {
                 //we are out of range
-                myCanvas.Children.Clear();
-                TrackerIsOutsideTheCurveRange = true;
+                TurnOutsideOfRangeOn();
             }
 
 
@@ -468,7 +468,7 @@ namespace Fda.Plots
             //if prev plot is outside the range then there is nothing for me to track
             if ( PreviousPlot.TrackerIsOutsideTheCurveRange)
             {
-                myCanvas.Children.Clear();
+                TurnOutsideOfRangeOn();
                 NextPlot.DisplayNextTracker(0, 0);
                 return;
             }
@@ -567,7 +567,7 @@ namespace Fda.Plots
 
             if (NextPlot.TrackerIsOutsideTheCurveRange)
             {
-                myCanvas.Children.Clear();
+                TurnOutsideOfRangeOn();
                 PreviousPlot.DisplayPreviousTracker(0, 0);
                 return;
             }
@@ -680,5 +680,25 @@ namespace Fda.Plots
 
 
         }
+
+
+        public void TurnOutsideOfRangeOn()
+        {
+            myCanvas.Children.Clear();
+            TrackerIsOutsideTheCurveRange = true;
+
+
+        }
+        public void TurnOutsideOfRangeOff()
+        {
+            
+            //txt_OutsideOfRange.Visibility = Visibility.Hidden;
+
+            this.TrackerIsOutsideTheCurveRange = false;
+            //ShowTracker();
+
+        }
+
+
     }
 }

@@ -75,7 +75,7 @@ namespace Fda.Plots
         public bool HasXAreaPlots { get; set; }
         //public bool OutOfRange { get; set; }
 
-        List<AreaSeries> ListOfRemovedAreaSeries { get; set; }
+        public List<AreaSeries> ListOfRemovedAreaSeries { get; set; }
         public bool FreezeNextTracker
         {
             get { return _FreezeTracker; }
@@ -209,6 +209,7 @@ namespace Fda.Plots
             get { return (bool)GetValue(AreaPlotVisibleProperty); }
             set { SetValue(AreaPlotVisibleProperty, value); }
         }
+      
         #endregion
 
         #region CallBacks
@@ -241,6 +242,7 @@ namespace Fda.Plots
         //        owner.MaxX = maxX;
 
         //}
+      
         private static void AreaPlotVisibleCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             IndividualLinkedPlot owner = d as IndividualLinkedPlot;
@@ -479,6 +481,23 @@ namespace Fda.Plots
 
 
         }
+
+        public void TurnOutsideOfRangeOn()
+        {
+            txt_OutsideOfRange.Visibility = Visibility.Visible;
+            this.TrackerIsOutsideTheCurveRange = true;
+            TurnTrackerOff();
+            
+        }
+        public void TurnOutsideOfRangeOff()
+        {
+            txt_OutsideOfRange.Visibility = Visibility.Hidden;
+
+            this.TrackerIsOutsideTheCurveRange = false;
+            ShowTracker();
+
+        }
+
         //private void SetCurve(Statistics.CurveIncreasing curve)
         //{
         //    OxyPlot1.Model.Series.Clear();
@@ -560,7 +579,6 @@ namespace Fda.Plots
             if (thisLineSeries != null)
             {
 
-                double incrementValue = .001;
                 double startValue = 1 - thisLineSeries.Points[0].X;
                 double endValue = 1 - thisLineSeries.Points[thisLineSeries.Points.Count - 1].X;
 
@@ -1063,37 +1081,42 @@ namespace Fda.Plots
         /// <param name="y"></param>
         public void DisplayNextTracker(double x, double y)
         {
-            FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+           // FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
 
             if (PreviousPlot.TrackerIsOutsideTheCurveRange == true)
             {
+                TurnOutsideOfRangeOn();
+                //vm.PlotIsOutsideRange(this, new EventArgs());
 
-                this.TrackerIsOutsideTheCurveRange = true;
-                vm.PlotIsOutsideRange(this, new EventArgs());
-
-                TurnTrackerOff();
+               // TurnTrackerOff();
                 _NextPlot.DisplayNextTracker(0, 0);//values don't matter here
                 return;
             }
             else
             {
-                this.TrackerIsOutsideTheCurveRange = false;
-                vm.PlotIsInsideRange(this, new EventArgs());
-                ShowTracker();
+                TurnOutsideOfRangeOff();
+                //this.TrackerIsOutsideTheCurveRange = false;
+               // vm.PlotIsInsideRange(this, new EventArgs());
+               // ShowTracker();
             }
 
             //only display to the top and bottom of curve?
             if (x > MaxX || y > MaxY || x < MinX || y < MinY)
 
             {
-                TrackerOutsideRangeFromDisplayNextTracker();
-
+                //TrackerOutsideRangeFromDisplayNextTracker();
+                TurnOutsideOfRangeOn();
+                _NextPlot.DisplayNextTracker(0, 0);
                 return; } //this is checking if the point will be somewhere in the entire plot window
-            if (x > Curve.XValues.Max() || y > Curve.YValues.Max()) { DisplayMaxOutOfRangeTracker();
-                TrackerOutsideRangeFromDisplayNextTracker();
+            if (x > Curve.XValues.Max() || y > Curve.YValues.Max()) { 
+                //TrackerOutsideRangeFromDisplayNextTracker();
+                TurnOutsideOfRangeOn();
+                _NextPlot.DisplayNextTracker(0, 0);
                 return; } //this checks if the point is out of the range of the curve
-            if (x < Curve.XValues.Min() || y < Curve.YValues.Min()) { DisplayMinOutOfRangeTracker();
-                TrackerOutsideRangeFromDisplayNextTracker();
+            if (x < Curve.XValues.Min() || y < Curve.YValues.Min()) { 
+                //TrackerOutsideRangeFromDisplayNextTracker();
+                TurnOutsideOfRangeOn();
+                _NextPlot.DisplayNextTracker(0, 0);
 
                 return; }
 
@@ -1118,25 +1141,25 @@ namespace Fda.Plots
             }
         }
 
-        private void TrackerOutsideRangeFromDisplayNextTracker()
-        {
-            this.TrackerIsOutsideTheCurveRange = true;
-            FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
-            vm.PlotIsOutsideRange(this, new EventArgs());
+        //private void TrackerOutsideRangeFromDisplayNextTracker()
+        //{
+        //    this.TrackerIsOutsideTheCurveRange = true;
+        //    FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+        //    vm.PlotIsOutsideRange(this, new EventArgs());
 
-            TurnTrackerOff();
-            _NextPlot.DisplayNextTracker(0, 0);//values don't matter here
-        }
+        //    TurnTrackerOff();
+        //    _NextPlot.DisplayNextTracker(0, 0);//values don't matter here
+        //}
 
-        private void TrackerOutsideRangeFromDisplayPreviousTracker()
-        {
-            this.TrackerIsOutsideTheCurveRange = true;
-            FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
-            vm.PlotIsOutsideRange(this, new EventArgs());
+        //private void TrackerOutsideRangeFromDisplayPreviousTracker()
+        //{
+        //    this.TrackerIsOutsideTheCurveRange = true;
+        //    FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+        //    vm.PlotIsOutsideRange(this, new EventArgs());
 
-            TurnTrackerOff();
-            _PreviousPlot.DisplayPreviousTracker(0, 0);//values don't matter here
-        }
+        //    TurnTrackerOff();
+        //    _PreviousPlot.DisplayPreviousTracker(0, 0);//values don't matter here
+        //}
 
         private DataPoint GetNextTrackerDataPoint(SharedAxisEnum nextPlotSharedAxis, DataPoint currentDataPoint)
         {
@@ -1199,37 +1222,31 @@ namespace Fda.Plots
         public void DisplayPreviousTracker(double x, double y)
         {
 
-            FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
-
             if (NextPlot.TrackerIsOutsideTheCurveRange == true)
             {
-
-                this.TrackerIsOutsideTheCurveRange = true;
-                vm.PlotIsOutsideRange(this, new EventArgs());
-
-                TurnTrackerOff();
+                TurnOutsideOfRangeOn();               
                 _PreviousPlot.DisplayPreviousTracker(0, 0);//values don't matter here
                 return;
             }
             else
             {
-                this.TrackerIsOutsideTheCurveRange = false;
-                vm.PlotIsInsideRange(this, new EventArgs());
-                ShowTracker();
+                TurnOutsideOfRangeOff();
             }
 
 
             //only display to the top and bottom of the curve my cursor is on?
             if (x > MaxX || y > MaxY || x < MinX || y < MinY) {
-                TrackerOutsideRangeFromDisplayPreviousTracker();
+                //TrackerOutsideRangeFromDisplayPreviousTracker();
+                TurnOutsideOfRangeOn();
+                _PreviousPlot.DisplayPreviousTracker(0, 0);
                 return; } //this is checking if the point will be somewhere in the entire plot window
-            if (x > Curve.XValues.Max() || y > Curve.YValues.Max()) { DisplayMaxOutOfRangeTracker();
-                TrackerOutsideRangeFromDisplayPreviousTracker();
-
+            if (x > Curve.XValues.Max() || y > Curve.YValues.Max()) {
+                TurnOutsideOfRangeOn();
+                _PreviousPlot.DisplayPreviousTracker(0, 0);
                 return; } //this checks if the point is out of the range of the curve
-            if (x < Curve.XValues.Min() || y < Curve.YValues.Min()) { DisplayMinOutOfRangeTracker();
-                TrackerOutsideRangeFromDisplayPreviousTracker();
-
+            if (x < Curve.XValues.Min() || y < Curve.YValues.Min()) { 
+                TurnOutsideOfRangeOn();
+                _PreviousPlot.DisplayPreviousTracker(0, 0);
                 return; }
 
             DataPoint dp = new DataPoint(x, y);
@@ -1279,12 +1296,24 @@ namespace Fda.Plots
             {
                 return;
             }
-            if ( _FreezeTracker == false)
+            if (_FreezeTracker == false)
             {
-                this.TrackerIsOutsideTheCurveRange = false;
-                //FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
-                //vm.PlotIsInsideRange(this, new EventArgs());
+
+            TurnOutsideOfRangeOff();
             }
+               // this.TrackerIsOutsideTheCurveRange = false;
+            //    //this is hacky but the cond editor uses a wrapper around the individual linked plot and the results viewer doesn't
+            //    if (this.DataContext.GetType() == typeof(FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM))
+            //    {
+            //        FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+            //        vm.PlotIsInsideRange(this, new EventArgs());
+            //    }
+            //    else if (this.DataContext.GetType() == typeof(FdaViewModel.Plots.IndividualLinkedPlotVM))
+            //    {
+            //        FdaViewModel.Plots.IndividualLinkedPlotVM vm = (FdaViewModel.Plots.IndividualLinkedPlotVM)this.DataContext;
+            //        //vm.DisplayOutOfRange = false;
+            //    }
+            //}
 
 
             DisplayTheTrackers(e.Position);

@@ -63,7 +63,9 @@
 
 
         </Border>
-        <TextBlock Text="OUT OF RANGE" FontSize="16"  VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding Path=DisplayOutOfRange,Converter={StaticResource BoolToVisibilityConverter}}">
+        <!--<TextBlock Text="OUT OF RANGE" FontSize="16"  VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding Path=DisplayOutOfRange,Converter={StaticResource BoolToVisibilityConverter}}">-->
+        <TextBlock Name="txt_OutsideOfRange" Text="OUT OF RANGE" FontSize="16"  VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Hidden" >
+
             <TextBlock.Background>
                 <SolidColorBrush Opacity="0" />
             </TextBlock.Background>

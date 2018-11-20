@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="Fda.Plots.LinkedPlotSpecificPointTool"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Fda.Plots"
+             xmlns:utils="clr-namespace:Fda.Utilities"
+
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <ToolBar>
+            <Label Content="Plot:" />
+            <ComboBox Name="cmb_PlotNames" Width="150" ItemsSource="{Binding AddedPlots}" DisplayMemberPath="CurveImporterVM.SelectedElementName"  />
+
+            <Label Content="X:"/>
+            <utils:NumericTextBoxWithClickHighlighting x:Name="txt_XValue" Width="60" Height="20" LostFocus="txt_XValue_LostFocus"    />
+            <Label Content="Y:"/>
+            <utils:NumericTextBoxWithClickHighlighting x:Name="txt_YValue" Width="60" Height="20" LostFocus="txt_YValue_LostFocus" />
+           
+        </ToolBar>
+    </Grid>
+</UserControl>

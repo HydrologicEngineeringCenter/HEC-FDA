@@ -104,7 +104,10 @@
 
 
             </Grid.ColumnDefinitions>
-            <local:IndividualLinkedPlot x:Name="plot1" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot1VM.Curve}" BaseFunction="{Binding Path=Plot1VM.BaseFunction}" Title="{Binding Path=Plot1VM.Title}" XAxisLabel="{Binding Plot1VM.XAxisLabel}" YAxisLabel="{Binding Plot1VM.YAxisLabel}"  />
+            <local:IndividualLinkedPlot x:Name="plot1" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot1VM.Curve}" BaseFunction="{Binding Path=Plot1VM.BaseFunction}" Title="{Binding Path=Plot1VM.Title}" XAxisLabel="{Binding Plot1VM.XAxisLabel}" YAxisLabel="{Binding Plot1VM.YAxisLabel}" AreaPlotVisible="True" />
+            <!--<local:ConditionsIndividualPlotWrapper x:Name="plot1" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="2" DataContext="{Binding Plot1VM}"   />-->
+
+
             <Button Name="btn_CollapsePlot1"  Width="26" Height="26" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="White" BorderBrush="White" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,1,0,0" Click="btn_CollapsePlot1_Click">
                 <Image Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/PopDown.png"/>
 
@@ -132,7 +135,7 @@
 
             </Grid.ColumnDefinitions>
 
-            <local:IndividualLinkedPlot x:Name="plot5" Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot5VM.Curve}" BaseFunction="{Binding Path=Plot5VM.BaseFunction}" Title="{Binding Path=Plot5VM.Title}" XAxisLabel="{Binding Plot5VM.XAxisLabel}" YAxisLabel="{Binding Plot5VM.YAxisLabel}"   />
+            <local:IndividualLinkedPlot x:Name="plot5" Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot5VM.Curve}" BaseFunction="{Binding Path=Plot5VM.BaseFunction}" Title="{Binding Path=Plot5VM.Title}" XAxisLabel="{Binding Plot5VM.XAxisLabel}" YAxisLabel="{Binding Plot5VM.YAxisLabel}"  AreaPlotVisible="True" />
             <Button Name="btn_CollapsePlot5" Width="26" Height="26" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Background="White" BorderBrush="White" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="1,0,0,0" Click="btn_CollapsePlot5_Click">
                 <Image Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/PopRight.png"/>
 
@@ -173,10 +176,10 @@
         <local:DoubleLineModulator x:Name="doubleLineModulator" Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Curve="{Binding Path=Plot1VM.Curve}" />
         <!--<local:SingleLinePlot Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Width="100" MinHeight="150" />-->
 
-            <local:IndividualLinkedPlot  x:Name="plot0" Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot0VM.Curve}" BaseFunction="{Binding Path=Plot0VM.BaseFunction}" Title="{Binding Path=Plot0VM.Title}" XAxisLabel="{Binding Plot0VM.XAxisLabel}" YAxisLabel="{Binding Plot0VM.YAxisLabel}"  SetYAxisToLogarithmic="True" FlipFrequencyAxis="True" />
+            <local:IndividualLinkedPlot  x:Name="plot0" Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot0VM.Curve}" BaseFunction="{Binding Path=Plot0VM.BaseFunction}" Title="{Binding Path=Plot0VM.Title}" XAxisLabel="{Binding Plot0VM.XAxisLabel}" YAxisLabel="{Binding Plot0VM.YAxisLabel}"  SetYAxisToLogarithmic="True" FlipFrequencyAxis="True" AreaPlotVisible="True" />
 
 
-            <local:IndividualLinkedPlot x:Name="plot3" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot3VM.Curve}" BaseFunction="{Binding Path=Plot3VM.BaseFunction}" Title="{Binding Path=Plot3VM.Title}" XAxisLabel="{Binding Plot3VM.XAxisLabel}" YAxisLabel="{Binding Plot3VM.YAxisLabel}"  SetYAxisToLogarithmic="True" />
+            <local:IndividualLinkedPlot x:Name="plot3" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot3VM.Curve}" BaseFunction="{Binding Path=Plot3VM.BaseFunction}" Title="{Binding Path=Plot3VM.Title}" XAxisLabel="{Binding Plot3VM.XAxisLabel}" YAxisLabel="{Binding Plot3VM.YAxisLabel}"  SetYAxisToLogarithmic="True" AreaPlotVisible="True" />
                 <!--<ResizeGrip Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2"/>-->
 
 
@@ -185,10 +188,10 @@
         <local:DoubleLineModulatorHorizontal x:Name="DoubleLineHorizontal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Curve="{Binding Path=Plot5VM.Curve}" />
 
 
-            <local:IndividualLinkedPlot x:Name="plot7" Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot7VM.Curve}" BaseFunction="{Binding Path=Plot7VM.BaseFunction}" Title="{Binding Path=Plot7VM.Title}" XAxisLabel="{Binding Plot7VM.XAxisLabel}" YAxisLabel="{Binding Plot7VM.YAxisLabel}"  SetYAxisToLogarithmic="True"/>
+            <local:IndividualLinkedPlot x:Name="plot7" Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot7VM.Curve}" BaseFunction="{Binding Path=Plot7VM.BaseFunction}" Title="{Binding Path=Plot7VM.Title}" XAxisLabel="{Binding Plot7VM.XAxisLabel}" YAxisLabel="{Binding Plot7VM.YAxisLabel}"  SetYAxisToLogarithmic="True" AreaPlotVisible="True"/>
 
 
-            <local:IndividualLinkedPlot x:Name="plot8" Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot8VM.Curve}" BaseFunction="{Binding Path=Plot8VM.BaseFunction}" Title="{Binding Path=Plot8VM.Title}" XAxisLabel="{Binding Plot8VM.XAxisLabel}" YAxisLabel="{Binding Plot8VM.YAxisLabel}"  FlipFrequencyAxis="True" SetYAxisToLogarithmic="True"/>
+            <local:IndividualLinkedPlot x:Name="plot8" Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot8VM.Curve}" BaseFunction="{Binding Path=Plot8VM.BaseFunction}" Title="{Binding Path=Plot8VM.Title}" XAxisLabel="{Binding Plot8VM.XAxisLabel}" YAxisLabel="{Binding Plot8VM.YAxisLabel}"  FlipFrequencyAxis="True" SetYAxisToLogarithmic="True" AreaPlotVisible="True"/>
         <!--<GridSplitter Grid.Row="2" Grid.RowSpan="4" Width="5" Grid.Column="4" HorizontalAlignment="Left" />-->
 
         <!--<GridSplitter Grid.Row="2" Grid.Column="0" Margin="0" Background="Gray" BorderBrush="DarkGray" BorderThickness="1" HorizontalAlignment="Right" Width="3"/>-->

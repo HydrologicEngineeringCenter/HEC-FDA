@@ -576,7 +576,7 @@ namespace Fda.Plots
             plot3.RemoveAreaPlots();
             plot7.RemoveAreaPlots();
             plot8.RemoveAreaPlots();
-            AreaPlotsHaveBeenRemoved = true;
+            //AreaPlotsHaveBeenRemoved = true;
         }
 
         private void AddAreaPlots()
@@ -638,12 +638,32 @@ namespace Fda.Plots
             }
         }
 
+        private void ClearAreaSeriesLists()
+        {
+            plot0.ListOfRemovedAreaSeries.Clear();
+            plot1.ListOfRemovedAreaSeries.Clear();
+            plot3.ListOfRemovedAreaSeries.Clear();
+            plot5.ListOfRemovedAreaSeries.Clear();
+            plot7.ListOfRemovedAreaSeries.Clear();
+            plot8.ListOfRemovedAreaSeries.Clear();
+        }
 
         public void PlotIteration(int iteration)
         {
+            if(AreaPlotsHaveBeenRemoved)
+            {
+                //if the user has toggled the area series off, then each plot stores its list of
+                //removed area series. When the user toggles them on, it adds the removed area series
+                //to the plot. If the user iterates to a new plot, however, inbetween the button clicks
+                //then it will add the wrong area series to the plots
+                ClearAreaSeriesLists();
+            }
+
             //reasign the input functions
             FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
             //InputFunctions = vm.Result.Realizations[iteration].Functions;
+
+            
 
             //clear all axes
             //plot0.OxyPlot1.Model.Axes.Clear();
@@ -679,6 +699,8 @@ namespace Fda.Plots
             //ResetMinMaxValues();
             //IndividualLinkedPlot.FlipFreqAxis(plot8);// plot8.FlipFrequencyAxis = true;
             //IndividualLinkedPlot.FlipFreqAxis(plot0);
+
+            //set the shared axes is what actually creates the area series
             SetTheSharedAxes();
             SetTheLinkages();
             UpdatePlotVisibility();
@@ -702,8 +724,15 @@ namespace Fda.Plots
 
             plot8.PlotAreaUnderTheCurve();
 
-            // AddAreaPlots();
-            plot0.OxyPlot1.InvalidatePlot(true);
+            if (AreaPlotsHaveBeenRemoved)
+            {
+                //the area plots automatically get drawn if "areaplotvisibility" is true
+                //so here we need to remove them
+                RemoveAreaPlotsFromButtonClick();
+            }
+
+                //AddAreaPlots();
+                plot0.OxyPlot1.InvalidatePlot(true);
             plot1.OxyPlot1.InvalidatePlot(true);
             plot3.OxyPlot1.InvalidatePlot(true);
             plot5.OxyPlot1.InvalidatePlot(true);

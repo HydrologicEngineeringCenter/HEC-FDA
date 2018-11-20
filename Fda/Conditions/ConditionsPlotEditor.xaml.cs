@@ -925,7 +925,8 @@ namespace Fda.Conditions
             if(_SelectedPlot == null) { return; }
             // if (cmb_PlotNames.SelectedIndex == -1) { return; }
             //_SelectedPlot = (IndividualLinkedPlot)cmb_PlotNames.SelectedItem;
-            _SelectedPlot.TrackerIsOutsideTheCurveRange = false;
+           // _SelectedPlot.TrackerIsOutsideTheCurveRange = false;
+            _SelectedPlot.TurnOutsideOfRangeOff();
             FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)_SelectedPlot.DataContext;
             vm.PlotIsInsideRange(this, new EventArgs());
 

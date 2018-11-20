@@ -73,17 +73,18 @@
             </ToolBar>
             <ToolBar>
                 <Label Content="Plot:" />
-                    <!--<ComboBox Name="cmb_PlotNames" Width="150" ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}},Path=ObservablePlots}" DisplayMemberPath="TestName"  />-->
                     <ComboBox Name="cmb_PlotNames" Width="150" ItemsSource="{Binding AddedPlots}" DisplayMemberPath="CurveImporterVM.SelectedElementName"  />
 
                     <Label Content="X:"/>
                     <utils:NumericTextBoxWithClickHighlighting x:Name="txt_XValue" Width="60" Height="20" LostFocus="txt_XValue_LostFocus"    />
                 <Label Content="Y:"/>
                     <utils:NumericTextBoxWithClickHighlighting x:Name="txt_YValue" Width="60" Height="20" LostFocus="txt_YValue_LostFocus" />
-                    <!--<Button Name="btn_PlotSpecificPoint" Content="Display"  Click="btn_PlotSpecificPoint_Click"/>-->
-                <!--<Separator Margin="10,0,10,0"/>-->
+                  
             </ToolBar>
-            <!--<ToolBar>
+                <!--<plot:LinkedPlotSpecificPointTool />-->
+
+
+                <!--<ToolBar>
                 <Label Content="AEP:" VerticalAlignment="Center"/>
                 <Label Content="{Binding AEP}" VerticalAlignment="Center" />
                 <Label Content="EAD:" VerticalAlignment="Center"/>
