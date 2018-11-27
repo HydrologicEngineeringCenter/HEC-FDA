@@ -8,6 +8,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <plots:DoubleLineModulator Curve="{Binding Path=PlotVM.Curve}" BaseFunction="{Binding Path=PlotVM.BaseFunction}" />
+        <plots:DoubleLineModulator Curve="{Binding Path=PlotVM.Curve}" BaseFunction="{Binding Path=PlotVM.BaseFunction}" TrackerVisible="{Binding TrackerVisible}" />
     </Grid>
 </UserControl>

@@ -119,8 +119,14 @@ namespace FdaViewModel.Plots
         {
             SelectedElementNames = selectedElementNames;
             Result = result;
-            MeanAEP = result.AEP.GetMean;
-            MeanEAD = result.EAD.GetMean;
+            if (result.AEP != null)
+            {
+                MeanAEP = result.AEP.GetMean;
+            }
+            if (result.EAD != null)
+            {
+                MeanEAD = result.EAD.GetMean;
+            }
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;
 

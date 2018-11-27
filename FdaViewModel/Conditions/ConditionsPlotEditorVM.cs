@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FdaModel.ComputationPoint;
 using FdaModel.Functions.OrdinatesFunctions;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace FdaViewModel.Conditions
 {
@@ -58,17 +59,24 @@ namespace FdaViewModel.Conditions
         private ImpactArea.ImpactAreaElement _SelectedImpactArea;
 
         private ObservableCollection<PerformanceThresholdTypes> _ThresholdTypes = new ObservableCollection<PerformanceThresholdTypes>();
+        private PerformanceThresholdTypes _SelectedThresholdType;
+        private bool _ThresholdLinesAllowedToShow = true;
 
         #endregion
         #region Properties
         //public List<Plots.IndividualLinkedPlotControlVM> ListOfLinkedPlots { get; set; }
 
-        public double ThresholdValue { get; set; }
+        public double ThresholdValue { get;
+            set; }
         public ObservableCollection<PerformanceThresholdTypes> ThresholdTypes
         {
             get { return _ThresholdTypes; }
         }
-        public PerformanceThresholdTypes SelectedThresholdType { get; set; }
+        public PerformanceThresholdTypes SelectedThresholdType
+        {
+            get { return _SelectedThresholdType; }
+            set { _SelectedThresholdType = value; PlotThresholdLine(ThresholdValue); }
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -348,10 +356,50 @@ namespace FdaViewModel.Conditions
             ImpactAreas = tempList;//this is to hit the notify prop changed
         }
 
-       
+
 
         #endregion
         #region Voids
+
+        public void ToggleThresholdLines()
+        {
+            if (_ThresholdLinesAllowedToShow)
+            {
+                _ThresholdLinesAllowedToShow = false;
+                Plot7ControlVM.IndividualPlotWrapperVM.Threshold = null;//this is basically a flag that the callback uses to turn them off
+                Plot8ControlVM.IndividualPlotWrapperVM.Threshold = new PerformanceThreshold(new LateralStructure(0));//this is just do change it from null to a value so that i can turn it back to null
+                Plot8ControlVM.IndividualPlotWrapperVM.Threshold = null;
+            }
+            else
+            {
+                //turn them on
+                _ThresholdLinesAllowedToShow = true ;
+                PerformanceThreshold pt = new PerformanceThreshold(SelectedThresholdType, ThresholdValue);
+                Plot7ControlVM.IndividualPlotWrapperVM.Threshold = pt;//this is basically a flag that the callback uses to turn them off
+                //Plot8ControlVM.IndividualPlotWrapperVM.Threshold = pt;
+            }
+        }
+        public void PlotThresholdLine(double thresholdValue)
+        {
+            if(_ThresholdLinesAllowedToShow == false) { return; }
+            //I can't use the Threshold property that exists in this class
+            //because it hasn't changed yet, it is an ordering issue, so i just pass it in.
+            PerformanceThreshold pt = new PerformanceThreshold(SelectedThresholdType, thresholdValue);
+            if(SelectedThresholdType == PerformanceThresholdTypes.InteriorStage)
+            {
+                Plot7ControlVM.IndividualPlotWrapperVM.Threshold = pt;//this will trigger the callback in the view side
+
+            }
+            else if (SelectedThresholdType == PerformanceThresholdTypes.Damage)
+            {
+                Plot7ControlVM.IndividualPlotWrapperVM.Threshold = pt;
+            }
+            //if(Plot8ControlVM.CurrentVM.GetType() == typeof(Plots.ConditionsIndividualPlotWrapperVM))
+            //{
+            //    Plot8ControlVM.IndividualPlotWrapperVM.Threshold = pt;
+            //}
+        }
+
         /// <summary>
         /// This updates the available plots collection whos entire purpose is to work with the plot specific point tool
         /// </summary>
@@ -592,8 +640,8 @@ namespace FdaViewModel.Conditions
         {
 
             //get the threshold values
-            PerformanceThreshold threshold = new PerformanceThreshold(PerformanceThresholdTypes.InteriorStage, 8);
-
+            //PerformanceThreshold threshold = new PerformanceThreshold(PerformanceThresholdTypes.InteriorStage, 8);
+            PerformanceThreshold threshold = new PerformanceThreshold(SelectedThresholdType, ThresholdValue);
 
             //get the selected impact area
 
@@ -638,10 +686,9 @@ namespace FdaViewModel.Conditions
             LateralStructure myLateralStruct = new LateralStructure(10);
 
             //create the condition
-            Condition simpleTest = new Condition(2008, Name, myListOfBaseFunctions, threshold, null); //bool call Validate
+            FdaModel.ComputationPoint.Condition simpleTest = new FdaModel.ComputationPoint.Condition(2008, Name, myListOfBaseFunctions, threshold, null); //bool call Validate
 
             FdaModel.ComputationPoint.Outputs.Result result = new FdaModel.ComputationPoint.Outputs.Result(simpleTest,1);
-
             //create random number gen
             //Random randomNumberGenerator = new Random(0);
 
@@ -652,13 +699,18 @@ namespace FdaViewModel.Conditions
             //simpleTestRealization.Compute(randomNumberGenerator);
 
             //if it was successful, plot number 8. if not then message why not
-
+            if(result.Realizations.Count == 0)
+            {
+                MessageBox.Show("A damage frequency curve could not be created", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             foreach (FdaModel.Functions.BaseFunction bf in result.Realizations.First().Functions)
             {
                 if (bf.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
                 {
                    Plot8ControlVM.IndividualPlotWrapperVM.PlotVM = new Plots.IndividualLinkedPlotVM(bf, bf.GetOrdinatesFunction().Function, "Damage Frequency", "Frequency", "Damage ($)");
                     //Plot8ControlVM.AddCurveToPlot(this, new EventArgs());
+                    TrimZeroesFromCurve(Plot8ControlVM.IndividualPlotWrapperVM.PlotVM.Curve);
                     Plot8ControlVM.CurrentVM = (BaseViewModel)Plot8ControlVM.IndividualPlotWrapperVM;
                     //IsPlot8Visible = true;
 
@@ -684,6 +736,25 @@ namespace FdaViewModel.Conditions
 
             //Plot8ControlVM.IndividualPlotWrapperVM.PlotVM = new Plots.IndividualLinkedPlotVM(eight,eight.GetOrdinatesFunction().Function,"Cody test");
             //Plot8ControlVM.CurrentVM = (FdaViewModel.BaseViewModel)Plot8ControlVM.IndividualPlotWrapperVM;
+        }
+
+        private void TrimZeroesFromCurve(Statistics.CurveIncreasing curveIncreasing)
+        {
+            int index = -1;
+            for(int i = 0;i<curveIncreasing.XValues.Count;i++)
+            //foreach(double y in curveIncreasing.YValues)
+            {
+                if(curveIncreasing.YValues[i] > 0)
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if(index>-1)
+            {
+                curveIncreasing.RemoveRange(0, index);
+                
+            }
         }
 
         public override void AddValidationRules()

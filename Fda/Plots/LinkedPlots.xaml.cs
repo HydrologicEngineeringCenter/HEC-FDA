@@ -182,6 +182,9 @@ namespace Fda.Plots
                 }
             }
 
+            FdaModel.ComputationPoint.PerformanceThreshold pt = new FdaModel.ComputationPoint.PerformanceThreshold(vm.ThresholdType, vm.ThresholdValue);
+            plot7.PlotThreshold(pt);
+            plot7.OxyPlot1.InvalidatePlot(true);
         }
 
         private void SetTheSharedAxes()
@@ -745,6 +748,8 @@ namespace Fda.Plots
             //plot8.OxyPlot1.Model.InvalidatePlot(true);
 
             plot8.PlotAreaUnderTheCurve();
+            FdaModel.ComputationPoint.PerformanceThreshold pt = new FdaModel.ComputationPoint.PerformanceThreshold(vm.ThresholdType, vm.ThresholdValue);
+            plot7.PlotThreshold(pt);
 
             if (AreaPlotsHaveBeenRemoved)
             {

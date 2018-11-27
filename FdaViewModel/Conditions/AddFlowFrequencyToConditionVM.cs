@@ -73,7 +73,10 @@ namespace FdaViewModel.Conditions
         {
             SelectedElement = selectedElement;
             InflowFrequencyCurves = lp3Curves;
-            StudyCache.FlowFrequencyAdded += FlowFrequencyAdded;
+
+            StudyCache.FlowFrequencyAdded += FlowFrequencyWasUpdated;
+            StudyCache.FlowFrequencyUpdated += FlowFrequencyWasUpdated;
+            StudyCache.FlowFrequencyRemoved += FlowFrequencyWasUpdated;
 
         }
 
@@ -87,12 +90,22 @@ namespace FdaViewModel.Conditions
           
         }
 
-        private void FlowFrequencyAdded(object sender, Saving.ElementAddedEventArgs e)
+        private void FlowFrequencyWasUpdated(object sender, EventArgs e)
         {
-            List<FrequencyRelationships.AnalyticalFrequencyElement> tempList = InflowFrequencyCurves;
-            tempList.Add((FrequencyRelationships.AnalyticalFrequencyElement)e.Element);
+            List<FrequencyRelationships.AnalyticalFrequencyElement> tempList = StudyCache.GetChildElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
             InflowFrequencyCurves = tempList;//this is to hit the notify prop changed
+            //at first i thought that if a user adds, updates, or removes and item, then maybe we would want to move the selected item, but i dont think
+            //that is a good idea. First i don't know if they added and element from the conditios editor or the study. I don't want to be switching things around
+            //without the user knowing it.
+            //SelectedElement = ListOfStageDamageElements.LastOrDefault();//this works if an element was added or removed. Not so good if an element was updated.
         }
+
+        //private void FlowFrequencyAdded(object sender, Saving.ElementAddedEventArgs e)
+        //{
+        //    List<FrequencyRelationships.AnalyticalFrequencyElement> tempList = InflowFrequencyCurves;
+        //    tempList.Add((FrequencyRelationships.AnalyticalFrequencyElement)e.Element);
+        //    InflowFrequencyCurves = tempList;//this is to hit the notify prop changed
+        //}
 
         public void OKClicked()
         {

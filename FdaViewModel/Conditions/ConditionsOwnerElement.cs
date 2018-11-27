@@ -94,7 +94,7 @@ namespace FdaViewModel.Conditions
         {
             List<RatingCurveElement> listOfRatingCurves = StudyCache.GetChildElementsOfType<RatingCurveElement>();
             AddRatingCurveToConditionVM ratImporter = new AddRatingCurveToConditionVM(listOfRatingCurves);
-            ratImporter.RequestNavigation += ownerElement.Navigate;
+           // ratImporter.RequestNavigation += ownerElement.Navigate;
             return new Plots.IndividualLinkedPlotControlVM(
                 new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Rating", "Exterior Stage", "OutFlow"),
                 new Plots.IndividualLinkedPlotCoverButtonVM("Rating Curve"),
@@ -145,6 +145,7 @@ namespace FdaViewModel.Conditions
             Plots.IndividualLinkedPlotControlVM inflowOutflowControl = BuildDefaultInflowOutflowControl(this);
 
             Plots.IndividualLinkedPlotControlVM ratingControl = BuildDefaultRatingControl(this);
+            ratingControl.RequestNavigation += Navigate;
 
             Plots.IndividualLinkedPlotControlVM extIntStageControl = BuildDefaultExtIntStageControl(this);
 
@@ -160,7 +161,7 @@ namespace FdaViewModel.Conditions
             ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl, StageDamageControl, DamageFrequencyControl, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);
-
+            vm.RequestNavigation += Navigate;
             Navigate(vm, false, false,"Create Condition");
 
             //if (!vm2.WasCanceled)

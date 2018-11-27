@@ -94,7 +94,7 @@ namespace FdaViewModel.FlowTransforms
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
             //vm.ParentGUID = this.GUID;
             //StudyCache.AddSiblingRules(vm, this);
-            Navigate( vm, false, false, "Edit Inflow Outflow");
+            Navigate( vm, false, false, "Edit " + vm.Name);
 
        
         }

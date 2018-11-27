@@ -77,7 +77,7 @@ namespace FdaViewModel.FrequencyRelationships
                .WithCanOpenMultipleTimes(false);
 
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this, actionManager);// Name, Distribution, Description, _Owner);
-            Navigate(vm, false, false, "Edit Frequency");
+            Navigate(vm, false, false, "Edit " + vm.Name);
             //if (!vm.WasCanceled)
             //{
             //    if (!vm.HasError)

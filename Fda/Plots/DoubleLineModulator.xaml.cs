@@ -26,6 +26,9 @@ namespace Fda.Plots
         public static readonly DependencyProperty BaseFunctionProperty = DependencyProperty.Register("BaseFunction", typeof(FdaModel.Functions.BaseFunction), typeof(DoubleLineModulator), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(BaseFunctionChangedCallBack)));
 
         public static readonly DependencyProperty CurveProperty = DependencyProperty.Register("Curve", typeof(Statistics.CurveIncreasing), typeof(DoubleLineModulator), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(CurveChangedCallBack)));
+        public static readonly DependencyProperty TrackerVisibleProperty = DependencyProperty.Register("TrackerVisible", typeof(bool), typeof(DoubleLineModulator), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(TrackerVisibleCallBack)));
+
+
 
         private bool _FreezeTracker;
         private SharedAxisEnum _NextPlotSharedAxisEnum = SharedAxisEnum.unknown;
@@ -47,7 +50,11 @@ namespace Fda.Plots
         public double MinY { get; set; }
         public bool IsStartNode { get; set; }
         public bool IsEndNode { get; set; }
-
+        public bool TrackerVisible
+        {
+            get { return (bool)GetValue(TrackerVisibleProperty); }
+            set { SetValue(TrackerVisibleProperty, value); }
+        }
         public FdaModel.Functions.BaseFunction BaseFunction
         {
             get { return (FdaModel.Functions.BaseFunction)GetValue(BaseFunctionProperty); }
@@ -700,6 +707,24 @@ namespace Fda.Plots
 
         }
 
+
+        private static void TrackerVisibleCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            DoubleLineModulator owner = d as DoubleLineModulator;
+            bool trackerVisible = Convert.ToBoolean(e.NewValue);
+            if (trackerVisible == true)
+            {
+               // owner.ShowTracker();
+            }
+            else
+            {
+                owner.myCanvas.Children.Clear();
+
+                //owner.HideTracker();
+                //if there is no tracker then turn the outside of range label off
+                // owner.TurnOutsideOfRangeOff();
+            }
+        }
 
     }
 }

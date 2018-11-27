@@ -420,7 +420,8 @@ namespace FdaViewModel.Conditions
             Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Rating", "Exterior Stage", "OutFlow");
             plotWrapper.PlotVM = plotVM;
             AddRatingCurveToConditionVM importer = new AddRatingCurveToConditionVM(listOfRatingCurves, RatingCurveElement);
-            importer.RequestNavigation += Navigate;
+            //importer.RequestNavigation += Navigate;
+           // Navigate(importer, false, false, "mytest");
             return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Rating Curve"), importer);
         }
 
@@ -487,6 +488,7 @@ namespace FdaViewModel.Conditions
             if (UseAnalyiticalFlowFrequency)
             {
                 lp3Control = BuildLP3ControlFromElement();
+                lp3Control.RequestNavigation += Navigate;
             }
             else
             {
@@ -505,6 +507,7 @@ namespace FdaViewModel.Conditions
             if (UseRatingCurve)
             {
                 ratingControl = BuildRatingControlFromElement();
+                ratingControl.RequestNavigation += Navigate;
             }
             else
             {
@@ -542,6 +545,11 @@ namespace FdaViewModel.Conditions
 
             // ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, infOutControl, ratingControl, extIntStageControl, stageDamageControl, damageFrequencyControl,
             //   UseAnalyiticalFlowFrequency, UseInflowOutflow, UseRatingCurve,UseExteriorInteriorStage,UseAggregatedStageDamage);
+
+
+            
+
+
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                  .WithSiblingRules(this)
                .WithParentGuid(this.GUID)
@@ -552,7 +560,7 @@ namespace FdaViewModel.Conditions
 
 
             //ConditionsEditorVM vm = new ConditionsEditorVM(Name,Description, AnalysisYear, impactAreas,ImpactAreaSet,ImpactArea, UseAnalyiticalFlowFrequency, freqeles, AnalyticalFlowFrequency, UseInflowOutflow, inflowOutflowList,InflowOutflowElement,UseRatingCurve, ratingeles,RatingCurve, UseExteriorInteriorStage, extIntList,ExteriorInteriorElement,UseLevee,leveeList,LeveeElement,UseFailureFunction,failureFunctionList,FailureFunctionElement,UseAggregatedStageDamage, damageles, StageDamage,UseThreshold,ThresholdType,ThresholdValue, (ConditionsOwnerElement)_Owner);
-            Navigate( vm, false,false,"Edit Condition");
+            Navigate( vm, false,false,"Edit " + vm.Name);
             //if (!vm.WasCanceled)
             //{
             //    if (!vm.HasError)

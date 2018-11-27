@@ -477,6 +477,7 @@ namespace FdaViewModel.Study
             //dynamicTabVM.BaseVM.TabUniqueID = uniqueID;
             dynamicTabVM.RemoveEvent += RemoveTab;
             dynamicTabVM.PopTabOutEvent += PopTabOut;
+            //this is used to go from a window back to a tab after it has been popped out
             dynamicTabVM.BaseVM.AddPopThisIntoATabAction((dynamicTab, isPoppingIn) => AddTab(dynamicTab, isPoppingIn));
             Tabs.Add(dynamicTabVM);
             Avalon.Add(dynamicTabVM.BaseVM);

@@ -27,7 +27,7 @@ namespace FdaViewModel.Conditions
 
         //private AggregatedStageDamage.AggregatedStageDamageElement _StageDamageElement;
         private List<AggregatedStageDamage.AggregatedStageDamageElement> _ListOfStageDamageElements;
-
+        private ChildElement _SelectedElement;
         #endregion
         #region Properties
         public bool IsPoppedOut { get; set; }
@@ -38,7 +38,8 @@ namespace FdaViewModel.Conditions
         //}
         public ChildElement SelectedElement
         {
-            get;set;
+            get { return _SelectedElement; }
+            set { _SelectedElement = value;NotifyPropertyChanged(); }
         }
         public List<AggregatedStageDamage.AggregatedStageDamageElement> ListOfStageDamageElements
         {
@@ -86,7 +87,10 @@ namespace FdaViewModel.Conditions
         {
             SelectedElement = selectedElement;
             ListOfStageDamageElements = listOfStageDamageElements;
-            StudyCache.StageDamageAdded += StageDamageAdded;
+
+            StudyCache.StageDamageAdded += StageDamageWasUpdated;
+            StudyCache.StageDamageUpdated += StageDamageWasUpdated;
+            StudyCache.StageDamageRemoved += StageDamageWasUpdated;
 
         }
         #endregion
@@ -99,12 +103,23 @@ namespace FdaViewModel.Conditions
         }
 
       
-        private void StageDamageAdded(object sender, Saving.ElementAddedEventArgs e)
+        //private void StageDamageAdded(object sender, Saving.ElementAddedEventArgs e)
+        //{
+        //    List<AggregatedStageDamageElement> tempList = ListOfStageDamageElements;
+        //    tempList.Add((AggregatedStageDamageElement)e.Element);
+        //    ListOfStageDamageElements = tempList;//this is to hit the notify prop changed
+        //}
+
+        private void StageDamageWasUpdated(object sender, EventArgs e)
         {
-            List<AggregatedStageDamageElement> tempList = ListOfStageDamageElements;
-            tempList.Add((AggregatedStageDamageElement)e.Element);
-            ListOfStageDamageElements = tempList;//this is to hit the notify prop changed
+            List<AggregatedStageDamageElement> tempList = StudyCache.GetChildElementsOfType<AggregatedStageDamageElement>();
+            ListOfStageDamageElements = tempList;
+            //at first i thought that if a user adds, updates, or removes and item, then maybe we would want to move the selected item, but i dont think
+            //that is a good idea. First i don't know if they added and element from the conditios editor or the study. I don't want to be switching things around
+            //without the user knowing it.
+            //SelectedElement = ListOfStageDamageElements.LastOrDefault();//this works if an element was added or removed. Not so good if an element was updated.
         }
+
         public void LaunchNewWaterSurfaceElevation()
         {
 

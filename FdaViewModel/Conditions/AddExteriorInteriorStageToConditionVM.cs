@@ -101,7 +101,10 @@ namespace FdaViewModel.Conditions
         {
             SelectedElement = selectedElement;
             ListOfExteriorInteriorStageElements = listOfExIntStage;
-            StudyCache.ExteriorInteriorAdded += ExteriorInteriorAdded;
+
+            StudyCache.ExteriorInteriorAdded += ExteriorInteriorWasUpdated;
+            StudyCache.ExteriorInteriorUpdated += ExteriorInteriorWasUpdated;
+            StudyCache.ExteriorInteriorRemoved += ExteriorInteriorWasUpdated;
 
         }
         #endregion
@@ -111,14 +114,25 @@ namespace FdaViewModel.Conditions
         {
             ExteriorInteriorOwnerElement extIntParent = StudyCache.GetParentElementOfType<ExteriorInteriorOwnerElement>();
             extIntParent.AddNewExteriorInteriorCurve(sender, e);
-            
+            //at first i thought that if a user adds, updates, or removes and item, then maybe we would want to move the selected item, but i dont think
+            //that is a good idea. First i don't know if they added and element from the conditios editor or the study. I don't want to be switching things around
+            //without the user knowing it.
+            //SelectedElement = ListOfStageDamageElements.LastOrDefault();//this works if an element was added or removed. Not so good if an element was updated.
         }
-        private void ExteriorInteriorAdded(object sender, Saving.ElementAddedEventArgs e)
+        //private void ExteriorInteriorAdded(object sender, Saving.ElementAddedEventArgs e)
+        //{
+        //    List<ExteriorInteriorElement> tempList = ListOfExteriorInteriorStageElements;
+        //    tempList.Add((ExteriorInteriorElement)e.Element);
+        //    ListOfExteriorInteriorStageElements = tempList;//this is to hit the notify prop changed
+        //}
+
+        private void ExteriorInteriorWasUpdated(object sender, EventArgs e)
         {
-            List<ExteriorInteriorElement> tempList = ListOfExteriorInteriorStageElements;
-            tempList.Add((ExteriorInteriorElement)e.Element);
-            ListOfExteriorInteriorStageElements = tempList;//this is to hit the notify prop changed
+            List<ExteriorInteriorElement> tempList = StudyCache.GetChildElementsOfType<ExteriorInteriorElement>();
+            ListOfExteriorInteriorStageElements = tempList;
+
         }
+
         public override void AddValidationRules()
         {
             AddRule(nameof(SelectedElement), () => { return (SelectedElement != null); }, "An Exterior Interior Curve has not been selected.");

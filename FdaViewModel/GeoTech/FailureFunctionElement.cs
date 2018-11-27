@@ -117,7 +117,7 @@ namespace FdaViewModel.GeoTech
             Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(this, leveeCollection, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
 
-            Navigate(vm, false, false, "Edit Failure Function");
+            Navigate(vm, false, false, "Edit " + vm.Name);
             ////get the current list of levees
             //List<LeveeFeatureElement> leveeList = GetElementsOfType<LeveeFeatureElement>();
 

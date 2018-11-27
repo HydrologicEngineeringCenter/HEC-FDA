@@ -23,8 +23,15 @@ namespace FdaViewModel.Plots
 
         private bool _TrackerVisible = true;
         private bool _AreaPlotVisible = true;
+        private FdaModel.ComputationPoint.PerformanceThreshold _Threshold;
+
         #endregion
         #region Properties
+        public FdaModel.ComputationPoint.PerformanceThreshold Threshold
+        {
+            get { return _Threshold; }
+            set { _Threshold = value; NotifyPropertyChanged(); }
+        }
         public bool AreaPlotVisible
         {
             get { return _AreaPlotVisible; }

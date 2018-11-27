@@ -61,7 +61,7 @@
                     <Button Name="btn_Prev" Width="40" Content="Prev" Background="Gray" IsEnabled="False" Click="btn_Prev_Click"/>
                     <Button Name="btn_Next" Width="40" Content="Next" Background="Gray" Click="btn_Next_Click"/>
                     <Label Content="Iteration " HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <utils:NumericTextBoxWithClickHighlighting  x:Name="txt_IterationNumber" Width="50" Text="{Binding IterationNumber,Mode=OneWay}" LostFocus="txt_IterationNumber_LostFocus"/>
+                    <utils:NumericTextBoxWithClickHighlighting  x:Name="txt_IterationNumber" Width="50" Height="20" Text="{Binding IterationNumber,Mode=OneWay}" LostFocus="txt_IterationNumber_LostFocus"/>
                     <Label Content="of " VerticalAlignment="Center" />
                     <Label Name="lbl_IterationTotal" Content="{Binding TotalRealizations}" VerticalAlignment="Center"/>
                     <!--<Button Name="btn_DisplayIteration" Content="Display" Click="btn_DisplayIteration_Click" Background="Gray"/>-->

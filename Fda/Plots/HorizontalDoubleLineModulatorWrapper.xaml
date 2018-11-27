@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <local:DoubleLineModulatorHorizontal Curve="{Binding Path=PlotVM.Curve}" BaseFunction="{Binding Path=PlotVM.BaseFunction}" />
+        <local:DoubleLineModulatorHorizontal Curve="{Binding Path=PlotVM.Curve}" BaseFunction="{Binding Path=PlotVM.BaseFunction}" TrackerVisible="{Binding TrackerVisible}" />
 
     </Grid>
 </UserControl>

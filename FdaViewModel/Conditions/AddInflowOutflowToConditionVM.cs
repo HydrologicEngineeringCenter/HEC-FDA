@@ -102,7 +102,10 @@ namespace FdaViewModel.Conditions
         {
             SelectedElement = selectedElement;
             ListOfInflowOutflowElements = listOfinOut;
-            StudyCache.FlowFrequencyAdded += InflowOutflowAdded;
+
+            StudyCache.InflowOutflowAdded += InflowOutflowWasUpdated;
+            StudyCache.InflowOutflowUpdated += InflowOutflowWasUpdated;
+            StudyCache.InflowOutflowRemoved += InflowOutflowWasUpdated;
 
         }
 
@@ -115,12 +118,22 @@ namespace FdaViewModel.Conditions
             infOutParent.AddInflowOutflow(sender, e);
            
         }
-        private void InflowOutflowAdded(object sender, Saving.ElementAddedEventArgs e)
+
+        private void InflowOutflowWasUpdated(object sender, EventArgs e)
         {
-            List<InflowOutflowElement> tempList = ListOfInflowOutflowElements;
-            tempList.Add((InflowOutflowElement)e.Element);
+            List<InflowOutflowElement> tempList = StudyCache.GetChildElementsOfType<InflowOutflowElement>();
             ListOfInflowOutflowElements = tempList;//this is to hit the notify prop changed
+            //at first i thought that if a user adds, updates, or removes and item, then maybe we would want to move the selected item, but i dont think
+            //that is a good idea. First i don't know if they added and element from the conditios editor or the study. I don't want to be switching things around
+            //without the user knowing it.
+            //SelectedElement = ListOfStageDamageElements.LastOrDefault();//this works if an element was added or removed. Not so good if an element was updated.
         }
+        //private void InflowOutflowAdded(object sender, Saving.ElementAddedEventArgs e)
+        //{
+        //    List<InflowOutflowElement> tempList = ListOfInflowOutflowElements;
+        //    tempList.Add((InflowOutflowElement)e.Element);
+        //    ListOfInflowOutflowElements = tempList;//this is to hit the notify prop changed
+        //}
 
         public override void AddValidationRules()
         {

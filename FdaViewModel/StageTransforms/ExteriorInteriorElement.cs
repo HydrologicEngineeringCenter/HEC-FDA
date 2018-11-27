@@ -87,7 +87,7 @@ namespace FdaViewModel.StageTransforms
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
 
-            Navigate(vm, false, true, "Create Exterior Interior");
+            Navigate(vm, false, true, "Edit " + vm.Name);
             
         }
         #endregion

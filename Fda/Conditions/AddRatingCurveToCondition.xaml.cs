@@ -37,8 +37,33 @@ namespace Fda.Conditions
             if (vm.IsPoppedOut == true)
             {
                 var window = Window.GetWindow(this);
-                vm.WasCanceled = true;
-                window.Close();
+                //vm.WasCanceled = true;
+                //window.Close();
+                if (window is ViewWindow)
+                {
+
+                    FdaViewModel.Utilities.WindowVM winVM = (FdaViewModel.Utilities.WindowVM)window.DataContext;
+                    if (winVM.StudyVM != null) //then it is a tab not a seperate window
+                    {
+                        if (winVM.StudyVM.SelectedDynamicTabIndex != -1)
+                        {
+                            winVM.StudyVM.RemoveTabAtIndex(winVM.StudyVM.SelectedDynamicTabIndex);
+                        }
+                        else
+                        {
+                            window.Close();
+                        }
+                    }
+                    else
+                    {
+                        window.Close();
+                    }
+
+                }
+                else
+                {
+                    window.Close();
+                }
             }
             vm.OKClicked();
             //because i want to set all the linking in the view side and not the viewmodel side, i need to tell the VM that i clicked OK, then i 

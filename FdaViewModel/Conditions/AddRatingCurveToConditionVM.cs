@@ -14,7 +14,7 @@ using FdaViewModel.StageTransforms;
 namespace FdaViewModel.Conditions
 {
     //[Author(q0heccdm, 12 / 1 / 2017 3:35:31 PM)]
-    public class AddRatingCurveToConditionVM : BaseViewModel,Plots.iConditionsImporter
+    public class AddRatingCurveToConditionVM : Editors.BaseEditorVM,Plots.iConditionsImporter
     {
         #region Notes
         // Created By: q0heccdm
@@ -34,7 +34,10 @@ namespace FdaViewModel.Conditions
         {
             get;set;
         }
-        public bool IsPoppedOut { get; set; }
+        public bool IsPoppedOut {
+            get;
+            set;
+        }
         public string SelectedElementName
         {
             get { return SelectedElement.Name; }
@@ -85,17 +88,23 @@ namespace FdaViewModel.Conditions
         
         #endregion
         #region Constructors
-        public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves ):this(listOfRatingCurves,null)
+        public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves ):base(null)
         {
+            ListOfRatingCurves = listOfRatingCurves;
 
+            StudyCache.RatingAdded += RatingWasUpdated;
+            StudyCache.RatingUpdated += RatingWasUpdated;
+            StudyCache.RatingRemoved += RatingWasUpdated;
         }
 
-        public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves, StageTransforms.RatingCurveElement selectedRatingElement ):base()
+        public AddRatingCurveToConditionVM(List<StageTransforms.RatingCurveElement> listOfRatingCurves, StageTransforms.RatingCurveElement selectedRatingElement ):base(selectedRatingElement,null)
         {
             SelectedElement = selectedRatingElement;
             ListOfRatingCurves = listOfRatingCurves;
-            StudyCache.RatingAdded += RatingAdded;
+
+            StudyCache.RatingAdded += RatingWasUpdated;
             StudyCache.RatingUpdated += RatingWasUpdated;
+            StudyCache.RatingRemoved += RatingWasUpdated;
         }
         #endregion
         #region Voids
@@ -153,30 +162,17 @@ namespace FdaViewModel.Conditions
             //((RatingCurveElement)SelectedElement).EditRatingCurve(sender, e);
             //ratingParent.AddNewRatingCurve(sender, e);
         }
-        private void RatingWasUpdated(object sender, Saving.ElementUpdatedEventArgs args)
-        {
-            ////i need to swap out the old element for the new one
-            //AggregatedStageDamageElement oldElem = (AggregatedStageDamageElement)args.OldElement;
-            //AggregatedStageDamageElement newElem = (AggregatedStageDamageElement)args.NewElement;
-            //int i;
-            //for (i=0;i<ListOfStageDamageElements.Count;i++)
-            //{
-            //    if(ListOfStageDamageElements[i].Name.Equals(oldElem.Name))
-            //    {
-            //        break;                   
-            //    }
-            //}
-            //ListOfStageDamageElements.RemoveAt(i);
-
+        private void RatingWasUpdated(object sender, EventArgs args)
+        {          
             List<RatingCurveElement> tempList = StudyCache.GetChildElementsOfType<RatingCurveElement>();
             ListOfRatingCurves = tempList;//this is to hit the notify prop changed
         }
-        private void RatingAdded(object sender, Saving.ElementAddedEventArgs e)
-        {
-            List<RatingCurveElement> tempList = ListOfRatingCurves;
-            tempList.Add((RatingCurveElement)e.Element);
-            ListOfRatingCurves = tempList;//this is to hit the notify prop changed
-        }
+        //private void RatingAdded(object sender, Saving.ElementAddedEventArgs e)
+        //{
+        //    List<RatingCurveElement> tempList = ListOfRatingCurves;
+        //    tempList.Add((RatingCurveElement)e.Element);
+        //    ListOfRatingCurves = tempList;//this is to hit the notify prop changed
+        //}
         #endregion
         #region Functions
         #endregion
@@ -186,6 +182,9 @@ namespace FdaViewModel.Conditions
             AddRule(nameof(SelectedElement), () => { return (SelectedElement != null); }, "A Rating Curve has not been selected.");
         }
 
-       
+        public override void Save()
+        {
+            OKClicked();
+        }
     }
 }

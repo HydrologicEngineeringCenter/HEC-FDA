@@ -18,5 +18,6 @@ namespace FdaViewModel.Plots
         bool TrackerVisible { get; set; }
         bool AreaPlotVisible { get; set; }
 
+        FdaModel.ComputationPoint.PerformanceThreshold Threshold { get; set; }
     }
 }

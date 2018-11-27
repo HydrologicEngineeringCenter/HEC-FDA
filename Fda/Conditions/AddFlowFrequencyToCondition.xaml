@@ -5,31 +5,30 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Fda.Conditions"
              xmlns:Utils="clr-namespace:Fda.Utilities"
-            VerticalAlignment="Center"
-             HorizontalAlignment="Center"
              mc:Ignorable="d" 
              
              d:DesignHeight="150" d:DesignWidth="500">
     <UserControl.Resources>
         <Utils:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibility" />
     </UserControl.Resources>
-    <Border BorderThickness="1" BorderBrush="Black">
+    <Grid>
+    <Border BorderThickness="2" BorderBrush="Black">
     <Grid Name="grid_main">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="60"  />
+            <RowDefinition Height="*"  />
             <RowDefinition Height="35"/>
 
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right"  Visibility="{Binding IsPoppedOut,Converter={StaticResource BoolToInverseVisibility}}">
             <Button Width="18" Height="18" Name="btn_PopOutCurve" Click="btn_PopOutImporter_Click"  Margin="5" ToolTip="Pop Out" Visibility="{Binding IsPoppedOut,Converter={StaticResource BoolToInverseVisibility}}">
                 <Image Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/PopUp.png"/>
             </Button>
-            <Button Width="18" Height="18" Name="btn_DeleteCurve" Click="btn_Cancel_Click"  Margin="5" ToolTip="Cancel" Visibility="{Binding IsPoppedOut,Converter={StaticResource BoolToInverseVisibility}}">
+            <!--<Button Width="18" Height="18" Name="btn_DeleteCurve" Click="btn_Cancel_Click"  Margin="5" ToolTip="Cancel" Visibility="{Binding IsPoppedOut,Converter={StaticResource BoolToInverseVisibility}}">
                 <Image Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Delete.png"/>
-            </Button>
+            </Button>-->
         </StackPanel>
         
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left">
@@ -76,7 +75,7 @@
         </StackPanel>
         
         <!--<Utils:OKCloseControl Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10"/>-->
-        <StackPanel Orientation="Horizontal" Grid.Row="3" HorizontalAlignment="Right">
+        <StackPanel Orientation="Horizontal" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Bottom">
             <Button Name="btn_OK" Grid.Row="4" Height="20" Width="50" HorizontalAlignment="Right" Margin="5" VerticalAlignment="Bottom" Content="OK" Click="btn_OK_Click" />
             <Button Name="btn_Cancel" Grid.Row="4" Height="20" Width="50" HorizontalAlignment="Right" Margin="5" VerticalAlignment="Bottom"  Content="Cancel" Click="btn_Cancel_Click" />
         </StackPanel>
@@ -86,4 +85,5 @@
 
     </Grid>
     </Border>
+    </Grid>
 </UserControl>

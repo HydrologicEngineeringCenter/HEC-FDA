@@ -35,8 +35,15 @@ namespace FdaViewModel.Plots
         private IndividualLinkedPlotVM _PlotVM;
 
         private bool _OutOfRange;
+        private FdaModel.ComputationPoint.PerformanceThreshold _Threshold;
         #endregion
         #region Properties
+     
+        public FdaModel.ComputationPoint.PerformanceThreshold Threshold
+        {
+            get { return _Threshold; }
+            set { _Threshold = value; NotifyPropertyChanged(); }
+        }
         public bool AreaPlotVisible
         {
             get { return _AreaPlotVisible; }
@@ -141,7 +148,6 @@ namespace FdaViewModel.Plots
            // throw new NotImplementedException();
         }
 
-     
         #endregion
         #region Functions
         #endregion

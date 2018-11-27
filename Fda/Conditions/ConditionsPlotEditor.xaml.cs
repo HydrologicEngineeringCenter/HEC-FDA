@@ -86,10 +86,29 @@ namespace Fda.Conditions
         public void UpdateThePlotLinkages(object sender, EventArgs e)
         {
             UpdateTheListOfAddedCurves();
+            RemoveThresholdLines();
             UpdateTheLinkages(TheAddedPlots.ToList());
             SetTheSharedAxes();
+            AddThresholdLinesBackIn();
             
         }
+
+        private void RemoveThresholdLines()
+        {
+            foreach(ILinkedPlot plot in TheAddedPlots)
+            {
+                if(plot.GetType() == typeof(IndividualLinkedPlot))//might be the wrapper???
+                {
+                    IndividualLinkedPlot indPlot = (IndividualLinkedPlot)plot;
+                    indPlot.RemoveThresholdPlot();
+                }
+            }
+        }
+        private void AddThresholdLinesBackIn()
+        {
+            txt_ThresholdValue_LostFocus(this, new RoutedEventArgs());//this should add the lines back in
+        }
+
         private void UpdateTheListOfAddedCurves()
         {
 
@@ -452,12 +471,6 @@ namespace Fda.Conditions
         {
             if (HideTrackers == false)
             {
-                //plot0.HideTracker();
-                //plot1.HideTracker();
-                //plot3.HideTracker();
-                //plot5.HideTracker();
-                //plot7.HideTracker();
-                //plot8.HideTracker();
 
                 FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
                 vm.Plot0ControlVM.IndividualPlotWrapperVM.TrackerVisible = false;
@@ -670,7 +683,7 @@ namespace Fda.Conditions
             bool ratingExists = false;
             foreach (Plots.ILinkedPlot p in TheAddedPlots)
             {
-                if (p.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency)
+                if (p.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency || p.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.OutflowFrequency)
                 {
                     flowFrequencyExists = true;
                 }
@@ -913,6 +926,41 @@ namespace Fda.Conditions
             PlotSpecificPointTool.AvailablePlotsFromView = TheAddedPlots;
         }
 
+        private void txt_ThresholdValue_LostFocus(object sender, RoutedEventArgs e)
+        {
+            //get what you need and plot the line
+            double thresholdValue;
+            if (Double.TryParse(txt_ThresholdValue.Text, out thresholdValue))
+            {
+                FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+                vm.PlotThresholdLine(thresholdValue);
+            }
+           
+
+            //if(vm.SelectedThresholdType == FdaModel.ComputationPoint.PerformanceThresholdTypes.InteriorStage)
+            //{
+            //    //then vertical line in plot 7
+            //    if(vm.Plot7ControlVM.CurrentVM == vm.Plot7ControlVM.IndividualPlotWrapperVM)
+            //    {
+            //        ConditionsIndividualPlotWrapper plot = (ConditionsIndividualPlotWrapper)Plot7Control.Content;
+
+            //    }
+            //}
+            //else if(vm.SelectedThresholdType == FdaModel.ComputationPoint.PerformanceThresholdTypes.Damage)
+            //{
+            //    //then horizontal line in plot 8
+
+            //}
+        }
+
+        private void btn_ToggleThresholdLines_Click(object sender, RoutedEventArgs e)
+        {
+          
+                FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+            vm.ToggleThresholdLines();
+            
+        }
+
         //private void txt_XValue_LostFocus(object sender, RoutedEventArgs e)
         //{
         //    if(cmb_PlotNames.SelectedItem == null) { return; }
@@ -964,7 +1012,7 @@ namespace Fda.Conditions
 
 
 
-            
+
         //}
 
         //private void txt_YValue_LostFocus(object sender, RoutedEventArgs e)
@@ -1013,9 +1061,9 @@ namespace Fda.Conditions
         //        {
         //            _SelectedPlot.Model_MouseDown(new object(), new OxyMouseDownEventArgs());
         //        }
-            
+
         //}
 
-       
+
     }
 }

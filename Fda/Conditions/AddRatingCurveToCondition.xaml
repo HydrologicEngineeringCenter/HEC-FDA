@@ -33,7 +33,7 @@
                 </Button>
                 </StackPanel>
                 <!--<Utils:OKCloseControl Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right"/>-->
-        <Button Name="btn_OK" Content="OK" Width="50" Height="22" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="5,5,60,5" Click="btn_OK_Click"/>
+                <Button Name="btn_OK" Content="OK" Width="50" Height="22" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="5,5,60,5" Click="btn_OK_Click"/>
                 <Button Name="btn_Cancel" Content="Cancel" Width="50" Height="22" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="5" Click="btn_Cancel_Click"/>
                 <Button Name="btn_PopOut"  Grid.Row="3" Grid.Column="1" Content="^" HorizontalAlignment="Left" Width="50" Height="22" Click="btn_PopOut_Click" />
             </Grid>
