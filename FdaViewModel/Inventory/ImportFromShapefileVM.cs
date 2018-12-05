@@ -197,11 +197,7 @@ namespace FdaViewModel.Inventory
             set { _InputMonetaryIndex = value; }
         }
 
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged(); }
-        }
+       
         public string Path
         {
             get { return _Path; }

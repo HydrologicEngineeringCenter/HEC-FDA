@@ -17,62 +17,87 @@
 
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <!--<RowDefinition Height="Auto"/>-->
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="1" Grid.Column="0" >
-           
+        <Grid Grid.Row="0" Grid.Column="0" >
+            <!--<Grid.ColumnDefinitions>
+                <ColumnDefinition Width="33*"/>
+                <ColumnDefinition Width="67*"/>
+            </Grid.ColumnDefinitions>-->
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="605"/>
             </Grid.RowDefinitions>
-            <Label Grid.Row="0" Content="Occupancy Types Group:" />
-            <ComboBox Grid.Row="1" Name="cmb_Group" ItemsSource="{Binding OccTypeGroups}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedOccTypeGroup}" Margin="5" SelectionChanged="cmb_Group_SelectionChanged" />
-            <ListView Grid.Column="0" Grid.Row="2" Margin="5" Name="OccTypeListView" SelectionChanged="OccTypeListView_SelectionChanged" SelectedItem="{Binding SelectedOccType}" >
-            <ListView.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.ContainerStyle>
-                        <Style TargetType="{x:Type GroupItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate>
-                                        <Grid>
-                                            <Expander IsExpanded="True">
-                                                <ItemsPresenter />
-                                            </Expander>
-                                            <TextBlock Name="ExpanderHeaderTextBlock" Text="{Binding Name, Mode=OneWay}" HorizontalAlignment="Stretch" Margin="21,0,0,0" Padding="4,3,0,0" VerticalAlignment="Top" FontWeight="Bold" TextDecorations="Underline"  IsHitTestVisible="True" Focusable="True"/>
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GroupStyle.ContainerStyle>
-                </GroupStyle>
-            </ListView.GroupStyle>
+            <GroupBox Header="Occupancy Types Group" Grid.Row="0">
 
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Margin="30,0,0,0" Text="{Binding Name}"/>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                <StackPanel>
+                    <ToolBarPanel Grid.Row="0" Grid.Column="0" Margin="5,5,0,0" Orientation="Horizontal">
+                        <Button Name="CreateNewOccTypeGroupButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Import New Occupancy Type Group" ToolTipService.ShowOnDisabled="True" Click="CreateNewOccTypeGroupButton_Click" >
+                            <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
+                        </Button>
+                        <Button Name="RenameOccTypeGroupButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Rename Selected Occupancy Type Group" ToolTipService.ShowOnDisabled="True" Margin="5,0,0,0" Click="RenameOccTypeGroupButton_Click" >
+                            <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Edit.png"/>
+                        </Button>
+                        <Button Name="DeleteOccTypeGroupButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Delete Selected Occupancy Type Group" ToolTipService.ShowOnDisabled="True" Margin="5,0,0,0" Click="DeleteOccTypeGroupButton_Click" >
+                            <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Delete.png"/>
+                        </Button>
+                    </ToolBarPanel>
+                    <ComboBox  Name="cmb_Group" ItemsSource="{Binding OccTypeGroups, Mode=TwoWay}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedOccTypeGroup}" Margin="5" SelectionChanged="cmb_Group_SelectionChanged" Grid.ColumnSpan="2" />
+                </StackPanel>
+            </GroupBox>
+
+            <StackPanel Grid.Row="1">
+            <Label Content="Occupancy Types:" Grid.ColumnSpan="2" />
+                <ToolBarPanel Grid.Row="0" Grid.Column="0" Margin="5,5,0,0" Orientation="Horizontal">
+                    <Button Name="CreateNewOccTypeButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Create New Occupancy Type" ToolTipService.ShowOnDisabled="True" Click="CreateNewOccTypeButton_Click" >
+                        <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
+                    </Button>
+                    <Button Name="CopyExistingButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Copy Selected Occupancy Type" ToolTipService.ShowOnDisabled="True" Margin="5,0,0,0" Click="CopyExistingButton_Click" >
+                        <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Copy.png"/>
+                    </Button>
+                    <Button Name="DeleteButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Delete Selected Occupancy Type" ToolTipService.ShowOnDisabled="True" Margin="5,0,0,0" Click="DeleteButton_Click" >
+                        <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Delete.png"/>
+                    </Button>
+                </ToolBarPanel>
+            </StackPanel>
+            
+            <ListView Grid.Column="0" Grid.Row="2" Margin="5" Name="OccTypeListView" SelectionChanged="OccTypeListView_SelectionChanged" SelectedItem="{Binding SelectedOccType}" Grid.ColumnSpan="2" >
+                <ListView.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.ContainerStyle>
+                            <Style TargetType="{x:Type GroupItem}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <Grid>
+                                                <Expander IsExpanded="True">
+                                                    <ItemsPresenter />
+                                                </Expander>
+                                                <TextBlock Name="ExpanderHeaderTextBlock" Text="{Binding Name, Mode=OneWay}" HorizontalAlignment="Stretch" Margin="21,0,0,0" Padding="4,3,0,0" VerticalAlignment="Top" FontWeight="Bold" TextDecorations="Underline"  IsHitTestVisible="True" Focusable="True"/>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </GroupStyle.ContainerStyle>
+                    </GroupStyle>
+                </ListView.GroupStyle>
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="30,0,0,0" Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
 
         </Grid>
 
-        <ToolBarPanel Grid.Row="0" Grid.Column="0" Margin="5,5,0,0" Orientation="Horizontal">
-            <Button Name="CreateNewOccTypeButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Create New Occupancy Type" ToolTipService.ShowOnDisabled="True" Click="CreateNewOccTypeButton_Click" >
-                <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
-            </Button>
-            <Button Name="CopyExistingButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Copy Selected Occupancy Type" ToolTipService.ShowOnDisabled="True" Margin="5,0,0,0" Click="CopyExistingButton_Click" >
-                <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Copy.png"/>
-            </Button>
-            <Button Name="DeleteButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Delete Selected Occupancy Type" ToolTipService.ShowOnDisabled="True" Margin="5,0,0,0" Click="DeleteButton_Click" >
-                <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Delete.png"/>
-            </Button>
-        </ToolBarPanel>
+        
         <!--<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
             <Button Name="CreateNewButton" Click="CreateNewButton_Click">Create New</Button>
             <Button Name="CopyExistingButton" Margin="5,0,0,0" Click="CopyExistingButton_Click">Create Copy</Button>
@@ -82,8 +107,8 @@
         <GridSplitter Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" Width="3" Background="Transparent" VerticalAlignment="Stretch"></GridSplitter>
 
         <!--<ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="1" Grid.Row="0" Grid.RowSpan="3">-->
-            
-            <controls:OccTypeEditorControl x:Name="OccTypeEditorControl" Margin="5"  Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"/>
+
+        <controls:OccTypeEditorControl x:Name="OccTypeEditorControl" Margin="5"  Grid.Row="0" Grid.RowSpan="1" Grid.Column="1"/>
         <!--</ScrollViewer>-->
 
         <!--<local:OccTypeEditorControl x:Name="OccTypeEditorControl" Margin="5" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"></local:OccTypeEditorControl>-->

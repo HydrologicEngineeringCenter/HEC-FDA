@@ -53,13 +53,13 @@ namespace Fda.Plots
             plot0.SetAsStartNode();
             if (vm.Plot1VM.BaseFunction != null)
             {
-                plot0.SetNextPlotLinkage(doubleLineModulator, "y", "x");
-                doubleLineModulator.SetNextPlotLinkage(plot3, "y", "y");
+                plot0.SetNextPlotLinkage(doubleLineModulator);
+                doubleLineModulator.SetNextPlotLinkage(plot3);
                 doubleLineModulator.SetPreviousPlotLinkage(plot0);
             }
             else
             {
-                plot0.SetNextPlotLinkage(plot3, "y", "y");
+                plot0.SetNextPlotLinkage(plot3);
             }
             //plot0.SetPreviousPlotLinkage(plot8);
 
@@ -69,7 +69,7 @@ namespace Fda.Plots
 
             if (vm.Plot5VM.BaseFunction != null)
             {
-                plot3.SetNextPlotLinkage(DoubleLineHorizontal, "x", "x");
+                plot3.SetNextPlotLinkage(DoubleLineHorizontal);
                 if (vm.Plot1VM.BaseFunction != null)
                 {
                     plot3.SetPreviousPlotLinkage(doubleLineModulator);
@@ -79,7 +79,7 @@ namespace Fda.Plots
                     plot3.SetPreviousPlotLinkage(plot0);
                 }
 
-                DoubleLineHorizontal.SetNextPlotLinkage(plot7, "y", "x");
+                DoubleLineHorizontal.SetNextPlotLinkage(plot7);
                 DoubleLineHorizontal.SetPreviousPlotLinkage(plot3);
 
                 plot7.SetPreviousPlotLinkage(DoubleLineHorizontal);
@@ -88,7 +88,7 @@ namespace Fda.Plots
             else
             {
 
-                plot3.SetNextPlotLinkage(plot7, "x", "x");
+                plot3.SetNextPlotLinkage(plot7);
                 if (vm.Plot1VM.BaseFunction != null)
                 {
                     plot3.SetPreviousPlotLinkage(doubleLineModulator);
@@ -103,7 +103,7 @@ namespace Fda.Plots
             }
 
 
-            plot7.SetNextPlotLinkage(plot8, "y", "y");
+            plot7.SetNextPlotLinkage(plot8);
 
 
 
@@ -172,6 +172,7 @@ namespace Fda.Plots
 
             //this is all kinds of bad i think. The whole system of getting the names into the vm and into here
             //needs work i think. but for now...
+            //some of the plots can be created when running the compute. At least plot 5 can (ext int stage)
             FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
             List<string> selectedElementNames = vm.SelectedElementNames;
             if(availablePlots.Count == selectedElementNames.Count)
@@ -253,9 +254,9 @@ namespace Fda.Plots
             FourPlotGrid.ColumnDefinitions[2].Width = new GridLength(0);
 
             //break the linkage to the modulator and reset it to plot 1
-            plot0.SetNextPlotLinkage(plot1, "y", "x");
+            plot0.SetNextPlotLinkage(plot1);
 
-            plot1.SetNextPlotLinkage(plot3, "y", "y");
+            plot1.SetNextPlotLinkage(plot3);
             plot1.SetPreviousPlotLinkage(plot0);
 
             plot3.SetPreviousPlotLinkage(plot1);
@@ -273,9 +274,9 @@ namespace Fda.Plots
             FourPlotGrid.RowDefinitions[2].Height = new GridLength(0);
 
             //break the linkage to the modulator and reset it to plot 1
-            plot3.SetNextPlotLinkage(plot5, "x", "x");
+            plot3.SetNextPlotLinkage(plot5);
 
-            plot5.SetNextPlotLinkage(plot7, "y", "x");
+            plot5.SetNextPlotLinkage(plot7);
             plot5.SetPreviousPlotLinkage(plot3);
 
             plot7.SetPreviousPlotLinkage(plot5);
@@ -297,9 +298,9 @@ namespace Fda.Plots
             FourPlotGrid.ColumnDefinitions[2].Width = new GridLength(45);
 
             //break the linkage to the modulator and reset it to plot 1
-            plot0.SetNextPlotLinkage(doubleLineModulator, "y", "x");
+            plot0.SetNextPlotLinkage(doubleLineModulator);
 
-            doubleLineModulator.SetNextPlotLinkage(plot3, "y", "y");
+            doubleLineModulator.SetNextPlotLinkage(plot3);
             doubleLineModulator.SetPreviousPlotLinkage(plot0);
 
             plot3.SetPreviousPlotLinkage(doubleLineModulator);
@@ -314,9 +315,9 @@ namespace Fda.Plots
             FourPlotGrid.RowDefinitions[2].Height = new GridLength(45);
 
             //break the linkage to the modulator and reset it to plot 1
-            plot3.SetNextPlotLinkage(DoubleLineHorizontal, "x", "x");
+            plot3.SetNextPlotLinkage(DoubleLineHorizontal);
 
-            DoubleLineHorizontal.SetNextPlotLinkage(plot7, "y", "x");
+            DoubleLineHorizontal.SetNextPlotLinkage(plot7);
             DoubleLineHorizontal.SetPreviousPlotLinkage(plot3);
 
             plot7.SetPreviousPlotLinkage(DoubleLineHorizontal);
@@ -359,6 +360,16 @@ namespace Fda.Plots
                 plot5.HideTracker();
                 plot7.HideTracker();
                 plot8.HideTracker();
+
+                plot0.TurnOutsideOfRangeOff();
+                plot1.TurnOutsideOfRangeOff();
+                plot3.TurnOutsideOfRangeOff();
+                plot5.TurnOutsideOfRangeOff();
+                plot7.TurnOutsideOfRangeOff();
+                plot8.TurnOutsideOfRangeOff();
+
+
+
                 FourPlotGrid.ColumnDefinitions[2].Width = new GridLength(0);
                 FourPlotGrid.RowDefinitions[2].Height = new GridLength(0);
                 HideTrackers = true;

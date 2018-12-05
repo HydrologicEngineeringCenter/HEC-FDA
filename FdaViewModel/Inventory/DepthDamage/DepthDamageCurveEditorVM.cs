@@ -179,39 +179,39 @@ namespace FdaViewModel.Inventory.DepthDamage
 
         public void LanuchCopyDepthDamageWindow()
         {
-            OccupancyTypes.CreateNewDamCatVM vm = new OccupancyTypes.CreateNewDamCatVM();
+            //OccupancyTypes.CreateNewDamCatVM vm = new OccupancyTypes.CreateNewDamCatVM();
 
-            Navigate(vm, true, true, "Enter Depth Damage Curve Name");
-            if (vm.WasCanceled == false)
-            {
-                if (vm.HasError == false)
-                {
-                    DepthDamageCurve ddc = new DepthDamageCurve(vm.Name, CurrentDepthDamageCurveVM.Description, CurrentDepthDamageCurveVM.Curve, CurrentDepthDamageCurveVM.DamageType);
-                    DepthDamageCurveEditorControlVM newRow = new DepthDamageCurveEditorControlVM(vm.Name,ddc);
+            //Navigate(vm, true, true, "Enter Depth Damage Curve Name");
+            //if (vm.WasCanceled == false)
+            //{
+            //    if (vm.HasError == false)
+            //    {
+            //        DepthDamageCurve ddc = new DepthDamageCurve(vm.Name, CurrentDepthDamageCurveVM.Description, CurrentDepthDamageCurveVM.Curve, CurrentDepthDamageCurveVM.DamageType);
+            //        DepthDamageCurveEditorControlVM newRow = new DepthDamageCurveEditorControlVM(vm.Name,ddc);
 
-                    ListOfDepthDamageVMs.Add(newRow);
-                }
-            }
+            //        ListOfDepthDamageVMs.Add(newRow);
+            //    }
+            //}
         }
 
         public void LanuchNewDepthDamageWindow()
         {
-            OccupancyTypes.CreateNewDamCatVM vm = new OccupancyTypes.CreateNewDamCatVM();
+            //OccupancyTypes.CreateNewDamCatVM vm = new OccupancyTypes.CreateNewDamCatVM();
 
-            Navigate(vm, true, true, "Enter Depth Damage Curve Name");
-            if (vm.WasCanceled == false)
-            {
-                if (vm.HasError == false)
-                {
+            //Navigate(vm, true, true, "Enter Depth Damage Curve Name");
+            //if (vm.WasCanceled == false)
+            //{
+            //    if (vm.HasError == false)
+            //    {
 
-                    CheckForNameConflict(vm.Name);
+            //        CheckForNameConflict(vm.Name);
 
-                    DepthDamageCurve ddc = new DepthDamageCurve(vm.Name, "", new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None), CurrentDepthDamageCurveVM.DamageType);
-                    DepthDamageCurveEditorControlVM newRow = new DepthDamageCurveEditorControlVM(vm.Name, ddc);
+            //        DepthDamageCurve ddc = new DepthDamageCurve(vm.Name, "", new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None), CurrentDepthDamageCurveVM.DamageType);
+            //        DepthDamageCurveEditorControlVM newRow = new DepthDamageCurveEditorControlVM(vm.Name, ddc);
 
-                    ListOfDepthDamageVMs.Add(newRow);
-                }
-            }
+            //        ListOfDepthDamageVMs.Add(newRow);
+            //    }
+            //}
         }
 
         #endregion

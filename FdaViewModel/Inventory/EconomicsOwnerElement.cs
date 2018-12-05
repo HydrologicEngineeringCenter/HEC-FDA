@@ -39,6 +39,7 @@ namespace FdaViewModel.Inventory
 
             OccupancyTypes.OccupancyTypesOwnerElement o = new OccupancyTypes.OccupancyTypesOwnerElement(this);
             this.AddElement(o);
+            cache.OccTypeParent = o;
 
             StructureInventoryOwnerElement sioe = new StructureInventoryOwnerElement(this);
             this.AddElement(sioe);

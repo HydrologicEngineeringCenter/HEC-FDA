@@ -67,7 +67,7 @@
 
                 </Button>
                     <Button Name="btn_ToggleThresholdLines" Width="40" ToolTip="Hide Threshold Lines" Click="btn_ToggleThresholdLines_Click" >
-                        <Image  Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/HideAreaPlots.png"/>
+                        <Image Name="img_HideThresholdLines"  Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/HideThresholdLines.png"/>
 
                     </Button>
                     <!--<Separator Margin="10,0,10,0"/>-->
@@ -101,24 +101,30 @@
                 <Label Name="lbl_LP3"  Visibility="{Binding IsPlot0Visible,Converter={StaticResource BoolToVisibilityConverter}}" Content="{Binding Plot0VM.SelectedElementName}"/>
             </StackPanel>-->
             <Expander Grid.Row="2" Header="Condition Properties" IsExpanded="True">
-            <WrapPanel  Orientation="Horizontal" Margin="5">
-              <!--<StackPanel Orientation="Horizontal">-->
-                <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="10,0,0,0">
-                    <Label  Content="Name:" />
+            <!--<WrapPanel  Orientation="Horizontal" Margin="5">-->
+                    <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32"/>
+                        <RowDefinition Height="32"/>
+                       
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="3">
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Grid.Column="0" Margin="10,0,0,0">
+                            <Label  Content="Name:" />
                     <TextBox Name="txt_Name" Width="175" Text="{Binding Name, ValidatesOnDataErrors=True}" Margin="2" />
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="10,0,0,0">
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.Column="1" Margin="10,0,0,0">
                     <Label  Content="Description:" />
                     <Cac:TextBoxDescription Width="175" Text="{Binding Description}" Margin="2" />
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Grid.Column="2" Margin="10,0,0,0">
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Grid.Column="2" Margin="10,0,0,0">
                     <Label Content="Year:"/>
                     <TextBox Name="txt_year" Width="40" Text="{Binding Year}" Margin="2"/>
                 </StackPanel>
-              <!--</StackPanel>-->
+              </StackPanel>
 
-               <!--<StackPanel Orientation="Horizontal">-->
-                 <StackPanel Orientation="Horizontal" Grid.Column="3" Margin="10,0,0,0">
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="3">
+                    <StackPanel Grid.Row="3" Orientation="Horizontal" Grid.Column="3" Margin="10,0,0,0">
                     <Label Content="Impact Area:" />
                     <ComboBox Name="cmb_ImpAreas" Width="210" ItemsSource="{Binding ImpactAreas}" SelectedItem="{Binding SelectedImpactArea}" Margin="2" />
                     <Button Name="btn_AddImpactAreas" Width="30" Height="20" Click="btn_AddImpactAreas_Click" Margin="10,0,10,0" >
@@ -126,19 +132,20 @@
 
                     </Button>
                     </StackPanel>
-                        <StackPanel Orientation="Horizontal">
+                    <StackPanel Grid.Row="4" Orientation="Horizontal">
                     <Label Content="Threshold Type: " />
                     <ComboBox Name="cmb_ThresholdType" Width="150" ItemsSource="{Binding ThresholdTypes}" SelectedItem="{Binding SelectedThresholdType}" Margin="2"  />
                     <Label Content="Value: " />
                     <TextBox Name="txt_ThresholdValue" Width="100" Text="{Binding ThresholdValue}" Margin="0,0,10,0" LostFocus="txt_ThresholdValue_LostFocus"/>
                         </StackPanel>
-               <!--</StackPanel>-->
+               </StackPanel>
                     <!--<StackPanel Orientation="Horizontal" Grid.Column="2">
                 <Label Content="Structures:" />
                 <ComboBox Name="cmb_Structures" Width="150" ItemsSource="{Binding StructureInventories}" DisplayMemberPath="{Binding Name}"/>
                     
                 </StackPanel>-->
-            </WrapPanel>
+                    </Grid>
+                <!--</WrapPanel>-->
             </Expander>
 
         </Grid>

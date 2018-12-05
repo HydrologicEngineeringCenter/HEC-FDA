@@ -91,7 +91,7 @@ namespace FdaViewModel.Inventory
                .WithParentGuid(this.GUID)
                .WithCanOpenMultipleTimes(true);
 
-            ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(collectionOfPointFiles, actionManager);
+            ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(collectionOfPointFiles, actionManager, false);
             // StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);
 

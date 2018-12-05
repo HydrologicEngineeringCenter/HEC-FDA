@@ -75,6 +75,7 @@ namespace FdaViewModel.Saving
             {
                 return new ConditionsPersistenceManager(StudyCacheForSaving);
             }
+           
             return null;
         }
 
@@ -83,7 +84,16 @@ namespace FdaViewModel.Saving
             RatingElementPersistenceManager manager = new RatingElementPersistenceManager(StudyCacheForSaving);
             return manager;
         }
-       
+        public static OccTypePersistenceManager GetOccTypeManager()
+        {
+            OccTypePersistenceManager manager = new OccTypePersistenceManager(StudyCacheForSaving);
+            return manager;
+        }
+        public static StudyPropertiesPersistenceManager GetStudyPropertiesManager()
+        {
+            StudyPropertiesPersistenceManager manager = new StudyPropertiesPersistenceManager(StudyCacheForSaving);
+            return manager;
+        }
         public static TerrainElementPersistenceManager GetTerrainManager()
         {
             return new TerrainElementPersistenceManager(StudyCacheForSaving);

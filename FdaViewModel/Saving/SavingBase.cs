@@ -16,6 +16,76 @@ namespace FdaViewModel.Saving
         public Study.FDACache StudyCacheForSaving { get; set; }
 
         #region Utilities
+
+        public static async void SaveElementOnBackGroundThread(ChildElement elementToSave, BaseFdaElement elementToChangeActionsAndHeader, Action<ChildElement> SavingAction, string savingMessage) 
+        {
+            elementToChangeActionsAndHeader.CustomTreeViewHeader = new CustomHeaderVM(elementToChangeActionsAndHeader.Name, "", savingMessage, true);//need to create a method to just append the note and gif
+
+            //clear the actions while it is saving
+            List<NamedAction> actions = new List<NamedAction>();
+            foreach (NamedAction act in elementToChangeActionsAndHeader.Actions)
+            {
+                actions.Add(act);
+            }
+            elementToChangeActionsAndHeader.Actions = new List<NamedAction>();
+
+            await Task.Run(() =>
+            {
+                if (!Storage.Connection.Instance.IsConnectionNull)
+                {
+                    if (!Storage.Connection.Instance.IsOpen)
+                    {
+                        Storage.Connection.Instance.Open();
+                    }
+                    System.Threading.Thread.Sleep(5000);
+
+                    SavingAction(elementToSave);
+
+                    
+                    elementToChangeActionsAndHeader.CustomTreeViewHeader = new CustomHeaderVM(elementToChangeActionsAndHeader.Name);
+
+                    //restore the actions
+                    elementToChangeActionsAndHeader.Actions = actions;
+                }
+            });
+        }
+
+        public static async void SaveElementsOnBackGroundThread(List<ChildElement> elementsToSave, BaseFdaElement elementToChangeActionsAndHeader, Action<ChildElement> SavingAction, string savingMessage)
+        {
+            elementToChangeActionsAndHeader.CustomTreeViewHeader = new CustomHeaderVM(elementToChangeActionsAndHeader.Name, "", savingMessage, true);//need to create a method to just append the note and gif
+
+            //clear the actions while it is saving
+            List<NamedAction> actions = new List<NamedAction>();
+            foreach (NamedAction act in elementToChangeActionsAndHeader.Actions)
+            {
+                actions.Add(act);
+            }
+            elementToChangeActionsAndHeader.Actions = new List<NamedAction>();
+
+            await Task.Run(() =>
+            {
+                if (!Storage.Connection.Instance.IsConnectionNull)
+                {
+                    if (!Storage.Connection.Instance.IsOpen)
+                    {
+                        Storage.Connection.Instance.Open();
+                    }
+                    //System.Threading.Thread.Sleep(5000);
+
+                    foreach (ChildElement elem in elementsToSave)
+                    {
+                        SavingAction(elem);
+                    }
+
+
+                    elementToChangeActionsAndHeader.CustomTreeViewHeader = new CustomHeaderVM(elementToChangeActionsAndHeader.Name);
+
+                    //restore the actions
+                    elementToChangeActionsAndHeader.Actions = actions;
+                }
+            });
+        }
+
         public List<ChildElement> CreateElementsFromRows(string tableName, Func<object[], ChildElement> createElemsFromRowDataAction)
         {
             List<ChildElement> elems = new List<ChildElement>();

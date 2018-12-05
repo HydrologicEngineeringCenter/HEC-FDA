@@ -22,8 +22,8 @@
                         <ColumnDefinition Width=".5*"/>
                     </Grid.ColumnDefinitions>
                         
-                    <!--<RadioButton Name="rad_UseDefaults" Content="Use Defaults" IsChecked="{Binding UseDefaultsIsChecked}" Checked="rad_UseDefaults_Checked" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>-->
-                    <!--<RadioButton Grid.Column="1" Name="rad_FromFile" Content="Import From File" IsChecked="{Binding FromFileIsChecked}" Checked="rad_FromFile_Checked" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" />-->
+                    <!--<RadioButton Name="rad_UseDefaults" Content="Use Defaults" IsChecked="{Binding UseDefaultsIsChecked}" Checked="rad_UseDefaults_Checked" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <RadioButton Grid.Column="1" Name="rad_FromFile" Content="Import From File" IsChecked="{Binding FromFileIsChecked}" Checked="rad_FromFile_Checked" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" />-->
                 </Grid>
                 </ScrollViewer>
 
@@ -33,7 +33,7 @@
             <ScrollViewer VerticalScrollBarVisibility="Visible">
                 <Grid Name="LinkingGrid" Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="150"/>
                         <ColumnDefinition Width="*"/>
                         <!--<ColumnDefinition Width="{Binding AttributeColumnWidth}"/>-->
                         <!--<ColumnDefinition Width="{Binding ComboBoxColumnWidth}"/>-->

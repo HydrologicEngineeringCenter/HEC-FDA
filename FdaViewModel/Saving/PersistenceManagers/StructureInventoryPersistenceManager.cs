@@ -61,7 +61,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             {
 
                 SaveNewElementToParentTable(GetRowDataFromElement((InventoryElement)element), TableName, TableColumnNames, TableColumnTypes);
-                WriteAttributeTable(((InventoryElement)element).DefineSIAttributes, ((InventoryElement)element).AttributeLinkingList, ((InventoryElement)element).DefineSIAttributes.Path);
+                //WriteAttributeTable(((InventoryElement)element).DefineSIAttributes, ((InventoryElement)element).AttributeLinkingList, ((InventoryElement)element).DefineSIAttributes.Path);
                 StudyCacheForSaving.AddStructureInventoryElement((InventoryElement)element);
             }
         }

@@ -27,6 +27,11 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         #endregion
         #region Properties
+        /// <summary>
+        /// This bool is to let the editor know which one of the elements to have selected when it opens. There should
+        /// only ever be one element that is turned to "true".
+        /// </summary>
+        public bool IsSelected { get; set; }
         public Dictionary<string,bool[]> OccTypesSelectedTabsDictionary { get; set; }
             //public string OccTypesGroupName { get; set; }
         public List<Consequences_Assist.ComputableObjects.OccupancyType> ListOfOccupancyTypes { get; set; }
@@ -134,49 +139,50 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         #endregion
 
 
-        public  void Save()
-        {
+        //public  void Save()
+        //{
 
-            //if (!Storage.Connection.Instance.IsConnectionNull)
-            //{
-            //    if (!Storage.Connection.Instance.IsOpen)
-            //    {
-            //        Storage.Connection.Instance.Open();
-            //    }
-            //    if (Storage.Connection.Instance.TableNames().Contains(TableName))
-            //    {
-            //        //already exists... delete?
-            //        Storage.Connection.Instance.DeleteTable(TableName);
-            //    }
+        //    //if (!Storage.Connection.Instance.IsConnectionNull)
+        //    //{
+        //    //    if (!Storage.Connection.Instance.IsOpen)
+        //    //    {
+        //    //        Storage.Connection.Instance.Open();
+        //    //    }
+        //    //    if (Storage.Connection.Instance.TableNames().Contains(TableName))
+        //    //    {
+        //    //        //already exists... delete?
+        //    //        Storage.Connection.Instance.DeleteTable(TableName);
+        //    //    }
 
-            //    string[] colNames = new string[] { "Name", "Description", "DamageCategory","VarInFoundHtType","FdHtMin","FdHtMax","FdHtStDev",
-            //        "IsStructChecked","VarInStructValueType","StructMin","StructMax","StructStDev","StructDistType", "IsContChecked",
-            //        "VarInContValueType", "ContMin", "ContMax", "ContStDev", "ContDistType", "IsVehChecked", "VarInVehValueType",
-            //        "VehMin", "VehMax", "VehStDev", "VehDistType", "IsOtherChecked", "VarInOtherValueType", "OtherMin", "OtherMax",
-            //        "OtherStDev", "OtherDistType","GroupName", "StructureCurve","ContentCurve","VehicleCurve","OtherCurve" };
-            //    Type[] colTypes = new Type[] { typeof(string), typeof(string), typeof(string), typeof(string), typeof(double),
-            //        typeof(double), typeof(double), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double),
-            //        typeof(string), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),
-            //        typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string), typeof(bool),
-            //        typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),typeof(string),typeof(string),
-            //        typeof(string),typeof(string),typeof(string)};
+        //    //    string[] colNames = new string[] { "Name", "Description", "DamageCategory","VarInFoundHtType","FdHtMin","FdHtMax","FdHtStDev",
+        //    //        "IsStructChecked","VarInStructValueType","StructMin","StructMax","StructStDev","StructDistType", "IsContChecked",
+        //    //        "VarInContValueType", "ContMin", "ContMax", "ContStDev", "ContDistType", "IsVehChecked", "VarInVehValueType",
+        //    //        "VehMin", "VehMax", "VehStDev", "VehDistType", "IsOtherChecked", "VarInOtherValueType", "OtherMin", "OtherMax",
+        //    //        "OtherStDev", "OtherDistType","GroupName", "StructureCurve","ContentCurve","VehicleCurve","OtherCurve" };
+        //    //    Type[] colTypes = new Type[] { typeof(string), typeof(string), typeof(string), typeof(string), typeof(double),
+        //    //        typeof(double), typeof(double), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double),
+        //    //        typeof(string), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),
+        //    //        typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string), typeof(bool),
+        //    //        typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),typeof(string),typeof(string),
+        //    //        typeof(string),typeof(string),typeof(string)};
 
-            //    Storage.Connection.Instance.CreateTable(TableName, colNames, colTypes);
-            //    DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
+        //    //    Storage.Connection.Instance.CreateTable(TableName, colNames, colTypes);
+        //    //    DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
 
-            //    List<object[]> rows = new List<object[]>();
+        //    //    List<object[]> rows = new List<object[]>();
 
-            //    foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in ListOfOccupancyTypes)
-            //    {
+        //    //    foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in ListOfOccupancyTypes)
+        //    //    {
 
-            //        rows.Add(GetOccTypeRowForParentTable(ot).ToArray());
-            //    }
-            //    tbl.AddRows(rows);
-            //    tbl.ApplyEdits();
-            //    Storage.Connection.Instance.Close();
+        //    //        rows.Add(GetOccTypeRowForParentTable(ot).ToArray());
+        //    //    }
+        //    //    tbl.AddRows(rows);
+        //    //    tbl.ApplyEdits();
+        //    //    Storage.Connection.Instance.Close();
 
-            //}
-        }
+        //    //}
+        //    //Saving.PersistenceFactory.GetOccTypeManager().SaveNew(ListOfOccupancyTypes, OccTypesSelectedTabsDictionary, Name);
+        //}
         /// <summary>
         /// This method is used to create the row for the parent occtype table. 
         /// This table has a lot of columns

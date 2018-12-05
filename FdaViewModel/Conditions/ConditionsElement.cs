@@ -634,7 +634,10 @@ namespace FdaViewModel.Conditions
             List<string> selectedElementNames = new List<string>();
             selectedElementNames.Add(AnalyticalFlowFrequency.Name);
             selectedElementNames.Add(RatingCurveElement.Name);
-            selectedElementNames.Add(ExteriorInteriorElement.Name);
+            if (ExteriorInteriorElement != null)
+            {
+                selectedElementNames.Add(ExteriorInteriorElement.Name);
+            }
             selectedElementNames.Add(StageDamageElement.Name);
             selectedElementNames.Add("Computed Stage Frequency");
             // write out results for testing purposes.

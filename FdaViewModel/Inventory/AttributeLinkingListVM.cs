@@ -27,7 +27,6 @@ namespace FdaViewModel.Inventory
         #endregion
         #region Properties
         public bool IsInEditMode { get; set; }
-
         public List<string> SelectedListOfOccTypeStrings
         {
             get { return _SelectedListOfOccTypeStrings; }

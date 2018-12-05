@@ -33,7 +33,7 @@ namespace Fda.Conditions
         public bool Plot5PoppedOut { get; set; }
         public bool Plot5DoesntExist { get; set; }
         public bool AreaPlotsHaveBeenRemoved { get; set; }
-
+        public bool ThresholdLinesShowing { get; set; } = true;
         public ObservableCollection<ILinkedPlot> TheAddedPlots
         {
             get;
@@ -589,14 +589,14 @@ namespace Fda.Conditions
                 return;
             }
 
-            sortedList[0].SetNextPlotLinkage(sortedList[1], "", "");
+            sortedList[0].SetNextPlotLinkage(sortedList[1]);
 
 
             //**********   set the linkages for all but the last plot
             for (int i = 1; i < sortedList.Count - 1; i++)
             {
 
-                sortedList[i].SetNextPlotLinkage(sortedList[i + 1], "", "");
+                sortedList[i].SetNextPlotLinkage(sortedList[i + 1]);
                 sortedList[i].SetPreviousPlotLinkage(sortedList[i - 1]);
 
             }
@@ -957,8 +957,19 @@ namespace Fda.Conditions
         {
           
                 FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
-            vm.ToggleThresholdLines();
             
+            vm.ToggleThresholdLines();
+            if(ThresholdLinesShowing)
+            {
+                img_HideThresholdLines.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(new Uri(@"pack://application:,,,/Fda;component/Resources/ShowThresholdLines.png"));
+                ThresholdLinesShowing = false;
+            }
+            else
+            {
+                img_HideThresholdLines.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(new Uri(@"pack://application:,,,/Fda;component/Resources/HideThresholdLines.png"));
+                ThresholdLinesShowing = true;
+            }
+
         }
 
         //private void txt_XValue_LostFocus(object sender, RoutedEventArgs e)

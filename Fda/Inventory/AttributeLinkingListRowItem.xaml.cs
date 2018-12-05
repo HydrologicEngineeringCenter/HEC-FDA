@@ -69,7 +69,10 @@ namespace Fda.Inventory
 
             }
             FdaViewModel.Inventory.AttributeLinkingListVM vm = (FdaViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
-            vm.UpdateOcctypeDictionary(OldOccType, NewOccType);
+            if (vm != null)
+            {
+                vm.UpdateOcctypeDictionary(OldOccType, NewOccType);
+            }
         }
     }
 }

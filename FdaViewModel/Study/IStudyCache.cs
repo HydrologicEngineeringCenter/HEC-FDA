@@ -41,6 +41,7 @@ namespace FdaViewModel.Study
         event FDACache.AddElementEventHandler StageDamageAdded;
         event FDACache.AddElementEventHandler StructureInventoryAdded;
         event FDACache.AddElementEventHandler ConditionsElementAdded;
+        event FDACache.AddElementEventHandler OccTypeElementAdded;
 
         event FDACache.AddElementEventHandler RatingRemoved;
         event FDACache.AddElementEventHandler TerrainRemoved;
@@ -54,6 +55,7 @@ namespace FdaViewModel.Study
         event FDACache.AddElementEventHandler StageDamageRemoved;
         event FDACache.AddElementEventHandler StructureInventoryRemoved;
         event FDACache.AddElementEventHandler ConditionsElementRemoved;
+        event FDACache.AddElementEventHandler OccTypeElementRemoved;
 
         event FDACache.UpdateElementEventHandler RatingUpdated;
         event FDACache.UpdateElementEventHandler TerrainUpdated;
@@ -67,5 +69,7 @@ namespace FdaViewModel.Study
         event FDACache.UpdateElementEventHandler StageDamageUpdated;
         event FDACache.UpdateElementEventHandler StructureInventoryUpdated;
         event FDACache.UpdateElementEventHandler ConditionsElementUpdated;
+        event FDACache.UpdateElementEventHandler OccTypeElementUpdated;
+
     }
 }

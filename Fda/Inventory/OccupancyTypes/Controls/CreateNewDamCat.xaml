@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Fda.Inventory.OccupancyTypes.Controls"
                           xmlns:Utilities="clr-namespace:Fda.Utilities"
-
+                Width="350"
+             Height="100"
              mc:Ignorable="d" 
              d:DesignHeight="123" d:DesignWidth="500">
     <Grid>
@@ -16,7 +17,7 @@
         </Grid.RowDefinitions>
         <!--<StackPanel Name="NameStackPanel" Margin="5,10,5,5" VerticalAlignment="Top" HorizontalAlignment="Center" Orientation="Vertical">-->
         <TextBlock Grid.Row="0" Margin="5,0,0,0" Name="NameLabel" Text="Name:" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
-        <TextBox Grid.Row="1" Name="txt_NameTextBox" Text="{Binding Name}" HorizontalAlignment="Stretch" Margin="5,0,5,0" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Name="txt_NameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True}" HorizontalAlignment="Stretch" Margin="5,0,5,0" VerticalAlignment="Center" />
         <!--</StackPanel>-->
         <!--Standard Buttons-->
         <Utilities:OKCloseControl Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>

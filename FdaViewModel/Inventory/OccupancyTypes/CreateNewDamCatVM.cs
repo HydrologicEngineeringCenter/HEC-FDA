@@ -16,33 +16,41 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         // Created Date: 7/21/2017 1:26:32 PM
         #endregion
         #region Fields
-        private string _Name;
         #endregion
         #region Properties
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged(); }
-        }
+        
         
         #endregion
         #region Constructors
-        public CreateNewDamCatVM():base()
+        public CreateNewDamCatVM(List<string> bannedNames):base()
         {
-
+            AddValidationRules(bannedNames);
         }
-        public CreateNewDamCatVM(string name) : base()
+        public CreateNewDamCatVM(string exampleName, List<string> bannedNames) : base()
         {
-            Name = name;
+            Name = exampleName;
+            AddValidationRules(bannedNames);
         }
         #endregion
         #region Voids
         #endregion
         #region Functions
         #endregion
-        public override void AddValidationRules()
+       private void AddValidationRules(List<string> bannedNames)
         {
-            //throw new NotImplementedException();
+            AddRule(nameof(Name), () => { if (Name == null) { return false; } else { return !Name.Equals(""); } }, "Name cannot be blank");
+
+            foreach (string bannedName in bannedNames)
+            {
+                AddRule(nameof(Name), () => {
+                    if (bannedName.Equals(Name))
+                    {
+                        return false;
+                    }
+                    else { return true; }
+
+                }, "Name already exists.");
+            }
         }
 
        

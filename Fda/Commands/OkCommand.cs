@@ -64,6 +64,10 @@ namespace Fda.Commands
                     {
                         ((FdaViewModel.Editors.BaseEditorVM)vm).Save();
                     }
+                    else
+                    {
+                        return;
+                    }
                 }
             }
 

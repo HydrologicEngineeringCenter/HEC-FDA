@@ -37,14 +37,71 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Consequences_Assist">
+      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\Consequences_Assist.dll</HintPath>
+    </Reference>
+    <Reference Include="DataBase_Reader, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\FdaViewModel\bin\Debug\DataBase_Reader.dll</HintPath>
+    </Reference>
+    <Reference Include="DataTable_Viewer, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\FdaViewModel\bin\Debug\DataTable_Viewer.dll</HintPath>
+    </Reference>
     <Reference Include="FdaModel">
       <HintPath>..\Model\bin\Debug\FdaModel.dll</HintPath>
+    </Reference>
+    <Reference Include="GDALAssist, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\GDALAssist.dll</HintPath>
+    </Reference>
+    <Reference Include="gdalconst_csharp">
+      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\gdalconst_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="gdal_csharp, Version=1.0.4916.28018, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\gdal_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="LifeSimGIS, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\FdaViewModel\bin\Debug\LifeSimGIS.dll</HintPath>
+    </Reference>
+    <Reference Include="ogr_csharp, Version=1.0.4916.28017, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\ogr_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenGLMapping, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\FdaViewModel\bin\Debug\OpenGLMapping.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\FdaViewModel\bin\Debug\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK.GLControl, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\FdaViewModel\bin\Debug\OpenTK.GLControl.dll</HintPath>
+    </Reference>
+    <Reference Include="osr_csharp, Version=1.0.4916.28017, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\osr_csharp.dll</HintPath>
     </Reference>
     <Reference Include="Statistics">
       <HintPath>..\lib\Statistics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite, Version=1.0.105.2, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\FdaViewModel\bin\Debug\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq">
+      <HintPath>..\FdaViewModel\bin\Debug\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\x86\Debug\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -68,6 +125,7 @@
     <Compile Include="LateralStructureTests.cs" />
     <Compile Include="RealizationTests.cs" />
     <Compile Include="FrequencyFunctionTests.cs" />
+    <Compile Include="OccTypeEditorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CSV Files\AnalyzeCompositionTest.csv">
@@ -120,6 +178,10 @@
     <ProjectReference Include="..\FdaTester\FdaTester.csproj">
       <Project>{0d9ccaaa-4117-47e3-9829-2ca53ff695f5}</Project>
       <Name>FdaTester</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FdaViewModel\FdaViewModel.csproj">
+      <Project>{6a8fd3e7-b4ec-46b4-b91b-2b63034f9776}</Project>
+      <Name>FdaViewModel</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

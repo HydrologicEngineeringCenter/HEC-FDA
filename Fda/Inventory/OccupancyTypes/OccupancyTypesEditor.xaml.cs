@@ -35,23 +35,23 @@ namespace Fda.Inventory.OccupancyTypes
         {
             // I wanted the editor to open up with a group and occtype selected. This gets the first group and the first occtype.
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
-            if (vm.OccTypeGroups.Count > 0)
-            {
-                if (vm.OccTypeGroups.Count > 0)
-                {
-                    vm.SelectedOccTypeGroup = vm.OccTypeGroups[0];
+           // if (vm.OccTypeGroups.Count > 0)
+           // {
+                //if (vm.OccTypeGroups.Count > 0)
+                //{
+                //    vm.SelectedOccTypeGroup = vm.OccTypeGroups[0];
 
-                    if (vm.SelectedOccTypeGroup.ListOfOccupancyTypes.Count > 0)
-                    {
-                        vm.SelectedOccType = vm.SelectedOccTypeGroup.ListOfOccupancyTypes[0];
+                //    if (vm.SelectedOccTypeGroup.ListOfOccupancyTypes.Count > 0)
+                //    {
+                //        vm.SelectedOccType = vm.SelectedOccTypeGroup.ListOfOccupancyTypes[0];
 
-                        cmb_Group.SelectedItem = vm.SelectedOccTypeGroup;
-                        OccTypeListView.SelectedItem = vm.SelectedOccType;
-                    }
+                //        cmb_Group.SelectedItem = vm.SelectedOccTypeGroup;
+                //        OccTypeListView.SelectedItem = vm.SelectedOccType;
+                //    }
 
-                }
+                //}
                 
-            }
+            //}
         }
 
         public void UpdateTheListView(object sender, EventArgs e)
@@ -107,37 +107,86 @@ namespace Fda.Inventory.OccupancyTypes
             lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Consequences_Assist.ComputableObjects.OccupancyType.Name), System.ComponentModel.ListSortDirection.Ascending));
              
             OccTypeListView.ItemsSource = lcv;
-            if (OccTypeListView.Items.Count == 0) { return; }
+            if (OccTypeListView.Items.Count == 0)
+            {
+                return;
+            }
             OccTypeListView.SelectedItem = OccTypeListView.Items[0];
             vm.LoadTheIsTabsCheckedDictionary();
 
         }
 
+        private void ClearAllControls()
+        {
+
+            OccTypeEditorControl.OccTypeNameBox.Text = "";
+            OccTypeEditorControl.OccTypeNameBox.IsEnabled = false;
+
+            OccTypeEditorControl.OccTypeDescriptionBox.Text = "";
+            OccTypeEditorControl.OccTypeDescriptionBox.IsEnabled = false;
+
+            OccTypeEditorControl.DamageCategoryComboBox.SelectedIndex = -1;
+            OccTypeEditorControl.DamageCategoryComboBox.IsEnabled = false;
+
+            OccTypeEditorControl.FoundationHeightUncertainty.IsEnabled = false;
+
+            OccTypeEditorControl.tableWithPlot_Structures.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None) ;
+            OccTypeEditorControl.tableWithPlot_Content.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            OccTypeEditorControl.tableWithPlot_vehicle.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            OccTypeEditorControl.tableWithPlot_other.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+
+            OccTypeEditorControl.txt_YearBox.IsEnabled = false;
+            OccTypeEditorControl.txt_Module.IsEnabled = false;
+        }
+        private void EnableAllControls()
+        {
+
+            //OccTypeEditorControl.OccTypeNameBox.Text = "";
+            OccTypeEditorControl.OccTypeNameBox.IsEnabled = true;
+
+            //OccTypeEditorControl.OccTypeDescriptionBox.Text = "";
+            OccTypeEditorControl.OccTypeDescriptionBox.IsEnabled = true;
+
+            //OccTypeEditorControl.DamageCategoryComboBox.SelectedIndex = -1;
+            OccTypeEditorControl.DamageCategoryComboBox.IsEnabled = true;
+
+            OccTypeEditorControl.FoundationHeightUncertainty.IsEnabled = true;
+
+            //OccTypeEditorControl.tableWithPlot_Structures.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            //OccTypeEditorControl.tableWithPlot_Content.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            //OccTypeEditorControl.tableWithPlot_vehicle.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            //OccTypeEditorControl.tableWithPlot_other.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+
+            OccTypeEditorControl.txt_YearBox.IsEnabled = true;
+            OccTypeEditorControl.txt_Module.IsEnabled = true;
+        }
+    
+
         private void OccTypeListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
 
-            //assign the continuous distributions for the previously selected "percentofmeanuncertaintyWarning" control
-            if (e.RemovedItems.Count > 0)
-            {
-                Consequences_Assist.ComputableObjects.OccupancyType prev = (Consequences_Assist.ComputableObjects.OccupancyType)e.RemovedItems[0];
-                FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
-                //structure
-                prev.StructureValueUncertainty = OccTypeEditorControl.StructureValueUncertainty.ReturnDistribution();
-                //content
-                prev.ContentValueUncertainty = OccTypeEditorControl.ContentValueUncertainty.ReturnDistribution();
-                //vehicle
-                prev.VehicleValueUncertainty = OccTypeEditorControl.VehicleValueUncertainty.ReturnDistribution();
-                //other
-                prev.OtherValueUncertainty = OccTypeEditorControl.OtherValueUncertainty.ReturnDistribution();
+            ////assign the continuous distributions for the previously selected "percentofmeanuncertaintyWarning" control
+            //if (e.RemovedItems.Count > 0)
+            //{
+            //    Consequences_Assist.ComputableObjects.OccupancyType prev = (Consequences_Assist.ComputableObjects.OccupancyType)e.RemovedItems[0];
+            //    FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //    //structure
+            //    prev.StructureValueUncertainty = OccTypeEditorControl.StructureValueUncertainty.ReturnDistribution();
+            //    //content
+            //    prev.ContentValueUncertainty = OccTypeEditorControl.ContentValueUncertainty.ReturnDistribution();
+            //    //vehicle
+            //    prev.VehicleValueUncertainty = OccTypeEditorControl.VehicleValueUncertainty.ReturnDistribution();
+            //    //other
+            //    prev.OtherValueUncertainty = OccTypeEditorControl.OtherValueUncertainty.ReturnDistribution();
 
-                //assign the description
-                prev.Description = vm.Description;
+            //    //assign the description
+            //    prev.Description = vm.Description;
 
-                //assign the foundation height uncertainty
-                prev.FoundationHeightUncertainty = OccTypeEditorControl.FoundationHeightUncertainty.ReturnDistribution();
+            //    //assign the foundation height uncertainty
+            //    prev.FoundationHeightUncertainty = OccTypeEditorControl.FoundationHeightUncertainty.ReturnDistribution();
 
-            }
+            //}
 
             
 
@@ -201,6 +250,7 @@ namespace Fda.Inventory.OccupancyTypes
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             vm.LaunchNewOccTypeWindow();
             UpdateTheListView(sender,e);
+            EnableAllControls();
         }
 
         private void CopyExistingButton_Click(object sender, RoutedEventArgs e)
@@ -215,6 +265,28 @@ namespace Fda.Inventory.OccupancyTypes
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             vm.DeleteOccType();
             UpdateTheListView(sender, e);
+            if(vm.SelectedOccType == null)
+            {
+                ClearAllControls();
+            }
+        }
+
+        private void CreateNewOccTypeGroupButton_Click(object sender, RoutedEventArgs e)
+        {
+            FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            vm.LaunchImportNewOccTypeGroup();
+        }
+
+        private void RenameOccTypeGroupButton_Click(object sender, RoutedEventArgs e)
+        {
+            FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            vm.LaunchRenameOcctypeGroup();
+        }
+
+        private void DeleteOccTypeGroupButton_Click(object sender, RoutedEventArgs e)
+        {
+            FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            vm.DeleteOccTypeGroup();
         }
     }
 }

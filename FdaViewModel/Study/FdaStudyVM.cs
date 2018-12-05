@@ -91,10 +91,10 @@ namespace FdaViewModel.Study
             set { _Tabs = value; NotifyPropertyChanged(); }
         }
 
-        public List<BaseViewModel> Avalon
-        {
-            get;set;
-        }
+        //public List<BaseViewModel> Avalon
+        //{
+        //    get;set;
+        //}
 
         //public ObservableCollection<Utilities.DynamicTabVM> PoppedOutTabs
         //{
@@ -176,7 +176,7 @@ namespace FdaViewModel.Study
             if (Tabs == null)
             {
                 Tabs = new ObservableCollection<IDynamicTab>();
-                Avalon = new List<BaseViewModel>();
+                //Avalon = new List<BaseViewModel>();
                 _TabsDictionary = new Dictionary<Guid, List<IDynamicTab>>();
             }
 
@@ -207,8 +207,8 @@ namespace FdaViewModel.Study
         #region Voids
         private void AddTheMapTreeViewItemBackIn(object sender, EventArgs e)
         {
-            OpenGLMapping.RasterFeatureNode newNode = (OpenGLMapping.RasterFeatureNode)sender;
-            _MWMTVConn.MapTreeView.AddGisData(newNode);
+            //OpenGLMapping.RasterFeatureNode newNode = (OpenGLMapping.RasterFeatureNode)sender;
+            //_MWMTVConn.MapTreeView.AddGisData(newNode);
 
         }
         private void RenameTheMapTreeViewItem(object sender, EventArgs e)
@@ -480,7 +480,7 @@ namespace FdaViewModel.Study
             //this is used to go from a window back to a tab after it has been popped out
             dynamicTabVM.BaseVM.AddPopThisIntoATabAction((dynamicTab, isPoppingIn) => AddTab(dynamicTab, isPoppingIn));
             Tabs.Add(dynamicTabVM);
-            Avalon.Add(dynamicTabVM.BaseVM);
+            //Avalon.Add(dynamicTabVM.BaseVM);
 
             AddTabToTabsDictionary(dynamicTabVM);
             //_TabsDictionary.Add(uniqueID, dynamicTabVM);

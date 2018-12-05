@@ -15,6 +15,7 @@ using FdaViewModel.AggregatedStageDamage;
 using FdaViewModel.Inventory;
 using FdaViewModel.Conditions;
 using System.Collections.ObjectModel;
+using FdaViewModel.Inventory.OccupancyTypes;
 
 namespace FdaViewModel.Study
 {
@@ -38,6 +39,8 @@ namespace FdaViewModel.Study
         public event AddElementEventHandler StageDamageAdded;
         public event AddElementEventHandler StructureInventoryAdded;
         public event AddElementEventHandler ConditionsElementAdded;
+        public event AddElementEventHandler OccTypeElementAdded;
+
 
         public event AddElementEventHandler RatingRemoved;
         public event AddElementEventHandler TerrainRemoved;
@@ -51,6 +54,8 @@ namespace FdaViewModel.Study
         public event AddElementEventHandler StageDamageRemoved;
         public event AddElementEventHandler StructureInventoryRemoved;
         public event AddElementEventHandler ConditionsElementRemoved;
+        public event AddElementEventHandler OccTypeElementRemoved;
+
 
         public event UpdateElementEventHandler RatingUpdated;
         public event UpdateElementEventHandler TerrainUpdated;
@@ -64,8 +69,11 @@ namespace FdaViewModel.Study
         public event UpdateElementEventHandler StageDamageUpdated;
         public event UpdateElementEventHandler StructureInventoryUpdated;
         public event UpdateElementEventHandler ConditionsElementUpdated;
+        public event UpdateElementEventHandler OccTypeElementUpdated;
+
 
         private List<RatingCurveElement> _Ratings = new List<RatingCurveElement>();
+        private List<OccupancyTypesElement> _OccTypes = new List<OccupancyTypesElement>();
         private List<TerrainElement> _Terrains = new List<TerrainElement>();
         private List<ImpactAreaElement> _ImpactAreas = new List<ImpactAreaElement>();
         private List<WaterSurfaceElevationElement> _WaterSurfaceElevations = new List<WaterSurfaceElevationElement>();
@@ -78,8 +86,10 @@ namespace FdaViewModel.Study
         private List<InventoryElement> _Structures = new List<InventoryElement>();
         private List<ConditionsElement> _Conditions = new List<ConditionsElement>();
 
-
+        #region Properties
         public List<RatingCurveElement> RatingCurveElements { get { return _Ratings; }  }
+        public List<OccupancyTypesElement> OccTypeElements { get { return _OccTypes; } }
+
         public List<TerrainElement> TerrainElements { get { return _Terrains; } }
         public List<ImpactAreaElement> ImpactAreaElements { get { return _ImpactAreas; } }
         public List<WaterSurfaceElevationElement> WaterSurfaceElements { get { return _WaterSurfaceElevations; } }
@@ -100,12 +110,12 @@ namespace FdaViewModel.Study
         public RatingCurveOwnerElement RatingCurveParent { get; set; }
         public ExteriorInteriorOwnerElement ExteriorInteriorParent { get; set; }
         public AggregatedStageDamageOwnerElement StageDamageParent { get; set; }
-        
+        public OccupancyTypesOwnerElement OccTypeParent { get; set; }
 
         public ConditionsOwnerElement ConditionsParent { get; set; }
         public ConditionsTreeOwnerElement ConditionsTreeParent { get; set; }
         #endregion
-
+        #endregion
         private FDACache()
         {
 
@@ -148,9 +158,19 @@ namespace FdaViewModel.Study
             LoadStageDamages();
             LoadStructureInventories();
             LoadConditions();
+            LoadOccTypes();
         }
 
         #region load elements
+        private void LoadOccTypes()
+        {
+            List<Utilities.ChildElement> occTypes = Saving.PersistenceFactory.GetOccTypeManager().Load();
+
+            foreach (Inventory.OccupancyTypes.OccupancyTypesElement elem in occTypes)
+            {
+                AddOccTypesElement(elem);
+            }
+        }
         private void LoadRatings()
         {
             List<Utilities.ChildElement> ratings = Saving.PersistenceFactory.GetRatingManager().Load();
@@ -445,6 +465,11 @@ namespace FdaViewModel.Study
             TerrainElements.Remove(elem);
             TerrainRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
         }
+        public void RemoveOccTypeElement(OccupancyTypesElement elem)
+        {
+            OccTypeElements.Remove(elem);
+            OccTypeElementRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+        }
         #endregion
 
         #region add elements
@@ -557,7 +582,11 @@ namespace FdaViewModel.Study
             //}
 
         }
-
+        public void AddOccTypesElement(OccupancyTypesElement elem)
+        {
+            OccTypeElements.Add(elem);
+            OccTypeElementAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+        }
         public void AddRatingElement(RatingCurveElement elem)
         {
             RatingCurveElements.Add(elem);
@@ -846,6 +875,25 @@ namespace FdaViewModel.Study
                 StructureInventoryUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
+
+        //public void UpdateOccTypeElement(InventoryElement oldElement, InventoryElement newElement)
+        //{
+        //    int index = -1;
+        //    for (int i = 0; i < StructureInventoryElements.Count; i++)
+        //    {
+        //        if (StructureInventoryElements[i].Name.Equals(oldElement.Name))
+        //        {
+        //            index = i;
+        //            break;
+        //        }
+        //    }
+        //    if (index != -1)
+        //    {
+        //        StructureInventoryElements.RemoveAt(index);
+        //        StructureInventoryElements.Insert(index, newElement);
+        //        StructureInventoryUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+        //    }
+        //}
         #endregion
 
         #region Rename
@@ -1014,14 +1062,10 @@ namespace FdaViewModel.Study
             {
 
             }
-            //if (element.GetType() == typeof(occtype))
-            //{
-            //    foreach (BaseFdaElement elem in ImpactAreaElements)
-            //    {
-            //        retVal.Add(elem);
-            //    }
-            //    return retVal;
-            //}
+            if (parentType == typeof(OccupancyTypesOwnerElement))
+            {
+                return OccTypeParent as T;
+            }
             if (parentType == typeof(StructureInventoryOwnerElement))
             {
 
@@ -1116,14 +1160,14 @@ namespace FdaViewModel.Study
                 }
                 return retVal;
             }
-            //if (element.GetType() == typeof(Inventory.OccupancyTypes.OccupancyTypesElement))
-            //{
-            //    foreach (BaseFdaElement elem in o)
-            //    {
-            //        retVal.Add(elem);
-            //    }
-            //    return retVal;
-            //}
+            if (childElementType == typeof(OccupancyTypesElement))
+            {
+                foreach (ChildElement elem in OccTypeElements)
+                {
+                    retVal.Add(elem as T);
+                }
+                return retVal;
+            }
             if (childElementType == typeof(InventoryElement))
             {
                 foreach (ChildElement elem in StructureInventoryElements)

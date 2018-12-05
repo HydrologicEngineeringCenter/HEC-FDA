@@ -9,6 +9,7 @@ using FdaModel.ComputationPoint;
 using FdaModel.Functions.OrdinatesFunctions;
 using System.Collections.ObjectModel;
 using System.Windows;
+using FdaViewModel.ImpactArea;
 
 namespace FdaViewModel.Conditions
 {
@@ -351,7 +352,11 @@ namespace FdaViewModel.Conditions
 
         private void ImpactAreaAdded(object sender, Saving.ElementAddedEventArgs e)
         {
-            List<ImpactArea.ImpactAreaElement> tempList = ImpactAreas;
+            List<ImpactArea.ImpactAreaElement> tempList = new List<ImpactArea.ImpactAreaElement>();
+            foreach(ImpactAreaElement elem in ImpactAreas)
+            {
+                tempList.Add(elem);
+            }
             tempList.Add((ImpactArea.ImpactAreaElement)e.Element);
             ImpactAreas = tempList;//this is to hit the notify prop changed
         }

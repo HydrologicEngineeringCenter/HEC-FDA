@@ -7,11 +7,12 @@ using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 11 / 2017 1:47:59 PM)]
-    public class ImportOccupancyTypesVM : BaseViewModel
+    public class ImportOccupancyTypesVM : Editors.BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
@@ -50,7 +51,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public string OccupancyTypesGroupName { get; set; }
         #endregion
         #region Constructors
-        public ImportOccupancyTypesVM() : base()
+        public ImportOccupancyTypesVM() : base(null)
         {
            
 
@@ -129,13 +130,14 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                     Navigate(cmb);
                     return false;
                 }
-                if (ListOfOccupancyTypes.Count == 0)
-                {
-                    errorMessage = "No occupancy types were detected in the selected file.";
-                    Utilities.CustomMessageBoxVM cmb = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, errorMessage);
-                    Navigate(cmb);
-                    return false;
-                }
+                //I added a rule for this, so this shouldn't be possible
+                //if (ListOfOccupancyTypes.Count == 0)
+                //{
+                //    errorMessage = "No occupancy types were detected in the selected file.";
+                //    Utilities.CustomMessageBoxVM cmb = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, errorMessage);
+                //    Navigate(cmb);
+                //    return false;
+                //}
 
 
                 List<DepthDamage.DepthDamageCurve> listOfDDCurves = new List<DepthDamage.DepthDamageCurve>();
@@ -228,11 +230,85 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 }
                
 
-            }, "No occupancy type groups have been added for import.", false);
+            }, "No occupancy type groups have been added for import.", true);
+        }
+
+        public override bool RunSpecialValidation()
+        {
+            List<OccupancyTypesElement> existingElements = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
+
+            foreach (OccupancyTypesGroupRowItemVM row in ListOfRowVMs)
+            {
+                if(IsOccTypeElementNameUnique(row.Name, existingElements) == false) { return false; }
+                //create a dummy tabs checked dictionary
+                Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
+
+                foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in row.ListOfOccTypes)
+                {
+                    if (_OcctypeTabsSelectedDictionary.ContainsKey(ot.Name))
+                    {
+                        System.Windows.MessageBox.Show("Multiple occupancy types found with the same name '" + ot.Name + "' in " + row.Name , "Error", System.Windows.MessageBoxButton.OK);
+                        return false;
+                    }
+                    else
+                    {
+                        bool[] tabsCheckedArray = new bool[] { true, true, true, false };
+                        _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
+                    }
+                }
+            }
+            return true;
+        }
+
+        private bool IsOccTypeElementNameUnique(string name, List<OccupancyTypesElement> existingElements)
+        {
+            foreach (OccupancyTypesElement elem in existingElements)
+            {
+                if (elem.Name.Equals(name))
+                {
+                    System.Windows.MessageBox.Show("The name " + name + " already exists. All names must be unique.", "Error", System.Windows.MessageBoxButton.OK);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override void Save()
+        {
+            List<OccupancyTypesElement> elementsToSave = new List<OccupancyTypesElement>();
+            foreach (OccupancyTypesGroupRowItemVM row in ListOfRowVMs)
+            {
+                //create a dummy tabs checked dictionary
+                Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
+
+                foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in row.ListOfOccTypes)
+                {
+                    bool[] tabsCheckedArray = new bool[] { true, true, true, false };
+                    //if(_OcctypeTabsSelectedDictionary.ContainsKey(ot.Name))
+                    //{
+                    //    System.Windows.MessageBox.Show("Multiple occupancy types found with the same name: " + ot.Name, "Error", System.Windows.MessageBoxButton.OK);
+                    //    return;
+                    //}
+                    _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
+
+                }
+
+                OccupancyTypesElement elem = new OccupancyTypesElement(row.Name, row.ListOfOccTypes, _OcctypeTabsSelectedDictionary);
+                //OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(elem);
+                elementsToSave.Add(elem);
+            }
+            //foreach (OccupancyTypesElement element in elementsToSave)
+            //{
+            List<ChildElement> tmp = elementsToSave.ToList<ChildElement>();
+            Saving.PersistenceFactory.GetOccTypeManager().SaveNewElements(tmp);
+            //}
+
+            //object[] args = new object[] { elementsToSave, Actions };
+            //OccupancyTypesOwnerElement.SaveFilesOnBackgroundThread(this, new DoWorkEventArgs(args));
         }
 
        
 
-        
+
     }
 }

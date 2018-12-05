@@ -9,8 +9,7 @@
              xmlns:OpenGL="clr-namespace:OpenGLMapping;assembly=OpenGLMapping"
              xmlns:VMUtils="clr-namespace:FdaViewModel.Utilities;assembly=FdaViewModel"
              xmlns:study="clr-namespace:FdaViewModel.Study;assembly=FdaViewModel"
-             xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"        
-               xmlns:dockctrl="clr-namespace:Xceed.Wpf.AvalonDock.Controls;assembly=Xceed.Wpf.AvalonDock"
+           
 
              Loaded="UserControl_Loaded"
              SizeChanged="UserControl_SizeChanged"
@@ -64,12 +63,12 @@
 
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" MinWidth="100" />
-            <ColumnDefinition Width="100*"/>
+            <ColumnDefinition Width="250" MinWidth="100" />
+            <ColumnDefinition Width="*"  />
         </Grid.ColumnDefinitions>
         <!--<Menu Grid.ColumnSpan="2" Name="MainMenu" VerticalAlignment="Stretch"/>-->
 
-        <Label Name="lbl_Study" Grid.Row="0"  Content="{Binding CurrentStudyElement.CustomTreeViewHeader}" FontSize="14" MouseRightButtonDown="lbl_Study_MouseRightButtonDown"  ContextMenu="{Binding CurrentStudyElement.Actions, Converter={StaticResource converter }}"/>
+        <Label Name="lbl_Study" Grid.Row="0" Grid.ColumnSpan="2"  Content="{Binding CurrentStudyElement.CustomTreeViewHeader}" FontSize="14" MouseRightButtonDown="lbl_Study_MouseRightButtonDown"  ContextMenu="{Binding CurrentStudyElement.Actions, Converter={StaticResource converter }}"/>
         
         <!--<StackPanel Name="stack_MapViewTabView" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal">
         <Button Name="btn_MapView" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Click="btn_MapView_Click" >
@@ -84,7 +83,7 @@
         
         <TabControl Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"  SelectedIndex="{Binding SelectedTab, Mode=TwoWay}" MinWidth="80">
 
-            <TabItem Header="Conditions Control" Name="ConditionsTab">
+            <TabItem Header="Conditions" Name="ConditionsTab">
                 <Grid>
                     <TreeView Name="ConditionsTree" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding CurrentStudyElement.ConditionsTree}" >
                         <TreeView.ItemContainerStyle>
@@ -153,7 +152,7 @@
         </Grid>-->
         
         
-      <utils:CustomTabControl x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding Tabs}" SelectedIndex="{Binding SelectedDynamicTabIndex, Mode=TwoWay}"  MinWidth="500" MinHeight="600" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+      <utils:CustomTabControl x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding Tabs}" SelectedIndex="{Binding SelectedDynamicTabIndex, Mode=TwoWay}"   Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  >
                            
                             <!--<TabControl.ItemContainerStyle>
         <Style TargetType="TabItem">
@@ -200,23 +199,25 @@
           
     <TabControl.ContentTemplate>
         <DataTemplate DataType="VMUtils:DynamicTabVM">
-            <ContentControl Name="masterControl" Content="{Binding BaseVM}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+          <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <ContentControl Name="masterControl" Content="{Binding BaseVM}" />
+          </ScrollViewer>
         </DataTemplate>
     </TabControl.ContentTemplate>
           
       </utils:CustomTabControl>
 
-                        <xcad:DockingManager Grid.Row="1" Grid.Column="1" DocumentsSource="{Binding Avalon}">
+                        <!--<xcad:DockingManager Grid.Row="1" Grid.Column="1" DocumentsSource="{Binding Avalon}">
 
                             <xcad:DockingManager.LayoutItemContainerStyle>
-                                <!-- you can add additional bindings from the layoutitem to the DockWindowViewModel -->
+                                --><!-- you can add additional bindings from the layoutitem to the DockWindowViewModel --><!--
                                 <Style TargetType="{x:Type dockctrl:LayoutItem}">
                                     <Setter Property="Title" Value="{Binding Name}" />
-                                    <!--<Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
-                                    <Setter Property="CanClose" Value="{Binding Model.CanClose}" />-->
+                                    --><!--<Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
+                                    <Setter Property="CanClose" Value="{Binding Model.CanClose}" />--><!--
                                 </Style>
                             </xcad:DockingManager.LayoutItemContainerStyle>
-                        </xcad:DockingManager>
+                        </xcad:DockingManager>-->
 
 
                         <!--<DockPanel Grid.Row="1" Grid.Column="1" Name="ToolPanel">

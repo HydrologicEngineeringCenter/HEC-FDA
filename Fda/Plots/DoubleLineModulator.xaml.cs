@@ -251,7 +251,7 @@ namespace Fda.Plots
         {
             //i am just fulfilling the interface contract. This should never be a start node right?
         }
-        public void SetNextPlotLinkage(ILinkedPlot plot, string thisAxis = "", string linkedAxis = "")
+        public void SetNextPlotLinkage(ILinkedPlot plot)
         {
             ////if (ThisIsEndNode == true) { return; }
             //_NextPlot = plot;
@@ -259,8 +259,8 @@ namespace Fda.Plots
 
 
             if (IsEndNode == true) { return; }
-            thisAxis = "";
-            linkedAxis = "";
+            string thisAxis = "";
+            string linkedAxis = "";
 
             if (plot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.Rating)
             {

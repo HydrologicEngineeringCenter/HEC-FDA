@@ -6,11 +6,15 @@ using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Data;
+using System.ComponentModel;
+using FdaViewModel.Utilities;
+using Consequences_Assist.ComputableObjects;
+using FdaViewModel.Saving.PersistenceManagers;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 14 / 2017 1:55:50 PM)]
-    public class OccupancyTypesEditorVM : BaseViewModel
+    public class OccupancyTypesEditorVM : Editors.BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
@@ -133,6 +137,21 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 _OcctypeTabsSelectedDictionary[_SelectedOccType.Name].SetValue(value, 3);
             }
         }
+        //public new string Description
+        //{
+        //    get
+        //    {
+        //        if (SelectedOccType != null)
+        //        {
+        //            return SelectedOccType.Description;
+        //        }
+        //        else
+        //        {
+        //            return "";
+        //        }
+        //    }
+        //    set { if (value == null) { return; } SelectedOccType.Description = value; }
+        //}
         public string Year
         {
             get { return _Year; }
@@ -144,11 +163,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             get { return _Module; }
             set { _Module = value; }
         }
-        public string Description
-        {
-            get { return _Description; }
-            set { _Description = value; }
-        }
+       
         public List<string> DamageCategoriesList
         {
             get { return _DamageCategoriesList; }
@@ -157,7 +172,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public string SelectedDamageCategory
         {
             get { if (_SelectedOccType == null) { return ""; } return _SelectedOccType.DamageCategoryName; }
-            set { if (_SelectedOccType != null) { _SelectedOccType.DamageCategoryName = value; } NotifyPropertyChanged(); }
+            set { if (_SelectedOccType != null && value != null) { _SelectedOccType.DamageCategoryName = value; } NotifyPropertyChanged(); }
         }
 
 
@@ -321,7 +336,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public Statistics.UncertainCurveDataCollection OtherDepthDamageCurve
         {
             get{return _OtherDepthDamageCurve;}
-            set { _OtherDepthDamageCurve = value; NotifyPropertyChanged(); }
+            set { _OtherDepthDamageCurve = value; if (_SelectedOccType != null) { _SelectedOccType.SetOtherPercentDD = (Statistics.UncertainCurveIncreasing)value; } NotifyPropertyChanged(); }
         }
 
         #endregion
@@ -334,39 +349,127 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         }
 
 
-       
-       
+
+
         public OccupancyTypesElement SelectedOccTypeGroup
         {
             get { return _SelectedOccTypeGroup; }
-            set { _SelectedOccTypeGroup = value; LoadDamageCategoriesList(); _OcctypeTabsSelectedDictionary = _SelectedOccTypeGroup.OccTypesSelectedTabsDictionary; NotifyPropertyChanged(); }
+            set { if (value == null) { return; } _SelectedOccTypeGroup = value; UpdateTheIsSelectedBoolOnEachOccTypeGroup(); LoadDamageCategoriesList(); _OcctypeTabsSelectedDictionary = _SelectedOccTypeGroup.OccTypesSelectedTabsDictionary; NotifyPropertyChanged(); }
         }
-            public List<OccupancyTypesElement> OccTypeGroups
+        public List<OccupancyTypesElement> OccTypeGroups
         {
             get { return _OccTypeGroups; }
             set { _OccTypeGroups = value; NotifyPropertyChanged(); }
         }
         #endregion
         #region Constructors
-            public OccupancyTypesEditorVM():base()
+        public OccupancyTypesEditorVM(OccupancyTypesElement selectedOccTypeElement, Editors.EditorActionManager manager):base(manager)
         {
+            Name = "OccTypeEditor";//I just needed some name so that it doesn't fail the empty name test that is now universal.
            // _OcctypeTabsSelectedDictionary = _SelectedOccTypeGroup.OccTypesSelectedTabsDictionary;//new Dictionary<string, bool[]>();
             DepthDamage.DepthDamageCurveData ddcd = new DepthDamage.DepthDamageCurveData(); //this call will load the default DD curves dictionary
             DepthDamageCurveDictionary = DepthDamage.DepthDamageCurveData.CurveDictionary;
             LoadDepthDamageCurveNames();
-            OccTypeGroups = OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups;
+            OccTypeGroups = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();// OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups;
 
             //ListOfDataTables = new List<DataTable>();
             //foreach(OccupancyTypesElement ote in OccTypeGroups)
             //{
             //    ListOfDataTables.Add(CreateDataTable(ote));
             //}
+            AddEmptyCurvesToEmptyDepthDamages();
 
+            //set the selected occtype group
+            SelectedOccTypeGroup = selectedOccTypeElement;
+            SelectedOccType = SelectedOccTypeGroup.ListOfOccupancyTypes.FirstOrDefault();
+            StudyCache.OccTypeElementAdded += OccTypeElementAdded;
+            StudyCache.OccTypeElementRemoved += OccTypeElementRemoved;
         }
 
         #endregion
         #region Voids
+        private void OccTypeElementAdded(object sender, Saving.ElementAddedEventArgs e)
+        {
+            List<OccupancyTypesElement> tempList = new List<OccupancyTypesElement>();
+            foreach(OccupancyTypesElement elem in OccTypeGroups)
+            {
+                tempList.Add(elem);
+            }
+             //tempList =   OccTypeGroups;
+            tempList.Add((OccupancyTypesElement)e.Element);
+            OccTypeGroups = tempList;//this is to hit the notify prop changed
+        }
 
+        private void OccTypeElementRemoved(object sender, Saving.ElementAddedEventArgs e)
+        {
+            OccupancyTypesElement elementToRemove = (OccupancyTypesElement)e.Element;
+            List<OccupancyTypesElement> tempList = new List<OccupancyTypesElement>();
+            foreach(OccupancyTypesElement elem in OccTypeGroups)
+            {
+                tempList.Add(elem);
+            }
+            tempList.Remove(elementToRemove);
+            //we know that the one we are removing is the selected group, so we need to switch to a different one
+            int indexInList = OccTypeGroups.IndexOf(elementToRemove);
+            if (OccTypeGroups.Count == 1)//then its about to be zero
+            {
+                //clear everything
+
+            }
+            else if (indexInList > 0)//display the one before it
+            {
+                SelectedOccTypeGroup = OccTypeGroups[indexInList -1];
+            }
+            else//they are deleting the first group
+            {
+                SelectedOccTypeGroup = OccTypeGroups[1];
+            }
+            
+            //if(OccTypeGroups.IndexOf(elementToRemove) == 0)
+            OccTypeGroups = tempList;
+        }
+        private void UpdateTheIsSelectedBoolOnEachOccTypeGroup()
+        {
+            foreach(OccupancyTypesElement elem in OccTypeGroups)
+            {
+                if(elem == SelectedOccTypeGroup)
+                {
+                    elem.IsSelected = true;
+                }
+                else
+                {
+                    elem.IsSelected = false;
+                }
+            }
+        }
+        private void AddEmptyCurvesToEmptyDepthDamages()
+        {
+            Statistics.UncertainCurveIncreasing newCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            newCurve.Add(0, new Statistics.None(0));
+
+            foreach (OccupancyTypesElement element in OccTypeGroups)
+            {
+                foreach( Consequences_Assist.ComputableObjects.OccupancyType ot in element.ListOfOccupancyTypes)
+                {
+                    if (ot.GetStructurePercentDD.Count == 0)
+                    {
+                        ot.SetStructurePercentDD = newCurve;
+                    }
+                    if (ot.GetContentPercentDD.Count == 0)
+                    {
+                        ot.SetContentPercentDD = newCurve;
+                    }
+                    if (ot.GetVehiclePercentDD.Count == 0)
+                    {
+                        ot.SetVehiclePercentDD = newCurve;
+                    }
+                    if (ot.GetOtherPercentDD.Count == 0)
+                    {
+                        ot.SetOtherPercentDD = newCurve;
+                    }
+                }
+            }
+        }
         private DataTable CreateDataTable(OccupancyTypesElement ote)
         {
             //define all the columns
@@ -434,8 +537,8 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public void LaunchNewDamCatWindow()
         {
             if(_SelectedOccType == null) { return; }
-            CreateNewDamCatVM vm = new CreateNewDamCatVM();
-            Navigate(vm, true, true, "Enter New Damage Category Name");
+            CreateNewDamCatVM vm = new CreateNewDamCatVM(DamageCategoriesList);
+            Navigate(vm, true, true, "New Damage Category");
             if(vm.WasCanceled == false)
             {
                 if(vm.HasError == false)
@@ -450,10 +553,21 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 }
             }
         }
-        public void LaunchNewOccTypeWindow()
+        private List<string> GetAllOccTypeNames()
         {
-            CreateNewDamCatVM vm = new CreateNewDamCatVM();
-            Navigate(vm, true, true, "Enter New Occupancy Type Name");
+            List<string> occtypeNames = new List<string>();
+            if(SelectedOccTypeGroup == null) { return occtypeNames; }
+            foreach (OccupancyType ot in SelectedOccTypeGroup.ListOfOccupancyTypes)
+            {
+                occtypeNames.Add(ot.Name);
+            }
+            return occtypeNames;
+        }
+        public void LaunchNewOccTypeWindow()
+        {         
+
+            CreateNewDamCatVM vm = new CreateNewDamCatVM(GetAllOccTypeNames());
+            Navigate(vm, true, true, "New Occupancy Type");
             if (vm.WasCanceled == false)
             {
                 if (vm.HasError == false)
@@ -472,6 +586,14 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                     newOT.VehicleValueUncertainty = new Statistics.None();
                     newOT.OtherValueUncertainty = new Statistics.None();
 
+                    Statistics.UncertainCurveIncreasing newCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+                    newCurve.Add(0, new Statistics.None(0));
+
+                    newOT.SetStructurePercentDD = newCurve;
+                    newOT.SetContentPercentDD = newCurve;
+                    newOT.SetOtherPercentDD = newCurve;
+                    newOT.SetVehiclePercentDD = newCurve;
+
                     newOT.FoundationHeightUncertainty = new Statistics.None();
 
                     _OcctypeTabsSelectedDictionary.Add(newOT.Name, new bool[] { true, true, true, false });
@@ -483,7 +605,6 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                     SetDamageCategory();
                     LoadDamageCategoriesList();
 
-
                 }
             }
         }
@@ -491,8 +612,8 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public void LaunchCopyOccTypeWindow()
         {
             if(_SelectedOccType == null) { return; }
-            CreateNewDamCatVM vm = new CreateNewDamCatVM(SelectedOccType.Name + "_Copy");
-            Navigate(vm, true, true, "Name of New Occupancy Type");
+            CreateNewDamCatVM vm = new CreateNewDamCatVM(SelectedOccType.Name + "_Copy", GetAllOccTypeNames());
+            Navigate(vm, true, true, "New Occupancy Type");
             if (vm.WasCanceled == false)
             {
                 if (vm.HasError == false)
@@ -511,6 +632,12 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                     newOT.VehicleValueUncertainty = SelectedOccType.VehicleValueUncertainty;
                     newOT.OtherValueUncertainty = SelectedOccType.OtherValueUncertainty;
                     newOT.FoundationHeightUncertainty = SelectedOccType.FoundationHeightUncertainty;
+
+
+                    newOT.SetStructurePercentDD = SelectedOccType.GetStructurePercentDD;
+                    newOT.SetContentPercentDD = SelectedOccType.GetContentPercentDD;
+                    newOT.SetOtherPercentDD = SelectedOccType.GetOtherPercentDD;
+                    newOT.SetVehiclePercentDD = SelectedOccType.GetVehiclePercentDD;
 
                     bool[] values = _OcctypeTabsSelectedDictionary[SelectedOccType.Name];
                     _OcctypeTabsSelectedDictionary.Add(newOT.Name, values);
@@ -532,8 +659,9 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         {
             int selectedIndex = SelectedOccTypeGroup.ListOfOccupancyTypes.IndexOf(SelectedOccType);
             SelectedOccTypeGroup.ListOfOccupancyTypes.Remove(SelectedOccType);
+            _OcctypeTabsSelectedDictionary.Remove(SelectedOccType.Name);
             //set the selected occtype to be the one before, unless at 0
-            if(selectedIndex>0)
+            if (selectedIndex>0)
             {
                 Consequences_Assist.ComputableObjects.OccupancyType ot = SelectedOccTypeGroup.ListOfOccupancyTypes[selectedIndex - 1];
                 SelectedOccType = ot;
@@ -551,6 +679,43 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 }
             }
 
+        }
+
+        public void LaunchImportNewOccTypeGroup()
+        {
+            //get the parent from the studycache and launch the importer
+            OccupancyTypesOwnerElement owner = StudyCache.GetParentElementOfType<OccupancyTypesOwnerElement>();
+            owner.ImportFromFile(this, new EventArgs());
+        }
+        public void LaunchRenameOcctypeGroup()
+        {
+            CreateNewDamCatVM vm = new CreateNewDamCatVM(SelectedOccTypeGroup.Name, DamageCategoriesList);
+            Navigate(vm, true, true, "Rename Occupancy Type Group");
+            if (vm.WasCanceled == false)
+            {
+                if (vm.HasError == false)
+                {
+                    string newName = vm.Name;
+                    OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
+                    ChildElement oldElement = SelectedOccTypeGroup;
+                    ChildElement newElement = new OccupancyTypesElement(newName, SelectedOccTypeGroup.ListOfOccupancyTypes, SelectedOccTypeGroup.OccTypesSelectedTabsDictionary);
+                    manager.SaveExisting(oldElement, newElement, 0);
+                    if (OccTypeGroups.Contains((OccupancyTypesElement)newElement))
+                    {
+                        SelectedOccTypeGroup = (OccupancyTypesElement)newElement;
+                    }
+                }
+            }
+        }
+
+        public void DeleteOccTypeGroup()
+        {
+            //call the pers manager to delete the occtype element. Make sure to remove from cache
+            OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
+            manager.Remove(SelectedOccTypeGroup);
+            // removing from the cache should hit an event on the owner to remove it from its list.
+
+            //also add a listener in here to remove the occtype group if it is deleted that will remove from OccTypegroups
         }
 
         private void SetBindingsToNull()
@@ -632,7 +797,14 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         }
         private void SetDepthDamageCurves()
         {
-            if (SelectedOccType == null) { return; }
+            if (SelectedOccType == null)
+            {
+                StructureDepthDamageCurve = null;
+                ContentDepthDamageCurve = null;
+                VehicleDepthDamageCurve = null;
+                OtherDepthDamageCurve = null;
+                return;
+            }
             //if(_SelectedOccType.StructureDepthDamageName == null) { _SelectedOccType.StructureDepthDamageName = ""; }
             //if (_SelectedOccType.ContentDepthDamageName == null) { _SelectedOccType.ContentDepthDamageName = ""; }
             //if (_SelectedOccType.OtherDepthDamageName == null) { _SelectedOccType.OtherDepthDamageName = ""; }
@@ -641,7 +813,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             StructureDepthDamageCurve = _SelectedOccType.GetStructurePercentDD;
             ContentDepthDamageCurve = _SelectedOccType.GetContentPercentDD;
             VehicleDepthDamageCurve = _SelectedOccType.GetVehiclePercentDD;
-            OtherDepthDamageCurve = _SelectedOccType.GetOtherPercentDD;
+            OtherDepthDamageCurve = _SelectedOccType.   GetOtherPercentDD;
 
             //SelectedStructureDepthDamage = _SelectedOccType.GetStructurePercentDD;
             //SelectedContentDepthDamage = _SelectedOccType.ContentDepthDamageName;
@@ -702,15 +874,44 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 }
             }
         }
+
+        public override void Save()
+        {
+            //foreach (OccupancyTypesElement ote in ListOfOccupancyTypesGroups)
+            //for (int i = 0; i <OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Count; i++)
+            //{
+            //    //foreach (OccupancyTypesElement ote in vm.OccTypeGroups)
+            //    for (int j = 0; j < OccTypeGroups.Count; j++)
+            //    {
+            //        if (OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups[i].Name == OccTypeGroups[j].Name)
+            //        {
+            //            OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups[i] = OccTypeGroups[j];
+            //        }
+            //    }
+            //}
+            //now save the changes
+            //CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "", "Loading...");
+
+            //SaveFilesOnBackgroundThread(this, new DoWorkEventArgs(ListOfOccupancyTypesGroups));
+
+
+
+            //because i am lumping all the elements together in one editor, then it is difficult to keep track of old names vs new names vs adding new ones etc.
+            //i think it is best to just delete all previous tables (all rows in parent table and all individual tables) and then resave everything.
+            List<ChildElement> tmp = OccTypeGroups.ToList<ChildElement>();
+            Saving.PersistenceFactory.GetOccTypeManager().SaveExisting(tmp);   //SaveNew(ListOfOccupancyTypes, OccTypesSelectedTabsDictionary, Name);
+
+            //foreach (OccupancyTypesElement elem in OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups)
+            //{
+            //    elem.Save();
+            //}
+        }
         #endregion
         #region Functions
-        
-        #endregion
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
 
-     
+        #endregion
+
+
+
     }
 }

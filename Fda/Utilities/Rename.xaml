@@ -7,7 +7,7 @@
         xmlns:OkClose="clr-namespace:Fda.Utilities"
         xmlns:ViewModel="clr-namespace:FdaViewModel.Utilities;assembly=FdaViewModel"
         mc:Ignorable="d"
-         Height="100" Width="300">
+         >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="35"/>

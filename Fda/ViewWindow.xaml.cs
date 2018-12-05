@@ -174,7 +174,10 @@ namespace Fda
         {
             FdaViewModel.Utilities.WindowVM vm = (FdaViewModel.Utilities.WindowVM)this.DataContext;
             FdaViewModel.BaseViewModel vmToPopIn = vm.CurrentView;
-            vmToPopIn.AddThisToTabs(new DynamicTabVM(vm.Title,vmToPopIn,true), true);         
+            if (vmToPopIn.AddThisToTabs != null)
+            {
+                vmToPopIn.AddThisToTabs(new DynamicTabVM(vm.Title, vmToPopIn, true), true);
+            }
             Close();
         }
 
@@ -224,10 +227,10 @@ namespace Fda
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Height = this.DesiredSize.Height;
-            this.MinHeight = this.DesiredSize.Height;
-            this.MinWidth = this.DesiredSize.Width;
-            this.Width = this.DesiredSize.Width;
+            //this.Height = this.DesiredSize.Height;
+            //this.MinHeight = this.DesiredSize.Height;
+            //this.MinWidth = this.DesiredSize.Width;
+            //this.Width = this.DesiredSize.Width;
             //need to figure out how to set max widths and heights.
         }
         public T GetTheVisualChild<T>(Visual Parent) where T : Visual

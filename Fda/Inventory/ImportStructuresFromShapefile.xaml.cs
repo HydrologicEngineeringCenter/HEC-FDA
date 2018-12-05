@@ -53,11 +53,11 @@ namespace Fda.Inventory
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
 
-            stack_ShapefilePath.Visibility = Visibility.Collapsed;
 
             FdaViewModel.Inventory.ImportStructuresFromShapefileVM vm = (FdaViewModel.Inventory.ImportStructuresFromShapefileVM)this.DataContext;
             if( vm.NextButtonClicked() == true) //this does validation and returns true if it passes
             {
+                stack_ShapefilePath.Visibility = Visibility.Collapsed;
                 if (NextButton.Content.ToString() == "Finish")
                 {
                     var window = Window.GetWindow(this);

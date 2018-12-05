@@ -24,9 +24,10 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         #endregion
         #region Properties
         //private Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary;
-
+        public OccupancyTypesElement SelectedOccTypeElement { get; set; }
        
-        public static List<OccupancyTypesElement> ListOfOccupancyTypesGroups { get; set; } = new List<OccupancyTypesElement>();
+        public List<OccupancyTypesElement> ListOfOccupancyTypesGroups { get;
+            set; } = new List<OccupancyTypesElement>();
         //public static List<Consequences_Assist.ComputableObjects.OccupancyType> ListOfOccupancyTypes
         //{
         //    get { return _ListOfOccupancyTypes; }
@@ -56,6 +57,12 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             Actions = localActions;
             GUID = Guid.NewGuid();
 
+            StudyCache.OccTypeElementAdded += OccTypeElementWasAdded;
+
+            StudyCache.OccTypeElementRemoved += RemoveOccTypeElement;
+            // StudyCache.OccTypeElementUpdated += UpdateRatingCurveElement;
+            //GUID = Guid.NewGuid();
+
         }
 
 
@@ -63,156 +70,203 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         #endregion
         #region Voids
+
+        private void OccTypeElementWasAdded(object sender, Saving.ElementAddedEventArgs e)
+        {
+            ListOfOccupancyTypesGroups.Add((OccupancyTypesElement)e.Element);
+        }
+        //private void UpdateRatingCurveElement(object sender, Saving.ElementUpdatedEventArgs e)
+        //{
+        //    UpdateElement(e.OldElement, e.NewElement);
+        //}
+        //private void AddRatingCurveElement(object sender, Saving.ElementAddedEventArgs e)
+        //{
+        //    AddElement(e.Element);
+        //}
+        private void RemoveOccTypeElement(object sender, Saving.ElementAddedEventArgs e)
+        {
+            //RemoveElement(e.Element);
+            ListOfOccupancyTypesGroups.Remove((OccupancyTypesElement)e.Element);
+        }
         private void EditOccupancyTypes(object arg1, EventArgs arg2)
         {
-
             //dont open the editor if there are no occtype groups to edit
-            if(ListOfOccupancyTypesGroups.Count<1)
+            if (ListOfOccupancyTypesGroups.Count < 1)
             {
-                Utilities.CustomMessageBoxVM messageBox = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK,"There are no occupancy types to edit. You must first import a group of occupancy types.");
+                Utilities.CustomMessageBoxVM messageBox = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "There are no occupancy types to edit. You must first import a group of occupancy types.");
                 Navigate(messageBox);
                 return;
             }
 
-            OccupancyTypesEditorVM vm = new OccupancyTypesEditorVM();
-            Navigate(vm);
-            if (!vm.WasCanceled)
-            {
-                if (!vm.HasError)
-                {
-                    //foreach (OccupancyTypesElement ote in ListOfOccupancyTypesGroups)
-                    for(int i = 0;i<ListOfOccupancyTypesGroups.Count;i++)
-                    {
-                        //foreach (OccupancyTypesElement ote in vm.OccTypeGroups)
-                        for(int j = 0;j<vm.OccTypeGroups.Count;j++)
-                        {
-                            if (ListOfOccupancyTypesGroups[i].Name == vm.OccTypeGroups[j].Name)
-                            {
-                                ListOfOccupancyTypesGroups[i] = vm.OccTypeGroups[j];
-                            }
-                        }
-                    }
-                    //now save the changes
-                    //CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "", "Loading...");
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+               //.WithSaveUndoRedo(saveHelper)
+               //.WithSiblingRules(this)
+               .WithParentGuid(this.GUID)
+               .WithCanOpenMultipleTimes(false);
 
-                    //SaveFilesOnBackgroundThread(this, new DoWorkEventArgs(ListOfOccupancyTypesGroups));
-                    foreach (OccupancyTypesElement elem in ListOfOccupancyTypesGroups)
-                    {
-                        elem.Save();
-                    }
+            OccupancyTypesEditorVM vm = new OccupancyTypesEditorVM(GetSelectedOccTypeElement(), actionManager);
+            vm.RequestNavigation += Navigate;
+            Navigate(vm, false, false, "Edit Occupancy Types");
+
+
+            //Navigate(vm);
+            //if (!vm.WasCanceled)
+            //{
+            //    if (!vm.HasError)
+            //    {
+            //        //foreach (OccupancyTypesElement ote in ListOfOccupancyTypesGroups)
+            //        for(int i = 0;i<ListOfOccupancyTypesGroups.Count;i++)
+            //        {
+            //            //foreach (OccupancyTypesElement ote in vm.OccTypeGroups)
+            //            for(int j = 0;j<vm.OccTypeGroups.Count;j++)
+            //            {
+            //                if (ListOfOccupancyTypesGroups[i].Name == vm.OccTypeGroups[j].Name)
+            //                {
+            //                    ListOfOccupancyTypesGroups[i] = vm.OccTypeGroups[j];
+            //                }
+            //            }
+            //        }
+            //        //now save the changes
+            //        //CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "", "Loading...");
+
+            //        //SaveFilesOnBackgroundThread(this, new DoWorkEventArgs(ListOfOccupancyTypesGroups));
+            //        foreach (OccupancyTypesElement elem in ListOfOccupancyTypesGroups)
+            //        {
+            //            elem.Save();
+            //        }
+            //    }
+            //}
+
+        }
+        private OccupancyTypesElement GetSelectedOccTypeElement()
+        {
+            OccupancyTypesElement returnElement = null;
+            foreach(OccupancyTypesElement elem in ListOfOccupancyTypesGroups)
+            {
+                if(elem.IsSelected == true)
+                {
+                    returnElement = elem;
+                    break;
                 }
             }
-
-        }
-
-
-        private async void SaveFilesOnBackgroundThread(object sender, DoWorkEventArgs e)
-        {
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "", " -Saving",true);
-            List<Utilities.NamedAction> tempActions = new List<Utilities.NamedAction>(Actions);
-            Actions = new List<Utilities.NamedAction>();
-
-            object[] args = (object[])e.Argument;
-            List<OccupancyTypesElement> elementsToSave = (List<OccupancyTypesElement>)args[0];
-            List<Utilities.NamedAction> actions = (List < Utilities.NamedAction >) args[1];
-
-            actions.Clear();
-
-            await Task.Run(() =>
+            if(returnElement == null)//none have been selected. THis is probably the first time opening the occtype editor in a new study
             {
-                foreach (OccupancyTypesElement elem in elementsToSave)
-                {
-                    elem.Save();
-                }
-                    //owner.AddElement(ote);
-                    //AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ote.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(OccupancyTypesElement)));
-                
-            });
-
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
-            SaveTableWithoutSavingElements();
-            Actions = tempActions;
+                ListOfOccupancyTypesGroups[0].IsSelected = true;
+                return ListOfOccupancyTypesGroups[0];
+            }
+            else
+            {
+                return returnElement;
+            }
         }
-        private void ImportFromFile(object arg1, EventArgs arg2)
+
+        //private async void SaveFilesOnBackgroundThread(object sender, DoWorkEventArgs e)
+        //{
+        //    CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "", " -Saving",true);
+        //    List<Utilities.NamedAction> tempActions = new List<Utilities.NamedAction>(Actions);
+        //    Actions = new List<Utilities.NamedAction>();
+
+        //    object[] args = (object[])e.Argument;
+        //    List<OccupancyTypesElement> elementsToSave = (List<OccupancyTypesElement>)args[0];
+        //    List<Utilities.NamedAction> actions = (List < Utilities.NamedAction >) args[1];
+
+        //    actions.Clear();
+
+        //    await Task.Run(() =>
+        //    {
+        //        foreach (OccupancyTypesElement elem in elementsToSave)
+        //        {
+        //            elem.Save();
+        //        }
+        //            //owner.AddElement(ote);
+        //            //AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(ote.Name, Utilities.Transactions.TransactionEnum.CreateNew, "", nameof(OccupancyTypesElement)));
+
+        //    });
+
+        //    CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+        //    SaveTableWithoutSavingElements();
+        //    Actions = tempActions;
+        //}
+        public void ImportFromFile(object arg1, EventArgs arg2)
         {
 
             ImportOccupancyTypesVM vm = new ImportOccupancyTypesVM();
-            Navigate(vm);
-            if (!vm.WasCanceled)
-            {
-                if (!vm.HasError)
-                {
-                    //object[] arguments = new object[] { vm, this };
+            Navigate(vm,false,false,"Import Occupancy Types");
+            //if (!vm.WasCanceled)
+            //{
+            //    if (!vm.HasError)
+            //    {
+            //        //object[] arguments = new object[] { vm, this };
 
 
-                    List<OccupancyTypesElement> elementsToSave = new List<OccupancyTypesElement>();
-                    foreach (OccupancyTypesGroupRowItemVM row in vm.ListOfRowVMs)
-                    {
-                        //create a dummy tabs checked dictionary
-                        Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
+            //        List<OccupancyTypesElement> elementsToSave = new List<OccupancyTypesElement>();
+            //        foreach (OccupancyTypesGroupRowItemVM row in vm.ListOfRowVMs)
+            //        {
+            //            //create a dummy tabs checked dictionary
+            //            Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
 
-                        foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in row.ListOfOccTypes)
-                        {
-                            bool[] tabsCheckedArray = new bool[] { true, true, true, false };
-                            _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
+            //            foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in row.ListOfOccTypes)
+            //            {
+            //                bool[] tabsCheckedArray = new bool[] { true, true, true, false };
+            //                _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
 
-                        }
+            //            }
 
-                        OccupancyTypesElement elem = new OccupancyTypesElement(row.Name, row.ListOfOccTypes, _OcctypeTabsSelectedDictionary);
-                        OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(elem);
-                        elementsToSave.Add(elem);
-                    }
-                    object[] args = new object[] { elementsToSave, Actions};
-                    SaveFilesOnBackgroundThread(this, new DoWorkEventArgs(args));
-                }
-            }
+            //            OccupancyTypesElement elem = new OccupancyTypesElement(row.Name, row.ListOfOccTypes, _OcctypeTabsSelectedDictionary);
+            //            OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(elem);
+            //            elementsToSave.Add(elem);
+            //        }
+            //        object[] args = new object[] { elementsToSave, Actions};
+            //        SaveFilesOnBackgroundThread(this, new DoWorkEventArgs(args));
+            //    }
+            //}
         }
 
        
         #endregion
         #region Functions
         #endregion
-        public  string TableName
-        {
-            get
-            {
-                return "OccupancyTypeGroups";
-            }
-        }
+        //public  string TableName
+        //{
+        //    get
+        //    {
+        //        return "OccupancyTypeGroups";
+        //    }
+        //}
 
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();
         }
 
-        private void SaveTableWithoutSavingElements()
-        {
-            Storage.Connection.Instance.DeleteTable(TableName); // always delete owner tables, and rewrite them.  This simplifies checking for removal, sorting, or adding owned elements.
-            string[] names = new string[] { "Group Name" };
-            Type[] types = new Type[] { typeof(string) };
-            Storage.Connection.Instance.CreateTable(TableName, names, types);
-            DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
-            foreach (OccupancyTypesElement ele in ListOfOccupancyTypesGroups)
-            {
-                tbl.AddRow(new object[] { ele.Name });
-            }
-            tbl.ApplyEdits();
-        }
+        //private void SaveTableWithoutSavingElements()
+        //{
+        //    Storage.Connection.Instance.DeleteTable(TableName); // always delete owner tables, and rewrite them.  This simplifies checking for removal, sorting, or adding owned elements.
+        //    string[] names = new string[] { "Group Name" };
+        //    Type[] types = new Type[] { typeof(string) };
+        //    Storage.Connection.Instance.CreateTable(TableName, names, types);
+        //    DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
+        //    foreach (OccupancyTypesElement ele in ListOfOccupancyTypesGroups)
+        //    {
+        //        tbl.AddRow(new object[] { ele.Name });
+        //    }
+        //    tbl.ApplyEdits();
+        //}
 
-        public  void Save()
-        {
-            Storage.Connection.Instance.DeleteTable(TableName); // always delete owner tables, and rewrite them.  This simplifies checking for removal, sorting, or adding owned elements.
-            string[] names =new string[] { "Group Name" };
-            Type[] types = new Type[] { typeof(string) };
-            Storage.Connection.Instance.CreateTable(TableName, names, types);
-            DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
-            foreach (OccupancyTypesElement ele in ListOfOccupancyTypesGroups)
-            {
-                tbl.AddRow(new object[] { ele.Name });
-                ele.Save();
-            }
-            tbl.ApplyEdits();
-        }
+        //public  void Save()
+        //{
+        //    Storage.Connection.Instance.DeleteTable(TableName); // always delete owner tables, and rewrite them.  This simplifies checking for removal, sorting, or adding owned elements.
+        //    string[] names =new string[] { "Group Name" };
+        //    Type[] types = new Type[] { typeof(string) };
+        //    Storage.Connection.Instance.CreateTable(TableName, names, types);
+        //    DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
+        //    foreach (OccupancyTypesElement ele in ListOfOccupancyTypesGroups)
+        //    {
+        //        tbl.AddRow(new object[] { ele.Name });
+        //        ele.Save();
+        //    }
+        //    tbl.ApplyEdits();
+        //}
 
       
 

@@ -89,6 +89,11 @@ namespace FdaViewModel.Utilities
         #region Constructors
         public WindowVM()
         {
+            //this is dumb, but for some reason anytime a window is opened in all of FDA it falls into here
+            //and recreates the studyVM. This static prop in a static class fixes it
+            if (ExtentionMethods.IsStudyOpen) { return; }
+            else { ExtentionMethods.IsStudyOpen = true; }
+
             StudyVM = new Study.FdaStudyVM();
             CurrentView = StudyVM;
             Title = "FDA 2.0";

@@ -35,7 +35,7 @@
             </Grid.RowDefinitions>
             <Utilities:SaveControl Grid.Row="0" Grid.ColumnSpan="2"/>
             <!--<Button Name="btn_Save" Grid.Row="0" Grid.ColumnSpan="2" Content="Save" HorizontalAlignment="Stretch" IsEnabled="{Binding Path=HasFatalError, Converter={StaticResource HasErrorConverter}, UpdateSourceTrigger=PropertyChanged}" Background="LightGreen" Click="btn_Save_Click" Margin="5,0,5,0" />-->
-            <Label Grid.Row="1" Content="Name:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <Label Grid.Row="1" Grid.Column="0" Content="Name:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name, ValidatesOnDataErrors=True}" Margin="5"/>
         </Grid>
         <Grid Grid.Row="1">

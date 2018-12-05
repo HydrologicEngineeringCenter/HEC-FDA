@@ -11,10 +11,12 @@
             <RowDefinition Height="23" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="3"/>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <TextBlock Name="txt_OldOccType" Grid.Column="0" />
-        <ComboBox Name="cmb_NewOccType" Grid.Column="1" ItemsSource="{Binding SelectedListOfOccTypeStrings}" SelectionChanged="cmb_NewOccType_SelectionChanged" />
+        <GridSplitter Grid.Row="1" Width="3" />
+        <ComboBox Name="cmb_NewOccType" Grid.Column="2" ItemsSource="{Binding SelectedListOfOccTypeStrings}" SelectionChanged="cmb_NewOccType_SelectionChanged" />
     </Grid>
 </UserControl>
