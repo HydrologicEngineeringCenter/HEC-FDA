@@ -31,11 +31,11 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             get { return System.IO.Path.GetFileName(_Path); }
             set { _Path = value; NotifyPropertyChanged(); }
         }
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; NotifyPropertyChanged(); }
-        }
+        //public string Name
+        //{
+        //    get { return _Name; }
+        //    set { _Name = value; NotifyPropertyChanged(); }
+        //}
 
         public int NumberOfOccTypes
         {

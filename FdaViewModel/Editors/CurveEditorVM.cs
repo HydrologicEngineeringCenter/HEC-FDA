@@ -61,14 +61,20 @@ namespace FdaViewModel.Editors
 
         public ObservableCollection<TransactionRowItem> TransactionRows
         {
-            get;set;
+            get;
+            set;
         }
 
         public List<MessageRowItem> MessageRows
         {
-            get;set;
+            get;
+            set;
         }
-        public bool TransactionsMessagesVisible { get; set; }
+        public bool TransactionsMessagesVisible
+        {
+            get;
+            set;
+        }
 
         public string PlotTitle { get; set; }
 
@@ -79,6 +85,8 @@ namespace FdaViewModel.Editors
         {
             _Curve = defaultCurve;
             PlotTitle = "Curve";
+            TransactionRows = new ObservableCollection<TransactionRowItem>();
+            MessageRows = new List<MessageRowItem>();
         }
 
         public CurveEditorVM(Utilities.ChildElement elem, EditorActionManager actionManager) :base(elem, actionManager)

@@ -60,34 +60,7 @@ namespace Fda.Inventory
                 stack_ShapefilePath.Visibility = Visibility.Collapsed;
                 if (NextButton.Content.ToString() == "Finish")
                 {
-                    var window = Window.GetWindow(this);
-                    //vm.WasCanceled = false;
-                    //window.Close();
-                    if (window is ViewWindow)
-                    {
-
-                        FdaViewModel.Utilities.WindowVM winVM = (FdaViewModel.Utilities.WindowVM)window.DataContext;
-                        if (winVM.StudyVM != null)
-                        {
-                            if (winVM.StudyVM.SelectedDynamicTabIndex != -1)
-                            {
-                                winVM.StudyVM.RemoveTabAtIndex(winVM.StudyVM.SelectedDynamicTabIndex);
-                            }
-                            else
-                            {
-                                window.Close();
-                            }
-                        }
-                        else
-                        {
-                            window.Close();
-                        }
-
-                    }
-                    else
-                    {
-                        window.Close();
-                    }
+                    RunClosingLogic();
                 }
                 else
                 {
@@ -99,7 +72,37 @@ namespace Fda.Inventory
             
         }
 
-       
+       private void RunClosingLogic()
+        {
+            var window = Window.GetWindow(this);
+            //vm.WasCanceled = false;
+            //window.Close();
+            if (window is ViewWindow)
+            {
+
+                FdaViewModel.Utilities.WindowVM winVM = (FdaViewModel.Utilities.WindowVM)window.DataContext;
+                if (winVM.StudyVM != null)
+                {
+                    if (winVM.StudyVM.SelectedDynamicTabIndex != -1)
+                    {
+                        winVM.StudyVM.RemoveTabAtIndex(winVM.StudyVM.SelectedDynamicTabIndex);
+                    }
+                    else
+                    {
+                        window.Close();
+                    }
+                }
+                else
+                {
+                    window.Close();
+                }
+
+            }
+            else
+            {
+                window.Close();
+            }
+        }
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
@@ -113,11 +116,17 @@ namespace Fda.Inventory
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Inventory.ImportStructuresFromShapefileVM vm = (FdaViewModel.Inventory.ImportStructuresFromShapefileVM)this.DataContext;
+            //FdaViewModel.Inventory.ImportStructuresFromShapefileVM vm = (FdaViewModel.Inventory.ImportStructuresFromShapefileVM)this.DataContext;
+            //vm.RemoveTab();
+
+            RunClosingLogic();
+
+
+
             //vm.CancelButtonClicked();
-            vm.WasCanceled = true;
-            var window = Window.GetWindow(this);
-            window.Close();
+            //vm.WasCanceled = true;
+            //var window = Window.GetWindow(this);
+            //window.Close();
         }
     }
 }

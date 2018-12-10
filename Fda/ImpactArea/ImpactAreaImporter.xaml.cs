@@ -52,7 +52,7 @@ namespace Fda.ImpactArea
         {
             FdaViewModel.ImpactArea.ImpactAreaImporterVM vm = (FdaViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
             if (vm == null) { return; }
-            if (vm.IsNameReadOnly)
+            if (vm.IsInEditMode)
             {
                 row_SelectPath.Height = new GridLength(0);
                 row_SelectUniqueName.Height = new GridLength(0);

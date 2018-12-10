@@ -235,10 +235,23 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         public override bool RunSpecialValidation()
         {
+            //test that no new names match existing names, and that no row has multiple occtypes with the same name
+            List<string> uniqueNameList = new List<string>();
+
             List<OccupancyTypesElement> existingElements = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
 
             foreach (OccupancyTypesGroupRowItemVM row in ListOfRowVMs)
             {
+                if(uniqueNameList.Contains(row.Name))
+                {
+                    System.Windows.MessageBox.Show("Multiple rows have the same name of '" + row.Name + "'.", "Error", System.Windows.MessageBoxButton.OK);
+                    return false;
+                }
+                else
+                {
+                    uniqueNameList.Add(row.Name);
+                }
+
                 if(IsOccTypeElementNameUnique(row.Name, existingElements) == false) { return false; }
                 //create a dummy tabs checked dictionary
                 Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();

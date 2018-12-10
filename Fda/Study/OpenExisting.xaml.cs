@@ -28,7 +28,15 @@ namespace Fda.Study
         {
             FdaViewModel.Study.ExistingStudyVM vm = (FdaViewModel.Study.ExistingStudyVM)this.DataContext;
             vm.Path = fullpath;
+            txtbox.Text = fullpath;
         }
+
+        //private void TextBoxFileBrowser_LostFocus(object sender, RoutedEventArgs e)
+        //{
+        //    FdaViewModel.Study.ExistingStudyVM vm = (FdaViewModel.Study.ExistingStudyVM)this.DataContext;
+        //    vm.Path = ((Consequences_Assist.Controls.TextBoxFileBrowser)sender).Path;
+        //    txtbox.Text = vm.Path;
+        //}
 
         //private void TextBoxFolderBrowser_SelectionMade(string fullpath)
         //{

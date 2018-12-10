@@ -158,7 +158,9 @@ namespace FdaViewModel.Editors
             //}
 
             List<string> existingElements = new List<string>();
-            List<ChildElement> siblings = StudyCache.GetSiblingsOfChild(element);
+            //List<ChildElement> siblings = StudyCache.GetSiblingsOfChild(element);
+           //Type elementType = ;
+            List<ChildElement> siblings = StudyCache.GetChildElementsOfType(element.GetType());
 
             string originalName = element.Name;
 

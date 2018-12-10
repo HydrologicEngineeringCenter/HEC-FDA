@@ -386,7 +386,7 @@ namespace FdaViewModel.Conditions
                 Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, true, "LP3", "Probability", "Inflow");
                 plotWrapper.PlotVM = plotVM;
                 AddFlowFrequencyToConditionVM importer = new AddFlowFrequencyToConditionVM(listOfLp3, AnalyticalFlowFrequency);
-                importer.RequestNavigation += Navigate;
+                //importer.RequestNavigation += Navigate;
                 return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Flow Frequency Curve"), importer);
         }
 
@@ -402,7 +402,7 @@ namespace FdaViewModel.Conditions
             Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Inflow Outflow", "Inflow", "OutFlow");
             plotWrapper.PlotVM = plotVM;
             AddInflowOutflowToConditionVM importer = new AddInflowOutflowToConditionVM(listOfInfOut, InflowOutflowElement);
-            importer.RequestNavigation += Navigate;
+            //importer.RequestNavigation += Navigate;
             return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Inflow Outflow"), importer,
                 new Plots.DoubleLineModulatorCoverButtonVM(),
                 new Plots.DoubleLineModulatorWrapperVM(plotVM));
@@ -437,7 +437,7 @@ namespace FdaViewModel.Conditions
             Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Exterior Interior Stage", "Exterior Stage", "Interior Stage");
             plotWrapper.PlotVM = plotVM;
             AddExteriorInteriorStageToConditionVM importer = new AddExteriorInteriorStageToConditionVM(listOfExtIntElements, ExteriorInteriorElement);
-            importer.RequestNavigation += Navigate;
+            //importer.RequestNavigation += Navigate;
             return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Ext Int Stage Curve"),importer,
                 new Plots.DoubleLineModulatorHorizontalCoverButtonVM(),
                 new Plots.HorizontalDoubleLineModulatorWrapperVM(plotVM));
@@ -454,6 +454,7 @@ namespace FdaViewModel.Conditions
             Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Stage Damage", "Interior Stage", "Damage");
             plotWrapper.PlotVM = plotVM;
             AddStageDamageToConditionVM importer = new AddStageDamageToConditionVM(listOfStageDamage, StageDamageElement);
+            //importer.RequestNavigation += Navigate;
             return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Int Stage Damage Curve"), importer);
         }
         #endregion
@@ -488,7 +489,6 @@ namespace FdaViewModel.Conditions
             if (UseAnalyiticalFlowFrequency)
             {
                 lp3Control = BuildLP3ControlFromElement();
-                lp3Control.RequestNavigation += Navigate;
             }
             else
             {
@@ -507,7 +507,6 @@ namespace FdaViewModel.Conditions
             if (UseRatingCurve)
             {
                 ratingControl = BuildRatingControlFromElement();
-                ratingControl.RequestNavigation += Navigate;
             }
             else
             {
@@ -517,6 +516,7 @@ namespace FdaViewModel.Conditions
             if (UseExteriorInteriorStage)
             {
                 extIntStageControl = BuildExtIntControlFromElement();
+
             }
             else
             {
@@ -526,6 +526,7 @@ namespace FdaViewModel.Conditions
             if (_UseAggregatedStageDamage)
             {
                 stageDamageControl = BuildStageDamageControlFromElement();
+
             }
             else
             {
@@ -533,6 +534,12 @@ namespace FdaViewModel.Conditions
             }
 
             damageFrequencyControl = ConditionsOwnerElement.BuildDefaultDamageFrequencyControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
+
+            lp3Control.RequestNavigation += Navigate;
+            infOutControl.RequestNavigation += Navigate;
+            ratingControl.RequestNavigation += Navigate;
+            extIntStageControl.RequestNavigation += Navigate;
+            stageDamageControl.RequestNavigation += Navigate;
 
 
 
@@ -547,7 +554,7 @@ namespace FdaViewModel.Conditions
             //   UseAnalyiticalFlowFrequency, UseInflowOutflow, UseRatingCurve,UseExteriorInteriorStage,UseAggregatedStageDamage);
 
 
-            
+
 
 
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()

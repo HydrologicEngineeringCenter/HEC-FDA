@@ -904,12 +904,12 @@ namespace FdaViewModel.Study
         /// </summary>
         /// <param name="element"></param>
         /// <returns></returns>
-        public List<ChildElement> GetSiblingsOfChild(ChildElement element)
-        {
-            List<ChildElement> retVal = new List<ChildElement>();         
-            retVal = GetChildElementsOfType<ChildElement>();          
-            return retVal;
-        }
+        //public List<ChildElement> GetSiblingsOfChild(ChildElement element)
+        //{
+        //    List<ChildElement> retVal = new List<ChildElement>();         
+        //    retVal = GetChildElementsOfType<ChildElement>();          
+        //    return retVal;
+        //}
 
         public List<ChildElement> GetChildrenOfParent(ParentElement element)
         {
@@ -1081,18 +1081,14 @@ namespace FdaViewModel.Study
             return null;
         }
 
-
-        public List<T> GetChildElementsOfType<T>() where T : ChildElement
+        public List<ChildElement> GetChildElementsOfType(Type childElementType)
         {
-            List<T> retVal = new List<T>();
-            var childElementType = typeof(T);
-
-
+            List<ChildElement> retVal = new List<ChildElement>();
             if (childElementType == typeof(TerrainElement))
             {
                 foreach (ChildElement elem in TerrainElements)
                 {
-                    retVal.Add(elem as T);
+                    retVal.Add(elem);
                 }
                 return retVal;
             }
@@ -1100,7 +1096,7 @@ namespace FdaViewModel.Study
             {
                 foreach (ChildElement elem in ImpactAreaElements)
                 {
-                    retVal.Add(elem as T);
+                    retVal.Add(elem);
                 }
                 return retVal;
             }
@@ -1108,7 +1104,7 @@ namespace FdaViewModel.Study
             {
                 foreach (ChildElement elem in WaterSurfaceElements)
                 {
-                    retVal.Add(elem as T);
+                    retVal.Add(elem);
                 }
                 return retVal;
             }
@@ -1116,7 +1112,7 @@ namespace FdaViewModel.Study
             {
                 foreach (ChildElement elem in FlowFrequencyElements)
                 {
-                    retVal.Add(elem as T);
+                    retVal.Add(elem);
                 }
                 return retVal;
             }
@@ -1124,15 +1120,15 @@ namespace FdaViewModel.Study
             {
                 foreach (ChildElement elem in InflowOutflowElements)
                 {
-                    retVal.Add(elem as T);
+                    retVal.Add(elem);
                 }
                 return retVal;
             }
-            if (childElementType == typeof(RatingCurveElement))
+            if (childElementType.IsAssignableFrom(typeof(RatingCurveElement)))
             {
                 foreach (ChildElement elem in RatingCurveElements)
                 {
-                    retVal.Add(elem as T);
+                    retVal.Add(elem );
                 }
                 return retVal;
             }
@@ -1140,7 +1136,7 @@ namespace FdaViewModel.Study
             {
                 foreach (ChildElement elem in ExteriorInteriorElements)
                 {
-                    retVal.Add(elem as T);
+                    retVal.Add(elem );
                 }
                 return retVal;
             }
@@ -1148,7 +1144,7 @@ namespace FdaViewModel.Study
             {
                 foreach (ChildElement elem in LeveeElements)
                 {
-                    retVal.Add(elem as T);
+                    retVal.Add(elem);
                 }
                 return retVal;
             }
@@ -1156,7 +1152,7 @@ namespace FdaViewModel.Study
             {
                 foreach (ChildElement elem in FailureFunctionElements)
                 {
-                    retVal.Add(elem as T);
+                    retVal.Add(elem );
                 }
                 return retVal;
             }
@@ -1164,7 +1160,7 @@ namespace FdaViewModel.Study
             {
                 foreach (ChildElement elem in OccTypeElements)
                 {
-                    retVal.Add(elem as T);
+                    retVal.Add(elem );
                 }
                 return retVal;
             }
@@ -1172,7 +1168,7 @@ namespace FdaViewModel.Study
             {
                 foreach (ChildElement elem in StructureInventoryElements)
                 {
-                    retVal.Add(elem as T);
+                    retVal.Add(elem );
                 }
                 return retVal;
             }
@@ -1180,7 +1176,7 @@ namespace FdaViewModel.Study
             {
                 foreach (ChildElement elem in StageDamageElements)
                 {
-                    retVal.Add(elem as T);
+                    retVal.Add(elem );
                 }
                 return retVal;
             }
@@ -1188,9 +1184,21 @@ namespace FdaViewModel.Study
             {
                 foreach (ChildElement elem in ConditionsElements)
                 {
-                    retVal.Add(elem as T);
+                    retVal.Add(elem );
                 }
                 return retVal;
+            }
+            return retVal;
+        }
+        public List<T> GetChildElementsOfType<T>() where T : ChildElement
+        {
+            List<T> retVal = new List<T>();
+            var childElementType = typeof(T);
+            //typeof(TerrainElement).
+            List<ChildElement> children = GetChildElementsOfType(typeof(T));
+           foreach(ChildElement ele in children)
+            {
+                retVal.Add(ele as T);
             }
             return retVal;
         }

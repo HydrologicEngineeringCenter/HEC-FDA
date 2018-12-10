@@ -140,16 +140,16 @@ namespace Fda.Inventory.OccupancyTypes
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM sendingRow = sender as FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM;
             if(sendingRow == null) { return; }
 
+            vm.ListOfRowVMs.Remove(sendingRow);
+            //foreach (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM row in vm.ListOfRowVMs)
+            //{
+            //    if (sendingRow.Name == row.Name)
+            //    {
+            //        vm.ListOfRowVMs.Remove(row);
 
-            foreach (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM row in vm.ListOfRowVMs)
-            {
-                if (sendingRow.Name == row.Name)
-                {
-                    vm.ListOfRowVMs.Remove(row);
-
-                    break;
-                }
-            }
+            //        break;
+            //    }
+            //}
             DrawAllTheRows();
         }
         public void DrawAllTheRows()

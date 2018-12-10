@@ -14,7 +14,7 @@ namespace FdaViewModel.Study
         //void AddElement(ChildElement element);
         //void UpdateElement(ChildElement oldElement, ChildElement newElement);
 
-        List<ChildElement> GetSiblingsOfChild(ChildElement element);
+        List<ChildElement> GetChildElementsOfType(Type elementType);
         List<ChildElement> GetChildrenOfParent(ParentElement element);
         List<T> GetChildElementsOfType<T>() where T : ChildElement ;
         T GetParentElementOfType<T>() where T : ParentElement;

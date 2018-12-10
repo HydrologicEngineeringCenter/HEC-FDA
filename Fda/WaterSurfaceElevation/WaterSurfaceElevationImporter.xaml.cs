@@ -31,7 +31,14 @@ namespace Fda.WaterSurfaceElevation
 
         private void TxtDirectory_SelectionMade(string fullpath)
         {
-           
+            FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
+            //clear out any already existing rows
+            if (!System.IO.Directory.Exists(fullpath))
+            {
+                vm.ListOfRows.Clear();
+                //MessageBox.Show("File does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             List<string> tifFiles = new List<string>();
             List<string> fltFiles = new List<string>();
@@ -54,7 +61,6 @@ namespace Fda.WaterSurfaceElevation
 
             
 
-            FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
             //clear out any already existing rows
             vm.ListOfRows.Clear();
 

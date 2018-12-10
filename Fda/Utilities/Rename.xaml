@@ -11,10 +11,10 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="35"/>
-            <RowDefinition Height="35"/>
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="*"/>
+            <!--<RowDefinition Height="*"/>-->
 
-            <RowDefinition Height="35"/>
+            <!--<RowDefinition Height="35"/>-->
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="75"/>
@@ -23,6 +23,6 @@
 
         <TextBox Name="txt_name" Grid.Row="0" Grid.Column="1" Margin="5" Text="{Binding Path=Name, ValidatesOnDataErrors=True}" />
         <Label Content="New Name:" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="0" />
-        <OkClose:OKCloseControl Grid.Row="1" Grid.Column="1" />
+        <OkClose:OKCloseControl Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" />
     </Grid>
 </UserControl>

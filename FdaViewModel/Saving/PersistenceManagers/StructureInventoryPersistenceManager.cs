@@ -72,12 +72,24 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             return CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
         }
-
+        /// <summary>
+        /// Right now there is no way to edit structs other than through the map window. This call only works for "rename". It will not 
+        /// update any of the structs falues, only its name
+        /// </summary>
+        /// <param name="oldElement"></param>
+        /// <param name="elementToSave"></param>
+        /// <param name="changeTableIndex"></param>
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex )
         {
             if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((InventoryElement)elementToSave), oldElement.Name, TableName) )
             {
                 UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((InventoryElement)elementToSave), oldElement.Name, TableName, false, ChangeTableConstant);
+                string childTable = ChangeTableConstant + oldElement.Name;
+                string newChildTableName = ChangeTableConstant + elementToSave.Name;
+                if(Storage.Connection.Instance.TableNames().Contains(childTable))
+                {
+                    Storage.Connection.Instance.RenameTable(childTable, newChildTableName);
+                }
                 //SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
                 // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
                 StudyCacheForSaving.UpdateStructureInventoryElement((InventoryElement)oldElement, (InventoryElement)elementToSave);

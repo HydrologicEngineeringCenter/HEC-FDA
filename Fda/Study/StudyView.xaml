@@ -10,6 +10,7 @@
              xmlns:VMUtils="clr-namespace:FdaViewModel.Utilities;assembly=FdaViewModel"
              xmlns:study="clr-namespace:FdaViewModel.Study;assembly=FdaViewModel"
            
+           
 
              Loaded="UserControl_Loaded"
              SizeChanged="UserControl_SizeChanged"
@@ -141,7 +142,9 @@
             </TabItem>
                 <TabItem Name="Maps" Header="Map Layers">
                 <Grid Name="MaptreeviewGRID">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <OpenGL:MapTreeView x:Name="MapTreeView" />
+                        </ScrollViewer>
                 </Grid>
             </TabItem>
         </TabControl>
@@ -150,9 +153,9 @@
         <!--<Grid Name="mapwindowgrid"  Grid.Row="1" Grid.Column="1" Margin="0,30,5,5" >
             <OpenGL:WPFMapWindow x:Name="MapWindowControl" />
         </Grid>-->
-        
-        
-      <utils:CustomTabControl x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding Tabs}" SelectedIndex="{Binding SelectedDynamicTabIndex, Mode=TwoWay}"   Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  >
+
+
+                        <utils:CustomTabControl x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding Tabs}" SelectedIndex="{Binding SelectedDynamicTabIndex, Mode=TwoWay}"   Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  >
                            
                             <!--<TabControl.ItemContainerStyle>
         <Style TargetType="TabItem">
@@ -199,9 +202,9 @@
           
     <TabControl.ContentTemplate>
         <DataTemplate DataType="VMUtils:DynamicTabVM">
-          <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+          <!--<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">-->
             <ContentControl Name="masterControl" Content="{Binding BaseVM}" />
-          </ScrollViewer>
+          <!--</ScrollViewer>-->
         </DataTemplate>
     </TabControl.ContentTemplate>
           

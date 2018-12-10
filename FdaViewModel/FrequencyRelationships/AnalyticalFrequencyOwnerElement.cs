@@ -1,5 +1,6 @@
 ﻿using FdaViewModel.Editors;
 using FdaViewModel.Utilities;
+using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,7 +80,12 @@ namespace FdaViewModel.FrequencyRelationships
                .WithParentGuid(this.GUID)
                .WithCanOpenMultipleTimes(true);
 
-            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(actionManager);
+             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(actionManager);
+            //LogPearsonIII curve = new Statistics.LogPearsonIII(4, .4, .5, 50);
+            //Probabilities = 
+
+            //Editors.AnalyticalFrequencyCurveEditor vm = new AnalyticalFrequencyCurveEditor(new UncertainCurveIncreasing(UncertainCurveDataCollection.DistributionsEnum.LogPearsonIII), actionManager);
+            vm.Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };
             //StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);
 

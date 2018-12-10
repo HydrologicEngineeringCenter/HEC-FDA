@@ -12,7 +12,7 @@
         Closing="Window_Closing"
         Loaded="Window_Loaded"
         StateChanged="Window_StateChanged"
-        MinHeight="500"
+          MinHeight="500"
         MinWidth="800"
         Width="1000"
         Height="800"

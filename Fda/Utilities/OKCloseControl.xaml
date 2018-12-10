@@ -15,7 +15,7 @@
     </UserControl.Resources>
     <Grid>
         <StackPanel Orientation="Horizontal" Width="95" HorizontalAlignment="Right" >
-            <Button  Content="OK" IsEnabled="{Binding Path=HasFatalError, Converter={StaticResource HasErrorConverter}, UpdateSourceTrigger=PropertyChanged}" Margin="5,5,2,5" Width="40" Height="22" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding Source={StaticResource ok}}">
+            <Button  Content="OK" ToolTip="{Binding Error}" ToolTipService.ShowOnDisabled="True" IsEnabled="{Binding Path=HasFatalError, Converter={StaticResource HasErrorConverter}, UpdateSourceTrigger=PropertyChanged}" Margin="5,5,2,5" Width="40" Height="22" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding Source={StaticResource ok}}">
                 <Button.CommandParameter>
                     <MultiBinding Converter="{StaticResource OkConverter}">
                         <Binding/>

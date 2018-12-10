@@ -123,9 +123,19 @@ namespace FdaViewModel.Plots
             {
                 MeanAEP = result.AEP.GetMean;
             }
+            else
+            {
+                //do what?
+                int test = 0;
+            }
             if (result.EAD != null)
             {
                 MeanEAD = result.EAD.GetMean;
+            }
+            else
+            {
+                //do what?
+                int test = 0;
             }
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;
@@ -151,6 +161,7 @@ namespace FdaViewModel.Plots
                 FdaModel.ComputationPoint.Outputs.Realization realization = Result.Realizations[iteration];
                 //AssignTheCurvesToThePlots(realization.Functions);
                 //CheckIfAllPlotsExists();
+                if(realization == null) { return; }
                 UpdateCurves(realization.Functions);
                 IterationNumber = iteration;
                 EAD = Math.Round(realization.ExpectedAnnualDamage, 3);

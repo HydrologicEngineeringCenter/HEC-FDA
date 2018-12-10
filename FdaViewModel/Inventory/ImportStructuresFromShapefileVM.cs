@@ -21,10 +21,8 @@ namespace FdaViewModel.Inventory
         #endregion
         #region Fields
 
-        private string _Name;
         private string _SelectedPath;
 
-        private string _Description;
 
         private BaseViewModel _CurrentView;
 
@@ -585,6 +583,9 @@ namespace FdaViewModel.Inventory
 
             return true;
         }
+
+       
+
         public void loadUniqueNames(string path)
 
         {
@@ -708,6 +709,8 @@ namespace FdaViewModel.Inventory
             }
             return new Consequences_Assist.ComputableObjects.OccupancyType(); // if it gets here then no occtype matching the names given exists. Should we send an error message?
         }
+
+        
 
         #endregion
         #region Functions

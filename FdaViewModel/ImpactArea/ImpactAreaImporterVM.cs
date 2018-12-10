@@ -26,13 +26,13 @@ namespace FdaViewModel.ImpactArea
         //private ObservableCollection<ImpactAreaUniqueNameSet> _UniqueFields;
         //private ImpactAreaUniqueNameSet _SelectedImpactAreaUniqueNameSet;
         private ObservableCollection<ImpactAreaRowItem> _ListOfRows;
-        private bool _IsNameReadOnly = false;
+        private bool _IsInEditMode = false;
         #endregion
         #region Properties
-            public bool IsNameReadOnly
+            public bool IsInEditMode
         {
-            get { return _IsNameReadOnly; }
-            set { _IsNameReadOnly = value; NotifyPropertyChanged(); }
+            get { return _IsInEditMode; }
+            set { _IsInEditMode = value; NotifyPropertyChanged(); }
         }
         public ObservableCollection<string> AvailablePaths
         {
@@ -72,7 +72,7 @@ namespace FdaViewModel.ImpactArea
         public ImpactAreaImporterVM(ObservableCollection<string> PolygonPaths, EditorActionManager actionManager):base(actionManager)
         {
             AvailablePaths = PolygonPaths;
-            IsNameReadOnly = false;
+            IsInEditMode = false;
         }
 
         public ImpactAreaImporterVM(ImpactAreaElement element, ObservableCollection<ImpactAreaRowItem> impactAreaRows, EditorActionManager actionManager) :base(element, actionManager)
@@ -80,7 +80,7 @@ namespace FdaViewModel.ImpactArea
             Name = element.Name;
             ListOfRows = impactAreaRows;
             Description = element.Description;
-            IsNameReadOnly = true;
+            IsInEditMode = true;
 
         }
         #endregion

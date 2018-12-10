@@ -20,21 +20,21 @@
             <RowDefinition Height="35"/>
             <RowDefinition Height="35"/>
 
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="90"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Label Content="Study Name" Grid.Row="0" Grid.Column="0" Margin="5" HorizontalAlignment="Left"/>
+        <Label Content="Study Name" Grid.Row="0" Grid.Column="0" Margin="5" HorizontalAlignment="Right"/>
         <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding Path=StudyName, ValidatesOnDataErrors=True}" />
-        <Label Content="Study Path" Grid.Row="1" Grid.Column="0" Margin="5"/>
+        <Label Content="Study Path" Grid.Row="1" Grid.Column="0" Margin="5" HorizontalAlignment="Right"/>
         <CA:TextBoxFolderBrowser Grid.Row="1" Grid.Column="1" Margin="5" FolderPath="{Binding Path, ValidatesOnDataErrors=True}" SelectionMade="TextBoxFolderBrowser_SelectionMade" />
 
         <!--<TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding Path=Path, ValidatesOnDataErrors=True}"/>-->
-        <Label Grid.Row="2" Grid.Column="0" Content="Description"  Margin="5"/>
+        <Label Grid.Row="2" Grid.Column="0" Content="Description"  Margin="5" HorizontalAlignment="Right"/>
         <CA:TextBoxDescription Text="{Binding Path=Description}" Grid.Row="2" Grid.Column="1" Margin="5"/>
-        <Utils:OKCloseControl Grid.Column="1" Grid.Row="3"/>
+        <Utils:OKCloseControl Grid.Column="1" Grid.Row="3" VerticalAlignment="Bottom"/>
 
     </Grid>
 </UserControl>

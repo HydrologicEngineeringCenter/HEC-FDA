@@ -80,7 +80,8 @@ namespace FdaViewModel.Utilities
             RenameVM renameViewModel = new RenameVM( this, CloneElement);
             //StudyCache.AddSiblingRules(renameViewModel, this);
             renameViewModel.ParentGUID = this.GUID;
-            Navigate( renameViewModel, false, true, "Rename");
+            //Navigate( renameViewModel, false, true, "Rename");
+            Navigate(renameViewModel);
             //if (renameViewModel.WasCanceled == true)
             //{
             //    return;

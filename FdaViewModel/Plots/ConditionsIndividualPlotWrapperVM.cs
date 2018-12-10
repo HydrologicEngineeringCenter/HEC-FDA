@@ -63,7 +63,7 @@ namespace FdaViewModel.Plots
         public bool DisplayImportButton
         {
             get { return _DisplayImportButton; }
-            set { _DisplayImportButton = value; }
+            set { _DisplayImportButton = value; NotifyPropertyChanged(); }
         }
         public string Title
         {

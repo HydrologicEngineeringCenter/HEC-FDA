@@ -169,6 +169,7 @@ namespace Fda
             Title = newvm.Title;
             newvm.LaunchNewWindow += WindowSpawner;
             Closing += newvm.OnClosing;
+            
         }
         private void btn_PopWindowInToTabs_Click(object sender, RoutedEventArgs e)
         {
@@ -227,11 +228,24 @@ namespace Fda
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //this.Height = this.DesiredSize.Height;
-            //this.MinHeight = this.DesiredSize.Height;
-            //this.MinWidth = this.DesiredSize.Width;
-            //this.Width = this.DesiredSize.Width;
-            //need to figure out how to set max widths and heights.
+            //if(masterControl.Content.GetType() == typeof(Utilities.IPopOut))
+            //{
+            //    this.Width = ((Utilities.IPopOut)masterControl.Content).PopOutWidth;
+            //}
+
+           // if (this.DataContext.GetType() != typeof(FdaViewModel.Study.FdaStudyVM))
+           // {
+                //this.SizeToContent = SizeToContent.WidthAndHeight;
+                //then we want the window to size to the content better.
+                //masterControl.Content.
+                //this.Height = this.DesiredSize.Height;
+                //this.MinHeight = this.DesiredSize.Height;
+                //this.MinWidth = this.DesiredSize.Width;
+                //this.Width = this.DesiredSize.Width;
+                //need to figure out how to set max widths and heights.
+            //}
+
+
         }
         public T GetTheVisualChild<T>(Visual Parent) where T : Visual
         {

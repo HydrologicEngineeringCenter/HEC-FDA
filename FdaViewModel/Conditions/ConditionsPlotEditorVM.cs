@@ -445,12 +445,12 @@ namespace FdaViewModel.Conditions
 
             Plot8ControlVM.PreviewCompute += RunPreviewCompute;
 
-            _Plot0ControlVM.RequestNavigation += Navigate;
-            _Plot1ControlVM.RequestNavigation += Navigate;
-            _Plot3ControlVM.RequestNavigation += Navigate;
-            _Plot5ControlVM.RequestNavigation += Navigate;
-            _Plot7ControlVM.RequestNavigation += Navigate;
-            _Plot8ControlVM.RequestNavigation += Navigate;
+            //_Plot0ControlVM.RequestNavigation += Navigate;
+            //_Plot1ControlVM.RequestNavigation += Navigate;
+            //_Plot3ControlVM.RequestNavigation += Navigate;
+            //_Plot5ControlVM.RequestNavigation += Navigate;
+            //_Plot7ControlVM.RequestNavigation += Navigate;
+            //_Plot8ControlVM.RequestNavigation += Navigate;
 
             AttachUpdatePreviewPlotEvents();
         }

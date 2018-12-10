@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FdaViewModel.Utilities;
+using FdaViewModel.Utilities.Transactions;
 using Statistics;
 
 namespace FdaViewModel.FrequencyRelationships
 {
-    public class AnalyticalFrequencyEditorVM : Utilities.Transactions.TransactionAndMessageBase, ISaveUndoRedo
+    public class AnalyticalFrequencyEditorVM :Editors.BaseEditorVM,  Utilities.Transactions.ITransactionsAndMessages, ISaveUndoRedo
     {
         #region Notes
         #endregion
@@ -67,18 +69,36 @@ namespace FdaViewModel.FrequencyRelationships
         public double TestNatural { get { return _TestNatural; } set { _TestNatural = value; NotifyPropertyChanged(); NotifyPropertyChanged(nameof(Result)); } }
         public double Result { get { return _Distribution.GetG; } }
 
+        public ObservableCollection<TransactionRowItem> TransactionRows
+        {
+            get;
+            set;
+        }
+        public List<MessageRowItem> MessageRows
+        {
+            get;
+            set;
+        }
+        public bool TransactionsMessagesVisible
+        {
+            get;
+            set;
+        }
+
         //public ChildElement CurrentElement { get; set; }
 
-       
+
         #endregion
         #region Constructors
-        public AnalyticalFrequencyEditorVM(Editors.EditorActionManager actionManager) : base()
+        public AnalyticalFrequencyEditorVM(Editors.EditorActionManager actionManager) : base(actionManager)
         {
             Distribution = new Statistics.LogPearsonIII(4, .4, .5, 50);
             Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };
             ActionManager = actionManager;
+            TransactionRows = new ObservableCollection<TransactionRowItem>();
+            MessageRows = new List<MessageRowItem>();
         }
-        public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem, Editors.EditorActionManager actionManager) :base(elem)// string name, Statistics.LogPearsonIII lpiii, string description, Utilities.OwnerElement owner) : base()
+        public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem, Editors.EditorActionManager actionManager) :base(elem, actionManager)// string name, Statistics.LogPearsonIII lpiii, string description, Utilities.OwnerElement owner) : base()
         {
             //OriginalName = elem.Name;
             CurrentElement = elem;
@@ -86,6 +106,8 @@ namespace FdaViewModel.FrequencyRelationships
             Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };
             AssignValuesFromElementToEditor(elem);
             ActionManager = actionManager;
+            TransactionHelper.LoadTransactionsAndMessages(this, elem);
+            SavingText = elem.Name + " last saved: " + elem.LastEditDate;
 
             //DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
             //UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
@@ -153,6 +175,8 @@ namespace FdaViewModel.FrequencyRelationships
             if (prevElement != null)
             {
                 AssignValuesFromElementToEditor(prevElement);
+                SavingText = prevElement.Name + " last saved: " + prevElement.LastEditDate;
+                TransactionRows.Insert(0, new TransactionRowItem(DateTime.Now.ToString("G"), "Previously saved values", "me"));
             }
         }
 
@@ -162,6 +186,8 @@ namespace FdaViewModel.FrequencyRelationships
             if (nextElement != null)
             {
                 AssignValuesFromElementToEditor(nextElement);
+                SavingText = nextElement.Name + " last saved: " + nextElement.LastEditDate;
+
             }
         }
 

@@ -164,6 +164,7 @@ namespace FdaViewModel.Study
             _StudyElement.TransactionEvent += WriteTransactions;
             _StudyElement.UpdateTransactionsAndMessages += UpdateTransactionsAndMessages;
             _StudyElement.LoadMapLayers += LoadMapLayers;
+            _StudyElement.OpeningADifferentStudy += OpenADifferentStudy;
             //_StudyElement.ClearStudy += ClearCurrentStudy;
             _StudyElement.AddBaseElements();
             _MainStudyTree.Add(_StudyElement);
@@ -205,6 +206,13 @@ namespace FdaViewModel.Study
         #endregion
 
         #region Voids
+
+        private void OpenADifferentStudy(object sender, EventArgs e)
+        {
+            _TabsDictionary.Clear();
+            Tabs.Clear();
+            AddMapsTab(_MWMTVConn.MapTreeView);
+        }
         private void AddTheMapTreeViewItemBackIn(object sender, EventArgs e)
         {
             //OpenGLMapping.RasterFeatureNode newNode = (OpenGLMapping.RasterFeatureNode)sender;
@@ -274,8 +282,22 @@ namespace FdaViewModel.Study
             RemoveTab(tab);
             
         }
+        /// <summary>
+        /// I don't like this one bit but i needed a way to switch this boolean when the red x is clicked
+        /// on the tab. I couldn't think of any other way to do it with the current constraints.
+        /// </summary>
+        /// <param name="vm"></param>
+        private void DealWithTheConditionsEditorImporters(Plots.iConditionsImporter vm)
+        {
+            vm.CancelClicked();           
+        }
         public void RemoveTab(IDynamicTab tab)
         {
+            if(tab.BaseVM is Plots.iConditionsImporter)
+            {
+                DealWithTheConditionsEditorImporters((Plots.iConditionsImporter)tab.BaseVM);
+            }
+
             if (tab.BaseVM.ParentGUID != null)
             {
                 if (_TabsDictionary.ContainsKey(tab.BaseVM.ParentGUID))
@@ -311,6 +333,10 @@ namespace FdaViewModel.Study
         /// <param name="vm"></param>
         public void RemoveTabFromDictionary(BaseViewModel vm)
         {
+            if(vm is Plots.iConditionsImporter)
+            {
+                DealWithTheConditionsEditorImporters((Plots.iConditionsImporter)vm);
+            }
             if (vm.ParentGUID != null)
             {
                 if (_TabsDictionary.ContainsKey(vm.ParentGUID))
@@ -318,10 +344,16 @@ namespace FdaViewModel.Study
                     //foreach (IDynamicTab tab in _TabsDictionary[vm.ParentGUID])
                     for(int i = 0;i<_TabsDictionary[vm.ParentGUID].Count;i++)
                     {
-                        if (_TabsDictionary[vm.ParentGUID][i].BaseVM.GetType() == vm.GetType() && vm.Name.Equals(_TabsDictionary[vm.ParentGUID][i].BaseVM.Name))
+                        if (_TabsDictionary[vm.ParentGUID][i].BaseVM.GetType() == vm.GetType() )
                         {
-                            //Tabs.Remove(_TabsDictionary[vm.ParentGUID][i]);
-                            _TabsDictionary[vm.ParentGUID].Remove(_TabsDictionary[vm.ParentGUID][i]);
+                            if(vm.Name == null && _TabsDictionary[vm.ParentGUID][i].BaseVM.Name == null)
+                            {
+                                _TabsDictionary[vm.ParentGUID].Remove(_TabsDictionary[vm.ParentGUID][i]);
+                            }
+                            else if(vm.Name.Equals(_TabsDictionary[vm.ParentGUID][i].BaseVM.Name))
+                            {
+                                _TabsDictionary[vm.ParentGUID].Remove(_TabsDictionary[vm.ParentGUID][i]);
+                            }
                         }
                     }
                 }
@@ -470,6 +502,7 @@ namespace FdaViewModel.Study
             //    }
             //}
         //}
+        
     
             StudyStatusBar.SaveStatus = StudyStatusBar.UnsavedChangesMessage;
 

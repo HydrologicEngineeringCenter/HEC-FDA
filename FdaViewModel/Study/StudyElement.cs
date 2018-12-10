@@ -12,6 +12,7 @@ namespace FdaViewModel.Study
     {
         public event EventHandler RenameTreeViewElement;
         public event EventHandler AddBackInTreeViewElement;
+        public event EventHandler OpeningADifferentStudy;
 
         public event EventHandler SaveTheOpenTabs;
         public event EventHandler UpdateTransactionsAndMessages;
@@ -225,7 +226,10 @@ namespace FdaViewModel.Study
             }
             for (int i = 0; i <= registrystudies.Count - 1; i++)
             {
-                registrykey.SetValue(i.ToString(), registrystudies[i]);
+                if (registrystudies[i] != null)
+                {
+                    registrykey.SetValue(i.ToString(), registrystudies[i]);
+                }
             }
         }
 
@@ -403,8 +407,9 @@ namespace FdaViewModel.Study
             }
         }
 
-        private void OpenStudyFromFilePath(string name, string path)
+        public void OpenStudyFromFilePath(string name, string path)
         {
+            OpeningADifferentStudy?.Invoke(this, new EventArgs());
             //if a study is opened and the create new study tab is still in the tabs, then remove it
             RemoveCreateNewStudyTab?.Invoke(this, new EventArgs());
 
@@ -453,15 +458,17 @@ namespace FdaViewModel.Study
         }
         private void OpenStudy(object sender, EventArgs e)
         {
-            Study.ExistingStudyVM ESVM = new ExistingStudyVM();
-            Navigate( ESVM, true, true, "Open Existing Study");
-            if (!ESVM.WasCanceled)
-            {
-                if (!ESVM.HasError)
-                {
-                    OpenStudyFromFilePath(ESVM.StudyName, ESVM.Path);
-                }
-            }
+            Study.ExistingStudyVM ESVM = new ExistingStudyVM(this);
+            //Navigate( ESVM, true, true, "Open Existing Study");
+            Navigate( ESVM, false, false, "Open Existing Study");
+
+            //if (!ESVM.WasCanceled)
+            //{
+            //    if (!ESVM.HasError)
+            //    {
+            //        OpenStudyFromFilePath(ESVM.StudyName, ESVM.Path);
+            //    }
+            //}
 
 
 
@@ -481,7 +488,9 @@ namespace FdaViewModel.Study
 
             Elements.Clear();//clear out any existing ones from an existing study
             if (Storage.Connection.Instance.IsConnectionNull) return;
-
+            
+            //the tabs are in the fdastudyvm, i might need to throw an event here that is saying that a new study is opening and then remove all the tabs and 
+            //deal with the map window.
             bool loadStudyCache = false;
             FDACache cache = null;
             if (StudyCache == null)

@@ -27,6 +27,10 @@ namespace FdaViewModel.Plots
 
         #endregion
         #region Properties
+        public bool DisplayImportButton
+        {
+            get;set;
+        }
         public FdaModel.ComputationPoint.PerformanceThreshold Threshold
         {
             get { return _Threshold; }

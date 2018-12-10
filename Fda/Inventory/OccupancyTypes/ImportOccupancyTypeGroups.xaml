@@ -12,7 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="35" />
             <RowDefinition Height="300" />
-            <RowDefinition Height="35" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <!--<Grid.RowDefinitions>
@@ -27,7 +27,7 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Row="0" Margin="5" Text="Occupancy Types Text File:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <CA:TextBoxFileBrowser Grid.Row="0" Grid.Column="1" Margin="5"  Filter="Textfiles (*.txt) |*.txt|All files (*.*) |*.*"   DisplayPath="True"  Name="cmb_Path"   />
+            <CA:TextBoxFileBrowser Grid.Row="0" Grid.Column="1" Margin="5"  Filter="Textfiles (*.txt) |*.txt|All files (*.*) |*.*" DisplayPath="True"   Name="cmb_Path"   />
 
             <Button Name="btn_Add" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" Click="btn_Add_Click" >
                 <Image Width="16" Height="16" VerticalAlignment="Bottom" HorizontalAlignment="Center" Grid.Row="1" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
@@ -85,7 +85,7 @@
         <Label Name="lbl_PassFail" Grid.Row="2"  Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" />
         --><!--<Util:BindableButton Grid.Row="2" Grid.Column="1" NamedAction="{Binding Test}" Margin="5" Width="40" Height="25" VerticalAlignment="Center" HorizontalAlignment="Right" />-->
         <!--<Button Grid.Row="2" Grid.Column="1" Content="Import" Margin="5" Width="45" Height="25" VerticalAlignment="Center" HorizontalAlignment="Right"  />-->
-        <Util:OKCloseControl HorizontalAlignment="Right" Grid.Row="2" Grid.Column="1" />
+        <Util:OKCloseControl HorizontalAlignment="Right" Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" />
     </Grid>
     
 </UserControl>

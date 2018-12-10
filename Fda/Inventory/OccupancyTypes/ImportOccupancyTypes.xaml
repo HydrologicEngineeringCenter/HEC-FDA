@@ -20,7 +20,7 @@ xmlns:Util="clr-namespace:Fda.Utilities"
         </Grid.ColumnDefinitions>
        
             <TextBlock Grid.Row="0" Margin="5" Text="Occupancy Types Text File:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <CA:TextBoxFileBrowser Grid.Row="0" Grid.Column="1" Margin="5" Path="{Binding SelectedPath}" Filter="Textfiles (*.txt) |*.txt|All files (*.*) |*.*" SelectionMade="cmb_Path_SelectionMade" DisplayPath="False"  Name="cmb_Path"  />
+            <CA:TextBoxFileBrowser Grid.Row="0" Grid.Column="1" Margin="5" Path="{Binding SelectedPath}" Filter="Textfiles (*.txt) |*.txt|All files (*.*) |*.*" DisplayPath="True" SelectionMade="cmb_Path_SelectionMade"   Name="cmb_Path"  />
         
         <TextBlock Grid.Row="1" Text="Name:" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Center" />
         <TextBox Grid.Row="1" Grid.Column="1" Name="txt_Name" Text="{Binding OccupancyTypesGroupName}" Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Center"  />

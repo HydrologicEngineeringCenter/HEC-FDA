@@ -10,8 +10,8 @@
     <Grid Background="WhiteSmoke">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"  Name="SymbolsRow"></RowDefinition>
-            <RowDefinition Height="450" Name="ShapeDetailsRow"></RowDefinition>
-            <RowDefinition Height="28" Name="ApplyOKRow"></RowDefinition>
+            <RowDefinition Height="Auto" Name="ShapeDetailsRow"></RowDefinition>
+            <RowDefinition Height="*" Name="ApplyOKRow"></RowDefinition>
         </Grid.RowDefinitions>
         <!--<qh:HelpButton HorizontalAlignment="Right" Name="ImportFromShapefileHelpButton" TopicNames="ImportFromShapefileHelp" ToolTip="Help" VerticalAlignment="Top" Margin="5" Width="20" Height="20" PathIsEmbeddedResource="True" AssemblyName="HEC-LifeSim" RootNamespace="LifeSim_WPF" xmlPATH="ImportFromShapefile.xml"/>-->
         <!--SI Set Name-->

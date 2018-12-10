@@ -10,7 +10,7 @@
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
             
-             d:DesignHeight="700" MinHeight="700" MinWidth="800" d:DesignWidth="700">
+             d:DesignHeight="700"  d:DesignWidth="700">
     <Grid Name="mainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -66,9 +66,9 @@
                     <Label Name="lbl_IterationTotal" Content="{Binding TotalRealizations}" VerticalAlignment="Center"/>
                     <!--<Button Name="btn_DisplayIteration" Content="Display" Click="btn_DisplayIteration_Click" Background="Gray"/>-->
                     <Label Content="AEP:" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                <Label Content="{Binding AEP}" VerticalAlignment="Center" />
+                <Label Content="{Binding AEP, Mode=TwoWay}" Width="50" VerticalAlignment="Center" />
                 <Label Content="EAD:" VerticalAlignment="Center"/>
-                <Label Content="{Binding EAD}" VerticalAlignment="Center"/>
+                <Label Content="{Binding EAD, Mode=TwoWay}" Width="60" VerticalAlignment="Center"/>
             </ToolBar>
         </ToolBarTray>
             <StackPanel Name="stk_AepAndEad" Grid.Row="1" Orientation="Horizontal">
@@ -158,10 +158,11 @@
             <RowDefinition Height="45" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
+                <!--<RowDefinition Height=".3*" />-->
 
 
 
-        </Grid.RowDefinitions>
+            </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
            
             <ColumnDefinition Width="*" />
@@ -201,6 +202,8 @@
         <local:ArrowPolygon Grid.Row="2" Grid.Column="4" Rotate="-125" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <local:ArrowPolygon Grid.Row="4" Grid.Column="2" Rotate="-135" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <local:ArrowPolygon Grid.Row="5" Grid.Column="2" Rotate="135" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
+            <!--<utils:OKCloseControl Grid.Row="5" Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Bottom" />-->
+
         </Grid>
     </Grid>
 </UserControl>
