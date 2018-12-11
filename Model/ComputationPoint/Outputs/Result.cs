@@ -141,7 +141,8 @@ namespace FdaModel.ComputationPoint.Outputs
 
                 if (maxDamage == 0)
                 {
-                    throw new Exception("A damage function was not found for an EAD compute.");
+                    
+                   // throw new Exception("A damage function was not found for an EAD compute.");
                 }
                 else
                 {

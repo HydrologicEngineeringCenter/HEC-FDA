@@ -86,6 +86,8 @@ namespace FdaViewModel
             get;
             set;
         }
+
+        public string ValidationErrorMessage { get; set; }
         //public Utilities.NamedAction MessagesAction
         //{
         //    get { return _MessagesAction; }
@@ -151,7 +153,8 @@ namespace FdaViewModel
 
         public Action<DynamicTabVM, bool> AddThisToTabs { get; set; }
         public Action<BaseViewModel> RemoveFromTabsDictionary { get; set; }
-        public Guid ParentGUID { get; set; }
+        public Guid ParentGUID { get;
+            set; }
         /// <summary>
         /// This is used to tell the ui if there should be a top row with the pop in button
         /// </summary>
@@ -194,6 +197,7 @@ namespace FdaViewModel
             NotifyPropertyChanged("HasError");
             NotifyPropertyChanged("HasFatalError");
             StringBuilder errors = new StringBuilder();
+            Error = "";
             foreach (PropertyRule pr in ruleMap.Values)
             {
                 pr.Update();
@@ -212,15 +216,16 @@ namespace FdaViewModel
             if (HasError)
             {
                 Error = errors.ToString().Remove(errors.ToString().Length - 2);
-                NotifyPropertyChanged(nameof(Error));
             }
             else
             {
                 Error = null;
             }
+            NotifyPropertyChanged(nameof(Error));
+
         }
         //virtual public void Save() { }
-        
+
         protected void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
             _HasChanges = true;
@@ -267,6 +272,8 @@ namespace FdaViewModel
      
         public void Navigate( BaseViewModel vm, bool newWindow = true, bool asDialog = true, string title = "FDA 2.0")
         {
+            string name = this.Name;
+            string type = this.GetType().ToString();
             if (RequestNavigation != null)
             {
                 vm.WasCanceled = true;

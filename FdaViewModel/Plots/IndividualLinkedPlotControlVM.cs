@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FdaViewModel.Plots
 {
     //[Author(q0heccdm, 12 / 19 / 2017 1:26:57 PM)]
-    public class IndividualLinkedPlotControlVM:BaseViewModel,iConditionsControl
+    public class IndividualLinkedPlotControlVM : BaseViewModel, iConditionsControl
     {
         #region Notes
         // Created By: q0heccdm
@@ -23,8 +23,20 @@ namespace FdaViewModel.Plots
         public event EventHandler PreviewCompute;
 
         private BaseViewModel _CurrentVM;
+        private bool _UpdatePlots;
         #endregion
         #region Properties
+        /// <summary>
+        /// this is not ideal but i needed a way to tell the view side to update the plots when a new curve is selected
+        /// from the importer. The curve change callback works if the importer is in the editor but it does not trigger
+        /// the callback if it is popped into a tab or its own window. It does NOT matter whether this is true or false
+        /// it just needs to change values to trigger the callback in the view side.
+        /// </summary>
+        public bool UpdatePlots
+        {
+            get { return _UpdatePlots; }
+            set { _UpdatePlots = value;NotifyPropertyChanged(); }
+        }
         public IndividualLinkedPlotVM PreviousPlot { get; set; }
         public BaseViewModel PreviousVM
         {
@@ -62,10 +74,13 @@ namespace FdaViewModel.Plots
 
             if (importerVM != null)
             {
+
                 CurveImporterVM = importerVM;
                 CurveImporterVM.OKClickedEvent += new EventHandler(AddCurveToPlot);
                 CurveImporterVM.CancelClickedEvent += new EventHandler(ImporterWasCanceled);
                 CurveImporterVM.PopImporterOut += new EventHandler(PopTheImporterOut);
+
+                
             }
 
             ModulatorCoverButtonVM = modulatorCoverButton;
@@ -102,14 +117,15 @@ namespace FdaViewModel.Plots
         private void PopTheImporterOut(object sender, EventArgs e)
         {
             CurveImporterVM.IsPoppedOut = true;
+            IndividualPlotWrapperVM.DisplayImportButton = false;
 
             ShowPreviousVM(sender, e);
-
-            Navigate((BaseViewModel)CurveImporterVM);
-            if (((BaseViewModel)CurveImporterVM).WasCanceled == true)
-            {
-                CurveImporterVM.IsPoppedOut = false;
-            }
+            //CurveImporterVM.CancelClickedEvent += ImporterWasCanceled
+            Navigate((BaseViewModel)CurveImporterVM,false,false,"Importer");
+            //if (((BaseViewModel)CurveImporterVM).WasCanceled == true)
+            //{
+            //    CurveImporterVM.IsPoppedOut = false;
+            //}
         }
 
         private void ImporterWasCanceled(object sender, EventArgs e)
@@ -121,17 +137,23 @@ namespace FdaViewModel.Plots
             }
             //update the linkages
 
-            if (CurveImporterVM.IsPoppedOut == true)
-            {
-
-                CurveImporterVM.IsPoppedOut = false;
-            }
-            else
+            if(CurrentVM == CurveImporterVM)
             {
                 ShowPreviousVM(sender, e);
             }
 
-            
+            CurveImporterVM.IsPoppedOut = false;
+            IndividualPlotWrapperVM.DisplayImportButton = true;
+
+            //if (CurveImporterVM.IsPoppedOut == true)
+            //{
+
+            //    CurveImporterVM.IsPoppedOut = false;
+            //}
+            //else
+            //{
+            //    ShowPreviousVM(sender, e);
+            //}
 
         }
 
@@ -203,7 +225,18 @@ namespace FdaViewModel.Plots
             
         }
 
-       
+       private void UpdateThePlots()
+        {
+            //i just need to switch it
+            if(UpdatePlots)
+            {
+                UpdatePlots = false;
+            }
+            else
+            {
+                UpdatePlots = true;
+            }
+        }
 
         /// <summary>
         /// This gets called when the user clicks the OK button on the importer form.
@@ -212,21 +245,31 @@ namespace FdaViewModel.Plots
         /// <param name="e"></param>
         public void AddCurveToPlot(object sender,EventArgs e)
         {
-
+          
             CurveImporterVM.IsPoppedOut = false;
+            IndividualPlotWrapperVM.DisplayImportButton = true;
 
             IndividualPlotWrapperVM.SubTitle = CurveImporterVM.SelectedElement.Name;
             //switch to the plot vm
-            IndividualPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(CurveImporterVM.BaseFunction, CurveImporterVM.SelectedCurve, CurveImporterVM.SelectedElementName);
+            if (IndividualPlotWrapperVM.PlotVM == null)
+            {
+                IndividualPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(CurveImporterVM.BaseFunction, CurveImporterVM.SelectedElementName);
+            }
+            else
+            {
+                IndividualPlotWrapperVM.PlotVM.BaseFunction = CurveImporterVM.BaseFunction;
+                IndividualPlotWrapperVM.PlotVM.SelectedElementName = CurveImporterVM.SelectedElementName;
+                IndividualPlotWrapperVM.PlotVM.Curve = CurveImporterVM.SelectedCurve;
+            }
 
             CurrentVM = (BaseViewModel)IndividualPlotWrapperVM;
 
             //store the previouse curve
-            PreviousPlot = new IndividualLinkedPlotVM(CurveImporterVM.BaseFunction, CurveImporterVM.SelectedCurve, CurveImporterVM.SelectedElementName); 
+            PreviousPlot = new IndividualLinkedPlotVM(CurveImporterVM.BaseFunction, CurveImporterVM.SelectedElementName); 
 
             if (ModulatorPlotWrapperVM != null)
             {
-                ModulatorPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(CurveImporterVM.BaseFunction, CurveImporterVM.SelectedCurve, CurveImporterVM.SelectedElementName);
+                ModulatorPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(CurveImporterVM.BaseFunction, CurveImporterVM.SelectedElementName);
                 //CurrentVM = (BaseViewModel)ModulatorPlotWrapperVM;
             }
 
@@ -241,7 +284,7 @@ namespace FdaViewModel.Plots
             {
                 SelectedCurveUpdated(sender, e);
             }
-
+            UpdateThePlots();
         }
 
         public void PreviewTheCompute(object sender, EventArgs e)

@@ -27,6 +27,8 @@ namespace Fda.Plots
         public static readonly DependencyProperty BaseFunctionProperty = DependencyProperty.Register("BaseFunction", typeof(FdaModel.Functions.BaseFunction), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(BaseFunctionChangedCallBack)));
 
         public static readonly DependencyProperty CurveProperty = DependencyProperty.Register("Curve", typeof(Statistics.CurveIncreasing), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(CurveChangedCallBack)));
+        public static readonly DependencyProperty NonStandardDeviationCurveProperty = DependencyProperty.Register("NonStandardDeviationCurve", typeof(Statistics.CurveIncreasing), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(null));
+
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register("Title", typeof(string), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(TitleChangedCallBack)));
 
         public static readonly DependencyProperty SubTitleProperty = DependencyProperty.Register("SubTitle", typeof(string), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(SubTitleChangedCallBack)));
@@ -38,6 +40,8 @@ namespace Fda.Plots
         //public static readonly DependencyProperty MaxXProperty = DependencyProperty.Register("MaxX", typeof(double), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(0, new PropertyChangedCallback(MaxXCallBack)));
         public static readonly DependencyProperty TrackerVisibleProperty = DependencyProperty.Register("TrackerVisible", typeof(bool), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(TrackerVisibleCallBack)));
         public static readonly DependencyProperty AreaPlotVisibleProperty = DependencyProperty.Register("AreaPlotVisible", typeof(bool), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(AreaPlotVisibleCallBack)));
+        public static readonly DependencyProperty ThresholdProperty = DependencyProperty.Register("Threshold", typeof(FdaModel.ComputationPoint.PerformanceThreshold), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(PlotThresholdCallBack)));
+        public static readonly DependencyProperty XAxisAsStandardDeviationProperty = DependencyProperty.Register("XAxisAsStandardDeviation", typeof(bool), typeof(IndividualLinkedPlot), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(XAxisAsStandardDeviationCallBack)));
 
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -49,6 +53,7 @@ namespace Fda.Plots
 
         private OxyColor AREA_UNDER_CURVE_COLOR = OxyColor.FromArgb(50, 128, 255, 128);
         private OxyColor AREA_PLOT_COLOR = OxyColor.FromArgb(100, 100, 100, 100);
+        private OxyColor THRESHOLD_LINE_COLOR = OxyColor.FromArgb(100, 0, 0, 255);
 
         private SharedAxisEnum _NextPlotSharedAxisEnum = SharedAxisEnum.unknown;
         private SharedAxisEnum _PreviousPlotSharedAxisEnum = SharedAxisEnum.unknown;
@@ -61,6 +66,10 @@ namespace Fda.Plots
 
 
         #region Properties
+        public bool ThresholdLineIsShowing { get; set; }
+        public LineSeries VerticalThresholdLine { get; set; }
+        public LineSeries HorizontalThresholdLine { get; set; }
+
         public string SelectedElementName { get; set; } = "cody test";
 
         public bool TrackerIsOutsideTheCurveRange { get; set; }
@@ -188,6 +197,12 @@ namespace Fda.Plots
             get { return (Statistics.CurveIncreasing)GetValue(CurveProperty); }
             set { SetValue(CurveProperty, value); }
         }
+        public Statistics.CurveIncreasing NonStandardDeviationCurve
+        {
+            get { return (Statistics.CurveIncreasing)GetValue(NonStandardDeviationCurveProperty); }
+            set { SetValue(NonStandardDeviationCurveProperty, value); }
+        }
+        
         public string Title
         {
             get { return (string)GetValue(TitleProperty); }
@@ -211,7 +226,16 @@ namespace Fda.Plots
             get { return (bool)GetValue(AreaPlotVisibleProperty); }
             set { SetValue(AreaPlotVisibleProperty, value); }
         }
-      
+        public bool XAxisAsStandardDeviation
+        {
+            get { return (bool)GetValue(XAxisAsStandardDeviationProperty); }
+            set { SetValue(XAxisAsStandardDeviationProperty, value); }
+        }
+        public bool Threshold
+        {
+            get { return (bool)GetValue(ThresholdProperty); }
+            set { SetValue(ThresholdProperty, value); }
+        }
         #endregion
 
         #region CallBacks
@@ -244,7 +268,37 @@ namespace Fda.Plots
         //        owner.MaxX = maxX;
 
         //}
-      
+        
+        private static void PlotThresholdCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            IndividualLinkedPlot owner = d as IndividualLinkedPlot;
+            if (e.NewValue != null)
+            {
+                if (e.NewValue.GetType() == typeof(FdaModel.ComputationPoint.PerformanceThreshold))
+                {
+                    FdaModel.ComputationPoint.PerformanceThreshold pt = (FdaModel.ComputationPoint.PerformanceThreshold)e.NewValue;
+
+                    //DataPoint dp = owner.GetPairedValue(pt.ThresholdValue)
+                    owner.PlotThreshold(pt);
+
+                    //}
+                    //else
+                    //{
+                    //    owner.RemoveThresholdPlot();
+                    //}
+                }
+            }
+            else
+            {
+                owner.RemoveThresholdPlot();
+            }
+           
+        }
+        
+        private static void XAxisAsStandardDeviationCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            //i don't need anything in here. The property gets set to true or false in xaml binding
+        }
         private static void AreaPlotVisibleCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             IndividualLinkedPlot owner = d as IndividualLinkedPlot;
@@ -270,6 +324,8 @@ namespace Fda.Plots
             else
             {
                 owner.HideTracker();
+                //if there is no tracker then turn the outside of range label off
+               owner.TurnOutsideOfRangeOff();
             }
         }
 
@@ -362,22 +418,34 @@ namespace Fda.Plots
             //}
             owner.OxyPlot1.Model.Series.Clear();
             LineSeries series1 = new LineSeries();
-
-            for (int i = 0; i < curve.Count; i++)
+            if (owner.XAxisAsStandardDeviation == true)//owner.Name != null && owner.Name.Equals("plot8"))
             {
-                //if the y axis is log scale then no values of "0" will be displayed because there is no log(0). I change them to be close to zero.
-                if (owner.SetYAxisToLogarithmic == true && curve.get_Y(i) == 0)
+                //Statistics.CurveIncreasing newCurve = owner.ConvertXValuesToStandardDeviation(curve);
+                //for (int i = 0; i < newCurve.Count; i++)
+                //{
+                //    series1.Points.Add(new DataPoint(curve.get_X(i), curve.get_Y(i)));
+
+                //}
+                owner.OxyPlot1.Model.Axes[0].LabelFormatter = owner.ProbabilityAxisFormatter;
+            }
+            //else
+            {
+                for (int i = 0; i < curve.Count; i++)
                 {
-                    //if the value is 0 then don't plot that point
-                    //series1.Points.Add(new DataPoint(curve.get_X(i), .000001));
+                    //if the y axis is log scale then no values of "0" will be displayed because there is no log(0). I change them to be close to zero.
+                    if (owner.SetYAxisToLogarithmic == true && curve.get_Y(i) == 0)
+                    {
+                        //if the value is 0 then don't plot that point
+                        //series1.Points.Add(new DataPoint(curve.get_X(i), .000001));
+
+                    }
+                    else
+                    {
+                        series1.Points.Add(new DataPoint(curve.get_X(i), curve.get_Y(i)));
+
+                    }
 
                 }
-                else
-                {
-                    series1.Points.Add(new DataPoint(curve.get_X(i), curve.get_Y(i)));
-
-                }
-
             }
 
             owner.OxyPlot1.Model.Series.Add(series1);
@@ -386,10 +454,72 @@ namespace Fda.Plots
 
             if (curve.Count != 0 && owner.FlipFrequencyAxis == true)
             {
-                FlipFreqAxis(owner);
+               FlipFreqAxis(owner);
             }
 
         }
+
+        private  string ProbabilityAxisFormatter(double d)
+        {
+            double yValue = GetPairedValue(d, true, OxyPlot1.Model);
+            //then i just need to get the paired value off of the original curve
+            //cant use "vm" because it is different between the two. need a dep prop for it i guess.
+            if(NonStandardDeviationCurve != null)
+            {
+                
+                double prob = GetPairedValue(yValue, false, NonStandardDeviationCurve);
+                if(prob != -1)
+                {
+                    return (1- prob).ToString("N3");
+                }
+                else
+                {
+                    return "";
+                }
+            }
+            else
+            {
+                return "";
+            }
+
+
+            //if (d<0)
+            //{
+            //    return ".5";
+            //}
+            //else if (d <= .5 && d > 0)
+            //{
+            //    return ".69";
+            //}
+            //else if (d <= 1 && d > .5)
+            //{
+            //    return ".84";
+            //}
+            //else if (d <=1.5  && d > 1)
+            //{
+            //    return ".93";
+            //}
+            //else if (d <=2 && d > 1.5)
+            //{
+            //    return ".97";
+            //}
+            //else if(d<=2.5 && d>2)
+            //{
+            //    return ".99";
+            //}
+            //else if (d <= 3 && d > 2.5)
+            //{
+            //    return ".999";
+            //}
+            //else
+            //{
+            //    return "test";
+            //}
+        }
+        
+
+       
+
 
         #endregion
 
@@ -496,7 +626,7 @@ namespace Fda.Plots
             txt_OutsideOfRange.Visibility = Visibility.Hidden;
 
             this.TrackerIsOutsideTheCurveRange = false;
-            ShowTracker();
+            //ShowTracker();
 
         }
 
@@ -581,9 +711,12 @@ namespace Fda.Plots
             if (thisLineSeries != null)
             {
 
-                double startValue = 1 - thisLineSeries.Points[0].X;
-                double endValue = 1 - thisLineSeries.Points[thisLineSeries.Points.Count - 1].X;
-
+                //double startValue = 1 - thisLineSeries.Points[0].X;
+                //double endValue = 1 - thisLineSeries.Points[thisLineSeries.Points.Count - 1].X;
+                if(MinY == 0)
+                {
+                    MinY = .001;
+                }
                 foreach (DataPoint dp in thisLineSeries.Points)
                 {
                     AreaUnderTheCurveSeries.Points.Add(dp);
@@ -1071,8 +1204,44 @@ namespace Fda.Plots
             thr.Series = OxyPlot1.Model.Series[0];
             thr.DataPoint = dp;
             thr.Position = position;
-            thr.Text = XAxisLabel + ": " + Math.Round(dp.X, 3).ToString() + Environment.NewLine + YAxisLabel + ": " + Math.Round(dp.Y, 3).ToString();
+            if (XAxisAsStandardDeviation)
+            {
+                double newXValue = GetPairedValue(dp.Y, false, NonStandardDeviationCurve);
+                thr.Text = XAxisLabel + ": " + Math.Round(1-newXValue, 3).ToString() + Environment.NewLine + YAxisLabel + ": " + Math.Round(dp.Y, 3).ToString();
+
+            }
+            else
+            {
+                thr.Text = XAxisLabel + ": " + Math.Round(dp.X, 3).ToString() + Environment.NewLine + YAxisLabel + ": " + Math.Round(dp.Y, 3).ToString();
+            }
             OxyPlot1.ShowTracker(thr);
+        }
+
+        private bool IsPointInRange(double x, double y)
+        {
+            //only display to the top and bottom of curve?
+            if (x > MaxX || y > MaxY || x < MinX || y < MinY)
+            {
+                return false;
+            } //this is checking if the point will be somewhere in the entire plot window
+
+            double maxCurveX = Curve.XValues.Max();
+            double minCurveX = Curve.XValues.Min();
+            double maxCurveY = Curve.YValues.Max();
+            double minCurveY = Curve.YValues.Min();
+
+            if (FlipFrequencyAxis)
+            {
+                //maxCurveX = 1 - minCurveX;
+                //minCurveX = 1 - maxCurveX;
+                x = 1 - x;
+            }
+
+            if (x > maxCurveX || y > maxCurveY || x < minCurveX || y< minCurveY)
+            {
+                return false;
+            } 
+            return true;
         }
 
         /// <summary>
@@ -1083,44 +1252,48 @@ namespace Fda.Plots
         /// <param name="y"></param>
         public void DisplayNextTracker(double x, double y)
         {
-           // FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
 
             if (PreviousPlot.TrackerIsOutsideTheCurveRange == true)
             {
                 TurnOutsideOfRangeOn();
-                //vm.PlotIsOutsideRange(this, new EventArgs());
-
-               // TurnTrackerOff();
                 _NextPlot.DisplayNextTracker(0, 0);//values don't matter here
                 return;
             }
             else
             {
                 TurnOutsideOfRangeOff();
-                //this.TrackerIsOutsideTheCurveRange = false;
-               // vm.PlotIsInsideRange(this, new EventArgs());
-               // ShowTracker();
             }
 
-            //only display to the top and bottom of curve?
-            if (x > MaxX || y > MaxY || x < MinX || y < MinY)
-
+            if (IsPointInRange(x, y) == false)
             {
-                //TrackerOutsideRangeFromDisplayNextTracker();
                 TurnOutsideOfRangeOn();
-                _NextPlot.DisplayNextTracker(0, 0);
-                return; } //this is checking if the point will be somewhere in the entire plot window
-            if (x > Curve.XValues.Max() || y > Curve.YValues.Max()) { 
-                //TrackerOutsideRangeFromDisplayNextTracker();
-                TurnOutsideOfRangeOn();
-                _NextPlot.DisplayNextTracker(0, 0);
-                return; } //this checks if the point is out of the range of the curve
-            if (x < Curve.XValues.Min() || y < Curve.YValues.Min()) { 
-                //TrackerOutsideRangeFromDisplayNextTracker();
-                TurnOutsideOfRangeOn();
-                _NextPlot.DisplayNextTracker(0, 0);
+                _NextPlot.DisplayNextTracker(0, 0);//values don't matter here because tracker is out of range
+                return;
+            }
+           
+            ////only display to the top and bottom of curve?
+            //if (x > MaxX || y > MaxY || x < MinX || y < MinY)
 
-                return; }
+            //{
+            //    //TrackerOutsideRangeFromDisplayNextTracker();
+            //    TurnOutsideOfRangeOn();
+            //    _NextPlot.DisplayNextTracker(0, 0);
+            //    return; } //this is checking if the point will be somewhere in the entire plot window
+            //if (x > Curve.XValues.Max() || y > Curve.YValues.Max()) { 
+            //    //TrackerOutsideRangeFromDisplayNextTracker();
+            //    TurnOutsideOfRangeOn();
+            //    _NextPlot.DisplayNextTracker(0, 0);
+            //    return; } //this checks if the point is out of the range of the curve
+
+            
+            //if (x < Curve.XValues.Min() || y < Curve.YValues.Min())
+            //{ 
+            //    //TrackerOutsideRangeFromDisplayNextTracker();
+            //    TurnOutsideOfRangeOn();
+            //    _NextPlot.DisplayNextTracker(0, 0);
+
+            //    return;
+            //}
 
             DataPoint dp = new DataPoint(x, y);
 
@@ -1236,20 +1409,26 @@ namespace Fda.Plots
             }
 
 
-            //only display to the top and bottom of the curve my cursor is on?
-            if (x > MaxX || y > MaxY || x < MinX || y < MinY) {
-                //TrackerOutsideRangeFromDisplayPreviousTracker();
+            ////only display to the top and bottom of the curve my cursor is on?
+            //if (x > MaxX || y > MaxY || x < MinX || y < MinY) {
+            //    //TrackerOutsideRangeFromDisplayPreviousTracker();
+            //    TurnOutsideOfRangeOn();
+            //    _PreviousPlot.DisplayPreviousTracker(0, 0);
+            //    return; } //this is checking if the point will be somewhere in the entire plot window
+            //if (x > Curve.XValues.Max() || y > Curve.YValues.Max()) {
+            //    TurnOutsideOfRangeOn();
+            //    _PreviousPlot.DisplayPreviousTracker(0, 0);
+            //    return; } //this checks if the point is out of the range of the curve
+            //if (x < Curve.XValues.Min() || y < Curve.YValues.Min()) { 
+            //    TurnOutsideOfRangeOn();
+            //    _PreviousPlot.DisplayPreviousTracker(0, 0);
+            //    return; }
+            if (IsPointInRange(x, y) == false)
+            {
                 TurnOutsideOfRangeOn();
-                _PreviousPlot.DisplayPreviousTracker(0, 0);
-                return; } //this is checking if the point will be somewhere in the entire plot window
-            if (x > Curve.XValues.Max() || y > Curve.YValues.Max()) {
-                TurnOutsideOfRangeOn();
-                _PreviousPlot.DisplayPreviousTracker(0, 0);
-                return; } //this checks if the point is out of the range of the curve
-            if (x < Curve.XValues.Min() || y < Curve.YValues.Min()) { 
-                TurnOutsideOfRangeOn();
-                _PreviousPlot.DisplayPreviousTracker(0, 0);
-                return; }
+                _PreviousPlot.DisplayPreviousTracker(0, 0);//values don't matter here because tracker is out of range
+                return;
+            }
 
             DataPoint dp = new DataPoint(x, y);
 
@@ -1333,9 +1512,16 @@ namespace Fda.Plots
                     TrackerHitResult result = mySeries.GetNearestPoint(sp, true);
                     if (result != null && !result.DataPoint.Equals(null))
                     {
-                        DataPoint dp = result.DataPoint;                  
-
-                        result.Text = XAxisLabel + ": " + Math.Round(dp.X, 3).ToString() + Environment.NewLine + YAxisLabel + ": " + Math.Round(dp.Y, 3).ToString();
+                        DataPoint dp = result.DataPoint;
+                        if (XAxisAsStandardDeviation == true)
+                        {
+                            double newXValue = GetPairedValue(dp.Y, false, NonStandardDeviationCurve);
+                            result.Text = XAxisLabel + ": " + Math.Round(1-newXValue, 3).ToString() + Environment.NewLine + YAxisLabel + ": " + Math.Round(dp.Y, 3).ToString();
+                        }
+                        else
+                        {
+                            result.Text = XAxisLabel + ": " + Math.Round(dp.X, 3).ToString() + Environment.NewLine + YAxisLabel + ": " + Math.Round(dp.Y, 3).ToString();
+                        }
                         
                         OxyPlot1.ShowTracker(result);
 
@@ -1491,11 +1677,11 @@ namespace Fda.Plots
         /// <param name="plot">This is the plot that this plot will link with.</param>
         /// <param name="thisAxis">This should be "x" or "y". It is not case sensitive.</param>
         /// <param name="linkedAxis">This should be "x" or "y". It is not case sensitive.</param>
-        public void SetNextPlotLinkage(ILinkedPlot plot, string thisAxis = "",string linkedAxis = "")
+        public void SetNextPlotLinkage(ILinkedPlot plot)
         {
             if (IsEndNode == true) { return; }
-            thisAxis = "";
-            linkedAxis = "";
+            string thisAxis = "";
+            string linkedAxis = "";
             switch (BaseFunction.FunctionType)
             {
                 case FdaModel.Functions.FunctionTypes.InflowFrequency:
@@ -1598,7 +1784,48 @@ namespace Fda.Plots
 
 
 
+        public double GetPairedValue(double knownValue, bool lookingForY, Statistics.CurveIncreasing curve)
+        {
+            double pairedValue = -1;
 
+            //List<DataPoint> seriesPoints = ((LineSeries)PM.Series[0]).Points.ToList<DataPoint>();
+            //if (lookingForY == true)
+            //{
+                
+            //        for (int i = 0; i < seriesPoints.Count(); i++)
+            //        {
+            //            if (knownValue < seriesPoints[0].X) { return -1; }
+            //            if (knownValue < seriesPoints[i].X) //what about equal to
+            //            {
+            //                double slope = (seriesPoints[i].Y - seriesPoints[i - 1].Y) / (seriesPoints[i].X - seriesPoints[i - 1].X);
+            //                double yIntercept = -1 * ((slope * seriesPoints[i].X) - seriesPoints[i].Y);
+            //                pairedValue = slope * knownValue + yIntercept; // y = mx + b
+            //                return pairedValue;
+            //            }
+            //        }
+                
+               
+
+            //}
+            if (lookingForY == false)
+            {
+                //the known value is a y value
+                if (knownValue < curve.YValues[0]) { return -1; }
+                for (int i = 0; i < curve.XValues.Count(); i++)// need to handle the end cases!!!!
+                {
+                    if (knownValue < curve.YValues[i]) //what about equal to
+                    {
+                        double slope = (curve.YValues[i] - curve.YValues[i - 1]) / (curve.XValues[i] - curve.XValues[i - 1]);
+                        if (slope == 0) { throw new Exception(); }
+                        double yIntercept = -1 * ((slope * curve.XValues[i]) - curve.YValues[i]);
+                        pairedValue = (knownValue - yIntercept) / slope; //x = (y - b)/m
+                        return pairedValue;
+                    }
+                }
+            }
+
+            return pairedValue;
+        }
 
 
         public double GetPairedValue(double knownValue, bool lookingForY, PlotModel PM, bool axisReversed = false)
@@ -1826,6 +2053,152 @@ namespace Fda.Plots
 
         }
 
+        public void PlotThresholdLines(FdaModel.ComputationPoint.PerformanceThreshold pt)
+        {
+            if (pt.ThresholdType == FdaModel.ComputationPoint.PerformanceThresholdTypes.InteriorStage)
+            {
+                if (this.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InteriorStageDamage)
+                {
+                    //PlotThreshold(pt.ThresholdType,)
+                    // i think i would just need to add a plot next threshold and a plot prev threshold and then 
+                    //kick it off.
+                }
+            }
+        }
+
+        public void PlotThreshold(FdaModel.ComputationPoint.PerformanceThreshold pt)
+        {
+            string testName = this.Name;
+            //get the type and the value from pt and plot it
+            if (ThresholdLineIsShowing)
+            {
+                RemoveThresholdPlot();
+            }
+            LineSeries verticalThresholdSeries = new LineSeries();
+            LineSeries horizontalThresholdSeries = new LineSeries();
+
+            verticalThresholdSeries.Color = THRESHOLD_LINE_COLOR;
+            horizontalThresholdSeries.Color = THRESHOLD_LINE_COLOR;
+
+
+            if (pt.ThresholdType == FdaModel.ComputationPoint.PerformanceThresholdTypes.InteriorStage)
+            {
+                //logic for plot7
+                if (this.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InteriorStageDamage)
+                {
+                    double yValueWhereLineCrosses = GetPairedValue(pt.ThresholdValue, true, OxyPlot1.Model);
+
+                    verticalThresholdSeries.Points.Add(new DataPoint(pt.ThresholdValue, MinY));
+                    verticalThresholdSeries.Points.Add(new DataPoint(pt.ThresholdValue, yValueWhereLineCrosses));
+
+                    horizontalThresholdSeries.Points.Add(new DataPoint(pt.ThresholdValue, yValueWhereLineCrosses));
+                    horizontalThresholdSeries.Points.Add(new DataPoint(MaxX, yValueWhereLineCrosses));
+
+                    if(NextPlot != null && NextPlot.Curve != null)
+                    {
+                        //i can get the associated y value here
+                        pt.ThresholdValue = yValueWhereLineCrosses;
+                        ((IndividualLinkedPlot)NextPlot).PlotThreshold(pt);
+                    }
+
+                }
+                //logic for plot8
+                else if (this.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+                {
+                    //DataPoint dp = GetPreviousTrackerDataPointForSharedAxisYY(pt.ThresholdValue);
+                   
+                    double xValueWhereLineCrosses = GetPairedValue(pt.ThresholdValue, false, OxyPlot1.Model);
+
+                    verticalThresholdSeries.Points.Add(new DataPoint(xValueWhereLineCrosses, MinY));
+                    verticalThresholdSeries.Points.Add(new DataPoint(xValueWhereLineCrosses, pt.ThresholdValue));
+
+                    if(XAxisAsStandardDeviation == true)
+                    {
+                        horizontalThresholdSeries.Points.Add(new DataPoint(MinX, pt.ThresholdValue));
+                        horizontalThresholdSeries.Points.Add(new DataPoint(xValueWhereLineCrosses, pt.ThresholdValue));
+                    }
+                    else
+                    {
+                        horizontalThresholdSeries.Points.Add(new DataPoint(MaxX, pt.ThresholdValue));
+                        horizontalThresholdSeries.Points.Add(new DataPoint(xValueWhereLineCrosses, pt.ThresholdValue));
+                    }
+
+                }
+
+            }
+            else if (pt.ThresholdType == FdaModel.ComputationPoint.PerformanceThresholdTypes.Damage)
+            {
+                ////Plot the line horizontally
+                //verticalThresholdSeries.Points.Add(new DataPoint(MinX, pt.ThresholdValue));
+                //verticalThresholdSeries.Points.Add(new DataPoint(MaxX, pt.ThresholdValue));
+                //
+                //logic for plot7
+                if (this.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InteriorStageDamage)
+                {
+                    double xValueWhereLineCrosses = GetPairedValue(pt.ThresholdValue, false, OxyPlot1.Model);
+
+                    verticalThresholdSeries.Points.Add(new DataPoint(xValueWhereLineCrosses, MinY));
+                    verticalThresholdSeries.Points.Add(new DataPoint(xValueWhereLineCrosses, pt.ThresholdValue));
+
+                    horizontalThresholdSeries.Points.Add(new DataPoint(xValueWhereLineCrosses, pt.ThresholdValue));
+                    horizontalThresholdSeries.Points.Add(new DataPoint(MaxX, pt.ThresholdValue));
+
+                    if (NextPlot != null && NextPlot.Curve != null)
+                    {
+                        //i can get the associated y value here
+                        //pt.ThresholdValue = xValueWhereLineCrosses;
+                        ((IndividualLinkedPlot)NextPlot).PlotThreshold(pt);
+                    }
+
+                }
+                //logic for plot8
+                else if (this.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+                {
+                    //DataPoint dp = GetPreviousTrackerDataPointForSharedAxisYY(pt.ThresholdValue);
+
+                    double xValueWhereLineCrosses = GetPairedValue(pt.ThresholdValue, false, OxyPlot1.Model);
+
+                    verticalThresholdSeries.Points.Add(new DataPoint(xValueWhereLineCrosses, MinY));
+                    verticalThresholdSeries.Points.Add(new DataPoint(xValueWhereLineCrosses, pt.ThresholdValue));
+
+                    horizontalThresholdSeries.Points.Add(new DataPoint(MaxX, pt.ThresholdValue));
+                    horizontalThresholdSeries.Points.Add(new DataPoint(xValueWhereLineCrosses, pt.ThresholdValue));
+                }
+            }
+
+
+
+
+            OxyPlot1.Model.Series.Add(verticalThresholdSeries);
+
+            OxyPlot1.Model.Series.Add(horizontalThresholdSeries);
+
+            OxyPlot1.InvalidatePlot(true);
+
+            ThresholdLineIsShowing = true;
+            VerticalThresholdLine = verticalThresholdSeries;
+            HorizontalThresholdLine = horizontalThresholdSeries;
+        }
+
+        public void RemoveThresholdPlot()
+        {
+            if (ThresholdLineIsShowing)
+            {
+                if (OxyPlot1.Model.Series.Contains(VerticalThresholdLine))
+                {
+                    OxyPlot1.Model.Series.Remove(VerticalThresholdLine);
+                }
+                if(OxyPlot1.Model.Series.Contains(HorizontalThresholdLine))
+                {
+                    OxyPlot1.Model.Series.Remove(HorizontalThresholdLine);
+                }
+                    OxyPlot1.InvalidatePlot(true);
+                    ThresholdLineIsShowing = false;
+            }
+
+        }
+
+       
 
         #endregion
 

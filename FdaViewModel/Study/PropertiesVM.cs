@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Study
 {
-    public class PropertiesVM : BaseViewModel
+    public class PropertiesVM : Editors.BaseEditorVM
     {
         #region Notes
         #endregion
         #region Fields
         public static readonly string TableName = "Study Properties";
-        private readonly string _StudyName;
+        private  string _StudyName;
         private readonly string _StudyPath;
         private string _StudyDescription;
         private readonly string _CreatedBy;
@@ -27,6 +27,7 @@ namespace FdaViewModel.Study
         #region Properties
         public string StudyName {
             get { return _StudyName; }
+            set { _StudyName = value; }
         }
         public string StudyPath {
             get { return _StudyPath; }
@@ -98,7 +99,7 @@ namespace FdaViewModel.Study
         }
         #endregion
         #region Constructors
-        public PropertiesVM():base()
+        public PropertiesVM():base(null)
         {
             _StudyName = "Example Study Name";
             _StudyPath = "C:\\Temp\\FDA";
@@ -112,7 +113,12 @@ namespace FdaViewModel.Study
             _UpdatedYear = DateTime.Now.Year;
             _UpdatedPriceIndex = 0.01f;
         }
-        public PropertiesVM(string studyName, string studyPath):base()
+        /// <summary>
+        /// This is called when creating a new study
+        /// </summary>
+        /// <param name="studyName"></param>
+        /// <param name="studyPath"></param>
+        public PropertiesVM(string studyName, string studyPath):base(null)
         {
             _StudyName = studyName;
             _StudyPath = studyPath;
@@ -126,7 +132,7 @@ namespace FdaViewModel.Study
             _UpdatedYear = DateTime.Now.Year;
             _UpdatedPriceIndex = 0.01f;
         }
-        public PropertiesVM(DataBase_Reader.DataTableView tbl)
+        public PropertiesVM(DataBase_Reader.DataTableView tbl):base(null)
         {
             if(tbl.TableName != TableName)
             {
@@ -159,44 +165,50 @@ namespace FdaViewModel.Study
             AddRule(nameof(UpdatedYear), () => UpdatedYear <= DateTime.Now.Year, "The Updated Year must not be in the future.");
             AddRule(nameof(UpdatedYear), () => UpdatedYear >= SurveyedYear, "The Updated Year must happen after the Surveyed Year.");
         }
-        public  void Save()
+        public override void Save()
         {
             if (!Storage.Connection.Instance.TableNames().Contains(TableName))
             {
-                string[] names = new string[2];
-                names[0] = "Parameter";
-                names[1] = "Value";
-                Type[] types = new Type[2];
-                types[0] = typeof(string);
-                types[1] = typeof(string);
-                Storage.Connection.Instance.CreateTable(TableName, names, types);
-                DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
-                tbl.AddRow(new object[] { "Study Name: ", StudyName });
-                tbl.AddRow(new object[] { "Study Path: ", StudyPath });
-                tbl.AddRow(new object[] { "Description: ", StudyDescription });
-                tbl.AddRow(new object[] { "Created By: ", CreatedBy });
-                tbl.AddRow(new object[] { "Created Date: ", CreatedDate});
-                tbl.AddRow(new object[] { "Study Notes: ", StudyNotes });
-                tbl.AddRow(new object[] { "Monetary Unit: ", MonetaryUnit });
-                tbl.AddRow(new object[] { "Surveyed Year: ", SurveyedYear});
-                tbl.AddRow(new object[] { "Updated Year: ", UpdatedYear });
-                tbl.AddRow(new object[] { "Updated Price Index: ", UpdatedPriceIndex });
-                tbl.ApplyEdits();
-            }else
+                Saving.PersistenceManagers.StudyPropertiesPersistenceManager manager = Saving.PersistenceFactory.GetStudyPropertiesManager();
+                manager.SaveNew(this);
+                //string[] names = new string[2];
+                //names[0] = "Parameter";
+                //names[1] = "Value";
+                //Type[] types = new Type[2];
+                //types[0] = typeof(string);
+                //types[1] = typeof(string);
+                //Storage.Connection.Instance.CreateTable(TableName, names, types);
+                //DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
+                //tbl.AddRow(new object[] { "Study Name: ", StudyName });
+                //tbl.AddRow(new object[] { "Study Path: ", StudyPath });
+                //tbl.AddRow(new object[] { "Description: ", StudyDescription });
+                //tbl.AddRow(new object[] { "Created By: ", CreatedBy });
+                //tbl.AddRow(new object[] { "Created Date: ", CreatedDate});
+                //tbl.AddRow(new object[] { "Study Notes: ", StudyNotes });
+                //tbl.AddRow(new object[] { "Monetary Unit: ", MonetaryUnit });
+                //tbl.AddRow(new object[] { "Surveyed Year: ", SurveyedYear});
+                //tbl.AddRow(new object[] { "Updated Year: ", UpdatedYear });
+                //tbl.AddRow(new object[] { "Updated Price Index: ", UpdatedPriceIndex });
+                //tbl.ApplyEdits();
+            }
+            else
             {
-                DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
-                tbl.EditCell(0, 1,StudyName);
-                tbl.EditCell(1, 1,StudyPath);
-                tbl.EditCell(2, 1, StudyDescription);
-                tbl.EditCell(3, 1, CreatedBy);
-                tbl.EditCell(4, 1,CreatedDate);
-                tbl.EditCell(5, 1, StudyNotes);
-                tbl.EditCell(6, 1, MonetaryUnit);
-                tbl.EditCell(7, 1, SurveyedYear);
-                tbl.EditCell(8, 1, UpdatedYear);
-                tbl.EditCell(9, 1, UpdatedPriceIndex);
-                if (!Storage.Connection.Instance.IsOpen) Storage.Connection.Instance.Open();
-                tbl.ApplyEdits();
+                Saving.PersistenceManagers.StudyPropertiesPersistenceManager manager = Saving.PersistenceFactory.GetStudyPropertiesManager();
+                manager.SaveExisting(this);
+
+                //DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
+                //tbl.EditCell(0, 1,StudyName);
+                //tbl.EditCell(1, 1,StudyPath);
+                //tbl.EditCell(2, 1, StudyDescription);
+                //tbl.EditCell(3, 1, CreatedBy);
+                //tbl.EditCell(4, 1,CreatedDate);
+                //tbl.EditCell(5, 1, StudyNotes);
+                //tbl.EditCell(6, 1, MonetaryUnit);
+                //tbl.EditCell(7, 1, SurveyedYear);
+                //tbl.EditCell(8, 1, UpdatedYear);
+                //tbl.EditCell(9, 1, UpdatedPriceIndex);
+                //if (!Storage.Connection.Instance.IsOpen) Storage.Connection.Instance.Open();
+                //tbl.ApplyEdits();
             }
         }
         #endregion        

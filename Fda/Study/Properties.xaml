@@ -51,7 +51,7 @@
             <Label Name="LblCreatedBy" Content="Created By:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
             <Label Name="LblCreatedDate" Content="Created Date:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
 
-            <TextBox Name="TxtProjectName" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="3" IsReadOnly="True" Text="{Binding StudyName, Mode=OneWay}"/>
+            <TextBox Name="TxtProjectName" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="3" IsReadOnly="False" Text="{Binding StudyName}"/>
             <CA:TextBoxDescription Grid.Row="1" Grid.Column="1" Margin="3" Text="{Binding StudyDescription}"/>
             <TextBox Name="TxtProjectFile" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True" Margin="3" Text="{Binding StudyPath, Mode=OneWay}"/>
             <TextBox Name="TxtCreatedBy" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True" Margin="3" Text="{Binding CreatedBy, Mode=OneWay}"/>

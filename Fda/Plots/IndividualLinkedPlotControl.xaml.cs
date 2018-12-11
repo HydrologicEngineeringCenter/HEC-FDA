@@ -20,6 +20,9 @@ namespace Fda.Plots
     /// </summary>
     public partial class IndividualLinkedPlotControl : UserControl
     {
+        public static readonly DependencyProperty UpdatePlotsFromVMProperty = DependencyProperty.Register("UpdatePlotsFromVM", typeof(bool), typeof(IndividualLinkedPlotControl), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(UpdatePlotsFromVMCallBack)));
+
+
         public event EventHandler UpdatePlots;
         public event EventHandler PopImporterIntoPlot1;
         public event EventHandler PopPlotIntoPlot1;
@@ -27,6 +30,11 @@ namespace Fda.Plots
         public event EventHandler PopImporterIntoPlot5;
         public event EventHandler PopPlotIntoPlot5;
 
+        public bool UpdatePlotsFromVM
+        {
+            get { return (bool)GetValue(UpdatePlotsFromVMProperty); }
+            set { SetValue(UpdatePlotsFromVMProperty, value); }
+        }
         public ILinkedPlot LinkedPlot
         {
             get;
@@ -92,6 +100,14 @@ namespace Fda.Plots
             else
 
                 return FindParent<T>(VisualTreeHelper.GetParent(child));
+        }
+
+
+        private static void UpdatePlotsFromVMCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            IndividualLinkedPlotControl owner = d as IndividualLinkedPlotControl;
+            owner.UpdateThePlots();
+            
         }
 
 
