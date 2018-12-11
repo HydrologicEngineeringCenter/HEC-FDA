@@ -382,7 +382,7 @@ namespace FdaViewModel.Conditions
             List<FrequencyRelationships.AnalyticalFrequencyElement> listOfLp3 = StudyCache.GetChildElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();// StudyCache.FlowFrequencyElements;// GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
                 FdaModel.Functions.FrequencyFunctions.LogPearsonIII lp3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(AnalyticalFlowFrequency.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
                 Statistics.CurveIncreasing curve = lp3.GetOrdinatesFunction().Function;
-                Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(lp3, curve, AnalyticalFlowFrequency.Name);
+                Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(lp3, AnalyticalFlowFrequency.Name);
                 Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, true, "LP3", "Probability", "Inflow");
                 plotWrapper.PlotVM = plotVM;
                 AddFlowFrequencyToConditionVM importer = new AddFlowFrequencyToConditionVM(listOfLp3, AnalyticalFlowFrequency);
@@ -397,7 +397,7 @@ namespace FdaViewModel.Conditions
             FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction infOut =
                 new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InflowOutflow);
 
-            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(infOut, infOut.GetOrdinatesFunction().Function, InflowOutflowElement.Name);
+            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(infOut, InflowOutflowElement.Name);
 
             Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Inflow Outflow", "Inflow", "OutFlow");
             plotWrapper.PlotVM = plotVM;
@@ -415,7 +415,7 @@ namespace FdaViewModel.Conditions
             FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction ratFunc =
                 new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.Rating);
 
-            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(ratFunc, ratFunc.GetOrdinatesFunction().Function, RatingCurveElement.Name);
+            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(ratFunc, RatingCurveElement.Name);
 
             Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Rating", "Exterior Stage", "OutFlow");
             plotWrapper.PlotVM = plotVM;
@@ -432,7 +432,7 @@ namespace FdaViewModel.Conditions
             FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extIntCurve =
                 new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.ExteriorInteriorStage);
 
-            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(extIntCurve, extIntCurve.GetOrdinatesFunction().Function, ExteriorInteriorElement.Name);
+            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(extIntCurve, ExteriorInteriorElement.Name);
 
             Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Exterior Interior Stage", "Exterior Stage", "Interior Stage");
             plotWrapper.PlotVM = plotVM;
@@ -449,7 +449,7 @@ namespace FdaViewModel.Conditions
             FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamageCurve =
                 new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InteriorStageDamage);
 
-            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(stageDamageCurve, stageDamageCurve.GetOrdinatesFunction().Function, StageDamageElement.Name);
+            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(stageDamageCurve, StageDamageElement.Name);
 
             Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Stage Damage", "Interior Stage", "Damage");
             plotWrapper.PlotVM = plotVM;

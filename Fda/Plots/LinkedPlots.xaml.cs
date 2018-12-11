@@ -186,6 +186,9 @@ namespace Fda.Plots
             FdaModel.ComputationPoint.PerformanceThreshold pt = new FdaModel.ComputationPoint.PerformanceThreshold(vm.ThresholdType, vm.ThresholdValue);
             plot7.PlotThreshold(pt);
             plot7.OxyPlot1.InvalidatePlot(true);
+          
+            lbl_Aep.Content = vm.AEP.ToString("N3");
+            lbl_Ead.Content = vm.EAD.ToString("N3");
         }
 
         private void SetTheSharedAxes()

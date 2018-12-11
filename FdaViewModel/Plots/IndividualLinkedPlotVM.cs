@@ -27,11 +27,12 @@ namespace FdaViewModel.Plots
             set { _MyCurve = value; NotifyPropertyChanged(); }
                 //CurveUpdated?.Invoke(this, new EventArgs()); }
         }
-       
+        public Statistics.CurveIncreasing NonStandardDeviationCurve { get; set; }
         public string Title { get; set; }
         public string SubTitle { get; set; }
-        public string XAxisLabel { get; set; }
+        public string XAxisLabel { get; set; } 
         public string YAxisLabel { get; set; }
+        public bool XAxisIsStandardDeviation { get; set; }
 
         public bool IsVisible
         {
@@ -48,7 +49,7 @@ namespace FdaViewModel.Plots
         {
         }
 
-        public IndividualLinkedPlotVM(FdaModel.Functions.BaseFunction baseFunction, Statistics.CurveIncreasing curve, string selectedElementName) : this(baseFunction,curve,"","","",selectedElementName)
+        public IndividualLinkedPlotVM(FdaModel.Functions.BaseFunction baseFunction, string selectedElementName) : this(baseFunction,"","","",false,selectedElementName)
         {
           
             //BaseFunction = baseFunction;
@@ -67,8 +68,9 @@ namespace FdaViewModel.Plots
             
             //_MyCurve = curve;
         }
-        public IndividualLinkedPlotVM(FdaModel.Functions.BaseFunction baseFunction, Statistics.CurveIncreasing curve,string title, string xAxisLabel,string yAxisLabel, string selectedElementName = "")
+        public IndividualLinkedPlotVM(FdaModel.Functions.BaseFunction baseFunction,string title, string xAxisLabel,string yAxisLabel, bool isXAxisStandardDeviations = false, string selectedElementName = "")
         {
+            XAxisIsStandardDeviation = isXAxisStandardDeviations;
             BaseFunction = baseFunction;
             SelectedElementName = selectedElementName;
             SubTitle = selectedElementName;
@@ -78,7 +80,7 @@ namespace FdaViewModel.Plots
                 if(baseFunction.GetType() == typeof(FdaModel.Functions.FrequencyFunctions.LogPearsonIII))
                 {
                     Curve = ((FdaModel.Functions.FrequencyFunctions.LogPearsonIII)baseFunction).GetOrdinatesFunction().Function;
-
+                    //Curve = ConvertXValuesToStandardDeviation(((FdaModel.Functions.FrequencyFunctions.LogPearsonIII)baseFunction).GetOrdinatesFunction().Function);
                 }
 
             }
@@ -90,7 +92,15 @@ namespace FdaViewModel.Plots
                 }
                 else
                 {
-                    Curve = ((FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction)baseFunction).Function;
+                    if(XAxisIsStandardDeviation)
+                    {
+                        Curve = ConvertXValuesToStandardDeviation(((FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction)baseFunction).Function);
+                        NonStandardDeviationCurve = ((FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction)baseFunction).Function;
+                    }
+                    else
+                    {
+                        Curve = ((FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction)baseFunction).Function;
+                    }
                 }
             }
             else if(baseFunction.GetType() == typeof(FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction))
@@ -121,10 +131,65 @@ namespace FdaViewModel.Plots
             //throw new NotImplementedException();
         }
 
-       
+
         #endregion
         #region Functions
+        public Statistics.CurveIncreasing ConvertXValuesToStandardDeviation(Statistics.CurveIncreasing curve)
+        {
+            double meanXValue = curve.XValues.Average();
 
+            List<double> newXValues = new List<double>();
+            List<double> newYValues = new List<double>();
+            double j = 0;
+            for (int i = 0; i < curve.XValues.Count; i++)
+            {
+                double val = curve.XValues[i];
+                if(val<=.001)
+                {
+                    newXValues.Add(-3 + (j/100));
+                }
+                else if(val<=.0228 && val>.001)
+                {
+                    newXValues.Add(-2 + (j / 100));
+                }
+                else if (val <= .1587 && val > .0228)
+                {
+                    newXValues.Add(-1 + (j / 100));
+                }
+                else if (val <= .5 && val > .1587)
+                {
+                    newXValues.Add(0 + (j / 100));
+                }
+
+                else if (val <= .8413 && val > .5)
+                {
+                    newXValues.Add(1 + (j / 100));
+                }
+                else if (val <= .9772 && val > .8413)
+                {
+                    newXValues.Add(2 + (j / 100));
+                }
+                else if (val <= .9987 && val > .9772)
+                {
+                    newXValues.Add(3 +(j / 100));
+                }
+                else if (val > .9987)
+                {
+                    newXValues.Add(4 + (j / 100));
+                }
+                else
+                {
+                    newXValues.Add(4 + (j/100));
+                }
+
+                //newXValues.Add(Math.Sqrt(Math.Pow(curve.XValues[i] - meanXValue, 2)));
+                newYValues.Add(curve.YValues[i]);
+                j++;
+            }
+           // newXValues.Sort();
+            Statistics.CurveIncreasing newCurve = TrimTrailingZeroes( new Statistics.CurveIncreasing(newXValues, newYValues, true, true));
+            return newCurve;
+        }
         private Statistics.CurveIncreasing TrimTrailingZeroes(Statistics.CurveIncreasing curve)
         {
             if(curve.Count > 0 && curve.YValues[0] > 0) { return curve; }//early exit if there aren't any zeros at the beginning

@@ -713,7 +713,7 @@ namespace FdaViewModel.Conditions
             {
                 if (bf.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
                 {
-                   Plot8ControlVM.IndividualPlotWrapperVM.PlotVM = new Plots.IndividualLinkedPlotVM(bf, bf.GetOrdinatesFunction().Function, "Damage Frequency", "Frequency", "Damage ($)");
+                   Plot8ControlVM.IndividualPlotWrapperVM.PlotVM = new Plots.IndividualLinkedPlotVM(bf, "Damage Frequency", "Frequency", "Damage ($)");
                     //Plot8ControlVM.AddCurveToPlot(this, new EventArgs());
                     TrimZeroesFromCurve(Plot8ControlVM.IndividualPlotWrapperVM.PlotVM.Curve);
                     Plot8ControlVM.CurrentVM = (BaseViewModel)Plot8ControlVM.IndividualPlotWrapperVM;

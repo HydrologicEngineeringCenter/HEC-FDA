@@ -178,7 +178,14 @@ namespace FdaViewModel.Plots
                 {
                     case FunctionTypes.InflowFrequency:
                     case FunctionTypes.OutflowFrequency:
-                        Plot0VM.Curve = ord.Function;
+                        if (Plot0VM.XAxisIsStandardDeviation)
+                        {
+                            Plot0VM.Curve = Plot0VM.ConvertXValuesToStandardDeviation(ord.Function);
+                        }
+                        else
+                        {
+                            Plot0VM.Curve = ord.Function;
+                        }
                         break;
                     case FunctionTypes.InflowOutflow:
                         Plot1VM.Curve = ord.Function;
@@ -205,7 +212,14 @@ namespace FdaViewModel.Plots
                         Plot7VM.Curve = ord.Function;
                         break;
                     case FunctionTypes.DamageFrequency:
-                        Plot8VM.Curve = ord.Function;
+                        if (Plot8VM.XAxisIsStandardDeviation)
+                        {
+                            Plot8VM.Curve = Plot8VM.ConvertXValuesToStandardDeviation(ord.Function);
+                        }
+                        else
+                        {
+                            Plot8VM.Curve = ord.Function;
+                        }
                         break;
                 }
 
@@ -250,20 +264,21 @@ namespace FdaViewModel.Plots
             Plot5VM = new IndividualLinkedPlotVM();
             Plot7VM = new IndividualLinkedPlotVM();
             Plot8VM = new IndividualLinkedPlotVM();
+
             foreach (FdaModel.Functions.BaseFunction func in ordFunctions)
             {
                 FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction ord = func.GetOrdinatesFunction();
                 if (func.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency || func.FunctionType == FdaModel.Functions.FunctionTypes.OutflowFrequency)
                 {
-                    Plot0VM = new IndividualLinkedPlotVM(ord, ord.Function,"LP3","Probability","Outflow (cfs)");
-                    Plot0VM.Curve = ord.Function;
+                    Plot0VM = new IndividualLinkedPlotVM(ord,"LP3","Probability","Outflow (cfs)",true);
+                    Plot0VM.NonStandardDeviationCurve = ord.Function;
                     AvailablePlots.Add(Plot0VM);
 
                     //Plot0Curve = ord.Function;
                 }
                 if (func.FunctionType == FdaModel.Functions.FunctionTypes.InflowOutflow)
                 {
-                    Plot1VM = new IndividualLinkedPlotVM(ord,ord.Function,"Inflow-Outflow","Inflow (cfs)", "Outflow (cfs)");
+                    Plot1VM = new IndividualLinkedPlotVM(ord,"Inflow-Outflow","Inflow (cfs)", "Outflow (cfs)");
                     //Plot1Curve = ord.Function;
                     AvailablePlots.Add(Plot1VM);
                 }
@@ -281,29 +296,30 @@ namespace FdaViewModel.Plots
                         xs.Add(x);
                     }
                     FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction rat = new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(func.GetOrdinatesFunction().Function.YValues, func.GetOrdinatesFunction().Function.XValues, FdaModel.Functions.FunctionTypes.Rating);
-                    Plot3VM = new IndividualLinkedPlotVM(rat,new Statistics.CurveIncreasing(ys.ToArray(), xs.ToArray(), true, false), "Rating", "Exterior Stage (ft)", "Outflow (cfs)");
+                    Plot3VM = new IndividualLinkedPlotVM(rat, "Rating", "Exterior Stage (ft)", "Outflow (cfs)");
                     //Plot3Curve = new Statistics.CurveIncreasing(ys.ToArray(), xs.ToArray(), true, false);
                     AvailablePlots.Add(Plot3VM);
 
                 }
                 if (func.FunctionType == FdaModel.Functions.FunctionTypes.InteriorStageDamage)
                 {
-                    Plot7VM = new IndividualLinkedPlotVM(func,ord.Function, "Interior Stage Damage", "Interior Stage (ft)", "Damage ($)");
+                    Plot7VM = new IndividualLinkedPlotVM(func, "Interior Stage Damage", "Interior Stage (ft)", "Damage ($)");
                     //Plot7Curve = ord.Function;
                     AvailablePlots.Add(Plot7VM);
 
                 }
                 if (func.FunctionType == FdaModel.Functions.FunctionTypes.ExteriorInteriorStage)
                 {
-                    Plot5VM = new IndividualLinkedPlotVM(func,ord.Function, "Exterior-Interior Stage", "Exterior Stage (ft)", "Interior Stage (ft)");
+                    Plot5VM = new IndividualLinkedPlotVM(func, "Exterior-Interior Stage", "Exterior Stage (ft)", "Interior Stage (ft)");
                     //Plot5Curve = ord.Function;
                     AvailablePlots.Add(Plot5VM);
 
                 }
                 if (func.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
                 {
-                    Plot8VM = new IndividualLinkedPlotVM(func,ord.Function, "Damage Frequency", "Probability", "Damage ($)");
-                    //Plot8Curve = ord.Function;
+                    //Statistics.CurveIncreasing newCurve = ConvertXValuesToStandardDeviation(ord.Function);
+                    Plot8VM = new IndividualLinkedPlotVM(func, "Damage Frequency", "Probability", "Damage ($)", true);
+                    Plot8VM.NonStandardDeviationCurve = ord.Function;
                     AvailablePlots.Add(Plot8VM);
 
                 }
@@ -318,6 +334,9 @@ namespace FdaViewModel.Plots
 
             }
         }
+
+     
+
         public override void AddValidationRules()
         {
             //AddRule(nameof(XValue), () => XValue < 0, "X value cannot be less than zero.");

@@ -66,9 +66,9 @@
                     <Label Name="lbl_IterationTotal" Content="{Binding TotalRealizations}" VerticalAlignment="Center"/>
                     <!--<Button Name="btn_DisplayIteration" Content="Display" Click="btn_DisplayIteration_Click" Background="Gray"/>-->
                     <Label Content="AEP:" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                <Label Content="{Binding AEP, Mode=TwoWay}" Width="50" VerticalAlignment="Center" />
-                <Label Content="EAD:" VerticalAlignment="Center"/>
-                <Label Content="{Binding EAD, Mode=TwoWay}" Width="60" VerticalAlignment="Center"/>
+                <Label Name="lbl_Aep" Content="{Binding AEP, Mode=TwoWay}" Width="60" VerticalAlignment="Center" />
+                <Label  Content="EAD:" VerticalAlignment="Center"/>
+                <Label Name="lbl_Ead" Content="{Binding EAD, Mode=TwoWay}" Width="60" VerticalAlignment="Center"/>
             </ToolBar>
         </ToolBarTray>
             <StackPanel Name="stk_AepAndEad" Grid.Row="1" Orientation="Horizontal">
@@ -179,7 +179,7 @@
         <local:DoubleLineModulator x:Name="doubleLineModulator" Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Curve="{Binding Path=Plot1VM.Curve}" />
         <!--<local:SingleLinePlot Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Width="100" MinHeight="150" />-->
 
-            <local:IndividualLinkedPlot  x:Name="plot0" Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot0VM.Curve}" BaseFunction="{Binding Path=Plot0VM.BaseFunction}" Title="{Binding Path=Plot0VM.Title}" XAxisLabel="{Binding Plot0VM.XAxisLabel}" YAxisLabel="{Binding Plot0VM.YAxisLabel}"  SetYAxisToLogarithmic="True" FlipFrequencyAxis="True" AreaPlotVisible="True" />
+            <local:IndividualLinkedPlot  x:Name="plot0" Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot0VM.Curve}" NonStandardDeviationCurve="{Binding Path=Plot0VM.NonStandardDeviationCurve}" BaseFunction="{Binding Path=Plot0VM.BaseFunction}" Title="{Binding Path=Plot0VM.Title}" XAxisLabel="{Binding Plot0VM.XAxisLabel}" YAxisLabel="{Binding Plot0VM.YAxisLabel}"  SetYAxisToLogarithmic="True"  AreaPlotVisible="True" XAxisAsStandardDeviation="True" />
 
 
             <local:IndividualLinkedPlot x:Name="plot3" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot3VM.Curve}" BaseFunction="{Binding Path=Plot3VM.BaseFunction}" Title="{Binding Path=Plot3VM.Title}" XAxisLabel="{Binding Plot3VM.XAxisLabel}" YAxisLabel="{Binding Plot3VM.YAxisLabel}"  SetYAxisToLogarithmic="True" AreaPlotVisible="True" />
@@ -194,7 +194,7 @@
             <local:IndividualLinkedPlot x:Name="plot7" Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot7VM.Curve}" BaseFunction="{Binding Path=Plot7VM.BaseFunction}" Title="{Binding Path=Plot7VM.Title}" XAxisLabel="{Binding Plot7VM.XAxisLabel}" YAxisLabel="{Binding Plot7VM.YAxisLabel}"  SetYAxisToLogarithmic="True" AreaPlotVisible="True"/>
 
 
-            <local:IndividualLinkedPlot x:Name="plot8" Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot8VM.Curve}" BaseFunction="{Binding Path=Plot8VM.BaseFunction}" Title="{Binding Path=Plot8VM.Title}" XAxisLabel="{Binding Plot8VM.XAxisLabel}" YAxisLabel="{Binding Plot8VM.YAxisLabel}"  FlipFrequencyAxis="True" SetYAxisToLogarithmic="True" AreaPlotVisible="True"/>
+            <local:IndividualLinkedPlot x:Name="plot8" Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot8VM.Curve}" NonStandardDeviationCurve="{Binding Path=Plot8VM.NonStandardDeviationCurve}" BaseFunction="{Binding Path=Plot8VM.BaseFunction}" Title="{Binding Path=Plot8VM.Title}" XAxisLabel="{Binding Plot8VM.XAxisLabel}" YAxisLabel="{Binding Plot8VM.YAxisLabel}"   SetYAxisToLogarithmic="True" AreaPlotVisible="True" XAxisAsStandardDeviation="True"/>
         <!--<GridSplitter Grid.Row="2" Grid.RowSpan="4" Width="5" Grid.Column="4" HorizontalAlignment="Left" />-->
 
         <!--<GridSplitter Grid.Row="2" Grid.Column="0" Margin="0" Background="Gray" BorderBrush="DarkGray" BorderThickness="1" HorizontalAlignment="Right" Width="3"/>-->
