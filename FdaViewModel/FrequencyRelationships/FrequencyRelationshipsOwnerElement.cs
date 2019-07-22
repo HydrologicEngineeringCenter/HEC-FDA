@@ -19,7 +19,7 @@ namespace FdaViewModel.FrequencyRelationships
         //}
         #endregion
         #region Constructors
-        public FrequencyRelationshipsOwnerElement(BaseFdaElement owner) : base(owner)
+        public FrequencyRelationshipsOwnerElement( ) : base()
         {
             Name = "Frequency Relationships";
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
@@ -36,14 +36,14 @@ namespace FdaViewModel.FrequencyRelationships
         #region Voids
         public  void AddBaseElements(Study.FDACache cache)
         {
-            AnalyticalFrequencyOwnerElement r = new AnalyticalFrequencyOwnerElement(this);
+            AnalyticalFrequencyOwnerElement r = new AnalyticalFrequencyOwnerElement();
             AddElement(r);
             cache.FlowFrequencyParent = r;
 
-            GraphicalFrequencyOwnerElement i = new GraphicalFrequencyOwnerElement(this);
+            GraphicalFrequencyOwnerElement i = new GraphicalFrequencyOwnerElement();
             //AddElement(i);
 
-            StageFrequencyOwnerElement s = new StageFrequencyOwnerElement(this);
+            StageFrequencyOwnerElement s = new StageFrequencyOwnerElement();
             //AddElement(s);
         }
         public override void AddValidationRules()

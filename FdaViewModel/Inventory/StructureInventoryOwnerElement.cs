@@ -23,7 +23,7 @@ namespace FdaViewModel.Inventory
         
         #endregion
         #region Constructors
-        public StructureInventoryOwnerElement(Utilities.ParentElement owner) : base(owner)
+        public StructureInventoryOwnerElement( ) : base()
         {
             Name = "Structure Inventories";
             IsBold = false;

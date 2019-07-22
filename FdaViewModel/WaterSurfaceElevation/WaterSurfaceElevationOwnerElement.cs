@@ -21,7 +21,7 @@ namespace FdaViewModel.WaterSurfaceElevation
        
         #endregion
         #region Constructors
-        public WaterSurfaceElevationOwnerElement(BaseFdaElement owner):base(owner)
+        public WaterSurfaceElevationOwnerElement( ):base()
         {
             Name = "Water Surface Elevations";
             IsBold = true;

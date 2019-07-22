@@ -184,7 +184,10 @@ namespace FdaViewModel.Editors
         }
 
         #region Undo/Redo
-
+        /// <summary>
+        /// Gets all the change table rows from the database
+        /// </summary>
+        /// <param name="element">The element that will be used to get the change table</param>
         public void LoadInitialStateOfUndoRedoValues(ChildElement element)
         {
             //if (SaveElement == null)

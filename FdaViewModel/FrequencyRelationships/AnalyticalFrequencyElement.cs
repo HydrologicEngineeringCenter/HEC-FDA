@@ -147,6 +147,45 @@ namespace FdaViewModel.FrequencyRelationships
         //        throw new NotImplementedException();
         //    }
         //}
+
+        public override bool Equals(object obj)
+        {
+            bool retval = true;
+            if (obj.GetType() == typeof(AnalyticalFrequencyElement))
+            {
+                AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)obj;
+                if (!Name.Equals(elem.Name))
+                {
+                    retval = false;
+                }
+                if (!Description.Equals(elem.Description))
+                {
+                    retval = false;
+                }
+                if (!LastEditDate.Equals(elem.LastEditDate))
+                {
+                    retval = false;
+                }
+                if (!Double.Equals(Distribution.GetMean, elem.Distribution.GetMean))
+                {
+                    retval = false;
+                }
+                if (!Double.Equals(Distribution.GetStDev, elem.Distribution.GetStDev))
+                {
+                    retval = false;
+                }
+                if (!Double.Equals(Distribution.GetG, elem.Distribution.GetG))
+                {
+                    retval = false;
+                }
+            }
+            else
+            {
+                retval = false;
+            }
+            return retval;
+        }
+
         #endregion
 
     }

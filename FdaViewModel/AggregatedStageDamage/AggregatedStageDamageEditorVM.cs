@@ -55,6 +55,11 @@ namespace FdaViewModel.AggregatedStageDamage
 
         #endregion
         #region Constructors
+        /// <summary>
+        /// Editor View Model for Aggregated Stage Damage
+        /// </summary>
+        /// <param name="saveAction"></param>
+        /// <param name="ownerValidationRules"></param>
         public AggregatedStageDamageEditorVM(Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) : base()
         {
             double[] xValues = new double[16] { 95, 97, 99, 101, 103, 105, 107, 110, 112, 115, 117, 120, 122, 125, 127, 130 };

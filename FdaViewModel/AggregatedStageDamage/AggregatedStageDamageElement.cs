@@ -1,4 +1,5 @@
 ﻿using FdaViewModel.Utilities;
+using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,14 @@ namespace FdaViewModel.AggregatedStageDamage
   
         #endregion
         #region Constructors
+            /// <summary>
+            /// Stage damage element
+            /// </summary>
+            /// <param name="name">Name of element</param>
+            /// <param name="lastEditDate">Last edit date</param>
+            /// <param name="description">Element description</param>
+            /// <param name="curve">The curve that represents the stage vs damage for the element</param>
+            /// <param name="method">Creation method</param>
         public AggregatedStageDamageElement( string name , string lastEditDate, string description, Statistics.UncertainCurveDataCollection curve, CreationMethodEnum method) : base()
         {
             LastEditDate = lastEditDate;
@@ -48,7 +57,6 @@ namespace FdaViewModel.AggregatedStageDamage
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/StageDamage.png");
 
             Description = description;
-            //DamageCategory = damagecategory;
             Curve = curve;
             _Method = method;
             //add named actions like edit.
@@ -91,8 +99,9 @@ namespace FdaViewModel.AggregatedStageDamage
         public void EditDamageCurve(object arg1, EventArgs arg2)
         {
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetStageDamageManager()
-                ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetStageDamageManager(), this, 
+                (editorVM) => CreateElementFromEditor(editorVM), 
+                (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
@@ -149,5 +158,82 @@ namespace FdaViewModel.AggregatedStageDamage
             return new AggregatedStageDamageElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve, CreationMethodEnum.UserDefined);
         }
         #endregion
+
+
+        public override bool Equals(object obj)
+        {
+            bool retval = true;
+            if (obj.GetType() == typeof(AggregatedStageDamageElement))
+            {
+                AggregatedStageDamageElement elem = (AggregatedStageDamageElement)obj;
+                if (!Name.Equals(elem.Name))
+                {
+                    retval = false;
+                }
+                if(!Description.Equals(elem.Description))
+                {
+                    retval = false;
+                }
+                if(!LastEditDate.Equals(elem.LastEditDate))
+                {
+                    retval = false;
+                }
+                if (Method != elem.Method)
+                {
+                    retval = false;
+                }
+                if (!areCurvesEqual(elem.Curve))
+                {
+                    retval = false;
+                }
+            }
+            else
+            {
+                retval = false;
+            }
+            return retval;
+        }
+
+        private bool areCurvesEqual(UncertainCurveDataCollection curve2)
+        {
+            bool retval = true;
+            if(Curve.GetType() != curve2.GetType())
+            {
+                return false;
+            }
+            if (Curve.Distribution != curve2.Distribution)
+            {
+                return false;
+            }
+            if (Curve.XValues.Count != curve2.XValues.Count)
+            {
+                return false;
+            }
+            if (Curve.YValues.Count != curve2.YValues.Count)
+            {
+                return false;
+            }
+            double epsilon = .0001;
+            for(int i = 0;i<Curve.XValues.Count;i++)
+            {
+                if(Math.Abs( Curve.get_X(i)) - Math.Abs(curve2.get_X(i)) > epsilon)
+                {
+                    return false;
+                }
+                ContinuousDistribution y = Curve.get_Y(i);
+                ContinuousDistribution y2 = curve2.get_Y(i);
+                if (Math.Abs(y.GetCentralTendency) - Math.Abs(y2.GetCentralTendency)> epsilon)
+                {
+                    return false;
+                }
+                if (Math.Abs(y.GetSampleSize) - Math.Abs( y2.GetSampleSize) > epsilon)
+                {
+                    return false;
+                }
+            }
+
+            return retval;
+        }
+
     }
 }

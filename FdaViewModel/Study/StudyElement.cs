@@ -480,15 +480,15 @@ namespace FdaViewModel.Study
             //throw new NotImplementedException();
         }
 
-     
 
-       
+
+
         public void AddBaseElements()
         {
 
             Elements.Clear();//clear out any existing ones from an existing study
             if (Storage.Connection.Instance.IsConnectionNull) return;
-            
+
             //the tabs are in the fdastudyvm, i might need to throw an event here that is saying that a new study is opening and then remove all the tabs and 
             //deal with the map window.
             bool loadStudyCache = false;
@@ -499,80 +499,80 @@ namespace FdaViewModel.Study
                 cache = FDACache.Create();
                 StudyCache = cache;
                 PersistenceFactory = new Saving.PersistenceFactory(cache);
-            
 
-            Watershed.TerrainOwnerElement t = new Watershed.TerrainOwnerElement(this);
-            AddElement(t);
-            t.RenameMapTreeViewElement += RenameTreeViewElement;
+
+                Watershed.TerrainOwnerElement t = new Watershed.TerrainOwnerElement();
+                AddElement(t);
+                t.RenameMapTreeViewElement += RenameTreeViewElement;
                 t.AddMapTreeViewElementBackIn += AddBackInTreeViewElement;
-            cache.TerrainParent = t; 
+                cache.TerrainParent = t;
 
-            ImpactArea.ImpactAreaOwnerElement i = new ImpactArea.ImpactAreaOwnerElement(this);
-            AddElement(i);
-            cache.ImpactAreaParent = i; 
-                
+                ImpactArea.ImpactAreaOwnerElement i = new ImpactArea.ImpactAreaOwnerElement();
+                AddElement(i);
+                cache.ImpactAreaParent = i;
 
-            WaterSurfaceElevation.WaterSurfaceElevationOwnerElement wse = new WaterSurfaceElevation.WaterSurfaceElevationOwnerElement(this);
-            
-            AddElement(wse);
 
-            FrequencyRelationships.FrequencyRelationshipsOwnerElement f = new FrequencyRelationships.FrequencyRelationshipsOwnerElement(this);
-            f.AddBaseElements(cache);
-            AddElement(f);
+                WaterSurfaceElevation.WaterSurfaceElevationOwnerElement wse = new WaterSurfaceElevation.WaterSurfaceElevationOwnerElement();
 
-            FlowTransforms.FlowTransformsOwnerElement ft = new FlowTransforms.FlowTransformsOwnerElement(this);
-            ft.AddBaseElements(cache);
-            AddElement(ft);
+                AddElement(wse);
 
-           
+                FrequencyRelationships.FrequencyRelationshipsOwnerElement f = new FrequencyRelationships.FrequencyRelationshipsOwnerElement();
+                f.AddBaseElements(cache);
+                AddElement(f);
 
-            StageTransforms.StageTransformsOwnerElement s = new StageTransforms.StageTransformsOwnerElement(this);
-            s.AddBaseElements(cache);
-            AddElement(s);
+                FlowTransforms.FlowTransformsOwnerElement ft = new FlowTransforms.FlowTransformsOwnerElement();
+                ft.AddBaseElements(cache);
+                AddElement(ft);
 
-            //Hydraulics.FloodPlainDataOwnerElement h = new Hydraulics.FloodPlainDataOwnerElement(this);
-            //this.AddElement(h);
 
-            GeoTech.LateralStructuresOwnerElement ls = new GeoTech.LateralStructuresOwnerElement(this);
-            ls.AddBaseElements();
-            AddElement(ls);
 
-     
+                StageTransforms.StageTransformsOwnerElement s = new StageTransforms.StageTransformsOwnerElement();
+                s.AddBaseElements(cache);
+                AddElement(s);
 
-            Inventory.InventoryOwnerElement inv = new Inventory.InventoryOwnerElement(this);
-            inv.AddBaseElements(cache);
-            AddElement(inv);
+                //Hydraulics.FloodPlainDataOwnerElement h = new Hydraulics.FloodPlainDataOwnerElement(this);
+                //this.AddElement(h);
 
-            Conditions.ConditionsOwnerElement c = new Conditions.ConditionsOwnerElement(this);
-            AddElement(c);
-            if (loadStudyCache) { cache.ConditionsParent = c; }
+                GeoTech.LateralStructuresOwnerElement ls = new GeoTech.LateralStructuresOwnerElement();
+                ls.AddBaseElements();
+                AddElement(ls);
 
-            if (loadStudyCache == true)
-            {
-                cache.LoadFDACache();
-            }
+
+
+                Inventory.InventoryOwnerElement inv = new Inventory.InventoryOwnerElement();
+                inv.AddBaseElements(cache);
+                AddElement(inv);
+
+                Conditions.ConditionsOwnerElement c = new Conditions.ConditionsOwnerElement();
+                AddElement(c);
+                if (loadStudyCache) { cache.ConditionsParent = c; }
+
+                if (loadStudyCache == true)
+                {
+                    cache.LoadFDACache();
+                }
 
                 ConditionsTreeOwnerElement ct = new ConditionsTreeOwnerElement(c);
                 cache.ConditionsElementUpdated += ConditionsElementWasUpdated; //ct.ConditionWasUpdated;
                 cache.ConditionsElementAdded += UpdateTheConditionsTree;
                 if (loadStudyCache) { cache.ConditionsTreeParent = ct; }
 
-            UpdateTheConditionsTree(this, new EventArgs());
-            UpdateTransactionsAndMessages?.Invoke(this, new EventArgs());
-            LoadMapLayers?.Invoke(this, new EventArgs());
+                UpdateTheConditionsTree(this, new EventArgs());
+                UpdateTransactionsAndMessages?.Invoke(this, new EventArgs());
+                LoadMapLayers?.Invoke(this, new EventArgs());
             }
         }
 
-      
-       /// <summary>
-       /// This stuff is getting a little wierd. It was done before the new "StudyCache" stuff. So it seems like i could just go straight to the cache
-       /// and not have to get the nodes from the study tree, but i want them to be linked. I don't want the conditions tree to have its own nodes.
-       /// when a conditions element gets updated (saved) then it actually gets rid of the old one and creates a new one. This breaks the connection to 
-       /// the one in the conditions tree. So i need to call update on the conditions tree, but it was losing the "isExpanded" value, so i am adding
-       /// this method inbetween.
-       /// </summary>
-       /// <param name="sender"></param>
-       /// <param name="args"></param>
+
+        /// <summary>
+        /// This stuff is getting a little wierd. It was done before the new "StudyCache" stuff. So it seems like i could just go straight to the cache
+        /// and not have to get the nodes from the study tree, but i want them to be linked. I don't want the conditions tree to have its own nodes.
+        /// when a conditions element gets updated (saved) then it actually gets rid of the old one and creates a new one. This breaks the connection to 
+        /// the one in the conditions tree. So i need to call update on the conditions tree, but it was losing the "isExpanded" value, so i am adding
+        /// this method inbetween.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void ConditionsElementWasUpdated(object sender, Saving.ElementUpdatedEventArgs args)
         {
             UpdateTheConditionsTree(sender, args);

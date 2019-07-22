@@ -19,7 +19,7 @@ namespace FdaViewModel.FrequencyRelationships
        
         #endregion
         #region Constructors
-        public AnalyticalFrequencyOwnerElement(Utilities.ParentElement owner) : base(owner)
+        public AnalyticalFrequencyOwnerElement() : base()
         {
             Name = "Analyitical Flow Frequency Curves";
             IsBold = false;

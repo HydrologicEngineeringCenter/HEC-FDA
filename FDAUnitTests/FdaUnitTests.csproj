@@ -118,6 +118,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AggregatedStageDamage\AggregatedStageDamageElementTest.cs" />
     <Compile Include="ComputeWriter.cs" />
     <Compile Include="ConditionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -126,6 +127,11 @@
     <Compile Include="RealizationTests.cs" />
     <Compile Include="FrequencyFunctionTests.cs" />
     <Compile Include="OccTypeEditorTests.cs" />
+    <Compile Include="Saving\PersistenceManagers\ExteriorInteriorPersistenceManagerTest.cs" />
+    <Compile Include="Saving\PersistenceManagers\FailureFunctionPersistenceManagerTests.cs" />
+    <Compile Include="Saving\PersistenceManagers\FlowFrequencyPersistenceManager.cs" />
+    <Compile Include="Saving\PersistenceManagers\PersistenceManagersBaseTest.cs" />
+    <Compile Include="Saving\PersistenceManagers\StageDamagePersistenceManagerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CSV Files\AnalyzeCompositionTest.csv">
@@ -184,6 +190,7 @@
       <Name>FdaViewModel</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

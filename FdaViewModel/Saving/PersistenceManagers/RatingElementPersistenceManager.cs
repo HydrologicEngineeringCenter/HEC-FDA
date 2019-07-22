@@ -67,15 +67,15 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 StudyCacheForSaving.AddRatingElement((RatingCurveElement)element);
             }
         }
-        
+
         public void Remove(ChildElement element)
         {
             //RequestNavigation += Navigate;
-           
-                RemoveFromParentTable(element, TableName);
-                DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
+
+            RemoveFromParentTable(element, TableName);
+            DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
             StudyCacheForSaving.RemoveRatingElement((RatingCurveElement)element);
-           
+
         }
 
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave,int changeTableIndex )

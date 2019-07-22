@@ -20,7 +20,7 @@ namespace FdaViewModel.FlowTransforms
         //}
         #endregion
         #region Constructors
-        public InflowOutflowOwnerElement(BaseFdaElement owner) : base(owner)
+        public InflowOutflowOwnerElement( ) : base()
         {
             Name = "Inflow Outflow Relationships";
             IsBold = false;

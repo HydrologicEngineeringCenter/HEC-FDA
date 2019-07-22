@@ -20,7 +20,7 @@ namespace FdaViewModel.Watershed
         
         #endregion
         #region Constructors
-        public TerrainOwnerElement(BaseFdaElement owner) : base(owner)
+        public TerrainOwnerElement( ) : base()
         {
             Name = "Terrains";
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
@@ -66,7 +66,7 @@ namespace FdaViewModel.Watershed
             ShapefilePaths(ref availableVRTPaths);
             TerrainBrowserVM vm = new TerrainBrowserVM(availableVRTPaths, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
-            ExtendEventsToImporter(vm);
+            //ExtendEventsToImporter(vm);
             //vm.AddSiblingRules(this);
             //vm.CanOpenMultipleTimes = true;
             //vm.ParentGUID = this.GUID;

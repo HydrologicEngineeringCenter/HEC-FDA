@@ -20,7 +20,7 @@ namespace FdaViewModel.Conditions
         /// study tree.
         /// </summary>
         /// <param name="conditionsOwnerElement"></param>
-        public ConditionsTreeOwnerElement(ConditionsOwnerElement conditionsOwnerElement) : base(conditionsOwnerElement)
+        public ConditionsTreeOwnerElement(ConditionsOwnerElement conditionsOwnerElement) : base()
         {
             _StudyTreeConditionsOwnerElement = conditionsOwnerElement;
             Name = "Conditions";

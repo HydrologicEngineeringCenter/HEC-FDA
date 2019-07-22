@@ -17,7 +17,7 @@ namespace FdaViewModel.GeoTech
       
         #endregion
         #region Constructors
-        public LeveeFeatureOwnerElement(Utilities.ParentElement owner) : base(owner)
+        public LeveeFeatureOwnerElement( ) : base()
         {
             Name = "Levee Features";
             IsBold = false;

@@ -20,7 +20,7 @@ namespace FdaViewModel.StageTransforms
         //}
         #endregion
         #region Constructors
-        public ExteriorInteriorOwnerElement(Utilities.ParentElement owner) : base(owner)
+        public ExteriorInteriorOwnerElement( ) : base()
         {
             Name = "Exterior Interior Relationships";
             IsBold = false;

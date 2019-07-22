@@ -21,7 +21,7 @@ namespace FdaViewModel.FlowTransforms
        
         #endregion
         #region Constructors
-        public FlowTransformsOwnerElement(BaseFdaElement owner) : base(owner)
+        public FlowTransformsOwnerElement( ) : base()
         {
             Name = "Flow Transforms";
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
@@ -41,7 +41,7 @@ namespace FdaViewModel.FlowTransforms
 
         public  void AddBaseElements(Study.FDACache cache)
         {
-            InflowOutflowOwnerElement io = new InflowOutflowOwnerElement(this);
+            InflowOutflowOwnerElement io = new InflowOutflowOwnerElement();
             AddElement(io);
             cache.InflowOutflowParent = io;
         }

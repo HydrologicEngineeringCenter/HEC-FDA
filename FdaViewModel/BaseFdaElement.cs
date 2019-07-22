@@ -7,6 +7,10 @@ using System.Collections.Generic;
 namespace FdaViewModel
 {
     public delegate void TransactionEventHandler(object sender, Utilities.Transactions.TransactionEventArgs args);
+    /// <summary>
+    /// Base class for all "elements" in FDA. Elements are broken into two categories- parents and children. This
+    /// class contains all the shared functionality among all elements.
+    /// </summary>
     public abstract class BaseFdaElement : BaseViewModel
     {
         #region Notes
@@ -36,12 +40,15 @@ namespace FdaViewModel
         #region Properties
 
 
-        public BaseFdaElement Parent { get; set; }
+        //public BaseFdaElement Parent { get; set; }
         public bool TableContainsGeoData
         {
             get { return _TableContainsGeoData; }
             set { _TableContainsGeoData = value; }
         }
+        /// <summary>
+        /// This governs the image and text that is displayed in the main trees.
+        /// </summary>
         public Utilities.CustomHeaderVM CustomTreeViewHeader
         {
             get { return _CustomTreeViewHeader; }
@@ -58,6 +65,10 @@ namespace FdaViewModel
         //    get;set;
         //}
         //public abstract string TableName { get; }
+
+        /// <summary>
+        /// These become the right click menu options for each element in the tree.
+        /// </summary>
         public List<Utilities.NamedAction> Actions
         {
             get { return _Actions; }
@@ -67,14 +78,17 @@ namespace FdaViewModel
         //public abstract bool SavesToTable();
         #endregion
         #region Constructors
+            /// <summary>
+            /// Constructor
+            /// </summary>
         public BaseFdaElement()
         {
             PropertyChanged += BaseFdaElement_PropertyChanged;
         }
-        public BaseFdaElement(BaseFdaElement parent):base()
-        {
-            Parent = parent;
-        }
+        //public BaseFdaElement(BaseFdaElement parent):base()
+        //{
+        //    Parent = parent;
+        //}
 
         private void BaseFdaElement_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -106,15 +120,15 @@ namespace FdaViewModel
         #endregion
         #region Voids
 
-        public void ExtendEventsToImporter(BaseViewModel vm)
-        {
-            vm.RequestNavigation += Navigate;
-            vm.RequestShapefilePaths += ShapefilePaths;
-            vm.RequestShapefilePathsOfType += ShapefilePathsOfType;
-            vm.RequestAddToMapWindow += AddToMapWindow;
-            vm.RequestRemoveFromMapWindow += RemoveFromMapWindow;
-            vm.TransactionEvent += AddTransaction;
-        }
+        //public void ExtendEventsToImporter(BaseViewModel vm)
+        //{
+        //    vm.RequestNavigation += Navigate;
+        //    vm.RequestShapefilePaths += ShapefilePaths;
+        //    vm.RequestShapefilePathsOfType += ShapefilePathsOfType;
+        //    vm.RequestAddToMapWindow += AddToMapWindow;
+        //    vm.RequestRemoveFromMapWindow += RemoveFromMapWindow;
+        //    vm.TransactionEvent += AddTransaction;
+        //}
       
         public void UpdateTreeViewHeader(string newName)
         {

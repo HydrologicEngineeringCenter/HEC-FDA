@@ -21,7 +21,7 @@ namespace FdaViewModel.Hydraulics
 
         #endregion
         #region Constructors
-        public GriddedHydraulicsOwnerElement(BaseFdaElement owner):base(owner)
+        public GriddedHydraulicsOwnerElement( ):base()
         {
             Name = _TableName;
 

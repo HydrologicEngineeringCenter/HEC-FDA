@@ -21,7 +21,7 @@ namespace FdaViewModel.GeoTech
        
         #endregion
         #region Constructors
-        public LateralStructuresOwnerElement(BaseFdaElement owner) : base(owner)
+        public LateralStructuresOwnerElement( ) : base()
         {
             Name = "Lateral Structures";
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
@@ -41,10 +41,10 @@ namespace FdaViewModel.GeoTech
 
         public  void AddBaseElements()
         {
-            LeveeFeatureOwnerElement lf = new LeveeFeatureOwnerElement(this);
+            LeveeFeatureOwnerElement lf = new LeveeFeatureOwnerElement();
             AddElement(lf);
 
-            FailureFunctionOwnerElement ff = new FailureFunctionOwnerElement(this);
+            FailureFunctionOwnerElement ff = new FailureFunctionOwnerElement();
             AddElement(ff);
         }
 

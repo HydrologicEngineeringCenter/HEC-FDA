@@ -20,7 +20,7 @@ namespace FdaViewModel.FrequencyRelationships
         //}
         #endregion
         #region Constructors
-        public StageFrequencyOwnerElement(BaseFdaElement owner) : base(owner)
+        public StageFrequencyOwnerElement( ) : base()
         {
             Name = "Stage Frequency Curves";
 

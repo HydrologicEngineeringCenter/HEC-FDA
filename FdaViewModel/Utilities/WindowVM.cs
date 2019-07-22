@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Tabs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -123,7 +124,9 @@ namespace FdaViewModel.Utilities
                     //    StudyVM.Tabs = new System.Collections.ObjectModel.ObservableCollection<IDynamicTab>();
                     //}
                     DynamicTabVM tab = new DynamicTabVM(title, vm, true);
-                        StudyVM.AddTab(tab);
+                    StudyVM.AddTab(tab);
+                    //TabFactory tabFactory = TabFactory.Instance;
+                    //tabFactory.AddTab(tab);
                    
                     
                     // StudyVM.SelectedTabIndex = StudyVM.Tabs.Count - 1;

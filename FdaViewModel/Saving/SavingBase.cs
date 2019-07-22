@@ -13,6 +13,9 @@ namespace FdaViewModel.Saving
     {
         private const int MAX_CHANGE_NUMBER = 4;
 
+        /// <summary>
+        /// The FDACache stores all the elements in memory. 
+        /// </summary>
         public Study.FDACache StudyCacheForSaving { get; set; }
 
         #region Utilities

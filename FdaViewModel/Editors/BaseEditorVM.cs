@@ -49,7 +49,7 @@ namespace FdaViewModel.Editors
 
         }
         /// <summary>
-        /// Call this one when editing an existing element
+        /// Call this one when editing an existing element. 
         /// </summary>
         /// <param name="elem"></param>
         /// <param name="actionManager"></param>

@@ -64,6 +64,13 @@
     <Compile Include="ComputationPoint\Outputs\Result.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Utilities\Initialize.cs" />
+    <Compile Include="Utilities\Messaging\ErrorLevel.cs" />
+    <Compile Include="Utilities\Messaging\IMessage.cs" />
+    <Compile Include="Utilities\Messaging\IRecieveMessages.cs" />
+    <Compile Include="Utilities\Messaging\IReportMessage.cs" />
+    <Compile Include="Utilities\Messaging\Message.cs" />
+    <Compile Include="Utilities\Messaging\MessageEventArgs.cs" />
+    <Compile Include="Utilities\Messaging\MessageHub.cs" />
     <Compile Include="Utilities\ModelErrors.cs" />
     <Compile Include="ComputationPoint\Condition.cs" />
     <Compile Include="Functions\BaseFunction.cs" />

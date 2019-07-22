@@ -19,7 +19,7 @@ namespace FdaViewModel.Hydraulics
 
         #endregion
         #region Constructors
-        public WaterSurfaceProfileOwnerElement(BaseFdaElement owner):base(owner)
+        public WaterSurfaceProfileOwnerElement( ):base()
         {
             Name = _TableName;
 

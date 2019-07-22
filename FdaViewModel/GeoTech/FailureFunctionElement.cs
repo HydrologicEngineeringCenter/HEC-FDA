@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FdaViewModel.Utilities;
 using FdaViewModel.Editors;
 using System.Collections.ObjectModel;
+using Statistics;
 
 namespace FdaViewModel.GeoTech
 {
@@ -48,7 +49,8 @@ namespace FdaViewModel.GeoTech
         //}
         #endregion
         #region Constructors
-        public FailureFunctionElement(string userProvidedName, string lastEditDate, string description, Statistics.UncertainCurveDataCollection failureFunctionCurve, LeveeFeatureElement selectedLatStructure) : base()
+        public FailureFunctionElement(string userProvidedName, string lastEditDate, string description, 
+            Statistics.UncertainCurveDataCollection failureFunctionCurve, LeveeFeatureElement selectedLatStructure) : base()
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
@@ -192,6 +194,75 @@ namespace FdaViewModel.GeoTech
             //throw new NotImplementedException();
         }
 
-      
+        public override bool Equals(object obj)
+        {
+            bool retval = true;
+            if (obj.GetType() == typeof(FailureFunctionElement))
+            {
+                FailureFunctionElement elem = (FailureFunctionElement)obj;
+                if (!Name.Equals(elem.Name))
+                {
+                    retval = false;
+                }
+                if (!Description.Equals(elem.Description))
+                {
+                    retval = false;
+                }
+                if (!LastEditDate.Equals(elem.LastEditDate))
+                {
+                    retval = false;
+                }
+                if (!areCurvesEqual(elem.Curve))
+                {
+                    retval = false;
+                }
+            }
+            else
+            {
+                retval = false;
+            }
+            return retval;
+        }
+        private bool areCurvesEqual(UncertainCurveDataCollection curve2)
+        {
+            bool retval = true;
+            if (Curve.GetType() != curve2.GetType())
+            {
+                return false;
+            }
+            if (Curve.Distribution != curve2.Distribution)
+            {
+                return false;
+            }
+            if (Curve.XValues.Count != curve2.XValues.Count)
+            {
+                return false;
+            }
+            if (Curve.YValues.Count != curve2.YValues.Count)
+            {
+                return false;
+            }
+            double epsilon = .0001;
+            for (int i = 0; i < Curve.XValues.Count; i++)
+            {
+                if (Math.Abs(Curve.get_X(i)) - Math.Abs(curve2.get_X(i)) > epsilon)
+                {
+                    return false;
+                }
+                ContinuousDistribution y = Curve.get_Y(i);
+                ContinuousDistribution y2 = curve2.get_Y(i);
+                if (Math.Abs(y.GetCentralTendency) - Math.Abs(y2.GetCentralTendency) > epsilon)
+                {
+                    return false;
+                }
+                if (Math.Abs(y.GetSampleSize) - Math.Abs(y2.GetSampleSize) > epsilon)
+                {
+                    return false;
+                }
+            }
+
+            return retval;
+        }
+
     }
 }

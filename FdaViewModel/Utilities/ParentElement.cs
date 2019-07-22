@@ -46,7 +46,7 @@ namespace FdaViewModel.Utilities
         }
         #endregion
         #region Constructors
-        public ParentElement(BaseFdaElement parent = null): base(parent)
+        public ParentElement(): base()
         {
             _Elements = new ObservableCollection<BaseFdaElement>();
         }

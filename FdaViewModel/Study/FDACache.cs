@@ -19,6 +19,11 @@ using FdaViewModel.Inventory.OccupancyTypes;
 
 namespace FdaViewModel.Study
 {
+    /// <summary>
+    /// The cache is used to hold all the elements in fda in memory. It gets loaded with elements
+    /// by the persistence managers when the study opens and then gets modified by the managers. The 
+    /// managers are the only ones that can modify the data, but everything else can get the data.
+    /// </summary>
     public class FDACache: IStudyCache
     {
         public delegate void AddElementEventHandler(object sender, Saving.ElementAddedEventArgs args);

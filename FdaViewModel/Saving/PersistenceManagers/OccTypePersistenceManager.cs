@@ -13,12 +13,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
         private const string GroupTablePrefix = "OccTypeGroup-";
         private const string ParentTableName = "OccTypeGroups";
 
-        internal override string ChangeTableConstant => throw new NotImplementedException();
+        internal override string ChangeTableConstant { get { return "OccType"; } }
 
         public OccTypePersistenceManager(Study.FDACache studyCache)
         {
             StudyCacheForSaving = studyCache;
         }
+
 
         private Statistics.ContinuousDistribution CreateContinuousDistributionFromRow(object[] row, int start, int end)
         {

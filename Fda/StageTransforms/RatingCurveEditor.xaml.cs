@@ -20,7 +20,7 @@ namespace Fda.StageTransforms
     /// </summary>
     public partial class RatingCurveEditor : UserControl
     {
-        public RatingCurveEditor()
+        public RatingCurveEditor()  
         {
             InitializeComponent();
         }

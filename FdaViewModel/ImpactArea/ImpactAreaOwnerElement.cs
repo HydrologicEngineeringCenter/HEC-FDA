@@ -20,7 +20,7 @@ namespace FdaViewModel.ImpactArea
         
         #endregion
         #region Constructors
-        public ImpactAreaOwnerElement(Utilities.ParentElement owner) : base(owner)
+        public ImpactAreaOwnerElement( ) : base()
         {
             Name = "Impact Areas";
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
@@ -74,7 +74,8 @@ namespace FdaViewModel.ImpactArea
                 .WithCanOpenMultipleTimes(true);
 
             ImpactAreaImporterVM vm = new ImpactAreaImporterVM(observpaths, actionManager);
-            ExtendEventsToImporter(vm);
+            //ExtendEventsToImporter(vm);
+            
             //vm.AddSiblingRules(this);
             //vm.ParentGUID = this.GUID;
             //vm.CanOpenMultipleTimes = true;

@@ -19,7 +19,7 @@ namespace FdaViewModel.Inventory
        
         #endregion
         #region Constructors
-        public InventoryOwnerElement(BaseFdaElement owner) : base(owner)
+        public InventoryOwnerElement( ) : base()
         {
             Name = _TableName;
             
@@ -37,14 +37,14 @@ namespace FdaViewModel.Inventory
             //DamageCategory.DamageCategoryOwnedElement d = new DamageCategory.DamageCategoryOwnedElement(this);
             //this.AddElement(d);
 
-            OccupancyTypes.OccupancyTypesOwnerElement o = new OccupancyTypes.OccupancyTypesOwnerElement(this);
+            OccupancyTypes.OccupancyTypesOwnerElement o = new OccupancyTypes.OccupancyTypesOwnerElement();
             this.AddElement(o);
             cache.OccTypeParent = o;
 
-            StructureInventoryOwnerElement sioe = new StructureInventoryOwnerElement(this);
+            StructureInventoryOwnerElement sioe = new StructureInventoryOwnerElement();
             this.AddElement(sioe);
 
-            AggregatedStageDamage.AggregatedStageDamageOwnerElement a = new AggregatedStageDamage.AggregatedStageDamageOwnerElement(this);
+            AggregatedStageDamage.AggregatedStageDamageOwnerElement a = new AggregatedStageDamage.AggregatedStageDamageOwnerElement();
             this.AddElement(a);
             cache.StageDamageParent = a;
 

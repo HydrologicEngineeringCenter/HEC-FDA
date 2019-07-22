@@ -19,7 +19,7 @@ namespace FdaViewModel.FrequencyRelationships
         //}
         #endregion
         #region Constructors
-        public GraphicalFrequencyOwnerElement(BaseFdaElement owner) : base(owner)
+        public GraphicalFrequencyOwnerElement( ) : base()
         {
             Name = "Graphical Flow Frequency Curves";
 

@@ -1,4 +1,5 @@
-﻿using FdaViewModel.Study;
+﻿using FdaModel.Messaging;
+using FdaViewModel.Study;
 using FdaViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,12 @@ namespace FdaViewModel
     public delegate void RequestShapefilePathsOfTypeHandler(ref List<string> files, Utilities.VectorFeatureType type);
     public delegate void RequestAddToMapWindowHandler(object sender, Utilities.AddMapFeatureEventArgs args);//needs to be capable of passing a geopackage connection??
     public delegate void RequestRemoveFromMapWindowHandler(object sender, Utilities.RemoveMapFeatureEventArgs args);//needs to be capable of passing a geopackage connection??
-    public abstract class BaseViewModel : System.ComponentModel.INotifyPropertyChanged, System.ComponentModel.IDataErrorInfo, IDisposable
+
+    /// <summary>
+    /// The base class for all view model classes. Contains methods that are common among all view model classes
+    /// such as validation, navigation, adding rules.
+    /// </summary>
+    public abstract class BaseViewModel : System.ComponentModel.INotifyPropertyChanged, System.ComponentModel.IDataErrorInfo, IDisposable, FdaModel.Messaging.IReportMessage
     {
         #region Notes
         #endregion
@@ -26,6 +32,8 @@ namespace FdaViewModel
         public event RequestShapefilePathsOfTypeHandler RequestShapefilePathsOfType;
         public event RequestAddToMapWindowHandler RequestAddToMapWindow;
         public event RequestRemoveFromMapWindowHandler RequestRemoveFromMapWindow;
+        public event MessageReportedEventHandler MessageReport;
+
         public TransactionEventHandler TransactionEvent;
 
 
@@ -119,12 +127,15 @@ namespace FdaViewModel
 
         #endregion
         #region Constructors
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public BaseViewModel()
         {
             //_MessagesAction = new Utilities.NamedAction();
             //_ErrorsAction = new Utilities.NamedAction();
             //_HelpAction = new Utilities.NamedAction();
-
+            MessageHub.Register(this);
             AddValidationRules();
             //Utilities.NamedAction messageAction = new Utilities.NamedAction();
             ////_MessagesAction = new Utilities.NamedAction();
@@ -189,7 +200,17 @@ namespace FdaViewModel
 
         //    Navigate(mvm, true, false, "Messages");
         //}
+
+
+        /// <summary>
+        /// Virtual method that can be overriden in any view model class to add its own validation rules. 
+        /// This gets called in the constructor of BaseViewModel.
+        /// </summary>
         virtual public void AddValidationRules() { }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void Validate()
         {
             _HasError = false;
@@ -226,6 +247,11 @@ namespace FdaViewModel
         }
         //virtual public void Save() { }
 
+            /// <summary>
+            /// Gets called anytime a property gets changed. The main purpose of this is to call validate() 
+            /// which will go over the rules and see if any are in error.
+            /// </summary>
+            /// <param name="propertyName"></param>
         protected void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
             _HasChanges = true;
@@ -258,18 +284,34 @@ namespace FdaViewModel
             }
             this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
-        public void AddRule(string PropertyName, Func<bool> ruleDelegate, string errorMessage, bool hasFatalError = true)
+        /// <summary>
+        /// Adds a rule to a property in this VM. If that property changes, all rules attached to that property will get
+        /// analyzed. 
+        /// </summary>
+        /// <param name="PropertyName">Name of the property to which this rule applies</param>
+        /// <param name="ruleDelegate">The rule for the property</param>
+        /// <param name="errorMessage">The tooltip message that will get displayed if in error</param>
+        /// <param name="isFatalRule">True: Will disable the OK button and not let the user proceed. False: Will show as an error but will let the user click OK</param>
+        public void AddRule(string PropertyName, Func<bool> ruleDelegate, string errorMessage, bool isFatalRule = true)
         {
             if (ruleMap.ContainsKey(PropertyName))
             {
-                ruleMap[PropertyName].AddRule(ruleDelegate, errorMessage, hasFatalError);
+                ruleMap[PropertyName].AddRule(ruleDelegate, errorMessage, isFatalRule);
             }
             else
             {
-                ruleMap.Add(PropertyName, new PropertyRule(ruleDelegate, errorMessage, hasFatalError));
+                ruleMap.Add(PropertyName, new PropertyRule(ruleDelegate, errorMessage, isFatalRule));
             }
         }
-     
+
+        /// <summary>
+        /// Recursively bubbles up the tree structure to WindowVM.CurrentView_RequestNavigation(). Takes the vm and finds its matching view and displays it.
+        /// Launches either a new window or a new tab in the main window.
+        /// </summary>
+        /// <param name="vm">The view model that you want to display</param>
+        /// <param name="newWindow">True: displays the view in a new window. False: displays the view as a new tab in the main window.</param>
+        /// <param name="asDialog">If newWindow is true, this determines if it is modal or not</param>
+        /// <param name="title">The title for the tab or window.</param>
         public void Navigate( BaseViewModel vm, bool newWindow = true, bool asDialog = true, string title = "FDA 2.0")
         {
             string name = this.Name;
@@ -408,28 +450,45 @@ namespace FdaViewModel
             
         }
 
-        
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageReport?.Invoke(sender, e);
+        }
+
+
 
         #endregion
         #region Functions
 
         #endregion
         #region InternalClasses
+        /// <summary>
+        /// Each view model class can have "rules" that are used to validate the class.
+        /// The rules are attached to properties. When the property changes then each rule
+        /// is evaluated for that property.
+        /// </summary>
         protected class PropertyRule
         {
             private List<Rule> _rules = new List<Rule>();
-
+            /// <summary>
+            /// If a rule is in error then there will be some visual indication (turn red) and
+            /// a tooltip message will be displayed over the control
+            /// </summary>
             internal bool HasError { get; set; }
+            /// <summary>
+            /// If a rule is broken and it is a fatal error then the user will not be allowed to 
+            /// continue by clicking the OK button.
+            /// </summary>
             internal bool HasFatalError { get; set; }
             //internal bool IsDirty { get; set; }
             internal string Error { get; set; }
-            internal PropertyRule(Func<bool> rule, string errormessage, bool hasFatalError = true)
+            internal PropertyRule(Func<bool> rule, string errormessage, bool isFatalRule = true)
             {
-                _rules.Add(new Rule(rule, errormessage, hasFatalError));
+                _rules.Add(new Rule(rule, errormessage, isFatalRule));
             }
-            internal void AddRule(Func<bool> rule, string errormessage, bool hasFatalError = true)
+            internal void AddRule(Func<bool> rule, string errormessage, bool isFatalRule = true)
             {
-                _rules.Add(new Rule(rule, errormessage, hasFatalError));
+                _rules.Add(new Rule(rule, errormessage, isFatalRule));
             }
             internal void Update()
             {

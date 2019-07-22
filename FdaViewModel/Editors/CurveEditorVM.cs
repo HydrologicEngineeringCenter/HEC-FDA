@@ -6,14 +6,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FdaViewModel.Utilities.Transactions;
+using FdaModel.Messaging;
 
 namespace FdaViewModel.Editors
 {
-    public class CurveEditorVM : BaseEditorVM, Utilities.ISaveUndoRedo, Utilities.Transactions.ITransactionsAndMessages
+    public class CurveEditorVM : BaseEditorVM, Utilities.ISaveUndoRedo, ITransactionsAndMessages, FdaModel.Messaging.IRecieveMessages
     {
 
         private Statistics.UncertainCurveDataCollection _Curve;
         private string _SavingText;
+        private List<MessageRowItem> _MessageRows = new List<MessageRowItem>();
+
+        public ErrorLevel FilterLevel => throw new NotImplementedException();
+        public Type SenderTypeFilter => throw new NotImplementedException();
+        public Type MessageTypeFilter => throw new NotImplementedException();
 
         #region properties
         public int UndoRowsSelectedIndex
@@ -50,7 +56,12 @@ namespace FdaViewModel.Editors
         public Statistics.UncertainCurveDataCollection Curve
         {
             get { return _Curve; }
-            set { _Curve = value; NotifyPropertyChanged(); }
+            set
+            {
+                _Curve = value;
+                ReportMessage(this, new FdaModel.Messaging.MessageEventArgs(new Message("Curve value changed")));
+                NotifyPropertyChanged();
+            }
         }
 
         public string SavingText
@@ -67,8 +78,8 @@ namespace FdaViewModel.Editors
 
         public List<MessageRowItem> MessageRows
         {
-            get;
-            set;
+            get { return _MessageRows; }
+            set { _MessageRows = value; NotifyPropertyChanged(); }
         }
         public bool TransactionsMessagesVisible
         {
@@ -78,6 +89,8 @@ namespace FdaViewModel.Editors
 
         public string PlotTitle { get; set; }
 
+    
+
         #endregion
 
         #region constructors
@@ -86,13 +99,14 @@ namespace FdaViewModel.Editors
             _Curve = defaultCurve;
             PlotTitle = "Curve";
             TransactionRows = new ObservableCollection<TransactionRowItem>();
-            MessageRows = new List<MessageRowItem>();
         }
 
         public CurveEditorVM(Utilities.ChildElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
+            MessageHub.Subscribe(this);
             SavingText = elem.Name + " last saved: " + elem.LastEditDate;
             TransactionHelper.LoadTransactionsAndMessages(this, elem);
+            ReportMessage(this, new MessageEventArgs(new Message("openning... testing pub sub")));
             PlotTitle = Name;
         }
 
@@ -170,6 +184,17 @@ namespace FdaViewModel.Editors
         public override void Dispose()
         {
             base.Dispose();
+        }
+
+        public void RecieveMessage(object sender, MessageEventArgs e)
+        {
+            List<MessageRowItem> msgs = new List<MessageRowItem>();
+            foreach(MessageRowItem row in MessageRows)
+            {
+                msgs.Add(row);
+            }
+            msgs.Add(new MessageRowItem("date", e.Message.ToString(), "cody"));
+            MessageRows = msgs;
         }
 
 

@@ -26,7 +26,7 @@ namespace FdaViewModel.Conditions
         //}
         #endregion
         #region Constructors
-        public ConditionsOwnerElement(BaseFdaElement owner) : base(owner)
+        public ConditionsOwnerElement( ) : base()
         {
             Name = "Conditions";
             CustomTreeViewHeader = new CustomHeaderVM(Name);

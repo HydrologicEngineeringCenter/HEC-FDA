@@ -47,11 +47,11 @@ namespace FdaViewModel.ImpactArea
         #region Voids
         public override void AddValidationRules()
         {
-            AddRule(nameof(Name), () => Name == null, "Impact Area Name cannot be null.");
-            AddRule(nameof(Name), () => Name == "", "Impact Area Name cannot be null.");
-            AddRule(nameof(IndexPoint), () => IndexPoint < 0, "Index Point must be greater than or equal to zero.");
-            AddRule(nameof(IndexPoint), () => UniqueRule(nameof(IndexPoint), "Index Point must be unique."), "Index Point must be unique.");
-            AddRule(nameof(Name), () => UniqueRule(nameof(Name), "Impact Area Name must be unique."), "Impact Area Name must be unique.");
+            //AddRule(nameof(Name), () => Name == null, "Impact Area Name cannot be null.");
+            //AddRule(nameof(Name), () => Name == "", "Impact Area Name cannot be null.");
+            //AddRule(nameof(IndexPoint), () => IndexPoint < 0, "Index Point must be greater than or equal to zero.");
+            //AddRule(nameof(IndexPoint), () => UniqueRule(nameof(IndexPoint), "Index Point must be unique."), "Index Point must be unique.");
+            //AddRule(nameof(Name), () => UniqueRule(nameof(Name), "Impact Area Name must be unique."), "Impact Area Name must be unique.");
         }
 
         public override string PropertyDisplayName(string propertyName)

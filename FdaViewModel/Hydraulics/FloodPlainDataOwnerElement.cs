@@ -28,7 +28,7 @@ namespace FdaViewModel.Hydraulics
         //}
         #endregion
         #region Constructors
-        public FloodPlainDataOwnerElement(BaseFdaElement owner):base(owner)
+        public FloodPlainDataOwnerElement( ):base()
         {
             Name = _TableName;
         }
@@ -41,10 +41,10 @@ namespace FdaViewModel.Hydraulics
         }
         public  void AddBaseElements()
         {
-            GriddedHydraulicsOwnerElement h = new GriddedHydraulicsOwnerElement(this);
+            GriddedHydraulicsOwnerElement h = new GriddedHydraulicsOwnerElement();
             this.AddElement(h);
 
-            WaterSurfaceProfileOwnerElement w = new WaterSurfaceProfileOwnerElement(this);
+            WaterSurfaceProfileOwnerElement w = new WaterSurfaceProfileOwnerElement();
             this.AddElement(w);
         }
         #endregion

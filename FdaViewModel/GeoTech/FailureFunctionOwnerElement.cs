@@ -24,7 +24,7 @@ namespace FdaViewModel.GeoTech
         
         #endregion
         #region Constructors
-        public FailureFunctionOwnerElement(BaseFdaElement owner):base(owner)
+        public FailureFunctionOwnerElement( ):base()
         {
             Name = "Failure Functions";
             IsBold = false;

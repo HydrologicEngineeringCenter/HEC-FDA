@@ -17,7 +17,7 @@ namespace FdaViewModel.AggregatedStageDamage
         
         #endregion
         #region Constructors
-        public AggregatedStageDamageOwnerElement(Utilities.ParentElement owner) : base(owner)
+        public AggregatedStageDamageOwnerElement() : base()
         {
             Name = "Aggregated Stage Damage Relationships";
             IsBold = false;

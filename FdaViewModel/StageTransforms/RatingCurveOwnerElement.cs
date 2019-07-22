@@ -19,7 +19,7 @@ namespace FdaViewModel.StageTransforms
         
         #endregion
         #region Constructors
-        public RatingCurveOwnerElement(Utilities.ParentElement owner) : base(owner)
+        public RatingCurveOwnerElement( ) : base()
         {
             Name = "Rating Curves";
             IsBold = false;

@@ -18,6 +18,7 @@ namespace FdaViewModel.Utilities.Transactions
         {
             get { return _transactions; }
         }
+
         #endregion
         #region Constructors
         public TransactionVM()
@@ -60,6 +61,7 @@ namespace FdaViewModel.Utilities.Transactions
         {
             //throw new NotImplementedException();
         }
+
 
 
         #endregion

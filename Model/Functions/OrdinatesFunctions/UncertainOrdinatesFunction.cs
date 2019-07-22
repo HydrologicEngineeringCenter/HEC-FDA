@@ -32,6 +32,8 @@ namespace FdaModel.Functions.OrdinatesFunctions
         #region Constructors
         public UncertainOrdinatesFunction(Statistics.UncertainCurveIncreasing function, FunctionTypes functionType): base( )
         {
+            Messaging.MessageHub.Register(this);
+            ReportMessage(this, new Messaging.MessageEventArgs( new Messaging.Message("UncertainOrdinatesFunction being created")));
             Messages = new ModelErrors();
             FunctionType = functionType;
             UncertainFunction = function;

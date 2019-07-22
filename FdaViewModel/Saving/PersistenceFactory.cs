@@ -12,9 +12,19 @@ using FdaViewModel.FrequencyRelationships;
 
 namespace FdaViewModel.Saving
 {
+    /// <summary>
+    /// Used to get persistence managers for each element. Holds the cache that contains all the elements in memory
+    /// </summary>
     public class PersistenceFactory
     {
+        /// <summary>
+        /// Cache that holds all the elements in memory
+        /// </summary>
         public static Study.FDACache StudyCacheForSaving { get; set; }
+        /// <summary>
+        /// Factory used to create persistence managers for elements in FDA. 
+        /// </summary>
+        /// <param name="cache">The cache holds all the elements in memory</param>
         public PersistenceFactory(Study.FDACache cache)
         {
             StudyCacheForSaving = cache;

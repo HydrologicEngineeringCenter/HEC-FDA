@@ -18,7 +18,7 @@ namespace FdaViewModel.StageTransforms
      
         #endregion
         #region Constructors
-        public StageTransformsOwnerElement(BaseFdaElement owner) : base(owner)
+        public StageTransformsOwnerElement( ) : base()
         {
             Name = "Stage Transforms";
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
@@ -35,12 +35,12 @@ namespace FdaViewModel.StageTransforms
         #region Voids
         public  void AddBaseElements(Study.FDACache cache)
         {
-            RatingCurveOwnerElement r = new RatingCurveOwnerElement(this);
+            RatingCurveOwnerElement r = new RatingCurveOwnerElement();
             AddElement(r);
             cache.RatingCurveParent = r;
 
 
-            ExteriorInteriorOwnerElement i = new ExteriorInteriorOwnerElement(this);
+            ExteriorInteriorOwnerElement i = new ExteriorInteriorOwnerElement();
             AddElement(i);
             cache.ExteriorInteriorParent = i;
         }
