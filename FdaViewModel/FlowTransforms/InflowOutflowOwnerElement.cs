@@ -77,16 +77,17 @@ namespace FdaViewModel.FlowTransforms
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
                 .WithSaveUndoRedo(saveHelper)
-                .WithSiblingRules(this)
-               .WithParentGuid(this.GUID)
-               .WithCanOpenMultipleTimes(true);
+                .WithSiblingRules(this);
+               //.WithParentGuid(this.GUID)
+               //.WithCanOpenMultipleTimes(true);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
             //vm.ParentGUID = this.GUID;
             //StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);
-
-            Navigate( vm, false, false, "Create Inflow Outflow");
+            string title = "Create Inflow Outflow";
+            DynamicTabVM tab = new DynamicTabVM(title, vm, "NewInflowOutflow" + Name);
+            Navigate( tab, false, false);
             //if (!vm.WasCancled)
             //{
             //    if (!vm.HasFatalError)

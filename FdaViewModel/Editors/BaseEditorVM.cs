@@ -11,6 +11,7 @@ using FdaViewModel.GeoTech;
 using FdaViewModel.ImpactArea;
 using FdaViewModel.Inventory;
 using FdaViewModel.StageTransforms;
+using FdaViewModel.Tabs;
 using FdaViewModel.Utilities;
 using FdaViewModel.Watershed;
 using FdaViewModel.WaterSurfaceElevation;
@@ -81,32 +82,32 @@ namespace FdaViewModel.Editors
         /// This needs to happen when the importer save button gets clicked. 
         /// I need to switch it over to being a dictionary
         /// </summary>
-        private void RemoveFromTabsDictionaryAndAddElementEditor(object sender, EventArgs e)
-        {
-            ChildElement element = (ChildElement)sender;
+        //private void RemoveFromTabsDictionaryAndAddElementEditor(object sender, EventArgs e)
+        //{
+        //    ChildElement element = (ChildElement)sender;
 
-            if(Study.FdaStudyVM._TabsDictionary.ContainsKey(ParentGUID))
-            {
-                for(int i = 0;i< Study.FdaStudyVM._TabsDictionary[ParentGUID].Count;i++)
-                {
-                    if(Study.FdaStudyVM._TabsDictionary[ParentGUID][i].BaseVM == this)
-                    {
-                        Study.FdaStudyVM._TabsDictionary[ParentGUID].RemoveAt(i);
-                        DynamicTabVM newTab = new DynamicTabVM("", this);
-                        newTab.CanOpenMultipleTimes = false;
-                        Study.FdaStudyVM._TabsDictionary.Add(element.GUID, new List<IDynamicTab>() { newTab });
-                        this.ParentGUID = element.GUID;
-                        break;
-                    }
-                }
-            }
-        }
+        //    if(Study.FdaStudyVM._TabsDictionary.ContainsKey(ParentGUID))
+        //    {
+        //        for(int i = 0;i< Study.FdaStudyVM._TabsDictionary[ParentGUID].Count;i++)
+        //        {
+        //            if(Study.FdaStudyVM._TabsDictionary[ParentGUID][i].BaseVM == this)
+        //            {
+        //                Study.FdaStudyVM._TabsDictionary[ParentGUID].RemoveAt(i);
+        //                DynamicTabVM newTab = new DynamicTabVM("", this);
+        //                newTab.CanOpenMultipleTimes = false;
+        //                Study.FdaStudyVM._TabsDictionary.Add(element.GUID, new List<IDynamicTab>() { newTab });
+        //                this.ParentGUID = element.GUID;
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
 
         private void SetActionManagerValues()
         {
             if (ActionManager.SaveUndoRedoHelper != null)
             {
-                ActionManager.SaveUndoRedoHelper.RemoveFromTabsDictionary += RemoveFromTabsDictionaryAndAddElementEditor;
+                //ActionManager.SaveUndoRedoHelper.RemoveFromTabsDictionary += RemoveFromTabsDictionaryAndAddElementEditor;
             }
             if (ActionManager.HasSiblingRules)
             {
@@ -119,14 +120,14 @@ namespace FdaViewModel.Editors
                     AddSiblingRules((ParentElement)ActionManager.SiblingElement);
                 }
             }
-            if(ActionManager.HasCanOpenMultipleTimes)
-            {
-                this.CanOpenMultipleTimes = ActionManager.CanOpenMultipleTimes;
-            }
-            if(ActionManager.HasParentGuid)
-            {
-                this.ParentGUID = ActionManager.ParentGuid;
-            }
+            //if(ActionManager.HasCanOpenMultipleTimes)
+            //{
+            //    this.CanOpenMultipleTimes = ActionManager.CanOpenMultipleTimes;
+            //}
+            //if(ActionManager.HasParentGuid)
+            //{
+            //    this.ParentGUID = ActionManager.ParentGuid;
+            //}
         }
 
         /// <summary>

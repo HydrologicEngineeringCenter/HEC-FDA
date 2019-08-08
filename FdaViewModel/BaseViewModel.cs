@@ -1,5 +1,6 @@
 ﻿using FdaModel.Messaging;
 using FdaViewModel.Study;
+using FdaViewModel.Tabs;
 using FdaViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Windows.Input;
 
 namespace FdaViewModel
 {
-    public delegate void RequestNavigationHandler( BaseViewModel vm, bool newWindow, bool asDialog, string title);
+    public delegate void RequestNavigationHandler( IDynamicTab tab, bool newWindow, bool asDialog);
     public delegate void RequestShapefilePathsHandler(ref List<string> files);
     public delegate void RequestShapefilePathsOfTypeHandler(ref List<string> files, Utilities.VectorFeatureType type);
     public delegate void RequestAddToMapWindowHandler(object sender, Utilities.AddMapFeatureEventArgs args);//needs to be capable of passing a geopackage connection??
@@ -21,7 +22,7 @@ namespace FdaViewModel
     /// The base class for all view model classes. Contains methods that are common among all view model classes
     /// such as validation, navigation, adding rules.
     /// </summary>
-    public abstract class BaseViewModel : System.ComponentModel.INotifyPropertyChanged, System.ComponentModel.IDataErrorInfo, IDisposable, FdaModel.Messaging.IReportMessage
+    public abstract class BaseViewModel : System.ComponentModel.INotifyPropertyChanged, System.ComponentModel.IDataErrorInfo, IDisposable, IReportMessage
     {
         #region Notes
         #endregion
@@ -160,22 +161,7 @@ namespace FdaViewModel
             //HelpAction = helpAction;
         }
         #endregion
-        #region Voids
-
-        public Action<DynamicTabVM, bool> AddThisToTabs { get; set; }
-        public Action<BaseViewModel> RemoveFromTabsDictionary { get; set; }
-        public Guid ParentGUID { get;
-            set; }
-        /// <summary>
-        /// This is used to tell the ui if there should be a top row with the pop in button
-        /// </summary>
-        public bool CanPopIn { get; set; } = false;
-        public bool CanOpenMultipleTimes { get; set; } = false;
-        public void AddPopThisIntoATabAction( Action<DynamicTabVM,bool> addTab)
-        {
-            AddThisToTabs = addTab;
-            CanPopIn = true;
-        }
+        #region Voids     
 
         public void AddTransaction(object sender, Utilities.Transactions.TransactionEventArgs transaction)
         {
@@ -312,18 +298,18 @@ namespace FdaViewModel
         /// <param name="newWindow">True: displays the view in a new window. False: displays the view as a new tab in the main window.</param>
         /// <param name="asDialog">If newWindow is true, this determines if it is modal or not</param>
         /// <param name="title">The title for the tab or window.</param>
-        public void Navigate( BaseViewModel vm, bool newWindow = true, bool asDialog = true, string title = "FDA 2.0")
+        public void Navigate( IDynamicTab tab, bool newWindow = true, bool asDialog = true)
         {
             string name = this.Name;
             string type = this.GetType().ToString();
             if (RequestNavigation != null)
             {
-                vm.WasCanceled = true;
-                RequestNavigation( vm, newWindow, asDialog, title);
+                tab.BaseVM.WasCanceled = true;
+                RequestNavigation( tab, newWindow, asDialog);
             }
             else
             {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Navigation requested from " + this.GetType().Name + " to " + vm.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
+                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Navigation requested from " + this.GetType().Name + " to " + tab.BaseVM.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
             }
         }
         public void ShapefilePaths(ref List<string> paths)

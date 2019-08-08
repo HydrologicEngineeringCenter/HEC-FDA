@@ -76,9 +76,9 @@ namespace FdaViewModel.FrequencyRelationships
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSaveUndoRedo(saveHelper)
-               .WithSiblingRules(this)
-               .WithParentGuid(this.GUID)
-               .WithCanOpenMultipleTimes(true);
+               .WithSiblingRules(this);
+               //.WithParentGuid(this.GUID)
+               //.WithCanOpenMultipleTimes(true);
 
              AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(actionManager);
             //LogPearsonIII curve = new Statistics.LogPearsonIII(4, .4, .5, 50);
@@ -88,8 +88,9 @@ namespace FdaViewModel.FrequencyRelationships
             vm.Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };
             //StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);
-
-            Navigate(vm,false,false,"Import Frequency");
+            string header = "Import Frequency";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportFrequency");
+            Navigate(tab,false,false);
             //if (!vm.WasCanceled)
             //{
             //    if (!vm.HasError)

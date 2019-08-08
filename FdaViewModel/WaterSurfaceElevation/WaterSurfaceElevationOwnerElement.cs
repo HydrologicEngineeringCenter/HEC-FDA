@@ -5,6 +5,7 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.WaterSurfaceElevation
 {
@@ -65,15 +66,16 @@ namespace FdaViewModel.WaterSurfaceElevation
         public void ImportWaterSurfaceElevations(object arg1, EventArgs arg2)
         {
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-               .WithSiblingRules(this)
-               .WithParentGuid(this.GUID)
-               .WithCanOpenMultipleTimes(true);
+               .WithSiblingRules(this);
+               //.WithParentGuid(this.GUID)
+               //.WithCanOpenMultipleTimes(true);
 
             WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(actionManager);
             //StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);
-
-            Navigate(vm, false,false,"Import Water Surface Elevation");
+            string header = "Import Water Surface Elevation";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportWatSurfElev");
+            Navigate(tab, false,false);
             //if (!vm.WasCanceled)
             //{
             //    if (!vm.HasFatalError)

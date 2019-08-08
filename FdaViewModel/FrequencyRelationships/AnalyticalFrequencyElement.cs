@@ -72,12 +72,14 @@ namespace FdaViewModel.FrequencyRelationships
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSaveUndoRedo(saveHelper)
-                .WithSiblingRules(this)
-               .WithParentGuid(this.GUID)
-               .WithCanOpenMultipleTimes(false);
+                .WithSiblingRules(this);
+               //.WithParentGuid(this.GUID)
+               //.WithCanOpenMultipleTimes(false);
 
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this, actionManager);// Name, Distribution, Description, _Owner);
-            Navigate(vm, false, false, "Edit " + vm.Name);
+            string header = "Edit " + vm.Name;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditAnalyticalFrequency" + vm.Name);
+            Navigate(tab, false, false);
             //if (!vm.WasCanceled)
             //{
             //    if (!vm.HasError)

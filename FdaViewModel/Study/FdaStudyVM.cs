@@ -12,6 +12,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Collections;
 using System.Windows;
+using FdaViewModel.Tabs;
 
 namespace FdaViewModel.Study
 {
@@ -34,7 +35,7 @@ namespace FdaViewModel.Study
 
         private MapWindowMapTreeViewConnector _MWMTVConn;
 
-        public static Dictionary<Guid, List<IDynamicTab>> _TabsDictionary;
+        //public static Dictionary<Guid, List<IDynamicTab>> _TabsDictionary;
         private string _SaveStatus;
 
         private bool _MapViewVisible;
@@ -85,11 +86,11 @@ namespace FdaViewModel.Study
 
 
 
-        public ObservableCollection<IDynamicTab> Tabs
-        {
-            get { return _Tabs; }
-            set { _Tabs = value; NotifyPropertyChanged(); }
-        }
+        //public ObservableCollection<IDynamicTab> Tabs
+        //{
+        //    get { return _Tabs; }
+        //    set { _Tabs = value; NotifyPropertyChanged(); }
+        //}
 
         //public List<BaseViewModel> Avalon
         //{
@@ -140,10 +141,23 @@ namespace FdaViewModel.Study
             get { return _TransactionsMessagesVisible; }
             set { _TransactionsMessagesVisible = value; NotifyPropertyChanged(); }
         }
+
+        /// <summary>
+        /// This needs to be here so that the UI has something to bind to.
+        /// </summary>
+        public TabController TabFactoryInstance
+        {
+            get; set;
+        }
+
         #endregion
         #region Constructors
         public FdaStudyVM() : base()
         {
+            TabController tabFactory = TabController.Instance;
+            TabFactoryInstance = tabFactory;
+            tabFactory.RequestNavigation += Navigate;
+            
             //load elements
             //put elements in cent repo
             //pass repo to studyelement
@@ -153,9 +167,8 @@ namespace FdaViewModel.Study
             CurrentStudyElement = new StudyElement();
             CurrentStudyElement.GUID = Guid.NewGuid();
             _StudyElement.RenameTreeViewElement += RenameTheMapTreeViewItem;
-            _StudyElement.AddBackInTreeViewElement += AddTheMapTreeViewItemBackIn;
-            _StudyElement.RemoveCreateNewStudyTab += RemoveCreateNewStudyTab;
-            _StudyElement.SaveTheOpenTabs += SaveTheTabs;
+            _StudyElement.AddBackInTreeViewElement += AddTheMapTreeViewItemBackIn;           
+           // _StudyElement.SaveTheOpenTabs += SaveTheTabs;
             _StudyElement.RequestNavigation += Navigate;
             _StudyElement.RequestShapefilePaths += ShapefilePaths;
             _StudyElement.RequestShapefilePathsOfType += ShapefilePathsOfType;
@@ -173,45 +186,18 @@ namespace FdaViewModel.Study
             FdaModel.Utilities.Initialize.InitializeGDAL();
 
 
-            //testing the new tabs stuff
-            if (Tabs == null)
-            {
-                Tabs = new ObservableCollection<IDynamicTab>();
-                //Avalon = new List<BaseViewModel>();
-                _TabsDictionary = new Dictionary<Guid, List<IDynamicTab>>();
-            }
-
             StudyStatusBar.SaveStatusChanged += UpdateSaveStatus;
-            //load the cent repo
-            //CentralRepository.Instance().RatingCurveElements = 
-            // CentralRepository.Create(StudyElement);
+        
 
         }
-
-
-
-        //public FdaStudyVM(string filepath) : base()
-        //{
-        //    _MainStudyTree = new List<Utilities.ParentElement>();
-        //    StudyElement s = new StudyElement(this);
-        //    s.RequestNavigation += Navigate;
-        //    s.RequestShapefilePaths += ShapefilePaths;
-        //    s.RequestShapefilePathsOfType += ShapefilePathsOfType;
-        //    s.RequestAddToMapWindow += AddToMapWindow;
-        //    s.RequestRemoveFromMapWindow += RemoveFromMapWindow;
-        //    s.AddBaseElements();
-        //    _MainStudyTree.Add(s);
-
-        //}
-        #endregion
 
         #region Voids
 
         private void OpenADifferentStudy(object sender, EventArgs e)
         {
-            _TabsDictionary.Clear();
-            Tabs.Clear();
-            AddMapsTab(_MWMTVConn.MapTreeView);
+           // _TabsDictionary.Clear();
+            //Tabs.Clear();
+            //AddMapsTab(_MWMTVConn.MapTreeView);
         }
         private void AddTheMapTreeViewItemBackIn(object sender, EventArgs e)
         {
@@ -265,364 +251,33 @@ namespace FdaViewModel.Study
 
         }
 
-        #region Tab Stuff
-        private bool DoesUserWantToDeleteTab(IDynamicTab tab)
-        {
-            if (tab.BaseVM.HasChanges)
-            {
-                CustomMessageBoxVM vm = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK_Cancel, "Are you sure you want to remove tab '" + tab.Header + "'?");
-                Navigate(vm, true, true, "Remove Tab");
-                return (vm.ClickedButton == CustomMessageBoxVM.ButtonsEnum.Cancel) ? false : true;
-            }
-            return true;
-        }
-        public void RemoveTab(object sender, EventArgs e)
-        {
-            IDynamicTab tab = (IDynamicTab)sender;
-            RemoveTab(tab);
-            
-        }
-        /// <summary>
-        /// I don't like this one bit but i needed a way to switch this boolean when the red x is clicked
-        /// on the tab. I couldn't think of any other way to do it with the current constraints.
-        /// </summary>
-        /// <param name="vm"></param>
-        private void DealWithTheConditionsEditorImporters(Plots.iConditionsImporter vm)
-        {
-            vm.CancelClicked();           
-        }
-        public void RemoveTab(IDynamicTab tab)
-        {
-            if(tab.BaseVM is Plots.iConditionsImporter)
-            {
-                DealWithTheConditionsEditorImporters((Plots.iConditionsImporter)tab.BaseVM);
-            }
-
-            if (tab.BaseVM.ParentGUID != null)
-            {
-                if (_TabsDictionary.ContainsKey(tab.BaseVM.ParentGUID))
-                {
-
-                    if (_TabsDictionary[tab.BaseVM.ParentGUID].Contains(tab))
-                    {
-                        _TabsDictionary[tab.BaseVM.ParentGUID].Remove(tab);
-                    }
-                    else
-                    {
-                        for(int i = 0;i< _TabsDictionary[tab.BaseVM.ParentGUID].Count;i++)
-                        {
-                            if(_TabsDictionary[tab.BaseVM.ParentGUID][i].BaseVM == tab.BaseVM)
-                            {
-                                _TabsDictionary[tab.BaseVM.ParentGUID].RemoveAt(i);
-                            }
-                        }
-                    }
-                    Tabs.Remove(tab);
-                }
-            }
-        }
-        public void RemoveTabAtIndex(int index)
-        {
-            IDynamicTab tab = Tabs[index];
-            RemoveTab(tab);
-        }
-
-        /// <summary>
-        /// This one gets called when closing a window. There is no dynamicTab just a vm in the window.
-        /// </summary>
-        /// <param name="vm"></param>
-        public void RemoveTabFromDictionary(BaseViewModel vm)
-        {
-            if(vm is Plots.iConditionsImporter)
-            {
-                DealWithTheConditionsEditorImporters((Plots.iConditionsImporter)vm);
-            }
-            if (vm.ParentGUID != null)
-            {
-                if (_TabsDictionary.ContainsKey(vm.ParentGUID))
-                {
-                    //foreach (IDynamicTab tab in _TabsDictionary[vm.ParentGUID])
-                    for(int i = 0;i<_TabsDictionary[vm.ParentGUID].Count;i++)
-                    {
-                        if (_TabsDictionary[vm.ParentGUID][i].BaseVM.GetType() == vm.GetType() )
-                        {
-                            if(vm.Name == null && _TabsDictionary[vm.ParentGUID][i].BaseVM.Name == null)
-                            {
-                                _TabsDictionary[vm.ParentGUID].Remove(_TabsDictionary[vm.ParentGUID][i]);
-                            }
-                            else if(vm.Name.Equals(_TabsDictionary[vm.ParentGUID][i].BaseVM.Name))
-                            {
-                                _TabsDictionary[vm.ParentGUID].Remove(_TabsDictionary[vm.ParentGUID][i]);
-                            }
-                        }
-                    }
-                }
-                //RemoveTabFromDictionary(parentElement);
-            }
-            //Tabs.Remove(tab);
-            // _TabsDictionary.Remove(id);
-
-        }
-        public void PopTabOut(object sender, EventArgs e)
-        {
-            DynamicTabVM tabToPopOut = (DynamicTabVM)sender;
-            //remove the tab from the tabs list
-            RemoveTab(sender, e);
-            //hook up the event for how to remove from the dictionary if the window is closed
-            tabToPopOut.BaseVM.RemoveFromTabsDictionary = RemoveTabFromDictionary;
-            Navigate(tabToPopOut.BaseVM, true, false, tabToPopOut.Header);
-        }
+       
 
         public void AddMapsTab(OpenGLMapping.MapTreeView mapTreeView)
         {
             _MWMTVConn = MapWindowMapTreeViewConnector.Instance;
             _MWMTVConn.MapTreeView = mapTreeView;
 
-
-
             MapWindowControlVM vm = new MapWindowControlVM(ref _MWMTVConn);
             //vm.SetMapWindowProperty += SetMapWindowProperty;
             vm.Name = "map window vm";
-            DynamicTabVM mapTabVM = new DynamicTabVM("Map", vm, false);
-            Tabs.Add(mapTabVM);
-            SelectedDynamicTabIndex = Tabs.Count - 1;
+            DynamicTabVM mapTabVM = new DynamicTabVM("Map", vm, "Map", false, false);
+            TabController.Instance.AddTab(mapTabVM);
         }
 
-        public void RemoveCreateNewStudyTab(object sender, EventArgs e)
-        {
-            //BaseFdaElement studyElement =  StudyCache.GetParentElementOfType<StudyElement>();
-            //if (studyElement != null)
-            {
-                if (_TabsDictionary.ContainsKey(CurrentStudyElement.GUID))
-                {
-
-                    //foreach (IDynamicTab tab in _TabsDictionary[CurrentStudyElement.GUID])
-                    for(int i = 0;i<_TabsDictionary[CurrentStudyElement.GUID].Count;i++)
-                    {
-                        if (_TabsDictionary[CurrentStudyElement.GUID][i].BaseVM.GetType() == typeof(Study.NewStudyVM))
-                        {
-                            Tabs.Remove(_TabsDictionary[CurrentStudyElement.GUID][i]);
-                            _TabsDictionary[CurrentStudyElement.GUID].Remove(_TabsDictionary[CurrentStudyElement.GUID][i]);
-                        }
-                    }
-                }
-            }
-        }
+        /// <summary>
+        /// Adds the "Create New Study" tab to the main window. We remove the tab if the user loads 
+        /// a previously created study.
+        /// </summary>
         public void AddCreateNewStudyTab()
         {
-
             NewStudyVM vm = new NewStudyVM(CurrentStudyElement);
-            vm.ParentGUID = CurrentStudyElement.GUID;
-            DynamicTabVM newStudyTab = new DynamicTabVM("Create New Study", vm, true);
-            newStudyTab.Name = "CreateStudyTab";//i use this to query the dictionary later to remove it
-            AddTab(newStudyTab);
-            SelectedDynamicTabIndex = Tabs.Count - 1;
+            DynamicTabVM newStudyTab = new DynamicTabVM("Create New Study", vm, "CreateNewStudy", false, true);
+            newStudyTab.Name = "CreateStudyTab";
+            TabController.Instance.AddTab(newStudyTab);
         }
 
-        public DynamicTabVM SelectedDynamicTab { get; set; }
-
-        private int GetIndexInTabs(IDynamicTab dynamicTab)
-        {
-            int index = -1;
-            foreach (IDynamicTab tab in Tabs)
-            {
-                if (tab.BaseVM.GetType() == dynamicTab.BaseVM.GetType()) //might have to do tab.gettype == dynamicTabVM.gettype
-                {
-
-                }
-            }
-
-                    return index;
-        }
-
-        public void AddTab(IDynamicTab dynamicTabVM, bool poppingIn = false)
-        {
-
-            //if (dynamicTabVM.BaseVM.CanOpenMultipleTimes == false)
-            {
-                if (dynamicTabVM.BaseVM.ParentGUID != null)
-                {
-                    if (_TabsDictionary.ContainsKey(dynamicTabVM.BaseVM.ParentGUID))
-                    {
-                        foreach (IDynamicTab tab in _TabsDictionary[dynamicTabVM.BaseVM.ParentGUID])
-                        {
-                            if (tab.BaseVM.GetType() == dynamicTabVM.BaseVM.GetType()) //might have to do tab.gettype == dynamicTabVM.gettype
-                            {
-                                //we have a duplicate, select the open one
-                                int index = Tabs.IndexOf(tab);
-                                if(index != -1)
-                                {
-                                    SelectedDynamicTabIndex = index;
-                                }
-                       
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-
-            //    //some tabs we do not want to allow to be openned multiple times and some we do
-            //    if (dynamicTabVM.BaseVM.CanOpenMultipleTimes == false)
-            //{
-            //    //foreach(KeyValuePair<Guid,IDynamicTab> entry in _TabsDictionary)
-            //    {
-            //        if(_TabsDictionary.ContainsKey(uniqueID))
-            //        //if(entry.Value.Header.Equals(dynamicTabVM.Header) && entry.Value.BaseVM.Name.Equals(dynamicTabVM.BaseVM.Name))
-            //        {
-            //            //SelectedDynamicTabIndex = Tabs.IndexOf(tab);
-            //            return;
-            //        }
-            //    }
-            //foreach (IDynamicTab tab in Tabs)
-            //{
-            //    if (tab.Header.Equals(dynamicTabVM.Header))
-            //    {
-            //        SelectedDynamicTabIndex = Tabs.IndexOf(tab);
-            //        return;
-            //    }
-            //}
-            //if (poppingIn == false)
-            //{
-            //    foreach (IDynamicTab tab in PoppedOutTabs)
-            //    {
-            //        if (tab.Header.Equals(dynamicTabVM.Header))
-            //        {
-            //            //I wanted to bring the focus to the currect window. This is possible by looping through the open windows and then 
-            //            //checking the datacontext to get the vm and maybe comparing. Then set the focus on it. I don't have access to the view from
-            //            //here and it seems like more work than its worth.
-            //            //foreach (var Window in Application.Current.Windows)
-            //            //{
-            //            //    int i = 0;
-            //            //   //if(Window.)
-            //            //    // TODO: write what you want here
-            //            //}
-            //            return;
-            //        }
-            //    }
-            //}
-        //}
-        
-    
-            StudyStatusBar.SaveStatus = StudyStatusBar.UnsavedChangesMessage;
-
-           // Guid uniqueID = Guid.NewGuid();
-            //dynamicTabVM.BaseVM.TabUniqueID = uniqueID;
-            dynamicTabVM.RemoveEvent += RemoveTab;
-            dynamicTabVM.PopTabOutEvent += PopTabOut;
-            //this is used to go from a window back to a tab after it has been popped out
-            dynamicTabVM.BaseVM.AddPopThisIntoATabAction((dynamicTab, isPoppingIn) => AddTab(dynamicTab, isPoppingIn));
-            Tabs.Add(dynamicTabVM);
-            //Avalon.Add(dynamicTabVM.BaseVM);
-
-            AddTabToTabsDictionary(dynamicTabVM);
-            //_TabsDictionary.Add(uniqueID, dynamicTabVM);
-            SelectedDynamicTabIndex = Tabs.Count - 1;//I want to make the tab we just added be selected. But some crazy stuff
-            //happens and it magically sets the selected tab to be count -2. Maybe its an order thing and the tab isn't actually 
-            //in yet or something.
-        }
-
-    private void AddTabToTabsDictionary(IDynamicTab tab)
-        {
-            if(_TabsDictionary.ContainsKey(tab.BaseVM.ParentGUID))
-            {
-                _TabsDictionary[tab.BaseVM.ParentGUID].Add(tab);
-            }
-            else
-            {
-                _TabsDictionary.Add(tab.BaseVM.ParentGUID, new List<IDynamicTab>() { tab });
-            }
-        }
-
-        private void SaveTheTabs(object sender, EventArgs e)
-        {
-            List<Guid> keys = new List<Guid>();
-            foreach (KeyValuePair<Guid,List<IDynamicTab>> entry in _TabsDictionary)
-            {
-                keys.Add(entry.Key);
-            }
-
-
-            bool allTabsSaved = true;
-            int tabsCount = _TabsDictionary.Count;
-            for(int j = 0;j<tabsCount;j++)
-            //foreach (KeyValuePair<Guid,List<IDynamicTab>> entry in _TabsDictionary)
-            {
-                List<IDynamicTab> tabsForKey = _TabsDictionary[keys[j]];
-                for(int i = 0;i< tabsForKey.Count;i++)
-                //foreach (IDynamicTab tab in entry.Value)
-                {
-                    IDynamicTab tab = tabsForKey[i];
-                    if (tab.BaseVM.GetType().BaseType == typeof(Editors.BaseEditorVM))
-                    {
-                        tab.BaseVM.Validate();
-                        if (tab.BaseVM.HasError)
-                        {
-                            //do something?
-                        }
-                        if (tab.BaseVM.HasFatalError)
-                        {
-                            allTabsSaved = false;
-                            TransactionRows.Add(new TransactionRowItem(DateTime.Now.ToString("G"), "Unable to save tab: '" + tab.Header + "' because it is in an error state.", "i forget how to get the user"));
-                        }
-                        else
-                        {
-                            ((Editors.BaseEditorVM)tab.BaseVM).Save();
-                        }
-                    }
-                }
-            }
-            if (allTabsSaved)
-            {
-                SaveStatus = "Saved " + DateTime.Now.ToString("G");
-            }
-            else
-            {
-                SaveStatus = "Unsaved Changes";
-
-            }
-            //foreach(IDynamicTab tab in Tabs)
-            //{
-            //    if(tab.BaseVM.GetType().BaseType == typeof(Editors.BaseEditorVM))
-            //    {
-            //        tab.BaseVM.Validate();
-            //        if(tab.BaseVM.HasError)
-            //        {
-            //            //do something?
-            //        }
-            //        if(tab.BaseVM.HasFatalError)
-            //        {
-            //            TransactionRows.Add(new TransactionRowItem(DateTime.Now.ToString("G"), "Unable to save tab: '" + tab.Header + "' because it is in an error state.","i forget how to get the user"));
-            //        }
-            //        else
-            //        {
-            //            ((Editors.BaseEditorVM)tab.BaseVM).Save();
-            //        }
-            //    }
-            //}
-
-            ////now save the open windows
-            //foreach (IDynamicTab tab in PoppedOutTabs)
-            //{
-            //    if (tab.BaseVM.GetType().BaseType == typeof(Editors.BaseEditorVM))
-            //    {
-            //        tab.BaseVM.Validate();
-            //        if (tab.BaseVM.HasError)
-            //        {
-            //            //do something?
-            //        }
-            //        if (tab.BaseVM.HasFatalError)
-            //        {
-            //            TransactionRows.Add(new TransactionRowItem(DateTime.Now.ToString("G"), "Unable to save window: '" + tab.Header + "' because it is in an error state.", "i forget how to get the user"));
-            //        }
-            //        else
-            //        {
-            //            ((Editors.BaseEditorVM)tab.BaseVM).Save();
-            //        }
-            //    }
-            //}
-
-        }
+       
 
         #endregion
         public void WriteMapLayersXMLFile()
@@ -647,10 +302,16 @@ namespace FdaViewModel.Study
             string path = Storage.Connection.Instance.ProjectDirectory + "\\MapLayers.xml";
             if (File.Exists(path) && _MWMTVConn != null)
             {
-
-                XElement mapLayers = XElement.Load(path);
-                string messageOut = "";
-                _MWMTVConn.MapTreeView.LoadFromXElement(mapLayers,ref messageOut);
+                try
+                {
+                    XElement mapLayers = XElement.Load(path);
+                    string messageOut = "";
+                    _MWMTVConn.MapTreeView.LoadFromXElement(mapLayers, ref messageOut);
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show("Error reading map layers xml file. " + ex.Message);
+                }
                         
             }
         }
@@ -695,16 +356,6 @@ namespace FdaViewModel.Study
         {
             //AddRule(nameof(StudyElement), () => { return AreConditionsValid(); }, GetConditionErrors());
         }
-
-        //private bool AreConditionsValid()
-        //{
-        //    return false;
-        //}
-
-        //private string GetConditionErrors()
-        //{
-        //    return "Condition 1 is in error\nCondition 2 is in error.";
-        //}
 
        
         #endregion

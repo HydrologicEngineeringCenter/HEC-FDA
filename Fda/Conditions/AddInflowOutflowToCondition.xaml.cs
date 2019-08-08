@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Tabs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,39 +35,11 @@ namespace Fda.Conditions
 
         private void btn_OK_Click(object sender, RoutedEventArgs e)
         {
-
             FdaViewModel.Conditions.AddInflowOutflowToConditionVM vm = (FdaViewModel.Conditions.AddInflowOutflowToConditionVM)this.DataContext;
 
             if (vm.IsPoppedOut == true)
             {
-                var window = Window.GetWindow(this);
-                //vm.WasCanceled = true;
-                //window.Close();
-                if (window is ViewWindow)
-                {
-
-                    FdaViewModel.Utilities.WindowVM winVM = (FdaViewModel.Utilities.WindowVM)window.DataContext;
-                    if (winVM.StudyVM != null) //then it is a tab not a seperate window
-                    {
-                        if (winVM.StudyVM.SelectedDynamicTabIndex != -1)
-                        {
-                            winVM.StudyVM.RemoveTabAtIndex(winVM.StudyVM.SelectedDynamicTabIndex);
-                        }
-                        else
-                        {
-                            window.Close();
-                        }
-                    }
-                    else
-                    {
-                        window.Close();
-                    }
-
-                }
-                else
-                {
-                    window.Close();
-                }
+                TabController.Instance.CloseTabOrWindow(this);
             }
             vm.OKClicked();
         }
@@ -77,37 +50,9 @@ namespace Fda.Conditions
 
             if (vm.IsPoppedOut == true)
             {
-                var window = Window.GetWindow(this);
-                //vm.WasCanceled = true;
-                //window.Close();
-                if (window is ViewWindow)
-                {
-
-                    FdaViewModel.Utilities.WindowVM winVM = (FdaViewModel.Utilities.WindowVM)window.DataContext;
-                    if (winVM.StudyVM != null) //then it is a tab not a seperate window
-                    {
-                        if (winVM.StudyVM.SelectedDynamicTabIndex != -1)
-                        {
-                            winVM.StudyVM.RemoveTabAtIndex(winVM.StudyVM.SelectedDynamicTabIndex);
-                        }
-                        else
-                        {
-                            window.Close();
-                        }
-                    }
-                    else
-                    {
-                        window.Close();
-                    }
-
-                }
-                else
-                {
-                    window.Close();
-                }
+                TabController.Instance.CloseTabOrWindow(this);
             }
             vm.CancelClicked();
-
         }
 
         private void btn_PopOutImporter_Click(object sender, RoutedEventArgs e)

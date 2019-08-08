@@ -538,7 +538,9 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         {
             if(_SelectedOccType == null) { return; }
             CreateNewDamCatVM vm = new CreateNewDamCatVM(DamageCategoriesList);
-            Navigate(vm, true, true, "New Damage Category");
+            string header = "New Damage Category";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "NewDamageCategory");
+            Navigate(tab, true, true);
             if(vm.WasCanceled == false)
             {
                 if(vm.HasError == false)
@@ -567,7 +569,9 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         {         
 
             CreateNewDamCatVM vm = new CreateNewDamCatVM(GetAllOccTypeNames());
-            Navigate(vm, true, true, "New Occupancy Type");
+            string header = "New Occupancy Type";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "NewOccupancyType");
+            Navigate(tab, true, true);
             if (vm.WasCanceled == false)
             {
                 if (vm.HasError == false)
@@ -613,7 +617,9 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         {
             if(_SelectedOccType == null) { return; }
             CreateNewDamCatVM vm = new CreateNewDamCatVM(SelectedOccType.Name + "_Copy", GetAllOccTypeNames());
-            Navigate(vm, true, true, "New Occupancy Type");
+            string header = "Copy Occupancy Type";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "CopyOccupancyType");
+            Navigate(tab, true, true);
             if (vm.WasCanceled == false)
             {
                 if (vm.HasError == false)
@@ -690,7 +696,9 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public void LaunchRenameOcctypeGroup()
         {
             CreateNewDamCatVM vm = new CreateNewDamCatVM(SelectedOccTypeGroup.Name, DamageCategoriesList);
-            Navigate(vm, true, true, "Rename Occupancy Type Group");
+            string header = "Rename Occupancy Type Group";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "RenameOccupancyTypeGroup");
+            Navigate(tab, true, true);
             if (vm.WasCanceled == false)
             {
                 if (vm.HasError == false)
@@ -850,7 +858,9 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public void LaunchDepthDamageEditor()
         {
             DepthDamage.DepthDamageCurveEditorVM vm = new DepthDamage.DepthDamageCurveEditorVM();
-            Navigate(vm, true, true, "Depth Damage Curve Editor");
+            string header = "Depth Damage Curve Editor";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "DepthDamageCurveEditor");
+            Navigate(tab, true, true);
             if (vm.WasCanceled == false)
             {
                 if (vm.HasError == false)

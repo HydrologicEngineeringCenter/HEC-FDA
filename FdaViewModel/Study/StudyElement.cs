@@ -5,6 +5,7 @@ using FdaModel.ComputationPoint;
 using FdaModel.Functions.OrdinatesFunctions;
 using System.Collections.ObjectModel;
 using FdaViewModel.Conditions;
+using FdaViewModel.Tabs;
 
 namespace FdaViewModel.Study
 {
@@ -17,7 +18,6 @@ namespace FdaViewModel.Study
         public event EventHandler SaveTheOpenTabs;
         public event EventHandler UpdateTransactionsAndMessages;
         public event EventHandler LoadMapLayers;
-        public event EventHandler RemoveCreateNewStudyTab;
         private List<string> _RegistryStudies = new List<string>();
         private ObservableCollection<ParentElement> _ConditionsTree;
 
@@ -117,7 +117,9 @@ namespace FdaViewModel.Study
 
         private void ViewTransactions(object arg1, EventArgs arg2)
         {
-            Navigate( new Utilities.Transactions.TransactionVM());
+            string header = "Transactions";
+            DynamicTabVM tab = new DynamicTabVM(header, new Utilities.Transactions.TransactionVM(), "Transactions");
+            Navigate(tab );
         }
 
 
@@ -336,7 +338,9 @@ namespace FdaViewModel.Study
         private void CreateStudyFromWindow(object arg1, EventArgs arg2)
         {
             NewStudyVM vm = new NewStudyVM(this);
-            Navigate( vm, false,false,"Create New Study");
+            string header = "Create New Study";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "StudyElement");
+            Navigate( tab, false,false);
             //if (!vm.HasError)
             //{
             //    CreateStudyFromViewModel(vm);
@@ -399,7 +403,10 @@ namespace FdaViewModel.Study
         {
             if (!Storage.Connection.Instance.IsConnectionNull)
             {
-                Navigate( new PropertiesVM(Storage.Connection.Instance.GetTable(PropertiesVM.TableName)), true, true);
+                PropertiesVM prop =  new PropertiesVM(Storage.Connection.Instance.GetTable(PropertiesVM.TableName));
+                string header = "Study Properties";
+                DynamicTabVM tab = new DynamicTabVM(header, prop, "Properties");
+                Navigate(tab, true, true);
             }
             else
             {
@@ -411,7 +418,7 @@ namespace FdaViewModel.Study
         {
             OpeningADifferentStudy?.Invoke(this, new EventArgs());
             //if a study is opened and the create new study tab is still in the tabs, then remove it
-            RemoveCreateNewStudyTab?.Invoke(this, new EventArgs());
+            TabController.Instance.RemoveTab("CreateNewStudy");
 
             UpdateRecentStudiesFile(path);
             
@@ -459,8 +466,9 @@ namespace FdaViewModel.Study
         private void OpenStudy(object sender, EventArgs e)
         {
             Study.ExistingStudyVM ESVM = new ExistingStudyVM(this);
-            //Navigate( ESVM, true, true, "Open Existing Study");
-            Navigate( ESVM, false, false, "Open Existing Study");
+            string header = "Open Study";
+            DynamicTabVM tab = new DynamicTabVM(header, ESVM, "OpenStudy");
+            Navigate( tab, false, false);
 
             //if (!ESVM.WasCanceled)
             //{

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +21,8 @@ namespace Fda.Utilities
     /// </summary>
     public partial class TabHeaderControl : UserControl
     {
-
+        private bool _MouseDown;
+        private Point _StartPoint;
 
         public TabHeaderControl()
         {
@@ -59,7 +61,40 @@ namespace Fda.Utilities
         private void btn_PopOut_Click(object sender, RoutedEventArgs e)
         {
             FdaViewModel.Utilities.DynamicTabVM vm = (FdaViewModel.Utilities.DynamicTabVM)this.DataContext;
-            vm.PopTabOut();
+            vm.PopTabIntoWindow();
         }
+
+        private void TextBlock_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (_MouseDown && HasDraggedMinimumDistance(e))
+            {
+                DynamicTabVM vm = (DynamicTabVM)this.DataContext;
+                if (vm.CanPopOut)
+                {
+                    vm.PopTabIntoWindowDragging();
+                }
+            }
+
+        }
+
+       private bool HasDraggedMinimumDistance(MouseEventArgs e)
+        {
+            return Math.Abs(e.GetPosition(null).X - _StartPoint.X) >= SystemParameters.MinimumHorizontalDragDistance &&
+            Math.Abs(e.GetPosition(null).Y - _StartPoint.Y) >= SystemParameters.MinimumVerticalDragDistance;
+        }
+
+        private void TextBlock_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            _MouseDown = false;
+        }
+       
+
+        private void TextBlock_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _MouseDown = true;
+            _StartPoint = e.GetPosition(null);
+        }
+
+        
     }
 }

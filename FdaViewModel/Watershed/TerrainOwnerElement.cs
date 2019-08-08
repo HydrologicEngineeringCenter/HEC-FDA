@@ -58,9 +58,9 @@ namespace FdaViewModel.Watershed
         private void AddNew(object arg1, EventArgs arg2)
         {
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSiblingRules(this)
-                .WithParentGuid(this.GUID)
-                .WithCanOpenMultipleTimes(true);
+                .WithSiblingRules(this);
+                //.WithParentGuid(this.GUID)
+                //.WithCanOpenMultipleTimes(true);
 
             List<string> availableVRTPaths = new List<string>();
             ShapefilePaths(ref availableVRTPaths);
@@ -71,7 +71,9 @@ namespace FdaViewModel.Watershed
             //vm.CanOpenMultipleTimes = true;
             //vm.ParentGUID = this.GUID;
             //vm.TerrainFileFinishedCopying += ReplaceTemporaryTerrainNode;
-            Navigate( vm, false,true,"Import Terrain");
+            string header = "Import Terrain";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportTerrain");
+            Navigate( tab, false,true);
             //if (!vm.WasCanceled)
             //{
             //    if (!vm.HasFatalError)

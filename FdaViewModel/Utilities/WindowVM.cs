@@ -37,6 +37,7 @@ namespace FdaViewModel.Utilities
                 CurrentView.RequestNavigation += CurrentView_RequestNavigation;
             }
         }
+        public IDynamicTab Tab { get; set; }
         public double MinimumScaleFactor
         {
             get { return _MinimumScaleFactor; }
@@ -99,22 +100,23 @@ namespace FdaViewModel.Utilities
             CurrentView = StudyVM;
             Title = "FDA 2.0";
         }
-        public WindowVM(BaseViewModel vm)
+        public WindowVM(IDynamicTab tab)
         {
-            CurrentView = vm;
-            Title = vm.GetType().Name;
+            Tab = tab;
+            CurrentView = tab.BaseVM;
+            Title = tab.Header; //vm.GetType().Name;
         }
         #endregion
         #region Voids
-        private void CurrentView_RequestNavigation( BaseViewModel vm, bool newWindow, bool asDialog, string title = "FDA 2.0")
+        private void CurrentView_RequestNavigation( IDynamicTab tab, bool newWindow, bool asDialog)
         {
             if (LaunchNewWindow != null)
             {
                 if (newWindow)
                 {
-                    WindowVM tmp = new WindowVM(vm);
+                    WindowVM tmp = new WindowVM(tab);
                     tmp.Scalable = true;
-                    tmp.Title = title;
+                    tmp.Title = tab.Header;
                     LaunchNewWindow(tmp,asDialog);
                 }
                 else
@@ -123,10 +125,14 @@ namespace FdaViewModel.Utilities
                     //{
                     //    StudyVM.Tabs = new System.Collections.ObjectModel.ObservableCollection<IDynamicTab>();
                     //}
-                    DynamicTabVM tab = new DynamicTabVM(title, vm, true);
-                    StudyVM.AddTab(tab);
-                    //TabFactory tabFactory = TabFactory.Instance;
-                    //tabFactory.AddTab(tab);
+                    //vm.CanPopIn = true;
+                    //DynamicTabVM tab = new DynamicTabVM(title, vm, true);
+                   
+                    //old tab method
+                    //StudyVM.AddTab(tab);
+                    //new tab method
+                    TabController tabFactory = TabController.Instance;
+                    tabFactory.AddTab(tab);
                    
                     
                     // StudyVM.SelectedTabIndex = StudyVM.Tabs.Count - 1;
@@ -134,7 +140,7 @@ namespace FdaViewModel.Utilities
                 }
             }else
             {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("A new window launch was requested from " + this.GetType().Name + " to " + vm.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
+                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("A new window launch was requested from " + this.GetType().Name + " to " + tab.BaseVM.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
             }
 
         }

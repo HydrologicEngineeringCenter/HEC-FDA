@@ -84,14 +84,14 @@ namespace FdaViewModel.GeoTech
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSaveUndoRedo(saveHelper)
-                 .WithSiblingRules(this)
-               .WithParentGuid(this.GUID)
-               .WithCanOpenMultipleTimes(true);
+                 .WithSiblingRules(this);
+               //.WithParentGuid(this.GUID)
+               //.WithCanOpenMultipleTimes(true);
 
             Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(defaultCurve, leveeCollection, actionManager);
-            
-
-            Navigate(vm, false, false, "Create Failure Function");
+            string header = "Create Failure Function";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "NewFailureFunction");
+            Navigate(tab, false, false );
             //FailureFunctionEditorVM vm = new FailureFunctionEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar), leveeList);
             //if (!vm.WasCanceled)
             //{

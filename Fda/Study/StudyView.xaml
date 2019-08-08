@@ -20,38 +20,7 @@
         <utils:ContextMenuConverter x:Key="converter"/>
         <utils:BoolToBoldConverter x:Key="BoolToBoldConverter" />
         <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <!--<Style TargetType="{x:Type Label}">
-            <Setter Property="ContextMenu" Value="{Binding Actions, Converter={StaticResource converter }}"/>
-        </Style>-->
-        <Style TargetType="{x:Type utils:CustomTabControl}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type TabControl}">
-                        <Grid Background="{TemplateBinding Background}" ClipToBounds="True" KeyboardNavigation.TabNavigation="Local" SnapsToDevicePixels="True">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition x:Name="ColumnDefinition0" />
-                                <ColumnDefinition x:Name="ColumnDefinition1" Width="0" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition x:Name="RowDefinition0" Height="Auto" />
-                                <RowDefinition x:Name="RowDefinition1" Height="*" />
-                            </Grid.RowDefinitions>
-                            <DockPanel Margin="2,2,0,0" LastChildFill="False">
-                                <TabPanel x:Name="HeaderPanel" Margin="0,0,0,-1" VerticalAlignment="Bottom" Panel.ZIndex="1" DockPanel.Dock="Left"
-                                  IsItemsHost="True" KeyboardNavigation.TabIndex="1" />
-                            </DockPanel>
-                            <Border x:Name="ContentPanel" Grid.Row="1" Grid.Column="0"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            KeyboardNavigation.DirectionalNavigation="Contained" KeyboardNavigation.TabIndex="2" KeyboardNavigation.TabNavigation="Local">
-                                <Grid x:Name="PART_ItemsHolder" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                            </Border>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+       
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -70,18 +39,8 @@
         <!--<Menu Grid.ColumnSpan="2" Name="MainMenu" VerticalAlignment="Stretch"/>-->
 
         <Label Name="lbl_Study" Grid.Row="0" Grid.ColumnSpan="2"  Content="{Binding CurrentStudyElement.CustomTreeViewHeader}" FontSize="14" MouseRightButtonDown="lbl_Study_MouseRightButtonDown"  ContextMenu="{Binding CurrentStudyElement.Actions, Converter={StaticResource converter }}"/>
-        
-        <!--<StackPanel Name="stack_MapViewTabView" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal">
-        <Button Name="btn_MapView" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Click="btn_MapView_Click" >
-            Map View
-        </Button>
-        <Button Name="btn_TabsView" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Click="btn_TabsView_Click">
-            Tab View
-        </Button>
-        </StackPanel>-->
-        
-        
-        
+
+
         <TabControl Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"  SelectedIndex="{Binding SelectedTab, Mode=TwoWay}" MinWidth="80">
 
             <TabItem Header="Conditions" Name="ConditionsTab">
@@ -149,99 +108,31 @@
             </TabItem>
         </TabControl>
 
-        <!--<utils:MapWindowControl x:Name="MapWindowControl" Grid.Row="1" Grid.Column="1" Margin="0,25,5,0" Visibility="Hidden"/>-->
-        <!--<Grid Name="mapwindowgrid"  Grid.Row="1" Grid.Column="1" Margin="0,30,5,5" >
-            <OpenGL:WPFMapWindow x:Name="MapWindowControl" />
-        </Grid>-->
 
 
-                        <utils:CustomTabControl x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding Tabs}" SelectedIndex="{Binding SelectedDynamicTabIndex, Mode=TwoWay}"   Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  >
-                           
-                            <!--<TabControl.ItemContainerStyle>
-        <Style TargetType="TabItem">
-            <Setter Property="Header" Value=/>
-        </Style>
-    </TabControl.ItemContainerStyle>-->
-          
-      <TabControl.ItemTemplate>
-        <DataTemplate DataType="VMUtils:DynamicTabVM">
-                                <utils:TabHeaderControl/>
-                                <!--<StackPanel Orientation="Horizontal" >
-                
-                <TextBlock Name="txt_PopOut" Text="pop" VerticalAlignment="Top" HorizontalAlignment="Center" MouseLeftButtonDown="txt_PopOut_MouseLeftButtonDown" Width="7" Margin="6,0,0,0" Foreground="Black" >
-                    <TextBlock.Style>
-                <Style TargetType="{x:Type TextBlock}">
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="LightBlue"/>
-                        </Trigger>
-                    </Style.Triggers>  
-                </Style>
-            </TextBlock.Style> 
-                    </TextBlock>
-                
-                
-            <TextBlock Text="{Binding Header}"/>
-                <Button Name="btn_CloseTab" Width="15"  Content="x" Click="btn_CloseTab_Click" FontSize="12" Margin="3,0,0,0" Background="White" Foreground="Red" BorderThickness="0" VerticalAlignment="Top" Visibility="{Binding CanDelete,Converter={StaticResource BoolToVisibilityConverter}}" />
-                <TextBlock Text="x" VerticalAlignment="Top" HorizontalAlignment="Center" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Width="7" Margin="6,0,0,0" Foreground="Black" >
-                    <TextBlock.Style>
-                <Style TargetType="{x:Type TextBlock}">
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="LightBlue"/>
-                        </Trigger>
-                    </Style.Triggers>  
-                </Style>
-            </TextBlock.Style> 
-                    </TextBlock>
-            </StackPanel>-->
-        </DataTemplate>
-    </TabControl.ItemTemplate>
-          
-          
-          
-    <TabControl.ContentTemplate>
-        <DataTemplate DataType="VMUtils:DynamicTabVM">
-          <!--<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">-->
-            <ContentControl Name="masterControl" Content="{Binding BaseVM}" />
-          <!--</ScrollViewer>-->
-        </DataTemplate>
-    </TabControl.ContentTemplate>
-          
-      </utils:CustomTabControl>
 
-                        <!--<xcad:DockingManager Grid.Row="1" Grid.Column="1" DocumentsSource="{Binding Avalon}">
-
-                            <xcad:DockingManager.LayoutItemContainerStyle>
-                                --><!-- you can add additional bindings from the layoutitem to the DockWindowViewModel --><!--
-                                <Style TargetType="{x:Type dockctrl:LayoutItem}">
-                                    <Setter Property="Title" Value="{Binding Name}" />
-                                    --><!--<Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
-                                    <Setter Property="CanClose" Value="{Binding Model.CanClose}" />--><!--
-                                </Style>
-                            </xcad:DockingManager.LayoutItemContainerStyle>
-                        </xcad:DockingManager>-->
+                        <TabControl  Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1" ItemsSource="{Binding TabFactoryInstance.Tabs}" SelectedIndex="{Binding TabFactoryInstance.SelectedDynamicTabIndex, Mode=TwoWay}"   Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  >
 
 
-                        <!--<DockPanel Grid.Row="1" Grid.Column="1" Name="ToolPanel">
-                            <OpenGL:BasicMapToolbar x:Name="MapToolBar" ToolBarTray.IsLocked="True"/>
-                            <ToolBar Name="SelectionToolbar" ToolBarTray.IsLocked="True" VerticalAlignment="Bottom">
-                                <OpenGL:SelectableLayersControl Name="SelectableLayers" Width="300" />
-                            </ToolBar>
-                            <OpenGL:FeatureEditToolbar x:Name="FeatureEditorToolbar" ToolBarTray.IsLocked="True"/>
-                        </DockPanel>
-                        <Grid Name="StudyStatusPanel" Background="#FFAEBCD1" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
-                            <Border Name="StatusBorder" Margin="0,0,5,0" VerticalAlignment="Center" HorizontalAlignment="Left">
+                            <TabControl.ItemTemplate>
+                                <DataTemplate DataType="VMUtils:DynamicTabVM">
+                                    <utils:TabHeaderControl/>
+                 
+                                </DataTemplate>
+                            </TabControl.ItemTemplate>
 
-                            </Border>
-                        </Grid>
-                        <Grid Grid.Column="1" Grid.Row="2" MinHeight="600">
-                            <OpenGL:WPFMapWindow x:Name="MapWindow"/>
-                        </Grid>-->
-                        <!--<utils:MapWindowControl Grid.Row="2" Grid.Column="1" MapTreeView="{Binding MapTreeView, Mode=TwoWay}"/>-->
 
+
+                            <TabControl.ContentTemplate>
+                                <DataTemplate DataType="VMUtils:DynamicTabVM">
+                                    <ContentControl Name="masterControl" Content="{Binding BaseVM}" />
+                                </DataTemplate>
+                            </TabControl.ContentTemplate>
+
+                        </TabControl>
+
+                       
                         <GridSplitter Grid.Row="1" Grid.Column="0" Margin="0,22,0,0" Background="Gray" BorderBrush="DarkGray" BorderThickness="1" HorizontalAlignment="Right" Width="3"/>
-                        <!--<GridSplitter Grid.Row="2" Grid.Column="1" Margin="0" Background="Gray" BorderBrush="DarkGray" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="3"/>-->
 
                         <GridSplitter Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" />
                         <utils:TransactionMessageControl Grid.Row="3" Grid.ColumnSpan="2" />

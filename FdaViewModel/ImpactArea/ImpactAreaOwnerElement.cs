@@ -69,18 +69,19 @@ namespace FdaViewModel.ImpactArea
             }
 
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSiblingRules(this)
-                .WithParentGuid(this.GUID)
-                .WithCanOpenMultipleTimes(true);
+                .WithSiblingRules(this);
+               // .WithParentGuid(this.GUID)
+                //.WithCanOpenMultipleTimes(true);
 
             ImpactAreaImporterVM vm = new ImpactAreaImporterVM(observpaths, actionManager);
             //ExtendEventsToImporter(vm);
-            
+
             //vm.AddSiblingRules(this);
             //vm.ParentGUID = this.GUID;
             //vm.CanOpenMultipleTimes = true;
-
-            Navigate( vm,false,false,"Import Impact Areas");
+            string header = "Import Impact Areas";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportImpactAreas");
+            Navigate( tab,false,false);
             //if (!vm.HasError & !vm.WasCanceled)
             //{
                 

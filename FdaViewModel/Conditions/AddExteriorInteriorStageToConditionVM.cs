@@ -149,7 +149,9 @@ namespace FdaViewModel.Conditions
             else
             {
                 CustomMessageBoxVM custmb = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "An Exterior Interior Curve has not been selected.");
-                Navigate(custmb);
+                String header = "Error";
+                DynamicTabVM tab = new DynamicTabVM(header, custmb, "ExtIntError1");
+                Navigate(tab);
             }
         }
 

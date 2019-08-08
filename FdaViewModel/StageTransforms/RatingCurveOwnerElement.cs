@@ -82,15 +82,16 @@ namespace FdaViewModel.StageTransforms
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSaveUndoRedo(saveHelper)
-                .WithSiblingRules(this)
-               .WithParentGuid(this.GUID)
-               .WithCanOpenMultipleTimes(true);
+                .WithSiblingRules(this);
+              // .WithParentGuid(this.GUID)
+               //.WithCanOpenMultipleTimes(true);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
             //StudyCache.AddSiblingRules(vm,this);
             //vm.AddSiblingRules(this);
-
-            Navigate(vm, false, true, "Create Rating Curve");
+            string header = "Create Rating Curve " + vm.Name;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateRatingCurve");
+            Navigate(tab, false, true);
             
         }
         //public override void AddBaseElements()

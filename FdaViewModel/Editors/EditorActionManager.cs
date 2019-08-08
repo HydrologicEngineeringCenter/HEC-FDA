@@ -15,8 +15,8 @@ namespace FdaViewModel.Editors
 
         public bool HasSiblingRules { get; set; }
         public BaseFdaElement SiblingElement { get; set; }//this can be a parent element or a sibling
-        public bool HasCanOpenMultipleTimes { get; set; }
-        public bool CanOpenMultipleTimes { get; set; }
+        //public bool HasCanOpenMultipleTimes { get; set; }
+        //public bool CanOpenMultipleTimes { get; set; }
         public bool HasParentGuid { get; set; }
         public Guid ParentGuid { get; set; }
 
@@ -33,18 +33,18 @@ namespace FdaViewModel.Editors
             
         }
 
-        public EditorActionManager WithParentGuid(Guid parentGuid)
-        {
-            HasParentGuid = true;
-            ParentGuid = parentGuid;
-            return this;
-        }
-        public EditorActionManager WithCanOpenMultipleTimes(bool canOpenMultipleTimes)
-        {
-            HasCanOpenMultipleTimes = true;
-            CanOpenMultipleTimes = canOpenMultipleTimes;
-            return this;
-        }
+        //public EditorActionManager WithParentGuid(Guid parentGuid)
+        //{
+        //    HasParentGuid = true;
+        //    ParentGuid = parentGuid;
+        //    return this;
+        //}
+        //public EditorActionManager WithCanOpenMultipleTimes(bool canOpenMultipleTimes)
+        //{
+        //    HasCanOpenMultipleTimes = true;
+        //    CanOpenMultipleTimes = canOpenMultipleTimes;
+        //    return this;
+        //}
         public EditorActionManager WithSiblingRules(BaseFdaElement element)
         {
             HasSiblingRules = true;

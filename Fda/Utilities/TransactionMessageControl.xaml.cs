@@ -44,7 +44,7 @@ namespace Fda.Utilities
         {
             //TransactionsAndMessagesTabControl.items
             //Tab_TransactionLog.Background = Brushes.Red;
-            Tab_TransactionLog.Header += "!";
+            //Tab_TransactionLog.Header += "!";
             //Tab_TransactionLog.cont
             //DataGrid_TransactionLog.rows
             //double height = MainGrid.ActualHeight;

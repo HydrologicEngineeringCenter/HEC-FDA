@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace FdaViewModel.Conditions
 {
@@ -558,16 +559,18 @@ namespace FdaViewModel.Conditions
 
 
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                 .WithSiblingRules(this)
-               .WithParentGuid(this.GUID)
-               .WithCanOpenMultipleTimes(false);
+                 .WithSiblingRules(this);
+              // .WithParentGuid(this.GUID)
+               //.WithCanOpenMultipleTimes(false);
 
             ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, infOutControl, ratingControl, extIntStageControl, stageDamageControl, damageFrequencyControl, this, actionManager);
             ///////////////////////////////////////
 
 
             //ConditionsEditorVM vm = new ConditionsEditorVM(Name,Description, AnalysisYear, impactAreas,ImpactAreaSet,ImpactArea, UseAnalyiticalFlowFrequency, freqeles, AnalyticalFlowFrequency, UseInflowOutflow, inflowOutflowList,InflowOutflowElement,UseRatingCurve, ratingeles,RatingCurve, UseExteriorInteriorStage, extIntList,ExteriorInteriorElement,UseLevee,leveeList,LeveeElement,UseFailureFunction,failureFunctionList,FailureFunctionElement,UseAggregatedStageDamage, damageles, StageDamage,UseThreshold,ThresholdType,ThresholdValue, (ConditionsOwnerElement)_Owner);
-            Navigate( vm, false,false,"Edit " + vm.Name);
+            string title = "Edit " + vm.Name;
+            DynamicTabVM tab = new DynamicTabVM(title, vm, "EditCondition" + Name);
+            Navigate( tab, false,false);
             //if (!vm.WasCanceled)
             //{
             //    if (!vm.HasError)
@@ -648,8 +651,17 @@ namespace FdaViewModel.Conditions
             selectedElementNames.Add(StageDamageElement.Name);
             selectedElementNames.Add("Computed Stage Frequency");
             // write out results for testing purposes.
-            Plots.LinkedPlotsVM vem = new Plots.LinkedPlotsVM(result, ThresholdType, ThresholdValue, selectedElementNames);
-            Navigate( vem, false, false, "Computed Condition");
+            if (result.Realizations.Count != 0)
+            {
+                Plots.LinkedPlotsVM vem = new Plots.LinkedPlotsVM(result, ThresholdType, ThresholdValue, selectedElementNames);
+                string title = "Condition " + Name;
+                DynamicTabVM tab = new DynamicTabVM(title, vem, "ComputedCondition" + Name);
+                Navigate(tab, false, false);
+            }
+            else
+            {
+                MessageBox.Show("The compute produced no realizations");
+            }
             //Output.LinkedPlotsVM vm = new Output.LinkedPlotsVM(result);
             //Navigate(vm);
         }

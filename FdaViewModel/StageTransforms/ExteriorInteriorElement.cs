@@ -81,14 +81,15 @@ namespace FdaViewModel.StageTransforms
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
                 .WithSaveUndoRedo(saveHelper)
-                .WithSiblingRules(this)
-               .WithParentGuid(this.GUID)
-               .WithCanOpenMultipleTimes(false);
+                .WithSiblingRules(this);
+              // .WithParentGuid(this.GUID)
+              // .WithCanOpenMultipleTimes(false);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
-
-            Navigate(vm, false, true, "Edit " + vm.Name);
+            string header = "Edit " + vm.Name;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditExtInt"+vm.Name);
+            Navigate(tab, false, true);
             
         }
         #endregion

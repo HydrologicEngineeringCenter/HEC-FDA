@@ -7,6 +7,7 @@ using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using FdaViewModel.Editors;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.WaterSurfaceElevation
 {
@@ -245,13 +246,17 @@ namespace FdaViewModel.WaterSurfaceElevation
                 if (atLeastOneFileIsFlt == true || atLeastOneFileIsTif == true)
                 {
                     Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "Cannot mix .vrt and other file types.\nAll files need to be .vrt or .tif.");
-                    Navigate(msgBoxVM, true, true, "Incompatible File Types");
+                    string header = "Incompatible File Types";
+                    DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "IncompatibleFileTypes");
+                    Navigate(tab, true, true);
                     return false;
                 }
                 else if (numberOfSelectedRows < 8)
                 {
                     Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.Yes_No, "You have only selected " + numberOfSelectedRows + " files. You will get better results with 8 or more files.\n\nDo you want to continue?");
-                    Navigate(msgBoxVM, true, true, "Small Number of Files Selected");
+                    string header = "Small Number of Files Selected";
+                    DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "SmallNumberOfFilesSelected");
+                    Navigate(tab, true, true);
                     if (msgBoxVM.ClickedButton == Utilities.CustomMessageBoxVM.ButtonsEnum.Yes)
                     {
                         //close the form and save the wse's
@@ -303,7 +308,9 @@ namespace FdaViewModel.WaterSurfaceElevation
             if (atLeastOneFileIsFlt == true)
             {
                 Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.Yes_No, "At least one of your files has an extension of *.flt. HEC-Fda only accepts all *.vrt files or all *.tif files.\n\nWould you like to convert your *.flt files to *.tif files?");
-                Navigate(msgBoxVM, true, true, "Change flt to tif");
+                string header = "Change flt to tif";
+                DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "ChangeFltToTif");
+                Navigate(tab, true, true);
                 if (msgBoxVM.ClickedButton == Utilities.CustomMessageBoxVM.ButtonsEnum.Yes)
                 {
                     //change flt to tif and proceed somehow
@@ -318,7 +325,9 @@ namespace FdaViewModel.WaterSurfaceElevation
                 if (numberOfSelectedRows < 8)
                 {
                     Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.Yes_No, "You have only selected " + numberOfSelectedRows + " files. You will get better results with 8 or more files.\n\nDo you want to continue?");
-                    Navigate(msgBoxVM, true, true, "Small Number of Files Selected");
+                    string header = "SmallNumberOfFilesSelected";
+                    DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "SmallNumberOfFilesSelected");
+                    Navigate(tab, true, true);
                     if (msgBoxVM.ClickedButton == Utilities.CustomMessageBoxVM.ButtonsEnum.Yes)
                     {
                         //close the form and save the wse's
@@ -386,7 +395,9 @@ namespace FdaViewModel.WaterSurfaceElevation
             catch (Exception e)
             {
                 Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "An error occured while trying to copy the selected files into the hydraulics directory in your study.\n\n" + e.Message);
-                Navigate(msgBoxVM, true, true, "Error Copying Files");
+                string header = "Error Copying Files";
+                DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "ErrorCopyingFiles");
+                Navigate(tab, true, true);
                 return false;
             }
             //string relativePath = System.IO.Path.GetDirectoryName(destinationFilePath) + "\\" + System.IO.Path.GetFileName(destinationFilePath);

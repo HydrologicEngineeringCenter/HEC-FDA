@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Tabs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -53,9 +54,8 @@ namespace Fda.Inventory
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
 
-
             FdaViewModel.Inventory.ImportStructuresFromShapefileVM vm = (FdaViewModel.Inventory.ImportStructuresFromShapefileVM)this.DataContext;
-            if( vm.NextButtonClicked() == true) //this does validation and returns true if it passes
+            if (vm.NextButtonClicked() == true) //this does validation and returns true if it passes
             {
                 stack_ShapefilePath.Visibility = Visibility.Collapsed;
                 if (NextButton.Content.ToString() == "Finish")
@@ -67,41 +67,12 @@ namespace Fda.Inventory
                     NextButton.Content = "Finish";
                     PreviousButton.Visibility = Visibility.Visible;
                 }
-
             }
-            
         }
 
-       private void RunClosingLogic()
+        private void RunClosingLogic()
         {
-            var window = Window.GetWindow(this);
-            //vm.WasCanceled = false;
-            //window.Close();
-            if (window is ViewWindow)
-            {
-
-                FdaViewModel.Utilities.WindowVM winVM = (FdaViewModel.Utilities.WindowVM)window.DataContext;
-                if (winVM.StudyVM != null)
-                {
-                    if (winVM.StudyVM.SelectedDynamicTabIndex != -1)
-                    {
-                        winVM.StudyVM.RemoveTabAtIndex(winVM.StudyVM.SelectedDynamicTabIndex);
-                    }
-                    else
-                    {
-                        window.Close();
-                    }
-                }
-                else
-                {
-                    window.Close();
-                }
-
-            }
-            else
-            {
-                window.Close();
-            }
+            TabController.Instance.CloseTabOrWindow(this);
         }
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)

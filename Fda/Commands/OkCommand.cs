@@ -1,8 +1,12 @@
-﻿using System;
+﻿using FdaViewModel;
+using FdaViewModel.Tabs;
+using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Fda.Commands
 {
@@ -21,6 +25,29 @@ namespace Fda.Commands
         #region Constructors
         #endregion
         #region Voids
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>True if OK was clicked indicating user wants to continue with the close and save even though there are errors.</returns>
+        private bool DisplayErrors(BaseViewModel vm, Window window)
+        {
+            MessageVM messagevm = new MessageVM(vm.Error);
+            string header = "Error";
+            DynamicTabVM tab = new DynamicTabVM(header, messagevm, "ErrorMessage");
+            WindowVM newvm = new WindowVM(tab);
+            newvm.Title = "Non-Fatal Errors";
+
+            string headerMessage = "The following non-fatal errors were discovered:";
+            string footerMessage = "Saving data in an error state can cause issues later on. \nDo you want to continue?";
+            CustomMessageBoxVM customVM = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.Yes_No, headerMessage + Environment.NewLine + Environment.NewLine + messagevm.Message + Environment.NewLine + footerMessage);
+            header = "Error";
+            tab = new DynamicTabVM(header, customVM, "ErrorMessage");
+            ViewWindow newWindow = new ViewWindow(new WindowVM(tab));
+            newWindow.Owner = window;
+            newWindow.ShowDialog();
+            return customVM.ClickedButton == CustomMessageBoxVM.ButtonsEnum.Yes;
+        }
         public void Execute(object parameter)
         {
             //if we bind the "isenabled" of the ok button to the "hasFatalError" property of the vm, then the ok button will be disabled if there is any fatal errors
@@ -28,34 +55,20 @@ namespace Fda.Commands
             // and save the information in the form even if it has errors then use a "false" when declaring the rule. The ok button will be enabled and this method 
             // will be called.
             var values = (object[])parameter;
-            FdaViewModel.BaseViewModel vm = (FdaViewModel.BaseViewModel)values[0];
-            System.Windows.Window window = (System.Windows.Window)values[1];
+            BaseViewModel vm = (BaseViewModel)values[0];
+            Window window = (Window)values[1];
             //if (vm.HasChanges)//if the vm is loaded in an error state, the user will not be identified, we should consider not checking for changes.
-            {
+            //{
                 vm.Validate();
                
                 if (vm.HasError)
                 {
-                    FdaViewModel.Utilities.MessageVM messagevm = new FdaViewModel.Utilities.MessageVM(vm.Error);
-                    FdaViewModel.Utilities.WindowVM newvm = new FdaViewModel.Utilities.WindowVM(messagevm);
-                    newvm.Title = "Non-Fatal Errors";
-                    //ViewWindow newwindow = new ViewWindow(newvm);
-                    //newwindow.Owner = window;
-                    //newwindow.ShowDialog();
-                    string headerMessage = "The following non-fatal errors were discovered:";
-                    string footerMessage = "Saving data in an error state can cause issues later on. \nDo you want to continue?";
-                    FdaViewModel.Utilities.CustomMessageBoxVM customVM = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Yes_No, headerMessage + System.Environment.NewLine + Environment.NewLine + messagevm.Message + Environment.NewLine  + footerMessage);
-                    ViewWindow newWindow = new ViewWindow(new FdaViewModel.Utilities.WindowVM(customVM));
-                    newWindow.Owner = window;
-                    newWindow.ShowDialog();
-                    if(customVM.ClickedButton == FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Yes)
-                    {
-                        //save. which is done below.
-                    }
-                    else
+                bool yesClicked = DisplayErrors(vm, window);
+                    if(!yesClicked)
                     {
                         return;
                     }
+                    
                 }
                 //call save if its an editor?
                 if (vm.GetType().IsSubclassOf(typeof(FdaViewModel.Editors.BaseEditorVM)))
@@ -69,35 +82,11 @@ namespace Fda.Commands
                         return;
                     }
                 }
-            }
+           // }
 
             vm.WasCanceled = false;
 
-            if (window is ViewWindow)
-            {
-                
-                FdaViewModel.Utilities.WindowVM winVM = (FdaViewModel.Utilities.WindowVM)window.DataContext;
-                if(winVM.StudyVM != null) //then it is a tab not a seperate window
-                {
-                    if(winVM.StudyVM.SelectedDynamicTabIndex != -1)
-                    {
-                        winVM.StudyVM.RemoveTabAtIndex(winVM.StudyVM.SelectedDynamicTabIndex);
-                    }
-                    else
-                    {
-                        window.Close();
-                    }
-                }
-                else
-                {
-                    window.Close();
-                }
-
-            }
-            else
-            {
-                window.Close();
-            }
+            TabController.Instance.CloseTabOrWindow(window);
 
         }
         #endregion

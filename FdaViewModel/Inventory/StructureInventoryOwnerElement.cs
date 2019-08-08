@@ -87,15 +87,17 @@ namespace FdaViewModel.Inventory
             }
 
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                 .WithSiblingRules(this)
-               .WithParentGuid(this.GUID)
-               .WithCanOpenMultipleTimes(true);
+                 .WithSiblingRules(this);
+               //.WithParentGuid(this.GUID)
+               //.WithCanOpenMultipleTimes(true);
 
             ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(collectionOfPointFiles, actionManager, false);
             // StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);
 
-            Navigate(vm, false, false,"Import Structure Inventory");
+            string header = "Import Structure Inventory";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStructureInventory");
+            Navigate(tab, false, false);
            // if (!vm.WasCanceled)
             {
                // if (!vm.HasError)

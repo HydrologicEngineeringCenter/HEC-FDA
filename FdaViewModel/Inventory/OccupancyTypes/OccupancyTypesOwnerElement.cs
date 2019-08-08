@@ -94,19 +94,23 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             if (ListOfOccupancyTypesGroups.Count < 1)
             {
                 Utilities.CustomMessageBoxVM messageBox = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "There are no occupancy types to edit. You must first import a group of occupancy types.");
-                Navigate(messageBox);
+                string title = "No Occupancy Types";
+                DynamicTabVM tabb = new DynamicTabVM(title, messageBox, "ErrorMessage");
+                Navigate(tabb);
                 return;
             }
 
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager();
                //.WithSaveUndoRedo(saveHelper)
                //.WithSiblingRules(this)
-               .WithParentGuid(this.GUID)
-               .WithCanOpenMultipleTimes(false);
+               //.WithParentGuid(this.GUID)
+               //.WithCanOpenMultipleTimes(false);
 
             OccupancyTypesEditorVM vm = new OccupancyTypesEditorVM(GetSelectedOccTypeElement(), actionManager);
             vm.RequestNavigation += Navigate;
-            Navigate(vm, false, false, "Edit Occupancy Types");
+            string header = "Edit Occupancy Types";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditOccupancyTypes");
+            Navigate(tab, false, false);
 
 
             //Navigate(vm);
@@ -191,7 +195,9 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         {
 
             ImportOccupancyTypesVM vm = new ImportOccupancyTypesVM();
-            Navigate(vm,false,false,"Import Occupancy Types");
+            string header = "Import Occupancy Types";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportOccupancyTypes");
+            Navigate(tab,false,false);
             //if (!vm.WasCanceled)
             //{
             //    if (!vm.HasError)

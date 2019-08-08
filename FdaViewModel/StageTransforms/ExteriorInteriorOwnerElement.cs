@@ -78,15 +78,16 @@ namespace FdaViewModel.StageTransforms
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSaveUndoRedo(saveHelper)
-                .WithSiblingRules(this)
-               .WithParentGuid(this.GUID)
-               .WithCanOpenMultipleTimes(true);
+                .WithSiblingRules(this);
+               //.WithParentGuid(this.GUID)
+               //.WithCanOpenMultipleTimes(true);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);
-
-            Navigate(vm, false, true, "Create Exterior Interior");
+            string header = "Create Exterior Interior";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateExteriorInterior");
+            Navigate(tab, false, true);
 
             //ExteriorInteriorEditorVM vm = new ExteriorInteriorEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar));
             //Navigate(vm);

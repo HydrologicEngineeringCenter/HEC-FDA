@@ -7,6 +7,7 @@ using OpenGLMapping;
 using System.IO;
 using System.Xml;
 using FdaViewModel.Utilities;
+using System.Windows.Input;
 
 namespace Fda
 {
@@ -15,6 +16,8 @@ namespace Fda
     /// </summary>
     public partial class ViewWindow : Window
     {
+        private bool _CanDragIntoTab;
+        private bool _MousePressed;
         public ViewWindow()
         {
             InitializeComponent();
@@ -30,10 +33,10 @@ namespace Fda
             Closing += vm.OnClosing;
 
             //hide the top row with the pop in button if this vm doesn't support that
-            MainGrid.RowDefinitions[0].Height = new GridLength(0);            
+            MainGrid.RowDefinitions[0].Height = new GridLength(0);
         }
 
-       
+
         private void RequestAddToMapWindow(object sender, FdaViewModel.Utilities.AddMapFeatureEventArgs args)
         {
             Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
@@ -69,7 +72,7 @@ namespace Fda
                     LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)sargs.Features;
                     OpenGLDrawSingle drawInfo = new OpenGLMapping.OpenGLDrawSingle(sargs.DrawInfo);
                     MapPolygons mapPolys = new MapPolygons(polyFeatures, sargs.Attributes, sargs.FeatureName, drawInfo, mtv.MapWindow);
-                   VectorFeatureNode vfn = new VectorFeatureNode(mapPolys, sargs.FeatureName);
+                    VectorFeatureNode vfn = new VectorFeatureNode(mapPolys, sargs.FeatureName);
 
                     mtv.AddGisData(vfn, 0, true);
                     args.MapFeatureHash = vfn.GetHashCode();
@@ -92,8 +95,8 @@ namespace Fda
 
             }
 
-            
-           
+
+
 
         }
 
@@ -169,30 +172,28 @@ namespace Fda
             Title = newvm.Title;
             newvm.LaunchNewWindow += WindowSpawner;
             Closing += newvm.OnClosing;
-            
+
         }
         private void btn_PopWindowInToTabs_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Utilities.WindowVM vm = (FdaViewModel.Utilities.WindowVM)this.DataContext;
-            FdaViewModel.BaseViewModel vmToPopIn = vm.CurrentView;
-            if (vmToPopIn.AddThisToTabs != null)
-            {
-                vmToPopIn.AddThisToTabs(new DynamicTabVM(vm.Title, vmToPopIn, true), true);
-            }
+            WindowVM vm = (WindowVM)this.DataContext;
+            IDynamicTab tab = vm.Tab;
+            tab.PopWindowIntoTab();
+
             Close();
         }
 
 
-        private void WindowSpawner(FdaViewModel.Utilities.WindowVM newvm, bool asDialogue)
+        private void WindowSpawner(WindowVM newvm, bool asDialogue)
         {
             newvm.WasCanceled = true;
-            
+
             newvm.Scalable = false;
             ViewWindow newwindow = new ViewWindow(newvm);
             newwindow.Owner = this;
 
             //hide the top row with the pop in button if this vm doesn't support that
-            if(newvm.CurrentView.CanPopIn == false)
+            if (newvm.Tab.CanPopOut == false)
             {
                 newwindow.MainGrid.RowDefinitions[0].Height = new GridLength(0);
             }
@@ -200,7 +201,6 @@ namespace Fda
             if (asDialogue)
             {
                 newwindow.ShowDialog();
-
             }
             else
             {
@@ -210,39 +210,50 @@ namespace Fda
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-           
-
-            FdaViewModel.Utilities.WindowVM vm = (FdaViewModel.Utilities.WindowVM)this.DataContext;
-            if(vm.CurrentView.GetType() == typeof(FdaViewModel.Study.FdaStudyVM))
+            WindowVM vm = (WindowVM)this.DataContext;
+            if (vm.CurrentView.GetType() == typeof(FdaViewModel.Study.FdaStudyVM))
             {
                 FdaViewModel.Study.FdaStudyVM studyVM = (FdaViewModel.Study.FdaStudyVM)vm.CurrentView;
                 studyVM.Dispose();
             }
-            if (vm.CurrentView.RemoveFromTabsDictionary != null)
+            else
             {
-
-                vm.CurrentView.RemoveFromTabsDictionary(vm.CurrentView);
+                vm.Tab.RemoveWindow();
             }
             vm.Dispose();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            WindowVM vm = (WindowVM)this.DataContext;
+            if (vm != null && vm.Tab != null && vm.Tab.IsDragging)
+            {
+                Opacity = .75;
+                try
+                {
+                    DragMove();
+                }
+                catch(Exception ex)
+                {
+                    //do nothing
+                }
+                Opacity = 1;
+            }
             //if(masterControl.Content.GetType() == typeof(Utilities.IPopOut))
             //{
             //    this.Width = ((Utilities.IPopOut)masterControl.Content).PopOutWidth;
             //}
 
-           // if (this.DataContext.GetType() != typeof(FdaViewModel.Study.FdaStudyVM))
-           // {
-                //this.SizeToContent = SizeToContent.WidthAndHeight;
-                //then we want the window to size to the content better.
-                //masterControl.Content.
-                //this.Height = this.DesiredSize.Height;
-                //this.MinHeight = this.DesiredSize.Height;
-                //this.MinWidth = this.DesiredSize.Width;
-                //this.Width = this.DesiredSize.Width;
-                //need to figure out how to set max widths and heights.
+            // if (this.DataContext.GetType() != typeof(FdaViewModel.Study.FdaStudyVM))
+            // {
+            //this.SizeToContent = SizeToContent.WidthAndHeight;
+            //then we want the window to size to the content better.
+            //masterControl.Content.
+            //this.Height = this.DesiredSize.Height;
+            //this.MinHeight = this.DesiredSize.Height;
+            //this.MinWidth = this.DesiredSize.Width;
+            //this.Width = this.DesiredSize.Width;
+            //need to figure out how to set max widths and heights.
             //}
 
 
@@ -320,7 +331,7 @@ namespace Fda
                 max.Header = "Maximize";
                 max.Icon = new Image() { Source = new System.Windows.Media.Imaging.BitmapImage(new System.Uri("pack://application:,,,/Fda;component/Resources/Maximize.png")) };
             }
-                
+
             max.Click += MaximizeWindow;
 
             MenuItem close = new MenuItem();
@@ -343,5 +354,15 @@ namespace Fda
             //    vm.MWMTVConn.UpdateMapWindow();
             //}
         }
+
+        private void Window_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            WindowVM vm = (WindowVM)this.DataContext;
+            if (vm != null && vm.Tab != null && vm.Tab.IsDragging)
+            {
+                vm.Tab.IsDragging = false;
+            }
+        }
+
     }
 }

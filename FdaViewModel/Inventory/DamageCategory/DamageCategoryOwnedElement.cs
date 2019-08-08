@@ -61,7 +61,9 @@ namespace FdaViewModel.Inventory.DamageCategory
             {
                 vm = new DamageCategoriesVM();
             }
-            Navigate(vm,true,true,"Damage Category Editor");
+            string header = "Damage Category Editor";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "DamageCategoryEditor");
+            Navigate(tab,true,true);
             if (!vm.WasCanceled)
             {
                 if (vm.HasChanges)

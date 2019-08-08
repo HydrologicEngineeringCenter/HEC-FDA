@@ -87,14 +87,16 @@ namespace FdaViewModel.FlowTransforms
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
                 .WithSaveUndoRedo(saveHelper)
-                .WithSiblingRules(this)
-               .WithParentGuid(this.GUID)
-               .WithCanOpenMultipleTimes(false);
+                .WithSiblingRules(this);
+               //.WithParentGuid(this.GUID)
+               //.WithCanOpenMultipleTimes(false);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
             //vm.ParentGUID = this.GUID;
             //StudyCache.AddSiblingRules(vm, this);
-            Navigate( vm, false, false, "Edit " + vm.Name);
+            string header = "Edit " + vm.Name;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditInflowOutflow" + vm.Name);
+            Navigate( tab, false, false);
 
        
         }

@@ -117,7 +117,9 @@ namespace FdaViewModel.Conditions
             else
             {
                 CustomMessageBoxVM custmb = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "A frequency Curve has not been selected.");
-                Navigate(custmb);
+                string header = "Error";
+                DynamicTabVM tab = new DynamicTabVM(header, custmb, "MessageBoxError");
+                Navigate(tab);
             }
         }
         public void CancelClicked()

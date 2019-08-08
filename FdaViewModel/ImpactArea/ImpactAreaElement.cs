@@ -148,14 +148,16 @@ namespace FdaViewModel.ImpactArea
         {
             //create an observable collection of all the available paths
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSiblingRules(this)
-                .WithParentGuid(this.GUID)
-                .WithCanOpenMultipleTimes(false);
+                .WithSiblingRules(this);
+                //.WithParentGuid(this.GUID)
+                //.WithCanOpenMultipleTimes(false);
 
             ImpactAreaImporterVM vm = new ImpactAreaImporterVM(this, ImpactAreaRows, actionManager);
             //vm.AddSiblingRules(this);
             //vm.ParentGUID = this.GUID;
-            Navigate(vm, false,false,"Edit Impact Area");
+            string header = "Edit Impact Area";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditImpactArea");
+            Navigate(tab, false,false);
 
          
         }

@@ -167,7 +167,7 @@ namespace FdaViewModel.Editors
                 RemoveAndReplaceFromTabsDictionary(elementToSave);
                 SavingManager.SaveNew(elementToSave);
                 _IsFirstSave = false;
-                if (Study.FdaStudyVM._TabsDictionary.ContainsKey(ParentGUID))
+               // if (Study.FdaStudyVM._TabsDictionary.ContainsKey(ParentGUID))
                 {
                     //Study.FdaStudyVM._TabsDictionary.Remove
                 }

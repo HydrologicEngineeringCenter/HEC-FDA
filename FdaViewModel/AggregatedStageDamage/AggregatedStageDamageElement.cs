@@ -106,14 +106,14 @@ namespace FdaViewModel.AggregatedStageDamage
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSaveUndoRedo(saveHelper)
-                 .WithSiblingRules(this)
-               .WithParentGuid(this.GUID)
-               .WithCanOpenMultipleTimes(false);
+                 .WithSiblingRules(this);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
             vm.AddSiblingRules( this);
 
-            Navigate(vm, false, true, "Edit " + vm.Name);
+            string title = "Edit " + vm.Name;
+            DynamicTabVM tab = new DynamicTabVM(title, vm, "EditStageDamageElement" + Name);
+            Navigate(tab, false, true);
             //List<Inventory.DamageCategory.DamageCategoryOwnedElement> damcateleements = GetElementsOfType<Inventory.DamageCategory.DamageCategoryOwnedElement>();
             //Inventory.DamageCategory.DamageCategoryOwnedElement damcatelement = damcateleements.FirstOrDefault();
             //AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(this, (foo) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar));

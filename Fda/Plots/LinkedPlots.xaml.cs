@@ -51,7 +51,7 @@ namespace Fda.Plots
 
             //I am assuming that we will always have a valid plot 0 here?
             plot0.SetAsStartNode();
-            if (vm.Plot1VM.BaseFunction != null)
+            if (vm.Plot1VM != null && vm.Plot1VM.BaseFunction != null)
             {
                 plot0.SetNextPlotLinkage(doubleLineModulator);
                 doubleLineModulator.SetNextPlotLinkage(plot3);

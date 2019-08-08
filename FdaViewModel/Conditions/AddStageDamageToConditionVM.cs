@@ -164,7 +164,9 @@ namespace FdaViewModel.Conditions
             else
             {
                 CustomMessageBoxVM custmb = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "A Stage Damage Curve has not been selected.");
-                Navigate(custmb);
+                string header = "Error";
+                DynamicTabVM tab = new DynamicTabVM(header, custmb, "ErrorMessage");
+                Navigate(tab);
             }
         }
         public void CancelClicked()

@@ -143,12 +143,6 @@ namespace Fda.Study
             //vm.MWMTVConn. MapTreeView = MapTreeView;
             vm.AddMapsTab(MapTreeView);
             vm.AddCreateNewStudyTab();
-            for(int i = 0;i<vm.Tabs.Count;i++)
-            {
-                DynamicTabControl.SelectedIndex = i;
-                UpdateLayout();
-                
-            }
 
             //MapWindowControl.MapToolBar.MapWindow = MapWindowControl.MapWindow.MapWindow;
 
@@ -225,5 +219,6 @@ namespace Fda.Study
             //MapWindowControl.Visibility = Visibility.Hidden;
             //DynamicTabControl.Visibility = Visibility.Visible;
         }
+
     }
 }

@@ -118,7 +118,9 @@ namespace FdaViewModel.Conditions
             else
             {
                 CustomMessageBoxVM custmb = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "A Rating Curve has not been selected.");
-                Navigate(custmb, true, true, "No Rating Curve");
+                string header = "No Rating Curve";
+                DynamicTabVM tab = new DynamicTabVM(header, custmb, "ErrorMessage");
+                Navigate(tab, true, true);
             }
         }
         public void CancelClicked()

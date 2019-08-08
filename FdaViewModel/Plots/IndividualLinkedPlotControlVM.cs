@@ -5,6 +5,7 @@ using System.Text;
 using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using FdaViewModel.Utilities;
 
 namespace FdaViewModel.Plots
 {
@@ -121,7 +122,9 @@ namespace FdaViewModel.Plots
 
             ShowPreviousVM(sender, e);
             //CurveImporterVM.CancelClickedEvent += ImporterWasCanceled
-            Navigate((BaseViewModel)CurveImporterVM,false,false,"Importer");
+            string header = "Importer";
+            DynamicTabVM tab = new DynamicTabVM(header, (BaseViewModel)CurveImporterVM, "PlotImporter");
+            Navigate(tab,false,false);
             //if (((BaseViewModel)CurveImporterVM).WasCanceled == true)
             //{
             //    CurveImporterVM.IsPoppedOut = false;

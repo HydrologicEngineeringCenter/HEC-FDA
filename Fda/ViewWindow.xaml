@@ -17,6 +17,7 @@
         Width="1000"
         Height="800"
         
+        PreviewMouseUp="Window_PreviewMouseUp"
         Title="ViewWindow" > <!--="None" ResizeMode="CanResizeWithGrip" AllowsTransparency="false">-->
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>

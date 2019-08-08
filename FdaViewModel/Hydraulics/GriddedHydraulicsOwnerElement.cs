@@ -43,7 +43,9 @@ namespace FdaViewModel.Hydraulics
 
 
             GridImporterVM vm = new GridImporterVM(TerrainList,2001,2002);
-            Navigate(vm);
+            string header = "New Hydraulic Data";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "NewHydraulicData");
+            Navigate(tab);
             if(!vm.HasError & !vm.WasCanceled)
             {
                 //create a child and add it

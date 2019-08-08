@@ -112,14 +112,15 @@ namespace FdaViewModel.GeoTech
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 //.WithOwnerValidationRules((editorVM, oldName) => AddOwnerRules(editorVM, oldName))
                 .WithSaveUndoRedo(saveHelper)
-                 .WithSiblingRules(this)
-               .WithParentGuid(this.GUID)
-               .WithCanOpenMultipleTimes(false);
+                 .WithSiblingRules(this);
+               //.WithParentGuid(this.GUID)
+               //.WithCanOpenMultipleTimes(false);
 
             Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(this, leveeCollection, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
-
-            Navigate(vm, false, false, "Edit " + vm.Name);
+            string header = "Edit " + vm.Name;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditFailureFunction"+vm.Name);
+            Navigate(tab, false, false);
             ////get the current list of levees
             //List<LeveeFeatureElement> leveeList = GetElementsOfType<LeveeFeatureElement>();
 

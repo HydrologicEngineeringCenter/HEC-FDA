@@ -77,7 +77,9 @@ namespace FdaViewModel.Saving.PersistenceManagers
             catch (Exception e)
             {
                 CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "Could not delete terrain file: " + element.FileName);
-                Navigate(messageBox);
+                string header = "Error";
+                DynamicTabVM tab = new DynamicTabVM(header, messageBox, "MessageBoxError");
+                Navigate(tab);
                 element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
                 return;
             }
@@ -116,7 +118,9 @@ namespace FdaViewModel.Saving.PersistenceManagers
                     catch (Exception e)
                     {
                         CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "Could not rename the terrain file at location: " + Storage.Connection.Instance.TerrainDirectory + "\\" + oldElement.Name);
-                        Navigate(messageBox);
+                        string header = "Error";
+                        DynamicTabVM tab = new DynamicTabVM(header, messageBox, "MessageBoxError");
+                        Navigate(tab);
                     }
                 }
                

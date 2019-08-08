@@ -57,15 +57,16 @@ namespace FdaViewModel.GeoTech
         public void AddNewLeveeFeature(object arg1, EventArgs arg2)
         {
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSiblingRules(this)
-               .WithParentGuid(this.GUID)
-               .WithCanOpenMultipleTimes(true);
+                .WithSiblingRules(this);
+               //.WithParentGuid(this.GUID)
+               //.WithCanOpenMultipleTimes(true);
 
             LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(actionManager);
             //StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);
-
-            Navigate(vm, false, false, "Create Levee");
+            string header = "Create Levee";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateLevee");
+            Navigate(tab, false, false);
           
         }
        

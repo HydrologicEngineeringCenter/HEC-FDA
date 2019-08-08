@@ -127,7 +127,9 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 catch (Exception e)
                 {
                     Utilities.CustomMessageBoxVM cmb = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, e.Message);
-                    Navigate(cmb);
+                    string header = "Error";
+                    DynamicTabVM tab = new DynamicTabVM(header, cmb, "ErrorMessage");
+                    Navigate(tab);
                     return false;
                 }
                 //I added a rule for this, so this shouldn't be possible
@@ -209,7 +211,9 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             else
             {
                 Utilities.CustomMessageBoxVM cmb = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, errorMessage);
-                Navigate(cmb);
+                string header = "Error";
+                DynamicTabVM tab = new DynamicTabVM(header, cmb, "ErrorMessage");
+                Navigate(tab);
                 return false;
             }
 

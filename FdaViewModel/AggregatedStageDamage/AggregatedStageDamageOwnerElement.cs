@@ -65,15 +65,15 @@ namespace FdaViewModel.AggregatedStageDamage
             //create action manager
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSaveUndoRedo(saveHelper)
-                 .WithSiblingRules(this)
-               .WithParentGuid(this.GUID)
-               .WithCanOpenMultipleTimes(true);
+                 .WithSiblingRules(this);
+               //.WithParentGuid(this.GUID)
+               //.WithCanOpenMultipleTimes(true);
 
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);
-
-            Navigate(vm, false, true, "Create Stage Damage");
+            DynamicTabVM tab = new DynamicTabVM("Create Damage Curve", vm, "AddNewDamageCurve");
+            Navigate(tab, false, true);
 
             //AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM((foo) => SaveNewElement(foo), (bar) => AddOwnerRules(bar));
             //Navigate(vm, true, true);

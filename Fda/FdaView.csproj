@@ -363,7 +363,6 @@
     <Compile Include="Utilities\CustomMessageBox.xaml.cs">
       <DependentUpon>CustomMessageBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utilities\CustomTabControl.cs" />
     <Compile Include="Utilities\DepthDamageEnumToStringConverter.cs" />
     <Compile Include="Utilities\DynamicTab.cs" />
     <Compile Include="Utilities\InverseBooleanConverter.cs" />

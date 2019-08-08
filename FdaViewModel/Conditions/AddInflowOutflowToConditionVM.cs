@@ -152,7 +152,9 @@ namespace FdaViewModel.Conditions
             else
             {
                 CustomMessageBoxVM custmb = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "An Inflow Outflow Curve has not been selected.");
-                Navigate(custmb);
+                string header = "Error";
+                DynamicTabVM tab = new DynamicTabVM(header, custmb, "CustomMessageBox");
+                Navigate(tab);
             }
         }
 
