@@ -43,8 +43,6 @@ namespace FdaViewModel.StageTransforms
             StudyCache.ExteriorInteriorAdded += AddExteriorInteriorElement;
             StudyCache.ExteriorInteriorRemoved += RemoveExteriorInteriorElement;
             StudyCache.ExteriorInteriorUpdated += UpdateExteriorInteriorElement;
-            GUID = Guid.NewGuid();
-
         }
         #endregion
         #region Voids

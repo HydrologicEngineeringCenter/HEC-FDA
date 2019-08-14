@@ -36,8 +36,6 @@ namespace FdaViewModel.GeoTech
             StudyCache.LeveeAdded += AddLeveeElement;
             StudyCache.LeveeRemoved += RemoveLeveeElement;
             StudyCache.LeveeUpdated += UpdateLeveeElement;
-            GUID = Guid.NewGuid();
-
         }
         #endregion
         #region Voids

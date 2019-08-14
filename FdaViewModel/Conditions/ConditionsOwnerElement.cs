@@ -42,8 +42,6 @@ namespace FdaViewModel.Conditions
             StudyCache.ConditionsElementAdded += AddConditionsElement;
             StudyCache.ConditionsElementRemoved += RemoveConditionsElement;
             StudyCache.ConditionsElementUpdated += UpdateConditionsElement;
-            GUID = Guid.NewGuid();
-
         }
         #endregion
         #region Voids

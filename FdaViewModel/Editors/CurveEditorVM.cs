@@ -103,11 +103,11 @@ namespace FdaViewModel.Editors
 
         public CurveEditorVM(Utilities.ChildElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
-            MessageHub.Subscribe(this);
             SavingText = elem.Name + " last saved: " + elem.LastEditDate;
             TransactionHelper.LoadTransactionsAndMessages(this, elem);
             ReportMessage(this, new MessageEventArgs(new Message("openning... testing pub sub")));
             PlotTitle = Name;
+            MessageRows = NLogDataBaseHelper.GetMessageRows(NLog.LogLevel.Fatal);
         }
 
         #endregion

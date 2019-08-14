@@ -42,8 +42,6 @@ namespace FdaViewModel.StageTransforms
             StudyCache.RatingAdded += AddRatingCurveElement;
             StudyCache.RatingRemoved += RemoveRatingCurveElement;
             StudyCache.RatingUpdated += UpdateRatingCurveElement;
-            GUID = Guid.NewGuid();
-
         }
 
         #endregion

@@ -52,8 +52,6 @@ namespace FdaViewModel.Inventory
             StudyCache.StructureInventoryAdded += AddStructureInventoryElement;
             StudyCache.StructureInventoryRemoved += RemoveStructureInventoryElement;
             StudyCache.StructureInventoryUpdated += UpdateStructureInventoryElement;
-            GUID = Guid.NewGuid();
-
         }
         #endregion
         #region Voids

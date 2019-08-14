@@ -45,6 +45,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\gdal_csharp.dll</HintPath>
     </Reference>
+    <Reference Include="NLog">
+      <HintPath>..\packages\NLog.4.6.6\lib\xamarinios10\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="Statistics, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Statistics.dll</HintPath>

@@ -41,8 +41,6 @@ namespace FdaViewModel.FrequencyRelationships
             StudyCache.FlowFrequencyAdded += AddFlowFrequencyElement;
             StudyCache.FlowFrequencyRemoved += RemoveFlowFrequencyElement;
             StudyCache.FlowFrequencyUpdated += UpdateFlowFrequencyElement;
-            GUID = Guid.NewGuid();
-
         }
 
 

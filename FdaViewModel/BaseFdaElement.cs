@@ -16,12 +16,9 @@ namespace FdaViewModel
         #region Notes
         #endregion
         #region Fields
-        //private string _Name;
         private List<Utilities.NamedAction> _Actions;
         private Utilities.CustomHeaderVM _CustomTreeViewHeader;
         private bool _TableContainsGeoData = false;
-        public Guid GUID { get; set; }
-
 
         #endregion
         #region Events

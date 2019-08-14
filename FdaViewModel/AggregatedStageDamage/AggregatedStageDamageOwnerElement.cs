@@ -35,8 +35,6 @@ namespace FdaViewModel.AggregatedStageDamage
             StudyCache.StageDamageAdded += AddStageDamageElement;
             StudyCache.StageDamageRemoved += RemoveStageDamageElement;
             StudyCache.StageDamageUpdated += UpdateStageDamageElement;
-            GUID = Guid.NewGuid();
-
         }
         #endregion
         #region Voids

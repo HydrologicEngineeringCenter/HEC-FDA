@@ -37,10 +37,6 @@ namespace FdaViewModel.Saving
             {
                 return new TerrainElementPersistenceManager(StudyCacheForSaving);
             }
-            else if(element.GetType() == typeof(RatingCurveElement))
-            {
-                return new RatingElementPersistenceManager(StudyCacheForSaving);
-            }
             else if (element.GetType() == typeof(RatingCurveElement))
             {
                 return new RatingElementPersistenceManager(StudyCacheForSaving);

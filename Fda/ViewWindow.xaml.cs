@@ -204,6 +204,14 @@ namespace Fda
             }
             else
             {
+                
+                if (newvm.Tab.IsDragging)
+                {
+                    //have the new window show up where the mouse is
+                    newwindow.WindowStartupLocation = WindowStartupLocation.Manual;
+                    newwindow.Left = PointToScreen(Mouse.GetPosition(null)).X - 80;
+                    newwindow.Top = PointToScreen(Mouse.GetPosition(null)).Y - 10;
+                }
                 newwindow.Show();
             }
         }

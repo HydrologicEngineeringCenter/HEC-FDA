@@ -34,6 +34,7 @@ namespace FdaModel.ComputationPoint
 
 
         #region Fields
+
         private int _Year;
         private string _Location;
         private ModelErrors _Messages;
@@ -143,7 +144,6 @@ namespace FdaModel.ComputationPoint
         #region Constructor
         public Condition(int year, string location, List<BaseFunction> listToCompute, PerformanceThreshold threshold, LateralStructure lateralStructure = null)
         {
-            
             Year = year;
             Location = location;
             Functions = listToCompute;

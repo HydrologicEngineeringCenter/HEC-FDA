@@ -1,4 +1,5 @@
-﻿using FdaViewModel.Study;
+﻿using FdaViewModel.Editors;
+using FdaViewModel.Study;
 using FdaViewModel.Utilities;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace FdaViewModel.Tabs
     /// </summary>
     public sealed class TabController : BaseViewModel
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         private static readonly TabController _Instance = new TabController();
         
         private int _SelectedTabIndex;
@@ -128,9 +131,15 @@ namespace FdaViewModel.Tabs
         /// <summary>
         /// Adds a new tab to the list of tabs. This will automatically add the tab to the UI
         /// </summary>
-        /// <param name="tab"></param>
+        /// <param name="tab">The tab you want to add</param>
         public void AddTab(IDynamicTab tab)
         {
+            Logger.Fatal("Adding tab fatal message");
+            Logger.Error("Adding tab: {0}. From ViewModel error msg", tab.Header);
+            Logger.Warn("Adding tab: {0}. From ViewModel Warn msg", tab.Header);
+            Logger.Info("Adding tab: {0}. From ViewModel INfo msg", tab.Header);
+            Logger.Debug("Adding tab: {0}. From ViewModel", tab.Header );
+
             int indexOfTab = IsAlreadyOpenInTabs(tab.UniqueName);
             if (indexOfTab != -1)
             {

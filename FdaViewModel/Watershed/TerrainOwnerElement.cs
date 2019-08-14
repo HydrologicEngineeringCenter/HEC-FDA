@@ -35,7 +35,6 @@ namespace FdaViewModel.Watershed
             StudyCache.TerrainAdded += AddTerrainElement;
             StudyCache.TerrainRemoved += RemoveTerrainElement;
             StudyCache.TerrainUpdated += UpdateTerrainElement;
-            GUID = Guid.NewGuid();
         }
         #endregion
         #region Voids

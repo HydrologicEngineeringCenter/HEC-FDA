@@ -134,6 +134,7 @@
     <Compile Include="Saving\PersistenceManagers\StageDamagePersistenceManagerTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="CSV Files\AnalyzeCompositionTest.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

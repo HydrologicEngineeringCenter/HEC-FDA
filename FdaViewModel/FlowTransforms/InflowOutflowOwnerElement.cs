@@ -38,8 +38,6 @@ namespace FdaViewModel.FlowTransforms
             StudyCache.InflowOutflowAdded += AddInflowOutflowElement;
             StudyCache.InflowOutflowRemoved += RemoveInflowOutflowElement;
             StudyCache.InflowOutflowUpdated += UpdateInflowOutflowElement;
-            GUID = Guid.NewGuid();
-
         }
 
 

@@ -118,8 +118,6 @@ namespace FdaViewModel.Utilities
             }
             if (index != -1)
             {
-                newElement.GUID = oldElement.GUID;
-                //newElement.ParentGUID = oldElement.ParentGUID;
                 Elements.RemoveAt(index);
                 InsertElement(index, newElement);
             }
@@ -150,11 +148,6 @@ namespace FdaViewModel.Utilities
             //string newName = ele.Name;
 
             //the name possibly changed so assign it to the element
-           // ele.ParentGUID = GUID;
-            if (ele.GUID == Guid.Empty)
-            {
-                ele.GUID = Guid.NewGuid();
-            }
             ele.RenameMapTreeViewElement += RenameMapTreeViewElement;
             ele.AddMapTreeViewElementBackIn += AddMapTreeViewElementBackIn;
             ele.RequestNavigation += Navigate;
@@ -164,15 +157,10 @@ namespace FdaViewModel.Utilities
             ele.RequestRemoveFromMapWindow += RemoveFromMapWindow;
             ele.TransactionEvent += AddTransaction;
             Elements.Add(ele);
-            if (newElement)
-            {
-                //SaveNewElement(ele);
-            }
 
             IsExpanded = true;
             
         }
-        //public abstract void AddBaseElements();
 
         #endregion
 

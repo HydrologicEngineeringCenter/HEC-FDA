@@ -6,6 +6,15 @@ using FdaModel.Functions.OrdinatesFunctions;
 using System.Collections.ObjectModel;
 using FdaViewModel.Conditions;
 using FdaViewModel.Tabs;
+using FdaViewModel.StageTransforms;
+using FdaViewModel.Watershed;
+using FdaViewModel.Inventory;
+using FdaViewModel.AggregatedStageDamage;
+using FdaViewModel.GeoTech;
+using FdaViewModel.FlowTransforms;
+using FdaViewModel.FrequencyRelationships;
+using FdaViewModel.WaterSurfaceElevation;
+using FdaViewModel.ImpactArea;
 
 namespace FdaViewModel.Study
 {
@@ -557,7 +566,7 @@ namespace FdaViewModel.Study
 
                 if (loadStudyCache == true)
                 {
-                    cache.LoadFDACache();
+                    LoadElementsFromDB(cache);
                 }
 
                 ConditionsTreeOwnerElement ct = new ConditionsTreeOwnerElement(c);
@@ -571,6 +580,145 @@ namespace FdaViewModel.Study
             }
         }
 
+        #region Load Elements
+        private void LoadElementsFromDB(FDACache cache)
+        {
+            LoadRatings(cache);
+            LoadTerrains(cache);
+            LoadImpactAreas(cache);
+            LoadWaterSurfaceElevations(cache);
+            LoadFlowFrequencies(cache);
+            LoadInflowOutflows(cache);
+            LoadExteriorInteriors(cache);
+            LoadLevees(cache);
+            LoadFailureFunctions(cache);
+            LoadStageDamages(cache);
+            LoadStructureInventories(cache);
+            LoadConditions(cache);
+            LoadOccTypes(cache);
+
+        }
+        private void LoadRatings(FDACache cache)
+        {
+            List<Utilities.ChildElement> ratings = Saving.PersistenceFactory.GetRatingManager().Load();
+
+            foreach (RatingCurveElement elem in ratings)
+            {
+                cache.AddRatingElement(elem);
+            }
+        }
+        private void LoadTerrains(FDACache cache)
+        {
+            List<Utilities.ChildElement> terrains = Saving.PersistenceFactory.GetTerrainManager().Load();
+
+            foreach (TerrainElement elem in terrains)
+            {
+                cache.AddTerrainElement(elem);
+            }
+        }
+        private void LoadImpactAreas(FDACache cache)
+        {
+            List<Utilities.ChildElement> impAreas = Saving.PersistenceFactory.GetImpactAreaManager().Load();
+
+            foreach (ImpactAreaElement elem in impAreas)
+            {
+                cache.AddImpactAreaElement(elem);
+            }
+        }
+
+        private void LoadWaterSurfaceElevations(FDACache cache)
+        {
+            List<Utilities.ChildElement> waterSurfaceElevs = Saving.PersistenceFactory.GetWaterSurfaceManager().Load();
+
+            foreach (WaterSurfaceElevationElement elem in waterSurfaceElevs)
+            {
+                cache.AddWaterSurfaceElevationElement(elem);
+            }
+        }
+        private void LoadFlowFrequencies(FDACache cache)
+        {
+            List<Utilities.ChildElement> flowFreqs = Saving.PersistenceFactory.GetFlowFrequencyManager().Load();
+
+            foreach (AnalyticalFrequencyElement elem in flowFreqs)
+            {
+                cache.AddFlowFrequencyElement(elem);
+            }
+        }
+        private void LoadInflowOutflows(FDACache cache)
+        {
+            List<Utilities.ChildElement> inflowOutflows = Saving.PersistenceFactory.GetInflowOutflowManager().Load();
+
+            foreach (InflowOutflowElement elem in inflowOutflows)
+            {
+                cache.AddInflowOutflowElement(elem);
+            }
+        }
+
+        private void LoadExteriorInteriors(FDACache cache)
+        {
+            List<Utilities.ChildElement> exteriorInteriors = Saving.PersistenceFactory.GetExteriorInteriorManager().Load();
+
+            foreach (ExteriorInteriorElement elem in exteriorInteriors)
+            {
+                cache.AddExteriorInteriorElement(elem);
+            }
+        }
+        private void LoadLevees(FDACache cache)
+        {
+            List<Utilities.ChildElement> levees = Saving.PersistenceFactory.GetLeveeManager().Load();
+
+            foreach (LeveeFeatureElement elem in levees)
+            {
+                cache.AddLeveeElement(elem);
+            }
+        }
+
+        private void LoadFailureFunctions(FDACache cache)
+        {
+            List<Utilities.ChildElement> failures = Saving.PersistenceFactory.GetFailureFunctionManager().Load();
+
+            foreach (FailureFunctionElement elem in failures)
+            {
+                cache.AddFailureFunctionElement(elem);
+            }
+        }
+        private void LoadStageDamages(FDACache cache)
+        {
+            List<Utilities.ChildElement> stageDamages = Saving.PersistenceFactory.GetStageDamageManager().Load();
+
+            foreach (AggregatedStageDamageElement elem in stageDamages)
+            {
+                cache.AddStageDamageElement(elem);
+            }
+        }
+        private void LoadStructureInventories(FDACache cache)
+        {
+            List<Utilities.ChildElement> structures = Saving.PersistenceFactory.GetStructureInventoryManager().Load();
+
+            foreach (InventoryElement elem in structures)
+            {
+                cache.AddStructureInventoryElement(elem);
+            }
+        }
+        private void LoadConditions(FDACache cache)
+        {
+            List<Utilities.ChildElement> conditions = Saving.PersistenceFactory.GetConditionsManager().Load();
+
+            foreach (ConditionsElement elem in conditions)
+            {
+                cache.AddConditionsElement(elem);
+            }
+        }
+        private void LoadOccTypes(FDACache cache)
+        {
+            List<Utilities.ChildElement> occTypes = Saving.PersistenceFactory.GetOccTypeManager().Load();
+
+            foreach (Inventory.OccupancyTypes.OccupancyTypesElement elem in occTypes)
+            {
+                cache.AddOccTypesElement(elem);
+            }
+        }
+        #endregion
 
         /// <summary>
         /// This stuff is getting a little wierd. It was done before the new "StudyCache" stuff. So it seems like i could just go straight to the cache

@@ -53,22 +53,24 @@ namespace FdaViewModel.Storage
                         _SqliteReader = new DataBase_Reader.SqLiteReader(value);
                         _SqliteReader.EditsSaved += _SqliteReader_EditsSaved;
                 }
+                //add a logging target for the sqlite db.
+                NLogDataBaseHelper.CreateDBTargets(value);
             }
         }
 
         private void SetUpForExistingStudy(string value)
         {
             _ProjectDirectory = System.IO.Path.GetDirectoryName(value);
-            if (!System.IO.Directory.Exists(ProjectDirectory)) { System.IO.Directory.CreateDirectory(ProjectDirectory); }
-            if (!System.IO.Directory.Exists(TerrainDirectory)) { System.IO.Directory.CreateDirectory(TerrainDirectory); }
-            if (!System.IO.Directory.Exists(HydraulicsDirectory)) { System.IO.Directory.CreateDirectory(HydraulicsDirectory); }
+            if (!Directory.Exists(ProjectDirectory)) { Directory.CreateDirectory(ProjectDirectory); }
+            if (!Directory.Exists(TerrainDirectory)) { Directory.CreateDirectory(TerrainDirectory); }
+            if (!Directory.Exists(HydraulicsDirectory)) { Directory.CreateDirectory(HydraulicsDirectory); }
         }
         private void SetUpForNewStudy(string value)
         {
             _ProjectDirectory = System.IO.Path.GetDirectoryName(value);
-            if (!System.IO.Directory.Exists(ProjectDirectory)) { System.IO.Directory.CreateDirectory(ProjectDirectory); }
-            if (!System.IO.Directory.Exists(TerrainDirectory)) { System.IO.Directory.CreateDirectory(TerrainDirectory); }
-            if (!System.IO.Directory.Exists(HydraulicsDirectory)) { System.IO.Directory.CreateDirectory(HydraulicsDirectory); }
+            if (!Directory.Exists(ProjectDirectory)) { Directory.CreateDirectory(ProjectDirectory); }
+            if (!Directory.Exists(TerrainDirectory)) { Directory.CreateDirectory(TerrainDirectory); }
+            if (!Directory.Exists(HydraulicsDirectory)) { Directory.CreateDirectory(HydraulicsDirectory); }
             DataBase_Reader.SqLiteReader.CreateSqLiteFile(value);
             
         }
@@ -87,7 +89,7 @@ namespace FdaViewModel.Storage
         }
         public string GetTerrainFile(string name)
         {
-            string[] files = Directory.GetFiles(Storage.Connection.Instance.TerrainDirectory, name + ".*");
+            string[] files = Directory.GetFiles(Connection.Instance.TerrainDirectory, name + ".*");
             if (files.Length > 0)
             {
                 return files[0];

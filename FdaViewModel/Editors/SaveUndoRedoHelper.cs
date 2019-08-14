@@ -158,7 +158,6 @@ namespace FdaViewModel.Editors
             string newName = elementToSave.Name;
             OldCurve = oldElement.Curve;// oldCurve;
 
-            elementToSave.GUID = Guid.NewGuid();
             //elementToSave.ChangeIndex = ChangeIndex;
             //SaveElement = elementToSave;
             // SaveAction.Invoke( (T)elementToSave);

@@ -47,8 +47,6 @@ namespace FdaViewModel.GeoTech
             StudyCache.FailureFunctionAdded += AddFailureFunctionElement;
             StudyCache.FailureFunctionRemoved += RemoveFailureFunctionElement;
             StudyCache.FailureFunctionUpdated += UpdateFailureFunctionElement;
-            GUID = Guid.NewGuid();
-
         }
         #endregion
         #region Voids

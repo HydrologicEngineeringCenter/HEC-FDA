@@ -37,8 +37,6 @@ namespace FdaViewModel.ImpactArea
             StudyCache.ImpactAreaAdded += AddImpactAreaElement;
             StudyCache.ImpactAreaRemoved += RemoveImpactAreaElement;
             StudyCache.ImpactAreaUpdated += UpdateImpactAreaElement;
-            GUID = Guid.NewGuid();
-
         }
         #endregion
         #region Voids

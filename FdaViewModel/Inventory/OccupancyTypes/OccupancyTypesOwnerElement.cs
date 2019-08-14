@@ -55,13 +55,11 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             localActions.Add(editOccupancyTypes);
 
             Actions = localActions;
-            GUID = Guid.NewGuid();
 
             StudyCache.OccTypeElementAdded += OccTypeElementWasAdded;
 
             StudyCache.OccTypeElementRemoved += RemoveOccTypeElement;
             // StudyCache.OccTypeElementUpdated += UpdateRatingCurveElement;
-            //GUID = Guid.NewGuid();
 
         }
 

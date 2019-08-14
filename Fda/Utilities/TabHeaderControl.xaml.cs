@@ -79,8 +79,8 @@ namespace Fda.Utilities
 
        private bool HasDraggedMinimumDistance(MouseEventArgs e)
         {
-            return Math.Abs(e.GetPosition(null).X - _StartPoint.X) >= SystemParameters.MinimumHorizontalDragDistance &&
-            Math.Abs(e.GetPosition(null).Y - _StartPoint.Y) >= SystemParameters.MinimumVerticalDragDistance;
+            return Math.Abs(e.GetPosition(null).X - _StartPoint.X) >= SystemParameters.MinimumHorizontalDragDistance ||
+            Math.Abs(e.GetPosition(null).Y - _StartPoint.Y) >= SystemParameters.MinimumVerticalDragDistance;           
         }
 
         private void TextBlock_PreviewMouseUp(object sender, MouseButtonEventArgs e)

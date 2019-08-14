@@ -46,8 +46,6 @@ namespace FdaViewModel.WaterSurfaceElevation
             StudyCache.WaterSurfaceElevationAdded += AddWaterSurfaceElevationElement;
             StudyCache.WaterSurfaceElevationRemoved += RemoveWaterSurfaceElevationElement;
             StudyCache.WaterSurfaceElevationUpdated += UpdateWaterSurfaceElevationElement;
-            GUID = Guid.NewGuid();
-
         }
         #endregion
         #region Voids

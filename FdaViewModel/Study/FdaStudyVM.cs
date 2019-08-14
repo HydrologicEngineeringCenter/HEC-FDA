@@ -165,7 +165,6 @@ namespace FdaViewModel.Study
             //fill the main study tree
             _MainStudyTree = new List<Utilities.ParentElement>();
             CurrentStudyElement = new StudyElement();
-            CurrentStudyElement.GUID = Guid.NewGuid();
             _StudyElement.RenameTreeViewElement += RenameTheMapTreeViewItem;
             _StudyElement.AddBackInTreeViewElement += AddTheMapTreeViewItemBackIn;           
            // _StudyElement.SaveTheOpenTabs += SaveTheTabs;
@@ -373,6 +372,7 @@ namespace FdaViewModel.Study
             FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
             FdaModel.Utilities.Initialize.DisposeGDAL();
             WriteMapLayersXMLFile();
+            NLog.LogManager.Shutdown();
         }
 
         /// <summary>
