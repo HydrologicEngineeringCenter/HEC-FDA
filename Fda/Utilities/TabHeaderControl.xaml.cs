@@ -60,7 +60,7 @@ namespace Fda.Utilities
 
         private void btn_PopOut_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Utilities.DynamicTabVM vm = (FdaViewModel.Utilities.DynamicTabVM)this.DataContext;
+            DynamicTabVM vm = (DynamicTabVM)this.DataContext;
             vm.PopTabIntoWindow();
         }
 
@@ -68,6 +68,7 @@ namespace Fda.Utilities
         {
             if (_MouseDown && HasDraggedMinimumDistance(e))
             {
+                Mouse.Capture(null);//releases the capture
                 DynamicTabVM vm = (DynamicTabVM)this.DataContext;
                 if (vm.CanPopOut)
                 {
@@ -86,6 +87,7 @@ namespace Fda.Utilities
         private void TextBlock_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             _MouseDown = false;
+            Mouse.Capture(null);//releases the capture
         }
        
 
@@ -93,6 +95,8 @@ namespace Fda.Utilities
         {
             _MouseDown = true;
             _StartPoint = e.GetPosition(null);
+            Mouse.Capture(txt_block);
+       
         }
 
         

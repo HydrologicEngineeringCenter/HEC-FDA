@@ -54,14 +54,14 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 SaveElementToChangeTable(element.Name, GetRowDataFromElement((AggregatedStageDamageElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
                 //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
                 //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCacheForSaving.AddStageDamageElement((AggregatedStageDamageElement)element);
+                StudyCacheForSaving.AddElement((AggregatedStageDamageElement)element);
             }
         }
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
             DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCacheForSaving.RemoveStageDamageElement((AggregatedStageDamageElement)element);
+            StudyCacheForSaving.RemoveElement((AggregatedStageDamageElement)element);
         }
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex)
         {
@@ -79,9 +79,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
         }
 
-        public List<ChildElement> Load()
+        public void Load()
         {
-            return CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
+            List<ChildElement> stageDamages = CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
+            foreach (AggregatedStageDamageElement elem in stageDamages)
+            {
+                StudyCacheForSaving.AddElement(elem);
+            }
         }
 
         public override void AddValidationRules()

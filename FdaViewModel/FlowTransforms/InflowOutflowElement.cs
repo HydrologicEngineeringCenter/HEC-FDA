@@ -6,6 +6,7 @@ using FdaModel;
 using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using FdaViewModel.Utilities;
+using Statistics;
 
 namespace FdaViewModel.FlowTransforms
 {
@@ -132,23 +133,75 @@ namespace FdaViewModel.FlowTransforms
             AddRule(nameof(Name), () => Name != "test", "Name cannot be test.", false);
         }
 
-        //public override void Save()
-        //{
-        //    _Curve.toSqliteTable(TableName);
-        //}
-        //public override object[] RowData()
-        //{
-        //    return new object[] { Name, LastEditDate, Description, InflowOutflowCurve.Distribution };
-        //}
+        public override bool Equals(object obj)
+        {
+            bool retval = true;
+            if (obj.GetType() == typeof(InflowOutflowElement))
+            {
+                InflowOutflowElement elem = (InflowOutflowElement)obj;
+                if (!Name.Equals(elem.Name))
+                {
+                    retval = false;
+                }
+                if (!Description.Equals(elem.Description))
+                {
+                    retval = false;
+                }
+                if (!LastEditDate.Equals(elem.LastEditDate))
+                {
+                    retval = false;
+                }
+                if (!areCurvesEqual(elem.Curve))
+                {
+                    retval = false;
+                }
+            }
+            else
+            {
+                retval = false;
+            }
+            return retval;
+        }
 
-        //public override bool SavesToRow()
-        //{
-        //    return true;
-        //}
+        private bool areCurvesEqual(UncertainCurveDataCollection curve2)
+        {
+            bool retval = true;
+            if (Curve.GetType() != curve2.GetType())
+            {
+                return false;
+            }
+            if (Curve.Distribution != curve2.Distribution)
+            {
+                return false;
+            }
+            if (Curve.XValues.Count != curve2.XValues.Count)
+            {
+                return false;
+            }
+            if (Curve.YValues.Count != curve2.YValues.Count)
+            {
+                return false;
+            }
+            double epsilon = .0001;
+            for (int i = 0; i < Curve.XValues.Count; i++)
+            {
+                if (Math.Abs(Curve.get_X(i)) - Math.Abs(curve2.get_X(i)) > epsilon)
+                {
+                    return false;
+                }
+                ContinuousDistribution y = Curve.get_Y(i);
+                ContinuousDistribution y2 = curve2.get_Y(i);
+                if (Math.Abs(y.GetCentralTendency) - Math.Abs(y2.GetCentralTendency) > epsilon)
+                {
+                    return false;
+                }
+                if (Math.Abs(y.GetSampleSize) - Math.Abs(y2.GetSampleSize) > epsilon)
+                {
+                    return false;
+                }
+            }
 
-        //public override bool SavesToTable()
-        //{
-        //    return true;
-        //}
+            return retval;
+        }
     }
 }

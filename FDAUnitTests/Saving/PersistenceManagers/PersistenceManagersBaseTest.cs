@@ -1,4 +1,5 @@
 ﻿using FdaViewModel.Saving;
+using FdaViewModel.Study;
 using FdaViewModel.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -12,19 +13,38 @@ namespace FDAUnitTests.Saving.PersistenceManagers
 {
     public class PersistenceManagersBaseTest
     {
+        private string _DataBasePath;
+
+        [TestInitialize]
+        public void SetUp()
+        {
+            FDACache cache = FDACache.Create();
+            FdaViewModel.BaseViewModel.StudyCache = cache;
+            FdaViewModel.Saving.PersistenceFactory.StudyCacheForSaving = cache;
+        }
+
+        [TestCleanup]
+        public void CleanUp()
+        {
+            if(FdaViewModel.Storage.Connection.Instance.IsOpen)
+            {
+                FdaViewModel.Storage.Connection.Instance.Close();
+            }
+            File.Delete(_DataBasePath);
+        }
 
         public void createSqliteDatabase(String dbName)
         {
             String tempPath = Path.GetTempPath();
-            string newStudyPath = tempPath + "\\" + "Testing" + "\\" + dbName + ".sqlite";
-            FdaViewModel.Storage.Connection.Instance.ProjectFile = newStudyPath;
+            _DataBasePath = tempPath + "Testing" + "\\" + dbName + ".sqlite";
+            FdaViewModel.Storage.Connection.Instance.ProjectFile = _DataBasePath;     
         }
 
         public void SaveNewTest(String dbName, ChildElement elem, IPersistable manager)
         {
             createSqliteDatabase(dbName);
             manager.SaveNew(elem);
-            Assert.IsTrue(isElementInDataBase(elem.Name, manager));
+            Assert.IsTrue(isElementInDataBase(elem, manager));
             manager.Remove(elem);
 
         }
@@ -33,14 +53,14 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         {
             createSqliteDatabase(dbName);
             manager.SaveNew(originalElem);
-            Assert.IsTrue(isElementInDataBase(originalElem.Name, manager));
+            Assert.IsTrue(isElementInDataBase(originalElem, manager));
 
             ChildElement modifiedElem = originalElem.CloneElement(originalElem);
             modifiedElem.Name = "newName";
             //save existing
             manager.SaveExisting(originalElem, modifiedElem, 0);
-            Assert.IsTrue(isElementInDataBase(modifiedElem.Name, manager));
-
+            Assert.IsTrue(isElementInDataBase(modifiedElem, manager));
+            Assert.IsFalse(isElementInDataBase(originalElem, manager));
             manager.Remove(modifiedElem);
         }
 
@@ -49,13 +69,13 @@ namespace FDAUnitTests.Saving.PersistenceManagers
             createSqliteDatabase(dbName);
             //save
             manager.SaveNew(originalElem);
-            Assert.IsTrue(isElementInDataBase(originalElem.Name, manager));
+            Assert.IsTrue(isElementInDataBase(originalElem, manager));
 
             ChildElement modifiedElem = originalElem.CloneElement(originalElem);
             modifiedElem.Name = "newName";
             //save existing
             manager.SaveExisting(originalElem, modifiedElem, 0);
-            Assert.IsTrue(isElementInDataBase(modifiedElem.Name, manager));
+            Assert.IsTrue(isElementInDataBase(modifiedElem, manager));
 
             ChildElement undoElem = manager.Undo(modifiedElem, 0);
             Assert.IsTrue(undoElem.Equals(originalElem));
@@ -67,13 +87,13 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         {
             createSqliteDatabase(dbName);
             manager.SaveNew(originalElem);
-            Assert.IsTrue(isElementInDataBase(originalElem.Name, manager));
+            Assert.IsTrue(isElementInDataBase(originalElem, manager));
 
             ChildElement modifiedElem = originalElem.CloneElement(originalElem);
             modifiedElem.Name = "newName";
             //save existing
             manager.SaveExisting(originalElem, modifiedElem, 0);
-            Assert.IsTrue(isElementInDataBase(modifiedElem.Name, manager));
+            Assert.IsTrue(isElementInDataBase(modifiedElem, manager));
 
             //undo
             ChildElement undoElem = manager.Undo(modifiedElem, 0);
@@ -91,16 +111,19 @@ namespace FDAUnitTests.Saving.PersistenceManagers
             createSqliteDatabase(dbName);
             //save
             manager.SaveNew(elem);
-            Assert.IsTrue(isElementInDataBase(elem.Name, manager));
+            Assert.IsTrue(isElementInDataBase(elem, manager));
             //remove
             manager.Remove(elem);
-            Assert.IsFalse(isElementInDataBase(elem.Name, manager));
+            Assert.IsFalse(isElementInDataBase(elem, manager));
         }
 
-        public bool isElementInDataBase(String name, IPersistable manager)
+        public bool isElementInDataBase(ChildElement elem, IPersistable manager)
         {
+            string name = elem.Name;
+            Type childElementType = elem.GetType();
             //retrieve from db
-            List<ChildElement> elems = manager.Load();
+            //List<ChildElement> elems = manager.Load();
+            List<ChildElement> elems  = FdaViewModel.BaseViewModel.StudyCache.GetChildElementsOfType(childElementType);
 
             bool elemFound = false;
             foreach (ChildElement el in elems)

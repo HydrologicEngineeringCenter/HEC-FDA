@@ -49,7 +49,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
-            StudyCacheForSaving.RemoveStructureInventoryElement((InventoryElement)element);
+            StudyCacheForSaving.RemoveElement((InventoryElement)element);
 
         }
 
@@ -62,16 +62,22 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
                 SaveNewElementToParentTable(GetRowDataFromElement((InventoryElement)element), TableName, TableColumnNames, TableColumnTypes);
                 //WriteAttributeTable(((InventoryElement)element).DefineSIAttributes, ((InventoryElement)element).AttributeLinkingList, ((InventoryElement)element).DefineSIAttributes.Path);
-                StudyCacheForSaving.AddStructureInventoryElement((InventoryElement)element);
+                StudyCacheForSaving.AddElement((InventoryElement)element);
             }
         }
 
        
 
-        public List<ChildElement> Load()
+        public void Load()
         {
-            return CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
+            List<Utilities.ChildElement> structures = CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
+            foreach (InventoryElement elem in structures)
+            {
+                StudyCacheForSaving.AddElement(elem);
+            }
         }
+
+
         /// <summary>
         /// Right now there is no way to edit structs other than through the map window. This call only works for "rename". It will not 
         /// update any of the structs falues, only its name

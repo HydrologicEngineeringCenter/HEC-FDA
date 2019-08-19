@@ -221,7 +221,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 //AddElement(ele,false);
         }
 
-        public List<ChildElement> Load()
+        public void Load()
         {
             List<ChildElement> occTypeGroupsToReturn = new List<ChildElement>();
             
@@ -251,7 +251,10 @@ namespace FdaViewModel.Saving.PersistenceManagers
                     }
                 }
             }
-            return occTypeGroupsToReturn;
+            foreach (Inventory.OccupancyTypes.OccupancyTypesElement elem in occTypeGroupsToReturn)
+            {
+                StudyCacheForSaving.AddElement(elem);
+            }
         }
 
         public void Remove(ChildElement element)
@@ -281,7 +284,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 Storage.Connection.Instance.DeleteTable(elementTableName);
             }
             //remove from the study cache
-            StudyCacheForSaving.RemoveOccTypeElement((OccupancyTypesElement)element);
+            StudyCacheForSaving.RemoveElement((OccupancyTypesElement)element);
         }
 
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex)
@@ -321,7 +324,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             List<OccupancyTypesElement> elems = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
             foreach (OccupancyTypesElement elem in elems)
             {
-                StudyCacheForSaving.RemoveOccTypeElement(elem);
+                StudyCacheForSaving.RemoveElement(elem);
             }
         }
         private void DeleteAllOccTypeTables()
@@ -431,7 +434,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             SaveGroupToParentTable(element.Name, ((OccupancyTypesElement)element).IsSelected);
             SaveNewGroupTable((OccupancyTypesElement)element);
-            StudyCacheForSaving.AddOccTypesElement((OccupancyTypesElement)element);
+            StudyCacheForSaving.AddElement((OccupancyTypesElement)element);
 
         }
 

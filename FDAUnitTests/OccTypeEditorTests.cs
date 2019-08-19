@@ -38,7 +38,7 @@ namespace FDAUnitTests
             //save the element
             FdaViewModel.Saving.PersistenceFactory.GetOccTypeManager().SaveNew(element);
             //read the element in
-            List<FdaViewModel.Utilities.ChildElement> elems = FdaViewModel.Saving.PersistenceFactory.GetOccTypeManager().Load();
+            List<FdaViewModel.Utilities.ChildElement> elems = FdaViewModel.BaseViewModel.StudyCache.GetChildElementsOfType(element.GetType()); //FdaViewModel.Saving.PersistenceFactory.GetOccTypeManager().Load();
             //compare the element you saved to the one you read in
             Assert.IsTrue(elems.Count > 0);
 

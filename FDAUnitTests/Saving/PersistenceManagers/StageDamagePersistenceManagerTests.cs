@@ -14,15 +14,13 @@ namespace FDAUnitTests.Saving.PersistenceManagers
     [TestClass]
     public class StageDamagePersistenceManagerTests : PersistenceManagersBaseTest
     {
-        //element table - Aggregated Stage Damage Relationships
-        //change table - string changeTableName = changeTableConstant + elementName + "-ChangeTable";
         private const String DBNAME = "AggregatedStageDamage";
 
         [TestMethod]
         public void SaveNewElemTest()
         {
             AggregatedStageDamageElement elem = createAggregatedStageDamageElement("testElem5");
-            StageDamagePersistenceManager manager = createPersistenceManager();
+            StageDamagePersistenceManager manager = PersistenceFactory.GetStageDamageManager();
 
             SaveNewTest(DBNAME, elem, manager);
         }
@@ -31,7 +29,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void SaveExistingElemTest()
         {
             AggregatedStageDamageElement originalElem = createAggregatedStageDamageElement("testElem4");
-            StageDamagePersistenceManager manager = createPersistenceManager();
+            StageDamagePersistenceManager manager = PersistenceFactory.GetStageDamageManager();
 
             SaveExistingTest(DBNAME, originalElem, manager);
         }
@@ -40,7 +38,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void UndoElemTest()
         {
             AggregatedStageDamageElement originalElem = createAggregatedStageDamageElement("testElem3");
-            StageDamagePersistenceManager manager = createPersistenceManager();
+            StageDamagePersistenceManager manager = PersistenceFactory.GetStageDamageManager();
 
             UndoTest(DBNAME, originalElem, manager);
         }
@@ -49,7 +47,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void RedoElemTest()
         {
             AggregatedStageDamageElement originalElem = createAggregatedStageDamageElement("testElem2");
-            StageDamagePersistenceManager manager = createPersistenceManager();
+            StageDamagePersistenceManager manager = PersistenceFactory.GetStageDamageManager();
 
             RedoTest(DBNAME, originalElem, manager);
         }
@@ -58,22 +56,12 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void RemoveElementTest()
         {
             AggregatedStageDamageElement elem = createAggregatedStageDamageElement("testElem1");
-            StageDamagePersistenceManager manager = createPersistenceManager();
+            StageDamagePersistenceManager manager = PersistenceFactory.GetStageDamageManager();
 
             RemoveTest(DBNAME, elem, manager);
         }
 
 
-
-
-
-
-
-        private StageDamagePersistenceManager createPersistenceManager()
-        {
-            FDACache cache = FDACache.Create();
-            return new StageDamagePersistenceManager(cache);
-        }
 
         private AggregatedStageDamageElement createAggregatedStageDamageElement(String name)
         {

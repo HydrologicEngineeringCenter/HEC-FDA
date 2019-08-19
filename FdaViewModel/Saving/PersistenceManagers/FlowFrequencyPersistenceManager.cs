@@ -54,7 +54,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 SaveElementToChangeTable(element.Name, GetRowDataFromElement((AnalyticalFrequencyElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
                 //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
                 //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCacheForSaving.AddFlowFrequencyElement((AnalyticalFrequencyElement)element);
+                StudyCacheForSaving.AddElement((AnalyticalFrequencyElement)element);
             }
         }
 
@@ -62,7 +62,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             RemoveFromParentTable(element, TableName);
             DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCacheForSaving.RemoveFlowFrequencyElement((AnalyticalFrequencyElement)element);
+            StudyCacheForSaving.RemoveElement((AnalyticalFrequencyElement)element);
 
         }
 
@@ -79,9 +79,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
         }
 
-        public List<ChildElement> Load()
+        public void Load()
         {
-            return CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
+            List<ChildElement> flowFreqs = CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
+            foreach (AnalyticalFrequencyElement elem in flowFreqs)
+            {
+                StudyCacheForSaving.AddElement(elem);
+            }
         }
 
         public override void AddValidationRules()

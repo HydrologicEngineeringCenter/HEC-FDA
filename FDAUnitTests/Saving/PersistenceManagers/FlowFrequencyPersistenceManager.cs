@@ -16,7 +16,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void SaveNewElemTest()
         {
             AnalyticalFrequencyElement elem = createExteriorInteriorElement("testElem5");
-            FlowFrequencyPersistenceManager manager = createPersistenceManager();
+            FlowFrequencyPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetFlowFrequencyManager();
             SaveNewTest(DBNAME, elem, manager);
 
         }
@@ -25,7 +25,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void SaveExistingElemTest()
         {
             AnalyticalFrequencyElement originalElem = createExteriorInteriorElement("testElem4");
-            FlowFrequencyPersistenceManager manager = createPersistenceManager();
+            FlowFrequencyPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetFlowFrequencyManager();
             SaveExistingTest(DBNAME, originalElem, manager);
 
         }
@@ -34,7 +34,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void UndoElemTest()
         {
             AnalyticalFrequencyElement originalElem = createExteriorInteriorElement("testElem3");
-            FlowFrequencyPersistenceManager manager = createPersistenceManager();
+            FlowFrequencyPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetFlowFrequencyManager();
             UndoTest(DBNAME, originalElem, manager);
 
         }
@@ -43,7 +43,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void RedoElemTest()
         {
             AnalyticalFrequencyElement originalElem = createExteriorInteriorElement("testElem2");
-            FlowFrequencyPersistenceManager manager = createPersistenceManager();
+            FlowFrequencyPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetFlowFrequencyManager();
             RedoTest(DBNAME, originalElem, manager);
 
         }
@@ -52,16 +52,9 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void RemoveElementTest()
         {
             AnalyticalFrequencyElement elem = createExteriorInteriorElement("testElem1");
-            FlowFrequencyPersistenceManager manager = createPersistenceManager();
+            FlowFrequencyPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetFlowFrequencyManager();
             RemoveTest(DBNAME, elem, manager);
 
-        }
-
-
-        private FlowFrequencyPersistenceManager createPersistenceManager()
-        {
-            FDACache cache = FDACache.Create();
-            return new FlowFrequencyPersistenceManager(cache);
         }
 
         private AnalyticalFrequencyElement createExteriorInteriorElement(String name)

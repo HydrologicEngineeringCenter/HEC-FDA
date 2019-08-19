@@ -8,6 +8,7 @@ using System.IO;
 using System.Xml;
 using FdaViewModel.Utilities;
 using System.Windows.Input;
+using FdaViewModel.Utilities.Transactions;
 
 namespace Fda
 {
@@ -30,7 +31,7 @@ namespace Fda
             test.RequestAddToMapWindow += RequestAddToMapWindow;
             test.RequestRemoveFromMapWindow += RequestRemoveFromMapWindow;
             vm.LaunchNewWindow += WindowSpawner;
-            Closing += vm.OnClosing;
+            //Closing += vm.OnClosing;
 
             //hide the top row with the pop in button if this vm doesn't support that
             MainGrid.RowDefinitions[0].Height = new GridLength(0);
@@ -171,7 +172,7 @@ namespace Fda
             DataContext = newvm;
             Title = newvm.Title;
             newvm.LaunchNewWindow += WindowSpawner;
-            Closing += newvm.OnClosing;
+            //Closing += newvm.OnClosing;
 
         }
         private void btn_PopWindowInToTabs_Click(object sender, RoutedEventArgs e)
@@ -228,7 +229,7 @@ namespace Fda
             {
                 vm.Tab.RemoveWindow();
             }
-            vm.Dispose();
+            //vm.Dispose();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -247,6 +248,13 @@ namespace Fda
                 }
                 Opacity = 1;
             }
+
+            //if(vm != null && vm.Tab != null && vm.Tab.BaseVM != null && vm.Tab.BaseVM is ITransactionsAndMessages)
+            //{
+            //    MessagesListView.ItemsSource = ((ITransactionsAndMessages)vm.Tab.BaseVM).MessageRows;
+            //    MessagesListView.DisplayMemberPath = "Message";
+            //}
+
             //if(masterControl.Content.GetType() == typeof(Utilities.IPopOut))
             //{
             //    this.Width = ((Utilities.IPopOut)masterControl.Content).PopOutWidth;
@@ -372,5 +380,6 @@ namespace Fda
             }
         }
 
+       
     }
 }

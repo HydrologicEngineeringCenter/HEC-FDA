@@ -14,7 +14,7 @@ namespace FdaViewModel.Saving
         void SaveNew(Utilities.ChildElement element);
         void Remove(Utilities.ChildElement element);
         void SaveExisting(Utilities.ChildElement oldElement, ChildElement elementToSave, int changeTableIndex);
-         List<Utilities.ChildElement> Load();
+        void Load();
 
 
        

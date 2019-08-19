@@ -16,7 +16,7 @@ using FdaViewModel.Tabs;
 
 namespace FdaViewModel.Study
 {
-    public class FdaStudyVM : BaseViewModel, IDisposable, Utilities.Transactions.ITransactionsAndMessages
+    public class FdaStudyVM : BaseViewModel, IDisposable, ITransactionsAndMessages
     {
         #region Notes
         #endregion
@@ -367,7 +367,7 @@ namespace FdaViewModel.Study
         //{
         //    return _MainStudyTree[0].GetElementsOfType<T>();
         //}
-        public override void Dispose()
+        public void Dispose()
         {
             FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
             FdaModel.Utilities.Initialize.DisposeGDAL();

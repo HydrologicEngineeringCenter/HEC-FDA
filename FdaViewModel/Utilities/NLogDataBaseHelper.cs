@@ -48,7 +48,11 @@ namespace FdaViewModel.Utilities
         public static void CreateDBTargets(String sqliteDBPath)
         {
             var config = LogManager.Configuration;
-
+            if(config == null)
+            {
+                //this happens when unit testing
+                return;
+            }
             //set up fatal target
             DatabaseTarget fatalDBTarget = new DatabaseTarget(FATAL_LOG_TABLE_NAME);
             SetUpTarget(fatalDBTarget, sqliteDBPath, FATAL_LOG_TABLE_NAME);
@@ -124,6 +128,12 @@ namespace FdaViewModel.Utilities
             param.Name = "@Message";
             param.Layout = "${message}";
             target.Parameters.Add(param);
+
+
+            MemoryTarget memTarget = new MemoryTarget("CurveEditorVM");
+            memTarget.Layout = "${message}";
+            SimpleConfigurator.ConfigureForTargetLogging(target, LogLevel.Fatal);
+
         }
 
         //it would be pretty easy to get logs based on level and user, level and class, date etc

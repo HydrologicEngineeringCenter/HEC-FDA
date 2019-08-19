@@ -134,7 +134,8 @@ namespace FdaViewModel.Tabs
         /// <param name="tab">The tab you want to add</param>
         public void AddTab(IDynamicTab tab)
         {
-            Logger.Fatal("Adding tab fatal message");
+            
+            Logger.Fatal("Adding tab: {0}. Fatal message", tab.Header);
             Logger.Error("Adding tab: {0}. From ViewModel error msg", tab.Header);
             Logger.Warn("Adding tab: {0}. From ViewModel Warn msg", tab.Header);
             Logger.Info("Adding tab: {0}. From ViewModel INfo msg", tab.Header);

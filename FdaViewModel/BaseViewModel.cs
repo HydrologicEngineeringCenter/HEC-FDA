@@ -22,7 +22,7 @@ namespace FdaViewModel
     /// The base class for all view model classes. Contains methods that are common among all view model classes
     /// such as validation, navigation, adding rules.
     /// </summary>
-    public abstract class BaseViewModel : System.ComponentModel.INotifyPropertyChanged, System.ComponentModel.IDataErrorInfo, IDisposable, IReportMessage
+    public abstract class BaseViewModel : System.ComponentModel.INotifyPropertyChanged, System.ComponentModel.IDataErrorInfo, IReportMessage
     {
         #region Notes
         #endregion
@@ -44,11 +44,7 @@ namespace FdaViewModel
         /// This is a dictionary of property names, and any rules that go with that property.
         /// </summary>
         private Dictionary<string, PropertyRule> ruleMap = new Dictionary<string, PropertyRule>();
-        private bool _HasError;
-        private bool _HasFatalError;
-        private bool _WasCanceled;
-        private bool _HasChanges;
-        private List<FdaModel.Utilities.Messager.ErrorMessage> _messages;
+
         //private Utilities.NamedAction _MessagesAction;
         //private Utilities.NamedAction _ErrorsAction;
         //private Utilities.NamedAction _HelpAction;
@@ -60,9 +56,15 @@ namespace FdaViewModel
 
         #endregion
         #region Properties
+        /// <summary>
+        /// The StudyCache holds all the elements used in FDA. You can use this to get any of them 
+        /// as well as listen for events where elements are added, removed, or updated
+        /// </summary>
         public static IStudyCache StudyCache { get; set; }
-        public static Saving.PersistenceFactory PersistenceFactory{get;set;}
 
+        /// <summary>
+        /// The name of the object
+        /// </summary>
         public virtual string Name
         {
             get { return _Name; }
@@ -74,7 +76,11 @@ namespace FdaViewModel
 
         public string LastEditDate { get; set; }
 
-        
+        /// <summary>
+        /// Required to implement IDataErrorInfo interface
+        /// </summary>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
         public string this[string columnName]
         {
             get
@@ -89,6 +95,7 @@ namespace FdaViewModel
         }
         /// <summary>
         /// WPF seems to not use the Error call, theoretically it is used to invalidate an object.
+        /// This is required to implement IDataErrorInfo interface.
         /// </summary>
         public string Error
         {
@@ -96,7 +103,9 @@ namespace FdaViewModel
             set;
         }
 
-        public string ValidationErrorMessage { get; set; }
+        //public string ValidationErrorMessage {
+        //    get;
+        //    set; }
         //public Utilities.NamedAction MessagesAction
         //{
         //    get { return _MessagesAction; }
@@ -112,19 +121,13 @@ namespace FdaViewModel
         //    get { return _HelpAction; }
         //    set { _HelpAction = value; NotifyPropertyChanged(); }
         //}
-        public List<FdaModel.Utilities.Messager.ErrorMessage> Messages
-        {
-            get { return _messages; }
-            
-        }
-        public bool HasError { get { return _HasError; } }
-        public bool HasFatalError { get { return _HasFatalError; } }
-        public bool HasChanges { get { return _HasChanges; } }
-        public bool WasCanceled
-        {
-            get { return _WasCanceled; }
-            set { _WasCanceled = value; } //NotifyPropertyChanged(nameof(WasCancled)); }    
-        }
+        public List<FdaModel.Utilities.Messager.ErrorMessage> Messages { get; private set; }
+        public bool HasError { get; private set; }
+        public bool HasFatalError { get; private set; }
+        public bool HasChanges { get; private set; }
+        public bool WasCanceled { get; set; }
+       
+
 
         #endregion
         #region Constructors
@@ -133,32 +136,10 @@ namespace FdaViewModel
         /// </summary>
         public BaseViewModel()
         {
-            //_MessagesAction = new Utilities.NamedAction();
-            //_ErrorsAction = new Utilities.NamedAction();
-            //_HelpAction = new Utilities.NamedAction();
+     
             MessageHub.Register(this);
             AddValidationRules();
-            //Utilities.NamedAction messageAction = new Utilities.NamedAction();
-            ////_MessagesAction = new Utilities.NamedAction();
-            //messageAction.Header = "";
-            //messageAction.IsEnabled = false;
-            //messageAction.IsVisible = false;
-            //messageAction.Action = DisplayMessages;
-            //MessagesAction = messageAction;
-
-            //Utilities.NamedAction errorAction = new Utilities.NamedAction();
-            //errorAction.Header = "";
-            //errorAction.IsEnabled = false;
-            //errorAction.IsVisible = false;
-            //errorAction.Action = DisplayErrors;
-            //ErrorsAction = errorAction;
-
-            //Utilities.NamedAction helpAction = new Utilities.NamedAction();
-            //helpAction.Header = "";
-            //helpAction.IsEnabled = true;
-            //helpAction.IsVisible = true;
-            //helpAction.Action = DisplayHelp;
-            //HelpAction = helpAction;
+           
         }
         #endregion
         #region Voids     
@@ -167,25 +148,6 @@ namespace FdaViewModel
         {
             TransactionEvent?.Invoke(this, transaction);
         }
-
-        //private void DisplayErrors(object arg1, EventArgs arg2)
-        //{
-        //    Utilities.MessageVM mvm = new Utilities.MessageVM(Error);
-        //    Navigate(mvm, true, false, "Errors");
-
-        //}
-        //private void DisplayHelp(object arg1, EventArgs arg2)
-        //{
-        //    Utilities.MessageVM mvm = new Utilities.MessageVM("Help");
-        //    Navigate(mvm, true, false, "Help for " + GetType().Name);
-        //}
-        //private void DisplayMessages(object arg1, EventArgs arg2)
-        //{
-        //    //Utilities.MessagesVM mvm = new Utilities.MessagesVM(_messages);
-        //    Utilities.MessagesVM mvm = new Utilities.MessagesVM();
-
-        //    Navigate(mvm, true, false, "Messages");
-        //}
 
 
         /// <summary>
@@ -199,8 +161,8 @@ namespace FdaViewModel
         /// </summary>
         public void Validate()
         {
-            _HasError = false;
-            _HasFatalError = false;
+            HasError = false;
+            HasFatalError = false;
             NotifyPropertyChanged("HasError");
             NotifyPropertyChanged("HasFatalError");
             StringBuilder errors = new StringBuilder();
@@ -212,11 +174,11 @@ namespace FdaViewModel
                 {
                     if (pr.HasFatalError == true)
                     {
-                        _HasFatalError = true;
+                        HasFatalError = true;
                         NotifyPropertyChanged("HasFatalError");
                     }
                     errors.AppendLine(pr.Error);
-                    _HasError = true;
+                    HasError = true;
                     NotifyPropertyChanged("HasError");
                 }
             }
@@ -240,7 +202,7 @@ namespace FdaViewModel
             /// <param name="propertyName"></param>
         protected void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
-            _HasChanges = true;
+            HasChanges = true;
 
 
             if (propertyName.Equals(nameof(HasError)) || propertyName.Equals(nameof(HasFatalError)) || propertyName.Equals(nameof(Error)) || propertyName.Equals(nameof(Messages)))
@@ -291,7 +253,7 @@ namespace FdaViewModel
         }
 
         /// <summary>
-        /// Recursively bubbles up the tree structure to WindowVM.CurrentView_RequestNavigation(). Takes the vm and finds its matching view and displays it.
+        /// Recursively goes up the tree structure to WindowVM.CurrentView_RequestNavigation(). Takes the vm and finds its matching view and displays it.
         /// Launches either a new window or a new tab in the main window.
         /// </summary>
         /// <param name="vm">The view model that you want to display</param>
@@ -312,6 +274,11 @@ namespace FdaViewModel
                 ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Navigation requested from " + this.GetType().Name + " to " + tab.BaseVM.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
             }
         }
+
+        /// <summary>
+        /// Recursively goes up to the ViewWindow.xaml.cs and gets any shapefiles in the map window
+        /// </summary>
+        /// <param name="paths"></param>
         public void ShapefilePaths(ref List<string> paths)
         {
             if (RequestShapefilePaths != null)
@@ -323,6 +290,11 @@ namespace FdaViewModel
                 ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Shapefiles requested from " + this.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
             }
         }
+        /// <summary>
+        /// Recursively goes up to the ViewWindow.xaml.cs and gets any files of the desired VectorFeatureType
+        /// </summary>
+        /// <param name="paths"></param>
+        /// <param name="type">Point, Line, Polygon</param>
         public void ShapefilePathsOfType(ref List<string> paths, Utilities.VectorFeatureType type)
         {
             if (RequestShapefilePathsOfType != null)
@@ -334,6 +306,11 @@ namespace FdaViewModel
                 ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Shapefiles requested from " + this.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
             }
         }
+        /// <summary>
+        /// Recursively goes up to the ViewWindow.xaml.cs and adds "this" to the map window.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         public void AddToMapWindow(object sender, Utilities.AddMapFeatureEventArgs args)
         {
             if (RequestAddToMapWindow != null)
@@ -345,6 +322,11 @@ namespace FdaViewModel
                 ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage(this.GetType().Name + " attemped to add a shapefile but no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
             }
         }
+        /// <summary>
+        /// Recursively goes up to the ViewWindow.xaml.cs and removes "this" from the map window 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         public void RemoveFromMapWindow(object sender, Utilities.RemoveMapFeatureEventArgs args)
         {
             if (RequestRemoveFromMapWindow != null)
@@ -361,14 +343,14 @@ namespace FdaViewModel
             FdaModel.Utilities.Messager.Logger.Instance.ReportMessage(error);
             if (error.ReportedFrom == GetType().Name)
             {
-                if (_messages == null)
+                if (Messages == null)
                 {
-                    _messages = new List<FdaModel.Utilities.Messager.ErrorMessage>();
-                    _messages.Add(error);
+                    Messages = new List<FdaModel.Utilities.Messager.ErrorMessage>();
+                    Messages.Add(error);
                 }
                 else
                 {
-                    _messages.Add(error);
+                    Messages.Add(error);
                 }
                 NotifyPropertyChanged(nameof(Messages));
                 //_MessagesAction.IsEnabled = true;
@@ -425,16 +407,16 @@ namespace FdaViewModel
         //}
 
      
-        public virtual void OnClosing(object sender, EventArgs e)
-        {
-            Dispose();
-        }
-        public virtual void Dispose()
-        {
-            FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
+        //public virtual void OnClosing(object sender, EventArgs e)
+        //{
+        //    Dispose();
+        //}
+        //public virtual void Dispose()
+        //{
+        //    FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
             
             
-        }
+        //}
 
         public void ReportMessage(object sender, MessageEventArgs e)
         {

@@ -16,7 +16,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void SaveNewElemTest()
         {
             ExteriorInteriorElement elem = createExteriorInteriorElement("testElem5");
-            ExteriorInteriorPersistenceManager manager = createPersistenceManager();
+            ExteriorInteriorPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetExteriorInteriorManager();
             SaveNewTest(DBNAME, elem, manager);
 
         }
@@ -25,7 +25,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void SaveExistingElemTest()
         {
             ExteriorInteriorElement originalElem = createExteriorInteriorElement("testElem4");
-            ExteriorInteriorPersistenceManager manager = createPersistenceManager();
+            ExteriorInteriorPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetExteriorInteriorManager();
             SaveExistingTest(DBNAME, originalElem, manager);
 
         }
@@ -34,7 +34,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void UndoElemTest()
         {
             ExteriorInteriorElement originalElem = createExteriorInteriorElement("testElem3");
-            ExteriorInteriorPersistenceManager manager = createPersistenceManager();
+            ExteriorInteriorPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetExteriorInteriorManager();
             UndoTest(DBNAME, originalElem, manager);
 
         }
@@ -43,7 +43,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void RedoElemTest()
         {
             ExteriorInteriorElement originalElem = createExteriorInteriorElement("testElem2");
-            ExteriorInteriorPersistenceManager manager = createPersistenceManager();
+            ExteriorInteriorPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetExteriorInteriorManager();
             RedoTest(DBNAME, originalElem, manager);
 
         }
@@ -52,16 +52,9 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void RemoveElementTest()
         {
             ExteriorInteriorElement elem = createExteriorInteriorElement("testElem1");
-            ExteriorInteriorPersistenceManager manager = createPersistenceManager();
+            ExteriorInteriorPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetExteriorInteriorManager();
             RemoveTest(DBNAME, elem, manager);
 
-        }
-
-
-        private ExteriorInteriorPersistenceManager createPersistenceManager()
-        {
-            FDACache cache = FDACache.Create();
-            return new ExteriorInteriorPersistenceManager(cache);
         }
 
         private ExteriorInteriorElement createExteriorInteriorElement(String name)

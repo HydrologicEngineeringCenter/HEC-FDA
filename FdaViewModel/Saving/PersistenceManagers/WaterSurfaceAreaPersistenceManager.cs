@@ -164,7 +164,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 SaveNewElementToParentTable(GetRowDataFromElement((WaterSurfaceElevationElement)element), TableName, TableColumnNames, TableColumnTypes);
                 SavePathAndProbabilitiesTable((WaterSurfaceElevationElement)element);
                 //save files to the study directory
-                StudyCacheForSaving.AddWaterSurfaceElevationElement((WaterSurfaceElevationElement)element);
+                StudyCacheForSaving.AddElement((WaterSurfaceElevationElement)element);
             }
         }
 
@@ -173,7 +173,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             RemoveFromParentTable(element, TableName);
             Storage.Connection.Instance.DeleteTable(PathAndProbTableConstant + element.Name);
             RemoveWaterSurfElevFiles((WaterSurfaceElevationElement)element);
-            StudyCacheForSaving.RemoveWaterSurfaceElevationElement((WaterSurfaceElevationElement)element);
+            StudyCacheForSaving.RemoveElement((WaterSurfaceElevationElement)element);
 
         }
 
@@ -188,9 +188,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         }
 
-        public List<ChildElement> Load()
+        public void Load()
         {
-            return CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
+            List<Utilities.ChildElement> waterSurfaceElevs = CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
+            foreach (WaterSurfaceElevationElement elem in waterSurfaceElevs)
+            {
+                StudyCacheForSaving.AddElement(elem);
+            }
         }
 
         public override void AddValidationRules()

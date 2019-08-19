@@ -145,7 +145,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 //SaveElementToChangeTable(element.Name, GetRowDataFromElement((ImpactAreaElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
                 SaveImpactAreaTable((ImpactAreaElement)element);
                 //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCacheForSaving.AddImpactAreaElement((ImpactAreaElement)element);
+                StudyCacheForSaving.AddElement((ImpactAreaElement)element);
             }
         }
 
@@ -154,7 +154,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             RemoveFromParentTable(element, TableName);
             DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCacheForSaving.RemoveImpactAreaElement((ImpactAreaElement)element);
+            StudyCacheForSaving.RemoveElement((ImpactAreaElement)element);
 
         }
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )
@@ -176,9 +176,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
         }
 
-        public List<Utilities.ChildElement> Load()
+        public void Load()
         {
-           return CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
+            List<ChildElement> impAreas = CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
+            foreach (ImpactAreaElement elem in impAreas)
+            {
+                StudyCacheForSaving.AddElement(elem);
+            }
         }
 
         public override void AddValidationRules()

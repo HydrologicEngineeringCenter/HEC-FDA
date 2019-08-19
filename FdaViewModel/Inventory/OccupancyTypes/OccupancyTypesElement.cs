@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
 using FdaViewModel.Utilities;
+using Consequences_Assist.ComputableObjects;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -368,7 +369,17 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
-            return null;
+            OccupancyTypesElement elem = (OccupancyTypesElement)elementToClone;
+
+            List<OccupancyType> occTypes = new List<OccupancyType>(); 
+            foreach(OccupancyType ot in elem.ListOfOccupancyTypes)
+            {
+                occTypes.Add(ot);
+            }
+
+            Dictionary<string, bool[]> dictionaryCopy = new Dictionary<string, bool[]>(elem.OccTypesSelectedTabsDictionary);
+
+            return new OccupancyTypesElement(elem.Name, occTypes, dictionaryCopy);
         }
 
     }

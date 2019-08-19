@@ -380,6 +380,9 @@
     <Compile Include="Utilities\MapWindowWrapper.xaml.cs">
       <DependentUpon>MapWindowWrapper.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\MessageExpanderControl.xaml.cs">
+      <DependentUpon>MessageExpanderControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\MessagesView.xaml.cs">
       <DependentUpon>MessagesView.xaml</DependentUpon>
     </Compile>
@@ -685,6 +688,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Utilities\MapWindowWrapper.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Utilities\MessageExpanderControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

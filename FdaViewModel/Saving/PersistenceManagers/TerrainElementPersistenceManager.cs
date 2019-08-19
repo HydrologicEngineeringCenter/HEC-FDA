@@ -60,7 +60,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                     break;
                 }
             }
-            StudyCacheForSaving.AddTerrainElement(element);
+            StudyCacheForSaving.AddElement(element);
         }
         private async void RemoveTerrainFileOnBackgroundThread(TerrainElement element)
         {
@@ -83,7 +83,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
                 return;
             }
-            StudyCacheForSaving.RemoveTerrainElement((TerrainElement)element);
+            StudyCacheForSaving.RemoveElement((TerrainElement)element);
 
         }
 
@@ -130,12 +130,16 @@ namespace FdaViewModel.Saving.PersistenceManagers
         #endregion
 
 
-        public List<Utilities.ChildElement> Load()
+        public void Load()
         {
-            return CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
+            List<ChildElement> terrains = CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
+            foreach (TerrainElement elem in terrains)
+            {
+                StudyCacheForSaving.AddElement(elem);
+            }
         }
 
-        public void SaveNew(Utilities.ChildElement element)
+        public void SaveNew(ChildElement element)
         {
             SaveNewElementToParentTable(GetRowDataFromElement((TerrainElement)element), TableName, TableColumnNames, TableColumnTypes);
             CopyFileOnBackgroundThread((TerrainElement)element);

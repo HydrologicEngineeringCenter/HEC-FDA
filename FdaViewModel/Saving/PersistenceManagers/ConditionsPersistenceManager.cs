@@ -207,7 +207,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 //SaveElementToChangeTable(element.Name, GetRowDataFromElement((ConditionsElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
                 //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
                 //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCacheForSaving.AddConditionsElement((ConditionsElement)element);
+                StudyCacheForSaving.AddElement((ConditionsElement)element);
                 
             }
         }
@@ -216,7 +216,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             RemoveFromParentTable(element, TableName);
             //DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCacheForSaving.RemoveConditionsElement((ConditionsElement)element);// RemoveRatingElement((RatingCurveElement)element);
+            StudyCacheForSaving.RemoveElement((ConditionsElement)element);// RemoveRatingElement((RatingCurveElement)element);
 
         }
 
@@ -229,9 +229,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
         }
 
-        public List<ChildElement> Load()
+        public void Load()
         {
-            return CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
+            List<ChildElement> conditions = CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
+            foreach (ConditionsElement elem in conditions)
+            {
+                StudyCacheForSaving.AddElement(elem);
+            }
         }
 
 

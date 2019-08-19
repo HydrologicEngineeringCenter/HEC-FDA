@@ -42,13 +42,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
             if (element.GetType() == typeof(LeveeFeatureElement))
             {
                 SaveNewElementToParentTable(GetRowDataFromElement((LeveeFeatureElement)element), TableName, TableColumnNames, TableColumnTypes);
-                StudyCacheForSaving.AddLeveeElement((LeveeFeatureElement)element);
+                StudyCacheForSaving.AddElement((LeveeFeatureElement)element);
             }
         }
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
-            StudyCacheForSaving.RemoveLeveeElement((LeveeFeatureElement)element);
+            StudyCacheForSaving.RemoveElement((LeveeFeatureElement)element);
 
         }
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )
@@ -60,9 +60,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
         }
 
-        public List<ChildElement> Load()
+        public void Load()
         {
-            return CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
+            List<ChildElement> levees = CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));
+            foreach (LeveeFeatureElement elem in levees)
+            {
+                StudyCacheForSaving.AddElement(elem);
+            }
         }
 
         public override void AddValidationRules()

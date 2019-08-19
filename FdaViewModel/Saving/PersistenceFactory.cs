@@ -17,6 +17,7 @@ namespace FdaViewModel.Saving
     /// </summary>
     public class PersistenceFactory
     {
+
         /// <summary>
         /// Cache that holds all the elements in memory
         /// </summary>
@@ -25,10 +26,11 @@ namespace FdaViewModel.Saving
         /// Factory used to create persistence managers for elements in FDA. 
         /// </summary>
         /// <param name="cache">The cache holds all the elements in memory</param>
-        public PersistenceFactory(Study.FDACache cache)
+        private PersistenceFactory()
         {
-            StudyCacheForSaving = cache;
+            
         }
+        
 
         public static IPersistable GetElementManager(Utilities.ChildElement element)
         {

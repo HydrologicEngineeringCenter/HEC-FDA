@@ -64,7 +64,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
 
                 //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCacheForSaving.AddRatingElement((RatingCurveElement)element);
+                //StudyCacheForSaving.AddRatingElement((RatingCurveElement)element);
+                StudyCacheForSaving.AddElement(element);
             }
         }
 
@@ -74,7 +75,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
             RemoveFromParentTable(element, TableName);
             DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCacheForSaving.RemoveRatingElement((RatingCurveElement)element);
+            //StudyCacheForSaving.RemoveRatingElement((RatingCurveElement)element);
+            StudyCacheForSaving.RemoveElement(element);
 
         }
 
@@ -93,9 +95,15 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         }
 
-        public List<ChildElement> Load()
+        public void Load()
         {
-            return CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
+            List<ChildElement> ratings = CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
+            foreach (RatingCurveElement elem in ratings)
+            {
+                //StudyCacheForSaving.AddRatingElement(elem);
+                StudyCacheForSaving.AddElement(elem);
+
+            }
         }
       
 

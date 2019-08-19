@@ -52,7 +52,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
 
                 //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCacheForSaving.AddExteriorInteriorElement((ExteriorInteriorElement)element);
+                StudyCacheForSaving.AddElement((ExteriorInteriorElement)element);
             }
         }
 
@@ -60,7 +60,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             RemoveFromParentTable(element, TableName);
             DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCacheForSaving.RemoveExteriorInteriorElement((ExteriorInteriorElement)element);
+            StudyCacheForSaving.RemoveElement((ExteriorInteriorElement)element);
 
         }
 
@@ -79,10 +79,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
         }
 
-        public List<ChildElement> Load()
+        public void Load()
         {
-            return CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
-             
+            List<ChildElement> exteriorInteriors = CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
+            foreach (ExteriorInteriorElement elem in exteriorInteriors)
+            {
+                StudyCacheForSaving.AddElement(elem);
+            }
         }
 
         public override void AddValidationRules()

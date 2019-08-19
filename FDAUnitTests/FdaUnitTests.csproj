@@ -130,8 +130,13 @@
     <Compile Include="Saving\PersistenceManagers\ExteriorInteriorPersistenceManagerTest.cs" />
     <Compile Include="Saving\PersistenceManagers\FailureFunctionPersistenceManagerTests.cs" />
     <Compile Include="Saving\PersistenceManagers\FlowFrequencyPersistenceManager.cs" />
+    <Compile Include="Saving\PersistenceManagers\ImpactAreaPersistenceManagerTests.cs" />
+    <Compile Include="Saving\PersistenceManagers\InflowOutflowPersistenceManagerTests.cs" />
+    <Compile Include="Saving\PersistenceManagers\OccupanceTypesPersistenceManagerTests.cs" />
     <Compile Include="Saving\PersistenceManagers\PersistenceManagersBaseTest.cs" />
+    <Compile Include="Saving\PersistenceManagers\RatingElementPersistenceManagerTests.cs" />
     <Compile Include="Saving\PersistenceManagers\StageDamagePersistenceManagerTests.cs" />
+    <Compile Include="Saving\PersistenceManagers\StructureInventoriesPersistenceManagerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

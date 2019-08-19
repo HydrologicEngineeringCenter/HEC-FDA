@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using FdaViewModel.Utilities.Transactions;
 using FdaModel.Messaging;
+using NLog.Targets;
+using NLog;
 
 namespace FdaViewModel.Editors
 {
@@ -60,6 +62,7 @@ namespace FdaViewModel.Editors
             {
                 _Curve = value;
                 ReportMessage(this, new FdaModel.Messaging.MessageEventArgs(new Message("Curve value changed")));
+
                 NotifyPropertyChanged();
             }
         }
@@ -108,6 +111,10 @@ namespace FdaViewModel.Editors
             ReportMessage(this, new MessageEventArgs(new Message("openning... testing pub sub")));
             PlotTitle = Name;
             MessageRows = NLogDataBaseHelper.GetMessageRows(NLog.LogLevel.Fatal);
+
+
+            MemoryTarget target = (MemoryTarget)LogManager.Configuration.FindTargetByName("CurveEditorVM");
+            IList<string> logs = target.Logs;
         }
 
         #endregion
@@ -177,14 +184,14 @@ namespace FdaViewModel.Editors
             ActionManager.SaveUndoRedoHelper.AssignValuesFromElementToEditorAction(this, element);
         }
 
-        public override void OnClosing(object sender, EventArgs e)
-        {
-            base.OnClosing(sender, e);
-        }
-        public override void Dispose()
-        {
-            base.Dispose();
-        }
+        //public override void OnClosing(object sender, EventArgs e)
+        //{
+        //    base.OnClosing(sender, e);
+        //}
+        //public override void Dispose()
+        //{
+        //    base.Dispose();
+        //}
 
         public void RecieveMessage(object sender, MessageEventArgs e)
         {

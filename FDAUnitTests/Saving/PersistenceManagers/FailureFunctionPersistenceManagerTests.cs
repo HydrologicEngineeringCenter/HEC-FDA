@@ -17,7 +17,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         {
             
             FailureFunctionElement elem = createFailureFunctionElement("testElem5");
-            FailureFunctionPersistenceManager manager = createPersistenceManager();
+            FailureFunctionPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetFailureFunctionManager();
 
             SaveNewTest(DBNAME, elem, manager);
         }
@@ -26,7 +26,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void SaveExistingElemTest()
         {
             FailureFunctionElement originalElem = createFailureFunctionElement("testElem4");
-            FailureFunctionPersistenceManager manager = createPersistenceManager();
+            FailureFunctionPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetFailureFunctionManager();
 
             SaveExistingTest(DBNAME, originalElem, manager);
         }
@@ -35,7 +35,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void UndoElemTest()
         {
             FailureFunctionElement originalElem = createFailureFunctionElement("testElem3");
-            FailureFunctionPersistenceManager manager = createPersistenceManager();
+            FailureFunctionPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetFailureFunctionManager();
 
             UndoTest(DBNAME, originalElem, manager);
            
@@ -45,7 +45,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void RedoElemTest()
         {
             FailureFunctionElement originalElem = createFailureFunctionElement("testElem2");
-            FailureFunctionPersistenceManager manager = createPersistenceManager();
+            FailureFunctionPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetFailureFunctionManager();
 
             RedoTest(DBNAME, originalElem, manager);
         }
@@ -54,22 +54,12 @@ namespace FDAUnitTests.Saving.PersistenceManagers
         public void RemoveElementTest()
         {
             FailureFunctionElement elem = createFailureFunctionElement("testElem1");
-            FailureFunctionPersistenceManager manager = createPersistenceManager();
+            FailureFunctionPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetFailureFunctionManager();
 
             RemoveTest(DBNAME, elem, manager);
         }
 
 
-
-
-
-
-
-        private FailureFunctionPersistenceManager createPersistenceManager()
-        {
-            FDACache cache = FDACache.Create();
-            return new FailureFunctionPersistenceManager(cache);
-        }
 
         private FailureFunctionElement createFailureFunctionElement(String name)
         {
