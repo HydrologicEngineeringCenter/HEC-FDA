@@ -15,12 +15,15 @@ using FdaViewModel.Tabs;
 using FdaViewModel.Utilities;
 using FdaViewModel.Watershed;
 using FdaViewModel.WaterSurfaceElevation;
+using NLog;
+using NLog.Targets;
 using Statistics;
 
 namespace FdaViewModel.Editors
 {
     public abstract class BaseEditorVM : BaseViewModel
     {
+        public static event EventHandler EditorLogAdded;
 
         private string _Description;
         public string Description
@@ -47,7 +50,6 @@ namespace FdaViewModel.Editors
             {
                 SetActionManagerValues();
             }
-
         }
         /// <summary>
         /// Call this one when editing an existing element. 
@@ -78,6 +80,13 @@ namespace FdaViewModel.Editors
                 }
             }
         }
+
+        public static void UpdateErrorMessage(string level, string message)
+        {
+            MessageRowItem mri = new MessageRowItem("", message, "", level, "BaseEditorVM");
+            //EditorLogAdded?.Invoke(mri, new EventArgs());
+        }
+
         /// <summary>
         /// This needs to happen when the importer save button gets clicked. 
         /// I need to switch it over to being a dictionary

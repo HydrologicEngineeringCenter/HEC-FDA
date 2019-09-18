@@ -5,18 +5,62 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Fda.Utilities"
              mc:Ignorable="d" 
-             Loaded="UserControl_Loaded"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Name="MainGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" MaxHeight="210"/>
+            <RowDefinition Height="35"/>
         </Grid.RowDefinitions>
-        <Expander Name="MessagesExpander" Header="Errors" Grid.Row="1" Collapsed="Expander_Collapsed" Expanded="MessagesExpander_Expanded" Margin="5" MaxHeight="200">
-            <ScrollViewer VerticalScrollBarVisibility="Visible" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" Margin="5" Height="Auto" BorderThickness="3" BorderBrush="Red">
-                <ListView Name="MessagesListView" >
-                    
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Expander Name="MessagesExpander" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Collapsed="Expander_Collapsed" Expanded="MessagesExpander_Expanded" Margin="5,5,0,5" >
+            <Expander.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Name="HeaderBaseText" Text="Errors " VerticalAlignment="Bottom" />
+                    <TextBlock Text="{Binding MessageCount, StringFormat=({0})}" />
+                </StackPanel>
+            </Expander.Header>
+            <!--<ScrollViewer VerticalScrollBarVisibility="Visible" CanContentScroll="True" HorizontalScrollBarVisibility="Disabled" Margin="5" Height="Auto" BorderThickness="3" BorderBrush="Red">-->
+                <ListView Name="MessagesListView" ItemsSource="{Binding MessageRows}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="5,5,0,0">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Expander Name="InnerExpander" ExpandDirection="Down" Margin="0">
+                                <Expander.Header>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Message}" TextWrapping="Wrap" VerticalAlignment="Bottom" />
+                                    </StackPanel>
+                                </Expander.Header>
+                                <StackPanel Orientation="Vertical" Margin="0" >
+                                    <StackPanel Orientation="Horizontal" Margin="40,0,0,0">
+                                        <Label Content="Date: " Margin="0"/>
+                                        <Label Content="{Binding Date}" Margin="0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="40,0,0,0">
+                                        <Label Content="User: " Margin="0"/>
+                                        <Label Content="{Binding User}" Margin="0"/>
+                                    </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="40,0,0,0">
+                                    <Label Content="LogLevel: " Margin="0"/>
+                                    <Label Content="{Binding LogLevel}" Margin="0"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="40,0,0,0">
+                                    <Label Content="Source: " Margin="0"/>
+                                    <Label Content="{Binding Logger}" Margin="0"/>
+                                </StackPanel>
+                            </StackPanel>
+                            </Expander>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                 </ListView>
-            </ScrollViewer>
+            <!--</ScrollViewer>-->
         </Expander>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+            <Label Content="Filter:" />
+            <ComboBox Name="cmb_Filter"  HorizontalAlignment="Left" VerticalAlignment="Top" Text="Filter" Width="150" Height="20" Margin="5" SelectionChanged="cmb_Filter_SelectionChanged" />
+        </StackPanel>
+
     </Grid>
 </UserControl>
