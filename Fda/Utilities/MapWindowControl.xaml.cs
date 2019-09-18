@@ -27,10 +27,11 @@ namespace Fda.Utilities
         //    get { return (OpenGLMapping.MapTreeView)GetValue(MapTreeViewProperty); }
         //    set { SetValue(MapTreeViewProperty, value); }
         //}
-
         public MapWindowControl()
         {
             InitializeComponent();
+
+           
 
             //MapWindow.MapWindow.TreeView = MapTreeView;
             //MapTreeView.MapWindow = MapWindow.MapWindow;
@@ -119,6 +120,8 @@ namespace Fda.Utilities
         //}
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            FdaViewModel.Utilities.MapWindowControlVM vm = (FdaViewModel.Utilities.MapWindowControlVM)this.DataContext;
+
             MapToolBar.MapWindow = MapWindow.MapWindow;
 
             SelectableLayers.MapWindow = MapWindow.MapWindow;
@@ -134,7 +137,6 @@ namespace Fda.Utilities
             MapWindow.MapWindow.MouseLeave += MapWindow_Mouse;
             MapWindow.MapWindow.MouseEnter += MapWindow_Mouse;
 
-            FdaViewModel.Utilities.MapWindowControlVM vm = (FdaViewModel.Utilities.MapWindowControlVM)this.DataContext;
             vm.MWMTVConn.MapWindow = MapWindow.MapWindow;
 
             MapWindow.MapWindow.TreeView = vm.MWMTVConn.MapTreeView;
@@ -145,9 +147,8 @@ namespace Fda.Utilities
 
             FeatureEditorToolbar.MapTree = vm.MWMTVConn.MapTreeView;
 
-
             vm.MWMTVConn.MapTreeView.UpdateMapWindow();
-
         }
+
     }
 }

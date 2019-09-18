@@ -55,11 +55,14 @@ namespace FdaViewModel.Utilities
             if (_MapWindow != null)
             {
 
-                _MapTreeView.MapWindow = _MapWindow;
-                _MapWindow.TreeView = _MapTreeView;
+                //_MapTreeView.MapWindow = _MapWindow;
+                //_MapWindow.TreeView = _MapTreeView;
 
                 _MapWindow.PlotFeatures();
-                _MapTreeView.UpdateLayout();
+                //_MapWindow.ZoomFromCenter(1);
+               // _MapWindow.OpenGLMapWindow_Resize(null, null);
+               // _MapWindow.SetupViewPort(extent); definitely not this one
+                //_MapTreeView.UpdateMapWindow();
             }
         }
 

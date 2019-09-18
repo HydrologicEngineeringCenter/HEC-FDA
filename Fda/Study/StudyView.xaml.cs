@@ -27,9 +27,8 @@ namespace Fda.Study
         public StudyView()
         {
 
-
-            InitializeComponent();
-
+                InitializeComponent();
+         
             
 
             //MapWindow.MapWindow.TreeView = MapTreeView;
@@ -180,16 +179,6 @@ namespace Fda.Study
             FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
             //lbl_Study.ContextMenu = vm.StudyElement.Actions;
             lbl_Study.ContextMenu.IsOpen = true;
-        }
-
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
-            //vm.MWMTVConn. MapTreeView = MapTreeView;
-            if (vm.MWMTVConn != null)
-            {
-                vm.MWMTVConn.UpdateMapWindow();
-            }
         }
 
 

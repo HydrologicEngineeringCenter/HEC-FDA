@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataBase_Reader;
+using DatabaseManager;
 
 namespace FdaModel
 {
@@ -149,7 +149,7 @@ namespace FdaModel
 
         public void WriteData()
         {
-            SqLiteReader database = new SqLiteReader(FilePath + Name + ".sqlite");
+            SQLiteManager database = new SQLiteManager(FilePath + Name + ".sqlite");
             string[] tableNames = new string[2] 
             {
                 GetType().ToString(),

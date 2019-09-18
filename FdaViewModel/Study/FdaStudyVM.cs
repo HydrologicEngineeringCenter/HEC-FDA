@@ -262,6 +262,7 @@ namespace FdaViewModel.Study
             vm.Name = "map window vm";
             DynamicTabVM mapTabVM = new DynamicTabVM("Map", vm, "Map", false, false);
             TabController.Instance.AddTab(mapTabVM);
+            TabController.Instance.MWMTVConnector = _MWMTVConn;
         }
 
         /// <summary>
@@ -333,7 +334,7 @@ namespace FdaViewModel.Study
         {
             if (!Storage.Connection.Instance.IsConnectionNull)
             {
-                FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
+                //FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
             }
         }
 
@@ -341,7 +342,7 @@ namespace FdaViewModel.Study
         {
             if (!Storage.Connection.Instance.IsConnectionNull)
             {
-                DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable("Transactions");
+                DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable("Transactions");
                 if (dtv == null)
                 {
                     Storage.Connection.Instance.CreateTable("Transactions", new string[] { "Element Name", "Element Type", "Action", "Date", "User", "Notes" }, new Type[] { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) });
@@ -369,7 +370,7 @@ namespace FdaViewModel.Study
         //}
         public void Dispose()
         {
-            FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
+           // FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
             FdaModel.Utilities.Initialize.DisposeGDAL();
             WriteMapLayersXMLFile();
             NLog.LogManager.Shutdown();

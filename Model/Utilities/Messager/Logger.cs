@@ -60,11 +60,11 @@ namespace FdaModel.Utilities.Messager
         /// <summary>
         /// This flushes the message queue.
         /// </summary>
-        public void Flush(DataBase_Reader.SqLiteReader reader)
+        public void Flush(DatabaseManager.SQLiteManager reader)
         {
             WriteAllMessagesToLogFile(reader);
         }
-        private void WriteAllMessagesToLogFile(DataBase_Reader.SqLiteReader reader)
+        private void WriteAllMessagesToLogFile(DatabaseManager.SQLiteManager reader)
         {
             List<ErrorMessage> messages = new List<ErrorMessage>();
             ErrorMessage error;
@@ -96,7 +96,7 @@ namespace FdaModel.Utilities.Messager
                     {
                         reader.CreateTable("Messages", new string[] { "Message", "Error Level", "User", "Date", "Source" }, new Type[] { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) });
                     }
-                    DataBase_Reader.DataTableView dtv = reader.GetTableManager("Messages");
+                    DatabaseManager.DataTableView dtv = reader.GetTableManager("Messages");
                     foreach (ErrorMessage err in messages)
                     {
                         dtv.AddRow(new object[] { err.Message, err.ErrorLevel, err.User, err.Date, err.ReportedFrom });

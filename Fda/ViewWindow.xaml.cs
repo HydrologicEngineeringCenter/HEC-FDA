@@ -67,7 +67,6 @@ namespace Fda
             {
                 FdaViewModel.Utilities.AddShapefileEventArgs sargs = args as FdaViewModel.Utilities.AddShapefileEventArgs;
 
-                //if (sender.GetType().Name == nameof(FdaViewModel.ImpactArea.ImpactAreaElement))
                 if (sargs.Features.GetType() == typeof(LifeSimGIS.PolygonFeatures))
                 {
                     LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)sargs.Features;
@@ -79,7 +78,6 @@ namespace Fda
                     args.MapFeatureHash = vfn.GetHashCode();
                     vfn.RemoveLayerCalled += ((FdaViewModel.ImpactArea.ImpactAreaElement)sender).removedcallback;
                 }
-                //else if (sender.GetType().Name == nameof(FdaViewModel.Inventory.InventoryElement))
                 else if (sargs.Features.GetType() == typeof(LifeSimGIS.PointFeatures))
                 {
                     VectorFeatureNode vfn = new VectorFeatureNode(new MapPoints((LifeSimGIS.PointFeatures)sargs.Features, sargs.Attributes, sargs.FeatureName, new OpenGLMapping.OpenGLDrawSingle(sargs.DrawInfo), mtv.MapWindow), sargs.FeatureName);

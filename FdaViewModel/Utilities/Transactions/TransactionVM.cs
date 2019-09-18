@@ -28,7 +28,7 @@ namespace FdaViewModel.Utilities.Transactions
                 if (Storage.Connection.Instance.TableNames().Contains("Transactions"))
                 {
                     if (!Storage.Connection.Instance.IsOpen) { Storage.Connection.Instance.Open(); }
-                    DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable("Transactions");
+                    DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable("Transactions");
                     object[] row = null;
                     for(int i = 0; i<dtv.NumberOfRows;i++)
                     {

@@ -28,6 +28,9 @@ namespace FdaViewModel.Tabs
 
 
         #region Properties
+
+        public MapWindowMapTreeViewConnector MWMTVConnector { get; set; }
+
         /// <summary>
         /// The list of tabs in the main UI
         /// </summary>
@@ -45,9 +48,13 @@ namespace FdaViewModel.Tabs
             set
             {
                 _SelectedTabIndex = value; NotifyPropertyChanged();
-                if (_SelectedTabIndex == 0)
+                //I don't like this one bit. It would be nice if we could pop the map window out etc
+                //Now i have to have access to the connector in this class which i don't want to do.
+                //I don't think this is even working, so probably get rid of it once i know how to update
+                //the map window when it is selected.
+                if (_SelectedTabIndex == 0 && MWMTVConnector != null)
                 {
-                    //_MWMTVConn.UpdateMapWindow();
+                    MWMTVConnector.UpdateMapWindow();
                     //UpdateMapWindow();
                 }
             }

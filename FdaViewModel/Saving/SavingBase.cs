@@ -97,7 +97,7 @@ namespace FdaViewModel.Saving
                 Storage.Connection.Instance.Open();
             }
 
-            DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(tableName);
+            DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable(tableName);
             if (dtv != null)
             {
                 //add an element based on a row element;
@@ -110,7 +110,7 @@ namespace FdaViewModel.Saving
             return elems;
         }
 
-        private int GetElementIndexInTable(DataBase_Reader.DataTableView tableView, string name, int nameIndexInTheRow)
+        private int GetElementIndexInTable(DatabaseManager.DataTableView tableView, string name, int nameIndexInTheRow)
         {
             if (tableView != null)
             {
@@ -136,7 +136,7 @@ namespace FdaViewModel.Saving
             //if (!element.SavesToRow()) return;
 
 
-            DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(tableName);
+            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(tableName);
             if (tbl == null)
             {
                 Storage.Connection.Instance.CreateTable(tableName, TableColumnNames, TableColumnTypes);
@@ -152,7 +152,7 @@ namespace FdaViewModel.Saving
 
             string changeTableName = changeTableConstant + elementName + "-ChangeTable";
 
-            DataBase_Reader.DataTableView changeTable = Storage.Connection.Instance.GetTable(changeTableName);
+            DatabaseManager.DataTableView changeTable = Storage.Connection.Instance.GetTable(changeTableName);
             if (changeTable == null)
             {
                 Storage.Connection.Instance.CreateTable(changeTableName, TableColumnNames, TableColumnTypes);
@@ -191,7 +191,7 @@ namespace FdaViewModel.Saving
 
             if (Storage.Connection.Instance.TableNames().Contains(tableName))
             {
-                DataBase_Reader.DataTableView parentTableView = Storage.Connection.Instance.GetTable(tableName);
+                DatabaseManager.DataTableView parentTableView = Storage.Connection.Instance.GetTable(tableName);
                 if (parentTableView != null)
                 {
                     int parentTableIndex = GetElementIndexInTable(parentTableView, element.Name, 0);
@@ -209,7 +209,7 @@ namespace FdaViewModel.Saving
         public void DeleteChangeTableAndAssociatedTables(ChildElement element, string changeTableConstant)
         {
             string changeTableName = changeTableConstant + element.Name + "-ChangeTable";
-            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(changeTableName);
+            DatabaseManager.DataTableView changeTableView = Storage.Connection.Instance.GetTable(changeTableName);
             if (changeTableView != null)
             {
                 //loop through all rows and delete all associated tables
@@ -255,7 +255,7 @@ namespace FdaViewModel.Saving
         public void UpdateParentTableRow(string elementName, int changeIndex, object[] rowData, string oldName, string tableName, bool hasChangeTable = false, string changeTableConstant = "")
         {
             if (!Storage.Connection.Instance.IsOpen) { Storage.Connection.Instance.Open(); }
-            DataBase_Reader.DataTableView tableView = Storage.Connection.Instance.GetTable(tableName);
+            DatabaseManager.DataTableView tableView = Storage.Connection.Instance.GetTable(tableName);
 
             
 
@@ -289,7 +289,7 @@ namespace FdaViewModel.Saving
         public bool DidParentTableRowValuesChange(ChildElement element, object[] rowData, string oldName, string tableName)
         {
             if (!Storage.Connection.Instance.IsOpen) { Storage.Connection.Instance.Open(); }
-            DataBase_Reader.DataTableView tableView = Storage.Connection.Instance.GetTable(tableName);
+            DatabaseManager.DataTableView tableView = Storage.Connection.Instance.GetTable(tableName);
 
 
             int rowIndex = GetElementIndexInTable(tableView, oldName, 0);
@@ -412,7 +412,7 @@ namespace FdaViewModel.Saving
         private void UpdateElementChangeTable(int changeIndex, object[] rowData, string elementName, string changeTableConstant)
         {
             string changeTableName = changeTableConstant + elementName + "-ChangeTable";
-            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(changeTableName);
+            DatabaseManager.DataTableView changeTableView = Storage.Connection.Instance.GetTable(changeTableName);
             System.Data.DataTable table = changeTableView.ExportToDataTable();
 
 
@@ -485,7 +485,7 @@ namespace FdaViewModel.Saving
             {
                 Storage.Connection.Instance.Open();
             }
-            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(ChangeTableConstant + element.Name +  "-ChangeTable");
+            DatabaseManager.DataTableView changeTableView = Storage.Connection.Instance.GetTable(ChangeTableConstant + element.Name +  "-ChangeTable");
             if (changeTableIndex < changeTableView.NumberOfRows - 1)
             {
                 prevElement = GetPreviousElementFromChangeTable(element, changeTableIndex + 1);
@@ -509,7 +509,7 @@ namespace FdaViewModel.Saving
             {
                 Storage.Connection.Instance.Open();
             }
-            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(ChangeTableConstant + element.Name+ "-ChangeTable");
+            DatabaseManager.DataTableView changeTableView = Storage.Connection.Instance.GetTable(ChangeTableConstant + element.Name+ "-ChangeTable");
             if (changeTableView != null)
             {
                 //get the previous state
@@ -535,7 +535,7 @@ namespace FdaViewModel.Saving
             }
 
             string changeTableName = ChangeTableConstant + element.Name +  "-ChangeTable";
-            DataBase_Reader.DataTableView tableView = Storage.Connection.Instance.GetTable(changeTableName);
+            DatabaseManager.DataTableView tableView = Storage.Connection.Instance.GetTable(changeTableName);
             if (tableView == null) { return new ObservableCollection<UndoRedoRowItem>(); }
 
             int nameIndex = 0;
@@ -554,7 +554,7 @@ namespace FdaViewModel.Saving
             ChildElement prevElement = null;
             string changeTableName = ChangeTableConstant + element.Name+ "-ChangeTable";
 
-            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(changeTableName);
+            DatabaseManager.DataTableView changeTableView = Storage.Connection.Instance.GetTable(changeTableName);
             if (changeTableIndex < changeTableView.NumberOfRows)
             {
                 if (changeTableView != null)
@@ -578,7 +578,7 @@ namespace FdaViewModel.Saving
             string changeTableName = ChangeTableConstant + element.Name+ "-ChangeTable";
 
             ChildElement nextElement = null;
-            DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(changeTableName);
+            DatabaseManager.DataTableView changeTableView = Storage.Connection.Instance.GetTable(changeTableName);
             if (changeTableIndex >= 0)
             {
                 if (changeTableView != null)

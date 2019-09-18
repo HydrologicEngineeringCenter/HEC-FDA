@@ -14,7 +14,7 @@ namespace FdaViewModel.Storage
         #endregion
         #region Fields
         private static object _WriteLock = new object();
-        private static DataBase_Reader.SqLiteReader _SqliteReader = null; // consider a list of readers so i can create a reader pool.
+        private static DatabaseManager.SQLiteManager _SqliteReader = null; // consider a list of readers so i can create a reader pool.
         private const string _TerrainFolderName = "Terrains";
         private const string _HydraulicsFolderName = "Hydraulic Data";
         private static string _ProjectDirectory = "";
@@ -35,7 +35,7 @@ namespace FdaViewModel.Storage
                     {
                         SetUpForExistingStudy(value);
                     }
-                    _SqliteReader = new DataBase_Reader.SqLiteReader(value);
+                    _SqliteReader = new DatabaseManager.SQLiteManager(value);
                     _SqliteReader.EditsSaved += _SqliteReader_EditsSaved;
                 }
                 else
@@ -49,9 +49,9 @@ namespace FdaViewModel.Storage
                     {
                         SetUpForExistingStudy(value);
                         
-                    }
-                        _SqliteReader = new DataBase_Reader.SqLiteReader(value);
-                        _SqliteReader.EditsSaved += _SqliteReader_EditsSaved;
+                    }                    
+                    _SqliteReader = new DatabaseManager.SQLiteManager(value);
+                    _SqliteReader.EditsSaved += _SqliteReader_EditsSaved;
                 }
                 //add a logging target for the sqlite db.
                 NLogDataBaseHelper.CreateDBTargets(value);
@@ -71,11 +71,11 @@ namespace FdaViewModel.Storage
             if (!Directory.Exists(ProjectDirectory)) { Directory.CreateDirectory(ProjectDirectory); }
             if (!Directory.Exists(TerrainDirectory)) { Directory.CreateDirectory(TerrainDirectory); }
             if (!Directory.Exists(HydraulicsDirectory)) { Directory.CreateDirectory(HydraulicsDirectory); }
-            DataBase_Reader.SqLiteReader.CreateSqLiteFile(value);
+            DatabaseManager.SQLiteManager.CreateSqLiteFile(value);
             
         }
 
-        public DataBase_Reader.SqLiteReader Reader
+        public DatabaseManager.SQLiteManager Reader
         {
             get { return _SqliteReader; }
         }
@@ -105,7 +105,10 @@ namespace FdaViewModel.Storage
         }
         public bool IsOpen { get { return _SqliteReader.DataBaseOpen; } }
 
-        public bool IsConnectionNull { get { return _SqliteReader == null; } }
+        public bool IsConnectionNull
+        {
+            get { return _SqliteReader == null; }
+        }
 
         public static readonly Connection Instance = new Connection();
         #endregion
@@ -168,7 +171,7 @@ namespace FdaViewModel.Storage
         {
             return _SqliteReader.GetTableNames();
         }
-        public DataBase_Reader.DataTableView GetTable(string TableName)
+        public DatabaseManager.DataTableView GetTable(string TableName)
         {
 
             if (IsConnectionNull)

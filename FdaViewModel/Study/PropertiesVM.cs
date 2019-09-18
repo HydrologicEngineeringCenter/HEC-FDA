@@ -132,7 +132,7 @@ namespace FdaViewModel.Study
             _UpdatedYear = DateTime.Now.Year;
             _UpdatedPriceIndex = 0.01f;
         }
-        public PropertiesVM(DataBase_Reader.DataTableView tbl):base(null)
+        public PropertiesVM(DatabaseManager.DataTableView tbl):base(null)
         {
             if(tbl.TableName != TableName)
             {

@@ -44,7 +44,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
            // int lastRow = Storage.Connection.Instance.GetTable(TableName).NumberOfRows - 1;
             ObservableCollection<object> tempCollection = new ObservableCollection<object>();
-            DataBase_Reader.DataTableView indexTable = Storage.Connection.Instance.GetTable(IndexPointTableNameConstant + rowData[0]);
+            DatabaseManager.DataTableView indexTable = Storage.Connection.Instance.GetTable(IndexPointTableNameConstant + rowData[0]);
             foreach (object[] row in indexTable.GetRows(0, indexTable.NumberOfRows-1))
             {
                 //each row here should be a name and an index point
@@ -86,7 +86,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                     dt.Rows.Add(row.Name, row.IndexPoint);
                 }
 
-                DataBase_Reader.InMemoryReader imr = new DataBase_Reader.InMemoryReader(dt);
+                DatabaseManager.InMemoryReader imr = new DatabaseManager.InMemoryReader(dt);
                 gpw.AddFeatures(IndexPointTableNameConstant + element.Name, polyFeatures, imr.GetTableManager(imr.TableNames[0]));
             }
 
@@ -94,7 +94,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         private void UpdateExistingTable(ImpactAreaElement element)
         {
 
-            DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(IndexPointTableNameConstant + element.Name);
+            DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable(IndexPointTableNameConstant + element.Name);
 
             object[] nameArray = new object[element.ImpactAreaRows.Count];
             object[] indexPointArray = new object[element.ImpactAreaRows.Count];

@@ -69,7 +69,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
             if (Storage.Connection.Instance.TableNames().Contains(elementTableName))
             {
-                DataBase_Reader.DataTableView elementTable = Storage.Connection.Instance.GetTable(elementTableName);
+                DatabaseManager.DataTableView elementTable = Storage.Connection.Instance.GetTable(elementTableName);
                 List<object[]> occTypeRows = elementTable.GetRows(0, elementTable.NumberOfRows - 1);
 
             foreach (object[] row in occTypeRows)//Storage.Connection.Instance.GetTable(tableName).GetRows(0, lastRow))
@@ -234,7 +234,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 }
                 if (Storage.Connection.Instance.TableNames().Contains(ParentTableName))
                 {
-                    DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(ParentTableName);
+                    DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable(ParentTableName);
                     List<object[]> rowData = dtv.GetRows(0, dtv.NumberOfRows - 1);
 
                     //go over each row in the parent table and create an occtype element
@@ -264,7 +264,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 Storage.Connection.Instance.Open();
             }
             //remove row from parent table
-            DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(ParentTableName);
+            DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable(ParentTableName);
             int index = -1;
             for(int i = 0;i<dtv.NumberOfRows;i++)
             {
@@ -331,7 +331,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             if (Storage.Connection.Instance.TableNames().Contains(ParentTableName))
             {
-                DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(ParentTableName);
+                DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable(ParentTableName);
                 foreach (object[] row in dtv.GetRows(0, dtv.NumberOfRows - 1))
                 {
                     //delete the table with the name of row[0]
@@ -447,7 +447,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 Type[] parentColTypes = new Type[] { typeof(String), typeof(bool) };
                 Storage.Connection.Instance.CreateTable(ParentTableName, parentColNames, parentColTypes);
             }
-            DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(ParentTableName);
+            DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable(ParentTableName);
             dtv.AddRow(new object[] { groupName, isSelected });
             dtv.ApplyEdits();
         }
@@ -475,7 +475,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
            
             Storage.Connection.Instance.CreateTable(GroupTablePrefix + groupName, colNames, colTypes);
-            DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(GroupTablePrefix + groupName);
+            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(GroupTablePrefix + groupName);
 
             List<object[]> rows = new List<object[]>();
 

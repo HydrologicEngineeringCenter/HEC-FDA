@@ -43,7 +43,7 @@ namespace FdaViewModel.Utilities
                 if (Storage.Connection.Instance.TableNames().Contains("Messages"))
                 {
                     if (!Storage.Connection.Instance.IsOpen) { Storage.Connection.Instance.Open(); }
-                    DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable("Messages");
+                    DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable("Messages");
                     object[] row = null;
                     for (int i = 0; i < dtv.NumberOfRows; i++)
                     {

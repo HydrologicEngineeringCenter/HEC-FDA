@@ -32,7 +32,7 @@ namespace FdaViewModel.Utilities
 
         private static void MakeSureLogTableExists(string tableName)
         {
-            DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(tableName);
+            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(tableName);
             if (tbl == null)
             {
                 string[] tableColumnNames = new string[] { TIMESTAMP_COL, USER_COL, LOGLEVEL_COL, LOGGER_COL, CALLSITE_COL, MESSAGE_COL };
@@ -148,7 +148,7 @@ namespace FdaViewModel.Utilities
                 Storage.Connection.Instance.Open();
             }
 
-            DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable(tableName);
+            DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable(tableName);
             if (dtv != null)
             {
                 return dtv.GetRows(0, dtv.NumberOfRows - 1);

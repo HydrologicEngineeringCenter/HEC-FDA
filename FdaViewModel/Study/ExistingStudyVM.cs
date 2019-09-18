@@ -30,7 +30,7 @@ namespace FdaViewModel.Study
                     {
                         StudyName = System.IO.Path.GetFileNameWithoutExtension(Path);
                         Storage.Connection.Instance.ProjectFile = _Path;
-                        DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.GetTable("Study Properties");
+                        DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable("Study Properties");
                         if (dtv != null)
                         {
                             PropertiesVM pvm = new PropertiesVM(dtv);

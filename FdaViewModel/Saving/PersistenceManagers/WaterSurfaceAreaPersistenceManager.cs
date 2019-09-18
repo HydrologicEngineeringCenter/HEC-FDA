@@ -43,7 +43,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             WaterSurfaceElevationElement wse = new WaterSurfaceElevationElement((string)rowData[0], (string)rowData[1], ppList, (bool)rowData[2]);
 
             //this isn't going to be correct. The table name here is not the parent table but the change table name.
-            DataBase_Reader.DataTableView tableView = Storage.Connection.Instance.GetTable(PathAndProbTableConstant + rowData[0]);
+            DatabaseManager.DataTableView tableView = Storage.Connection.Instance.GetTable(PathAndProbTableConstant + rowData[0]);
             foreach (object[] row in tableView.GetRows(0, tableView.NumberOfRows-1))
             {
                 wse.RelativePathAndProbability.Add(new PathAndProbability(row[0].ToString(), Convert.ToDouble(row[1])));
@@ -67,7 +67,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 Type[] colTypes = new Type[] { typeof(string), typeof(string), typeof(string) };
 
                 Storage.Connection.Instance.CreateTable(PathAndProbTableConstant + element.Name, colNames, colTypes);
-                DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(PathAndProbTableConstant + element.Name);
+                DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(PathAndProbTableConstant + element.Name);
 
                 object[][] rows = new object[element.RelativePathAndProbability.Count][];
                 int i = 0;

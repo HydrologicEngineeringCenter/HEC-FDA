@@ -46,7 +46,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             types[0] = typeof(string);
             types[1] = typeof(string);
             Storage.Connection.Instance.CreateTable(TableName, names, types);
-            DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
+            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
             tbl.AddRow(new object[] { "Study Name: ", vm.StudyName });
             tbl.AddRow(new object[] { "Study Path: ", vm.StudyPath });
             tbl.AddRow(new object[] { "Description: ", vm.StudyDescription });
@@ -61,7 +61,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
         public void SaveExisting(Study.PropertiesVM vm)
         {
-            DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
+            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
 
             string oldName = tbl.GetCell(0, 1).ToString();
             if(!oldName.Equals(vm.StudyName))

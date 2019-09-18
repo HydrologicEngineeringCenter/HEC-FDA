@@ -91,12 +91,12 @@ namespace FdaViewModel.ImpactArea
 
         private void ImpactAreasToMapWindow(object arg1, EventArgs arg2)
         {
-            DataBase_Reader.SqLiteReader sqr = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
+            DatabaseManager.SQLiteManager sqr = new DatabaseManager.SQLiteManager(Storage.Connection.Instance.ProjectFile);
             LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(sqr);
             LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)gpr.ConvertToGisFeatures("IndexPointTable -" + this.Name);
             LifeSimGIS.VectorFeatures features = polyFeatures;
             //read from table.
-            DataBase_Reader.DataTableView dtv = sqr.GetTableManager("IndexPointTable -" + this.Name);
+            DatabaseManager.DataTableView dtv = sqr.GetTableManager("IndexPointTable -" + this.Name);
             int[] geometryColumns = { 0, 1 };
             dtv.DeleteColumns(geometryColumns);
 

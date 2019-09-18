@@ -75,7 +75,7 @@ namespace FdaViewModel
                     Storage.Connection.Instance.DeleteTable(tableName);
                 }
                 Storage.Connection.Instance.CreateTable(tableName, colNames, colTypes);
-                DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(tableName);
+                DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(tableName);
                 for (int i = 0; i < rows.Count(); i++)
                 {
                     tbl.AddRow(rows[i]);
@@ -97,7 +97,7 @@ namespace FdaViewModel
                 //error.
                 throw new ArgumentNullException("The sqlite connection has not yet been initialized.");
             }
-            DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(tableName);
+            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(tableName);
             List<object[]> rows = tbl.GetRows(0, tbl.NumberOfRows - 1);
             if (curve.Count > 0)
             {

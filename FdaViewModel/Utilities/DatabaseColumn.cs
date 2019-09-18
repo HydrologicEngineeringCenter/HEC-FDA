@@ -51,8 +51,8 @@ namespace FdaViewModel.Utilities
         {
             Data = new List<IRowItem>();
             Header = columnName;
-            DataBase_Reader.DbfReader dbf = new DataBase_Reader.DbfReader(System.IO.Path.ChangeExtension(path, ".dbf"));
-            DataBase_Reader.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+            DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(System.IO.Path.ChangeExtension(path, ".dbf"));
+            DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
             List<object> tempList = dtv.GetColumn(columnName).ToList();
 
             
