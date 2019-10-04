@@ -74,10 +74,14 @@ namespace FdaViewModel.FrequencyRelationships
             get;
             set;
         }
-        public List<MessageRowItem> MessageRows
+        public ObservableCollection<FdaLogging.LogItem> MessageRows
         {
             get;
             set;
+        }
+        public int MessageCount
+        {
+            get { return MessageRows.Count; }
         }
         public bool TransactionsMessagesVisible
         {
@@ -96,7 +100,7 @@ namespace FdaViewModel.FrequencyRelationships
             Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };
             ActionManager = actionManager;
             TransactionRows = new ObservableCollection<TransactionRowItem>();
-            MessageRows = new List<MessageRowItem>();
+            MessageRows = new ObservableCollection<FdaLogging.LogItem>();
         }
         public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem, Editors.EditorActionManager actionManager) :base(elem, actionManager)// string name, Statistics.LogPearsonIII lpiii, string description, Utilities.OwnerElement owner) : base()
         {
@@ -246,6 +250,25 @@ namespace FdaViewModel.FrequencyRelationships
             ((AnalyticalFrequencyElement)CurrentElement).Distribution = Distribution;
         }
 
+        public void FilterRowsByLevel(FdaLogging.LoggingLevel level)
+        {
+
+            ObservableCollection<FdaLogging.LogItem> tempList = new ObservableCollection<FdaLogging.LogItem>();
+            foreach (FdaLogging.LogItem mri in MessageRows)
+            {
+                if (mri.LogLevel.Equals(level.ToString()))
+                {
+                    tempList.Add(mri);
+                }
+            }
+
+            MessageRows = tempList;
+
+        }
+        public void DisplayAllMessages()
+        {
+            //MessageRows = NLogDataBaseHelper.GetMessageRowsForType(GetType());
+        }
         //public UncertainCurveDataCollection GetTheElementsCurve()
         //{
         //    FdaModel.Functions.FrequencyFunctions.LogPearsonIII lp3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);

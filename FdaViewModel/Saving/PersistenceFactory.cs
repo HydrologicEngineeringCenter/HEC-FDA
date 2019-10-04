@@ -32,7 +32,7 @@ namespace FdaViewModel.Saving
         }
         
 
-        public static IPersistable GetElementManager(Utilities.ChildElement element)
+        public static IElementManager GetElementManager(Utilities.ChildElement element)
         {
 
             if (element.GetType() == typeof(TerrainElement))

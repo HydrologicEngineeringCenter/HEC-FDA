@@ -61,13 +61,13 @@ namespace FdaViewModel.Editors
         }
         public ChildElement SelectedIndexInRedoList(int index, ChildElement element)
         {
-            ChangeIndex -= index;
+            ChangeIndex += index;
             return RedoElement(element);
         }
 
         public ChildElement SelectedIndexInUndoList(int index, ChildElement element)
         {
-                ChangeIndex += index;
+                ChangeIndex -= index;
                 return UndoElement(element);            
         }
 
@@ -132,10 +132,10 @@ namespace FdaViewModel.Editors
 
         #endregion
 
-        private void RemoveAndReplaceFromTabsDictionary(ChildElement element)
-        {
-            RemoveFromTabsDictionary?.Invoke(element, new EventArgs());
-        }
+        //private void RemoveAndReplaceFromTabsDictionary(ChildElement element)
+        //{
+        //    RemoveFromTabsDictionary?.Invoke(element, new EventArgs());
+        //}
 
         private void UpdateUndoRedo()
         {
@@ -163,20 +163,21 @@ namespace FdaViewModel.Editors
             // SaveAction.Invoke( (T)elementToSave);
             if (_IsImporter && _IsFirstSave)
             {
-                RemoveAndReplaceFromTabsDictionary(elementToSave);
+                //RemoveAndReplaceFromTabsDictionary(elementToSave);
                 SavingManager.SaveNew(elementToSave);
                 _IsFirstSave = false;
+                
                // if (Study.FdaStudyVM._TabsDictionary.ContainsKey(ParentGUID))
-                {
+               // {
                     //Study.FdaStudyVM._TabsDictionary.Remove
-                }
+                //}
             }
             else
             {
                 SavingManager.SaveExisting(oldElement, elementToSave,ChangeIndex);
             }
 
-            ChangeIndex = 0;
+            ChangeIndex = UndoRedoRows.Count;
             //add a row to the undoredorows
             UndoRedoRows = SavingManager.CreateUndoRedoRows(elementToSave);
             UpdateUndoRedo();
@@ -195,7 +196,8 @@ namespace FdaViewModel.Editors
             //}
             //else
             //{
-                 UndoRedoRows = SavingManager.CreateUndoRedoRows(element);// CreateUndoRedoRows();
+            UndoRedoRows = SavingManager.CreateUndoRedoRows(element);// CreateUndoRedoRows();
+            ChangeIndex = UndoRedoRows.Count-1; // i could also just ask the table what its max is using that method i wrote.
             UpdateUndoRedo();
 
             // }
@@ -216,13 +218,13 @@ namespace FdaViewModel.Editors
             //load the undo rows
             for (int i = ChangeIndex + 1; i < UndoRedoRows.Count; i++)
             {
-                UndoRows.Add(UndoRedoRows[i]);
+                RedoRows.Add(UndoRedoRows[i]);
             }
 
             //load the redo rows
             for(int j= ChangeIndex - 1;j>=0;j--)
             {
-                RedoRows.Add(UndoRedoRows[j]);
+                UndoRows.Add(UndoRedoRows[j]);
             }
         }
 
@@ -245,8 +247,8 @@ namespace FdaViewModel.Editors
             //    }
             //}
             //return prevElement;
+            ChangeIndex -= 1;
             ChildElement prevElement = SavingManager.Undo(element, ChangeIndex);
-            ChangeIndex += 1;
             UpdateUndoRedo();
             return prevElement;
         }
@@ -274,8 +276,8 @@ namespace FdaViewModel.Editors
             //    }
             //}
             //return nextElement;
+            ChangeIndex += 1;
             ChildElement nextElement = SavingManager.Redo(element, ChangeIndex);
-            ChangeIndex -= 1;
             UpdateUndoRedo();
             return nextElement;
         }
@@ -297,15 +299,15 @@ namespace FdaViewModel.Editors
                 UndoEnabled = false;
                 RedoEnabled = false;
             }
-            else if (currentIndex == numRows - 1)//we are at the oldest record
-            {
-                UndoEnabled = false;
-                RedoEnabled = true;
-            }
-            else if (currentIndex == 0)//at the newest record
+            else if (currentIndex == numRows - 1)//we are at the newest record
             {
                 UndoEnabled = true;
                 RedoEnabled = false;
+            }
+            else if (currentIndex == 0)//at the oldest record
+            {
+                UndoEnabled = false;
+                RedoEnabled = true;
             }
             else //we are in the middle somewhere
             {

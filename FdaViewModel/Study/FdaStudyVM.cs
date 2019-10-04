@@ -13,6 +13,9 @@ using System.Xml.Linq;
 using System.Collections;
 using System.Windows;
 using FdaViewModel.Tabs;
+using System.Threading;
+using System.Reflection;
+using System.Diagnostics;
 
 namespace FdaViewModel.Study
 {
@@ -30,7 +33,7 @@ namespace FdaViewModel.Study
 
 
         private ObservableCollection<TransactionRowItem> _TransactionRows;
-        private List<MessageRowItem> _MessageRows;
+        private ObservableCollection<FdaLogging.LogItem> _MessageRows;
         private bool _TransactionsMessagesVisible;
 
         private MapWindowMapTreeViewConnector _MWMTVConn;
@@ -130,10 +133,15 @@ namespace FdaViewModel.Study
             set { _TransactionRows = value; NotifyPropertyChanged(); }
         }
 
-        public List<MessageRowItem> MessageRows
+        public ObservableCollection<FdaLogging.LogItem> MessageRows
         {
             get { return _MessageRows; }
             set { _MessageRows = value; NotifyPropertyChanged(); }
+        }
+
+        public int MessageCount
+        {
+            get { return _MessageRows.Count; }
         }
 
         public bool TransactionsMessagesVisible
@@ -186,7 +194,8 @@ namespace FdaViewModel.Study
 
 
             StudyStatusBar.SaveStatusChanged += UpdateSaveStatus;
-        
+
+          
 
         }
 
@@ -250,7 +259,15 @@ namespace FdaViewModel.Study
 
         }
 
-       
+        /// <summary>
+        /// This is very hacky and i need to come up with a better way, but the map window is not updating
+        /// properly when the tabs switch. If i do the update on the selection changed event of the tab, it 
+        /// is too early. I have set a timer for 100 miliseconds and it calls this.
+        /// </summary>
+       public void UpdateMapTabTest()
+        {
+            _MWMTVConn.UpdateMapWindow();
+        }
 
         public void AddMapsTab(OpenGLMapping.MapTreeView mapTreeView)
         {
@@ -263,6 +280,10 @@ namespace FdaViewModel.Study
             DynamicTabVM mapTabVM = new DynamicTabVM("Map", vm, "Map", false, false);
             TabController.Instance.AddTab(mapTabVM);
             TabController.Instance.MWMTVConnector = _MWMTVConn;
+
+            //for testing, delete me
+            LoadMapLayers(null, null);
+            //
         }
 
         /// <summary>
@@ -297,8 +318,37 @@ namespace FdaViewModel.Study
             }
         }
 
+        ///// <summary>
+        ///// For testing only. Delete me
+        ///// </summary>
+        //public static bool CheckForMainThread()
+        //{
+        //    if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA &&
+        //        !Thread.CurrentThread.IsBackground && !Thread.CurrentThread.IsThreadPoolThread && Thread.CurrentThread.IsAlive)
+        //    {
+        //        MethodInfo correctEntryMethod = Assembly.GetEntryAssembly().EntryPoint;
+        //        StackTrace trace = new StackTrace();
+        //        StackFrame[] frames = trace.GetFrames();
+        //        for (int i = frames.Length - 1; i >= 0; i--)
+        //        {
+        //            MethodBase method = frames[i].GetMethod();
+        //            if (correctEntryMethod == method)
+        //            {
+        //                return true;
+        //            }
+        //        }
+        //    }
+        //    return false;
+        //    // throw exception, the current thread is not the main thread...
+        //}
+
         public void LoadMapLayers(object sender, EventArgs e)
         {
+            
+            
+
+            //bool isMainThread = CheckForMainThread();
+            //Storage.Connection.Instance.ProjectFile = @"C:\Users\cody\Documents\HEC\HEC-FDA\Studies\sep 18\sep 18.sqlite";
             string path = Storage.Connection.Instance.ProjectDirectory + "\\MapLayers.xml";
             if (File.Exists(path) && _MWMTVConn != null)
             {
@@ -334,7 +384,7 @@ namespace FdaViewModel.Study
         {
             if (!Storage.Connection.Instance.IsConnectionNull)
             {
-                //FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
+                FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
             }
         }
 
@@ -368,12 +418,14 @@ namespace FdaViewModel.Study
         //{
         //    return _MainStudyTree[0].GetElementsOfType<T>();
         //}
-        public void Dispose()
+        public override void Dispose()
         {
-           // FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
+            FdaLogging.Disposer.DeleteOldLogs();
+            FdaLogging.Disposer.DeleteLogsOverMaxNumber();
+            FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
             FdaModel.Utilities.Initialize.DisposeGDAL();
             WriteMapLayersXMLFile();
-            NLog.LogManager.Shutdown();
+            FdaLogging.Disposer.Dispose();
         }
 
         /// <summary>
@@ -389,9 +441,24 @@ namespace FdaViewModel.Study
             }       
         }
 
-      
 
+        public void FilterRowsByLevel(FdaLogging.LoggingLevel level)
+        {
+            ObservableCollection<FdaLogging.LogItem> tempList = new ObservableCollection<FdaLogging.LogItem>();
+            foreach (FdaLogging.LogItem mri in MessageRows)
+            {
+                if (mri.LogLevel.Equals(level.ToString()))
+                {
+                    tempList.Add(mri);
+                }
+            }
 
+            MessageRows = tempList;
+        }
+        public void DisplayAllMessages()
+        {
+            MessageRows = FdaLogging.RetrieveFromDB.GetMessageRowsForType(GetType());
+        }
 
 
         #endregion

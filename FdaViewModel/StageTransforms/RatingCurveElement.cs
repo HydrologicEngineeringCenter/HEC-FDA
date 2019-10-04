@@ -3,29 +3,32 @@ using FdaViewModel.Utilities;
 using Statistics;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FdaViewModel.StageTransforms
 {
-    public class RatingCurveElement : Utilities.ChildElement
+    public class RatingCurveElement : ChildElement
     {
+        
         #region Notes
         #endregion
         #region Fields
-
+        private FdaLogging.FdaLogger _Logger = new FdaLogging.FdaLogger("RatingCurveElement");
         private const string TABLE_NAME_CONSTANT = "Rating Curve - ";
 
         #endregion
         #region Properties
-     
       
         #endregion
         #region Constructors
 
         public RatingCurveElement(string userprovidedname, string creationDate, string desc, Statistics.UncertainCurveDataCollection ratingCurve) : base()
         {
+           // _Logger.LogInfo("Creating new rating curve element: " + Name, GetType(), Name);
+            //FdaLogging.RetrieveFromDB.GetMessageRowsForType(GetType(), Name);
             LastEditDate = creationDate;
             Name = userprovidedname;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/RatingCurve.png");
@@ -97,9 +100,11 @@ namespace FdaViewModel.StageTransforms
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSaveUndoRedo(saveHelper)
                 .WithSiblingRules(this);
-               //.WithParentGuid(this.GUID)
-               //.WithCanOpenMultipleTimes(false);
+            //.WithParentGuid(this.GUID)
+            //.WithCanOpenMultipleTimes(false);
 
+            //int ratingId = Storage.Connection.Instance.GetElementId()
+            //_Logger.LogInfo("Opening " + Name + " for edit.", this.GetType(), Name);
             Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditRatingCurve" + vm.Name);
@@ -154,7 +159,11 @@ namespace FdaViewModel.StageTransforms
                 {
                     retval = false;
                 }
-                if (!Description.Equals(elem.Description))
+                if(Description == null && elem.Description != null)
+                {
+                    return false;
+                }
+                else if (Description != null && !Description.Equals(elem.Description))
                 {
                     retval = false;
                 }

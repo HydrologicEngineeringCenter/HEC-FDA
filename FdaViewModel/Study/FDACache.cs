@@ -295,6 +295,57 @@ namespace FdaViewModel.Study
 
         #region UpdateElements
 
+        public void UpdateElement(ChildElement oldElement, ChildElement newElement)
+        {
+            if(oldElement.GetType().Equals(typeof(TerrainElement)))
+            {
+                UpdateTerrain((TerrainElement) oldElement, (TerrainElement)newElement);
+            }
+            else if(oldElement.GetType().Equals(typeof(RatingCurveElement)))
+            {
+                UpdateRatingCurve((RatingCurveElement)oldElement, (RatingCurveElement)newElement);
+            }
+            else if (oldElement.GetType().Equals(typeof(ImpactAreaElement)))
+            {
+                UpdateImpactAreaElement((ImpactAreaElement)oldElement, (ImpactAreaElement)newElement);
+            }
+            else if (oldElement.GetType().Equals(typeof(WaterSurfaceElevationElement)))
+            {
+                UpdateWaterSurfaceElevationElement((WaterSurfaceElevationElement)oldElement, (WaterSurfaceElevationElement)newElement);
+            }
+            else if (oldElement.GetType().Equals(typeof(AnalyticalFrequencyElement)))
+            {
+                UpdateFlowFrequencyElement((AnalyticalFrequencyElement)oldElement, (AnalyticalFrequencyElement)newElement);
+            }
+            else if (oldElement.GetType().Equals(typeof(InflowOutflowElement)))
+            {
+                UpdateInflowOutflowElement((InflowOutflowElement)oldElement, (InflowOutflowElement)newElement);
+            }
+            else if (oldElement.GetType().Equals(typeof(ExteriorInteriorElement)))
+            {
+                UpdateExteriorInteriorElement((ExteriorInteriorElement)oldElement, (ExteriorInteriorElement)newElement);
+            }
+            else if (oldElement.GetType().Equals(typeof(LeveeFeatureElement)))
+            {
+                UpdateLeveeElement((LeveeFeatureElement)oldElement, (LeveeFeatureElement)newElement);
+            }
+            else if (oldElement.GetType().Equals(typeof(FailureFunctionElement)))
+            {
+                UpdateFailureFunctionElement((FailureFunctionElement)oldElement, (FailureFunctionElement)newElement);
+            }
+            else if (oldElement.GetType().Equals(typeof(AggregatedStageDamageElement)))
+            {
+                UpdateStageDamageElement((AggregatedStageDamageElement)oldElement, (AggregatedStageDamageElement)newElement);
+            }
+            else if (oldElement.GetType().Equals(typeof(ConditionsElement)))
+            {
+                UpdateConditionsElement((ConditionsElement)oldElement, (ConditionsElement)newElement);
+            }
+            else if (oldElement.GetType().Equals(typeof(InventoryElement)))
+            {
+                UpdateStructureInventoryElement((InventoryElement)oldElement, (InventoryElement)newElement);
+            }
+        }
 
         public void UpdateTerrain(TerrainElement oldElement, TerrainElement newElement)
         {

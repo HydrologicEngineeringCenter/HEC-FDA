@@ -1,4 +1,4 @@
-﻿using FdaModel.Messaging;
+﻿using FdaViewModel.Editors;
 using FdaViewModel.Study;
 using FdaViewModel.Tabs;
 using FdaViewModel.Utilities;
@@ -22,8 +22,10 @@ namespace FdaViewModel
     /// The base class for all view model classes. Contains methods that are common among all view model classes
     /// such as validation, navigation, adding rules.
     /// </summary>
-    public abstract class BaseViewModel : System.ComponentModel.INotifyPropertyChanged, System.ComponentModel.IDataErrorInfo, IReportMessage
+    public abstract class BaseViewModel : System.ComponentModel.INotifyPropertyChanged, System.ComponentModel.IDataErrorInfo
     {
+        private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("BaseViewModel");
+
         #region Notes
         #endregion
         #region Events
@@ -33,7 +35,6 @@ namespace FdaViewModel
         public event RequestShapefilePathsOfTypeHandler RequestShapefilePathsOfType;
         public event RequestAddToMapWindowHandler RequestAddToMapWindow;
         public event RequestRemoveFromMapWindowHandler RequestRemoveFromMapWindow;
-        public event MessageReportedEventHandler MessageReport;
 
         public TransactionEventHandler TransactionEvent;
 
@@ -44,7 +45,7 @@ namespace FdaViewModel
         /// This is a dictionary of property names, and any rules that go with that property.
         /// </summary>
         private Dictionary<string, PropertyRule> ruleMap = new Dictionary<string, PropertyRule>();
-
+        
         //private Utilities.NamedAction _MessagesAction;
         //private Utilities.NamedAction _ErrorsAction;
         //private Utilities.NamedAction _HelpAction;
@@ -61,7 +62,7 @@ namespace FdaViewModel
         /// as well as listen for events where elements are added, removed, or updated
         /// </summary>
         public static IStudyCache StudyCache { get; set; }
-
+        public static Saving.PersistenceFactory PersistenceFactory { get; set; }
         /// <summary>
         /// The name of the object
         /// </summary>
@@ -103,6 +104,7 @@ namespace FdaViewModel
             set;
         }
 
+        public string ValidationErrorMessage { get; set; }
         //public string ValidationErrorMessage {
         //    get;
         //    set; }
@@ -136,10 +138,7 @@ namespace FdaViewModel
         /// </summary>
         public BaseViewModel()
         {
-     
-            MessageHub.Register(this);
             AddValidationRules();
-           
         }
         #endregion
         #region Voids     
@@ -174,6 +173,25 @@ namespace FdaViewModel
                 {
                     if (pr.HasFatalError == true)
                     {
+                        //test logging from validate
+                        //LogEventInfo theEvent = new LogEventInfo(LogLevel.Fatal, "", pr.Error);
+                        //theEvent.Properties["ID"] = this.GetType();
+                        //Logger.Log(theEvent);
+                        //UpdateMessages();
+                        AddErrorMessage(pr.Error);
+
+
+
+                        //if (GetType().IsSubclassOf(typeof(BaseEditorVM)))
+                        //{
+                        //    BaseEditorVM baseEditor = (BaseEditorVM)this;
+                        //    ChildElement elem = baseEditor.OriginalElement;
+                        //    if (elem != null)
+                        //    {
+                        //        Saving.PersistenceFactory.GetElementManager(elem).Log(FdaLogging.LoggingLevel.Fatal, pr.Error, Name);
+                        //    }
+                        //}
+                        ///////////////////////////
                         HasFatalError = true;
                         NotifyPropertyChanged("HasFatalError");
                     }
@@ -189,6 +207,7 @@ namespace FdaViewModel
             else
             {
                 Error = null;
+                //todo: clear out fatal logs
             }
             NotifyPropertyChanged(nameof(Error));
 
@@ -205,7 +224,12 @@ namespace FdaViewModel
             HasChanges = true;
 
 
-            if (propertyName.Equals(nameof(HasError)) || propertyName.Equals(nameof(HasFatalError)) || propertyName.Equals(nameof(Error)) || propertyName.Equals(nameof(Messages)))
+            if (propertyName.Equals(nameof(HasError))
+                || propertyName.Equals(nameof(HasFatalError))
+                || propertyName.Equals(nameof(Error))
+                || propertyName.Equals(nameof(Messages))
+                || propertyName.Equals("MessageRows")
+                || propertyName.Equals("MessageCount"))
             {
                 //do nothing
                 //if (propertyName.Equals(nameof(HasError)))
@@ -232,6 +256,15 @@ namespace FdaViewModel
             }
             this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
+
+        public virtual void AddErrorMessage(string error)
+        {
+
+        }
+        public virtual void UpdateMessages()
+        {
+        }
+
         /// <summary>
         /// Adds a rule to a property in this VM. If that property changes, all rules attached to that property will get
         /// analyzed. 
@@ -406,21 +439,16 @@ namespace FdaViewModel
         //    }
         //}
 
-     
-        //public virtual void OnClosing(object sender, EventArgs e)
-        //{
-        //    Dispose();
-        //}
-        //public virtual void Dispose()
-        //{
-        //    FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
-            
-            
-        //}
 
-        public void ReportMessage(object sender, MessageEventArgs e)
+        public virtual void OnClosing(object sender, EventArgs e)
         {
-            MessageReport?.Invoke(sender, e);
+            Dispose();
+        }
+        public virtual void Dispose()
+        {
+            //FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
+
+
         }
 
 

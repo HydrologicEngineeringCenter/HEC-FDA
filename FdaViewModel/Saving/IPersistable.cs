@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Saving
 {
-    public interface IPersistable
+    public interface IElementManager
     {
         
         void SaveNew(Utilities.ChildElement element);
@@ -16,8 +16,12 @@ namespace FdaViewModel.Saving
         void SaveExisting(Utilities.ChildElement oldElement, ChildElement elementToSave, int changeTableIndex);
         void Load();
 
+        void Log(FdaLogging.LoggingLevel level, string message, string elementName);
+        ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName);
+        ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName);
 
-       
+
+
 
 
     }

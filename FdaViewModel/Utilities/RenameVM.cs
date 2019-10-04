@@ -55,7 +55,7 @@ namespace FdaViewModel.Utilities
             //if it is in the map window then i need to take it out and put it back in so i can modify the file
             OldElement.RenameMapTreeViewItem(OldElement, new EventArgs());
 
-            Saving.IPersistable savingManager = Saving.PersistenceFactory.GetElementManager(OldElement);
+            Saving.IElementManager savingManager = Saving.PersistenceFactory.GetElementManager(OldElement);
             if (savingManager != null)
             {
                 savingManager.SaveExisting(OldElement, ElementToSave, 0);

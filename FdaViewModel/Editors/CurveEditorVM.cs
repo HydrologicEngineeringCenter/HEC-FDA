@@ -6,22 +6,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FdaViewModel.Utilities.Transactions;
-using FdaModel.Messaging;
-using NLog.Targets;
-using NLog;
+using FdaViewModel.StageTransforms;
 
 namespace FdaViewModel.Editors
 {
-    public class CurveEditorVM : BaseEditorVM, Utilities.ISaveUndoRedo, ITransactionsAndMessages, FdaModel.Messaging.IRecieveMessages
+    public class CurveEditorVM : BaseEditorVM, ISaveUndoRedo, ITransactionsAndMessages
     {
+
+        private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("CurveEditorVM");
 
         private Statistics.UncertainCurveDataCollection _Curve;
         private string _SavingText;
-        private List<MessageRowItem> _MessageRows = new List<MessageRowItem>();
+        private ObservableCollection<FdaLogging.LogItem> _MessageRows = new ObservableCollection<FdaLogging.LogItem>();
 
-        public ErrorLevel FilterLevel => throw new NotImplementedException();
-        public Type SenderTypeFilter => throw new NotImplementedException();
-        public Type MessageTypeFilter => throw new NotImplementedException();
+  
 
         #region properties
         public int UndoRowsSelectedIndex
@@ -61,9 +59,9 @@ namespace FdaViewModel.Editors
             set
             {
                 _Curve = value;
-                ReportMessage(this, new FdaModel.Messaging.MessageEventArgs(new Message("Curve value changed")));
-
                 NotifyPropertyChanged();
+                //Saving.PersistenceFactory.GetElementManager(CurrentElement).Log(FdaLogging.LoggingLevel.Info, "CurveChanged", CurrentElement.Name);
+                //MessageRows = Saving.PersistenceFactory.GetElementManager(CurrentElement).GetLogMessages(CurrentElement.Name);
             }
         }
 
@@ -79,11 +77,17 @@ namespace FdaViewModel.Editors
             set;
         }
 
-        public List<MessageRowItem> MessageRows
+        public ObservableCollection<FdaLogging.LogItem> MessageRows
         {
             get { return _MessageRows; }
-            set { _MessageRows = value; NotifyPropertyChanged(); }
+            set { _MessageRows = value; NotifyPropertyChanged("MessageRows"); NotifyPropertyChanged("MessageCount"); }
         }
+
+        public int MessageCount
+        {
+            get { return _MessageRows.Count; }
+        }
+
         public bool TransactionsMessagesVisible
         {
             get;
@@ -106,21 +110,56 @@ namespace FdaViewModel.Editors
 
         public CurveEditorVM(Utilities.ChildElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
-            SavingText = elem.Name + " last saved: " + elem.LastEditDate;
+
             TransactionHelper.LoadTransactionsAndMessages(this, elem);
-            ReportMessage(this, new MessageEventArgs(new Message("openning... testing pub sub")));
             PlotTitle = Name;
-            MessageRows = NLogDataBaseHelper.GetMessageRows(NLog.LogLevel.Fatal);
 
-
-            MemoryTarget target = (MemoryTarget)LogManager.Configuration.FindTargetByName("CurveEditorVM");
-            IList<string> logs = target.Logs;
+            //MessageRows = FdaLogging.RetrieveFromDB.GetMessageRowsForType(elem.GetType(), FdaLogging.LoggingLevel.Fatal);
+            //Saving.PersistenceFactory.GetElementManager(elem).;
+            //Storage.Connection.Instance.GetElementId()
+            MessageRows = Saving.PersistenceFactory.GetElementManager(elem).GetLogMessages(elem.Name);
+            //MessageRows = elem.Logs;
+            //EditorLogAdded += UpdateMessages;
         }
 
         #endregion
 
 
         #region voids
+
+        public override void AddErrorMessage(string error)
+        {
+
+            FdaLogging.LogItem mri = new FdaLogging.LogItem(DateTime.Now, error, "", "Fatal", "", "");
+            InsertMessage(mri);
+        }
+        public override void UpdateMessages()
+        {
+            MessageRows = FdaLogging.RetrieveFromDB.GetMessageRows(FdaLogging.LoggingLevel.Fatal);
+        }
+
+        private void InsertMessage(FdaLogging.LogItem mri)
+        {
+            ObservableCollection<FdaLogging.LogItem> tempList = new ObservableCollection<FdaLogging.LogItem>();
+            tempList.Add(mri);
+            foreach (FdaLogging.LogItem row in MessageRows)
+            {
+                tempList.Add(row);
+            }
+            MessageRows = tempList;
+        }
+        private void UpdateMessages(object sender, EventArgs e)
+        {
+            FdaLogging.LogItem mri = (FdaLogging.LogItem)sender;
+            ObservableCollection<FdaLogging.LogItem> tempList = new ObservableCollection<FdaLogging.LogItem>();
+            foreach (FdaLogging.LogItem row in MessageRows)
+            {
+                tempList.Add(row);
+            }
+            tempList.Add(mri);
+            MessageRows = tempList;
+        }
+
         public  void Undo()
         {
             ChildElement prevElement = ActionManager.SaveUndoRedoHelper.UndoElement(CurrentElement);
@@ -162,6 +201,8 @@ namespace FdaViewModel.Editors
             //update the rules to exclude the new name from the banned list
             //OwnerValidationRules.Invoke(this, _CurrentElement.Name);  
             SavingText = elementToSave.Name + " last saved: " + elementToSave.LastEditDate;
+            MessageRows = Saving.PersistenceFactory.GetElementManager(CurrentElement).GetLogMessages(CurrentElement.Name);
+
         }
 
         public override void Save()
@@ -184,26 +225,16 @@ namespace FdaViewModel.Editors
             ActionManager.SaveUndoRedoHelper.AssignValuesFromElementToEditorAction(this, element);
         }
 
-        //public override void OnClosing(object sender, EventArgs e)
-        //{
-        //    base.OnClosing(sender, e);
-        //}
-        //public override void Dispose()
-        //{
-        //    base.Dispose();
-        //}
+        public void FilterRowsByLevel(FdaLogging.LoggingLevel level)
+        {   
 
-        public void RecieveMessage(object sender, MessageEventArgs e)
-        {
-            List<MessageRowItem> msgs = new List<MessageRowItem>();
-            foreach(MessageRowItem row in MessageRows)
-            {
-                msgs.Add(row);
-            }
-            msgs.Add(new MessageRowItem("date", e.Message.ToString(), "cody"));
-            MessageRows = msgs;
+            MessageRows = Saving.PersistenceFactory.GetElementManager(CurrentElement).GetLogMessagesByLevel(level, CurrentElement.Name);
         }
 
+        public void DisplayAllMessages()
+        {
+            MessageRows = Saving.PersistenceFactory.GetElementManager(CurrentElement).GetLogMessages(CurrentElement.Name);
+        }
 
         #endregion
 

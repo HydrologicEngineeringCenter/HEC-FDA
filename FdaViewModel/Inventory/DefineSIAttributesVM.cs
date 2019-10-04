@@ -350,8 +350,8 @@ namespace FdaViewModel.Inventory
                     ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
                     return new List<string>();
                 }
-                DataBase_Reader.DbfReader dbf = new DataBase_Reader.DbfReader(System.IO.Path.ChangeExtension(path, ".dbf"));
-                DataBase_Reader.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+                DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(System.IO.Path.ChangeExtension(path, ".dbf"));
+                DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
                 object[] occtypesFromFile = dtv.GetColumn(occTypeHeader);
                 foreach (object o in occtypesFromFile)

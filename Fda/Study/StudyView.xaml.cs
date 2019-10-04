@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,14 +23,14 @@ namespace Fda.Study
     {
 
 
-       
+
 
         public StudyView()
         {
 
-                InitializeComponent();
-         
-            
+            InitializeComponent();
+
+
 
             //MapWindow.MapWindow.TreeView = MapTreeView;
             //MapTreeView.MapWindow = MapWindow.MapWindow;
@@ -177,6 +178,7 @@ namespace Fda.Study
         private void lbl_Study_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+
             //lbl_Study.ContextMenu = vm.StudyElement.Actions;
             lbl_Study.ContextMenu.IsOpen = true;
         }
@@ -189,7 +191,7 @@ namespace Fda.Study
             WasXClicked = true;
         }
 
-      
+
 
         private void txt_PopOut_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -199,7 +201,7 @@ namespace Fda.Study
         private void btn_MapView_Click(object sender, RoutedEventArgs e)
         {
             //MapWindowControl .Visibility = Visibility.Visible;
-           //MapWindowControl.MapWindow.MapWindow.PlotFeatures();
+            //MapWindowControl.MapWindow.MapWindow.PlotFeatures();
             //DynamicTabControl.Visibility = Visibility.Hidden;
         }
 
@@ -209,5 +211,26 @@ namespace Fda.Study
             //DynamicTabControl.Visibility = Visibility.Visible;
         }
 
+        private void DynamicTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+        
+
+            System.Timers.Timer updateMapWindowTimer;
+            updateMapWindowTimer = new System.Timers.Timer(100);
+            updateMapWindowTimer.Elapsed += OnTimedEvent;
+            updateMapWindowTimer.AutoReset = false;
+            updateMapWindowTimer.Enabled = true;
+        }
+
+        private void OnTimedEvent(Object source, ElapsedEventArgs e)
+        {
+            Dispatcher.Invoke(new Action(() =>
+            {
+                FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+                //testing only
+                vm.UpdateMapTabTest();
+            }));
+        }
     }
 }

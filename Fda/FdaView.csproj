@@ -63,6 +63,9 @@
     <Reference Include="DatabaseManager">
       <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\DatabaseManager.dll</HintPath>
     </Reference>
+    <Reference Include="FdaLogging">
+      <HintPath>..\..\..\FdaLogger\FdaLogger\bin\Debug\netstandard2.0\FdaLogging.dll</HintPath>
+    </Reference>
     <Reference Include="FieldCalculationParser">
       <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\FieldCalculationParser\obj\x86\Debug\FieldCalculationParser.dll</HintPath>
     </Reference>
@@ -84,9 +87,6 @@
     <Reference Include="LifeSimGIS, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\LifeSimGIS.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.6.6\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="ogr_csharp, Version=1.0.6981.27857, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
@@ -755,12 +755,31 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Resource Include="UI_RES\ClosedExpander.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UI_RES\OpenExpander.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UI_RES\Close_act.png" />
+    <Resource Include="UI_RES\Close_inact.png" />
+    <Resource Include="UI_RES\Close_pr.png" />
+    <Resource Include="UI_RES\Maximize_act.png" />
+    <Resource Include="UI_RES\Maximize_inact.png" />
+    <Resource Include="UI_RES\Maximize_pr.png" />
+    <Resource Include="UI_RES\Minimize_act.png" />
+    <Resource Include="UI_RES\Minimize_inact.png" />
+    <Resource Include="UI_RES\Minimize_pr.png" />
+    <Resource Include="UI_RES\Title_top_left.png" />
+    <Resource Include="UI_RES\Title_top_middle.png" />
+    <Resource Include="UI_RES\Title_top_right.png" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Content Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>

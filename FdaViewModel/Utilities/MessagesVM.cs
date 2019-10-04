@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,15 +57,15 @@ namespace FdaViewModel.Utilities
             return allMessages;
         }
 
-        public static List<MessageRowItem> GetMessageRowsForElement(BaseFdaElement elem)
+        public static ObservableCollection<MessageRowItem> GetMessageRowsForElement(BaseFdaElement elem)
         {
             List<MessageItem> allMessages = MessagesVM.GetMessages();
-            List<MessageRowItem> messages = new List<MessageRowItem>();
+            ObservableCollection<MessageRowItem> messages = new ObservableCollection<MessageRowItem>();
             foreach (MessageItem mes in allMessages)
             {
                 if(mes.ReportedFrom == nameof(FlowTransforms.InflowOutflowElement))
                 {
-                    messages.Add(new MessageRowItem(mes.Date,mes.Message,mes.User));
+                    //messages.Add(new MessageRowItem(mes.Date,mes.Message,mes.User));
                 }
             }
             return messages;

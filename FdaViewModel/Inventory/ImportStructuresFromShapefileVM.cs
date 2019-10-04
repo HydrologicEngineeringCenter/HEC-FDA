@@ -205,7 +205,7 @@ namespace FdaViewModel.Inventory
                 //We need to write the data to the sqlite file
 
                 // DataBase_Reader.SqLiteReader.CreateSqLiteFile(System.IO.Path.GetDirectoryName(SelectedPath) + "\\codyTest.sqlite");
-                StructureInventoryLibrary.SharedData.StudyDatabase = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
+                //StructureInventoryLibrary.SharedData.StudyDatabase = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
 
                 LifeSimGIS.ShapefileReader myReader = new LifeSimGIS.ShapefileReader(SelectedPath);
 
@@ -225,7 +225,7 @@ namespace FdaViewModel.Inventory
                 myAttributeTable.Columns.Add(StructureInventoryBaseElement.ModuleField, typeof(string));
 
 
-                DataBase_Reader.DataTableView attributeTable = myReader.GetAttributeTable();
+                DatabaseManager.DataTableView attributeTable = myReader.GetAttributeTable();
                 if (attributeTable.ParentDatabase.DataBaseOpen == false)
                 {
                     attributeTable.ParentDatabase.Open();
@@ -428,15 +428,15 @@ namespace FdaViewModel.Inventory
 
                 //create an in memory reader and data table view
 
-                DataBase_Reader.InMemoryReader myInMemoryReader = new DataBase_Reader.InMemoryReader(myAttributeTable);
-                DataBase_Reader.DataTableView myDTView = myInMemoryReader.GetTableManager(Name);
+                DatabaseManager.InMemoryReader myInMemoryReader = new DatabaseManager.InMemoryReader(myAttributeTable);
+                DatabaseManager.DataTableView myDTView = myInMemoryReader.GetTableManager(Name);
 
                 //create the geo package writer that will write the data out
-                LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
+                //LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
 
                 // write the data out
                 //myGeoPackWriter.AddFeatures(Name, myReader.ToFeatures(), myReader.GetAttributeTable());
-                myGeoPackWriter.AddFeatures("Structure Inventory - " + Name, myReader.ToFeatures(), myDTView);
+                //myGeoPackWriter.AddFeatures("Structure Inventory - " + Name, myReader.ToFeatures(), myDTView);
                 Save();
             }
 
@@ -596,8 +596,8 @@ namespace FdaViewModel.Inventory
 
             CurrentViewIsEnabled = true;
             SelectedPath = path; //isnt this bound?? yes but it is not working.
-            DataBase_Reader.DbfReader dbf = new DataBase_Reader.DbfReader(System.IO.Path.ChangeExtension(SelectedPath, ".dbf"));
-            DataBase_Reader.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+            DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(System.IO.Path.ChangeExtension(SelectedPath, ".dbf"));
+            DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
 
             for (int i = 0; i < dtv.ColumnNames.Count(); i++)

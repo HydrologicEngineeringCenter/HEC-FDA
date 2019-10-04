@@ -8,7 +8,6 @@ namespace FdaModel.Utilities
 {
     public sealed class Initialize
     {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region Notes
         #endregion
@@ -37,7 +36,6 @@ namespace FdaModel.Utilities
             }
             catch(Exception ex)
             {
-                Logger.Fatal(ex.InnerException.ToString() + "\n Failed to initialize GDAL, check if the GDAL directory is next to the FdaModel.dll");
                 //Messager.Logger.Instance.ReportMessage(new Messager.ErrorMessage(ex.InnerException.ToString() + "\n Failed to initialize GDAL, check if the GDAL directory is next to the FdaModel.dll", 
                 //    Messager.ErrorMessageEnum.Fatal | Messager.ErrorMessageEnum.Model));
             }

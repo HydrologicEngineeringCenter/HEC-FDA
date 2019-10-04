@@ -10,7 +10,7 @@ namespace FdaViewModel.Utilities.Transactions
     public abstract class TransactionAndMessageBase:Editors.BaseEditorVM
     {    
         public ObservableCollection<Utilities.Transactions.TransactionRowItem> TransactionRows { get; set; }
-        public List<Utilities.MessageRowItem> MessageRows { get; set; }
+        public ObservableCollection<Utilities.MessageRowItem> MessageRows { get; set; }
 
         public TransactionAndMessageBase():base(null)
         {

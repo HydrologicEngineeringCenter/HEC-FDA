@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FdaModel.Functions.OrdinatesFunctions;
-using FdaModel.Messaging;
 using FdaModel.Utilities.Messager;
 
 namespace FdaModel.Functions
 {
-    public abstract class BaseFunction : IValidate, Messaging.IReportMessage
+    public abstract class BaseFunction : IValidate
     {
 
         #region Fields
@@ -17,7 +16,6 @@ namespace FdaModel.Functions
         protected FunctionTypes _FunctionType;
         protected ModelErrors _Messages;
 
-        public event MessageReportedEventHandler MessageReport;
         #endregion
 
         #region Properties
@@ -65,10 +63,6 @@ namespace FdaModel.Functions
         #region IValidateMembers
         public abstract void Validate( );
 
-        public void ReportMessage(object sender, MessageEventArgs e)
-        {
-            MessageReport?.Invoke(sender, e);
-        }
         #endregion
 
     }

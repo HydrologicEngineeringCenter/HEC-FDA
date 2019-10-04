@@ -15,15 +15,13 @@ using FdaViewModel.Tabs;
 using FdaViewModel.Utilities;
 using FdaViewModel.Watershed;
 using FdaViewModel.WaterSurfaceElevation;
-using NLog;
-using NLog.Targets;
 using Statistics;
 
 namespace FdaViewModel.Editors
 {
     public abstract class BaseEditorVM : BaseViewModel
     {
-        public static event EventHandler EditorLogAdded;
+        //public static event EventHandler EditorLogAdded;
 
         private string _Description;
         public string Description

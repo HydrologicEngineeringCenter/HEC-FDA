@@ -240,9 +240,9 @@ namespace FdaViewModel.Inventory
             }
             else
             {
-                DataBase_Reader.DbfReader dbf = new DataBase_Reader.DbfReader(dbfPath);
+                DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(dbfPath);
 
-                DataBase_Reader.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);//this is assuming one table
+                DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);//this is assuming one table
                 tempColumnNames = dtv.ColumnNames.ToList();
                 tempNumColumnNames = dtv.GetNumericColumns();
 
@@ -256,9 +256,9 @@ namespace FdaViewModel.Inventory
         {
             if (Path == null || Path == "") return false;
             string dbfPath = System.IO.Path.ChangeExtension(Path, ".dbf");
-            DataBase_Reader.DbfReader dbf = new DataBase_Reader.DbfReader(dbfPath);
+            DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(dbfPath);
 
-            DataBase_Reader.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+            DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
             object[] columnValues = dtv.GetColumn(index);
             string[] uniqueNames = new string[columnValues.Length];
                   
@@ -294,8 +294,8 @@ namespace FdaViewModel.Inventory
         public  void Save()
         {
             //this file will already be created somewhere else. It will be our main FDA study file
-            DataBase_Reader.SqLiteReader.CreateSqLiteFile(System.IO.Path.GetDirectoryName(Path) + "\\codyTest.sqlite");
-            StructureInventoryLibrary.SharedData.StudyDatabase = new DataBase_Reader.SqLiteReader(System.IO.Path.GetDirectoryName(Path) + "\\codyTest.sqlite");
+            DatabaseManager.SQLiteManager.CreateSqLiteFile(System.IO.Path.GetDirectoryName(Path) + "\\codyTest.sqlite");
+            //StructureInventoryLibrary.SharedData.StudyDatabase = new DataBase_Reader.SqLiteReader(System.IO.Path.GetDirectoryName(Path) + "\\codyTest.sqlite");
             
             
              
@@ -316,7 +316,7 @@ namespace FdaViewModel.Inventory
             myAttributeTable.Columns.Add(StructureInventoryBaseElement.GroundElevationField, typeof(string));
 
 
-            DataBase_Reader.DataTableView aTable = myReader.GetAttributeTable();
+            DatabaseManager.DataTableView aTable = myReader.GetAttributeTable();
 
             for(int i = 0;i<aTable.NumberOfRows;i++)
             {
@@ -338,15 +338,15 @@ namespace FdaViewModel.Inventory
 
             //create an in memory reader and data table view
 
-            DataBase_Reader.InMemoryReader myInMemoryReader = new DataBase_Reader.InMemoryReader(myAttributeTable);
-            DataBase_Reader.DataTableView myDTView = myInMemoryReader.GetTableManager(Name);
+            DatabaseManager.InMemoryReader myInMemoryReader = new DatabaseManager.InMemoryReader(myAttributeTable);
+            DatabaseManager.DataTableView myDTView = myInMemoryReader.GetTableManager(Name);
 
             //create the geo package writer that will write the data out
-            LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
+            //LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
 
             // write the data out
             //myGeoPackWriter.AddFeatures(Name, myReader.ToFeatures(), myReader.GetAttributeTable());
-            myGeoPackWriter.AddFeatures(Name, myReader.ToFeatures(), myDTView);
+           // myGeoPackWriter.AddFeatures(Name, myReader.ToFeatures(), myDTView);
 
 
 

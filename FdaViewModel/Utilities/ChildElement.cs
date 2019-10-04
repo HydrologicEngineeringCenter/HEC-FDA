@@ -1,7 +1,9 @@
 ﻿using FdaViewModel.Editors;
+using FdaViewModel.Saving;
 using FdaViewModel.WaterSurfaceElevation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +28,9 @@ namespace FdaViewModel.Utilities
 
         #endregion
         #region Properties
+
+
+        public ObservableCollection<FdaLogging.LogItem> Logs { get; set; }
         public bool IsOpenInTabOrWindow { get; set; }
         //public bool IsExpanded
         //{

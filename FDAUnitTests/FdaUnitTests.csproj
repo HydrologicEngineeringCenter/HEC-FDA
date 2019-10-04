@@ -49,7 +49,7 @@
       <HintPath>..\FdaViewModel\bin\Debug\DataTable_Viewer.dll</HintPath>
     </Reference>
     <Reference Include="FdaModel">
-      <HintPath>..\OldModel\bin\Debug\FdaModel.dll</HintPath>
+      <HintPath>..\Model\bin\Debug\FdaModel.dll</HintPath>
     </Reference>
     <Reference Include="GDALAssist, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -191,9 +191,9 @@
       <Project>{0d9ccaaa-4117-47e3-9829-2ca53ff695f5}</Project>
       <Name>FdaTester</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FdaViewModel\ViewModel.csproj">
+    <ProjectReference Include="..\FdaViewModel\FdaViewModel.csproj">
       <Project>{6a8fd3e7-b4ec-46b4-b91b-2b63034f9776}</Project>
-      <Name>ViewModel</Name>
+      <Name>FdaViewModel</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

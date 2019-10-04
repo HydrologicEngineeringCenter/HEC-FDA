@@ -58,11 +58,11 @@ namespace Fda.Utilities
             //}
         }
 
-        private void btn_PopOut_Click(object sender, RoutedEventArgs e)
-        {
-            DynamicTabVM vm = (DynamicTabVM)this.DataContext;
-            vm.PopTabIntoWindow();
-        }
+        //private void btn_PopOut_Click(object sender, RoutedEventArgs e)
+        //{
+        //    DynamicTabVM vm = (DynamicTabVM)this.DataContext;
+        //    vm.PopTabIntoWindow();
+        //}
 
         private void TextBlock_PreviewMouseMove(object sender, MouseEventArgs e)
         {

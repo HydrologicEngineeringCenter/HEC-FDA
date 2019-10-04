@@ -2,21 +2,69 @@
 using FdaViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FdaViewModel.Saving.PersistenceManagers
 {
-    public class ExteriorInteriorPersistenceManager : SavingBase, IPersistableWithUndoRedo
+    public class ExteriorInteriorPersistenceManager : UndoRedoBase, IPersistableWithUndoRedo
     {
+        private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("ExteriorInteriorPersistenceManager");
+        //ELEMENT_TYPE is used to store the type of element in the log tables.
+        private const string ELEMENT_TYPE = "exterior_interior";
+        /// <summary>
+        /// The name of the parent table that will hold all elements of this type
+        /// </summary>
+        public override string TableName { get { return "exterior_interior_curves"; } }
 
-        private const string TableName = "Interior Exterior Curves";
-        internal override string ChangeTableConstant { get { return "Exterior Interior - "; } }
-        private static readonly string[] TableColumnNames = { "Name", "Last Edit Date", "Description", "Curve Distribution Type", "Curve" };
-        private static readonly Type[] TableColumnTypes = { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
+        /// <summary>
+        /// The name of the change table that will hold the various states of elements.
+        /// </summary>
+        public override string ChangeTableName { get { return "exterior_interior_changes"; } }
+        
+        /// <summary>
+        /// Names of the columns in the parent table
+        /// </summary>
+        public override string[] TableColumnNames
+        {
+            get
+            {
+                return new string[] {ELEMENT_ID_COL_NAME,NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE_DISTRIBUTION_TYPE, CURVE_TYPE, CURVE , STATE_INDEX_COL_NAME};
+            }
+        }
+        /// <summary>
+        /// The types of the columns in the parent table
+        /// </summary>
+        public override Type[] TableColumnTypes
+        {
+            get { return new Type[] { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) }; }
+        }
 
+        /// <summary>
+        /// Names of the columns in the change table
+        /// </summary>
+        public override string[] ChangeTableColumnNames
+        {
+            get
+            {
+                return new string[] { ELEMENT_ID_COL_NAME, NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE_DISTRIBUTION_TYPE, CURVE_TYPE, CURVE, STATE_INDEX_COL_NAME };
+            }
+        }
 
+        /// <summary>
+        /// Types for the columns in the change table
+        /// </summary>
+        public override Type[] ChangeTableColumnTypes
+        {
+            get
+            {
+                return new Type[]{ typeof(int), typeof(string), typeof(string), typeof(string), typeof(string),
+                    typeof(string), typeof(string), typeof(int) };
+            }
+        }     
 
         public ExteriorInteriorPersistenceManager(Study.FDACache studyCache)
         {
@@ -25,57 +73,71 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
 
         #region utilities
-        private object[] GetRowDataFromElement(ExteriorInteriorElement element)
+        public override object[] GetRowDataFromElement(ChildElement element)
         {
-            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.Distribution, ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues) };
+            //todo: why are all these properties on child element. I was expecting to have to cast this element to an ext int.
+            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.Distribution, element.Curve.GetType(), ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues) };
         }
+
+        public override object[] GetRowDataForChangeTable(ChildElement element)
+        {
+            if (element.Description == null)
+            {
+                element.Description = "";
+            }
+
+            int id = GetElementId(TableName, element.Name);
+            //the new statId will be one higher than the max that is in the table already.
+            int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, id, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
+            return new object[] {id, element.Name, element.LastEditDate, element.Description,
+                element.Curve.Distribution, element.Curve.GetType(),
+                ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues),
+                stateId};
+
+        }
+
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
-            ExteriorInteriorElement ele = new ExteriorInteriorElement((string)rowData[0], (string)rowData[1], (string)rowData[2], ucdc);
-            //ele.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
-            ele.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[4], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
-            return ele;
+            Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
+                            (string)rowData[CURVE_DISTRIBUTION_TYPE_INDEX]));
+            ExteriorInteriorElement ele = new ExteriorInteriorElement((string)rowData[CHANGE_TABLE_NAME_INDEX], (string)rowData[LAST_EDIT_DATE_INDEX],
+                (string)rowData[DESCRIPTION_INDEX], emptyCurve);
+            ele.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_INDEX], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
+                            (string)rowData[CURVE_DISTRIBUTION_TYPE_INDEX])); return ele;
         }
         #endregion
 
 
         public void SaveNew(ChildElement element)
         {
-            if (element.GetType() == typeof(ExteriorInteriorElement))
-            {
-                string editDate = DateTime.Now.ToString("G");
-                element.LastEditDate = editDate;               
+            //save to parent table
+            SaveNewElement(element);
+            //save to change table
+            SaveToChangeTable(element);
+            //log message
+            Log(FdaLogging.LoggingLevel.Info, "Created new exterior interior curve: " + element.Name, element.Name);
 
-                SaveNewElementToParentTable(GetRowDataFromElement((ExteriorInteriorElement)element), TableName, TableColumnNames, TableColumnTypes);
-                SaveElementToChangeTable(element.Name, GetRowDataFromElement((ExteriorInteriorElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
-                //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
-
-                //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCacheForSaving.AddElement((ExteriorInteriorElement)element);
-            }
         }
 
         public void Remove(ChildElement element)
         {
-            RemoveFromParentTable(element, TableName);
-            DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCacheForSaving.RemoveElement((ExteriorInteriorElement)element);
-
+            base.Remove(element);
         }
 
        
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex )
         {
-            string editDate = DateTime.Now.ToString("G");
-            elementToSave.LastEditDate = editDate;
-
-            if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((ExteriorInteriorElement)elementToSave), oldElement.Name, TableName) || AreCurvesDifferent(oldElement.Curve, elementToSave.Curve))
+            //this will save to the parent table and to the change table
+            base.SaveExisting(oldElement, elementToSave, changeTableIndex);
+            //log that we are saving
+            if (!oldElement.Name.Equals(elementToSave.Name))
             {
-                UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((ExteriorInteriorElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
-                //SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
-                // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
-                StudyCacheForSaving.UpdateExteriorInteriorElement((ExteriorInteriorElement)oldElement, (ExteriorInteriorElement)elementToSave);
+                Log(FdaLogging.LoggingLevel.Info, "Saved exterior interior curve with name change from " + oldElement.Name +
+                    " to " + elementToSave.Name + ".", elementToSave.Name);
+            }
+            else
+            {
+                Log(FdaLogging.LoggingLevel.Info, "Saved exterior interior curve: " + elementToSave.Name, elementToSave.Name);
             }
         }
 
@@ -88,9 +150,47 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
         }
 
-        public override void AddValidationRules()
+        
+        /// <summary>
+        /// This will put a log into the log tables. Logs are only unique by element id and
+        /// element type. ie. Rating Curve id=3.
+        /// </summary>
+        /// <param name="level"></param>
+        /// <param name="message"></param>
+        /// <param name="elementName"></param>
+        public void Log(FdaLogging.LoggingLevel level, string message, string elementName)
         {
-            //throw new NotImplementedException();
+            int elementId = GetElementId(TableName, elementName);
+            LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
         }
+
+
+        /// <summary>
+        /// This will look in the parent table for the element id using the element name. 
+        /// Then it will sweep through the log tables pulling out any logs with that id
+        /// and element type. 
+        /// </summary>
+        /// <param name="elementName"></param>
+        /// <returns></returns>
+        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
+        {
+            int id = GetElementId(TableName, elementName);
+            return FdaLogging.RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
+        }
+
+        
+        /// <summary>
+        /// Gets all the log messages for this element from the specified log level table.
+        /// This is used by the MessageExpander to filter by log level
+        /// </summary>
+        /// <param name="level"></param>
+        /// <param name="elementName"></param>
+        /// <returns></returns>
+        public ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
+        {
+            int id = GetElementId(TableName, elementName);
+            return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
+        }
+
     }
 }

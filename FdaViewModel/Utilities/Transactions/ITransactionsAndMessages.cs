@@ -10,7 +10,10 @@ namespace FdaViewModel.Utilities.Transactions
     public interface ITransactionsAndMessages
     {
          ObservableCollection<TransactionRowItem> TransactionRows { get; set; }
-         List<MessageRowItem> MessageRows { get; set; }
+        void FilterRowsByLevel(FdaLogging.LoggingLevel level);
+        void DisplayAllMessages();
+
+        ObservableCollection<FdaLogging.LogItem> MessageRows { get; set; }
         bool TransactionsMessagesVisible { get; set; }
 
 

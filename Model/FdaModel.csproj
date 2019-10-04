@@ -35,6 +35,9 @@
     <Reference Include="DatabaseManager">
       <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\DatabaseManager.dll</HintPath>
     </Reference>
+    <Reference Include="FdaLogging">
+      <HintPath>..\..\..\FdaLogger\FdaLogger\bin\Debug\netstandard2.0\FdaLogging.dll</HintPath>
+    </Reference>
     <Reference Include="GDALAssist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\GDALAssist.dll</HintPath>
@@ -46,9 +49,6 @@
     <Reference Include="gdal_csharp, Version=1.0.6981.27857, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\gdal_csharp.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog">
-      <HintPath>..\packages\NLog.4.6.6\lib\xamarinios10\NLog.dll</HintPath>
     </Reference>
     <Reference Include="ogr_csharp, Version=1.0.6981.27857, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
@@ -77,13 +77,6 @@
     <Compile Include="ComputationPoint\Outputs\Result.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Utilities\Initialize.cs" />
-    <Compile Include="Utilities\Messaging\ErrorLevel.cs" />
-    <Compile Include="Utilities\Messaging\IMessage.cs" />
-    <Compile Include="Utilities\Messaging\IRecieveMessages.cs" />
-    <Compile Include="Utilities\Messaging\IReportMessage.cs" />
-    <Compile Include="Utilities\Messaging\Message.cs" />
-    <Compile Include="Utilities\Messaging\MessageEventArgs.cs" />
-    <Compile Include="Utilities\Messaging\MessageHub.cs" />
     <Compile Include="Utilities\ModelErrors.cs" />
     <Compile Include="ComputationPoint\Condition.cs" />
     <Compile Include="Functions\BaseFunction.cs" />

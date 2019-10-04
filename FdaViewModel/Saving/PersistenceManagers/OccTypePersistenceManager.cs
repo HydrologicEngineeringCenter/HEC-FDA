@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,12 +9,29 @@ using FdaViewModel.Utilities;
 
 namespace FdaViewModel.Saving.PersistenceManagers
 {
-    public class OccTypePersistenceManager : SavingBase, IPersistable
+    public class OccTypePersistenceManager : SavingBase, IElementManager
     {
+        //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
+        //of the element. But since they get stored as strings if a developer changes the name of the class
+        //you would no longer get any of the old logs. So i use this constant.
+        private const string ELEMENT_TYPE = "OccType";
+        private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("OccTypePersistenceManager");
+
+
         private const string GroupTablePrefix = "OccTypeGroup-";
         private const string ParentTableName = "OccTypeGroups";
-
+        /// <summary>
+        /// The types of the columns in the parent table
+        /// </summary>
+        public override Type[] TableColumnTypes
+        {
+            get { return new Type[0]; }
+        }
         internal override string ChangeTableConstant { get { return "OccType"; } }
+
+        public override string TableName => throw new NotImplementedException();
+
+        public override string[] TableColumnNames => throw new NotImplementedException();
 
         public OccTypePersistenceManager(Study.FDACache studyCache)
         {
@@ -629,7 +647,56 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
 
 
+        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)
+        {
+            return new ObservableCollection<FdaLogging.LogItem>();
+        }
 
+        /// <summary>
+        /// This will put a log into the log tables. Logs are only unique by element id and
+        /// element type. ie. Rating Curve id=3.
+        /// </summary>
+        /// <param name="level"></param>
+        /// <param name="message"></param>
+        /// <param name="elementName"></param>
+        public void Log(FdaLogging.LoggingLevel level, string message, string elementName)
+        {
+           // int elementId = GetElementId(TableName, elementName);
+            //LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
+        }
 
+        /// <summary>
+        /// This will look in the parent table for the element id using the element name. 
+        /// Then it will sweep through the log tables pulling out any logs with that id
+        /// and element type. 
+        /// </summary>
+        /// <param name="elementName"></param>
+        /// <returns></returns>
+        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
+        {
+            //int id = GetElementId(TableName, elementName);
+            //return FdaLogging.RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
+            return new ObservableCollection<FdaLogging.LogItem>();
+        }
+
+        /// <summary>
+        /// Gets all the log messages for this element from the specified log level table.
+        /// This is used by the MessageExpander to filter by log level
+        /// </summary>
+        /// <param name="level"></param>
+        /// <param name="elementName"></param>
+        /// <returns></returns>
+        public ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
+        {
+            //int id = GetElementId(TableName, elementName);
+            //return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
+            return new ObservableCollection<FdaLogging.LogItem>();
+
+        }
+
+        public override object[] GetRowDataFromElement(ChildElement elem)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

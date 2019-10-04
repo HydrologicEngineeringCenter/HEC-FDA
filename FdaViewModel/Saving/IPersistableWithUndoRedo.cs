@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Saving
 {
-    public interface IPersistableWithUndoRedo:IPersistable
+    public interface IPersistableWithUndoRedo:IElementManager
     {
 
 

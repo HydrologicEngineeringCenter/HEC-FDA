@@ -11,9 +11,12 @@ namespace FdaViewModel.Utilities
         public string Date { get; set; }
         public string Message { get; set; }
         public string User { get; set; }
-
-        public MessageRowItem(string date, string message, string user)
+        public string LogLevel { get; set; }
+        public string Logger { get; set; }
+        public MessageRowItem(string date, string message, string user, string logLevel, string logger)
         {
+            LogLevel = logLevel;
+            Logger = logger;
             Date = date;
             Message = message;
             User = user;

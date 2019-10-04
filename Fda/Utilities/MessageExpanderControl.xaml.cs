@@ -39,10 +39,11 @@ namespace Fda.Utilities
         {
             InitializeComponent();
             cmb_Filter.Items.Add("All");
-            cmb_Filter.Items.Add(NLog.LogLevel.Fatal);
-            cmb_Filter.Items.Add(NLog.LogLevel.Error);
-            cmb_Filter.Items.Add(NLog.LogLevel.Warn);
-            cmb_Filter.Items.Add(NLog.LogLevel.Info);
+            cmb_Filter.Items.Add(FdaLogging.LoggingLevel.Fatal);
+            cmb_Filter.Items.Add(FdaLogging.LoggingLevel.Error);
+            cmb_Filter.Items.Add(FdaLogging.LoggingLevel.Warn);
+            cmb_Filter.Items.Add(FdaLogging.LoggingLevel.Info);
+            cmb_Filter.SelectedIndex = 0;
 
         }
         private static void HeaderTextCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -70,6 +71,7 @@ namespace Fda.Utilities
             {
                 MainGrid.RowDefinitions[0].Height = GridLength.Auto;
                 MessagesExpander.Margin = new Thickness(5, 5, 5, 5);
+
             }
         }
 
@@ -77,7 +79,7 @@ namespace Fda.Utilities
         {
             if (sender == e.OriginalSource)
             {
-                MainGrid.RowDefinitions[0].Height = GridLength.Auto;
+                MainGrid.RowDefinitions[0].Height = new GridLength(1,GridUnitType.Star);
                 MessagesExpander.Margin = new Thickness(5, 5, 5, 40);
             }
 
@@ -85,33 +87,42 @@ namespace Fda.Utilities
 
         private void cmb_Filter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(cmb_Filter.SelectedItem is NLog.LogLevel)
+            if(cmb_Filter.SelectedItem is FdaLogging.LoggingLevel)
             {
-                NLog.LogLevel level = (NLog.LogLevel)cmb_Filter.SelectedItem;
-                if(level == NLog.LogLevel.Fatal)
+                FdaLogging.LoggingLevel level = (FdaLogging.LoggingLevel)cmb_Filter.SelectedItem;
+                if(level == FdaLogging.LoggingLevel.Fatal)
                 {
-                    SetMessageRows(NLog.LogLevel.Fatal);
+                    SetMessageRows(FdaLogging.LoggingLevel.Fatal);
                 }
-                else if (level == NLog.LogLevel.Error)
+                else if (level == FdaLogging.LoggingLevel.Error)
                 {
-                    SetMessageRows(NLog.LogLevel.Error);
+                    SetMessageRows(FdaLogging.LoggingLevel.Error);
                 }
-                else if (level == NLog.LogLevel.Warn)
+                else if (level == FdaLogging.LoggingLevel.Warn)
                 {
-                    SetMessageRows(NLog.LogLevel.Warn);
+                    SetMessageRows(FdaLogging.LoggingLevel.Warn);
                 }
-                else if (level == NLog.LogLevel.Info)
+                else if (level == FdaLogging.LoggingLevel.Info)
                 {
-                    SetMessageRows(NLog.LogLevel.Info);
+                    SetMessageRows(FdaLogging.LoggingLevel.Info);
                 }
             }
             else
             {
                 //its "all"
+                DisplayAllMessages();
             }
         }
 
-        private void SetMessageRows(NLog.LogLevel level)
+        private void DisplayAllMessages()
+        {
+            if (this.DataContext is ITransactionsAndMessages)
+            {
+                ITransactionsAndMessages messageVM = (ITransactionsAndMessages)this.DataContext;
+                messageVM.DisplayAllMessages();
+            }
+        }
+        private void SetMessageRows(FdaLogging.LoggingLevel level)
         {
             if(this.DataContext is ITransactionsAndMessages)
             {

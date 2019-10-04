@@ -7,7 +7,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace FdaViewModel.Tabs
 {
@@ -18,7 +20,8 @@ namespace FdaViewModel.Tabs
     /// </summary>
     public sealed class TabController : BaseViewModel
     {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly FdaLogging.FdaLogger logger = new FdaLogging.FdaLogger("TabController");
+
 
         private static readonly TabController _Instance = new TabController();
         
@@ -54,6 +57,7 @@ namespace FdaViewModel.Tabs
                 //the map window when it is selected.
                 if (_SelectedTabIndex == 0 && MWMTVConnector != null)
                 {
+
                     MWMTVConnector.UpdateMapWindow();
                     //UpdateMapWindow();
                 }
@@ -141,12 +145,13 @@ namespace FdaViewModel.Tabs
         /// <param name="tab">The tab you want to add</param>
         public void AddTab(IDynamicTab tab)
         {
-            
-            Logger.Fatal("Adding tab: {0}. Fatal message", tab.Header);
-            Logger.Error("Adding tab: {0}. From ViewModel error msg", tab.Header);
-            Logger.Warn("Adding tab: {0}. From ViewModel Warn msg", tab.Header);
-            Logger.Info("Adding tab: {0}. From ViewModel INfo msg", tab.Header);
-            Logger.Debug("Adding tab: {0}. From ViewModel", tab.Header );
+            //logger.LogInfo("testing the new fda logger.", typeof(CurveEditorVM), tab.BaseVM.Name);
+
+            //Logger.Fatal("Adding tab: {0}. Fatal message", tab.Header);
+            //Logger.Error("Adding tab: {0}. From ViewModel error msg", tab.Header);
+            //Logger.Warn("Adding tab: {0}. From ViewModel Warn msg", tab.Header);
+            //Logger.Info("Adding tab: {0}. From ViewModel INfo msg", tab.Header);
+            //Logger.Debug("Adding tab: {0}. From ViewModel", tab.Header );
 
             int indexOfTab = IsAlreadyOpenInTabs(tab.UniqueName);
             if (indexOfTab != -1)
@@ -266,6 +271,8 @@ namespace FdaViewModel.Tabs
             Navigate(tabToPopOut, true, false);
         }
         #endregion
+
+       
 
     }
 }

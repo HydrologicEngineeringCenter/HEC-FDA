@@ -2,21 +2,41 @@
 using FdaViewModel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FdaViewModel.Saving.PersistenceManagers
 {
-    public class StructureInventoryPersistenceManager : SavingBase, IPersistable
+    public class StructureInventoryPersistenceManager : SavingBase, IElementManager
     {
+        //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
+        //of the element. But since they get stored as strings if a developer changes the name of the class
+        //you would no longer get any of the old logs. So i use this constant.
+        private const string ELEMENT_TYPE = "Structure_Inventory";
+        private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("StructureInventoryPersistenceManager");
 
 
-        private const string TableName = "Structure Inventories";
+        private const string TABLE_NAME = "Structure Inventories";
         internal override string ChangeTableConstant { get { return "Structure Inventory - "; } }
-        private static readonly string[] TableColumnNames = { "Name", "Description" };
-        private static readonly Type[] TableColumnTypes = { typeof(string), typeof(string) };
 
+        public override string TableName
+        {
+            get { return TABLE_NAME; }
+        }
+
+        public override string[] TableColumnNames => throw new NotImplementedException();
+
+        private static readonly string[] TableColNames = { "Name", "Description" };
+        private static readonly Type[] TableColTypes = { typeof(string), typeof(string) };
+        /// <summary>
+        /// The types of the columns in the parent table
+        /// </summary>
+        public override Type[] TableColumnTypes
+        {
+            get { return TableColTypes; }
+        }
 
 
         public StructureInventoryPersistenceManager(Study.FDACache studyCache)
@@ -33,15 +53,16 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
+            return null;
             //name, path, description
-            if (StructureInventoryLibrary.SharedData.StudyDatabase == null)
-            {
-                StructureInventoryLibrary.SharedData.StudyDatabase = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
-            }
-            StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[0], (string)rowData[1]);
+            //if (StructureInventoryLibrary.SharedData.StudyDatabase == null)
+            //{
+            //    StructureInventoryLibrary.SharedData.StudyDatabase = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
+            //}
+            //StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[0], (string)rowData[1]);
 
-            InventoryElement invEle = new InventoryElement(baseElement);
-            return invEle;
+            //InventoryElement invEle = new InventoryElement(baseElement);
+            //return invEle;
         }
         #endregion
 
@@ -109,7 +130,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         public void WriteAttributeTable(DefineSIAttributesVM _DefineSIAttributes, AttributeLinkingListVM _AttributeLinkingList, string SelectedPath)
         {
             // DataBase_Reader.SqLiteReader.CreateSqLiteFile(System.IO.Path.GetDirectoryName(SelectedPath) + "\\codyTest.sqlite");
-            StructureInventoryLibrary.SharedData.StudyDatabase = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
+           // StructureInventoryLibrary.SharedData.StudyDatabase = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
 
             LifeSimGIS.ShapefileReader myReader = new LifeSimGIS.ShapefileReader(SelectedPath);
 
@@ -129,7 +150,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             myAttributeTable.Columns.Add(StructureInventoryBaseElement.ModuleField, typeof(string));
 
 
-            DataBase_Reader.DataTableView attributeTable = myReader.GetAttributeTable();
+            DatabaseManager.DataTableView attributeTable = myReader.GetAttributeTable();
             if (attributeTable.ParentDatabase.DataBaseOpen == false)
             {
                 attributeTable.ParentDatabase.Open();
@@ -332,17 +353,63 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
             //create an in memory reader and data table view
 
-            DataBase_Reader.InMemoryReader myInMemoryReader = new DataBase_Reader.InMemoryReader(myAttributeTable);
-            DataBase_Reader.DataTableView myDTView = myInMemoryReader.GetTableManager(Name);
+            DatabaseManager.InMemoryReader myInMemoryReader = new DatabaseManager.InMemoryReader(myAttributeTable);
+            DatabaseManager.DataTableView myDTView = myInMemoryReader.GetTableManager(Name);
 
             //create the geo package writer that will write the data out
-            LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
+           // LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
 
             // write the data out
             //myGeoPackWriter.AddFeatures(Name, myReader.ToFeatures(), myReader.GetAttributeTable());
-            myGeoPackWriter.AddFeatures("Structure Inventory - " + Name, myReader.ToFeatures(), myDTView);
+           // myGeoPackWriter.AddFeatures("Structure Inventory - " + Name, myReader.ToFeatures(), myDTView);
         }
 
+        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)
+        {
+            return new ObservableCollection<FdaLogging.LogItem>();
+        }
 
+        /// <summary>
+        /// This will put a log into the log tables. Logs are only unique by element id and
+        /// element type. ie. Rating Curve id=3.
+        /// </summary>
+        /// <param name="level"></param>
+        /// <param name="message"></param>
+        /// <param name="elementName"></param>
+        public void Log(FdaLogging.LoggingLevel level, string message, string elementName)
+        {
+            int elementId = GetElementId(TableName, elementName);
+            LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
+        }
+
+        /// <summary>
+        /// This will look in the parent table for the element id using the element name. 
+        /// Then it will sweep through the log tables pulling out any logs with that id
+        /// and element type. 
+        /// </summary>
+        /// <param name="elementName"></param>
+        /// <returns></returns>
+        public ObservableCollection<FdaLogging.LogItem> GetLogMessages(string elementName)
+        {
+            int id = GetElementId(TableName, elementName);
+            return FdaLogging.RetrieveFromDB.GetLogMessages(id, ELEMENT_TYPE);
+        }
+        /// <summary>
+        /// Gets all the log messages for this element from the specified log level table.
+        /// This is used by the MessageExpander to filter by log level
+        /// </summary>
+        /// <param name="level"></param>
+        /// <param name="elementName"></param>
+        /// <returns></returns>
+        public ObservableCollection<FdaLogging.LogItem> GetLogMessagesByLevel(FdaLogging.LoggingLevel level, string elementName)
+        {
+            int id = GetElementId(TableName, elementName);
+            return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
+        }
+
+        public override object[] GetRowDataFromElement(ChildElement elem)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

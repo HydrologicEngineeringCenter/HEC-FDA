@@ -60,8 +60,8 @@
             <RowDefinition Height="32" />
             <RowDefinition Height="500*" />
             <RowDefinition Height="5" />
-            <RowDefinition Height="27" MinHeight="27"/>
-            <RowDefinition Height="27" MinHeight="27"/>
+            <!--<RowDefinition Height="27" MinHeight="27"/>-->
+            <RowDefinition Height="Auto" MinHeight="27"/>
 
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -143,7 +143,7 @@
 
 
 
-                        <utils:TabControlNoReload  x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1" ItemsSource="{Binding TabFactoryInstance.Tabs}" SelectedIndex="{Binding TabFactoryInstance.SelectedDynamicTabIndex, Mode=TwoWay}"   Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  
+                        <utils:TabControlNoReload  x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1" ItemsSource="{Binding TabFactoryInstance.Tabs}" SelectedIndex="{Binding TabFactoryInstance.SelectedDynamicTabIndex, Mode=TwoWay}" SelectionChanged="DynamicTabControl_SelectionChanged"  Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  
                                                      IsSynchronizedWithCurrentItem="True"  Style="{StaticResource TabControlNoReloadStyle}">
 
 
@@ -168,13 +168,14 @@
                         <GridSplitter Grid.Row="1" Grid.Column="0" Margin="0,22,0,0" Background="Gray" BorderBrush="DarkGray" BorderThickness="1" HorizontalAlignment="Right" Width="3"/>
 
                         <GridSplitter Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" />
-                        <utils:TransactionMessageControl Grid.Row="3" Grid.ColumnSpan="2" />
-        <Grid Grid.Row="4" Grid.ColumnSpan="2" Background="LightBlue">
+                        <!--<utils:TransactionMessageControl Grid.Row="3" Grid.ColumnSpan="2" />-->
+        <Grid Grid.Row="4" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="250" />
             </Grid.ColumnDefinitions>
-                <Label Grid.Column="1" Content="{Binding SaveStatus}" HorizontalAlignment="Right" Margin="0,0,5,0" FontSize="10" />
+                <utils:MessageExpanderControl ExpandedHeight="200" HeaderText="Messages" />
+                <Label Grid.Column="1" Content="{Binding SaveStatus}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,5,0" FontSize="10" />
         </Grid>
     </Grid>
 </UserControl>

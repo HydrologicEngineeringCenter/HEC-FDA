@@ -71,7 +71,7 @@ namespace FdaViewModel.Utilities.Transactions
 
             //load the messages log
             
-            editor.MessageRows = Utilities.MessagesVM.GetMessageRowsForElement(element);
+            //editor.MessageRows = Utilities.MessagesVM.GetMessageRowsForElement(element);
             // if(TransactionRows.Count>0 || MessageRows.Count > 0)
             {
                 editor.TransactionsMessagesVisible = true;
