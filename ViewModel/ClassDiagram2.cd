@@ -1,0 +1,1378 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="FdaViewModel.AggregatedStageDamage.AggregatedStageDamageEditorVM" Collapsed="true">
+    <Position X="256.25" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AABBBIAQQCggBAAAAAAAIEABAIgAAQAEgAAKAAAAAAE=</HashCode>
+      <FileName>AggregatedStageDamage\AggregatedStageDamageEditorVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.AggregatedStageDamage.AggregatedStageDamageElement" Collapsed="true">
+    <Position X="74" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AABAoAEAAAAAAAAAAAAgAAAACBACAQAEAAACAAAAAAA=</HashCode>
+      <FileName>AggregatedStageDamage\AggregatedStageDamageElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.AggregatedStageDamage.AggregatedStageDamageOwnerElement" Collapsed="true">
+    <Position X="112.25" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAIBAAAAAAAAAAAAAABAAAAACAAAAgAA=</HashCode>
+      <FileName>AggregatedStageDamage\AggregatedStageDamageOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.BaseFdaElement" Collapsed="true">
+    <Position X="117.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AIQAAAAAIAAABABAAAAASAAAgAAAEAAAAAAAAAIAAAA=</HashCode>
+      <FileName>BaseFdaElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.BaseViewModel" Collapsed="true">
+    <Position X="152.75" Y="0.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>YAIBAQQAACCAEeoBCCACpBQgkAQQAIAIEAASCRABgMA=</HashCode>
+      <FileName>BaseViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.ExtentionMethods" Collapsed="true">
+    <Position X="294.25" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAQAQAQAICAAAAAADYoAA=</HashCode>
+      <FileName>ExtentionMethods.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Conditions.AddExteriorInteriorStageToConditionVM" Collapsed="true">
+    <Position X="283.25" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAMAAAAAAAAAAAEEIAAiACAAAEAEAACAAAACAAAAoAA=</HashCode>
+      <FileName>Conditions\AddExteriorInteriorStageToConditionVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Conditions.AddFlowFrequencyToConditionVM" Collapsed="true">
+    <Position X="15.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACEIAAiACAAAkAUAACAAAACAAAEoAA=</HashCode>
+      <FileName>Conditions\AddFlowFrequencyToConditionVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Conditions.AddInflowOutflowToConditionVM" Collapsed="true">
+    <Position X="29" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAEIQAiACAAAUAEAACAAAACAAAAoAA=</HashCode>
+      <FileName>Conditions\AddInflowOutflowToConditionVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Conditions.AddRatingCurveToConditionVM" Collapsed="true">
+    <Position X="44.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEIAAiACABAEAUAACAAAACAAIAoAA=</HashCode>
+      <FileName>Conditions\AddRatingCurveToConditionVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Conditions.AddStageDamageToConditionVM" Collapsed="true">
+    <Position X="58.25" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAACEIQAiACAAAGAEBACEAAACAAAAoAA=</HashCode>
+      <FileName>Conditions\AddStageDamageToConditionVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Conditions.ConditionBuilder" Collapsed="true">
+    <Position X="297.75" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>hAAQIQAAIIgAAKAEAQEBIIAAAAJTEEAQIIAAFQAAAAA=</HashCode>
+      <FileName>Conditions\ConditionBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Conditions.ConditionFactory" Collapsed="true">
+    <Position X="299.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Conditions\ConditionFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Conditions.ConditionsEditorVM" Collapsed="true">
+    <Position X="193.25" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>UIISRIFYShJoEAkQSCSOLIUKaAYAOOAMW4ELAQEYSRg=</HashCode>
+      <FileName>Conditions\ConditionsEditorVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Conditions.ConditionsElement" Collapsed="true">
+    <Position X="92" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>Q4AAUY0QSjJsQTBAQAiMDgQAIBarSIoME4ICMRwBABg=</HashCode>
+      <FileName>Conditions\ConditionsElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Conditions.ConditionsOwnerElement" Collapsed="true">
+    <Position X="137" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAwAAAAABAACAAAAAAAAAAAAIAAAAAAICABCAAACBAA=</HashCode>
+      <FileName>Conditions\ConditionsOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Conditions.ConditionsPlotEditorVM" Collapsed="true">
+    <Position X="254" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>QAAJUJAABQQgQQmEUAigIAABABABCQAQIABCEgIAAAg=</HashCode>
+      <FileName>Conditions\ConditionsPlotEditorVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Conditions.ConditionsTreeOwnerElement" Collapsed="true">
+    <Position X="148.25" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAIAAAAAAAIoACAAAIAAACAQAAAEA=</HashCode>
+      <FileName>Conditions\ConditionsTreeOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Editors.AnalyticalFrequencyCurveEditor" Collapsed="true">
+    <Position X="238.25" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAABAACAQAAAAIAAAABAAAAAAEAAECAAAAAQI=</HashCode>
+      <FileName>Editors\AnalyticalFrequencyCurveEditor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Editors.BaseEditorVM" Collapsed="true">
+    <Position X="251.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAkAAAIIAAAAAEAAAAAAABEAAACQAAAAAE=</HashCode>
+      <FileName>Editors\BaseEditorVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Editors.CurveEditorFactory" Collapsed="true">
+    <Position X="292.5" Y="1.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Editors\CurveEditorFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Editors.CurveEditorVM" Collapsed="true">
+    <Position X="237" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AABABIAUwAAARAAAEAAAAAABAAAAAwAAgAAAAABAAgA=</HashCode>
+      <FileName>Editors\CurveEditorVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Editors.EditorActionManager" Collapsed="true">
+    <Position X="299.5" Y="1.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>Editors\EditorActionManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Editors.FailureFunctionCurveEditorVM" Collapsed="true">
+    <Position X="236" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAIAABAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAACAAA=</HashCode>
+      <FileName>Editors\FailureFunctionCurveEditorVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Editors.SaveUndoRedoHelper" Collapsed="true">
+    <Position X="60.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>iwpAAIACAAISABIAgAQoAAwAAQBAAQBAAAAGABgAIAI=</HashCode>
+      <FileName>Editors\SaveUndoRedoHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Editors.UndoRedoManager" Collapsed="true">
+    <Position X="292.5" Y="5.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Editors\UndoRedoManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.FlowTransforms.FlowTransformsOwnerElement" Collapsed="true">
+    <Position X="121.25" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>FlowTransforms\FlowTransformsOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.FlowTransforms.InflowOutflowEditorVM" Collapsed="true">
+    <Position X="263" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AgBCJIAQQCogBBAAgAAAIEABAAhEAQBEgAACgBAAAAE=</HashCode>
+      <FileName>FlowTransforms\InflowOutflowEditorVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.FlowTransforms.InflowOutflowElement" Collapsed="true">
+    <Position X="94.25" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAEAAAAABAAAAAAAAAAAABACAAAAAAACAAAAAAA=</HashCode>
+      <FileName>FlowTransforms\InflowOutflowElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.FlowTransforms.InflowOutflowOwnerElement" Collapsed="true">
+    <Position X="139.25" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAABAAAAABAAIAAAAAAAAAAAAAAACABAAIAA=</HashCode>
+      <FileName>FlowTransforms\InflowOutflowOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.FrequencyRelationships.AnalyticalFrequencyEditorVM" Collapsed="true">
+    <Position X="267.5" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAFABIQUABgATAQAAAAIAAQBBCAAAAAEBAECAAAAAQI=</HashCode>
+      <FileName>FrequencyRelationships\AnalyticalFrequencyEditorVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.FrequencyRelationships.AnalyticalFrequencyElement" Collapsed="true">
+    <Position X="103.25" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAEQAAAAAAQAAAAEAAAAABICAAAEAAAAAAAAAQA=</HashCode>
+      <FileName>FrequencyRelationships\AnalyticalFrequencyElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.FrequencyRelationships.AnalyticalFrequencyOwnerElement" Collapsed="true">
+    <Position X="152.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAQAAAAAAAAAABAAgAAAAJAAAAAAAAAABAAAgA=</HashCode>
+      <FileName>FrequencyRelationships\AnalyticalFrequencyOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.FrequencyRelationships.AnalyticalFrequencyRowItem" Collapsed="true">
+    <Position X="292.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AABBAAAIAAgAAAAAAACAAIAAAAAIAAAEAAACBAAAAAA=</HashCode>
+      <FileName>FrequencyRelationships\AnalyticalFrequencyRowItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.FrequencyRelationships.FrequencyRelationshipsOwnerElement" Collapsed="true">
+    <Position X="157.25" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>FrequencyRelationships\FrequencyRelationshipsOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.FrequencyRelationships.GraphicalFrequencyOwnerElement" Collapsed="true">
+    <Position X="107.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAgAAAAAACAAAAAACAAAAAAA=</HashCode>
+      <FileName>FrequencyRelationships\GraphicalFrequencyOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.FrequencyRelationships.StageFrequencyOwnerElement" Collapsed="true">
+    <Position X="110" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAgAAAAAACAAAAAACAAAAAAA=</HashCode>
+      <FileName>FrequencyRelationships\StageFrequencyOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.GeoTech.FailureFunctionEditorVM" Collapsed="true">
+    <Position X="258.5" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AABIBIBQQCggBAAAAAAAIEABAIgAAQCEgAACAAACAAE=</HashCode>
+      <FileName>GeoTech\FailureFunctionEditorVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.GeoTech.FailureFunctionElement" Collapsed="true">
+    <Position X="80.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAFQAAAAAAAAAAAAAAAAABICAAAABAACAAACAAA=</HashCode>
+      <FileName>GeoTech\FailureFunctionElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.GeoTech.FailureFunctionOwnerElement" Collapsed="true">
+    <Position X="116.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAQAAAAAAAAEIAAAAAAAAIAAAAAAAACAAQACAA=</HashCode>
+      <FileName>GeoTech\FailureFunctionOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.GeoTech.LateralStructuresOwnerElement" Collapsed="true">
+    <Position X="123.5" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>GeoTech\LateralStructuresOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.GeoTech.LeveeFeatureEditorVM" Collapsed="true">
+    <Position X="249.5" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAAAAAAAAAAAEABAAAAAAACAAAAAAA=</HashCode>
+      <FileName>GeoTech\LeveeFeatureEditorVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.GeoTech.LeveeFeatureElement" Collapsed="true">
+    <Position X="96.5" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAEAACAAAAAAAFADAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>GeoTech\LeveeFeatureElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.GeoTech.LeveeFeatureOwnerElement" Collapsed="true">
+    <Position X="141.5" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>QACAAAAAAAAABAAgAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GeoTech\LeveeFeatureOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Hydraulics.FloodPlainDataOwnerElement" Collapsed="true">
+    <Position X="143.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Hydraulics\FloodPlainDataOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Hydraulics.GriddedHydraulicsElement" Collapsed="true">
+    <Position X="105.5" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAgAAIAAAAEIAAAAFAAIAAEAAACBIIAAAE=</HashCode>
+      <FileName>Hydraulics\GriddedHydraulicsElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Hydraulics.GriddedHydraulicsOwnerElement" Collapsed="true">
+    <Position X="155" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAIAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Hydraulics\GriddedHydraulicsOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Hydraulics.GridImporterVM" Collapsed="true">
+    <Position X="269.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAIAAAAEIAQAAEAAIAAEAAADBIIAAAA=</HashCode>
+      <FileName>Hydraulics\GridImporterVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Hydraulics.WaterSurfaceProfileOwnerElement" Collapsed="true">
+    <Position X="159.5" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABAAAAAIAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Hydraulics\WaterSurfaceProfileOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Hydraulics.WSPRowItem" Collapsed="true">
+    <Position X="296" Y="5.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAIAAAAAAAAEACAAAAAAAAAAAAIAAACAAAAAAA=</HashCode>
+      <FileName>Hydraulics\WSPRowItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.ImpactArea.ImpactAreaEditorVM" Collapsed="true">
+    <Position X="31.25" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAgAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ImpactArea\ImpactAreaEditorVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.ImpactArea.ImpactAreaElement" Collapsed="true">
+    <Position X="76.25" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAEAECAQAAIAABBACAAACAAACAACACAQ=</HashCode>
+      <FileName>ImpactArea\ImpactAreaElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.ImpactArea.ImpactAreaImporterVM" Collapsed="true">
+    <Position X="245" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>EAAAAYAAQAAAAEAAAAQAIEAAgAAAAAKMAAACABIAAAA=</HashCode>
+      <FileName>ImpactArea\ImpactAreaImporterVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.ImpactArea.ImpactAreaOwnerElement" Collapsed="true">
+    <Position X="119" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgEAAAAAAAAAQAAAAAAAAAAAAAAICAAAAAAA=</HashCode>
+      <FileName>ImpactArea\ImpactAreaOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.ImpactArea.ImpactAreaRowItem" Collapsed="true">
+    <Position X="297.75" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAACAIAQQAABAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ImpactArea\ImpactAreaRowItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.ImpactArea.ImpactAreaUniqueNameSet" Collapsed="true">
+    <Position X="195.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAACABBAAAAACAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ImpactArea\ImpactAreaUniqueNameSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.ImpactArea.ImpactAreaVM" Collapsed="true">
+    <Position X="204.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAIAQQAQBAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>ImpactArea\ImpactAreaVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.ImpactArea.RadioButtonConverterBoth" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="297.75" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ImpactArea\RadioButtonConverterBoth.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="FdaViewModel.ImpactArea.RadioButtonConverterLeft" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="299.5" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ImpactArea\RadioButtonConverterLeft.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="FdaViewModel.ImpactArea.RadioButtonConverterRight" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="301.25" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ImpactArea\RadioButtonConverterRight.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="FdaViewModel.Inventory.AttributeLinkingListVM" Collapsed="true">
+    <Position X="229.25" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAQQAAABACIDQQAAAAAQEIAYCACAAACEABABCA=</HashCode>
+      <FileName>Inventory\AttributeLinkingListVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.DefineSIAttributesVM" Collapsed="true">
+    <Position X="272" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>gAmACWQREAAIRg4BEARCIMngDzAAAAABlgoCZTIpAA0=</HashCode>
+      <FileName>Inventory\DefineSIAttributesVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.InventoryOwnerElement" Collapsed="true">
+    <Position X="161.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Inventory\EconomicsOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.EditStructuresFromShapefileVM" Collapsed="true">
+    <Position X="17.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Inventory\EditStructuresFromShapefileVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.ImportFromHAZUSVM" Collapsed="true">
+    <Position X="33.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAIAAAIQIAQAAYAIAAIAAAJCAAAAAAA=</HashCode>
+      <FileName>Inventory\ImportFromHAZUSVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.ImportFromNSIVM" Collapsed="true">
+    <Position X="47" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAgACAAAAAAAAAAQIAQAAAAAAIAAABACAAAAAAA=</HashCode>
+      <FileName>Inventory\ImportFromNSIVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.ImportFromShapefileVM" Collapsed="true">
+    <Position X="62.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>hACgAIYRAAlIQG8GRAxIIAykBjYAgAABjAACRhICgwQ=</HashCode>
+      <FileName>Inventory\ImportFromShapefileVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.ImportStructuresFromShapefileVM" Collapsed="true">
+    <Position X="247.25" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>MABAAIACAAEAIAUAAARAIAAAAAYEIAAMEFACQAgBAAA=</HashCode>
+      <FileName>Inventory\ImportStructuresFromShapefileVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.InventoryElement" Collapsed="true">
+    <Position X="83" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AABAAAEAAAAAEAAACAAAAACAABACCAAAABACAAAACAA=</HashCode>
+      <FileName>Inventory\InventoryElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.StructureInventoryBaseElement" Collapsed="true">
+    <Position X="294.25" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQAEAAAAAAAgQACAAIAAAAYAIAAAACAACBAACAACIAA=</HashCode>
+      <FileName>Inventory\StructureInventoryBaseElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.StructureInventoryOwnerElement" Collapsed="true">
+    <Position X="130.25" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAABAAAAAABAEAACIAAAAAA=</HashCode>
+      <FileName>Inventory\StructureInventoryOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.DamageCategory.DamageCategoriesVM" Collapsed="true">
+    <Position X="209" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAgIAAAAAAAAAgUACAAAAAEAAACAAAAAAA=</HashCode>
+      <FileName>Inventory\DamageCategory\DamageCategoriesVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.DamageCategory.DamageCategoryOwnedElement" Collapsed="true">
+    <Position X="101" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAADAAAAIAAAACAACAAAA=</HashCode>
+      <FileName>Inventory\DamageCategory\DamageCategoryOwnedElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.DamageCategory.DamageCategoryRowItem" Collapsed="true">
+    <Position X="294.25" Y="1.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAIAAAAAAAAAACCIAQAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Inventory\DamageCategory\DamageCategoryRowItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.DepthDamage.DepthDamageCurve" Collapsed="true">
+    <Position X="296" Y="1.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAIAAAAAAIAQgAAAAAQAEgAAAAAAAAAA=</HashCode>
+      <FileName>Inventory\DepthDamage\DepthDamageCurve.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.DepthDamage.DepthDamageCurveData" Collapsed="true">
+    <Position X="297.75" Y="1.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQEAAAAABAAAAAAAAAQAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inventory\DepthDamage\DepthDamageCurveData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.DepthDamage.CheckForNameConflictEventArgs" Collapsed="true">
+    <Position X="294.25" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inventory\DepthDamage\DepthDamageCurveEditorControlVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM" Collapsed="true">
+    <Position X="20" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAIEAgAIABAAAAMAQgAAAAAQAEgAAKAAAgAAA=</HashCode>
+      <FileName>Inventory\DepthDamage\DepthDamageCurveEditorControlVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.DepthDamage.DepthDamageCurveEditorVM" Collapsed="true">
+    <Position X="35.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQSCAGAAAAABQACCEQAGAAAQBBAAAIEaAAAgAAA=</HashCode>
+      <FileName>Inventory\DepthDamage\DepthDamageCurveEditorVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.OccupancyTypes.CreateNewDamCatVM" Collapsed="true">
+    <Position X="49.25" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAQAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Inventory\OccupancyTypes\CreateNewDamCatVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM" Collapsed="true">
+    <Position X="65" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAEAIAAAJAwBAAAAAAAAAAAAAAQCgAAAAAA=</HashCode>
+      <FileName>Inventory\OccupancyTypes\ImportOccupancyTypesVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM" Collapsed="true">
+    <Position X="69.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AABIABFMBAEkIAAaABJBEIAQkEIEnQgEEAKiCGpiEQU=</HashCode>
+      <FileName>Inventory\OccupancyTypes\OccupancyTypesEditorVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesElement" Collapsed="true">
+    <Position X="85.25" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAqAIAEAAEAAAAAAAAAgDABAAAAAAAAACCAAAAAA=</HashCode>
+      <FileName>Inventory\OccupancyTypes\OccupancyTypesElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM" Collapsed="true">
+    <Position X="197.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAIAAAAAIBQAAAAAAAIAQAgCQAIAIAA=</HashCode>
+      <FileName>Inventory\OccupancyTypes\OccupancyTypesGroupRowItemVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesOwnerElement" Collapsed="true">
+    <Position X="132.5" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AACIAIAAAAAABAAAABAAACAASAAAQAAAAAACAQCAAAA=</HashCode>
+      <FileName>Inventory\OccupancyTypes\OccupancyTypesOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Output.CreateEconImportFileVM" Collapsed="true">
+    <Position X="211.25" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAgAAAgAAAAAAAAIQQAAAAAAAAEAQACAAEgAAA=</HashCode>
+      <FileName>Output\CreateEconImportFileVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Output.IndexLocationsVM" Collapsed="true">
+    <Position X="218" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Output\IndexLocationsVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Output.LinkedPlotsUpdatedVM" Collapsed="true">
+    <Position X="224.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAIAAAABAAgAQAIgQCYAQAAAAAAAACAIQAAAA=</HashCode>
+      <FileName>Output\LinkedPlotsUpdatedVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Output.LinkedPlotsVM" Collapsed="true">
+    <Position X="231.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAQAAgAAAAAAAAADAAAAEAI=</HashCode>
+      <FileName>Output\LinkedPlotsVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM" Collapsed="true">
+    <Position X="274.25" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AEEAAAAAARAAAEBAACAAIUgAANoAAQAAQBACAAAAAKA=</HashCode>
+      <FileName>Plots\ConditionsIndividualPlotWrapperVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Plots.DoubleLineModulatorCoverButtonVM" Collapsed="true">
+    <Position X="285.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAEAQAAAAAAAACAAAAACgAAAAgA=</HashCode>
+      <FileName>Plots\DoubleLineModulatorCoverButtonVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Plots.DoubleLineModulatorHorizontalCoverButtonVM" Collapsed="true">
+    <Position X="22.25" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAEAQAAAAAAAACAAAAACgAAAAgA=</HashCode>
+      <FileName>Plots\DoubleLineModulatorHorizontalCoverButtonVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Plots.DoubleLineModulatorWrapperVM" Collapsed="true">
+    <Position X="38" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAARAAAAAAAAAAAEAAAEAAAQAAAAACAAAAAAA=</HashCode>
+      <FileName>Plots\DoubleLineModulatorWrapperVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Plots.HorizontalDoubleLineModulatorWrapperVM" Collapsed="true">
+    <Position X="51.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAARAAAAAAAAAAAEAAAEAAAQAAAAACAAAAAAA=</HashCode>
+      <FileName>Plots\HorizontalDoubleLineModulatorWrapperVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Plots.IndividualLinkedPlotControlVM" Collapsed="true">
+    <Position X="206.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>ERQAAAAAAFAQkEAAQAACBAAIAEIAACQAEQAWABAAAAA=</HashCode>
+      <FileName>Plots\IndividualLinkedPlotControlVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Plots.IndividualLinkedPlotCoverButtonVM" Collapsed="true">
+    <Position X="213.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAAAAEAQAAAAAAAACAAAAACgAAAAgA=</HashCode>
+      <FileName>Plots\IndividualLinkedPlotCoverButtonVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Plots.IndividualLinkedPlotVM" Collapsed="true">
+    <Position X="220.25" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAEEBAAAggAEAAAACAAAAAgAACAAAAIIA=</HashCode>
+      <FileName>Plots\IndividualLinkedPlotVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Plots.LinkedPlotsVM" Collapsed="true">
+    <Position X="233.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AACAQAAQAMAQQCKAQQAAADQAAABEEAAAEgACQIIDAAw=</HashCode>
+      <FileName>Plots\LinkedPlotsVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Plots.ParentUserControlVM" Collapsed="true">
+    <Position X="276.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAEEBAAAAAAAAAAIAAACAAgAACAAAAAIA=</HashCode>
+      <FileName>Plots\ParentUserControlVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Saving.ElementAddedEventArgs" Collapsed="true">
+    <Position X="301.25" Y="1.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Saving\ElementAddedEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Saving.ElementUpdatedEventArgs" Collapsed="true">
+    <Position X="292.5" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Saving\ElementAddedEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Saving.LoadingManager" Collapsed="true">
+    <Position X="299.5" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>Saving\LoadingManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Saving.PersistenceFactory" Collapsed="true">
+    <Position X="296" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AgAAAQABAAAAAAAQAAACAQBAEQIIEAEAAAgAAAAAAAA=</HashCode>
+      <FileName>Saving\PersistenceFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Saving.SavingBase" Collapsed="true">
+    <Position X="176.25" Y="1.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>KAAAghQAgAAQBAAAAgACECABAAAAAAAAAAAFABAAIAA=</HashCode>
+      <FileName>Saving\SavingBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Saving.PersistenceManagers.ConditionsPersistenceManager" Collapsed="true">
+    <Position X="173" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgBAAQACQABgAAAAABAAAAAACAgAAAAACAQAAAAA=</HashCode>
+      <FileName>Saving\PersistenceManagers\ConditionsPersistenceManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Saving.PersistenceManagers.ExteriorInteriorPersistenceManager" Collapsed="true">
+    <Position X="175.25" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgBAAQACQABgAAAAABAAAAAACAAAAAAACAQAAAAA=</HashCode>
+      <FileName>Saving\PersistenceManagers\ExteriorInteriorPersistenceManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Saving.PersistenceManagers.FailureFunctionPersistenceManager" Collapsed="true">
+    <Position X="177.5" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgBAAQACQABgAAAAABAAAAAACAAAAAAACAQAAAAA=</HashCode>
+      <FileName>Saving\PersistenceManagers\FailureFunctionPersistenceManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Saving.PersistenceManagers.FlowFrequencyPersistenceManager" Collapsed="true">
+    <Position X="179.75" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgBAAQACQABgAAAAABAAAAAACAAAAAAACAQAAAAA=</HashCode>
+      <FileName>Saving\PersistenceManagers\FlowFrequencyPersistenceManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Saving.PersistenceManagers.ImpactAreaPersistenceManager" Collapsed="true">
+    <Position X="182" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgBAAQACQCBgIIAAABAAAAAACAAAAAAACAQCAAAA=</HashCode>
+      <FileName>Saving\PersistenceManagers\ImpactAreaPersistenceManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Saving.PersistenceManagers.InflowOutflowPersistenceManager" Collapsed="true">
+    <Position X="184.25" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgBAAQACQABgAAACABAAAAAACAAAAAAACAQAAAAA=</HashCode>
+      <FileName>Saving\PersistenceManagers\InflowOutflowPersistenceManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Saving.PersistenceManagers.LeveePersistenceManager" Collapsed="true">
+    <Position X="186.5" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgBAAQACQABgAAAAABAAAAAACAAAAAAACAQAAAAA=</HashCode>
+      <FileName>Saving\PersistenceManagers\LeveePersistenceManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Saving.PersistenceManagers.RatingElementPersistenceManager" Collapsed="true">
+    <Position X="188.75" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgBAAQACQABgAAAAABAAAAAACAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>Saving\PersistenceManagers\RatingElementPersistenceManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Saving.PersistenceManagers.StageDamagePersistenceManager" Collapsed="true">
+    <Position X="164" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgBAAQACQABgAAAAABAAAAAACAAAAAAACAQAAAAA=</HashCode>
+      <FileName>Saving\PersistenceManagers\StageDamagePersistenceManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Saving.PersistenceManagers.StructureInventoryPersistenceManager" Collapsed="true">
+    <Position X="166.25" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgBAAQACQABgAAAAABAAAAAACAAAEAAAAAQAAAAA=</HashCode>
+      <FileName>Saving\PersistenceManagers\StructureInventoryPersistenceManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Saving.PersistenceManagers.TerrainElementPersistenceManager" Collapsed="true">
+    <Position X="168.5" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgBAAQACQABggAAEABAAAABACAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>Saving\PersistenceManagers\TerrainElementPersistenceManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Saving.PersistenceManagers.WaterSurfaceAreaPersistenceManager" Collapsed="true">
+    <Position X="170.75" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAQgBAAQACQARgAAAAABAAAAAACAAAAAAECAQAAAAA=</HashCode>
+      <FileName>Saving\PersistenceManagers\WaterSurfaceAreaPersistenceManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.StageTransforms.ExteriorInteriorEditorVM" Collapsed="true">
+    <Position X="260.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AABABIAQQCggBAAAAAAAIEABAIgAAQAEgAACAAAAAAE=</HashCode>
+      <FileName>StageTransforms\ExteriorInteriorEditorVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.StageTransforms.ExteriorInteriorElement" Collapsed="true">
+    <Position X="87.5" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAEAAAAAABAAAAAAAAAAABACAAAAAAACAAAAAAA=</HashCode>
+      <FileName>StageTransforms\ExteriorInteriorElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.StageTransforms.ExteriorInteriorOwnerElement" Collapsed="true">
+    <Position X="128" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAoAAAAAAAAAAAAAAAAAAgAAAAAAAEAAACIAAAIAA=</HashCode>
+      <FileName>StageTransforms\ExteriorInteriorOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.StageTransforms.RatingCurveEditorVM" Collapsed="true">
+    <Position X="265.25" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AABBBIAQQAgABAAAAAAAIAABAIgAAQAEgAAKAAAAAAA=</HashCode>
+      <FileName>StageTransforms\RatingCurveEditorVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.StageTransforms.RatingCurveElement" Collapsed="true">
+    <Position X="98.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAEAAAAAAAAABADAgAAAAACAAAAAAA=</HashCode>
+      <FileName>StageTransforms\RatingCurveElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.StageTransforms.RatingCurveOwnerElement" Collapsed="true">
+    <Position X="146" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAIAAAAAAAgAAAAACGAAAAAACAAAAAAA=</HashCode>
+      <FileName>StageTransforms\RatingCurveOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.StageTransforms.StageTransformsOwnerElement" Collapsed="true">
+    <Position X="150.5" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>StageTransforms\StageTransformsOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Storage.Connection" Collapsed="true">
+    <Position X="301.25" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>IEAgAAJAABABIACIBEAAAAAACAAEEAAISBAEEAmAAAA=</HashCode>
+      <FileName>Storage\Connection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Study.AnalysisYearsVM" Collapsed="true">
+    <Position X="278.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAAAAAIIAAACBAAAAAA=</HashCode>
+      <FileName>Study\AnalysisYearsVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Study.ExistingStudyVM" Collapsed="true">
+    <Position X="287.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAoAAIAAAAAAAAAAAAAAAAEAAACAAIAAAA=</HashCode>
+      <FileName>Study\ExistingStudyVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Study.FDACache" Collapsed="true">
+    <Position X="296" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>gbOCIGFwhApRHoJhXI1fGAV1anFzGEUEmgJEJAQjrhQ=</HashCode>
+      <FileName>Study\FDACache.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Study.FdaStudyVM" Collapsed="true">
+    <Position X="40.25" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>BgCAQAQAhKhYABEUAAEACggAAACAAkDCAAACCAAUAwA=</HashCode>
+      <FileName>Study\FdaStudyVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Study.NewStudyVM" Collapsed="true">
+    <Position X="67.25" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAoAAIAAAAAAAAAAAAAAAAEAAACAAIAAAA=</HashCode>
+      <FileName>Study\NewStudyVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Study.PropertiesVM" Collapsed="true">
+    <Position X="71.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AACFAIJAEBAIBAJAAAEAAAAAwAQAAAQAAgACBUAAQAU=</HashCode>
+      <FileName>Study\PropertiesVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Study.StudyElement" Collapsed="true">
+    <Position X="125.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAQQAAAgASAhQBBAAAAAAAAAAAQAAAAwAABCCAAABAg=</HashCode>
+      <FileName>Study\StudyElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.AddGriddedDataEventArgs" Collapsed="true">
+    <Position X="1.75" Y="2" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Utilities\AddGriddedDataEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.AddMapFeatureEventArgs" Collapsed="true">
+    <Position X="3" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAAAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utilities\AddMapFeatureEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.AddShapefileEventArgs" Collapsed="true">
+    <Position X="4" Y="2" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAAAABAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utilities\AddShapefileEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.ChildElement" Collapsed="true">
+    <Position X="89.75" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>IAAAAQAAAAAkCAAACAAAAgAAABAgAQIEgAAAAAAAgAA=</HashCode>
+      <FileName>Utilities\ChildElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.CommandHandler" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="296" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEACAAQAAEAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Utilities\CommandHandler.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="FdaViewModel.Utilities.CustomHeaderVM" Collapsed="true">
+    <Position X="281" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAIAEAIAAAAAAAAAAgIAACACAAAAA=</HashCode>
+      <FileName>Utilities\CustomHeaderVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.CustomMessageBoxVM" Collapsed="true">
+    <Position X="290" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAABAAAAAABAAAgAAAAACoAAAAAA=</HashCode>
+      <FileName>Utilities\CustomMessageBoxVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.DatabaseColumn" Collapsed="true">
+    <Position X="24.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAAAAFAAAAAGAAAAAAA=</HashCode>
+      <FileName>Utilities\DatabaseColumn.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.DatabaseTable" Collapsed="true">
+    <Position X="42.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAAAAFAAAAAGAAAAAAA=</HashCode>
+      <FileName>Utilities\DatabaseTable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.DynamicTabVM" Collapsed="true">
+    <Position X="53.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>BkAAAAAAAAAAAgAQAAAAAAAAAAAAAEAQAAADAAAAAAA=</HashCode>
+      <FileName>Utilities\DynamicTabVM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Utilities.MapWindowControlVM" Collapsed="true">
+    <Position X="191" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAAAAAAAAAAAAAAAACAACCAAAAAAA=</HashCode>
+      <FileName>Utilities\MapWindowControlVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.MapWindowMapTreeViewConnector" Collapsed="true">
+    <Position X="200" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAAAAAAAAAAABAAAQAQAACAECgAAA=</HashCode>
+      <FileName>Utilities\MapWindowMapTreeViewConnector.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.MessageItem" Collapsed="true">
+    <Position X="301.25" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AABBAAAQAQAAAAAIAAAAAAAQAAAAAACBAAIAIAAAAAA=</HashCode>
+      <FileName>Utilities\MessageItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.MessageRowItem" Collapsed="true">
+    <Position X="292.5" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAIAAAAAA=</HashCode>
+      <FileName>Utilities\MessageRowItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.MessagesVM" Collapsed="true">
+    <Position X="222.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAEEAAEAASAAAAAAA=</HashCode>
+      <FileName>Utilities\MessagesVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.MessageVM" Collapsed="true">
+    <Position X="227" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAACIAAAAAA=</HashCode>
+      <FileName>Utilities\MessageVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.NamedAction" Collapsed="true">
+    <Position X="1.75" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAACAAEIIAAAkAAAAAgAAAAEAAAAAAgAIAEAQ=</HashCode>
+      <FileName>Utilities\NamedAction.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Utilities.ParentElement" Collapsed="true">
+    <Position X="134.75" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAACQAAAAAFCAAAAAAQAgAABAAiAAIAAAABAAAAIAA=</HashCode>
+      <FileName>Utilities\ParentElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.RecentFileNamedAction" Collapsed="true">
+    <Position X="1.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>Utilities\RecentFileNamedAction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.RemoveMapFeatureEventArgs" Collapsed="true">
+    <Position X="292.5" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>Utilities\RemoveMapFeatureEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.RenameVM" Collapsed="true">
+    <Position X="240.5" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAEAAAAAIIAAQAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Utilities\RenameVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.RowItem" Collapsed="true">
+    <Position X="56" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAABAAEAABAAAAAAAACAAQAAAA=</HashCode>
+      <FileName>Utilities\RowItem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FdaViewModel.Utilities.UndoRedoRowItem" Collapsed="true">
+    <Position X="294.25" Y="5.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utilities\UndoRedoRowItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.WindowVM" Collapsed="true">
+    <Position X="202.25" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>gACAACACAABAAEAAAAAAAIAAAIMBAAIAAAAECACAAAA=</HashCode>
+      <FileName>Utilities\WindowVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.Transactions.Transaction" Collapsed="true">
+    <Position X="296" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAhAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAgAEAAAAAQ=</HashCode>
+      <FileName>Utilities\Transactions\Transaction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.Transactions.TransactionAndMessageBase" Collapsed="true">
+    <Position X="261.75" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAAAAAAAAAAAAgAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utilities\Transactions\TransactionAndMessageBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.Transactions.TransactionEventArgs" Collapsed="true">
+    <Position X="297.75" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAhAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAgAEAAAAAQ=</HashCode>
+      <FileName>Utilities\Transactions\TransactionEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.Transactions.TransactionHelper" Collapsed="true">
+    <Position X="299.5" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAAAAAAkAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>Utilities\Transactions\TransactionHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.Transactions.TransactionRowItem" Collapsed="true">
+    <Position X="301.25" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAIAAAAAA=</HashCode>
+      <FileName>Utilities\Transactions\TransactionRowItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Utilities.Transactions.TransactionVM" Collapsed="true">
+    <Position X="26.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAACAAAAAAAAAAIAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Utilities\Transactions\TransactionVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Watershed.TerrainBrowserVM" Collapsed="true">
+    <Position X="242.75" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAEAAAAAAABCAAAAAAAAABAAAAAAAACAAAAIAA=</HashCode>
+      <FileName>Watershed\TerrainBrowserVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Watershed.TerrainElement" Collapsed="true">
+    <Position X="78.5" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAEAAACAAAIAAAABACBAQAAQACAABACAA=</HashCode>
+      <FileName>Watershed\TerrainElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.Watershed.TerrainOwnerElement" Collapsed="true">
+    <Position X="114.5" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAQAAAAAAAAAAAAAAAAEAAAAgAAAAAAAgA=</HashCode>
+      <FileName>Watershed\TerrainOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.WaterSurfaceElevation.PathAndProbability" Collapsed="true">
+    <Position X="294.25" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>WaterSurfaceElevation\PathAndProbability.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationElement" Collapsed="true">
+    <Position X="89.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>UAAAgAEAAAAAAAAACAAEIAAAARACAAAEAAAAAAAACAA=</HashCode>
+      <FileName>WaterSurfaceElevation\WaterSurfaceElevationElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM" Collapsed="true">
+    <Position X="251.75" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>EAAgEYAAAAAgAAAIYAAAIkAgAAAAAAAEEAECABAAAAA=</HashCode>
+      <FileName>WaterSurfaceElevation\WaterSurfaceElevationImporterVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationOwnerElement" Collapsed="true">
+    <Position X="134.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>gBAAAAAAAAAAQAAAAAAIAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>WaterSurfaceElevation\WaterSurfaceElevationOwnerElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationRowItemVM" Collapsed="true">
+    <Position X="215.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>EAABQAAAICEAAEIAAEAAAIQAAAAAAgAAAAACAAAAAAA=</HashCode>
+      <FileName>WaterSurfaceElevation\WaterSurfaceElevationRowItemVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="FdaViewModel.Plots.iConditionsControl" Collapsed="true">
+    <Position X="292.5" Y="6.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>ERQAAAAAABAAgAAAQAACAAAAAAIAAAAAEQAEABAAAAA=</HashCode>
+      <FileName>Plots\iConditionsControl.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FdaViewModel.Plots.iConditionsImporter" Collapsed="true">
+    <Position X="294.25" Y="6.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEIAAiACAAAEAEAACAAAAAAAAAoAA=</HashCode>
+      <FileName>Plots\iConditionsImporter.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FdaViewModel.Plots.ICoverButton" Collapsed="true">
+    <Position X="296" Y="6.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAEAAAAAAAAAACAAAAAAAAAAAgA=</HashCode>
+      <FileName>Plots\ICoverButton.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FdaViewModel.Plots.IIndividualLinkedPlotWrapper" Collapsed="true">
+    <Position X="297.75" Y="6.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAARAAAAAAAAAAAEAAAEAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>Plots\IIndividualLinkedPlotWrapper.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FdaViewModel.Saving.IPersistable" Collapsed="true">
+    <Position X="4.75" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAQAAAAAAAAAAABAAAAAACAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Saving\IPersistable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FdaViewModel.Saving.IPersistableWithUndoRedo" Collapsed="true">
+    <Position X="4.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAABAAAAAAAAAABAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Saving\IPersistableWithUndoRedo.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FdaViewModel.Utilities.IRowItem" Collapsed="true">
+    <Position X="299.5" Y="6.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utilities\IRowItem.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FdaViewModel.Utilities.ISaveUndoRedo" Collapsed="true">
+    <Position X="301.25" Y="6.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAABAAAAAAAAAABAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utilities\ISaveUndoRedo.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FdaViewModel.Utilities.Transactions.ITransactionsAndMessages" Collapsed="true">
+    <Position X="292.5" Y="7.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAgA=</HashCode>
+      <FileName>Utilities\Transactions\ITransactionsAndMessages.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="FdaViewModel.AggregatedStageDamage.CreationMethodEnum" Collapsed="true">
+    <Position X="292.5" Y="8.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAQEAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>AggregatedStageDamage\CreationMethodEnum.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="FdaViewModel.Study.MonetaryUnitsEnum" Collapsed="true">
+    <Position X="294.25" Y="8.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAACEAAAAQAAA=</HashCode>
+      <FileName>Study\MonetaryUnitsEnum.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="FdaViewModel.Study.UnitsSystemEnum" Collapsed="true">
+    <Position X="297.75" Y="8.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAABAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Study\UnitsSystemEnum.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="FdaViewModel.Utilities.VectorFeatureType" Collapsed="true">
+    <Position X="299.5" Y="8.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAABACA=</HashCode>
+      <FileName>Utilities\VectorFeatureType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="FdaViewModel.Utilities.Transactions.TransactionEnum" Collapsed="true">
+    <Position X="296" Y="8.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAgAAAAEAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Utilities\Transactions\TransactionEnum.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="FdaViewModel.TransactionEventHandler" Collapsed="true">
+    <Position X="294.25" Y="10.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAQAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BaseFdaElement.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="FdaViewModel.RequestNavigationHandler" Collapsed="true">
+    <Position X="297.75" Y="9.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAEAAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BaseViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="FdaViewModel.RequestShapefilePathsHandler" Collapsed="true">
+    <Position X="301.25" Y="9.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BaseViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="FdaViewModel.RequestShapefilePathsOfTypeHandler" Collapsed="true">
+    <Position X="292.5" Y="10.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BaseViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="FdaViewModel.RequestAddToMapWindowHandler" Collapsed="true">
+    <Position X="296" Y="9.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BaseViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="FdaViewModel.RequestRemoveFromMapWindowHandler" Collapsed="true">
+    <Position X="299.5" Y="9.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BaseViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="FdaViewModel.Plots.DisplaySpecificPoint" Collapsed="true">
+    <Position X="292.5" Y="9.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAQAAAA=</HashCode>
+      <FileName>Plots\LinkedPlotsVM.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="FdaViewModel.Utilities.LaunchNewWindowHandler" Collapsed="true">
+    <Position X="294.25" Y="9.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utilities\WindowVM.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

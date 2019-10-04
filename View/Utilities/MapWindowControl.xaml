@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="Fda.Utilities.MapWindowControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Fda.Utilities"
+             xmlns:OpenGL="clr-namespace:OpenGLMapping;assembly=OpenGLMapping"
+             Loaded="UserControl_Loaded"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="27" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="27" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <DockPanel  Name="ToolPanel" Grid.Row="0">
+            <OpenGL:BasicMapToolbar x:Name="MapToolBar" ToolBarTray.IsLocked="True"/>
+            <ToolBar Name="SelectionToolbar" ToolBarTray.IsLocked="True" VerticalAlignment="Bottom">
+                <OpenGL:SelectableLayersControl Name="SelectableLayers" Width="300" />
+            </ToolBar>
+            <OpenGL:FeatureEditToolbar x:Name="FeatureEditorToolbar" ToolBarTray.IsLocked="True"/>
+        </DockPanel>
+
+        <Grid  Grid.Row="1" >
+            <OpenGL:WPFMapWindow x:Name="MapWindow" />
+        </Grid>
+
+        <Grid Name="StudyStatusPanel" Grid.Row="2" Background="#FFAEBCD1"  >
+            <Border Name="StatusBorder" Margin="0,0,5,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+        </Grid>
+
+
+    </Grid>
+</UserControl>

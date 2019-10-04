@@ -39,6 +39,9 @@
     <Reference Include="Consequences_Assist">
       <HintPath>..\lib\Consequences_Assist.dll</HintPath>
     </Reference>
+    <Reference Include="FdaModel">
+      <HintPath>..\OldModel\bin\Debug\FdaModel.dll</HintPath>
+    </Reference>
     <Reference Include="OxyPlot">
       <HintPath>..\lib\OxyPlot.dll</HintPath>
     </Reference>
@@ -182,13 +185,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FdaViewModel\FdaViewModel.csproj">
+    <ProjectReference Include="..\FdaViewModel\ViewModel.csproj">
       <Project>{6a8fd3e7-b4ec-46b4-b91b-2b63034f9776}</Project>
-      <Name>FdaViewModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Model\FdaModel.csproj">
-      <Project>{33bebaaf-125c-404c-8107-3a3fe2a5c776}</Project>
-      <Name>FdaModel</Name>
+      <Name>ViewModel</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

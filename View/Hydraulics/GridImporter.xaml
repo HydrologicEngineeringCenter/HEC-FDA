@@ -1,0 +1,128 @@
+﻿<UserControl x:Class="Fda.Hydraulics.GridImporter"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Fda.Hydraulics"
+        xmlns:OkClose="clr-namespace:Fda.Utilities"
+        xmlns:ModelView="clr-namespace:FdaViewModel.Hydraulics;assembly=FdaViewModel"
+        xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
+        mc:Ignorable="d"
+      Height="520" Width="650">
+    <UserControl.Resources>
+        <!--<ModelView:GridImporterVM x:Key="vm"/>-->
+    </UserControl.Resources>
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="28"/>
+            <RowDefinition Height="28"/>
+            <RowDefinition Height="28"/>
+            <RowDefinition Height="28"/>
+            <RowDefinition Height="28"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
+        </Grid.RowDefinitions>
+
+        <!--<QH:HelpButton Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Margin="2" xmlPATH="ImportGridSetHelp.xml" PathIsEmbeddedResource="True" AssemblyName="HEC-GeoFDA" RootNamespace="GeoFDA" ToolTip="Get Help On Gridded Hydraulics Importer"/>-->
+
+        <Grid Name="ProfileNameInfo" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="110"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Profile Name:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <TextBox Name="TxtName" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3" Text="{Binding Path=Name,ValidatesOnDataErrors=True}" />
+        </Grid>
+        <Grid Name="ProfileDescInfo" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="110"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Profile Description:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" />
+            <TextBox Name="TxtDesc" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3" Text="{Binding Path=Description}"/>
+        </Grid>
+        <Grid Name="WatershedInfo" Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="110"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Terrain:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <ComboBox Name="CmbTerrain" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3" ItemsSource="{Binding Path=Terrains}" />
+        </Grid>
+        <Grid Name="YearInfo" Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="110"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Year:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <ComboBox Name="CmbYear" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3" ItemsSource="{Binding Path=Years}"/>
+        </Grid>
+        <Grid Name="DirectoryInfo" Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="110"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Source Directory:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
+
+            <CA:TextBoxFileBrowser Grid.Row="0" Grid.Column="1" Text="{Binding Path=Path, ElementName=DirectoryInfo, Mode=TwoWay}" />
+            <!--<TextBox Height="23" Grid.Row="0" Text="{Binding Path=Path}" Grid.Column="1" Width="495" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" Name="cmb_Path"/>
+
+            <Button Content="..." Name="btn_fileSearch" Width="20" Margin="5" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Height="20" Click="btn_fileSearch_Click" />-->
+
+            <!--<CA:TextBoxFolderBrowser Name="TxtDirectory" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3"/>-->
+        </Grid>
+
+        <Grid Name="GridSelectionInfo" Grid.Row="6">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="23"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="30"/>
+                <!--<ColumnDefinition Width="2*"/>-->
+                <ColumnDefinition Width="10*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Available Grids:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5,0,0,0"/>
+            <ListBox Name="AvailableGrids" Margin="5" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Path=AvailableFiles}" DisplayMemberPath="FileName"/>
+
+            <StackPanel VerticalAlignment="center" Grid.Row="1" Grid.Column="1">
+                <Button Name="CmdSelectOne" Content=">" Margin="3"/>
+                <Button Name="CmdSelectAll" Content=">>" Margin="3"/>
+                <Button Name="CmdDeSelectAll" Content="&lt;&lt;" Margin="3"/>
+                <Button Name="CmdDeSelectOne" Content="&lt;" Margin="3"/>
+            </StackPanel>
+
+            <!--<TextBlock Text="Probability:" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5,0,0,0"/>
+            <ListBox Name="SelectedProbabilities" Margin="5" Grid.Row="1" Grid.Column="2" ItemsSource="{Binding Path=SelectedFiles}" DisplayMemberPath="Probability"/>
+
+            <TextBlock Text="Selected Grids:" Grid.Row="0" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5,0,0,0"/>
+            <ListBox Name="SelectedGrids" Margin="5" Grid.Row="1" Grid.Column="3" ItemsSource="{Binding Path=SelectedFiles}" DisplayMemberPath="FileName" />-->
+            <!--<CA:CopyPasteDataGrid Name="MyWPFDGV" HorizontalScrollBarVisibility="Hidden" Grid.Row="1" Grid.Column="2" Margin="5" AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="CellOrRowHeader" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeRows="False" CanUserReorderColumns="False" AlternatingRowBackground="#FFF3F9F7" AlternationCount="2" RowHeight="22" VerticalContentAlignment="Center" ItemsSource="{Binding Path=SelectedFiles}" RowHeaderWidth="15">
+                <DataGrid.Resources>
+                    <DataTemplate x:Key="EditingValueTemplate">
+                        <TextBox ToolTip="{Binding Error}" Style="{StaticResource ColumnEditStyle}" Text="{Binding Probability, ValidatesOnDataErrors=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FocusManager.FocusedElement="{Binding RelativeSource=  {RelativeSource Self}}"/>
+                    </DataTemplate>
+                    <DataTemplate x:Key="ViewingValueTemplate">
+                        <TextBox ToolTip="{Binding Error}" Style="{StaticResource ColumnViewStyle}" CaretBrush="White" Text="{Binding Probability, ValidatesOnDataErrors=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FocusManager.FocusedElement="{Binding RelativeSource=  {RelativeSource Self}}"/>
+                    </DataTemplate>
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    --><!--<DataGridTextColumn HeaderStyle="{StaticResource WrappedColumnHeaderStyle}"  EditingElementStyle="{StaticResource ColumnEditStyle}" Header="Probability" Binding="{Binding Path=Probability, ValidatesOnDataErrors=True}" Width="1*"/>--><!--
+                    <DataGridTemplateColumn HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" CellTemplate="{StaticResource ViewingValueTemplate}" CellEditingTemplate="{StaticResource EditingValueTemplate}" Header="Probability" Width="1*"/>
+                    <DataGridTextColumn HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" CanUserSort="False" Header="Return Interval" Binding="{Binding Path=GetProbabilityAsReturnInterval}" Width="1*" IsReadOnly="True"/>
+                    <DataGridTextColumn HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" CanUserSort="False" Header="Water Surface Elevation" Binding="{Binding Path=FileName}" Width="1*" IsReadOnly="True"/>
+
+                </DataGrid.Columns>
+            </CA:CopyPasteDataGrid>-->
+        </Grid>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="7">
+            <RadioButton Name="RDBWSE" Content="Water Surface Elevation Grids"/>
+            <RadioButton Name="RDBDepth" Content="Depth Grids" Margin="10,0,0,0"/>
+        </StackPanel>
+        <OkClose:OKCloseControl Grid.Row="8"  />
+
+    </Grid>
+</UserControl>
