@@ -40,7 +40,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
             FdaViewModel.Storage.Connection.Instance.ProjectFile = _DataBasePath;     
         }
 
-        public void SaveNewTest(String dbName, ChildElement elem, IPersistable manager)
+        public void SaveNewTest(String dbName, ChildElement elem, IElementManager manager)
         {
             createSqliteDatabase(dbName);
             manager.SaveNew(elem);
@@ -49,7 +49,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
 
         }
 
-        public void SaveExistingTest(String dbName, ChildElement originalElem, IPersistable manager)
+        public void SaveExistingTest(String dbName, ChildElement originalElem, IElementManager manager)
         {
             createSqliteDatabase(dbName);
             manager.SaveNew(originalElem);
@@ -106,7 +106,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
             manager.Remove(modifiedElem);
         }
 
-        public void RemoveTest(String dbName, ChildElement elem, IPersistable manager)
+        public void RemoveTest(String dbName, ChildElement elem, IElementManager manager)
         {
             createSqliteDatabase(dbName);
             //save
@@ -117,7 +117,7 @@ namespace FDAUnitTests.Saving.PersistenceManagers
             Assert.IsFalse(isElementInDataBase(elem, manager));
         }
 
-        public bool isElementInDataBase(ChildElement elem, IPersistable manager)
+        public bool isElementInDataBase(ChildElement elem, IElementManager manager)
         {
             string name = elem.Name;
             Type childElementType = elem.GetType();
