@@ -11,7 +11,11 @@ namespace Statistics.Validation
 {
     public class HistogramValidator : IValidator<IHistogram>
     {
-        public bool IsValid(IHistogram entity) => ReportErrors(entity).Any();
+        public bool IsValid(IHistogram entity, out IEnumerable<string> errors)
+        {
+            errors = ReportErrors(entity);
+            return !errors.Any();
+        }
 
         public IEnumerable<string> ReportErrors(IHistogram entity)
         {

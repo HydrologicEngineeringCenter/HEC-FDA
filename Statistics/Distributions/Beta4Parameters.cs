@@ -9,16 +9,19 @@ using System.Linq;
 
 namespace Statistics.Distributions
 {
-    internal class Beta4Parameters: MathNet.Numerics.Distributions.BetaScaled, IDistribution, IOrdinate<IDistribution>
+    internal class Beta4Parameters: MathNet.Numerics.Distributions.BetaScaled, IDistribution // IOrdinate<IDistribution>
     {
+        //TODO: Validation
+        //TODO: Cleanup commented out code
+        
         #region Properties
         public double StandardDeviation => StdDev;
         public IDistributions Type => IDistributions.Beta4Parameters;
         public int SampleSize { get; }
-        #region IOrdinate Properties
-        public bool IsVariable => true;
-        public Type OrdinateType => typeof(IDistribution);
-        #endregion
+        //#region IOrdinate Properties
+        //public bool IsVariable => true;
+        //public Type OrdinateType => typeof(IDistribution);
+        //#endregion
         #endregion
 
         #region Constructor
@@ -47,10 +50,10 @@ namespace Statistics.Distributions
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         public string Print() => $"ScaledBeta(alpha: {base.A}, beta: {base.B}, range: [{Minimum}, {Maximum}], sample size: {SampleSize})";
         #endregion
-        #region IOrdinate Functions
-        public double GetValue(double sampleProbability = 0.5) => InverseCDF(sampleProbability);
-        public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
-        #endregion
+        //#region IOrdinate Functions
+        //public double GetValue(double sampleProbability = 0.5) => InverseCDF(sampleProbability);
+        //public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
+        //#endregion
         public static Beta4Parameters Fit(IEnumerable<double> data)
         {
             if (data.IsNullOrEmpty()) throw new ArgumentException("The provided data is invalid because it is null or an empty.");

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Statistics.Distributions
 {
-    internal class LogPearsonIII: IDistribution, IOrdinate<IDistribution>
+    internal class LogPearsonIII: IDistribution //IOrdinate<IDistribution>
     {
         //TODO: Validate
         //TODO: PDF, CDF Functions throw Exceptions
@@ -21,10 +21,10 @@ namespace Statistics.Distributions
         public double Minimum { get; }
         public double Maximum { get; }
         public int SampleSize { get; }
-        #region IOrdinate Properties
-        public bool IsVariable => true;
-        public Type OrdinateType => typeof(IDistribution);
-        #endregion
+        //#region IOrdinate Properties
+        //public bool IsVariable => true;
+        //public Type OrdinateType => typeof(IDistribution);
+        //#endregion
         #endregion
 
         #region Constructor
@@ -74,10 +74,10 @@ namespace Statistics.Distributions
         public string Print() => $"LogPearsonIII(mean: {Mean}, sd: {StandardDeviation}, skew: {Skewness}, sample size: {SampleSize})";
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
-        #region IOrdinate Functions
-        public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
-        public double GetValue(double sampleProbability = 0.5) => InverseCDF(sampleProbability);
-        #endregion
+        //#region IOrdinate Functions
+        //public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
+        //public double GetValue(double sampleProbability = 0.5) => InverseCDF(sampleProbability);
+        //#endregion
 
         public static LogPearsonIII Fit(IEnumerable<double> sample)
         {

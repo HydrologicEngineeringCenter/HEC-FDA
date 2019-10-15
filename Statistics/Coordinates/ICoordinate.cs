@@ -7,9 +7,11 @@ namespace Statistics
     //TODO: Comment
     //TODO: Factory Method
 
-    public interface ICoordinate<XType, YType>
+    public interface ICoordinate<out XType, out YType>
     {
-        IOrdinate<XType> XOrdinate { get; }
-        IOrdinate<YType> YOrdinate { get; }
+        XType X { get; }
+        YType Y { get; }
+
+        ICoordinate<double, double> Sample(double p);
     }
 }

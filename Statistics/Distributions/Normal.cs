@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Statistics.Distributions
 {
-    internal class Normal: IDistribution, IOrdinate<IDistribution>
+    internal class Normal: IDistribution //IOrdinate<IDistribution>
     {
         //TODO: Sample
         //TODO: Validation
@@ -25,10 +25,10 @@ namespace Statistics.Distributions
 
         public int SampleSize { get; }
         #endregion
-        #region IOrdinate Properties
-        public bool IsVariable => true;
-        public Type OrdinateType => typeof(IDistribution);
-        #endregion
+        //#region IOrdinate Properties
+        //public bool IsVariable => true;
+        //public Type OrdinateType => typeof(IDistribution);
+        //#endregion
         #endregion
 
         #region Constructor
@@ -58,10 +58,10 @@ namespace Statistics.Distributions
         public string Print() => $"Normal(mean: {Mean}, sd: {StandardDeviation}, sample size: {SampleSize})";
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
-        #region Iordinate Functions
-        public double GetValue(double sampleProbability) => InverseCDF(sampleProbability);
-        public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
-        #endregion
+        //#region Iordinate Functions
+        //public double GetValue(double sampleProbability) => InverseCDF(sampleProbability);
+        //public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
+        //#endregion
 
         public static Normal Fit(IEnumerable<double> sample)
         {

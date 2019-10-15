@@ -55,13 +55,13 @@ namespace Statistics.Histograms
         /// Creates a new bin by adding <paramref name="n"/> observations to a pre-existing bin count.
         /// </summary>
         /// <param name="oldBin"> A <see cref="Bin"/> with the desired <see cref="Bin.Minimum"/>, <see cref="Bin.MidPoint"/> and <see cref="Bin.Maximum"/> property values, to which <paramref name="n"/> observations are added to the <see cref="Bin.Count"/>. </param>
-        /// <param name="n"> The number of observations to add to the <paramref name="oldBin"/> <see cref="Bin.Count"/>. </param>
-        internal Bin (IBin oldBin, int n)
+        /// <param name="addN"> The number of observations to add to the <paramref name="oldBin"/> <see cref="Bin.Count"/>. </param>
+        internal Bin (IBin oldBin, int addN)
         {
             Minimum = oldBin.Minimum;
             Maximum = oldBin.Maximum;
             MidPoint = oldBin.MidPoint;
-            Count = oldBin.Count + n;
+            Count = oldBin.Count + addN;
             IsValid = Validate(new BinValidator(), out IEnumerable<string> errors);
             Errors = errors;
         }
@@ -71,8 +71,7 @@ namespace Statistics.Histograms
         #region IValidate Functions
         public bool Validate(IValidator<IBin> validator, out IEnumerable<string> errors)
         {
-            errors = validator.ReportErrors(this);
-            return validator.IsValid(this);
+            return validator.IsValid(this, out errors);
         }
         #endregion
 

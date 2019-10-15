@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Statistics.Distributions
 {
-    internal class Uniform: IDistribution, IOrdinate<IDistribution>
+    internal class Uniform: IDistribution //IOrdinate<IDistribution>
     {
         #region Fields and Properties
         private readonly MathNet.Numerics.Distributions.ContinuousUniform _Distribution;
@@ -20,10 +20,10 @@ namespace Statistics.Distributions
         public double Maximum => _Distribution.Maximum;
         public int SampleSize { get; }
         #endregion
-        #region IOrdinate Properties
-        public bool IsVariable => true;
-        public Type OrdinateType => typeof(IDistribution);
-        #endregion
+        //#region IOrdinate Properties
+        //public bool IsVariable => true;
+        //public Type OrdinateType => typeof(IDistribution);
+        //#endregion
         #endregion
 
         #region Constructor
@@ -53,10 +53,10 @@ namespace Statistics.Distributions
         public string Print() => $"Uniform(range: [{Minimum}, {Maximum})";
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
-        #region Iordinate Functions
-        public double GetValue(double sampleProbability) => InverseCDF(sampleProbability);
-        public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
-        #endregion
+        //#region Iordinate Functions
+        //public double GetValue(double sampleProbability) => InverseCDF(sampleProbability);
+        //public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
+        //#endregion
 
         public static Uniform Fit(IEnumerable<double> sample)
         {

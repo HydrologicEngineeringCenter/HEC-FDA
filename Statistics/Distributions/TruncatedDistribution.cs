@@ -10,7 +10,7 @@ namespace Statistics.Distributions
     /// A specific truncated distribution that places density from outside the truncation value(s) at the truncation value(s) without altering the statistics of the underlying distribution.
     /// </summary>
     /// <remarks> Measures of central tendency and dispersion are based on the underlying distribution NOT the truncated copy. </remarks>
-    internal class TruncatedDistribution: IDistribution, IOrdinate<IDistribution>
+    internal class TruncatedDistribution: IDistribution //IOrdinate<IDistribution>
     {
         // TODO: Validation lower bound below mean, median, mode and upper bound above mean, median mode - valid range of lower and upper bounds 
 
@@ -28,10 +28,10 @@ namespace Statistics.Distributions
         public double Maximum { get; }
         public int SampleSize => _Distribution.SampleSize;
         #endregion
-        #region IOrdinate Properties
-        public bool IsVariable => true;
-        public Type OrdinateType => typeof(IDistribution);
-        #endregion
+        //#region IOrdinate Properties
+        //public bool IsVariable => true;
+        //public Type OrdinateType => typeof(IDistribution);
+        //#endregion
         #endregion
 
         #region Constructor
@@ -95,10 +95,10 @@ namespace Statistics.Distributions
         public string Print() => $"TruncatedDistribution(distribution: {_Distribution.Print()}, truncated range: [{Minimum}, {Maximum}])";
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
-        #region Iordinate Functions
-        public double GetValue(double sampleProbability) => InverseCDF(sampleProbability);
-        public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
-        #endregion
+        //#region Iordinate Functions
+        //public double GetValue(double sampleProbability) => InverseCDF(sampleProbability);
+        //public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
+        //#endregion
         #endregion
     }
 }

@@ -6,7 +6,7 @@ using Utilities.Validation;
 
 namespace Statistics.Histograms
 {
-    internal class Histogram : IHistogram, IDistribution, IOrdinate<IHistogram>, IValidate<IHistogram>
+    internal class Histogram : IHistogram, IDistribution //IOrdinate<IHistogram>, IValidate<IHistogram>
     {
         //TODO: Add convergence
         //TODO: Keep bins in accending order
@@ -29,10 +29,10 @@ namespace Statistics.Histograms
         public double Maximum { get; }
         public int SampleSize { get; }
         #endregion
-        #region IOrdinate Properties
-        public bool IsVariable => true;
-        public Type OrdinateType => typeof(IHistogram);
-        #endregion
+        //#region IOrdinate Properties
+        //public bool IsVariable => true;
+        //public Type OrdinateType => typeof(IHistogram);
+        //#endregion
         public IBin[] Bins { get; }
         #endregion
 
@@ -55,7 +55,7 @@ namespace Statistics.Histograms
             StandardDeviation = Math.Sqrt(Variance);
             Skewness = medianAndDeviations.Item3 / (SampleSize - 1);
             Minimum = Bins[0].Minimum;
-            Maximum = Bins[Bins.Length - 1].Maximum;
+            Maximum = Bins[^1].Maximum;
         }
         /// <summary>
         /// Histogram constructor for adding sample to existing histogram.
@@ -75,7 +75,7 @@ namespace Statistics.Histograms
             StandardDeviation = Math.Sqrt(Variance);
             Skewness = medianAndDeviations.Item3 / (SampleSize - 1);
             Minimum = Bins[0].Minimum;
-            Maximum = Bins[Bins.Length - 1].Maximum;
+            Maximum = Bins[^1].Maximum;
         }
         #endregion
 
@@ -293,19 +293,18 @@ namespace Statistics.Histograms
         #region Validation Functions
         public bool Validate(IValidator<IHistogram> validator, out IEnumerable<string> errors)
         {
-            errors = validator.ReportErrors(this);
-            return validator.IsValid(this);
+            return validator.IsValid(this, out errors);
         }
         #endregion
         #region IDistribution Functions
         public double PDF(double x)
         {
-            if (!x.IsOnRange(min: Bins[0].Minimum, max: Bins[Bins.Length - 1].Maximum, inclusiveMin: true, inclusiveMax: false)) return 0;
+            if (!x.IsOnRange(min: Bins[0].Minimum, max: Bins[^1].Maximum, inclusiveMin: true, inclusiveMax: false)) return 0;
             else return (double)FindBin(x, false) / SampleSize;
         }
         public double CDF(double x)
         {
-            if (!x.IsOnRange(min: Bins[0].Minimum, max: Bins[Bins.Length - 1].Maximum, inclusiveMin: true, inclusiveMax: false)) return x < Bins[0].Minimum ? 0 : 1;
+            if (!x.IsOnRange(min: Bins[0].Minimum, max: Bins[^1].Maximum, inclusiveMin: true, inclusiveMax: false)) return x < Bins[0].Minimum ? 0 : 1;
             else return (double)FindBin(x) / SampleSize;
         }
         public double InverseCDF(double p)
@@ -348,10 +347,10 @@ namespace Statistics.Histograms
             return Equals((IHistogram)distribution);       
         }
         #endregion
-        #region IOrdinate Functions
-        public double GetValue(double sampleProbability = 0.50) => InverseCDF(sampleProbability);
-        public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IHistogram) ? Equals((IDistribution)ordinate) : false;
-        #endregion
+        //#region IOrdinate Functions
+        //public double GetValue(double sampleProbability = 0.50) => InverseCDF(sampleProbability);
+        //public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IHistogram) ? Equals((IDistribution)ordinate) : false;
+        //#endregion
         #region IHistogram Functions
         public IHistogram AddSample(IEnumerable<double> sample) => new Histogram(Bins, sample);
         public bool Equals(IHistogram histogram)

@@ -8,23 +8,25 @@ namespace Statistics.Coordinates
     {
         //TODO: Validation
 
-        public IOrdinate<double> XOrdinate { get; }
-        public IOrdinate<double> YOrdinate { get; }
+        public double X { get; }
+        public double Y { get; }
 
         public ScalarCoordinateConstants(double x, double y)
         {
-            XOrdinate = new Constant(x);
-            YOrdinate = new Constant(y);
+            X = x;
+            Y = y;
         }
-        public ScalarCoordinateConstants(double x, IOrdinate<double> y)
-        {
-            XOrdinate = new Constant(x);
-            YOrdinate = y;
-        }
-        public ScalarCoordinateConstants(IOrdinate<double> x, IOrdinate<double> y)
-        {
-            XOrdinate = x;
-            YOrdinate = y;
-        }
+        //public ScalarCoordinateConstants(double x, IOrdinate<double> y)
+        //{
+        //    XOrdinate = new Constant(x);
+        //    YOrdinate = y;
+        //}
+        //public ScalarCoordinateConstants(IOrdinate<double> x, IOrdinate<double> y)
+        //{
+        //    XOrdinate = x;
+        //    YOrdinate = y;
+        //}
+
+        public ICoordinate<double, double> Sample(double p = 0.50) => this;
     }
 }

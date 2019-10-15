@@ -7,7 +7,7 @@ namespace Statistics
     /// <summary>
     /// Provides and interface for double precision numbers stored as distributions rather than static values.
     /// </summary>
-    public interface IDistribution: IOrdinate<IDistribution>
+    public interface IDistribution //IOrdinate<IDistribution>
     {
         #region Properties
         /// <summary>

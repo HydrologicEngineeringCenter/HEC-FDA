@@ -6,7 +6,7 @@ namespace Utilities.Validation
 {
     public interface IValidator<T>
     {
-        bool IsValid(T entity);
+        bool IsValid(T entity, out IEnumerable<string> errors);
         IEnumerable<string> ReportErrors(T entity);
     }
 }

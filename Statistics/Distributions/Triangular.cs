@@ -6,7 +6,7 @@ using Utilities.Validation;
 
 namespace Statistics.Distributions
 {
-    internal class Triangular: IDistribution, IOrdinate<IDistribution>
+    internal class Triangular: IDistribution //IOrdinate<IDistribution>
     {
         //TODO: Sample
         //TODO: Validation
@@ -25,10 +25,10 @@ namespace Statistics.Distributions
         public double Maximum => _Distribution.Maximum;
         public int SampleSize { get; }
         #endregion
-        #region IOrdinate Properties
-        public bool IsVariable => true;
-        public Type OrdinateType => typeof(IDistribution);
-        #endregion
+        //#region IOrdinate Properties
+        //public bool IsVariable => true;
+        //public Type OrdinateType => typeof(IDistribution);
+        //#endregion
         #endregion
 
         #region Constructor
@@ -58,10 +58,10 @@ namespace Statistics.Distributions
         public string Print() => $"Triangular(mean: {Mean}, range: [{Minimum}, {Maximum}], sample size: {SampleSize})";
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
-        #region Iordinate Functions
-        public double GetValue(double sampleProbability) => InverseCDF(sampleProbability);
-        public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
-        #endregion
+        //#region Iordinate Functions
+        //public double GetValue(double sampleProbability) => InverseCDF(sampleProbability);
+        //public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
+        //#endregion
 
         public static Triangular Fit(IEnumerable<double> data)
         {
