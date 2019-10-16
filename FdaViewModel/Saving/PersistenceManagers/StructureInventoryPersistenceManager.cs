@@ -11,24 +11,35 @@ namespace FdaViewModel.Saving.PersistenceManagers
 {
     public class StructureInventoryPersistenceManager : SavingBase, IElementManager
     {
+        public static readonly string STRUCTURE_INVENTORY_TABLE_CONSTANT = "structure_inventory_";
+        private const int ID_COL = 0;
+        private const int NAME_COL = 1;
+        private const int DESC_COL = 2;
+
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
         //you would no longer get any of the old logs. So i use this constant.
-        private const string ELEMENT_TYPE = "Structure_Inventory";
+        private const string ELEMENT_TYPE = "structure_inventory";
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("StructureInventoryPersistenceManager");
 
 
-        private const string TABLE_NAME = "Structure Inventories";
-        internal override string ChangeTableConstant { get { return "Structure Inventory - "; } }
-
+        private const string TABLE_NAME = "structure_inventories";
+        internal override string ChangeTableConstant { get { return STRUCTURE_INVENTORY_TABLE_CONSTANT; } }
+       
         public override string TableName
         {
             get { return TABLE_NAME; }
         }
 
-        public override string[] TableColumnNames => throw new NotImplementedException();
+        public override string[] TableColumnNames
+        {
+            get
+            {
+                return TableColNames;
+            }
+        }
 
-        private static readonly string[] TableColNames = { "Name", "Description" };
+        private static readonly string[] TableColNames = { NAME, DESCRIPTION };
         private static readonly Type[] TableColTypes = { typeof(string), typeof(string) };
         /// <summary>
         /// The types of the columns in the parent table
@@ -53,16 +64,15 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            return null;
             //name, path, description
-            //if (StructureInventoryLibrary.SharedData.StudyDatabase == null)
-            //{
-            //    StructureInventoryLibrary.SharedData.StudyDatabase = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
-            //}
-            //StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[0], (string)rowData[1]);
+            if (StructureInventoryLibrary.SharedData.StudyDatabase == null)
+            {
+                StructureInventoryLibrary.SharedData.StudyDatabase = new DatabaseManager.SQLiteManager(Storage.Connection.Instance.ProjectFile);
+            }
+            StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[NAME_COL], (string)rowData[DESC_COL]);
 
-            //InventoryElement invEle = new InventoryElement(baseElement);
-            //return invEle;
+            InventoryElement invEle = new InventoryElement(baseElement);
+            return invEle;
         }
         #endregion
 
@@ -108,29 +118,41 @@ namespace FdaViewModel.Saving.PersistenceManagers
         /// <param name="changeTableIndex"></param>
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex )
         {
+            base.SaveExisting(oldElement, elementToSave);
+            //todo: do we like this DidParentTableROwValuesChange method?
             if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((InventoryElement)elementToSave), oldElement.Name, TableName) )
             {
-                UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((InventoryElement)elementToSave), oldElement.Name, TableName, false, ChangeTableConstant);
-                string childTable = ChangeTableConstant + oldElement.Name;
-                string newChildTableName = ChangeTableConstant + elementToSave.Name;
-                if(Storage.Connection.Instance.TableNames().Contains(childTable))
+                //if the name has changed then we need to change the name in the geo package contents table
+                if (!oldElement.Name.Equals(elementToSave.Name))
                 {
-                    Storage.Connection.Instance.RenameTable(childTable, newChildTableName);
+
+                    //UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((InventoryElement)elementToSave), oldElement.Name, TableName, false, ChangeTableConstant);
+                    string childTable = ChangeTableConstant + oldElement.Name;
+                    string newChildTableName = ChangeTableConstant + elementToSave.Name;
+                    //if (Storage.Connection.Instance.TableNames().Contains(childTable))
+                    //{
+                    //    Storage.Connection.Instance.RenameTable(childTable, newChildTableName);
+                    //}
+                    RenameInventoryInGeoPackageTable(childTable, newChildTableName);
                 }
                 //SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
                 // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
-                StudyCacheForSaving.UpdateStructureInventoryElement((InventoryElement)oldElement, (InventoryElement)elementToSave);
+               // StudyCacheForSaving.UpdateStructureInventoryElement((InventoryElement)oldElement, (InventoryElement)elementToSave);
             }
         }
 
-
+        private void RenameInventoryInGeoPackageTable(string oldName, string newName)
+        {
+            LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
+            myGeoPackWriter.RenameFeatures(oldName, newName);
+        }
 
 
 
         public void WriteAttributeTable(DefineSIAttributesVM _DefineSIAttributes, AttributeLinkingListVM _AttributeLinkingList, string SelectedPath)
         {
-            // DataBase_Reader.SqLiteReader.CreateSqLiteFile(System.IO.Path.GetDirectoryName(SelectedPath) + "\\codyTest.sqlite");
-           // StructureInventoryLibrary.SharedData.StudyDatabase = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
+             //DataBase_Reader.SqLiteReader.CreateSqLiteFile(System.IO.Path.GetDirectoryName(SelectedPath) + "\\codyTest.sqlite");
+            StructureInventoryLibrary.SharedData.StudyDatabase = new DatabaseManager.SQLiteManager(Storage.Connection.Instance.ProjectFile);
 
             LifeSimGIS.ShapefileReader myReader = new LifeSimGIS.ShapefileReader(SelectedPath);
 
@@ -357,11 +379,11 @@ namespace FdaViewModel.Saving.PersistenceManagers
             DatabaseManager.DataTableView myDTView = myInMemoryReader.GetTableManager(Name);
 
             //create the geo package writer that will write the data out
-           // LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
+            LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
 
             // write the data out
             //myGeoPackWriter.AddFeatures(Name, myReader.ToFeatures(), myReader.GetAttributeTable());
-           // myGeoPackWriter.AddFeatures("Structure Inventory - " + Name, myReader.ToFeatures(), myDTView);
+            myGeoPackWriter.AddFeatures("Structure Inventory - " + Name, myReader.ToFeatures(), myDTView);
         }
 
         public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)
@@ -409,7 +431,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            throw new NotImplementedException();
+            return GetRowDataFromElement((InventoryElement)elem);
         }
     }
 }

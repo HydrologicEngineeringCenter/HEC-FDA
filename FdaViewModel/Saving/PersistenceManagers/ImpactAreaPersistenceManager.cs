@@ -3,6 +3,7 @@ using FdaViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,10 +15,10 @@ namespace FdaViewModel.Saving.PersistenceManagers
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
         //you would no longer get any of the old logs. So i use this constant.
-        private const string ELEMENT_TYPE = "Impact_Area";
+        private const string ELEMENT_TYPE = "impact_area";
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("ImpactAreaPersistenceManager");
 
-        private const string TABLE_NAME = "Impact Areas";
+        private const string TABLE_NAME = "impact_areas";
         internal override string ChangeTableConstant { get { return "?????"; } }
 
         public override string TableName
@@ -25,9 +26,15 @@ namespace FdaViewModel.Saving.PersistenceManagers
             get { return TABLE_NAME; }
         }
 
-        public override string[] TableColumnNames => throw new NotImplementedException();
+        public override string[] TableColumnNames
+        {
+            get
+            {
+                return TableColNames;
+            }
+        }
 
-        private static readonly string[] TableColNames = { "Impact Area Set Name", "Description" };
+        private static readonly string[] TableColNames = { NAME, DESCRIPTION };
         private static readonly Type[] TableColTypes = { typeof(string), typeof(string) };
         private static string IndexPointTableNameConstant = "IndexPointTable -";
         /// <summary>
@@ -59,11 +66,11 @@ namespace FdaViewModel.Saving.PersistenceManagers
             //LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(sqr);
             //LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)gpr.ConvertToGisFeatures("Impact Areas - " + rowData[0]);
 
-            ImpactAreaElement iae = new ImpactAreaElement((string)rowData[0], (string)rowData[1], dummyCollection);
+            ImpactAreaElement iae = new ImpactAreaElement((string)rowData[1], (string)rowData[2], dummyCollection);
 
            // int lastRow = Storage.Connection.Instance.GetTable(TableName).NumberOfRows - 1;
             ObservableCollection<object> tempCollection = new ObservableCollection<object>();
-            DatabaseManager.DataTableView indexTable = Storage.Connection.Instance.GetTable(IndexPointTableNameConstant + rowData[0]);
+            DatabaseManager.DataTableView indexTable = Storage.Connection.Instance.GetTable(IndexPointTableNameConstant + rowData[1]);
             foreach (object[] row in indexTable.GetRows(0, indexTable.NumberOfRows-1))
             {
                 //each row here should be a name and an index point
@@ -178,21 +185,28 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )
         {
-            string editDate = DateTime.Now.ToString("G");
-            elementToSave.LastEditDate = editDate;
+            //string editDate = DateTime.Now.ToString("G");
+            //elementToSave.LastEditDate = editDate;
 
             //need to add, did Index point values change
             //if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((ImpactAreaElement)elementToSave), oldName, TableName))
-            {
-                UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((ImpactAreaElement)elementToSave), oldElement.Name, TableName, false, ChangeTableConstant);
-                if(!oldElement.Name.Equals(elementToSave.Name))
+            //{
+            //UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((ImpactAreaElement)elementToSave), oldElement.Name, TableName, false, ChangeTableConstant);
+            base.SaveExisting(oldElement, elementToSave);
+            if (!oldElement.Name.Equals(elementToSave.Name))
                 {
-                    Storage.Connection.Instance.RenameTable(IndexPointTableNameConstant + oldElement.Name, IndexPointTableNameConstant + elementToSave.Name);
-                }
+
+                string oldName = IndexPointTableNameConstant + oldElement.Name;
+                string newName = IndexPointTableNameConstant + elementToSave.Name;
+                LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
+                myGeoPackWriter.RenameFeatures(oldName, newName);
+                //Storage.Connection.Instance.RenameTable(IndexPointTableNameConstant + oldElement.Name, IndexPointTableNameConstant + elementToSave.Name);
+                
+            }
                 UpdateExistingTable((ImpactAreaElement)elementToSave);
                 // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
-                StudyCacheForSaving.UpdateImpactAreaElement((ImpactAreaElement)oldElement, (ImpactAreaElement)elementToSave);
-            }
+              //  StudyCacheForSaving.UpdateImpactAreaElement((ImpactAreaElement)oldElement, (ImpactAreaElement)elementToSave);
+            //}
         }
 
         public void Load()
@@ -255,7 +269,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            throw new NotImplementedException();
+            return GetRowDataFromElement((ImpactAreaElement)elem);
         }
     }
 }

@@ -20,6 +20,7 @@ namespace FdaViewModel.Saving
         public abstract string TableName { get; }
         public const string ID_COL_NAME = "id";
         public const string NAME = "name";
+        //todo: move these out of here and put in the rating element persistence manager which is what is using it
         public const int ID_INDEX = 0;
         public const string ELEMENT_ID_COL_NAME = "elem_id";
 
@@ -343,41 +344,41 @@ namespace FdaViewModel.Saving
 
         //}
 
-        public void UpdateParentTableRow(string elementName, int changeIndex, object[] rowData, string oldName, string tableName, bool hasChangeTable = false, string changeTableConstant = "")
-        {
-            if (!Storage.Connection.Instance.IsOpen) { Storage.Connection.Instance.Open(); }
-            DatabaseManager.DataTableView tableView = Storage.Connection.Instance.GetTable(tableName);
+        //public void UpdateParentTableRow(string elementName, int changeIndex, object[] rowData, string oldName, string tableName, bool hasChangeTable = false, string changeTableConstant = "")
+        //{
+        //    if (!Storage.Connection.Instance.IsOpen) { Storage.Connection.Instance.Open(); }
+        //    DatabaseManager.DataTableView tableView = Storage.Connection.Instance.GetTable(tableName);
 
             
 
-            bool nameHasChanged = false;
-            if (!oldName.Equals(elementName))
-            {
-                nameHasChanged = true;
-            }
+        //    bool nameHasChanged = false;
+        //    if (!oldName.Equals(elementName))
+        //    {
+        //        nameHasChanged = true;
+        //    }
 
-            //int rowIndex = GetElementIndexInTable(tableView, oldName, 0);
-            DataTable dt = Storage.Connection.Instance.GetDataTable(tableName);
-            int rowIndex = GetElementIndexInTable(dt, oldName, 1);
-            if (rowIndex != -1)
-            {
+        //    //int rowIndex = GetElementIndexInTable(tableView, oldName, 0);
+        //    DataTable dt = Storage.Connection.Instance.GetDataTable(tableName);
+        //    int rowIndex = GetElementIndexInTable(dt, oldName, 1);
+        //    if (rowIndex != -1)
+        //    {
 
-                //possibly need to change the name in associated table
-                if (nameHasChanged && hasChangeTable)
-                {
-                    Storage.Connection.Instance.RenameTable(changeTableConstant + oldName + "-ChangeTable", changeTableConstant + elementName + "-ChangeTable");
-                }
+        //        //possibly need to change the name in associated table
+        //        if (nameHasChanged && hasChangeTable)
+        //        {
+        //            Storage.Connection.Instance.RenameTable(changeTableConstant + oldName + "-ChangeTable", changeTableConstant + elementName + "-ChangeTable");
+        //        }
 
 
-                tableView.EditRow(rowIndex, rowData);
-                tableView.ApplyEdits();
+        //        tableView.EditRow(rowIndex, rowData);
+        //        tableView.ApplyEdits();
 
-                //if (hasChangeTable)
-                //{
-                //    UpdateElementChangeTable(changeIndex, rowData, elementName, changeTableConstant);
-                //}
-            }
-        }
+        //        //if (hasChangeTable)
+        //        //{
+        //        //    UpdateElementChangeTable(changeIndex, rowData, elementName, changeTableConstant);
+        //        //}
+        //    }
+        //}
 
         /// <summary>
         /// This sends a sql "update" command to the database.

@@ -205,7 +205,7 @@ namespace FdaViewModel.Inventory
                 //We need to write the data to the sqlite file
 
                 // DataBase_Reader.SqLiteReader.CreateSqLiteFile(System.IO.Path.GetDirectoryName(SelectedPath) + "\\codyTest.sqlite");
-                //StructureInventoryLibrary.SharedData.StudyDatabase = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
+                StructureInventoryLibrary.SharedData.StudyDatabase = new DatabaseManager.SQLiteManager(Storage.Connection.Instance.ProjectFile);
 
                 LifeSimGIS.ShapefileReader myReader = new LifeSimGIS.ShapefileReader(SelectedPath);
 
@@ -432,11 +432,12 @@ namespace FdaViewModel.Inventory
                 DatabaseManager.DataTableView myDTView = myInMemoryReader.GetTableManager(Name);
 
                 //create the geo package writer that will write the data out
-                //LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
+                LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
 
                 // write the data out
                 //myGeoPackWriter.AddFeatures(Name, myReader.ToFeatures(), myReader.GetAttributeTable());
-                //myGeoPackWriter.AddFeatures("Structure Inventory - " + Name, myReader.ToFeatures(), myDTView);
+                string tableConst = Saving.PersistenceManagers.StructureInventoryPersistenceManager.STRUCTURE_INVENTORY_TABLE_CONSTANT;
+                myGeoPackWriter.AddFeatures(tableConst + Name, myReader.ToFeatures(), myDTView);
                 Save();
             }
 

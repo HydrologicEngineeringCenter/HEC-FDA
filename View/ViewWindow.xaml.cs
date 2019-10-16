@@ -463,10 +463,13 @@ namespace Fda
 
         private void DoDraggingWithTimer()
         {
-            WinTemp = this;
-            aTimer.Enabled = true;
-            DragMove();
-            TitleBarRectangle_MouseLeftButtonUp(null, null);
+            if (aTimer != null)
+            {
+                WinTemp = this;
+                aTimer.Enabled = true;
+                DragMove();
+                TitleBarRectangle_MouseLeftButtonUp(null, null);
+            }
         }
 
         private void initTimer()

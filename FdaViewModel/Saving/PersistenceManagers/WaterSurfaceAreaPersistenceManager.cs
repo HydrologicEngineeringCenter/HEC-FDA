@@ -3,6 +3,7 @@ using FdaViewModel.WaterSurfaceElevation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,8 +18,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
         private const string ELEMENT_TYPE = "Water_Surface_Area";
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("WaterSurfaceAreaPersistenceManager");
 
-        private const string TABLE_NAME = "Water Surface Elevations";
-        private static readonly string[] TableColNames = { "Name", "Description", "IsDepthGrids" };
+        private const string TABLE_NAME = "water_surface_elevations";
+        private static readonly string[] TableColNames = { NAME, DESCRIPTION, "is_depth_grids" };
         private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(bool) };
         /// <summary>
         /// The types of the columns in the parent table
@@ -38,7 +39,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
             get { return TABLE_NAME; }
         }
 
-        public override string[] TableColumnNames => throw new NotImplementedException();
+        public override string[] TableColumnNames
+        {
+            get
+            {
+                return TableColNames;
+            }
+        }
 
         public WaterSurfaceAreaPersistenceManager(Study.FDACache studyCache)
         {
@@ -60,10 +67,10 @@ namespace FdaViewModel.Saving.PersistenceManagers
             List<PathAndProbability> ppList = new List<PathAndProbability>();
 
 
-            WaterSurfaceElevationElement wse = new WaterSurfaceElevationElement((string)rowData[0], (string)rowData[1], ppList, (bool)rowData[2]);
+            WaterSurfaceElevationElement wse = new WaterSurfaceElevationElement((string)rowData[1], (string)rowData[2], ppList, Convert.ToBoolean(rowData[3]));
 
             //this isn't going to be correct. The table name here is not the parent table but the change table name.
-            DatabaseManager.DataTableView tableView = Storage.Connection.Instance.GetTable(PathAndProbTableConstant + rowData[0]);
+            DatabaseManager.DataTableView tableView = Storage.Connection.Instance.GetTable(PathAndProbTableConstant + rowData[1]);
             foreach (object[] row in tableView.GetRows(0, tableView.NumberOfRows-1))
             {
                 wse.RelativePathAndProbability.Add(new PathAndProbability(row[0].ToString(), Convert.ToDouble(row[1])));
@@ -199,13 +206,24 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public void SaveExisting(ChildElement oldElement, ChildElement element, int changeTableIndex )
         {
-            UpdateParentTableRow(element.Name, changeTableIndex, GetRowDataFromElement((WaterSurfaceElevationElement)element), oldElement.Name, TableName, false, ChangeTableConstant);
+            //UpdateParentTableRow(element.Name, changeTableIndex, GetRowDataFromElement((WaterSurfaceElevationElement)element), oldElement.Name, TableName, false, ChangeTableConstant);
+            base.SaveExisting(oldElement, element);
+            UpdateThePaths((WaterSurfaceElevationElement)element);
             Storage.Connection.Instance.RenameTable(PathAndProbTableConstant + oldElement.Name, PathAndProbTableConstant + element.Name);
             SavePathAndProbabilitiesTable((WaterSurfaceElevationElement)element);
             //rename the folder in the study directory
             RenameHydraulicsDirectory(oldElement.Name, element.Name);
-            StudyCacheForSaving.UpdateWaterSurfaceElevationElement((WaterSurfaceElevationElement)oldElement, (WaterSurfaceElevationElement)element);
+            //StudyCacheForSaving.UpdateWaterSurfaceElevationElement((WaterSurfaceElevationElement)oldElement, (WaterSurfaceElevationElement)element);
 
+        }
+
+        private void UpdateThePaths(WaterSurfaceElevationElement element)
+        {
+            foreach(PathAndProbability pp in element.RelativePathAndProbability)
+            {
+                string fileName = Path.GetFileName(pp.Path);
+                pp.Path = element.Name + "\\" + fileName;
+            }
         }
 
         public void Load()
@@ -268,7 +286,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            throw new NotImplementedException();
+            return GetRowDataFromElement((WaterSurfaceElevationElement)elem);
         }
     }
 }

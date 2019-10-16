@@ -11,6 +11,15 @@ namespace FdaViewModel.Saving.PersistenceManagers
 {
     public class FlowFrequencyPersistenceManager :UndoRedoBase, IPersistableWithUndoRedo
     {
+        private const int ID_COL = 0;
+        private const int NAME_COL = 1;
+        private const int LAST_EDIT_DATE_COL = 2;
+        private const int DESC_COL = 3;
+        private const int MEAN_COL = 4;
+        private const int ST_DEV_COL = 5;
+        private const int SKEW_COL = 6;
+        private const int YEARS_OF_RECORD_COL = 7;
+
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("FlowFrequencyPersistenceManager");
         //ELEMENT_TYPE is used to store the type of element in the log tables.
         private const string ELEMENT_TYPE = "Flow_Freq";
@@ -23,7 +32,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override string[] TableColumnNames
         {
-            get { return new string[] { "Name", "Last Edit Date", "Description", "Mean (of Log)", "Standard Deviation (of Log)", "Skew (of Log)", "Equivalent Years of Record" }; }
+            get { return new string[] { NAME, LAST_EDIT_DATE, DESCRIPTION, "mean", "standard_deviation", "skew", "equivalent_years_of_record" }; }
         }
 
         public override Type[] TableColumnTypes
@@ -33,9 +42,24 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
 
 
-        public override string[] ChangeTableColumnNames => throw new NotImplementedException();
+        public override string[] ChangeTableColumnNames
+        {
+            get
+            {
+                return new string[] { ELEMENT_ID_COL_NAME, NAME, LAST_EDIT_DATE, DESCRIPTION,
+            "mean_(of_log)", "standard_deviation_(of_log)", "skew_(of_log)", "equivalent_years_of_record", STATE_INDEX_COL_NAME};
+            }
 
-        public override Type[] ChangeTableColumnTypes => throw new NotImplementedException();
+        }
+
+public override Type[] ChangeTableColumnTypes
+        {
+            get
+            {
+                return new Type[] {typeof(int), typeof(string), typeof(string), typeof(string),
+                typeof(double), typeof(double), typeof(double), typeof(int), typeof(int) };
+            }
+        }
 
 
         public FlowFrequencyPersistenceManager(Study.FDACache studyCache)
@@ -51,11 +75,11 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            double mean = (double)rowData[3];
-            double stdev = (double)rowData[4];
-            double skew = (double)rowData[5];
-            Int64 n = (Int64)rowData[6];
-            return new AnalyticalFrequencyElement((string)rowData[0], (string)rowData[1], (string)rowData[2], new Statistics.LogPearsonIII(mean, stdev, skew, (int)n));
+            double mean = Convert.ToDouble( rowData[MEAN_COL]);
+            double stdev = Convert.ToDouble(rowData[ST_DEV_COL]);
+            double skew = Convert.ToDouble(rowData[SKEW_COL]);
+            Int64 n = Convert.ToInt64( rowData[YEARS_OF_RECORD_COL]);
+            return new AnalyticalFrequencyElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESC_COL], new Statistics.LogPearsonIII(mean, stdev, skew, (int)n));
 
         }
         #endregion
@@ -67,19 +91,18 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             if (element.GetType() == typeof(AnalyticalFrequencyElement))
             {
-                string editDate = DateTime.Now.ToString("G");
-                element.LastEditDate = editDate;
-
-                SaveNewElementToParentTable(GetRowDataFromElement((AnalyticalFrequencyElement)element), TableName, TableColumnNames, TableColumnTypes);
-                //SaveElementToChangeTable(element.Name, GetRowDataFromElement((AnalyticalFrequencyElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
-                //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
-                //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCacheForSaving.AddElement((AnalyticalFrequencyElement)element);
+                //save to parent table
+                SaveNewElement(element);
+                //save to change table
+                SaveToChangeTable(element);
+                //log message
+                Log(FdaLogging.LoggingLevel.Info, "Created new flow frequency curve: " + element.Name, element.Name);
             }
         }
 
         public void Remove(ChildElement element)
         {
+            //todo: do something here
             //RemoveFromParentTable(element, TableName);
             //DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
             //StudyCacheForSaving.RemoveElement((AnalyticalFrequencyElement)element);
@@ -88,15 +111,16 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex )
         {
-            string editDate = DateTime.Now.ToString("G");
-            elementToSave.LastEditDate = editDate;
+            base.SaveExisting(oldElement, elementToSave, changeTableIndex);
+            //string editDate = DateTime.Now.ToString("G");
+            //elementToSave.LastEditDate = editDate;
 
-            if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((AnalyticalFrequencyElement)elementToSave), oldElement.Name, TableName) )
-            {
-                UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((AnalyticalFrequencyElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
-                // SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
-                StudyCacheForSaving.UpdateFlowFrequencyElement((AnalyticalFrequencyElement)oldElement, (AnalyticalFrequencyElement)elementToSave);
-            }
+            //if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((AnalyticalFrequencyElement)elementToSave), oldElement.Name, TableName) )
+            //{
+            //    UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((AnalyticalFrequencyElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
+            //    // SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
+            //    StudyCacheForSaving.UpdateFlowFrequencyElement((AnalyticalFrequencyElement)oldElement, (AnalyticalFrequencyElement)elementToSave);
+            //}
         }
 
         public void Load()
@@ -158,12 +182,22 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override object[] GetRowDataForChangeTable(ChildElement element)
         {
-            throw new NotImplementedException();
+            if (element.Description == null)
+            {
+                element.Description = "";
+            }
+
+            int elemId = GetElementId(TableName, element.Name);
+            AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)element;
+            //the new statId will be one higher than the max that is in the table already.
+            int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
+            return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
+                elem.Distribution.GetMean, elem.Distribution.GetStDev, elem.Distribution.GetG, elem.Distribution.GetSampleSize, stateId};
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            throw new NotImplementedException();
+            return GetRowDataFromElement((AnalyticalFrequencyElement)elem);
         }
     }
 }

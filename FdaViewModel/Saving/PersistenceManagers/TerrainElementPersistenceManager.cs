@@ -13,16 +13,20 @@ namespace FdaViewModel.Saving.PersistenceManagers
 {
     public class TerrainElementPersistenceManager : SavingBase, IElementManager
     {
+        private const int ID_COL = 0;
+        private const int NAME_COL = 1;
+        private const int DESC_COL = 2;
+
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
         //you would no longer get any of the old logs. So i use this constant.
-        private const string ELEMENT_TYPE = "Terrain";
+        private const string ELEMENT_TYPE = "terrain";
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("TerrainElementPersistenceManager");
 
 
-        private const string TABLE_NAME = "Terrains";
+        private const string TABLE_NAME = "terrains";
         internal override string ChangeTableConstant { get { return "?????"; } }
-        private static readonly string[] TableColNames = { "Terrain Name", "Path Name" };
+        private static readonly string[] TableColNames = { NAME, "path" };
         private static readonly Type[] TableColTypes = { typeof(string), typeof(string) };
 
         /// <summary>
@@ -53,7 +57,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
             get { return TABLE_NAME; }
         }
 
-        public override string[] TableColumnNames => throw new NotImplementedException();
+        public override string[] TableColumnNames
+        {
+            get
+            {
+                return TableColNames;
+            }
+        }
 
         private object[] GetRowDataFromElement(TerrainElement element)
         {
@@ -62,7 +72,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            return new TerrainElement((string)rowData[0], (string)rowData[1]);
+            return new TerrainElement((string)rowData[NAME_COL], (string)rowData[DESC_COL]);
         }
 
         private async void CopyFileOnBackgroundThread(TerrainElement element) //object sender, DoWorkEventArgs e)
@@ -176,8 +186,15 @@ namespace FdaViewModel.Saving.PersistenceManagers
         public void SaveExisting(ChildElement oldElement, ChildElement element, int changeTableIndex)
         {
             RenameTheTerrainFileOnBackgroundThread(oldElement, element);
-            UpdateParentTableRow(element.Name, changeTableIndex, GetRowDataFromElement((TerrainElement)element), oldElement.Name, TableName, false, ChangeTableConstant);
-            StudyCacheForSaving.UpdateTerrain((TerrainElement)oldElement, (TerrainElement)element);
+            //UpdateParentTableRow(element.Name, changeTableIndex, GetRowDataFromElement((TerrainElement)element), oldElement.Name, TableName, false, ChangeTableConstant);
+            //StudyCacheForSaving.UpdateTerrain((TerrainElement)oldElement, (TerrainElement)element);
+
+            //the path needs to get updated with the new name and set on the new element.
+            TerrainElement elem = (TerrainElement)oldElement;
+            string originalExtension = System.IO.Path.GetExtension(elem.FileName);
+            string destinationFilePath = Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name + originalExtension;
+            ((TerrainElement)element).FileName = destinationFilePath;
+            base.SaveExisting(oldElement, element);
             oldElement.AddMapTreeViewItemBackIn(((TerrainElement)oldElement).NodeToAddBackToMapWindow, new EventArgs());
         }
         public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)
@@ -225,7 +242,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            throw new NotImplementedException();
+            return GetRowDataFromElement((TerrainElement)elem);
         }
     }
 }

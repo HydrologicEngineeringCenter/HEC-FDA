@@ -239,7 +239,10 @@ namespace FdaViewModel.FrequencyRelationships
             LastEditDate = elem.LastEditDate;
             Description = elem.Description;
             Distribution = elem.Distribution;
-            //Mean = prevElement.Distribution.GetMean;//???
+            Mean = elem.Distribution.GetMean;
+            StandardDeviation = elem.Distribution.GetStDev;
+            Skew = elem.Distribution.GetG;
+            SampleSize = elem.Distribution.GetSampleSize;
 
         }
         public void AssignValuesFromEditorToCurrentElement()

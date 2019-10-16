@@ -18,10 +18,12 @@ namespace FdaViewModel.Saving.PersistenceManagers
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("StageDamagePersistenceManager");
 
 
-        private const string TABLE_NAME = "Aggregated Stage Damage Relationships";
+        private const string TABLE_NAME = "stage_damage_relationships";
         internal override string ChangeTableConstant { get { return "Aggregated Stage Damage Function - "; } }
-        private static readonly string[] TableColNames = { "Name", "Last Edit Date", "Description", "Curve Uncertainty Type", "Creation Method", "Curve" };
-        private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
+        private static readonly string[] TableColNames = { NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE_DISTRIBUTION_TYPE, "creation_method", CURVE };
+    
+
+    private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
         /// <summary>
         /// The types of the columns in the parent table
         /// </summary>
@@ -32,13 +34,41 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override string TableName { get { return TABLE_NAME; } }
 
-        public override string ChangeTableName => throw new NotImplementedException();
+        /// <summary>
+        /// The name of the change table that will hold the various states of elements.
+        /// </summary>
+        public override string ChangeTableName { get { return "stage_damage_changes"; } }
 
-        public override string[] ChangeTableColumnNames => throw new NotImplementedException();
+        /// <summary>
+        /// Names of the columns in the change table
+        /// </summary>
+        public override string[] ChangeTableColumnNames
+        {
+            get
+            {
+                return new string[] { ELEMENT_ID_COL_NAME, NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE_DISTRIBUTION_TYPE, "creation_method", CURVE, STATE_INDEX_COL_NAME };
+            }
+        }
+        /// <summary>
+        /// Types for the columns in the change table
+        /// </summary>
+        public override Type[] ChangeTableColumnTypes
+        {
+            get
+            {
+                return new Type[]{ typeof(int), typeof(string), typeof(string), typeof(string), typeof(string),
+                    typeof(string), typeof(string), typeof(int) };
+            }
+        }
 
-        public override Type[] ChangeTableColumnTypes => throw new NotImplementedException();
 
-        public override string[] TableColumnNames => throw new NotImplementedException();
+        public override string[] TableColumnNames
+        {
+            get
+            {
+                return TableColNames;
+            }
+        }
 
         public StageDamagePersistenceManager(Study.FDACache studyCache)
         {
@@ -55,10 +85,11 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            Statistics.UncertainCurveDataCollection emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
-            AggregatedStageDamageElement asd = new AggregatedStageDamageElement((string)rowData[0], (string)rowData[1], (string)rowData[2], emptyCurve, (CreationMethodEnum)Enum.Parse(typeof(CreationMethodEnum), (string)rowData[4]));
+            //todo: make the ints constancts at the top of the class
+            Statistics.UncertainCurveDataCollection emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[4]));
+            AggregatedStageDamageElement asd = new AggregatedStageDamageElement((string)rowData[1], (string)rowData[2], (string)rowData[3], emptyCurve, (CreationMethodEnum)Enum.Parse(typeof(CreationMethodEnum), (string)rowData[5]));
             //asd.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
-            asd.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[5], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
+            asd.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[6], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[4]));
             return asd;
         }
         #endregion
@@ -68,15 +99,12 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             if (element.GetType() == typeof(AggregatedStageDamageElement))
             {
-                if(element.Description == null) { element.Description = ""; }
-                string editDate = DateTime.Now.ToString("G");
-                element.LastEditDate = editDate;
-
-                SaveNewElementToParentTable(GetRowDataFromElement((AggregatedStageDamageElement)element), TableName, TableColumnNames, TableColumnTypes);
-                //SaveElementToChangeTable(element.Name, GetRowDataFromElement((AggregatedStageDamageElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
-                //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
-                //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCacheForSaving.AddElement((AggregatedStageDamageElement)element);
+                //save to parent table
+                SaveNewElement(element);
+                //save to change table
+                SaveToChangeTable(element);
+                //log message
+                Log(FdaLogging.LoggingLevel.Info, "Created new stage damage curve: " + element.Name, element.Name);
             }
         }
         public void Remove(ChildElement element)
@@ -89,15 +117,9 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             if (elementToSave.Description == null) { elementToSave.Description = ""; }
 
-            string editDate = DateTime.Now.ToString("G");
-            elementToSave.LastEditDate = editDate;
-
             if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((AggregatedStageDamageElement)elementToSave), oldElement.Name, TableName) || AreCurvesDifferent(oldElement.Curve, elementToSave.Curve))
             {
-                UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((AggregatedStageDamageElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
-                //SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
-                // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
-                StudyCacheForSaving.UpdateStageDamageElement((AggregatedStageDamageElement)oldElement, (AggregatedStageDamageElement)elementToSave);
+                base.SaveExisting(oldElement, elementToSave, changeTableIndex);
             }
         }
 
@@ -160,12 +182,24 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override object[] GetRowDataForChangeTable(ChildElement element)
         {
-            throw new NotImplementedException();
+
+            if (element.Description == null)
+            {
+                element.Description = "";
+            }
+
+            int elemId = GetElementId(TableName, element.Name);
+            //the new statId will be one higher than the max that is in the table already.
+            int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
+            return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
+                element.Curve.Distribution, ((AggregatedStageDamageElement)element).Method,
+                ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues),
+                stateId};
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            throw new NotImplementedException();
+            return GetRowDataFromElement((AggregatedStageDamageElement)elem);
         }
     }
 }

@@ -14,12 +14,12 @@ namespace FdaViewModel.Saving.PersistenceManagers
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
         //you would no longer get any of the old logs. So i use this constant.
-        private const string ELEMENT_TYPE = "Levee";
+        private const string ELEMENT_TYPE = "levee";
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("LeveePersistenceManager");
 
 
-        private const string TABLE_NAME = "Levee Features";
-        private static readonly string[] TableColNames = { "Levee Feature", "Description", "Elevation" };
+        private const string TABLE_NAME = "levee_features";
+        private static readonly string[] TableColNames = { NAME, DESCRIPTION, "elevation" };
         private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(double) };
         /// <summary>
         /// The types of the columns in the parent table
@@ -38,7 +38,11 @@ namespace FdaViewModel.Saving.PersistenceManagers
             get { return TABLE_NAME; }
         }
 
-        public override string[] TableColumnNames => throw new NotImplementedException();
+        public override string[] TableColumnNames
+        {
+            get { return TableColNames; }
+        }
+
 
         public LeveePersistenceManager(Study.FDACache studyCache)
         {
@@ -53,7 +57,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            return new LeveeFeatureElement((string)rowData[0], (string)rowData[1], (double)rowData[2]);
+            //todo: make constants
+            return new LeveeFeatureElement((string)rowData[1], (string)rowData[2], Convert.ToDouble( rowData[3]));
         }
         #endregion
 
@@ -75,8 +80,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((LeveeFeatureElement)elementToSave), oldElement.Name, TableName))
             {
-                UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((LeveeFeatureElement)elementToSave), oldElement.Name, TableName, false, ChangeTableConstant);
-                StudyCacheForSaving.UpdateLeveeElement((LeveeFeatureElement)oldElement, (LeveeFeatureElement)elementToSave);
+                base.SaveExisting(oldElement, elementToSave);
             }
         }
 
@@ -140,7 +144,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            throw new NotImplementedException();
+            return GetRowDataFromElement((LeveeFeatureElement)elem);
         }
     }
 }

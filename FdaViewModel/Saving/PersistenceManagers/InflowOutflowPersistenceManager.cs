@@ -1,32 +1,43 @@
 ﻿using FdaViewModel.FlowTransforms;
 using FdaViewModel.Utilities;
+using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Statistics.UncertainCurveDataCollection;
 
 namespace FdaViewModel.Saving.PersistenceManagers
 {
     public class InflowOutflowPersistenceManager : UndoRedoBase, IPersistableWithUndoRedo
     {
+        private const int ID_COL = 0;
+        private const int NAME_COL = 1;
+        private const int LAST_EDIT_DATE_COL = 2;
+        private const int DESCRIPTION_COL = 3;
+        private const int CURVE_DIST_TYPE_COL = 4;
+        private const int CURVE_COL = 5;
+
+
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
         //you would no longer get any of the old logs. So i use this constant.
-        private const string ELEMENT_TYPE = "Inflow_Outflow";
+        private const string ELEMENT_TYPE = "inflow_outflow";
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("InflowOutflowPersistenceManager");
 
 
-        private const string TABLE_NAME = "Inflow_Outflow_Relationships";
+        private const string TABLE_NAME = "inflow_outflow_relationships";
         internal override string ChangeTableConstant { get { return "Inflow Outflow - "; } }
-        private static readonly string[] TableColNames = { "Name", "Last Edit Date", "Description", "Curve Distribution Type" , "Curve"};
+        private static readonly string[] TableColNames = { NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE_DISTRIBUTION_TYPE , CURVE};
         public static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
 
         public override string TableName { get { return TABLE_NAME; } }
         //TODO MAKE THIS A REAL NAME
-        public override string ChangeTableName { get { return "NAME"; } }
+        public override string ChangeTableName { get { return "inflow_outflow_changes"; } }
 
+        //TODO: what are these things below. I don't think i use them on the other elements.
         public override int ChangeTableNameColIndex { get { return CHANGE_TABLE_NAME_INDEX; } }
 
         public override string ChangeTableStateIndexColName { get { return STATE_INDEX_COL_NAME; } }
@@ -35,11 +46,33 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override string ChangeTableElementIdColName { get { return ELEMENT_ID_COL_NAME; } }
 
-        public override string[] ChangeTableColumnNames => throw new NotImplementedException();
+        /// <summary>
+        /// Names of the columns in the change table
+        /// </summary>
+        public override string[] ChangeTableColumnNames
+        {
+            get
+            {
+                return new string[] { ELEMENT_ID_COL_NAME, NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE_DISTRIBUTION_TYPE, CURVE, STATE_INDEX_COL_NAME };
+            }
+        }
+        /// <summary>
+        /// Types for the columns in the change table
+        /// </summary>
+        public override Type[] ChangeTableColumnTypes
+        {
+            get
+            {
+                return new Type[]{ typeof(int), typeof(string), typeof(string), typeof(string), typeof(string),
+                     typeof(string), typeof(int) };
+            }
+        }
 
-        public override Type[] ChangeTableColumnTypes => throw new NotImplementedException();
 
-        public override string[] TableColumnNames => throw new NotImplementedException();
+        public override string[] TableColumnNames
+        {
+            get { return TableColNames; }
+        }
         /// <summary>
         /// The types of the columns in the parent table
         /// </summary>
@@ -61,10 +94,10 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
-            InflowOutflowElement inout = new InflowOutflowElement((string)rowData[0], (string)rowData[1], (string)rowData[2], ucdc);
+            UncertainCurveDataCollection ucdc = new UncertainCurveIncreasing((DistributionsEnum)Enum.Parse(typeof(DistributionsEnum), (string)rowData[CURVE_DIST_TYPE_COL]));
+            InflowOutflowElement inout = new InflowOutflowElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESCRIPTION_COL], ucdc);
             //inout.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
-            inout.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[4], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[3]));
+            inout.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_COL], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[CURVE_DIST_TYPE_COL]));
             return inout;
         }
 
@@ -75,14 +108,12 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             if (element.GetType() == typeof(InflowOutflowElement))
             {
-                string editDate = DateTime.Now.ToString("G");
-                element.LastEditDate = editDate;
-
-                SaveNewElementToParentTable(GetRowDataFromElement((InflowOutflowElement)element), TableName, TableColumnNames, TableColumnTypes);
-                //SaveElementToChangeTable(element.Name, GetRowDataFromElement((InflowOutflowElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
-                //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);                //save the individual table
-                //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCacheForSaving.AddElement((InflowOutflowElement)element);
+                //save to parent table
+                SaveNewElement(element);
+                //save to change table
+                SaveToChangeTable(element);
+                //log message
+                Log(FdaLogging.LoggingLevel.Info, "Created new inflow outflow curve: " + element.Name, element.Name);
             }
         }
 
@@ -95,17 +126,18 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public void SaveExisting(ChildElement oldElement, Utilities.ChildElement elementToSave, int changeTableIndex  )
         {
-            string editDate = DateTime.Now.ToString("G");
-            elementToSave.LastEditDate = editDate;
+            base.SaveExisting(oldElement, elementToSave, changeTableIndex);
+            //string editDate = DateTime.Now.ToString("G");
+            //elementToSave.LastEditDate = editDate;
 
-            if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((InflowOutflowElement)elementToSave), oldElement.Name, TableName) || AreCurvesDifferent(oldElement.Curve, elementToSave.Curve))
-            {
-                UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((InflowOutflowElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
-                //
-                //SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
-                // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
-                StudyCacheForSaving.UpdateInflowOutflowElement((InflowOutflowElement)oldElement, (InflowOutflowElement)elementToSave);
-            }
+            //if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((InflowOutflowElement)elementToSave), oldElement.Name, TableName) || AreCurvesDifferent(oldElement.Curve, elementToSave.Curve))
+            //{
+            //    UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((InflowOutflowElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
+            //    //
+            //    //SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
+            //    // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
+            //    StudyCacheForSaving.UpdateInflowOutflowElement((InflowOutflowElement)oldElement, (InflowOutflowElement)elementToSave);
+            //}
         }
 
         public void Load()
@@ -180,12 +212,23 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override object[] GetRowDataForChangeTable(ChildElement element)
         {
-            throw new NotImplementedException();
+            if (element.Description == null)
+            {
+                element.Description = "";
+            }
+
+            int elemId = GetElementId(TableName, element.Name);
+            //the new statId will be one higher than the max that is in the table already.
+            int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
+            return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
+                element.Curve.Distribution,
+                ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues),
+                stateId};
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            throw new NotImplementedException();
+            return GetRowDataFromElement((InflowOutflowElement)elem);
         }
     }
 }

@@ -17,6 +17,29 @@ namespace FdaViewModel.Saving.PersistenceManagers
 {
     public class ConditionsPersistenceManager : SavingBase, IElementManager
     {
+        private const int ID_COL = 0;
+        private const int NAME_COL = 1;
+        private const int DESC_COL = 2;
+        private const int ANALYSIS_YEAR_COL = 3;
+        private const int IMPACT_AREA_COL = 4;
+        private const int USE_FLOW_FREQ_COL = 5;
+        private const int FLOW_FREQ_COL = 6;
+        private const int USE_INFLOW_OUTFLOW_COL = 7;
+        private const int INFLOW_OUTFLOW_COL = 8;
+        private const int USE_RATING_COL = 9;
+        private const int RATING_COL = 10;
+        private const int USE_EXT_INT_COL = 11;
+        private const int EXT_INT_COL = 12;
+        private const int USE_LEVEE_COL = 13;
+        private const int LEVEE_COL = 14;
+        private const int USE_FAILURE_FUNC_COL = 15;
+        private const int FAILURE_FUNC_COL = 16;
+        private const int USE_STAGE_DAMAGE_COL = 17;
+        private const int STAGE_DAMAGE_COL = 18;
+        private const int USE_THRESHOLD_COL = 19;
+        private const int THRESHOLD_TYPE_COL = 20;
+        private const int THRESHOLD_VALUE_COL = 21;
+
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
         //you would no longer get any of the old logs. So i use this constant.
@@ -101,10 +124,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            if (rowData.Length >= 18)
-            {
                 //get the impact area
-                string selectedImpAreaName = (string)rowData[3];
+                string selectedImpAreaName = (string)rowData[IMPACT_AREA_COL];
                 ImpactArea.ImpactAreaElement selectedImpArea = null;
                 List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.GetChildElementsOfType<ImpactArea.ImpactAreaElement>();
                 foreach (ImpactArea.ImpactAreaElement impArea in impactAreas)
@@ -120,79 +141,74 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 }
 
                 //threshold stuff
-                bool useThreshold = (bool)rowData[18];
+                bool useThreshold = Convert.ToBoolean( rowData[USE_THRESHOLD_COL]);
                 PerformanceThresholdTypes thresholdType = PerformanceThresholdTypes.InteriorStage;
-                Enum.TryParse((string)rowData[19], out thresholdType);
-                double thresholdValue = (double)rowData[20];
+                Enum.TryParse((string)rowData[THRESHOLD_TYPE_COL], out thresholdType);
+                double thresholdValue = Convert.ToDouble( rowData[THRESHOLD_VALUE_COL]);
 
                 //get the impAreaRowItem. What is this? do we need it?
                 ImpactArea.ImpactAreaRowItem indexLocation = new ImpactArea.ImpactAreaRowItem();
-                int analysisYear = Convert.ToInt32(rowData[2]);
-                ConditionBuilder builder = new ConditionBuilder((string)rowData[0], (string)rowData[1], analysisYear, selectedImpArea, indexLocation,
+                int analysisYear = Convert.ToInt32(rowData[ANALYSIS_YEAR_COL]);
+                ConditionBuilder builder = new ConditionBuilder((string)rowData[NAME_COL], (string)rowData[DESC_COL], analysisYear, selectedImpArea, indexLocation,
                      thresholdType, thresholdValue);
 
-                bool useFlowFreq = (bool)rowData[4];
+                bool useFlowFreq = Convert.ToBoolean(rowData[USE_FLOW_FREQ_COL]);
                 if (useFlowFreq)
                 {
-                    string flowFreqName = (string)rowData[5];
+                    string flowFreqName = (string)rowData[FLOW_FREQ_COL];
                     AnalyticalFrequencyElement flowFreqElem = GetSelectedElementOfType<AnalyticalFrequencyElement>(StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>(), flowFreqName);
                     builder.WithAnalyticalFreqElem(flowFreqElem);
                 }
 
-                bool useInflowOutflow = (bool)rowData[6];
+                bool useInflowOutflow = Convert.ToBoolean(rowData[USE_INFLOW_OUTFLOW_COL]);
                 if (useInflowOutflow)
                 {
-                    string infOutName = (string)rowData[7];
+                    string infOutName = (string)rowData[INFLOW_OUTFLOW_COL];
                     InflowOutflowElement inOutElem = GetSelectedElementOfType<InflowOutflowElement>(StudyCache.GetChildElementsOfType<InflowOutflowElement>(), infOutName);
                     builder.WithInflowOutflowElem(inOutElem);
                 }
 
-                bool useRating = (bool)rowData[8];
+                bool useRating = Convert.ToBoolean(rowData[USE_RATING_COL]);
                 if (useRating)
                 {
-                    string ratingName = (string)rowData[9];
+                    string ratingName = (string)rowData[RATING_COL];
                     RatingCurveElement ratingElem = GetSelectedElementOfType<RatingCurveElement>(StudyCache.GetChildElementsOfType<RatingCurveElement>(), ratingName);
                     builder.WithRatingCurveElem(ratingElem);
                 }
 
-                bool useIntExt = (bool)rowData[10];
+                bool useIntExt = Convert.ToBoolean(rowData[USE_EXT_INT_COL]);
                 if (useIntExt)
                 {
-                    string extIntName = (string)rowData[11];
+                    string extIntName = (string)rowData[EXT_INT_COL];
                     ExteriorInteriorElement extIntElem = GetSelectedElementOfType<ExteriorInteriorElement>(StudyCache.GetChildElementsOfType<ExteriorInteriorElement>(), extIntName);
                     builder.WithExtIntStageElem(extIntElem);
                 }
 
-                bool useLevee = (bool)rowData[12];
+                bool useLevee = Convert.ToBoolean(rowData[USE_LEVEE_COL]);
                 if (useLevee)
                 {
-                    string leveeName = (string)rowData[13];
+                    string leveeName = (string)rowData[LEVEE_COL];
                     LeveeFeatureElement leveeElem = GetSelectedElementOfType<LeveeFeatureElement>(StudyCache.GetChildElementsOfType<LeveeFeatureElement>(), leveeName);
                     builder.WithLevee(leveeElem);
                 }
 
-                bool useFailure = (bool)rowData[14];
+                bool useFailure = Convert.ToBoolean(rowData[USE_FAILURE_FUNC_COL]);
                 if (useFailure)
                 {
-                    string failureName = (string)rowData[15];
+                    string failureName = (string)rowData[FAILURE_FUNC_COL];
                     FailureFunctionElement failureElem = GetSelectedElementOfType<FailureFunctionElement>(StudyCache.GetChildElementsOfType<FailureFunctionElement>(), failureName);
                     builder.WithFailureFunctionElem(failureElem);
                 }
 
-                bool useStageDam = (bool)rowData[16];
+                bool useStageDam = Convert.ToBoolean(rowData[USE_STAGE_DAMAGE_COL]);
                 if (useStageDam)
                 {
-                    string stageDamName = (string)rowData[17];
+                    string stageDamName = (string)rowData[STAGE_DAMAGE_COL];
                     AggregatedStageDamage.AggregatedStageDamageElement stageDamElem = GetSelectedElementOfType<AggregatedStageDamageElement>(StudyCache.GetChildElementsOfType<AggregatedStageDamageElement>(), stageDamName);
                     builder.WithAggStageDamageElem(stageDamElem);
                 }
 
                 return builder.build();
-            }
-            else
-            {
-                return null;
-            }
         }
 
         private T GetSelectedElementOfType<T>(List<T> elements, string name) where T : ChildElement
@@ -236,11 +252,12 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public void SaveExisting(ChildElement oldElement, ChildElement element, int changeTableIndex  )
         {
-            if (DidParentTableRowValuesChange(element, GetRowDataFromElement((ConditionsElement)element), oldElement.Name, TableName))
-            {
-                UpdateParentTableRow(element.Name, changeTableIndex, GetRowDataFromElement((ConditionsElement)element), oldElement.Name, TableName, false, ChangeTableConstant);
-                StudyCacheForSaving.UpdateConditionsElement((ConditionsElement)oldElement, (ConditionsElement)element);
-            }
+            base.SaveExisting(oldElement, element);
+            //if (DidParentTableRowValuesChange(element, GetRowDataFromElement((ConditionsElement)element), oldElement.Name, TableName))
+            //{
+            //    UpdateParentTableRow(element.Name, changeTableIndex, GetRowDataFromElement((ConditionsElement)element), oldElement.Name, TableName, false, ChangeTableConstant);
+            //    StudyCacheForSaving.UpdateConditionsElement((ConditionsElement)oldElement, (ConditionsElement)element);
+            //}
         }
 
         public void Load()

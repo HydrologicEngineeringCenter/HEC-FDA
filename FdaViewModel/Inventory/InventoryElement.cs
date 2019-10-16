@@ -19,7 +19,7 @@ namespace FdaViewModel.Inventory
         #endregion
         #region Fields
         private int _featureHashCode;
-        private const string _TableConstant = "Structure Inventory - ";
+        private string _TableConstant = Saving.PersistenceManagers.StructureInventoryPersistenceManager.STRUCTURE_INVENTORY_TABLE_CONSTANT;
 
         private StructureInventoryBaseElement _StructureInventory;
 
@@ -125,31 +125,31 @@ namespace FdaViewModel.Inventory
         }
         private void InventoryToMapWindow(object arg1, EventArgs arg2)
         {
-            ////DataBase_Reader.SqLiteReader sqr = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
-            //LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(Storage.Connection.Instance.Reader);
-            //LifeSimGIS.PointFeatures pointFeatures = (LifeSimGIS.PointFeatures)gpr.ConvertToGisFeatures(_TableConstant + this.Name);
-            //LifeSimGIS.VectorFeatures features = pointFeatures;
-            ////read from table.
-            //DataBase_Reader.DataTableView dtv = Storage.Connection.Instance.Reader.GetTableManager(_TableConstant + this.Name);
-            //int[] geometryColumns = { 0, 1 };
-            //dtv.DeleteColumns(geometryColumns);
+            //DataBase_Reader.SqLiteReader sqr = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
+            LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(Storage.Connection.Instance.Reader);
+            LifeSimGIS.PointFeatures pointFeatures = (LifeSimGIS.PointFeatures)gpr.ConvertToGisFeatures(_TableConstant + this.Name);
+            LifeSimGIS.VectorFeatures features = pointFeatures;
+            //read from table.
+            DatabaseManager.DataTableView dtv = Storage.Connection.Instance.Reader.GetTableManager(_TableConstant + this.Name);
+            int[] geometryColumns = { 0, 1 };
+            dtv.DeleteColumns(geometryColumns);
 
-            //OpenGLMapping.OpenGLDrawInfo ogldi = new OpenGLMapping.OpenGLDrawInfo(15,OpenGLMapping.OpenGLDrawInfo.GlyphType.House1,true, new OpenTK.Graphics.Color4((byte)0, 0, 0, 255), true, new OpenTK.Graphics.Color4((byte)0, 0, 255, 200),true);
+            OpenGLMapping.OpenGLDrawInfo ogldi = new OpenGLMapping.OpenGLDrawInfo(15, OpenGLMapping.OpenGLDrawInfo.GlyphType.House1, true, new OpenTK.Graphics.Color4((byte)0, 0, 0, 255), true, new OpenTK.Graphics.Color4((byte)0, 0, 255, 200), true);
 
-            //Utilities.AddShapefileEventArgs args = new Utilities.AddShapefileEventArgs(Name, features, dtv, ogldi);
+            Utilities.AddShapefileEventArgs args = new Utilities.AddShapefileEventArgs(Name, features, dtv, ogldi);
 
-            //AddToMapWindow(this,args );
+            AddToMapWindow(this, args);
 
-            //_featureHashCode = args.MapFeatureHash;
+            _featureHashCode = args.MapFeatureHash;
 
-            //foreach (Utilities.NamedAction a in Actions)
-            //{
-            //    if (a.Header.Equals("Add to Map Window"))
-            //    {
-            //        a.Header = "Remove from Map Window";
-            //        a.Action = RemoveElementFromMapWindow;
-            //    }
-            //}
+            foreach (Utilities.NamedAction a in Actions)
+            {
+                if (a.Header.Equals("Add to Map Window"))
+                {
+                    a.Header = "Remove from Map Window";
+                    a.Action = RemoveElementFromMapWindow;
+                }
+            }
         }
 
       
