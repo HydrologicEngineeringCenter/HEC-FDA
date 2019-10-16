@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Statistics.Histograms;
+
 using Utilities.Validation;
 
 namespace Statistics.Validation

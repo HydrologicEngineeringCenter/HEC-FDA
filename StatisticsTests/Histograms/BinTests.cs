@@ -50,6 +50,19 @@ namespace StatisticsTests.Histograms
             var testObj = new Bin(0, 2, count);
             Assert.Equal(count, testObj.Count);
         }
+        [Theory]
+        [InlineData(0, 2)]
+        [InlineData(2, 0)]
+        [InlineData(double.NegativeInfinity, double.PositiveInfinity)]
+        [InlineData(double.NegativeInfinity, 2)]
+        [InlineData(0, double.PositiveInfinity)]
+        [InlineData(double.NaN, double.NaN)]
+        public void MidPoint_GoodOrBad_Returns_InputValue(double min, double max)
+        {
+            double expected = min + (max - min) / 2;
+            var testObj = new Bin(min, max, 0);
+            Assert.Equal(expected, testObj.MidPoint);
+        }
         #endregion
 
 

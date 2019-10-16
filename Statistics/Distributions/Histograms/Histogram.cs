@@ -6,7 +6,7 @@ using Utilities.Validation;
 
 namespace Statistics.Histograms
 {
-    internal class Histogram : IHistogram, IDistribution //IOrdinate<IHistogram>, IValidate<IHistogram>
+    internal class Histogram : IHistogram, IDistribution, IValidate<IHistogram>
     {
         //TODO: Add convergence
         //TODO: Keep bins in accending order
@@ -44,18 +44,29 @@ namespace Statistics.Histograms
         /// <param name="nBins"> The number of desired bins. </param>
         public Histogram(IEnumerable<double> sample, int nBins = 100)
         {
-            Bins = BinData(sample, nBins, out int sampleSize, out double mean);
-            SampleSize = sampleSize;
-            Mean = mean;
+            if (FatalErrors(sample, nBins, out _)) throw new ArgumentException("The requested histogram cannot be constructed.");
+            else
+            {
+                Bins = BinData(sample, nBins, out int sampleSize, out double mean);
+                SampleSize = sampleSize;
+                Mean = mean;
 
-            var medianAndDeviations = HistogramMedianAndDeviations(Bins, Mean, SampleSize);
-            // Item1: Median, Item2: Squared Deviations, Item3: Cubed Deviations
-            Median = medianAndDeviations.Item1;
-            Variance = medianAndDeviations.Item2 / (SampleSize - 1);
-            StandardDeviation = Math.Sqrt(Variance);
-            Skewness = medianAndDeviations.Item3 / (SampleSize - 1);
-            Minimum = Bins[0].Minimum;
-            Maximum = Bins[^1].Maximum;
+                var medianAndDeviations = HistogramMedianAndDeviations(Bins, Mean, SampleSize);
+                // Item1: Median, Item2: Squared Deviations, Item3: Cubed Deviations
+                Median = medianAndDeviations.Item1;
+                Variance = medianAndDeviations.Item2 / (SampleSize - 1);
+                StandardDeviation = Math.Sqrt(Variance);
+                Skewness = medianAndDeviations.Item3 / (SampleSize - 1);
+                Minimum = Bins[0].Minimum;
+                Maximum = Bins[^1].Maximum;
+            }
+        }
+        private bool FatalErrors(IEnumerable<double> sample, int nBins, out IList<string> errors)
+        {
+            errors = new List<string>();
+            if (sample.IsNullOrEmpty()) errors.Add("The provided sample data is invalid because it is null or empty.");
+            if (nBins < 1) errors.Add($"The requested number of bins: {nBins} is invalid, at least one bin must be requested.");
+            return errors.Any();
         }
         /// <summary>
         /// Histogram constructor for adding sample to existing histogram.
@@ -95,6 +106,7 @@ namespace Statistics.Histograms
             sampleSize = 0;
             Bin[] bins = new Bin[nBins];
             int binIndex = 0, binCount = 0;
+
             IEnumerable<double> data = sample.OrderBy(i => i);
             // Bin width, Bin min, Bin max, sum of sample data values
             double width = (data.Max() - data.Min()) / (nBins - 1), min = data.Min() - width / 2, max = min + width, sum = 0;
