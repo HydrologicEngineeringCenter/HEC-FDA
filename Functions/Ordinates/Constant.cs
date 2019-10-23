@@ -1,0 +1,40 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Functions.Ordinates
+{
+    internal class Constant : IOrdinate
+    {
+        private double _ConstantValue;
+        internal Constant(double value)
+        {
+            _ConstantValue = value;
+        }
+
+        public Tuple<double, double> Range
+        {
+            get { return new Tuple<double, double>(_ConstantValue, _ConstantValue); }
+        }
+
+        public bool IsDistributed
+        {
+            get { return false; }
+        }
+
+        public bool Equals(IOrdinate scalar)
+        {
+            return scalar.Print().Equals(this.Print());
+        }
+
+        public string Print()
+        {
+            return $"Double(value: {_ConstantValue}";
+        }
+
+        public double Value(double p = 0.5)
+        {
+            return _ConstantValue;
+        }
+    }
+}
