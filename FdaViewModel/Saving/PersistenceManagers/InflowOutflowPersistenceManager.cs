@@ -34,7 +34,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         public static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string), typeof(string), typeof(string) };
 
         public override string TableName { get { return TABLE_NAME; } }
-        //TODO MAKE THIS A REAL NAME
+        
         public override string ChangeTableName { get { return "inflow_outflow_changes"; } }
 
         //TODO: what are these things below. I don't think i use them on the other elements.
@@ -42,7 +42,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override string ChangeTableStateIndexColName { get { return STATE_INDEX_COL_NAME; } }
 
-        public override int ChangeTableLastEditDateIndex { get { return LAST_EDIT_DATE_INDEX; } }
+        public override int ChangeTableLastEditDateIndex { get { return LAST_EDIT_DATE_COL; } }
 
         public override string ChangeTableElementIdColName { get { return ELEMENT_ID_COL_NAME; } }
 

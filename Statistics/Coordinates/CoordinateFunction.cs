@@ -6,7 +6,7 @@ namespace Statistics.Coordinates
 {
     internal class CoordinateFunction<XType, YType>
     {
-        ICoordinate<XType, YType>[] Coordinates { get; }
+        //ICoordinate<XType, YType>[] Coordinates { get; }
         
     }
 }

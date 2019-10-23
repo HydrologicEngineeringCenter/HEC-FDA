@@ -155,7 +155,7 @@ namespace Statistics.Histograms
             StandardDeviation = Math.Sqrt(Variance);
             Skewness = medianAndDeviations.Item3 / (SampleSize - 1);
             Minimum = Bins[0].Minimum;
-            Maximum = Bins[^1].Maximum;
+            Maximum = Bins[Bins.Length - 1].Maximum;
         }
         #endregion
 
@@ -382,12 +382,12 @@ namespace Statistics.Histograms
         #region IDistribution Functions
         public double PDF(double x)
         {
-            if (!x.IsOnRange(min: Bins[0].Minimum, max: Bins[^1].Maximum, inclusiveMin: true, inclusiveMax: false)) return 0;
+            if (!x.IsOnRange(min: Bins[0].Minimum, max: Bins[Bins.Length-1].Maximum, inclusiveMin: true, inclusiveMax: false)) return 0;
             else return (double)FindBin(x, false) / SampleSize;
         }
         public double CDF(double x)
         {
-            if (!x.IsOnRange(min: Bins[0].Minimum, max: Bins[^1].Maximum, inclusiveMin: true, inclusiveMax: false)) return x < Bins[0].Minimum ? 0 : 1;
+            if (!x.IsOnRange(min: Bins[0].Minimum, max: Bins[Bins.Length - 1].Maximum, inclusiveMin: true, inclusiveMax: false)) return x < Bins[0].Minimum ? 0 : 1;
             else return (double)FindBin(x) / SampleSize;
         }
         public double InverseCDF(double p)

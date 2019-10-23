@@ -21,24 +21,15 @@ namespace FdaViewModel.Saving
         public const string ID_COL_NAME = "id";
         public const string NAME = "name";
         //todo: move these out of here and put in the rating element persistence manager which is what is using it
-        public const int ID_INDEX = 0;
         public const string ELEMENT_ID_COL_NAME = "elem_id";
 
         public const string LAST_EDIT_DATE = "last_edit_date";
-        public const int LAST_EDIT_DATE_INDEX = 2;
 
         public const string DESCRIPTION = "description";
-        public const int DESCRIPTION_INDEX = 3;
-
         public const string CURVE_DISTRIBUTION_TYPE = "curve_distribution_type";
-        public const int CURVE_DISTRIBUTION_TYPE_INDEX = 4;
-
+        //todo: some elems use the curve type in their tables and some don't. Am i using the curve type for something? investigate?
         public const string CURVE_TYPE = "curve_type";
-        public const int CURVE_TYPE_INDEX = 5;
-
-
         public const string CURVE = "curve";
-        public const int CURVE_INDEX = 6;
 
 
         public abstract string[] TableColumnNames { get; }

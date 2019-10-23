@@ -141,7 +141,17 @@ namespace FdaViewModel.Study
 
         public int MessageCount
         {
-            get { return _MessageRows.Count; }
+            get 
+            {
+                if (_MessageRows != null)
+                {
+                    return _MessageRows.Count;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
         }
 
         public bool TransactionsMessagesVisible

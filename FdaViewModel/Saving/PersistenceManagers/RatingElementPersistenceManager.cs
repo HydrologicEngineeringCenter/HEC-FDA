@@ -12,6 +12,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
 {
     public class RatingElementPersistenceManager :UndoRedoBase, IPersistableWithUndoRedo
     {
+        private const int NAME_COL = 1;
+        private const int LAST_EDIT_DATE_COL = 1;
+        private const int DESC_COL = 1;
+        private const int CURVE_DIST_TYPE_COL = 1;
+        private const int CURVE_TYPE_COL = 1;
+        private const int CURVE_COL = 1;
+
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("RatingElementPersistenceManager");
         //ELEMENT_TYPE is used to store the type of element in the log tables.
         private const string ELEMENT_TYPE = "rating_curve";
@@ -23,6 +30,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
         /// The name of the change table that will hold the various states of elements.
         /// </summary>
         public override string ChangeTableName { get { return "rating_curve_changes"; } }
+
+     
 
         /// <summary>
         /// Names of the columns in the parent table
@@ -129,11 +138,11 @@ namespace FdaViewModel.Saving.PersistenceManagers
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), 
-                (string)rowData[CURVE_DISTRIBUTION_TYPE_INDEX]));
-            RatingCurveElement rc = new RatingCurveElement((string)rowData[CHANGE_TABLE_NAME_INDEX], (string)rowData[LAST_EDIT_DATE_INDEX], 
-                (string)rowData[DESCRIPTION_INDEX], emptyCurve);
-            rc.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_INDEX], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), 
-                (string)rowData[CURVE_DISTRIBUTION_TYPE_INDEX]));
+                (string)rowData[CURVE_DIST_TYPE_COL]));
+            RatingCurveElement rc = new RatingCurveElement((string)rowData[CHANGE_TABLE_NAME_INDEX], (string)rowData[LAST_EDIT_DATE_COL], 
+                (string)rowData[DESC_COL], emptyCurve);
+            rc.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_COL], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), 
+                (string)rowData[CURVE_DIST_TYPE_COL]));
             return rc;
         }
 

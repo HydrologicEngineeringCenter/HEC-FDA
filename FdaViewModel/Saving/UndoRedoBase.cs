@@ -33,7 +33,7 @@ namespace FdaViewModel.Saving
         //todo: not sure if i need this one
         public virtual int ChangeTableNameColIndex { get { return CHANGE_TABLE_NAME_INDEX; } }
         public virtual string ChangeTableStateIndexColName { get { return STATE_INDEX_COL_NAME; } }
-        public virtual int ChangeTableLastEditDateIndex { get { return LAST_EDIT_DATE_INDEX; } }
+        public virtual int ChangeTableLastEditDateIndex { get { return 2; } }
         public virtual string ChangeTableElementIdColName { get {return  ELEMENT_ID_COL_NAME; } }
 
 

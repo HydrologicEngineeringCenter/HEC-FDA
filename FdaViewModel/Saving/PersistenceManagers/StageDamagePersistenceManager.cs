@@ -11,6 +11,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
 {
     public class StageDamagePersistenceManager : UndoRedoBase, IPersistableWithUndoRedo
     {
+        private const int NAME_COL = 1;
+        private const int LAST_EDIT_DATE_COL = 2;
+        private const int DESC_COL = 3;
+        private const int CURVE_DIST_TYPE_COL = 4;
+        private const int CREATION_METHOD_COL = 5;
+        private const int CURVE_COL = 6;
+
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
         //you would no longer get any of the old logs. So i use this constant.
@@ -85,11 +92,14 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            //todo: make the ints constancts at the top of the class
-            Statistics.UncertainCurveDataCollection emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[4]));
-            AggregatedStageDamageElement asd = new AggregatedStageDamageElement((string)rowData[1], (string)rowData[2], (string)rowData[3], emptyCurve, (CreationMethodEnum)Enum.Parse(typeof(CreationMethodEnum), (string)rowData[5]));
+            Statistics.UncertainCurveDataCollection emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
+                (string)rowData[CURVE_DIST_TYPE_COL]));
+            AggregatedStageDamageElement asd = new AggregatedStageDamageElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL], 
+                (string)rowData[DESC_COL], emptyCurve, (CreationMethodEnum)Enum.Parse(typeof(CreationMethodEnum), (string)rowData[CREATION_METHOD_COL]));
             //asd.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
-            asd.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[6], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[4]));
+            asd.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_COL], 
+                (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), 
+                (string)rowData[CURVE_DIST_TYPE_COL]));
             return asd;
         }
         #endregion

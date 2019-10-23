@@ -46,7 +46,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         public override string[] ChangeTableColumnNames
         {
             get
-            {//todo make a constant string
+            {
                 return new string[] { ELEMENT_ID_COL_NAME, NAME, LAST_EDIT_DATE, DESCRIPTION, "associated_levee_feature", CURVE_DISTRIBUTION_TYPE, CURVE, STATE_INDEX_COL_NAME };
             }
         }

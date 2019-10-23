@@ -6,7 +6,6 @@ using System.Text;
 
 using Xunit;
 
-using Statistics;
 using Statistics.Histograms;
 
 namespace StatisticsTests.Histograms

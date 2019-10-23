@@ -9,12 +9,12 @@ namespace Statistics.Coordinates
         //TODO: Optionally enforce common X, Y types across all coordinates (Functions may have a solution here)
 
         bool IsInvertable { get; }
-        ICoordinate<XType, YType>[] Coordinates { get; }
+        //ICoordinate<XType, YType>[] Coordinates { get; }
         //Interpolator --Description: Linear, Piecewise, NoInterpolation ...
         //Interpolator<YType, XType>
 
         YType F(XType x);
         XType InverseF(YType y);
-        ICoordinate<double, double> Sample(double p);
+        //ICoordinate<double, double> Sample(double p);
     }
 }

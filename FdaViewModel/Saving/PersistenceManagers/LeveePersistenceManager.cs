@@ -11,6 +11,10 @@ namespace FdaViewModel.Saving.PersistenceManagers
 {
     public class LeveePersistenceManager : SavingBase, IElementManager
     {
+        private const int NAME_COL = 1;
+        private const int DESC_COL = 2;
+        private const int ELEVATION_COL = 3;
+
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
         //you would no longer get any of the old logs. So i use this constant.
@@ -57,8 +61,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            //todo: make constants
-            return new LeveeFeatureElement((string)rowData[1], (string)rowData[2], Convert.ToDouble( rowData[3]));
+            return new LeveeFeatureElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], Convert.ToDouble( rowData[ELEVATION_COL]));
         }
         #endregion
 
