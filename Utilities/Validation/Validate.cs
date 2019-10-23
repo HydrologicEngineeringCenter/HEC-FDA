@@ -50,5 +50,16 @@ namespace Utilities.Validation
         /// <returns> <see langword="true"/> if <paramref name="min"/> &lt <paramref name="max"/> or <see langword="false"/> otherwise. </returns>
         public static bool IsRange<T>(T min, T max) where T : IComparable => min.CompareTo(max) < 0 ? true : false;
         public static bool IsOnRange<T>(this T value, T min, T max, bool inclusiveMin = true, bool inclusiveMax = true) where T : IComparable => value.CompareTo(min) > (inclusiveMin ? -1 : 0) && value.CompareTo(max) < (inclusiveMax ? 1 : 0);
+        public static int CastToInt(this long value)
+        {
+            try
+            {
+                return Convert.ToInt32(value);
+            }
+            catch (OverflowException)
+            {
+                return int.MaxValue;
+            }
+        }
     }
 }

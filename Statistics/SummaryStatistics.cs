@@ -1,51 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using Utilities.Validation;
 
 namespace Statistics
 {
-    internal class SummaryStatistics
+    internal class SummaryStatistics : IValidate<SummaryStatistics>
     {
-        //TODO: Validation
-
-        private readonly MathNet.Numerics.Statistics.DescriptiveStatistics _SampleStatistics;
-
-        public double Mean => _SampleStatistics.Mean;
-        public double Variance => _SampleStatistics.Variance;
-        public double StandardDeviation => _SampleStatistics.StandardDeviation;
-        public double Skewness => _SampleStatistics.Skewness;
-        public double Minimum => _SampleStatistics.Minimum;
-        public double Maximum => _SampleStatistics.Maximum;
-        public int SampleSize => (int)_SampleStatistics.Count;
+        public bool IsValid { get; }
+        public IEnumerable<string> Errors { get; }
+        public double Mean { get; }
+        public double Variance { get; }
+        public double StandardDeviation { get; }
+        public double Skewness { get; }
+        public double Minimum { get; }
+        public double Maximum { get; }
+        public int SampleSize { get; }
 
         public SummaryStatistics(IEnumerable<double> sample)
         {
-            _SampleStatistics = new MathNet.Numerics.Statistics.DescriptiveStatistics(sample);
+            if (sample.Any())
+            {
+                var stats = new MathNet.Numerics.Statistics.DescriptiveStatistics(sample);
+                Mean = stats.Mean;
+                Variance = stats.Variance;
+                StandardDeviation = stats.StandardDeviation;
+                Skewness = stats.Skewness;
+                Minimum = stats.Minimum;
+                Maximum = stats.Maximum;
+                SampleSize = stats.Count.CastToInt();
+                IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<string> errors);
+                Errors = errors;
+            }
+            else new SummaryStatistics();
+        }
+
+        public SummaryStatistics()
+        {
+            Mean = double.NaN;
+            Variance = double.NaN;
+            StandardDeviation = double.NaN;
+            Skewness = double.NaN;
+            Minimum = double.NaN;
+            Maximum = double.NaN;
+            SampleSize = 0;
+            IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<string> errors);
+            Errors = errors;
+        }
+        
+        public bool Validate(IValidator<SummaryStatistics> validator, out IEnumerable<string> errors)
+        {
+            return validator.IsValid(this, out errors);
         }
     }
-
-    
-    //public class SummaryStatistics
-    //{
-    //    public double Mean { get; }
-    //    public double Median { get; }
-    //    public double Mode { get; }
-    //    public double Variance { get; }
-    //    public double Skewness { get; }
-    //    public double Minimum { get; }
-    //    public double Maximum { get; }
-    //    public int SampleSize { get; }
-
-    //    public SummaryStatistics(double mean, double median, double mode, double variance, double skewness, double minimum, double maximum, int n)
-    //    {
-    //        Mean = mean;
-    //        Median = median;
-    //        Mode = mode;
-    //        Variance = variance;
-    //        Skewness = skewness;
-    //        Minimum = minimum;
-    //        Maximum = maximum;
-    //        SampleSize = n;
-    //    }
-    //}
 }

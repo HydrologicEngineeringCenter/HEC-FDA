@@ -8,6 +8,49 @@ namespace Statistics.Histograms
 {
     internal class Histogram : IHistogram, IDistribution, IValidate<IHistogram>
     {
+        internal Histogram(double min, double max, double widths)
+        {
+            if (!IsConstructable(min, max, widths, out IList<string> messages)) throw new InvalidConstructorArgumentsException(messages);
+            else
+            {
+                Bins = InitializeEmptyBins(min, max, widths, out SummaryStatistics stats);
+                Minimum = min;
+                Maximum = max;
+                Mean = stats.Mean;
+                Variance = stats.Variance;
+                Skewness = stats.Skewness;
+                SampleSize = stats.SampleSize;
+                StandardDeviation = stats.StandardDeviation;
+                IsValid = Validate(new Validation.HistogramValidator(), out IEnumerable<string> errors);
+                Errors = errors;
+            }
+        }
+        private bool IsConstructable(double min, double max, double binwidths, out IList<string> messages)
+        {
+            messages = new List<string>();
+            if (!binwidths.IsFinite() || !(binwidths > 0)) messages.Add($"The requested {typeof(Histogram)} cannot be constructed because the requested bin width: {binwidths} is not a positive finite value.");
+            if (!min.IsFinite() || !max.IsFinite() || Utilities.Validation.Validate.IsRange(min, max)) messages.Add($"The requested {typeof(Histogram)} cannot be constructed because the range: [{min}, {max}) that was provided is invalid.");
+            if (max - min < binwidths) messages.Add($"The requested {typeof(Histogram)} cannot be constructed because the request bin width: {binwidths} is less than the requested {typeof(Histogram)} range: [{min}, {max}).");
+            return messages.Any();
+        }
+        private IBin[] InitializeEmptyBins(double min, double max, double widths, out SummaryStatistics stats)
+        {
+            List<IBin> bins = new List<IBin>();
+            while (min < max)
+            {
+                bins.Add(new Bin(min, min + widths, 0));
+                min += widths;
+            }
+            stats = new SummaryStatistics();
+            return bins.ToArray();
+        } 
+
+        
+        
+        
+        
+        
+        
         //TODO: Add convergence
         //TODO: Keep bins in accending order
         //TODO: Fit to Beta4Parameter distribution
@@ -29,10 +72,6 @@ namespace Statistics.Histograms
         public double Maximum { get; }
         public int SampleSize { get; }
         #endregion
-        //#region IOrdinate Properties
-        //public bool IsVariable => true;
-        //public Type OrdinateType => typeof(IHistogram);
-        //#endregion
         public IBin[] Bins { get; }
         #endregion
 
@@ -44,30 +83,60 @@ namespace Statistics.Histograms
         /// <param name="nBins"> The number of desired bins. </param>
         public Histogram(IEnumerable<double> sample, int nBins = 100)
         {
-            if (FatalErrors(sample, nBins, out _)) throw new ArgumentException("The requested histogram cannot be constructed.");
+            if (!IsConstructable(sample, nBins, out IList<string> errors)) throw new InvalidConstructorArgumentsException(errors);
             else
             {
-                Bins = BinData(sample, nBins, out int sampleSize, out double mean);
-                SampleSize = sampleSize;
-                Mean = mean;
 
-                var medianAndDeviations = HistogramMedianAndDeviations(Bins, Mean, SampleSize);
-                // Item1: Median, Item2: Squared Deviations, Item3: Cubed Deviations
-                Median = medianAndDeviations.Item1;
-                Variance = medianAndDeviations.Item2 / (SampleSize - 1);
-                StandardDeviation = Math.Sqrt(Variance);
-                Skewness = medianAndDeviations.Item3 / (SampleSize - 1);
-                Minimum = Bins[0].Minimum;
-                Maximum = Bins[^1].Maximum;
             }
+            if (IsConstructable(sample, nBins, out _))
+            {
+                //1. Bin data also collect sample size and histogram mean.
+                Bins = BinData(sample, nBins, out int n, out double mu);
+                SampleSize = n; Mean = mu;
+                //2. Collect histogram measures of dispersion on second pass.
+                Minimum = Bins[0].Minimum; Maximum = Bins[Bins.Length - 1].Maximum;
+                var dispersionTuple = HistogramMedianAndDeviations(Bins, Mean, SampleSize);
+                Median = dispersionTuple.Item1;  Variance = dispersionTuple.Item2 / (SampleSize - 1);
+                Skewness = dispersionTuple.Item3 / (SampleSize - 1); StandardDeviation = Math.Sqrt(Variance);
+            }
+            else throw new ArgumentException();
         }
-        private bool FatalErrors(IEnumerable<double> sample, int nBins, out IList<string> errors)
+        private bool IsConstructable(IEnumerable<double> sample, int nBins, out IList<string> errors)
         {
             errors = new List<string>();
+            if (nBins < 1) errors.Add($"The requested number of bins: {nBins} is invalid, at least one bin must be requested.");
             if (sample.IsNullOrEmpty()) errors.Add("The provided sample data is invalid because it is null or empty.");
+            else
+            {
+                SummaryStatistics stats = new SummaryStatistics(sample);
+                if (stats.Variance == 0) errors.Add("The provided sample data is invalid in the current constructor because it lacks variance and therefore cannot be used to generate histogram bin widths.");
+            }
+            return errors.Any();
+        }
+
+        public Histogram(IEnumerable<double> sample, double width)
+        {
+            throw new NotImplementedException();    
+        }
+        private bool IsConstructable(IEnumerable<double> sample, double width, out IList<string> errors)
+        {
+            errors = new List<string>();
+            if (!width.IsFinite() || width < 0) errors.Add($"The requested bin width: {width} is invalid because it is not a positive finite value.");
+            return errors.Any();
+        }
+
+        public Histogram(double width, int nBins)
+        {
+            throw new NotImplementedException();
+        }
+        private bool IsConstructable(double width, int nBins, out IList<string> errors)
+        {
+            errors = new List<string>();
+            if (!width.IsFinite() || width < 0) errors.Add($"The requested bin width: {width} is invalid because it is not a positive finite value.");
             if (nBins < 1) errors.Add($"The requested number of bins: {nBins} is invalid, at least one bin must be requested.");
             return errors.Any();
         }
+
         /// <summary>
         /// Histogram constructor for adding sample to existing histogram.
         /// </summary>
@@ -106,10 +175,12 @@ namespace Statistics.Histograms
             sampleSize = 0;
             Bin[] bins = new Bin[nBins];
             int binIndex = 0, binCount = 0;
+            
 
             IEnumerable<double> data = sample.OrderBy(i => i);
+            SummaryStatistics stats = new SummaryStatistics(data);
             // Bin width, Bin min, Bin max, sum of sample data values
-            double width = (data.Max() - data.Min()) / (nBins - 1), min = data.Min() - width / 2, max = min + width, sum = 0;
+            double width = (stats.Maximum - stats.Minimum) / (nBins - 1), min = data.Min() - width / 2, max = min + width, sum = 0;
             foreach (var x in data)
             {
                 // x is greater than bin max, so create new bin(s) until x can be binned.
