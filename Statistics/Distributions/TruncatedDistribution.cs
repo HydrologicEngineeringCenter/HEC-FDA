@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-using Utilities.Validation;
+using Utilities;
 
 namespace Statistics.Distributions
 {

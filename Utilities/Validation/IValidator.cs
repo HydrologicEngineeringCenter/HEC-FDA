@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Utilities.Validation
+namespace Utilities
 {
     public interface IValidator<T>
     {
-        bool IsValid(T entity, out IEnumerable<string> errors);
-        IEnumerable<string> ReportErrors(T entity);
+        bool IsValid(T entity, out IEnumerable<IMessage> errors);
+        IEnumerable<IMessage> ReportErrors(T entity);
     }
 }

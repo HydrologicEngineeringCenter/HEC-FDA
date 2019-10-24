@@ -1,11 +1,8 @@
-﻿using System;
+﻿using MathNet.Numerics.Statistics;
+using System;
 using System.Collections.Generic;
-using System.Text;
-
-using Utilities.Validation;
-
-using MathNet.Numerics.Statistics;
 using System.Linq;
+using Utilities;
 
 namespace Statistics.Distributions
 {

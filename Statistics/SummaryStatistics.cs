@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Utilities.Validation;
+
+using Utilities;
 
 namespace Statistics
 {
     internal class SummaryStatistics : IValidate<SummaryStatistics>
     {
         public bool IsValid { get; }
-        public IEnumerable<string> Errors { get; }
+        public IEnumerable<IMessage> Errors { get; }
         public double Mean { get; }
         public double Variance { get; }
         public double StandardDeviation { get; }
@@ -29,7 +30,7 @@ namespace Statistics
                 Minimum = stats.Minimum;
                 Maximum = stats.Maximum;
                 SampleSize = stats.Count.CastToInt();
-                IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<string> errors);
+                IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<IMessage> errors);
                 Errors = errors;
             }
             else new SummaryStatistics();
@@ -44,11 +45,11 @@ namespace Statistics
             Minimum = double.NaN;
             Maximum = double.NaN;
             SampleSize = 0;
-            IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<string> errors);
+            IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<IMessage> errors);
             Errors = errors;
         }
         
-        public bool Validate(IValidator<SummaryStatistics> validator, out IEnumerable<string> errors)
+        public bool Validate(IValidator<SummaryStatistics> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);
         }

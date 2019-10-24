@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-using Utilities.Validation;
+using Utilities;
 using System.Collections.Generic;
 
 namespace UtilitiesTests

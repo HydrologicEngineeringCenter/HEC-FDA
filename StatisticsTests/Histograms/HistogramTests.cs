@@ -13,6 +13,12 @@ namespace StatisticsTests.Histograms
     public class HistogramTests
     {
         #region Empty Bins
+        /// <summary>
+        /// Tests that for a variety of good data examples the expected number of <see cref="Histogram.Bins"/> is returned, where the expected number of bins is equal to the <see cref="Histogram.Maximum"/> minus the <see cref="Histogram.Minimum"/> divided by the provided <paramref name="widths"/> rounded up to the nearest integer value.
+        /// </summary>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <param name="widths"></param>
         [Theory]
         [InlineData(0, 1, 1)]
         [InlineData(-1, 1, 1)]
@@ -29,6 +35,12 @@ namespace StatisticsTests.Histograms
             //A double precision issue prevents the commented out assert statement below from working...
             //Assert.Equal<int>(expected, testObj.Bins.Length, );
         }
+        /// <summary>
+        /// Test that for a variety of good data examples the requested minimum value is provided as the <see cref="Histogram.Minimum"/> property.
+        /// </summary>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <param name="widths"></param>
         [Theory]
         [InlineData(-100, -1, 1)]
         [InlineData(-1, 1, 1)]

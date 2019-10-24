@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-using Utilities.Validation;
+using Utilities;
 
 namespace Statistics.Validation
 {
@@ -13,16 +12,17 @@ namespace Statistics.Validation
         {
         }
 
-        public bool IsValid(SummaryStatistics obj, out IEnumerable<string> messages)
+        public bool IsValid(SummaryStatistics obj, out IEnumerable<IMessage> messages)
         {
             messages = ReportErrors(obj);
             return !messages.Any();
         }
-        public IEnumerable<string> ReportErrors(SummaryStatistics obj)
+        public IEnumerable<IMessage> ReportErrors(SummaryStatistics obj)
         {
-            IList<string> messages = new List<string>();
-            if (obj.SampleSize < 1) messages.Add("The provided sample is invalid because it contains no elements.");
-            if (!obj.Minimum.IsFinite() || !obj.Maximum.IsFinite()) messages.Add("The sample contains non-finite elements that will produce illogical or useless results.");
+            IList<IMessage> messages = new List<IMessage>();
+            if (obj.IsNull()) throw new ArgumentNullException($"The {obj.GetType()} is invalid because it is null");
+            if (obj.SampleSize < 1) messages.Add(IMessageFactory.Factory(IMessageLevels.Error, "The provided sample is invalid because it contains no elements."));
+            if (!obj.Minimum.IsFinite() || !obj.Maximum.IsFinite()) messages.Add(IMessageFactory.Factory(IMessageLevels.Error, "The sample contains non-finite elements that will produce illogical or useless results."));
             return messages;
         }
     }

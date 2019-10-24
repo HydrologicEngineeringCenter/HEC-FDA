@@ -1,8 +1,8 @@
-﻿using MathNet.Numerics.Statistics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Utilities.Validation;
+
+using Utilities;
 
 namespace Statistics.Histograms
 {
@@ -21,7 +21,7 @@ namespace Statistics.Histograms
                 Skewness = stats.Skewness;
                 SampleSize = stats.SampleSize;
                 StandardDeviation = stats.StandardDeviation;
-                IsValid = Validate(new Validation.HistogramValidator(), out IEnumerable<string> errors);
+                IsValid = Validate(new Validation.HistogramValidator(), out IEnumerable<IMessage> errors);
                 Errors = errors;
             }
         }
@@ -29,7 +29,7 @@ namespace Statistics.Histograms
         {
             messages = new List<string>();
             if (!binwidths.IsFinite() || !(binwidths > 0)) messages.Add($"The requested {typeof(Histogram)} cannot be constructed because the requested bin width: {binwidths} is not a positive finite value.");
-            if (!min.IsFinite() || !max.IsFinite() || Utilities.Validation.Validate.IsRange(min, max)) messages.Add($"The requested {typeof(Histogram)} cannot be constructed because the range: [{min}, {max}) that was provided is invalid.");
+            if (!min.IsFinite() || !max.IsFinite() || Utilities.Validate.IsRange(min, max)) messages.Add($"The requested {typeof(Histogram)} cannot be constructed because the range: [{min}, {max}) that was provided is invalid.");
             if (max - min < binwidths) messages.Add($"The requested {typeof(Histogram)} cannot be constructed because the request bin width: {binwidths} is less than the requested {typeof(Histogram)} range: [{min}, {max}).");
             return messages.Any();
         }
@@ -59,7 +59,7 @@ namespace Statistics.Histograms
         #region Properties
         #region IValidate Properties
         public bool IsValid { get; }
-        public IEnumerable<string> Errors { get; }
+        public IEnumerable<IMessage> Errors { get; }
         #endregion
         #region IDistribution Properties
         public IDistributions Type => IDistributions.Histogram;
@@ -374,7 +374,7 @@ namespace Statistics.Histograms
         #endregion
         #endregion
         #region Validation Functions
-        public bool Validate(IValidator<IHistogram> validator, out IEnumerable<string> errors)
+        public bool Validate(IValidator<IHistogram> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);
         }

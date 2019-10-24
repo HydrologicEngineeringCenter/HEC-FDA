@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Utilities.Validation
+namespace Utilities
 {
     /// <summary>
     /// Provides <see langword="static"/> functions for use in the validation of model parameters.

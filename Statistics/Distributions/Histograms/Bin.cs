@@ -5,7 +5,7 @@ using System.Text;
 
 using Statistics.Validation;
 
-using Utilities.Validation;
+using Utilities;
 
 namespace Statistics.Histograms
 {
@@ -20,7 +20,7 @@ namespace Statistics.Histograms
         #region Properties
         #region IValidate Properties
         public bool IsValid { get; }
-        public IEnumerable<string> Errors { get; }
+        public IEnumerable<IMessage> Errors { get; }
         #endregion
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Statistics.Histograms
             Maximum = max;
             MidPoint = Minimum + (Maximum - Minimum) / 2;
             Count = n;
-            IsValid = Validate(new BinValidator(), out IEnumerable<string> errors);
+            IsValid = Validate(new BinValidator(), out IEnumerable<IMessage> errors);
             Errors = errors;
         }
         /// <summary>
@@ -62,14 +62,14 @@ namespace Statistics.Histograms
             Maximum = oldBin.Maximum;
             MidPoint = oldBin.MidPoint;
             Count = oldBin.Count + addN;
-            IsValid = Validate(new BinValidator(), out IEnumerable<string> errors);
+            IsValid = Validate(new BinValidator(), out IEnumerable<IMessage> errors);
             Errors = errors;
         }
         #endregion
 
         #region Functions
         #region IValidate Functions
-        public bool Validate(IValidator<IBin> validator, out IEnumerable<string> errors)
+        public bool Validate(IValidator<IBin> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);
         }

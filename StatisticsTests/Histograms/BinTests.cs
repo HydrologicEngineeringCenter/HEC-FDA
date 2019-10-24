@@ -7,6 +7,7 @@ using System.Text;
 using Xunit;
 
 using Statistics.Histograms;
+using Utilities;
 
 namespace StatisticsTests.Histograms
 {
@@ -14,6 +15,10 @@ namespace StatisticsTests.Histograms
     public class BinTests
     {
         #region Property Tests
+        /// <summary>
+        /// Tests that the requested minimum is provided as the <see cref="Bin.Minimum"/> property regardless of the validity of the provided argument.
+        /// </summary>
+        /// <param name="min"> The requested bin minimum. </param>
         [Theory]
         [InlineData(-1)]
         [InlineData(0)]
@@ -26,6 +31,10 @@ namespace StatisticsTests.Histograms
             var testObj = new Bin(min, 2, 0);
             Assert.Equal(min, testObj.Minimum);
         }
+        /// <summary>
+        /// Tests that the requested maximum is provided as the <see cref="Bin.Maximum"/> property regardless of the validity of the provided argument.
+        /// </summary>
+        /// <param name="max"> The requested bin maximum. </param>
         [Theory]
         [InlineData(-1)]
         [InlineData(0)]
@@ -38,6 +47,10 @@ namespace StatisticsTests.Histograms
             var testObj = new Bin(0, max, 0);
             Assert.Equal(max, testObj.Maximum);
         }
+        /// <summary>
+        /// Tests that the requested bin count is provided as the <see cref="Bin.Count"/> property regardless of the validity of the provided argument.
+        /// </summary>
+        /// <param name="count"> The requested bin count. </param>
         [Theory]
         [InlineData(-1)]
         [InlineData(0)]
@@ -49,6 +62,10 @@ namespace StatisticsTests.Histograms
             var testObj = new Bin(0, 2, count);
             Assert.Equal(count, testObj.Count);
         }
+        /// <summary>
+        /// Tests that the mid point between the <see cref="Bin.Minimum"/> and the <see cref="Bin.Maximum"/> is is provided as the <see cref="Bin.MidPoint"/> property regardless of the validity of the value.
+        /// </summary>
+        /// <param name="count"> The requested bin count. </param>
         [Theory]
         [InlineData(0, 2)]
         [InlineData(2, 0)]
@@ -196,7 +213,7 @@ namespace StatisticsTests.Histograms
             Assert.True(new Bin(oldBin, addN).IsValid);
         }
         /// <summary>
-        /// Tests that old <see cref="Bin"/> with non finite <see cref="Bin.Minimum"/> or <see cref="Bin.Maximum"/> property values when added to sets <see cref="Bin.IsValid"/> to <see langword="false"/>.
+        /// Tests that when additional observations are added to an existing <see cref="Bin"/> with non finite <see cref="Bin.Minimum"/> or <see cref="Bin.Maximum"/> property values, the <see cref="Bin.IsValid"/> property reamins <see langword="false"/>.
         /// </summary>
         /// <param name="min"></param>
         /// <param name="max"></param>
@@ -212,6 +229,10 @@ namespace StatisticsTests.Histograms
             Bin oldBin = new Bin(min, max, n: 0);
             Assert.False(new Bin(oldBin, 0).IsValid);
         }
+        /// <summary>
+        /// Tests that when additional observations are added to an existing <see cref="Bin"/> that causes the <see cref="Bin.Count"/> property to return a negative value the <see cref="Bin.IsValid"/> property is set to <see langword="false"/>.
+        /// </summary>
+        /// <param name="addN"></param>
         [Theory]
         [InlineData(-1)]
         [InlineData(int.MinValue)]
