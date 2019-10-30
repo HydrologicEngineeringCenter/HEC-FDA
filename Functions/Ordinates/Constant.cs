@@ -22,9 +22,9 @@ namespace Functions.Ordinates
             get { return false; }
         }
 
-        public bool Equals(IOrdinate scalar)
+        public bool Equals(IOrdinate constant)
         {
-            return scalar.Print().Equals(this.Print());
+            return constant.Print().Equals(this.Print());
         }
 
         public string Print()

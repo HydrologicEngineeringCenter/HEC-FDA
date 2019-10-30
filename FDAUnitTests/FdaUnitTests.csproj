@@ -38,7 +38,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Consequences_Assist">
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\Consequences_Assist.dll</HintPath>
+      <HintPath>..\lib\Consequences_Assist.dll</HintPath>
     </Reference>
     <Reference Include="DataBase_Reader, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>

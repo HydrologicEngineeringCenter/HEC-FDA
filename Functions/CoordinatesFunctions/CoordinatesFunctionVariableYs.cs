@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Functions.Coordinates;
+using Statistics;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -6,39 +8,79 @@ using System.Text;
 
 namespace Functions.CoordinatesFunctions
 {
-    internal sealed class CoordinatesFunctionVariableYs: CoordinatesFunction
+    internal sealed class CoordinatesFunctionVariableYs: ICoordinatesFunction<double, IDistribution>
     {
         #region Properties
-        public bool IsDistributedXs { get; }
-        public bool IsDistributedYs { get; }
+        public bool IsInvertible { get; }
+        //todo: John i think we can get rid of the IsDistributedXs property since nothing has distributed xs.
+        public bool IsDistributedXs => false;
+        public bool IsDistributedYs => true;
         public OrderedSetEnum Order { get; }
+
+        public IImmutableList<ICoordinate<double, IDistribution>> Coordinates { get; }
+
+        public bool IsDistributed => true;
+
+        public Tuple<double, double> Domain { get; }
+
+        public InterpolationEnum Interpolator => throw new NotImplementedException();
         #endregion
 
         #region Constructor
-        internal CoordinatesFunctionVariableYs(IImmutableList<ICoordinate<IOrdinate, IOrdinate>> coordinates): base(coordinates)
+        //todo: are we using this interpolator?
+        internal CoordinatesFunctionVariableYs(IImmutableList<ICoordinate<double, IDistribution>> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
         {
-            IsDistributedXs = FindDistributedXs();
-            IsDistributedYs = FindDistributedYs();
+            if (IsValid(coordinates))
+            {
+                Coordinates = SortByXs(coordinates);
+                IsInvertible = IsInvertibleFunction();
+            }
+            Domain = new Tuple<double, double>(Coordinates[0].X, Coordinates[Coordinates.Count - 1].X);
+
         }
         #endregion
 
         #region Functions
-        #region Initialization Functions
-        private bool FindDistributedXs()
+        public bool IsInvertibleFunction()
         {
-            foreach (var xy in Coordinates) if (xy.X.IsDistributed) return true;
-            return false;
+            //todo: John, how is this working? How can you compare ys that are distributed?
+            for (int i = 0; i < Coordinates.Count; i++)
+            {
+                int j = i + 1;
+                while (j < Coordinates.Count)
+                {
+                    if (Coordinates[i].Y.Equals(Coordinates[j].Y) && !Coordinates[i].X.Equals(Coordinates[j].Y)) return false;
+                    else j++;
+                }
+            }
+            return true;
         }
-        private bool FindDistributedYs()
+        private bool IsValid(IImmutableList<ICoordinate<double, IDistribution>> coordinates)
         {
-            foreach (var xy in Coordinates) if (xy.Y.IsDistributed) return true;
-            return false;
+            if (Utilities.Validation.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate<double, IDistribution>>)) return false;
+            if (!IsFunction(coordinates)) throw new ArgumentException("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).");
+            return true;
         }
-        #endregion
+        private bool IsFunction(IImmutableList<ICoordinate<double, IDistribution>> xys)
+        {
+            for (int i = 0; i < xys.Count; i++)
+            {
+                int j = i + 1;
+                while (j < xys.Count)
+                {
+                    if (xys[i].X.Equals(xys[j].X) && !xys[i].Y.Equals(xys[j].Y)) return false;
+                    else j++;
+                }
+            }
+            return true;
+        }
+        public IImmutableList<ICoordinate<double, IDistribution>> SortByXs(IImmutableList<ICoordinate<double, IDistribution>> coordinates) 
+            => coordinates.OrderBy(xy => xy.X).ToImmutableList();
 
         #region F()
-        public override IOrdinate F(IOrdinate x)
+        public IDistribution F(double x)
         {
+            //todo: John, i tried to do F(1) and it came through as F(1.00000000001) which threw the exception. We might want to try to fix that?
             if (Utilities.Validation.IsNull(x)) throw new ArgumentNullException("The specified x value is invalid because it is null");
             for (int i = 0; i < Coordinates.Count; i++) if (Coordinates[i].X.Equals(x)) return Coordinates[i].Y;
             throw new ArgumentOutOfRangeException("The specified x value was not found in any of the coordinates. Interpolation is not supported for coordinates with distributed x or y values");      
@@ -46,13 +88,41 @@ namespace Functions.CoordinatesFunctions
         #endregion
 
         #region InverseF()
-        public override IOrdinate InverseF(IOrdinate y)
+        public double InverseF(IDistribution y)
         {
             if (Utilities.Validation.IsNull(y)) throw new ArgumentNullException("The specified y value is invalid because it is null");
             if (IsInvertible == false) throw new InvalidOperationException("The function InverseF(y) is invalid for this set of coordinates. The inverse of F(x) is not a function, because one or more y values maps to multiple x values");
-            for (int i = 0; i < Coordinates.Count; i++) if (Coordinates[i].Y.Equals(y)) return Coordinates[i].Y;
+            for (int i = 0; i < Coordinates.Count; i++)
+            {
+                if (Coordinates[i].Y.Equals(y))
+                {
+                    return Coordinates[i].X;
+                }
+            }
             throw new ArgumentOutOfRangeException("The specified y value was not found in any of the coordinates. Interpolation is not supported for coorindates with distributed x or y values.");
         }
+
+        public ICoordinatesFunction<double, double> Sample(double p)
+        {
+            return new CoordinatesFunctionConstants(ConvertCoordinatesToConstants(p));
+        }
+
+        public ICoordinatesFunction<double, double> Sample(double p, InterpolationEnum interpolator)
+        {
+            return new CoordinatesFunctionConstants(ConvertCoordinatesToConstants(p), interpolator);
+        }
+
+        private IImmutableList<ICoordinate<double, double>> ConvertCoordinatesToConstants(double p)
+        {
+            IImmutableList<ICoordinate<double, double>> coords = ImmutableList.Create<ICoordinate<double, double>>();
+            foreach (ICoordinate<double, IDistribution> coord in Coordinates)
+            {
+                coords = coords.Add(new CoordinateConstants(coord.X, coord.Y.InverseCDF(p)));
+            }
+            return coords;
+        }
+
+
         #endregion
         #endregion
     }
