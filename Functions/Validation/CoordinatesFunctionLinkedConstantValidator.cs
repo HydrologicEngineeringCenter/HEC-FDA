@@ -3,19 +3,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Utilities;
 using Utilities.Validation;
 
 namespace Functions.Validation
 {
     class CoordinatesFunctionLinkedConstantValidator : IValidator<CoordinatesFunctionLinkedConstants>
     {
-        public bool IsValid(CoordinatesFunctionLinkedConstants entity, out IEnumerable<string> errors)
+        //public bool IsValid(CoordinatesFunctionLinkedConstants entity, out IEnumerable<string> errors)
+        //{
+        //    errors = ReportErrors(entity);
+        //    return !errors.Any();
+        //}
+
+        public bool IsValid(CoordinatesFunctionLinkedConstants entity, out IEnumerable<IMessage> errors)
         {
             errors = ReportErrors(entity);
             return !errors.Any();
         }
 
-        public IEnumerable<string> ReportErrors(CoordinatesFunctionLinkedConstants entity)
+        public IEnumerable<IMessage> ReportErrors(CoordinatesFunctionLinkedConstants entity)
         {
             List<string> errors = new List<string>();
             if (entity.IsNull()) throw new ArgumentNullException(nameof(entity), $"The Linked Coordinates Function could not be validated because it is null.");
@@ -38,7 +45,13 @@ namespace Functions.Validation
                 }
             }
             //todo: john, check that ranges don't overlap?
-            return errors;
+            //todo: implement this correctly
+            return new List<IMessage>();
+        }
+
+        IEnumerable<IMessage> IValidator<CoordinatesFunctionLinkedConstants>.ReportErrors(CoordinatesFunctionLinkedConstants entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

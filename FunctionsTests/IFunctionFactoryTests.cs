@@ -14,7 +14,7 @@ namespace FunctionsTests
         //public void IFunctionFactory_ZeroCoordinate_NoInterpolation_Returns_IUnivariateFunction()
         //{
         //        ICoordinate<IOrdinate, IOrdinate> coordinate = ICoordinateFactory.Factory(IScalarFactory.Factory(0), IScalarFactory.Factory(0));
-        //        IImmutableList<ICoordinate<IOrdinate, IOrdinate>> list = ImmutableList.Create<ICoordinate<IOrdinate, IOrdinate>>(coordinate);
+        //        List<ICoordinate<IOrdinate, IOrdinate>> list = new List<ICoordinate<IOrdinate, IOrdinate>>(coordinate);
         //        IFunction testObj = IFunctionFactory.Factory(list, InterpolationEnum.NoInterpolation);
         //        Assert.True(true);
         //}
@@ -23,7 +23,7 @@ namespace FunctionsTests
         //public void IFunctionFactory_ZeroCoordinate_LinearInterpolation_Returns_IUnivariateFunction()
         //{
         //    ICoordinate<IOrdinate, IOrdinate> coordinate = ICoordinateFactory.Factory(IScalarFactory.Factory(0), IScalarFactory.Factory(0));
-        //    IImmutableList<ICoordinate<IOrdinate, IOrdinate>> list = ImmutableList.Create<ICoordinate<IOrdinate, IOrdinate>>(coordinate);
+        //    List<ICoordinate<IOrdinate, IOrdinate>> list = new List<ICoordinate<IOrdinate, IOrdinate>>(coordinate);
         //    IFunction testObj = IFunctionFactory.Factory(list, InterpolationEnum.Linear);
         //    Assert.True(true);
         //}
@@ -32,7 +32,7 @@ namespace FunctionsTests
         //public void IFunctionFactory_ZeroCoordinate_PiecewiseInterpolation_Returns_IUnivariateFunction()
         //{
         //    ICoordinate<IOrdinate, IOrdinate> coordinate = ICoordinateFactory.Factory(IScalarFactory.Factory(0), IScalarFactory.Factory(0));
-        //    IImmutableList<ICoordinate<IOrdinate, IOrdinate>> list = ImmutableList.Create<ICoordinate<IOrdinate, IOrdinate>>(coordinate);
+        //    List<ICoordinate<IOrdinate, IOrdinate>> list = new List<ICoordinate<IOrdinate, IOrdinate>>(coordinate);
         //    IFunction testObj = IFunctionFactory.Factory(list, InterpolationEnum.Piecewise);
         //    Assert.True(true);
         //}
@@ -46,7 +46,7 @@ namespace FunctionsTests
         //    try
         //    {
         //        ICoordinate<IOrdinate, IOrdinate> coordinate = ICoordinateFactory.Factory(IScalarFactory.Factory(0), IScalarFactory.Factory(0));
-        //        IImmutableList<ICoordinate<IOrdinate, IOrdinate>> list = ImmutableList<ICoordinate<IOrdinate, IOrdinate>>.Empty;
+        //        List<ICoordinate<IOrdinate, IOrdinate>> list = ImmutableList<ICoordinate<IOrdinate, IOrdinate>>.Empty;
         //        IFunction testObj = IFunctionFactory.Factory(list, InterpolationEnum.NoInterpolation);
         //        Assert.True(false);
         //    }
@@ -63,7 +63,7 @@ namespace FunctionsTests
         //    try
         //    {
         //        ICoordinate<IOrdinate, IOrdinate> coordinate = ICoordinateFactory.Factory(IScalarFactory.Factory(0), IScalarFactory.Factory(0));
-        //        IImmutableList<ICoordinate<IOrdinate, IOrdinate>> list = ImmutableList<ICoordinate<IOrdinate, IOrdinate>>.Empty;
+        //        List<ICoordinate<IOrdinate, IOrdinate>> list = ImmutableList<ICoordinate<IOrdinate, IOrdinate>>.Empty;
         //        IFunction testObj = IFunctionFactory.Factory(list, InterpolationEnum.Linear);
         //        Assert.True(false);
         //    }
@@ -80,7 +80,7 @@ namespace FunctionsTests
         //    try
         //    {
         //        ICoordinate<IOrdinate, IOrdinate> coordinate = ICoordinateFactory.Factory(IScalarFactory.Factory(0), IScalarFactory.Factory(0));
-        //        IImmutableList<ICoordinate<IOrdinate, IOrdinate>> list = ImmutableList<ICoordinate<IOrdinate, IOrdinate>>.Empty;
+        //        List<ICoordinate<IOrdinate, IOrdinate>> list = ImmutableList<ICoordinate<IOrdinate, IOrdinate>>.Empty;
         //        IFunction testObj = IFunctionFactory.Factory(list, InterpolationEnum.Piecewise);
         //        Assert.True(false);
         //    }

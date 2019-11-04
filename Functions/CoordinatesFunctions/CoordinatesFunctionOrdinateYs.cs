@@ -46,7 +46,7 @@ namespace Functions.CoordinatesFunctions
                 }
             }
         }
-        public IImmutableList<ICoordinate<double, IOrdinate>> Coordinates
+        public List<ICoordinate<double, IOrdinate>> Coordinates
         {
             get
             {
@@ -77,22 +77,22 @@ namespace Functions.CoordinatesFunctions
 
 
 
-        private IImmutableList<ICoordinate<double, IOrdinate>> ConvertDistributedYsToOrdinates(IImmutableList<ICoordinate<double, IDistribution>> coords)
+        private List<ICoordinate<double, IOrdinate>> ConvertDistributedYsToOrdinates(List<ICoordinate<double, IDistribution>> coords)
         {
-            IImmutableList<ICoordinate<double, IOrdinate>> retval = ImmutableList.Create<ICoordinate<double, IOrdinate>>();
+            List<ICoordinate<double, IOrdinate>> retval = new List<ICoordinate<double, IOrdinate>>();
             foreach(ICoordinate<double, IDistribution> coord in coords)
             {
-                retval = retval.Add(new CoordinateOrdinateY(coord.X, new Distribution(coord.Y)));
+                retval.Add(new CoordinateOrdinateY(coord.X, new Distribution(coord.Y)));
             }
             return retval;
         }
 
-        private IImmutableList<ICoordinate<double, IOrdinate>> ConvertConstantYsToOrdinates(IImmutableList<ICoordinate<double, double>> coords)
+        private List<ICoordinate<double, IOrdinate>> ConvertConstantYsToOrdinates(List<ICoordinate<double, double>> coords)
         {
-            IImmutableList<ICoordinate<double, IOrdinate>> retval = ImmutableList.Create<ICoordinate<double, IOrdinate>>();
+            List<ICoordinate<double, IOrdinate>> retval = new List<ICoordinate<double, IOrdinate>>();
             foreach (ICoordinate<double, double> coord in coords)
             {
-                retval = retval.Add(new CoordinateOrdinateY(coord.X, new Constant(coord.Y)));
+                retval.Add(new CoordinateOrdinateY(coord.X, new Constant(coord.Y)));
             }
             return retval;
         }
@@ -143,11 +143,11 @@ namespace Functions.CoordinatesFunctions
 
         }
 
-        public ICoordinatesFunction<double, double> Sample(double p)
+        public IFunction Sample(double p)
         {
             if (IsDistributed)
             {
-                return _distributedFunction.Sample(p);
+                return new CoordinatesFunctionConstants(_distributedFunction.Sample(p).Coordinates, Interpolator);;
             }
             else
             {
@@ -155,7 +155,7 @@ namespace Functions.CoordinatesFunctions
             }
         }
 
-        public ICoordinatesFunction<double, double> Sample(double p, InterpolationEnum interpolator)
+        public IFunction Sample(double p, InterpolationEnum interpolator)
         {
             if (IsDistributed)
             {

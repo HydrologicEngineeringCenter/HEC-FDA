@@ -26,7 +26,7 @@ namespace FunctionsTests.CoordinatesFunctions
         /// <summary> Tests that with good input a CoordinatesFunctionConstants object is constructed. </summary>
         [Theory]
         [MemberData(nameof( GoodData_Constant))]
-        public void CoordinatesFunctionConstants_GoodInputNoInterpolation_Returns_CoordinatesFunctionConstants(IImmutableList<ICoordinate<double, double>> value)
+        public void CoordinatesFunctionConstants_GoodInputNoInterpolation_Returns_CoordinatesFunctionConstants(List<ICoordinate<double, double>> value)
         {
             IFunction testObj = new CoordinatesFunctionConstants(value);
             Assert.True(true);
@@ -34,7 +34,7 @@ namespace FunctionsTests.CoordinatesFunctions
         /// <summary> Tests that with good input a CoordinatesFunctionConstants object is constructed. </summary>
         [Theory]
         [MemberData(nameof(GoodData_Constant))]
-        public void CoordinatesFunctionConstants_GoodLinearInterpolation_Returns_CoordinatesFunctionConstants(IImmutableList<ICoordinate<double, double>> value)
+        public void CoordinatesFunctionConstants_GoodLinearInterpolation_Returns_CoordinatesFunctionConstants(List<ICoordinate<double, double>> value)
         {
             IFunction testObj = new CoordinatesFunctionConstants(value, InterpolationEnum.Linear);
             Assert.True(true);
@@ -42,7 +42,7 @@ namespace FunctionsTests.CoordinatesFunctions
         ///// <summary> Tests that with good input a CoordinatesFunctionConstants object is constructed. </summary>
         [Theory]
         [MemberData(nameof(GoodData_Constant))]
-        public void CoordinatesFunctionConstants_GoodPiecewiseInterpolation_Returns_CoordinatesFunctionConstants(IImmutableList<ICoordinate<double, double>> value)
+        public void CoordinatesFunctionConstants_GoodPiecewiseInterpolation_Returns_CoordinatesFunctionConstants(List<ICoordinate<double, double>> value)
         {
             IFunction testObj = new CoordinatesFunctionConstants(value, InterpolationEnum.Piecewise);
             Assert.True(true);
@@ -53,7 +53,7 @@ namespace FunctionsTests.CoordinatesFunctions
         ///// <summary> Tests that with bad input it throws an <see cref="ArgumentException"/>. </summary>
         [Theory]
         [MemberData(nameof(BadData_Constant_Nan))]
-        public void CoordinatesFunctionConstants_BadInput_NAN_Throws_ArgumentException(IImmutableList<ICoordinate<double, double>> value)
+        public void CoordinatesFunctionConstants_BadInput_NAN_Throws_ArgumentException(List<ICoordinate<double, double>> value)
         {
             Assert.Throws<Exception>(() => new CoordinatesFunctionConstants(value));
         }
@@ -61,7 +61,7 @@ namespace FunctionsTests.CoordinatesFunctions
         ///// <summary> Tests that with bad input it throws an <see cref="ArgumentException"/>. </summary>
         [Theory]
         [MemberData(nameof(BadData_Constant_NegativeInfinity))]
-        public void CoordinatesFunctionConstants_BadInput_NegativeInfinity_Throws_ArgumentException(IImmutableList<ICoordinate<double, double>> value)
+        public void CoordinatesFunctionConstants_BadInput_NegativeInfinity_Throws_ArgumentException(List<ICoordinate<double, double>> value)
         {
             Assert.Throws<Exception>(() => new CoordinatesFunctionConstants(value));
         }
@@ -69,7 +69,7 @@ namespace FunctionsTests.CoordinatesFunctions
         ///// <summary> Tests that with bad input it throws an <see cref="ArgumentException"/>. </summary>
         [Theory]
         [MemberData(nameof(BadData_Constant_PositiveInfinity))]
-        public void CoordinatesFunctionConstants_BadInput_PositiveInfinity_Throws_ArgumentException(IImmutableList<ICoordinate<double, double>> value)
+        public void CoordinatesFunctionConstants_BadInput_PositiveInfinity_Throws_ArgumentException(List<ICoordinate<double, double>> value)
         {
             Assert.Throws<Exception>(() => new CoordinatesFunctionConstants(value));
         }
@@ -77,7 +77,7 @@ namespace FunctionsTests.CoordinatesFunctions
         ///// <summary> Tests that with bad input it throws an <see cref="ArgumentException"/>. </summary>
         [Theory]
         [MemberData(nameof(BadData_Constant_RepeatXs))]
-        public void CoordinatesFunctionConstants_BadInput_RepeatXs_Throws_ArgumentException(IImmutableList<ICoordinate<double, double>> value)
+        public void CoordinatesFunctionConstants_BadInput_RepeatXs_Throws_ArgumentException(List<ICoordinate<double, double>> value)
         {
             Assert.Throws<ArgumentException>(() => new CoordinatesFunctionConstants(value));
         }

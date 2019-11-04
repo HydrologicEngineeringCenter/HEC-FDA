@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using Utilities;
 using Utilities.Validation;
 
 namespace Functions.CoordinatesFunctions
@@ -11,18 +12,21 @@ namespace Functions.CoordinatesFunctions
     /// <summary>
     /// This class exists as a way to return a function composed of constant functions to the LinkedCoordinatesFunction Sample() method.
     /// </summary>
-    internal class CoordinatesFunctionLinkedConstants : CoordinatesFunctionLinkedBase<double, double>, ICoordinatesFunctions<double, double>, IValidate<CoordinatesFunctionLinkedConstants>
+    internal class CoordinatesFunctionLinkedConstants : CoordinatesFunctionLinkedBase<double, double>, IFunction, IValidate<CoordinatesFunctionLinkedConstants>
     {
        
 
         public bool IsDistributed => false;
-        
+
+        public bool IsInvertible => throw new NotImplementedException();
+
+        public Tuple<double, double> Range => throw new NotImplementedException();
 
         internal CoordinatesFunctionLinkedConstants(List<ICoordinatesFunction<double, double>> functions, List<InterpolationEnum> interpolators)
         {
             Functions = functions;
             Interpolators = interpolators;
-            IsValid = Validate(new CoordinatesFunctionLinkedConstantValidator(), out IEnumerable<string> errors);
+            IsValid = Validate(new CoordinatesFunctionLinkedConstantValidator(), out IEnumerable<IMessage> errors);
             CombineCoordinates();
             SetOrderEnum();
             Errors = errors;
@@ -204,7 +208,7 @@ namespace Functions.CoordinatesFunctions
             return retval;
         }
 
-        public ICoordinatesFunction<double, double> Sample(double p)
+        public IFunction Sample(double p)
         {
             return this;
         }
@@ -215,7 +219,7 @@ namespace Functions.CoordinatesFunctions
         /// <param name="p"></param>
         /// <param name="interpolator">This interpolator will be set the interpolation type for all functions and the space between functions</param>
         /// <returns></returns>
-        public ICoordinatesFunction<double, double> Sample(double p, InterpolationEnum interpolator)
+        public IFunction Sample(double p, InterpolationEnum interpolator)
         {
             List<ICoordinatesFunction<double, double>> constFunctions = new List<ICoordinatesFunction<double, double>>();
             foreach(ICoordinatesFunction<double, double> func in Functions)
@@ -232,7 +236,7 @@ namespace Functions.CoordinatesFunctions
             return new CoordinatesFunctionLinkedConstants(constFunctions, betweenInterpolators);
         }
 
-        public bool Validate(IValidator<CoordinatesFunctionLinkedConstants> validator, out IEnumerable<string> errors)
+        public bool Validate(IValidator<CoordinatesFunctionLinkedConstants> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);
         }
@@ -254,6 +258,14 @@ namespace Functions.CoordinatesFunctions
             return retval;
         }
 
+        public double RiemannSum()
+        {
+            throw new NotImplementedException();
+        }
 
+        public IFunction Compose(IFunction g)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

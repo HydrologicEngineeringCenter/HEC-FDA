@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using Utilities;
 
 namespace Functions.CoordinatesFunctions
 {
@@ -10,7 +11,7 @@ namespace Functions.CoordinatesFunctions
     {
         public List<ICoordinatesFunction<XType, YType>> Functions { get; internal set; }
 
-        public IImmutableList<ICoordinate<XType, YType>> Coordinates { get; internal set; }
+        public List<ICoordinate<XType, YType>> Coordinates { get; internal set; }
 
         public bool IsValid { get; internal set; }
         public OrderedSetEnum Order { get; internal set; }
@@ -20,7 +21,7 @@ namespace Functions.CoordinatesFunctions
         /// </summary>
         public List<InterpolationEnum> Interpolators { get; internal set; }
 
-        public IEnumerable<string> Errors { get; internal set; }
+        public IEnumerable<IMessage> Errors { get; internal set; }
 
         public Tuple<double, double> Domain
         {
@@ -354,10 +355,10 @@ namespace Functions.CoordinatesFunctions
             }
 
             List<ICoordinate<XType, YType>> sortedList = allCoords.OrderBy(coord => coord.X).ToList();
-            ImmutableList<ICoordinate<XType, YType>> coordinates = ImmutableList.Create<ICoordinate<XType, YType>>();
+            List<ICoordinate<XType, YType>> coordinates = new List<ICoordinate<XType, YType>>();
             foreach (ICoordinate<XType, YType> coord in sortedList)
             {
-                coordinates =  coordinates.Add(coord);
+                coordinates.Add(coord);
             }
 
             Coordinates = coordinates;

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Utilities;
 using Utilities.Validation;
 using Xunit;
 
@@ -209,10 +210,10 @@ namespace FunctionsTests.CoordinatesFunctions
         {
             List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_WeakMonotonicDecreasing_OrdinateFunctions();
 
-            IImmutableList<ICoordinate<double, IOrdinate>> allCoords = ImmutableList.Create<ICoordinate<double, IOrdinate>>();
+            List<ICoordinate<double, IOrdinate>> allCoords = new List<ICoordinate<double, IOrdinate>>();
             foreach (ICoordinatesFunction<double, IOrdinate> function in functions)
             {
-                allCoords = allCoords.AddRange(function.Coordinates);
+                allCoords.AddRange(function.Coordinates);
             }
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
@@ -256,10 +257,10 @@ namespace FunctionsTests.CoordinatesFunctions
             functions.Add(const3OrdFunc);
 
 
-            IImmutableList<ICoordinate<double, IOrdinate>> allCoords = ImmutableList.Create<ICoordinate<double, IOrdinate>>();
+            List<ICoordinate<double, IOrdinate>> allCoords = new List<ICoordinate<double, IOrdinate>>();
             foreach (ICoordinatesFunction<double, IOrdinate> function in functions)
             {
-                allCoords = allCoords.AddRange(function.Coordinates);
+                allCoords.AddRange(function.Coordinates);
             }
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
@@ -417,7 +418,7 @@ namespace FunctionsTests.CoordinatesFunctions
 
             CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, null);
             int count =0;
-            foreach(string s in func.Errors)
+            foreach(IMessage s in func.Errors)
             {
                 count++;
             }
@@ -454,7 +455,7 @@ namespace FunctionsTests.CoordinatesFunctions
 
             CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
             int count = 0;
-            foreach (string s in func.Errors)
+            foreach (IMessage s in func.Errors)
             {
                 count++;
             }
@@ -475,7 +476,7 @@ namespace FunctionsTests.CoordinatesFunctions
 
             CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
             int count = 0;
-            foreach (string s in func.Errors)
+            foreach (IMessage s in func.Errors)
             {
                 count++;
             }
@@ -585,9 +586,9 @@ namespace FunctionsTests.CoordinatesFunctions
             CoordinatesFunctionConstants const2Func = CreateCoordinatesFunctionConstants(xs2, ys2);
             CoordinatesFunctionConstants const3Func = CreateCoordinatesFunctionConstants(xs3, ys3);
 
-            IImmutableList<ICoordinate<double, double>> originalCoords = ImmutableList.CreateRange<ICoordinate<double, double>>(const1Func.Coordinates); // ImmutableList.Create<IImmutableList<ICoordinate<double,double>>>(const1Func.Coordinates);
-            originalCoords = originalCoords.AddRange(const2Func.Coordinates);
-            originalCoords = originalCoords.AddRange(const3Func.Coordinates);
+            List<ICoordinate<double, double>> originalCoords = new List<ICoordinate<double, double>>(const1Func.Coordinates); // new List<List<ICoordinate<double,double>>>(const1Func.Coordinates);
+            originalCoords.AddRange(const2Func.Coordinates);
+            originalCoords.AddRange(const3Func.Coordinates);
 
             List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_StrictMonotonicIncreasing_OrdinateFunctions();
 

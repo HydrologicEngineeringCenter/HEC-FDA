@@ -17,7 +17,7 @@ namespace Functions.CoordinatesFunctions
         public bool IsDistributedYs => true;
         public OrderedSetEnum Order { get; }
 
-        public IImmutableList<ICoordinate<double, IDistribution>> Coordinates { get; }
+        public List<ICoordinate<double, IDistribution>> Coordinates { get; }
 
         public bool IsDistributed => true;
 
@@ -28,7 +28,7 @@ namespace Functions.CoordinatesFunctions
 
         #region Constructor
         //todo: are we using this interpolator?
-        internal CoordinatesFunctionVariableYs(IImmutableList<ICoordinate<double, IDistribution>> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
+        internal CoordinatesFunctionVariableYs(List<ICoordinate<double, IDistribution>> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
         {
             if (IsValid(coordinates))
             {
@@ -55,13 +55,13 @@ namespace Functions.CoordinatesFunctions
             }
             return true;
         }
-        private bool IsValid(IImmutableList<ICoordinate<double, IDistribution>> coordinates)
+        private bool IsValid(List<ICoordinate<double, IDistribution>> coordinates)
         {
             if (Utilities.Validation.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate<double, IDistribution>>)) return false;
             if (!IsFunction(coordinates)) throw new ArgumentException("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).");
             return true;
         }
-        private bool IsFunction(IImmutableList<ICoordinate<double, IDistribution>> xys)
+        private bool IsFunction(List<ICoordinate<double, IDistribution>> xys)
         {
             for (int i = 0; i < xys.Count; i++)
             {
@@ -74,8 +74,8 @@ namespace Functions.CoordinatesFunctions
             }
             return true;
         }
-        public IImmutableList<ICoordinate<double, IDistribution>> SortByXs(IImmutableList<ICoordinate<double, IDistribution>> coordinates) 
-            => coordinates.OrderBy(xy => xy.X).ToImmutableList();
+        public List<ICoordinate<double, IDistribution>> SortByXs(List<ICoordinate<double, IDistribution>> coordinates) 
+            => coordinates.OrderBy(xy => xy.X).ToList();
 
         #region F()
         public IDistribution F(double x)
@@ -102,22 +102,22 @@ namespace Functions.CoordinatesFunctions
             throw new ArgumentOutOfRangeException("The specified y value was not found in any of the coordinates. Interpolation is not supported for coorindates with distributed x or y values.");
         }
 
-        public ICoordinatesFunction<double, double> Sample(double p)
+        public IFunction Sample(double p)
         {
             return new CoordinatesFunctionConstants(ConvertCoordinatesToConstants(p));
         }
 
-        public ICoordinatesFunction<double, double> Sample(double p, InterpolationEnum interpolator)
+        public IFunction Sample(double p, InterpolationEnum interpolator)
         {
             return new CoordinatesFunctionConstants(ConvertCoordinatesToConstants(p), interpolator);
         }
 
-        private IImmutableList<ICoordinate<double, double>> ConvertCoordinatesToConstants(double p)
+        private List<ICoordinate<double, double>> ConvertCoordinatesToConstants(double p)
         {
-            IImmutableList<ICoordinate<double, double>> coords = ImmutableList.Create<ICoordinate<double, double>>();
+            List<ICoordinate<double, double>> coords = new List<ICoordinate<double, double>>();
             foreach (ICoordinate<double, IDistribution> coord in Coordinates)
             {
-                coords = coords.Add(new CoordinateConstants(coord.X, coord.Y.InverseCDF(p)));
+                coords.Add(new CoordinateConstants(coord.X, coord.Y.InverseCDF(p)));
             }
             return coords;
         }
