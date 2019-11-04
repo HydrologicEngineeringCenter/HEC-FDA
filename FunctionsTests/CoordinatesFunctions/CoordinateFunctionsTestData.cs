@@ -18,8 +18,8 @@ namespace FunctionsTests.CoordinatesFunctions
 
         #region ConstantData
         #region GoodData
-        public static TheoryData<IImmutableList<ICoordinate<double, double>>> GoodData_Constant =>
-            new TheoryData<IImmutableList<ICoordinate<double, double>>>
+        public static TheoryData<List<ICoordinate<double, double>>> GoodData_Constant =>
+            new TheoryData<List<ICoordinate<double, double>>>
             {
                 { ConstantCoordinates(new double[]{0}, new double[]{0})},
                 {  ConstantCoordinates(new double[]{0,0}, new double[]{0,0})},
@@ -28,23 +28,23 @@ namespace FunctionsTests.CoordinatesFunctions
             };
         #endregion
         #region BadData
-        public static TheoryData<IImmutableList<ICoordinate<double, double>>> BadData_Constant_Nan =>
-            new TheoryData<IImmutableList<ICoordinate<double, double>>>
+        public static TheoryData<List<ICoordinate<double, double>>> BadData_Constant_Nan =>
+            new TheoryData<List<ICoordinate<double, double>>>
             {
                 { ConstantCoordinates(new double[]{double.NaN}, new double[]{0})},
             };
-        public static TheoryData<IImmutableList<ICoordinate<double, double>>> BadData_Constant_PositiveInfinity =>
-            new TheoryData<IImmutableList<ICoordinate<double, double>>>
+        public static TheoryData<List<ICoordinate<double, double>>> BadData_Constant_PositiveInfinity =>
+            new TheoryData<List<ICoordinate<double, double>>>
             {
                 { ConstantCoordinates(new double[]{double.PositiveInfinity}, new double[]{0})},
             };
-        public static TheoryData<IImmutableList<ICoordinate<double, double>>> BadData_Constant_NegativeInfinity =>
-           new TheoryData<IImmutableList<ICoordinate<double, double>>>
+        public static TheoryData<List<ICoordinate<double, double>>> BadData_Constant_NegativeInfinity =>
+           new TheoryData<List<ICoordinate<double, double>>>
            {
                 { ConstantCoordinates(new double[]{double.NegativeInfinity}, new double[]{0})},
            };
-        public static TheoryData<IImmutableList<ICoordinate<double, double>>> BadData_Constant_RepeatXs =>
-           new TheoryData<IImmutableList<ICoordinate<double, double>>>
+        public static TheoryData<List<ICoordinate<double, double>>> BadData_Constant_RepeatXs =>
+           new TheoryData<List<ICoordinate<double, double>>>
            {
                 { ConstantCoordinates(new double[]{1,1}, new double[]{10,11})},
                 { ConstantCoordinates(new double[]{1,1}, new double[]{25,25})}
@@ -85,7 +85,7 @@ namespace FunctionsTests.CoordinatesFunctions
         }
 
         #endregion
-        private static IImmutableList<ICoordinate<double, double>> ConstantCoordinates(double[] xs, double[] ys)
+        private static List<ICoordinate<double, double>> ConstantCoordinates(double[] xs, double[] ys)
         {
             if (xs.Length != ys.Length)
             {
@@ -98,7 +98,7 @@ namespace FunctionsTests.CoordinatesFunctions
                 coords.Add(ICoordinateFactory.Factory(xs[i], ys[i]));
             }
 
-            return ImmutableList.Create<ICoordinate<double, double>>(coords.ToArray());
+            return new List<ICoordinate<double, double>>(coords.ToArray());
         }
 
         #endregion
@@ -106,8 +106,8 @@ namespace FunctionsTests.CoordinatesFunctions
         #region DistributedData
 
         #region GoodData
-        public static TheoryData<IImmutableList<ICoordinate<double, IDistribution>>> GoodDataDistributed =>
-           new TheoryData<IImmutableList<ICoordinate<double, IDistribution>>>
+        public static TheoryData<List<ICoordinate<double, IDistribution>>> GoodDataDistributed =>
+           new TheoryData<List<ICoordinate<double, IDistribution>>>
            {
                 { DistributedCoordinates(new double[]{0}, new IDistribution[]{new Normal(1,0)})},
                 { DistributedCoordinates(new double[]{0, 1}, new IDistribution[]{new Normal(1,0), new Normal(1,1)})},
@@ -128,14 +128,14 @@ namespace FunctionsTests.CoordinatesFunctions
 
         #endregion
         #region BadData
-        public static TheoryData<IImmutableList<ICoordinate<double, IDistribution>>> BadDataDistributed =>
-            new TheoryData<IImmutableList<ICoordinate<double, IDistribution>>>
+        public static TheoryData<List<ICoordinate<double, IDistribution>>> BadDataDistributed =>
+            new TheoryData<List<ICoordinate<double, IDistribution>>>
             {
                 { DistributedCoordinates(new double[]{3},new IDistribution[]{ new Statistics.Distributions.Normal(0,1) }) },
-                //{ ImmutableList.Create<ICoordinate<IOrdinate, IOrdinate>>(new UnivariateCoordinate(new ScalarDistributed(new Normal()), new ScalarDistributed(new Normal()), map)) },
-                //{ ImmutableList.Create<ICoordinate<IOrdinate, IOrdinate>>(new UnivariateCoordinate(new ScalarHistogram(), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarHistogram(), map)) },
-                //{ ImmutableList.Create<ICoordinate<IOrdinate, IOrdinate>>(new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarHistogram(), map), new UnivariateCoordinate(new ScalarHistogram(), IScalarFactory.Factory(0), map)) },
-                //{ ImmutableList.Create<ICoordinate<IOrdinate, IOrdinate>>(new UnivariateCoordinate(new ScalarDistributed(new Normal()), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarDistributed(new Normal()), map)) }
+                //{ new List<ICoordinate<IOrdinate, IOrdinate>>(new UnivariateCoordinate(new ScalarDistributed(new Normal()), new ScalarDistributed(new Normal()), map)) },
+                //{ new List<ICoordinate<IOrdinate, IOrdinate>>(new UnivariateCoordinate(new ScalarHistogram(), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarHistogram(), map)) },
+                //{ new List<ICoordinate<IOrdinate, IOrdinate>>(new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarHistogram(), map), new UnivariateCoordinate(new ScalarHistogram(), IScalarFactory.Factory(0), map)) },
+                //{ new List<ICoordinate<IOrdinate, IOrdinate>>(new UnivariateCoordinate(new ScalarDistributed(new Normal()), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarDistributed(new Normal()), map)) }
             };
         #endregion
 
@@ -153,7 +153,7 @@ namespace FunctionsTests.CoordinatesFunctions
         }
         #endregion
 
-        internal static IImmutableList<ICoordinate<double, IDistribution>> DistributedCoordinates(double[] xs, IDistribution[] ys)
+        internal static List<ICoordinate<double, IDistribution>> DistributedCoordinates(double[] xs, IDistribution[] ys)
         {
             if (xs.Length != ys.Length)
             {
@@ -166,7 +166,7 @@ namespace FunctionsTests.CoordinatesFunctions
                 coords.Add(ICoordinateFactory.Factory(xs[i], ys[i]));
             }
 
-            return ImmutableList.Create<ICoordinate<double, IDistribution>>(coords.ToArray());
+            return new List<ICoordinate<double, IDistribution>>(coords.ToArray());
         }
 
         #endregion
@@ -357,9 +357,9 @@ namespace FunctionsTests.CoordinatesFunctions
             return functions;
         }
 
-        //private IImmutableList<ICoordinate<double, IOrdinate>> ConvertDistributedYsToOrdinates(IImmutableList<ICoordinate<double, IDistribution>> coords)
+        //private List<ICoordinate<double, IOrdinate>> ConvertDistributedYsToOrdinates(List<ICoordinate<double, IDistribution>> coords)
         //{
-        //    IImmutableList<ICoordinate<double, IOrdinate>> retval = ImmutableList.Create<ICoordinate<double, IOrdinate>>();
+        //    List<ICoordinate<double, IOrdinate>> retval = new List<ICoordinate<double, IOrdinate>>();
         //    foreach (ICoordinate<double, IDistribution> coord in coords)
         //    {
         //        retval.Add(new CoordinateOrdinateY(coord.X, new Distribution(coord.Y)));
@@ -367,9 +367,9 @@ namespace FunctionsTests.CoordinatesFunctions
         //    return retval;
         //}
 
-        //private IImmutableList<ICoordinate<double, IOrdinate>> ConvertConstantYsToOrdinates(IImmutableList<ICoordinate<double, double>> coords)
+        //private List<ICoordinate<double, IOrdinate>> ConvertConstantYsToOrdinates(List<ICoordinate<double, double>> coords)
         //{
-        //    IImmutableList<ICoordinate<double, IOrdinate>> retval = ImmutableList.Create<ICoordinate<double, IOrdinate>>();
+        //    List<ICoordinate<double, IOrdinate>> retval = new List<ICoordinate<double, IOrdinate>>();
         //    foreach (ICoordinate<double, double> coord in coords)
         //    {
         //        retval.Add(new CoordinateOrdinateY(coord.X, new Constant(coord.Y)));
@@ -378,7 +378,7 @@ namespace FunctionsTests.CoordinatesFunctions
         //}
         #endregion
 
-        public static bool AreCoordinatesEqual(IImmutableList<ICoordinate<double, IOrdinate>> lista, IImmutableList<ICoordinate<double, IOrdinate>> listb)
+        public static bool AreCoordinatesEqual(List<ICoordinate<double, IOrdinate>> lista, List<ICoordinate<double, IOrdinate>> listb)
         {
             if (lista.Count != listb.Count)
             {
@@ -397,7 +397,7 @@ namespace FunctionsTests.CoordinatesFunctions
             return true;
         }
 
-        public static bool AreCoordinatesEqual(IImmutableList<ICoordinate<double, double>> lista, IImmutableList<ICoordinate<double, double>> listb)
+        public static bool AreCoordinatesEqual(List<ICoordinate<double, double>> lista, List<ICoordinate<double, double>> listb)
         {
             if (lista.Count != listb.Count)
             {

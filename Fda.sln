@@ -14,7 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FdaUnitTests", "FDAUnitTest
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "OpenGLMapping", "OpenGLMapper\geospatial\OpenGLMapping\OpenGLMapping.vbproj", "{E6DD31C5-1388-4B1D-8291-C317DDE22388}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FdaModel", "OldModel\FdaModel.csproj", "{33BEBAAF-125C-404C-8107-3A3FE2A5C776}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FdaModel_OldVersion", "OldModel\FdaModel_OldVersion.csproj", "{33BEBAAF-125C-404C-8107-3A3FE2A5C776}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "View", "View\View.csproj", "{CB13C644-E9D3-400F-B9ED-CFF9BEAF5E20}"
 EndProject
@@ -30,9 +30,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities", "Utilities\Util
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UtilitiesTests", "UtilitiesTests\UtilitiesTests.csproj", "{446520E4-603F-4468-B9B3-C2FE8A65BCA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Functions", "Functions\Functions.csproj", "{C33A0F59-FE11-4E06-B85E-BD84E6C1106D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Functions", "Functions\Functions.csproj", "{C33A0F59-FE11-4E06-B85E-BD84E6C1106D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionsTests", "FunctionsTests\FunctionsTests.csproj", "{4AFE6338-04B8-4D17-A750-48707E9B6539}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionsTests", "FunctionsTests\FunctionsTests.csproj", "{4AFE6338-04B8-4D17-A750-48707E9B6539}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

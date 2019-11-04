@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using Utilities;
 using Utilities.Validation;
 
 namespace Functions.CoordinatesFunctions
@@ -30,7 +31,6 @@ namespace Functions.CoordinatesFunctions
             }
         }
 
-
         /// <summary>
         /// The list of functions must be in the correct order.
         /// </summary>
@@ -45,7 +45,7 @@ namespace Functions.CoordinatesFunctions
             Functions = functions;
             Interpolators = interpolators;
 
-            IsValid = Validate(new LinkedCoordinatesFunctionValidator(), out IEnumerable<string> errors);
+            IsValid = Validate(new LinkedCoordinatesFunctionValidator(), out IEnumerable<IMessage> errors);
             CombineCoordinates();
             SetOrder();
             Errors = errors;
@@ -250,12 +250,12 @@ namespace Functions.CoordinatesFunctions
             return retval;
         }
 
-        public bool Validate(IValidator<CoordinatesFunctionLinkedOrdinates> validator, out IEnumerable<string> errors)
+        public bool Validate(IValidator<CoordinatesFunctionLinkedOrdinates> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);
         }
 
-        public ICoordinatesFunction<double, double> Sample(double p)
+        public IFunction Sample(double p)
         {
             //todo check that 0<=p<=1 argument out of range
 
@@ -276,7 +276,7 @@ namespace Functions.CoordinatesFunctions
         /// <param name="p"></param>
         /// <param name="interpolator">This interpolator will be used as the interpolation method for all functions and inbetween functions.</param>
         /// <returns></returns>
-        public ICoordinatesFunction<double, double> Sample(double p, InterpolationEnum interpolator)
+        public IFunction Sample(double p, InterpolationEnum interpolator)
         {
             //todo check that 0<=p<=1 argument out of range
 
@@ -315,7 +315,6 @@ namespace Functions.CoordinatesFunctions
             }
             return retval;
         }
-
 
     }
 }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using Utilities;
 using Utilities.Validation;
 
 namespace Functions
@@ -14,7 +15,7 @@ namespace Functions
     public static class ICoordinatesFunctionsFactory
     {
 
-        //public static ICoordinatesFunction<IOrdinate, IOrdinate> Factory(IImmutableList<ICoordinate<IOrdinate, IOrdinate>> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
+        //public static ICoordinatesFunction<IOrdinate, IOrdinate> Factory(List<ICoordinate<IOrdinate, IOrdinate>> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
         //{
         //    return new CoordinatesFunctions.CoordinatesFunctionConstants(coordinates, interpolation);
         //}
@@ -24,12 +25,12 @@ namespace Functions
             //are lengths the same
             if (xs.Count == ys.Count)
             {
-                ImmutableList<ICoordinate<double, double>> coordinates = ImmutableList.Create<ICoordinate<double, double>>();
+                List<ICoordinate<double, double>> coordinates = new List<ICoordinate<double, double>>();
 
                 for (int i = 0; i < xs.Count; i++)
                 {
                     ICoordinate<double, double> coordinate = ICoordinateFactory.Factory(xs[i], ys[i]);
-                    coordinates = coordinates.Add(coordinate);
+                    coordinates.Add(coordinate);
                 }
                 return new CoordinatesFunctionConstants(coordinates, interpolation);
             }
@@ -44,11 +45,11 @@ namespace Functions
             //are lengths the same
             if (xs.Count == ys.Count)
             {
-                ImmutableList<ICoordinate<double, IDistribution>> coordinates = ImmutableList.Create<ICoordinate<double, IDistribution>>();
+                List<ICoordinate<double, IDistribution>> coordinates = new List<ICoordinate<double, IDistribution>>();
                 for (int i = 0; i < xs.Count; i++)
                 {
                     ICoordinate<double, IDistribution> coordinate = ICoordinateFactory.Factory(xs[i], ys[i]);
-                    coordinates = coordinates.Add(coordinate);
+                    coordinates.Add(coordinate);
                 }
 
                 return new CoordinatesFunctionVariableYs(coordinates);
@@ -74,20 +75,20 @@ namespace Functions
                 throw new InvalidConstructorArgumentsException("The function was of the wrong type for this method.");
             }
 
-            ImmutableList<ICoordinate<double, double>> coordinates = ImmutableList.Create<ICoordinate<double, double>>();
+            List<ICoordinate<double, double>> coordinates = new List<ICoordinate<double, double>>();
 
             //add the coordinates from the function
             foreach (ICoordinate<double, double> coord in function.Coordinates)
             {
-                coordinates = coordinates.Add(coord);
+                coordinates.Add(coord);
             }
             //add the coordinates to the end
             foreach (ICoordinate<double, double> coord in additionalCoordinates)
             {
-                coordinates = coordinates.Add(coord);
+                coordinates.Add(coord);
             }
 
-            ImmutableList<ICoordinate<double, double>> sortedList = coordinates.Sort(delegate (ICoordinate<double, double> coord1, ICoordinate<double, double> coord2)
+             coordinates.Sort(delegate (ICoordinate<double, double> coord1, ICoordinate<double, double> coord2)
             {
                 return coord1.X.CompareTo(coord2.X);
             });
@@ -103,20 +104,20 @@ namespace Functions
                 throw new InvalidConstructorArgumentsException("The function was of the wrong type for this method.");
             }
 
-            ImmutableList<ICoordinate<double, IDistribution>> coordinates = ImmutableList.Create<ICoordinate<double, IDistribution>>();
+            List<ICoordinate<double, IDistribution>> coordinates = new List<ICoordinate<double, IDistribution>>();
 
             //add the coordinates from the function
             foreach (ICoordinate<double, IDistribution> coord in function.Coordinates)
             {
-                coordinates = coordinates.Add(coord);
+                coordinates.Add(coord);
             }
             //add the coordinates to the end
             foreach (ICoordinate<double, IDistribution> coord in additionalCoordinates)
             {
-                coordinates = coordinates.Add(coord);
+                coordinates.Add(coord);
             }
 
-            ImmutableList<ICoordinate<double, IDistribution>> sortedList = coordinates.Sort(delegate (ICoordinate<double, IDistribution> coord1, ICoordinate<double, IDistribution> coord2)
+            coordinates.Sort(delegate (ICoordinate<double, IDistribution> coord1, ICoordinate<double, IDistribution> coord2)
             {
                 return coord1.X.CompareTo(coord2.X);
             });
@@ -263,9 +264,9 @@ namespace Functions
         //    }
         //}
 
-        //private static IImmutableList<ICoordinate<double, IOrdinate>> ConvertDistributedYsToOrdinates(IImmutableList<ICoordinate<double, IDistribution>> coords)
+        //private static List<ICoordinate<double, IOrdinate>> ConvertDistributedYsToOrdinates(List<ICoordinate<double, IDistribution>> coords)
         //{
-        //    IImmutableList<ICoordinate<double, IOrdinate>> retval = ImmutableList.Create<ICoordinate<double, IOrdinate>>();
+        //    List<ICoordinate<double, IOrdinate>> retval = new List<ICoordinate<double, IOrdinate>>();
         //    foreach (ICoordinate<double, IDistribution> coord in coords)
         //    {
         //        retval.Add(new CoordinateOrdinateY(coord.X, new Distribution(coord.Y)));
@@ -273,9 +274,9 @@ namespace Functions
         //    return retval;
         //}
 
-        //private static IImmutableList<ICoordinate<double, IOrdinate>> ConvertConstantYsToOrdinates(IImmutableList<ICoordinate<double, double>> coords)
+        //private static List<ICoordinate<double, IOrdinate>> ConvertConstantYsToOrdinates(List<ICoordinate<double, double>> coords)
         //{
-        //    IImmutableList<ICoordinate<double, IOrdinate>> retval = ImmutableList.Create<ICoordinate<double, IOrdinate>>();
+        //    List<ICoordinate<double, IOrdinate>> retval = new List<ICoordinate<double, IOrdinate>>();
         //    foreach (ICoordinate<double, double> coord in coords)
         //    {
         //        retval.Add(new CoordinateOrdinateY(coord.X, new Constant(coord.Y)));

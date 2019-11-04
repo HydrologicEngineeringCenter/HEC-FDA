@@ -11,14 +11,14 @@ namespace Functions.CoordinatesFunctions
     //    public bool IsInvertible { get; }
     //    public Tuple<double, double> Domain { get; }
 
-    //    public IImmutableList<ICoordinate<IOrdinate, IOrdinate>> Coordinates { get; }
+    //    public List<ICoordinate<IOrdinate, IOrdinate>> Coordinates { get; }
 
     //    //todo: do this
     //    public bool IsDistributed => throw new NotImplementedException();
     //    #endregion
 
     //    #region Constructor
-    //    internal CoordinatesFunction(IImmutableList<ICoordinate<IOrdinate, IOrdinate>> coordinates)
+    //    internal CoordinatesFunction(List<ICoordinate<IOrdinate, IOrdinate>> coordinates)
     //    {
     //        if (IsValid(coordinates))
     //        {
@@ -30,13 +30,13 @@ namespace Functions.CoordinatesFunctions
 
     //    #region Functions
     //    #region Initialization Functions
-    //    private bool IsValid(IImmutableList<ICoordinate<IOrdinate, IOrdinate>> coordinates)
+    //    private bool IsValid(List<ICoordinate<IOrdinate, IOrdinate>> coordinates)
     //    {
     //        if (Utilities.Validation.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate<IOrdinate, IOrdinate>>)) return false;
     //        if (!IsFunction(coordinates)) throw new ArgumentException("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).");
     //        return true;
     //    }
-    //    private bool IsFunction(IImmutableList<ICoordinate<IOrdinate, IOrdinate>> xys)
+    //    private bool IsFunction(List<ICoordinate<IOrdinate, IOrdinate>> xys)
     //    {
     //        for (int i = 0; i < xys.Count; i++)
     //        {
@@ -49,7 +49,7 @@ namespace Functions.CoordinatesFunctions
     //        }          
     //        return true;
     //    }
-    //    public static IImmutableList<ICoordinate<IOrdinate, IOrdinate>> SortByXs(IImmutableList<ICoordinate<IOrdinate, IOrdinate>> coordinates) => coordinates.OrderBy(xy => xy.X.Value()).ToImmutableList();
+    //    public static List<ICoordinate<IOrdinate, IOrdinate>> SortByXs(List<ICoordinate<IOrdinate, IOrdinate>> coordinates) => coordinates.OrderBy(xy => xy.X.Value()).ToList();
     //    public bool IsInvertibleFunction()
     //    {
     //        for (int i = 0; i < Coordinates.Count; i++)

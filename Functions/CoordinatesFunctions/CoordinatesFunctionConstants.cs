@@ -10,7 +10,7 @@ namespace Functions.CoordinatesFunctions
     internal sealed class CoordinatesFunctionConstants : IFunction
     {
         #region Properties
-        public IImmutableList<ICoordinate<double, double>> Coordinates { get; }
+        public List<ICoordinate<double, double>> Coordinates { get; }
 
         public Tuple<double, double> Range { get; }
         public Tuple<double, double> Domain { get; }
@@ -25,7 +25,7 @@ namespace Functions.CoordinatesFunctions
         #endregion
 
         #region Constructor
-        internal CoordinatesFunctionConstants(IImmutableList<ICoordinate<double, double>> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation) 
+        internal CoordinatesFunctionConstants(List<ICoordinate<double, double>> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation) 
         {
             if (IsValid(coordinates))
             {
@@ -46,12 +46,12 @@ namespace Functions.CoordinatesFunctions
 
         #region Functions
         #region Initialization Functions
-        public IImmutableList<ICoordinate<double, double>> SortByXs(IImmutableList<ICoordinate<double, double>> coordinates)
+        public List<ICoordinate<double, double>> SortByXs(List<ICoordinate<double, double>> coordinates)
         {
-            return coordinates.OrderBy(xy => xy.X).ToImmutableList();
+            return coordinates.OrderBy(xy => xy.X).ToList();
         }
 
-        private bool IsValid(IImmutableList<ICoordinate<double, double>> coordinates)
+        private bool IsValid(List<ICoordinate<double, double>> coordinates)
         {
             if (Utilities.Validation.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate<double, double>>))
             {
@@ -63,7 +63,7 @@ namespace Functions.CoordinatesFunctions
             }
             return true;
         }
-        private bool IsFunction(IImmutableList<ICoordinate<double, double>> xys)
+        private bool IsFunction(List<ICoordinate<double, double>> xys)
         {
             for (int i = 0; i < xys.Count; i++)
             {
@@ -112,8 +112,8 @@ namespace Functions.CoordinatesFunctions
             }
             return order;
         }
-        private OrderedSetEnum InitialOrder(IImmutableList<ICoordinate<double, double>> ordinates) => ordinates.Count == 1 ? OrderedSetEnum.NonMonotonic : OrderOfPair(ordinates, 0);
-        private OrderedSetEnum OrderOfPair(IImmutableList<ICoordinate<double, double>> ordinates, int index) => ordinates[index].Y == ordinates[index + 1].Y ? OrderedSetEnum.NonMonotonic : ordinates[index].Y < ordinates[index + 1].Y ? OrderedSetEnum.StrictlyIncreasing : OrderedSetEnum.StrictlyDecreasing;
+        private OrderedSetEnum InitialOrder(List<ICoordinate<double, double>> ordinates) => ordinates.Count == 1 ? OrderedSetEnum.NonMonotonic : OrderOfPair(ordinates, 0);
+        private OrderedSetEnum OrderOfPair(List<ICoordinate<double, double>> ordinates, int index) => ordinates[index].Y == ordinates[index + 1].Y ? OrderedSetEnum.NonMonotonic : ordinates[index].Y < ordinates[index + 1].Y ? OrderedSetEnum.StrictlyIncreasing : OrderedSetEnum.StrictlyDecreasing;
         private OrderedSetEnum UpdateOrderOfSet(OrderedSetEnum orderOfSet, OrderedSetEnum orderOfPair, out bool hasChangedOrder)
         {
             hasChangedOrder = false;
@@ -212,12 +212,12 @@ namespace Functions.CoordinatesFunctions
             int j = FirstZ(g), J = g.Coordinates.Count; // - 1;
             if (j == J) throw new InvalidOperationException(NoOverlapMessage(g));
 
-            IImmutableList<ICoordinate<double, double>> fog = ImmutableList.Create<ICoordinate<double, double>>();
+            List<ICoordinate<double, double>> fog = new List<ICoordinate<double, double>>();
             while (!IsComplete(i, I, j, J, g)) // InOverlapping Portion
             {
                 if (Coordinates[i].Y == g.Coordinates[j].X) //Matching ordinate
                 {
-                    fog = fog.Add(ICoordinateFactory.Factory(new Constant(Coordinates[i].X).Value(), new Constant(g.Coordinates[j].Y).Value()));
+                    fog.Add(ICoordinateFactory.Factory(new Constant(Coordinates[i].X).Value(), new Constant(g.Coordinates[j].Y).Value()));
                     i++;
                     j++;
                 }
@@ -227,14 +227,14 @@ namespace Functions.CoordinatesFunctions
                     {
                         // Add new ordinate to FoG if G allows interpolation between ordinates
                         if (!(g.Interpolator == InterpolationEnum.NoInterpolation))
-                            fog = fog.Add(ICoordinateFactory.Factory(new Constant(Coordinates[i].X).Value(), new Constant(g.F(Coordinates[i].Y)).Value()));
+                            fog.Add(ICoordinateFactory.Factory(new Constant(Coordinates[i].X).Value(), new Constant(g.F(Coordinates[i].Y)).Value()));
                         i++;
                     }
                     else // A Z should be added and X interpolated
                     {
                         // Add new ordinate to FoG if F allows Interpolation between ordinates
                         if (!(Interpolator == InterpolationEnum.NoInterpolation))
-                            fog = fog.Add(ICoordinateFactory.Factory(new Constant(InverseF(g.Coordinates[j].X, i - 1)).Value(), new Constant(g.Coordinates[j].Y).Value()));
+                            fog.Add(ICoordinateFactory.Factory(new Constant(InverseF(g.Coordinates[j].X, i - 1)).Value(), new Constant(g.Coordinates[j].Y).Value()));
                         j++;
                     }
                 }
@@ -326,15 +326,16 @@ namespace Functions.CoordinatesFunctions
             }
         }
 
-        public ICoordinatesFunction<double, double> Sample(double p)
+        public IFunction Sample(double p)
         {
             return this;
         }
 
-        public ICoordinatesFunction<double, double> Sample(double p, InterpolationEnum interpolator)
+        public IFunction Sample(double p, InterpolationEnum interpolator)
         {
             return new CoordinatesFunctionConstants(Coordinates, interpolator);
         }
+
         #endregion
         #endregion
     }
