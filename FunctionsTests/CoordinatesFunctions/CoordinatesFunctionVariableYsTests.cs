@@ -299,128 +299,128 @@ namespace FunctionsTests.CoordinatesFunctions
 
         #region Sample
 
-        /// <summary> Tests that the Sample method returns the mean for .5 probability on Normal Distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_Sample_Returns_True_NormalDist1()
-        {
-            List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 0 }, new IDistribution[] { new Normal(1, 0) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(.5);
-            List<ICoordinate<double, double>> sampledCoords =  sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 0 && coord.Y == 1);
+        ///// <summary> Tests that the Sample method returns the mean for .5 probability on Normal Distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_Sample_Returns_True_NormalDist1()
+        //{
+        //    List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 0 }, new IDistribution[] { new Normal(1, 0) });
+        //    ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(.5);
+        //    List<ICoordinate<double, double>> sampledCoords =  sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 0 && coord.Y == 1);
             
-        }
-        /// <summary> Tests that the Sample method returns the mean for .5 probability on Normal Distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_Sample_Returns_True_NormalDist2()
-        {
-            List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 0 }, new IDistribution[] { new Normal(2, 0) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(.5);
-            List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 0 && coord.Y == 2);
+        //}
+        ///// <summary> Tests that the Sample method returns the mean for .5 probability on Normal Distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_Sample_Returns_True_NormalDist2()
+        //{
+        //    List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 0 }, new IDistribution[] { new Normal(2, 0) });
+        //    ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(.5);
+        //    List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 0 && coord.Y == 2);
 
-        }
+        //}
 
-        /// <summary> Tests that the Sample method returns the most likely value for .5 probability for triangular distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_Sample_Returns_True_TriangularDist1()
-        {
-            List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Triangular(10,20,30) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(.5);
-            List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 5 && coord.Y == 20);
+        ///// <summary> Tests that the Sample method returns the most likely value for .5 probability for triangular distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_Sample_Returns_True_TriangularDist1()
+        //{
+        //    List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Triangular(10,20,30) });
+        //    ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(.5);
+        //    List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 5 && coord.Y == 20);
 
-        }
+        //}
 
-        /// <summary> Tests that the Sample method returns the min value for 0.0 probability for triangular distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_Sample_Returns_True_TriangularDist2()
-        {
-            List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Triangular(10, 20, 30) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(0.0);
-            List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 5 && coord.Y == 10);
+        ///// <summary> Tests that the Sample method returns the min value for 0.0 probability for triangular distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_Sample_Returns_True_TriangularDist2()
+        //{
+        //    List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Triangular(10, 20, 30) });
+        //    ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(0.0);
+        //    List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 5 && coord.Y == 10);
 
-        }
+        //}
 
-        /// <summary> Tests that the Sample method returns the max value for 1.0 probability for triangular distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_Sample_Returns_True_TriangularDist3()
-        {
-            List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Triangular(10, 20, 30) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(1.0);
-            List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 5 && coord.Y == 30);
+        ///// <summary> Tests that the Sample method returns the max value for 1.0 probability for triangular distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_Sample_Returns_True_TriangularDist3()
+        //{
+        //    List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Triangular(10, 20, 30) });
+        //    ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(1.0);
+        //    List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 5 && coord.Y == 30);
 
-        }
+        //}
 
-        /// <summary> Tests that the Sample method returns the max value for 1.0 probability for Uniform distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_Sample_Returns_True_UniformDist1()
-        {
-            List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Uniform(10, 30) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(1.0);
-            List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 5 && coord.Y == 30);
+        ///// <summary> Tests that the Sample method returns the max value for 1.0 probability for Uniform distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_Sample_Returns_True_UniformDist1()
+        //{
+        //    List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Uniform(10, 30) });
+        //    ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(1.0);
+        //    List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 5 && coord.Y == 30);
 
-        }
+        //}
 
-        /// <summary> Tests that the Sample method returns the min value for 0.0 probability for Uniform distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_Sample_Returns_True_UniformDist2()
-        {
-            List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Uniform(10, 30) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(0.0);
-            List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 5 && coord.Y == 10);
+        ///// <summary> Tests that the Sample method returns the min value for 0.0 probability for Uniform distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_Sample_Returns_True_UniformDist2()
+        //{
+        //    List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Uniform(10, 30) });
+        //    ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(0.0);
+        //    List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 5 && coord.Y == 10);
 
-        }
+        //}
 
-        /// <summary> Tests that the Sample method returns the mean value for 0.5 probability for Uniform distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_Sample_Returns_True_UniformDist3()
-        {
-            List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Uniform(10, 30) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(0.5);
-            List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 5 && coord.Y == 20);
-        }
+        ///// <summary> Tests that the Sample method returns the mean value for 0.5 probability for Uniform distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_Sample_Returns_True_UniformDist3()
+        //{
+        //    List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Uniform(10, 30) });
+        //    ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(0.5);
+        //    List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 5 && coord.Y == 20);
+        //}
 
-        /// <summary> Tests that the Sample method returns the mean value for 0.5 probability for Uniform distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_SampleWithInterpolator_Returns_True_UniformDist3()
-        {
-            List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Uniform(10, 30) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(0.5);
-            List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 5 && coord.Y == 20);
-        }
+        ///// <summary> Tests that the Sample method returns the mean value for 0.5 probability for Uniform distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_SampleWithInterpolator_Returns_True_UniformDist3()
+        //{
+        //    List<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Uniform(10, 30) });
+        //    ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(0.5);
+        //    List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 5 && coord.Y == 20);
+        //}
         #endregion
 
         #endregion

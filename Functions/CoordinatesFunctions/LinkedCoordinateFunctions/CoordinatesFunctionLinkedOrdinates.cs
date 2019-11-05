@@ -12,24 +12,24 @@ namespace Functions.CoordinatesFunctions
 {
     internal class CoordinatesFunctionLinkedOrdinates : CoordinatesFunctionLinkedBase<double, IOrdinate>, ICoordinatesFunctions<double, IOrdinate>, IValidate<CoordinatesFunctionLinkedOrdinates>
     {
-        
-        public bool IsDistributed
-        {
-            //If any function is distributed then return true;
-            get
-            {
-                bool retval = false;
-                foreach(ICoordinatesFunction<double, IOrdinate> func in Functions)
-                {
-                    if(func.IsDistributed)
-                    {
-                        retval = true;
-                        break;
-                    }
-                }
-                return retval;
-            }
-        }
+
+        //public bool IsDistributed
+        //{
+        //    If any function is distributed then return true;
+        //    get
+        //    {
+        //        bool retval = false;
+        //        foreach (ICoordinatesFunction<double, IOrdinate> func in Functions)
+        //        {
+        //            if (func.IsDistributed)
+        //            {
+        //                retval = true;
+        //                break;
+        //            }
+        //        }
+        //        return retval;
+        //    }
+        //}
 
         /// <summary>
         /// The list of functions must be in the correct order.
@@ -55,14 +55,16 @@ namespace Functions.CoordinatesFunctions
 
         private void SetOrder()
         {
-            if (IsDistributed)
-            {
-                Order = OrderedSetEnum.NonMonotonic;
-                return;
-            }
-            //now we can assume that all functions are Not Distributed
-            //add the orders to a list
-            SetOrderEnum();
+            //todo: implement
+            throw new NotImplementedException();
+            //if (IsDistributed)
+            //{
+            //    Order = OrderedSetEnum.NonMonotonic;
+            //    return;
+            //}
+            ////now we can assume that all functions are Not Distributed
+            ////add the orders to a list
+            //SetOrderEnum();
         }
 
 
@@ -255,50 +257,50 @@ namespace Functions.CoordinatesFunctions
             return validator.IsValid(this, out errors);
         }
 
-        public IFunction Sample(double p)
-        {
-            //todo check that 0<=p<=1 argument out of range
+        //public IFunction Sample(double p)
+        //{
+        //    //todo check that 0<=p<=1 argument out of range
 
-            List<ICoordinatesFunction<double, double>> constantFunctions = new List<ICoordinatesFunction<double, double>>();
-            foreach (ICoordinatesFunction<double, IOrdinate> func in Functions)
-            {
-                ICoordinatesFunction<double, double> constFunc = func.Sample(p);
-                constantFunctions.Add(constFunc);
-            }
+        //    List<ICoordinatesFunction<double, double>> constantFunctions = new List<ICoordinatesFunction<double, double>>();
+        //    foreach (ICoordinatesFunction<double, IOrdinate> func in Functions)
+        //    {
+        //        ICoordinatesFunction<double, double> constFunc = func.Sample(p);
+        //        constantFunctions.Add(constFunc);
+        //    }
 
-            CoordinatesFunctionLinkedConstants linkedFunc = new CoordinatesFunctionLinkedConstants(constantFunctions, Interpolators);
-            return linkedFunc;
-        }
+        //    CoordinatesFunctionLinkedConstants linkedFunc = new CoordinatesFunctionLinkedConstants(constantFunctions, Interpolators);
+        //    return linkedFunc;
+        //}
 
-        /// <summary>
-        /// This will call the sample on each function and will override all interpolators with the one passed in.
-        /// </summary>
-        /// <param name="p"></param>
-        /// <param name="interpolator">This interpolator will be used as the interpolation method for all functions and inbetween functions.</param>
-        /// <returns></returns>
-        public IFunction Sample(double p, InterpolationEnum interpolator)
-        {
-            //todo check that 0<=p<=1 argument out of range
+        ///// <summary>
+        ///// This will call the sample on each function and will override all interpolators with the one passed in.
+        ///// </summary>
+        ///// <param name="p"></param>
+        ///// <param name="interpolator">This interpolator will be used as the interpolation method for all functions and inbetween functions.</param>
+        ///// <returns></returns>
+        //public IFunction Sample(double p, InterpolationEnum interpolator)
+        //{
+        //    //todo check that 0<=p<=1 argument out of range
 
-            List<ICoordinatesFunction<double, double>> constantFunctions = new List<ICoordinatesFunction<double, double>>();
-            foreach (ICoordinatesFunction<double, IOrdinate> func in Functions)
-            {
-                ICoordinatesFunction<double, double> constFunc = func.Sample(p, interpolator);
-                constantFunctions.Add(constFunc);
-            }
+        //    List<ICoordinatesFunction<double, double>> constantFunctions = new List<ICoordinatesFunction<double, double>>();
+        //    foreach (ICoordinatesFunction<double, IOrdinate> func in Functions)
+        //    {
+        //        ICoordinatesFunction<double, double> constFunc = func.Sample(p, interpolator);
+        //        constantFunctions.Add(constFunc);
+        //    }
 
-            //create a list of interpolators that will be the interpolators between the functions
-            int numFunctions = constantFunctions.Count;
-            List<InterpolationEnum> betweenInterpolators = new List<InterpolationEnum>();
-            for(int i = 0;i<numFunctions-1;i++)
-            {
-                betweenInterpolators.Add(interpolator);
-            }
+        //    //create a list of interpolators that will be the interpolators between the functions
+        //    int numFunctions = constantFunctions.Count;
+        //    List<InterpolationEnum> betweenInterpolators = new List<InterpolationEnum>();
+        //    for(int i = 0;i<numFunctions-1;i++)
+        //    {
+        //        betweenInterpolators.Add(interpolator);
+        //    }
 
-            CoordinatesFunctionLinkedConstants linkedFunc = new CoordinatesFunctionLinkedConstants(constantFunctions, betweenInterpolators);
-            return linkedFunc;
+        //    CoordinatesFunctionLinkedConstants linkedFunc = new CoordinatesFunctionLinkedConstants(constantFunctions, betweenInterpolators);
+        //    return linkedFunc;
 
-        }
+        //}
         internal override bool AreRangesStrictlyIncreasing()
         {
             bool retval = true;
