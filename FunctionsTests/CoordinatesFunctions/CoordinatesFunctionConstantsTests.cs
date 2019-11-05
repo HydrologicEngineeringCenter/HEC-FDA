@@ -329,32 +329,32 @@ namespace FunctionsTests.CoordinatesFunctions
         #endregion
 
         #region
-        /// <summary> Tests that sampling a CoordinatesFunctionConstants with no interpolator argument returns itself
-        [Fact]
-        public void CoordinatesFunctionConstants_Sample_Returns_ICoordinatesFunction()
-        {
-            List<double> xs1 = new List<double>() { 0, 3, 5 };
-            List<double> ys1 = new List<double>() { 2, 4, 7 };
+        ///// <summary> Tests that sampling a CoordinatesFunctionConstants with no interpolator argument returns itself
+        //[Fact]
+        //public void CoordinatesFunctionConstants_Sample_Returns_ICoordinatesFunction()
+        //{
+        //    List<double> xs1 = new List<double>() { 0, 3, 5 };
+        //    List<double> ys1 = new List<double>() { 2, 4, 7 };
 
-            IFunction testObj = CreateCoordinatesFunctionConstants(xs1, ys1);
+        //    IFunction testObj = CreateCoordinatesFunctionConstants(xs1, ys1);
 
-            Assert.True(testObj == testObj.Sample(.1));
-        }
+        //    Assert.True(testObj == testObj.Sample(.1));
+        //}
 
-        /// <summary> Tests that sampling a CoordinatesFunctionConstants with an interpolator returns 
-        /// an identical function but with the new interpolator set.
-        [Fact]
-        public void CoordinatesFunctionConstants_Sample_Returns_ICoordinatesFunction2()
-        {
-            List<double> xs1 = new List<double>() { 0, 3, 5 };
-            List<double> ys1 = new List<double>() { 2, 4, 7 };
+        ///// <summary> Tests that sampling a CoordinatesFunctionConstants with an interpolator returns 
+        ///// an identical function but with the new interpolator set.
+        //[Fact]
+        //public void CoordinatesFunctionConstants_Sample_Returns_ICoordinatesFunction2()
+        //{
+        //    List<double> xs1 = new List<double>() { 0, 3, 5 };
+        //    List<double> ys1 = new List<double>() { 2, 4, 7 };
 
-            IFunction testObj = CreateCoordinatesFunctionConstants(xs1, ys1);
+        //    IFunction testObj = CreateCoordinatesFunctionConstants(xs1, ys1);
 
-            ICoordinatesFunction<double, double> sampledFunction = testObj.Sample(.1, InterpolationEnum.Piecewise);
-            Assert.True(sampledFunction.Interpolator == InterpolationEnum.Piecewise);
-            Assert.True(AreCoordinatesEqual(testObj.Coordinates, sampledFunction.Coordinates));
-        }
+        //    ICoordinatesFunction<double, double> sampledFunction = testObj.Sample(.1, InterpolationEnum.Piecewise);
+        //    Assert.True(sampledFunction.Interpolator == InterpolationEnum.Piecewise);
+        //    Assert.True(AreCoordinatesEqual(testObj.Coordinates, sampledFunction.Coordinates));
+        //}
         #endregion
 
     }

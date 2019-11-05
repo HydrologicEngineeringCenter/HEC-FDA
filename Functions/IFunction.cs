@@ -9,12 +9,12 @@ namespace Functions
     {
         bool IsInvertible { get; }
         Tuple<double, double> Range { get; }
-        Tuple<double, double> Domain { get; }
+        //Tuple<double, double> Domain { get; }
         //InterpolationEnum Interpolation { get; }
-        OrderedSetEnum Order { get; }
+        //OrderedSetEnum Order { get; }
 
-        double F(double x);
-        double InverseF(double y);
+        //double F(double x);
+        //double InverseF(double y);
         double RiemannSum();
         IFunction Compose(IFunction g);
     }
