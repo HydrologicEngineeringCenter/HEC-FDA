@@ -1,4 +1,5 @@
-﻿using Functions.Ordinates;
+﻿using Functions.CoordinatesFunctions;
+using Functions.Ordinates;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,19 +8,26 @@ namespace Functions.Utilities
 {
     public class ConstantSampler : ISampler
     {
-        public bool CanSample(ICoordinatesFunction<IOrdinate, IOrdinate> coordinatesFunction)
+        //I think the function will always be an OrdinateY function.
+        public bool CanSample(ICoordinatesFunctionBase coordinatesFunction)
         {
-            return typeof(ICoordinatesFunction<double, double>).IsAssignableFrom(coordinatesFunction.GetType());
+            bool retval = false;
+            if (typeof(CoordinatesFunctionOrdinateYs).IsAssignableFrom(coordinatesFunction.GetType()))
+            {
+                retval = !((CoordinatesFunctionOrdinateYs)coordinatesFunction).IsDistributed;
+            }
+          
+            return retval;
             //return (typeof(XType) == typeof(double) && typeof(YType) == typeof(double));
         }
 
-        public IFunction Sample(ICoordinatesFunction<IOrdinate, IOrdinate> coordinatesFunction)
+        public IFunction Sample(ICoordinatesFunctionBase coordinatesFunction)
         {
-            if(typeof(ICoordinatesFunction<double, double>).IsAssignableFrom(coordinatesFunction.GetType()))
+            if (typeof(CoordinatesFunctionOrdinateYs).IsAssignableFrom(coordinatesFunction.GetType()))
             {
-                return new CoordinatesFunctions.CoordinatesFunctionConstants(((ICoordinatesFunction<Constant, Constant>)coordinatesFunction).Coordinates);
-                 
+                return ConvertOrdinateYsToConstant((CoordinatesFunctionOrdinateYs)coordinatesFunction);
             }
+            
             throw new ArgumentException("Could not sample the coordinates function.");
             ////the can sample should have been checked before this method is called but i am being overly cautious
             //if (CanSample(coordinatesFunction))
@@ -36,5 +44,16 @@ namespace Functions.Utilities
             //}
             //throw new ArgumentException("Could not sample the coordinates function because the x and/or y values were of the wrong type.");
         }
+
+        private CoordinatesFunctionConstants ConvertOrdinateYsToConstant(CoordinatesFunctionOrdinateYs func)
+        {
+            List<ICoordinate<Constant, Constant>> coords = new List<ICoordinate<Constant, Constant>>();
+            foreach(ICoordinate<Constant, IOrdinate> coord in func.Coordinates)
+            {
+                coords.Add(new Coordinates.CoordinateConstants(coord.X, new Constant(coord.Y.Value())));
+            }
+            return new CoordinatesFunctionConstants(coords, func.Interpolator);
+        }
+
     }
 }

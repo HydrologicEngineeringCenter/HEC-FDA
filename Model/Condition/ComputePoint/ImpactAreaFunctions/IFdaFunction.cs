@@ -7,11 +7,13 @@ using Model.Condition.ComputePoint.ImpactAreaFunctions;
 
 namespace Model
 {
-    public interface IFdaFunction<IOrdinate> :ICoordinatesFunction<Constant,IOrdinate>
+    public interface IFdaFunction 
     {
        public string XLabel { get; }
         public string YLabel { get; }
         ImpactAreaFunctionEnum Type { get; }
+        public ICoordinatesFunction<Constant, IOrdinate> Function { get; }
+
 
         //public List<ICoordinate<double, YType>> Coordinates { get; }
         //public InterpolationEnum Interpolator { get; }

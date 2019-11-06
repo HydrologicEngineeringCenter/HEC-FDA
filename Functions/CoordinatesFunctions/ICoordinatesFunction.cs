@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Functions
 {
-    public interface ICoordinatesFunction< XType, YType>
+    public interface ICoordinatesFunction< XType, YType>:ICoordinatesFunctionBase
     {
         YType F(XType x);
         XType InverseF(YType y);

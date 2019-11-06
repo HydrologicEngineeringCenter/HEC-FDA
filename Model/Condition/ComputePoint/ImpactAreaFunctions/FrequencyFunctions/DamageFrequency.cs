@@ -8,7 +8,7 @@ using Functions.Ordinates;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal sealed class DamageFrequency<YType> : ImpactAreaFunctionBase<YType>, IValidate<DamageFrequency<YType>>
+    internal sealed class DamageFrequency<YType> : ImpactAreaFunctionBase, IValidate<DamageFrequency<YType>>
     {
         #region Properties
         public override string XLabel => "Frequency";

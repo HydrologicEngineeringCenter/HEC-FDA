@@ -15,7 +15,7 @@ namespace Functions
     public static class ICoordinatesFunctionsFactory
     {
 
-        public static ICoordinatesFunction<Constant, Constant> Factory(List<double> xs, List<double> ys, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
+        public static ICoordinatesFunctionBase Factory(List<double> xs, List<double> ys, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
         {
             //are lengths the same
             if (xs.Count == ys.Count)
@@ -32,6 +32,22 @@ namespace Functions
             else
             {
                 throw new InvalidConstructorArgumentsException("X values are a different length than the Y values.");
+            }
+        }
+
+        public static ICoordinatesFunction<Constant, IOrdinate> Factory(ICoordinatesFunctionBase function)
+        {
+            if (typeof(ICoordinatesFunction<Constant, Constant>).IsAssignableFrom(function.GetType()))
+            {
+                return new CoordinatesFunctionOrdinateYs((CoordinatesFunctionConstants)function);
+            }
+            else if (typeof(ICoordinatesFunction<Constant, Distribution>).IsAssignableFrom(function.GetType()))
+            {
+                return new CoordinatesFunctionOrdinateYs((CoordinatesFunctionVariableYs)function);
+            }
+            else
+            {
+                throw new ArgumentException("The function was not a constant or variable y function.");
             }
         }
 

@@ -3,14 +3,15 @@ using System.Linq;
 using System.Collections.Generic;
 using Functions;
 using Functions.Ordinates;
+using Functions.CoordinatesFunctions;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
     public static class ImpactAreaFunctionFactory
     {
         //#region CreateNew() Methods
-       
-        //public static IFrequencyFunction<double> CreateNewFrequencyFunction(ICoordinatesFunction<double,double> function, ImpactAreaFunctionEnum type)
+
+        //public static IFrequencyFunction<double> CreateNewFrequencyFunction(ICoordinatesFunction<double, double> function, ImpactAreaFunctionEnum type)
         //{
         //    if (type == ImpactAreaFunctionEnum.InflowFrequency)
         //    {
@@ -20,12 +21,17 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         //    else return null;
         //}
 
-        public static IFdaFunction<IOrdinate> CreateFdaFunction(ICoordinatesFunction<Constant, IOrdinate> function, ImpactAreaFunctionEnum type) 
+        public static IFdaFunction CreateFdaFunction(ICoordinatesFunctionBase function, ImpactAreaFunctionEnum type) 
         {
             if (type == ImpactAreaFunctionEnum.InflowOutflow)
             {
                 InflowOutflow<IOrdinate> inflowOutflow = new InflowOutflow<IOrdinate>(function);
                 return inflowOutflow;
+            }
+            else if(type == ImpactAreaFunctionEnum.InflowFrequency)
+            {
+                InflowFrequency<double> inflowFrequency = new InflowFrequency<double>(function);
+                return inflowFrequency;
             }
             else return null;
         }
