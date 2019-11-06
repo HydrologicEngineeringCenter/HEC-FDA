@@ -10,7 +10,7 @@ using Utilities.Validation;
 
 namespace Functions.CoordinatesFunctions
 {
-    internal class CoordinatesFunctionLinkedOrdinates : CoordinatesFunctionLinkedBase<double, IOrdinate>, ICoordinatesFunctions<double, IOrdinate>, IValidate<CoordinatesFunctionLinkedOrdinates>
+    internal class CoordinatesFunctionLinkedOrdinates : CoordinatesFunctionLinkedBase<Constant, IOrdinate>, ICoordinatesFunctions<Constant, IOrdinate>, IValidate<CoordinatesFunctionLinkedOrdinates>
     {
 
         //public bool IsDistributed
@@ -36,7 +36,7 @@ namespace Functions.CoordinatesFunctions
         /// </summary>
         /// <param name="functions"></param>
         /// <param name="interpolators"></param>
-        internal CoordinatesFunctionLinkedOrdinates(List<ICoordinatesFunction<double, IOrdinate>> functions, List<InterpolationEnum> interpolators)
+        internal CoordinatesFunctionLinkedOrdinates(List<ICoordinatesFunction<Constant, IOrdinate>> functions, List<InterpolationEnum> interpolators)
         {
             //the list of functions are not gauranteed to be in the correct order.
             //sort them on the min x value of each function
@@ -76,13 +76,13 @@ namespace Functions.CoordinatesFunctions
         #endregion
 
         #region Interpolators
-        private double LinearInterpolator(ICoordinate<double, IOrdinate> coordinateLeft, ICoordinate<double, IOrdinate> coordinateRight, double x)
+        private double LinearInterpolator(ICoordinate<Constant, IOrdinate> coordinateLeft, ICoordinate<Constant, IOrdinate> coordinateRight, double x)
         {
-            return coordinateLeft.Y.Value() + (x - coordinateLeft.X) / (coordinateRight.X - coordinateLeft.X) * (coordinateRight.Y.Value() - coordinateLeft.Y.Value());
+            return coordinateLeft.Y.Value() + (x - coordinateLeft.X.Value()) / (coordinateRight.X.Value() - coordinateLeft.X.Value()) * (coordinateRight.Y.Value() - coordinateLeft.Y.Value());
         }
-        private double PiecewiseInterpolator(ICoordinate<double, IOrdinate> coordinateLeft, ICoordinate<double, IOrdinate> coordinateRight, double x)
+        private double PiecewiseInterpolator(ICoordinate<Constant, IOrdinate> coordinateLeft, ICoordinate<Constant, IOrdinate> coordinateRight, double x)
         {
-            if ((x - coordinateLeft.X) < (coordinateRight.X - coordinateLeft.X) / 2)
+            if ((x - coordinateLeft.X.Value()) < (coordinateRight.X.Value() - coordinateLeft.X.Value()) / 2)
             {
                 return coordinateLeft.Y.Value(); 
             }
@@ -91,9 +91,9 @@ namespace Functions.CoordinatesFunctions
                 return coordinateRight.Y.Value(); 
             }
         }
-        private double NoInterpolator(ICoordinate<double, IOrdinate> coordinateLeft, double x)
+        private double NoInterpolator(ICoordinate<Constant, IOrdinate> coordinateLeft, double x)
         {
-            if (x == coordinateLeft.X)
+            if (x == coordinateLeft.X.Value())
             {
                 return coordinateLeft.Y.Value();
             }
@@ -103,20 +103,20 @@ namespace Functions.CoordinatesFunctions
             }
         }
 
-        private double InverseLinearInterpolator(ICoordinate<double, IOrdinate> coordinateLeft, ICoordinate<double, IOrdinate> coordinateRight, double y)
+        private double InverseLinearInterpolator(ICoordinate<Constant, IOrdinate> coordinateLeft, ICoordinate<Constant, IOrdinate> coordinateRight, double y)
         {
-           return coordinateLeft.X + (y - coordinateLeft.Y.Value()) / 
+           return coordinateLeft.X.Value() + (y - coordinateLeft.Y.Value()) / 
                 (coordinateRight.Y.Value() - coordinateLeft.Y.Value()) * 
-                (coordinateRight.X - coordinateLeft.X);
+                (coordinateRight.X.Value() - coordinateLeft.X.Value());
         }
-        private double InversePiecewiseInterpolator(ICoordinate<double, IOrdinate> coordinateLeft, ICoordinate<double, IOrdinate> coordinateRight, double y)
+        private double InversePiecewiseInterpolator(ICoordinate<Constant, IOrdinate> coordinateLeft, ICoordinate<Constant, IOrdinate> coordinateRight, double y)
         {
             return ((y - coordinateLeft.Y.Value()) < (coordinateRight.Y.Value() - coordinateLeft.Y.Value()) / 2) 
-                ? coordinateLeft.X : coordinateRight.X;
+                ? coordinateLeft.X.Value() : coordinateRight.X.Value();
         }
-        private double InverseNoInterpolator(ICoordinate<double, IOrdinate> coordinateLeft, double y)
+        private double InverseNoInterpolator(ICoordinate<Constant, IOrdinate> coordinateLeft, double y)
         {
-            return y == coordinateLeft.Y.Value() ? coordinateLeft.X 
+            return y == coordinateLeft.Y.Value() ? coordinateLeft.X.Value() 
                 : throw new InvalidOperationException(string.Format("The InverseF(y) operation cannot produce a " +
                 "result because no interpolation method has been set and the specified y value: {0} was not " +
                 "explicityly provided as part of the function domain.", y));
@@ -127,16 +127,16 @@ namespace Functions.CoordinatesFunctions
 
 
 
-        public IOrdinate F(double x)
+        public IOrdinate F(Constant x)
         {
             //there should be no overlapping domains because we check that in the ctor during validation
             //try to find the function that has this point within its domain.
             foreach (ICoordinatesFunction<double, IOrdinate> function in Functions)
             {
                 Tuple<double, double> funcDomain = function.Domain;
-                if (x >= funcDomain.Item1 && x <= funcDomain.Item2)
+                if (x.Value() >= funcDomain.Item1 && x.Value() <= funcDomain.Item2)
                 {
-                    return function.F(x);
+                    return function.F(x.Value());
                 }
             }
 
@@ -148,11 +148,11 @@ namespace Functions.CoordinatesFunctions
                 Tuple<double, double> func1Domain = Functions[i].Domain;
                 Tuple<double, double> func2Domain = Functions[i + 1].Domain;
 
-                if (x > func1Domain.Item2 && x < func2Domain.Item1)
+                if (x.Value() > func1Domain.Item2 && x.Value() < func2Domain.Item1)
                 {
                     //then this x is between func1 and func2
                     InterpolationEnum interpolator = Interpolators[i];
-                    double yValue = Interpolate(interpolator, Functions[i].Coordinates.Last(), Functions[i+1].Coordinates.First(), x);
+                    double yValue = Interpolate(interpolator, Functions[i].Coordinates.Last(), Functions[i+1].Coordinates.First(), x.Value());
                     return new Constant(yValue);
                 }
             }
@@ -160,7 +160,7 @@ namespace Functions.CoordinatesFunctions
             return null;
         }
 
-        private double Interpolate(InterpolationEnum interpolator, ICoordinate<double, IOrdinate> coordinateLeft, ICoordinate<double, IOrdinate> coordinateRight, double x)
+        private double Interpolate(InterpolationEnum interpolator, ICoordinate<Constant, IOrdinate> coordinateLeft, ICoordinate<Constant, IOrdinate> coordinateRight, double x)
         {
             double retval = Double.NaN;
             if(interpolator == InterpolationEnum.Linear)
@@ -179,7 +179,7 @@ namespace Functions.CoordinatesFunctions
 
         }
 
-        private double InverseInterpolate(InterpolationEnum interpolator, ICoordinate<double, IOrdinate> coordinateLeft, ICoordinate<double, IOrdinate> coordinateRight, double y)
+        private double InverseInterpolate(InterpolationEnum interpolator, ICoordinate<Constant, IOrdinate> coordinateLeft, ICoordinate<Constant, IOrdinate> coordinateRight, double y)
         {
             double retval = Double.NaN;
             if (interpolator == InterpolationEnum.Linear)
@@ -198,7 +198,7 @@ namespace Functions.CoordinatesFunctions
 
         }
 
-        public double InverseF(IOrdinate y)
+        public Constant InverseF(IOrdinate y)
         {
             //i only do this if this function is strict monotonic
             //find the function that the y cooresponds to and call its inverseF
@@ -207,7 +207,7 @@ namespace Functions.CoordinatesFunctions
             {
                 //then we can do the inverse
                 //try to find the function that has this point within its range.
-                foreach (ICoordinatesFunction<double, IOrdinate> function in Functions)
+                foreach (ICoordinatesFunction<Constant, IOrdinate> function in Functions)
                 {
                     if (IsYValueInFunctionRange(function, y.Value()))
                     {
@@ -218,18 +218,21 @@ namespace Functions.CoordinatesFunctions
                 //check to see if it is between functions
                 for (int i = 0; i < Functions.Count - 1; i++)
                 {
-                    if (Functions[i].GetType() == typeof(CoordinatesFunctionOrdinateYs) &&
-                        Functions[i + 1].GetType() == typeof(CoordinatesFunctionOrdinateYs))
+                    //todo: I don't like having to check the type and then casting but when this
+                    //gets called we know that the order is strictlyIncreasing which must mean that this
+                    //is a constant function.
+                    if (Functions[i].GetType() == typeof(CoordinatesFunctionConstants) &&
+                        Functions[i + 1].GetType() == typeof(CoordinatesFunctionConstants))
                     {
 
-                        Tuple<double, double> func1Range = ((CoordinatesFunctionOrdinateYs)Functions[i]).Range;
-                        Tuple<double, double> func2Range = ((CoordinatesFunctionOrdinateYs)Functions[i + 1]).Range;
+                        Tuple<double, double> func1Range = ((IFunction)Functions[i]).Range;
+                        Tuple<double, double> func2Range = ((IFunction)Functions[i + 1]).Range;
 
                         if (y.Value() > func1Range.Item2 && y.Value() < func2Range.Item1)
                         {
                             //then this y is between func1 and func2
                             InterpolationEnum interpolator = Interpolators[i];
-                            return InverseInterpolate(interpolator, Functions[i].Coordinates.Last(), Functions[i + 1].Coordinates.Last(), y.Value());
+                            return new Constant( InverseInterpolate(interpolator, Functions[i].Coordinates.Last(), Functions[i + 1].Coordinates.Last(), y.Value()));
 
                         }
                     }
@@ -238,12 +241,15 @@ namespace Functions.CoordinatesFunctions
             throw new InvalidOperationException("The function InverseF(y) is invalid for this set of coordinates. The inverse of F(x) is not a function, because one or more y values maps to multiple x values");
         }
 
-        private bool IsYValueInFunctionRange(ICoordinatesFunction<double, IOrdinate> function, double yValue)
+        private bool IsYValueInFunctionRange(ICoordinatesFunction<Constant, IOrdinate> function, double yValue)
         {
             bool retval = false;
-            if(function.GetType() == typeof(CoordinatesFunctionOrdinateYs))
+            //todo: I don't like having to check the type and then casting but when this
+            //gets called we know that the order is strictlyIncreasing which must mean that this
+            //is a constant function.
+            if(function.GetType() == typeof(CoordinatesFunctionConstants))
             {
-                Tuple<double, double> range = ((CoordinatesFunctionOrdinateYs)function).Range;
+                Tuple<double, double> range = ((IFunction)function).Range;
                 if(yValue >= range.Item1 && yValue <= range.Item2)
                 {
                     retval = true;
@@ -306,8 +312,8 @@ namespace Functions.CoordinatesFunctions
             bool retval = true;
             for (int i = 0; i < Functions.Count - 2; i++)
             {
-                CoordinatesFunctionOrdinateYs func1 = (CoordinatesFunctionOrdinateYs)Functions[i];
-                CoordinatesFunctionOrdinateYs func2 = (CoordinatesFunctionOrdinateYs)Functions[i + 1];
+                IFunction func1 = (IFunction)Functions[i];
+                IFunction func2 = (IFunction)Functions[i + 1];
 
                 if (func1.Range.Item2 >= func2.Range.Item1)
                 {

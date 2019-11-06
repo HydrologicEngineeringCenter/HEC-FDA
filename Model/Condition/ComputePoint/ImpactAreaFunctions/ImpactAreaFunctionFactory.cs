@@ -2,44 +2,43 @@
 using System.Linq;
 using System.Collections.Generic;
 using Functions;
-using Model.Condition.ComputePoint.ComputableFunctions;
+using Functions.Ordinates;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
     public static class ImpactAreaFunctionFactory
     {
         //#region CreateNew() Methods
-        public static IComputableFrequencyFunction CreateNew(IFunction function, ImpactAreaFunctionEnum type)
-        {
-            if (type == ImpactAreaFunctionEnum.DamageFrequency)
-            {
-                return new DamageFrequencyComputable(function);
-            }
-            else if(type == ImpactAreaFunctionEnum.OutflowFrequency)
-            {
-                return new OutflowFrequencyComputable(function);
-            }
-            else return null;
-        }
-        public static IFrequencyFunction<double> CreateNewFrequencyFunction(ICoordinatesFunction<double,double> function, ImpactAreaFunctionEnum type)
-        {
-            if (type == ImpactAreaFunctionEnum.InflowFrequency)
-            {
-                InflowFrequency<double> inflowFrequency = new InflowFrequency<double>(function);
-                return inflowFrequency;
-            }
-            else return null;
-        }
+       
+        //public static IFrequencyFunction<double> CreateNewFrequencyFunction(ICoordinatesFunction<double,double> function, ImpactAreaFunctionEnum type)
+        //{
+        //    if (type == ImpactAreaFunctionEnum.InflowFrequency)
+        //    {
+        //        InflowFrequency<double> inflowFrequency = new InflowFrequency<double>(function);
+        //        return inflowFrequency;
+        //    }
+        //    else return null;
+        //}
 
-        public static ITransformFunction<YType> CreateNewTransformFunction<YType>(ICoordinatesFunction<double, YType> function, ImpactAreaFunctionEnum type)
+        public static IFdaFunction<IOrdinate> CreateFdaFunction(ICoordinatesFunction<Constant, IOrdinate> function, ImpactAreaFunctionEnum type) 
         {
             if (type == ImpactAreaFunctionEnum.InflowOutflow)
             {
-                InflowOutflow<YType> inflowOutflow = new InflowOutflow<YType>(function);
+                InflowOutflow<IOrdinate> inflowOutflow = new InflowOutflow<IOrdinate>(function);
                 return inflowOutflow;
             }
             else return null;
         }
+
+        //public static ITransformFunction<YType> CreateNewTransformFunction<YType>(ICoordinatesFunction<double, YType> function, ImpactAreaFunctionEnum type)
+        //{
+        //    if (type == ImpactAreaFunctionEnum.InflowOutflow)
+        //    {
+        //        InflowOutflow<YType> inflowOutflow = new InflowOutflow<YType>(function);
+        //        return inflowOutflow;
+        //    }
+        //    else return null;
+        //}
 
 
         //public static IFunctionCompose CreateNew(Statistics.Distributions.LogPearsonIII logPearsonFrequencyFunction)

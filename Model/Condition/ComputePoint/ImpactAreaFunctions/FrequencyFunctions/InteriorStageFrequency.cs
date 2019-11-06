@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Functions;
-using Model.Condition.ComputePoint.ComputableFunctions.FrequencyFunctions;
+using Functions.Ordinates;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal sealed class InteriorStageFrequency<YType> : ImpactAreaFunctionBase<YType>, IFrequencyFunction<YType>
+    internal sealed class InteriorStageFrequency<YType> : ImpactAreaFunctionBase<YType>
     {
         #region Properties
         public override string XLabel => "Stage";
@@ -17,7 +17,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         #endregion
 
         #region Constructor
-        internal InteriorStageFrequency(ICoordinatesFunction<double, YType> function) : base(function, ImpactAreaFunctionEnum.InteriorStageFrequency)
+        internal InteriorStageFrequency(ICoordinatesFunction<Constant, YType> function) : base(function, ImpactAreaFunctionEnum.InteriorStageFrequency)
         {
             
         }

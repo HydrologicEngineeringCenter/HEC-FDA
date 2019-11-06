@@ -1,5 +1,6 @@
 ﻿using Functions;
 using Functions.CoordinatesFunctions;
+using Functions.Ordinates;
 using System;
 using System.Collections.Generic;
 
@@ -9,18 +10,18 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
     /// All impact area functions inherit from this abstract class. 
     /// It contains an IFunctionBase property that allows it to serve as the base implementation for the decorator pattern that is implemented by inherited classes. 
     /// </summary>
-    internal abstract class ImpactAreaFunctionBase<YType>:IFdaFunction<YType> 
+    internal abstract class ImpactAreaFunctionBase<IOrdinate>:IFdaFunction<IOrdinate>
     {
         #region Properties 
         
-        protected ICoordinatesFunction<double,YType> Function;
+        protected ICoordinatesFunction<Constant,IOrdinate> Function;
         public ImpactAreaFunctionEnum Type { get; }
 
         public abstract string XLabel { get; }
 
         public abstract string YLabel { get; }
 
-        public List<ICoordinate<double, YType>> Coordinates => Function.Coordinates;
+        public List<ICoordinate<Constant, IOrdinate>> Coordinates => Function.Coordinates;
 
         public InterpolationEnum Interpolator => Function.Interpolator;
 
@@ -30,7 +31,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         #endregion
 
         #region Constructor
-        protected ImpactAreaFunctionBase(ICoordinatesFunction<double,YType> function, ImpactAreaFunctionEnum type) 
+        protected ImpactAreaFunctionBase(ICoordinatesFunction<Constant, IOrdinate> function, ImpactAreaFunctionEnum type) 
         { 
             Function = function;
             Type = type;
@@ -46,9 +47,9 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 
         //public abstract IFdaFunction< Sample(double p);// => Function.Sample(p);
 
-        public YType F(double x) => Function.F(x);
+        public IOrdinate F(Constant x) => Function.F(x);
         
-        public double InverseF(YType y) => Function.InverseF(y);
+        public Constant InverseF(IOrdinate y) => Function.InverseF(y);
       
         #endregion
 

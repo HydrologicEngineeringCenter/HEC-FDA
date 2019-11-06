@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using Functions;
 using Functions.CoordinatesFunctions;
+using Functions.Ordinates;
 using Model.Condition.ComputePoint.ImpactAreaFunctions;
 
 namespace Model
 {
-    public interface IFdaFunction<YType> :ICoordinatesFunction<double,YType>
+    public interface IFdaFunction<IOrdinate> :ICoordinatesFunction<Constant,IOrdinate>
     {
        public string XLabel { get; }
         public string YLabel { get; }

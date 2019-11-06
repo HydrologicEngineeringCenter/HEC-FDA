@@ -15,21 +15,16 @@ namespace Functions
     public static class ICoordinatesFunctionsFactory
     {
 
-        //public static ICoordinatesFunction<IOrdinate, IOrdinate> Factory(List<ICoordinate<IOrdinate, IOrdinate>> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
-        //{
-        //    return new CoordinatesFunctions.CoordinatesFunctionConstants(coordinates, interpolation);
-        //}
-
-        public static ICoordinatesFunction<double, double> Factory(List<double> xs, List<double> ys, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
+        public static ICoordinatesFunction<Constant, Constant> Factory(List<double> xs, List<double> ys, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
         {
             //are lengths the same
             if (xs.Count == ys.Count)
             {
-                List<ICoordinate<double, double>> coordinates = new List<ICoordinate<double, double>>();
+                List<ICoordinate<Constant, Constant>> coordinates = new List<ICoordinate<Constant, Constant>>();
 
                 for (int i = 0; i < xs.Count; i++)
                 {
-                    ICoordinate<double, double> coordinate = ICoordinateFactory.Factory(xs[i], ys[i]);
+                    ICoordinate<Constant, Constant> coordinate = ICoordinateFactory.Factory(xs[i], ys[i]);
                     coordinates.Add(coordinate);
                 }
                 return new CoordinatesFunctionConstants(coordinates, interpolation);
@@ -40,15 +35,15 @@ namespace Functions
             }
         }
 
-        public static ICoordinatesFunction<double, IDistribution> Factory(List<double> xs, List<IDistribution> ys)
+        public static ICoordinatesFunction<Constant, Distribution> Factory(List<double> xs, List<IDistribution> ys)
         {
             //are lengths the same
             if (xs.Count == ys.Count)
             {
-                List<ICoordinate<double, IDistribution>> coordinates = new List<ICoordinate<double, IDistribution>>();
+                List<ICoordinate<Constant, Distribution>> coordinates = new List<ICoordinate<Constant, Distribution>>();
                 for (int i = 0; i < xs.Count; i++)
                 {
-                    ICoordinate<double, IDistribution> coordinate = ICoordinateFactory.Factory(xs[i], ys[i]);
+                    ICoordinate<Constant, Distribution> coordinate = ICoordinateFactory.Factory(xs[i], ys[i]);
                     coordinates.Add(coordinate);
                 }
 
@@ -67,63 +62,63 @@ namespace Functions
         /// <param name="function"></param>
         /// <param name="additionalCoordinates"></param>
         /// <returns></returns>
-        public static ICoordinatesFunction<double, double> Factory(ICoordinatesFunction<double, double> function, List<ICoordinate<double, double>> additionalCoordinates)
-        {
+        //public static ICoordinatesFunction<Constant, Constant> Factory(ICoordinatesFunction<Constant, Constant> function, List<ICoordinate<double, double>> additionalCoordinates)
+        //{
 
-            if (!function.GetType().Equals(typeof(CoordinatesFunctionConstants)))
-            {
-                throw new InvalidConstructorArgumentsException("The function was of the wrong type for this method.");
-            }
+        //    if (!function.GetType().Equals(typeof(CoordinatesFunctionConstants)))
+        //    {
+        //        throw new InvalidConstructorArgumentsException("The function was of the wrong type for this method.");
+        //    }
 
-            List<ICoordinate<double, double>> coordinates = new List<ICoordinate<double, double>>();
+        //    List<ICoordinate<Constant, Constant>> coordinates = new List<ICoordinate<Constant, Constant>>();
 
-            //add the coordinates from the function
-            foreach (ICoordinate<double, double> coord in function.Coordinates)
-            {
-                coordinates.Add(coord);
-            }
-            //add the coordinates to the end
-            foreach (ICoordinate<double, double> coord in additionalCoordinates)
-            {
-                coordinates.Add(coord);
-            }
+        //    //add the coordinates from the function
+        //    foreach (ICoordinate<double, double> coord in function.Coordinates)
+        //    {
+        //        coordinates.Add(coord);
+        //    }
+        //    //add the coordinates to the end
+        //    foreach (ICoordinate<double, double> coord in additionalCoordinates)
+        //    {
+        //        coordinates.Add(coord);
+        //    }
 
-             coordinates.Sort(delegate (ICoordinate<double, double> coord1, ICoordinate<double, double> coord2)
-            {
-                return coord1.X.CompareTo(coord2.X);
-            });
+        //    coordinates.Sort(delegate (ICoordinate<double, double> coord1, ICoordinate<double, double> coord2)
+        //   {
+        //       return coord1.X.CompareTo(coord2.X);
+        //   });
 
-            InterpolationEnum originalInterp = ((CoordinatesFunctionConstants)function).Interpolator;
-            return new CoordinatesFunctionConstants(coordinates, originalInterp);
-        }
+        //    InterpolationEnum originalInterp = ((CoordinatesFunctionConstants)function).Interpolator;
+        //    return new CoordinatesFunctionConstants(coordinates, originalInterp);
+        //}
 
-        public static ICoordinatesFunction<double, IDistribution> Factory(ICoordinatesFunction<double, IDistribution> function, List<ICoordinate<double, IDistribution>> additionalCoordinates)
-        {
-            if (!function.GetType().Equals(typeof(CoordinatesFunctionVariableYs)))
-            {
-                throw new InvalidConstructorArgumentsException("The function was of the wrong type for this method.");
-            }
+        //public static ICoordinatesFunction<Constant, Distribution> Factory(ICoordinatesFunction<double, IDistribution> function, List<ICoordinate<double, IDistribution>> additionalCoordinates)
+        //{
+        //    if (!function.GetType().Equals(typeof(CoordinatesFunctionVariableYs)))
+        //    {
+        //        throw new InvalidConstructorArgumentsException("The function was of the wrong type for this method.");
+        //    }
 
-            List<ICoordinate<double, IDistribution>> coordinates = new List<ICoordinate<double, IDistribution>>();
+        //    List<ICoordinate<double, IDistribution>> coordinates = new List<ICoordinate<double, IDistribution>>();
 
-            //add the coordinates from the function
-            foreach (ICoordinate<double, IDistribution> coord in function.Coordinates)
-            {
-                coordinates.Add(coord);
-            }
-            //add the coordinates to the end
-            foreach (ICoordinate<double, IDistribution> coord in additionalCoordinates)
-            {
-                coordinates.Add(coord);
-            }
+        //    //add the coordinates from the function
+        //    foreach (ICoordinate<double, IDistribution> coord in function.Coordinates)
+        //    {
+        //        coordinates.Add(coord);
+        //    }
+        //    //add the coordinates to the end
+        //    foreach (ICoordinate<double, IDistribution> coord in additionalCoordinates)
+        //    {
+        //        coordinates.Add(coord);
+        //    }
 
-            coordinates.Sort(delegate (ICoordinate<double, IDistribution> coord1, ICoordinate<double, IDistribution> coord2)
-            {
-                return coord1.X.CompareTo(coord2.X);
-            });
+        //    coordinates.Sort(delegate (ICoordinate<double, IDistribution> coord1, ICoordinate<double, IDistribution> coord2)
+        //    {
+        //        return coord1.X.CompareTo(coord2.X);
+        //    });
 
-            return new CoordinatesFunctionVariableYs(coordinates);
-        }
+        //    return new CoordinatesFunctionVariableYs(coordinates);
+        //}
 
         /// <summary>
         /// Creates a function that links functions together. Interpolation schemes need to be passed in detailing how to interpolate
@@ -132,26 +127,26 @@ namespace Functions
         /// <param name="function"></param>
         /// <param name="additionalCoordinates"></param>
         /// <returns></returns>
-        public static ICoordinatesFunction<double, IOrdinate> Factory(List<ICoordinatesFunction<double, IOrdinate>> functions, List<InterpolationEnum> interpolators)
-        {
-            //the functions cant have any overlap. They can't have points on top of each other. 
-            //the interpolators should be functions.count -1
-            //for example: func1, interp1, func2, interp2, func3
-            bool needsInterpolators = interpolators == null;
-            //sort the functions on the domain so that the xValues are increasing
-            List<ICoordinatesFunction<double, IOrdinate>> sortedFunctions = functions.OrderBy(func => func.Domain.Item1).ToList();
-            //make sure there is no overlapping domains
-            string error = ValidateDomains(sortedFunctions);
-            if(error != null)
-            {
-                //todo: do what?
-            }
+        //public static ICoordinatesFunction<double, IOrdinate> Factory(List<ICoordinatesFunction<double, IOrdinate>> functions, List<InterpolationEnum> interpolators)
+        //{
+        //    //the functions cant have any overlap. They can't have points on top of each other. 
+        //    //the interpolators should be functions.count -1
+        //    //for example: func1, interp1, func2, interp2, func3
+        //    bool needsInterpolators = interpolators == null;
+        //    //sort the functions on the domain so that the xValues are increasing
+        //    List<ICoordinatesFunction<double, IOrdinate>> sortedFunctions = functions.OrderBy(func => func.Domain.Item1).ToList();
+        //    //make sure there is no overlapping domains
+        //    string error = ValidateDomains(sortedFunctions);
+        //    if(error != null)
+        //    {
+        //        //todo: do what?
+        //    }
 
-            CoordinatesFunctionLinkedOrdinates linkedFunction = new CoordinatesFunctionLinkedOrdinates(sortedFunctions, interpolators);
+        //    CoordinatesFunctionLinkedOrdinates linkedFunction = new CoordinatesFunctionLinkedOrdinates(sortedFunctions, interpolators);
 
-            return linkedFunction;
+        //    return linkedFunction;
 
-        }
+        //}
         /// <summary>
         /// This method assumes that the list has been sorted on the xvalues so that each subsequent function
         /// has higher x values.
@@ -285,12 +280,12 @@ namespace Functions
         //}
 
 
-        private static void ClearLists(List<double> xs, List<double> ys, List<IDistribution> ysDistributed)
-        {
-            xs.Clear();
-            ys.Clear();
-            ysDistributed.Clear();
-        }
+        //private static void ClearLists(List<double> xs, List<double> ys, List<IDistribution> ysDistributed)
+        //{
+        //    xs.Clear();
+        //    ys.Clear();
+        //    ysDistributed.Clear();
+        //}
 
 
     }

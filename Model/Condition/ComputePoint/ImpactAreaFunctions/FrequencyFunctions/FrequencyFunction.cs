@@ -1,16 +1,17 @@
 ﻿using Functions;
+using Functions.Ordinates;
 using System;
 using System.Collections.Generic;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal class FrequencyFunction<YType> : ImpactAreaFunctionBase<YType>, IFrequencyFunction<YType>
+    internal class FrequencyFunction<IOrdinate> : ImpactAreaFunctionBase<IOrdinate>
     {
         public override string XLabel => throw new NotImplementedException();
 
         public override string YLabel => throw new NotImplementedException();
 
-        internal FrequencyFunction(ICoordinatesFunction<double, YType> function) : base(function, ImpactAreaFunctionEnum.DamageFrequency)
+        internal FrequencyFunction(ICoordinatesFunction<Constant, IOrdinate> function) : base(function, ImpactAreaFunctionEnum.DamageFrequency)
         {
         }
 
@@ -204,9 +205,6 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         //     else return transformOrdinates[j].Item1 + (nextY - transformOrdinates[j].Item2) / (transformOrdinates[j + 1].Item2 - transformOrdinates[j].Item2) * (transformOrdinates[j + 1].Item1 - transformOrdinates[j].Item1);
         // }
         // #endregion
-        public IComputableFrequencyFunction Sample(double p)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }
