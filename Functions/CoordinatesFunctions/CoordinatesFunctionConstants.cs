@@ -326,15 +326,15 @@ namespace Functions.CoordinatesFunctions
             }
         }
 
-        public IFunction Sample(double p)
-        {
-            return this;
-        }
+        //public IFunction Sample(double p)
+        //{
+        //    return this;
+        //}
 
-        public IFunction Sample(double p, InterpolationEnum interpolator)
-        {
-            return new CoordinatesFunctionConstants(Coordinates, interpolator);
-        }
+        //public IFunction Sample(double p, InterpolationEnum interpolator)
+        //{
+        //    return new CoordinatesFunctionConstants(Coordinates, interpolator);
+        //}
 
         #endregion
         #endregion
