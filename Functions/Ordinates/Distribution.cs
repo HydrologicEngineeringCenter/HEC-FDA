@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Functions.Ordinates
 {
-    internal class Distribution : IOrdinate
+    public class Distribution : IOrdinate
     {
         public Statistics.IDistribution GetDistribution { get; }
         internal Distribution(Statistics.IDistribution distribution)

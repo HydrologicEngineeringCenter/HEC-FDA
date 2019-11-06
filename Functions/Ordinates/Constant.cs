@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Functions.Ordinates
 {
-    internal class Constant : IOrdinate
+    public class Constant : IOrdinate
     {
         private double _ConstantValue;
-        internal Constant(double value)
+        public Constant(double value)
         {
             _ConstantValue = value;
         }

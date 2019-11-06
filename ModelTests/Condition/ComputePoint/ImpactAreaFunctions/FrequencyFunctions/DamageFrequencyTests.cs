@@ -6,6 +6,8 @@ using Xunit;
 using Model.Condition.ComputePoint.ImpactAreaFunctions;
 using Functions;
 using Functions.Utilities;
+using Model;
+using Functions.Ordinates;
 
 namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctions
 {
@@ -92,10 +94,10 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             List<double> xs = new List<double>() { 0, .25, .5, .75, 1 };
             List<double> ys = new List<double>() { 0, 25, 50, 75, 100 };
 
-            ICoordinatesFunction<double, double> coordFunction = ICoordinatesFunctionsFactory.Factory(xs, ys);
+            ICoordinatesFunction<Constant, Constant> coordFunction = ICoordinatesFunctionsFactory.Factory(xs, ys);
             ImpactAreaFunctionEnum type = ImpactAreaFunctionEnum.InflowFrequency;
 
-            IFrequencyFunction<double> inflowFrequency = ImpactAreaFunctionFactory.CreateNewFrequencyFunction(coordFunction, type);
+            IFdaFunction<IOrdinate> inflowFrequency = ImpactAreaFunctionFactory.CreateFdaFunction(coordFunction, type);
             IFunction computableInflowFreq = Sampler.Sample(inflowFrequency);
 
             xs = new List<double>() { 0, 25, 50, 75, 100 };
@@ -103,8 +105,8 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             coordFunction = ICoordinatesFunctionsFactory.Factory(xs, ys);
             type = ImpactAreaFunctionEnum.InflowOutflow;
 
-            ITransformFunction<double> inflowOutflow = ImpactAreaFunctionFactory.CreateNewTransformFunction<double>(coordFunction, type);
-            IFunction computeableInflowOutflow = Sampler.Sample(inflowOutflow);
+            IFdaFunction<IOrdinate> inflowOutflow = ImpactAreaFunctionFactory.CreateFdaFunction<double>(coordFunction, type);
+            IFunction computeableInflowOutflow = Sampler<IOrdinate, IOrdinate>.Sample(inflowOutflow);
 
             //IComputableTransformFunction computableInflowOutflow = inflowOutflow.Sample(.5);
 
@@ -112,8 +114,8 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
 
             IFunction composedFunction = computableInflowFreq.Compose(computeableInflowOutflow);
            // Assert.True(composedFunction.Type == ImpactAreaFunctionEnum.OutflowFrequency);
-            Assert.True(composedFunction.F(0) == 0);
-            Assert.True(composedFunction.F(1) == 100);
+            Assert.True(composedFunction.F(new Constant(0)).Value() == 0);
+            Assert.True(composedFunction.F(new Constant(1)).Value() == 100);
         }
 
 

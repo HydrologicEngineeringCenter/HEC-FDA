@@ -5,7 +5,7 @@ using Utilities;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal sealed class ExteriorInteriorStage<YType>: ImpactAreaFunctionBase<YType>, ITransformFunction<YType>, IValidate<ExteriorInteriorStage<YType>>
+    internal sealed class ExteriorInteriorStage<YType>: ImpactAreaFunctionBase<YType>, IValidate<ExteriorInteriorStage<YType>>
     {
         #region Properties
         public override string XLabel => "Exterior Stage";

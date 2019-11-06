@@ -7,11 +7,11 @@ using Utilities;
 
 namespace Functions.CoordinatesFunctions
 {
-    internal abstract class CoordinatesFunctionLinkedBase<XType, YType>
+    internal abstract class CoordinatesFunctionLinkedBase<Constant, IOrdinate>
     {
-        public List<ICoordinatesFunction<XType, YType>> Functions { get; internal set; }
+        public List<ICoordinatesFunction<Constant, IOrdinate>> Functions { get; internal set; }
 
-        public List<ICoordinate<XType, YType>> Coordinates { get; internal set; }
+        public List<ICoordinate<Constant, IOrdinate>> Coordinates { get; internal set; }
 
         public bool IsValid { get; internal set; }
         public OrderedSetEnum Order { get; internal set; }
@@ -31,7 +31,7 @@ namespace Functions.CoordinatesFunctions
                 {
                     double min = Double.MaxValue;
                     double max = Double.MinValue;
-                    foreach (ICoordinatesFunction<XType, YType> func in Functions)
+                    foreach (ICoordinatesFunction<Constant, IOrdinate> func in Functions)
                     {
                         double funcMin = func.Domain.Item1;
                         double funcMax = func.Domain.Item2;
@@ -67,7 +67,7 @@ namespace Functions.CoordinatesFunctions
            
 
             List<OrderedSetEnum> functionOrders = new List<OrderedSetEnum>();
-            foreach (ICoordinatesFunction<XType, YType> func in Functions)
+            foreach (ICoordinatesFunction<Constant, IOrdinate> func in Functions)
             {
                 OrderedSetEnum order = func.Order;
                 functionOrders.Add(order);
@@ -196,8 +196,8 @@ namespace Functions.CoordinatesFunctions
             bool retval = true;
             for (int i = 0; i < Functions.Count - 2; i++)
             {
-                CoordinatesFunctionOrdinateYs func1 = (CoordinatesFunctionOrdinateYs)Functions[i];
-                CoordinatesFunctionOrdinateYs func2 = (CoordinatesFunctionOrdinateYs)Functions[i + 1];
+                IFunction func1 = (IFunction)Functions[i];
+                IFunction func2 = (IFunction)Functions[i + 1];
 
                 if (func1.Range.Item2 > func2.Range.Item1)
                 {
@@ -213,8 +213,8 @@ namespace Functions.CoordinatesFunctions
             bool retval = true;
             for (int i = 0; i < Functions.Count - 2; i++)
             {
-                CoordinatesFunctionOrdinateYs func1 = (CoordinatesFunctionOrdinateYs)Functions[i];
-                CoordinatesFunctionOrdinateYs func2 = (CoordinatesFunctionOrdinateYs)Functions[i + 1];
+                IFunction func1 = (IFunction)Functions[i];
+                IFunction func2 = (IFunction)Functions[i + 1];
 
                 if (func1.Range.Item2 <= func2.Range.Item1)
                 {
@@ -230,8 +230,8 @@ namespace Functions.CoordinatesFunctions
             bool retval = true;
             for (int i = 0; i < Functions.Count - 2; i++)
             {
-                CoordinatesFunctionOrdinateYs func1 = (CoordinatesFunctionOrdinateYs)Functions[i];
-                CoordinatesFunctionOrdinateYs func2 = (CoordinatesFunctionOrdinateYs)Functions[i + 1];
+                IFunction func1 = (IFunction)Functions[i];
+                IFunction func2 = (IFunction)Functions[i + 1];
 
                 if (func1.Range.Item2 < func2.Range.Item1)
                 {
@@ -348,15 +348,15 @@ namespace Functions.CoordinatesFunctions
        
         internal void CombineCoordinates()
         {
-            List<ICoordinate<XType, YType>> allCoords = new List<ICoordinate<XType, YType>>();
-            foreach (ICoordinatesFunction<XType, YType> function in Functions)
+            List<ICoordinate<Constant, IOrdinate>> allCoords = new List<ICoordinate<Constant, IOrdinate>>();
+            foreach (ICoordinatesFunction<Constant, IOrdinate> function in Functions)
             {
                 allCoords.AddRange(function.Coordinates);
             }
 
-            List<ICoordinate<XType, YType>> sortedList = allCoords.OrderBy(coord => coord.X).ToList();
-            List<ICoordinate<XType, YType>> coordinates = new List<ICoordinate<XType, YType>>();
-            foreach (ICoordinate<XType, YType> coord in sortedList)
+            List<ICoordinate<Constant, IOrdinate>> sortedList = allCoords.OrderBy(coord => coord.X).ToList();
+            List<ICoordinate<Constant, IOrdinate>> coordinates = new List<ICoordinate<Constant, IOrdinate>>();
+            foreach (ICoordinate<Constant, IOrdinate> coord in sortedList)
             {
                 coordinates.Add(coord);
             }

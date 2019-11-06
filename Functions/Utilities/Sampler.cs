@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Functions.Ordinates;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -13,7 +14,9 @@ namespace Functions.Utilities
             _samplers.Add(sampler);
         }
 
-        public static IFunction Sample(ICoordinatesFunctionBase coordinatesFunction)
+        //todo: John, I really didn't want this to be <Constant, IOrdinate>. I wanted <IOrdinate, IOrdinate> but
+        //then passing in a function that is <Constant, IOrdinate> wasn't working. I feel like it should but it wasn't
+        public static IFunction Sample(ICoordinatesFunction<IOrdinate, IOrdinate> coordinatesFunction) 
         {
             foreach(ISampler sampler in _samplers)
             {

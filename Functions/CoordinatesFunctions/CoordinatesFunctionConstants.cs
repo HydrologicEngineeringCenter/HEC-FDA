@@ -10,7 +10,7 @@ namespace Functions.CoordinatesFunctions
     internal sealed class CoordinatesFunctionConstants : IFunction
     {
         #region Properties
-        public List<ICoordinate<double, double>> Coordinates { get; }
+        public List<ICoordinate<Constant, Constant>> Coordinates { get; }
 
         public Tuple<double, double> Range { get; }
         public Tuple<double, double> Domain { get; }
@@ -25,7 +25,7 @@ namespace Functions.CoordinatesFunctions
         #endregion
 
         #region Constructor
-        internal CoordinatesFunctionConstants(List<ICoordinate<double, double>> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation) 
+        internal CoordinatesFunctionConstants(List<ICoordinate<Constant, Constant>> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation) 
         {
             if (IsValid(coordinates))
             {
@@ -33,8 +33,8 @@ namespace Functions.CoordinatesFunctions
                 IsInvertible = IsInvertibleFunction();
             }
             Order = ComputeSetOrder();
-            Range = new Tuple<double, double>(Coordinates[0].Y, Coordinates[Coordinates.Count - 1].Y);
-            Domain = new Tuple<double, double>(Coordinates[0].X, Coordinates[Coordinates.Count - 1].X);
+            Range = new Tuple<double, double>(Coordinates[0].Y.Value(), Coordinates[Coordinates.Count - 1].Y.Value());
+            Domain = new Tuple<double, double>(Coordinates[0].X.Value(), Coordinates[Coordinates.Count - 1].X.Value());
             Interpolator = interpolation;
             InterpolationFunction = SetInterpolator(interpolation);
             InverseInterpolationFunction = IsInvertible ? SetInverseInterpolator(interpolation) : null;
@@ -46,14 +46,14 @@ namespace Functions.CoordinatesFunctions
 
         #region Functions
         #region Initialization Functions
-        public List<ICoordinate<double, double>> SortByXs(List<ICoordinate<double, double>> coordinates)
+        public List<ICoordinate<Constant, Constant>> SortByXs(List<ICoordinate<Constant, Constant>> coordinates)
         {
             return coordinates.OrderBy(xy => xy.X).ToList();
         }
 
-        private bool IsValid(List<ICoordinate<double, double>> coordinates)
+        private bool IsValid(List<ICoordinate<Constant, Constant>> coordinates)
         {
-            if (Utilities.Validation.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate<double, double>>))
+            if (Utilities.Validation.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate<Constant, Constant>>))
             {
                 return false;
             }
@@ -63,14 +63,14 @@ namespace Functions.CoordinatesFunctions
             }
             return true;
         }
-        private bool IsFunction(List<ICoordinate<double, double>> xys)
+        private bool IsFunction(List<ICoordinate<Constant, Constant>> xys)
         {
             for (int i = 0; i < xys.Count; i++)
             {
                 int j = i + 1;
                 while (j < xys.Count)
                 {
-                    if (xys[i].X.Equals(xys[j].X) && !xys[i].Y.Equals(xys[j].Y)) return false;
+                    if (xys[i].X.Equals(xys[j].X) && !xys[i].Y.Value().Equals(xys[j].Y.Value())) return false;
                     else j++;
                 }
             }
@@ -85,9 +85,9 @@ namespace Functions.CoordinatesFunctions
                 default: return NoInterpolator;
             }
         }
-        private double LinearInterpolator(int i, double x) => Coordinates[i].Y + (x - Coordinates[i].X) / (Coordinates[i + 1].X - Coordinates[i].X) * (Coordinates[i + 1].Y - Coordinates[i].Y);
-        private double PiecewiseInterpolator(int i, double x) => ((x - Coordinates[i].X) < (Coordinates[i + 1].X - Coordinates[i].X) / 2) ? Coordinates[i].Y : Coordinates[i + 1].Y;
-        private double NoInterpolator(int i, double x) => x == Coordinates[i].X ? Coordinates[i].Y : throw new InvalidOperationException(String.Format("The F(x) operation cannot produce a result because no interpolation method has been set and the specified x value: {0} was not explicitly provided as part of the function domain.", x));
+        private double LinearInterpolator(int i, double x) => Coordinates[i].Y.Value() + (x - Coordinates[i].X.Value()) / (Coordinates[i + 1].X.Value() - Coordinates[i].X.Value()) * (Coordinates[i + 1].Y.Value() - Coordinates[i].Y.Value());
+        private double PiecewiseInterpolator(int i, double x) => ((x - Coordinates[i].X.Value()) < (Coordinates[i + 1].X.Value() - Coordinates[i].X.Value()) / 2) ? Coordinates[i].Y.Value() : Coordinates[i + 1].Y.Value();
+        private double NoInterpolator(int i, double x) => x == Coordinates[i].X.Value() ? Coordinates[i].Y.Value() : throw new InvalidOperationException(String.Format("The F(x) operation cannot produce a result because no interpolation method has been set and the specified x value: {0} was not explicitly provided as part of the function domain.", x));
 
         private Func<int, double, double> SetInverseInterpolator(InterpolationEnum methodOfInterpolation = InterpolationEnum.NoInterpolation)
         {
@@ -98,9 +98,9 @@ namespace Functions.CoordinatesFunctions
                 default: return InverseNoInterpolator;
             }
         }
-        private double InverseLinearInterpolator(int i, double y) => Coordinates[i].X + (y - Coordinates[i].Y) / (Coordinates[i + 1].Y - Coordinates[i].Y) * (Coordinates[i + 1].X - Coordinates[i].X);
-        private double InversePiecewiseInterpolator(int i, double y) => ((y - Coordinates[i].Y) < (Coordinates[i + 1].Y - Coordinates[i].Y) / 2) ? Coordinates[i].X : Coordinates[i + 1].X;
-        private double InverseNoInterpolator(int i, double y) => y == Coordinates[i].Y ? Coordinates[i].X : throw new InvalidOperationException(string.Format("The InverseF(y) operation cannot produce a result because no interpolation method has been set and the specified y value: {0} was not explicityly provided as part of the function domain.", y));
+        private double InverseLinearInterpolator(int i, double y) => Coordinates[i].X.Value() + (y - Coordinates[i].Y.Value()) / (Coordinates[i + 1].Y.Value() - Coordinates[i].Y.Value()) * (Coordinates[i + 1].X.Value() - Coordinates[i].X.Value());
+        private double InversePiecewiseInterpolator(int i, double y) => ((y - Coordinates[i].Y.Value()) < (Coordinates[i + 1].Y.Value() - Coordinates[i].Y.Value()) / 2) ? Coordinates[i].X.Value() : Coordinates[i + 1].X.Value();
+        private double InverseNoInterpolator(int i, double y) => y == Coordinates[i].Y.Value() ? Coordinates[i].X.Value() : throw new InvalidOperationException(string.Format("The InverseF(y) operation cannot produce a result because no interpolation method has been set and the specified y value: {0} was not explicityly provided as part of the function domain.", y));
 
         private OrderedSetEnum ComputeSetOrder()
         {
@@ -112,8 +112,8 @@ namespace Functions.CoordinatesFunctions
             }
             return order;
         }
-        private OrderedSetEnum InitialOrder(List<ICoordinate<double, double>> ordinates) => ordinates.Count == 1 ? OrderedSetEnum.NonMonotonic : OrderOfPair(ordinates, 0);
-        private OrderedSetEnum OrderOfPair(List<ICoordinate<double, double>> ordinates, int index) => ordinates[index].Y == ordinates[index + 1].Y ? OrderedSetEnum.NonMonotonic : ordinates[index].Y < ordinates[index + 1].Y ? OrderedSetEnum.StrictlyIncreasing : OrderedSetEnum.StrictlyDecreasing;
+        private OrderedSetEnum InitialOrder(List<ICoordinate<Constant, Constant>> ordinates) => ordinates.Count == 1 ? OrderedSetEnum.NonMonotonic : OrderOfPair(ordinates, 0);
+        private OrderedSetEnum OrderOfPair(List<ICoordinate<Constant, Constant>> ordinates, int index) => ordinates[index].Y.Value() == ordinates[index + 1].Y.Value() ? OrderedSetEnum.NonMonotonic : ordinates[index].Y.Value() < ordinates[index + 1].Y.Value() ? OrderedSetEnum.StrictlyIncreasing : OrderedSetEnum.StrictlyDecreasing;
         private OrderedSetEnum UpdateOrderOfSet(OrderedSetEnum orderOfSet, OrderedSetEnum orderOfPair, out bool hasChangedOrder)
         {
             hasChangedOrder = false;
@@ -141,14 +141,14 @@ namespace Functions.CoordinatesFunctions
                 int j = i + 1;
                 while (j < Coordinates.Count)
                 {
-                    if (Coordinates[i].Y.Equals(Coordinates[j].Y) && !Coordinates[i].X.Equals(Coordinates[j].Y)) return false;
+                    if (Coordinates[i].Y.Value().Equals(Coordinates[j].Y.Value()) && !Coordinates[i].X.Value().Equals(Coordinates[j].Y.Value())) return false;
                     else j++;
                 }
             }
             return true;
         }
         #region F(x)
-        public IOrdinate F(IOrdinate x)
+        public Constant F(Constant x)
         {
             if (Utilities.Validation.IsNull(x)) throw new ArgumentNullException("The specified x value is invalid because it is null");
             else return new Constant(F(x.Value()));
@@ -157,12 +157,12 @@ namespace Functions.CoordinatesFunctions
         {
             if (!IsOnDomain(x)) throw new ArgumentOutOfRangeException(
                 string.Format("The specified x value: {0} is invalid because it is not on the domain of the coordinates" +
-                " function [{1}, {2}].", x, Coordinates[0].X, Coordinates[Coordinates.Count - 1].X));
+                " function [{1}, {2}].", x, Coordinates[0].X.Value(), Coordinates[Coordinates.Count - 1].X.Value()));
             int i = 0;
             if (!(i == Coordinates.Count - 1))
             {
-                while (Coordinates[i + 1].X < x) i++;
-                if (Coordinates[i + 1].X == x) return Coordinates[i + 1].Y;
+                while (Coordinates[i + 1].X.Value() < x) i++;
+                if (Coordinates[i + 1].X.Value() == x) return Coordinates[i + 1].Y.Value();
             }
             return InterpolationFunction(i, x);
         }
@@ -171,20 +171,20 @@ namespace Functions.CoordinatesFunctions
 
         #region InverseF(y)
        
-        public double InverseF(double y)
+        public Constant InverseF(Constant y)
         {
             if (Utilities.Validation.IsNull(y)) throw new ArgumentNullException("The specified y value is invalid because it is null");
-            if (!Utilities.Validation.IsFinite(y)) throw new ArgumentOutOfRangeException(string.Format("The specified y value: {0} is not finite.", y));
+            if (!Utilities.Validation.IsFinite(y.Value())) throw new ArgumentOutOfRangeException(string.Format("The specified y value: {0} is not finite.", y));
             if (!IsInvertible) throw new InvalidOperationException("The function InverseF(y) is invalid for this set of coordinates. The inverse of F(x) is not a function, because one or more y values maps to multiple x values");
-            if (!IsOnRange(y)) throw new ArgumentOutOfRangeException(string.Format("The specified y values: {0} is invalid because it is not on the domain of the inverse coordinates function [{1}, {2}] (e.g. range of coordinates function).",
-                y, Coordinates[0].Y, Coordinates[Coordinates.Count - 1].Y));
+            if (!IsOnRange(y.Value())) throw new ArgumentOutOfRangeException(string.Format("The specified y values: {0} is invalid because it is not on the domain of the inverse coordinates function [{1}, {2}] (e.g. range of coordinates function).",
+                y, Coordinates[0].Y.Value(), Coordinates[Coordinates.Count - 1].Y.Value()));
             int i = 0;
             if (!(i == Coordinates.Count - 1))
             {
-                while (Coordinates[i + 1].Y < y) i++;
-                if (Coordinates[i + 1].Y == y) return Coordinates[i + 1].X;
+                while (Coordinates[i + 1].Y.Value() < y.Value()) i++;
+                if (Coordinates[i + 1].Y.Value() == y.Value()) return Coordinates[i + 1].X;
             }
-            return SetInverseInterpolator(Interpolator)(i, y);
+            return new Constant( SetInverseInterpolator(Interpolator)(i, y.Value()));
         }
         private double InverseF(double y, int i)
         {
@@ -192,11 +192,11 @@ namespace Functions.CoordinatesFunctions
             if (!Utilities.Validation.IsFinite(y)) throw new ArgumentOutOfRangeException(string.Format("The specified y value: {0} is not finite.", y));
             // TODO: OnRange()  check  - so this works with decreasing functions.
             if (!IsOnRange(y)) throw new ArgumentOutOfRangeException(string.Format("The specified y values: {0} is invalid because it is not on the domain of the inverse coordinates function [{1}, {2}] (e.g. range of coordinates function).",
-                y, Coordinates[0].Y, Coordinates[Coordinates.Count - 1].Y));
-            if (y < Coordinates[i].Y || y > Coordinates[i + 1].Y) throw new ArgumentException(
+                y, Coordinates[0].Y.Value(), Coordinates[Coordinates.Count - 1].Y.Value()));
+            if (y < Coordinates[i].Y.Value() || y > Coordinates[i + 1].Y.Value()) throw new ArgumentException(
                 string.Format("The InverseF operation could not be completed because the specified y: {0} is not on the implicitly defined range: [{1}, {2}].",
-                y, Coordinates[i].Y, Coordinates[i + 1].Y));
-            if (Coordinates[i + 1].Y == y) return Coordinates[i + 1].Y;
+                y, Coordinates[i].Y.Value(), Coordinates[i + 1].Y.Value()));
+            if (Coordinates[i + 1].Y.Value() == y) return Coordinates[i + 1].Y.Value();
             else return InverseInterpolationFunction(i, y);
         }
         private bool IsOnRange(double y) => y < Range.Item1 || y > Range.Item2 ? false : true;     
@@ -212,29 +212,29 @@ namespace Functions.CoordinatesFunctions
             int j = FirstZ(g), J = g.Coordinates.Count; // - 1;
             if (j == J) throw new InvalidOperationException(NoOverlapMessage(g));
 
-            List<ICoordinate<double, double>> fog = new List<ICoordinate<double, double>>();
+            List<ICoordinate<Constant, Constant>> fog = new List<ICoordinate<Constant, Constant>>();
             while (!IsComplete(i, I, j, J, g)) // InOverlapping Portion
             {
-                if (Coordinates[i].Y == g.Coordinates[j].X) //Matching ordinate
+                if (Coordinates[i].Y.Value() == g.Coordinates[j].X.Value()) //Matching ordinate
                 {
-                    fog.Add(ICoordinateFactory.Factory(new Constant(Coordinates[i].X).Value(), new Constant(g.Coordinates[j].Y).Value()));
+                    fog.Add(ICoordinateFactory.Factory(Coordinates[i].X.Value(), new Constant(g.Coordinates[j].Y.Value()).Value()));
                     i++;
                     j++;
                 }
                 else // Mismatching ordinate
                 {
-                    if (Coordinates[i].Y < g.Coordinates[j].X) // An X should be added and Z interpolated
+                    if (Coordinates[i].Y.Value() < g.Coordinates[j].X.Value()) // An X should be added and Z interpolated
                     {
                         // Add new ordinate to FoG if G allows interpolation between ordinates
                         if (!(g.Interpolator == InterpolationEnum.NoInterpolation))
-                            fog.Add(ICoordinateFactory.Factory(new Constant(Coordinates[i].X).Value(), new Constant(g.F(Coordinates[i].Y)).Value()));
+                            fog.Add(ICoordinateFactory.Factory(Coordinates[i].X.Value(),   g.F(Coordinates[i].Y).Value()));
                         i++;
                     }
                     else // A Z should be added and X interpolated
                     {
                         // Add new ordinate to FoG if F allows Interpolation between ordinates
                         if (!(Interpolator == InterpolationEnum.NoInterpolation))
-                            fog.Add(ICoordinateFactory.Factory(new Constant(InverseF(g.Coordinates[j].X, i - 1)).Value(), new Constant(g.Coordinates[j].Y).Value()));
+                            fog.Add(ICoordinateFactory.Factory(new Constant(InverseF(g.Coordinates[j].X.Value(), i - 1)).Value(), new Constant(g.Coordinates[j].Y.Value()).Value()));
                         j++;
                     }
                 }
@@ -245,7 +245,7 @@ namespace Functions.CoordinatesFunctions
         private int FirstX(IFunction g)
         {
             int i = 0, I = Coordinates.Count;
-            while (Coordinates[i].Y < g.Coordinates[0].X)
+            while (Coordinates[i].Y.Value() < g.Coordinates[0].X.Value())
             {
                 i++;
                 if (i == I) break;
@@ -255,7 +255,7 @@ namespace Functions.CoordinatesFunctions
         private int FirstZ(IFunction g)
         {
             int j = 0, J = g.Coordinates.Count; //- 1;
-            while (g.Coordinates[j].X < Coordinates[0].Y)
+            while (g.Coordinates[j].X.Value() < Coordinates[0].Y.Value())
             {
                 j++;
                 if (j == J) break;
@@ -263,8 +263,8 @@ namespace Functions.CoordinatesFunctions
             return j;
         }
         private bool IsComplete(int i, int I, int j, int J, IFunction g) => (IsFinalIndex(i, I, j, J) || IsXOffOverlap(i, J, g) || IsZOffOverlap(I, j, g)) ? true : false;
-        private bool IsXOffOverlap(int i, int J, IFunction g) => Coordinates[i].Y > g.Coordinates[J - 1].X ? true : false;
-        private bool IsZOffOverlap(int I, int j, IFunction g) => Coordinates[I - 1].Y < g.Coordinates[j].X ? true : false;
+        private bool IsXOffOverlap(int i, int J, IFunction g) => Coordinates[i].Y.Value() > g.Coordinates[J - 1].X.Value() ? true : false;
+        private bool IsZOffOverlap(int I, int j, IFunction g) => Coordinates[I - 1].Y.Value() < g.Coordinates[j].X.Value() ? true : false;
         private bool IsFinalIndex(int i, int I, int j, int J) => (i == I || j == J) ? true : false;
         private string NoOverlapMessage(IFunction g) => string.Format("The functional composition operation could not be performed. The range of F: [{0}, {1}] in the composition equation F(G(x)) does not overlap the domain of G: [{2}, {3}].", Range.Item1, Range.Item2, g.Domain.Item1, g.Domain.Item2);
         #endregion
@@ -275,7 +275,7 @@ namespace Functions.CoordinatesFunctions
             double riemannSum = 0;
             for (int i = 0; i < Coordinates.Count - 1; i++)
             {
-                riemannSum += (Coordinates[i + 1].Y + Coordinates[i].Y) * (Coordinates[i + 1].X - Coordinates[i].X) / 2;
+                riemannSum += (Coordinates[i + 1].Y.Value() + Coordinates[i].Y.Value()) * (Coordinates[i + 1].X.Value() - Coordinates[i].X.Value()) / 2;
             }
             return riemannSum;
         }

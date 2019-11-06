@@ -6,20 +6,20 @@ using System.Text;
 
 namespace Functions.Coordinates
 {
-    internal class CoordinateConstants: ICoordinate<double, double>
+    internal class CoordinateConstants: ICoordinate<Constant, Constant>
     {
         //TODO: Validation
 
-        public double X { get; }
-        public double Y { get; }
+        public Constant X { get; }
+        public Constant Y { get; }
 
-        public CoordinateConstants(double x, double y)
+        public CoordinateConstants(Constant x, Constant y)
         {
             X = x;
             Y = y;
         }
 
-        public ICoordinate<double, double> Sample(double p = 0.50) => this;
+        public ICoordinate<Constant, Constant> Sample(double p = 0.50) => this;
 
         public override bool Equals(object obj)
         {

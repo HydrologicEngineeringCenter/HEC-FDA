@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Functions.Ordinates;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal sealed class StageDamage<YType> : ImpactAreaFunctionBase<YType>, ITransformFunction<YType>
+    internal sealed class StageDamage<YType> : ImpactAreaFunctionBase<YType>
     {
         #region Properties
         public override string XLabel => "Interior Stage";
@@ -16,15 +17,12 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         #endregion
 
         #region Constructor
-        internal StageDamage(Functions.ICoordinatesFunction<double, YType> function) : base(function, ImpactAreaFunctionEnum.InteriorStageDamage)
+        internal StageDamage(Functions.ICoordinatesFunction<Constant, YType> function) : base(function, ImpactAreaFunctionEnum.InteriorStageDamage)
         {
             
         }
 
-        public IComputableTransformFunction Sample(double p)
-        {
-            throw new NotImplementedException();
-        }
+     
         //internal StageDamage(): base(new OrdinatesFunction(new Statistics.CurveIncreasing(true, false)))
         //{
         //    Type = ImpactAreaFunctionEnum.InteriorStageDamage;

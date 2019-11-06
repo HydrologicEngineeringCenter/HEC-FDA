@@ -13,6 +13,6 @@ namespace Functions
         XType X { get; }
         YType Y { get; }
 
-        ICoordinate<double, double> Sample(double p);
+        //ICoordinate<double, double> Sample(double p);
     }
 }

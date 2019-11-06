@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Functions.Ordinates;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,17 +7,17 @@ namespace Functions.Utilities
 {
     public class ConstantSampler : ISampler
     {
-        public bool CanSample(ICoordinatesFunctionBase coordinatesFunction)
+        public bool CanSample(ICoordinatesFunction<IOrdinate, IOrdinate> coordinatesFunction)
         {
             return typeof(ICoordinatesFunction<double, double>).IsAssignableFrom(coordinatesFunction.GetType());
             //return (typeof(XType) == typeof(double) && typeof(YType) == typeof(double));
         }
 
-        public IFunction Sample(ICoordinatesFunctionBase coordinatesFunction)
+        public IFunction Sample(ICoordinatesFunction<IOrdinate, IOrdinate> coordinatesFunction)
         {
             if(typeof(ICoordinatesFunction<double, double>).IsAssignableFrom(coordinatesFunction.GetType()))
             {
-                return new CoordinatesFunctions.CoordinatesFunctionConstants(((ICoordinatesFunction<double, double>)coordinatesFunction).Coordinates);
+                return new CoordinatesFunctions.CoordinatesFunctionConstants(((ICoordinatesFunction<Constant, Constant>)coordinatesFunction).Coordinates);
                  
             }
             throw new ArgumentException("Could not sample the coordinates function.");

@@ -9,14 +9,14 @@ namespace Functions
 {
     public static class ICoordinateFactory
     {
-        public static ICoordinate<double, double> Factory(double x, double y)
+        public static ICoordinate<Constant, Constant> Factory(double x, double y)
         {
-            return (ICoordinate<double, double>)new CoordinateConstants(x,y);
+            return new CoordinateConstants(new Constant(x),new Constant(y));
         }
 
-        public static ICoordinate<double, IDistribution> Factory(double x, IDistribution y)
+        public static ICoordinate<Constant, Distribution> Factory(double x, IDistribution y)
         {
-            return (ICoordinate<double, IDistribution>)new CoordinateVariableY(x, y);
+            return new CoordinateVariableY(new Constant(x),new Distribution(y));
         }
     }
 }

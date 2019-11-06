@@ -1,4 +1,5 @@
 ﻿using Functions.Coordinates;
+using Functions.Ordinates;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -24,7 +25,7 @@ namespace FunctionsTests.Coordinates
         [InlineData(Double.MinValue, Double.MaxValue)]
         public void CoordinateConstants_GoodInput_Returns_CoordinateConstants(double x, double y)
         {
-            CoordinateConstants coord = new CoordinateConstants(x, y);
+            CoordinateConstants coord = new CoordinateConstants(new Constant(x), new Constant(y));
             Assert.NotNull(coord);
         }
 
@@ -42,8 +43,8 @@ namespace FunctionsTests.Coordinates
         [InlineData(Double.MinValue, Double.MaxValue)]
         public void X_GoodInput_Returns_Double(double x, double y)
         {
-            CoordinateConstants coord = new CoordinateConstants(x, y);
-            Assert.True(coord.X == x);
+            CoordinateConstants coord = new CoordinateConstants(new Constant(x), new Constant(y));
+            Assert.True(coord.X.Value() == x);
         }
 
         /// <summary>
@@ -59,8 +60,8 @@ namespace FunctionsTests.Coordinates
         [InlineData(Double.MinValue, Double.MaxValue)]
         public void Y_GoodInput_Returns_Double(double x, double y)
         {
-            CoordinateConstants coord = new CoordinateConstants(x, y);
-            Assert.True(coord.Y == y);
+            CoordinateConstants coord = new CoordinateConstants(new Constant(x), new Constant(y));
+            Assert.True(coord.Y.Value() == y);
         }
 
         /// <summary>
@@ -76,7 +77,7 @@ namespace FunctionsTests.Coordinates
         [InlineData(Double.MinValue, Double.MaxValue)]
         public void Sample_GoodInput_Returns_CoordinateConstants(double x, double y)
         {
-            CoordinateConstants coord = new CoordinateConstants(x, y);
+            CoordinateConstants coord = new CoordinateConstants(new Constant(x), new Constant(y));
             Assert.True(coord.Sample() == coord);
         }
 
