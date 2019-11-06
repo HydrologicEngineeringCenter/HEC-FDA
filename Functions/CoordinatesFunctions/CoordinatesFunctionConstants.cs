@@ -48,7 +48,7 @@ namespace Functions.CoordinatesFunctions
         #region Initialization Functions
         public List<ICoordinate<Constant, Constant>> SortByXs(List<ICoordinate<Constant, Constant>> coordinates)
         {
-            return coordinates.OrderBy(xy => xy.X).ToList();
+            return coordinates.OrderBy(xy => xy.X.Value()).ToList();
         }
 
         private bool IsValid(List<ICoordinate<Constant, Constant>> coordinates)

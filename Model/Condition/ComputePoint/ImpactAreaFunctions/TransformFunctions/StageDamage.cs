@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal sealed class StageDamage<YType> : ImpactAreaFunctionBase<YType>
+    internal sealed class StageDamage<YType> : ImpactAreaFunctionBase
     {
         #region Properties
         public override string XLabel => "Interior Stage";

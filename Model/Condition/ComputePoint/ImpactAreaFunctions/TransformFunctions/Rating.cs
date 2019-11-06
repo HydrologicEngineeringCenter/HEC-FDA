@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal sealed class Rating<YType> : ImpactAreaFunctionBase<YType>
+    internal sealed class Rating<YType> : ImpactAreaFunctionBase
     {
         #region Properties
         public override string XLabel => "Stage";

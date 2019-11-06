@@ -6,7 +6,7 @@ using Functions.Ordinates;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal sealed class OutflowFrequency<YType> : ImpactAreaFunctionBase<YType>
+    internal sealed class OutflowFrequency<YType> : ImpactAreaFunctionBase
     {
         #region Properties
         public override string XLabel => "Stage";

@@ -10,11 +10,11 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
     /// All impact area functions inherit from this abstract class. 
     /// It contains an IFunctionBase property that allows it to serve as the base implementation for the decorator pattern that is implemented by inherited classes. 
     /// </summary>
-    internal abstract class ImpactAreaFunctionBase<IOrdinate>:IFdaFunction<IOrdinate>
+    internal abstract class ImpactAreaFunctionBase:IFdaFunction
     {
         #region Properties 
         
-        protected ICoordinatesFunction<Constant,IOrdinate> Function;
+        public ICoordinatesFunction<Constant, IOrdinate> Function { get; }
         public ImpactAreaFunctionEnum Type { get; }
 
         public abstract string XLabel { get; }
@@ -31,9 +31,14 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         #endregion
 
         #region Constructor
-        protected ImpactAreaFunctionBase(ICoordinatesFunction<Constant, IOrdinate> function, ImpactAreaFunctionEnum type) 
-        { 
-            Function = function;
+        protected ImpactAreaFunctionBase(ICoordinatesFunctionBase function, ImpactAreaFunctionEnum type) 
+        {
+            //have to convert the const and the dist funcs to ordinate ys
+            //todo: put try catch around this?
+                Function = ICoordinatesFunctionsFactory.Factory(function);
+                //Function = (ICoordinatesFunction<Constant, IOrdinate>)function;
+            
+
             Type = type;
         }
         #endregion

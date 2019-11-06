@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal class FrequencyFunction<IOrdinate> : ImpactAreaFunctionBase<IOrdinate>
+    internal class FrequencyFunction<IOrdinate> : ImpactAreaFunctionBase
     {
         public override string XLabel => throw new NotImplementedException();
 

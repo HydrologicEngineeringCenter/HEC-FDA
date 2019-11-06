@@ -8,7 +8,7 @@ using Functions.Ordinates;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal sealed class ExteriorStageFrequency<YType> : ImpactAreaFunctionBase<YType>
+    internal sealed class ExteriorStageFrequency<YType> : ImpactAreaFunctionBase
     {
         #region Properties
         public override string XLabel => "Frequency";
