@@ -8,9 +8,9 @@ namespace Functions.Coordinates
     /// <summary>
     /// This class exists so that a list of CoordinateConstants and CoordinateVariableY
     /// </summary>
-    internal class CoordinateOrdinateY : ICoordinate<Constant, IOrdinate>
+    internal class CoordinateOrdinateY : ICoordinate
     {
-        public Constant X { get; }
+        public IOrdinate X { get; }
 
         public IOrdinate Y { get; }
 
@@ -20,10 +20,10 @@ namespace Functions.Coordinates
             Y = y;
         }
 
-        public ICoordinate<Constant, Constant> Sample(double p)
-        {
-            return new CoordinateConstants(X, new Constant(Y.Value(p)));
-        }
+        //public ICoordinate<Constant, Constant> Sample(double p)
+        //{
+        //    return new CoordinateConstants(X, new Constant(Y.Value(p)));
+        //}
 
         public override bool Equals(object obj)
         {

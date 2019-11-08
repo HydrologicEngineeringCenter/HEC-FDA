@@ -14,7 +14,7 @@
 //    /// </summary>
 //    internal class CoordinatesFunctionLinkedConstants : CoordinatesFunctionLinkedBase<double, double>, IFunction, IValidate<CoordinatesFunctionLinkedConstants>
 //    {
-       
+
 
 //        public bool IsDistributed => false;
 
@@ -222,9 +222,9 @@
 //        public IFunction Sample(double p, InterpolationEnum interpolator)
 //        {
 //            List<ICoordinatesFunction<double, double>> constFunctions = new List<ICoordinatesFunction<double, double>>();
-//            foreach(ICoordinatesFunction<double, double> func in Functions)
+//            foreach (ICoordinatesFunction<double, double> func in Functions)
 //            {
-//                constFunctions.Add( new CoordinatesFunctionConstants(func.Coordinates, interpolator));
+//                constFunctions.Add(new CoordinatesFunctionConstants(func.Coordinates, interpolator));
 //            }
 //            //create a list of interpolators that will be the interpolators between the functions
 //            int numFunctions = constFunctions.Count;

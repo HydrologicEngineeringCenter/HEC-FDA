@@ -15,16 +15,16 @@ namespace Functions
     public static class ICoordinatesFunctionsFactory
     {
 
-        public static ICoordinatesFunctionBase Factory(List<double> xs, List<double> ys, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
+        public static ICoordinatesFunction Factory(List<double> xs, List<double> ys, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
         {
             //are lengths the same
             if (xs.Count == ys.Count)
             {
-                List<ICoordinate<Constant, Constant>> coordinates = new List<ICoordinate<Constant, Constant>>();
+                List<ICoordinate> coordinates = new List<ICoordinate>();
 
                 for (int i = 0; i < xs.Count; i++)
                 {
-                    ICoordinate<Constant, Constant> coordinate = ICoordinateFactory.Factory(xs[i], ys[i]);
+                    ICoordinate coordinate = ICoordinateFactory.Factory(xs[i], ys[i]);
                     coordinates.Add(coordinate);
                 }
                 return new CoordinatesFunctionConstants(coordinates, interpolation);
@@ -35,31 +35,31 @@ namespace Functions
             }
         }
 
-        public static ICoordinatesFunction<Constant, IOrdinate> Factory(ICoordinatesFunctionBase function)
-        {
-            if (typeof(ICoordinatesFunction<Constant, Constant>).IsAssignableFrom(function.GetType()))
-            {
-                return new CoordinatesFunctionOrdinateYs((CoordinatesFunctionConstants)function);
-            }
-            else if (typeof(ICoordinatesFunction<Constant, Distribution>).IsAssignableFrom(function.GetType()))
-            {
-                return new CoordinatesFunctionOrdinateYs((CoordinatesFunctionVariableYs)function);
-            }
-            else
-            {
-                throw new ArgumentException("The function was not a constant or variable y function.");
-            }
-        }
+        //public static ICoordinatesFunction<Constant, IOrdinate> Factory(ICoordinatesFunctionBase function)
+        //{
+        //    if (typeof(ICoordinatesFunction<Constant, Constant>).IsAssignableFrom(function.GetType()))
+        //    {
+        //        return new CoordinatesFunctionOrdinateYs((CoordinatesFunctionConstants)function);
+        //    }
+        //    else if (typeof(ICoordinatesFunction<Constant, Distribution>).IsAssignableFrom(function.GetType()))
+        //    {
+        //        return new CoordinatesFunctionOrdinateYs((CoordinatesFunctionVariableYs)function);
+        //    }
+        //    else
+        //    {
+        //        throw new ArgumentException("The function was not a constant or variable y function.");
+        //    }
+        //}
 
-        public static ICoordinatesFunction<Constant, Distribution> Factory(List<double> xs, List<IDistribution> ys)
+        public static ICoordinatesFunction Factory(List<double> xs, List<IDistribution> ys)
         {
             //are lengths the same
             if (xs.Count == ys.Count)
             {
-                List<ICoordinate<Constant, Distribution>> coordinates = new List<ICoordinate<Constant, Distribution>>();
+                List<ICoordinate> coordinates = new List<ICoordinate>();
                 for (int i = 0; i < xs.Count; i++)
                 {
-                    ICoordinate<Constant, Distribution> coordinate = ICoordinateFactory.Factory(xs[i], ys[i]);
+                    ICoordinate coordinate = ICoordinateFactory.Factory(xs[i], ys[i]);
                     coordinates.Add(coordinate);
                 }
 
@@ -143,44 +143,45 @@ namespace Functions
         /// <param name="function"></param>
         /// <param name="additionalCoordinates"></param>
         /// <returns></returns>
-        //public static ICoordinatesFunction<double, IOrdinate> Factory(List<ICoordinatesFunction<double, IOrdinate>> functions, List<InterpolationEnum> interpolators)
-        //{
-        //    //the functions cant have any overlap. They can't have points on top of each other. 
-        //    //the interpolators should be functions.count -1
-        //    //for example: func1, interp1, func2, interp2, func3
-        //    bool needsInterpolators = interpolators == null;
-        //    //sort the functions on the domain so that the xValues are increasing
-        //    List<ICoordinatesFunction<double, IOrdinate>> sortedFunctions = functions.OrderBy(func => func.Domain.Item1).ToList();
-        //    //make sure there is no overlapping domains
-        //    string error = ValidateDomains(sortedFunctions);
-        //    if(error != null)
-        //    {
-        //        //todo: do what?
-        //    }
+        public static ICoordinatesFunction Factory(List<ICoordinatesFunction> functions, List<InterpolationEnum> interpolators)
+        {
+            //the functions cant have any overlap. They can't have points on top of each other. 
+            //the interpolators should be functions.count -1
+            //for example: func1, interp1, func2, interp2, func3
+            bool needsInterpolators = (interpolators == null);
+            //sort the functions on the domain so that the xValues are increasing
+            List<ICoordinatesFunction> sortedFunctions = functions.OrderBy(func => func.Domain.Item1).ToList();
+            //make sure there is no overlapping domains
+            string error = ValidateDomains(sortedFunctions);
+            if (error != null)
+            {
+                //todo: do what?
+                throw new ArgumentException("Overlapping domains were detected. This is not allowed.");
+            }
 
-        //    CoordinatesFunctionLinkedOrdinates linkedFunction = new CoordinatesFunctionLinkedOrdinates(sortedFunctions, interpolators);
+            CoordinatesFunctionLinkedOrdinates linkedFunction = new CoordinatesFunctionLinkedOrdinates(sortedFunctions, interpolators);
 
-        //    return linkedFunction;
+            return linkedFunction;
 
-        //}
+            }
         /// <summary>
         /// This method assumes that the list has been sorted on the xvalues so that each subsequent function
         /// has higher x values.
         /// </summary>
         /// <param name="functions"></param>
-        private static string ValidateDomains(List<ICoordinatesFunction<double, IOrdinate>> functions)
+        private static string ValidateDomains(List<ICoordinatesFunction> functions)
         {
-            if(functions.Count == 0) { return "No functions were passed in."; }
+            if (functions.Count == 0) { return "No functions were passed in."; }
             double min = functions[0].Domain.Item1;
             double max = functions[0].Domain.Item2;
 
-            foreach(ICoordinatesFunction<IOrdinate, IOrdinate> func in functions)
+            for(int i = 1;i<functions.Count;i++)// (ICoordinatesFunction func in functions)
             {
-                double funcMin = func.Domain.Item1;
-                double funcMax = func.Domain.Item2;
+                double funcMin = functions[i].Domain.Item1;
+                double funcMax = functions[i].Domain.Item2;
                 //if this function's domain falls within the previously established domain
                 //then this list of funcs is invalid.
-                if(funcMin < max)
+                if (funcMin < max)
                 {
                     return "Overlapping domain detected.";
                 }

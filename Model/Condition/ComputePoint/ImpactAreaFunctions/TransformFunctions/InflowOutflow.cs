@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal sealed class InflowOutflow<IOrdinate>: ImpactAreaFunctionBase
+    internal sealed class InflowOutflow: ImpactAreaFunctionBase
     {
         #region Properties
         public override string XLabel => "Inflow";
@@ -16,7 +16,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         #endregion
 
         #region Constructor
-        internal InflowOutflow(ICoordinatesFunctionBase function) : base(function, ImpactAreaFunctionEnum.InflowOutflow)
+        internal InflowOutflow(ICoordinatesFunction function) : base(function, ImpactAreaFunctionEnum.InflowOutflow)
         {
        
         }

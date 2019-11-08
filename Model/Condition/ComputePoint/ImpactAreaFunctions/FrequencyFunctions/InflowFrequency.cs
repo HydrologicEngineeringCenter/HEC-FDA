@@ -7,7 +7,7 @@ using Functions.CoordinatesFunctions;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal class InflowFrequency<YType> : ImpactAreaFunctionBase
+    internal class InflowFrequency : ImpactAreaFunctionBase
     {
         #region Properties
         public override string XLabel => "Frequency";
@@ -16,7 +16,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         #endregion
 
         #region Constructors
-        internal InflowFrequency(ICoordinatesFunctionBase function) : base(function, ImpactAreaFunctionEnum.InflowFrequency)
+        internal InflowFrequency(ICoordinatesFunction function) : base(function, ImpactAreaFunctionEnum.InflowFrequency)
         {
     
         }

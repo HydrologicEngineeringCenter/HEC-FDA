@@ -6,12 +6,12 @@ using System.Text;
 
 namespace Functions.Coordinates
 {
-    internal class CoordinateVariableY: ICoordinate<Constant, Distribution>
+    internal class CoordinateVariableY: ICoordinate
     {
         //TODO: Validate
 
-        public Constant X { get; }
-        public Distribution Y { get; }
+        public IOrdinate X { get; }
+        public IOrdinate Y { get; }
 
         public CoordinateVariableY(Constant x, Distribution y)
         {
@@ -40,14 +40,14 @@ namespace Functions.Coordinates
         {
             return obj is CoordinateVariableY coord &&
                    X == coord.X &&
-                   EqualityComparer<Distribution>.Default.Equals(Y, coord.Y);
+                   EqualityComparer<Distribution>.Default.Equals((Distribution)Y, (Distribution)coord.Y);
         }
 
         public override int GetHashCode()
         {
             var hashCode = 1861411795;
             hashCode = hashCode * -1521134295 + X.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<Distribution>.Default.GetHashCode(Y);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Distribution>.Default.GetHashCode((Distribution)Y);
             return hashCode;
         }
     }

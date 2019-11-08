@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Functions.CoordinatesFunctions
 {
-    internal sealed class CoordinatesFunctionVariableYs: ICoordinatesFunction<Constant, Distribution>
+    internal sealed class CoordinatesFunctionVariableYs: ICoordinatesFunction
     {
         #region Properties
         public bool IsInvertible { get; }
@@ -18,7 +18,7 @@ namespace Functions.CoordinatesFunctions
         public bool IsDistributedYs => true;
         public OrderedSetEnum Order { get; }
 
-        public List<ICoordinate<Constant, Distribution>> Coordinates { get; }
+        public List<ICoordinate> Coordinates { get; }
 
         public bool IsDistributed => true;
 
@@ -29,7 +29,7 @@ namespace Functions.CoordinatesFunctions
 
         #region Constructor
         //todo: are we using this interpolator?
-        internal CoordinatesFunctionVariableYs(List<ICoordinate<Constant, Distribution>> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
+        internal CoordinatesFunctionVariableYs(List<ICoordinate> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
         {
             if (IsValid(coordinates))
             {
@@ -56,13 +56,13 @@ namespace Functions.CoordinatesFunctions
             }
             return true;
         }
-        private bool IsValid(List<ICoordinate<Constant, Distribution>> coordinates)
+        private bool IsValid(List<ICoordinate> coordinates)
         {
-            if (Utilities.Validation.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate<double, IDistribution>>)) return false;
+            if (Utilities.Validation.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate>)) return false;
             if (!IsFunction(coordinates)) throw new ArgumentException("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).");
             return true;
         }
-        private bool IsFunction(List<ICoordinate<Constant, Distribution>> xys)
+        private bool IsFunction(List<ICoordinate> xys)
         {
             for (int i = 0; i < xys.Count; i++)
             {
@@ -75,11 +75,11 @@ namespace Functions.CoordinatesFunctions
             }
             return true;
         }
-        public List<ICoordinate<Constant, Distribution>> SortByXs(List<ICoordinate<Constant, Distribution>> coordinates) 
+        public List<ICoordinate> SortByXs(List<ICoordinate> coordinates) 
             => coordinates.OrderBy(xy => xy.X.Value()).ToList();
 
         #region F()
-        public Distribution F(Constant x)
+        public IOrdinate F(IOrdinate x)
         {
             //todo: John, i tried to do F(1) and it came through as F(1.00000000001) which threw the exception. We might want to try to fix that?
             if (Utilities.Validation.IsNull(x)) throw new ArgumentNullException("The specified x value is invalid because it is null");
@@ -89,7 +89,7 @@ namespace Functions.CoordinatesFunctions
         #endregion
 
         #region InverseF()
-        public Constant InverseF(Distribution y)
+        public IOrdinate InverseF(IOrdinate y)
         {
             if (Utilities.Validation.IsNull(y)) throw new ArgumentNullException("The specified y value is invalid because it is null");
             if (IsInvertible == false) throw new InvalidOperationException("The function InverseF(y) is invalid for this set of coordinates. The inverse of F(x) is not a function, because one or more y values maps to multiple x values");
@@ -113,15 +113,15 @@ namespace Functions.CoordinatesFunctions
         //    return new CoordinatesFunctionConstants(ConvertCoordinatesToConstants(p), interpolator);
         //}
 
-        private List<ICoordinate<Constant, Constant>> ConvertCoordinatesToConstants(double p)
-        {
-            List<ICoordinate<Constant, Constant>> coords = new List<ICoordinate<Constant, Constant>>();
-            foreach (ICoordinate<Constant, Distribution> coord in Coordinates)
-            {
-                coords.Add(new CoordinateConstants(coord.X, new Constant( coord.Y.GetDistribution.InverseCDF(p))));
-            }
-            return coords;
-        }
+        //private List<ICoordinate> ConvertCoordinatesToConstants(double p)
+        //{
+        //    List<ICoordinate> coords = new List<ICoordinate>();
+        //    foreach (ICoordinate coord in Coordinates)
+        //    {
+        //        coords.Add(new CoordinateConstants(new Constant(coord.X.Value()), new Constant( coord.Y.GetDistribution.InverseCDF(p))));
+        //    }
+        //    return coords;
+        //}
 
 
         #endregion

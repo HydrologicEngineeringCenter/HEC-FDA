@@ -17,10 +17,7 @@ namespace Functions.Ordinates
             get { return new Tuple<double, double>(_ConstantValue, _ConstantValue); }
         }
 
-        public bool IsDistributed
-        {
-            get { return false; }
-        }
+        public bool IsDistributed => false;
 
         public bool Equals(IOrdinate constant)
         {

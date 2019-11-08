@@ -12,7 +12,7 @@ namespace Model
        public string XLabel { get; }
         public string YLabel { get; }
         ImpactAreaFunctionEnum Type { get; }
-        public ICoordinatesFunction<Constant, IOrdinate> Function { get; }
+        public ICoordinatesFunction Function { get; }
 
 
         //public List<ICoordinate<double, YType>> Coordinates { get; }

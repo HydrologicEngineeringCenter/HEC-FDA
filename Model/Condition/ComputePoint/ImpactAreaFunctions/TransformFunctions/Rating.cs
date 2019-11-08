@@ -13,7 +13,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         #endregion
 
         #region Constructor
-        internal Rating(Functions.ICoordinatesFunction<double,YType> function) : base(function, ImpactAreaFunctionEnum.Rating)
+        internal Rating(Functions.ICoordinatesFunction function) : base(function, ImpactAreaFunctionEnum.Rating)
         {
         }
 

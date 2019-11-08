@@ -11,7 +11,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 
         public override string YLabel => throw new NotImplementedException();
 
-        internal FrequencyFunction(ICoordinatesFunction<Constant, IOrdinate> function) : base(function, ImpactAreaFunctionEnum.DamageFrequency)
+        internal FrequencyFunction(ICoordinatesFunction function) : base(function, ImpactAreaFunctionEnum.DamageFrequency)
         {
         }
 

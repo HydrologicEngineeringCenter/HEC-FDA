@@ -15,7 +15,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         #endregion
 
         #region Constructor
-        internal OutflowFrequency(ICoordinatesFunction<Constant, YType> function) : base(function, ImpactAreaFunctionEnum.OutflowFrequency)
+        internal OutflowFrequency(ICoordinatesFunction function) : base(function, ImpactAreaFunctionEnum.OutflowFrequency)
         {
            
         }

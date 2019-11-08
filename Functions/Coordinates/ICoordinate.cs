@@ -8,10 +8,10 @@ namespace Functions
     //TODO: Comment
     //TODO: Factory Method
 
-    public interface ICoordinate<out XType, out YType>
+    public interface ICoordinate 
     {
-        XType X { get; }
-        YType Y { get; }
+        IOrdinate X { get; }
+        IOrdinate Y { get; }
 
         //ICoordinate<double, double> Sample(double p);
     }
