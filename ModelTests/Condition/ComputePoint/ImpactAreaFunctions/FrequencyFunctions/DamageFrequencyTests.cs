@@ -317,6 +317,9 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
           
         }
 
+        /// <summary>
+        /// This one has an infinite loop
+        /// </summary>
         [Fact]
         public void TestingLinkedFunction_ConstantAndDistributedFunctions_NoInterpolator()
         {

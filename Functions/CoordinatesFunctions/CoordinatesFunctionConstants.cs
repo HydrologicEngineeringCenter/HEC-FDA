@@ -142,6 +142,7 @@ namespace Functions.CoordinatesFunctions
             }
             else
             {
+                //todo: there is an infinte loop here sometimes.
                 return UpdateOrderOfSet(orderOfSet, orderOfPair, out hasChangedOrder);
             }
         }

@@ -159,7 +159,7 @@ namespace Functions
                 throw new ArgumentException("Overlapping domains were detected. This is not allowed.");
             }
 
-            CoordinatesFunctionLinkedOrdinates linkedFunction = new CoordinatesFunctionLinkedOrdinates(sortedFunctions, interpolators);
+            CoordinatesFunctionLinked linkedFunction = new CoordinatesFunctionLinked(sortedFunctions, interpolators);
 
             return linkedFunction;
 
