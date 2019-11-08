@@ -12,11 +12,6 @@ namespace Functions
         Tuple<double, double> Range { get; }
         double RiemannSum();
         IFunction Compose(IFunction g);
-        //Tuple<double, double> Domain { get; }
-        //InterpolationEnum Interpolation { get; }
-        //OrderedSetEnum Order { get; }
-
-        //double F(double x);
-        //double InverseF(double y);
+        
     }
 }

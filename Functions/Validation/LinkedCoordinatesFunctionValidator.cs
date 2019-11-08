@@ -8,15 +8,15 @@ using Utilities.Validation;
 
 namespace Functions.Validation
 {
-    internal class LinkedCoordinatesFunctionValidator : IValidator<CoordinatesFunctionLinkedOrdinates>
+    internal class LinkedCoordinatesFunctionValidator : IValidator<CoordinatesFunctionLinked>
     {
-        public bool IsValid(CoordinatesFunctionLinkedOrdinates entity, out IEnumerable<IMessage> errors)
+        public bool IsValid(CoordinatesFunctionLinked entity, out IEnumerable<IMessage> errors)
         {
             errors = ReportErrors(entity);
             return !errors.Any();
         }
 
-        public IEnumerable<IMessage> ReportErrors(CoordinatesFunctionLinkedOrdinates entity)
+        public IEnumerable<IMessage> ReportErrors(CoordinatesFunctionLinked entity)
         {
             List<string> errors = new List<string>();
             if (entity.IsNull()) throw new ArgumentNullException(nameof(entity), $"The Linked Coordinates Function could not be validated because it is null.");
