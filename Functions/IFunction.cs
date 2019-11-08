@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Functions
 {
-    public interface IFunction: ICoordinatesFunction<Constant, Constant>
+    public interface IFunction: ICoordinatesFunction
     {
         bool IsInvertible { get; }
         Tuple<double, double> Range { get; }

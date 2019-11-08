@@ -14,14 +14,14 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
     {
         #region Properties 
         
-        public ICoordinatesFunction<Constant, IOrdinate> Function { get; }
+        public ICoordinatesFunction Function { get; }
         public ImpactAreaFunctionEnum Type { get; }
 
         public abstract string XLabel { get; }
 
         public abstract string YLabel { get; }
 
-        public List<ICoordinate<Constant, IOrdinate>> Coordinates => Function.Coordinates;
+        public List<ICoordinate> Coordinates => Function.Coordinates;
 
         public InterpolationEnum Interpolator => Function.Interpolator;
 
@@ -31,11 +31,11 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         #endregion
 
         #region Constructor
-        protected ImpactAreaFunctionBase(ICoordinatesFunctionBase function, ImpactAreaFunctionEnum type) 
+        protected ImpactAreaFunctionBase(ICoordinatesFunction function, ImpactAreaFunctionEnum type) 
         {
             //have to convert the const and the dist funcs to ordinate ys
             //todo: put try catch around this?
-                Function = ICoordinatesFunctionsFactory.Factory(function);
+            Function = function;// ICoordinatesFunctionsFactory.Factory(function);
                 //Function = (ICoordinatesFunction<Constant, IOrdinate>)function;
             
 
@@ -52,9 +52,9 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 
         //public abstract IFdaFunction< Sample(double p);// => Function.Sample(p);
 
-        public IOrdinate F(Constant x) => Function.F(x);
+        public IOrdinate F(IOrdinate x) => Function.F(x);
         
-        public Constant InverseF(IOrdinate y) => Function.InverseF(y);
+        public IOrdinate InverseF(IOrdinate y) => Function.InverseF(y);
       
         #endregion
 

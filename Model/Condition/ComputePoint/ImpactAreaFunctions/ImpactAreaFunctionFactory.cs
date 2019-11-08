@@ -21,16 +21,16 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         //    else return null;
         //}
 
-        public static IFdaFunction CreateFdaFunction(ICoordinatesFunctionBase function, ImpactAreaFunctionEnum type) 
+        public static IFdaFunction CreateFdaFunction(ICoordinatesFunction function, ImpactAreaFunctionEnum type) 
         {
             if (type == ImpactAreaFunctionEnum.InflowOutflow)
             {
-                InflowOutflow<IOrdinate> inflowOutflow = new InflowOutflow<IOrdinate>(function);
+                InflowOutflow inflowOutflow = new InflowOutflow(function);
                 return inflowOutflow;
             }
             else if(type == ImpactAreaFunctionEnum.InflowFrequency)
             {
-                InflowFrequency<double> inflowFrequency = new InflowFrequency<double>(function);
+                InflowFrequency inflowFrequency = new InflowFrequency(function);
                 return inflowFrequency;
             }
             else return null;

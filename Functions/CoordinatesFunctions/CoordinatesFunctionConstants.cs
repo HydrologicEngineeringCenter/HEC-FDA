@@ -10,7 +10,7 @@ namespace Functions.CoordinatesFunctions
     internal sealed class CoordinatesFunctionConstants : IFunction
     {
         #region Properties
-        public List<ICoordinate<Constant, Constant>> Coordinates { get; }
+        public List<ICoordinate> Coordinates { get; }
 
         public Tuple<double, double> Range { get; }
         public Tuple<double, double> Domain { get; }
@@ -25,7 +25,7 @@ namespace Functions.CoordinatesFunctions
         #endregion
 
         #region Constructor
-        internal CoordinatesFunctionConstants(List<ICoordinate<Constant, Constant>> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation) 
+        internal CoordinatesFunctionConstants(List<ICoordinate> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation) 
         {
             if (IsValid(coordinates))
             {
@@ -46,14 +46,14 @@ namespace Functions.CoordinatesFunctions
 
         #region Functions
         #region Initialization Functions
-        public List<ICoordinate<Constant, Constant>> SortByXs(List<ICoordinate<Constant, Constant>> coordinates)
+        public List<ICoordinate> SortByXs(List<ICoordinate> coordinates)
         {
             return coordinates.OrderBy(xy => xy.X.Value()).ToList();
         }
 
-        private bool IsValid(List<ICoordinate<Constant, Constant>> coordinates)
+        private bool IsValid(List<ICoordinate> coordinates)
         {
-            if (Utilities.Validation.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate<Constant, Constant>>))
+            if (Utilities.Validation.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate>))
             {
                 return false;
             }
@@ -63,7 +63,7 @@ namespace Functions.CoordinatesFunctions
             }
             return true;
         }
-        private bool IsFunction(List<ICoordinate<Constant, Constant>> xys)
+        private bool IsFunction(List<ICoordinate> xys)
         {
             for (int i = 0; i < xys.Count; i++)
             {
@@ -112,12 +112,38 @@ namespace Functions.CoordinatesFunctions
             }
             return order;
         }
-        private OrderedSetEnum InitialOrder(List<ICoordinate<Constant, Constant>> ordinates) => ordinates.Count == 1 ? OrderedSetEnum.NonMonotonic : OrderOfPair(ordinates, 0);
-        private OrderedSetEnum OrderOfPair(List<ICoordinate<Constant, Constant>> ordinates, int index) => ordinates[index].Y.Value() == ordinates[index + 1].Y.Value() ? OrderedSetEnum.NonMonotonic : ordinates[index].Y.Value() < ordinates[index + 1].Y.Value() ? OrderedSetEnum.StrictlyIncreasing : OrderedSetEnum.StrictlyDecreasing;
+        private OrderedSetEnum InitialOrder(List<ICoordinate> ordinates) => ordinates.Count == 1 ? OrderedSetEnum.NonMonotonic : OrderOfPair(ordinates, 0);
+        private OrderedSetEnum OrderOfPair(List<ICoordinate> ordinates, int index)
+        {
+            if (ordinates[index].Y.Value() == ordinates[index + 1].Y.Value())
+            {
+                return OrderedSetEnum.NonMonotonic;
+            }
+            else if (ordinates[index].Y.Value() < ordinates[index + 1].Y.Value())
+            {
+                return OrderedSetEnum.StrictlyIncreasing;
+            }
+            else
+            {
+                return OrderedSetEnum.StrictlyDecreasing;
+            }
+        }
+
         private OrderedSetEnum UpdateOrderOfSet(OrderedSetEnum orderOfSet, OrderedSetEnum orderOfPair, out bool hasChangedOrder)
         {
             hasChangedOrder = false;
-            return orderOfSet == orderOfPair ? orderOfSet : orderOfPair == OrderedSetEnum.NonMonotonic ? UpdateSetOrderWithNonMonotonicPair(orderOfSet) : UpdateOrderOfSet(orderOfSet, orderOfPair, out hasChangedOrder);
+            if (orderOfSet == orderOfPair)
+            {
+                return orderOfSet; 
+            }
+            else if(orderOfPair == OrderedSetEnum.NonMonotonic)
+            {
+                return UpdateSetOrderWithNonMonotonicPair(orderOfSet); 
+            }
+            else
+            {
+                return UpdateOrderOfSet(orderOfSet, orderOfPair, out hasChangedOrder);
+            }
         }
         private OrderedSetEnum UpdateSetOrderWithNonMonotonicPair(OrderedSetEnum orderOfSet) => IsStrictEnum(orderOfSet) ? orderOfSet + 1 : orderOfSet;
         private OrderedSetEnum UpdateSetOrderWithMonotonicPair(OrderedSetEnum orderOfSet, OrderedSetEnum orderOfPair, out bool hasChangedOrder)
@@ -151,27 +177,27 @@ namespace Functions.CoordinatesFunctions
         public Constant F(Constant x)
         {
             if (Utilities.Validation.IsNull(x)) throw new ArgumentNullException("The specified x value is invalid because it is null");
-            else return new Constant(F(x.Value()));
+            else return F(x);
         }
-        public double F(double x)
+        public IOrdinate F(IOrdinate x)
         {
-            if (!IsOnDomain(x)) throw new ArgumentOutOfRangeException(
+            if (!IsOnDomain(x.Value())) throw new ArgumentOutOfRangeException(
                 string.Format("The specified x value: {0} is invalid because it is not on the domain of the coordinates" +
                 " function [{1}, {2}].", x, Coordinates[0].X.Value(), Coordinates[Coordinates.Count - 1].X.Value()));
             int i = 0;
             if (!(i == Coordinates.Count - 1))
             {
-                while (Coordinates[i + 1].X.Value() < x) i++;
-                if (Coordinates[i + 1].X.Value() == x) return Coordinates[i + 1].Y.Value();
+                while (Coordinates[i + 1].X.Value() < x.Value()) i++;
+                if (Coordinates[i + 1].X.Value() == x.Value()) return Coordinates[i + 1].Y;
             }
-            return InterpolationFunction(i, x);
+            return new Constant(InterpolationFunction(i, x.Value()));
         }
         private bool IsOnDomain(double x) => x < Domain.Item1 || x > Domain.Item2 ? false : true;
         #endregion
 
         #region InverseF(y)
        
-        public Constant InverseF(Constant y)
+        public IOrdinate InverseF(IOrdinate y)
         {
             if (Utilities.Validation.IsNull(y)) throw new ArgumentNullException("The specified y value is invalid because it is null");
             if (!Utilities.Validation.IsFinite(y.Value())) throw new ArgumentOutOfRangeException(string.Format("The specified y value: {0} is not finite.", y));
@@ -212,7 +238,7 @@ namespace Functions.CoordinatesFunctions
             int j = FirstZ(g), J = g.Coordinates.Count; // - 1;
             if (j == J) throw new InvalidOperationException(NoOverlapMessage(g));
 
-            List<ICoordinate<Constant, Constant>> fog = new List<ICoordinate<Constant, Constant>>();
+            List<ICoordinate> fog = new List<ICoordinate>();
             while (!IsComplete(i, I, j, J, g)) // InOverlapping Portion
             {
                 if (Coordinates[i].Y.Value() == g.Coordinates[j].X.Value()) //Matching ordinate
@@ -262,10 +288,25 @@ namespace Functions.CoordinatesFunctions
             }
             return j;
         }
-        private bool IsComplete(int i, int I, int j, int J, IFunction g) => (IsFinalIndex(i, I, j, J) || IsXOffOverlap(i, J, g) || IsZOffOverlap(I, j, g)) ? true : false;
-        private bool IsXOffOverlap(int i, int J, IFunction g) => Coordinates[i].Y.Value() > g.Coordinates[J - 1].X.Value() ? true : false;
-        private bool IsZOffOverlap(int I, int j, IFunction g) => Coordinates[I - 1].Y.Value() < g.Coordinates[j].X.Value() ? true : false;
-        private bool IsFinalIndex(int i, int I, int j, int J) => (i == I || j == J) ? true : false;
+        private bool IsComplete(int i, int I, int j, int J, IFunction g)
+        {
+            return (IsFinalIndex(i, I, j, J) || IsXOffOverlap(i, J, g) || IsZOffOverlap(I, j, g));
+        }
+        private bool IsXOffOverlap(int i, int J, IFunction g)
+        {
+            bool retval = Coordinates[i].Y.Value() > g.Coordinates[J - 1].X.Value();
+            return retval;
+        }
+        private bool IsZOffOverlap(int I, int j, IFunction g)
+        {
+            bool retval = Coordinates[I - 1].Y.Value() < g.Coordinates[j].X.Value();
+            return retval;
+        }
+        private bool IsFinalIndex(int i, int I, int j, int J)
+        {
+            bool retval = (i == I || j == J);
+            return retval;
+        }
         private string NoOverlapMessage(IFunction g) => string.Format("The functional composition operation could not be performed. The range of F: [{0}, {1}] in the composition equation F(G(x)) does not overlap the domain of G: [{2}, {3}].", Range.Item1, Range.Item2, g.Domain.Item1, g.Domain.Item2);
         #endregion
 
@@ -321,7 +362,7 @@ namespace Functions.CoordinatesFunctions
                 // Will need to fix
                 hash = hash * 23 + Interpolator.GetHashCode();
                 hash = hash * 23 + InverseInterpolationFunction.GetHashCode();
-                foreach (ICoordinate<IOrdinate, IOrdinate> i in Coordinates) hash = hash * 23 + i.GetHashCode();
+                foreach (ICoordinate i in Coordinates) hash = hash * 23 + i.GetHashCode();
                 return hash;
             }
         }

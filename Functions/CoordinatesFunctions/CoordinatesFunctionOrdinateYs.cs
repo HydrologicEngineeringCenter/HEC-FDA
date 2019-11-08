@@ -12,7 +12,7 @@ namespace Functions.CoordinatesFunctions
     /// This class exists as a way to more generically hold a list of functions. 
     /// This is necessary for the LinkedCoordinatesFunction.
     /// </summary>
-    internal class CoordinatesFunctionOrdinateYs : ICoordinatesFunction<Constant, IOrdinate>
+    internal class CoordinatesFunctionOrdinateYs : ICoordinatesFunction
     {
         private CoordinatesFunctionConstants _constFunction;
         private CoordinatesFunctionVariableYs _distributedFunction;
@@ -46,7 +46,7 @@ namespace Functions.CoordinatesFunctions
                 }
             }
         }
-        public List<ICoordinate<Constant, IOrdinate>> Coordinates
+        public List<ICoordinate> Coordinates
         {
             get
             {
@@ -79,22 +79,22 @@ namespace Functions.CoordinatesFunctions
 
 
 
-        private List<ICoordinate<Constant, IOrdinate>> ConvertDistributedYsToOrdinates(List<ICoordinate<Constant, Distribution>> coords)
+        private List<ICoordinate> ConvertDistributedYsToOrdinates(List<ICoordinate> coords)
         {
-            List<ICoordinate<Constant, IOrdinate>> retval = new List<ICoordinate<Constant, IOrdinate>>();
-            foreach (ICoordinate<Constant, IDistribution> coord in coords)
+            List<ICoordinate> retval = new List<ICoordinate>();
+            foreach (ICoordinate coord in coords)
             {
-                retval.Add(new CoordinateOrdinateY(coord.X, new Distribution(coord.Y)));
+                retval.Add(new CoordinateOrdinateY(new Constant(coord.X.Value()), coord.Y));
             }
             return retval;
         }
 
-        private List<ICoordinate<Constant, IOrdinate>> ConvertConstantYsToOrdinates(List<ICoordinate<Constant, Constant>> coords)
+        private List<ICoordinate> ConvertConstantYsToOrdinates(List<ICoordinate> coords)
         {
-            List<ICoordinate<Constant, IOrdinate>> retval = new List<ICoordinate<Constant, IOrdinate>>();
-            foreach (ICoordinate<Constant, Constant> coord in coords)
+            List<ICoordinate> retval = new List<ICoordinate>();
+            foreach (ICoordinate coord in coords)
             {
-                retval.Add(new CoordinateOrdinateY(coord.X, coord.Y));
+                retval.Add(new CoordinateOrdinateY(new Constant(coord.X.Value()), coord.Y));
             }
             return retval;
         }
@@ -116,7 +116,7 @@ namespace Functions.CoordinatesFunctions
         }
 
 
-        public IOrdinate F(Constant x)
+        public IOrdinate F(IOrdinate x)
         {
 
             if (IsDistributed)
@@ -130,7 +130,7 @@ namespace Functions.CoordinatesFunctions
 
         }
 
-        public Constant InverseF(IOrdinate y)
+        public IOrdinate InverseF(IOrdinate y)
         {
 
             if (IsDistributed)

@@ -17,7 +17,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         #endregion
 
         #region Constructor
-        internal InteriorStageFrequency(ICoordinatesFunction<Constant, YType> function) : base(function, ImpactAreaFunctionEnum.InteriorStageFrequency)
+        internal InteriorStageFrequency(ICoordinatesFunction function) : base(function, ImpactAreaFunctionEnum.InteriorStageFrequency)
         {
             
         }

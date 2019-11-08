@@ -17,7 +17,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         #endregion
 
         #region Constructor
-        internal StageDamage(Functions.ICoordinatesFunction<Constant, YType> function) : base(function, ImpactAreaFunctionEnum.InteriorStageDamage)
+        internal StageDamage(Functions.ICoordinatesFunction function) : base(function, ImpactAreaFunctionEnum.InteriorStageDamage)
         {
             
         }

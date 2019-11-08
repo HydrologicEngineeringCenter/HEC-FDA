@@ -7,11 +7,11 @@ using Utilities;
 
 namespace Functions.CoordinatesFunctions
 {
-    internal abstract class CoordinatesFunctionLinkedBase<Constant, IOrdinate>
+    internal abstract class CoordinatesFunctionLinkedBase
     {
-        public List<ICoordinatesFunction<Constant, IOrdinate>> Functions { get; internal set; }
+        public List<ICoordinatesFunction> Functions { get; internal set; }
 
-        public List<ICoordinate<Constant, IOrdinate>> Coordinates { get; internal set; }
+        public List<ICoordinate> Coordinates { get; internal set; }
 
         public bool IsValid { get; internal set; }
         public OrderedSetEnum Order { get; internal set; }
@@ -31,7 +31,7 @@ namespace Functions.CoordinatesFunctions
                 {
                     double min = Double.MaxValue;
                     double max = Double.MinValue;
-                    foreach (ICoordinatesFunction<Constant, IOrdinate> func in Functions)
+                    foreach (ICoordinatesFunction func in Functions)
                     {
                         double funcMin = func.Domain.Item1;
                         double funcMax = func.Domain.Item2;
@@ -64,10 +64,10 @@ namespace Functions.CoordinatesFunctions
             //default to not set
             Order = OrderedSetEnum.NotSet;
 
-           
+
 
             List<OrderedSetEnum> functionOrders = new List<OrderedSetEnum>();
-            foreach (ICoordinatesFunction<Constant, IOrdinate> func in Functions)
+            foreach (ICoordinatesFunction func in Functions)
             {
                 OrderedSetEnum order = func.Order;
                 functionOrders.Add(order);
@@ -185,7 +185,7 @@ namespace Functions.CoordinatesFunctions
             return retval;
         }
 
-        
+
 
         /// <summary>
         /// Might also be strictly increasing, but it is at least weakly increasing.
@@ -345,18 +345,18 @@ namespace Functions.CoordinatesFunctions
             return retval;
         }
 
-       
+
         internal void CombineCoordinates()
         {
-            List<ICoordinate<Constant, IOrdinate>> allCoords = new List<ICoordinate<Constant, IOrdinate>>();
-            foreach (ICoordinatesFunction<Constant, IOrdinate> function in Functions)
+            List<ICoordinate> allCoords = new List<ICoordinate>();
+            foreach (ICoordinatesFunction function in Functions)
             {
                 allCoords.AddRange(function.Coordinates);
             }
 
-            List<ICoordinate<Constant, IOrdinate>> sortedList = allCoords.OrderBy(coord => coord.X).ToList();
-            List<ICoordinate<Constant, IOrdinate>> coordinates = new List<ICoordinate<Constant, IOrdinate>>();
-            foreach (ICoordinate<Constant, IOrdinate> coord in sortedList)
+            List<ICoordinate> sortedList = allCoords.OrderBy(coord => coord.X.Value()).ToList();
+            List<ICoordinate> coordinates = new List<ICoordinate>();
+            foreach (ICoordinate coord in sortedList)
             {
                 coordinates.Add(coord);
             }

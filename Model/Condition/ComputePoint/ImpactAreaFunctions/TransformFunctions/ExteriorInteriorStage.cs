@@ -18,7 +18,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         #endregion
 
         #region Constructor
-        internal ExteriorInteriorStage(Functions.ICoordinatesFunction<double, YType> function) : base(function, ImpactAreaFunctionEnum.ExteriorInteriorStage)
+        internal ExteriorInteriorStage(Functions.ICoordinatesFunction function) : base(function, ImpactAreaFunctionEnum.ExteriorInteriorStage)
         {
 
         }

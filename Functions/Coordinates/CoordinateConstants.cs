@@ -6,12 +6,12 @@ using System.Text;
 
 namespace Functions.Coordinates
 {
-    internal class CoordinateConstants: ICoordinate<Constant, Constant>
+    internal class CoordinateConstants: ICoordinate
     {
         //TODO: Validation
 
-        public Constant X { get; }
-        public Constant Y { get; }
+        public IOrdinate X { get; }
+        public IOrdinate Y { get; }
 
         public CoordinateConstants(Constant x, Constant y)
         {
@@ -19,7 +19,7 @@ namespace Functions.Coordinates
             Y = y;
         }
 
-        public ICoordinate<Constant, Constant> Sample(double p = 0.50) => this;
+        public ICoordinate Sample(double p = 0.50) => this;
 
         public override bool Equals(object obj)
         {

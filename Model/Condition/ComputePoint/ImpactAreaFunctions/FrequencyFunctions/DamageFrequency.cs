@@ -22,7 +22,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 
 
         #region Constructor
-        internal DamageFrequency(ICoordinatesFunction<Constant, YType> function) : base(function, ImpactAreaFunctionEnum.DamageFrequency)
+        internal DamageFrequency(ICoordinatesFunction function) : base(function, ImpactAreaFunctionEnum.DamageFrequency)
         {
             IsValid = Validate(new DamageFrequencyValidator<YType>(), out IEnumerable<IMessage> errors);
             Errors = errors;

@@ -6,11 +6,11 @@ using System.Text;
 
 namespace Functions
 {
-    public interface ICoordinatesFunction< XType, YType>:ICoordinatesFunctionBase
+    public interface ICoordinatesFunction
     {
-        YType F(XType x);
-        XType InverseF(YType y);
-        List<ICoordinate<XType, YType>> Coordinates { get; }
+        IOrdinate F(IOrdinate x);
+        IOrdinate InverseF(IOrdinate y);
+        List<ICoordinate> Coordinates { get; }
         OrderedSetEnum Order { get; }
         InterpolationEnum Interpolator { get; }
 

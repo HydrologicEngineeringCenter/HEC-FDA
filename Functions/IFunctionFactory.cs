@@ -9,7 +9,7 @@ namespace Functions
 {
     public static class IFunctionFactory
     {
-        public static IFunction Factory(List<ICoordinate<Constant, Constant>> coordinates, 
+        public static IFunction Factory(List<ICoordinate> coordinates, 
             InterpolationEnum interpolation) => new CoordinatesFunctionConstants(coordinates, interpolation);
     }
 }
