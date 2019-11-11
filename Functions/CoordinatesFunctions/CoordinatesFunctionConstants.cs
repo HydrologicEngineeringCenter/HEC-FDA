@@ -232,6 +232,22 @@ namespace Functions.CoordinatesFunctions
         #region Compose()
         public IFunction Compose(IFunction g)
         {
+            //todo: delete this testing code at some point
+            ///////////// for testing //////////////////////////
+            Console.WriteLine("...Composing...");
+            Console.WriteLine("Function1 Coordinates:");
+            foreach(ICoordinate coord in Coordinates)
+            {
+                Console.WriteLine(coord.X.Value() + " |  " + coord.Y.Value());
+            }
+            Console.WriteLine("");
+            Console.WriteLine("Function2 Coordinates:");
+            foreach (ICoordinate coord in g.Coordinates)
+            {
+                Console.WriteLine(coord.X.Value() + " |  " + coord.Y.Value());
+            }
+            /////////////////////////end of for testing///////////////////////////////////////////
+
             // Advance F Ordinate index until F[i].y >= G[0].x 
             int i = FirstX(g), I = Coordinates.Count; // - 1;
             if (i == I) throw new InvalidOperationException(NoOverlapMessage(g));
@@ -267,7 +283,20 @@ namespace Functions.CoordinatesFunctions
                 }
             }
             // Past overlapping area or at end of both functions
-            return IFunctionFactory.Factory(fog, g.Interpolator);
+            IFunction composedFunction = IFunctionFactory.Factory(fog, g.Interpolator);
+
+            //todo: delete this testing code at some point
+            ///////////// for testing //////////////////////////
+            Console.WriteLine("");
+            Console.WriteLine("ComposedFunction Coordinates:");
+            foreach (ICoordinate coord in composedFunction.Coordinates)
+            {
+                Console.WriteLine(coord.X.Value() + " |  " + coord.Y.Value());
+            }
+            Console.WriteLine("");
+            /////////////////////////end of for testing///////////////////////////////////////////
+
+            return composedFunction;
         }
         private int FirstX(IFunction g)
         {

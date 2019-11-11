@@ -1,4 +1,5 @@
-﻿using Functions.Coordinates;
+﻿using Functions;
+using Functions.Coordinates;
 using Functions.Ordinates;
 using Statistics;
 using Statistics.Distributions;
@@ -21,10 +22,27 @@ namespace FunctionsTests.Coordinates
         /// <param name="y"></param>
         [Fact]
      
-        public void CoordinateConstants_GoodInput_Returns_CoordinateConstants()
+        public void CoordinateVariableY_GoodInput_Returns_CoordinateConstants()
         {
-            CoordinateVariableY coord = new CoordinateVariableY(new Constant(1), new Distribution(new Normal(1,1)));
+            IDistributedValue dist = new DistributedValue(new Normal(1, 1));
+            CoordinateVariableY coord = new CoordinateVariableY(new Constant(1), new Distribution(dist));
             Assert.NotNull(coord);
+        }
+
+        [Fact]
+        public void X_GoodInput_Returns_Double()
+        {
+            IDistributedValue dist = new DistributedValue(new Normal(1, 1));
+            CoordinateVariableY coord = new CoordinateVariableY(new Constant(1), new Distribution(dist));
+            Assert.True(coord.X.Value() == 1);
+        }
+
+        [Fact]
+        public void Y_GoodInput_Returns_Double()
+        {
+            IDistributedValue dist = new DistributedValue(new Normal(1, 1));
+            CoordinateVariableY coord = new CoordinateVariableY(new Constant(1), new Distribution(dist));
+            Assert.True(coord.Y.Value() == 1);
         }
     }
 }

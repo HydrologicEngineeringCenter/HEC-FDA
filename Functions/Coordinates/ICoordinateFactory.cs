@@ -14,7 +14,7 @@ namespace Functions
             return new CoordinateConstants(new Constant(x),new Constant(y));
         }
 
-        public static ICoordinate Factory(double x, IDistribution y)
+        public static ICoordinate Factory(double x, IDistributedValue y)
         {
             return new CoordinateVariableY(new Constant(x),new Distribution(y));
         }

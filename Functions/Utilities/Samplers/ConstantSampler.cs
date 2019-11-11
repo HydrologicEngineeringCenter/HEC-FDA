@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Functions.Utilities
+namespace Functions
 {
     public class ConstantSampler : ISampler
     {

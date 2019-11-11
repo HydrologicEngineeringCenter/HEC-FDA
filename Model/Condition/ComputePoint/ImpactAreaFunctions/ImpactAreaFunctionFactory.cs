@@ -21,7 +21,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         //    else return null;
         //}
 
-        public static IFdaFunction CreateFdaFunction(ICoordinatesFunction function, ImpactAreaFunctionEnum type) 
+        public static IFdaFunction Factory(ICoordinatesFunction function, ImpactAreaFunctionEnum type) 
         {
             if (type == ImpactAreaFunctionEnum.InflowOutflow)
             {

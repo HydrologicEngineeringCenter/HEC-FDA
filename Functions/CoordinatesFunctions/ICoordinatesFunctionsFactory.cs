@@ -51,7 +51,7 @@ namespace Functions
         //    }
         //}
 
-        public static ICoordinatesFunction Factory(List<double> xs, List<IDistribution> ys)
+        public static ICoordinatesFunction Factory(List<double> xs, List<IDistributedValue> ys)
         {
             //are lengths the same
             if (xs.Count == ys.Count)

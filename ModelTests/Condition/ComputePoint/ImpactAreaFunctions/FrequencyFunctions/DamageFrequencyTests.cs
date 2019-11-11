@@ -100,7 +100,7 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             ICoordinatesFunction coordFunction = ICoordinatesFunctionsFactory.Factory(xs, ys);
             ImpactAreaFunctionEnum type = ImpactAreaFunctionEnum.InflowFrequency;
 
-            IFdaFunction inflowFrequency = ImpactAreaFunctionFactory.CreateFdaFunction(coordFunction, type);
+            IFdaFunction inflowFrequency = ImpactAreaFunctionFactory.Factory(coordFunction, type);
             IFunction computableInflowFreq = Sampler.Sample(inflowFrequency.Function, .5);
 
             xs = new List<double>() { 0, 25, 50, 75, 100 };
@@ -108,7 +108,7 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             coordFunction = ICoordinatesFunctionsFactory.Factory(xs, ys);
             type = ImpactAreaFunctionEnum.InflowOutflow;
 
-            IFdaFunction inflowOutflow = ImpactAreaFunctionFactory.CreateFdaFunction(coordFunction, type);
+            IFdaFunction inflowOutflow = ImpactAreaFunctionFactory.Factory(coordFunction, type);
             IFunction computeableInflowOutflow = Sampler.Sample(inflowOutflow.Function, .5);
 
             //IComputableTransformFunction computableInflowOutflow = inflowOutflow.Sample(.5);
@@ -133,7 +133,7 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             ICoordinatesFunction coordFunction = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
             ImpactAreaFunctionEnum type = ImpactAreaFunctionEnum.InflowFrequency;
 
-            IFdaFunction inflowFrequency = ImpactAreaFunctionFactory.CreateFdaFunction(coordFunction, type);
+            IFdaFunction inflowFrequency = ImpactAreaFunctionFactory.Factory(coordFunction, type);
             IFunction computableInflowFreq = Sampler.Sample(inflowFrequency.Function, .5);
 
             xs = new List<double>() { 0, 50, 150, 275, 1000 };
@@ -141,7 +141,7 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             coordFunction = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
             type = ImpactAreaFunctionEnum.InflowOutflow;
 
-            IFdaFunction inflowOutflow = ImpactAreaFunctionFactory.CreateFdaFunction(coordFunction, type);
+            IFdaFunction inflowOutflow = ImpactAreaFunctionFactory.Factory(coordFunction, type);
             IFunction computeableInflowOutflow = Sampler.Sample(inflowOutflow.Function, .5);
 
             //IComputableTransformFunction computableInflowOutflow = inflowOutflow.Sample(.5);
@@ -171,20 +171,20 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             Sampler.RegisterSampler(new DistributionSampler());
 
             List<double> xs = new List<double>() { 0, .25, .5, .75, 1 };
-            List<IDistribution> ys = new List<IDistribution>()
+            List<IDistributedValue> ys = new List<IDistributedValue>()
                    {
-                       new Normal(1,2),
-                       new Triangular(3,4,5),
-                       new Uniform(5,6),
-                       new Normal(6,1),
-                       new Uniform(7,8),
+                       DistributedValueFactory.Factory( new Normal(1,2)),
+                       DistributedValueFactory.Factory(new Triangular(3,4,5)),
+                       DistributedValueFactory.Factory(new Uniform(5,6)),
+                       DistributedValueFactory.Factory(new Normal(6,1)),
+                       DistributedValueFactory.Factory(new Uniform(7,8)),
 
                    };
 
             ICoordinatesFunction coordFunction = ICoordinatesFunctionsFactory.Factory(xs, ys);
             ImpactAreaFunctionEnum type = ImpactAreaFunctionEnum.InflowFrequency;
 
-            IFdaFunction inflowFrequency = ImpactAreaFunctionFactory.CreateFdaFunction(coordFunction, type);
+            IFdaFunction inflowFrequency = ImpactAreaFunctionFactory.Factory(coordFunction, type);
             IFunction computableInflowFreq = Sampler.Sample(inflowFrequency.Function, .5);
 
             xs = new List<double>() { 0, 25, 50, 75, 100 };
@@ -192,7 +192,7 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             coordFunction = ICoordinatesFunctionsFactory.Factory(xs, ys2);
             type = ImpactAreaFunctionEnum.InflowOutflow;
 
-            IFdaFunction inflowOutflow = ImpactAreaFunctionFactory.CreateFdaFunction(coordFunction, type);
+            IFdaFunction inflowOutflow = ImpactAreaFunctionFactory.Factory(coordFunction, type);
             IFunction computeableInflowOutflow = Sampler.Sample(inflowOutflow.Function, .5);
 
             //IComputableTransformFunction computableInflowOutflow = inflowOutflow.Sample(.5);
@@ -212,20 +212,20 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             Sampler.RegisterSampler(new DistributionSampler());
 
             List<double> xs = new List<double>() { 0, .25, .5, .75, 1 };
-            List<IDistribution> ys = new List<IDistribution>()
+            List<IDistributedValue> ys = new List<IDistributedValue>()
                    {
-                       new Normal(1,2),
-                       new Triangular(3,4,5),
-                       new Uniform(5,6),
-                       new Normal(6,1),
-                       new Uniform(7,8),
+                       DistributedValueFactory.Factory( new Normal(1,2)),
+                       DistributedValueFactory.Factory(new Triangular(3,4,5)),
+                       DistributedValueFactory.Factory(new Uniform(5,6)),
+                       DistributedValueFactory.Factory(new Normal(6,1)),
+                       DistributedValueFactory.Factory(new Uniform(7,8)),
 
                    };
 
             ICoordinatesFunction coordFunction = ICoordinatesFunctionsFactory.Factory(xs, ys);
             ImpactAreaFunctionEnum type = ImpactAreaFunctionEnum.InflowFrequency;
 
-            IFdaFunction inflowFrequency = ImpactAreaFunctionFactory.CreateFdaFunction(coordFunction, type);
+            IFdaFunction inflowFrequency = ImpactAreaFunctionFactory.Factory(coordFunction, type);
             IFunction computableInflowFreq = Sampler.Sample(inflowFrequency.Function, .5);
 
             xs = new List<double>() { 0,1,2,3,4 };
@@ -233,7 +233,7 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             coordFunction = ICoordinatesFunctionsFactory.Factory(xs, ys2);
             type = ImpactAreaFunctionEnum.InflowOutflow;
 
-            IFdaFunction inflowOutflow = ImpactAreaFunctionFactory.CreateFdaFunction(coordFunction, type);
+            IFdaFunction inflowOutflow = ImpactAreaFunctionFactory.Factory(coordFunction, type);
             IFunction computeableInflowOutflow = Sampler.Sample(inflowOutflow.Function, .5);
 
             //IComputableTransformFunction computableInflowOutflow = inflowOutflow.Sample(.5);
@@ -253,20 +253,20 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             Sampler.RegisterSampler(new DistributionSampler());
 
             List<double> xs = new List<double>() { 0, .25, .5, .75, 1 };
-            List<IDistribution> ys = new List<IDistribution>()
+            List<IDistributedValue> ys = new List<IDistributedValue>()
                    {
-                       new Normal(1,2),
-                       new Triangular(3,4,5),
-                       new Uniform(5,6),
-                       new Normal(6,1),
-                       new Uniform(7,8),
+                       DistributedValueFactory.Factory( new Normal(1,2)),
+                       DistributedValueFactory.Factory(new Triangular(3,4,5)),
+                       DistributedValueFactory.Factory(new Uniform(5,6)),
+                       DistributedValueFactory.Factory(new Normal(6,1)),
+                       DistributedValueFactory.Factory(new Uniform(7,8)),
 
                    };
 
             ICoordinatesFunction coordFunction = ICoordinatesFunctionsFactory.Factory(xs, ys);
             ImpactAreaFunctionEnum type = ImpactAreaFunctionEnum.InflowFrequency;
 
-            IFdaFunction inflowFrequency = ImpactAreaFunctionFactory.CreateFdaFunction(coordFunction, type);
+            IFdaFunction inflowFrequency = ImpactAreaFunctionFactory.Factory(coordFunction, type);
             IFunction computableInflowFreq = Sampler.Sample(inflowFrequency.Function, .5);
 
             xs = new List<double>() { 0, 4, 5, 6, 7};
@@ -274,7 +274,7 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             coordFunction = ICoordinatesFunctionsFactory.Factory(xs, ys2);
             type = ImpactAreaFunctionEnum.InflowOutflow;
 
-            IFdaFunction inflowOutflow = ImpactAreaFunctionFactory.CreateFdaFunction(coordFunction, type);
+            IFdaFunction inflowOutflow = ImpactAreaFunctionFactory.Factory(coordFunction, type);
             IFunction computeableInflowOutflow = Sampler.Sample(inflowOutflow.Function, .5);
 
             //IComputableTransformFunction computableInflowOutflow = inflowOutflow.Sample(.5);
@@ -310,7 +310,7 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
 
             ImpactAreaFunctionEnum type = ImpactAreaFunctionEnum.InflowFrequency;
 
-            IFdaFunction inflowFrequency = ImpactAreaFunctionFactory.CreateFdaFunction(linkedFunction, type);
+            IFdaFunction inflowFrequency = ImpactAreaFunctionFactory.Factory(linkedFunction, type);
             IFunction computableInflowFreq = Sampler.Sample(inflowFrequency.Function, .5);
 
             Assert.True(true);
@@ -333,13 +333,13 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             ICoordinatesFunction coordFunction1 = ICoordinatesFunctionsFactory.Factory(xs, ys);
 
             List<double> xs2 = new List<double>() {.5,.6,.7,.8,.9 };
-            List<IDistribution> ys2 = new List<IDistribution>()
+            List<IDistributedValue> ys2 = new List<IDistributedValue>()
                    {
-                       new Normal(1,2),
-                       new Triangular(3,4,5),
-                       new Uniform(5,6),
-                       new Normal(6,1),
-                       new Uniform(7,8),
+                       DistributedValueFactory.Factory( new Normal(1,2)),
+                       DistributedValueFactory.Factory(new Triangular(3,4,5)),
+                       DistributedValueFactory.Factory(new Uniform(5,6)),
+                       DistributedValueFactory.Factory(new Normal(6,1)),
+                       DistributedValueFactory.Factory(new Uniform(7,8)),
 
                    };
 
@@ -351,7 +351,7 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
 
             ImpactAreaFunctionEnum type = ImpactAreaFunctionEnum.InflowFrequency;
 
-            IFdaFunction inflowFrequency = ImpactAreaFunctionFactory.CreateFdaFunction(linkedFunction, type);
+            IFdaFunction inflowFrequency = ImpactAreaFunctionFactory.Factory(linkedFunction, type);
             IFunction computableInflowFreq = Sampler.Sample(inflowFrequency.Function, .5);
 
             Assert.True(true);
