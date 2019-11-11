@@ -6,8 +6,8 @@ namespace Functions.Ordinates
 {
     public class Distribution : IOrdinate
     {
-        public Statistics.IDistribution GetDistribution { get; }
-        internal Distribution(Statistics.IDistribution distribution)
+        public IDistributedValue GetDistribution { get; }
+        internal Distribution(IDistributedValue distribution)
         {
             GetDistribution = distribution;
         }

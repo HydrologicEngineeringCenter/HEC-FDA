@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Functions
 {
-    internal interface IDistributedValue
+    public interface IDistributedValue
     {
         #region Properties
         /// <summary>
