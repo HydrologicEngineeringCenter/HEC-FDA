@@ -145,5 +145,12 @@ namespace Functions
         {
             return new DistributedValue( _distribution.SampleDistribution(numberGenerator));
         }
+
+        public string WriteToXML()
+        {
+            string retval = "";
+            //if(_distribution.GetType().Equals(typeof(Distributions.Normal)))
+            return retval;
+        }
     }
 }

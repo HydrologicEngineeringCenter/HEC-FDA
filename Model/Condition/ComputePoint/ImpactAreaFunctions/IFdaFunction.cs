@@ -7,7 +7,7 @@ using Model.Condition.ComputePoint.ImpactAreaFunctions;
 
 namespace Model
 {
-    public interface IFdaFunction 
+    public interface IFdaFunction : Utilities.Serialization.ISerializeToXML<IFdaFunction>
     {
        public string XLabel { get; }
         public string YLabel { get; }

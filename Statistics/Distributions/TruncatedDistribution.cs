@@ -94,6 +94,16 @@ namespace Statistics.Distributions
         }
         public string Print() => $"TruncatedDistribution(distribution: {_Distribution.Print()}, truncated range: [{Minimum}, {Maximum}])";
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
+
+        public IDistribution Read(string xmlString)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string WriteToXML()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
         //#region Iordinate Functions
         //public double GetValue(double sampleProbability) => InverseCDF(sampleProbability);

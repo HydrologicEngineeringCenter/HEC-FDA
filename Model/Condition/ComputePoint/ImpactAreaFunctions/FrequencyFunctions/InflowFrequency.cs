@@ -7,7 +7,7 @@ using Functions.CoordinatesFunctions;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal class InflowFrequency : ImpactAreaFunctionBase
+    internal class InflowFrequency : ImpactAreaFunctionBase, IFrequencyFunction
     {
         #region Properties
         public override string XLabel => "Frequency";
@@ -19,6 +19,22 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         internal InflowFrequency(ICoordinatesFunction function) : base(function, ImpactAreaFunctionEnum.InflowFrequency)
         {
     
+        }
+
+        public IFrequencyFunction Compose(ITransformFunction transformFunction, double probability1, double probability2)
+        {
+            if (transformFunction.Type - 1 == Type)
+            {
+                IFunction inflowFreq = Sampler.Sample(Function, probability1);
+                IFunction transformFunc = Sampler.Sample(transformFunction.Function, probability2);
+                IFunction composedFunc = inflowFreq.Compose(transformFunc);
+                return new OutflowFrequency(composedFunc);
+            }
+            else
+            {
+                throw new ArgumentException("Unable to compose the transform function to this outflow frequency function. The transform function " +
+                    "must be a rating curve.");
+            }
         }
 
 

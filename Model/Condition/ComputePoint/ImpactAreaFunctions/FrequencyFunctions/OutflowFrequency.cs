@@ -6,7 +6,7 @@ using Functions.Ordinates;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal sealed class OutflowFrequency<YType> : ImpactAreaFunctionBase
+    internal sealed class OutflowFrequency : ImpactAreaFunctionBase, IFrequencyFunction
     {
         #region Properties
         public override string XLabel => "Stage";
@@ -20,7 +20,23 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
            
         }
 
-      
+        public IFrequencyFunction Compose(ITransformFunction transformFunction, double p1, double p2)
+        {
+            if (transformFunction.Type - 1 == Type)
+            {
+                IFunction outflowFreq = Sampler.Sample(Function, p1);
+                IFunction transformFunc = Sampler.Sample(transformFunction.Function, p2);
+                IFunction composedFunc = outflowFreq.Compose(transformFunc);
+                return new InteriorStageFrequency(composedFunc);
+            }
+            else
+            {
+                throw new ArgumentException("Unable to compose the transform function to this outflow frequency function. The transform function " +
+                    "must be a rating curve.");
+            }
+        }
+
+
 
 
         //public IComputableFrequencyFunction Sample(double p)

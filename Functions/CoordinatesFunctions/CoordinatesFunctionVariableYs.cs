@@ -103,6 +103,16 @@ namespace Functions.CoordinatesFunctions
             throw new ArgumentOutOfRangeException("The specified y value was not found in any of the coordinates. Interpolation is not supported for coorindates with distributed x or y values.");
         }
 
+        public ICoordinatesFunction Read(string xmlString)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string WriteToXML()
+        {
+            throw new NotImplementedException();
+        }
+
         //public IFunction Sample(double p)
         //{
         //    return new CoordinatesFunctionConstants(ConvertCoordinatesToConstants(p));

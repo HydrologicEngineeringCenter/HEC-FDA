@@ -86,6 +86,16 @@ namespace Statistics.Distributions
             SummaryStatistics stats = new SummaryStatistics(IDataFactory.Factory(log10Sample));
             return new LogPearsonIII(stats.Mean, stats.StandardDeviation, stats.Skewness, stats.SampleSize);
         }
+
+        public string WriteToXML()
+        {
+            return $"{Mean}, {StandardDeviation}, {Skewness}, {SampleSize}";
+        }
+
+        public IDistribution Read(string xmlString)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

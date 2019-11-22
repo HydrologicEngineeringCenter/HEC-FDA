@@ -33,5 +33,10 @@ namespace Functions.Ordinates
         {
             return _ConstantValue;
         }
+
+        public string WriteToXML()
+        {
+            return _ConstantValue.ToString();
+        }
     }
 }

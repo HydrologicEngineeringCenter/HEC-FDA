@@ -36,6 +36,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
             else return null;
         }
 
+
         //public static ITransformFunction<YType> CreateNewTransformFunction<YType>(ICoordinatesFunction<double, YType> function, ImpactAreaFunctionEnum type)
         //{
         //    if (type == ImpactAreaFunctionEnum.InflowOutflow)

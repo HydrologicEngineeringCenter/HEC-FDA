@@ -3,6 +3,7 @@ using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Functions.Coordinates
 {
@@ -49,6 +50,16 @@ namespace Functions.Coordinates
             hashCode = hashCode * -1521134295 + X.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<Distribution>.Default.GetHashCode((Distribution)Y);
             return hashCode;
+        }
+
+        public XElement WriteToXML()
+        {
+            string xVal = X.WriteToXML();
+            string yVal = Y.WriteToXML();
+            XElement ordinateElement = new XElement("Ordinate");
+            ordinateElement.SetAttributeValue("x", xVal);
+            ordinateElement.SetAttributeValue("y", yVal);
+            return ordinateElement;
         }
     }
 }

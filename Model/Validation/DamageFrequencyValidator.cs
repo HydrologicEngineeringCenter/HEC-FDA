@@ -6,14 +6,14 @@ using Utilities;
 
 namespace Model.Validation
 {
-    class DamageFrequencyValidator<YType> : IValidator<DamageFrequency<YType>>
+    class DamageFrequencyValidator : IValidator<DamageFrequency>
     {
-        public bool IsValid(DamageFrequency<YType> entity, out IEnumerable<IMessage> errors)
+        public bool IsValid(DamageFrequency entity, out IEnumerable<IMessage> errors)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IMessage> ReportErrors(DamageFrequency<YType> entity)
+        public IEnumerable<IMessage> ReportErrors(DamageFrequency entity)
         {
             throw new NotImplementedException();
         }

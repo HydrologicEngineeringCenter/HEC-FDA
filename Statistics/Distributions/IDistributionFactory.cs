@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Xml.Linq;
 using MathNet.Numerics.Statistics;
 
 using Utilities;
@@ -14,6 +14,8 @@ namespace Statistics
         //TODO: Validate
         //TODO: Call other constructors with inputs and IDistributions Enum (may require switch case on enum values) 
         
+       
+
         public static IDistribution Fit(IEnumerable<double> sample, IDistributions returnType)
         {
             if ((int)returnType >= 10)
@@ -57,6 +59,11 @@ namespace Statistics
                 IDistribution distribution = (IDistribution)Fit(sample, (int)returnType / 10);
                 return new Distributions.TruncatedDistribution(distribution, minimum, maximum);
             }
+        }
+
+        public static IDistribution FactoryNormal(double mean, double stDev, int sample = 2147483647)
+        {
+            return new Distributions.Normal(mean, stDev, sample);
         }
     }
 }

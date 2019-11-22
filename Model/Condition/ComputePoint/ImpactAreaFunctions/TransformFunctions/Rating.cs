@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Functions;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal sealed class Rating<YType> : ImpactAreaFunctionBase
+    internal sealed class Rating : ImpactAreaFunctionBase, ITransformFunction
     {
         #region Properties
         public override string XLabel => "Stage";
@@ -13,9 +14,11 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         #endregion
 
         #region Constructor
-        internal Rating(Functions.ICoordinatesFunction function) : base(function, ImpactAreaFunctionEnum.Rating)
+        internal Rating(ICoordinatesFunction function) : base(function, ImpactAreaFunctionEnum.Rating)
         {
         }
+
+         
 
         //public IComputableTransformFunction Sample(double p)
         //{
