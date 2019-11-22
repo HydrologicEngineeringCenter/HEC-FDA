@@ -105,6 +105,16 @@ namespace Statistics.Distributions
 
             return ordinateElem;
         }
+
+        public IDistribution Read(string xmlString)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string WriteToXML()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }
