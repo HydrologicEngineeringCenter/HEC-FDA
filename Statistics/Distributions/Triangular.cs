@@ -68,6 +68,16 @@ namespace Statistics.Distributions
             SummaryStatistics stats = new SummaryStatistics(data);
             return new Triangular(stats.Minimum, stats.Mean, stats.Maximum, stats.SampleSize);
         }
+
+        public IDistribution Read(string xmlString)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string WriteToXML()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

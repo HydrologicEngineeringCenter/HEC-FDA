@@ -8,7 +8,7 @@ using Functions.Ordinates;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal sealed class DamageFrequency<YType> : ImpactAreaFunctionBase, IValidate<DamageFrequency<YType>>
+    internal sealed class DamageFrequency : ImpactAreaFunctionBase,IFrequencyFunction, IValidate<DamageFrequency>
     {
         #region Properties
         public override string XLabel => "Frequency";
@@ -24,7 +24,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         #region Constructor
         internal DamageFrequency(ICoordinatesFunction function) : base(function, ImpactAreaFunctionEnum.DamageFrequency)
         {
-            IsValid = Validate(new DamageFrequencyValidator<YType>(), out IEnumerable<IMessage> errors);
+            IsValid = Validate(new DamageFrequencyValidator(), out IEnumerable<IMessage> errors);
             Errors = errors;
         }
 
@@ -32,9 +32,15 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 
         #region IFunctionCompose Methods
 
-        public bool Validate(IValidator<DamageFrequency<YType>> validator, out IEnumerable<IMessage> errors)
+        public bool Validate(IValidator<DamageFrequency> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);
+        }
+
+        public IFrequencyFunction Compose(ITransformFunction transformFunction, double probability1, double probability2)
+        {
+            //nothing should try to compose with this.
+            throw new NotImplementedException();
         }
         #endregion
 

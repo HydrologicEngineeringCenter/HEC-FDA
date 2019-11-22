@@ -31,5 +31,7 @@ namespace Functions
         /// </summary>
         /// <returns> A string summarizing the parameter values </returns>
         string Print();
+
+        string WriteToXML();
     }
 }

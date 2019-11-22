@@ -5,7 +5,7 @@ using Utilities;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal sealed class ExteriorInteriorStage<YType>: ImpactAreaFunctionBase, IValidate<ExteriorInteriorStage<YType>>
+    internal sealed class ExteriorInteriorStage: ImpactAreaFunctionBase, ITransformFunction, IValidate<ExteriorInteriorStage>
     {
         #region Properties
         public override string XLabel => "Exterior Stage";
@@ -23,7 +23,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 
         }
 
-        public bool Validate(IValidator<ExteriorInteriorStage<YType>> validator, out IEnumerable<IMessage> errors)
+        public bool Validate(IValidator<ExteriorInteriorStage> validator, out IEnumerable<IMessage> errors)
         {
             throw new NotImplementedException();
         }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Functions
 {
@@ -13,6 +14,8 @@ namespace Functions
         IOrdinate X { get; }
         IOrdinate Y { get; }
 
+        XElement WriteToXML();
         //ICoordinate<double, double> Sample(double p);
+
     }
 }

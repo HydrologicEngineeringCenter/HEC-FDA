@@ -323,5 +323,14 @@ namespace Functions.CoordinatesFunctions
             return retval;
         }
 
+        public ICoordinatesFunction Read(string xmlString)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string WriteToXML()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

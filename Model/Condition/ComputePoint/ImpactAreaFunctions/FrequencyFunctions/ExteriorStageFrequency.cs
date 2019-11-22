@@ -8,7 +8,7 @@ using Functions.Ordinates;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
-    internal sealed class ExteriorStageFrequency<YType> : ImpactAreaFunctionBase
+    internal sealed class ExteriorStageFrequency : ImpactAreaFunctionBase, IFrequencyFunction
     {
         #region Properties
         public override string XLabel => "Frequency";
@@ -22,7 +22,23 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
             
         }
 
-       
+        public IFrequencyFunction Compose(ITransformFunction transformFunction, double probability1, double probability2)
+        {
+            if (transformFunction.Type - 1 == Type)
+            {
+                IFunction extStageFreq = Sampler.Sample(Function, probability1);
+                IFunction transformFunc = Sampler.Sample(transformFunction.Function, probability2);
+                IFunction composedFunc = extStageFreq.Compose(transformFunc);
+                return new DamageFrequency(composedFunc);
+            }
+            else
+            {
+                throw new ArgumentException("Unable to compose the transform function to this outflow frequency function. The transform function " +
+                    "must be a rating curve.");
+            }
+        }
+
+
         #endregion
 
         #region IFunctionCompose Methods
@@ -42,7 +58,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         //{
         //    return "Composition could not be initialized because no transform function was provided or the two functions do not share a common set of ordinates.";
         //}
-        
+
         //public IComputableFrequencyFunction Sample(double p)
         //{
         //    IFunction coordFunc = Function.Sample(p);
@@ -63,6 +79,6 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         //    return messages;
         //}
 
-       
+
     }
 }

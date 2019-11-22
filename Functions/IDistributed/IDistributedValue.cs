@@ -6,6 +6,8 @@ namespace Functions
 {
     public interface IDistributedValue
     {
+        string WriteToXML();
+
         #region Properties
         /// <summary>
         /// Enumerated type of the distribution.

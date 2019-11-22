@@ -63,6 +63,16 @@ namespace Statistics.Distributions
             SummaryStatistics stats = new SummaryStatistics(sample);
             return new Uniform(stats.Minimum, stats.Maximum, stats.SampleSize);
         }
+
+        public IDistribution Read(string xmlString)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string WriteToXML()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

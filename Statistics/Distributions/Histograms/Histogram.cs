@@ -447,7 +447,17 @@ namespace Statistics.Histograms
         public static Histogram Fit(IEnumerable<double> sample, int nBins = 100)
         {
             return new Histogram(sample, nBins);
-        }     
+        }
+
+        public IDistribution Read(string xmlString)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string WriteToXML()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

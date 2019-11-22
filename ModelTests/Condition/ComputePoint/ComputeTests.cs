@@ -31,30 +31,31 @@ namespace ModelTests.Condition.ComputePoint
         {
             Sampler.RegisterSampler(new ConstantSampler());
 
-            IFdaFunction inflowFrequency = ComputeTestData.CreateInflowFrequencyFunction();
-            IFdaFunction inflowOutflow = ComputeTestData.CreateInflowOutflowFunction();
+            IFrequencyFunction inflowFrequency = ComputeTestData.CreateInflowFrequencyFunction();
+            ITransformFunction inflowOutflow = ComputeTestData.CreateInflowOutflowFunction();
 
-            List<IFdaFunction> funcs = new List<IFdaFunction>();
-            funcs.Add(inflowFrequency);
-            funcs.Add(inflowOutflow);
+            //List<IFdaFunction> funcs = new List<IFdaFunction>();
+            //funcs.Add(inflowFrequency);
+            //funcs.Add(inflowOutflow);
 
-            IFdaFunction inflowFreq = funcs.Where(func => func.Type == ImpactAreaFunctionEnum.InflowFrequency).FirstOrDefault();
-            IFdaFunction inOut = funcs.Where(func => func.Type == ImpactAreaFunctionEnum.InflowOutflow).FirstOrDefault();
+            //IFrequencyFunction inflowFreq = funcs.Where(func => func.Type == ImpactAreaFunctionEnum.InflowFrequency).FirstOrDefault();
+            //IFdaFunction inOut = funcs.Where(func => func.Type == ImpactAreaFunctionEnum.InflowOutflow).FirstOrDefault();
 
-            if(inflowFreq != null && inOut != null)
+            if(inflowFrequency != null && inflowOutflow != null)
             {
-                IFunction func = Sampler.Sample(inflowFreq.Function, .5);
-                IFunction func2 = Sampler.Sample(inOut.Function, .5);
+                IFrequencyFunction outflowFrequency = inflowFrequency.Compose(inflowOutflow, .5, .5);
+                //IFunction func = Sampler.Sample(inflowFrequency.Function, .5);
+                //IFunction func2 = Sampler.Sample(inflowOutflow.Function, .5);
                 
-                OutputCoordinates(func, "inflowFreq");
-                OutputCoordinates(func2, "inflowOutflow");
+                //OutputCoordinates(func, "inflowFreq");
+                //OutputCoordinates(func2, "inflowOutflow");
 
-                IFunction composed = func.Compose(func2);
+                //IFunction composed = func.Compose(func2);
                 
-                OutputCoordinates(composed, "Composed");
+                //OutputCoordinates(composed, "Composed");
                 
-                IFdaFunction outflowFrequency = ImpactAreaFunctionFactory.Factory(composed, ImpactAreaFunctionEnum.OutflowFrequency);
-                funcs.Add(outflowFrequency);
+                //IFdaFunction outflowFrequency = ImpactAreaFunctionFactory.Factory(composed, ImpactAreaFunctionEnum.OutflowFrequency);
+                //funcs.Add(outflowFrequency);
 
                 Assert.True(outflowFrequency.Function.F(new Constant(1)).Value() == 5);
                 Assert.True(outflowFrequency.Function.F(new Constant(2)).Value() == 6);

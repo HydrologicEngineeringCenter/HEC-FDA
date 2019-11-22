@@ -104,7 +104,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             {
                 element.Description = "";
             }
-
+            
             return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.Distribution, element.Curve.GetType(), ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues) };
 
         }

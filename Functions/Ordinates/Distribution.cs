@@ -36,5 +36,10 @@ namespace Functions.Ordinates
                 return GetDistribution.InverseCDF(p);
             }
         }
+
+        public string WriteToXML()
+        {
+            return GetDistribution.WriteToXML();
+        }
     }
 }

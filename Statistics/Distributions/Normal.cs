@@ -68,6 +68,16 @@ namespace Statistics.Distributions
             MathNet.Numerics.Distributions.Normal norm = MathNet.Numerics.Distributions.Normal.Estimate(sample);
             return new Normal(norm.Mean, norm.StdDev, sample.Count());
         }
+
+        public string WriteToXML()
+        {
+            return $"{Mean}, {StandardDeviation}, {SampleSize}";
+        }
+
+        public IDistribution Read(string xmlString)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

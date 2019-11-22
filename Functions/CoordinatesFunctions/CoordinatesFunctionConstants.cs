@@ -397,6 +397,16 @@ namespace Functions.CoordinatesFunctions
             }
         }
 
+        public ICoordinatesFunction Read(string xmlString)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string WriteToXML()
+        {
+            throw new NotImplementedException();
+        }
+
         //public IFunction Sample(double p)
         //{
         //    return this;

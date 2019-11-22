@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Statistics\Statistics.csproj" />
+    <ProjectReference Include="..\Utilities\Utilities.csproj" />
   </ItemGroup>
 
 </Project>

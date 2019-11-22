@@ -131,6 +131,16 @@ namespace Statistics.Distributions
             double bound1 = kurtosis - skew * skew - 1, bound2 = 1.5 * skew * skew + 3 - kurtosis;
             return (bound1 < 0.00001 || bound2 < 0.00001) ? new Tuple<double, double, bool>(bound1, bound2, false) : new Tuple<double, double, bool>(bound1, bound2, true);
         }
+
+        public IDistribution Read(string xmlString)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string WriteToXML()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }
