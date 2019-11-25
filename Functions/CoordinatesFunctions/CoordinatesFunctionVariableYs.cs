@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Functions.CoordinatesFunctions
 {
@@ -24,13 +25,14 @@ namespace Functions.CoordinatesFunctions
 
         public Tuple<double, double> Domain { get; }
 
-        public InterpolationEnum Interpolator => throw new NotImplementedException();
+        public InterpolationEnum Interpolator { get; }
         #endregion
 
         #region Constructor
         //todo: are we using this interpolator?
         internal CoordinatesFunctionVariableYs(List<ICoordinate> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
         {
+            Interpolator = interpolation;
             if (IsValid(coordinates))
             {
                 Coordinates = SortByXs(coordinates);
@@ -103,14 +105,23 @@ namespace Functions.CoordinatesFunctions
             throw new ArgumentOutOfRangeException("The specified y value was not found in any of the coordinates. Interpolation is not supported for coorindates with distributed x or y values.");
         }
 
-        public ICoordinatesFunction Read(string xmlString)
-        {
-            throw new NotImplementedException();
-        }
+        
 
-        public string WriteToXML()
+        public XElement WriteToXML()
         {
-            throw new NotImplementedException();
+            XElement functionsElem = new XElement("Functions");
+            functionsElem.SetAttributeValue("Type", "NotLinked");
+
+            XElement funcElem = new XElement("Function");
+            funcElem.SetAttributeValue("Interpolator", Interpolator);
+
+            foreach (ICoordinate coord in Coordinates)
+            {
+                funcElem.Add(coord.WriteToXML());
+            }
+
+            functionsElem.Add(funcElem);
+            return functionsElem;
         }
 
         //public IFunction Sample(double p)

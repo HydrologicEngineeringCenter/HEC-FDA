@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="netstandard" />
+    <Reference Include="netstandard" />
     <Reference Include="Consequences_Assist">
       <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\Consequences_Assist.dll</HintPath>
     </Reference>
@@ -301,6 +301,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Model\Model.csproj">
+      <Project>{7fe104fd-b277-4dbe-b892-01f61262a82f}</Project>
+      <Name>Model</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenGLMapper\geospatial\OpenGLMapping\OpenGLMapping.vbproj">
       <Project>{e6dd31c5-1388-4b1d-8291-c317dde22388}</Project>
       <Name>OpenGLMapping</Name>

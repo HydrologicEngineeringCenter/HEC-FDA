@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
+using Utilities.Serialization;
 
 namespace Statistics.Distributions
 {
@@ -69,15 +71,20 @@ namespace Statistics.Distributions
             return new Normal(norm.Mean, norm.StdDev, sample.Count());
         }
 
-        public string WriteToXML()
+        public XElement WriteToXML()
         {
-            return $"{Mean}, {StandardDeviation}, {SampleSize}";
+            XElement ordinateElem = new XElement(SerializationConstants.NORMAL);
+            //mean
+            ordinateElem.SetAttributeValue(SerializationConstants.MEAN, Mean);
+            //st dev
+            ordinateElem.SetAttributeValue(SerializationConstants.ST_DEV, StandardDeviation);
+            //sample size
+            ordinateElem.SetAttributeValue(SerializationConstants.SAMPLE_SIZE, SampleSize);
+
+            return ordinateElem;
         }
 
-        public IDistribution Read(string xmlString)
-        {
-            throw new NotImplementedException();
-        }
+        
         #endregion
     }
 }

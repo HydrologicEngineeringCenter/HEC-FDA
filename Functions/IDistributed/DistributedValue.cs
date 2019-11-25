@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Functions
 {
@@ -146,11 +147,10 @@ namespace Functions
             return new DistributedValue( _distribution.SampleDistribution(numberGenerator));
         }
 
-        public string WriteToXML()
+        public XElement WriteToXML()
         {
-            string retval = "";
-            //if(_distribution.GetType().Equals(typeof(Distributions.Normal)))
-            return retval;
+            return _distribution.WriteToXML();
+            
         }
     }
 }

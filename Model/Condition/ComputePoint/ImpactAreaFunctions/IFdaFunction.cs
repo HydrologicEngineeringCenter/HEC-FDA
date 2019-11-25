@@ -9,10 +9,10 @@ namespace Model
 {
     public interface IFdaFunction : Utilities.Serialization.ISerializeToXML<IFdaFunction>
     {
-       public string XLabel { get; }
-        public string YLabel { get; }
+       string XLabel { get; }
+        string YLabel { get; }
         ImpactAreaFunctionEnum Type { get; }
-        public ICoordinatesFunction Function { get; }
+        ICoordinatesFunction Function { get; }
 
 
         //public List<ICoordinate<double, YType>> Coordinates { get; }

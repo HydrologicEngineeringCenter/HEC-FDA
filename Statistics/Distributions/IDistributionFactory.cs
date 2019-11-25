@@ -65,5 +65,15 @@ namespace Statistics
         {
             return new Distributions.Normal(mean, stDev, sample);
         }
+
+        public static IDistribution FactoryTriangular(double min, double mostLikely, double max, int sample = 2147483647)
+        {
+            return new Distributions.Triangular(min, mostLikely, max, sample);
+        }
+
+        public static IDistribution FactoryUniform(double min, double max, int sample = 2147483647)
+        {
+            return new Distributions.Uniform(min, max, sample);
+        }
     }
 }

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Utilities.Serialization
 {
     public interface ISerializeToXML<T>
     {
-        T Read(string xmlString);
-        string WriteToXML();
+        XElement WriteToXML();
 
     }
 }

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Xml.Linq;
 using Utilities;
+using Utilities.Serialization;
 
 namespace Statistics.Histograms
 {
@@ -449,12 +450,14 @@ namespace Statistics.Histograms
             return new Histogram(sample, nBins);
         }
 
-        public IDistribution Read(string xmlString)
+       
+
+        public string WriteToXML()
         {
             throw new NotImplementedException();
         }
 
-        public string WriteToXML()
+        XElement ISerializeToXML<IDistribution>.WriteToXML()
         {
             throw new NotImplementedException();
         }

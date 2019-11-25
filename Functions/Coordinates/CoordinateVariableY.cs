@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
+using Utilities.Serialization;
 
 namespace Functions.Coordinates
 {
@@ -54,12 +55,12 @@ namespace Functions.Coordinates
 
         public XElement WriteToXML()
         {
-            string xVal = X.WriteToXML();
-            string yVal = Y.WriteToXML();
-            XElement ordinateElement = new XElement("Ordinate");
-            ordinateElement.SetAttributeValue("x", xVal);
-            ordinateElement.SetAttributeValue("y", yVal);
-            return ordinateElement;
+            XElement xVal = X.WriteToXML();
+            XElement yVal = Y.WriteToXML();
+            XElement coordElem = new XElement(SerializationConstants.COORDINATE);
+            coordElem.Add(xVal);
+            coordElem.Add(yVal);
+            return coordElem;
         }
     }
 }

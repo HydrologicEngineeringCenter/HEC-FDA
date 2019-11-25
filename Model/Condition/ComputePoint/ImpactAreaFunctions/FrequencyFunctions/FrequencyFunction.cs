@@ -2,6 +2,7 @@
 using Functions.Ordinates;
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
@@ -13,6 +14,13 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 
         internal FrequencyFunction(ICoordinatesFunction function) : base(function, ImpactAreaFunctionEnum.DamageFrequency)
         {
+        }
+
+      
+
+        public override XElement WriteToXML()
+        {
+            throw new NotImplementedException();
         }
 
         // #region Notes
@@ -205,6 +213,6 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         //     else return transformOrdinates[j].Item1 + (nextY - transformOrdinates[j].Item2) / (transformOrdinates[j + 1].Item2 - transformOrdinates[j].Item2) * (transformOrdinates[j + 1].Item1 - transformOrdinates[j].Item1);
         // }
         // #endregion
-        
+
     }
 }

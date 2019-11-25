@@ -3,6 +3,7 @@ using Functions.CoordinatesFunctions;
 using Functions.Ordinates;
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
@@ -55,7 +56,11 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         public IOrdinate F(IOrdinate x) => Function.F(x);
         
         public IOrdinate InverseF(IOrdinate y) => Function.InverseF(y);
-      
+       
+
+        public abstract XElement WriteToXML();
+        
+
         #endregion
 
 

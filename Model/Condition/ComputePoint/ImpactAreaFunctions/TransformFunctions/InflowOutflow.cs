@@ -4,6 +4,7 @@ using Functions.Ordinates;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
@@ -19,6 +20,13 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         internal InflowOutflow(ICoordinatesFunction function) : base(function, ImpactAreaFunctionEnum.InflowOutflow)
         {
        
+        }
+
+       
+
+        public override XElement WriteToXML()
+        {
+            throw new NotImplementedException();
         }
 
         //public IComputableTransformFunction Sample(double p)

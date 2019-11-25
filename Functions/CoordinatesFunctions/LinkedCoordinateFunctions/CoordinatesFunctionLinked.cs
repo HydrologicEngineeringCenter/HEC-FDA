@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using Utilities;
 using Utilities.Validation;
 
@@ -323,14 +324,35 @@ namespace Functions.CoordinatesFunctions
             return retval;
         }
 
-        public ICoordinatesFunction Read(string xmlString)
-        {
-            throw new NotImplementedException();
-        }
+      
 
-        public string WriteToXML()
+        public XElement WriteToXML()
         {
-            throw new NotImplementedException();
+            XElement functionsElem = new XElement("Functions");
+            functionsElem.SetAttributeValue("Type", "Linked");
+
+            foreach (ICoordinatesFunction func in Functions)
+            {
+
+                XElement funcElem = new XElement("Function");
+                funcElem.SetAttributeValue("Interpolator", Interpolator);
+
+                foreach (ICoordinate coord in Coordinates)
+                {
+                    funcElem.Add(coord.WriteToXML());
+                }
+
+                functionsElem.Add(funcElem);
+            }
+
+            foreach(InterpolationEnum interpolator in Interpolators)
+            {
+                XElement interpElem = new XElement("Interpolator");
+                interpElem.SetAttributeValue("Type", interpolator);
+                functionsElem.Add(interpElem);
+            }
+
+            return functionsElem;
         }
     }
 }

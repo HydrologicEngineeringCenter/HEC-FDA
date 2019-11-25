@@ -5,6 +5,7 @@ using Functions;
 using Utilities;
 using Model.Validation;
 using Functions.Ordinates;
+using System.Xml.Linq;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
@@ -40,6 +41,13 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         public IFrequencyFunction Compose(ITransformFunction transformFunction, double probability1, double probability2)
         {
             //nothing should try to compose with this.
+            throw new NotImplementedException();
+        }
+
+       
+
+        public override XElement WriteToXML()
+        {
             throw new NotImplementedException();
         }
         #endregion
