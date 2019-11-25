@@ -106,14 +106,24 @@ namespace Statistics.Distributions
             return ordinateElem;
         }
 
-        public IDistribution Read(string xmlString)
-        {
-            throw new NotImplementedException();
-        }
+        
 
-        public string WriteToXML()
+        
+
+        public XElement WriteToXML()
         {
-            throw new NotImplementedException();
+            XElement ordinateElem = new XElement(SerializationConstants.TRIANGULAR);
+            //min
+            ordinateElem.SetAttributeValue(SerializationConstants.MIN, Minimum);
+            //most likely
+            ordinateElem.SetAttributeValue(SerializationConstants.MEAN, Mean);
+            //max
+            ordinateElem.SetAttributeValue(SerializationConstants.MAX, Maximum);
+
+            //sample size
+            ordinateElem.SetAttributeValue(SerializationConstants.SAMPLE_SIZE, SampleSize);
+
+            return ordinateElem;
         }
         #endregion
     }
