@@ -2,6 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using Utilities;
+using System.Xml.Linq;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
@@ -24,6 +25,13 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         }
 
         public bool Validate(IValidator<ExteriorInteriorStage> validator, out IEnumerable<IMessage> errors)
+        {
+            throw new NotImplementedException();
+        }
+
+        
+
+        public override XElement WriteToXML()
         {
             throw new NotImplementedException();
         }

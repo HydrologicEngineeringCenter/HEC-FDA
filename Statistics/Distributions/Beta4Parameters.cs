@@ -2,11 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using Utilities;
+using Utilities.Serialization;
 
 namespace Statistics.Distributions
 {
-    internal class Beta4Parameters: MathNet.Numerics.Distributions.BetaScaled, IDistribution // IOrdinate<IDistribution>
+    internal class Beta4Parameters: MathNet.Numerics.Distributions.BetaScaled,  IDistribution // IOrdinate<IDistribution>
     {
         //TODO: Validation
         //TODO: Cleanup commented out code
@@ -132,12 +134,14 @@ namespace Statistics.Distributions
             return (bound1 < 0.00001 || bound2 < 0.00001) ? new Tuple<double, double, bool>(bound1, bound2, false) : new Tuple<double, double, bool>(bound1, bound2, true);
         }
 
-        public IDistribution Read(string xmlString)
+       
+
+        public string WriteToXML()
         {
             throw new NotImplementedException();
         }
 
-        public string WriteToXML()
+        XElement ISerializeToXML<IDistribution>.WriteToXML()
         {
             throw new NotImplementedException();
         }

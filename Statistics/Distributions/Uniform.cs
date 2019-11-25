@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
+using Utilities.Serialization;
 
 namespace Statistics.Distributions
 {
@@ -64,14 +66,21 @@ namespace Statistics.Distributions
             return new Uniform(stats.Minimum, stats.Maximum, stats.SampleSize);
         }
 
-        public IDistribution Read(string xmlString)
-        {
-            throw new NotImplementedException();
-        }
+       
 
-        public string WriteToXML()
+      
+
+        public XElement WriteToXML()
         {
-            throw new NotImplementedException();
+            XElement ordinateElem = new XElement(SerializationConstants.UNIFORM);
+            //min
+            ordinateElem.SetAttributeValue(SerializationConstants.MIN, Minimum);
+            //max
+            ordinateElem.SetAttributeValue(SerializationConstants.MAX, Maximum);
+            //sample size
+            ordinateElem.SetAttributeValue(SerializationConstants.SAMPLE_SIZE, SampleSize);
+
+            return ordinateElem;
         }
         #endregion
     }

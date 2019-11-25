@@ -39,12 +39,12 @@ namespace Functions.Coordinates
 
         public XElement WriteToXML()
         {
-            string xVal = X.WriteToXML();
-            string yVal = Y.WriteToXML();
-            XElement ordinateElement = new XElement("Ordinate");
-            ordinateElement.SetAttributeValue("x", xVal);
-            ordinateElement.SetAttributeValue("y", yVal);
-            return ordinateElement;
+            XElement xVal = X.WriteToXML();
+            XElement yVal = Y.WriteToXML();
+            XElement coordElem = new XElement("Coordinate");
+            coordElem.Add(xVal);
+            coordElem.Add(yVal);
+            return coordElem;
         }
     }
 }

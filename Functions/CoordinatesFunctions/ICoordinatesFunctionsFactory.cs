@@ -15,6 +15,42 @@ namespace Functions
     public static class ICoordinatesFunctionsFactory
     {
 
+        public static ICoordinatesFunction Factory(List<ICoordinate> coordinates, InterpolationEnum interpolator)
+        {
+            if (IsConstantYValues(coordinates))
+            {
+                return new CoordinatesFunctionConstants(coordinates, interpolator);
+            }
+            else if(IsDistributedYValues(coordinates))
+            {
+                return new CoordinatesFunctionVariableYs(coordinates, interpolator);
+            }
+            //todo add the linked plots option
+            else throw new ArgumentException("Could not turn the coordinates provided into a function.");
+        }
+        private static bool IsDistributedYValues(List<ICoordinate> coordinates)
+        {
+            foreach (ICoordinate coord in coordinates)
+            {
+                if (!coord.Y.GetType().Equals(typeof(Distribution)))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        private static bool IsConstantYValues(List<ICoordinate> coordinates)
+        {
+            foreach(ICoordinate coord in coordinates)
+            {
+                if(!coord.Y.GetType().Equals(typeof(Constant)))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public static ICoordinatesFunction Factory(List<double> xs, List<double> ys, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
         {
             //are lengths the same

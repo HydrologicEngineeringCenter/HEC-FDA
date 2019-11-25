@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
@@ -22,7 +23,14 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
             
         }
 
-     
+       
+
+        public override XElement WriteToXML()
+        {
+            throw new NotImplementedException();
+        }
+
+
         //internal StageDamage(): base(new OrdinatesFunction(new Statistics.CurveIncreasing(true, false)))
         //{
         //    Type = ImpactAreaFunctionEnum.InteriorStageDamage;

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 {
@@ -18,16 +19,14 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         {
         }
 
-         
-
-        //public IComputableTransformFunction Sample(double p)
-        //{
-        //    throw new NotImplementedException();
-        //}
         #endregion
 
 
 
+        public override XElement WriteToXML()
+        {
+            return Function.WriteToXML();
+        }
 
 
     }

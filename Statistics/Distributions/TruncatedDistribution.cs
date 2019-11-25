@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.Xml.Linq;
 using Utilities;
+using Utilities.Serialization;
 
 namespace Statistics.Distributions
 {
@@ -95,12 +96,14 @@ namespace Statistics.Distributions
         public string Print() => $"TruncatedDistribution(distribution: {_Distribution.Print()}, truncated range: [{Minimum}, {Maximum}])";
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
 
-        public IDistribution Read(string xmlString)
+       
+
+        public string WriteToXML()
         {
             throw new NotImplementedException();
         }
 
-        public string WriteToXML()
+        XElement ISerializeToXML<IDistribution>.WriteToXML()
         {
             throw new NotImplementedException();
         }

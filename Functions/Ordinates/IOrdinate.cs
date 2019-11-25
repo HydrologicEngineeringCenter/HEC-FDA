@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Functions
 {
@@ -32,6 +33,6 @@ namespace Functions
         /// <returns> A string summarizing the parameter values </returns>
         string Print();
 
-        string WriteToXML();
+        XElement WriteToXML();
     }
 }

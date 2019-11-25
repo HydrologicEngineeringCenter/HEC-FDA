@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Functions;
 using Functions.Ordinates;
 
@@ -36,6 +37,13 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
                 throw new ArgumentException("Unable to compose the transform function to this outflow frequency function. The transform function " +
                     "must be a rating curve.");
             }
+        }
+
+       
+
+        public override XElement WriteToXML()
+        {
+            throw new NotImplementedException();
         }
 
         //public IComputableFrequencyFunction Sample(double p)

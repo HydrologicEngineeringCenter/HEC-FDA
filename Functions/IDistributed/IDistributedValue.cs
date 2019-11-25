@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Functions
 {
     public interface IDistributedValue
     {
-        string WriteToXML();
+        XElement WriteToXML();
 
         #region Properties
         /// <summary>

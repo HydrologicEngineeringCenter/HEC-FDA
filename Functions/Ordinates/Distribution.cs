@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
+using Utilities.Serialization;
 
 namespace Functions.Ordinates
 {
@@ -37,9 +39,16 @@ namespace Functions.Ordinates
             }
         }
 
-        public string WriteToXML()
-        {
-            return GetDistribution.WriteToXML();
+        public XElement WriteToXML()
+        {     
+            XElement distElem = GetDistribution.WriteToXML();
+
+            XElement ordinateElem = new XElement(SerializationConstants.ORDINATE);
+            ordinateElem.SetAttributeValue(SerializationConstants.TYPE, SerializationConstants.DISTRIBUTION);
+
+            ordinateElem.Add(distElem);
+
+            return ordinateElem;
         }
     }
 }

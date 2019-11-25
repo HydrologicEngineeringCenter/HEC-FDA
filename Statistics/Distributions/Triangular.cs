@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.Xml.Linq;
 using Utilities;
+using Utilities.Serialization;
 
 namespace Statistics.Distributions
 {
@@ -69,14 +70,24 @@ namespace Statistics.Distributions
             return new Triangular(stats.Minimum, stats.Mean, stats.Maximum, stats.SampleSize);
         }
 
-        public IDistribution Read(string xmlString)
-        {
-            throw new NotImplementedException();
-        }
+        
 
-        public string WriteToXML()
+        
+
+        public XElement WriteToXML()
         {
-            throw new NotImplementedException();
+            XElement ordinateElem = new XElement(SerializationConstants.TRIANGULAR);
+            //min
+            ordinateElem.SetAttributeValue(SerializationConstants.MIN, Minimum);
+            //most likely
+            ordinateElem.SetAttributeValue(SerializationConstants.MEAN, Mean);
+            //max
+            ordinateElem.SetAttributeValue(SerializationConstants.MAX, Maximum);
+
+            //sample size
+            ordinateElem.SetAttributeValue(SerializationConstants.SAMPLE_SIZE, SampleSize);
+
+            return ordinateElem;
         }
         #endregion
     }

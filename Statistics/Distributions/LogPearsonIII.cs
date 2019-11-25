@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Xml.Linq;
+using Utilities.Serialization;
 
 namespace Statistics.Distributions
 {
@@ -92,7 +93,9 @@ namespace Statistics.Distributions
             return $"{Mean}, {StandardDeviation}, {Skewness}, {SampleSize}";
         }
 
-        public IDistribution Read(string xmlString)
+       
+
+        XElement ISerializeToXML<IDistribution>.WriteToXML()
         {
             throw new NotImplementedException();
         }

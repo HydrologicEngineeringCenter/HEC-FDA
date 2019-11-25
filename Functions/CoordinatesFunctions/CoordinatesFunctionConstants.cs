@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Functions.CoordinatesFunctions
 {
@@ -397,14 +398,21 @@ namespace Functions.CoordinatesFunctions
             }
         }
 
-        public ICoordinatesFunction Read(string xmlString)
+        public XElement WriteToXML()
         {
-            throw new NotImplementedException();
-        }
+            XElement functionsElem = new XElement("Functions");
+            functionsElem.SetAttributeValue("Type", "NotLinked");
 
-        public string WriteToXML()
-        {
-            throw new NotImplementedException();
+            XElement funcElem = new XElement("Function");
+            funcElem.SetAttributeValue("Interpolator", Interpolator);
+
+            foreach(ICoordinate coord in Coordinates)
+            {
+                funcElem.Add(coord.WriteToXML());
+            }
+
+            functionsElem.Add(funcElem);
+            return functionsElem;
         }
 
         //public IFunction Sample(double p)
