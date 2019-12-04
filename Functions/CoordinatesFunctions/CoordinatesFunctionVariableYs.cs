@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using Utilities;
 
 namespace Functions.CoordinatesFunctions
 {
@@ -71,7 +72,7 @@ namespace Functions.CoordinatesFunctions
                 int j = i + 1;
                 while (j < xys.Count)
                 {
-                    if (xys[i].X.Equals(xys[j].X) && !xys[i].Y.Equals(xys[j].Y)) return false;
+                    if (xys[i].X.Equals(xys[j].X)) return false;
                     else j++;
                 }
             }
@@ -85,7 +86,13 @@ namespace Functions.CoordinatesFunctions
         {
             //todo: John, i tried to do F(1) and it came through as F(1.00000000001) which threw the exception. We might want to try to fix that?
             if (Utilities.Validation.IsNull(x)) throw new ArgumentNullException("The specified x value is invalid because it is null");
-            for (int i = 0; i < Coordinates.Count; i++) if (Coordinates[i].X.Equals(x)) return Coordinates[i].Y;
+            for (int i = 0; i < Coordinates.Count; i++)
+            {
+                if (Coordinates[i].X.Equals(x))
+                {
+                    return Coordinates[i].Y;
+                }
+            }
             throw new ArgumentOutOfRangeException("The specified x value was not found in any of the coordinates. Interpolation is not supported for coordinates with distributed x or y values");      
         }
         #endregion
@@ -123,26 +130,6 @@ namespace Functions.CoordinatesFunctions
             functionsElem.Add(funcElem);
             return functionsElem;
         }
-
-        //public IFunction Sample(double p)
-        //{
-        //    return new CoordinatesFunctionConstants(ConvertCoordinatesToConstants(p));
-        //}
-
-        //public IFunction Sample(double p, InterpolationEnum interpolator)
-        //{
-        //    return new CoordinatesFunctionConstants(ConvertCoordinatesToConstants(p), interpolator);
-        //}
-
-        //private List<ICoordinate> ConvertCoordinatesToConstants(double p)
-        //{
-        //    List<ICoordinate> coords = new List<ICoordinate>();
-        //    foreach (ICoordinate coord in Coordinates)
-        //    {
-        //        coords.Add(new CoordinateConstants(new Constant(coord.X.Value()), new Constant( coord.Y.GetDistribution.InverseCDF(p))));
-        //    }
-        //    return coords;
-        //}
 
 
         #endregion

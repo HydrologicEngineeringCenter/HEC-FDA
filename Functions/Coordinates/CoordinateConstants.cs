@@ -20,13 +20,13 @@ namespace Functions.Coordinates
             Y = y;
         }
 
-        public ICoordinate Sample(double p = 0.50) => this;
+       // public ICoordinate Sample(double p = 0.50) => this;
 
         public override bool Equals(object obj)
         {
             return obj is CoordinateConstants constants &&
-                   X == constants.X &&
-                   Y == constants.Y;
+                   X.Equals(constants.X) &&
+                   Y.Equals(constants.Y);
         }
 
         public override int GetHashCode()

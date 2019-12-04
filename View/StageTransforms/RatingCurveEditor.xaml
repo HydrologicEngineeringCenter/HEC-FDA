@@ -43,7 +43,9 @@
             <Label Content="Description:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <CAC:TextBoxDescription Grid.Column="1" Text="{Binding Description}" Margin="5"/>
         </Grid>
-        <CA:TableWithPlot MinHeight="300" MinWidth="600"  TableWidth="250"  Grid.Row="2" Margin="5" plotTitle="{Binding PlotTitle}" IsStrictX="True" xColumnHeader="Flow" yColumnHeader="Stage" xAxisLabel="Flow" yAxisLabel="Stage" IsReadOnly="{Binding ReadOnly}" Curve="{Binding Curve}" IsMonotonicallyIncreasing="True"/>
+        <CA:TableWithPlot MinHeight="300" MinWidth="600"  TableWidth="250"  Grid.Row="2" Margin="5" plotTitle="{Binding PlotTitle}" 
+                          IsStrictX="True" xColumnHeader="Flow" yColumnHeader="Stage" xAxisLabel="Flow" yAxisLabel="Stage" 
+                          IsReadOnly="{Binding ReadOnly}" Curve="{Binding Curve}" IsMonotonicallyIncreasing="True"/>
         <!--<GridSplitter Grid.Row="3" Height="5" HorizontalAlignment="Stretch" />
         <Utilities:TransactionMessageControl Grid.Row="4" />-->
         <Utilities:MessageExpanderControl Grid.Row="3" ExpandedHeight="250" />

@@ -22,7 +22,7 @@ namespace FunctionsTests.CoordinatesFunctions
             new TheoryData<List<ICoordinate>>
             {
                 { ConstantCoordinates(new double[]{0}, new double[]{0})},
-                {  ConstantCoordinates(new double[]{0,0}, new double[]{0,0})},
+                {  ConstantCoordinates(new double[]{0,1}, new double[]{0,0})},
                 {  ConstantCoordinates(new double[]{Double.MaxValue,0}, new double[]{0,Double.MinValue})},
                 {  ConstantCoordinates(new double[]{Double.MinValue,0}, new double[]{0,Double.MaxValue})},
             };
@@ -47,7 +47,7 @@ namespace FunctionsTests.CoordinatesFunctions
            new TheoryData<List<ICoordinate>>
            {
                 { ConstantCoordinates(new double[]{1,1}, new double[]{10,11})},
-                { ConstantCoordinates(new double[]{1,1}, new double[]{25,25})}
+                { ConstantCoordinates(new double[]{1,2,3,3,4}, new double[]{20,10,9,8,7})}
 
            };
         #endregion
@@ -128,7 +128,7 @@ namespace FunctionsTests.CoordinatesFunctions
                        DistributedValueFactory.Factory(new Normal(1,2)),
                        DistributedValueFactory.Factory(new Triangular(3,4,5)),
                        DistributedValueFactory.Factory(new Uniform(5,6)),
-                       DistributedValueFactory.Factory(new Normal(1,2))
+                       DistributedValueFactory.Factory(new Normal(0,1))
                    })
                 },
 
@@ -137,10 +137,10 @@ namespace FunctionsTests.CoordinatesFunctions
 
         #endregion
         #region BadData
-        public static TheoryData<List<ICoordinate>> BadDataDistributed =>
+        public static TheoryData<List<ICoordinate>> BadDataDistributed_RepeatXs =>
             new TheoryData<List<ICoordinate>>
             {
-                { DistributedCoordinates(new double[]{3},new IDistributedValue[]{ DistributedValueFactory.Factory( new Normal(0,1)) }) },
+                { DistributedCoordinates(new double[]{1,1},new IDistributedValue[]{ DistributedValueFactory.Factory( new Normal(0,1)), DistributedValueFactory.Factory(new Normal(0,1)) }) },
                 //{ new List<ICoordinate<IOrdinate, IOrdinate>>(new UnivariateCoordinate(new ScalarDistributed(new Normal()), new ScalarDistributed(new Normal()), map)) },
                 //{ new List<ICoordinate<IOrdinate, IOrdinate>>(new UnivariateCoordinate(new ScalarHistogram(), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarHistogram(), map)) },
                 //{ new List<ICoordinate<IOrdinate, IOrdinate>>(new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarHistogram(), map), new UnivariateCoordinate(new ScalarHistogram(), IScalarFactory.Factory(0), map)) },
@@ -208,7 +208,7 @@ namespace FunctionsTests.CoordinatesFunctions
             return functions;
         }
 
-        internal List<ICoordinatesFunction> Create_3Constant_NonMonotonic_OrdinateFunctions()
+        internal List<ICoordinatesFunction> Create_3Constant_StrictlyIncreasing_OverlappingXs_OrdinateFunctions()
         {
             List<ICoordinatesFunction> functions = new List<ICoordinatesFunction>();
 
@@ -220,6 +220,27 @@ namespace FunctionsTests.CoordinatesFunctions
 
             List<double> xs3 = new List<double>() { 0, 1, 2, 3 };
             List<double> ys3 = new List<double>() { 5, 6, 7, 8 };
+
+            //create a constant func
+            functions.Add(CreateCoordinatesFunctionConstants(xs1, ys1));
+            functions.Add(CreateCoordinatesFunctionConstants(xs2, ys2));
+            functions.Add(CreateCoordinatesFunctionConstants(xs3, ys3));
+
+            return functions;
+        }
+
+        internal List<ICoordinatesFunction> Create_3Constant_StrictlyIncreasing_NonOverlappingXs_OrdinateFunctions()
+        {
+            List<ICoordinatesFunction> functions = new List<ICoordinatesFunction>();
+
+            List<double> xs1 = new List<double>() { 0, 1, 2, 3 };
+            List<double> ys1 = new List<double>() { 5, 6, 7, 8 };
+
+            List<double> xs2 = new List<double>() { 4,5,6,7 };
+            List<double> ys2 = new List<double>() { 9,10,11,12 };
+
+            List<double> xs3 = new List<double>() { 8,9,10,11 };
+            List<double> ys3 = new List<double>() { 13,14,15,16 };
 
             //create a constant func
             functions.Add(CreateCoordinatesFunctionConstants(xs1, ys1));
