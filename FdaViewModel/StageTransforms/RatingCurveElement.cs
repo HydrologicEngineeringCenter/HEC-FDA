@@ -1,5 +1,6 @@
 ﻿using FdaViewModel.Editors;
 using FdaViewModel.Utilities;
+using Model;
 using Statistics;
 using System;
 using System.Collections.Generic;
@@ -21,11 +22,10 @@ namespace FdaViewModel.StageTransforms
 
         #endregion
         #region Properties
-      
         #endregion
         #region Constructors
 
-        public RatingCurveElement(string userprovidedname, string creationDate, string desc, Statistics.UncertainCurveDataCollection ratingCurve) : base()
+        public RatingCurveElement(string userprovidedname, string creationDate, string desc, UncertainCurveDataCollection ratingCurve) : base()
         {
            // _Logger.LogInfo("Creating new rating curve element: " + Name, GetType(), Name);
             //FdaLogging.RetrieveFromDB.GetMessageRowsForType(GetType(), Name);
@@ -134,6 +134,7 @@ namespace FdaViewModel.StageTransforms
             Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
             //Editors.CurveEditorVM vm = (Editors.CurveEditorVM)editorVM;
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+
             return new RatingCurveElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
         }
 

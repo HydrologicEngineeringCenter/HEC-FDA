@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Xunit;
 using Model.Condition.ComputePoint.ImpactAreaFunctions;
+using Model;
 using Functions;
 using Functions.Utilities;
 using Model;

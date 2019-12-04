@@ -248,6 +248,9 @@
     <Compile Include="Utilities\AddMapFeatureEventArgs.cs" />
     <Compile Include="Utilities\AddShapefileEventArgs.cs" />
     <Compile Include="Utilities\CommandHandler.cs" />
+    <Compile Include="Utilities\CurveGeneratorEventArgs.cs" />
+    <Compile Include="Utilities\CurveGeneratorRowItem.cs" />
+    <Compile Include="Utilities\CurveGeneratorVM.cs" />
     <Compile Include="Utilities\CustomHeaderVM.cs" />
     <Compile Include="Utilities\CustomMessageBoxVM.cs" />
     <Compile Include="Utilities\DatabaseColumn.cs" />
@@ -301,6 +304,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Functions\Functions.csproj">
+      <Project>{c33a0f59-fe11-4e06-b85e-bd84e6c1106d}</Project>
+      <Name>Functions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Model\Model.csproj">
       <Project>{7fe104fd-b277-4dbe-b892-01f61262a82f}</Project>
       <Name>Model</Name>
@@ -308,6 +315,10 @@
     <ProjectReference Include="..\OpenGLMapper\geospatial\OpenGLMapping\OpenGLMapping.vbproj">
       <Project>{e6dd31c5-1388-4b1d-8291-c317dde22388}</Project>
       <Name>OpenGLMapping</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utilities\Utilities.csproj">
+      <Project>{9038add9-59ca-4e3a-b665-6b086fde5f18}</Project>
+      <Name>Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

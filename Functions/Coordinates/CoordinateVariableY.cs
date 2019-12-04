@@ -41,8 +41,10 @@ namespace Functions.Coordinates
         public override bool Equals(object obj)
         {
             return obj is CoordinateVariableY coord &&
-                   X == coord.X &&
-                   EqualityComparer<Distribution>.Default.Equals((Distribution)Y, (Distribution)coord.Y);
+                   X.Equals(coord.X) &&
+                   Y.Equals(coord.Y);
+                   
+                   //EqualityComparer<Distribution>.Default.Equals((Distribution)Y, (Distribution)coord.Y);
         }
 
         public override int GetHashCode()

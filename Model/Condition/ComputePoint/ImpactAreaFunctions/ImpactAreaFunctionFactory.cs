@@ -6,22 +6,12 @@ using Functions.Ordinates;
 using Functions.CoordinatesFunctions;
 using System.Xml.Linq;
 using Utilities.Serialization;
+using Model.Condition.ComputePoint.ImpactAreaFunctions;
 
-namespace Model.Condition.ComputePoint.ImpactAreaFunctions
+namespace Model
 {
     public static class ImpactAreaFunctionFactory
     {
-        //#region CreateNew() Methods
-
-        //public static IFrequencyFunction<double> CreateNewFrequencyFunction(ICoordinatesFunction<double, double> function, ImpactAreaFunctionEnum type)
-        //{
-        //    if (type == ImpactAreaFunctionEnum.InflowFrequency)
-        //    {
-        //        InflowFrequency<double> inflowFrequency = new InflowFrequency<double>(function);
-        //        return inflowFrequency;
-        //    }
-        //    else return null;
-        //}
 
         public static IFdaFunction Factory(String xmlString, ImpactAreaFunctionEnum type)
         {

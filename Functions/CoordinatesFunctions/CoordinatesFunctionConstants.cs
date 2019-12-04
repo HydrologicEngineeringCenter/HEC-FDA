@@ -33,7 +33,7 @@ namespace Functions.CoordinatesFunctions
                 Coordinates = SortByXs(coordinates);
                 IsInvertible = IsInvertibleFunction();
             }
-            Order = ComputeSetOrder();
+            Order = SetTheOrder(); //ComputeSetOrder();
             Range = new Tuple<double, double>(Coordinates[0].Y.Value(), Coordinates[Coordinates.Count - 1].Y.Value());
             Domain = new Tuple<double, double>(Coordinates[0].X.Value(), Coordinates[Coordinates.Count - 1].X.Value());
             Interpolator = interpolation;
@@ -58,12 +58,24 @@ namespace Functions.CoordinatesFunctions
             {
                 return false;
             }
+            foreach(ICoordinate coord in coordinates)
+            {
+                if(!IsCoordinateValid(coord))
+                {
+                    throw new ArgumentException("One or more coordinates have an invalid value.");
+                }
+            }
             if (!IsFunction(coordinates))
             {
                 throw new ArgumentException("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).");
             }
             return true;
         }
+        /// <summary>
+        /// Checks that no two X values are the same. 
+        /// </summary>
+        /// <param name="xys"></param>
+        /// <returns></returns>
         private bool IsFunction(List<ICoordinate> xys)
         {
             for (int i = 0; i < xys.Count; i++)
@@ -71,11 +83,28 @@ namespace Functions.CoordinatesFunctions
                 int j = i + 1;
                 while (j < xys.Count)
                 {
-                    if (xys[i].X.Equals(xys[j].X) && !xys[i].Y.Value().Equals(xys[j].Y.Value())) return false;
+                    if (xys[i].X.Equals(xys[j].X)) return false;
                     else j++;
                 }
             }
             return true;
+        }
+        /// <summary>
+        /// Checks that the ordinates that make up the coordinate have valid values:
+        /// no double.nan, no infinity
+        /// </summary>
+        /// <returns></returns>
+        private bool IsCoordinateValid(ICoordinate coord)
+        {
+            if(double.IsNaN( coord.X.Value()) || double.IsNaN(coord.Y.Value()) ||
+                double.IsInfinity(coord.X.Value()) || double.IsInfinity(coord.Y.Value()))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
         private Func<int, double, double> SetInterpolator(InterpolationEnum methodOfInterpolation = InterpolationEnum.NoInterpolation)
         {
@@ -102,6 +131,135 @@ namespace Functions.CoordinatesFunctions
         private double InverseLinearInterpolator(int i, double y) => Coordinates[i].X.Value() + (y - Coordinates[i].Y.Value()) / (Coordinates[i + 1].Y.Value() - Coordinates[i].Y.Value()) * (Coordinates[i + 1].X.Value() - Coordinates[i].X.Value());
         private double InversePiecewiseInterpolator(int i, double y) => ((y - Coordinates[i].Y.Value()) < (Coordinates[i + 1].Y.Value() - Coordinates[i].Y.Value()) / 2) ? Coordinates[i].X.Value() : Coordinates[i + 1].X.Value();
         private double InverseNoInterpolator(int i, double y) => y == Coordinates[i].Y.Value() ? Coordinates[i].X.Value() : throw new InvalidOperationException(string.Format("The InverseF(y) operation cannot produce a result because no interpolation method has been set and the specified y value: {0} was not explicityly provided as part of the function domain.", y));
+
+        #region Set The Order
+        private OrderedSetEnum SetTheOrder()
+        {
+            if(IsStraightLine())
+            {
+                return OrderedSetEnum.NonMonotonic;
+            }
+            else if(IsStrictlyIncreasing())
+            {
+                return OrderedSetEnum.StrictlyIncreasing;
+            }
+            else if(IsStrictlyDecreasing())
+            {
+                return OrderedSetEnum.StrictlyDecreasing;
+            }
+            else if (IsAtLeastWeaklyIncreasing())
+            {
+                return OrderedSetEnum.WeaklyIncreasing;
+            }
+            else if(IsAtLeastWeaklyDecreasing())
+            {
+                return OrderedSetEnum.WeaklyDecreasing;
+            }
+            else
+            {
+                //if it is none of the others then it would have to be non monotonic
+                return OrderedSetEnum.NonMonotonic;
+            }
+          
+
+        }
+
+        private bool IsStraightLine()
+        {
+            for (int i = 0; i < Coordinates.Count - 1; i++)
+            {
+                ICoordinate coord1 = Coordinates[i];
+                ICoordinate coord2 = Coordinates[i + 1];
+                if (!coord1.Y.Equals(coord2.Y))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool IsAtLeastWeaklyDecreasing()
+        {
+            for (int i = 0; i < Coordinates.Count - 1; i++)
+            {
+                ICoordinate coord1 = Coordinates[i];
+                ICoordinate coord2 = Coordinates[i + 1];
+                if (!IsAtLeastWeaklyDecreasing(coord1, coord2))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        private bool IsAtLeastWeaklyIncreasing()
+        {
+            for (int i = 0; i < Coordinates.Count - 1; i++)
+            {
+                ICoordinate coord1 = Coordinates[i];
+                ICoordinate coord2 = Coordinates[i + 1];
+                if (!IsAtLeastWeaklyIncreasing(coord1, coord2))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        private bool IsStrictlyDecreasing()
+        {
+            for (int i = 0; i < Coordinates.Count - 1; i++)
+            {
+                ICoordinate coord1 = Coordinates[i];
+                ICoordinate coord2 = Coordinates[i + 1];
+                if (!IsCoordinatesStrictlyDecreasing(coord1, coord2))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        private bool IsStrictlyIncreasing()
+        {
+            for(int i =0;i<Coordinates.Count-1;i++)
+            {
+                ICoordinate coord1 = Coordinates[i];
+                ICoordinate coord2 = Coordinates[i+1];
+                if(!IsCoordinatesStrictlyIncreasing(coord1, coord2))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool IsAtLeastWeaklyDecreasing(ICoordinate coord1, ICoordinate coord2)
+        {
+            bool areXsIncreasing = coord1.X.Value() < coord2.X.Value();
+            bool areYsDecreasing = coord1.Y.Value() >= coord2.Y.Value();
+            return areXsIncreasing && areYsDecreasing;
+        }
+
+        private bool IsAtLeastWeaklyIncreasing(ICoordinate coord1, ICoordinate coord2)
+        {
+            bool areXsIncreasing = coord1.X.Value() < coord2.X.Value();
+            bool areYsIncreasing = coord1.Y.Value() <= coord2.Y.Value();
+            return areXsIncreasing && areYsIncreasing;
+        }
+
+        private bool IsCoordinatesStrictlyIncreasing(ICoordinate coord1, ICoordinate coord2)
+        {
+            bool areXsIncreasing = coord1.X.Value() < coord2.X.Value();
+            bool areYsIncreasing = coord1.Y.Value() < coord2.Y.Value();
+            return areXsIncreasing && areYsIncreasing;
+        }
+
+        private bool IsCoordinatesStrictlyDecreasing(ICoordinate coord1, ICoordinate coord2)
+        {
+            bool areXsIncreasing = coord1.X.Value() < coord2.X.Value();
+            bool areYsDecreasing = coord1.Y.Value() > coord2.Y.Value();
+            return areXsIncreasing && areYsDecreasing;
+        }
+
+        #endregion
 
         private OrderedSetEnum ComputeSetOrder()
         {
@@ -183,16 +341,26 @@ namespace Functions.CoordinatesFunctions
         }
         public IOrdinate F(IOrdinate x)
         {
-            if (!IsOnDomain(x.Value())) throw new ArgumentOutOfRangeException(
-                string.Format("The specified x value: {0} is invalid because it is not on the domain of the coordinates" +
-                " function [{1}, {2}].", x, Coordinates[0].X.Value(), Coordinates[Coordinates.Count - 1].X.Value()));
-            int i = 0;
-            if (!(i == Coordinates.Count - 1))
+            if (!IsOnDomain(x.Value()))
             {
-                while (Coordinates[i + 1].X.Value() < x.Value()) i++;
-                if (Coordinates[i + 1].X.Value() == x.Value()) return Coordinates[i + 1].Y;
+                throw new ArgumentOutOfRangeException(string.Format("The specified x value: {0} is invalid because it is not on the domain of the coordinates function [{1}, {2}].",
+                x, Coordinates[0].X.Value(), Coordinates[Coordinates.Count - 1].X.Value()));
             }
-            return new Constant(InterpolationFunction(i, x.Value()));
+            //if the x is an exact match, then just return the y, else we have to interpolate
+           
+            for(int i = 0;i<Coordinates.Count;i++)
+            {
+                if(x.Equals(Coordinates[i].X))
+                {
+                    return Coordinates[i].Y;
+                }
+            }
+            int j = 0;
+            if (!(j == Coordinates.Count - 1))
+            {
+                while (Coordinates[j + 1].X.Value() < x.Value()) j++;
+            }
+            return new Constant(InterpolationFunction(j, x.Value()));
         }
         private bool IsOnDomain(double x) => x < Domain.Item1 || x > Domain.Item2 ? false : true;
         #endregion
@@ -414,16 +582,6 @@ namespace Functions.CoordinatesFunctions
             functionsElem.Add(funcElem);
             return functionsElem;
         }
-
-        //public IFunction Sample(double p)
-        //{
-        //    return this;
-        //}
-
-        //public IFunction Sample(double p, InterpolationEnum interpolator)
-        //{
-        //    return new CoordinatesFunctionConstants(Coordinates, interpolator);
-        //}
 
         #endregion
         #endregion
