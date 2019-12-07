@@ -8,7 +8,7 @@ namespace Functions
 {
     public static class IFunctionFactory
     {
-        public static IFunction Factory(IImmutableList<ICoordinate<IOrdinate, IOrdinate>> coordinates, 
+        public static IFunction Factory(IImmutableList<ICoordinate<double, double>> coordinates, 
             InterpolationEnum interpolation) => new CoordinatesFunctionConstants(coordinates, interpolation);
     }
 }

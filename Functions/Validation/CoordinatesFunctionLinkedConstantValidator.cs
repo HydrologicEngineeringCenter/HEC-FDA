@@ -7,22 +7,22 @@ using Utilities.Validation;
 
 namespace Functions.Validation
 {
-    internal class LinkedCoordinatesFunctionValidator : IValidator<CoordinatesFunctionLinkedOrdinates>
+    class CoordinatesFunctionLinkedConstantValidator : IValidator<CoordinatesFunctionLinkedConstants>
     {
-        public bool IsValid(CoordinatesFunctionLinkedOrdinates entity, out IEnumerable<string> errors)
+        public bool IsValid(CoordinatesFunctionLinkedConstants entity, out IEnumerable<string> errors)
         {
             errors = ReportErrors(entity);
             return !errors.Any();
         }
 
-        public IEnumerable<string> ReportErrors(CoordinatesFunctionLinkedOrdinates entity)
+        public IEnumerable<string> ReportErrors(CoordinatesFunctionLinkedConstants entity)
         {
             List<string> errors = new List<string>();
             if (entity.IsNull()) throw new ArgumentNullException(nameof(entity), $"The Linked Coordinates Function could not be validated because it is null.");
             if (entity.Functions == null) throw new InvalidConstructorArgumentsException("The list of functions was null");
             if (entity.Functions.Count == 0) throw new InvalidConstructorArgumentsException("There were no functions to link together");
-            
-            if(entity.Interpolators.IsNull() || entity.Interpolators.Count != entity.Functions.Count-1)
+
+            if (entity.Interpolators.IsNull() || entity.Interpolators.Count != entity.Functions.Count - 1)
             {
                 errors.Add("Not enough interpolators. There should be an interpolator between every function.");
             }

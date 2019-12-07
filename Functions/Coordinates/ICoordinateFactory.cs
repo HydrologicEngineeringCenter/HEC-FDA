@@ -1,4 +1,5 @@
 ﻿using Functions.Coordinates;
+using Functions.Ordinates;
 using Statistics;
 using System;
 using System.Collections.Generic;
@@ -8,14 +9,14 @@ namespace Functions
 {
     public static class ICoordinateFactory
     {
-        public static ICoordinate<IOrdinate, IOrdinate> Factory(double x, double y)
+        public static ICoordinate<double, double> Factory(double x, double y)
         {
-            return (ICoordinate<IOrdinate, IOrdinate>)new CoordinateConstants(x, y);
+            return (ICoordinate<double, double>)new CoordinateConstants(x,y);
         }
 
-        public static ICoordinate<IOrdinate, IOrdinate> Factory(double x, IDistribution y)
+        public static ICoordinate<double, IDistribution> Factory(double x, IDistribution y)
         {
-            return (ICoordinate<IOrdinate, IOrdinate>)new CoordinateVariableY(x, y);
+            return (ICoordinate<double, IDistribution>)new CoordinateVariableY(x, y);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Functions.Ordinates;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -16,17 +18,22 @@ namespace Functions.Coordinates
             X = x;
             Y = y;
         }
-        //public ScalarCoordinateConstants(double x, IOrdinate<double> y)
-        //{
-        //    XOrdinate = new Constant(x);
-        //    YOrdinate = y;
-        //}
-        //public ScalarCoordinateConstants(IOrdinate<double> x, IOrdinate<double> y)
-        //{
-        //    XOrdinate = x;
-        //    YOrdinate = y;
-        //}
 
         public ICoordinate<double, double> Sample(double p = 0.50) => this;
+
+        public override bool Equals(object obj)
+        {
+            return obj is CoordinateConstants constants &&
+                   X == constants.X &&
+                   Y == constants.Y;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 1861411795;
+            hashCode = hashCode * -1521134295 + X.GetHashCode();
+            hashCode = hashCode * -1521134295 + Y.GetHashCode();
+            return hashCode;
+        }
     }
 }

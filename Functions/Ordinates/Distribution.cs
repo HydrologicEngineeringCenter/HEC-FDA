@@ -6,12 +6,12 @@ namespace Functions.Ordinates
 {
     internal class Distribution : IOrdinate
     {
-        private Statistics.IDistribution _Distribution;
+        public Statistics.IDistribution GetDistribution { get; }
         internal Distribution(Statistics.IDistribution distribution)
         {
-            _Distribution = distribution;
+            GetDistribution = distribution;
         }
-        public Tuple<double, double> Range => new Tuple<double, double>(_Distribution.Minimum, _Distribution.Maximum);
+        public Tuple<double, double> Range => new Tuple<double, double>(GetDistribution.Minimum, GetDistribution.Maximum);
 
         public bool IsDistributed => true;
 
@@ -22,7 +22,7 @@ namespace Functions.Ordinates
 
         public string Print()
         {
-            return _Distribution.Print();
+            return GetDistribution.Print();
         }
 
         public double Value(double p = 0.5)
@@ -33,7 +33,7 @@ namespace Functions.Ordinates
             }
             else
             {
-                return _Distribution.InverseCDF(p);
+                return GetDistribution.InverseCDF(p);
             }
         }
     }
