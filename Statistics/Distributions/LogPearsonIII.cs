@@ -59,8 +59,8 @@ namespace Statistics.Distributions
             // raise log x to 10th power
             return Math.Pow(10, Mean + k * StandardDeviation);
         }
-        public double Sample() => InverseCDF(new Random().NextDouble());
-        public double[] Sample(Random numberGenerator) => Sample(SampleSize, numberGenerator);
+        public double Sample(Random r = null) => InverseCDF(r == null ? new Random().NextDouble() : r.NextDouble());
+        //public double[] Sample(Random numberGenerator) => Sample(SampleSize, numberGenerator);
         public double[] Sample(int sampleSize, Random numberGenerator)
         {
             if (numberGenerator == null) numberGenerator = new Random();
@@ -68,7 +68,7 @@ namespace Statistics.Distributions
             for (int i = 0; i < sample.Length; i++) sample[i] = InverseCDF(numberGenerator.NextDouble());
             return sample;
         }
-        public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(numberGenerator));
+        public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(SampleSize, numberGenerator));
         #endregion
         #region IParameter Functions
         public double Value(double p = 0.5) => InverseCDF(p);
@@ -84,7 +84,7 @@ namespace Statistics.Distributions
         {
             List<double> log10Sample = new List<double>();
             foreach (double x in sample) log10Sample.Add(Math.Log(x));
-            SummaryStatistics stats = new SummaryStatistics(log10Sample);
+            SummaryStatistics stats = new SummaryStatistics(IDataFactory.Factory(log10Sample));
             return new LogPearsonIII(stats.Mean, stats.StandardDeviation, stats.Skewness, stats.SampleSize);
         }
 

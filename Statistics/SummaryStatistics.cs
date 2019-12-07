@@ -6,50 +6,83 @@ using Utilities;
 
 namespace Statistics
 {
-    internal class SummaryStatistics : IValidate<SummaryStatistics>
+    internal class SummaryStatistics : ISummaryStatistics
     {
-        public bool IsValid { get; }
-        public IEnumerable<IMessage> Errors { get; }
+        
         public double Mean { get; }
+        public double Median { get; }
         public double Variance { get; }
         public double StandardDeviation { get; }
         public double Skewness { get; }
         public double Minimum { get; }
         public double Maximum { get; }
         public int SampleSize { get; }
+        public bool IsValid { get; }
+        public IEnumerable<IMessage> Messages { get; }
 
-        public SummaryStatistics(IEnumerable<double> sample)
+        public SummaryStatistics(IData data)
         {
-            if (sample.Any())
+            SampleSize = data.SampleSize;
+            if (SampleSize > 1)
             {
-                var stats = new MathNet.Numerics.Statistics.DescriptiveStatistics(sample);
-                Mean = stats.Mean;
-                Variance = stats.Variance;
-                StandardDeviation = stats.StandardDeviation;
-                Skewness = stats.Skewness;
-                Minimum = stats.Minimum;
-                Maximum = stats.Maximum;
-                SampleSize = stats.Count.CastToInt();
-                IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<IMessage> errors);
-                Errors = errors;
+                Minimum = data.Minimum;
+                Maximum = data.Maximum;
+                Mean = data.Elements.Sum() / SampleSize;
+                double median = 0, deviations2 = 0, deviations3 = 0;
+                int i = 0, iMid = data.SampleSize / 2, iMidMod = data.SampleSize % 2;
+                foreach (var x in data.Elements)
+                {
+                    if (i == iMid || i == iMid + 1 && iMidMod > 0) median = x;
+                    if (i == iMid + 1 && iMidMod != 0) median = (median + x) / 2;
+                    deviations2 += (x - Mean) * (x - Mean);
+                    deviations3 += (x - Mean) * (x - Mean) * (x - Mean);
+                    // could attempt to outwit compiler by caculating deviation, deviation2 first, or having iterator for median calculations.
+                }
+                Variance = deviations2 / (double)(SampleSize - 1);
+                StandardDeviation = Math.Sqrt(Variance);
+                Skewness = (deviations3 / (double)SampleSize) / (StandardDeviation * StandardDeviation * StandardDeviation);
             }
-            else new SummaryStatistics();
+            else
+            {
+                if (SampleSize == 1)
+                {
+                    Mean = data.Elements.Sum();
+                    Median = Mean;
+                    Minimum = Mean;
+                    Maximum = Mean;
+                    Variance = 0;
+                    Skewness = 0;
+                    StandardDeviation = 0;
+                }
+                else
+                {
+                    Mean = double.NaN;
+                    Median = double.NaN;
+                    Minimum = double.NaN;
+                    Maximum = double.NaN;
+                    Variance = double.NaN;
+                    Skewness = double.NaN;
+                    StandardDeviation = double.NaN;      
+                }
+            }
+            IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<IMessage> msgs);
+            Messages = data.Messages.Concat(msgs);
         }
-
-        public SummaryStatistics()
-        {
-            Mean = double.NaN;
-            Variance = double.NaN;
-            StandardDeviation = double.NaN;
-            Skewness = double.NaN;
-            Minimum = double.NaN;
-            Maximum = double.NaN;
-            SampleSize = 0;
-            IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<IMessage> errors);
-            Errors = errors;
-        }
-        
-        public bool Validate(IValidator<SummaryStatistics> validator, out IEnumerable<IMessage> errors)
+        //public SummaryStatistics()
+        //{
+        //    Mean = double.NaN;
+        //    Median = double.NaN;
+        //    Variance = double.NaN;
+        //    StandardDeviation = double.NaN;
+        //    Skewness = double.NaN;
+        //    Minimum = double.NaN;
+        //    Maximum = double.NaN;
+        //    SampleSize = 0;
+        //    IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<IMessage> errors);
+        //    Messages = errors;
+        //}
+       
+        public bool Validate(IValidator<ISummaryStatistics> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);
         }

@@ -36,8 +36,8 @@ namespace Statistics.Distributions
         public double CDF(double x) => CumulativeDistribution(x);
         public double InverseCDF(double p) => InverseCumulativeDistribution(p);
 
-        public new double Sample() => InverseCDF(new Random().NextDouble());
-        public double[] Sample(Random numberGenerator = null) => Sample(SampleSize, numberGenerator);
+        public double Sample(Random r = null) => InverseCDF(r == null ? new Random().NextDouble() : r.NextDouble());
+        //public double[] Sample(Random numberGenerator = null) => Sample(SampleSize, numberGenerator);
         public double[] Sample(int sampleSize, Random numberGenerator = null)
         {
             if (numberGenerator == null) numberGenerator = new Random();
@@ -45,14 +45,14 @@ namespace Statistics.Distributions
             for (int i = 0; i < sample.Length; i++) sample[i] = InverseCDF(numberGenerator.NextDouble());
             return sample;
         }
-        public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(numberGenerator));
+        public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(SampleSize, numberGenerator));
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         public string Print() => $"ScaledBeta(alpha: {base.A}, beta: {base.B}, range: [{Minimum}, {Maximum}], sample size: {SampleSize})";
         #endregion
         //#region IOrdinate Functions
         //public double GetValue(double sampleProbability = 0.5) => InverseCDF(sampleProbability);
         //public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
-        //#endregion
+        //#endregion        
         public static Beta4Parameters Fit(IEnumerable<double> data)
         {
             if (data.IsNullOrEmpty()) throw new ArgumentException("The provided data is invalid because it is null or an empty.");

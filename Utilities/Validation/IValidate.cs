@@ -7,7 +7,7 @@ namespace Utilities
     public interface IValidate<T>
     {
         bool IsValid { get; }
-        IEnumerable<IMessage> Errors { get; }
+        IEnumerable<IMessage> Messages { get; }
         bool Validate(IValidator<T> validator, out IEnumerable<IMessage> errors);
     }
 }

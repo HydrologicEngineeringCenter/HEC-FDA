@@ -42,8 +42,8 @@ namespace Statistics.Distributions
         public double CDF(double x) => _Distribution.CumulativeDistribution(x);
         public double InverseCDF(double p) => _Distribution.InverseCumulativeDistribution(p);
 
-        public double Sample() => InverseCDF(new Random().NextDouble());
-        public double[] Sample(Random numberGenerator = null) => Sample(SampleSize, numberGenerator);
+        public double Sample(Random r = null) => InverseCDF(r == null ? new Random().NextDouble() : r.NextDouble());
+        //public double[] Sample(Random numberGenerator = null) => Sample(SampleSize, numberGenerator);
         public double[] Sample(int sampleSize, Random numberGenerator = null)
         {
             if (numberGenerator == null) numberGenerator = new Random();
@@ -51,7 +51,7 @@ namespace Statistics.Distributions
             for (int i = 0; i < sample.Length; i++) sample[i] = InverseCDF(numberGenerator.NextDouble());
             return sample;
         }
-        public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(numberGenerator));
+        public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(SampleSize, numberGenerator));
         public string Print() => $"Uniform(range: [{Minimum}, {Maximum})";
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
@@ -62,7 +62,7 @@ namespace Statistics.Distributions
 
         public static Uniform Fit(IEnumerable<double> sample)
         {
-            SummaryStatistics stats = new SummaryStatistics(sample);
+            SummaryStatistics stats = new SummaryStatistics(IDataFactory.Factory(sample));
             return new Uniform(stats.Minimum, stats.Maximum, stats.SampleSize);
         }
 

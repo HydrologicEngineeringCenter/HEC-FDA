@@ -79,8 +79,8 @@ namespace Statistics.Distributions
             else return _Distribution.InverseCDF(p);
         }
 
-        public double Sample() => InverseCDF(new Random().NextDouble());
-        public double[] Sample(Random numberGenerator = null) => Sample(SampleSize, numberGenerator);
+        public double Sample(Random r = null) => InverseCDF(r == null ? new Random().NextDouble() : r.NextDouble());
+        //public double[] Sample(Random numberGenerator = null) => Sample(SampleSize, numberGenerator);
         public double[] Sample(int sampleSize, Random numberGenerator = null)
         {
             if (numberGenerator == null) numberGenerator = new Random();
@@ -90,7 +90,7 @@ namespace Statistics.Distributions
         }
         public IDistribution SampleDistribution(Random numberGenerator = null)
         {
-            IDistribution distribution = IDistributionFactory.Fit(Sample(numberGenerator), _Distribution.Type);
+            IDistribution distribution = IDistributionFactory.Fit(Sample(SampleSize, numberGenerator), _Distribution.Type);
             return new TruncatedDistribution(distribution, Minimum, Maximum);
         }
         public string Print() => $"TruncatedDistribution(distribution: {_Distribution.Print()}, truncated range: [{Minimum}, {Maximum}])";

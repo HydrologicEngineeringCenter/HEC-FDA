@@ -9,5 +9,4 @@ namespace Statistics
         Constant = 0,
         CentralTendency = 1,
     }
-
 }

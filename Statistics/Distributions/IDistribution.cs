@@ -52,14 +52,17 @@ namespace Statistics
         /// <summary>
         /// Draws a single random value from the distribution.
         /// </summary>
+        /// <param name="numberGenerator"> A <see cref="Random"/> Number Generator. If left <see langword="null""/> a random number generator is constructed by the function.</param>
         /// <returns> A single double value drawn from the distribution. </returns>
-        double Sample();
-        /// <summary>
-        /// Draws a random sample from the distribution, with the same length as the distribution <see cref="IDistribution.SampleSize"/>.
-        /// </summary>
-        /// <param name="numberGenerator"> A <see cref="Random"/> Number Generator. If it is <see langword="null""/> a random number generator is constructed by the function. </param>
-        /// <returns> An array of double values drawn from the distribution. </returns>
-        double[] Sample(Random numberGenerator = null);
+        double Sample(Random numberGenerator);
+        
+        ///// <summary>
+        ///// Draws a random sample from the distribution, with the same length as the distribution <see cref="IDistribution.SampleSize"/>.
+        ///// </summary>
+        ///// <param name="numberGenerator"> A <see cref="Random"/> Number Generator. If it is <see langword="null""/> a random number generator is constructed by the function. </param>
+        ///// <returns> An array of double values drawn from the distribution. </returns>
+        /////double[] Sample(Random numberGenerator = null);
+        
         /// <summary>
         /// Draws a random sample from the distribution, with the specified length (<paramref name="sampleSize"/>).
         /// </summary>
