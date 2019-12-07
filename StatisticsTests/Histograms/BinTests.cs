@@ -154,7 +154,7 @@ namespace StatisticsTests.Histograms
         [Fact]
         public void Errors_NewBin_GoodData_Returns_True()
         {
-            Assert.True(!new Bin(0, 2, 0).Errors.Any());
+            Assert.True(!new Bin(0, 2, 0).Messages.Any());
         }
         /// <summary>
         /// Test that new bin non finite <see cref="Bin.Minimum"/> values: (<see cref="double.NegativeInfinity"/>, <see cref="double.PositiveInfinity"/>, <see cref="double.NaN"/>) return a two errors(not finite range, not finite midpoint) in the <see cref="Bin.Errors"/> property.
@@ -167,8 +167,8 @@ namespace StatisticsTests.Histograms
         public void Errors_NewBinNotFiniteMinimumValue_Returns_TwoErrorString(double min)
         {
             //ValidationRegistry.Register(new BinValidator());
-            if (min == double.PositiveInfinity) Assert.True(new Bin(min, max: 2, n: 0).Errors.Count() == 3);
-            else Assert.True(new Bin(min, max: 2, n: 0).Errors.Count() == 2);
+            if (min == double.PositiveInfinity) Assert.True(new Bin(min, max: 2, n: 0).Messages.Count() == 3);
+            else Assert.True(new Bin(min, max: 2, n: 0).Messages.Count() == 2);
         }
         /// <summary>
         /// Test that new bin non finite <see cref="Bin.Maximum"/> values: (<see cref="double.NegativeInfinity"/>, <see cref="double.PositiveInfinity"/>, <see cref="double.NaN"/>) return two errors (not finite range, not finite midpoint) in the <see cref="Bin.Errors"/> property.
@@ -182,8 +182,8 @@ namespace StatisticsTests.Histograms
         {
             //ValidationRegistry.Register(new BinValidator());
             var testObj = new Bin(min: 0, max: max, n: 0);
-            // Errors: 1 - non-finite range, 2 - not a range (for double.NegativeInfinity and .NaN only), 3 - non finite mid-point
-            Assert.True(testObj.Errors.Count() > 1 && testObj.Errors.Count() < 4);
+            // Messages: 1 - non-finite range, 2 - not a range (for double.NegativeInfinity and .NaN only), 3 - non finite mid-point
+            Assert.True(testObj.Messages.Count() > 1 && testObj.Messages.Count() < 4);
         }
         /// <summary>
         /// Test that new bin negative <see cref="Bin.Count"/> values: (-1, <see cref="int.MinValue"/>) return a single string in the <see cref="Bin.Errors"/> property.
@@ -195,7 +195,7 @@ namespace StatisticsTests.Histograms
         public void Errors_NewBinNegativeCountValue_Returns_SingleErrorString(int count)
         {
             //ValidationRegistry.Register(new BinValidator());
-            Assert.True(new Bin(min: 0, max: 2, n: count).Errors.Count() == 1);
+            Assert.True(new Bin(min: 0, max: 2, n: count).Messages.Count() == 1);
         }
         #endregion
 

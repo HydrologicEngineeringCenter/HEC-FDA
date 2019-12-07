@@ -18,7 +18,7 @@ namespace Statistics
         {
             if ((int)returnType >= 10)
             {
-                SummaryStatistics stats = new SummaryStatistics(sample);
+                SummaryStatistics stats = new SummaryStatistics(IDataFactory.Factory(sample));
                 return Fit(sample, stats.Minimum, stats.Maximum, returnType);
             }
             else
@@ -34,7 +34,7 @@ namespace Statistics
                     case IDistributions.Triangular:
                         return Distributions.Triangular.Fit(sample);
                     case IDistributions.Histogram:
-                        return Histograms.Histogram.Fit(sample);
+                        return (IDistribution)IHistogramFactory.Factory(IDataFactory.Factory(sample), nBins: 100);
                     case IDistributions.LogPearsonIII:
                         return Distributions.LogPearsonIII.Fit(sample);
                     default:
@@ -44,7 +44,7 @@ namespace Statistics
         }
         public static IHistogram Fit(IEnumerable<double> sample, int nBins)
         {
-            return Histograms.Histogram.Fit(sample, nBins);
+            return IHistogramFactory.Factory(IDataFactory.Factory(sample), nBins);
         }
         public static IDistribution Fit(IEnumerable<double> sample, double minimum, double maximum, IDistributions returnType)
         {
@@ -54,7 +54,7 @@ namespace Statistics
             }
             else
             {
-                IDistribution distribution = Fit(sample, (int)returnType / 10);
+                IDistribution distribution = (IDistribution)Fit(sample, (int)returnType / 10);
                 return new Distributions.TruncatedDistribution(distribution, minimum, maximum);
             }
         }

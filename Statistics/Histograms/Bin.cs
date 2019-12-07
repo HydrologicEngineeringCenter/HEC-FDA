@@ -20,7 +20,7 @@ namespace Statistics.Histograms
         #region Properties
         #region IValidate Properties
         public bool IsValid { get; }
-        public IEnumerable<IMessage> Errors { get; }
+        public IEnumerable<IMessage> Messages { get; }
         #endregion
 
         /// <summary>
@@ -39,6 +39,7 @@ namespace Statistics.Histograms
         /// The midpoint value computed with equation: (Maximum - Minimum) / 2
         /// </summary>
         public double MidPoint { get; }
+        public double Width { get; }
         #endregion
 
         #region Constructors
@@ -46,10 +47,11 @@ namespace Statistics.Histograms
         {
             Minimum =  min;
             Maximum = max;
-            MidPoint = Minimum + (Maximum - Minimum) / 2;
+            Width = max - min;
+            MidPoint = (Maximum - Minimum) / 2d + Minimum;
             Count = n;
             IsValid = Validate(new BinValidator(), out IEnumerable<IMessage> errors);
-            Errors = errors;
+            Messages = errors;
         }
         /// <summary>
         /// Creates a new bin by adding <paramref name="n"/> observations to a pre-existing bin count.
@@ -60,10 +62,11 @@ namespace Statistics.Histograms
         {
             Minimum = oldBin.Minimum;
             Maximum = oldBin.Maximum;
+            Width = oldBin.Maximum - oldBin.Minimum;
             MidPoint = oldBin.MidPoint;
             Count = oldBin.Count + addN;
             IsValid = Validate(new BinValidator(), out IEnumerable<IMessage> errors);
-            Errors = errors;
+            Messages = errors;
         }
         #endregion
 
