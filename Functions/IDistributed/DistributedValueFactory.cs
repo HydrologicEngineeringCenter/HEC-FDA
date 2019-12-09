@@ -10,5 +10,10 @@ namespace Functions
         {
             return new DistributedValue(distribution);
         }
+
+        public static IDistributedValue FactoryNormal(double mean, double stDev, int sampleSize = 2147483647)
+        {
+            return new DistributedValue(Statistics.IDistributionFactory.FactoryNormal(mean, stDev, sampleSize));
+        }
     }
 }

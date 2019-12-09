@@ -1,0 +1,71 @@
+﻿using Functions;
+using FunctionsView.ViewModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace FunctionsViewUITester
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        public CoordinatesFunctionEditorVM Curve
+        {
+            get;
+            set;
+        }
+
+        //private List<CurveGeneratorRowItem> _Rows = new List<CurveGeneratorRowItem>();
+        //public List<CurveGeneratorRowItem> RowItems
+        //{
+        //    get
+        //    {
+        //        return _Rows;
+        //    }
+        //}
+
+        private void CreateRows()
+        {
+            List<double> xs = new List<double>() { 0, 1, 2, 3, 4 };
+            List<double> ys = new List<double>() { 10, 11, 12, 13, 14 };
+            //List<IDistribution> ys = new List<IDistribution>()
+            //    {
+            //        IDistributionFactory.FactoryNormal(1,0),
+            //        IDistributionFactory.FactoryNormal(1,0),
+            //        IDistributionFactory.FactoryNormal(1,0),
+            //        IDistributionFactory.FactoryNormal(1,0),
+            //        IDistributionFactory.FactoryNormal(1,0),
+
+            //    };
+            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xs, ys);
+
+            Curve = new CoordinatesFunctionEditorVM(func, "SomeType");
+        }
+        public MainWindow()
+        {
+            CreateRows();
+            this.DataContext = this;
+
+            InitializeComponent();
+
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ICoordinatesFunction func = Curve.GenerateFunction();
+        }
+    }
+}

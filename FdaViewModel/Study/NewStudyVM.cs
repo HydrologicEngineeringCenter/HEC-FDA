@@ -18,17 +18,18 @@ namespace FdaViewModel.Study
         #endregion
         #region Properties
         //for testing delete me
-        public CurveGeneratorVM Curve
+        public FunctionsView.ViewModel.CoordinatesFunctionEditorVM Curve
         {
             get 
             {
                 List<double> xs = new List<double>() { 1, 2, 3, 4 };
                 List<double> ys = new List<double>() { 2,3,4,5 };
 
-                Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xs, ys);
-                IFdaFunction function = ImpactAreaFunctionFactory.Factory(func, Model.Condition.ComputePoint.ImpactAreaFunctions.ImpactAreaFunctionEnum.InflowOutflow);
+                // Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xs, ys);
+                //IFdaFunction function = ImpactAreaFunctionFactory.Factory(func, Model.Condition.ComputePoint.ImpactAreaFunctions.ImpactAreaFunctionEnum.InflowOutflow);
 
-                return new CurveGeneratorVM(function, Model.Condition.ComputePoint.ImpactAreaFunctions.ImpactAreaFunctionEnum.InflowOutflow);
+                //return new CurveGeneratorVM(function, Model.Condition.ComputePoint.ImpactAreaFunctions.ImpactAreaFunctionEnum.InflowOutflow);
+                return null;
             }
         }
             //delete to here

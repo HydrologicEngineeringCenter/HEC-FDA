@@ -790,6 +790,10 @@
       <Project>{6a8fd3e7-b4ec-46b4-b91b-2b63034f9776}</Project>
       <Name>ViewModel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FunctionsView\FunctionsView.csproj">
+      <Project>{8e8c8388-f610-44cd-8746-bc2559e02424}</Project>
+      <Name>FunctionsView</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Model\Model.csproj">
       <Project>{7fe104fd-b277-4dbe-b892-01f61262a82f}</Project>
       <Name>Model</Name>
