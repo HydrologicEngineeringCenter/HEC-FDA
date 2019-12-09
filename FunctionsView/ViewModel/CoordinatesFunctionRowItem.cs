@@ -1,17 +1,36 @@
-﻿using System;
+﻿using Statistics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Utilities
+namespace FunctionsView.ViewModel
 {
-    public class CurveGeneratorRowItem
+    public class CoordinatesFunctionRowItem
     {
         public event EventHandler ChangedDistributionType;
+        public event EventHandler ChangedInterpolationType;
 
         private string _selectedDistType = "None";
+        private string _selectedInterpolationType = "Linear";
 
+        #region Properties
+        public CoordinatesFunctionRowItem Row
+        {
+            get { return this; }
+        }
+        public Statistics.IDistribution Distribution
+        {
+            get;
+            set;
+        }
+
+        public double Mean
+        {
+            get { return 99; }
+            set { Mean = value; }
+        }
 
         public List<string> DistributionTypes
         {
@@ -31,9 +50,22 @@ namespace FdaViewModel.Utilities
         {
             get
             {
-                return new List<string>() {"None", "Linear", "Piecewise" };
+                return new List<string>() { "None", "Linear", "Piecewise" };
             }
         }
+        public string SelectedInterpolationType
+        {
+            get { return _selectedInterpolationType; }
+            set
+            {
+                if (!value.Equals(_selectedInterpolationType))
+                {
+                    _selectedInterpolationType = value;
+                    ChangedInterpolationType?.Invoke(this, new EventArgs());
+                }
+            }
+        }
+
         public string SelectedDistributionType
         {
             get { return _selectedDistType; }
@@ -46,8 +78,16 @@ namespace FdaViewModel.Utilities
                 }
             }
         }
-        public double X { get; set; }
-        public double Y { get; set; }
+        public double X
+        {
+            get;
+            set;
+        }
+        public double Y
+        {
+            get;
+            set;
+        }
 
         //public List<Functions.DistributionType> DistributionTypes
         //{
@@ -60,11 +100,16 @@ namespace FdaViewModel.Utilities
         //        return types;
         //    }
         //}
-
-        public CurveGeneratorRowItem(double x, double y)
+        #endregion
+        public CoordinatesFunctionRowItem(double x, double y)
         {
             X = x;
             Y = y;
+        }
+        public CoordinatesFunctionRowItem(double x, IDistribution dist)
+        {
+            X = x;
+            Distribution = dist;
         }
     }
 }

@@ -107,6 +107,26 @@ namespace Functions
             }
         }
 
+        public static ICoordinatesFunction Factory(List<double> xs, List<IDistribution> ys)
+        {
+            //are lengths the same
+            if (xs.Count == ys.Count)
+            {
+                List<ICoordinate> coordinates = new List<ICoordinate>();
+                for (int i = 0; i < xs.Count; i++)
+                {
+                    IDistributedValue y = new DistributedValue(ys[i]);
+                    ICoordinate coordinate = ICoordinateFactory.Factory(xs[i], y);
+                    coordinates.Add(coordinate);
+                }
+
+                return new CoordinatesFunctionVariableYs(coordinates);
+            }
+            else
+            {
+                throw new ArgumentException("X values are a different length than the Y values.");
+            }
+        }
         /// <summary>
         /// Inserts/adds coordinates to the function based off the x value of the coordinates.
         /// Coordinates have to be of the same type as the coordinates in the function. ie (double, double) or (double, IDistribution)

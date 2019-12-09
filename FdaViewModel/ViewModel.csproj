@@ -248,9 +248,6 @@
     <Compile Include="Utilities\AddMapFeatureEventArgs.cs" />
     <Compile Include="Utilities\AddShapefileEventArgs.cs" />
     <Compile Include="Utilities\CommandHandler.cs" />
-    <Compile Include="Utilities\CurveGeneratorEventArgs.cs" />
-    <Compile Include="Utilities\CurveGeneratorRowItem.cs" />
-    <Compile Include="Utilities\CurveGeneratorVM.cs" />
     <Compile Include="Utilities\CustomHeaderVM.cs" />
     <Compile Include="Utilities\CustomMessageBoxVM.cs" />
     <Compile Include="Utilities\DatabaseColumn.cs" />
@@ -304,6 +301,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FunctionsView\FunctionsView.csproj">
+      <Project>{8e8c8388-f610-44cd-8746-bc2559e02424}</Project>
+      <Name>FunctionsView</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Functions\Functions.csproj">
       <Project>{c33a0f59-fe11-4e06-b85e-bd84e6c1106d}</Project>
       <Name>Functions</Name>

@@ -1,32 +1,34 @@
-﻿using FdaViewModel.Utilities;
-using Functions;
+﻿using Functions;
 using Functions.Ordinates;
-using Model;
-using Model.Condition.ComputePoint.ImpactAreaFunctions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel
+namespace FunctionsView.ViewModel
 {
-    public class CurveGeneratorVM:BaseViewModel
+    public class CoordinatesFunctionEditorVM : INotifyPropertyChanged
     {
-        
-        public delegate void NewDistributionSelected(CurveGeneratorEventArgs e);
-        public static event NewDistributionSelected NewDistributionEventTriggered;
+        //public delegate void NewDistributionSelected(CurveGeneratorEventArgs e);
+        //public static event NewDistributionSelected NewDistributionEventTriggered;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        private List<CurveGeneratorRowItem> _Rows = new List<CurveGeneratorRowItem>();
+        private List<CoordinatesFunctionRowItem> _Rows = new List<CoordinatesFunctionRowItem>();
         private string _selectedDistType;
-        private ImpactAreaFunctionEnum _type;
-        
-        public Model.IFdaFunction Function { get; }
+        private string _type;
 
-        public List<CurveGeneratorRowItem> RowItems
+        public ICoordinatesFunction Function { get; }
+
+        public List<CoordinatesFunctionRowItem> RowItems
         {
             get { return _Rows; }
-            set { _Rows = value; NotifyPropertyChanged(); }
+            set
+            {
+                _Rows = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RowItems"));
+            }
         }
 
         public string SelectedDistributionType
@@ -38,13 +40,13 @@ namespace FdaViewModel
                 {
                     _selectedDistType = value;
 
-                   // NewDistributionEventTriggered?.Invoke( new CurveGeneratorEventArgs());
+                    // NewDistributionEventTriggered?.Invoke( new CurveGeneratorEventArgs());
                 }
-                
+
             }
         }
 
-        internal CurveGeneratorVM(Model.IFdaFunction function, ImpactAreaFunctionEnum type)
+        public CoordinatesFunctionEditorVM(ICoordinatesFunction function, string type)
         {
             _type = type;
             Function = function;
@@ -54,39 +56,47 @@ namespace FdaViewModel
         //todo actually, i think this will need to return an icoordinates function so that it can be combined
         //with other funcs to make a linked function. The convertion to IFdaFunction is easy and could be done
         //by the parent control.
-        public IFdaFunction GenerateFunction()
+        public ICoordinatesFunction GenerateFunction()
         {
             //can we assume that all rows will have the same distribution? i think so.
             //turn each row into a coordinate
             List<ICoordinate> coords = new List<ICoordinate>();
-            foreach(CurveGeneratorRowItem ri in RowItems)
+            foreach (CoordinatesFunctionRowItem ri in RowItems)
             {
-                coords.Add( CreateCoordinateFromRowItem(ri));
+                coords.Add(CreateCoordinateFromRowItem(ri));
             }
             ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(coords, Functions.CoordinatesFunctions.InterpolationEnum.Linear);
-            return ImpactAreaFunctionFactory.Factory(func, _type);
+            return func;
         }
 
         private void CreateRowItems()
         {
-            List<CurveGeneratorRowItem> rows = new List<CurveGeneratorRowItem>();
-            foreach(ICoordinate coord in Function.Function.Coordinates)
+            List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
+            foreach (ICoordinate coord in Function.Coordinates)
             {
                 rows.Add(CreateRowItemFromCoordinate(coord));
-                
+
             }
             RowItems = rows;
         }
 
-        private ICoordinate CreateCoordinateFromRowItem(CurveGeneratorRowItem rowItem)
+        private ICoordinate CreateCoordinateFromRowItem(CoordinatesFunctionRowItem rowItem)
         {
             double x = rowItem.X;
-            switch(rowItem.SelectedDistributionType)
+            switch (rowItem.SelectedDistributionType)
             {
+                case "None":
+                    {
+                        return ICoordinateFactory.Factory(x, rowItem.Y);
+                    }
                 case "Normal":
                     {
+                        double mean = rowItem.Mean;
+                        double stDev = rowItem.Distribution.StandardDeviation;
+                        int sampleSize = rowItem.Distribution.SampleSize;
+                        IDistributedValue dist = DistributedValueFactory.FactoryNormal(mean, stDev, sampleSize);
+                        return ICoordinateFactory.Factory(x, dist);
 
-                        break;
                     }
             }
             //todo delete me
@@ -99,18 +109,18 @@ namespace FdaViewModel
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void RowChangedDistributionType(object sender, EventArgs e)
-        {
-            CurveGeneratorRowItem rowThatChanged = (CurveGeneratorRowItem)sender;
-            List<CurveGeneratorRowItem> rowsBelow = GetRowsBelowRow(rowThatChanged);
-            List<CurveGeneratorRowItem> rowsAbove = GetRowsAboveRow(rowThatChanged);
+        //private void RowChangedDistributionType(object sender, EventArgs e)
+        //{
+        //    CoordinatesFunctionRowItem rowThatChanged = (CoordinatesFunctionRowItem)sender;
+        //    List<CoordinatesFunctionRowItem> rowsBelow = GetRowsBelowRow(rowThatChanged);
+        //    List<CoordinatesFunctionRowItem> rowsAbove = GetRowsAboveRow(rowThatChanged);
 
-            NewDistributionEventTriggered?.Invoke( new CurveGeneratorEventArgs(rowThatChanged, rowsBelow, rowsAbove));
-        }
+        //    NewDistributionEventTriggered?.Invoke(new CurveGeneratorEventArgs(rowThatChanged, rowsBelow, rowsAbove));
+        //}
 
-        private List<CurveGeneratorRowItem> GetRowsAboveRow(CurveGeneratorRowItem row)
+        private List<CoordinatesFunctionRowItem> GetRowsAboveRow(CoordinatesFunctionRowItem row)
         {
-            List<CurveGeneratorRowItem> rows = new List<CurveGeneratorRowItem>();
+            List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
             int i;
             for (i = 0; i < RowItems.Count; i++)
             {
@@ -125,7 +135,7 @@ namespace FdaViewModel
             }
             return rows;
         }
-        private List<CurveGeneratorRowItem> GetRowsBelowRow(CurveGeneratorRowItem row)
+        private List<CoordinatesFunctionRowItem> GetRowsBelowRow(CoordinatesFunctionRowItem row)
         {
             int i;
             for (i = 0; i < RowItems.Count; i++)
@@ -135,7 +145,7 @@ namespace FdaViewModel
                     break;
                 }
             }
-            List<CurveGeneratorRowItem> rows = new List<CurveGeneratorRowItem>();
+            List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
             i++;
             for (int j = i; j < RowItems.Count; j++)
             {
@@ -144,27 +154,27 @@ namespace FdaViewModel
             return rows;
         }
 
-        private CurveGeneratorRowItem CreateRowItemFromCoordinate(ICoordinate coord)
+        private CoordinatesFunctionRowItem CreateRowItemFromCoordinate(ICoordinate coord)
         {
             //we know that x is always constant
             double x = coord.X.Value();
             //todo if we add a dist type for "None" then i can get rid of the "else" here and 
             //just include it in the switch.
-            if(coord.Y.GetType().Equals(typeof(Distribution)))
+            if (coord.Y.GetType().Equals(typeof(Distribution)))
             {
                 IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
                 DistributionType type = dist.Type;
-                switch(type)
+                switch (type)
                 {
                     case DistributionType.Normal:
                         {
 
-                            CurveGeneratorRowItem row = new RowItemBuilder(x)
+                            CoordinatesFunctionRowItem row = new RowItemBuilder(x)
                                 .WithNormalDist(dist.Skewness, dist.StandardDeviation)
                                 .Build();
-                            row.ChangedDistributionType += RowChangedDistributionType;
+                            row.SelectedInterpolationType = "Linear";
+                            //row.ChangedDistributionType += RowChangedDistributionType;
                             return row;
-                            break;
                         }
                     default:
                         {
@@ -177,8 +187,8 @@ namespace FdaViewModel
             {
                 //then y is a constant
                 double y = coord.Y.Value();
-                CurveGeneratorRowItem row = new CurveGeneratorRowItem(x, y);
-                row.ChangedDistributionType += RowChangedDistributionType;
+                CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItem(x, y);
+                //row.ChangedDistributionType += RowChangedDistributionType;
                 return row;
             }
         }
@@ -213,9 +223,9 @@ namespace FdaViewModel
                 return this;
             }
 
-            internal CurveGeneratorRowItem Build()
+            internal CoordinatesFunctionRowItem Build()
             {
-                return new CurveGeneratorRowItem(_X, _Y);
+                return new CoordinatesFunctionRowItem(_X, _Y);
             }
 
         }
