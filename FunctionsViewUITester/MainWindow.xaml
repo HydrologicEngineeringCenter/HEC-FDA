@@ -14,7 +14,7 @@
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
         <!--<curveGen:CurveGeneratorTable Grid.Row="0" />-->
-        <FunctionsView:CoordinatesFunctionEditor Grid.Row="1" Rows="{Binding Path=Curve.RowItems}"/>
+        <FunctionsView:CoordinatesFunctionEditor Grid.Row="1" Function="{Binding Path=Function}"/>
         <Button Grid.Row="2"  Content="OK" Width="60" Height="20" Click="Button_Click" />
     </Grid>
 </Window>

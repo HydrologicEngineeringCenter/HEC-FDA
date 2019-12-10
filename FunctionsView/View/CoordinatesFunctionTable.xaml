@@ -8,7 +8,8 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <Style x:Key="ColumnHeaderStyle1" TargetType="DataGridColumnHeader">
-            <Setter Property="Foreground" Value="DarkGray"/>
+            <Setter Property="Foreground" Value="#808080"/>
+            <!--<Setter Property="Background" Value="White" />-->
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -17,14 +18,26 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <DataGrid x:Name="dg_table" Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding Rows}" Width="520" HorizontalAlignment="Left"
-                  Margin="5,0,5,0" BorderThickness="1,0,1,0">
+                  Margin="5,0,5,0" BorderThickness="1,0,1,0" HorizontalGridLinesBrush="#808080" VerticalGridLinesBrush="#808080"
+                  CanUserAddRows="True" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False"
+                  SelectionMode="Extended" SelectionUnit="CellOrRowHeader">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Name="mi_InsertAbove" Header="Insert Row(s) Above" Click="mi_InsertAbove_Click" />
+                    <MenuItem Header="Insert Row(s) Below" />
+                    <MenuItem Header="Add Rows" />
+                    <MenuItem Header="Delete Row(s)" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+
+            <!--<DataGrid.CommandBindings>
+                <CommandBinding Command="{x:Static ApplicationCommands.Paste}" 
+                        CanExecute="CanPaste" Executed="Paste"/>
+                <CommandBinding Command="{x:Static ApplicationCommands.Copy}" 
+                        CanExecute="CanCopy" Executed="Copy"/>
+            </DataGrid.CommandBindings>-->
             <DataGrid.Columns>
                 <DataGridTextColumn x:Name="col_x"  Binding="{Binding Path=X}" Width="50"/>
-                <!--<DataGridTextColumn x:Name="col_mean" Header="Mean" Binding="{Binding Path=Mean}" Width="60" Foreground="DarkGray" HeaderStyle="{StaticResource ColumnHeaderStyle1}">
-
-                </DataGridTextColumn>
-                <DataGridTextColumn x:Name="col_stDev" Header="St Dev" Binding="{Binding Path=Distribution.StandardDeviation}" Width="100" HeaderStyle="{StaticResource ColumnHeaderStyle1}"/>
-                <DataGridTextColumn x:Name="col_sample" Header="Sample Size" Binding="{Binding Path=Distribution.SampleSize}" Width="100" HeaderStyle="{StaticResource ColumnHeaderStyle1}"/>-->
                 <DataGridTemplateColumn x:Name="col_dist" Header="Distribution" Width="100"  HeaderStyle="{StaticResource ColumnHeaderStyle1}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

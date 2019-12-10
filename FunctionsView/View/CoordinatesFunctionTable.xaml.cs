@@ -1,6 +1,7 @@
 ﻿using FunctionsView.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,10 @@ namespace FunctionsView.View
     /// </summary>
     public partial class CoordinatesFunctionTable : UserControl
     {
+        //The table rows modified has nothing to do with cells changing their value.
+        //it is about rows getting added or deleted
+        public delegate void TableRowsModified(TableRowsModifiedEventArgs e);
+        public event TableRowsModified RowsModified;
         public List<CoordinatesFunctionRowItem> Rows
         {
             get;
@@ -55,6 +60,13 @@ namespace FunctionsView.View
             }
         }
 
+        public void DisplayXAndInterpolatorHeaders()
+        {
+            ObservableCollection<DataGridColumn> columns = dg_table.Columns;
+            
+            columns[0].Header = "X";
+            columns[columns.Count - 1].Header = "Interpolator";
+        }
         private void AddNormalColumns()
         {
             List<DataGridColumn> columns = new List<DataGridColumn>();
@@ -104,6 +116,21 @@ namespace FunctionsView.View
             for (int i = 0; i < columnsToInsert.Count; i++)
             {
                 dg_table.Columns.Insert(i + 1, columnsToInsert[i]);
+            }
+        }
+
+        private void mi_InsertRow_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void mi_InsertAbove_Click(object sender, RoutedEventArgs e)
+        {
+            int index = dg_table.SelectedIndex;
+            if (index >= 0)
+            {
+                RowsModified?.Invoke(new TableRowsModifiedEventArgs(null, RowModificationEnum.AddSingleRow));
+                
             }
         }
     }

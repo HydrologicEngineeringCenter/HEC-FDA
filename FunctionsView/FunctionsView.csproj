@@ -75,9 +75,11 @@
     <Compile Include="View\InterpolationComboboxControl.xaml.cs">
       <DependentUpon>InterpolationComboboxControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\RowModificationEnum.cs" />
     <Compile Include="View\TableBottomControl.xaml.cs">
       <DependentUpon>TableBottomControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\TableRowsModifiedEventArgs.cs" />
     <Compile Include="View\TableTopControl.xaml.cs">
       <DependentUpon>TableTopControl.xaml</DependentUpon>
     </Compile>

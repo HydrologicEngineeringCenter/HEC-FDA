@@ -22,7 +22,7 @@ namespace FunctionsViewUITester
     /// </summary>
     public partial class MainWindow : Window
     {
-        public CoordinatesFunctionEditorVM Curve
+        public ICoordinatesFunction Function
         {
             get;
             set;
@@ -37,7 +37,7 @@ namespace FunctionsViewUITester
         //    }
         //}
 
-        private void CreateRows()
+        private void CreateFunction()
         {
             List<double> xs = new List<double>() { 0, 1, 2, 3, 4 };
             List<double> ys = new List<double>() { 10, 11, 12, 13, 14 };
@@ -50,13 +50,13 @@ namespace FunctionsViewUITester
             //        IDistributionFactory.FactoryNormal(1,0),
 
             //    };
-            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xs, ys);
+            Function = ICoordinatesFunctionsFactory.Factory(xs, ys);
 
-            Curve = new CoordinatesFunctionEditorVM(func, "SomeType");
+            //Curve = new CoordinatesFunctionEditorVM(func, "SomeType");
         }
         public MainWindow()
         {
-            CreateRows();
+            CreateFunction();
             this.DataContext = this;
 
             InitializeComponent();
@@ -65,7 +65,7 @@ namespace FunctionsViewUITester
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            ICoordinatesFunction func = Curve.GenerateFunction();
+            //ICoordinatesFunction func = Curve.GenerateFunction();
         }
     }
 }
