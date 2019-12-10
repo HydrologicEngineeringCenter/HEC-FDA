@@ -67,6 +67,9 @@ namespace FunctionsView.ViewModel
             }
             ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(coords, Functions.CoordinatesFunctions.InterpolationEnum.Linear);
             return func;
+
+            //can i just get the data context, cast it to some interface (iFunctionEditor) and then call the save
+            //method on that and pass in this new function?
         }
 
         private void CreateRowItems()
