@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Linq;
 
 namespace FunctionsView.View
 {
@@ -26,19 +27,74 @@ namespace FunctionsView.View
         //it is about rows getting added or deleted
         public delegate void TableRowsModified(TableRowsModifiedEventArgs e);
         public event TableRowsModified RowsModified;
-        public List<CoordinatesFunctionRowItem> Rows
+        public event EventHandler UpdateView;
+
+        public string TableType { get; set; }
+        public ObservableCollection<CoordinatesFunctionRowItem> Rows
         {
             get;
             set;
         }
+
+        public int SelectedIndex
+        {
+            get;
+            set;
+        }
+
+//todo Do i need this constructor?
         public CoordinatesFunctionTable()
         {
             InitializeComponent();
+            SelectedIndex = -1;
+            col_x.Width = ColumnWidths.COL_X_WIDTH;
+            col_dist.Width = ColumnWidths.COL_DIST_WIDTH;
+            col_interp.Width = ColumnWidths.COL_INTERP_WIDTH;
+            TableType = "None";
+            dg_table.RowsAdded += Dg_table_RowsAdded;
+            dg_table.DataPasted += Dg_table_DataPasted;
         }
 
-        public CoordinatesFunctionTable(List<CoordinatesFunctionRowItem> rows)
+        private void Dg_table_DataPasted()
         {
-            InitializeComponent();
+            //every row that had values pasted into it has now lost its event connections
+            //i need to reconnect them
+            //todo, I really don't like this but i don't know what rows have the events and which don't. Is there a better way?
+            foreach(CoordinatesFunctionRowItem row in Rows)
+            {
+                row.ChangedDistributionType -= TableStructureChanged;
+                row.ChangedInterpolationType -= TableStructureChanged;
+
+                row.ChangedDistributionType += TableStructureChanged;
+                row.ChangedInterpolationType += TableStructureChanged;
+            }
+        }
+
+        private void Dg_table_RowsAdded(int startrow, int numrows)
+        {
+            //pre-fill the dist type and the interp type for each new row
+            string distType = Rows[0].SelectedDistributionType;
+            string interpType = Rows[0].SelectedInterpolationType;
+            for(int i = 0;i<numrows;i++)
+            {
+                CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItem(0, 0, distType, interpType);
+                row.ChangedDistributionType += TableStructureChanged;
+                row.ChangedInterpolationType += TableStructureChanged;
+                Rows.Insert(startrow, row);
+            }
+        }
+
+        public CoordinatesFunctionTable(ObservableCollection<CoordinatesFunctionRowItem> rows, ColumnWidths.TableTypes tableType):this()
+        {
+
+            dg_table.Width = ColumnWidths.TotalColumnWidths(tableType) + 8;
+               
+            //InitializeComponent();
+            foreach(CoordinatesFunctionRowItem row in rows)
+            {
+                row.ChangedDistributionType += TableStructureChanged;
+                row.ChangedInterpolationType += TableStructureChanged;
+            }
             this.DataContext = this;
             Rows = rows;
             if (rows.Count > 0)
@@ -48,18 +104,34 @@ namespace FunctionsView.View
                 {
                     case "None":
                         {
-                            AddNoneColumn();
+                            TableType = "None";
+                            AddNoneColumn(tableType);
                             break;
                         }
                     case "Normal":
                         {
-                            AddNormalColumns();
+                            TableType = "Normal";
+                            AddNormalColumns(tableType);
+                            break;
+                        }
+                    case "Triangular":
+                        {
+                            TableType = "Triangular";
+                            AddTriangularColumns(tableType);
                             break;
                         }
                 }
             }
         }
 
+        #region events
+
+        private void TableStructureChanged(object sender, EventArgs e)
+        {
+            UpdateView?.Invoke(sender, e);
+        }
+
+        #endregion
         public void DisplayXAndInterpolatorHeaders()
         {
             ObservableCollection<DataGridColumn> columns = dg_table.Columns;
@@ -67,12 +139,53 @@ namespace FunctionsView.View
             columns[0].Header = "X";
             columns[columns.Count - 1].Header = "Interpolator";
         }
-        private void AddNormalColumns()
+
+        private void AddTriangularColumns(ColumnWidths.TableTypes tableType)
         {
+            int[] colWidths = ColumnWidths.DynamicColumnWidths(tableType);
+
+            List<DataGridColumn> columns = new List<DataGridColumn>();
+
+            DataGridTextColumn colMostLikely = new DataGridTextColumn();
+            colMostLikely.Header = "Most Likely";
+            colMostLikely.Width = colWidths[0]; //130;
+            colMostLikely.CanUserReorder = false;
+            colMostLikely.CanUserResize = false;
+            colMostLikely.CanUserSort = false;
+            colMostLikely.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
+            colMostLikely.Binding = new Binding("Distribution.StandardDeviation");
+            columns.Add(colMostLikely);
+
+            DataGridTextColumn colMin = new DataGridTextColumn();
+            colMin.Header = "Min";
+            colMin.Width = colWidths[1]; //130;
+            colMin.CanUserReorder = false;
+            colMin.CanUserResize = false;
+            colMin.CanUserSort = false;
+            colMin.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
+            colMin.Binding = new Binding("Mean");
+            columns.Add(colMin);
+
+            DataGridTextColumn colMax = new DataGridTextColumn();
+            colMax.Header = "Max";
+            colMax.Width = colWidths[2]; //130;
+            colMax.CanUserReorder = false;
+            colMax.CanUserResize = false;
+            colMax.CanUserSort = false;
+            colMax.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
+            colMax.Binding = new Binding("Distribution.StandardDeviation");
+            columns.Add(colMax);
+
+            AddColumns(columns);
+        }
+        private void AddNormalColumns(ColumnWidths.TableTypes tableType)
+        {
+            int[] colWidths = ColumnWidths.GetComputedNormalWidths(tableType);
+
             List<DataGridColumn> columns = new List<DataGridColumn>();
             DataGridTextColumn colMean = new DataGridTextColumn();
             colMean.Header = "Mean";
-            colMean.Width = 130;
+            colMean.Width = colWidths[0]; //130;
             colMean.CanUserReorder = false;
             colMean.CanUserResize = false;
             colMean.CanUserSort = false;
@@ -82,7 +195,7 @@ namespace FunctionsView.View
 
             DataGridTextColumn colStDev = new DataGridTextColumn();
             colStDev.Header = "St Dev";
-            colStDev.Width = 130;
+            colStDev.Width = colWidths[1]; //130;
             colStDev.CanUserReorder = false;
             colStDev.CanUserResize = false;
             colStDev.CanUserSort = false;
@@ -94,11 +207,13 @@ namespace FunctionsView.View
         }
 
 
-        private void AddNoneColumn()
+        private void AddNoneColumn(ColumnWidths.TableTypes tableType)
         {
+            int colWidth = ColumnWidths.TotalDynamicColumnWidths(tableType);
+
             DataGridTextColumn col = new DataGridTextColumn();
-            col.Header = "TestValue (Constant)";
-            col.Width = 260;
+            col.Header = "Value (Constant)";
+            col.Width = colWidth; //260;
             col.CanUserReorder = false;
             col.CanUserResize = false;
             col.CanUserSort = false;
@@ -126,10 +241,16 @@ namespace FunctionsView.View
 
         private void mi_InsertAbove_Click(object sender, RoutedEventArgs e)
         {
-            int index = dg_table.SelectedIndex;
-            if (index >= 0)
+            //int index = 0;// dg_table.SelectedIndex;
+            if (SelectedIndex >= 0)
             {
-                RowsModified?.Invoke(new TableRowsModifiedEventArgs(null, RowModificationEnum.AddSingleRow));
+                CoordinatesFunctionRowItem newRow = new CoordinatesFunctionRowItem(0, 0,Rows[0].SelectedDistributionType, Rows[0].SelectedInterpolationType);
+                newRow.ChangedDistributionType += TableStructureChanged;
+                newRow.ChangedInterpolationType += TableStructureChanged;
+                
+                Rows.Insert(SelectedIndex, newRow);
+
+                //RowsModified?.Invoke(new TableRowsModifiedEventArgs(null, RowModificationEnum.AddSingleRow));
                 
             }
         }

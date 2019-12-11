@@ -7,6 +7,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <ComboBox Name="cmb_Interp" ItemsSource="{Binding InterpolationTypes}" SelectedItem="{Binding SelectedInterpolationType}" SelectionChanged="ComboBox_SelectionChanged"/>
+        <ComboBox Name="cmb_Interp" ItemsSource="{Binding InterpolationTypes}" IsTabStop="False" SelectedItem="{Binding SelectedInterpolationType}" SelectionChanged="ComboBox_SelectionChanged"/>
     </Grid>
 </UserControl>

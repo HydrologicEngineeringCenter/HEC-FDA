@@ -8,8 +8,8 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="525"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Border BorderThickness="0,1,0,0" BorderBrush="CornflowerBlue" Margin="5,0,0,0"/>
+        <Border x:Name="BottomBorder" BorderThickness="0,1,0,0" BorderBrush="CornflowerBlue" Margin="5,0,0,0"/>
     </Grid>
 </UserControl>

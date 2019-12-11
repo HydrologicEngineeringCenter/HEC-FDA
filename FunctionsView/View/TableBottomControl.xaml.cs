@@ -20,9 +20,11 @@ namespace FunctionsView.View
     /// </summary>
     public partial class TableBottomControl : UserControl
     {
-        public TableBottomControl()
+        public TableBottomControl(ColumnWidths.TableTypes type)
         {
             InitializeComponent();
+            BottomBorder.Width = ColumnWidths.TotalColumnWidths(type) + 8;
         }
+
     }
 }

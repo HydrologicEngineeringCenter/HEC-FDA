@@ -11,16 +11,21 @@
             <Setter Property="Foreground" Value="#808080"/>
             <!--<Setter Property="Background" Value="White" />-->
         </Style>
+        <Style TargetType="DataGridCell" x:Key="NoTabStopStyle">
+            <Setter Property="IsTabStop" Value="False" />
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <DataGrid x:Name="dg_table" Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding Rows}" Width="520" HorizontalAlignment="Left"
-                  Margin="5,0,5,0" BorderThickness="1,0,1,0" HorizontalGridLinesBrush="#808080" VerticalGridLinesBrush="#808080"
+        <local:CoordinatesFunctionDataGrid x:Name="dg_table" Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding Rows}" 
+                  Width="520" HorizontalAlignment="Left" Margin="5,0,5,0" BorderThickness="1,0,1,0" 
+                  HorizontalGridLinesBrush="#808080" VerticalGridLinesBrush="#808080"
                   CanUserAddRows="True" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False"
-                  SelectionMode="Extended" SelectionUnit="CellOrRowHeader">
+                  SelectionMode="Extended" SelectionUnit="Cell" SelectedIndex="{Binding SelectedIndex}"
+                  >
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Name="mi_InsertAbove" Header="Insert Row(s) Above" Click="mi_InsertAbove_Click" />
@@ -37,22 +42,22 @@
                         CanExecute="CanCopy" Executed="Copy"/>
             </DataGrid.CommandBindings>-->
             <DataGrid.Columns>
-                <DataGridTextColumn x:Name="col_x"  Binding="{Binding Path=X}" Width="50"/>
-                <DataGridTemplateColumn x:Name="col_dist" Header="Distribution" Width="100"  HeaderStyle="{StaticResource ColumnHeaderStyle1}">
+                <DataGridTextColumn x:Name="col_x"  Binding="{Binding Path=X}" />
+                <DataGridTemplateColumn x:Name="col_dist"  Header="Distribution" CellStyle="{StaticResource NoTabStopStyle}"   HeaderStyle="{StaticResource ColumnHeaderStyle1}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <local:DistributionComboboxControl Row="{Binding Row}" />
+                            <local:DistributionComboboxControl Row="{Binding Row}" IsTabStop="False" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn x:Name="col_interp"  Width="*" >
+                <DataGridTemplateColumn x:Name="col_interp"    CellStyle="{StaticResource NoTabStopStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <local:InterpolationComboboxControl Row="{Binding Row}"/>
+                            <local:InterpolationComboboxControl Row="{Binding Row}" IsTabStop="False"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
-        </DataGrid>
+        </local:CoordinatesFunctionDataGrid>
     </Grid>
 </UserControl>

@@ -24,5 +24,12 @@ namespace FunctionsView.View
         {
             InitializeComponent();
         }
+
+        public TableTopControl(ColumnWidths.TableTypes type):this()
+        {
+            Col_Left.Width = new GridLength( ColumnWidths.COL_X_WIDTH + 11);
+            Col_Middle.Width = new GridLength(ColumnWidths.TotalDynamicColumnWidths(type) + ColumnWidths.COL_DIST_WIDTH + 2);
+            Col_Right.Width = new GridLength(ColumnWidths.COL_INTERP_WIDTH + 10);
+        }
     }
 }

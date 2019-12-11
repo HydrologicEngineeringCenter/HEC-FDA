@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <ComboBox Name="cmb_DistTypes" ItemsSource="{Binding DistributionTypes}" SelectedItem="{Binding SelectedDistributionType}" SelectionChanged="ComboBox_SelectionChanged"/>
+        <ComboBox Name="cmb_DistTypes" ItemsSource="{Binding DistributionTypes}" IsTabStop="False" SelectedItem="{Binding SelectedDistributionType}" SelectionChanged="ComboBox_SelectionChanged"/>
 
     </Grid>
 </UserControl>
