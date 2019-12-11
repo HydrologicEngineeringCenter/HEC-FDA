@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CustomDataGrid">
+      <HintPath>..\..\UserControls\CustomDataGrid\bin\Debug\CustomDataGrid.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -63,6 +66,8 @@
     </Compile>
     <Compile Include="ViewModel\CoordinatesFunctionEditorVM.cs" />
     <Compile Include="ViewModel\CoordinatesFunctionRowItem.cs" />
+    <Compile Include="View\ColumnWidths.cs" />
+    <Compile Include="View\CoordinatesFunctionDataGrid.cs" />
     <Compile Include="View\CoordinatesFunctionEditor.xaml.cs">
       <DependentUpon>CoordinatesFunctionEditor.xaml</DependentUpon>
     </Compile>

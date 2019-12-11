@@ -101,10 +101,25 @@ namespace FunctionsView.ViewModel
         //    }
         //}
         #endregion
+        public CoordinatesFunctionRowItem(double x, double y, string distType, string interpType)
+        {
+            X = x;
+            Y = y;
+            SelectedDistributionType = distType;
+            SelectedInterpolationType = interpType;
+        }
+        public CoordinatesFunctionRowItem()
+        {
+            X = 0;
+            Y = 0;
+            SelectedDistributionType = "None";
+            SelectedInterpolationType = "Linear";
+        }
         public CoordinatesFunctionRowItem(double x, double y)
         {
             X = x;
             Y = y;
+            
         }
         public CoordinatesFunctionRowItem(double x, IDistribution dist)
         {

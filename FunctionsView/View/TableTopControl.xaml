@@ -9,17 +9,20 @@
     <Grid>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="62" />
-            <ColumnDefinition Width="360" />
-            <ColumnDefinition Width="103" />
+            <ColumnDefinition x:Name="Col_Left" Width="Auto" />
+            <ColumnDefinition x:Name="Col_Middle" Width="Auto" />
+            <ColumnDefinition x:Name="Col_Right" Width="Auto" />
         </Grid.ColumnDefinitions>
+        <!--the left part with border on left and top-->
         <Border Grid.Column="0"    HorizontalAlignment="Stretch" BorderThickness="1,1,0,0" BorderBrush="CornflowerBlue" Margin="5,0,0,0">
             <!--<Label Content="X" HorizontalAlignment="Center" />-->
         </Border>
-        <Border Grid.Column="1"   BorderBrush="CornflowerBlue" HorizontalAlignment="Stretch" BorderThickness="0,1,0,1">
+        <!--the middle section with border on top and bottom and "Y" in the middle-->
+        <Border  Grid.Column="1"   BorderBrush="CornflowerBlue" HorizontalAlignment="Stretch" BorderThickness="0,1,0,1">
             <Label Content="Y" HorizontalAlignment="Center" />
         </Border>
-        <Border Grid.Column="2"   BorderBrush="CornflowerBlue" HorizontalAlignment="Stretch" BorderThickness="0,1,1,0">
+        <!--the right part with border on top and right side-->
+        <Border Grid.Column="2"   BorderBrush="CornflowerBlue" HorizontalAlignment="Stretch" BorderThickness="0,1,1,0" Margin="0,0,10,0">
             <!--<Label Content="Interpolator" HorizontalAlignment="Center"  Foreground="Black"/>-->
         </Border>
 

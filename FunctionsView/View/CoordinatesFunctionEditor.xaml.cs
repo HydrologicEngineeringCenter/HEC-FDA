@@ -3,6 +3,7 @@ using Functions.Ordinates;
 using FunctionsView.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,26 +24,40 @@ namespace FunctionsView.View
     /// </summary>
     public partial class CoordinatesFunctionEditor : UserControl
     {
+        
+        
+        /// <summary>
+        /// This enum is to aid in determining what the column widths should be.
+        /// The enum basically describes the type of all the tables combined.
+        /// </summary>
+        
         public CoordinatesFunctionEditor()
         {
             InitializeComponent();
+            Tables = new List<CoordinatesFunctionTable>();
         }
         //public static readonly DependencyProperty RowsProperty = DependencyProperty.Register("Rows", typeof(List<CoordinatesFunctionRowItem>), typeof(CoordinatesFunctionEditor), new FrameworkPropertyMetadata(new List<CoordinatesFunctionRowItem>(), new PropertyChangedCallback(RowsChangedCallBack)));
         public static readonly DependencyProperty FunctionProperty = DependencyProperty.Register("Function", typeof(ICoordinatesFunction), typeof(CoordinatesFunctionEditor), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(FunctionChangedCallBack)));
 
-        private List<CoordinatesFunctionRowItem> _Rows;
-        public List<CoordinatesFunctionRowItem> Rows
+        //private List<CoordinatesFunctionRowItem> _Rows;
+        //public List<CoordinatesFunctionRowItem> Rows
+        //{
+        //    get { return _Rows; }
+        //    set
+        //    {
+        //        _Rows = value;
+        //        foreach (CoordinatesFunctionRowItem row in _Rows)
+        //        {
+        //            row.ChangedDistributionType += UpdateView;
+        //            row.ChangedInterpolationType += UpdateView;
+        //        }
+        //    }
+        //}
+
+        public List<CoordinatesFunctionTable> Tables
         {
-            get { return _Rows; }
-            set
-            {
-                _Rows = value;
-                foreach (CoordinatesFunctionRowItem row in _Rows)
-                {
-                    row.ChangedDistributionType += UpdateView;
-                    row.ChangedInterpolationType += UpdateView;
-                }
-            }
+            get;
+            set;
         }
 
         public ICoordinatesFunction Function
@@ -63,12 +78,67 @@ namespace FunctionsView.View
         private static void FunctionChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             CoordinatesFunctionEditor owner = d as CoordinatesFunctionEditor;
-            owner.CreateRows( e.NewValue as ICoordinatesFunction);
+            owner.CreateTables( e.NewValue as ICoordinatesFunction);
             //call some sort of update method that re sorts and organizes the tables and replots.
             owner.UpdateView(owner, new EventArgs());
         }
 
-        public void CreateRows(ICoordinatesFunction function)
+        private void CreateTables(ICoordinatesFunction function)
+        {
+            List<CoordinatesFunctionRowItem> rows = CreateRows(function);
+            CreateTables(rows);
+        }
+
+        #region Determine column widths
+        
+      
+
+        #endregion
+        private void CreateTables(List<CoordinatesFunctionRowItem> rowItems)
+        {
+            //we are about to create the tables, so we need to find out what kinds of data we are dealing with
+            ColumnWidths.TableTypes tableType = ColumnWidths.GetTableTypeForRows(rowItems);
+            //it would be nice to just bind the items source of the list to be the list of tables
+            //but i have to put the topper and bottom UI pieces in. I could do them outside the list
+            //but that seemed harder to get it to line up etc.
+            lst_tables.Items.Clear();
+            Tables.Clear();
+
+            if (rowItems.Count > 0)
+            {
+                lst_tables.Items.Add(new TableTopControl(tableType));
+
+                ObservableCollection<CoordinatesFunctionRowItem> rows = new ObservableCollection<CoordinatesFunctionRowItem>();
+                string distType = rowItems[0].SelectedDistributionType;
+                string interpType = rowItems[0].SelectedInterpolationType;
+                rows.Add(rowItems[0]);
+                for (int i = 1; i < rowItems.Count; i++)
+                //while (i < _Rows.Count)
+                {
+                    CoordinatesFunctionRowItem row = rowItems[i];
+                    if (row.SelectedDistributionType.Equals(distType) && row.SelectedInterpolationType.Equals(interpType))
+                    {
+                        rows.Add(rowItems[i]);
+                    }
+                    else
+                    {
+                        //the dist type changed
+                        CreateTable(rows, tableType);
+                        //set the new dist type and add it to the list
+                        distType = row.SelectedDistributionType;
+                        interpType = row.SelectedInterpolationType;
+                        rows = new ObservableCollection<CoordinatesFunctionRowItem>();
+                        rows.Add(row);
+                    }
+
+                }
+                //need to create the final table
+                CreateTable(rows, tableType);
+
+                lst_tables.Items.Add(new TableBottomControl(tableType));
+            }
+        }
+        public List<CoordinatesFunctionRowItem> CreateRows(ICoordinatesFunction function)
         {
             List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
             foreach (ICoordinate coord in function.Coordinates)
@@ -76,7 +146,7 @@ namespace FunctionsView.View
                 rows.Add(CreateRowItemFromCoordinate(coord));
 
             }
-            Rows = rows;
+            return rows;
         }
         private CoordinatesFunctionRowItem CreateRowItemFromCoordinate(ICoordinate coord)
         {
@@ -117,72 +187,54 @@ namespace FunctionsView.View
             }
         }
 
+        
         private void UpdateView(object sender, EventArgs e)
         {
-            //CoordinatesFunctionRowItem rowThatChanged = sender as CoordinatesFunctionRowItem;
-            //List<CoordinatesFunctionRowItem> rowsAbove = GetRowsAboveRow(rowThatChanged);
-            //List<CoordinatesFunctionRowItem> rowsBelow = GetRowsBelowRow(rowThatChanged);
-            //List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
-            //foreach(CoordinatesFunctionRowItem row in _Rows)
-            //{
-            //    distType = row.SelectedDistributionType;
-            //}
-            //lst_tables.Items.Add(new NoneTable(Rows));
-            lst_tables.Items.Clear();
-
-            if (_Rows.Count > 0)
+            List<CoordinatesFunctionRowItem> allRows = new List<CoordinatesFunctionRowItem>();
+           foreach(CoordinatesFunctionTable table in Tables)
             {
-                lst_tables.Items.Add(new TableTopControl());
-
-                List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
-                string distType = _Rows[0].SelectedDistributionType;
-                string interpType = _Rows[0].SelectedInterpolationType;
-                rows.Add(_Rows[0]);
-                for(int i = 1;i<_Rows.Count;i++)
-                //while (i < _Rows.Count)
-                {
-                    CoordinatesFunctionRowItem row = _Rows[i];
-                    if (row.SelectedDistributionType.Equals(distType) && row.SelectedInterpolationType.Equals(interpType))
-                    {
-                        rows.Add(_Rows[i]);
-                    }
-                    else
-                    {
-                        //the dist type changed
-                        CreateTable(rows);
-                        //set the new dist type and add it to the list
-                        distType = row.SelectedDistributionType;
-                        interpType = row.SelectedInterpolationType;
-                        rows = new List<CoordinatesFunctionRowItem>();
-                        rows.Add(row);
-                    }
-
-                }
-                //need to create the final table
-                CreateTable(rows);
-
-                lst_tables.Items.Add(new TableBottomControl());
+                allRows.AddRange(table.Rows);
             }
+           //before we create the tables we need to determine what types of rows we are dealing with and set the 
+           //column widths accordingly.
+
+            CreateTables(allRows);
+            
 
 
         }
-
+       
+        private bool AreAllTablesNone()
+        {
+            bool retval = true;
+            foreach (CoordinatesFunctionTable table in Tables)
+            {
+                if(!table.TableType.Equals("None"))
+                {
+                    retval = false;
+                    break;
+                }
+            }
+            return retval;
+        }
         private void TableRowsModified(TableRowsModifiedEventArgs e)
         {
 
         }
-        private void CreateTable(List<CoordinatesFunctionRowItem> rows)
+        private void CreateTable(ObservableCollection<CoordinatesFunctionRowItem> rows, ColumnWidths.TableTypes type)
         {
             //i need to add the "X" and the "Interpolator" headers on the top table only
             //the lst_tables' first item is the table topper. So add to the second item
-            CoordinatesFunctionTable newTable = new CoordinatesFunctionTable(rows);
+            CoordinatesFunctionTable newTable = new CoordinatesFunctionTable(rows, type);
             newTable.RowsModified += TableRowsModified;
+            newTable.UpdateView += UpdateView;
             if(lst_tables.Items.Count == 1)
             {
                 newTable.DisplayXAndInterpolatorHeaders();
             }
 
             lst_tables.Items.Add(newTable);
+            Tables.Add(newTable);
             //switch (distType)
             //{
             //    case "None":
