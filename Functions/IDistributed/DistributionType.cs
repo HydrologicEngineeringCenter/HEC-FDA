@@ -9,7 +9,11 @@ namespace Functions
         /// <summary>
         /// Default value likely to lead to an error.
         /// </summary>
-        NotSupported = 0,
+        NotSupported = -1,
+        /// <summary>
+        /// Single y value for every x.
+        /// </summary>
+        Constant = 0,
         /// <summary>
         /// Normal distribution.
         /// </summary>
