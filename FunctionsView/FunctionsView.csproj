@@ -32,9 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CustomDataGrid">
-      <HintPath>..\..\UserControls\CustomDataGrid\bin\Debug\CustomDataGrid.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -106,6 +103,10 @@
     <ProjectReference Include="..\Statistics\Statistics.csproj">
       <Project>{c793991b-b5f7-4667-8478-713e97340d34}</Project>
       <Name>Statistics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UserControls\UserControls.vbproj">
+      <Project>{80eb938b-bc8f-44f7-b4dd-6127010f2d96}</Project>
+      <Name>UserControls</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utilities\Utilities.csproj">
       <Project>{9038ADD9-59CA-4E3A-B665-6B086FDE5F18}</Project>

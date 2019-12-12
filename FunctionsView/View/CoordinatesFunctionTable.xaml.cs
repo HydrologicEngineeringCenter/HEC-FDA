@@ -25,9 +25,11 @@ namespace FunctionsView.View
     {
         //The table rows modified has nothing to do with cells changing their value.
         //it is about rows getting added or deleted
-        public delegate void TableRowsModified(TableRowsModifiedEventArgs e);
-        public event TableRowsModified RowsModified;
+        //public delegate void TableRowsModified(TableRowsModifiedEventArgs e);
+        //public event TableRowsModified RowsModified;
         public event EventHandler UpdateView;
+        public event EventHandler LastRowEnterPressed;
+        public event EventHandler LastRowAndCellTabPressed;
 
         public string TableType { get; set; }
         public ObservableCollection<CoordinatesFunctionRowItem> Rows
@@ -49,10 +51,69 @@ namespace FunctionsView.View
             SelectedIndex = -1;
             col_x.Width = ColumnWidths.COL_X_WIDTH;
             col_dist.Width = ColumnWidths.COL_DIST_WIDTH;
-            col_interp.Width = ColumnWidths.COL_INTERP_WIDTH;
+            //col_interp.Width = ColumnWidths.COL_INTERP_WIDTH;
             TableType = "None";
             dg_table.RowsAdded += Dg_table_RowsAdded;
             dg_table.DataPasted += Dg_table_DataPasted;
+            dg_table.RowsDeleted += Dg_table_RowsDeleted;
+            dg_table.PreviewLastRowEnter += Dg_table_PreviewLastRowEnter;
+            dg_table.PreviewLastRowTab += Dg_table_PreviewLastRowTab;
+        }
+
+        private void Dg_table_PreviewLastRowTab(int cellIndex)
+        {
+            //the user hit the tab key while in the last row
+            //but we dont know if this table is the last table in the list
+            //pass the event on up to the editor and let it decide what to do
+            //we didn't want the datagrid itself to determine if the tabbed cell was 
+            //the last cell in the row because that isn't actually what we want. We
+            //want to add the new row if the tabbed cell is the last dynamic column. (count - 3)
+            if(cellIndex == dg_table.Columns.Count -3)
+            {
+                LastRowAndCellTabPressed?.Invoke(this, new EventArgs());
+            }
+        }
+
+        private void Dg_table_PreviewLastRowEnter()
+        {
+            //the user hit the enter key while in the last row of this table
+            //but we dont know if this table is the last table in the list
+            //pass the event on up to the editor and let it decide what to do
+            LastRowEnterPressed?.Invoke(this, new EventArgs());
+
+            //string distType = Rows[0].SelectedDistributionType;
+            //string interpType = Rows[0].SelectedInterpolationType;
+            //CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItem(0, 0, distType, interpType);
+            //row.ChangedDistributionType += TableStructureChanged;
+            //row.ChangedInterpolationType += TableStructureChanged;
+            //Rows.Add( row);
+        }
+
+        public void AddRow()
+        {
+            string distType = Rows[0].SelectedDistributionType;
+            string interpType = Rows[0].SelectedInterpolationType;
+            CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItem(0, 0, distType, interpType);
+            row.ChangedDistributionType += TableStructureChanged;
+            row.ChangedInterpolationType += TableStructureChanged;
+            Rows.Add(row);
+            SetFocusToLastRowFirstCell();
+        }
+
+        private void SetFocusToLastRowFirstCell()
+        {
+            DataGridCellInfo dataGridCellInfo = new DataGridCellInfo(dg_table.Items[Rows.Count-1], dg_table.Columns[0]);
+            dg_table.SelectedCells.Clear();
+            dg_table.SelectedCells.Add(dataGridCellInfo);
+        }
+
+        private void Dg_table_RowsDeleted(List<int> rowindices)
+        {
+            if(Rows.Count == 0)
+            {
+                //this will remove the table from the parents list
+                UpdateView(this, new EventArgs());
+            }
         }
 
         private void Dg_table_DataPasted()
@@ -234,25 +295,8 @@ namespace FunctionsView.View
             }
         }
 
-        private void mi_InsertRow_Click(object sender, RoutedEventArgs e)
-        {
+       
 
-        }
-
-        private void mi_InsertAbove_Click(object sender, RoutedEventArgs e)
-        {
-            //int index = 0;// dg_table.SelectedIndex;
-            if (SelectedIndex >= 0)
-            {
-                CoordinatesFunctionRowItem newRow = new CoordinatesFunctionRowItem(0, 0,Rows[0].SelectedDistributionType, Rows[0].SelectedInterpolationType);
-                newRow.ChangedDistributionType += TableStructureChanged;
-                newRow.ChangedInterpolationType += TableStructureChanged;
-                
-                Rows.Insert(SelectedIndex, newRow);
-
-                //RowsModified?.Invoke(new TableRowsModifiedEventArgs(null, RowModificationEnum.AddSingleRow));
-                
-            }
-        }
+      
     }
 }

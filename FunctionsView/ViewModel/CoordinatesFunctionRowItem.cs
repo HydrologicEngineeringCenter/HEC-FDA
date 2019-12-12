@@ -15,6 +15,7 @@ namespace FunctionsView.ViewModel
         private string _selectedDistType = "None";
         private string _selectedInterpolationType = "Linear";
 
+        private double _Mean;
         #region Properties
         public CoordinatesFunctionRowItem Row
         {
@@ -28,8 +29,8 @@ namespace FunctionsView.ViewModel
 
         public double Mean
         {
-            get { return 99; }
-            set { Mean = value; }
+            get { return _Mean; }
+            set { _Mean = value; }
         }
 
         public List<string> DistributionTypes

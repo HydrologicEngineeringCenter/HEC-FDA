@@ -25,34 +25,12 @@ namespace FunctionsView.View
     public partial class CoordinatesFunctionEditor : UserControl
     {
         
-        
-        /// <summary>
-        /// This enum is to aid in determining what the column widths should be.
-        /// The enum basically describes the type of all the tables combined.
-        /// </summary>
-        
         public CoordinatesFunctionEditor()
         {
             InitializeComponent();
             Tables = new List<CoordinatesFunctionTable>();
         }
-        //public static readonly DependencyProperty RowsProperty = DependencyProperty.Register("Rows", typeof(List<CoordinatesFunctionRowItem>), typeof(CoordinatesFunctionEditor), new FrameworkPropertyMetadata(new List<CoordinatesFunctionRowItem>(), new PropertyChangedCallback(RowsChangedCallBack)));
-        public static readonly DependencyProperty FunctionProperty = DependencyProperty.Register("Function", typeof(ICoordinatesFunction), typeof(CoordinatesFunctionEditor), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(FunctionChangedCallBack)));
-
-        //private List<CoordinatesFunctionRowItem> _Rows;
-        //public List<CoordinatesFunctionRowItem> Rows
-        //{
-        //    get { return _Rows; }
-        //    set
-        //    {
-        //        _Rows = value;
-        //        foreach (CoordinatesFunctionRowItem row in _Rows)
-        //        {
-        //            row.ChangedDistributionType += UpdateView;
-        //            row.ChangedInterpolationType += UpdateView;
-        //        }
-        //    }
-        //}
+        public static readonly DependencyProperty FunctionProperty = DependencyProperty.Register("Function", typeof(ICoordinatesFunction), typeof(CoordinatesFunctionEditor), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(FunctionChangedCallBack)));   
 
         public List<CoordinatesFunctionTable> Tables
         {
@@ -65,15 +43,6 @@ namespace FunctionsView.View
             get;
             set;
         }
-      
-
-        //private static void RowsChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        //{
-        //    CoordinatesFunctionEditor owner = d as CoordinatesFunctionEditor;
-        //    owner.Rows = e.NewValue as List<CoordinatesFunctionRowItem>;
-        //    //call some sort of update method that re sorts and organizes the tables and replots.
-        //    owner.UpdateView(owner, new EventArgs());
-        //}
 
         private static void FunctionChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -83,6 +52,10 @@ namespace FunctionsView.View
             owner.UpdateView(owner, new EventArgs());
         }
 
+        /// <summary>
+        /// This is used when the editor is opened to load the tables from a coordinates function.
+        /// </summary>
+        /// <param name="function"></param>
         private void CreateTables(ICoordinatesFunction function)
         {
             List<CoordinatesFunctionRowItem> rows = CreateRows(function);
@@ -94,6 +67,10 @@ namespace FunctionsView.View
       
 
         #endregion
+        /// <summary>
+        /// This is called anytime an visual update needs to happen, such as changing distribution types.
+        /// </summary>
+        /// <param name="rowItems"></param>
         private void CreateTables(List<CoordinatesFunctionRowItem> rowItems)
         {
             //we are about to create the tables, so we need to find out what kinds of data we are dealing with
@@ -138,6 +115,12 @@ namespace FunctionsView.View
                 lst_tables.Items.Add(new TableBottomControl(tableType));
             }
         }
+        /// <summary>
+        /// Turns a coordinates function into a list of row items.
+        /// Converts each coordinate of the function into its own row.
+        /// </summary>
+        /// <param name="function"></param>
+        /// <returns></returns>
         public List<CoordinatesFunctionRowItem> CreateRows(ICoordinatesFunction function)
         {
             List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
@@ -187,7 +170,13 @@ namespace FunctionsView.View
             }
         }
 
-        
+        /// <summary>
+        /// This gets called anytime a visual update needs to happen to the editor.
+        /// It will grab the rows from all the tables, then delete the tables and create tables
+        /// from scratch using the rows.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UpdateView(object sender, EventArgs e)
         {
             List<CoordinatesFunctionRowItem> allRows = new List<CoordinatesFunctionRowItem>();
@@ -204,30 +193,35 @@ namespace FunctionsView.View
 
         }
        
-        private bool AreAllTablesNone()
-        {
-            bool retval = true;
-            foreach (CoordinatesFunctionTable table in Tables)
-            {
-                if(!table.TableType.Equals("None"))
-                {
-                    retval = false;
-                    break;
-                }
-            }
-            return retval;
-        }
-        private void TableRowsModified(TableRowsModifiedEventArgs e)
-        {
+        //private bool AreAllTablesNone()
+        //{
+        //    bool retval = true;
+        //    foreach (CoordinatesFunctionTable table in Tables)
+        //    {
+        //        if(!table.TableType.Equals("None"))
+        //        {
+        //            retval = false;
+        //            break;
+        //        }
+        //    }
+        //    return retval;
+        //}
+        //private void TableRowsModified(TableRowsModifiedEventArgs e)
+        //{
 
-        }
+        //}
+        /// <summary>
+        /// Creates a new coordinates function table using the rows passed in.
+        /// All rows should have the same distribution type and interpolation type.
+        /// </summary>
+        /// <param name="rows"></param>
+        /// <param name="type"></param>
         private void CreateTable(ObservableCollection<CoordinatesFunctionRowItem> rows, ColumnWidths.TableTypes type)
         {
-            //i need to add the "X" and the "Interpolator" headers on the top table only
-            //the lst_tables' first item is the table topper. So add to the second item
             CoordinatesFunctionTable newTable = new CoordinatesFunctionTable(rows, type);
-            newTable.RowsModified += TableRowsModified;
             newTable.UpdateView += UpdateView;
+            newTable.LastRowEnterPressed += NewTable_LastRowEnterPressed;
+            newTable.LastRowAndCellTabPressed += NewTable_LastRowAndCellTabPressed;
             if(lst_tables.Items.Count == 1)
             {
                 newTable.DisplayXAndInterpolatorHeaders();
@@ -235,65 +229,37 @@ namespace FunctionsView.View
 
             lst_tables.Items.Add(newTable);
             Tables.Add(newTable);
-            //switch (distType)
-            //{
-            //    case "None":
-            //        {
-
-            //            lst_tables.Items.Add(new CoordinateFunctionTable(rows));  //new NoneTable(rows));
-            //            return;
-            //        }
-            //    case "Normal":
-            //        {
-
-            //            lst_tables.Items.Add(new CoordinateFunctionTable(rows)); //new NormalTable(rows));
-            //            return;
-            //        }
-            //    case "Triangular":
-            //        {
-            //            lst_tables.Items.Add(new TriangularTable(rows));
-            //                return;
-            //        }
-
-            //}
-
         }
 
-        //private List<CoordinatesFunctionRowItem> GetRowsAboveRow(CoordinatesFunctionRowItem row)
-        //{
-        //    List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
-        //    int i;
-        //    for (i = 0; i < Rows.Count; i++)
-        //    {
-        //        if (Rows[i] == row)
-        //        {
-        //            break;
-        //        }
-        //        else
-        //        {
-        //            rows.Add(Rows[i]);
-        //        }
-        //    }
-        //    return rows;
-        //}
-        //private List<CoordinatesFunctionRowItem> GetRowsBelowRow(CoordinatesFunctionRowItem row)
-        //{
-        //    int i;
-        //    for (i = 0; i < Rows.Count; i++)
-        //    {
-        //        if (Rows[i] == row)
-        //        {
-        //            break;
-        //        }
-        //    }
-        //    List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
-        //    i++;
-        //    for (int j = i; j < Rows.Count; j++)
-        //    {
-        //        rows.Add(Rows[j]);
-        //    }
-        //    return rows;
-        //}
+        /// <summary>
+        /// Tab was pressed in the last row and editable cell of a table. If it is the last table
+        /// in the editor, then add a row
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NewTable_LastRowAndCellTabPressed(object sender, EventArgs e)
+        {
+            CoordinatesFunctionTable senderTable = (CoordinatesFunctionTable)sender;
+            if (Tables.Last().Equals(senderTable))
+            {
+                senderTable.AddRow();
+            }
+        }
+
+        /// <summary>
+        /// Enter was pressed in the last row of a table. If it is the last table
+        /// in the editor, then add a row
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NewTable_LastRowEnterPressed(object sender, EventArgs e)
+        {
+            CoordinatesFunctionTable senderTable = (CoordinatesFunctionTable)sender;
+            if(Tables.Last().Equals(senderTable))
+            {
+                senderTable.AddRow();
+            }
+        }
 
         private class RowItemBuilder
         {

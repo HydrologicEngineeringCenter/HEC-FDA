@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace FunctionsView.View
 {
-    public class CoordinatesFunctionDataGrid : CustomDataGrid.Controls.CopyPasteDataGrid<CoordinatesFunctionRowItem>
+    public class CoordinatesFunctionDataGrid : UserControls.Controls.CopyPasteDataGrid<CoordinatesFunctionRowItem>
     {
         
+       
     }
 }

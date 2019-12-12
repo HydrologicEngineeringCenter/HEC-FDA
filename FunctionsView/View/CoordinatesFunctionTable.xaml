@@ -23,17 +23,17 @@
         <local:CoordinatesFunctionDataGrid x:Name="dg_table" Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding Rows}" 
                   Width="520" HorizontalAlignment="Left" Margin="5,0,5,0" BorderThickness="1,0,1,0" 
                   HorizontalGridLinesBrush="#808080" VerticalGridLinesBrush="#808080"
-                  CanUserAddRows="True" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False"
+                  CanUserAddRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False"
                   SelectionMode="Extended" SelectionUnit="Cell" SelectedIndex="{Binding SelectedIndex}"
                   >
-            <DataGrid.ContextMenu>
+            <!--<DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Name="mi_InsertAbove" Header="Insert Row(s) Above" Click="mi_InsertAbove_Click" />
                     <MenuItem Header="Insert Row(s) Below" />
                     <MenuItem Header="Add Rows" />
                     <MenuItem Header="Delete Row(s)" />
                 </ContextMenu>
-            </DataGrid.ContextMenu>
+            </DataGrid.ContextMenu>-->
 
             <!--<DataGrid.CommandBindings>
                 <CommandBinding Command="{x:Static ApplicationCommands.Paste}" 
@@ -50,7 +50,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn x:Name="col_interp"    CellStyle="{StaticResource NoTabStopStyle}">
+                <DataGridTemplateColumn x:Name="col_interp"  Width="*"  CellStyle="{StaticResource NoTabStopStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <local:InterpolationComboboxControl Row="{Binding Row}" IsTabStop="False"/>
