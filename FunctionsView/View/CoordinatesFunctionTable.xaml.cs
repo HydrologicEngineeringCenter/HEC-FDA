@@ -15,6 +15,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Linq;
+using Functions;
+using Functions.CoordinatesFunctions;
 
 namespace FunctionsView.View
 {
@@ -89,14 +91,39 @@ namespace FunctionsView.View
             //Rows.Add( row);
         }
 
+        private CoordinatesFunctionRowItem CreateDefaultRow()
+        {
+            InterpolationEnum interpType = Rows[0].SelectedInterpolationType;
+            DistributionType distType = Rows[0].SelectedDistributionType;
+            CoordinatesFunctionRowItem row = null;
+            switch (distType)
+            {
+                case DistributionType.Constant:
+                    {
+                        row = new CoordinatesFunctionRowItemBuilder(0).WithConstantDist(0, interpType).Build();
+                        break;
+                    }
+                case DistributionType.Normal:
+                    {
+                        row = new CoordinatesFunctionRowItemBuilder(0).WithNormalDist(0, 0, interpType).Build();
+                        break;
+                    }
+                case DistributionType.Triangular:
+                    {
+                        row = new CoordinatesFunctionRowItemBuilder(0).WithTriangularDist(0, 0, 0, interpType).Build();
+                        break;
+                    }
+            }
+            row.StructureChanged += TableStructureChanged;
+            row.ChangedInterpolationType += TableStructureChanged;
+
+            return row;
+        }
         public void AddRow()
         {
-            string distType = Rows[0].SelectedDistributionType;
-            string interpType = Rows[0].SelectedInterpolationType;
-            CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItem(0, 0, distType, interpType);
-            row.ChangedDistributionType += TableStructureChanged;
-            row.ChangedInterpolationType += TableStructureChanged;
-            Rows.Add(row);
+            //todo maybe i want a factory class to make do this logic. It might come in handy when i need to translate
+            //from one dist type to another when the user changes the dist type.
+            Rows.Add(CreateDefaultRow());
             SetFocusToLastRowFirstCell();
         }
 
@@ -123,59 +150,52 @@ namespace FunctionsView.View
             //todo, I really don't like this but i don't know what rows have the events and which don't. Is there a better way?
             foreach(CoordinatesFunctionRowItem row in Rows)
             {
-                row.ChangedDistributionType -= TableStructureChanged;
+                row.StructureChanged -= TableStructureChanged;
                 row.ChangedInterpolationType -= TableStructureChanged;
 
-                row.ChangedDistributionType += TableStructureChanged;
+                row.StructureChanged += TableStructureChanged;
                 row.ChangedInterpolationType += TableStructureChanged;
             }
         }
 
         private void Dg_table_RowsAdded(int startrow, int numrows)
         {
-            //pre-fill the dist type and the interp type for each new row
-            string distType = Rows[0].SelectedDistributionType;
-            string interpType = Rows[0].SelectedInterpolationType;
             for(int i = 0;i<numrows;i++)
             {
-                CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItem(0, 0, distType, interpType);
-                row.ChangedDistributionType += TableStructureChanged;
-                row.ChangedInterpolationType += TableStructureChanged;
-                Rows.Insert(startrow, row);
+                Rows.Insert(startrow, CreateDefaultRow());
             }
         }
 
         public CoordinatesFunctionTable(ObservableCollection<CoordinatesFunctionRowItem> rows, ColumnWidths.TableTypes tableType):this()
         {
 
-            dg_table.Width = ColumnWidths.TotalColumnWidths(tableType) + 8;
+            this.DataContext = this;
+            dg_table.Width = ColumnWidths.TotalColumnWidths(tableType) + 8; //had to add 8 to make the lines match up
                
-            //InitializeComponent();
             foreach(CoordinatesFunctionRowItem row in rows)
             {
-                row.ChangedDistributionType += TableStructureChanged;
+                row.StructureChanged += TableStructureChanged;
                 row.ChangedInterpolationType += TableStructureChanged;
             }
-            this.DataContext = this;
             Rows = rows;
             if (rows.Count > 0)
             {
-                string distType = rows[0].SelectedDistributionType;
+                DistributionType distType = rows[0].SelectedDistributionType;
                 switch (distType)
                 {
-                    case "None":
+                    case DistributionType.Constant:
                         {
                             TableType = "None";
                             AddNoneColumn(tableType);
                             break;
                         }
-                    case "Normal":
+                    case DistributionType.Normal:
                         {
                             TableType = "Normal";
                             AddNormalColumns(tableType);
                             break;
                         }
-                    case "Triangular":
+                    case DistributionType.Triangular:
                         {
                             TableType = "Triangular";
                             AddTriangularColumns(tableType);

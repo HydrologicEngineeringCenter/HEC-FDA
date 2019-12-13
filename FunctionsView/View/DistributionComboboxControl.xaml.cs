@@ -1,4 +1,5 @@
-﻿using FunctionsView.ViewModel;
+﻿using Functions;
+using FunctionsView.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -39,7 +40,7 @@ namespace FunctionsView.View
         {
             if (Row != null)
             {
-                Row.SelectedDistributionType = cmb_DistTypes.SelectedValue.ToString();
+                Row.SelectedDistributionType = (DistributionType)cmb_DistTypes.SelectedValue;
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using FunctionsView.ViewModel;
+﻿using Functions;
+using FunctionsView.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,11 +78,11 @@ namespace FunctionsView.View
             //start with the type that has the most columns. Once i determine that, then 
             //we are done.
 
-            if (ContainsRowWithType(rows, "Triangular"))
+            if (ContainsRowWithType(rows, DistributionType.Triangular))
             {
                 return TableTypes.Triangular;
             }
-            else if (ContainsRowWithType(rows, "Normal"))
+            else if (ContainsRowWithType(rows, DistributionType.Normal))
             {
                 return TableTypes.Normal;
             }
@@ -101,7 +102,7 @@ namespace FunctionsView.View
             bool retval = true;
             foreach (CoordinatesFunctionRowItem row in rows)
             {
-                if (!row.SelectedDistributionType.Equals("None"))
+                if (!row.SelectedDistributionType.Equals(DistributionType.Constant))
                 {
                     retval = false;
                     break;
@@ -110,7 +111,7 @@ namespace FunctionsView.View
             return retval;
         }
 
-        private static bool ContainsRowWithType(List<CoordinatesFunctionRowItem> rows, string type)
+        private static bool ContainsRowWithType(List<CoordinatesFunctionRowItem> rows, DistributionType type)
         {
             bool retval = false;
             foreach (CoordinatesFunctionRowItem row in rows)

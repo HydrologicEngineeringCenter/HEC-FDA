@@ -15,7 +15,7 @@ namespace Functions.Ordinates
         }
         public Tuple<double, double> Range => new Tuple<double, double>(GetDistribution.Minimum, GetDistribution.Maximum);
 
-        public bool IsDistributed => true;
+        public DistributionType DistributionType { get { return GetDistribution.Type; } }
 
         public bool Equals(IOrdinate scalar)
         {

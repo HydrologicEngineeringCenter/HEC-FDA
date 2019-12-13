@@ -1,4 +1,5 @@
 ﻿using Functions;
+using Functions.CoordinatesFunctions;
 using Functions.Ordinates;
 using FunctionsView.ViewModel;
 using System;
@@ -24,7 +25,7 @@ namespace FunctionsView.View
     /// </summary>
     public partial class CoordinatesFunctionEditor : UserControl
     {
-        
+        public bool HasLoaded { get; set; }
         public CoordinatesFunctionEditor()
         {
             InitializeComponent();
@@ -40,16 +41,27 @@ namespace FunctionsView.View
 
         public ICoordinatesFunction Function
         {
-            get;
-            set;
+            get { return (ICoordinatesFunction)this.GetValue(FunctionProperty); }
+            set { this.SetValue(FunctionProperty, value); }
         }
 
         private static void FunctionChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             CoordinatesFunctionEditor owner = d as CoordinatesFunctionEditor;
-            owner.CreateTables( e.NewValue as ICoordinatesFunction);
-            //call some sort of update method that re sorts and organizes the tables and replots.
-            owner.UpdateView(owner, new EventArgs());
+            //basically i am just storing a pointer to this function that is in the VM
+            //when the user clicks OK or Save then i update this Function with whatever is
+            //in this editors tables
+
+            //i only want to do this one time when the editor is first opened.
+            if (owner.HasLoaded != true)
+            {
+                owner.HasLoaded = true;
+                owner.Function = e.NewValue as ICoordinatesFunction;
+                owner.CreateTables(e.NewValue as ICoordinatesFunction);
+                //call some sort of update method that re sorts and organizes the tables and replots.
+                owner.UpdateView(owner, new EventArgs());
+            }
+            
         }
 
         /// <summary>
@@ -62,11 +74,18 @@ namespace FunctionsView.View
             CreateTables(rows);
         }
 
-        #region Determine column widths
-        
-      
+        public void Save()
+        {
+            Function = CreateFunctionFromTables();
+        }
 
-        #endregion
+        private ICoordinatesFunction CreateFunctionFromTables()
+        {
+            List<double> testXs = new List<double>() { 9, 99 };
+            List<double> testYs = new List<double>() { 10, 100 };
+            return ICoordinatesFunctionsFactory.Factory(testXs, testYs);
+        }
+
         /// <summary>
         /// This is called anytime an visual update needs to happen, such as changing distribution types.
         /// </summary>
@@ -86,8 +105,8 @@ namespace FunctionsView.View
                 lst_tables.Items.Add(new TableTopControl(tableType));
 
                 ObservableCollection<CoordinatesFunctionRowItem> rows = new ObservableCollection<CoordinatesFunctionRowItem>();
-                string distType = rowItems[0].SelectedDistributionType;
-                string interpType = rowItems[0].SelectedInterpolationType;
+                DistributionType distType = rowItems[0].SelectedDistributionType;
+                InterpolationEnum interpType = rowItems[0].SelectedInterpolationType;
                 rows.Add(rowItems[0]);
                 for (int i = 1; i < rowItems.Count; i++)
                 //while (i < _Rows.Count)
@@ -123,50 +142,41 @@ namespace FunctionsView.View
         /// <returns></returns>
         public List<CoordinatesFunctionRowItem> CreateRows(ICoordinatesFunction function)
         {
+            InterpolationEnum interpolator = function.Interpolator;
             List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
             foreach (ICoordinate coord in function.Coordinates)
             {
-                rows.Add(CreateRowItemFromCoordinate(coord));
+                rows.Add(CreateRowItemFromCoordinate(coord, interpolator));
 
             }
             return rows;
         }
-        private CoordinatesFunctionRowItem CreateRowItemFromCoordinate(ICoordinate coord)
+        private CoordinatesFunctionRowItem CreateRowItemFromCoordinate(ICoordinate coord, InterpolationEnum interpolator)
         {
-            //we know that x is always constant
             double x = coord.X.Value();
-            //todo if we add a dist type for "None" then i can get rid of the "else" here and 
-            //just include it in the switch.
-            if (coord.Y.GetType().Equals(typeof(Distribution)))
+            DistributionType type = coord.Y.DistributionType;
+            switch (type)
             {
-                IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
-                DistributionType type = dist.Type;
-                switch (type)
-                {
-                    case DistributionType.Normal:
-                        {
-
-                            CoordinatesFunctionRowItem row = new RowItemBuilder(x)
-                                .WithNormalDist(dist.Skewness, dist.StandardDeviation)
+                case DistributionType.Constant:
+                    {
+                        double y = coord.Y.Value();
+                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
+                                .WithConstantDist(y, interpolator)
                                 .Build();
-                            row.SelectedInterpolationType = "Linear";
-                            //row.ChangedDistributionType += RowChangedDistributionType;
-                            return row;
-                        }
-                    default:
-                        {
-                            throw new ArgumentException("The coordinate has a distributed y value that is not an allowed distribution type.");
-                        }
-                }
-
-            }
-            else
-            {
-                //then y is a constant
-                double y = coord.Y.Value();
-                CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItem(x, y);
-                //row.ChangedDistributionType += RowChangedDistributionType;
-                return row;
+                        return row;
+                    }
+                case DistributionType.Normal:
+                    {
+                        IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
+                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
+                            .WithNormalDist(dist.Mean, dist.StandardDeviation, interpolator)
+                            .Build();
+                        return row;
+                    }
+                default:
+                    {
+                        throw new ArgumentException("The coordinate has a distributed y value that is not supported.");
+                    }
             }
         }
 
@@ -188,9 +198,7 @@ namespace FunctionsView.View
            //column widths accordingly.
 
             CreateTables(allRows);
-            
-
-
+            Save();
         }
        
         //private bool AreAllTablesNone()
@@ -261,40 +269,55 @@ namespace FunctionsView.View
             }
         }
 
-        private class RowItemBuilder
-        {
-            private double _X;
-            private double _Y;
-            private DistributionType _distType;
-            private double _skew;
-            private double _standDev;
+        //private class RowItemBuilder
+        //{
+        //    private double _X;
+        //    private double _Y;
+        //    private DistributionType _distType;
+        //    private InterpolationEnum _interpType;
+            
+        //    private double _standDev;
+        //    private double _min;
+        //    private double _max;
+        //    private double _mostLikely;
+        //    private double _mean;
 
-            internal RowItemBuilder(double x)
-            {
-                _X = x;
-                _distType = DistributionType.NotSupported;
-            }
+        //    internal RowItemBuilder(double x)
+        //    {
+        //        _X = x;
+        //        _distType = DistributionType.NotSupported;
+        //    }
+        //    internal RowItemBuilder WithTriangularDist(double mostLikely, double min, double max, InterpolationEnum interpolator)
+        //    {
+        //        _mostLikely = mostLikely;
+        //        _min = min;
+        //        _max = max;
+        //        _distType = DistributionType.Triangular;
+        //        _interpType = interpolator;
+        //        return this;
+        //    }
+        //    internal RowItemBuilder WithNormalDist(double mean, double standardDeviation, InterpolationEnum interpolator)
+        //    {
+        //        _distType = DistributionType.Normal;
+        //        _mean = mean;
+        //        _standDev = standardDeviation;
+        //        _interpType = interpolator;
+        //        return this;
+        //    }
 
-            internal RowItemBuilder WithNormalDist(double skew, double standardDeviation)
-            {
-                _distType = DistributionType.Normal;
-                _skew = skew;
-                _standDev = standardDeviation;
-                return this;
-            }
+        //    internal RowItemBuilder WithConstantDist(double y, InterpolationEnum interpolator)
+        //    {
+        //        _Y = y;
+        //        _distType = DistributionType.Constant;
+        //        _interpType = interpolator;
+        //        return this;
+        //    }
 
-            internal RowItemBuilder WithNoneDist(double y)
-            {
-                _Y = y;
-                //todo john, i think we need to add a "None" option to the dist enums.
-                return this;
-            }
+        //    internal CoordinatesFunctionRowItem Build()
+        //    {
+        //        return new CoordinatesFunctionRowItem(_X, _Y,_standDev, _mean, _min, _max, _mostLikely, _distType, _interpType);
+        //    }
 
-            internal CoordinatesFunctionRowItem Build()
-            {
-                return new CoordinatesFunctionRowItem(_X, _Y);
-            }
-
-        }
+        //}
     }
 }

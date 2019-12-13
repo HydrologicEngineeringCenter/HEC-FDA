@@ -13,7 +13,6 @@ namespace Functions
     {
         IOrdinate X { get; }
         IOrdinate Y { get; }
-
         XElement WriteToXML();
         //ICoordinate<double, double> Sample(double p);
 

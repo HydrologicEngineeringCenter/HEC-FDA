@@ -2,6 +2,7 @@
 using FunctionsView.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,13 +21,23 @@ namespace FunctionsViewUITester
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        private ICoordinatesFunction _Function;
         public ICoordinatesFunction Function
         {
-            get;
-            set;
+            get { return _Function; }
+            set
+            {
+                _Function = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("Function"));
+                }
+            }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         //private List<CurveGeneratorRowItem> _Rows = new List<CurveGeneratorRowItem>();
         //public List<CurveGeneratorRowItem> RowItems
@@ -65,7 +76,7 @@ namespace FunctionsViewUITester
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            //ICoordinatesFunction func = Curve.GenerateFunction();
+            int i = 0;
         }
     }
 }

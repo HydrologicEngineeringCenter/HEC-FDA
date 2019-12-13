@@ -31,7 +31,7 @@ namespace Functions.CoordinatesFunctions
 
         #region Constructor
         //todo: are we using this interpolator?
-        internal CoordinatesFunctionVariableYs(List<ICoordinate> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
+        internal CoordinatesFunctionVariableYs(List<ICoordinate> coordinates, InterpolationEnum interpolation = InterpolationEnum.None)
         {
             Interpolator = interpolation;
             if (IsValid(coordinates))

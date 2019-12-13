@@ -26,7 +26,7 @@ namespace Functions.CoordinatesFunctions
         #endregion
 
         #region Constructor
-        internal CoordinatesFunctionConstants(List<ICoordinate> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation) 
+        internal CoordinatesFunctionConstants(List<ICoordinate> coordinates, InterpolationEnum interpolation = InterpolationEnum.None) 
         {
             if (IsValid(coordinates))
             {
@@ -106,7 +106,7 @@ namespace Functions.CoordinatesFunctions
                 return true;
             }
         }
-        private Func<int, double, double> SetInterpolator(InterpolationEnum methodOfInterpolation = InterpolationEnum.NoInterpolation)
+        private Func<int, double, double> SetInterpolator(InterpolationEnum methodOfInterpolation = InterpolationEnum.None)
         {
             switch (methodOfInterpolation)
             {
@@ -119,7 +119,7 @@ namespace Functions.CoordinatesFunctions
         private double PiecewiseInterpolator(int i, double x) => ((x - Coordinates[i].X.Value()) < (Coordinates[i + 1].X.Value() - Coordinates[i].X.Value()) / 2) ? Coordinates[i].Y.Value() : Coordinates[i + 1].Y.Value();
         private double NoInterpolator(int i, double x) => x == Coordinates[i].X.Value() ? Coordinates[i].Y.Value() : throw new InvalidOperationException(String.Format("The F(x) operation cannot produce a result because no interpolation method has been set and the specified x value: {0} was not explicitly provided as part of the function domain.", x));
 
-        private Func<int, double, double> SetInverseInterpolator(InterpolationEnum methodOfInterpolation = InterpolationEnum.NoInterpolation)
+        private Func<int, double, double> SetInverseInterpolator(InterpolationEnum methodOfInterpolation = InterpolationEnum.None)
         {
             switch (methodOfInterpolation)
             {
@@ -438,14 +438,14 @@ namespace Functions.CoordinatesFunctions
                     if (Coordinates[i].Y.Value() < g.Coordinates[j].X.Value()) // An X should be added and Z interpolated
                     {
                         // Add new ordinate to FoG if G allows interpolation between ordinates
-                        if (!(g.Interpolator == InterpolationEnum.NoInterpolation))
+                        if (!(g.Interpolator == InterpolationEnum.None))
                             fog.Add(ICoordinateFactory.Factory(Coordinates[i].X.Value(),   g.F(Coordinates[i].Y).Value()));
                         i++;
                     }
                     else // A Z should be added and X interpolated
                     {
                         // Add new ordinate to FoG if F allows Interpolation between ordinates
-                        if (!(Interpolator == InterpolationEnum.NoInterpolation))
+                        if (!(Interpolator == InterpolationEnum.None))
                             fog.Add(ICoordinateFactory.Factory(new Constant(InverseF(g.Coordinates[j].X.Value(), i - 1)).Value(), new Constant(g.Coordinates[j].Y.Value()).Value()));
                         j++;
                     }

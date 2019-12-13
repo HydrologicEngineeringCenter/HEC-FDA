@@ -51,7 +51,7 @@ namespace Functions
             return true;
         }
 
-        public static ICoordinatesFunction Factory(List<double> xs, List<double> ys, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
+        public static ICoordinatesFunction Factory(List<double> xs, List<double> ys, InterpolationEnum interpolation = InterpolationEnum.None)
         {
             //are lengths the same
             if (xs.Count == ys.Count)
