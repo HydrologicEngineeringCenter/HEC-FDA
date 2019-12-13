@@ -1,4 +1,5 @@
-﻿using FunctionsView.ViewModel;
+﻿using Functions.CoordinatesFunctions;
+using FunctionsView.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace FunctionsView.View
         {
             if (Row != null)
             {
-                Row.SelectedInterpolationType = cmb_Interp.SelectedValue.ToString();
+                Row.SelectedInterpolationType = (InterpolationEnum)cmb_Interp.SelectedValue;
             }
         }
 

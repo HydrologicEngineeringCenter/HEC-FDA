@@ -171,7 +171,7 @@ namespace Functions.CoordinatesFunctions
             {
                 retval = PiecewiseInterpolator(coordinateLeft, coordinateRight, x);
             }
-            else if (interpolator == InterpolationEnum.NoInterpolation)
+            else if (interpolator == InterpolationEnum.None)
             {
                 retval = NoInterpolator(coordinateLeft, x);
             }
@@ -190,7 +190,7 @@ namespace Functions.CoordinatesFunctions
             {
                 retval = InversePiecewiseInterpolator(coordinateLeft, coordinateRight, y);
             }
-            else if (interpolator == InterpolationEnum.NoInterpolation)
+            else if (interpolator == InterpolationEnum.None)
             {
                 retval = InverseNoInterpolator(coordinateLeft, y);
             }

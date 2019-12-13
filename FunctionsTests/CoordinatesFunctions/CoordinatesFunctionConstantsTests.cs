@@ -97,7 +97,7 @@ namespace FunctionsTests.CoordinatesFunctions
         public void CoordinatesFunctionConstants_NoInterpolation_Returns_NoInterpolation()
         {
             IFunction testObj = CreateCoordinatesFunctionConstantsBasic();
-            Assert.Equal(InterpolationEnum.NoInterpolation, testObj.Interpolator);
+            Assert.Equal(InterpolationEnum.None, testObj.Interpolator);
         }
         /// <summary> Tests that with Linear Interpolation it returns a Linear Interpolation enum. </summary>
         [Fact]

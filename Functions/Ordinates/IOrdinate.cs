@@ -24,9 +24,10 @@ namespace Functions
         bool Equals(IOrdinate scalar);
 
         /// <summary>
-        /// True if the parameter is distributed or variant in anyway, false otherwise
+        /// The type of distribution. If it is not distributed then this 
+        /// should have a value of "Constant"
         /// </summary>
-        bool IsDistributed { get; }
+        DistributionType DistributionType { get; }
         /// <summary>
         /// Provides a string representation of the parameter
         /// </summary>
