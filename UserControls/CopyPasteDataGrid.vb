@@ -125,14 +125,14 @@ Namespace Controls
 
                         Dim InsertRowsBelow As New MenuItem
                         InsertRowsBelow.Header = "Insert Row(s) Below"
-                        InsertRowsBelow.IsEnabled = Not IsLastRowSelected()
+                        'InsertRowsBelow.IsEnabled = Not IsLastRowSelected()
                         AddHandler InsertRowsBelow.Click, AddressOf InsertRowItemsBelow
                         cell.ContextMenu.Items.Add(InsertRowsBelow)
 
-                        Dim AddRows As New MenuItem
-                        AddRows.Header = "Add Rows"
-                        AddHandler AddRows.Click, AddressOf AddSelectedRows
-                        cell.ContextMenu.Items.Add(AddRows)
+                        'Dim AddRows As New MenuItem
+                        'AddRows.Header = "Add Rows"
+                        'AddHandler AddRows.Click, AddressOf AddSelectedRows
+                        'cell.ContextMenu.Items.Add(AddRows)
 
                         Dim DeleteRows As New MenuItem
                         DeleteRows.Header = "Delete Row(s)"
@@ -251,8 +251,10 @@ Namespace Controls
                                 Me.Items.Refresh()
                                 Exit Sub
                             Else
-                                Dim RowType As Type = Me.Items(RowIndex).GetType
-                                p.Add(Activator.CreateInstance(RowType))
+                                'Dim RowType As Type = Me.Items(RowIndex).GetType
+                                'p.Add(Activator.CreateInstance(RowType))
+                                RaiseEvent RowsAdded(Me.Items.Count, 1)
+
                             End If
                         End If
                         For j As Int32 = 0 To clipboardData(i).Count - 1

@@ -20,7 +20,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <local:CoordinatesFunctionDataGrid x:Name="dg_table" Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding Rows}" 
+        <local:CoordinatesFunctionDataGrid x:Name="dg_table" Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding TableVM.Rows}" 
                   Width="520" HorizontalAlignment="Left" Margin="5,0,5,0" BorderThickness="1,0,1,0" 
                   HorizontalGridLinesBrush="#808080" VerticalGridLinesBrush="#808080"
                   CanUserAddRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False"
