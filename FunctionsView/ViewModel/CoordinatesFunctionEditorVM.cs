@@ -1,7 +1,10 @@
 ﻿using Functions;
+using Functions.CoordinatesFunctions;
 using Functions.Ordinates;
+using FunctionsView.View;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -11,261 +14,362 @@ namespace FunctionsView.ViewModel
 {
     public class CoordinatesFunctionEditorVM 
     {
-        ////public delegate void NewDistributionSelected(CurveGeneratorEventArgs e);
-        ////public static event NewDistributionSelected NewDistributionEventTriggered;
-        //public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler UpdateView;
+        public bool HasLoaded { get; set; }
+        public CoordinatesFunctionEditorVM()
+        {
+            Tables = new List<CoordinatesFunctionTableVM>();
+        }
+        public CoordinatesFunctionEditorVM(ICoordinatesFunction function)
+        {
+            Tables = new List<CoordinatesFunctionTableVM>();
+            CreateTables(function);
+        }
 
-        //private List<CoordinatesFunctionRowItem> _Rows = new List<CoordinatesFunctionRowItem>();
-        //private string _selectedDistType;
-        //private string _type;
+        public List<CoordinatesFunctionTableVM> Tables
+        {
+            get;
+            set;
+        }
 
-        //public ICoordinatesFunction Function { get; }
-
-        //public List<CoordinatesFunctionRowItem> RowItems
+        //public ICoordinatesFunction Function
         //{
-        //    get { return _Rows; }
-        //    set
-        //    {
-        //        _Rows = value;
-        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RowItems"));
-        //    }
-        //}
+            //get { return (ICoordinatesFunction)this.GetValue(FunctionProperty); }
+            //set { this.SetValue(FunctionProperty, value); }
+       // }
 
-        //public string SelectedDistributionType
-        //{
-        //    get { return _selectedDistType; }
-        //    set
-        //    {
-        //        if (!value.Equals(_selectedDistType))
-        //        {
-        //            _selectedDistType = value;
+        
 
-        //            // NewDistributionEventTriggered?.Invoke( new CurveGeneratorEventArgs());
-        //        }
+        /// <summary>
+        /// This is used when the editor is opened to load the tables from a coordinates function.
+        /// </summary>
+        /// <param name="function"></param>
+        private void CreateTables(ICoordinatesFunction function)
+        {
+            List<CoordinatesFunctionRowItem> rows = CreateRows(function);
+            //foreach (CoordinatesFunctionRowItem row in rows)
+            //{
+            //    row.StructureChanged += Row_StructureChanged;
+            //}
+            CreateTables(rows);
+        }
 
-        //    }
-        //}
+        public void Save()
+        {
+            //Function = CreateFunctionFromTables();
+        }
 
-        //public CoordinatesFunctionEditorVM(ICoordinatesFunction function, string type)
-        //{
-        //    _type = type;
-        //    Function = function;
-        //    CreateRowItems();
-        //}
+        private ICoordinatesFunction CreateFunctionFromTables()
+        {
+            List<double> testXs = new List<double>() { 9, 99 };
+            List<double> testYs = new List<double>() { 10, 100 };
+            return ICoordinatesFunctionsFactory.Factory(testXs, testYs);
+        }
 
-        ////todo actually, i think this will need to return an icoordinates function so that it can be combined
-        ////with other funcs to make a linked function. The convertion to IFdaFunction is easy and could be done
-        ////by the parent control.
-        //public ICoordinatesFunction GenerateFunction()
-        //{
-        //    //can we assume that all rows will have the same distribution? i think so.
-        //    //turn each row into a coordinate
-        //    List<ICoordinate> coords = new List<ICoordinate>();
-        //    foreach (CoordinatesFunctionRowItem ri in RowItems)
-        //    {
-        //        coords.Add(CreateCoordinateFromRowItem(ri));
-        //    }
-        //    ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(coords, Functions.CoordinatesFunctions.InterpolationEnum.Linear);
-        //    return func;
+        /// <summary>
+        /// This is called anytime an visual update needs to happen, such as changing distribution types.
+        /// </summary>
+        /// <param name="rowItems"></param>
+        private void CreateTables(List<CoordinatesFunctionRowItem> rowItems)
+        {
+            
+            //we are about to create the tables, so we need to find out what kinds of data we are dealing with
+            //ColumnWidths.TableTypes tableType = ColumnWidths.GetTableTypeForRows(rowItems);
+            //it would be nice to just bind the items source of the list to be the list of tables
+            //but i have to put the topper and bottom UI pieces in. I could do them outside the list
+            //but that seemed harder to get it to line up etc.
+            //lst_tables.Items.Clear();
 
-        //    //can i just get the data context, cast it to some interface (iFunctionEditor) and then call the save
-        //    //method on that and pass in this new function?
-        //}
+            Tables.Clear();
 
-        //private void CreateRowItems()
-        //{
-        //    List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
-        //    foreach (ICoordinate coord in Function.Coordinates)
-        //    {
-        //        rows.Add(CreateRowItemFromCoordinate(coord));
+            if (rowItems.Count > 0)
+            {
+                //lst_tables.Items.Add(new TableTopControl(tableType));
 
-        //    }
-        //    RowItems = rows;
-        //}
+                ObservableCollection<CoordinatesFunctionRowItem> rows = new ObservableCollection<CoordinatesFunctionRowItem>();
+                DistributionType distType = rowItems[0].SelectedDistributionType;
+                InterpolationEnum interpType = rowItems[0].SelectedInterpolationType;
+                rows.Add(rowItems[0]);
+                for (int i = 1; i < rowItems.Count; i++)
+                //while (i < _Rows.Count)
+                {
+                    CoordinatesFunctionRowItem row = rowItems[i];
+                    if (row.SelectedDistributionType.Equals(distType) && row.SelectedInterpolationType.Equals(interpType))
+                    {
+                        rows.Add(rowItems[i]);
+                    }
+                    else
+                    {
+                        //the dist type changed
+                        CreateTable(rows);
+                        //set the new dist type and add it to the list
+                        distType = row.SelectedDistributionType;
+                        interpType = row.SelectedInterpolationType;
+                        rows = new ObservableCollection<CoordinatesFunctionRowItem>();
+                        rows.Add(row);
+                    }
 
-        //private ICoordinate CreateCoordinateFromRowItem(CoordinatesFunctionRowItem rowItem)
-        //{
-        //    double x = rowItem.X;
-        //    switch (rowItem.SelectedDistributionType)
-        //    {
-        //        case "None":
-        //            {
-        //                return ICoordinateFactory.Factory(x, rowItem.Y);
-        //            }
-        //        case "Normal":
-        //            {
-        //                double mean = rowItem.Mean;
-        //                double stDev = rowItem.Distribution.StandardDeviation;
-        //                int sampleSize = rowItem.Distribution.SampleSize;
-        //                IDistributedValue dist = DistributedValueFactory.FactoryNormal(mean, stDev, sampleSize);
-        //                return ICoordinateFactory.Factory(x, dist);
+                }
+                //need to create the final table
+                CreateTable(rows);
+                UpdateView?.Invoke(this, new EventArgs());
+                //lst_tables.Items.Add(new TableBottomControl(tableType));
+            }
+        }
 
-        //            }
-        //    }
-        //    //todo delete me
-        //    return null;
-        //}
-        ///// <summary>
-        ///// An individual row will send an event when it changes distribution types.
-        ///// This method will send an event up to the parent that this table has a row that
-        ///// changed.
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        ////private void RowChangedDistributionType(object sender, EventArgs e)
-        ////{
-        ////    CoordinatesFunctionRowItem rowThatChanged = (CoordinatesFunctionRowItem)sender;
-        ////    List<CoordinatesFunctionRowItem> rowsBelow = GetRowsBelowRow(rowThatChanged);
-        ////    List<CoordinatesFunctionRowItem> rowsAbove = GetRowsAboveRow(rowThatChanged);
+        private void UpdateTables()
+        {
+            List<CoordinatesFunctionRowItem> rows = GetAllRowsFromAllTables();
+            CreateTables(rows);
+        }
 
-        ////    NewDistributionEventTriggered?.Invoke(new CurveGeneratorEventArgs(rowThatChanged, rowsBelow, rowsAbove));
-        ////}
-
-        //private List<CoordinatesFunctionRowItem> GetRowsAboveRow(CoordinatesFunctionRowItem row)
-        //{
-        //    List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
-        //    int i;
-        //    for (i = 0; i < RowItems.Count; i++)
-        //    {
-        //        if (RowItems[i] == row)
-        //        {
-        //            break;
-        //        }
-        //        else
-        //        {
-        //            rows.Add(RowItems[i]);
-        //        }
-        //    }
-        //    return rows;
-        //}
-        //private List<CoordinatesFunctionRowItem> GetRowsBelowRow(CoordinatesFunctionRowItem row)
-        //{
-        //    int i;
-        //    for (i = 0; i < RowItems.Count; i++)
-        //    {
-        //        if (RowItems[i] == row)
-        //        {
-        //            break;
-        //        }
-        //    }
-        //    List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
-        //    i++;
-        //    for (int j = i; j < RowItems.Count; j++)
-        //    {
-        //        rows.Add(RowItems[j]);
-        //    }
-        //    return rows;
-        //}
-
-        //private CoordinatesFunctionRowItem CreateRowItemFromCoordinate(ICoordinate coord)
-        //{
-        //    //we know that x is always constant
-        //    double x = coord.X.Value();
-        //    //todo if we add a dist type for "None" then i can get rid of the "else" here and 
-        //    //just include it in the switch.
-        //    if (coord.Y.GetType().Equals(typeof(Distribution)))
-        //    {
-        //        IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
-        //        DistributionType type = dist.Type;
-        //        switch (type)
-        //        {
-        //            case DistributionType.Normal:
-        //                {
-
-        //                    CoordinatesFunctionRowItem row = new RowItemBuilder(x)
-        //                        .WithNormalDist(dist.Skewness, dist.StandardDeviation)
-        //                        .Build();
-        //                    row.SelectedInterpolationType = "Linear";
-        //                    //row.ChangedDistributionType += RowChangedDistributionType;
-        //                    return row;
-        //                }
-        //            default:
-        //                {
-        //                    throw new ArgumentException("The coordinate has a distributed y value that is not an allowed distribution type.");
-        //                }
-        //        }
-
-        //    }
-        //    else
-        //    {
-        //        //then y is a constant
-        //        double y = coord.Y.Value();
-        //        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItem(x, y);
-        //        //row.ChangedDistributionType += RowChangedDistributionType;
-        //        return row;
-        //    }
-        //}
+        private List<CoordinatesFunctionRowItem> GetAllRowsFromAllTables()
+        {
+            //These rows already have tables listening to the row is leaving event. I need to clear those
+            List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
+            foreach(CoordinatesFunctionTableVM table in Tables)
+            {
+                rows.AddRange(table.Rows);
+            }
+            return rows;
+        }
+        private void Table_RowIsLeaving(CoordinatesFunctionTableVM.RowLeavingEventArgs args)
+        {
+            CoordinatesFunctionTableVM table = args.Table;
+            CoordinatesFunctionRowItem row = args.Row;
+            CoordinatesFunctionTableVM.RowLeavingEventArgs.RowExtractionType extractionType = args.ExtractionType;
+            int tableIndex = Tables.IndexOf(table);
+            switch(extractionType)
+            {
+                case CoordinatesFunctionTableVM.RowLeavingEventArgs.RowExtractionType.MovingBack:
+                    {
+                        //if the table is the first table then we know we need to create a new table for the row
+                        if (tableIndex == 0)
+                        {
+                            InsertTable(0, new ObservableCollection<CoordinatesFunctionRowItem>() { row });
+                        }
+                        else
+                        {
+                            //we know we aren't the first table, so move this row backward
+                            MoveRowBackward(tableIndex, row);
+                        }
+                        break;
+                    }
+                case CoordinatesFunctionTableVM.RowLeavingEventArgs.RowExtractionType.MovingForeward:
+                    {
+                        //if the table is the last table then we know we need to create a new table for the row
+                        if (tableIndex == Tables.Count-1)
+                        {
+                            CreateTable(new ObservableCollection<CoordinatesFunctionRowItem>() { row });
+                        }
+                        else
+                        {
+                            //we know we aren't the last table, so move this row foreward
+                            MoveRowForeward(tableIndex, row);
+                        }
+                        break;
 
 
-        //private class RowItemBuilder
-        //{
-        //    private double _X;
-        //    private double _Y;
-        //    private DistributionType _distType;
-        //    private double _skew;
-        //    private double _standDev;
+                        
+                    }
+                case CoordinatesFunctionTableVM.RowLeavingEventArgs.RowExtractionType.Splitting:
+                    {
+                        //when splitting, the event args will have already removed the row, and the rows after the row
+                        //i just need to create tables for them
+                        //I will leave the previous rows in the existing table
+                        InsertTable(tableIndex + 1, new ObservableCollection<CoordinatesFunctionRowItem>() { row });
+                        InsertTable(tableIndex + 2, args.RowsAfterRow);
+                        break;
+                    }
+                case CoordinatesFunctionTableVM.RowLeavingEventArgs.RowExtractionType.OnlyRow:
+                    {
+                        //this is the only row left in the table
+                        //this row can eiter go to a previous table, go to the next table, or glue the previous and next table together.
+                        if(tableIndex == 0 && Tables.Count == 1)
+                        {
+                            //this is the only table, and it is losing its only row
+                            //create a new table for the row
+                            CreateTable(new ObservableCollection<CoordinatesFunctionRowItem>() { row });
+                        }
+                        else if(tableIndex == 0)
+                        {
+                            //then it can only go foreward
+                            MoveRowForeward(tableIndex, row);
+                        }
+                        else if(tableIndex == Tables.Count-1)
+                        {
+                            //then it can only go backward
+                            MoveRowBackward(tableIndex, row);
+                        }
+                        else
+                        {
+                            //this table is between two tables
+                            CoordinatesFunctionTableVM nextTable = Tables[tableIndex + 1];
+                            CoordinatesFunctionTableVM previousTable = Tables[tableIndex - 1];
+                            bool rowBelongsInNextTable = (nextTable.DistributionType == row.SelectedDistributionType && nextTable.InterpolationType == row.SelectedInterpolationType);
+                            bool rowBelongsInPreviousTable = (previousTable.DistributionType == row.SelectedDistributionType && previousTable.InterpolationType == row.SelectedInterpolationType);
+                            if (rowBelongsInPreviousTable && rowBelongsInNextTable)
+                            {
+                                //then we need to glue the tables together
+                                //i will keep the previous table and this row, and the rows from the next table to it
+                                previousTable.AddRow(row);
+                                foreach(CoordinatesFunctionRowItem rowItem in nextTable.Rows)
+                                {
+                                    //i clone it so that i can be sure that i am not carrying around extra listeners to the row
+                                    previousTable.AddRow(rowItem.Clone());
+                                }
+                                //get rid of the next table
+                                Tables.Remove(nextTable);
 
-        //    internal RowItemBuilder(double x)
-        //    {
-        //        _X = x;
-        //        _distType = DistributionType.NotSupported;
-        //    }
+                            }
+                            else if(rowBelongsInPreviousTable)
+                            {
+                                //add row to previous table
+                                previousTable.AddRow(row);
+                            }
+                            else if(rowBelongsInNextTable)
+                            {
+                                //add row to next table
+                                nextTable.InsertRow(0, row);
+                            }
+                            else
+                            {
+                                //it doesn't belong to either table, so insert a new table for it
+                                InsertTable(tableIndex, new ObservableCollection<CoordinatesFunctionRowItem>() { row });
 
-        //    internal RowItemBuilder WithNormalDist(double skew, double standardDeviation)
-        //    {
-        //        _distType = DistributionType.Normal;
-        //        _skew = skew;
-        //        _standDev = standardDeviation;
-        //        return this;
-        //    }
+                            }
 
-        //    internal RowItemBuilder WithNoneDist(double y)
-        //    {
-        //        _Y = y;
-        //        //todo john, i think we need to add a "None" option to the dist enums.
-        //        return this;
-        //    }
+                        }
+                        break;
+                    }
+            }
+            //UpdateView?.Invoke(this, new EventArgs());
 
-        //    internal CoordinatesFunctionRowItem Build()
-        //    {
-        //        return new CoordinatesFunctionRowItem(_X, _Y);
-        //    }
+        }
 
-        //}
+        private void MoveRowForeward(int tableIndex, CoordinatesFunctionRowItem row)
+        {
+            //if next table is of the same dist type and interp type then add this row to it
+            CoordinatesFunctionTableVM nextTable = Tables[tableIndex + 1];
+            if (nextTable.DistributionType == row.SelectedDistributionType && nextTable.InterpolationType == row.SelectedInterpolationType)
+            {
+                nextTable.InsertRow(0, row);
+            }
+            //else create a new table
+            else
+            {
+                InsertTable(tableIndex + 1, new ObservableCollection<CoordinatesFunctionRowItem>() { row });
+            }
+        }
 
-        ////public class CurveGeneratorRow
-        ////{
-        ////    private string _selectedDistType = "None";
+        private void MoveRowBackward(int tableIndex, CoordinatesFunctionRowItem row)
+        {
+            //if next table is of the same dist type and interp type then add this row to it
+            CoordinatesFunctionTableVM previousTable = Tables[tableIndex - 1];
+            if (previousTable.DistributionType == row.SelectedDistributionType && previousTable.InterpolationType == row.SelectedInterpolationType)
+            {
+                previousTable.AddRow(row);
+            }
+            //else create a new table
+            else
+            {
+                InsertTable(tableIndex , new ObservableCollection<CoordinatesFunctionRowItem>() { row });
+            }
+        }
 
-        ////    public string SelectedDistributionType
-        ////    {
-        ////        get { return _selectedDistType; }
-        ////        set
-        ////        {
-        ////            _selectedDistType = value;
-        ////        }
-        ////    }
-        ////    public double X { get; set; }
-        ////    public double Y { get; set; }
+        /// <summary>
+        /// Turns a coordinates function into a list of row items.
+        /// Converts each coordinate of the function into its own row.
+        /// </summary>
+        /// <param name="function"></param>
+        /// <returns></returns>
+        public List<CoordinatesFunctionRowItem> CreateRows(ICoordinatesFunction function)
+        {
+            InterpolationEnum interpolator = function.Interpolator;
+            List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
+            foreach (ICoordinate coord in function.Coordinates)
+            {
+                rows.Add(CreateRowItemFromCoordinate(coord, interpolator));
 
-        ////    public List<Functions.DistributionType> DistributionTypes
-        ////    {
-        ////        get
-        ////        {
-        ////            List<Functions.DistributionType> types = new List<Functions.DistributionType>();
-        ////            types.Add(Functions.DistributionType.Normal);
-        ////            types.Add(Functions.DistributionType.Triangular);
-        ////            types.Add(Functions.DistributionType.Uniform);
-        ////            return types;
-        ////        }
-        ////    }
+            }
+            return rows;
+        }
+        private CoordinatesFunctionRowItem CreateRowItemFromCoordinate(ICoordinate coord, InterpolationEnum interpolator)
+        {
+            double x = coord.X.Value();
+            DistributionType type = coord.Y.DistributionType;
+            switch (type)
+            {
+                case DistributionType.Constant:
+                    {
+                        double y = coord.Y.Value();
+                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
+                                .WithConstantDist(y, interpolator)
+                                .Build();
+                        return row;
+                    }
+                case DistributionType.Normal:
+                    {
+                        IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
+                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
+                            .WithNormalDist(dist.Mean, dist.StandardDeviation, interpolator)
+                            .Build();
+                        return row;
+                    }
+                default:
+                    {
+                        throw new ArgumentException("The coordinate has a distributed y value that is not supported.");
+                    }
+            }
+        }
 
-        ////    public CurveGeneratorRow(double x, double y)
-        ////    {
-        ////        X = x;
-        ////        Y = y;
-        ////    }
-        ////}
+        private void InsertTable(int index, ObservableCollection<CoordinatesFunctionRowItem> rows)
+        {
+            CoordinatesFunctionTableVM newTable = new CoordinatesFunctionTableVM(rows);
+            newTable.RowIsLeavingTable += Table_RowIsLeaving;
+            newTable.NoMoreRows += NewTable_NoMoreRows;
+            Tables.Insert(index, newTable);
+            UpdateView?.Invoke(this, new EventArgs());
 
+        }
+
+        /// <summary>
+        /// Creates a new coordinates function table using the rows passed in.
+        /// All rows should have the same distribution type and interpolation type.
+        /// </summary>
+        /// <param name="rows"></param>
+        /// <param name="type"></param>
+        private void CreateTable(ObservableCollection<CoordinatesFunctionRowItem> rows)
+        {
+            CoordinatesFunctionTableVM newTable = new CoordinatesFunctionTableVM(rows);
+            newTable.RowIsLeavingTable += Table_RowIsLeaving;
+            newTable.NoMoreRows += NewTable_NoMoreRows;
+            Tables.Add(newTable);
+            UpdateView?.Invoke(this, new EventArgs());
+        }
+
+        private void NewTable_NoMoreRows(object sender, EventArgs e)
+        {
+            //if there are multiple tables then just delete this table
+            //if this is the last table then put in an empty row
+            CoordinatesFunctionTableVM table = (CoordinatesFunctionTableVM)sender;
+            
+            Tables.Remove(table);
+            if (Tables.Count == 0)
+            {
+                // add a default table with a single row.
+                CreateDefaultTable();
+            }
+            UpdateView?.Invoke(this, new EventArgs());
+            //UpdateTables();
+        }
+
+        private void CreateDefaultTable()
+        {
+            ObservableCollection<CoordinatesFunctionRowItem> rows = new ObservableCollection<CoordinatesFunctionRowItem>();
+            rows.Add(new CoordinatesFunctionRowItem());
+            CreateTable(rows);
+            
+        }
     }
 }

@@ -24,6 +24,8 @@ namespace FunctionsViewUITester
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private ICoordinatesFunction _Function;
+
+        public CoordinatesFunctionEditorVM EditorVM { get; set; }
         public ICoordinatesFunction Function
         {
             get { return _Function; }
@@ -67,8 +69,9 @@ namespace FunctionsViewUITester
         }
         public MainWindow()
         {
-            CreateFunction();
             this.DataContext = this;
+            CreateFunction();
+            EditorVM = new CoordinatesFunctionEditorVM(Function);
 
             InitializeComponent();
 

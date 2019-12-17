@@ -25,160 +25,213 @@ namespace FunctionsView.View
     /// </summary>
     public partial class CoordinatesFunctionEditor : UserControl
     {
+        //public static readonly DependencyProperty FunctionProperty = DependencyProperty.Register("Function", typeof(ICoordinatesFunction), typeof(CoordinatesFunctionEditor), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(FunctionChangedCallBack)));   
+        public static readonly DependencyProperty EditorVMProperty = DependencyProperty.Register("EditorVM", typeof(CoordinatesFunctionEditorVM), typeof(CoordinatesFunctionEditor), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(EditorVMChangedCallBack)));
         public bool HasLoaded { get; set; }
+
         public CoordinatesFunctionEditor()
         {
             InitializeComponent();
-            Tables = new List<CoordinatesFunctionTable>();
+            //Tables = new List<CoordinatesFunctionTable>();
         }
-        public static readonly DependencyProperty FunctionProperty = DependencyProperty.Register("Function", typeof(ICoordinatesFunction), typeof(CoordinatesFunctionEditor), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(FunctionChangedCallBack)));   
 
-        public List<CoordinatesFunctionTable> Tables
+        //public List<CoordinatesFunctionTable> Tables
+        //{
+        //    get;
+        //    set;
+        //}
+
+        //public ICoordinatesFunction Function
+        //{
+        //    get { return (ICoordinatesFunction)this.GetValue(FunctionProperty); }
+        //    set { this.SetValue(FunctionProperty, value); }
+        //}
+        public CoordinatesFunctionEditorVM EditorVM
         {
-            get;
-            set;
+            get { return (CoordinatesFunctionEditorVM)this.GetValue(EditorVMProperty); }
+            set { this.SetValue(EditorVMProperty, value); }
         }
 
-        public ICoordinatesFunction Function
-        {
-            get { return (ICoordinatesFunction)this.GetValue(FunctionProperty); }
-            set { this.SetValue(FunctionProperty, value); }
-        }
-
-        private static void FunctionChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        
+            private static void EditorVMChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             CoordinatesFunctionEditor owner = d as CoordinatesFunctionEditor;
-            //basically i am just storing a pointer to this function that is in the VM
-            //when the user clicks OK or Save then i update this Function with whatever is
-            //in this editors tables
-
-            //i only want to do this one time when the editor is first opened.
-            if (owner.HasLoaded != true)
-            {
-                owner.HasLoaded = true;
-                owner.Function = e.NewValue as ICoordinatesFunction;
-                owner.CreateTables(e.NewValue as ICoordinatesFunction);
-                //call some sort of update method that re sorts and organizes the tables and replots.
-                owner.UpdateView(owner, new EventArgs());
-            }
-            
+            CoordinatesFunctionEditorVM editorVM = e.NewValue as CoordinatesFunctionEditorVM;
+            editorVM.UpdateView += owner.UpdateView;
+            owner.EditorVM = editorVM;
+            owner.UpdateView(owner, new EventArgs());
         }
+        //private static void FunctionChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+            //CoordinatesFunctionEditor owner = d as CoordinatesFunctionEditor;
+            ////basically i am just storing a pointer to this function that is in the VM
+            ////when the user clicks OK or Save then i update this Function with whatever is
+            ////in this editors tables
+
+            ////i only want to do this one time when the editor is first opened.
+            //if (owner.HasLoaded != true)
+            //{
+            //    owner.HasLoaded = true;
+            //    //owner.Function = e.NewValue as ICoordinatesFunction;
+            //    owner.EditorVM = e.NewValue as CoordinatesFunctionEditorVM;
+            //    owner.CreateTables();
+            //    //call some sort of update method that re sorts and organizes the tables and replots.
+            //    owner.UpdateView(owner, new EventArgs());
+            //}
+            
+        //}
 
         /// <summary>
         /// This is used when the editor is opened to load the tables from a coordinates function.
         /// </summary>
         /// <param name="function"></param>
-        private void CreateTables(ICoordinatesFunction function)
-        {
-            List<CoordinatesFunctionRowItem> rows = CreateRows(function);
-            CreateTables(rows);
-        }
+        //private void CreateTables()
+        //{
+            //List<CoordinatesFunctionRowItem> rows = CreateRows(function);
+            //CreateTables(rows);
+       // }
 
-        public void Save()
-        {
-            Function = CreateFunctionFromTables();
-        }
+        //public void Save()
+        //{
+        //    Function = CreateFunctionFromTables();
+        //}
 
-        private ICoordinatesFunction CreateFunctionFromTables()
+        //private ICoordinatesFunction CreateFunctionFromTables()
+        //{
+        //    List<double> testXs = new List<double>() { 9, 99 };
+        //    List<double> testYs = new List<double>() { 10, 100 };
+        //    return ICoordinatesFunctionsFactory.Factory(testXs, testYs);
+        //}
+
+        private List<CoordinatesFunctionRowItem> GetAllRowsFromAllTables()
         {
-            List<double> testXs = new List<double>() { 9, 99 };
-            List<double> testYs = new List<double>() { 10, 100 };
-            return ICoordinatesFunctionsFactory.Factory(testXs, testYs);
+            List<CoordinatesFunctionRowItem> allRows = new List<CoordinatesFunctionRowItem>();
+            foreach (CoordinatesFunctionTableVM tableVM in EditorVM.Tables)
+            {
+                allRows.AddRange(tableVM.Rows);
+            }
+            return allRows;
         }
 
         /// <summary>
         /// This is called anytime an visual update needs to happen, such as changing distribution types.
         /// </summary>
         /// <param name="rowItems"></param>
-        private void CreateTables(List<CoordinatesFunctionRowItem> rowItems)
+        private void CreateTables()
         {
+            if(EditorVM.Tables.Count == 0)
+            {
+                return;
+            }
+
+            List<CoordinatesFunctionRowItem> rowItems = GetAllRowsFromAllTables();
+            
+
             //we are about to create the tables, so we need to find out what kinds of data we are dealing with
             ColumnWidths.TableTypes tableType = ColumnWidths.GetTableTypeForRows(rowItems);
+
+            lst_tables.Items.Clear();
+
+            lst_tables.Items.Add(new TableTopControl(tableType));
+            for(int i = 0;i<EditorVM.Tables.Count;i++)
+            {
+                CoordinatesFunctionTable newTable = new CoordinatesFunctionTable(EditorVM.Tables[i], tableType);
+                if (i == 0)
+                {
+                    newTable.DisplayXAndInterpolatorHeaders();
+                }
+                newTable.UpdateView += UpdateView;
+                newTable.LastRowEnterPressed += NewTable_LastRowEnterPressed;
+                newTable.LastRowAndCellTabPressed += NewTable_LastRowAndCellTabPressed;
+                lst_tables.Items.Add(newTable);
+
+            }
+            lst_tables.Items.Add(new TableBottomControl(tableType));
+
             //it would be nice to just bind the items source of the list to be the list of tables
             //but i have to put the topper and bottom UI pieces in. I could do them outside the list
             //but that seemed harder to get it to line up etc.
-            lst_tables.Items.Clear();
-            Tables.Clear();
+            //Tables.Clear();
 
-            if (rowItems.Count > 0)
-            {
-                lst_tables.Items.Add(new TableTopControl(tableType));
+            
 
-                ObservableCollection<CoordinatesFunctionRowItem> rows = new ObservableCollection<CoordinatesFunctionRowItem>();
-                DistributionType distType = rowItems[0].SelectedDistributionType;
-                InterpolationEnum interpType = rowItems[0].SelectedInterpolationType;
-                rows.Add(rowItems[0]);
-                for (int i = 1; i < rowItems.Count; i++)
-                //while (i < _Rows.Count)
-                {
-                    CoordinatesFunctionRowItem row = rowItems[i];
-                    if (row.SelectedDistributionType.Equals(distType) && row.SelectedInterpolationType.Equals(interpType))
-                    {
-                        rows.Add(rowItems[i]);
-                    }
-                    else
-                    {
-                        //the dist type changed
-                        CreateTable(rows, tableType);
-                        //set the new dist type and add it to the list
-                        distType = row.SelectedDistributionType;
-                        interpType = row.SelectedInterpolationType;
-                        rows = new ObservableCollection<CoordinatesFunctionRowItem>();
-                        rows.Add(row);
-                    }
+                //ObservableCollection<CoordinatesFunctionRowItem> rows = new ObservableCollection<CoordinatesFunctionRowItem>();
+                //DistributionType distType = rowItems[0].SelectedDistributionType;
+                //InterpolationEnum interpType = rowItems[0].SelectedInterpolationType;
+                //rows.Add(rowItems[0]);
+                //for (int i = 1; i < rowItems.Count; i++)
+                ////while (i < _Rows.Count)
+                //{
+                //    CoordinatesFunctionRowItem row = rowItems[i];
+                //    if (row.SelectedDistributionType.Equals(distType) && row.SelectedInterpolationType.Equals(interpType))
+                //    {
+                //        rows.Add(rowItems[i]);
+                //    }
+                //    else
+                //    {
+                //        //the dist type changed
+                //        CreateTable(rows, tableType);
+                //        //set the new dist type and add it to the list
+                //        distType = row.SelectedDistributionType;
+                //        interpType = row.SelectedInterpolationType;
+                //        rows = new ObservableCollection<CoordinatesFunctionRowItem>();
+                //        rows.Add(row);
+                //    }
 
-                }
-                //need to create the final table
-                CreateTable(rows, tableType);
+                //}
+                ////need to create the final table
+                //CreateTable(rows, tableType);
 
-                lst_tables.Items.Add(new TableBottomControl(tableType));
-            }
+            
         }
+
+       
+
         /// <summary>
         /// Turns a coordinates function into a list of row items.
         /// Converts each coordinate of the function into its own row.
         /// </summary>
         /// <param name="function"></param>
         /// <returns></returns>
-        public List<CoordinatesFunctionRowItem> CreateRows(ICoordinatesFunction function)
-        {
-            InterpolationEnum interpolator = function.Interpolator;
-            List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
-            foreach (ICoordinate coord in function.Coordinates)
-            {
-                rows.Add(CreateRowItemFromCoordinate(coord, interpolator));
+        //public List<CoordinatesFunctionRowItem> CreateRows(ICoordinatesFunction function)
+        //{
+        //    InterpolationEnum interpolator = function.Interpolator;
+        //    List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
+        //    foreach (ICoordinate coord in function.Coordinates)
+        //    {
+        //        rows.Add(CreateRowItemFromCoordinate(coord, interpolator));
 
-            }
-            return rows;
-        }
-        private CoordinatesFunctionRowItem CreateRowItemFromCoordinate(ICoordinate coord, InterpolationEnum interpolator)
-        {
-            double x = coord.X.Value();
-            DistributionType type = coord.Y.DistributionType;
-            switch (type)
-            {
-                case DistributionType.Constant:
-                    {
-                        double y = coord.Y.Value();
-                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
-                                .WithConstantDist(y, interpolator)
-                                .Build();
-                        return row;
-                    }
-                case DistributionType.Normal:
-                    {
-                        IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
-                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
-                            .WithNormalDist(dist.Mean, dist.StandardDeviation, interpolator)
-                            .Build();
-                        return row;
-                    }
-                default:
-                    {
-                        throw new ArgumentException("The coordinate has a distributed y value that is not supported.");
-                    }
-            }
-        }
+        //    }
+        //    return rows;
+        //}
+        //private CoordinatesFunctionRowItem CreateRowItemFromCoordinate(ICoordinate coord, InterpolationEnum interpolator)
+        //{
+        //    double x = coord.X.Value();
+        //    DistributionType type = coord.Y.DistributionType;
+        //    switch (type)
+        //    {
+        //        case DistributionType.Constant:
+        //            {
+        //                double y = coord.Y.Value();
+        //                CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
+        //                        .WithConstantDist(y, interpolator)
+        //                        .Build();
+        //                return row;
+        //            }
+        //        case DistributionType.Normal:
+        //            {
+        //                IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
+        //                CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
+        //                    .WithNormalDist(dist.Mean, dist.StandardDeviation, interpolator)
+        //                    .Build();
+        //                return row;
+        //            }
+        //        default:
+        //            {
+        //                throw new ArgumentException("The coordinate has a distributed y value that is not supported.");
+        //            }
+        //    }
+        //}
 
         /// <summary>
         /// This gets called anytime a visual update needs to happen to the editor.
@@ -189,16 +242,7 @@ namespace FunctionsView.View
         /// <param name="e"></param>
         private void UpdateView(object sender, EventArgs e)
         {
-            List<CoordinatesFunctionRowItem> allRows = new List<CoordinatesFunctionRowItem>();
-           foreach(CoordinatesFunctionTable table in Tables)
-            {
-                allRows.AddRange(table.Rows);
-            }
-           //before we create the tables we need to determine what types of rows we are dealing with and set the 
-           //column widths accordingly.
-
-            CreateTables(allRows);
-            Save();
+            CreateTables();
         }
        
         //private bool AreAllTablesNone()
@@ -224,20 +268,20 @@ namespace FunctionsView.View
         /// </summary>
         /// <param name="rows"></param>
         /// <param name="type"></param>
-        private void CreateTable(ObservableCollection<CoordinatesFunctionRowItem> rows, ColumnWidths.TableTypes type)
-        {
-            CoordinatesFunctionTable newTable = new CoordinatesFunctionTable(rows, type);
-            newTable.UpdateView += UpdateView;
-            newTable.LastRowEnterPressed += NewTable_LastRowEnterPressed;
-            newTable.LastRowAndCellTabPressed += NewTable_LastRowAndCellTabPressed;
-            if(lst_tables.Items.Count == 1)
-            {
-                newTable.DisplayXAndInterpolatorHeaders();
-            }
+        //private void CreateTable(ObservableCollection<CoordinatesFunctionRowItem> rows, ColumnWidths.TableTypes type)
+        //{
+        //    CoordinatesFunctionTable newTable = new CoordinatesFunctionTable(rows, type);
+        //    newTable.UpdateView += UpdateView;
+        //    newTable.LastRowEnterPressed += NewTable_LastRowEnterPressed;
+        //    newTable.LastRowAndCellTabPressed += NewTable_LastRowAndCellTabPressed;
+        //    if(lst_tables.Items.Count == 1)
+        //    {
+        //        newTable.DisplayXAndInterpolatorHeaders();
+        //    }
 
-            lst_tables.Items.Add(newTable);
-            Tables.Add(newTable);
-        }
+        //    lst_tables.Items.Add(newTable);
+        //    Tables.Add(newTable);
+        //}
 
         /// <summary>
         /// Tab was pressed in the last row and editable cell of a table. If it is the last table
@@ -248,9 +292,10 @@ namespace FunctionsView.View
         private void NewTable_LastRowAndCellTabPressed(object sender, EventArgs e)
         {
             CoordinatesFunctionTable senderTable = (CoordinatesFunctionTable)sender;
-            if (Tables.Last().Equals(senderTable))
+            if(EditorVM.Tables.Last().Equals(senderTable.TableVM))
+            //if (lst_tables.Items[lst_tables.Items.Count - 2].Equals(senderTable))
             {
-                senderTable.AddRow();
+                senderTable.TableVM.AddRow();
             }
         }
 
@@ -263,9 +308,9 @@ namespace FunctionsView.View
         private void NewTable_LastRowEnterPressed(object sender, EventArgs e)
         {
             CoordinatesFunctionTable senderTable = (CoordinatesFunctionTable)sender;
-            if(Tables.Last().Equals(senderTable))
+            if(lst_tables.Items[lst_tables.Items.Count-2].Equals(senderTable))
             {
-                senderTable.AddRow();
+                senderTable.TableVM.AddRow();
             }
         }
 

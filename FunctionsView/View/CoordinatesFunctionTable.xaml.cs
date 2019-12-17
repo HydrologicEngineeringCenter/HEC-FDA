@@ -33,8 +33,9 @@ namespace FunctionsView.View
         public event EventHandler LastRowEnterPressed;
         public event EventHandler LastRowAndCellTabPressed;
 
-        public string TableType { get; set; }
-        public ObservableCollection<CoordinatesFunctionRowItem> Rows
+        //public string TableType { get; set; }
+        //public ObservableCollection<CoordinatesFunctionRowItem> Rows
+        public CoordinatesFunctionTableVM TableVM
         {
             get;
             set;
@@ -54,12 +55,68 @@ namespace FunctionsView.View
             col_x.Width = ColumnWidths.COL_X_WIDTH;
             col_dist.Width = ColumnWidths.COL_DIST_WIDTH;
             //col_interp.Width = ColumnWidths.COL_INTERP_WIDTH;
-            TableType = "None";
+            //TableType = "None";
             dg_table.RowsAdded += Dg_table_RowsAdded;
             dg_table.DataPasted += Dg_table_DataPasted;
             dg_table.RowsDeleted += Dg_table_RowsDeleted;
             dg_table.PreviewLastRowEnter += Dg_table_PreviewLastRowEnter;
             dg_table.PreviewLastRowTab += Dg_table_PreviewLastRowTab;
+        }
+        /// <summary>
+        /// The table type is not the type for this individual table. Is the tableType of the widest table
+        /// in the editors list. It gets passed in here to make this table have that same spacing as its neighbors.
+        /// </summary>
+        /// <param name="vm"></param>
+        /// <param name="largestEditorTableType"></param>
+        public CoordinatesFunctionTable(CoordinatesFunctionTableVM vm, ColumnWidths.TableTypes largestEditorTableType) : this()
+        {
+            this.DataContext = this;
+            TableVM = vm;
+            dg_table.Width = ColumnWidths.TotalColumnWidths(largestEditorTableType) + 8; //had to add 8 to make the lines match up
+
+            if (TableVM.Rows.Count > 0)
+            {
+                DistributionType distType = TableVM.Rows[0].SelectedDistributionType;
+                switch (distType)
+                {
+                    case DistributionType.Constant:
+                        {
+                            //TableType = "None";
+                            AddNoneColumn(largestEditorTableType);
+                            break;
+                        }
+                    case DistributionType.Normal:
+                        {
+                            //TableType = "Normal";
+                            AddNormalColumns(largestEditorTableType);
+                            break;
+                        }
+                    case DistributionType.Triangular:
+                        {
+                            //TableType = "Triangular";
+                            AddTriangularColumns(largestEditorTableType);
+                            break;
+                        }
+                    case DistributionType.Uniform:
+                        {
+                            //TableType = "Uniform";
+                            AddUniformColumns(largestEditorTableType);
+                            break;
+                        }
+                    case DistributionType.TruncatedNormal:
+                        {
+                            //TableType = "Triangular";
+                            AddTruncatedNormalColumns(largestEditorTableType);
+                            break;
+                        }
+                    case DistributionType.Beta4Parameters:
+                        {
+                            //TableType = "Triangular";
+                            AddBetaColumns(largestEditorTableType);
+                            break;
+                        }
+                }
+            }
         }
 
         private void Dg_table_PreviewLastRowTab(int cellIndex)
@@ -91,126 +148,57 @@ namespace FunctionsView.View
             //Rows.Add( row);
         }
 
-        private CoordinatesFunctionRowItem CreateDefaultRow()
-        {
-            InterpolationEnum interpType = Rows[0].SelectedInterpolationType;
-            DistributionType distType = Rows[0].SelectedDistributionType;
-            CoordinatesFunctionRowItem row = null;
-            switch (distType)
-            {
-                case DistributionType.Constant:
-                    {
-                        row = new CoordinatesFunctionRowItemBuilder(0).WithConstantDist(0, interpType).Build();
-                        break;
-                    }
-                case DistributionType.Normal:
-                    {
-                        row = new CoordinatesFunctionRowItemBuilder(0).WithNormalDist(0, 0, interpType).Build();
-                        break;
-                    }
-                case DistributionType.Triangular:
-                    {
-                        row = new CoordinatesFunctionRowItemBuilder(0).WithTriangularDist(0, 0, 0, interpType).Build();
-                        break;
-                    }
-            }
-            row.StructureChanged += TableStructureChanged;
-            row.ChangedInterpolationType += TableStructureChanged;
-
-            return row;
-        }
-        public void AddRow()
-        {
-            //todo maybe i want a factory class to make do this logic. It might come in handy when i need to translate
-            //from one dist type to another when the user changes the dist type.
-            Rows.Add(CreateDefaultRow());
-            SetFocusToLastRowFirstCell();
-        }
-
         private void SetFocusToLastRowFirstCell()
         {
-            DataGridCellInfo dataGridCellInfo = new DataGridCellInfo(dg_table.Items[Rows.Count-1], dg_table.Columns[0]);
+            DataGridCellInfo dataGridCellInfo = new DataGridCellInfo(dg_table.Items[TableVM.Rows.Count-1], dg_table.Columns[0]);
             dg_table.SelectedCells.Clear();
             dg_table.SelectedCells.Add(dataGridCellInfo);
         }
 
         private void Dg_table_RowsDeleted(List<int> rowindices)
         {
-            if(Rows.Count == 0)
+            if(TableVM.Rows.Count == 0)
             {
-                //this will remove the table from the parents list
-                UpdateView(this, new EventArgs());
+
+                //this will remove the table from the editor's list
+                //UpdateView(this, new EventArgs());
+                TableVM.RowDeleted();
             }
         }
 
+        //todo: can i delete this?
         private void Dg_table_DataPasted()
         {
             //every row that had values pasted into it has now lost its event connections
             //i need to reconnect them
             //todo, I really don't like this but i don't know what rows have the events and which don't. Is there a better way?
-            foreach(CoordinatesFunctionRowItem row in Rows)
-            {
-                row.StructureChanged -= TableStructureChanged;
-                row.ChangedInterpolationType -= TableStructureChanged;
+            //foreach(CoordinatesFunctionRowItem row in Rows)
+            //{
+            //    row.StructureChanged -= TableStructureChanged;
+            //    row.DataChanged -= DataChanged;
 
-                row.StructureChanged += TableStructureChanged;
-                row.ChangedInterpolationType += TableStructureChanged;
-            }
+            //    //row.ChangedInterpolationType -= TableStructureChanged;
+
+            //    row.StructureChanged += TableStructureChanged;
+            //    row.DataChanged += DataChanged;
+
+            //    //row.ChangedInterpolationType += TableStructureChanged;
+            //}
         }
 
         private void Dg_table_RowsAdded(int startrow, int numrows)
         {
-            for(int i = 0;i<numrows;i++)
-            {
-                Rows.Insert(startrow, CreateDefaultRow());
-            }
+            TableVM.AddRows(startrow, numrows);
         }
 
-        public CoordinatesFunctionTable(ObservableCollection<CoordinatesFunctionRowItem> rows, ColumnWidths.TableTypes tableType):this()
-        {
-
-            this.DataContext = this;
-            dg_table.Width = ColumnWidths.TotalColumnWidths(tableType) + 8; //had to add 8 to make the lines match up
-               
-            foreach(CoordinatesFunctionRowItem row in rows)
-            {
-                row.StructureChanged += TableStructureChanged;
-                row.ChangedInterpolationType += TableStructureChanged;
-            }
-            Rows = rows;
-            if (rows.Count > 0)
-            {
-                DistributionType distType = rows[0].SelectedDistributionType;
-                switch (distType)
-                {
-                    case DistributionType.Constant:
-                        {
-                            TableType = "None";
-                            AddNoneColumn(tableType);
-                            break;
-                        }
-                    case DistributionType.Normal:
-                        {
-                            TableType = "Normal";
-                            AddNormalColumns(tableType);
-                            break;
-                        }
-                    case DistributionType.Triangular:
-                        {
-                            TableType = "Triangular";
-                            AddTriangularColumns(tableType);
-                            break;
-                        }
-                }
-            }
-        }
+       
 
         #region events
 
-        private void TableStructureChanged(object sender, EventArgs e)
-        {
-            UpdateView?.Invoke(sender, e);
-        }
+        //private void TableStructureChanged(object sender, EventArgs e)
+        //{
+        //    UpdateView?.Invoke(sender, e);
+        //}
 
         #endregion
         public void DisplayXAndInterpolatorHeaders()
@@ -221,9 +209,134 @@ namespace FunctionsView.View
             columns[columns.Count - 1].Header = "Interpolator";
         }
 
-        private void AddTriangularColumns(ColumnWidths.TableTypes tableType)
+        //private void AddUniformColumns(ColumnWidths.TableTypes largestEditorTableType)
+        //{
+        //    int[] colWidths = ColumnWidths.DynamicColumnWidths(largestEditorTableType);
+
+        //    List<DataGridColumn> columns = new List<DataGridColumn>();
+
+        //    DataGridTextColumn colMin = new DataGridTextColumn();
+        //    colMin.Header = "Min";
+        //    colMin.Width = colWidths[1]; //130;
+        //    colMin.CanUserReorder = false;
+        //    colMin.CanUserResize = false;
+        //    colMin.CanUserSort = false;
+        //    colMin.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
+        //    colMin.Binding = new Binding("Min");
+        //    columns.Add(colMin);
+
+        //    DataGridTextColumn colMax = new DataGridTextColumn();
+        //    colMax.Header = "Max";
+        //    colMax.Width = colWidths[2]; //130;
+        //    colMax.CanUserReorder = false;
+        //    colMax.CanUserResize = false;
+        //    colMax.CanUserSort = false;
+        //    colMax.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
+        //    colMax.Binding = new Binding("Max");
+        //    columns.Add(colMax);
+
+        //    AddColumns(columns);
+        //}
+        private void AddBetaColumns(ColumnWidths.TableTypes largestEditorTableType)
         {
-            int[] colWidths = ColumnWidths.DynamicColumnWidths(tableType);
+            int[] colWidths = ColumnWidths.GetComputedTrancatedNormalWidths(largestEditorTableType);
+
+            List<DataGridColumn> columns = new List<DataGridColumn>();
+
+            DataGridTextColumn colAlpha = new DataGridTextColumn();
+            colAlpha.Header = "Alpha";
+            colAlpha.Width = colWidths[0];
+            colAlpha.CanUserReorder = false;
+            colAlpha.CanUserResize = false;
+            colAlpha.CanUserSort = false;
+            colAlpha.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
+            colAlpha.Binding = new Binding("Alpha");
+            columns.Add(colAlpha);
+
+            DataGridTextColumn colBeta = new DataGridTextColumn();
+            colBeta.Header = "Beta";
+            colBeta.Width = colWidths[1];
+            colBeta.CanUserReorder = false;
+            colBeta.CanUserResize = false;
+            colBeta.CanUserSort = false;
+            colBeta.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
+            colBeta.Binding = new Binding("Beta");
+            columns.Add(colBeta);
+
+            DataGridTextColumn colMin = new DataGridTextColumn();
+            colMin.Header = "Min";
+            colMin.Width = colWidths[2];
+            colMin.CanUserReorder = false;
+            colMin.CanUserResize = false;
+            colMin.CanUserSort = false;
+            colMin.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
+            colMin.Binding = new Binding("Min");
+            columns.Add(colMin);
+
+            DataGridTextColumn colMax = new DataGridTextColumn();
+            colMax.Header = "Max";
+            colMax.Width = colWidths[3];
+            colMax.CanUserReorder = false;
+            colMax.CanUserResize = false;
+            colMax.CanUserSort = false;
+            colMax.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
+            colMax.Binding = new Binding("Max");
+            columns.Add(colMax);
+
+            AddColumns(columns);
+        }
+        private void AddTruncatedNormalColumns(ColumnWidths.TableTypes largestEditorTableType)
+        {
+            int[] colWidths = ColumnWidths.GetComputedTrancatedNormalWidths(largestEditorTableType);
+
+            List<DataGridColumn> columns = new List<DataGridColumn>();
+
+            DataGridTextColumn colMean = new DataGridTextColumn();
+            colMean.Header = "Mean";
+            colMean.Width = colWidths[0];
+            colMean.CanUserReorder = false;
+            colMean.CanUserResize = false;
+            colMean.CanUserSort = false;
+            colMean.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
+            colMean.Binding = new Binding("Mean");
+            columns.Add(colMean);
+
+            DataGridTextColumn colStDev = new DataGridTextColumn();
+            colStDev.Header = "St Dev";
+            colStDev.Width = colWidths[1];
+            colStDev.CanUserReorder = false;
+            colStDev.CanUserResize = false;
+            colStDev.CanUserSort = false;
+            colStDev.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
+            colStDev.Binding = new Binding("StandardDeviation");
+            columns.Add(colStDev);
+
+            DataGridTextColumn colMin = new DataGridTextColumn();
+            colMin.Header = "Min";
+            colMin.Width = colWidths[2];
+            colMin.CanUserReorder = false;
+            colMin.CanUserResize = false;
+            colMin.CanUserSort = false;
+            colMin.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
+            colMin.Binding = new Binding("Min");
+            columns.Add(colMin);
+
+            DataGridTextColumn colMax = new DataGridTextColumn();
+            colMax.Header = "Max";
+            colMax.Width = colWidths[3]; 
+            colMax.CanUserReorder = false;
+            colMax.CanUserResize = false;
+            colMax.CanUserSort = false;
+            colMax.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
+            colMax.Binding = new Binding("Max");
+            columns.Add(colMax);
+
+            AddColumns(columns);
+        }
+
+        private void AddTriangularColumns(ColumnWidths.TableTypes largestEditorTableType)
+        {
+            int[] colWidths = ColumnWidths.GetComputedTriangularWidths(largestEditorTableType);
 
             List<DataGridColumn> columns = new List<DataGridColumn>();
 
@@ -234,7 +347,7 @@ namespace FunctionsView.View
             colMostLikely.CanUserResize = false;
             colMostLikely.CanUserSort = false;
             colMostLikely.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
-            colMostLikely.Binding = new Binding("Distribution.StandardDeviation");
+            colMostLikely.Binding = new Binding("MostLikely");
             columns.Add(colMostLikely);
 
             DataGridTextColumn colMin = new DataGridTextColumn();
@@ -244,7 +357,7 @@ namespace FunctionsView.View
             colMin.CanUserResize = false;
             colMin.CanUserSort = false;
             colMin.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
-            colMin.Binding = new Binding("Mean");
+            colMin.Binding = new Binding("Min");
             columns.Add(colMin);
 
             DataGridTextColumn colMax = new DataGridTextColumn();
@@ -254,14 +367,43 @@ namespace FunctionsView.View
             colMax.CanUserResize = false;
             colMax.CanUserSort = false;
             colMax.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
-            colMax.Binding = new Binding("Distribution.StandardDeviation");
+            colMax.Binding = new Binding("Max");
             columns.Add(colMax);
 
             AddColumns(columns);
         }
-        private void AddNormalColumns(ColumnWidths.TableTypes tableType)
+
+        private void AddUniformColumns(ColumnWidths.TableTypes largestEditorTableType)
         {
-            int[] colWidths = ColumnWidths.GetComputedNormalWidths(tableType);
+            int[] colWidths = ColumnWidths.GetComputedUniformWidths(largestEditorTableType);
+
+            List<DataGridColumn> columns = new List<DataGridColumn>();
+
+            DataGridTextColumn colMin = new DataGridTextColumn();
+            colMin.Header = "Min";
+            colMin.Width = colWidths[0]; //130;
+            colMin.CanUserReorder = false;
+            colMin.CanUserResize = false;
+            colMin.CanUserSort = false;
+            colMin.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
+            colMin.Binding = new Binding("Min");
+            columns.Add(colMin);
+
+            DataGridTextColumn colMax = new DataGridTextColumn();
+            colMax.Header = "Max";
+            colMax.Width = colWidths[1]; //130;
+            colMax.CanUserReorder = false;
+            colMax.CanUserResize = false;
+            colMax.CanUserSort = false;
+            colMax.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
+            colMax.Binding = new Binding("Max");
+            columns.Add(colMax);
+
+            AddColumns(columns);
+        }
+        private void AddNormalColumns(ColumnWidths.TableTypes largestEditorTableType)
+        {
+            int[] colWidths = ColumnWidths.GetComputedNormalWidths(largestEditorTableType);
 
             List<DataGridColumn> columns = new List<DataGridColumn>();
             DataGridTextColumn colMean = new DataGridTextColumn();
@@ -281,16 +423,16 @@ namespace FunctionsView.View
             colStDev.CanUserResize = false;
             colStDev.CanUserSort = false;
             colStDev.HeaderStyle = Resources["ColumnHeaderStyle1"] as Style;
-            colStDev.Binding = new Binding("Distribution.StandardDeviation");
+            colStDev.Binding = new Binding("StandardDeviation");
             columns.Add(colStDev);
 
             AddColumns(columns);
         }
 
 
-        private void AddNoneColumn(ColumnWidths.TableTypes tableType)
+        private void AddNoneColumn(ColumnWidths.TableTypes largestEditorTableType)
         {
-            int colWidth = ColumnWidths.TotalDynamicColumnWidths(tableType);
+            int colWidth = ColumnWidths.TotalDynamicColumnWidths(largestEditorTableType);
 
             DataGridTextColumn col = new DataGridTextColumn();
             col.Header = "Value (Constant)";

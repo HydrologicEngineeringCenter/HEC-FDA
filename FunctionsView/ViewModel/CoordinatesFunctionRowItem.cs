@@ -13,10 +13,12 @@ namespace FunctionsView.ViewModel
     {
         //If any property changes then throw the row modified event. The table that the row is in will
         //be listening to it. It will create a new ICoordinatesFunction and pass it on up to the parent.
-        public event EventHandler DataChanged;
-        public event EventHandler StructureChanged;
-        public event EventHandler ChangedInterpolationType;
-
+        //public event EventHandler DataChanged;
+        public event EventHandler RowIsLeavingTable;
+        //public event EventHandler ChangedInterpolationType;
+        private readonly List<DistributionType> SupportedDistributionTypes = new List<DistributionType>() { DistributionType.Constant, DistributionType.Normal, 
+            DistributionType.Triangular, DistributionType.Uniform, DistributionType.TruncatedNormal, DistributionType.Beta4Parameters };
+        
         private DistributionType _selectedDistType = DistributionType.Constant;
         private InterpolationEnum _selectedInterpolationType = InterpolationEnum.Linear;
         private double _X;
@@ -32,49 +34,49 @@ namespace FunctionsView.ViewModel
         public double X
         {
             get { return _X; }
-            set { _X = value; DataChanged?.Invoke(this, new EventArgs()); }
+            set { _X = value;  }
         }
         public double Y
         {
             get { return _Y; }
-            set { _Y = value; DataChanged?.Invoke(this, new EventArgs()); }
+            set { _Y = value;  }
         }
         public double StandardDeviation
         {
             get { return _StandardDeviation; }
-            set { _StandardDeviation = value; DataChanged?.Invoke(this, new EventArgs()); }
+            set { _StandardDeviation = value; }
         }
         public double Min
         {
             get { return _Min; }
-            set { _Min = value; DataChanged?.Invoke(this, new EventArgs()); }
+            set { _Min = value;  }
         }
         public double Max
         {
             get { return _Max; }
-            set { _Max = value; DataChanged?.Invoke(this, new EventArgs()); }
+            set { _Max = value;  }
         }
         public double MostLikely
         {
             get { return _MostLikely; }
-            set { _MostLikely = value; DataChanged?.Invoke(this, new EventArgs()); }
+            set { _MostLikely = value;  }
         }
         public double Mean
         {
             get { return _Mean; }
-            set { _Mean = value; DataChanged?.Invoke(this, new EventArgs()); }
+            set { _Mean = value;  }
         }
 
-        public DistributionType DistributionType
-        {
-            get { return _selectedDistType; }
-            set { _selectedDistType = value; StructureChanged?.Invoke(this, new EventArgs()); }
-        }
-        public InterpolationEnum InterpolationType
-        {
-            get { return _selectedInterpolationType; }
-            set { _selectedInterpolationType = value; chang?.Invoke(this, new EventArgs()); }
-        }
+        //public DistributionType DistributionType
+        //{
+        //    get { return _selectedDistType; }
+        //    set { _selectedDistType = value; StructureChanged?.Invoke(this, new EventArgs()); }
+        //}
+        //public InterpolationEnum InterpolationType
+        //{
+        //    get { return _selectedInterpolationType; }
+        //    set { _selectedInterpolationType = value; StructureChanged?.Invoke(this, new EventArgs()); }
+        //}
 
         public CoordinatesFunctionRowItem Row
         {
@@ -92,7 +94,7 @@ namespace FunctionsView.ViewModel
             {
 
                 //return Enum.GetNames(typeof(DistributionType)).ToList();
-                return Enum.GetValues(typeof(DistributionType)).Cast<DistributionType>();
+                return SupportedDistributionTypes; //Enum.GetValues(typeof(DistributionType)).Cast<DistributionType>();
             }
 
         }
@@ -114,7 +116,7 @@ namespace FunctionsView.ViewModel
                 if (!value.Equals(_selectedInterpolationType))
                 {
                     _selectedInterpolationType = value;
-                    ChangedInterpolationType?.Invoke(this, new EventArgs());
+                    RowIsLeavingTable?.Invoke(this, new EventArgs());
                 }
             }
         }
@@ -127,7 +129,7 @@ namespace FunctionsView.ViewModel
                 if (!value.Equals(_selectedDistType))
                 {
                     _selectedDistType = value;
-                    StructureChanged?.Invoke(this, new EventArgs());
+                    RowIsLeavingTable?.Invoke(this, new EventArgs());
                 }
             }
         }
@@ -188,6 +190,11 @@ namespace FunctionsView.ViewModel
             SelectedInterpolationType = interpType;
 
             
+        }
+
+        public CoordinatesFunctionRowItem Clone()
+        {
+            return new CoordinatesFunctionRowItem(X, Y, StandardDeviation, Mean, Min, Max, MostLikely, SelectedDistributionType, SelectedInterpolationType);
         }
         //public CoordinatesFunctionRowItem(double x, IDistribution dist)
         //{
