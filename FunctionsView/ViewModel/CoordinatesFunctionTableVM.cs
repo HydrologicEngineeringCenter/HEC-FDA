@@ -26,12 +26,10 @@ namespace FunctionsView.ViewModel
             get { return Rows[0].SelectedInterpolationType; }
         }
         public ObservableCollection<CoordinatesFunctionRowItem> Rows { get; set; }
-        //public ColumnWidths.TableTypes TableType { get; set; }
 
         public CoordinatesFunctionTableVM(ObservableCollection<CoordinatesFunctionRowItem> rows)
         {
             Rows = rows;
-            //TableType = type;
             foreach (CoordinatesFunctionRowItem row in rows)
             {
                 row.RowIsLeavingTable += Row_RowIsLeavingTable;
@@ -49,6 +47,7 @@ namespace FunctionsView.ViewModel
         private void Row_RowIsLeavingTable(object sender, EventArgs e)
         {
             CoordinatesFunctionRowItem row = sender as CoordinatesFunctionRowItem;
+
             int rowIndex = Rows.IndexOf(row);
             RowLeavingEventArgs args = new RowLeavingEventArgs(this, row);
             //this row is leaving this table
@@ -65,21 +64,21 @@ namespace FunctionsView.ViewModel
             }
         }
 
-        
-
         public void AddRow(CoordinatesFunctionRowItem row)
         {
             row.RowIsLeavingTable += Row_RowIsLeavingTable;
             Rows.Add(row);
         }
 
+        /// <summary>
+        /// Creates a default row and adds it to the end of the table.
+        /// </summary>
         public void AddRow()
         {
             if (Rows.Count > 0)
             {
                 Rows.Add(CreateDefaultRow());
             }
-            //todo: John, do we allow a table to have no rows? Right now i don't, when the last row is deleted i delete the table.
         }
         /// <summary>
         /// This gets called by the table in the view for the context menu options: Add, insert
@@ -104,11 +103,6 @@ namespace FunctionsView.ViewModel
         {
             Rows.Insert(index, CreateDefaultRow());
         }
-
-        //public void DeleteRow(int index)
-        //{
-        //    Rows.RemoveAt(index);
-        //}
 
         /// <summary>
         /// Grabs the distribution type and interpolation type from the first row
@@ -137,41 +131,49 @@ namespace FunctionsView.ViewModel
                         row = new CoordinatesFunctionRowItemBuilder(0).WithTriangularDist(0, 0, 0, interpType).Build();
                         break;
                     }
+                case DistributionType.Uniform:
+                    {
+                        row = new CoordinatesFunctionRowItemBuilder(0).WithUniformDist(0, 0, interpType).Build();
+                        break;
+                    }
+                case DistributionType.TruncatedNormal:
+                    {
+                        row = new CoordinatesFunctionRowItemBuilder(0).WithTruncatedNormalDist(0, 0, 0, 0, interpType).Build();
+                        break;
+                    }
+                case DistributionType.Beta4Parameters:
+                    {
+                        row = new CoordinatesFunctionRowItemBuilder(0).WithBetaDist(0, 0, 0, 0, interpType).Build();
+                        break;
+                    }
             }
             row.RowIsLeavingTable += Row_RowIsLeavingTable;
             return row;
         }
 
+        /// <summary>
+        /// Used to capture the necessary information for the editor to handle a row leaving a table.
+        /// </summary>
         public class RowLeavingEventArgs : EventArgs
         {
             public CoordinatesFunctionRowItem Row { get; set; }
             public CoordinatesFunctionTableVM Table { get; set; }
             public RowExtractionType ExtractionType { get; set; }
-            //public ObservableCollection<CoordinatesFunctionRowItem> RowsBeforeRow { get; set; }
+            /// <summary>
+            /// This should only be called if the extraction type is "Splitting"
+            /// </summary>
             public ObservableCollection<CoordinatesFunctionRowItem> RowsAfterRow { get; set; }
 
             public RowLeavingEventArgs(CoordinatesFunctionTableVM table, CoordinatesFunctionRowItem row)
             {
                 Table = table;
-                Row = row.Clone();
+                Row = row;
                 ExtractionType = GetRowExtractionType(table.Rows, row);
                 if(ExtractionType == RowExtractionType.Splitting)
                 {
-                    //RowsBeforeRow = GetRowsBeforeRow();
                     RowsAfterRow = GetRowsAfterRow(row);
                 }
             }
-
-            //private ObservableCollection<CoordinatesFunctionRowItem> GetRowsBeforeRow()
-            //{
-            //    int rowIndex = Table.Rows.IndexOf(Row);
-            //    ObservableCollection<CoordinatesFunctionRowItem> rowsBefore = new ObservableCollection<CoordinatesFunctionRowItem>();
-            //    for(int i = 0;i<rowIndex;i++)
-            //    {
-            //        rowsBefore.Add(Table.Rows[i].Clone());
-            //    }
-            //    return rowsBefore;
-            //}
 
             private ObservableCollection<CoordinatesFunctionRowItem> GetRowsAfterRow(CoordinatesFunctionRowItem row)
             {

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FunctionsView.View"
+             xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -20,29 +21,14 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <local:CoordinatesFunctionDataGrid x:Name="dg_table" Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding TableVM.Rows}" 
+        <controls:CopyPasteDataGrid x:Name="dg_table" Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding TableVM.Rows}" 
                   Width="520" HorizontalAlignment="Left" Margin="5,0,5,0" BorderThickness="1,0,1,0" 
                   HorizontalGridLinesBrush="#808080" VerticalGridLinesBrush="#808080"
                   CanUserAddRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False"
-                  SelectionMode="Extended" SelectionUnit="Cell" SelectedIndex="{Binding SelectedIndex}"
-                  >
-            <!--<DataGrid.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Name="mi_InsertAbove" Header="Insert Row(s) Above" Click="mi_InsertAbove_Click" />
-                    <MenuItem Header="Insert Row(s) Below" />
-                    <MenuItem Header="Add Rows" />
-                    <MenuItem Header="Delete Row(s)" />
-                </ContextMenu>
-            </DataGrid.ContextMenu>-->
-
-            <!--<DataGrid.CommandBindings>
-                <CommandBinding Command="{x:Static ApplicationCommands.Paste}" 
-                        CanExecute="CanPaste" Executed="Paste"/>
-                <CommandBinding Command="{x:Static ApplicationCommands.Copy}" 
-                        CanExecute="CanCopy" Executed="Copy"/>
-            </DataGrid.CommandBindings>-->
+                  SelectionMode="Extended" SelectionUnit="Cell" >
+            
             <DataGrid.Columns>
-                <DataGridTextColumn x:Name="col_x"  Binding="{Binding Path=X}" />
+                <DataGridTextColumn x:Name="col_x"  Binding="{Binding Path=X, UpdateSourceTrigger=LostFocus}" />
                 <DataGridTemplateColumn x:Name="col_dist"  Header="Distribution" CellStyle="{StaticResource NoTabStopStyle}"   HeaderStyle="{StaticResource ColumnHeaderStyle1}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -58,6 +44,6 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
-        </local:CoordinatesFunctionDataGrid>
+        </controls:CopyPasteDataGrid>
     </Grid>
 </UserControl>
