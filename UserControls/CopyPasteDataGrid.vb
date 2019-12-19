@@ -1,17 +1,16 @@
-﻿'Imports System.Reflection
-Imports System.Windows.Controls.Primitives
+﻿Imports System.Windows.Controls.Primitives
 Imports System.Windows.Controls
 Imports System.Windows.Input
 Imports System.Windows
 Imports System.Windows.Media
 Imports System.Windows.Data
 Imports System.Collections.ObjectModel
+Imports System.Data
 
-Namespace Controls
-    Public Class CopyPasteDataGrid(Of T)
+Namespace UserControls
+    Public Class CopyPasteDataGrid
         Inherits DataGrid
         Public Event PreviewPasteData()
-        Public Event DataPasted()
         Public Event PreviewAddRows()
 
         Public Event PreviewLastRowEnter()
@@ -29,9 +28,11 @@ Namespace Controls
         Private Sub Me_PreviewKeyDown(sender As Object, e As KeyEventArgs) Handles Me.PreviewKeyDown
             If IsLastRowSelected() Then
                 If e.Key = Key.Enter Then
+                    e.Handled = True
                     RaiseEvent PreviewLastRowEnter()
-                ElseIf e.Key = Key.Tab Then
-                    RaiseEvent PreviewLastRowTab(GetHighestSelectedColumn)
+                ElseIf e.Key = Key.Tab And CurrentColumn.DisplayIndex = Columns.Count - 3 Then
+                    e.Handled = True
+                    RaiseEvent PreviewLastRowTab(CurrentColumn.DisplayIndex)
                 End If
 
             End If
@@ -46,30 +47,6 @@ Namespace Controls
 
 
         End Sub
-        Private Function GetHighestSelectedColumn() As Integer
-            Dim HighestSelectedColumn As Int32 = -1
-            For Each cellInfo As DataGridCellInfo In Me.SelectedCells
-                If cellInfo.Column.DisplayIndex > HighestSelectedColumn Then
-                    HighestSelectedColumn = cellInfo.Column.DisplayIndex
-                End If
-            Next
-            Return HighestSelectedColumn
-        End Function
-        'Private Function IsLastRowSelected() As Boolean
-        '    'raise event with necessary info and let the listener handle it
-        '    Dim RowIndex As Int32 = -1
-        '    For Each cellInfo As DataGridCellInfo In Me.SelectedCells
-        '        If Me.Items.IndexOf(cellInfo.Item) > RowIndex Then
-        '            RowIndex = Me.Items.IndexOf(cellInfo.Item)
-        '        End If
-        '    Next
-        '    If RowIndex = Me.Items.Count Then
-        '        Return True
-        '    Else
-        '        Return False
-        '    End If
-        'End Function
-
 
         Private Sub CopyPasteDataGrid_PreviewMouseRightButtonUp(sender As Object, e As System.Windows.Input.MouseButtonEventArgs) Handles Me.PreviewMouseRightButtonUp
             Dim dep As DependencyObject = DirectCast(e.OriginalSource, DependencyObject)
@@ -81,11 +58,6 @@ Namespace Controls
             If dep Is Nothing Then
                 Return
             End If
-
-            'If TypeOf dep Is DataGridColumnHeader Then
-            '    ' do something
-            '    Dim columnHeader As DataGridColumnHeader = TryCast(dep, DataGridColumnHeader)
-            'End If
 
             If TypeOf dep Is DataGridCell Then
                 Dim cell As DataGridCell = TryCast(dep, DataGridCell)
@@ -125,14 +97,8 @@ Namespace Controls
 
                         Dim InsertRowsBelow As New MenuItem
                         InsertRowsBelow.Header = "Insert Row(s) Below"
-                        'InsertRowsBelow.IsEnabled = Not IsLastRowSelected()
                         AddHandler InsertRowsBelow.Click, AddressOf InsertRowItemsBelow
                         cell.ContextMenu.Items.Add(InsertRowsBelow)
-
-                        'Dim AddRows As New MenuItem
-                        'AddRows.Header = "Add Rows"
-                        'AddHandler AddRows.Click, AddressOf AddSelectedRows
-                        'cell.ContextMenu.Items.Add(AddRows)
 
                         Dim DeleteRows As New MenuItem
                         DeleteRows.Header = "Delete Row(s)"
@@ -179,41 +145,29 @@ Namespace Controls
             RaiseEvent PreviewAddRows()
             Dim UniqueRows As List(Of Integer) = GetSelectedRows()
             Dim InsertAtRow As Int32 = Me.Items.Count
-
-            'Dim RowType As Type = Me.Items(UniqueRows(0)).GetType
-            'insert the rows
-            'Dim sourceRows As ObservableCollection(Of T) = CType(Me.ItemsSource, ObservableCollection(Of T))
-            'For i As Int32 = 1 To UniqueRows.Count
-            '    sourceRows.Insert(InsertAtRow, Activator.CreateInstance(RowType))
-            'Next
             RaiseEvent RowsAdded(InsertAtRow, UniqueRows.Count)
         End Sub
 
         Private Sub InsertRowItemsBelow(sender As Object, e As RoutedEventArgs)
             RaiseEvent PreviewAddRows()
             Dim UniqueRows As List(Of Integer) = GetSelectedRows()
-
             Dim InsertAtRow As Int32 = UniqueRows.Min
-            'Dim RowType As Type = Me.Items(UniqueRows(0)).GetType
-            'insert the rows
-            'Dim sourceRows As ObservableCollection(Of T) = CType(Me.ItemsSource, ObservableCollection(Of T))
-            'For i As Int32 = 1 To UniqueRows.Count
-            '    sourceRows.Insert(InsertAtRow, Activator.CreateInstance(RowType))
-            'Next
             RaiseEvent RowsAdded(InsertAtRow + 1, UniqueRows.Count)
         End Sub
+
+        Public Function GetSelectedIndex() As Int32
+            Dim selectedRows As List(Of Int32) = GetSelectedRows()
+            If selectedRows.Count > 0 Then
+                Return selectedRows(0)
+            Else
+                Return -1
+            End If
+        End Function
 
         Private Sub InsertRowItems(sender As Object, e As System.Windows.RoutedEventArgs)
             RaiseEvent PreviewAddRows()
             Dim UniqueRows As List(Of Integer) = GetSelectedRows()
-
             Dim InsertAtRow As Int32 = UniqueRows.Min
-            'Dim RowType As Type = Me.Items(UniqueRows(0)).GetType
-            'insert the rows
-            'Dim sourceRows As ObservableCollection(Of T) = CType(Me.ItemsSource, ObservableCollection(Of T))
-            'For i As Int32 = 1 To UniqueRows.Count
-            '    sourceRows.Insert(InsertAtRow, Activator.CreateInstance(RowType))
-            'Next
             RaiseEvent RowsAdded(InsertAtRow, UniqueRows.Count)
         End Sub
 
@@ -241,7 +195,6 @@ Namespace Controls
                 Dim RowIndex, ColumnIndex As Int32
                 If Me.SelectedCells.Count = 1 Then
                     'fill beyond selected cell
-                    Dim p As ObservableCollection(Of T) = CType(Me.ItemsSource, ObservableCollection(Of T))
                     Dim cellinfo As DataGridCellInfo = Me.SelectedCells(0)
                     RowIndex = Me.Items.IndexOf(cellinfo.Item)
                     ColumnIndex = cellinfo.Column.DisplayIndex
@@ -251,8 +204,6 @@ Namespace Controls
                                 Me.Items.Refresh()
                                 Exit Sub
                             Else
-                                'Dim RowType As Type = Me.Items(RowIndex).GetType
-                                'p.Add(Activator.CreateInstance(RowType))
                                 RaiseEvent RowsAdded(Me.Items.Count, 1)
 
                             End If
@@ -310,7 +261,6 @@ Namespace Controls
                 End If
 
                 Me.Items.Refresh()
-                RaiseEvent DataPasted()
             Catch ex As Exception
                 MessageBox.Show("Error pasting data from clipboard.", "Error in paste from clipboard", MessageBoxButton.OK, MsgBoxStyle.Information)
             End Try
@@ -357,6 +307,7 @@ Namespace Controls
             Next
             Return child
         End Function
+
     End Class
 End Namespace
 

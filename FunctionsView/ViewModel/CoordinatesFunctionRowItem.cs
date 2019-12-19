@@ -11,101 +11,38 @@ namespace FunctionsView.ViewModel
 {
     public class CoordinatesFunctionRowItem
     {
-        //If any property changes then throw the row modified event. The table that the row is in will
-        //be listening to it. It will create a new ICoordinatesFunction and pass it on up to the parent.
-        //public event EventHandler DataChanged;
         public event EventHandler RowIsLeavingTable;
-        //public event EventHandler ChangedInterpolationType;
         private readonly List<DistributionType> SupportedDistributionTypes = new List<DistributionType>() { DistributionType.Constant, DistributionType.Normal, 
             DistributionType.Triangular, DistributionType.Uniform, DistributionType.TruncatedNormal, DistributionType.Beta4Parameters };
         
         private DistributionType _selectedDistType = DistributionType.Constant;
         private InterpolationEnum _selectedInterpolationType = InterpolationEnum.Linear;
-        private double _X;
-        private double _Y;
-        private double _StandardDeviation;
-        private double _Min;
-        private double _Max;
-        private double _MostLikely;
-        private double _Mean;
-
 
         #region Properties
-        public double X
-        {
-            get { return _X; }
-            set { _X = value;  }
-        }
-        public double Y
-        {
-            get { return _Y; }
-            set { _Y = value;  }
-        }
-        public double StandardDeviation
-        {
-            get { return _StandardDeviation; }
-            set { _StandardDeviation = value; }
-        }
-        public double Min
-        {
-            get { return _Min; }
-            set { _Min = value;  }
-        }
-        public double Max
-        {
-            get { return _Max; }
-            set { _Max = value;  }
-        }
-        public double MostLikely
-        {
-            get { return _MostLikely; }
-            set { _MostLikely = value;  }
-        }
-        public double Mean
-        {
-            get { return _Mean; }
-            set { _Mean = value;  }
-        }
-
-        //public DistributionType DistributionType
-        //{
-        //    get { return _selectedDistType; }
-        //    set { _selectedDistType = value; StructureChanged?.Invoke(this, new EventArgs()); }
-        //}
-        //public InterpolationEnum InterpolationType
-        //{
-        //    get { return _selectedInterpolationType; }
-        //    set { _selectedInterpolationType = value; StructureChanged?.Invoke(this, new EventArgs()); }
-        //}
-
-        public CoordinatesFunctionRowItem Row
-        {
-            get { return this; }
-        }
-        //public Statistics.IDistribution Distribution
-        //{
-        //    get;
-        //    set;
-        //}  
+        public double Alpha { get; set; }
+        public double Beta { get; set; }
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double StandardDeviation { get; set; }
+        public double Min { get; set; }
+        public double Max { get; set; }
+        public double MostLikely { get; set; }
+        public double Mean { get; set; }
+ 
 
         public IEnumerable<DistributionType> DistributionTypes
         {
             get
             {
-
-                //return Enum.GetNames(typeof(DistributionType)).ToList();
-                return SupportedDistributionTypes; //Enum.GetValues(typeof(DistributionType)).Cast<DistributionType>();
+                return SupportedDistributionTypes; 
             }
-
         }
 
         public IEnumerable<InterpolationEnum> InterpolationTypes
         {
             get
             {
-                //return new List<string>() { "None", "Linear", "Piecewise" };
                 return Enum.GetValues(typeof(InterpolationEnum)).Cast<InterpolationEnum>();
-
             }
         }
         public InterpolationEnum SelectedInterpolationType
@@ -128,34 +65,239 @@ namespace FunctionsView.ViewModel
             {
                 if (!value.Equals(_selectedDistType))
                 {
+                    DistributionType originalType = _selectedDistType;
+                    DistributionType newType = value;
+                    TranslateValuesBetweenDistributionTypes(originalType, newType);
                     _selectedDistType = value;
                     RowIsLeavingTable?.Invoke(this, new EventArgs());
                 }
             }
         }
         
-
-        //public List<Functions.DistributionType> DistributionTypes
-        //{
-        //    get
-        //    {
-        //        List<Functions.DistributionType> types = new List<Functions.DistributionType>();
-        //        types.Add(Functions.DistributionType.Normal);
-        //        types.Add(Functions.DistributionType.Triangular);
-        //        types.Add(Functions.DistributionType.Uniform);
-        //        return types;
-        //    }
-        //}
-        #endregion
-        //public CoordinatesFunctionRowItem(double x, double y, string distType, string interpType)
-        //{
-        //    X = x;
-        //    Y = y;
-        //    SelectedDistributionType = distType;
-        //    SelectedInterpolationType = interpType;
-        //}
         /// <summary>
-        /// An empty constructor is required by the CopyPasteDataGrid to add empty rows. 
+        /// When switching distribution types there are some values that we might want to use for the new type. For example
+        /// if a type has min and max and you are switching to another type that has min and max then we want to keep those values.
+        /// All not needed properties will get cleared to 0.
+        /// </summary>
+        /// <param name="originalType"></param>
+        /// <param name="newType"></param>
+        private void TranslateValuesBetweenDistributionTypes( DistributionType originalType, DistributionType newType)
+        {
+            switch(originalType)
+            {
+                case DistributionType.Constant:
+                    {
+                        TranslateValuesFromConstantTo(newType);
+                        break;
+                    }
+                case DistributionType.Normal:
+                    {
+                        TranslateValuesFromNormalTo(newType);
+                        break;
+                    }
+                case DistributionType.Uniform:
+                    {
+                        TranslateValuesFromUniformTo(newType);
+                        break;
+                    }
+                case DistributionType.Triangular:
+                    {
+                        TranslateValuesFromTriangularTo(newType);
+                        break;
+                    }
+                case DistributionType.TruncatedNormal:
+                    {
+                        TranslateValuesFromTruncNormalTo(newType);
+                        break;
+                    }
+                case DistributionType.Beta4Parameters:
+                    {
+                        TranslateValuesFromBetaTo(newType);
+                        break;
+                    }
+            }
+        }
+
+        private void TranslateValuesFromBetaTo(DistributionType newDist)
+        {
+            double tempMin = Min;
+            double tempMax = Max;
+            ClearAllPropertiesExceptX();
+            switch (newDist)
+            {
+                case DistributionType.TruncatedNormal:
+                case DistributionType.Triangular:
+                case DistributionType.Uniform:
+                    {
+                        Min = tempMin;
+                        Max = tempMax;
+                        break;
+                    }
+            }
+        }
+
+        private void TranslateValuesFromUniformTo(DistributionType newDist)
+        {
+            double tempMin = Min;
+            double tempMax = Max;
+            ClearAllPropertiesExceptX();
+            switch (newDist)
+            {
+                case DistributionType.TruncatedNormal:
+                case DistributionType.Triangular:
+                case DistributionType.Beta4Parameters:
+                    {
+                        Min = tempMin;
+                        Max = tempMax;
+                        break;
+                    }
+            }
+        }
+
+        private void TranslateValuesFromTriangularTo(DistributionType newDist)
+        {
+            double tempMostLikely = MostLikely;
+            double tempMin = Min;
+            double tempMax = Max;
+            ClearAllPropertiesExceptX();
+            switch (newDist)
+            {
+                case DistributionType.Uniform:
+                    {
+                        Min = tempMin;
+                        Max = tempMax;
+                        break;
+                    }
+                case DistributionType.Constant:
+                    {
+                        Y = tempMostLikely;
+                        break;
+                    }
+                case DistributionType.Normal:
+                    {
+                        Mean = tempMostLikely;
+                        break;
+                    }
+                case DistributionType.TruncatedNormal:
+                    {
+                        Mean = tempMostLikely;
+                        Min = tempMin;
+                        Max = tempMax;
+                        break;
+                    }
+                case DistributionType.Triangular:
+                    {
+                        MostLikely = tempMostLikely;
+                        Min = tempMin;
+                        Max = tempMax;
+                        break;
+                    }
+                case DistributionType.Beta4Parameters:
+                    {
+                        Min = tempMin;
+                        Max = tempMax;
+                        break;
+                    }
+            }
+        }
+
+        private void TranslateValuesFromTruncNormalTo(DistributionType newDist)
+        {
+            double tempMean = Mean;
+            double tempStDev = StandardDeviation;
+            double tempMin = Min;
+            double tempMax = Max;
+            ClearAllPropertiesExceptX();
+            switch (newDist)
+            {
+                case DistributionType.Uniform:
+                    {
+                        Min = tempMin;
+                        Max = tempMax;
+                        break;
+                    }
+                case DistributionType.Constant:
+                    {
+                        Y = tempMean;
+                        break;
+                    }
+                case DistributionType.Normal:
+                    {
+                        Mean = tempMean;
+                        StandardDeviation = tempStDev;
+                        break;
+                    }
+                case DistributionType.Triangular:
+                    {
+                        MostLikely = tempMean;
+                        Min = tempMin;
+                        Max = tempMax;
+                        break;
+                    }
+                case DistributionType.Beta4Parameters:
+                    {
+                        Min = tempMin;
+                        Max = tempMax;
+                        break;
+                    }
+            }
+        }
+
+        private void TranslateValuesFromConstantTo(DistributionType newDist)
+        {
+            double tempY = Y;
+            ClearAllPropertiesExceptX();
+            switch (newDist)
+            {
+                case DistributionType.Normal:
+                case DistributionType.TruncatedNormal:
+                    {
+                        Mean = tempY;
+                        break;
+                    }
+                case DistributionType.Triangular:
+                    {
+                        MostLikely = tempY;
+                        break;
+                    }
+            }
+        }
+
+        private void TranslateValuesFromNormalTo(DistributionType newDist)
+        {
+            double tempMean = Mean;
+            double tempStDev = StandardDeviation;
+            ClearAllPropertiesExceptX();
+            switch (newDist)
+            {
+                case DistributionType.Constant:
+                    {
+                        Y = tempMean;
+                        break;
+                    }
+                case DistributionType.TruncatedNormal:
+                    {
+                        Mean = tempMean;
+                        StandardDeviation = tempStDev;
+                        break;
+                    }
+                case DistributionType.Triangular:
+                    {
+                        MostLikely = tempMean;
+                        break;
+                    }
+            }
+        }
+
+        private void ClearAllPropertiesExceptX()
+        {
+            Y = Mean = StandardDeviation = Min = Max = MostLikely = Alpha = Beta = 0;
+        }
+        
+        #endregion
+        
+        /// <summary>
+        /// An empty constructor.
         /// </summary>
         public CoordinatesFunctionRowItem()
         {
@@ -177,7 +319,7 @@ namespace FunctionsView.ViewModel
         /// <param name="distType"></param>
         /// <param name="interpType"></param>
         public CoordinatesFunctionRowItem(double x, double y, double standDev,double mean, double min, double max, double mostLikely, 
-            DistributionType distType,InterpolationEnum interpType)
+            double alpha, double beta, DistributionType distType,InterpolationEnum interpType)
         {
             X = x;
             Y = y;
@@ -186,20 +328,17 @@ namespace FunctionsView.ViewModel
             Min = min;
             Max = max;
             MostLikely = mostLikely;
+            Alpha = alpha;
+            Beta = beta;
             SelectedDistributionType = distType;
             SelectedInterpolationType = interpType;
-
             
         }
 
         public CoordinatesFunctionRowItem Clone()
         {
-            return new CoordinatesFunctionRowItem(X, Y, StandardDeviation, Mean, Min, Max, MostLikely, SelectedDistributionType, SelectedInterpolationType);
+            return new CoordinatesFunctionRowItem(X, Y, StandardDeviation, Mean, Min, Max, MostLikely,Alpha,Beta, SelectedDistributionType, SelectedInterpolationType);
         }
-        //public CoordinatesFunctionRowItem(double x, IDistribution dist)
-        //{
-        //    X = x;
-        //    Distribution = dist;
-        //}
+       
     }
 }
