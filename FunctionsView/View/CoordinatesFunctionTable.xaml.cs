@@ -19,6 +19,8 @@ namespace FunctionsView.View
     {
         public event EventHandler LastRowEnterPressed;
         public event EventHandler LastRowAndCellTabPressed;
+        public event EventHandler LastRowDownArrowPressed;
+        public event EventHandler FirstRowUpArrowPressed;
         //column header constants
         private readonly string X = "X";
         private readonly string INTERPOLATOR = "Interpolator";
@@ -46,6 +48,18 @@ namespace FunctionsView.View
             dg_table.RowsDeleted += Dg_table_RowsDeleted;
             dg_table.PreviewLastRowEnter += Dg_table_PreviewLastRowEnter;
             dg_table.PreviewLastRowTab += Dg_table_PreviewLastRowTab;
+            dg_table.ArrowDownInLastRow += Dg_table_ArrowDownInLastRow;
+            dg_table.ArrowUpInFirstRow += Dg_table_ArrowUpInFirstRow;
+        }
+
+        private void Dg_table_ArrowUpInFirstRow()
+        {
+            FirstRowUpArrowPressed?.Invoke(this, new EventArgs());
+        }
+
+        private void Dg_table_ArrowDownInLastRow()
+        {
+            LastRowDownArrowPressed?.Invoke(this, new EventArgs());
         }
 
         /// <summary>

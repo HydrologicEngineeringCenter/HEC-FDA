@@ -75,5 +75,16 @@ namespace Statistics
         {
             return new Distributions.Uniform(min, max, sample);
         }
+
+        public static IDistribution FactoryTruncatedNormal(double mean, double stDev, double min, double max, int sample = 2147483647)
+        {
+            IDistribution normal = new Distributions.Normal(mean, stDev, sample);
+            return new Distributions.TruncatedDistribution(normal, min, max);
+        }
+
+        public static IDistribution FactoryBeta(double alpha, double beta, double min, double max)
+        {
+            return new Distributions.Beta4Parameters(alpha, beta, min, max); //todo this isn't correct. Shouldn't be min and max
+        }
     }
 }

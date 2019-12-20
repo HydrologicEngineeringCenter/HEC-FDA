@@ -10,6 +10,8 @@ Imports System.Data
 Namespace UserControls
     Public Class CopyPasteDataGrid
         Inherits DataGrid
+        Public Event ArrowDownInLastRow()
+        Public Event ArrowUpInFirstRow()
         Public Event PreviewPasteData()
         Public Event PreviewAddRows()
 
@@ -33,8 +35,16 @@ Namespace UserControls
                 ElseIf e.Key = Key.Tab And CurrentColumn.DisplayIndex = Columns.Count - 3 Then
                     e.Handled = True
                     RaiseEvent PreviewLastRowTab(CurrentColumn.DisplayIndex)
+                ElseIf Keyboard.IsKeyDown(Key.Down) Then
+                    RaiseEvent ArrowDownInLastRow()
+                    e.Handled = True
                 End If
-
+            End If
+            If IsFirstRowSelected() Then
+                If Keyboard.IsKeyDown(Key.Up) Then
+                    RaiseEvent ArrowUpInFirstRow()
+                    e.Handled = True
+                End If
             End If
         End Sub
         Private Sub Me_KeyDown(sender As Object, e As KeyEventArgs) Handles Me.KeyDown
@@ -117,7 +127,16 @@ Namespace UserControls
                     Return True
                 End If
             Next
-
+            Return False
+        End Function
+        Private Function IsFirstRowSelected() As Boolean
+            Dim UniqueRows As New List(Of Int32), RowIndex As Int32
+            For Each cellInfo As DataGridCellInfo In Me.SelectedCells
+                RowIndex = Me.Items.IndexOf(cellInfo.Item)
+                If RowIndex = 0 Then
+                    Return True
+                End If
+            Next
             Return False
         End Function
         Private Sub DeleteSelectedRows(sender As Object, e As System.Windows.RoutedEventArgs)

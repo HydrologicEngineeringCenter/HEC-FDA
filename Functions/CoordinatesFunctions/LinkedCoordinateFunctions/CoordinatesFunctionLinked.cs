@@ -11,7 +11,7 @@ using Utilities.Validation;
 
 namespace Functions.CoordinatesFunctions
 {
-    internal class CoordinatesFunctionLinked : CoordinatesFunctionLinkedBase, ICoordinatesFunction, IValidate<CoordinatesFunctionLinked>
+    public class CoordinatesFunctionLinked : CoordinatesFunctionLinkedBase, ICoordinatesFunction, IValidate<CoordinatesFunctionLinked>
     {
 
         public bool IsDistributed
@@ -125,7 +125,30 @@ namespace Functions.CoordinatesFunctions
 
         #endregion
 
+        public bool Equals(ICoordinatesFunction function)
+        {
+            //I don't think i have to check the domain, range, or order because
+            //if the coordinates and interpolator are all the same then those values
+            //should be the same.
+            if (!function.GetType().Equals(typeof(CoordinatesFunctionLinked)))
+            {
+                return false;
+            }
+            CoordinatesFunctionLinked functionToCompare = (CoordinatesFunctionLinked)function;
+            if(Functions.Count != functionToCompare.Functions.Count)
+            {
+                return false;
+            }
+            for(int i = 0;i<Functions.Count;i++)
+            {
+                if(!Functions[i].Equals(functionToCompare.Functions[i]))
+                {
+                    return false;
+                }
+            }
 
+            return true;
+        }
 
         public IOrdinate F(IOrdinate x)
         {

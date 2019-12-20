@@ -82,7 +82,9 @@ namespace FunctionsView.View
                 {
                     newTable.DisplayXAndInterpolatorHeaders();
                 }
-                newTable.UpdateView += UpdateView;
+                //newTable.UpdateView += UpdateView;
+                newTable.FirstRowUpArrowPressed += NewTable_FirstRowUpArrowPressed;
+                newTable.LastRowDownArrowPressed += NewTable_LastRowDownArrowPressed;
                 newTable.LastRowEnterPressed += NewTable_LastRowEnterPressed;
                 newTable.LastRowAndCellTabPressed += NewTable_LastRowAndCellTabPressed;
                 lst_tables.Items.Add(newTable);
@@ -94,7 +96,11 @@ namespace FunctionsView.View
             //but i have to put the topper and bottom UI pieces in. I could do them outside the list
             //but that seemed harder to get it to line up etc.
                       
-        }   
+        }
+
+        
+
+
 
         /// <summary>
         /// This gets called anytime a visual update needs to happen to the editor.
@@ -139,6 +145,55 @@ namespace FunctionsView.View
             }
 
         }
+        private void NewTable_FirstRowUpArrowPressed(object sender, EventArgs e)
+        {
+            CoordinatesFunctionTable senderTable = (CoordinatesFunctionTable)sender;
+            int tableIndex = lst_tables.Items.IndexOf(senderTable);
+            if (tableIndex == -1) return;
+            int column = senderTable.dg_table.CurrentColumn.DisplayIndex;
+            //only go up to another table if we aren't already in the top table
+            //this is "1" and not "0" because the first thing in the list is the table topper.
+            if (tableIndex > 1)
+            {
+                CoordinatesFunctionTable previousTable = lst_tables.Items[tableIndex - 1] as CoordinatesFunctionTable;
+                int columnToSelect = column;
+                int lastEditableColumn = previousTable.dg_table.Columns.Count - 1;
+
+                if (column > lastEditableColumn)
+                {
+                    columnToSelect = lastEditableColumn;
+                }
+                previousTable.SelectCellByIndex(previousTable.TableVM.Rows.Count-1, columnToSelect);
+            }
+        }
+
+        private void NewTable_LastRowDownArrowPressed(object sender, EventArgs e)
+        {
+            CoordinatesFunctionTable senderTable = (CoordinatesFunctionTable)sender;
+            int tableIndex = lst_tables.Items.IndexOf(senderTable);
+            if (tableIndex == -1) return;
+            int column = senderTable.dg_table.CurrentColumn.DisplayIndex;
+            //only go down to another table if we aren't already in the last table
+            if (tableIndex != lst_tables.Items.Count - 2)
+            {
+                senderTable.dg_table.SelectedCells.Clear();
+                CoordinatesFunctionTable nextTable = lst_tables.Items[tableIndex + 1] as CoordinatesFunctionTable;
+                int columnToSelect = column;
+                int lastColumn = nextTable.dg_table.Columns.Count - 1;
+                //get the currently selected column. If the selected column in the current table is greater
+                //than the columns in the next table then just select the last column
+                if (column > lastColumn)
+                {
+                    columnToSelect = lastColumn;
+                }
+                nextTable.SelectCellByIndex(0, columnToSelect);
+            }
+        }
+
+        private void SelectCellInFirstRowOfNextTable(CoordinatesFunctionTable currentTable, int tableIndex, int currentColumn)
+        {
+            
+        }
 
         /// <summary>
         /// Enter was pressed in the last row of a table. If it is the last table
@@ -156,6 +211,7 @@ namespace FunctionsView.View
             //this is "-2" because this list is not just tables. There is the topper and the bottom line.
             if (tableIndex == lst_tables.Items.Count-2)
             {
+                //we are in the last row so we need to add a row and then select a cell in that row.
                 senderTable.TableVM.AddRow();
                 //now select the correct column in that table
                 int lastRowIndex = senderTable.dg_table.Items.Count - 1;
@@ -164,14 +220,12 @@ namespace FunctionsView.View
             else
             {
                 senderTable.dg_table.SelectedCells.Clear();
-                //its not the last table, put focus on the next table
-                CoordinatesFunctionTable nextTable = lst_tables.Items[tableIndex+1] as CoordinatesFunctionTable;
-                //get the currently selected column. If the selected column in the current table is greater
-                //than the columns in the next table then just select the largest editable column
+                CoordinatesFunctionTable nextTable = lst_tables.Items[tableIndex + 1] as CoordinatesFunctionTable;
                 int columnToSelect = column;
                 int lastEditableColumn = nextTable.dg_table.Columns.Count - 3;
-
-                if(column> lastEditableColumn)
+                //get the currently selected column. If the selected column in the current table is greater
+                //than the columns in the next table then just select the largest editable column
+                if (column > lastEditableColumn)
                 {
                     columnToSelect = lastEditableColumn;
                 }

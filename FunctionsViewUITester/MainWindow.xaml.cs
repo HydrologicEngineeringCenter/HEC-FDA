@@ -1,4 +1,5 @@
 ﻿using Functions;
+using Functions.CoordinatesFunctions;
 using FunctionsView.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -54,18 +55,18 @@ namespace FunctionsViewUITester
         {
             List<double> xs = new List<double>() { 0, 1, 2, 3, 4 };
             List<double> ys = new List<double>() { 10, 11, 12, 13, 14 };
-            //List<IDistribution> ys = new List<IDistribution>()
-            //    {
-            //        IDistributionFactory.FactoryNormal(1,0),
-            //        IDistributionFactory.FactoryNormal(1,0),
-            //        IDistributionFactory.FactoryNormal(1,0),
-            //        IDistributionFactory.FactoryNormal(1,0),
-            //        IDistributionFactory.FactoryNormal(1,0),
 
-            //    };
-            Function = ICoordinatesFunctionsFactory.Factory(xs, ys);
-
-            //Curve = new CoordinatesFunctionEditorVM(func, "SomeType");
+            List<double> xs2 = new List<double>() { 10, 11, 12, 13, 14 };
+            List<double> ys2 = new List<double>() { 100, 110, 120, 130, 140 };
+           
+            ICoordinatesFunction func1 = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+            ICoordinatesFunction func2 = ICoordinatesFunctionsFactory.Factory(xs2, ys2, InterpolationEnum.Piecewise);
+            List<ICoordinatesFunction> functions = new List<ICoordinatesFunction>() { func1, func2 };
+            List<InterpolationEnum> interps = new List<InterpolationEnum>();
+            interps.Add(func1.Interpolator);
+            ICoordinatesFunction linkedFunc = ICoordinatesFunctionsFactory.Factory(functions, interps);
+            Function = linkedFunc;
+            //Function = func1;
         }
         public MainWindow()
         {
@@ -79,7 +80,8 @@ namespace FunctionsViewUITester
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            int i = 0;
+            ICoordinatesFunction functionToSave = EditorVM.CreateFunctionFromTables();
+
         }
     }
 }

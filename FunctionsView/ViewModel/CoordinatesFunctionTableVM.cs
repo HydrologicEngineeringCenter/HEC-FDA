@@ -36,6 +36,20 @@ namespace FunctionsView.ViewModel
             }
         }
 
+        public ICoordinatesFunction CreateCoordinatesFunctionFromTable()
+        {
+            //every row in a table should be guaranteed to have the same distribution type
+            //and the same interpolation type
+            InterpolationEnum interpType = Rows[0].SelectedInterpolationType;
+            //i need to turn each row into an iCoordinate
+            List<ICoordinate> coordinates = new List<ICoordinate>();
+            foreach(CoordinatesFunctionRowItem row in Rows)
+            {
+                coordinates.Add(row.CreateCoordinateFromRow());
+            }
+            return ICoordinatesFunctionsFactory.Factory(coordinates, interpType);
+        }
+
         public void RowDeleted()
         {
             if (Rows.Count == 0)
