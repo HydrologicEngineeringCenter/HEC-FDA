@@ -19,6 +19,8 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         public bool IsValid { get; }
 
         public IEnumerable<IMessage> Errors { get; }
+
+        public IEnumerable<IMessage> Messages => throw new NotImplementedException();
         #endregion
 
 
