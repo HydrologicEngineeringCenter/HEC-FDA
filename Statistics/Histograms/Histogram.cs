@@ -5,6 +5,7 @@ using System.Linq;
 using Utilities;
 
 using Statistics.Validation;
+using System.Xml.Linq;
 
 namespace Statistics.Histograms
 {
@@ -128,6 +129,11 @@ namespace Statistics.Histograms
         public abstract IDistribution SampleDistribution(Random r);
         public string Print() => $"Histogram(observations: {SampleSize}, bins: {Bins.Length}, range: [{Minimum}, {Maximum}])";
         public bool Equals(IDistribution distribution) => distribution.Type == IDistributions.Histogram ? Equals((IHistogram)distribution) : false;
+
+        public XElement WriteToXML()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
         #endregion
     }

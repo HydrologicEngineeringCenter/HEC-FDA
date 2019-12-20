@@ -32,6 +32,8 @@ namespace Functions.CoordinatesFunctions
             }
         }
 
+        public IEnumerable<IMessage> Messages => null;
+
         /// <summary>
         /// The list of functions must be in the correct order.
         /// </summary>

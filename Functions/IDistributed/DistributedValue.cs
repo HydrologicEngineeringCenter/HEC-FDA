@@ -129,12 +129,12 @@ namespace Functions
 
         public double Sample()
         {
-            return _distribution.Sample();
+            return _distribution.Sample(new Random());
         }
 
         public double[] Sample(Random numberGenerator = null)
         {
-            return _distribution.Sample(numberGenerator);
+            return _distribution.Sample(1,numberGenerator);
         }
 
         public double[] Sample(int sampleSize, Random numberGenerator = null)
