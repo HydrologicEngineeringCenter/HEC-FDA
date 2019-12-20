@@ -59,11 +59,35 @@ namespace FunctionsView.ViewModel
             //Function = CreateFunctionFromTables();
         }
 
-        private ICoordinatesFunction CreateFunctionFromTables()
+        public ICoordinatesFunction CreateFunctionFromTables()
         {
-            List<double> testXs = new List<double>() { 9, 99 };
-            List<double> testYs = new List<double>() { 10, 100 };
-            return ICoordinatesFunctionsFactory.Factory(testXs, testYs);
+            if(Tables.Count == 1)
+            {
+                //if there is only one table then we know that this is not
+                //a linked coordinates function.
+                return Tables[0].CreateCoordinatesFunctionFromTable();
+            }
+            else
+            {
+                return CreateLinkedFunction();
+            }
+        }
+
+        private ICoordinatesFunction CreateLinkedFunction()
+        {
+            //the interpolators between tables is the same as the interpolator of the last row
+            //of the previous table. Since any rows in a table all have the same interpolator
+            //i can grab the interpolator from any row in the table.
+            List<ICoordinatesFunction> functions = new List<ICoordinatesFunction>();
+            List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
+            foreach (CoordinatesFunctionTableVM table in Tables)
+            {
+                functions.Add(table.CreateCoordinatesFunctionFromTable());
+                interpolators.Add(table.InterpolationType);
+            }
+            //dump the last interpolator
+            interpolators.RemoveAt(interpolators.Count - 1);
+            return ICoordinatesFunctionsFactory.Factory(functions, interpolators);
         }
 
         /// <summary>
@@ -71,8 +95,7 @@ namespace FunctionsView.ViewModel
         /// </summary>
         /// <param name="rowItems"></param>
         private void CreateTables(List<CoordinatesFunctionRowItem> rowItems)
-        {
-            
+        {           
             //we are about to create the tables, so we need to find out what kinds of data we are dealing with
             //ColumnWidths.TableTypes tableType = ColumnWidths.GetTableTypeForRows(rowItems);
             //it would be nice to just bind the items source of the list to be the list of tables
@@ -279,18 +302,34 @@ namespace FunctionsView.ViewModel
 
         /// <summary>
         /// Turns a coordinates function into a list of row items.
-        /// Converts each coordinate of the function into its own row.
         /// </summary>
-        /// <param name="function"></param>
+        /// <param name="function">The ICoordinatesFunction</param>
         /// <returns></returns>
-        public List<CoordinatesFunctionRowItem> CreateRows(ICoordinatesFunction function)
+        private List<CoordinatesFunctionRowItem> CreateRows(ICoordinatesFunction function)
         {
-            InterpolationEnum interpolator = function.Interpolator;
-            List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
-            foreach (ICoordinate coord in function.Coordinates)
-            {
-                rows.Add(CreateRowItemFromCoordinate(coord, interpolator));
+            //i have to determine if the function is linked or not.
+            List<ICoordinatesFunction> functions = new List<ICoordinatesFunction>();
 
+            if (function.GetType().Equals(typeof(CoordinatesFunctionLinked)))
+            {
+                CoordinatesFunctionLinked linkedFunc = (CoordinatesFunctionLinked)function;
+                functions.AddRange(linkedFunc.Functions);
+            }
+            else
+            {
+                //if it is not linked then just add the one function that was passed in.
+                functions.Add(function);
+            }
+            //create a list of all rows from all functions
+            List<CoordinatesFunctionRowItem> rows = new List<CoordinatesFunctionRowItem>();
+            foreach (ICoordinatesFunction func in functions)
+            {
+                InterpolationEnum interpolator = func.Interpolator;
+                foreach (ICoordinate coord in func.Coordinates)
+                {
+                    rows.Add(CreateRowItemFromCoordinate(coord, interpolator));
+
+                }
             }
             return rows;
         }

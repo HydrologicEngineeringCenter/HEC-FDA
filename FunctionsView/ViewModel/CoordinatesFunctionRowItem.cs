@@ -14,9 +14,9 @@ namespace FunctionsView.ViewModel
         public event EventHandler RowIsLeavingTable;
         private readonly List<DistributionType> SupportedDistributionTypes = new List<DistributionType>() { DistributionType.Constant, DistributionType.Normal, 
             DistributionType.Triangular, DistributionType.Uniform, DistributionType.TruncatedNormal, DistributionType.Beta4Parameters };
-        
-        private DistributionType _selectedDistType = DistributionType.Constant;
-        private InterpolationEnum _selectedInterpolationType = InterpolationEnum.Linear;
+
+        private DistributionType _selectedDistType = DistributionType.NotSupported;// = DistributionType.Constant;
+        private InterpolationEnum _selectedInterpolationType;// = InterpolationEnum.Linear;
 
         #region Properties
         public double Alpha { get; set; }
@@ -28,7 +28,16 @@ namespace FunctionsView.ViewModel
         public double Max { get; set; }
         public double MostLikely { get; set; }
         public double Mean { get; set; }
- 
+
+        /// <summary>
+        /// I know that this is weird to have this property, but i needed a way for the 
+        /// Distribution control and the InterpolationControl to know what row it belongs to.
+        /// So the table xaml binds this row property to the controls so that they know.
+        /// </summary>
+        public CoordinatesFunctionRowItem Row
+        {
+            get { return this; }
+        }
 
         public IEnumerable<DistributionType> DistributionTypes
         {
@@ -63,11 +72,17 @@ namespace FunctionsView.ViewModel
             get { return _selectedDistType; }
             set
             {
+                
                 if (!value.Equals(_selectedDistType))
                 {
                     DistributionType originalType = _selectedDistType;
                     DistributionType newType = value;
-                    TranslateValuesBetweenDistributionTypes(originalType, newType);
+                    //i don't want to clear the values if this is the first time values are getting set
+                    //The first time the row will have a type of NotSupported
+                    if (originalType != DistributionType.NotSupported)
+                    {
+                        TranslateValuesBetweenDistributionTypes(originalType, newType);
+                    }
                     _selectedDistType = value;
                     RowIsLeavingTable?.Invoke(this, new EventArgs());
                 }
@@ -303,8 +318,8 @@ namespace FunctionsView.ViewModel
         {
             X = 0;
             Y = 0;
-            SelectedDistributionType = DistributionType.Constant;
-            SelectedInterpolationType = InterpolationEnum.Linear;
+            //SelectedDistributionType = DistributionType.Constant;
+           //SelectedInterpolationType = InterpolationEnum.Linear;
         }
         /// <summary>
         /// You should never have to call this directly. Use the RowItemBuilder to build this object.
@@ -340,5 +355,59 @@ namespace FunctionsView.ViewModel
             return new CoordinatesFunctionRowItem(X, Y, StandardDeviation, Mean, Min, Max, MostLikely,Alpha,Beta, SelectedDistributionType, SelectedInterpolationType);
         }
        
+        public ICoordinate CreateCoordinateFromRow()
+        {
+            double x = X;
+
+            if(SelectedDistributionType == DistributionType.Constant)
+            {
+                return ICoordinateFactory.Factory(x, Y);
+            }
+            else
+            {
+                return ICoordinateFactory.Factory(x, CreateDistributedValueFromRow());
+            }
+        }
+
+        private IDistributedValue CreateDistributedValueFromRow()
+        {
+            IDistributedValue retval = null;
+            switch (SelectedDistributionType)
+            {
+                case DistributionType.Normal:
+                    {
+                        retval = DistributedValueFactory.FactoryNormal(Mean, StandardDeviation);
+                        break;
+                    }
+                case DistributionType.TruncatedNormal:
+                    {
+                        retval = DistributedValueFactory.FactoryTruncatedNormal(Mean, StandardDeviation, Min, Max);
+                        break;
+                    }
+                case DistributionType.Uniform:
+                    {
+                        retval = DistributedValueFactory.FactoryUniform(Min, Max);
+                        break;
+                    }
+                case DistributionType.Beta4Parameters:
+                    {
+                        retval = DistributedValueFactory.FactoryBeta(Alpha, Beta, Min, Max);
+                        break;
+                    }
+                case DistributionType.Triangular:
+                    {
+                        retval = DistributedValueFactory.FactoryTriangular(MostLikely, Min, Max);
+                        break;
+                    }
+            }
+            if(retval == null)
+            {
+                throw new Exception("Unable to create a distributed value from row. The selected distribution type may be unsupported.");
+            }
+            else
+            {
+                return retval;
+            }
+        }
     }
 }

@@ -40,6 +40,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionsViewUITester", "Fu
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "UserControls", "UserControls\UserControls.vbproj", "{80EB938B-BC8F-44F7-B4DD-6127010F2D96}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionsViewTests", "FunctionsViewTests\FunctionsViewTests.csproj", "{8595F51B-E997-4F7E-A6E0-424A592B4A27}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -252,6 +254,18 @@ Global
 		{80EB938B-BC8F-44F7-B4DD-6127010F2D96}.Release|x64.Build.0 = Release|Any CPU
 		{80EB938B-BC8F-44F7-B4DD-6127010F2D96}.Release|x86.ActiveCfg = Release|Any CPU
 		{80EB938B-BC8F-44F7-B4DD-6127010F2D96}.Release|x86.Build.0 = Release|Any CPU
+		{8595F51B-E997-4F7E-A6E0-424A592B4A27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8595F51B-E997-4F7E-A6E0-424A592B4A27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8595F51B-E997-4F7E-A6E0-424A592B4A27}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8595F51B-E997-4F7E-A6E0-424A592B4A27}.Debug|x64.Build.0 = Debug|Any CPU
+		{8595F51B-E997-4F7E-A6E0-424A592B4A27}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8595F51B-E997-4F7E-A6E0-424A592B4A27}.Debug|x86.Build.0 = Debug|Any CPU
+		{8595F51B-E997-4F7E-A6E0-424A592B4A27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8595F51B-E997-4F7E-A6E0-424A592B4A27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8595F51B-E997-4F7E-A6E0-424A592B4A27}.Release|x64.ActiveCfg = Release|Any CPU
+		{8595F51B-E997-4F7E-A6E0-424A592B4A27}.Release|x64.Build.0 = Release|Any CPU
+		{8595F51B-E997-4F7E-A6E0-424A592B4A27}.Release|x86.ActiveCfg = Release|Any CPU
+		{8595F51B-E997-4F7E-A6E0-424A592B4A27}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

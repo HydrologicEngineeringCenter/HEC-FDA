@@ -26,7 +26,7 @@ namespace Functions.CoordinatesFunctions
         #endregion
 
         #region Constructor
-        internal CoordinatesFunctionConstants(List<ICoordinate> coordinates, InterpolationEnum interpolation = InterpolationEnum.None) 
+        internal CoordinatesFunctionConstants(List<ICoordinate> coordinates, InterpolationEnum interpolation = InterpolationEnum.None)
         {
             if (IsValid(coordinates))
             {
@@ -46,6 +46,39 @@ namespace Functions.CoordinatesFunctions
         #endregion
 
         #region Functions
+
+        public bool Equals(ICoordinatesFunction function)
+        {
+            //I don't think i have to check the domain, range, or order because
+            //if the coordinates and interpolator are all the same then those values
+            //should be the same.
+            if(!function.GetType().Equals(typeof(CoordinatesFunctionConstants)))
+            {
+                return false;
+            }
+            if(Coordinates.Count != function.Coordinates.Count)
+            {
+                return false;
+            }
+            for(int i = 0;i<Coordinates.Count;i++)
+            {
+                if(!Coordinates[i].X.Equals(function.Coordinates[i].X))
+                {
+                    return false;
+                }
+                if (!Coordinates[i].Y.Equals(function.Coordinates[i].Y))
+                {
+                    return false;
+                }
+            }
+            if(Interpolator != function.Interpolator)
+            {
+                return false;
+            }
+            return true;
+        }
+
+
         #region Initialization Functions
         public List<ICoordinate> SortByXs(List<ICoordinate> coordinates)
         {

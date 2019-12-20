@@ -7,7 +7,7 @@ using Utilities;
 
 namespace Functions.CoordinatesFunctions
 {
-    internal abstract class CoordinatesFunctionLinkedBase
+    public abstract class CoordinatesFunctionLinkedBase
     {
         public List<ICoordinatesFunction> Functions { get; internal set; }
 

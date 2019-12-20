@@ -17,6 +17,9 @@ namespace Functions
 
         Tuple<double, double> Domain { get; }
 
+        bool Equals(ICoordinatesFunction function);
+
+
         //bool IsDistributed { get; }
 
         //IFunction Sample(double p);

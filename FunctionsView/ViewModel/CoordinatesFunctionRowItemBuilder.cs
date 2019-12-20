@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FunctionsView.ViewModel
 {
-    class CoordinatesFunctionRowItemBuilder
+    public class CoordinatesFunctionRowItemBuilder
     {
         private double _X;
         private double _Y;
@@ -23,12 +23,12 @@ namespace FunctionsView.ViewModel
         private double _mostLikely;
         private double _mean;
 
-        internal CoordinatesFunctionRowItemBuilder(double x)
+        public CoordinatesFunctionRowItemBuilder(double x)
         {
             _X = x;
             _distType = DistributionType.NotSupported;
         }
-        internal CoordinatesFunctionRowItemBuilder WithTriangularDist(double mostLikely, double min, double max, InterpolationEnum interpolator)
+        public CoordinatesFunctionRowItemBuilder WithTriangularDist(double mostLikely, double min, double max, InterpolationEnum interpolator)
         {
             _mostLikely = mostLikely;
             _min = min;
@@ -37,7 +37,7 @@ namespace FunctionsView.ViewModel
             _interpType = interpolator;
             return this;
         }
-        internal CoordinatesFunctionRowItemBuilder WithNormalDist(double mean, double standardDeviation, InterpolationEnum interpolator)
+        public CoordinatesFunctionRowItemBuilder WithNormalDist(double mean, double standardDeviation, InterpolationEnum interpolator)
         {
             _distType = DistributionType.Normal;
             _mean = mean;
@@ -46,7 +46,7 @@ namespace FunctionsView.ViewModel
             return this;
         }
 
-        internal CoordinatesFunctionRowItemBuilder WithConstantDist(double y, InterpolationEnum interpolator)
+        public CoordinatesFunctionRowItemBuilder WithConstantDist(double y, InterpolationEnum interpolator)
         {
             _Y = y;
             _distType = DistributionType.Constant;
@@ -54,7 +54,7 @@ namespace FunctionsView.ViewModel
             return this;
         }
 
-        internal CoordinatesFunctionRowItemBuilder WithUniformDist(double min, double max, InterpolationEnum interpolator)
+        public CoordinatesFunctionRowItemBuilder WithUniformDist(double min, double max, InterpolationEnum interpolator)
         {
             _min = min;
             _max = max;
@@ -62,7 +62,7 @@ namespace FunctionsView.ViewModel
             _interpType = interpolator;
             return this;
         }
-        internal CoordinatesFunctionRowItemBuilder WithTruncatedNormalDist(double mean, double stDev, double min, double max, InterpolationEnum interpolator)
+        public CoordinatesFunctionRowItemBuilder WithTruncatedNormalDist(double mean, double stDev, double min, double max, InterpolationEnum interpolator)
         {
             _distType = DistributionType.TruncatedNormal;
             _mean = mean;
@@ -73,7 +73,7 @@ namespace FunctionsView.ViewModel
             return this;
         }
 
-        internal CoordinatesFunctionRowItemBuilder WithBetaDist(double alpha, double beta, double min, double max, InterpolationEnum interpolator)
+        public CoordinatesFunctionRowItemBuilder WithBetaDist(double alpha, double beta, double min, double max, InterpolationEnum interpolator)
         {
             _distType = DistributionType.Beta4Parameters;
             _alpha = alpha;
@@ -84,7 +84,7 @@ namespace FunctionsView.ViewModel
             return this;
         }
 
-        internal CoordinatesFunctionRowItem Build()
+        public CoordinatesFunctionRowItem Build()
         {
             return new CoordinatesFunctionRowItem(_X, _Y, _standDev, _mean, _min, _max, _mostLikely,_alpha, _beta, _distType, _interpType);
         }
