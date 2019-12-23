@@ -38,11 +38,11 @@ namespace FdaViewModel.Conditions
 
         private bool _usesThreshold = false;
 
-        private FdaModel.ComputationPoint.PerformanceThresholdTypes _thresholdType;
+        private Model.ComputationPoint.PerformanceThresholdTypes _thresholdType;
         private double _thresholdValue;
 
         public ConditionBuilder(string name, string desc, int analysisYear, ImpactArea.ImpactAreaElement impactAreaElem, 
-            ImpactArea.ImpactAreaRowItem indexLocation, FdaModel.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue)
+            ImpactArea.ImpactAreaRowItem indexLocation, Model.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue)
         {
             _name = name;
             _description = desc;

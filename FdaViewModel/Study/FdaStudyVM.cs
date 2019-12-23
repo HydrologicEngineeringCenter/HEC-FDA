@@ -199,8 +199,8 @@ namespace FdaViewModel.Study
             _StudyElement.AddBaseElements();
             _MainStudyTree.Add(_StudyElement);
 
-            FdaModel.Utilities.Messager.Logger.Instance.RequestFlushLogFile += Instance_RequestFlushLogFile;
-            FdaModel.Utilities.Initialize.InitializeGDAL();
+            //FdaModel.Utilities.Messager.Logger.Instance.RequestFlushLogFile += Instance_RequestFlushLogFile;
+            Model.Utilities.Initialize.InitializeGDAL();
 
 
             StudyStatusBar.SaveStatusChanged += UpdateSaveStatus;
@@ -381,22 +381,18 @@ namespace FdaViewModel.Study
             AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(_StudyElement.Name, TransactionEnum.EditExisting,
                 "Openning " + _StudyElement.Name + " for editing.", nameof(CurrentStudyElement)));
 
-            FdaModel.Utilities.Messager.ErrorMessage err = new FdaModel.Utilities.Messager.ErrorMessage("Test message when opening", FdaModel.Utilities.Messager.ErrorMessageEnum.Report, nameof(CurrentStudyElement));
+            //FdaModel.Utilities.Messager.ErrorMessage err = new FdaModel.Utilities.Messager.ErrorMessage("Test message when opening", FdaModel.Utilities.Messager.ErrorMessageEnum.Report, nameof(CurrentStudyElement));
 
             TransactionHelper.LoadTransactionsAndMessages(this, CurrentStudyElement);
         }
-        //private void ClearCurrentStudy(object sender, EventArgs e)
+     
+        //private void Instance_RequestFlushLogFile(object sender, EventArgs e)
         //{
-        //    _MainStudyTree[0].Elements.Clear();
-        //    _StudyElement = new StudyElement(this);
+        //    if (!Storage.Connection.Instance.IsConnectionNull)
+        //    {
+        //        FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
+        //    }
         //}
-        private void Instance_RequestFlushLogFile(object sender, EventArgs e)
-        {
-            if (!Storage.Connection.Instance.IsConnectionNull)
-            {
-                FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
-            }
-        }
 
         private void WriteTransactions(object sender, TransactionEventArgs args)
         {
@@ -432,8 +428,8 @@ namespace FdaViewModel.Study
         {
             FdaLogging.Disposer.DeleteOldLogs();
             FdaLogging.Disposer.DeleteLogsOverMaxNumber();
-            FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
-            FdaModel.Utilities.Initialize.DisposeGDAL();
+            //FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
+            //FdaModel.Utilities.Initialize.DisposeGDAL();
             WriteMapLayersXMLFile();
             FdaLogging.Disposer.Dispose();
         }

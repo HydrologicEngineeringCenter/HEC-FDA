@@ -1,5 +1,7 @@
 ﻿using FdaViewModel.AggregatedStageDamage;
 using FdaViewModel.Utilities;
+using Model;
+using Model.Condition.ComputePoint.ImpactAreaFunctions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -87,19 +89,23 @@ namespace FdaViewModel.Saving.PersistenceManagers
         #region utilities
         private object[] GetRowDataFromElement(AggregatedStageDamageElement element)
         {
-            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.Distribution, element.Method, ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues) };
+            return new object[] { element.Name, element.LastEditDate, element.Description,
+               element.Curve.Function.DistributionType, element.Method,
+                element.Curve.WriteToXML().ToString() };
 
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            Statistics.UncertainCurveDataCollection emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
-                (string)rowData[CURVE_DIST_TYPE_COL]));
+            IFdaFunction function = ImpactAreaFunctionFactory.Factory((String)rowData[CURVE_COL], ImpactAreaFunctionEnum.InteriorStageDamage);
+
+            //Statistics.UncertainCurveDataCollection emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
+            //    (string)rowData[CURVE_DIST_TYPE_COL]));
             AggregatedStageDamageElement asd = new AggregatedStageDamageElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL], 
-                (string)rowData[DESC_COL], emptyCurve, (CreationMethodEnum)Enum.Parse(typeof(CreationMethodEnum), (string)rowData[CREATION_METHOD_COL]));
+                (string)rowData[DESC_COL], function, (CreationMethodEnum)Enum.Parse(typeof(CreationMethodEnum), (string)rowData[CREATION_METHOD_COL]));
             //asd.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
-            asd.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_COL], 
-                (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), 
-                (string)rowData[CURVE_DIST_TYPE_COL]));
+            //asd.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_COL], 
+            //    (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), 
+            //    (string)rowData[CURVE_DIST_TYPE_COL]));
             return asd;
         }
         #endregion
@@ -127,7 +133,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             if (elementToSave.Description == null) { elementToSave.Description = ""; }
 
-            if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((AggregatedStageDamageElement)elementToSave), oldElement.Name, TableName) || AreCurvesDifferent(oldElement.Curve, elementToSave.Curve))
+            if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((AggregatedStageDamageElement)elementToSave),oldElement.Name, TableName) 
+                || !oldElement.Curve.Equals(elementToSave.Curve) )//AreCurvesDifferent(oldElement.Curve, elementToSave.Curve))
             {
                 base.SaveExisting(oldElement, elementToSave, changeTableIndex);
             }
@@ -202,8 +209,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
             //the new statId will be one higher than the max that is in the table already.
             int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
             return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
-                element.Curve.Distribution, ((AggregatedStageDamageElement)element).Method,
-                ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues),
+                element.Curve.Function.DistributionType, ((AggregatedStageDamageElement)element).Method,
+                element.Curve.WriteToXML().ToString(),
                 stateId};
         }
 

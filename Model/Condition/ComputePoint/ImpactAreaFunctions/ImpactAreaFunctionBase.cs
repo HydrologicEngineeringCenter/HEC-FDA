@@ -59,7 +59,16 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
        
 
         public abstract XElement WriteToXML();
-        
+
+        public bool Equals(IFdaFunction function)
+        {
+            if(this.Type != function.Type)
+            {
+                return false;
+            }
+            return this.Function.Equals(function.Function);
+        }
+
 
         #endregion
 

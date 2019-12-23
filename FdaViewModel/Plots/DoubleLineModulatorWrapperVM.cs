@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 
 namespace FdaViewModel.Plots
@@ -23,7 +21,7 @@ namespace FdaViewModel.Plots
 
         private bool _TrackerVisible = true;
         private bool _AreaPlotVisible = true;
-        private FdaModel.ComputationPoint.PerformanceThreshold _Threshold;
+        private Model.ComputationPoint.PerformanceThreshold _Threshold;
 
         #endregion
         #region Properties
@@ -31,7 +29,7 @@ namespace FdaViewModel.Plots
         {
             get;set;
         }
-        public FdaModel.ComputationPoint.PerformanceThreshold Threshold
+        public Model.ComputationPoint.PerformanceThreshold Threshold
         {
             get { return _Threshold; }
             set { _Threshold = value; NotifyPropertyChanged(); }

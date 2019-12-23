@@ -174,14 +174,8 @@
     <Compile Include="Conditions\AddStageDamageToCondition.xaml.cs">
       <DependentUpon>AddStageDamageToCondition.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Conditions\ConditionsDoubleLineModulatorWrapper.xaml.cs">
-      <DependentUpon>ConditionsDoubleLineModulatorWrapper.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Conditions\ConditionsEditor.xaml.cs">
       <DependentUpon>ConditionsEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Conditions\ConditionsPlotEditor.xaml.cs">
-      <DependentUpon>ConditionsPlotEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="FlowTransforms\InflowOutflowEditor.xaml.cs">
       <DependentUpon>InflowOutflowEditor.xaml</DependentUpon>
@@ -210,12 +204,6 @@
     <Compile Include="ImpactArea\RadioButtonConverterLeft.cs" />
     <Compile Include="ImpactArea\RadioButtonConverterBoth.cs" />
     <Compile Include="ImpactArea\RadioButtonConverterRight.cs" />
-    <Compile Include="Inventory\AttributeLinkingList.xaml.cs">
-      <DependentUpon>AttributeLinkingList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\AttributeLinkingListRowItem.xaml.cs">
-      <DependentUpon>AttributeLinkingListRowItem.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Inventory\DamageCategory\DamageCategoryEditor.xaml.cs">
       <DependentUpon>DamageCategoryEditor.xaml</DependentUpon>
     </Compile>
@@ -237,30 +225,7 @@
     <Compile Include="Inventory\ImportFromShapefile.xaml.cs">
       <DependentUpon>ImportFromShapefile.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Inventory\ImportStructuresFromShapefile.xaml.cs">
-      <DependentUpon>ImportStructuresFromShapefile.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\OccupancyTypesFromFile.xaml.cs">
-      <DependentUpon>OccupancyTypesFromFile.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\OccupancyTypes\Controls\CreateNewDamCat.xaml.cs">
-      <DependentUpon>CreateNewDamCat.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\OccupancyTypes\Controls\OccTypeEditorControl.xaml.cs">
-      <DependentUpon>OccTypeEditorControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\OccupancyTypes\ImportOccupancyTypeGroups.xaml.cs">
-      <DependentUpon>ImportOccupancyTypeGroups.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\OccupancyTypes\ImportOccupancyTypes.xaml.cs">
-      <DependentUpon>ImportOccupancyTypes.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\OccupancyTypes\OccTypeGroupRowItem.xaml.cs">
-      <DependentUpon>OccTypeGroupRowItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\OccupancyTypes\OccupancyTypesEditor.xaml.cs">
-      <DependentUpon>OccupancyTypesEditor.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Inventory\OccupancyTypes\DeleteMe.cs" />
     <Compile Include="Output\CreateEconImportFile.xaml.cs">
       <DependentUpon>CreateEconImportFile.xaml</DependentUpon>
     </Compile>
@@ -279,48 +244,7 @@
     <Compile Include="Output\LinkedPlotsUpdated.xaml.cs">
       <DependentUpon>LinkedPlotsUpdated.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Plots\ArrowPolygon.xaml.cs">
-      <DependentUpon>ArrowPolygon.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\ConditionsIndividualPlotWrapper.xaml.cs">
-      <DependentUpon>ConditionsIndividualPlotWrapper.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\DoubleLineModulator.xaml.cs">
-      <DependentUpon>DoubleLineModulator.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\DoubleLineModulatorCoverButton.xaml.cs">
-      <DependentUpon>DoubleLineModulatorCoverButton.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\DoubleLineModulatorHorizontal.xaml.cs">
-      <DependentUpon>DoubleLineModulatorHorizontal.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\DoubleLineModulatorHorizontalCoverButton.xaml.cs">
-      <DependentUpon>DoubleLineModulatorHorizontalCoverButton.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\HorizontalDoubleLineModulatorWrapper.xaml.cs">
-      <DependentUpon>HorizontalDoubleLineModulatorWrapper.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\IndividualLinkedPlot.xaml.cs">
-      <DependentUpon>IndividualLinkedPlot.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Plots\ILinkedPlot.cs" />
-    <Compile Include="Plots\IndividualLinkedPlotControl.xaml.cs">
-      <DependentUpon>IndividualLinkedPlotControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\IndividualLinkedPlotCoverButton.xaml.cs">
-      <DependentUpon>IndividualLinkedPlotCoverButton.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\LinkedPlots.xaml.cs">
-      <DependentUpon>LinkedPlots.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\LinkedPlotSpecificPointTool.xaml.cs">
-      <DependentUpon>LinkedPlotSpecificPointTool.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\PlotsUtil.cs" />
-    <Compile Include="Plots\SharedAxisEnum.cs" />
-    <Compile Include="Plots\SingleLinePlot.xaml.cs">
-      <DependentUpon>SingleLinePlot.xaml</DependentUpon>
-    </Compile>
     <Compile Include="StageTransforms\ExteriorInteriorEditor.xaml.cs">
       <DependentUpon>ExteriorInteriorEditor.xaml</DependentUpon>
     </Compile>
@@ -431,17 +355,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Conditions\ConditionsDoubleLineModulatorWrapper.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Conditions\ConditionsEditor.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Conditions\ConditionsPlotEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="FlowTransforms\InflowOutflowEditor.xaml">
       <SubType>Designer</SubType>
@@ -475,14 +391,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Inventory\AttributeLinkingList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\AttributeLinkingListRowItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Inventory\DamageCategory\DamageCategoryEditor.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -508,38 +416,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Inventory\ImportFromShapefile.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\ImportStructuresFromShapefile.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\OccupancyTypesFromFile.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\OccupancyTypes\Controls\CreateNewDamCat.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\OccupancyTypes\Controls\OccTypeEditorControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\OccupancyTypes\ImportOccupancyTypeGroups.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\OccupancyTypes\ImportOccupancyTypes.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\OccupancyTypes\OccTypeGroupRowItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\OccupancyTypes\OccupancyTypesEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -576,58 +452,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Output\LinkedPlotsUpdated.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\ArrowPolygon.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\ConditionsIndividualPlotWrapper.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\DoubleLineModulator.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\DoubleLineModulatorCoverButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\DoubleLineModulatorHorizontal.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\DoubleLineModulatorHorizontalCoverButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\HorizontalDoubleLineModulatorWrapper.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\IndividualLinkedPlot.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\IndividualLinkedPlotControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\IndividualLinkedPlotCoverButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\LinkedPlots.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\LinkedPlotSpecificPointTool.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\SingleLinePlot.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -978,6 +802,7 @@
     <Resource Include="Resources\HideThresholdLines.png" />
     <Resource Include="Resources\ShowThresholdLines.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -140,7 +140,7 @@ namespace FdaViewModel.Utilities
                 }
             }else
             {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("A new window launch was requested from " + this.GetType().Name + " to " + tab.BaseVM.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
+                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("A new window launch was requested from " + this.GetType().Name + " to " + tab.BaseVM.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
             }
 
         }

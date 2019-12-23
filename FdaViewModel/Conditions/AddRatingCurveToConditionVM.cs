@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
-using System.Threading.Tasks;
-using FdaModel.Functions;
 using Statistics;
 using FdaViewModel.Utilities;
 using System.Windows;
 using FdaViewModel.StageTransforms;
+using Model;
 
 namespace FdaViewModel.Conditions
 {
@@ -55,35 +50,36 @@ namespace FdaViewModel.Conditions
             set { _ListOfRatingCurves = value; NotifyPropertyChanged(); }
         }
 
-        public CurveIncreasing SelectedCurve
+        public IFdaFunction SelectedCurve
         {
             get
             {
-                UncertainCurveDataCollection curve = ((StageTransforms.RatingCurveElement)SelectedElement).Curve;
-                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = 
-                    new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.Rating);
+                return ((StageTransforms.RatingCurveElement)SelectedElement).Curve;
+                //UncertainCurveDataCollection curve = ((StageTransforms.RatingCurveElement)SelectedElement).Curve;
+                //FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = 
+                //    new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.Rating);
 
-                List<double> ys = new List<double>();
-                List<double> xs = new List<double>();
-                foreach (double y in (rating.GetOrdinatesFunction().Function.YValues))
-                {
-                    ys.Add(y);
-                }
-                foreach (double x in (rating.GetOrdinatesFunction().Function.XValues))
-                {
-                    xs.Add(x);
-                }
-                return new Statistics.CurveIncreasing(ys.ToArray(), xs.ToArray(), true, false);
+                //List<double> ys = new List<double>();
+                //List<double> xs = new List<double>();
+                //foreach (double y in (rating.GetOrdinatesFunction().Function.YValues))
+                //{
+                //    ys.Add(y);
+                //}
+                //foreach (double x in (rating.GetOrdinatesFunction().Function.XValues))
+                //{
+                //    xs.Add(x);
+                //}
+                //return new Statistics.CurveIncreasing(ys.ToArray(), xs.ToArray(), true, false);
             }
         }
 
-        public BaseFunction BaseFunction
-        {
-            get
-            {
-                return new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(SelectedCurve, FunctionTypes.Rating);
-            }
-        }
+        //public BaseFunction BaseFunction
+        //{
+        //    get
+        //    {
+        //        return new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(SelectedCurve, FunctionTypes.Rating);
+        //    }
+        //}
 
         
         #endregion

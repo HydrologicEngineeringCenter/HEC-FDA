@@ -113,7 +113,7 @@ namespace FdaViewModel.FrequencyRelationships
             AnalyticalFrequencyElement element = (AnalyticalFrequencyElement)elem;
             element.Name = vm.Name;
             element.Description = vm.Description;
-            element.Distribution = vm.Distribution;
+            element.Distribution = vm.Curve;
             element.UpdateTreeViewHeader(vm.Name);
         }
 
@@ -124,14 +124,14 @@ namespace FdaViewModel.FrequencyRelationships
 
             vm.Name = element.Name;
             vm.Description = element.Description;
-            vm.Distribution = element.Distribution;
+            vm.Curve = element.Distribution;
            
         }
 
         public  ChildElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
         {
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            return new AnalyticalFrequencyElement(editorVM.Name, editDate, editorVM.Description, ((AnalyticalFrequencyEditorVM)editorVM).Distribution);
+            return new AnalyticalFrequencyElement(editorVM.Name, editDate, editorVM.Description, ((AnalyticalFrequencyEditorVM)editorVM).Curve);
             //return null;
         }
        

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,8 +15,9 @@ namespace FdaViewModel.Plots
         event EventHandler PopImporterOut;
 
         //properties
-        Statistics.CurveIncreasing SelectedCurve { get;  }
-        FdaModel.Functions.BaseFunction BaseFunction { get; }
+        IFdaFunction SelectedCurve { get;  }
+        //todo: Refactor: commenting out
+        //FdaModel.Functions.BaseFunction BaseFunction { get; }
         string SelectedElementName { get; }
         Utilities.ChildElement SelectedElement { get; }
         bool IsPoppedOut { get; set; }

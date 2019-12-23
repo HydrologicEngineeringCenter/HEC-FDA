@@ -1,4 +1,5 @@
 ﻿using FdaViewModel.Utilities;
+using Model;
 using Statistics;
 using System;
 using System.Collections.Generic;
@@ -50,7 +51,7 @@ namespace FdaViewModel.AggregatedStageDamage
             /// <param name="description">Element description</param>
             /// <param name="curve">The curve that represents the stage vs damage for the element</param>
             /// <param name="method">Creation method</param>
-        public AggregatedStageDamageElement( string name , string lastEditDate, string description, Statistics.UncertainCurveDataCollection curve, CreationMethodEnum method) : base()
+        public AggregatedStageDamageElement( string name , string lastEditDate, string description, IFdaFunction curve, CreationMethodEnum method) : base()
         {
             LastEditDate = lastEditDate;
             Name = name;
@@ -194,43 +195,44 @@ namespace FdaViewModel.AggregatedStageDamage
             return retval;
         }
 
-        private bool areCurvesEqual(UncertainCurveDataCollection curve2)
+        private bool areCurvesEqual(IFdaFunction curve2)
         {
+            //todo: Refactor: I just commented this out. I doubt i still need it.
             bool retval = true;
-            if(Curve.GetType() != curve2.GetType())
-            {
-                return false;
-            }
-            if (Curve.Distribution != curve2.Distribution)
-            {
-                return false;
-            }
-            if (Curve.XValues.Count != curve2.XValues.Count)
-            {
-                return false;
-            }
-            if (Curve.YValues.Count != curve2.YValues.Count)
-            {
-                return false;
-            }
-            double epsilon = .0001;
-            for(int i = 0;i<Curve.XValues.Count;i++)
-            {
-                if(Math.Abs( Curve.get_X(i)) - Math.Abs(curve2.get_X(i)) > epsilon)
-                {
-                    return false;
-                }
-                ContinuousDistribution y = Curve.get_Y(i);
-                ContinuousDistribution y2 = curve2.get_Y(i);
-                if (Math.Abs(y.GetCentralTendency) - Math.Abs(y2.GetCentralTendency)> epsilon)
-                {
-                    return false;
-                }
-                if (Math.Abs(y.GetSampleSize) - Math.Abs( y2.GetSampleSize) > epsilon)
-                {
-                    return false;
-                }
-            }
+            //if(Curve.GetType() != curve2.GetType())
+            //{
+            //    return false;
+            //}
+            //if (Curve.Distribution != curve2.Distribution)
+            //{
+            //    return false;
+            //}
+            //if (Curve.XValues.Count != curve2.XValues.Count)
+            //{
+            //    return false;
+            //}
+            //if (Curve.YValues.Count != curve2.YValues.Count)
+            //{
+            //    return false;
+            //}
+            //double epsilon = .0001;
+            //for(int i = 0;i<Curve.XValues.Count;i++)
+            //{
+            //    if(Math.Abs( Curve.get_X(i)) - Math.Abs(curve2.get_X(i)) > epsilon)
+            //    {
+            //        return false;
+            //    }
+            //    ContinuousDistribution y = Curve.get_Y(i);
+            //    ContinuousDistribution y2 = curve2.get_Y(i);
+            //    if (Math.Abs(y.GetCentralTendency) - Math.Abs(y2.GetCentralTendency)> epsilon)
+            //    {
+            //        return false;
+            //    }
+            //    if (Math.Abs(y.GetSampleSize) - Math.Abs( y2.GetSampleSize) > epsilon)
+            //    {
+            //        return false;
+            //    }
+            //}
 
             return retval;
         }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FdaViewModel.Utilities.Transactions;
 using FdaViewModel.StageTransforms;
+using Model;
 
 namespace FdaViewModel.Editors
 {
@@ -15,7 +16,8 @@ namespace FdaViewModel.Editors
 
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("CurveEditorVM");
 
-        private Statistics.UncertainCurveDataCollection _Curve;
+
+        private IFdaFunction _Curve;
         private string _SavingText;
         private ObservableCollection<FdaLogging.LogItem> _MessageRows = new ObservableCollection<FdaLogging.LogItem>();
 
@@ -53,7 +55,7 @@ namespace FdaViewModel.Editors
         }
 
 
-        public Statistics.UncertainCurveDataCollection Curve
+        public IFdaFunction Curve
         {
             get { return _Curve; }
             set
@@ -101,7 +103,7 @@ namespace FdaViewModel.Editors
         #endregion
 
         #region constructors
-        public CurveEditorVM(Statistics.UncertainCurveDataCollection defaultCurve, EditorActionManager actionManager) :base(actionManager)
+        public CurveEditorVM(IFdaFunction defaultCurve, EditorActionManager actionManager) :base(actionManager)
         {
             _Curve = defaultCurve;
             PlotTitle = "Curve";

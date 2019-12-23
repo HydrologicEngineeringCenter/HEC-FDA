@@ -25,12 +25,7 @@
               xmlns:DepthDamageView="clr-namespace:Fda.Inventory.DepthDamageCurves"
              xmlns:DepthDamageVM="clr-namespace:FdaViewModel.Inventory.DepthDamage;assembly=FdaViewModel"
              
-             
-             xmlns:OccupancyTypesView="clr-namespace:Fda.Inventory.OccupancyTypes"
-             xmlns:OccupancyTypesVM="clr-namespace:FdaViewModel.Inventory.OccupancyTypes;assembly=FdaViewModel"
-              
-             xmlns:OccupancyTypesControlsView="clr-namespace:Fda.Inventory.OccupancyTypes.Controls"
-             xmlns:OccupancyTypesControlsVM="clr-namespace:FdaViewModel.Inventory.OccupancyTypes;assembly=FdaViewModel"
+          
              
              xmlns:FlowTransformsView="clr-namespace:Fda.FlowTransforms"
              xmlns:FlowTransformsVM="clr-namespace:FdaViewModel.FlowTransforms;assembly=FdaViewModel"
@@ -54,12 +49,7 @@
              xmlns:ConditionsView="clr-namespace:Fda.Conditions"
              
              
-             
-             xmlns:LinkedPlotsVM="clr-namespace:FdaViewModel.Output;assembly=FdaViewModel"
-             xmlns:LinkedPlotsView="clr-namespace:Fda.Output"
-             
-             xmlns:PlotsVM="clr-namespace:FdaViewModel.Plots;assembly=FdaViewModel"
-             xmlns:PlotsView="clr-namespace:Fda.Plots"
+
              
              xmlns:UtilitiesView="clr-namespace:Fda.Utilities"
              xmlns:UtilitiesVM="clr-namespace:FdaViewModel.Utilities;assembly=FdaViewModel"
@@ -147,17 +137,19 @@
         </DataTemplate>
         
         <!--Occupancy Types Region-->
-        <DataTemplate DataType="{x:Type OccupancyTypesVM:OccupancyTypesEditorVM }" >
+        <!--todo: Refactor: CO-->
+        <!--<DataTemplate DataType="{x:Type OccupancyTypesVM:OccupancyTypesEditorVM }" >
             <OccupancyTypesView:OccupancyTypesEditor/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type OccupancyTypesVM:OccupancyTypesGroupRowItemVM }" >
             <OccupancyTypesView:OccTypeGroupRowItem/>
-        </DataTemplate>
+        </DataTemplate>-->
 
         <!--Occupancy Types Controls Region-->
-        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:CreateNewDamCatVM }" >
+        <!--todo: Refactor: CO-->
+        <!--<DataTemplate DataType="{x:Type OccupancyTypesControlsVM:CreateNewDamCatVM }" >
             <OccupancyTypesControlsView:CreateNewDamCat/>
-        </DataTemplate>
+        </DataTemplate>-->
        
 
         <!--Inventory Region-->
@@ -168,21 +160,24 @@
         <DataTemplate DataType="{x:Type DepthDamageVM:DepthDamageCurveEditorControlVM }" >
             <DepthDamageView:DepthDamageEditorControl/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type InventoryVM:AttributeLinkingListVM }" >
+        <!--todo: Refactor: CO-->
+        <!--<DataTemplate DataType="{x:Type InventoryVM:AttributeLinkingListVM }" >
             <InventoryView:AttributeLinkingList/>
-        </DataTemplate>
+        </DataTemplate>-->
         <DataTemplate DataType="{x:Type InventoryVM:DefineSIAttributesVM }" >
             <InventoryView:DefineSIAttributes/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromShapefileVM }" >
+        <!--todo: Refactor: CO-->
+        <!--<DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromShapefileVM }" >
             <InventoryView:ImportStructuresFromShapefile/>
-        </DataTemplate>
+        </DataTemplate>-->
         <DataTemplate DataType="{x:Type InventoryVM:ImportFromHAZUSVM }" >
             <InventoryView:ImportFromHAZUS/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type InventoryVM:ImportFromNSIVM }" >
+        <!--todo: Refactor: CO-->
+        <!--<DataTemplate DataType="{x:Type InventoryVM:ImportFromNSIVM }" >
             <InventoryView:ImportFromNSI/>
-        </DataTemplate>
+        </DataTemplate>-->
         <DataTemplate DataType="{x:Type InventoryVM:ImportFromShapefileVM }" >
             <InventoryView:ImportFromShapefile/>
         </DataTemplate>
@@ -190,9 +185,10 @@
             <DamageCategoryView:DamageCategoryEditor/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type OccupancyTypesVM:ImportOccupancyTypesVM }" >
+        <!--todo: Refactor: CO-->
+        <!--<DataTemplate DataType="{x:Type OccupancyTypesVM:ImportOccupancyTypesVM }" >
             <OccupancyTypesView:ImportOccupancyTypeGroups/>
-        </DataTemplate>
+        </DataTemplate>-->
 
 
         <!--Output Region-->
@@ -214,24 +210,27 @@
         <DataTemplate DataType="{x:Type ConditionVM:AddStageDamageToConditionVM }" >
             <ConditionsView:AddStageDamageToCondition/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:ConditionsPlotEditorVM }" >
+        <!--todo: Refactor: CO-->
+        <!--<DataTemplate DataType="{x:Type ConditionVM:ConditionsPlotEditorVM }" >
             <ConditionsView:ConditionsPlotEditor/>
-        </DataTemplate>
+        </DataTemplate>-->
         <DataTemplate DataType="{x:Type ConditionVM:AddFlowFrequencyToConditionVM }" >
             <ConditionsView:AddFlowFrequencyToCondition/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type ConditionVM:AddRatingCurveToConditionVM }" >
             <ConditionsView:AddRatingCurveToCondition/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type LinkedPlotsVM:LinkedPlotsUpdatedVM }" >
+        <!--todo: Refactor: CO-->
+        <!--<DataTemplate DataType="{x:Type LinkedPlotsVM:LinkedPlotsUpdatedVM }" >
             <LinkedPlotsView:LinkedPlotsUpdated/>
-        </DataTemplate>
-
+        </DataTemplate>-->
+        
+        <!--todo: Refactor: CO-->
         <!--Plots Region -->
         <!--<DataTemplate DataType="{x:Type PlotsVM:ParentUserControlVM }" >
             <PlotsView:ParentUserControl/>
         </DataTemplate>-->
-        <DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotVM }" >
+        <!--<DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotVM }" >
             <PlotsView:IndividualLinkedPlot/>
         </DataTemplate>
 
@@ -241,12 +240,12 @@
 
         <DataTemplate DataType="{x:Type PlotsVM:DoubleLineModulatorWrapperVM }" >
             <ConditionsView:ConditionsDoubleLineModulatorWrapper/>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotControlVM }" >
+        </DataTemplate>-->
+        <!--todo: Refactor: CO-->
+        <!--<DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotControlVM }" >
             <PlotsView:IndividualLinkedPlotControl/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotCoverButtonVM }" >
+        </DataTemplate>-->
+        <!--<DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotCoverButtonVM }" >
             <PlotsView:IndividualLinkedPlotCoverButton/>
         </DataTemplate>
 
@@ -259,12 +258,12 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type PlotsVM:DoubleLineModulatorCoverButtonVM }" >
             <PlotsView:DoubleLineModulatorCoverButton/>
-        </DataTemplate>
+        </DataTemplate>-->
 
-
-        <DataTemplate DataType="{x:Type PlotsVM:LinkedPlotsVM }" >
+        <!--todo: Refactor: CO-->
+        <!--<DataTemplate DataType="{x:Type PlotsVM:LinkedPlotsVM }" >
             <PlotsView:LinkedPlots/>
-        </DataTemplate>
+        </DataTemplate>-->
         
         <!--Study Region-->
         <DataTemplate DataType="{x:Type StudyVM:AnalysisYearsVM }" >
@@ -301,9 +300,10 @@
         <DataTemplate DataType="{x:Type UtilitiesVM:MessageVM }" >
             <UtilitiesView:MessageWindow/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type UtilitiesVM:MessagesVM }" >
+        <!--todo: Refactor: CO-->
+        <!--<DataTemplate DataType="{x:Type UtilitiesVM:MessagesVM }" >
             <UtilitiesView:MessagesView/>
-        </DataTemplate>
+        </DataTemplate>-->
         <DataTemplate DataType="{x:Type UtilitiesVM:CustomMessageBoxVM }" >
             <UtilitiesView:CustomMessageBox/>
         </DataTemplate>

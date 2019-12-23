@@ -136,6 +136,11 @@ namespace Model
             else return null;
         }
 
+        public static IFdaFunction Factory(List<double> xs, List<double> ys, ImpactAreaFunctionEnum type)
+        {
+            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xs, ys);
+            return Factory(func, type);
+        }
 
         //public static ITransformFunction<YType> CreateNewTransformFunction<YType>(ICoordinatesFunction<double, YType> function, ImpactAreaFunctionEnum type)
         //{

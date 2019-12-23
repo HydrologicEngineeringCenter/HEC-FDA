@@ -1,5 +1,6 @@
 ﻿using FdaViewModel.GeoTech;
 using FdaViewModel.Utilities;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,7 +26,7 @@ namespace FdaViewModel.Editors
         }        //public EditorActionManager ActionManager { get; set; }
 
 
-        public FailureFunctionCurveEditorVM(Statistics.UncertainCurveDataCollection defaultCurve, ObservableCollection<LeveeFeatureElement> latStructList, EditorActionManager actionManager) :base(defaultCurve, actionManager)
+        public FailureFunctionCurveEditorVM(IFdaFunction defaultCurve, ObservableCollection<LeveeFeatureElement> latStructList, EditorActionManager actionManager) :base(defaultCurve, actionManager)
         {
             LateralStructureList = latStructList;
             StudyCache.LeveeAdded += StudyCache_LeveeAdded;

@@ -1,6 +1,7 @@
 ﻿using FdaViewModel.Editors;
 using FdaViewModel.Saving;
 using FdaViewModel.WaterSurfaceElevation;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,7 +22,7 @@ namespace FdaViewModel.Utilities
 
         //private object _CustomTreeViewHeader;
         private string _Description;
-        private Statistics.UncertainCurveDataCollection _Curve;
+        private IFdaFunction _Curve;
         private bool _IsExpanded = true;
         private int _FontSize = 14;
         private bool _IsBold = false;
@@ -47,7 +48,7 @@ namespace FdaViewModel.Utilities
             get { return _IsBold; }
             set { _IsBold = value; NotifyPropertyChanged(nameof(IsBold)); }
         }
-        public Statistics.UncertainCurveDataCollection Curve
+        public IFdaFunction Curve
         {
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }

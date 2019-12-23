@@ -1,5 +1,6 @@
 ﻿using FdaViewModel.GeoTech;
 using FdaViewModel.Utilities;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -76,7 +77,10 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 element.Description = "";
             }
             FailureFunctionElement elem = (FailureFunctionElement)element;
-            return new object[] { element.Name, element.LastEditDate, element.Description, elem.SelectedLateralStructure.Name, element.Curve.Distribution, ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues) };
+            return new object[] { element.Name, element.LastEditDate, element.Description, elem.SelectedLateralStructure.Name,
+                element.Curve.Function.DistributionType,
+                element.Curve.WriteToXML().ToString() };
+                //ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues) };
 
         }
 
@@ -96,9 +100,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
             //the new statId will be one higher than the max that is in the table already.
             int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
             return new object[] {elemId, element.Name, element.LastEditDate, element.Description, elem.SelectedLateralStructure.Name,
-                element.Curve.Distribution,
-                ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues),
-                stateId};
+                element.Curve.Function.DistributionType,
+                element.Curve.WriteToXML().ToString(),  stateId};
 
         }
 
@@ -119,10 +122,15 @@ namespace FdaViewModel.Saving.PersistenceManagers
                     lfe = element;
                 }
             }
-            Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[4]));
-            FailureFunctionElement failure = new FailureFunctionElement((string)rowData[0], (string)rowData[1], (string)rowData[2], ucdc, lfe);
+
+            List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
+            IFdaFunction defaultCurve = ImpactAreaFunctionFactory.Factory(func, Model.Condition.ComputePoint.ImpactAreaFunctions.ImpactAreaFunctionEnum.Rating);
+            //Statistics.UncertainCurveDataCollection ucdc = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[4]));
+            FailureFunctionElement failure = new FailureFunctionElement((string)rowData[0], (string)rowData[1], (string)rowData[2], defaultCurve, lfe);
             //failure.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
-            failure.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[5], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[4]));
+            //failure.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[5], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[4]));
             return failure;
         }
         #endregion

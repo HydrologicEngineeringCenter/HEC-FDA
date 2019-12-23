@@ -25,7 +25,24 @@ namespace Functions.CoordinatesFunctions
         //public Tuple<double, double> Domain { get; }
         public IRange<double> Domain { get; }
         public InterpolationEnum Interpolator { get; }
-      
+        public DistributionType DistributionType
+        {
+            get
+            {
+                if (Coordinates.Count > 0)
+                {
+                    return Coordinates[0].Y.DistributionType;
+                }
+                else
+                {
+                    return DistributionType.NotSupported;
+                }
+
+            }
+        }
+
+        public bool IsLinkedFunction => false;
+
         #endregion
 
         #region Constructor

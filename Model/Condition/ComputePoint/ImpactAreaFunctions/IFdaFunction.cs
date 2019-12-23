@@ -4,16 +4,18 @@ using Functions;
 using Functions.CoordinatesFunctions;
 using Functions.Ordinates;
 using Model.Condition.ComputePoint.ImpactAreaFunctions;
+using Utilities.Serialization;
 
 namespace Model
 {
-    public interface IFdaFunction : Utilities.Serialization.ISerializeToXML<IFdaFunction>
+    public interface IFdaFunction : ISerializeToXML<IFdaFunction>
     {
        string XLabel { get; }
         string YLabel { get; }
         ImpactAreaFunctionEnum Type { get; }
         ICoordinatesFunction Function { get; }
 
+        bool Equals(IFdaFunction function);
 
         //public List<ICoordinate<double, YType>> Coordinates { get; }
         //public InterpolationEnum Interpolator { get; }

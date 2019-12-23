@@ -13,7 +13,8 @@ namespace Fda.Plots
         double MinX { get; set; }
         double MinY { get; set; }
         FdaModel.Functions.BaseFunction BaseFunction { get; set; }
-        SharedAxisEnum NextPlotSharedAxisEnum { get; set; }
+        //todo: Refactor: CO
+        //SharedAxisEnum NextPlotSharedAxisEnum { get; set; }
         bool IsStartNode { get; set; }
         bool IsEndNode { get; set; }
         bool FreezeNextTracker { get; set; }

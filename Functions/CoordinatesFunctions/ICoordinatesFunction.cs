@@ -20,7 +20,9 @@ namespace Functions
 
         bool Equals(ICoordinatesFunction function);
 
+        Functions.DistributionType DistributionType { get; }
 
+        bool IsLinkedFunction { get; }
         //bool IsDistributed { get; }
 
         //IFunction Sample(double p);

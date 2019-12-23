@@ -9,39 +9,39 @@ namespace FdaViewModel.Conditions
 {
     class ConditionFactory
     {
-
-        public static ConditionsElement BuildConditionsElement(ConditionsPlotEditorVM vm)
-        {
-            if(vm.Description == null) { vm.Description = ""; }
-            ConditionBuilder builder = new ConditionBuilder(vm.Name, vm.Description, vm.Year, vm.SelectedImpactArea, vm.IndexLocation,
-                vm.SelectedThresholdType, vm.ThresholdValue);
+        //todo: Refactor: CO
+        //public static ConditionsElement BuildConditionsElement(ConditionsPlotEditorVM vm)
+        //{
+        //    if(vm.Description == null) { vm.Description = ""; }
+        //    ConditionBuilder builder = new ConditionBuilder(vm.Name, vm.Description, vm.Year, vm.SelectedImpactArea, vm.IndexLocation,
+        //        vm.SelectedThresholdType, vm.ThresholdValue);
             
-            foreach(Plots.IndividualLinkedPlotControlVM control in vm.AddedPlots)
-            {
-                switch(control.IndividualPlotWrapperVM.PlotVM.BaseFunction.FunctionType)
-                {
+        //    foreach(Plots.IndividualLinkedPlotControlVM control in vm.AddedPlots)
+        //    {
+        //        switch(control.IndividualPlotWrapperVM.PlotVM.BaseFunction.FunctionType)
+        //        {
                     
-                    case FdaModel.Functions.FunctionTypes.InflowFrequency:
-                    case FdaModel.Functions.FunctionTypes.OutflowFrequency:
-                        builder.WithAnalyticalFreqElem((FrequencyRelationships.AnalyticalFrequencyElement)control.CurveImporterVM.SelectedElement);
-                        break;
-                    case FdaModel.Functions.FunctionTypes.InflowOutflow:
-                        builder.WithInflowOutflowElem((FlowTransforms.InflowOutflowElement)control.CurveImporterVM.SelectedElement);
-                        break;
-                    case FdaModel.Functions.FunctionTypes.Rating:
-                        builder.WithRatingCurveElem((StageTransforms.RatingCurveElement)control.CurveImporterVM.SelectedElement);
-                        break;
-                    case FdaModel.Functions.FunctionTypes.ExteriorInteriorStage:
-                        builder.WithExtIntStageElem((StageTransforms.ExteriorInteriorElement)control.CurveImporterVM.SelectedElement);
-                        break;
-                    case FdaModel.Functions.FunctionTypes.InteriorStageDamage:
-                        builder.WithAggStageDamageElem((AggregatedStageDamage.AggregatedStageDamageElement)control.CurveImporterVM.SelectedElement);
-                        break;
+        //            case FdaModel.Functions.FunctionTypes.InflowFrequency:
+        //            case FdaModel.Functions.FunctionTypes.OutflowFrequency:
+        //                builder.WithAnalyticalFreqElem((FrequencyRelationships.AnalyticalFrequencyElement)control.CurveImporterVM.SelectedElement);
+        //                break;
+        //            case FdaModel.Functions.FunctionTypes.InflowOutflow:
+        //                builder.WithInflowOutflowElem((FlowTransforms.InflowOutflowElement)control.CurveImporterVM.SelectedElement);
+        //                break;
+        //            case FdaModel.Functions.FunctionTypes.Rating:
+        //                builder.WithRatingCurveElem((StageTransforms.RatingCurveElement)control.CurveImporterVM.SelectedElement);
+        //                break;
+        //            case FdaModel.Functions.FunctionTypes.ExteriorInteriorStage:
+        //                builder.WithExtIntStageElem((StageTransforms.ExteriorInteriorElement)control.CurveImporterVM.SelectedElement);
+        //                break;
+        //            case FdaModel.Functions.FunctionTypes.InteriorStageDamage:
+        //                builder.WithAggStageDamageElem((AggregatedStageDamage.AggregatedStageDamageElement)control.CurveImporterVM.SelectedElement);
+        //                break;
                         
-                }
-            }
-            return builder.build();
-        }
+        //        }
+        //    }
+        //    return builder.build();
+        //}
 
         public static void CopyConditionsElement(ConditionsElement fromElem, ConditionsElement toElem)
         {

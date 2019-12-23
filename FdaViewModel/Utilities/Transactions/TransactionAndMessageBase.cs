@@ -28,7 +28,7 @@ namespace FdaViewModel.Utilities.Transactions
             TransactionRows = Utilities.Transactions.TransactionHelper.GetTransactionRowItemsForElement(element);
 
             //load the messages log
-            MessageRows = Utilities.MessagesVM.GetMessageRowsForElement(element);
+            //MessageRows = Utilities.MessagesVM.GetMessageRowsForElement(element);
         }
     }
 }

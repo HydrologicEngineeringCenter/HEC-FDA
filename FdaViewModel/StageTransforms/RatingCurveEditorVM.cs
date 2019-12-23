@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using FdaViewModel.Utilities;
+using Model;
 
 namespace FdaViewModel.StageTransforms
 {
@@ -17,7 +18,7 @@ namespace FdaViewModel.StageTransforms
         private string _Description = "";
         private bool _ReadOnly = false;
         private readonly string _Title = "Rating Curve";
-        private Statistics.UncertainCurveDataCollection _Curve;
+        private IFdaFunction _Curve;
 
         //private ICommand _UndoCommand;
         //private ICommand _RedoCommand;
@@ -52,7 +53,7 @@ namespace FdaViewModel.StageTransforms
         {
             get { return _Title; }
         }
-        public Statistics.UncertainCurveDataCollection Curve
+        public IFdaFunction Curve
         {
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
@@ -74,10 +75,13 @@ namespace FdaViewModel.StageTransforms
             SaveAction = savingAction;
             //double[] xValues = new double[] { 100, 200, 500, 1000, 2000 };
             //Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(1), new Statistics.None(2), new Statistics.None(5), new Statistics.None(10), new Statistics.None(20) };
-            double[] xValues = new double[] { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
-            Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(97), new Statistics.None(99), new Statistics.None(104), new Statistics.None(109), new Statistics.None(110), new Statistics.None(114), new Statistics.None(116), new Statistics.None(119), new Statistics.None(120), new Statistics.None(121) };
-            Curve = new Statistics.UncertainCurveIncreasing(xValues, yValues,true,true,Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-           
+            List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
+            ImpactAreaFunctionFactory.Factory(func, Model.Condition.ComputePoint.ImpactAreaFunctions.ImpactAreaFunctionEnum.Rating);
+            //Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(97), new Statistics.None(99), new Statistics.None(104), new Statistics.None(109), new Statistics.None(110), new Statistics.None(114), new Statistics.None(116), new Statistics.None(119), new Statistics.None(120), new Statistics.None(121) };
+            //Curve = new Statistics.UncertainCurveIncreasing(xValues, yValues,true,true,Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+
         }
         /// <summary>
         /// Used when editing an existing curve

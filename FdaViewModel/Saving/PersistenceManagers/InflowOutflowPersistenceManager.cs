@@ -1,5 +1,7 @@
 ﻿using FdaViewModel.FlowTransforms;
 using FdaViewModel.Utilities;
+using Model;
+using Model.Condition.ComputePoint.ImpactAreaFunctions;
 using Statistics;
 using System;
 using System.Collections.Generic;
@@ -7,7 +9,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Statistics.UncertainCurveDataCollection;
 
 namespace FdaViewModel.Saving.PersistenceManagers
 {
@@ -89,15 +90,19 @@ namespace FdaViewModel.Saving.PersistenceManagers
         #region utilities
         private object[] GetRowDataFromElement(InflowOutflowElement element)
         {
-            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.Distribution, ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues) };
+            return new object[] { element.Name, element.LastEditDate, element.Description,
+                element.Curve.Function.DistributionType, element.Curve.WriteToXML().ToString() };
 
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            UncertainCurveDataCollection ucdc = new UncertainCurveIncreasing((DistributionsEnum)Enum.Parse(typeof(DistributionsEnum), (string)rowData[CURVE_DIST_TYPE_COL]));
-            InflowOutflowElement inout = new InflowOutflowElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESCRIPTION_COL], ucdc);
+            IFdaFunction function = ImpactAreaFunctionFactory.Factory((String)rowData[CURVE_COL], ImpactAreaFunctionEnum.InflowOutflow);
+
+            //UncertainCurveDataCollection ucdc = new UncertainCurveIncreasing((DistributionsEnum)Enum.Parse(typeof(DistributionsEnum), (string)rowData[CURVE_DIST_TYPE_COL]));
+            InflowOutflowElement inout = new InflowOutflowElement((string)rowData[NAME_COL], 
+                (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESCRIPTION_COL], function);
             //inout.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
-            inout.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_COL], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[CURVE_DIST_TYPE_COL]));
+            //inout.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_COL], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), (string)rowData[CURVE_DIST_TYPE_COL]));
             return inout;
         }
 
@@ -221,9 +226,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
             //the new statId will be one higher than the max that is in the table already.
             int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
             return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
-                element.Curve.Distribution,
-                ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues),
-                stateId};
+                element.Curve.Function.DistributionType,
+                element.Curve.WriteToXML().ToString(), stateId};
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using FdaViewModel.Utilities;
 
@@ -27,7 +25,8 @@ namespace FdaViewModel.Inventory
         #endregion
         #region Properties
         public DefineSIAttributesVM DefineSIAttributes { get; set; }
-        public AttributeLinkingListVM AttributeLinkingList { get; set; }
+        //todo: Refactor: CO
+        //public AttributeLinkingListVM AttributeLinkingList { get; set; }
        
         public StructureInventoryBaseElement StructureInventory
         {
@@ -37,8 +36,9 @@ namespace FdaViewModel.Inventory
       
         #endregion
         #region Constructors
-        public InventoryElement(StructureInventoryBaseElement structureInventory, DefineSIAttributesVM defSIAttributes, AttributeLinkingListVM attLinkVM) : base()
-        {
+        //todo: Refactor: CO
+        //public InventoryElement(StructureInventoryBaseElement structureInventory, DefineSIAttributesVM defSIAttributes, AttributeLinkingListVM attLinkVM) : base()
+        //{
             //Name = structureInventory.Name;
             //CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/StructureInventory.png");
 
@@ -73,7 +73,7 @@ namespace FdaViewModel.Inventory
 
             //Actions = localactions;
 
-        }
+        //}
 
         public InventoryElement(StructureInventoryBaseElement structInventoryBaseElement) : base()
         {

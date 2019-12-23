@@ -310,7 +310,7 @@ namespace FunctionsView.ViewModel
             //i have to determine if the function is linked or not.
             List<ICoordinatesFunction> functions = new List<ICoordinatesFunction>();
 
-            if (function.GetType().Equals(typeof(CoordinatesFunctionLinked)))
+            if (function.IsLinkedFunction)
             {
                 CoordinatesFunctionLinked linkedFunc = (CoordinatesFunctionLinked)function;
                 functions.AddRange(linkedFunc.Functions);

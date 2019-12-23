@@ -24,6 +24,23 @@ namespace Functions.CoordinatesFunctions
         public bool IsInvertible { get; }
 
         public bool IsDistributed => false;
+        public DistributionType DistributionType 
+        { 
+            get
+            {
+                if(Coordinates.Count>0)
+                {
+                    return Coordinates[0].Y.DistributionType;
+                }
+                else
+                {
+                    return DistributionType.NotSupported;
+                }
+
+            }
+        }
+        public bool IsLinkedFunction => false;
+
 
         #endregion
 

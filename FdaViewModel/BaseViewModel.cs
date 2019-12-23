@@ -123,7 +123,8 @@ namespace FdaViewModel
         //    get { return _HelpAction; }
         //    set { _HelpAction = value; NotifyPropertyChanged(); }
         //}
-        public List<FdaModel.Utilities.Messager.ErrorMessage> Messages { get; private set; }
+        //todo: Refactor: I commented out the Messages and the ReportMessage down below. I shouldn't need it with the new NLog stuff.
+        //public List<FdaModel.Utilities.Messager.ErrorMessage> Messages { get; private set; }
         public bool HasError { get; private set; }
         public bool HasFatalError { get; private set; }
         public bool HasChanges { get; private set; }
@@ -227,7 +228,7 @@ namespace FdaViewModel
             if (propertyName.Equals(nameof(HasError))
                 || propertyName.Equals(nameof(HasFatalError))
                 || propertyName.Equals(nameof(Error))
-                || propertyName.Equals(nameof(Messages))
+                //|| propertyName.Equals(nameof(Messages))
                 || propertyName.Equals("MessageRows")
                 || propertyName.Equals("MessageCount"))
             {
@@ -302,10 +303,10 @@ namespace FdaViewModel
                 tab.BaseVM.WasCanceled = true;
                 RequestNavigation( tab, newWindow, asDialog);
             }
-            else
-            {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Navigation requested from " + this.GetType().Name + " to " + tab.BaseVM.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
-            }
+            //else
+            //{
+               // ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Navigation requested from " + this.GetType().Name + " to " + tab.BaseVM.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
+            //}
         }
 
         /// <summary>
@@ -318,10 +319,10 @@ namespace FdaViewModel
             {
                 RequestShapefilePaths(ref paths);
             }
-            else
-            {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Shapefiles requested from " + this.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
-            }
+            //else
+            //{
+            //    ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Shapefiles requested from " + this.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
+            //}
         }
         /// <summary>
         /// Recursively goes up to the ViewWindow.xaml.cs and gets any files of the desired VectorFeatureType
@@ -334,10 +335,10 @@ namespace FdaViewModel
             {
                 RequestShapefilePathsOfType(ref paths, type);
             }
-            else
-            {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Shapefiles requested from " + this.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
-            }
+            //else
+            //{
+            //    ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Shapefiles requested from " + this.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
+            //}
         }
         /// <summary>
         /// Recursively goes up to the ViewWindow.xaml.cs and adds "this" to the map window.
@@ -350,10 +351,10 @@ namespace FdaViewModel
             {
                 RequestAddToMapWindow(sender, args);
             }
-            else
-            {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage(this.GetType().Name + " attemped to add a shapefile but no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
-            }
+            //else
+            //{
+            //    ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage(this.GetType().Name + " attemped to add a shapefile but no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
+            //}
         }
         /// <summary>
         /// Recursively goes up to the ViewWindow.xaml.cs and removes "this" from the map window 
@@ -366,39 +367,39 @@ namespace FdaViewModel
             {
                 RequestRemoveFromMapWindow(sender,args);
             }
-            else
-            {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage(this.GetType().Name + " attemped to remove a shapefile but no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
-            }
-        }
-        public void ReportMessage(FdaModel.Utilities.Messager.ErrorMessage error)
-        {
-            FdaModel.Utilities.Messager.Logger.Instance.ReportMessage(error);
-            if (error.ReportedFrom == GetType().Name)
-            {
-                if (Messages == null)
-                {
-                    Messages = new List<FdaModel.Utilities.Messager.ErrorMessage>();
-                    Messages.Add(error);
-                }
-                else
-                {
-                    Messages.Add(error);
-                }
-                NotifyPropertyChanged(nameof(Messages));
-                //_MessagesAction.IsEnabled = true;
-                //_MessagesAction.IsVisible = true;
-            }
-            //if ((error.ErrorLevel & FdaModel.Utilities.Messager.ErrorMessageEnum.Report) > 0)
-            {
-                //Utilities.WindowVM
-                //Navigate( new Utilities.MessageVM(error.Message), true, true, "Error Report");
-            }
             //else
-            {
-
-            }
+            //{
+            //    ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage(this.GetType().Name + " attemped to remove a shapefile but no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
+            //}
         }
+        //public void ReportMessage(FdaModel.Utilities.Messager.ErrorMessage error)
+        //{
+        //    FdaModel.Utilities.Messager.Logger.Instance.ReportMessage(error);
+        //    if (error.ReportedFrom == GetType().Name)
+        //    {
+        //        if (Messages == null)
+        //        {
+        //            Messages = new List<FdaModel.Utilities.Messager.ErrorMessage>();
+        //            Messages.Add(error);
+        //        }
+        //        else
+        //        {
+        //            Messages.Add(error);
+        //        }
+        //        NotifyPropertyChanged(nameof(Messages));
+        //        //_MessagesAction.IsEnabled = true;
+        //        //_MessagesAction.IsVisible = true;
+        //    }
+        //    //if ((error.ErrorLevel & FdaModel.Utilities.Messager.ErrorMessageEnum.Report) > 0)
+        //    {
+        //        //Utilities.WindowVM
+        //        //Navigate( new Utilities.MessageVM(error.Message), true, true, "Error Report");
+        //    }
+        //    //else
+        //    {
+
+        //    }
+        //}
 
         //public void UndoElement(ISaveUndoRedo editorVM)
         //{

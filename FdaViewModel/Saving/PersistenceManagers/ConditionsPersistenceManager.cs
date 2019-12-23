@@ -1,4 +1,4 @@
-﻿using FdaModel.ComputationPoint;
+﻿
 using FdaViewModel.AggregatedStageDamage;
 using FdaViewModel.Conditions;
 using FdaViewModel.FlowTransforms;
@@ -6,6 +6,7 @@ using FdaViewModel.FrequencyRelationships;
 using FdaViewModel.GeoTech;
 using FdaViewModel.StageTransforms;
 using FdaViewModel.Utilities;
+using Model.ComputationPoint;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

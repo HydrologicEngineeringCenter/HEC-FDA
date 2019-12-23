@@ -2,14 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
-using System.Threading.Tasks;
-using FdaModel.ComputationPoint;
-using FdaModel.Functions.OrdinatesFunctions;
 using System.Collections.ObjectModel;
 using System.Windows;
 using FdaViewModel.ImpactArea;
+using Model.ComputationPoint;
 
 namespace FdaViewModel.Conditions
 {
@@ -643,124 +639,125 @@ namespace FdaViewModel.Conditions
 
         public void RunPreviewCompute(Object sender, EventArgs e)
         {
+            //todo: Refactor: I commented out this method.
+            ////get the threshold values
+            ////PerformanceThreshold threshold = new PerformanceThreshold(PerformanceThresholdTypes.InteriorStage, 8);
+            //PerformanceThreshold threshold = new PerformanceThreshold(SelectedThresholdType, ThresholdValue);
 
-            //get the threshold values
-            //PerformanceThreshold threshold = new PerformanceThreshold(PerformanceThresholdTypes.InteriorStage, 8);
-            PerformanceThreshold threshold = new PerformanceThreshold(SelectedThresholdType, ThresholdValue);
+            ////get the selected impact area
 
-            //get the selected impact area
+            ////get the selected struct inv
 
-            //get the selected struct inv
+            ////get all the selected curves
 
-            //get all the selected curves
+            //List<FdaModel.Functions.BaseFunction> myListOfBaseFunctions = new List<FdaModel.Functions.BaseFunction>();
 
-            List<FdaModel.Functions.BaseFunction> myListOfBaseFunctions = new List<FdaModel.Functions.BaseFunction>();
-
-            if (Plot0ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
-            {
-                FdaModel.Functions.FrequencyFunctions.LogPearsonIII zero = (FdaModel.Functions.FrequencyFunctions.LogPearsonIII)Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;//new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(FlowFrequencyVM.SelectedFlowFrequencyElement.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
-                myListOfBaseFunctions.Add(zero);
-            }
-            if (Plot1ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot1ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
-            {
-                FdaModel.Functions.BaseFunction one = Plot1ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;// new OrdinatesFunction(Plot1VM.Curve, FdaModel.Functions.FunctionTypes.InflowOutflow);
-                myListOfBaseFunctions.Add(one);
-            }
-            if (Plot3ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
-            {
-                //i have to flip the x and y values back before computing
-                ReadOnlyCollection<double> xs = Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction.GetOrdinatesFunction().Function.YValues;// Plot3VM.Curve.YValues;
-                ReadOnlyCollection<double> ys = Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction.GetOrdinatesFunction().Function.XValues; //Plot3VM.Curve.XValues;
-                //FdaModel.Functions.BaseFunction temp = new OrdinatesFunction();
-                FdaModel.Functions.BaseFunction three = new OrdinatesFunction(xs, ys, FdaModel.Functions.FunctionTypes.Rating);
-                myListOfBaseFunctions.Add(three);
-            }
-            if (Plot5ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot5ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
-            {
-                FdaModel.Functions.BaseFunction five = Plot5ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction; //new OrdinatesFunction(Plot5VM.Curve, FdaModel.Functions.FunctionTypes.ExteriorInteriorStage);
-                myListOfBaseFunctions.Add(five);
-            }
-            if (Plot7ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot7ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
-            {
-                FdaModel.Functions.BaseFunction seven = Plot7ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction; //new OrdinatesFunction(Plot7VM.Curve, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
-                myListOfBaseFunctions.Add(seven);
-            }
-
-
-            //create lateral structure
-            LateralStructure myLateralStruct = new LateralStructure(10);
-
-            //create the condition
-            FdaModel.ComputationPoint.Condition simpleTest = new FdaModel.ComputationPoint.Condition(2008, Name, myListOfBaseFunctions, threshold, null); //bool call Validate
-
-            FdaModel.ComputationPoint.Outputs.Result result = new FdaModel.ComputationPoint.Outputs.Result(simpleTest,1);
-            //create random number gen
-            //Random randomNumberGenerator = new Random(0);
-
-            //create the realization
-            //FdaModel.ComputationPoint.Outputs.Realization simpleTestRealization = new FdaModel.ComputationPoint.Outputs.Realization(simpleTest, false, false); //bool oldCompute, bool performance only
-
-            //compute
-            //simpleTestRealization.Compute(randomNumberGenerator);
-
-            //if it was successful, plot number 8. if not then message why not
-            if(result.Realizations.Count == 0)
-            {
-                MessageBox.Show("A damage frequency curve could not be created", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            foreach (FdaModel.Functions.BaseFunction bf in result.Realizations.First().Functions)
-            {
-                if (bf.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
-                {
-                   Plot8ControlVM.IndividualPlotWrapperVM.PlotVM = new Plots.IndividualLinkedPlotVM(bf, "Damage Frequency", "Frequency", "Damage ($)");
-                    //Plot8ControlVM.AddCurveToPlot(this, new EventArgs());
-                    TrimZeroesFromCurve(Plot8ControlVM.IndividualPlotWrapperVM.PlotVM.Curve);
-                    Plot8ControlVM.CurrentVM = (BaseViewModel)Plot8ControlVM.IndividualPlotWrapperVM;
-                    //IsPlot8Visible = true;
-
-
-                }
-            }
-            //if (IsPlot8Visible == false)
+            //if (Plot0ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
             //{
-            //    StringBuilder messages = new StringBuilder();
-            //    foreach (FdaModel.Utilities.Messager.ErrorMessage em in simpleTestRealization.Messages.Messages)
-            //    {
-            //        messages.AppendLine(em.Message);
-            //    }
-            //    Utilities.CustomMessageBoxVM custmb = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, messages.ToString());
-            //    Navigate(custmb);
+            //    FdaModel.Functions.FrequencyFunctions.LogPearsonIII zero = (FdaModel.Functions.FrequencyFunctions.LogPearsonIII)Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;//new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(FlowFrequencyVM.SelectedFlowFrequencyElement.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
+            //    myListOfBaseFunctions.Add(zero);
+            //}
+            //if (Plot1ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot1ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            //{
+            //    FdaModel.Functions.BaseFunction one = Plot1ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;// new OrdinatesFunction(Plot1VM.Curve, FdaModel.Functions.FunctionTypes.InflowOutflow);
+            //    myListOfBaseFunctions.Add(one);
+            //}
+            //if (Plot3ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            //{
+            //    //i have to flip the x and y values back before computing
+            //    ReadOnlyCollection<double> xs = Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction.GetOrdinatesFunction().Function.YValues;// Plot3VM.Curve.YValues;
+            //    ReadOnlyCollection<double> ys = Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction.GetOrdinatesFunction().Function.XValues; //Plot3VM.Curve.XValues;
+            //    //FdaModel.Functions.BaseFunction temp = new OrdinatesFunction();
+            //    FdaModel.Functions.BaseFunction three = new OrdinatesFunction(xs, ys, FdaModel.Functions.FunctionTypes.Rating);
+            //    myListOfBaseFunctions.Add(three);
+            //}
+            //if (Plot5ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot5ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            //{
+            //    FdaModel.Functions.BaseFunction five = Plot5ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction; //new OrdinatesFunction(Plot5VM.Curve, FdaModel.Functions.FunctionTypes.ExteriorInteriorStage);
+            //    myListOfBaseFunctions.Add(five);
+            //}
+            //if (Plot7ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot7ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            //{
+            //    FdaModel.Functions.BaseFunction seven = Plot7ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction; //new OrdinatesFunction(Plot7VM.Curve, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
+            //    myListOfBaseFunctions.Add(seven);
             //}
 
 
-            //the compute isn't working right now so i am going to just throw a random 8 at it.
-            //double[] x5 = new double[] { .2f, .3f, .4f, .5f, .6f, .7f, .8f, .9f };
-            //double[] y5 = new double[] { 2, 200, 300, 600, 1100, 2000, 3000, 4000 };
-            //OrdinatesFunction eight = new OrdinatesFunction(x5, y5, FdaModel.Functions.FunctionTypes.DamageFrequency);
+            ////create lateral structure
+            //LateralStructure myLateralStruct = new LateralStructure(10);
 
-            //Plot8ControlVM.IndividualPlotWrapperVM.PlotVM = new Plots.IndividualLinkedPlotVM(eight,eight.GetOrdinatesFunction().Function,"Cody test");
-            //Plot8ControlVM.CurrentVM = (FdaViewModel.BaseViewModel)Plot8ControlVM.IndividualPlotWrapperVM;
+            ////create the condition
+            //FdaModel.ComputationPoint.Condition simpleTest = new FdaModel.ComputationPoint.Condition(2008, Name, myListOfBaseFunctions, threshold, null); //bool call Validate
+
+            //FdaModel.ComputationPoint.Outputs.Result result = new FdaModel.ComputationPoint.Outputs.Result(simpleTest,1);
+            ////create random number gen
+            ////Random randomNumberGenerator = new Random(0);
+
+            ////create the realization
+            ////FdaModel.ComputationPoint.Outputs.Realization simpleTestRealization = new FdaModel.ComputationPoint.Outputs.Realization(simpleTest, false, false); //bool oldCompute, bool performance only
+
+            ////compute
+            ////simpleTestRealization.Compute(randomNumberGenerator);
+
+            ////if it was successful, plot number 8. if not then message why not
+            //if(result.Realizations.Count == 0)
+            //{
+            //    MessageBox.Show("A damage frequency curve could not be created", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            //    return;
+            //}
+            //foreach (FdaModel.Functions.BaseFunction bf in result.Realizations.First().Functions)
+            //{
+            //    if (bf.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+            //    {
+            //       Plot8ControlVM.IndividualPlotWrapperVM.PlotVM = new Plots.IndividualLinkedPlotVM(bf, "Damage Frequency", "Frequency", "Damage ($)");
+            //        //Plot8ControlVM.AddCurveToPlot(this, new EventArgs());
+            //        TrimZeroesFromCurve(Plot8ControlVM.IndividualPlotWrapperVM.PlotVM.Curve);
+            //        Plot8ControlVM.CurrentVM = (BaseViewModel)Plot8ControlVM.IndividualPlotWrapperVM;
+            //        //IsPlot8Visible = true;
+
+
+            //    }
+            //}
+            ////if (IsPlot8Visible == false)
+            ////{
+            ////    StringBuilder messages = new StringBuilder();
+            ////    foreach (FdaModel.Utilities.Messager.ErrorMessage em in simpleTestRealization.Messages.Messages)
+            ////    {
+            ////        messages.AppendLine(em.Message);
+            ////    }
+            ////    Utilities.CustomMessageBoxVM custmb = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, messages.ToString());
+            ////    Navigate(custmb);
+            ////}
+
+
+            ////the compute isn't working right now so i am going to just throw a random 8 at it.
+            ////double[] x5 = new double[] { .2f, .3f, .4f, .5f, .6f, .7f, .8f, .9f };
+            ////double[] y5 = new double[] { 2, 200, 300, 600, 1100, 2000, 3000, 4000 };
+            ////OrdinatesFunction eight = new OrdinatesFunction(x5, y5, FdaModel.Functions.FunctionTypes.DamageFrequency);
+
+            ////Plot8ControlVM.IndividualPlotWrapperVM.PlotVM = new Plots.IndividualLinkedPlotVM(eight,eight.GetOrdinatesFunction().Function,"Cody test");
+            ////Plot8ControlVM.CurrentVM = (FdaViewModel.BaseViewModel)Plot8ControlVM.IndividualPlotWrapperVM;
         }
 
-        private void TrimZeroesFromCurve(Statistics.CurveIncreasing curveIncreasing)
-        {
-            int index = -1;
-            for(int i = 0;i<curveIncreasing.XValues.Count;i++)
-            //foreach(double y in curveIncreasing.YValues)
-            {
-                if(curveIncreasing.YValues[i] > 0)
-                {
-                    index = i;
-                    break;
-                }
-            }
-            if(index>-1)
-            {
-                curveIncreasing.RemoveRange(0, index);
+        //todo: Refactor: I commented this method out
+        //private void TrimZeroesFromCurve(Statistics.CurveIncreasing curveIncreasing)
+        //{
+        //    int index = -1;
+        //    for(int i = 0;i<curveIncreasing.XValues.Count;i++)
+        //    //foreach(double y in curveIncreasing.YValues)
+        //    {
+        //        if(curveIncreasing.YValues[i] > 0)
+        //        {
+        //            index = i;
+        //            break;
+        //        }
+        //    }
+        //    if(index>-1)
+        //    {
+        //        curveIncreasing.RemoveRange(0, index);
                 
-            }
-        }
+        //    }
+        //}
 
         public override void AddValidationRules()
         {

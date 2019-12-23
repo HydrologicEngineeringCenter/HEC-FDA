@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Data;
 using System.ComponentModel;
@@ -29,10 +27,11 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         private Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary;
         //private string _SelectedStructureDepthDamage;
 
-        private Statistics.UncertainCurveDataCollection _StructureDepthDamageCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);// Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-        private Statistics.UncertainCurveDataCollection _ContentDepthDamageCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-        private Statistics.UncertainCurveDataCollection _VehicleDepthDamageCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-        private Statistics.UncertainCurveDataCollection _OtherDepthDamageCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            //todo: Refactor: Commenting out
+        //private Statistics.UncertainCurveDataCollection _StructureDepthDamageCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);// Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+        //private Statistics.UncertainCurveDataCollection _ContentDepthDamageCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+        //private Statistics.UncertainCurveDataCollection _VehicleDepthDamageCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+        //private Statistics.UncertainCurveDataCollection _OtherDepthDamageCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
         private List<string> _StructureDepthDamageStringNames = new List<string>();
         private List<string> _ContentDepthDamageStringNames = new List<string>();
