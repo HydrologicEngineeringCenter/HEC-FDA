@@ -15,11 +15,11 @@ namespace FdaViewModel.Saving.PersistenceManagers
     public class RatingElementPersistenceManager :UndoRedoBase, IPersistableWithUndoRedo
     {
         private const int NAME_COL = 1;
-        private const int LAST_EDIT_DATE_COL = 1;
-        private const int DESC_COL = 1;
-        private const int CURVE_DIST_TYPE_COL = 1;
-        private const int CURVE_TYPE_COL = 1;
-        private const int CURVE_COL = 1;
+        private const int LAST_EDIT_DATE_COL = 2;
+        private const int DESC_COL = 3;
+        private const int CURVE_DIST_TYPE_COL = 4;
+        private const int CURVE_TYPE_COL = 5;
+        private const int CURVE_COL = 6;
 
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("RatingElementPersistenceManager");
         //ELEMENT_TYPE is used to store the type of element in the log tables.

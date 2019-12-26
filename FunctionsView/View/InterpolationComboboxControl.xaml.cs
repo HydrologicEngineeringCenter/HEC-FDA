@@ -37,7 +37,9 @@ namespace FunctionsView.View
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Row != null)
+            //for some reason my test project isn't hitting this twice, but in Fda when a row gets removed
+            //it calls this method one last time with an items count of 0.
+            if (Row != null && cmb_Interp.Items.Count>0)
             {
                 Row.SelectedInterpolationType = (InterpolationEnum)cmb_Interp.SelectedValue;
             }

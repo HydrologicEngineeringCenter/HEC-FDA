@@ -32,6 +32,12 @@ namespace Functions
             }
             throw new ArgumentException("The ordinate XElement provided did not contain a child element.");
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xOrdinate">Should look like: <Ordinate Type="Constant"><Constant Value="1"/></Ordinate></param>
+        /// <param name="yOrdinate"></param>
+        /// <returns></returns>
         public static ICoordinate Factory(XElement xOrdinate, XElement yOrdinate)
         {
             //process the x ordinate

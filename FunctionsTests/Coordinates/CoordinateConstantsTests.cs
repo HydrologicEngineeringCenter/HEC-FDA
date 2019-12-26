@@ -99,7 +99,7 @@ namespace FunctionsTests.Coordinates
         /// Tests that the write to xml method can be read back in and turned into the same coordinate.
         /// </summary>
         [Fact]
-        public void WriteToXML_GoodInput_Returns_Bool()
+        public void WriteToXML_GoodInput()
         {
             CoordinateConstants coord1 = new CoordinateConstants(new Constant(1), new Constant(2));
             XElement xOrdXml = coord1.X.WriteToXML();
@@ -108,5 +108,20 @@ namespace FunctionsTests.Coordinates
             ICoordinate returnedCoord = ICoordinateFactory.Factory(xOrdXml, yOrdXml);
             Assert.True(coord1.Equals(returnedCoord));
         }
+
+        ///// <summary>
+        ///// Tests that the write to xml method can be read back in and turned into the same coordinate.
+        ///// </summary>
+        //[Fact]
+        //public void ReadFromXML_GoodInput_Returns_ICoordinate()
+        //{
+        //    CoordinateConstants coord1 = new CoordinateConstants(new Constant(1), new Constant(2));
+        //    XElement xOrdXml = coord1.X.WriteToXML();
+        //    XElement yOrdXml = coord1.Y.WriteToXML();
+
+        //    ICoordinate returnedCoord = ICoordinateFactory.Factory(xOrdXml, yOrdXml);
+        //    Assert.True(coord1.Equals(returnedCoord));
+        //}
+
     }
 }

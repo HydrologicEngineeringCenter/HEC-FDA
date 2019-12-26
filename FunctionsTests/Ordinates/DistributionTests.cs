@@ -43,16 +43,16 @@ namespace FunctionsTests.Ordinates
             Assert.True(range.Item1 == min && range.Item2 == max);
         }
 
-        /// <summary>
-        /// Tests that the IsDistributed property always returns false.
-        /// </summary>
-        [Theory]
-        [MemberData(nameof(GoodData_Distributed))]
-        public void IsDistributed_GoodInput_Returns_Bool(IDistributedValue value)
-        {
-            Distribution dist = new Distribution(value);
-            Assert.True(dist.IsDistributed);
-        }
+        ///// <summary>
+        ///// Tests that the IsDistributed property always returns false.
+        ///// </summary>
+        //[Theory]
+        //[MemberData(nameof(GoodData_Distributed))]
+        //public void IsDistributed_GoodInput_Returns_Bool(IDistributedValue value)
+        //{
+        //    Distribution dist = new Distribution(value);
+        //    Assert.True(dist.IsDistributed);
+        //}
 
         /// <summary>
         /// Tests the Equals method returns true for Constants that have been given the same value.

@@ -47,7 +47,7 @@
             --><!--<Label Content="Damage Category:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <ComboBox Grid.Column="1" Margin="5" ItemsSource="{Binding DamageCategories}" SelectedItem="{Binding DamageCategory}" DisplayMemberPath="Name" />--><!--
         </Grid>-->
-        <CA:TableWithPlot MinHeight="300" MinWidth="600" TableWidth="250"  MaxYValue="9999999999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Margin="5" plotTitle="{Binding PlotTitle}" IsStrictY="False" xAxisLabel="Stage" yAxisLabel="Damage ($)" xColumnHeader="Stage" yColumnHeader="Damage ($)" IsReadOnly="{Binding ReadOnly}" Curve="{Binding Curve}"/>
+        <!--<CA:TableWithPlot MinHeight="300" MinWidth="600" TableWidth="250"  MaxYValue="9999999999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Margin="5" plotTitle="{Binding PlotTitle}" IsStrictY="False" xAxisLabel="Stage" yAxisLabel="Damage ($)" xColumnHeader="Stage" yColumnHeader="Damage ($)" IsReadOnly="{Binding ReadOnly}" Curve="{Binding Curve}"/>-->
         <GridSplitter Grid.Row="3" Height="5" HorizontalAlignment="Stretch" />
         <Utilities:TransactionMessageControl Grid.Row="4" />
         <Utilities:OKCloseControl Grid.Row="5"/>

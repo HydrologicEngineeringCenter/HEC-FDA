@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using FdaViewModel.Utilities.Transactions;
 using FdaViewModel.StageTransforms;
 using Model;
+using Functions;
+using Model.Condition.ComputePoint.ImpactAreaFunctions;
 
 namespace FdaViewModel.Editors
 {
@@ -24,6 +26,11 @@ namespace FdaViewModel.Editors
   
 
         #region properties
+        public FunctionsView.ViewModel.CoordinatesFunctionEditorVM EditorVM
+        {
+            get;
+            set;
+        }
         public int UndoRowsSelectedIndex
         {
             set
@@ -105,7 +112,8 @@ namespace FdaViewModel.Editors
         #region constructors
         public CurveEditorVM(IFdaFunction defaultCurve, EditorActionManager actionManager) :base(actionManager)
         {
-            _Curve = defaultCurve;
+            EditorVM = new FunctionsView.ViewModel.CoordinatesFunctionEditorVM(defaultCurve.Function);
+           // _Curve = defaultCurve;
             PlotTitle = "Curve";
             TransactionRows = new ObservableCollection<TransactionRowItem>();
         }
@@ -186,6 +194,9 @@ namespace FdaViewModel.Editors
 
         public  void SaveWhileEditing()
         {
+            ICoordinatesFunction coordFunc = EditorVM.CreateFunctionFromTables();
+            IFdaFunction newFunction = ImpactAreaFunctionFactory.Factory(coordFunc, ImpactAreaFunctionEnum.Rating);
+            Curve = newFunction;
             //SavingText = " Saving...";
             ChildElement elementToSave = ActionManager.SaveUndoRedoHelper.CreateElementFromEditorAction(this);
             if(CurrentElement == null)

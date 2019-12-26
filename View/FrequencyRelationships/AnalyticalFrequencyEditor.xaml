@@ -6,6 +6,7 @@
              xmlns:Ca="clr-namespace:Consequences_Assist;assembly=Consequences_Assist"
              xmlns:Cac="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              xmlns:local="clr-namespace:Fda.FrequencyRelationships"
+             xmlns:functions="clr-namespace:FunctionsView.View;assembly=FunctionsView"
              xmlns:oxy="http://oxyplot.org/wpf"
              xmlns:cmds="clr-namespace:Fda.Commands"
              xmlns:Utilities="clr-namespace:Fda.Utilities"
@@ -98,7 +99,9 @@
                 </Grid>-->
             </Grid>
         <Grid Grid.Row="3">
-            <Grid.ColumnDefinitions>
+            <functions:CoordinatesFunctionEditor Margin="5" EditorVM="{Binding EditorVM}" />
+
+            <!--<Grid.ColumnDefinitions>
                 <ColumnDefinition Width="325" MinWidth="325"/>
                 <ColumnDefinition Width="200*" MinWidth="325"/>
             </Grid.ColumnDefinitions>
@@ -118,7 +121,7 @@
                     <oxy:LineSeries ItemsSource="{Binding Path=Items}" DataFieldX="Probability" DataFieldY="TwentyFive" Title="0.25"/>
                     <oxy:LineSeries ItemsSource="{Binding Path=Items}" DataFieldX="Probability" DataFieldY="OhFive" Title="0.05"/>
                 </oxy:Plot.Series>
-            </Ca:ExpandedOxyPlot>
+            </Ca:ExpandedOxyPlot>-->
 
         </Grid>
         <GridSplitter Grid.Row="4" Height="5" HorizontalAlignment="Stretch" />

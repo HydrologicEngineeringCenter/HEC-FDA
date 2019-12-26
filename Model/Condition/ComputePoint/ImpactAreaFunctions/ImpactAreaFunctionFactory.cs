@@ -133,7 +133,17 @@ namespace Model
                 InflowFrequency inflowFrequency = new InflowFrequency(function);
                 return inflowFrequency;
             }
-            else return null;
+            else if(type == ImpactAreaFunctionEnum.Rating)
+            {
+                Rating rating = new Rating(function);
+                return rating;
+            }
+            //todo: add more types here.
+            else
+            {
+                throw new ArgumentException("The type of function: '" + type + "' is not currently supported.");
+            }
+            
         }
 
         public static IFdaFunction Factory(List<double> xs, List<double> ys, ImpactAreaFunctionEnum type)

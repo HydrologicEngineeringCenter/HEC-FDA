@@ -28,7 +28,7 @@
                                     <!--<RowDefinition Height="*" />-->
                                 </Grid.RowDefinitions>
                                 <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Image Name="img_UndoButton" Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/left-arrow.png"/>
+                                    <Image Name="img_UndoButton" Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/left-arrow.png"/>
                                     <!--<ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0" />-->
                                 </StackPanel>
 
@@ -75,7 +75,7 @@
                                     <!--<RowDefinition Height="*" />-->
                                 </Grid.RowDefinitions>
                                 <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Image Name="img_RedoButton"  Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/right-arrow.png"/>
+                                    <Image Name="img_RedoButton"  Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/right-arrow.png"/>
                                     <!--<ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0" />-->
                                 </StackPanel>
 
@@ -123,8 +123,8 @@
                                 </Grid.RowDefinitions>
                                 <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <Grid>
-                                        <Image x:Name="img_saveEnabled"  Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/save_enabled.png"/>
-                                        <Image x:Name="img_saveDisabled"  Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/save_disabled.png"/>
+                                        <Image x:Name="img_saveEnabled"  Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/save_enabled.png"/>
+                                        <Image x:Name="img_saveDisabled"  Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/save_disabled.png"/>
 
                                     </Grid>
                                     

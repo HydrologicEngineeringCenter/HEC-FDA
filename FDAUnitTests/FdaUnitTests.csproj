@@ -118,7 +118,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="AggregatedStageDamage\AggregatedStageDamageElementTest.cs" />
     <Compile Include="ComputeWriter.cs" />
     <Compile Include="ConditionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -132,7 +131,6 @@
     <Compile Include="Saving\PersistenceManagers\FlowFrequencyPersistenceManager.cs" />
     <Compile Include="Saving\PersistenceManagers\ImpactAreaPersistenceManagerTests.cs" />
     <Compile Include="Saving\PersistenceManagers\InflowOutflowPersistenceManagerTests.cs" />
-    <Compile Include="Saving\PersistenceManagers\OccupanceTypesPersistenceManagerTests.cs" />
     <Compile Include="Saving\PersistenceManagers\PersistenceManagersBaseTest.cs" />
     <Compile Include="Saving\PersistenceManagers\RatingElementPersistenceManagerTests.cs" />
     <Compile Include="Saving\PersistenceManagers\StageDamagePersistenceManagerTests.cs" />
@@ -196,7 +194,9 @@
       <Name>ViewModel</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="AggregatedStageDamage\" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
