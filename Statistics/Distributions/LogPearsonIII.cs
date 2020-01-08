@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Xml.Linq;
+using Utilities.Serialization;
 
 namespace Statistics.Distributions
 {
@@ -86,6 +87,18 @@ namespace Statistics.Distributions
             foreach (double x in sample) log10Sample.Add(Math.Log(x));
             SummaryStatistics stats = new SummaryStatistics(IDataFactory.Factory(log10Sample));
             return new LogPearsonIII(stats.Mean, stats.StandardDeviation, stats.Skewness, stats.SampleSize);
+        }
+
+        public string WriteToXML()
+        {
+            return $"{Mean}, {StandardDeviation}, {Skewness}, {SampleSize}";
+        }
+
+       
+
+        XElement ISerializeToXML<IDistribution>.WriteToXML()
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

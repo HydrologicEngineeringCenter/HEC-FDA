@@ -62,6 +62,7 @@ namespace FunctionsTests.Ordinates
         /// <param name="valForConstant1"></param>
         /// <param name="valForConstant2"></param>
         [Theory]
+        [InlineData(.33333,.33333)]
         [InlineData(0, 0)]
         [InlineData(-1, -1)]
         [InlineData(99.7857, 99.7857)]

@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using Utilities;
 
 namespace Functions.CoordinatesFunctions
 {
-    internal abstract class CoordinatesFunctionLinkedBase<XType, YType>
+    public abstract class CoordinatesFunctionLinkedBase
     {
-        public List<ICoordinatesFunction<XType, YType>> Functions { get; internal set; }
+        public List<ICoordinatesFunction> Functions { get; internal set; }
 
-        public IImmutableList<ICoordinate<XType, YType>> Coordinates { get; internal set; }
+        public List<ICoordinate> Coordinates { get; internal set; }
 
         public bool IsValid { get; internal set; }
         public OrderedSetEnum Order { get; internal set; }
@@ -20,7 +21,7 @@ namespace Functions.CoordinatesFunctions
         /// </summary>
         public List<InterpolationEnum> Interpolators { get; internal set; }
 
-        public IEnumerable<string> Errors { get; internal set; }
+        public IEnumerable<IMessage> Errors { get; internal set; }
 
         public Tuple<double, double> Domain
         {
@@ -30,7 +31,7 @@ namespace Functions.CoordinatesFunctions
                 {
                     double min = Double.MaxValue;
                     double max = Double.MinValue;
-                    foreach (ICoordinatesFunction<XType, YType> func in Functions)
+                    foreach (ICoordinatesFunction func in Functions)
                     {
                         double funcMin = func.Domain.Item1;
                         double funcMax = func.Domain.Item2;
@@ -63,10 +64,10 @@ namespace Functions.CoordinatesFunctions
             //default to not set
             Order = OrderedSetEnum.NotSet;
 
-           
+
 
             List<OrderedSetEnum> functionOrders = new List<OrderedSetEnum>();
-            foreach (ICoordinatesFunction<XType, YType> func in Functions)
+            foreach (ICoordinatesFunction func in Functions)
             {
                 OrderedSetEnum order = func.Order;
                 functionOrders.Add(order);
@@ -184,7 +185,7 @@ namespace Functions.CoordinatesFunctions
             return retval;
         }
 
-        
+
 
         /// <summary>
         /// Might also be strictly increasing, but it is at least weakly increasing.
@@ -195,8 +196,8 @@ namespace Functions.CoordinatesFunctions
             bool retval = true;
             for (int i = 0; i < Functions.Count - 2; i++)
             {
-                CoordinatesFunctionOrdinateYs func1 = (CoordinatesFunctionOrdinateYs)Functions[i];
-                CoordinatesFunctionOrdinateYs func2 = (CoordinatesFunctionOrdinateYs)Functions[i + 1];
+                IFunction func1 = (IFunction)Functions[i];
+                IFunction func2 = (IFunction)Functions[i + 1];
 
                 if (func1.Range.Item2 > func2.Range.Item1)
                 {
@@ -212,8 +213,8 @@ namespace Functions.CoordinatesFunctions
             bool retval = true;
             for (int i = 0; i < Functions.Count - 2; i++)
             {
-                CoordinatesFunctionOrdinateYs func1 = (CoordinatesFunctionOrdinateYs)Functions[i];
-                CoordinatesFunctionOrdinateYs func2 = (CoordinatesFunctionOrdinateYs)Functions[i + 1];
+                IFunction func1 = (IFunction)Functions[i];
+                IFunction func2 = (IFunction)Functions[i + 1];
 
                 if (func1.Range.Item2 <= func2.Range.Item1)
                 {
@@ -229,8 +230,8 @@ namespace Functions.CoordinatesFunctions
             bool retval = true;
             for (int i = 0; i < Functions.Count - 2; i++)
             {
-                CoordinatesFunctionOrdinateYs func1 = (CoordinatesFunctionOrdinateYs)Functions[i];
-                CoordinatesFunctionOrdinateYs func2 = (CoordinatesFunctionOrdinateYs)Functions[i + 1];
+                IFunction func1 = (IFunction)Functions[i];
+                IFunction func2 = (IFunction)Functions[i + 1];
 
                 if (func1.Range.Item2 < func2.Range.Item1)
                 {
@@ -344,20 +345,20 @@ namespace Functions.CoordinatesFunctions
             return retval;
         }
 
-       
+
         internal void CombineCoordinates()
         {
-            List<ICoordinate<XType, YType>> allCoords = new List<ICoordinate<XType, YType>>();
-            foreach (ICoordinatesFunction<XType, YType> function in Functions)
+            List<ICoordinate> allCoords = new List<ICoordinate>();
+            foreach (ICoordinatesFunction function in Functions)
             {
                 allCoords.AddRange(function.Coordinates);
             }
 
-            List<ICoordinate<XType, YType>> sortedList = allCoords.OrderBy(coord => coord.X).ToList();
-            ImmutableList<ICoordinate<XType, YType>> coordinates = ImmutableList.Create<ICoordinate<XType, YType>>();
-            foreach (ICoordinate<XType, YType> coord in sortedList)
+            List<ICoordinate> sortedList = allCoords.OrderBy(coord => coord.X.Value()).ToList();
+            List<ICoordinate> coordinates = new List<ICoordinate>();
+            foreach (ICoordinate coord in sortedList)
             {
-                coordinates =  coordinates.Add(coord);
+                coordinates.Add(coord);
             }
 
             Coordinates = coordinates;

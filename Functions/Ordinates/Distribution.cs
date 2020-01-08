@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
+using Utilities.Serialization;
 
 namespace Functions.Ordinates
 {
-    internal class Distribution : IOrdinate
+    public class Distribution : IOrdinate
     {
-        public Statistics.IDistribution GetDistribution { get; }
-        internal Distribution(Statistics.IDistribution distribution)
+        public IDistributedValue GetDistribution { get; }
+        internal Distribution(IDistributedValue distribution)
         {
             GetDistribution = distribution;
         }
         public Tuple<double, double> Range => new Tuple<double, double>(GetDistribution.Minimum, GetDistribution.Maximum);
 
-        public bool IsDistributed => true;
+        public DistributionType DistributionType { get { return GetDistribution.Type; } }
 
         public bool Equals(IOrdinate scalar)
         {
@@ -35,6 +37,18 @@ namespace Functions.Ordinates
             {
                 return GetDistribution.InverseCDF(p);
             }
+        }
+
+        public XElement WriteToXML()
+        {     
+            XElement distElem = GetDistribution.WriteToXML();
+
+            XElement ordinateElem = new XElement(SerializationConstants.ORDINATE);
+            ordinateElem.SetAttributeValue(SerializationConstants.TYPE, SerializationConstants.DISTRIBUTION);
+
+            ordinateElem.Add(distElem);
+
+            return ordinateElem;
         }
     }
 }

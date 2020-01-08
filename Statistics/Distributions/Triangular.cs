@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.Xml.Linq;
 using Utilities;
+using Utilities.Serialization;
 
 namespace Statistics.Distributions
 {
@@ -70,6 +71,26 @@ namespace Statistics.Distributions
         {
             SummaryStatistics stats = new SummaryStatistics(IDataFactory.Factory(data));
             return new Triangular(stats.Range.Min, stats.Mean, stats.Range.Max, stats.SampleSize);
+        }
+
+        
+
+        
+
+        public XElement WriteToXML()
+        {
+            XElement ordinateElem = new XElement(SerializationConstants.TRIANGULAR);
+            //min
+            ordinateElem.SetAttributeValue(SerializationConstants.MIN, Minimum);
+            //most likely
+            ordinateElem.SetAttributeValue(SerializationConstants.MEAN, Mean);
+            //max
+            ordinateElem.SetAttributeValue(SerializationConstants.MAX, Maximum);
+
+            //sample size
+            ordinateElem.SetAttributeValue(SerializationConstants.SAMPLE_SIZE, SampleSize);
+
+            return ordinateElem;
         }
         #endregion
     }

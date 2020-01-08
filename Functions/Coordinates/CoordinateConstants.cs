@@ -3,29 +3,30 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Functions.Coordinates
 {
-    internal class CoordinateConstants: ICoordinate<double, double>
+    internal class CoordinateConstants: ICoordinate
     {
         //TODO: Validation
 
-        public double X { get; }
-        public double Y { get; }
+        public IOrdinate X { get; }
+        public IOrdinate Y { get; }
 
-        public CoordinateConstants(double x, double y)
+        public CoordinateConstants(Constant x, Constant y)
         {
             X = x;
             Y = y;
         }
 
-        public ICoordinate<double, double> Sample(double p = 0.50) => this;
+       // public ICoordinate Sample(double p = 0.50) => this;
 
         public override bool Equals(object obj)
         {
             return obj is CoordinateConstants constants &&
-                   X == constants.X &&
-                   Y == constants.Y;
+                   X.Equals(constants.X) &&
+                   Y.Equals(constants.Y);
         }
 
         public override int GetHashCode()
@@ -34,6 +35,16 @@ namespace Functions.Coordinates
             hashCode = hashCode * -1521134295 + X.GetHashCode();
             hashCode = hashCode * -1521134295 + Y.GetHashCode();
             return hashCode;
+        }
+
+        public XElement WriteToXML()
+        {
+            XElement xVal = X.WriteToXML();
+            XElement yVal = Y.WriteToXML();
+            XElement coordElem = new XElement("Coordinate");
+            coordElem.Add(xVal);
+            coordElem.Add(yVal);
+            return coordElem;
         }
     }
 }

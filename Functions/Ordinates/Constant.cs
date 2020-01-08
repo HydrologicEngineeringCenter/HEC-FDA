@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
+using Utilities.Serialization;
 
 namespace Functions.Ordinates
 {
-    internal class Constant : IOrdinate
+    public class Constant : IOrdinate
     {
         private double _ConstantValue;
-        internal Constant(double value)
+        public Constant(double value)
         {
             _ConstantValue = value;
         }
@@ -17,10 +19,8 @@ namespace Functions.Ordinates
             get { return new Tuple<double, double>(_ConstantValue, _ConstantValue); }
         }
 
-        public bool IsDistributed
-        {
-            get { return false; }
-        }
+        public DistributionType DistributionType { get { return DistributionType.Constant; } }
+
 
         public bool Equals(IOrdinate constant)
         {
@@ -35,6 +35,18 @@ namespace Functions.Ordinates
         public double Value(double p = 0.5)
         {
             return _ConstantValue;
+        }
+
+        public XElement WriteToXML()
+        {
+            XElement ordinateElem = new XElement(SerializationConstants.ORDINATE);
+            ordinateElem.SetAttributeValue(SerializationConstants.TYPE, SerializationConstants.CONSTANT);
+
+            XElement constantElem = new XElement(SerializationConstants.CONSTANT);
+            constantElem.SetAttributeValue(SerializationConstants.VALUE, _ConstantValue);
+
+            ordinateElem.Add(constantElem);
+            return ordinateElem;
         }
     }
 }

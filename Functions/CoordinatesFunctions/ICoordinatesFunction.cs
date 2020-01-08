@@ -3,22 +3,27 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
+using Utilities.Serialization;
 
 namespace Functions
 {
-    public interface ICoordinatesFunction<XType, YType>
+    public interface ICoordinatesFunction : ISerializeToXML<ICoordinatesFunction>
     {
-        YType F(XType x);
-        XType InverseF(YType y);
-        IImmutableList<ICoordinate<XType, YType>> Coordinates { get; }
+        IOrdinate F(IOrdinate x);
+        IOrdinate InverseF(IOrdinate y);
+        List<ICoordinate> Coordinates { get; }
         OrderedSetEnum Order { get; }
         InterpolationEnum Interpolator { get; }
 
-        bool IsDistributed { get; }
         Tuple<double, double> Domain { get; }
 
-        ICoordinatesFunction<double,double> Sample(double p);
-        ICoordinatesFunction<double, double> Sample(double p, InterpolationEnum interpolator);
+        bool Equals(ICoordinatesFunction function);
+
+
+        //bool IsDistributed { get; }
+
+        //IFunction Sample(double p);
+        //IFunction Sample(double p, InterpolationEnum interpolator);
 
     }
 }

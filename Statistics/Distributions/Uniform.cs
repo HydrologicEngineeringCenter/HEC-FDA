@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
+using Utilities.Serialization;
 
 namespace Statistics.Distributions
 {
@@ -64,6 +66,23 @@ namespace Statistics.Distributions
         {
             SummaryStatistics stats = new SummaryStatistics(IDataFactory.Factory(sample));
             return new Uniform(stats.Range.Min, stats.Range.Max, stats.SampleSize);
+        }
+
+       
+
+      
+
+        public XElement WriteToXML()
+        {
+            XElement ordinateElem = new XElement(SerializationConstants.UNIFORM);
+            //min
+            ordinateElem.SetAttributeValue(SerializationConstants.MIN, Minimum);
+            //max
+            ordinateElem.SetAttributeValue(SerializationConstants.MAX, Maximum);
+            //sample size
+            ordinateElem.SetAttributeValue(SerializationConstants.SAMPLE_SIZE, SampleSize);
+
+            return ordinateElem;
         }
         #endregion
     }

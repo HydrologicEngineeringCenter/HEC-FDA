@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="FunctionsView.View.CoordinatesFunctionEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FunctionsView.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
+    <ListBox x:Name="lst_tables" Grid.Row="1" KeyboardNavigation.TabNavigation="Continue" >
+        <!--this style is here to remove the padding between the list items-->
+        <!--and to be able to tabe between tables-->
+        <ListBox.ItemContainerStyle>
+            <Style TargetType="{x:Type ListBoxItem}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                            <ContentPresenter/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="IsTabStop" Value="False"/>
+                <Setter Property="BorderThickness" Value="0" />
+
+            </Style>
+            
+        </ListBox.ItemContainerStyle>
+
+    </ListBox>
+    </ScrollViewer>
+</UserControl>

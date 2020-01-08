@@ -3,17 +3,19 @@ using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
+using Utilities.Serialization;
 
 namespace Functions.Coordinates
 {
-    internal class CoordinateVariableY: ICoordinate<double, IDistribution>
+    internal class CoordinateVariableY: ICoordinate
     {
         //TODO: Validate
 
-        public double X { get; }
-        public IDistribution Y { get; }
+        public IOrdinate X { get; }
+        public IOrdinate Y { get; }
 
-        public CoordinateVariableY(double x, IDistribution y)
+        public CoordinateVariableY(Constant x, Distribution y)
         {
             X = x;
             Y = y;
@@ -34,21 +36,33 @@ namespace Functions.Coordinates
         //    YOrdinate = y;
         //}
 
-        public ICoordinate<double, double> Sample(double p) => new CoordinateConstants(X, Y.InverseCDF(p));
+        //public ICoordinate<double, double> Sample(double p) => new CoordinateConstants(X, Y.InverseCDF(p));
 
         public override bool Equals(object obj)
         {
             return obj is CoordinateVariableY coord &&
-                   X == coord.X &&
-                   EqualityComparer<IDistribution>.Default.Equals(Y, coord.Y);
+                   X.Equals(coord.X) &&
+                   Y.Equals(coord.Y);
+                   
+                   //EqualityComparer<Distribution>.Default.Equals((Distribution)Y, (Distribution)coord.Y);
         }
 
         public override int GetHashCode()
         {
             var hashCode = 1861411795;
             hashCode = hashCode * -1521134295 + X.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<IDistribution>.Default.GetHashCode(Y);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Distribution>.Default.GetHashCode((Distribution)Y);
             return hashCode;
+        }
+
+        public XElement WriteToXML()
+        {
+            XElement xVal = X.WriteToXML();
+            XElement yVal = Y.WriteToXML();
+            XElement coordElem = new XElement(SerializationConstants.COORDINATE);
+            coordElem.Add(xVal);
+            coordElem.Add(yVal);
+            return coordElem;
         }
     }
 }

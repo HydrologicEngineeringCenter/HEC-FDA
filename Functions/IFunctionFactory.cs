@@ -1,4 +1,5 @@
 ﻿using Functions.CoordinatesFunctions;
+using Functions.Ordinates;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -8,7 +9,7 @@ namespace Functions
 {
     public static class IFunctionFactory
     {
-        public static IFunction Factory(IImmutableList<ICoordinate<double, double>> coordinates, 
+        public static IFunction Factory(List<ICoordinate> coordinates, 
             InterpolationEnum interpolation) => new CoordinatesFunctionConstants(coordinates, interpolation);
     }
 }

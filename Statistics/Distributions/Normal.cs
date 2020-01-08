@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
+using Utilities.Serialization;
 
 namespace Statistics.Distributions
 {
@@ -71,6 +73,21 @@ namespace Statistics.Distributions
             MathNet.Numerics.Distributions.Normal norm = MathNet.Numerics.Distributions.Normal.Estimate(sample);
             return new Normal(norm.Mean, norm.StdDev, sample.Count());
         }
+
+        public XElement WriteToXML()
+        {
+            XElement ordinateElem = new XElement(SerializationConstants.NORMAL);
+            //mean
+            ordinateElem.SetAttributeValue(SerializationConstants.MEAN, Mean);
+            //st dev
+            ordinateElem.SetAttributeValue(SerializationConstants.ST_DEV, StandardDeviation);
+            //sample size
+            ordinateElem.SetAttributeValue(SerializationConstants.SAMPLE_SIZE, SampleSize);
+
+            return ordinateElem;
+        }
+
+        
         #endregion
     }
 }

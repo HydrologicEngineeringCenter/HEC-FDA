@@ -1,5 +1,6 @@
 ﻿using Functions;
 using Functions.CoordinatesFunctions;
+using Functions.Ordinates;
 using Statistics;
 using Statistics.Distributions;
 using System;
@@ -13,7 +14,7 @@ using Xunit.Abstractions;
 namespace FunctionsTests.CoordinatesFunctions
 {
     [ExcludeFromCodeCoverage]
-    public class CoordinatesFunctionVariableYsTests:CoordinateFunctionsTestData
+    public class CoordinatesFunctionVariableYsTests : CoordinateFunctionsTestData
     {
         private readonly ITestOutputHelper output;
 
@@ -23,40 +24,40 @@ namespace FunctionsTests.CoordinatesFunctions
         }
 
         #region Test Delegate Functions
-        //public static ICoordinate<double, IDistribution> Square(double val) => new UnivariateCoordinate(IScalarFactory.Factory(val), IScalarFactory.Factory(val * val));
-        //private static readonly Func<double, ICoordinate<double, IDistribution>> map = Square;
+        //public static ICoordinate Square(double val) => new UnivariateCoordinate(IScalarFactory.Factory(val), IScalarFactory.Factory(val * val));
+        //private static readonly Func<double, ICoordinate> map = Square;
         #endregion
 
         #region Good Constructor Data Tests
         /// <summary> Constructs Good Input Data for Good Constructor Data Tests. </summary>
-        //public static TheoryData<IImmutableList<ICoordinate<double, IDistribution>>> GoodDataNotDistributed =>
-        //    new TheoryData<IImmutableList<ICoordinate<double, IDistribution>>>
+        //public static TheoryData<List<ICoordinate>> GoodDataNotDistributed =>
+        //    new TheoryData<List<ICoordinate>>
         //    {
-        //        { ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(IScalarFactory.Factory(0), IScalarFactory.Factory(0), map)) },
-        //        { ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(IScalarFactory.Factory(0), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), IScalarFactory.Factory(0), map)) },
-        //        { ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(IScalarFactory.Factory(Double.MaxValue), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), IScalarFactory.Factory(Double.MinValue), map)) },
-        //        { ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(IScalarFactory.Factory(Double.MinValue), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), IScalarFactory.Factory(Double.MaxValue), map)) },
-        //        { ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(IScalarFactory.Factory(Double.MaxValue), IScalarFactory.Factory(0), null), new UnivariateCoordinate(IScalarFactory.Factory(0), IScalarFactory.Factory(Double.MinValue), null)) },
-        //        { ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(IScalarFactory.Factory(Double.MinValue), IScalarFactory.Factory(0), null), new UnivariateCoordinate(IScalarFactory.Factory(0), IScalarFactory.Factory(Double.MaxValue), null)) }
+        //        { new List<ICoordinate>(new UnivariateCoordinate(IScalarFactory.Factory(0), IScalarFactory.Factory(0), map)) },
+        //        { new List<ICoordinate>(new UnivariateCoordinate(IScalarFactory.Factory(0), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), IScalarFactory.Factory(0), map)) },
+        //        { new List<ICoordinate>(new UnivariateCoordinate(IScalarFactory.Factory(Double.MaxValue), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), IScalarFactory.Factory(Double.MinValue), map)) },
+        //        { new List<ICoordinate>(new UnivariateCoordinate(IScalarFactory.Factory(Double.MinValue), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), IScalarFactory.Factory(Double.MaxValue), map)) },
+        //        { new List<ICoordinate>(new UnivariateCoordinate(IScalarFactory.Factory(Double.MaxValue), IScalarFactory.Factory(0), null), new UnivariateCoordinate(IScalarFactory.Factory(0), IScalarFactory.Factory(Double.MinValue), null)) },
+        //        { new List<ICoordinate>(new UnivariateCoordinate(IScalarFactory.Factory(Double.MinValue), IScalarFactory.Factory(0), null), new UnivariateCoordinate(IScalarFactory.Factory(0), IScalarFactory.Factory(Double.MaxValue), null)) }
         //    };
 
-        //public static TheoryData<IImmutableList<ICoordinate<double, IDistribution>>> GoodDataDistributed =>
-        //    new TheoryData<IImmutableList<ICoordinate<double, IDistribution>>>
+        //public static TheoryData<List<ICoordinate>> GoodDataDistributed =>
+        //    new TheoryData<List<ICoordinate>>
         //    {
-        //        { ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(new ScalarHistogram(), new ScalarHistogram(), map)) },
-        //        { ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(new ScalarDistributed(new Normal()), new ScalarDistributed(new Normal()), map)) },
-        //        { ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(new ScalarHistogram(), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarHistogram(), map)) },
-        //        { ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarHistogram(), map), new UnivariateCoordinate(new ScalarHistogram(), IScalarFactory.Factory(0), map)) },
-        //        { ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(new ScalarDistributed(new Normal()), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarDistributed(new Normal()), map)) },
+        //        { new List<ICoordinate>(new UnivariateCoordinate(new ScalarHistogram(), new ScalarHistogram(), map)) },
+        //        { new List<ICoordinate>(new UnivariateCoordinate(new ScalarDistributed(new Normal()), new ScalarDistributed(new Normal()), map)) },
+        //        { new List<ICoordinate>(new UnivariateCoordinate(new ScalarHistogram(), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarHistogram(), map)) },
+        //        { new List<ICoordinate>(new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarHistogram(), map), new UnivariateCoordinate(new ScalarHistogram(), IScalarFactory.Factory(0), map)) },
+        //        { new List<ICoordinate>(new UnivariateCoordinate(new ScalarDistributed(new Normal()), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarDistributed(new Normal()), map)) },
 
         //    };
 
         /// <summary> Tests that for Good input it constructs the object without exception. </summary>
         [Theory]
         [MemberData(nameof(GoodDataDistributed))]
-        public void CoordinatesFunctionVariableYs_GoodInput_Returns_CoordinatesFunctionVariableYs(IImmutableList<ICoordinate<double, IDistribution>> value)
+        public void CoordinatesFunctionVariableYs_GoodInput_Returns_CoordinatesFunctionVariableYs(List<ICoordinate> value)
         {
-            ICoordinatesFunction<double, IDistribution> testObj = new CoordinatesFunctionVariableYs(value);
+            ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(value);
             Assert.True(true);
         }
         #endregion
@@ -66,41 +67,25 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void CoordinatesFunctionVariableYs_NullInput_Throws_ArgumentException()
         {
-            try
-            {
-                ICoordinatesFunction<double, IDistribution> testObj = new CoordinatesFunctionVariableYs(null);
-                Assert.True(false);
-            }
-            catch (ArgumentException e)
-            {
-                string m = e.Message;
-                Assert.Equal("The specified collection is invalid because it is empty or contains null values.", m);
-
-            }
+            Assert.Throws<ArgumentException>(() => new CoordinatesFunctionVariableYs(null));
         }
         /// <summary> Tests that for bad distributed input it throws an ArgumentException. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_BadDistributedInput_Throws_ArgumentException()
+        [Theory]
+        [MemberData(nameof(BadDataDistributed_RepeatXs))]
+        public void CoordinatesFunctionVariableYs_BadDistributedInput_Throws_ArgumentException(List<ICoordinate> value)
         {
-            try
-            {
-                //ICoordinatesFunction<double, IDistribution> testObj = new CoordinatesFunctionVariableYs(ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarDistributed(new Normal()), map), new UnivariateCoordinate(new ScalarDistributed(new Normal()), IScalarFactory.Factory(0), map)));
-                Assert.True(false);
-            }
-            catch (ArgumentException e)
-            {
-                string m = e.Message;
-                Assert.Equal("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).", m);
-            }
+          
+                Assert.Throws<ArgumentException>(()=> new CoordinatesFunctionVariableYs(value));
+           
         }
         #endregion
 
-       #region Property Tests
+        #region Property Tests
         #region IsInvertible Property Tests // from UnivariantCoordinatesFunction
         /// <summary> Tests that for the IsInvertible Property it returns true. </summary>
         [Theory]
         [MemberData(nameof(GoodDataDistributed))]
-        public void CoordinatesFunctionVariableYs_IsInvertible(IImmutableList<ICoordinate<double, IDistribution>> value)
+        public void CoordinatesFunctionVariableYs_IsInvertible(List<ICoordinate> value)
         {
             CoordinatesFunctionVariableYs testObj = new CoordinatesFunctionVariableYs(value);
             Assert.True(testObj.IsInvertible);
@@ -110,10 +95,10 @@ namespace FunctionsTests.CoordinatesFunctions
         /// <summary> Tests that the coordinates passed in are the same ones that get returned by the Coordinates property. </summary>
         [Theory]
         [MemberData(nameof(GoodDataDistributed))]
-        public void CoordinatesFunctionVariableYs_Coordinates_Returns_UnivariantCoordinatesFunction(IImmutableList<ICoordinate<double, IDistribution>> value)
+        public void CoordinatesFunctionVariableYs_Coordinates_Returns_UnivariantCoordinatesFunction(List<ICoordinate> value)
         {
-            IImmutableList<ICoordinate<double, IDistribution>> coords = value;
-            ICoordinatesFunction<double, IDistribution> func = new CoordinatesFunctionVariableYs(value);
+            List<ICoordinate> coords = value;
+            ICoordinatesFunction func = new CoordinatesFunctionVariableYs(value);
             Assert.True(coords.SequenceEqual(func.Coordinates));
         }
         #endregion
@@ -121,9 +106,9 @@ namespace FunctionsTests.CoordinatesFunctions
         /// <summary> Tests that the IsDistributedXs Property returns False. </summary>
         [Theory]
         [MemberData(nameof(GoodDataDistributed))]
-        public void CoordinatesFunctionVariableYs_IsDistributedXs_Returns_True(IImmutableList<ICoordinate<double, IDistribution>> value)
+        public void CoordinatesFunctionVariableYs_IsDistributedXs_Returns_True(List<ICoordinate> value)
         {
-            ICoordinatesFunction<double, IDistribution> testObj = new CoordinatesFunctionVariableYs(value);
+            ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(value);
             Assert.False(((CoordinatesFunctionVariableYs)testObj).IsDistributedXs);
         }
 
@@ -132,9 +117,9 @@ namespace FunctionsTests.CoordinatesFunctions
         /// <summary> Tests that the IsDistributedYs Property returns True. </summary>
         [Theory]
         [MemberData(nameof(GoodDataDistributed))]
-        public void CoordinatesFunctionVariableYs_IsDistributedYs_Returns_True(IImmutableList<ICoordinate<double, IDistribution>> value)
+        public void CoordinatesFunctionVariableYs_IsDistributedYs_Returns_True(List<ICoordinate> value)
         {
-            ICoordinatesFunction<double, IDistribution> testObj = new CoordinatesFunctionVariableYs(value);
+            ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(value);
             Assert.True(((CoordinatesFunctionVariableYs)testObj).IsDistributedYs);
         }
         #endregion
@@ -152,275 +137,220 @@ namespace FunctionsTests.CoordinatesFunctions
         /// <summary> Tests that the F Function returns True. </summary>
         [Theory]
         [MemberData(nameof(GoodDataDistributed))]
-        public void CoordinatesFunctionVariableYs_NotDistributedF_Returns_IScalar(IImmutableList<ICoordinate<double, IDistribution>> value)
+        public void CoordinatesFunctionVariableYs_NotDistributedF_Returns_IScalar(List<ICoordinate> value)
         {
-            CoordinatesFunctionVariableYs func = CreateDistributedCoordinatesFunctionBasic();
-            Assert.True(func.F(0) == new Normal(1, 0));
+            ICoordinate firstCoord = value[0];
 
-            //ICoordinatesFunction<double, IDistribution> testObj = new CoordinatesFunctionVariableYs(value);
-            //IOrdinate result = testObj.F(IScalarFactory.Factory(0));
-            //Assert.True(result.Equals(IScalarFactory.Factory(0)) || result.Equals(IScalarFactory.Factory(Double.MaxValue)) || result.Equals(IScalarFactory.Factory(Double.MinValue)));
+            CoordinatesFunctionVariableYs func = new CoordinatesFunctionVariableYs(value);
+            IOrdinate fOfX = func.F(firstCoord.X);
+            Assert.True(fOfX.Equals(firstCoord.Y));
+
         }
         /// <summary> Tests that the F Function throws an <see cref="ArgumentOutOfRangeException"/>. </summary>
         [Theory]
         [MemberData(nameof(GoodDataDistributed))]
-        public void CoordinatesFunctionVariableYs_NotDistributedF_Throws_ArgumentOutOfRangeException(IImmutableList<ICoordinate<double, IDistribution>> value)
+        public void CoordinatesFunctionVariableYs_NotDistributedF_Throws_ArgumentOutOfRangeException(List<ICoordinate> value)
         {
-           
-                CoordinatesFunctionVariableYs func = CreateDistributedCoordinatesFunctionBasic();
-                Assert.Throws<ArgumentOutOfRangeException>(()=> func.F(99));
-             
+
+            CoordinatesFunctionVariableYs func = CreateDistributedCoordinatesFunctionBasic();
+            Assert.Throws<ArgumentOutOfRangeException>(() => func.F(new Constant(99)));
+
         }
         /// <summary> Tests that the F Function throws an <see cref="ArgumentNullException"/>. </summary>
         [Theory]
         [MemberData(nameof(GoodDataDistributed))]
-        public void CoordinatesFunctionVariableYs_NullF_Throws_ArgumentNullException(IImmutableList<ICoordinate<double, IDistribution>> value)
+        public void CoordinatesFunctionVariableYs_NullF_Throws_ArgumentNullException(List<ICoordinate> value)
         {
             CoordinatesFunctionVariableYs func = CreateDistributedCoordinatesFunctionBasic();
-            Assert.Throws<ArgumentOutOfRangeException>(() => func.F(double.NaN));
+            Assert.Throws<ArgumentOutOfRangeException>(() => func.F(new Constant(double.NaN)));
         }
-        /// <summary> Tests that the F Function returns an IScalar object. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_F_Returns_IScalar()
-        {
-            CoordinatesFunctionVariableYs func = CreateDistributedCoordinatesFunctionBasic();
-            IDistribution result = func.F(0);
-            Assert.Equal(new Normal(1,0), result);
-        }
-        /// <summary> Tests that the F Function returns a ScalarHistogram object. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_F_Returns_ScalarHistogram()
-        {
-            //ICoordinatesFunction<double, IDistribution> testObj = new CoordinatesFunctionVariableYs(ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarHistogram(), map), new UnivariateCoordinate(new ScalarHistogram(), IScalarFactory.Factory(0), map)));
-            //IOrdinate result = testObj.F();
-            //Assert.Equal("Histogram(Mean: 0, Standard Deviation: 0, Min: 0, Max: 0, Sample Size: 0, Is Converged: False)", result.Print());
-        }
-        /// <summary> Tests that the F Function returns a ScalarDistributed object. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_F_Returns_ScalarDistributed()
-        {
-            //ICoordinatesFunction<double, IDistribution> testObj = new CoordinatesFunctionVariableYs(ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(new ScalarDistributed(new Normal()), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarDistributed(new Normal()), map)));
-            //IOrdinate result = testObj.F(IScalarFactory.Factory(0));
-            //Assert.Equal("Normal(Mean: 0, StandardDeviation: 1)", result.Print());
-        }
-        /// <summary> Tests that the F Function for Histogram input throws an <see cref="ArgumentOutOfRangeException"/>. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_FHistogram_Throws_ArgumentOutOfRangeException()
-        {
-            try
-            {
-               // ICoordinatesFunction<double, IDistribution> testObj = new CoordinatesFunctionVariableYs(ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(new ScalarHistogram(), new ScalarHistogram(), map)));
-                //IOrdinate result = testObj.F(IScalarFactory.Factory(0));
-                Assert.True(false);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                string m = e.Message;
-                Assert.Equal("Specified argument was out of the range of valid values.\r\nParameter name: The specified x value was not found in any of the coordinates. Interpolation is not supported for coordinates with distributed x or y values", m);
-            }
-        }
+
+
+
+
+        ///// <summary> Tests that the F Function for Histogram input throws an <see cref="ArgumentOutOfRangeException"/>. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_FHistogram_Throws_ArgumentOutOfRangeException()
+        //{
+        //    try
+        //    {
+        //        // ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(new List<ICoordinate>(new UnivariateCoordinate(new ScalarHistogram(), new ScalarHistogram(), map)));
+        //        //IOrdinate result = testObj.F(IScalarFactory.Factory(0));
+        //        Assert.True(false);
+        //    }
+        //    catch (ArgumentOutOfRangeException e)
+        //    {
+        //        string m = e.Message;
+        //        Assert.Equal("Specified argument was out of the range of valid values.\r\nParameter name: The specified x value was not found in any of the coordinates. Interpolation is not supported for coordinates with distributed x or y values", m);
+        //    }
+        //}
+
         /// <summary> Tests that the F Function for Distributed input throws an <see cref="ArgumentOutOfRangeException"/>. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_FDistributed_Throws_ArgumentOutOfRangeException()
+        [Theory]
+        [MemberData(nameof(GoodDataDistributed))]
+        public void CoordinatesFunctionVariableYs_FDistributed_Throws_ArgumentOutOfRangeException(List<ICoordinate> value)
         {
-            try
-            {
-                //ICoordinatesFunction<double, IDistribution> testObj = new CoordinatesFunctionVariableYs(ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(new ScalarDistributed(new Normal()), new ScalarDistributed(new Normal()), map)));
-                //IOrdinate result = testObj.F(IScalarFactory.Factory(0));
-                Assert.True(false);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                string m = e.Message;
-                Assert.Equal("Specified argument was out of the range of valid values.\r\nParameter name: The specified x value was not found in any of the coordinates. Interpolation is not supported for coordinates with distributed x or y values", m);
-            }
+            ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(value);
+            Assert.Throws<ArgumentOutOfRangeException>(() => testObj.F(new Distribution(new DistributedValue(new Normal(1, 0)))));
         }
         #endregion
         #region InverseF() Tests
-        /// <summary> Tests that the Inverse F Function returns True. </summary>
+        /// <summary> Tests that the Inverse F Function returns the correct IOrdinate. </summary>
         [Theory]
         [MemberData(nameof(GoodDataDistributed))]
-        public void CoordinatesFunctionVariableYs_InverseF_Returns_IScalar(IImmutableList<ICoordinate<double, IDistribution>> value)
+        public void CoordinatesFunctionVariableYs_InverseF_Returns_IScalar(List<ICoordinate> value)
         {
-            //ICoordinatesFunction<double, IDistribution> testObj = new CoordinatesFunctionVariableYs(value);
-            //IOrdinate result = testObj.InverseF(IScalarFactory.Factory(0));
-            //Assert.NotNull(result);
+            ICoordinate firstCoord = value[0];
+            ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(value);
+            IOrdinate result = testObj.InverseF(firstCoord.Y);
+            Assert.True(firstCoord.X.Equals(result));
         }
-        /// <summary> Tests that the Inverse F Function returns True. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_InverseF_Throws_ArgumentException()
+
+        /// <summary> Tests that the Inverse F Function throws ArgumentException if input is out of range. </summary>
+        [Theory]
+        [MemberData(nameof(GoodDataDistributed))]
+        public void CoordinatesFunctionVariableYs_InverseF_Throws_ArgumentException(List<ICoordinate> value)
         {
-            try
-            {
-                //ICoordinatesFunction<double, IDistribution> testObj = new CoordinatesFunctionVariableYs(ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(IScalarFactory.Factory(1), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(1), IScalarFactory.Factory(2), map)));
-                //IOrdinate result = testObj.InverseF(IScalarFactory.Factory(0));
-                Assert.True(false);
-            }
-            catch (ArgumentException e)
-            {
-                var m = e.Message;
-                Assert.Equal("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).", m);
-            }
+            ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(value);
+            Assert.Throws<ArgumentOutOfRangeException>(() => testObj.InverseF(new Distribution(new DistributedValue(new Normal(99, 0)))));
         }
-        /// <summary> Tests that the Inverse F Function returns False. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_InverseFNull_Throws_ArgumentNullException()
+        /// <summary> Tests that the Inverse F Function returns ArgumentNullException if input is null. </summary>
+        [Theory]
+        [MemberData(nameof(GoodDataDistributed))]
+        public void CoordinatesFunctionVariableYs_InverseFNull_Throws_ArgumentNullException(List<ICoordinate> value)
         {
-            try
-            {
-                //ICoordinatesFunction<double, IDistribution> testObj = new CoordinatesFunctionVariableYs(ImmutableList.Create<ICoordinate<double, IDistribution>>(new UnivariateCoordinate(IScalarFactory.Factory(1), IScalarFactory.Factory(0), map)));
-                //IOrdinate result = testObj.InverseF(null);
-                Assert.True(false);
-            }
-            catch (ArgumentNullException e)
-            {
-                var m = e.Message;
-                Assert.Equal("Value cannot be null.", m);
-            }
+           
+                ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(value);
+                Assert.Throws<ArgumentNullException>(()=> testObj.InverseF(null));
+            
         }
-        //Is never reached
-        /// <summary> Tests that the Inverse F Function when given an input not in the given coordinates, throws an <see cref="ArgumentOutOfRangeException"/>. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_InverseF_Throws_ArgumentOutOfRangeException()
-        {
-            try
-            {
-               // IFunctionFamily<IScalar, IScalar> testObj = new CoordinatesFunctionVariableYs(ImmutableList.Create<ICoordinate<IScalar, IScalar>>(new UnivariateCoordinate(IScalarFactory.Factory(1), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(1), IScalarFactory.Factory(2), map)));
-                //IScalar result = testObj.InverseF(IScalarFactory.Factory(5));
-                Assert.True(false);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                var m = e.Message;
-                Assert.Equal("The specified y value was not found in any of the coordinates. Interpolation is not supported for coorindates with distributed x or y values.", m);
-            }
-        }
+       
         #endregion
 
         #region Sample
 
-        /// <summary> Tests that the Sample method returns the mean for .5 probability on Normal Distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_Sample_Returns_True_NormalDist1()
-        {
-            IImmutableList<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 0 }, new IDistribution[] { new Normal(1, 0) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(.5);
-            IImmutableList<ICoordinate<double, double>> sampledCoords =  sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 0 && coord.Y == 1);
-            
-        }
-        /// <summary> Tests that the Sample method returns the mean for .5 probability on Normal Distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_Sample_Returns_True_NormalDist2()
-        {
-            IImmutableList<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 0 }, new IDistribution[] { new Normal(2, 0) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(.5);
-            IImmutableList<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 0 && coord.Y == 2);
+        ///// <summary> Tests that the Sample method returns the mean for .5 probability on Normal Distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_Sample_Returns_True_NormalDist1()
+        //{
+        //    List<ICoordinate> distCoords = DistributedCoordinates(new double[] { 0 }, new IDistribution[] { new Normal(1, 0) });
+        //    ICoordinatesFunction function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(.5);
+        //    List<ICoordinate<double, double>> sampledCoords =  sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 0 && coord.Y == 1);
 
-        }
+        //}
+        ///// <summary> Tests that the Sample method returns the mean for .5 probability on Normal Distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_Sample_Returns_True_NormalDist2()
+        //{
+        //    List<ICoordinate> distCoords = DistributedCoordinates(new double[] { 0 }, new IDistribution[] { new Normal(2, 0) });
+        //    ICoordinatesFunction function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(.5);
+        //    List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 0 && coord.Y == 2);
 
-        /// <summary> Tests that the Sample method returns the most likely value for .5 probability for triangular distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_Sample_Returns_True_TriangularDist1()
-        {
-            IImmutableList<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Triangular(10,20,30) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(.5);
-            IImmutableList<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 5 && coord.Y == 20);
+        //}
 
-        }
+        ///// <summary> Tests that the Sample method returns the most likely value for .5 probability for triangular distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_Sample_Returns_True_TriangularDist1()
+        //{
+        //    List<ICoordinate> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Triangular(10,20,30) });
+        //    ICoordinatesFunction function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(.5);
+        //    List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 5 && coord.Y == 20);
 
-        /// <summary> Tests that the Sample method returns the min value for 0.0 probability for triangular distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_Sample_Returns_True_TriangularDist2()
-        {
-            IImmutableList<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Triangular(10, 20, 30) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(0.0);
-            IImmutableList<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 5 && coord.Y == 10);
+        //}
 
-        }
+        ///// <summary> Tests that the Sample method returns the min value for 0.0 probability for triangular distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_Sample_Returns_True_TriangularDist2()
+        //{
+        //    List<ICoordinate> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Triangular(10, 20, 30) });
+        //    ICoordinatesFunction function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(0.0);
+        //    List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 5 && coord.Y == 10);
 
-        /// <summary> Tests that the Sample method returns the max value for 1.0 probability for triangular distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_Sample_Returns_True_TriangularDist3()
-        {
-            IImmutableList<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Triangular(10, 20, 30) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(1.0);
-            IImmutableList<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 5 && coord.Y == 30);
+        //}
 
-        }
+        ///// <summary> Tests that the Sample method returns the max value for 1.0 probability for triangular distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_Sample_Returns_True_TriangularDist3()
+        //{
+        //    List<ICoordinate> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Triangular(10, 20, 30) });
+        //    ICoordinatesFunction function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(1.0);
+        //    List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 5 && coord.Y == 30);
 
-        /// <summary> Tests that the Sample method returns the max value for 1.0 probability for Uniform distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_Sample_Returns_True_UniformDist1()
-        {
-            IImmutableList<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Uniform(10, 30) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(1.0);
-            IImmutableList<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 5 && coord.Y == 30);
+        //}
 
-        }
+        ///// <summary> Tests that the Sample method returns the max value for 1.0 probability for Uniform distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_Sample_Returns_True_UniformDist1()
+        //{
+        //    List<ICoordinate> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Uniform(10, 30) });
+        //    ICoordinatesFunction function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(1.0);
+        //    List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 5 && coord.Y == 30);
 
-        /// <summary> Tests that the Sample method returns the min value for 0.0 probability for Uniform distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_Sample_Returns_True_UniformDist2()
-        {
-            IImmutableList<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Uniform(10, 30) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(0.0);
-            IImmutableList<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 5 && coord.Y == 10);
+        //}
 
-        }
+        ///// <summary> Tests that the Sample method returns the min value for 0.0 probability for Uniform distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_Sample_Returns_True_UniformDist2()
+        //{
+        //    List<ICoordinate> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Uniform(10, 30) });
+        //    ICoordinatesFunction function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(0.0);
+        //    List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 5 && coord.Y == 10);
 
-        /// <summary> Tests that the Sample method returns the mean value for 0.5 probability for Uniform distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_Sample_Returns_True_UniformDist3()
-        {
-            IImmutableList<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Uniform(10, 30) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(0.5);
-            IImmutableList<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 5 && coord.Y == 20);
-        }
+        //}
 
-        /// <summary> Tests that the Sample method returns the mean value for 0.5 probability for Uniform distribution. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_SampleWithInterpolator_Returns_True_UniformDist3()
-        {
-            IImmutableList<ICoordinate<double, IDistribution>> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Uniform(10, 30) });
-            ICoordinatesFunction<double, IDistribution> function = new CoordinatesFunctionVariableYs(distCoords);
-            ICoordinatesFunction<double, double> sampledFunction = function.Sample(0.5);
-            IImmutableList<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
-            ICoordinate<double, double> coord = sampledCoords[0];
-            Assert.True(sampledCoords.Count == 1);
-            Assert.True(coord.X == 5 && coord.Y == 20);
-        }
+        ///// <summary> Tests that the Sample method returns the mean value for 0.5 probability for Uniform distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_Sample_Returns_True_UniformDist3()
+        //{
+        //    List<ICoordinate> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Uniform(10, 30) });
+        //    ICoordinatesFunction function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(0.5);
+        //    List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 5 && coord.Y == 20);
+        //}
+
+        ///// <summary> Tests that the Sample method returns the mean value for 0.5 probability for Uniform distribution. </summary>
+        //[Fact]
+        //public void CoordinatesFunctionVariableYs_SampleWithInterpolator_Returns_True_UniformDist3()
+        //{
+        //    List<ICoordinate> distCoords = DistributedCoordinates(new double[] { 5 }, new IDistribution[] { new Uniform(10, 30) });
+        //    ICoordinatesFunction function = new CoordinatesFunctionVariableYs(distCoords);
+        //    ICoordinatesFunction<double, double> sampledFunction = function.Sample(0.5);
+        //    List<ICoordinate<double, double>> sampledCoords = sampledFunction.Coordinates;
+        //    ICoordinate<double, double> coord = sampledCoords[0];
+        //    Assert.True(sampledCoords.Count == 1);
+        //    Assert.True(coord.X == 5 && coord.Y == 20);
+        //}
         #endregion
 
         #endregion

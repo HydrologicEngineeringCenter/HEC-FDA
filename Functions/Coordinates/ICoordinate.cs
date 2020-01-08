@@ -2,17 +2,19 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Functions
 {
     //TODO: Comment
     //TODO: Factory Method
 
-    public interface ICoordinate<out XType, out YType>
+    public interface ICoordinate 
     {
-        XType X { get; }
-        YType Y { get; }
+        IOrdinate X { get; }
+        IOrdinate Y { get; }
+        XElement WriteToXML();
+        //ICoordinate<double, double> Sample(double p);
 
-        ICoordinate<double, double> Sample(double p);
     }
 }

@@ -2,3 +2,4 @@
 
 [assembly: InternalsVisibleTo("StatisticsTests")]
 [assembly: InternalsVisibleTo("FunctionsTests")]
+[assembly: InternalsVisibleTo("ModelTests")]

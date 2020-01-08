@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8E8C8388-F610-44CD-8746-BC2559E02424}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <RootNamespace>FunctionsView</RootNamespace>
+    <AssemblyName>FunctionsView</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="ViewModel\CoordinatesFunctionEditorVM.cs" />
+    <Compile Include="ViewModel\CoordinatesFunctionRowItem.cs" />
+    <Compile Include="ViewModel\CoordinatesFunctionRowItemBuilder.cs" />
+    <Compile Include="ViewModel\CoordinatesFunctionTableVM.cs" />
+    <Compile Include="View\ColumnWidths.cs" />
+    <Compile Include="View\CoordinatesFunctionEditor.xaml.cs">
+      <DependentUpon>CoordinatesFunctionEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CoordinatesFunctionTable.xaml.cs">
+      <DependentUpon>CoordinatesFunctionTable.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DistributionComboboxControl.xaml.cs">
+      <DependentUpon>DistributionComboboxControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\InterpolationComboboxControl.xaml.cs">
+      <DependentUpon>InterpolationComboboxControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\RowModificationEnum.cs" />
+    <Compile Include="View\TableBottomControl.xaml.cs">
+      <DependentUpon>TableBottomControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\TableRowsModifiedEventArgs.cs" />
+    <Compile Include="View\TableTopControl.xaml.cs">
+      <DependentUpon>TableTopControl.xaml</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Functions\Functions.csproj">
+      <Project>{c33a0f59-fe11-4e06-b85e-bd84e6c1106d}</Project>
+      <Name>Functions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Statistics\Statistics.csproj">
+      <Project>{c793991b-b5f7-4667-8478-713e97340d34}</Project>
+      <Name>Statistics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UserControls\UserControls.vbproj">
+      <Project>{80eb938b-bc8f-44f7-b4dd-6127010f2d96}</Project>
+      <Name>UserControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utilities\Utilities.csproj">
+      <Project>{9038ADD9-59CA-4E3A-B665-6B086FDE5F18}</Project>
+      <Name>Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="View\CoordinatesFunctionEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CoordinatesFunctionTable.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DistributionComboboxControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\InterpolationComboboxControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\TableBottomControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\TableTopControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

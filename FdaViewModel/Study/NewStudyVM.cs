@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,22 @@ namespace FdaViewModel.Study
         private string _Description;
         #endregion
         #region Properties
+        //for testing delete me
+        public FunctionsView.ViewModel.CoordinatesFunctionEditorVM Curve
+        {
+            get 
+            {
+                List<double> xs = new List<double>() { 1, 2, 3, 4 };
+                List<double> ys = new List<double>() { 2,3,4,5 };
+
+                // Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xs, ys);
+                //IFdaFunction function = ImpactAreaFunctionFactory.Factory(func, Model.Condition.ComputePoint.ImpactAreaFunctions.ImpactAreaFunctionEnum.InflowOutflow);
+
+                //return new CurveGeneratorVM(function, Model.Condition.ComputePoint.ImpactAreaFunctions.ImpactAreaFunctionEnum.InflowOutflow);
+                return null;
+            }
+        }
+            //delete to here
         public string Path { get { return _Path; }
         set
             {

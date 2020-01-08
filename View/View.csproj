@@ -56,7 +56,7 @@
     <StartupObject>Fda.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-  <Reference Include="netstandard" />
+    <Reference Include="netstandard" />
     <Reference Include="Consequences_Assist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\Consequences_Assist.dll</HintPath>
@@ -349,6 +349,9 @@
     <Compile Include="Utilities\BoolToInverseVisibilityConverter.cs" />
     <Compile Include="Utilities\BoolToVisibilityConverter.cs" />
     <Compile Include="Utilities\ContextMenuConverter.cs" />
+    <Compile Include="Utilities\CurveGenerator.xaml.cs">
+      <DependentUpon>CurveGenerator.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\CustomHeader.xaml.cs">
       <DependentUpon>CustomHeader.xaml</DependentUpon>
     </Compile>
@@ -660,6 +663,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Utilities\CurveGenerator.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Utilities\CustomHeader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -782,6 +789,14 @@
     <ProjectReference Include="..\FdaViewModel\ViewModel.csproj">
       <Project>{6a8fd3e7-b4ec-46b4-b91b-2b63034f9776}</Project>
       <Name>ViewModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FunctionsView\FunctionsView.csproj">
+      <Project>{8e8c8388-f610-44cd-8746-bc2559e02424}</Project>
+      <Name>FunctionsView</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Model\Model.csproj">
+      <Project>{7fe104fd-b277-4dbe-b892-01f61262a82f}</Project>
+      <Name>Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenGLMapper\geospatial\OpenGLMapping\OpenGLMapping.vbproj">
       <Project>{e6dd31c5-1388-4b1d-8291-c317dde22388}</Project>

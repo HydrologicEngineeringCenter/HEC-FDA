@@ -1,14 +1,17 @@
 ﻿using Functions.Coordinates;
+using Functions.Ordinates;
 using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
+using Utilities;
 
 namespace Functions.CoordinatesFunctions
 {
-    internal sealed class CoordinatesFunctionVariableYs: ICoordinatesFunction<double, IDistribution>
+    internal sealed class CoordinatesFunctionVariableYs: ICoordinatesFunction
     {
         #region Properties
         public bool IsInvertible { get; }
@@ -17,30 +20,63 @@ namespace Functions.CoordinatesFunctions
         public bool IsDistributedYs => true;
         public OrderedSetEnum Order { get; }
 
-        public IImmutableList<ICoordinate<double, IDistribution>> Coordinates { get; }
+        public List<ICoordinate> Coordinates { get; }
 
         public bool IsDistributed => true;
 
         public Tuple<double, double> Domain { get; }
 
-        public InterpolationEnum Interpolator => throw new NotImplementedException();
+        public InterpolationEnum Interpolator { get; }
+      
         #endregion
 
         #region Constructor
         //todo: are we using this interpolator?
-        internal CoordinatesFunctionVariableYs(IImmutableList<ICoordinate<double, IDistribution>> coordinates, InterpolationEnum interpolation = InterpolationEnum.NoInterpolation)
+        internal CoordinatesFunctionVariableYs(List<ICoordinate> coordinates, InterpolationEnum interpolation = InterpolationEnum.None)
         {
+            Interpolator = interpolation;
             if (IsValid(coordinates))
             {
                 Coordinates = SortByXs(coordinates);
                 IsInvertible = IsInvertibleFunction();
             }
-            Domain = new Tuple<double, double>(Coordinates[0].X, Coordinates[Coordinates.Count - 1].X);
+            Domain = new Tuple<double, double>(Coordinates[0].X.Value(), Coordinates[Coordinates.Count - 1].X.Value());
 
         }
         #endregion
 
         #region Functions
+        public bool Equals(ICoordinatesFunction function)
+        {
+            //I don't think i have to check the domain, range, or order because
+            //if the coordinates and interpolator are all the same then those values
+            //should be the same.
+            if (!function.GetType().Equals(typeof(CoordinatesFunctionVariableYs)))
+            {
+                return false;
+            }
+            if (Coordinates.Count != function.Coordinates.Count)
+            {
+                return false;
+            }
+            for (int i = 0; i < Coordinates.Count; i++)
+            {
+                if (!Coordinates[i].X.Equals(function.Coordinates[i].X))
+                {
+                    return false;
+                }
+                if (!Coordinates[i].Y.Equals(function.Coordinates[i].Y))
+                {
+                    return false;
+                }
+            }
+            if (Interpolator != function.Interpolator)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public bool IsInvertibleFunction()
         {
             //todo: John, how is this working? How can you compare ys that are distributed?
@@ -55,40 +91,46 @@ namespace Functions.CoordinatesFunctions
             }
             return true;
         }
-        private bool IsValid(IImmutableList<ICoordinate<double, IDistribution>> coordinates)
+        private bool IsValid(List<ICoordinate> coordinates)
         {
-            if (Utilities.Validation.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate<double, IDistribution>>)) return false;
+            if (Utilities.Validation.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate>)) return false;
             if (!IsFunction(coordinates)) throw new ArgumentException("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).");
             return true;
         }
-        private bool IsFunction(IImmutableList<ICoordinate<double, IDistribution>> xys)
+        private bool IsFunction(List<ICoordinate> xys)
         {
             for (int i = 0; i < xys.Count; i++)
             {
                 int j = i + 1;
                 while (j < xys.Count)
                 {
-                    if (xys[i].X.Equals(xys[j].X) && !xys[i].Y.Equals(xys[j].Y)) return false;
+                    if (xys[i].X.Equals(xys[j].X)) return false;
                     else j++;
                 }
             }
             return true;
         }
-        public IImmutableList<ICoordinate<double, IDistribution>> SortByXs(IImmutableList<ICoordinate<double, IDistribution>> coordinates) 
-            => coordinates.OrderBy(xy => xy.X).ToImmutableList();
+        public List<ICoordinate> SortByXs(List<ICoordinate> coordinates) 
+            => coordinates.OrderBy(xy => xy.X.Value()).ToList();
 
         #region F()
-        public IDistribution F(double x)
+        public IOrdinate F(IOrdinate x)
         {
             //todo: John, i tried to do F(1) and it came through as F(1.00000000001) which threw the exception. We might want to try to fix that?
             if (Utilities.Validation.IsNull(x)) throw new ArgumentNullException("The specified x value is invalid because it is null");
-            for (int i = 0; i < Coordinates.Count; i++) if (Coordinates[i].X.Equals(x)) return Coordinates[i].Y;
+            for (int i = 0; i < Coordinates.Count; i++)
+            {
+                if (Coordinates[i].X.Equals(x))
+                {
+                    return Coordinates[i].Y;
+                }
+            }
             throw new ArgumentOutOfRangeException("The specified x value was not found in any of the coordinates. Interpolation is not supported for coordinates with distributed x or y values");      
         }
         #endregion
 
         #region InverseF()
-        public double InverseF(IDistribution y)
+        public IOrdinate InverseF(IOrdinate y)
         {
             if (Utilities.Validation.IsNull(y)) throw new ArgumentNullException("The specified y value is invalid because it is null");
             if (IsInvertible == false) throw new InvalidOperationException("The function InverseF(y) is invalid for this set of coordinates. The inverse of F(x) is not a function, because one or more y values maps to multiple x values");
@@ -102,24 +144,23 @@ namespace Functions.CoordinatesFunctions
             throw new ArgumentOutOfRangeException("The specified y value was not found in any of the coordinates. Interpolation is not supported for coorindates with distributed x or y values.");
         }
 
-        public ICoordinatesFunction<double, double> Sample(double p)
-        {
-            return new CoordinatesFunctionConstants(ConvertCoordinatesToConstants(p));
-        }
+        
 
-        public ICoordinatesFunction<double, double> Sample(double p, InterpolationEnum interpolator)
+        public XElement WriteToXML()
         {
-            return new CoordinatesFunctionConstants(ConvertCoordinatesToConstants(p), interpolator);
-        }
+            XElement functionsElem = new XElement("Functions");
+            functionsElem.SetAttributeValue("Type", "NotLinked");
 
-        private IImmutableList<ICoordinate<double, double>> ConvertCoordinatesToConstants(double p)
-        {
-            IImmutableList<ICoordinate<double, double>> coords = ImmutableList.Create<ICoordinate<double, double>>();
-            foreach (ICoordinate<double, IDistribution> coord in Coordinates)
+            XElement funcElem = new XElement("Function");
+            funcElem.SetAttributeValue("Interpolator", Interpolator);
+
+            foreach (ICoordinate coord in Coordinates)
             {
-                coords = coords.Add(new CoordinateConstants(coord.X, coord.Y.InverseCDF(p)));
+                funcElem.Add(coord.WriteToXML());
             }
-            return coords;
+
+            functionsElem.Add(funcElem);
+            return functionsElem;
         }
 
 

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Plan\" />
+    <Folder Include="Project\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Functions\Functions.csproj" />
+  </ItemGroup>
+
+</Project>

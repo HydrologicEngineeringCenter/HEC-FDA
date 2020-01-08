@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Utilities;
 using Utilities.Validation;
 using Xunit;
 
@@ -13,7 +14,7 @@ using Xunit;
 namespace FunctionsTests.CoordinatesFunctions
 {
     [ExcludeFromCodeCoverage]
-    public class CoordinatesFunctionLinkedOrdinatesTests : CoordinateFunctionsTestData
+    public class CoordinatesFunctionLinkedTests : CoordinateFunctionsTestData
     {
 
         //public static TheoryData<List<ICoordinatesFunction<IOrdinate, IOrdinate>>> Data
@@ -31,13 +32,13 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_GoodData1_Returns_LinkedCoordinatesFunction()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_StrictMonotonicIncreasing_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_StrictMonotonicIncreasing_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.True(true);
         }
 
@@ -47,13 +48,13 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_GoodData2_Returns_LinkedCoordinatesFunction()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_NonMonotonic_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_StrictlyIncreasing_OverlappingXs_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.True(true);
         }
 
@@ -63,13 +64,13 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_GoodData3_Returns_LinkedCoordinatesFunction()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_Constant_Distributed_Constant_NonMonotonic_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_Constant_Distributed_Constant_NonMonotonic_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.True(true);
         }
         #endregion
@@ -83,13 +84,13 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_Order_StrictMonotonicIncreasing_Returns_OrderSetEnum()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_StrictMonotonicIncreasing_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_StrictMonotonicIncreasing_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.True(func.Order == OrderedSetEnum.StrictlyIncreasing);
         }
 
@@ -100,13 +101,13 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_Order_WeakMonotonicIncreasing_Returns_OrderSetEnum()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_WeakMonotonicIncreasing_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_WeakMonotonicIncreasing_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.True(func.Order == OrderedSetEnum.WeaklyIncreasing);
         }
 
@@ -117,13 +118,13 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_Order_NonMonotonic_Returns_OrderSetEnum()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_NonMonotonic_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_StrictlyIncreasing_OverlappingXs_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.True(func.Order == OrderedSetEnum.NonMonotonic);
         }
 
@@ -133,13 +134,13 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_Order_StrictMonotonicDecreasing_Returns_OrderSetEnum()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_StrictMonotonicDecreasing_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_StrictMonotonicDecreasing_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.True(func.Order == OrderedSetEnum.StrictlyDecreasing);
         }
 
@@ -149,13 +150,13 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_Order_WeakMonotonicDecreasing_Returns_OrderSetEnum()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_WeakMonotonicDecreasing_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_WeakMonotonicDecreasing_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.True(func.Order == OrderedSetEnum.WeaklyDecreasing);
         }
 
@@ -169,13 +170,13 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_Interpolators_Returns_Interpolators()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_NonMonotonic_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_StrictlyIncreasing_OverlappingXs_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.Equal(interpolators, func.Interpolators);
         }
 
@@ -188,13 +189,13 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_Functions_Returns_ListICoordinateFunction()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_NonMonotonic_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_StrictlyIncreasing_OverlappingXs_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.Equal(functions, func.Functions);
         }
         #endregion
@@ -207,19 +208,19 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_Coordinates_Returns_ListICoordinate()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_WeakMonotonicDecreasing_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_WeakMonotonicDecreasing_OrdinateFunctions();
 
-            IImmutableList<ICoordinate<double, IOrdinate>> allCoords = ImmutableList.Create<ICoordinate<double, IOrdinate>>();
-            foreach (ICoordinatesFunction<double, IOrdinate> function in functions)
+            List<ICoordinate> allCoords = new List<ICoordinate>();
+            foreach (ICoordinatesFunction function in functions)
             {
-                allCoords = allCoords.AddRange(function.Coordinates);
+                allCoords.AddRange(function.Coordinates);
             }
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.True(allCoords.Count > 0);
             Assert.True(AreCoordinatesEqual(allCoords, func.Coordinates));
         }
@@ -230,7 +231,7 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_Coordinates_Returns_ListICoordinate_2()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = new List<ICoordinatesFunction<double, IOrdinate>>();
+            List<ICoordinatesFunction> functions = new List<ICoordinatesFunction>();
 
             List<double> xs1 = new List<double>() { 0, 1, 2, 3 };
             List<double> ys1 = new List<double>() { 5, 6, 7, 8 };
@@ -241,69 +242,64 @@ namespace FunctionsTests.CoordinatesFunctions
             List<double> xs3 = new List<double>() { 8, 9, 10, 11 };
             List<double> ys3 = new List<double>() { 13, 14, 15, 16 };
             //create a constant func
-            CoordinatesFunctionConstants const1Func = CreateCoordinatesFunctionConstants(xs1, ys1);
-            CoordinatesFunctionConstants const2Func = CreateCoordinatesFunctionConstants(xs2, ys2);
-            CoordinatesFunctionConstants const3Func = CreateCoordinatesFunctionConstants(xs3, ys3);
+            functions.Add(CreateCoordinatesFunctionConstants(xs1, ys1));
+            functions.Add( CreateCoordinatesFunctionConstants(xs2, ys2));
+            functions.Add( CreateCoordinatesFunctionConstants(xs3, ys3));
 
             //convert to iordinate
-            CoordinatesFunctionOrdinateYs const1OrdFunc = new CoordinatesFunctionOrdinateYs(const1Func);
-            CoordinatesFunctionOrdinateYs const2OrdFunc = new CoordinatesFunctionOrdinateYs(const2Func);
-            CoordinatesFunctionOrdinateYs const3OrdFunc = new CoordinatesFunctionOrdinateYs(const3Func);
-
-            //add to list of funcs
-            functions.Add(const1OrdFunc);
-            functions.Add(const2OrdFunc);
-            functions.Add(const3OrdFunc);
+            //CoordinatesFunctionOrdinateYs const1OrdFunc = new CoordinatesFunctionOrdinateYs(const1Func);
+            //CoordinatesFunctionOrdinateYs const2OrdFunc = new CoordinatesFunctionOrdinateYs(const2Func);
+            //CoordinatesFunctionOrdinateYs const3OrdFunc = new CoordinatesFunctionOrdinateYs(const3Func);
 
 
-            IImmutableList<ICoordinate<double, IOrdinate>> allCoords = ImmutableList.Create<ICoordinate<double, IOrdinate>>();
-            foreach (ICoordinatesFunction<double, IOrdinate> function in functions)
+            List<ICoordinate> allCoords = new List<ICoordinate>();
+            foreach (ICoordinatesFunction function in functions)
             {
-                allCoords = allCoords.AddRange(function.Coordinates);
+                allCoords.AddRange(function.Coordinates);
             }
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.True( AreCoordinatesEqual(allCoords, func.Coordinates));
         }
 
         #endregion
 
         #region IsDistributed
-        /// <summary>
-        /// Tests the IsDistributed property. 3 functions with none being distributed.
-        /// </summary>
-        [Fact]
-        public void LinkedCoordinatesFunction_IsDistributed_Returns_False()
-        {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_NonMonotonic_OrdinateFunctions();
+        ///// <summary>
+        ///// Tests the IsDistributed property. 3 functions with none being distributed.
+        ///// </summary>
+        //[Fact]
+        //public void LinkedCoordinatesFunction_IsDistributed_Returns_False()
+        //{
+        //    List<ICoordinatesFunction> functions = Create_3Constant_NonMonotonic_OrdinateFunctions();
 
-            List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
-            interpolators.Add(InterpolationEnum.Linear);
-            interpolators.Add(InterpolationEnum.Linear);
+        //    List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
+        //    interpolators.Add(InterpolationEnum.Linear);
+        //    interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
-            Assert.False(func.IsDistributed);
-        }
+        //    CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
+        //    Assert.False(func.IsDistributed);
+        //}
 
-        /// <summary>
-        /// Tests the IsDistributed property. 3 functions with one being distributed.
-        /// </summary>
-        [Fact]
-        public void LinkedCoordinatesFunction_IsDistributed_Returns_True()
-        {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_Constant_Distributed_Constant_NonMonotonic_OrdinateFunctions();
+        ///// <summary>
+        ///// Tests the IsDistributed property. 3 functions with one being distributed.
+        ///// </summary>
+        //[Fact]
+        //public void LinkedCoordinatesFunction_IsDistributed_Returns_True()
+        //{
+        //    List<ICoordinatesFunction> functions = Create_Constant_Distributed_Constant_NonMonotonic_OrdinateFunctions();
 
-            List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
-            interpolators.Add(InterpolationEnum.Linear);
-            interpolators.Add(InterpolationEnum.Linear);
+        //    List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
+        //    interpolators.Add(InterpolationEnum.Linear);
+        //    interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
-            Assert.True(func.IsDistributed);
-        }
+        //    CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
+        //    Assert.True(func.IsDistributed);
+        //}
         #endregion
 
         #region Domain Propert
@@ -314,13 +310,13 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_Domain_Returns_Tuple_1()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_Constant_Distributed_Constant_NonMonotonic_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_Constant_Distributed_Constant_NonMonotonic_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.Equal(func.Domain, new Tuple<double, double>(0, 11));
         }
 
@@ -330,13 +326,13 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_Domain_Returns_Tuple_2()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_NonMonotonic_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_StrictlyIncreasing_OverlappingXs_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.Equal(func.Domain, new Tuple<double, double>(0, 3));
         }
 
@@ -350,9 +346,9 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_IsValid_Returns_Bool_NullInterpolators()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_NonMonotonic_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_StrictlyIncreasing_OverlappingXs_OrdinateFunctions();
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, null);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, null);
             Assert.False(func.IsValid);
         }
 
@@ -367,7 +363,7 @@ namespace FunctionsTests.CoordinatesFunctions
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            Assert.Throws<InvalidConstructorArgumentsException>(()=> new CoordinatesFunctionLinkedOrdinates(null, interpolators));
+            Assert.Throws<InvalidConstructorArgumentsException>(()=> new CoordinatesFunctionLinked(null, interpolators));
         }
 
 
@@ -377,13 +373,13 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_IsValid_Returns_Bool_OverlappingDomains()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_NonMonotonic_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_StrictlyIncreasing_OverlappingXs_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.False(func.IsValid);
         }
 
@@ -393,13 +389,13 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_IsValid_Returns_Bool_AllGood()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_StrictMonotonicIncreasing_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_StrictMonotonicIncreasing_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.True(func.IsValid);
         }
         #endregion
@@ -413,11 +409,11 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_Errors_Returns_Bool_NullInterpolators()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_NonMonotonic_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_StrictlyIncreasing_OverlappingXs_OrdinateFunctions();
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, null);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, null);
             int count =0;
-            foreach(string s in func.Errors)
+            foreach(IMessage s in func.Errors)
             {
                 count++;
             }
@@ -436,7 +432,7 @@ namespace FunctionsTests.CoordinatesFunctions
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            Assert.Throws<InvalidConstructorArgumentsException>(() => new CoordinatesFunctionLinkedOrdinates(null, interpolators));
+            Assert.Throws<InvalidConstructorArgumentsException>(() => new CoordinatesFunctionLinked(null, interpolators));
         }
 
 
@@ -446,15 +442,15 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_Errors_Returns_Bool_OverlappingDomains()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_NonMonotonic_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_StrictlyIncreasing_OverlappingXs_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             int count = 0;
-            foreach (string s in func.Errors)
+            foreach (IMessage s in func.Errors)
             {
                 count++;
             }
@@ -467,15 +463,15 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_Error_Returns_Bool_AllGood()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_StrictMonotonicIncreasing_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_StrictMonotonicIncreasing_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             int count = 0;
-            foreach (string s in func.Errors)
+            foreach (IMessage s in func.Errors)
             {
                 count++;
             }
@@ -493,18 +489,17 @@ namespace FunctionsTests.CoordinatesFunctions
         /// of a non distributed function.
         /// </summary>
         [Fact]
-        public void LinkedCoordinatesFunction_Fx_Returns_Double()
+        public void LinkedCoordinatesFunction_Fx_Returns_Constant()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_Constant_Distributed_Constant_NonMonotonic_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_Constant_Distributed_Constant_NonMonotonic_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
-            //todo: John this is running into an issue because your F(x) function is trying to see if this x
-            //value is exactly on a coordinate, but in this case the 1 is getting turned into 1.000000000000015
-            Assert.True(func.F(1) == new Constant(6));
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
+            
+            Assert.True(func.F(new Constant(1)).Equals(new Constant(6)));
         }
 
         /// <summary>
@@ -514,16 +509,16 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_Fx_Returns_Double_2()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_Constant_Distributed_Constant_NonMonotonic_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_Constant_Distributed_Constant_NonMonotonic_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             //todo: John this is running into an issue because your F(x) function is trying to see if this x
             //value is exactly on a coordinate, but in this case the 1 is getting turned into 1.000000000000015
-            Assert.True(func.F(0) == new Constant(5));
+            Assert.True(func.F(new Constant(0)).Equals( new Constant(5)));
         }
         #endregion
 
@@ -535,15 +530,15 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_InverseFx_Returns_Double()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_StrictMonotonicIncreasing_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_StrictMonotonicIncreasing_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             //todo: John this is running into an issue because the inverseF doesn't evaluate the first coordinate. It starts at i+1 for some reason.
-            double xVal = func.InverseF(new Constant(5));
+            double xVal = func.InverseF(new Constant(5)).Value();
             Assert.True(xVal == 0);
         }
 
@@ -553,52 +548,52 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void LinkedCoordinatesFunction_InverseFx_Returns_Double_2()
         {
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_WeakMonotonicDecreasing_OrdinateFunctions();
+            List<ICoordinatesFunction> functions = Create_3Constant_WeakMonotonicDecreasing_OrdinateFunctions();
 
             List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             interpolators.Add(InterpolationEnum.Linear);
             interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
             Assert.Throws<InvalidOperationException>(()=> func.InverseF(new Constant(5)));
         }
 
         #endregion
 
         #region Sample
-        /// <summary>
-        /// Tests that the InverseF(x) function returns an InvalidOperationException if the function is not strictly increasing      
-        /// </summary>
-        [Fact]
-        public void LinkedCoordinatesFunction_Sample_Returns_ICoordinatesFunction()
-        {
-            List<double> xs1 = new List<double>() { 0, 1, 2, 3 };
-            List<double> ys1 = new List<double>() { 5, 6, 7, 8 };
+        ///// <summary>
+        ///// Tests that the InverseF(x) function returns an InvalidOperationException if the function is not strictly increasing      
+        ///// </summary>
+        //[Fact]
+        //public void LinkedCoordinatesFunction_Sample_Returns_ICoordinatesFunction()
+        //{
+        //    List<double> xs1 = new List<double>() { 0, 1, 2, 3 };
+        //    List<double> ys1 = new List<double>() { 5, 6, 7, 8 };
 
-            List<double> xs2 = new List<double>() { 4, 5, 6, 7 };
-            List<double> ys2 = new List<double>() { 9, 10, 11, 12 };
+        //    List<double> xs2 = new List<double>() { 4, 5, 6, 7 };
+        //    List<double> ys2 = new List<double>() { 9, 10, 11, 12 };
 
-            List<double> xs3 = new List<double>() { 8, 9, 10, 11 };
-            List<double> ys3 = new List<double>() { 13, 14, 15, 16 };
-            //create a constant func
-            CoordinatesFunctionConstants const1Func = CreateCoordinatesFunctionConstants(xs1, ys1);
-            CoordinatesFunctionConstants const2Func = CreateCoordinatesFunctionConstants(xs2, ys2);
-            CoordinatesFunctionConstants const3Func = CreateCoordinatesFunctionConstants(xs3, ys3);
+        //    List<double> xs3 = new List<double>() { 8, 9, 10, 11 };
+        //    List<double> ys3 = new List<double>() { 13, 14, 15, 16 };
+        //    //create a constant func
+        //    CoordinatesFunctionConstants const1Func = CreateCoordinatesFunctionConstants(xs1, ys1);
+        //    CoordinatesFunctionConstants const2Func = CreateCoordinatesFunctionConstants(xs2, ys2);
+        //    CoordinatesFunctionConstants const3Func = CreateCoordinatesFunctionConstants(xs3, ys3);
 
-            IImmutableList<ICoordinate<double, double>> originalCoords = ImmutableList.CreateRange<ICoordinate<double, double>>(const1Func.Coordinates); // ImmutableList.Create<IImmutableList<ICoordinate<double,double>>>(const1Func.Coordinates);
-            originalCoords = originalCoords.AddRange(const2Func.Coordinates);
-            originalCoords = originalCoords.AddRange(const3Func.Coordinates);
+        //    List<ICoordinate<double, double>> originalCoords = new List<ICoordinate<double, double>>(const1Func.Coordinates); // new List<List<ICoordinate<double,double>>>(const1Func.Coordinates);
+        //    originalCoords.AddRange(const2Func.Coordinates);
+        //    originalCoords.AddRange(const3Func.Coordinates);
 
-            List<ICoordinatesFunction<double, IOrdinate>> functions = Create_3Constant_StrictMonotonicIncreasing_OrdinateFunctions();
+        //    List<ICoordinatesFunction> functions = Create_3Constant_StrictMonotonicIncreasing_OrdinateFunctions();
 
-            List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
-            interpolators.Add(InterpolationEnum.Linear);
-            interpolators.Add(InterpolationEnum.Linear);
+        //    List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
+        //    interpolators.Add(InterpolationEnum.Linear);
+        //    interpolators.Add(InterpolationEnum.Linear);
 
-            CoordinatesFunctionLinkedOrdinates func = new CoordinatesFunctionLinkedOrdinates(functions, interpolators);
-            ICoordinatesFunction<double, double> sampleFunction = func.Sample(.5);
-            Assert.True(AreCoordinatesEqual( sampleFunction.Coordinates, originalCoords));
-        }
+        //    CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
+        //    ICoordinatesFunction<double, double> sampleFunction = func.Sample(.5);
+        //    Assert.True(AreCoordinatesEqual( sampleFunction.Coordinates, originalCoords));
+        //}
 
         
         #endregion
