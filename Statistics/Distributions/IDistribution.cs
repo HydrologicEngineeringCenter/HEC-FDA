@@ -21,8 +21,9 @@ namespace Statistics
         double Variance { get;  }
         double StandardDeviation { get; }
         double Skewness { get; }
-        double Minimum { get; }
-        double Maximum { get; }
+        Utilities.IRange<double> Range { get; }
+        //double Minimum { get; }
+        //double Maximum { get; }
         /// <summary>
         /// The sample size used to fit the distribution.
         /// </summary>

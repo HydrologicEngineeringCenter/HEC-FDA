@@ -11,13 +11,19 @@ namespace Statistics.Histograms
         internal HistogramBinnedData(IData data, double min, double max, double width) : base(InitializeBins(min, max, data, width, out IEnumerable<IMessage> msgs))
         {
         }
+        internal HistogramBinnedData(IBin[] bins) : base(bins)
+        {
+        }
+        internal HistogramBinnedData(IHistogram histogram, List<IConvergenceResult> convergence) : base(histogram, convergence)
+        {
+        }
 
         #region Functions
         private int FindBinCount(double x, bool cummulative = true)
         {
-            if (!x.IsOnRange(Minimum, Maximum, inclusiveMin: true, inclusiveMax: false))
+            if (!x.IsOnRange(Range.Min, Range.Max, inclusiveMin: true, inclusiveMax: false))
             {
-                return x < Minimum ? 0 : cummulative ? 1 : 0;
+                return x < Range.Min ? 0 : cummulative ? 1 : 0;
             }
             else
             {
@@ -25,7 +31,7 @@ namespace Statistics.Histograms
                 foreach (var bin in Bins)
                 {
                     n += bin.Count;
-                    if (x.IsOnRange(bin.Minimum, bin.Maximum, inclusiveMin: true, inclusiveMax: false)) return cummulative ? n : bin.Count;
+                    if (x.IsOnRange(bin.Range.Min, bin.Range.Max, inclusiveMin: true, inclusiveMax: false)) return cummulative ? n : bin.Count;
                 }
                 throw new Exception($"An unexpected error occured while attempting to find the histogram bin associated withe value {x}.");
             }
@@ -36,15 +42,16 @@ namespace Statistics.Histograms
             if (!Validation.HistogramValidator.IsConstructable(min, max, width, out IList<string> errors)) throw new InvalidConstructorArgumentsException(errors);
             else
             {
-                var msgsList = data.Messages.ToList();
+                List<IMessage> msgsList = data.Messages.ToList();
                 var range = GetHistogramRange(min, max, data, ref msgsList);
-                List<IBin> bins = InitializeEmptyBins(range.Item1, width, Increments(data.Minimum - range.Item1, width, Math.Floor));
-                bins.AddRange(InitializeDataBins(bins.Last().Maximum, data, width));
-                bins.AddRange(InitializeEmptyBins(bins.Last().Maximum, width, Increments(data.Maximum - bins.Last().Maximum, width, Math.Ceiling)));
+                List<IBin> bins = InitializeEmptyBins(range.Item1, width, Increments(data.Range.Min - range.Item1, width, Math.Floor));
+                bins.AddRange(InitializeDataBins(bins.Count == 0 ? range.Item1 : bins.Last().Range.Max, data, width));
+                bins.AddRange(InitializeEmptyBins(bins.Last().Range.Max, width, Increments(data.Range.Max - bins.Last().Range.Max, width, Math.Ceiling)));
                 msgs = msgsList.ToArray();
                 return bins.ToArray();
             }        
         }
+        
         #endregion
         #region IDistribution Functions
         public override double PDF(double x) => (double)FindBinCount(x, false) / (double)SampleSize;
@@ -71,7 +78,7 @@ namespace Statistics.Histograms
             for (int i = 0; i < sampleSize; i++) sample[i] = Sample(r);
             return sample;
         }
-        public override IDistribution SampleDistribution(Random r = null) => (IDistribution)IHistogramFactory.Factory(IDataFactory.Factory(Sample(SampleSize, r)), Minimum, Maximum, Bins.Length);
+        public override IDistribution SampleDistribution(Random r = null) => (IDistribution)IHistogramFactory.Factory(IDataFactory.Factory(Sample(SampleSize, r)), Range.Min, Range.Max, Bins.Length);
         #endregion
         #endregion
     }

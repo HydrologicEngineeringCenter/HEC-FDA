@@ -4,9 +4,8 @@ using System.Text;
 
 namespace Statistics
 {
-    public enum ValueDescriptions
+    public interface IConverge<T>
     {
-        Constant = 0,
-        CentralTendency = 1,
+        bool IsConverged { get; }
     }
 }

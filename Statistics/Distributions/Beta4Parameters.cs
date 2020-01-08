@@ -16,6 +16,7 @@ namespace Statistics.Distributions
         #region Properties
         public double StandardDeviation => StdDev;
         public IDistributions Type => IDistributions.Beta4Parameters;
+        public IRange<double> Range { get; }
         public int SampleSize { get; }
         //#region IOrdinate Properties
         //public bool IsVariable => true;
@@ -26,6 +27,7 @@ namespace Statistics.Distributions
         #region Constructor
         public Beta4Parameters(double alpha, double beta, double location, double scale, int sampleSize = int.MaxValue) : base(a: alpha, b: beta, location, scale)
         {
+            Range = IRangeFactory.Factory(this.Minimum, this.Maximum);
             SampleSize = sampleSize;
         }
         #endregion

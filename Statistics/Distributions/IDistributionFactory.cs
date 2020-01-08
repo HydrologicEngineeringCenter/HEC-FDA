@@ -21,7 +21,7 @@ namespace Statistics
             if ((int)returnType >= 10)
             {
                 SummaryStatistics stats = new SummaryStatistics(IDataFactory.Factory(sample));
-                return Fit(sample, stats.Minimum, stats.Maximum, returnType);
+                return Fit(sample, stats.Range.Min, stats.Range.Max, returnType);
             }
             else
             {

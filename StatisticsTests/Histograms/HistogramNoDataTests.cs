@@ -127,7 +127,7 @@ namespace StatisticsTests.Histograms
         public void Min_GoodDataEmptyHistogram_Returns_SpecifiedMin(double min, double max, double widths)
         {
             var testobj = new HistogramNoData(min, max, widths);
-            Assert.Equal(min, testobj.Minimum);
+            Assert.Equal(min, testobj.Range.Min);
         }
         
         /// <summary>
@@ -145,7 +145,7 @@ namespace StatisticsTests.Histograms
         public void Max_GoodDataEmptyHistogram_Returns_SpecifiedMax(double min, double max, double width)
         {
             var testobj = new HistogramNoData(min, max, width);
-            Assert.InRange(testobj.Maximum, max, max + width - double.Epsilon);
+            Assert.InRange(testobj.Range.Max, max, max + width - double.Epsilon);
         }
         
         /// <summary>

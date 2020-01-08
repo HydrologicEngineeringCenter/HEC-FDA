@@ -14,8 +14,9 @@ namespace Statistics
         public double Variance { get; }
         public double StandardDeviation { get; }
         public double Skewness { get; }
-        public double Minimum { get; }
-        public double Maximum { get; }
+        public IRange<double> Range { get; }
+        //public double Minimum { get; }
+        //public double Maximum { get; }
         public int SampleSize { get; }
         public bool IsValid { get; }
         public IEnumerable<IMessage> Messages { get; }
@@ -25,8 +26,7 @@ namespace Statistics
             SampleSize = data.SampleSize;
             if (SampleSize > 1)
             {
-                Minimum = data.Minimum;
-                Maximum = data.Maximum;
+                Range = data.Range;
                 Mean = data.Elements.Sum() / SampleSize;
                 double median = 0, deviations2 = 0, deviations3 = 0;
                 int i = 0, iMid = data.SampleSize / 2, iMidMod = data.SampleSize % 2;
@@ -48,21 +48,19 @@ namespace Statistics
                 {
                     Mean = data.Elements.Sum();
                     Median = Mean;
-                    Minimum = Mean;
-                    Maximum = Mean;
                     Variance = 0;
                     Skewness = 0;
                     StandardDeviation = 0;
+                    IRangeFactory.Factory(Mean, Mean);
                 }
                 else
                 {
                     Mean = double.NaN;
                     Median = double.NaN;
-                    Minimum = double.NaN;
-                    Maximum = double.NaN;
                     Variance = double.NaN;
                     Skewness = double.NaN;
-                    StandardDeviation = double.NaN;      
+                    StandardDeviation = double.NaN;
+                    Range = IRangeFactory.Factory(double.NaN, double.NaN);
                 }
             }
             IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<IMessage> msgs);

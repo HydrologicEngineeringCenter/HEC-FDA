@@ -27,14 +27,15 @@ namespace Statistics.Histograms
         /// The number of observation in the bin.
         /// </summary>
         public int Count { get; }
-        /// <summary>
-        /// The minimum value for the histogram bin, inclusive.
-        /// </summary>
-        public double Minimum { get; }
-        /// <summary>
-        /// The exclusive maximum value for the histogram bin.
-        /// </summary>
-        public double Maximum { get; }
+        public Utilities.IRange<double> Range { get; }
+        ///// <summary>
+        ///// The minimum value for the histogram bin, inclusive.
+        ///// </summary>
+        //public double Minimum { get; }
+        ///// <summary>
+        ///// The exclusive maximum value for the histogram bin.
+        ///// </summary>
+        //public double Maximum { get; }
         /// <summary>
         /// The midpoint value computed with equation: (Maximum - Minimum) / 2
         /// </summary>
@@ -45,10 +46,11 @@ namespace Statistics.Histograms
         #region Constructors
         internal Bin (double min, double max, int n)
         {
-            Minimum =  min;
-            Maximum = max;
+            //Minimum =  min;
+            //Maximum = max;
+            Range = IRangeFactory.Factory(min, max);
             Width = max - min;
-            MidPoint = (Maximum - Minimum) / 2d + Minimum;
+            MidPoint = (Range.Max - Range.Min) / 2d + Range.Min;
             Count = n;
             IsValid = Validate(new BinValidator(), out IEnumerable<IMessage> errors);
             Messages = errors;
@@ -60,9 +62,8 @@ namespace Statistics.Histograms
         /// <param name="addN"> The number of observations to add to the <paramref name="oldBin"/> <see cref="Bin.Count"/>. </param>
         internal Bin (IBin oldBin, int addN)
         {
-            Minimum = oldBin.Minimum;
-            Maximum = oldBin.Maximum;
-            Width = oldBin.Maximum - oldBin.Minimum;
+            Range = oldBin.Range;
+            Width = oldBin.Range.Max - oldBin.Range.Min;
             MidPoint = oldBin.MidPoint;
             Count = oldBin.Count + addN;
             IsValid = Validate(new BinValidator(), out IEnumerable<IMessage> errors);
@@ -88,8 +89,8 @@ namespace Statistics.Histograms
             for (int i = 0; i < Count; i++) data[i] = MidPoint;
             return data;
         }
-        public string Print() => $"Bin(count: {Count}, range: [{Minimum}, {Maximum}])";
-        public bool Equals(IBin bin) => Minimum == bin.Minimum && Maximum == bin.Maximum && Count == bin.Count ? true : false;
+        public string Print() => $"Bin(count: {Count}, range: [{Range.Min}, {Range.Max}])";
+        public bool Equals(IBin bin) => Range.Min == bin.Range.Min && Range.Max == bin.Range.Max && Count == bin.Count ? true : false;
         #endregion
     }
 }
