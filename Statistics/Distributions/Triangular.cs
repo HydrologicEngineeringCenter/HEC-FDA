@@ -21,8 +21,9 @@ namespace Statistics.Distributions
         public double Variance => _Distribution.Variance;
         public double StandardDeviation => _Distribution.StdDev;
         public double Skewness => _Distribution.Skewness;
-        public double Minimum => _Distribution.Minimum;
-        public double Maximum => _Distribution.Maximum;
+        //public double Minimum => _Distribution.Minimum;
+        //public double Maximum => _Distribution.Maximum;
+        public IRange<double> Range { get; }
         public int SampleSize { get; }
         #endregion
         //#region IOrdinate Properties
@@ -35,6 +36,8 @@ namespace Statistics.Distributions
         public Triangular(double min, double mostLikely, double max, int sampleSize = int.MaxValue)
         {
             _Distribution = new MathNet.Numerics.Distributions.Triangular(lower: min, upper: max, mode: mostLikely);
+            Range = IRangeFactory.Factory(_Distribution.Minimum, _Distribution.Maximum);
+            //TODO: Validation
             SampleSize = sampleSize;
         }
         #endregion
@@ -55,7 +58,7 @@ namespace Statistics.Distributions
             return sample;
         }
         public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(SampleSize, numberGenerator));
-        public string Print() => $"Triangular(mean: {Mean}, range: [{Minimum}, {Maximum}], sample size: {SampleSize})";
+        public string Print() => $"Triangular(mean: {Mean}, range: {Range.Print()}, sample size: {SampleSize})";
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
         //#region Iordinate Functions
@@ -66,7 +69,7 @@ namespace Statistics.Distributions
         public static Triangular Fit(IEnumerable<double> data)
         {
             SummaryStatistics stats = new SummaryStatistics(IDataFactory.Factory(data));
-            return new Triangular(stats.Minimum, stats.Mean, stats.Maximum, stats.SampleSize);
+            return new Triangular(stats.Range.Min, stats.Mean, stats.Range.Max, stats.SampleSize);
         }
         #endregion
     }

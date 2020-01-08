@@ -18,8 +18,9 @@ namespace Statistics.Distributions
         public double Variance { get; }
         public double StandardDeviation { get; }
         public double Skewness { get; }
-        public double Minimum { get; }
-        public double Maximum { get; }
+        public Utilities.IRange<double> Range { get; }
+        //public double Minimum { get; }
+        //public double Maximum { get; }
         public int SampleSize { get; }
         //#region IOrdinate Properties
         //public bool IsVariable => true;

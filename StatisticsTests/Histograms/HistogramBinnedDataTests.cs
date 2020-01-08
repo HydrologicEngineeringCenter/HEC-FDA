@@ -23,7 +23,7 @@ namespace StatisticsTests.Histograms
         /// A <see cref="HistogramBinnedData"/> with a <see cref="Histogram.Minimum"/>: 0, <see cref="Histogram.Maximum"/>: 2, constant <see cref="IBin"/> width of 1 and <see cref="IData.Elements"/>: { 1 }./>
         /// </summary>
         internal static object[] SimpleTestData1 => new object[4] { new double[] { 1d }, 0d, 2d, 1d };
-            
+        internal static object[] SimpleTestData2 => new object[2] { new double[] { 1d, 2d, 3d }, 1d };
     }
 
     /// <summary>
@@ -32,6 +32,19 @@ namespace StatisticsTests.Histograms
     [ExcludeFromCodeCoverage]
     public class HistogramBinnedDataTests
     {
+        #region Constructor Tests
+
+        #region Histogram Range Tests
+        [Theory]
+        [InlineData(new object[2] {new double[] { 1d, 2d, 3d }, 1d })]
+        public void Min_SimpleTestData_Returns_ExpectedHistogramMinimum(double[] data, double width)
+        {
+            IData testData = IDataFactory.Factory(data);
+            var testObj = new HistogramBinnedData(testData, testData.Range.Min, testData.Range.Max, width);
+            Assert.Equal(1d, testObj.Range.Min);
+        }
+        #endregion
+
         #region Binned Data
         /// <summary>
         /// Tests that simple test data cases described in <seealso cref="HistogramBinnedDataTestData"/> return the expected number of <see cref="Histogram.Bins"/>.
@@ -81,7 +94,6 @@ namespace StatisticsTests.Histograms
         {
             Assert.Throws<InvalidConstructorArgumentsException>(() => new HistogramBinnedData(IDataFactory.Factory(data), min, max, width));
         }
-
         /// <summary>
         /// Tests the <see cref="HistogramBinnedData.HistogramBinnedData(IData, double, double, double)"/> constructor to ensure the simple data case described in <see cref="HistogramBinnedDataTestData"/> throws an <see cref="InvalidConstructorArgumentsException"/>  when the requested <see cref="Histogram.Bins"/> width is negative or not finite.
         /// </summary>
@@ -97,8 +109,6 @@ namespace StatisticsTests.Histograms
         {
             Assert.Throws<InvalidConstructorArgumentsException>(() => new HistogramBinnedData(IDataFactory.Factory(data), min, max, width));
         }
-
-
         /// <summary>
         /// Tests the <see cref="HistogramNoData.HistogramNoData(double, double, double)"/> constructor to ensure the simple data case described in <see cref="HistogramBinnedDataTestData"/> throws an <see cref="InvalidConstructorArgumentsException"/> when the requested <see cref="Histogram.Minimum"/> is not finite.
         /// </summary>
@@ -113,8 +123,6 @@ namespace StatisticsTests.Histograms
         {
             Assert.Throws<InvalidConstructorArgumentsException>(() => new HistogramBinnedData(IDataFactory.Factory(data), min, max, width));
         }
-
-
         /// <summary>
         /// Tests the <see cref="HistogramNoData.HistogramNoData(double, double, double)"/> constructor to ensure the simple data case described in <see cref="HistogramBinnedDataTestData"/> throws an <see cref="InvalidConstructorArgumentsException"/> when the requested <see cref="Histogram.Maximum"/> is not finite.
         /// </summary>
@@ -131,21 +139,7 @@ namespace StatisticsTests.Histograms
         }
         #endregion
 
-
         #region IValidate Tests
-        /// <summary>
-        /// Tests that for a standard good data but empty histogram example, constructed using min, max and width arguments: (min: 0, max: 2, width: 2) that the <see cref="Histogram.IsValid"/> property is set to <see langword="false"/>.
-        /// </summary>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
-        /// <param name="widths"></param>
-        [Theory]
-        [InlineData(0, 2, 1)]
-        public void IsValid_GoodDataEmptyHistogramWidths_Returns_False(double min, double max, double widths)
-        {
-            //var testObj = new Histogram(min, max, widths);
-            //Assert.False(testObj.IsValid);
-        }
         /// <summary>
         /// Tests that for standard good data ( but empty histogram example, constructed using min, max and nBins arguements: (min: 0, max: 2, nBins: 2) that the <see cref="Histogram.IsValid"/> property is set to <see langword="false"/>.
         /// </summary>
@@ -160,11 +154,6 @@ namespace StatisticsTests.Histograms
             //Assert.False(testObj.IsValid);
         }
         #endregion
-
-        //public void Bins_SingleBinDataOnMin_Returns_ExpectedSingleBin()
-        //{
-        //    double[] testData = new double[1] { 0 };
-        //    var testObj = new Histogram(testData, 1);
-        //}
+        #endregion
     }
 }

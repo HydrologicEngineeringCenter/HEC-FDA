@@ -13,8 +13,9 @@ namespace Statistics.Histograms
         public double Variance { get; }
         public double StandardDeviation { get; }
         public double Skewness { get; }
-        public double Minimum { get; }
-        public double Maximum { get; }
+        public IRange<double> Range { get; }
+        //public double Minimum { get; }
+        //public double Maximum { get; }
         public int SampleSize { get; }
         public bool IsValid { get; }
         public IEnumerable<IMessage> Messages { get; }
@@ -28,8 +29,7 @@ namespace Statistics.Histograms
             SampleSize = _.Item2;
             if (SampleSize > 1)
             {
-                Minimum = bins[0].Minimum;
-                Maximum = bins[bins.Length - 1].Maximum;
+                Range = IRangeFactory.Factory(bins[0].Range.Min, bins[bins.Length - 1].Range.Max);
                 Mean = SampleSize > 0 ? sum / (double)SampleSize : double.NaN;
                 int medInt = SampleSize / 2, medMod = SampleSize % 2;
                 double deviations2 = 0, deviations3 = 0, n = 0;
@@ -56,8 +56,9 @@ namespace Statistics.Histograms
                     Variance = 0;
                     Skewness = 0;
                     StandardDeviation = 0;
-                    Minimum = bins[0].Minimum;
-                    Maximum = bins[bins.Length - 1].Maximum;
+                    Range = IRangeFactory.Factory(bins[0].Range.Min, bins[bins.Length - 1].Range.Max);
+                    //Minimum = bins[0].Minimum;
+                    //Maximum = bins[bins.Length - 1].Maximum;
                 }
                 else
                 {
@@ -66,8 +67,9 @@ namespace Statistics.Histograms
                     Variance = double.NaN;
                     Skewness = double.NaN;
                     StandardDeviation = double.NaN;
-                    Minimum = bins[0].Minimum;
-                    Maximum = bins[bins.Length - 1].Maximum;
+                    Range = IRangeFactory.Factory(bins[0].Range.Min, bins[bins.Length - 1].Range.Max);
+                    //Minimum = bins[0].Minimum;
+                    //Maximum = bins[bins.Length - 1].Maximum;
                 }
             }
             IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<IMessage> messages);

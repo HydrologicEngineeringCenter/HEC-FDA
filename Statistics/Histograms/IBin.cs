@@ -10,13 +10,17 @@ namespace Statistics
     public interface IBin
     {
         /// <summary>
-        /// The inclusive minimum bin value.
+        /// Inclusive minimum and exclusive maximum bin values.
         /// </summary>
-        double Minimum { get; }
-        /// <summary>
-        /// The exclusive maximum bin value.
-        /// </summary>
-        double Maximum { get; }
+        Utilities.IRange<double> Range { get; }
+        ///// <summary>
+        ///// The inclusive minimum bin value.
+        ///// </summary>
+        //double Minimum { get; }
+        ///// <summary>
+        ///// The exclusive maximum bin value.
+        ///// </summary>
+        //double Maximum { get; }
         /// <summary>
         /// The midpoint of the bins values.
         /// </summary>

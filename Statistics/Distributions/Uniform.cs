@@ -16,8 +16,9 @@ namespace Statistics.Distributions
         public double Variance => _Distribution.Variance;
         public double StandardDeviation => _Distribution.StdDev;
         public double Skewness => _Distribution.Skewness;
-        public double Minimum => _Distribution.Minimum;
-        public double Maximum => _Distribution.Maximum;
+        //public double Minimum => _Distribution.Minimum;
+        //public double Maximum => _Distribution.Maximum;
+        public Utilities.IRange<double> Range { get; }
         public int SampleSize { get; }
         #endregion
         //#region IOrdinate Properties
@@ -30,6 +31,7 @@ namespace Statistics.Distributions
         public Uniform(double min, double max, int sampleSize = int.MaxValue)
         {
             _Distribution = new MathNet.Numerics.Distributions.ContinuousUniform(lower: min, upper: max);
+            Range = Utilities.IRangeFactory.Factory(_Distribution.Minimum, _Distribution.Maximum);
             SampleSize = sampleSize;
         }
         #endregion
@@ -50,7 +52,7 @@ namespace Statistics.Distributions
             return sample;
         }
         public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(SampleSize, numberGenerator));
-        public string Print() => $"Uniform(range: [{Minimum}, {Maximum})";
+        public string Print() => $"Uniform(range: {Range.Print()})";
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
         //#region Iordinate Functions
@@ -61,7 +63,7 @@ namespace Statistics.Distributions
         public static Uniform Fit(IEnumerable<double> sample)
         {
             SummaryStatistics stats = new SummaryStatistics(IDataFactory.Factory(sample));
-            return new Uniform(stats.Minimum, stats.Maximum, stats.SampleSize);
+            return new Uniform(stats.Range.Min, stats.Range.Max, stats.SampleSize);
         }
         #endregion
     }

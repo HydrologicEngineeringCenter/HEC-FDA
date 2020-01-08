@@ -11,14 +11,15 @@ namespace Statistics
     /// </summary>
     public interface IData: IValidate<IData>
     {
-        /// <summary>
-        /// The minimum of the provided data minimum or the smallest data element.
-        /// </summary>
-        double Minimum { get; }
-        /// <summary>
-        /// The maximum of the provided data maximum or the largest data element.
-        /// </summary>
-        double Maximum { get; }
+        IRange<double> Range { get; }
+        ///// <summary>
+        ///// The minimum of the provided data minimum or the smallest data element.
+        ///// </summary>
+        //double Minimum { get; }
+        ///// <summary>
+        ///// The maximum of the provided data maximum or the largest data element.
+        ///// </summary>
+        //double Maximum { get; }
         /// <summary>
         /// Finite data elements in accending order.
         /// </summary>

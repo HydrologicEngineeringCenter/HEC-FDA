@@ -15,6 +15,7 @@ namespace Statistics.Validation
         public IEnumerable<IMessage> ReportErrors(IHistogram entity)
         {
             List<IMessage> errors = new List<IMessage>();
+            if (entity.IsNull()) throw new System.ArgumentNullException(nameof(entity), "The required IHistogram parameter is null.");
             if (entity.SampleSize < 1) errors.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The histogram contains no observations (SampleSize: {entity.SampleSize}) and therefore cannot be used."));
             if (entity.Bins.Length < 1) errors.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The histogram contains no bins and therefore cannot be used."));
             if (entity.Bins.Length == 1) errors.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The histogram only contains 1 bin. This is likely to lead to unexpected results."));
@@ -52,6 +53,30 @@ namespace Statistics.Validation
             if (!binwidths.IsFinite() || !(binwidths > 0)) errors.Add($"The requested bin width: {binwidths} is not valid because it is not a positive finite value.");
             if (max - min < binwidths) errors.Add($"The requested bin width: {binwidths} is invalid because it is great than the requested {typeof(Histograms.Histogram)} range: [{min}, {max}).");
             if (!(min.IsFinite() && max.IsFinite() && Validate.IsRange(min, max))) errors.Add($"The requested range: [{min}, {max}) is invalid.");
+            return !errors.Any();
+        }
+        public static bool IsConstructable(IData data, double min, double max, double width, out IList<string> errors)
+        {
+            errors = new List<string>();
+            if (data.IsNull()) errors.Add($"The required {nameof(data)} parameter is null.");
+            IsConstructable(max, min, width, out IList<string> moreErrors);
+            errors.ToList().AddRange(moreErrors);
+            return !errors.Any();
+        }
+        public static bool IsConstructable(IData data, double width, out IList<string> errors)
+        {
+            errors = new List<string>();
+            if (data.IsNull()) errors.Add($"The required {nameof(data)} parameter is null.");
+            IsConstructable(data.Range.Min, data.Range.Max, width, out IList<string> moreErrors);
+            errors.ToList().AddRange(moreErrors);
+            return !errors.Any();
+        }
+        public static bool IsConstructable(IHistogram histogram, IData data, List<IConvergenceCriteria> criterias, out IList<string> errors)
+        {
+            errors = new List<string>();
+            if (histogram.IsNull()) errors.Add($"The required {nameof(histogram)} parameter is null.");
+            if (data.IsNull()) errors.Add($"The required {nameof(data)} parameter is null.");
+            if (criterias.IsNullOrEmpty()) errors.Add($"The required {nameof(data)} parameter is null or empty.");
             return !errors.Any();
         }
         //public static bool IsConstructable(double min, double max, IEnumerable<double> data, double binwidths, out IList<string> errors)

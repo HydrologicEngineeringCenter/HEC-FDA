@@ -10,7 +10,7 @@ namespace Statistics.Distributions
     /// A specific truncated distribution that places density from outside the truncation value(s) at the truncation value(s) without altering the statistics of the underlying distribution.
     /// </summary>
     /// <remarks> Measures of central tendency and dispersion are based on the underlying distribution NOT the truncated copy. </remarks>
-    internal class TruncatedDistribution: IDistribution //IOrdinate<IDistribution>
+    internal class TruncatedDistribution : IDistribution //IOrdinate<IDistribution>
     {
         // TODO: Validation lower bound below mean, median, mode and upper bound above mean, median mode - valid range of lower and upper bounds 
 
@@ -24,8 +24,9 @@ namespace Statistics.Distributions
         public double Variance => _Distribution.Variance;
         public double StandardDeviation => _Distribution.StandardDeviation;
         public double Skewness => _Distribution.Skewness;
-        public double Minimum { get; }
-        public double Maximum { get; }
+        //public double Minimum { get; }
+        //public double Maximum { get; }
+        public Utilities.IRange<double> Range { get; }
         public int SampleSize => _Distribution.SampleSize;
         #endregion
         //#region IOrdinate Properties
@@ -38,8 +39,7 @@ namespace Statistics.Distributions
         public TruncatedDistribution(IDistribution distribution, double lowerBound = double.NegativeInfinity, double upperBound = double.PositiveInfinity)
         {
             _Distribution = distribution;
-            Minimum = lowerBound == double.NegativeInfinity ? _Distribution.Minimum: lowerBound;
-            Maximum = upperBound == double.PositiveInfinity ? _Distribution.Maximum: upperBound;
+            Utilities.IRangeFactory.Factory(lowerBound == double.NegativeInfinity ? _Distribution.Range.Min : lowerBound, upperBound == double.PositiveInfinity ? _Distribution.Range.Max : upperBound);
         }
         #endregion
 
@@ -48,33 +48,33 @@ namespace Statistics.Distributions
         public double PDF(double x)
         {
             // Inbetween truncation points density is computed normally
-            if (x > Minimum && x < Maximum) return _Distribution.PDF(x);
+            if (x > Range.Min && x < Range.Max) return _Distribution.PDF(x);
             else
             {
                 // IF x is at or below the lower bound
-                if (x < Minimum) return 0; // below the lower bound is no density.
-                else if (x == Minimum) return _Distribution.CDF(x); // all the density below the lower bound has been added to this point.
+                if (x < Range.Min) return 0; // below the lower bound is no density.
+                else if (x == Range.Min) return _Distribution.CDF(x); // all the density below the lower bound has been added to this point.
                 // IF x is at or above the upper bound
-                else if (x == Maximum) return _Distribution.CDF(_Distribution.Maximum) - _Distribution.CDF(Maximum); // all the density above the upper bound is added at this point.
+                else if (x == Range.Max) return _Distribution.CDF(_Distribution.Range.Max) - _Distribution.CDF(Range.Max); // all the density above the upper bound is added at this point.
                 else return 0; // since it must be true that x > Maximum (and there is no denisity above the upper bound).
             }
         }
         public double CDF(double x)
         {
             // Inbetween truncation points density is computed normally
-            if (x > Minimum && x < Maximum) return _Distribution.CDF(x);
+            if (x > Range.Min && x < Range.Max) return _Distribution.CDF(x);
             else
             {
-                if (x < Minimum) return 0; // below the lower bound is no density.
-                else if (x == Minimum) return _Distribution.CDF(x); // at the minimum all the underlying distribution density is accumulated.
+                if (x < Range.Min) return 0; // below the lower bound is no density.
+                else if (x == Range.Min) return _Distribution.CDF(x); // at the minimum all the underlying distribution density is accumulated.
                 else return 1; // since x >= Maximum all the density has been accumulated.
             }
         }
         public double InverseCDF(double p)
         {
             if (!p.IsOnRange(0, 1)) throw new ArgumentOutOfRangeException($"The specified probability: {p} is not on the valid range [0, 1].");
-            if (p <= _Distribution.CDF(Minimum)) return Minimum;
-            else if (p >= _Distribution.CDF(Maximum)) return Maximum;
+            if (p <= _Distribution.CDF(Range.Min)) return Range.Min;
+            else if (p >= _Distribution.CDF(Range.Max)) return Range.Max;
             else return _Distribution.InverseCDF(p);
         }
 
@@ -90,9 +90,9 @@ namespace Statistics.Distributions
         public IDistribution SampleDistribution(Random numberGenerator = null)
         {
             IDistribution distribution = IDistributionFactory.Fit(Sample(SampleSize, numberGenerator), _Distribution.Type);
-            return new TruncatedDistribution(distribution, Minimum, Maximum);
+            return new TruncatedDistribution(distribution, Range.Min, Range.Max);
         }
-        public string Print() => $"TruncatedDistribution(distribution: {_Distribution.Print()}, truncated range: [{Minimum}, {Maximum}])";
+        public string Print() => $"TruncatedDistribution(distribution: {_Distribution.Print()}, truncated range: [{Range.Min}, {Range.Max}])";
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
         //#region Iordinate Functions

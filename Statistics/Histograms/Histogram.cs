@@ -8,21 +8,26 @@ using Statistics.Validation;
 
 namespace Statistics.Histograms
 {
-    internal abstract class Histogram : IHistogram, IDistribution
+    internal abstract class Histogram : IHistogram
     {
+        private readonly IBin[] _Bins;
         #region Properties
-        public IBin[] Bins { get; }
+        public IBin[] Bins => (IBin[])_Bins.Clone();
         #region IDistribution Properties
         public double Mean { get; }
         public double Median { get; }
-        public double Minimum { get; }
-        public double Maximum { get; }
+        //public double Minimum { get; }
+        //public double Maximum { get; }
         public double Variance { get; }
         public double Skewness { get; }
         public double StandardDeviation { get; }
+        public IRange<double> Range { get; }
         public int SampleSize { get; }
         public IDistributions Type => IDistributions.Histogram;
         #endregion
+        #region IConverge Properties
+        public bool IsConverged { get; }
+        #endregion 
         #region IValidate Properties
         public bool IsValid { get; }
         public IEnumerable<IMessage> Messages { get; }
@@ -31,28 +36,127 @@ namespace Statistics.Histograms
 
         #region Constructor
         protected Histogram(IBin[] bins)
-        {
-            Bins = bins;
+        {          
+            _Bins = bins;
             var stats = ISummaryStatisticsFactory.Factory(bins);
             Mean = stats.Mean;
             Median = stats.Median;
-            Minimum = stats.Minimum;
-            Maximum = stats.Maximum;
+            //Minimum = stats.Minimum;
+            //Maximum = stats.Maximum;
             Variance = stats.Variance;
             Skewness = stats.Skewness;
             StandardDeviation = stats.StandardDeviation;
+            Range = stats.Range;
             SampleSize = stats.SampleSize;
             IsValid = Validate(new Validation.HistogramValidator(), out IEnumerable<IMessage> msgs);
             Messages = stats.Messages.Concat(msgs);
+            IsConverged = false;
+        }
+        protected Histogram(IHistogram histogram, List<IConvergenceResult> convergenceResults)
+        {
+            _Bins = histogram.Bins;
+            Mean = histogram.Mean;
+            Median = histogram.Median;
+            Variance = histogram.Variance;
+            Skewness = histogram.Skewness;
+            StandardDeviation = histogram.StandardDeviation;
+            Range = histogram.Range;
+            SampleSize = histogram.SampleSize;
+            IsValid = histogram.IsValid;
+            bool isConverged = true;
+            List<IMessage> msgs = new List<IMessage>(histogram.Messages);
+            foreach (var result in convergenceResults)
+            {
+                if (!result.Passed) isConverged = false;
+                msgs.Add(result.TestMessage);
+            }
+            IsConverged = isConverged;
+            Messages = msgs;
         }
         #endregion
 
         #region Functions
         public static IHistogram Fit(IData data, int nBins = 100) => IHistogramFactory.Factory(data, nBins);
+        public static IHistogram Fit(IHistogram histogram, IData sample, IList<IConvergenceCriteria> criterias)
+        {
+            // 1. Expand histogram bins to accomidate new sample data, place new data in the expended bins.
+            IHistogram newHistogram = new HistogramBinnedData(FillHistogramBins(ExpandHistogramRange(histogram, sample.Range), sample).ToArray());
+            // 2. Get convergence results
+            List<IConvergenceResult> results = CriteriaResults(criterias, histogram, newHistogram, sample.SampleSize);
+            return new HistogramBinnedData(newHistogram, results);
+        }
+        private static List<IConvergenceResult> CriteriaResults(IList<IConvergenceCriteria> criterias, IHistogram histogramBefore, IHistogram histogramAfter, int sampleSize)
+        {
+            List<IConvergenceResult> results = new List<IConvergenceResult>();
+            foreach (var criteria in criterias)
+            {
+                results.Add(criteria.Test(histogramBefore.InverseCDF(criteria.Quantile), histogramAfter.InverseCDF(criteria.Quantile), sampleSize, histogramAfter.SampleSize));
+            }
+            return results;
+        }
+        /// <summary>
+        /// Generates a list of quantile values for convergence testing (<seealso cref="IDistribution.InverseCDF(double)"/>). 
+        /// </summary>
+        /// <param name="criteria"> Convergence critera containing the quantile values to be tested. </param>
+        /// <returns> A <see cref="List{double}"/> containing the quantile values. </returns>
+        private static List<double> QuantileValues(IHistogram histogram, IEnumerable<IConvergenceCriteria> criteria)
+        {
+            List<double> qValues = new List<double>();
+            foreach (var element in criteria) qValues.Add(histogram.InverseCDF(element.Quantile));
+            return qValues;
+        }
+        /// <summary>
+        /// Builds list of <see cref="IBin"/> from a existing <see cref="IHistogram"/> expanded to fit an <see cref="IData.Range"/>.
+        /// </summary>
+        /// <param name="dataRange"> The range of the <see cref="IData"/> to be binned in the new <see cref="IHistogram"/>. </param>
+        /// <returns> A <see cref="List{IBin}"/> in which an existing <see cref="IHistogram"/> and new <see cref="IData"/> observations can be binned. </returns>
+        private static List<IBin> ExpandHistogramRange(IHistogram histogram, IRange<double> dataRange)
+        {
+            List<IBin> bins = new List<IBin>();
+            double loRange = histogram.Range.Min - dataRange.Min;
+            if (loRange > 0)
+            {
+                double width = histogram.Bins[0].Range.Max - histogram.Bins[0].Range.Min;
+                int loBinCount = Increments(loRange, width, Math.Ceiling);
+                double newMin = histogram.Range.Min - loBinCount * width;
+                bins.AddRange(InitializeEmptyBins(newMin, width, loBinCount));
+            }
+            bins.AddRange(histogram.Bins);
+            double hiRange = dataRange.Max - histogram.Range.Max;
+            if (hiRange > 0)
+            {
+                double width = histogram.Bins[0].Range.Max - histogram.Bins[0].Range.Min;
+                int hiBinCount = Increments(hiRange, width, Math.Ceiling);
+                bins.AddRange(InitializeEmptyBins(histogram.Range.Max, width, hiBinCount));
+            }
+            return bins;
+        }
+        private static IBin[] FillHistogramBins(List<IBin> bins, IData data)
+        {
+            int i = 0, n = 0;
+            foreach (double x in data.Elements)
+            {
+                if (x.IsOnRange(bins[i].Range.Min, bins[i].Range.Max, inclusiveMin: true, inclusiveMax: false)) n++;
+                else
+                {
+                    if (n > 0)
+                    {
+                        bins[i] = new Bin(bins[i], n);
+                        n = x.IsOnRange(bins[i + 1].Range.Min, bins[i + 1].Range.Max, inclusiveMin: true, inclusiveMax: false) ? 1 : 0;                        
+                    }
+                    while (!x.IsOnRange(bins[i + 1].Range.Min, bins[i + 1].Range.Max, inclusiveMin: true, inclusiveMax: false)) i++;
+                    i++;
+                }
+            }
+            if (n > 0) bins[i] = new Bin(bins[i], n);
+            return bins.ToArray();
+            //TODO: reeeeaaaaalllly need to test this.
+        }
+
         public bool Equals(IHistogram histogram)
         {
-            if (histogram.Bins.Length != Bins.Length) return false;
-            else for (int i = 0; i < Bins.Length; i++) if (!Bins[i].Equals(histogram.Bins[i])) return false;
+            if (histogram.Bins.Length != _Bins.Length) return false;
+            else for (int i = 0; i < _Bins.Length; i++) if (!_Bins[i].Equals(histogram.Bins[i])) return false;
             return true;
         }
         #region Initialization Functions
@@ -98,13 +202,13 @@ namespace Statistics.Histograms
             IBin nextBin = new Bin(min, min + width, 0);
             foreach (double x in data.Elements)
             {
-                if (x.IsOnRange(nextBin.Minimum, nextBin.Maximum, inclusiveMin: true, inclusiveMax: false)) n++;
+                if (x.IsOnRange(nextBin.Range.Min, nextBin.Range.Max, inclusiveMin: true, inclusiveMax: false)) n++;
                 else
                 {
-                    while (!x.IsOnRange(nextBin.Minimum, nextBin.Maximum, inclusiveMin: true, inclusiveMax: false))
+                    while (!x.IsOnRange(nextBin.Range.Min, nextBin.Range.Max, inclusiveMin: true, inclusiveMax: false))
                     { //or x > nextBin.Maximum
                         bins.Add(new Bin(nextBin, n));
-                        nextBin = new Bin(nextBin.Maximum, nextBin.Maximum + width, 0);
+                        nextBin = new Bin(nextBin.Range.Max, nextBin.Range.Max + width, 0);
                     }
                     n++;
                 }
@@ -126,7 +230,7 @@ namespace Statistics.Histograms
         public abstract double Sample(Random r = null);
         public abstract double[] Sample(int n, Random r = null);
         public abstract IDistribution SampleDistribution(Random r);
-        public string Print() => $"Histogram(observations: {SampleSize}, bins: {Bins.Length}, range: [{Minimum}, {Maximum}])";
+        public string Print() => $"Histogram(observations: {SampleSize}, bins: {Bins.Length}, range: {Range.Print()})";
         public bool Equals(IDistribution distribution) => distribution.Type == IDistributions.Histogram ? Equals((IHistogram)distribution) : false;
         #endregion
         #endregion

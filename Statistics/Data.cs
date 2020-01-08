@@ -11,8 +11,9 @@ namespace Statistics
         #region Properties
         public bool IsValid { get; }
         public IEnumerable<IMessage> Messages { get; }
-        public double Minimum { get; }
-        public double Maximum { get; }
+        //public double Minimum { get; }
+        //public double Maximum { get; }
+        public IRange<double> Range { get; }
         public IOrderedEnumerable<double> Elements { get; }
         public int SampleSize { get; }
         #endregion
@@ -22,11 +23,10 @@ namespace Statistics
         {
             var datasets = SplitData(data);
             Elements = datasets.Item1.OrderBy(i => i);
-            Minimum = Elements.First();
-            Maximum = Elements.Last();
+            Range = IRangeFactory.Factory(Elements.First(), Elements.Last());
             SampleSize = Elements.Count();
             IsValid = Validate(new Validation.DataValidator(), out IEnumerable<IMessage> errors);
-            Messages = AddDataMessages(errors, datasets.Item2, new Tuple<double, double>(Minimum, Maximum));
+            Messages = AddDataMessages(errors, datasets.Item2);
         }
         #endregion
 
@@ -52,7 +52,7 @@ namespace Statistics
         /// <param name="nonFiniteData"> The non-finite data elements returned from the <see cref="SplitData(IEnumerable{double})"/> method. </param>
         /// <param name="requestedRange"> The requested histogram range expressed as a Tuple. </param>
         /// <returns></returns>
-        private IEnumerable<IMessage> AddDataMessages(IEnumerable<IMessage> errors, IEnumerable<double> nonFiniteData, Tuple<double, double> requestedRange)
+        private IEnumerable<IMessage> AddDataMessages(IEnumerable<IMessage> errors, IEnumerable<double> nonFiniteData)
         {
             var msgs = errors.ToList();
             if (!nonFiniteData.IsNullOrEmpty()) msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"{nonFiniteData.Count()} {double.NegativeInfinity}, {double.PositiveInfinity}, {double.NaN} elements where removed from the provided data."));

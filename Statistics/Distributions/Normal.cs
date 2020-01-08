@@ -20,8 +20,9 @@ namespace Statistics.Distributions
         public double Variance => _Distribution.Variance;
         public double StandardDeviation => _Distribution.StdDev;
         public double Skewness => _Distribution.Skewness;
-        public double Minimum => _Distribution.Minimum;
-        public double Maximum => _Distribution.Maximum;
+        //public double Minimum => _Distribution.Minimum;
+        //public double Maximum => _Distribution.Maximum;
+        public Utilities.IRange<double> Range { get; }
 
         public int SampleSize { get; }
         #endregion
@@ -35,6 +36,8 @@ namespace Statistics.Distributions
         public Normal(double mean, double sd, int sampleSize = int.MaxValue)
         {
             _Distribution = new MathNet.Numerics.Distributions.Normal(mean, stddev: sd);
+            Range = Utilities.IRangeFactory.Factory(_Distribution.Minimum, _Distribution.Maximum);
+            //TODO: Add error checking.
             SampleSize = sampleSize;
         }
         #endregion

@@ -29,7 +29,7 @@ namespace StatisticsTests.Histograms
         public void Minimum_GoodOrBad_Returns_InputValue(double min)
         {
             var testObj = new Bin(min, 2, 0);
-            Assert.Equal(min, testObj.Minimum);
+            Assert.Equal(min, testObj.Range.Min);
         }
         /// <summary>
         /// Tests that the requested maximum is provided as the <see cref="Bin.Maximum"/> property regardless of the validity of the provided argument.
@@ -45,7 +45,7 @@ namespace StatisticsTests.Histograms
         public void Maximum_GoodOrBad_Returns_InputValue(double max)
         {
             var testObj = new Bin(0, max, 0);
-            Assert.Equal(max, testObj.Maximum);
+            Assert.Equal(max, testObj.Range.Max);
         }
         /// <summary>
         /// Tests that the requested bin count is provided as the <see cref="Bin.Count"/> property regardless of the validity of the provided argument.
