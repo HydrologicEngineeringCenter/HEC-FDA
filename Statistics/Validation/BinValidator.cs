@@ -6,9 +6,9 @@ using Utilities;
 
 namespace Statistics.Validation
 {
-    public class BinValidator: IValidator<IBin>
+    internal class BinValidator: IValidator<IBin>
     {
-        public BinValidator()
+        internal BinValidator()
         {
         }
         public bool IsValid(IBin obj, out IEnumerable<IMessage> errors)

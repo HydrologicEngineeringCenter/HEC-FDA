@@ -7,11 +7,9 @@ using Utilities.Serialization;
 
 namespace Statistics.Distributions
 {
-    internal class Normal: IDistribution //IOrdinate<IDistribution>
+    internal class Normal : IDistribution, Utilities.IValidate<Normal> //IOrdinate<IDistribution>
     {
         //TODO: Sample
-        //TODO: Validation
-
         #region Fields and Properties
         private readonly MathNet.Numerics.Distributions.Normal _Distribution;
         #region IDistribution Properties
@@ -28,6 +26,10 @@ namespace Statistics.Distributions
 
         public int SampleSize { get; }
         #endregion
+        #region IValidate Properties
+        public bool IsValid { get; }
+        public IEnumerable<Utilities.IMessage> Messages { get; }
+        #endregion
         //#region IOrdinate Properties
         //public bool IsVariable => true;
         //public Type OrdinateType => typeof(IDistribution);
@@ -37,14 +39,22 @@ namespace Statistics.Distributions
         #region Constructor
         public Normal(double mean, double sd, int sampleSize = int.MaxValue)
         {
+            if (!Validation.NormalValidator.IsConstructable(mean, sd, sampleSize, out string msg)) throw new Utilities.InvalidConstructorArgumentsException(msg);
             _Distribution = new MathNet.Numerics.Distributions.Normal(mean, stddev: sd);
             Range = Utilities.IRangeFactory.Factory(_Distribution.Minimum, _Distribution.Maximum);
-            //TODO: Add error checking.
             SampleSize = sampleSize;
+            IsValid = Validate(new Validation.NormalValidator(), out IEnumerable<Utilities.IMessage> msgs);
+            Messages = msgs;
         }
         #endregion
 
         #region Functions
+        #region IValidate Functions
+        public bool Validate(Utilities.IValidator<Normal> validator, out IEnumerable<Utilities.IMessage> msgs)
+        {
+            return validator.IsValid(this, out msgs);
+        }
+        #endregion
         #region IDistribution Functions
         public double PDF(double x) => _Distribution.Density(x);
         public double CDF(double x) => _Distribution.CumulativeDistribution(x);
@@ -73,7 +83,6 @@ namespace Statistics.Distributions
             MathNet.Numerics.Distributions.Normal norm = MathNet.Numerics.Distributions.Normal.Estimate(sample);
             return new Normal(norm.Mean, norm.StdDev, sample.Count());
         }
-
         public XElement WriteToXML()
         {
             XElement ordinateElem = new XElement(SerializationConstants.NORMAL);
@@ -85,9 +94,7 @@ namespace Statistics.Distributions
             ordinateElem.SetAttributeValue(SerializationConstants.SAMPLE_SIZE, SampleSize);
 
             return ordinateElem;
-        }
-
-        
+        }     
         #endregion
     }
 }

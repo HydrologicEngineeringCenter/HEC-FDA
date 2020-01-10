@@ -33,10 +33,12 @@ namespace Statistics.Distributions
         public LogPearsonIII(double mean, double standardDeviation, double skew, int sampleSize = int.MaxValue)
         {
             Mean = mean;
+            Median = InverseCDF(0.50);
             Variance = Math.Pow(standardDeviation, 2);
             StandardDeviation = standardDeviation;
             Skewness = skew;
             SampleSize = sampleSize;
+            Range = Utilities.IRangeFactory.Factory(InverseCDF(0), InverseCDF(1));
         }
         #endregion
 
@@ -44,11 +46,21 @@ namespace Statistics.Distributions
         #region IDistribution Functions
         public double PDF(double x)
         {
-            throw new NotImplementedException();
+            PearsonIII p3 = new PearsonIII(Mean, StandardDeviation, Skewness);
+            // the last part of this is odd to me. Again, it is based on Will Lehman's Statistics assembly.
+            return p3.PDF(Math.Log10(x)) / x / Math.Log(10); 
         }
         public double CDF(double x)
         {
-            throw new NotImplementedException();
+            // if x <= 0 then p = 0.
+            double p = 0;
+            if (x > 0)
+            {               
+                PearsonIII p3 = new PearsonIII(mean: Mean, sd: StandardDeviation, skew: Skewness);
+                // x is not the logged value (this seems strange to me).
+                p = p3.CDF(Math.Log10(x));
+            }
+            return p;
         }
         public double InverseCDF(double p)
         {
@@ -57,8 +69,9 @@ namespace Statistics.Distributions
             double zScore = norm.InverseCDF(p);
             // k is a value described in Bulletin 17b
             double k = Math.Pow(2 / Skewness * ((zScore - Skewness / 6) * Skewness / 6 + 1), 2);
-            // raise log x to 10th power
+            // log(base10)x  = Mean + k * StandardDeviation 
             return Math.Pow(10, Mean + k * StandardDeviation);
+            // so 10 ^ log(base10)x undoes the logging and is the x value we are seeking.
         }
         public double Sample(Random r = null) => InverseCDF(r == null ? new Random().NextDouble() : r.NextDouble());
         //public double[] Sample(Random numberGenerator) => Sample(SampleSize, numberGenerator);
@@ -84,7 +97,7 @@ namespace Statistics.Distributions
         public static LogPearsonIII Fit(IEnumerable<double> sample)
         {
             List<double> log10Sample = new List<double>();
-            foreach (double x in sample) log10Sample.Add(Math.Log(x));
+            foreach (double x in sample) log10Sample.Add(Math.Log10(x));
             SummaryStatistics stats = new SummaryStatistics(IDataFactory.Factory(log10Sample));
             return new LogPearsonIII(stats.Mean, stats.StandardDeviation, stats.Skewness, stats.SampleSize);
         }

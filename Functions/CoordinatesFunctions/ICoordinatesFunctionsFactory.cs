@@ -14,7 +14,26 @@ namespace Functions
 {
     public static class ICoordinatesFunctionsFactory
     {
+        public static ICoordinatesFunction Factory(IDistributedValue distribution, InterpolationEnum interpolator)
+        {
+            List<ICoordinate> coordinates = new List<ICoordinate>();
+            double epsilon = (distribution.Maximum - distribution.Minimum) * 0.01, y = distribution.Minimum + epsilon;
+            for (int p = 0; p < 100; p++)
+            {
+                ICoordinate coordinate = ICoordinateFactory.Factory(p * 0.01, distribution.InverseCDF(p * 0.01));
+                while (y < coordinate.Y.Value())
+                {
 
+                }
+                if (y < coordinate.Y.Value())
+                {
+                     
+                }
+                coordinates.Add(coordinate);
+            }
+        }
+        
+        
         public static ICoordinatesFunction Factory(List<ICoordinate> coordinates, InterpolationEnum interpolator)
         {
             if (IsConstantYValues(coordinates))

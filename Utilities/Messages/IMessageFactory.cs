@@ -14,7 +14,7 @@ namespace Utilities
         /// </summary>
         /// <param name="level"> The severity of type of message being created. </param>
         /// <param name="notice"> The notice that should be posted with the message. </param>
-        /// <returns></returns>
-        public static IMessage Factory(IMessageLevels level, string notice) => new Validation.Messages.Message(level, notice);
+        /// <returns> An <see cref="IMessage"/> consiting of a string <paramref name="notice"/> or message and its associated level of severity, provide by the <paramref name="level"/> parameter. </returns>
+        public static IMessage Factory(IMessageLevels level, string notice) => new Messages.Message(level, notice);
     }
 }

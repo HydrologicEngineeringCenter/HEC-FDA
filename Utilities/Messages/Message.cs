@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Utilities.Validation.Messages
+namespace Utilities.Messages
 {
     internal class Message: IMessage
     {
