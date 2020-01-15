@@ -15,7 +15,8 @@ namespace Functions
         OrderedSetEnum Order { get; }
         InterpolationEnum Interpolator { get; }
 
-        Tuple<double, double> Domain { get; }
+        //Tuple<double, double> Domain { get; }
+        Utilities.IRange<double> Domain { get; }
 
         bool Equals(ICoordinatesFunction function);
 

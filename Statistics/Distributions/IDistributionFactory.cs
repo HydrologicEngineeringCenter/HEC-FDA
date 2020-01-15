@@ -81,10 +81,17 @@ namespace Statistics
             IDistribution normal = new Distributions.Normal(mean, stDev, sample);
             return new Distributions.TruncatedDistribution(normal, min, max);
         }
-
-        public static IDistribution FactoryBeta(double alpha, double beta, double min, double max)
+        /// <summary>
+        /// Constructs a scaled beta distribution.
+        /// </summary>
+        /// <param name="alpha"> Exponential shape parameter, must be positive, alpha > 0. </param>
+        /// <param name="beta"> Exponential shape parameter, must be positive, beta > 0. </param>
+        /// <param name="location"> The lower bound or minimum of the scaled distribution (e.g. shift from an unscaled distribution). </param>
+        /// <param name="scale"> The range of the distribution (e.g. upper bound or maximum minus the lower bound or minimum), must be positive scale > 0. </param>
+        /// <returns> A scaled beta distribution. </returns>
+        public static IDistribution FactoryBeta(double alpha, double beta, double location, double scale)
         {
-            return new Distributions.Beta4Parameters(alpha, beta, min, max); //todo this isn't correct. Shouldn't be min and max
+            return new Distributions.Beta4Parameters(alpha, beta, location, scale); 
         }
     }
 }

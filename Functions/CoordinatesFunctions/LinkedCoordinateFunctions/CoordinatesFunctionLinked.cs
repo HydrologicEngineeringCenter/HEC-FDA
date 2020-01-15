@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Utilities;
-using Utilities.Validation;
+//using Utilities.Validation;
 
 namespace Functions.CoordinatesFunctions
 {
@@ -31,7 +31,6 @@ namespace Functions.CoordinatesFunctions
                 return retval;
             }
         }
-
         public IEnumerable<IMessage> Messages => null;
 
         /// <summary>
@@ -55,7 +54,6 @@ namespace Functions.CoordinatesFunctions
         }
 
         #region setting the function order
-
         private void SetOrder()
         {
             
@@ -68,13 +66,6 @@ namespace Functions.CoordinatesFunctions
             //add the orders to a list
             SetOrderEnum();
         }
-
-
-
-
-
-
-
         #endregion
 
         #region Interpolators
@@ -104,7 +95,6 @@ namespace Functions.CoordinatesFunctions
                 throw new InvalidOperationException(String.Format("The F(x) operation cannot produce a result because no interpolation method has been set and the specified x value: {0} was not explicitly provided as part of the function domain.", x));
             }
         }
-
         private double InverseLinearInterpolator(ICoordinate coordinateLeft, ICoordinate coordinateRight, double y)
         {
             return coordinateLeft.X.Value() + (y - coordinateLeft.Y.Value()) /
@@ -123,8 +113,6 @@ namespace Functions.CoordinatesFunctions
                 "result because no interpolation method has been set and the specified y value: {0} was not " +
                 "explicityly provided as part of the function domain.", y));
         }
-
-
         #endregion
 
         public bool Equals(ICoordinatesFunction function)
@@ -151,15 +139,14 @@ namespace Functions.CoordinatesFunctions
 
             return true;
         }
-
         public IOrdinate F(IOrdinate x)
         {
             //there should be no overlapping domains because we check that in the ctor during validation
             //try to find the function that has this point within its domain.
             foreach (ICoordinatesFunction function in Functions)
             {
-                Tuple<double, double> funcDomain = function.Domain;
-                if (x.Value() >= funcDomain.Item1 && x.Value() <= funcDomain.Item2)
+                Utilities.IRange<double> funcDomain = function.Domain;
+                if (x.Value() >= funcDomain.Min && x.Value() <= funcDomain.Max)
                 {
                     return function.F(x);
                 }
@@ -170,10 +157,10 @@ namespace Functions.CoordinatesFunctions
             for (int i = 0; i < Functions.Count - 1; i++)
             {
 
-                Tuple<double, double> func1Domain = Functions[i].Domain;
-                Tuple<double, double> func2Domain = Functions[i + 1].Domain;
+                IRange<double> func1Domain = Functions[i].Domain;
+                IRange<double> func2Domain = Functions[i + 1].Domain;
 
-                if (x.Value() > func1Domain.Item2 && x.Value() < func2Domain.Item1)
+                if (x.Value() > func1Domain.Max && x.Value() < func2Domain.Min)
                 {
                     //then this x is between func1 and func2
                     InterpolationEnum interpolator = Interpolators[i];
@@ -203,7 +190,6 @@ namespace Functions.CoordinatesFunctions
             return retval;
 
         }
-
         private double InverseInterpolate(InterpolationEnum interpolator, ICoordinate coordinateLeft, ICoordinate coordinateRight, double y)
         {
             double retval = Double.NaN;
@@ -250,10 +236,10 @@ namespace Functions.CoordinatesFunctions
                         Functions[i + 1].GetType() == typeof(CoordinatesFunctionConstants))
                     {
 
-                        Tuple<double, double> func1Range = ((IFunction)Functions[i]).Range;
-                        Tuple<double, double> func2Range = ((IFunction)Functions[i + 1]).Range;
+                        IRange<double> func1Range = ((IFunction)Functions[i]).Range;
+                        IRange<double> func2Range = ((IFunction)Functions[i + 1]).Range;
 
-                        if (y.Value() > func1Range.Item2 && y.Value() < func2Range.Item1)
+                        if (y.Value() > func1Range.Max && y.Value() < func2Range.Min)
                         {
                             //then this y is between func1 and func2
                             InterpolationEnum interpolator = Interpolators[i];
@@ -265,7 +251,6 @@ namespace Functions.CoordinatesFunctions
             }
             throw new InvalidOperationException("The function InverseF(y) is invalid for this set of coordinates. The inverse of F(x) is not a function, because one or more y values maps to multiple x values");
         }
-
         private bool IsYValueInFunctionRange(ICoordinatesFunction function, double yValue)
         {
             bool retval = false;
@@ -274,8 +259,8 @@ namespace Functions.CoordinatesFunctions
             //is a constant function.
             if (function.GetType() == typeof(CoordinatesFunctionConstants))
             {
-                Tuple<double, double> range = ((IFunction)function).Range;
-                if (yValue >= range.Item1 && yValue <= range.Item2)
+                IRange<double> range = ((IFunction)function).Range;
+                if (yValue >= range.Min && yValue <= range.Max)
                 {
                     retval = true;
                 }
@@ -340,7 +325,7 @@ namespace Functions.CoordinatesFunctions
                 IFunction func1 = (IFunction)Functions[i];
                 IFunction func2 = (IFunction)Functions[i + 1];
 
-                if (func1.Range.Item2 >= func2.Range.Item1)
+                if (func1.Range.Max >= func2.Range.Min)
                 {
                     retval = false;
                     break;
@@ -348,8 +333,6 @@ namespace Functions.CoordinatesFunctions
             }
             return retval;
         }
-
-      
 
         public XElement WriteToXML()
         {

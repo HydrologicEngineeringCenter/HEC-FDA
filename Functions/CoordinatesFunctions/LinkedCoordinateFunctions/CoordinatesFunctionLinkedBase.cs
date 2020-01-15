@@ -23,28 +23,39 @@ namespace Functions.CoordinatesFunctions
 
         public IEnumerable<IMessage> Errors { get; internal set; }
 
-        public Tuple<double, double> Domain
+        public IRange<double> Domain
         {
             get
             {
-                if (Functions != null)
+                double min = Double.MaxValue;
+                double max = Double.MinValue;
+                foreach (ICoordinatesFunction func in Functions)
                 {
-                    double min = Double.MaxValue;
-                    double max = Double.MinValue;
-                    foreach (ICoordinatesFunction func in Functions)
-                    {
-                        double funcMin = func.Domain.Item1;
-                        double funcMax = func.Domain.Item2;
-                        if (funcMin < min) { min = funcMin; }
-                        if (funcMax > max) { max = funcMax; }
-                    }
-                    return new Tuple<double, double>(min, max);
+                    double funcMin = func.Domain.Min;
+                    double funcMax = func.Domain.Max;
+                    if (funcMin < min) { min = funcMin; }
+                    if (funcMax > max) { max = funcMax; }
                 }
-                else
-                {
-                    //todo: john should i throw an exception?
-                    return new Tuple<double, double>(0, 0);
-                }
+                return IRangeFactory.Factory(min, max);
+
+                //if (Functions != null)
+                //{
+                //    double min = Double.MaxValue;
+                //    double max = Double.MinValue;
+                //    foreach (ICoordinatesFunction func in Functions)
+                //    {
+                //        double funcMin = func.Domain.Min;
+                //        double funcMax = func.Domain.Max;
+                //        if (funcMin < min) { min = funcMin; }
+                //        if (funcMax > max) { max = funcMax; }
+                //    }
+                //    return IRangeFactory.Factory(min, max);
+                //}
+                //else
+                //{
+                    //todo: john should i throw an exception? YES Definately, but way before this point during construction.
+                    //return new Tuple<double, double>(0, 0);
+                //}
             }
         }
 
@@ -176,7 +187,7 @@ namespace Functions.CoordinatesFunctions
             for (int i = 0; i < Functions.Count - 2; i++)
             {
                 //is the previous function's max xValue less than the next function's min xValue
-                if (Functions[i].Domain.Item2 >= Functions[i + 1].Domain.Item1)
+                if (Functions[i].Domain.Max >= Functions[i + 1].Domain.Min)
                 {
                     retval = false;
                     break;
@@ -199,7 +210,7 @@ namespace Functions.CoordinatesFunctions
                 IFunction func1 = (IFunction)Functions[i];
                 IFunction func2 = (IFunction)Functions[i + 1];
 
-                if (func1.Range.Item2 > func2.Range.Item1)
+                if (func1.Range.Max > func2.Range.Min)
                 {
                     retval = false;
                     break;
@@ -216,7 +227,7 @@ namespace Functions.CoordinatesFunctions
                 IFunction func1 = (IFunction)Functions[i];
                 IFunction func2 = (IFunction)Functions[i + 1];
 
-                if (func1.Range.Item2 <= func2.Range.Item1)
+                if (func1.Range.Max <= func2.Range.Min)
                 {
                     retval = false;
                     break;
@@ -233,7 +244,7 @@ namespace Functions.CoordinatesFunctions
                 IFunction func1 = (IFunction)Functions[i];
                 IFunction func2 = (IFunction)Functions[i + 1];
 
-                if (func1.Range.Item2 < func2.Range.Item1)
+                if (func1.Range.Max < func2.Range.Min)
                 {
                     retval = false;
                     break;

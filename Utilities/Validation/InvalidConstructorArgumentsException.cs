@@ -23,12 +23,12 @@ namespace Utilities
         public InvalidConstructorArgumentsException(IEnumerable<string> errors): base()
         {
             IList<IMessage> messages = new List<IMessage>();
-            foreach (var error in errors) messages.Add(new Validation.Messages.Message(IMessageLevels.FatalError, error));
+            foreach (var error in errors) messages.Add(new Messages.Message(IMessageLevels.FatalError, error));
             Errors = messages;
         }
         public InvalidConstructorArgumentsException(string message): base(message)
         {
-            Errors = new IMessage[] { new Validation.Messages.Message(IMessageLevels.FatalError, message) };
+            Errors = new IMessage[] { new Messages.Message(IMessageLevels.FatalError, message) };
         }
         public InvalidConstructorArgumentsException(IEnumerable<IMessage> errors): base()
         {

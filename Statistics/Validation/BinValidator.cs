@@ -4,6 +4,8 @@ using System.Linq;
 
 using Utilities;
 
+using Statistics.Histograms;
+
 namespace Statistics.Validation
 {
     internal class BinValidator: IValidator<IBin>
@@ -11,20 +13,41 @@ namespace Statistics.Validation
         internal BinValidator()
         {
         }
-        public bool IsValid(IBin obj, out IEnumerable<IMessage> errors)
+        public bool IsValid(IBin obj, out IEnumerable<IMessage> msgs)
         {
-            errors = ReportErrors(obj);
-            return !errors.Any();
+            msgs = ReportErrors(obj);
+            return msgs.Max() < IMessageLevels.Error;
         }
         public IEnumerable<IMessage> ReportErrors(IBin obj)
         {
-            List<IMessage> errors = new List<IMessage>();
+            List<IMessage> msgs = new List<IMessage>();
             if (obj.IsNull()) throw new ArgumentNullException(nameof(obj), "The Bin could not be validated because it is null.");
-            if (!Validate.IsRange(obj.Range.Min, obj.Range.Max) || obj.Range.Min == obj.Range.Max) errors.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The Histogram Bin is invalid because its minimum: {obj.Range.Min} and maximum: {obj.Range.Max} do not provide a valid finite range."));
-            if (!(obj.Range.Min.IsFinite() && obj.Range.Max.IsFinite())) errors.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The Histogram Bin is invalid because its range: [{obj.Range.Min}, {obj.Range.Max}) is not finite."));
-            if (!(obj.Count.IsOnRange(min: 0, max: int.MaxValue))) errors.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The Histogram Bin is invalid because its count: {obj.Count} is not on the valid range [0, {int.MaxValue}]."));
-            if (!obj.MidPoint.IsFinite()) errors.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The histogram bin is invalid because its midpoint value: {obj.MidPoint} defined by the equations: (BinMax: {obj.Range.Max} - BinMin: {obj.Range.Min}) / 2 + BinMin: {obj.Range.Min}, is not a finite numerical value."));
-            return errors;
+            if (!obj.Range.IsFinite() || !obj.Count.IsOnRange(0, int.MaxValue)) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"{Resources.InvalidParameterizationNotice(obj.Print(true))} {Bin.Requirements(false)}."));            
+            if (!obj.MidPoint.IsFinite()) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The histogram {obj.Print(true)} is invalid because its midpoint value: {obj.MidPoint.Print()} defined by the equations: (BinMax: {obj.Range.Max} - BinMin: {obj.Range.Min}) / 2 + BinMin: {obj.Range.Min}, is not a finite numerical value."));
+            return msgs;
+        }
+
+        internal static bool IsConstructable(double min, double max, int n, out string msg)
+        {
+            msg = ReportFatalErrors(min, max, n);
+            return msg.Length == 0;
+        }
+        internal static bool IsConstructable(IBin oldBin, int addN, out string msg)
+        {
+            msg = ReportFatalErrors(oldBin, addN);
+            return msg.Length == 0;
+        }
+        internal static string ReportFatalErrors(double min, double max, int n)
+        {
+            string msg = "";
+            if (!Validate.IsRange(min, max)) msg += $"{Resources.FatalParameterizationNotice(Bin.Print(min, max, n))} {Bin.Requirements(true)}";
+            return msg;
+        }
+        internal static string ReportFatalErrors(IBin oldBin, int addN)
+        {
+            string msg = "";
+            if (addN < 0 || ((long)oldBin.Count + (long)addN > (long)int.MaxValue)) msg += $"{addN.Print()} observations cannot be added to the {oldBin.Print(true)} because {addN.Print()} is a negative number or the sum of the observations: ({addN.Print()} + {oldBin.Count.Print()}) exceeds the maximum integer: {int.MaxValue.Print()} value.";
+            return msg;
         }
     }
 }

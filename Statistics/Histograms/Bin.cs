@@ -13,7 +13,7 @@ namespace Statistics.Histograms
     /// A bin for the histogram class.
     /// </summary>
     /// <remarks>
-    /// This class and its constructor are ont accessible through the API.
+    /// This class and its constructor are not accessible through the API.
     /// </remarks>
     internal sealed class Bin: IBin, IValidate<IBin>
     {
@@ -28,14 +28,6 @@ namespace Statistics.Histograms
         /// </summary>
         public int Count { get; }
         public Utilities.IRange<double> Range { get; }
-        ///// <summary>
-        ///// The minimum value for the histogram bin, inclusive.
-        ///// </summary>
-        //public double Minimum { get; }
-        ///// <summary>
-        ///// The exclusive maximum value for the histogram bin.
-        ///// </summary>
-        //public double Maximum { get; }
         /// <summary>
         /// The midpoint value computed with equation: (Maximum - Minimum) / 2
         /// </summary>
@@ -46,8 +38,6 @@ namespace Statistics.Histograms
         #region Constructors
         internal Bin (double min, double max, int n)
         {
-            //Minimum =  min;
-            //Maximum = max;
             Range = IRangeFactory.Factory(min, max);
             Width = max - min;
             MidPoint = (Range.Max - Range.Min) / 2d + Range.Min;
@@ -77,6 +67,14 @@ namespace Statistics.Histograms
         {
             return validator.IsValid(this, out errors);
         }
+        internal static string Print(double min, double max, int n) => $"Bin(count: {n.Print()}, range: [{min.Print()}, {max.Print()}]).";
+        public static string Requirements(bool printNotes = true)
+        {
+            string s = $"Histogram bins require the following parameterization: Bin(count: > 0, {Validation.Resources.DoubleRangeRequirements()}).";
+            if (printNotes) s += RequirementNotes();
+            return s;
+        }
+        public static string RequirementNotes() => $"The number of observation in the bin, represented by the count parameter cannot exceed the maximum integer: {int.MaxValue.Print()} value.";
         #endregion
 
         /// <summary>
@@ -89,7 +87,7 @@ namespace Statistics.Histograms
             for (int i = 0; i < Count; i++) data[i] = MidPoint;
             return data;
         }
-        public string Print() => $"Bin(count: {Count}, range: [{Range.Min}, {Range.Max}])";
+        public string Print(bool round = false) => round ? Print(Range.Min, Range.Max, Count) : $"Bin(count: {Count}, range: [{Range.Min}, {Range.Max}])";
         public bool Equals(IBin bin) => Range.Min == bin.Range.Min && Range.Max == bin.Range.Max && Count == bin.Count ? true : false;
         #endregion
     }

@@ -9,6 +9,8 @@ namespace Utilities
     /// </summary>
     public static class Validate
     {
+        public static string Print(this double x) => x.IsOnRange(-1000000, 1000000, false, false) ? string.Format("{0:n}", x) : x.ToString("E2");
+        public static string Print(this int x) => x.IsOnRange(-1000000, 1000000, false, false) ? string.Format("{0:n0}", x) : x.ToString("E2");
         /// <summary>
         /// Extension function tests for <see langword="null"/> references.
         /// </summary>
@@ -21,6 +23,12 @@ namespace Utilities
         /// <param name="x"> The <see cref="double"/> value to be tested. </param>
         /// <returns> <see langword="true"/> if the specified <see cref="double"/> a finite numerical value. <see langword="false"/> if the <see cref="double"/> value is <see cref="double.NaN"/>, <see cref="double.PositiveInfinity"/>, or <see cref="double.NegativeInfinity"/>. </returns>
         public static bool IsFinite(this double x) => !double.IsNaN(x) && !double.IsInfinity(x) ? true : false;
+        /// <summary>
+        /// Extension function tests <see cref="IRange{T}"/> variables for finite numerical values.
+        /// </summary>
+        /// <param name="range"> The <see cref="IRange{T}"/> to be tested. </param>
+        /// <returns> <see langword="true"/> if the specified <see cref="IRange{T}"/> contains finite numerical <see cref="IRange{T}.Min"/> and <see cref="IRange{T}.Max"/> values. <see langword="false"/> if the <see cref="IRange{T}.Min"/> or <see cref="IRange{T}.Max"/> values are <see cref="double.NaN"/>, <see cref="double.PositiveInfinity"/>, or <see cref="double.NegativeInfinity"/>. </returns>
+        public static bool IsFinite(this IRange<double> range) => range.Min.IsFinite() && range.Max.IsFinite();
         /// <summary>
         /// Tests an <see cref="IEnumerable{T}"/> for <see langword="null"/> or empty data sets.
         /// </summary>
@@ -60,6 +68,16 @@ namespace Utilities
             {
                 return int.MaxValue;
             }
+        }
+        public static Utilities.IMessageLevels Max(this IEnumerable<Utilities.IMessage> msgs)
+        {
+            Utilities.IMessageLevels level = Utilities.IMessageLevels.NotSet;
+            foreach (Utilities.IMessage msg in msgs)
+            {
+                if (msg.Level == Utilities.IMessageLevels.FatalError) return Utilities.IMessageLevels.FatalError;
+                if (msg.Level > level) level = msg.Level;
+            }
+            return level;
         }
     }
 }

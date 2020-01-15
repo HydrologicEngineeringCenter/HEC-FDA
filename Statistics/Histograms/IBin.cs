@@ -7,7 +7,7 @@ namespace Statistics
     /// <summary>
     /// Provides an interface for the Bins that make up Histograms
     /// </summary>
-    public interface IBin
+    public interface IBin: Utilities.IMessagePublisher
     {
         /// <summary>
         /// Inclusive minimum and exclusive maximum bin values.
@@ -41,7 +41,8 @@ namespace Statistics
         /// <summary>
         /// Prints a representation of the Bin as a string.
         /// </summary>
+        /// <param name="round"> <see langword="true"/> if some values should be rounded to produce a more readable string. </param>
         /// <returns> A string in the form: Bin(count: value, range: [min, max]). </returns>
-        string Print();
+        string Print(bool round = false);
     }
 }

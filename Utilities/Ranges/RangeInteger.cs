@@ -4,19 +4,26 @@ using System.Text;
 
 namespace Utilities.Ranges
 {
-    internal class RangeInteger: IRange<int>
+    internal class RangeInteger: IRange<int>, IValidate<RangeInteger>
     {
         public int Min { get; }
         public int Max { get; }
+        public bool IsValid { get; }
+        public IEnumerable<IMessage> Messages { get; }
 
         internal RangeInteger(int min, int max, bool isMinInclusive, bool isMaxInclusive)
         {
             Min = isMaxInclusive ? min : min + 1;
             Max = isMaxInclusive ? max : max - 1;
-            if (!Utilities.Validate.IsRange(Min, Max)) throw new Utilities.InvalidConstructorArgumentsException($"The provided min and max values: {min}, {max} created an invalid range of: [{Min}, {Max}].");
+            IsValid = Validate(new RangeIntegerValidator(), out IEnumerable<IMessage> msgs);
+            Messages = msgs;
         }
-
-        public string Print() => $"[{Min}, {Max}]";
+        public bool Validate(IValidator<RangeInteger> validator, out IEnumerable<IMessage> msgs)
+        {
+            return validator.IsValid(this, out msgs);
+        }
+        public string Print(bool round = false) => round ? $"[{Min.Print()}, {Max.Print()}]" : $"[{Min}, {Max}]";
+        public static string Requirements() => $"range: [{int.MinValue.Print()}, {int.MaxValue.Print()}] with range min < range max";
         public bool Equals<T>(IRange<T> range) => range.GetType() == typeof(RangeInteger) && Print() == range.Print(); 
     }
 }

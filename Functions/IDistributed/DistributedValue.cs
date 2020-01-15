@@ -6,9 +6,11 @@ using System.Xml.Linq;
 
 namespace Functions
 {
-    internal class DistributedValue : IDistributedValue
+    internal class DistributedValue : IDistributedValue, Utilities.IValidate<IDistributedValue>
     {
         private Statistics.IDistribution _distribution;
+        
+        
         internal DistributedValue(Statistics.IDistribution distribution)
         {
             _distribution = distribution;
@@ -85,22 +87,16 @@ namespace Functions
                 return retval;
             }
         }
-
         public double Mean => _distribution.Mean;
-
         public double Median => _distribution.Median;
-
         public double Variance => _distribution.Variance;
-
         public double StandardDeviation => _distribution.StandardDeviation;
-
         public double Skewness => _distribution.Skewness;
-
-        public double Minimum => _distribution.Minimum;
-
-        public double Maximum => _distribution.Maximum;
-
+        public Utilities.IRange<double> Range => _distribution.Range;
+        //public double Minimum => _distribution.Range.MIn;
+        //public double Maximum => _distribution.Maximum;
         public int SampleSize => _distribution.SampleSize;
+        public bool IsValid => _distribution.
 
         public double CDF(double x)
         {

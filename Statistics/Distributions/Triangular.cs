@@ -7,7 +7,7 @@ using Utilities.Serialization;
 
 namespace Statistics.Distributions
 {
-    internal class Triangular: IDistribution //IOrdinate<IDistribution>
+    internal class Triangular: IDistribution, IValidate<Triangular> 
     {
         //TODO: Sample
         //TODO: Validation
@@ -22,28 +22,45 @@ namespace Statistics.Distributions
         public double Variance => _Distribution.Variance;
         public double StandardDeviation => _Distribution.StdDev;
         public double Skewness => _Distribution.Skewness;
-        //public double Minimum => _Distribution.Minimum;
-        //public double Maximum => _Distribution.Maximum;
         public IRange<double> Range { get; }
         public int SampleSize { get; }
+        public bool IsValid { get; }
+        public IEnumerable<IMessage> Messages { get; }
         #endregion
-        //#region IOrdinate Properties
-        //public bool IsVariable => true;
-        //public Type OrdinateType => typeof(IDistribution);
-        //#endregion
         #endregion
 
         #region Constructor
-        public Triangular(double min, double mostLikely, double max, int sampleSize = int.MaxValue)
+        public Triangular(double min, double mode, double max, int sampleSize = int.MaxValue)
         {
-            _Distribution = new MathNet.Numerics.Distributions.Triangular(lower: min, upper: max, mode: mostLikely);
-            Range = IRangeFactory.Factory(_Distribution.Minimum, _Distribution.Maximum);
+            IRange<double> range = IRangeFactory.Factory(min, max);
+            if (!Validation.TriangularValidator.IsConstructable(mode, range, out string error)) throw new InvalidConstructorArgumentsException(error);
+            else
+            {
+                _Distribution = new MathNet.Numerics.Distributions.Triangular(lower: min, upper: max, mode: mode);
+                Range = range;
+                SampleSize = sampleSize;
+                IsValid = Validate(new Validation.TriangularValidator(), out IEnumerable<IMessage> msgs);
+                Messages = msgs;
+            }
+            
             //TODO: Validation
-            SampleSize = sampleSize;
+            
         }
         #endregion
 
         #region Functions
+        public bool Validate(IValidator<Triangular> validator, out IEnumerable<IMessage> msgs)
+        {
+            return validator.IsValid(this, out msgs);
+        }
+        internal static string Print(double mode, IRange<double> range) => $"Triangular(mode: {mode.Print()}, range: [{range.Min.Print()}, {range.Max.Print()}])";
+        public static string Requirements(bool printNotes)
+        {
+            string s = $"The Triangular distribution requires the following parameterization: Triangular(mode: range minimum \u2264 mode \u2264 range maximum, {Validation.Resources.DoubleRangeRequirements()}, sample size: > 0)" if (printNotes) RequirementNotes();
+            if (printNotes) s += RequirementNotes();
+            return s;
+        }
+        private static string RequirementNotes() => "The mode parameter is also sometimes referred to as the mostly likely value.";
         #region IDistribution Functions
         public double PDF(double x) => _Distribution.Density(x);
         public double CDF(double x) =>  _Distribution.CumulativeDistribution(x);
@@ -59,13 +76,9 @@ namespace Statistics.Distributions
             return sample;
         }
         public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(SampleSize, numberGenerator));
-        public string Print() => $"Triangular(mean: {Mean}, range: {Range.Print()}, sample size: {SampleSize})";
+        public string Print(bool round = false) => round ? Print(_Distribution.Mode, Range) : $"Triangular(mode: {_Distribution.Mode}, range: {Range.Print()}, sample size: {SampleSize})";
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
-        //#region Iordinate Functions
-        //public double GetValue(double sampleProbability) => InverseCDF(sampleProbability);
-        //public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
-        //#endregion
 
         public static Triangular Fit(IEnumerable<double> data)
         {
@@ -81,11 +94,11 @@ namespace Statistics.Distributions
         {
             XElement ordinateElem = new XElement(SerializationConstants.TRIANGULAR);
             //min
-            ordinateElem.SetAttributeValue(SerializationConstants.MIN, Minimum);
+            ordinateElem.SetAttributeValue(SerializationConstants.MIN, Range.Min);
             //most likely
             ordinateElem.SetAttributeValue(SerializationConstants.MEAN, Mean);
             //max
-            ordinateElem.SetAttributeValue(SerializationConstants.MAX, Maximum);
+            ordinateElem.SetAttributeValue(SerializationConstants.MAX, Range.Max);
 
             //sample size
             ordinateElem.SetAttributeValue(SerializationConstants.SAMPLE_SIZE, SampleSize);

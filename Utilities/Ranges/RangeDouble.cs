@@ -4,20 +4,32 @@ using System.Text;
 
 namespace Utilities.Ranges
 {
-    internal class RangeDouble : IRange<double>
+    internal class RangeDouble : IRange<double>, IValidate<IRange<double>>
     {
+        private readonly bool _FiniteRequirement;
+        
         #region Properties
         public double Min { get; }
         public double Max { get; }
+        public bool IsValid { get; }
+        public IEnumerable<IMessage> Messages { get; }
         #endregion
 
-        public RangeDouble(double min, double max, bool inclusiveMin, bool inclusiveMax)
+        internal RangeDouble(double min, double max, bool inclusiveMin, bool inclusiveMax, bool finiteRequirement)
         {
+            _FiniteRequirement = finiteRequirement;
             Min = inclusiveMin ? min : min + double.Epsilon;
             Max = inclusiveMax ? max : max - double.Epsilon;
-            if (!Utilities.Validate.IsRange(Min, Max)) throw new Utilities.InvalidConstructorArgumentsException($"The provided min and max values: {min}, {max} created an invalid range of: [{Min}, {Max}].");
+            IsValid = Validate(new RangeDoubleValidator(), out IEnumerable<IMessage> msgs);
+            Messages = msgs;
         }
-        public string Print() => $"[{Min}, {Max}]";
+        public bool Validate(IValidator<IRange<double>> validator, out IEnumerable<IMessage> msgs)
+        {
+            return validator.IsValid(this, out msgs);
+        }
+
+        public string Print(bool round = false) => round ? $"[{Min.Print()}, {Max.Print()}]" : $"[{Min}, {Max}]";
+        public static string Requirements() => $"range: [{double.MinValue.Print()}, {double.MaxValue.Print()}] with range min < range max";
         public bool Equals<T>(IRange<T> range) => range.GetType() == typeof(RangeDouble) && Print() == range.Print();
     }
 }

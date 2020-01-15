@@ -7,7 +7,7 @@ namespace Statistics
     /// <summary>
     /// Provides and interface for double precision numbers stored as distributions rather than static values.
     /// </summary>
-    public interface IDistribution: Utilities.Serialization.ISerializeToXML<IDistribution> //IOrdinate<IDistribution>
+    public interface IDistribution: Utilities.Serialization.ISerializeToXML<IDistribution>, Utilities.IMessagePublisher
     {
 
         #region Properties
@@ -80,8 +80,9 @@ namespace Statistics
         /// <summary>
         /// Prints a string describing the distribution.
         /// </summary>
+        /// <param name="round"> <see langword="true"/> if some values should be rounded to produce a more readable string. </param>
         /// <returns> A string in the form: <see cref="IDistribution.Type"/>(parameter1: value, parameter2: value, ...). </returns>
-        string Print();
+        string Print(bool round = false);
         /// <summary>
         /// Compares two distributions for value equality.
         /// </summary>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Utilities.Serialization;
+using Utilities;
 
 namespace Statistics.Distributions
 {
@@ -20,20 +21,14 @@ namespace Statistics.Distributions
         public double Variance => _Distribution.Variance;
         public double StandardDeviation => _Distribution.StdDev;
         public double Skewness => _Distribution.Skewness;
-        //public double Minimum => _Distribution.Minimum;
-        //public double Maximum => _Distribution.Maximum;
         public Utilities.IRange<double> Range { get; }
-
         public int SampleSize { get; }
         #endregion
         #region IValidate Properties
         public bool IsValid { get; }
         public IEnumerable<Utilities.IMessage> Messages { get; }
         #endregion
-        //#region IOrdinate Properties
-        //public bool IsVariable => true;
-        //public Type OrdinateType => typeof(IDistribution);
-        //#endregion
+
         #endregion
 
         #region Constructor
@@ -49,12 +44,12 @@ namespace Statistics.Distributions
         #endregion
 
         #region Functions
-        #region IValidate Functions
         public bool Validate(Utilities.IValidator<Normal> validator, out IEnumerable<Utilities.IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }
-        #endregion
+        internal static string Print(double mean, double sd, int n) => $"Normal(mean: {mean.Print()}, sd: {sd.Print()}, sample size: {n.Print()})";
+        public static string Requirements() => $"The Normal distribution requires the following parameterization: Normal(mean: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sd: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sample size: > 0).";
         #region IDistribution Functions
         public double PDF(double x) => _Distribution.Density(x);
         public double CDF(double x) => _Distribution.CumulativeDistribution(x);
@@ -70,13 +65,9 @@ namespace Statistics.Distributions
             return sample;
         }
         public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(SampleSize, numberGenerator));
-        public string Print() => $"Normal(mean: {Mean}, sd: {StandardDeviation}, sample size: {SampleSize})";
+        public string Print(bool round = false) => round ? Print(Mean, StandardDeviation, SampleSize): $"Normal(mean: {Mean}, sd: {StandardDeviation}, sample size: {SampleSize})";
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
-        //#region Iordinate Functions
-        //public double GetValue(double sampleProbability) => InverseCDF(sampleProbability);
-        //public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
-        //#endregion
 
         public static Normal Fit(IEnumerable<double> sample)
         {
