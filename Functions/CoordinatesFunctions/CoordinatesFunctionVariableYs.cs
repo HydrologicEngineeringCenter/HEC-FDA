@@ -15,8 +15,6 @@ namespace Functions.CoordinatesFunctions
     {
         #region Properties
         public bool IsInvertible { get; }
-        //todo: John i think we can get rid of the IsDistributedXs property since nothing has distributed xs.
-        public bool IsDistributedXs => false;
         public bool IsDistributedYs => true;
         public OrderedSetEnum Order { get; }
 
@@ -24,8 +22,8 @@ namespace Functions.CoordinatesFunctions
 
         public bool IsDistributed => true;
 
-        public Tuple<double, double> Domain { get; }
-
+        //public Tuple<double, double> Domain { get; }
+        public IRange<double> Domain { get; }
         public InterpolationEnum Interpolator { get; }
       
         #endregion
@@ -40,8 +38,8 @@ namespace Functions.CoordinatesFunctions
                 Coordinates = SortByXs(coordinates);
                 IsInvertible = IsInvertibleFunction();
             }
-            Domain = new Tuple<double, double>(Coordinates[0].X.Value(), Coordinates[Coordinates.Count - 1].X.Value());
-
+            //Domain = new Tuple<double, double>(Coordinates[0].X.Value(), Coordinates[Coordinates.Count - 1].X.Value());
+            Domain = IRangeFactory.Factory(Coordinates.First().X.Value(), Coordinates.Last().X.Value());
         }
         #endregion
 
@@ -93,7 +91,7 @@ namespace Functions.CoordinatesFunctions
         }
         private bool IsValid(List<ICoordinate> coordinates)
         {
-            if (Utilities.Validation.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate>)) return false;
+            if (Utilities.Validate.IsNullOrEmpty(coordinates as ICollection<ICoordinate>)) return false;
             if (!IsFunction(coordinates)) throw new ArgumentException("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).");
             return true;
         }
@@ -117,7 +115,7 @@ namespace Functions.CoordinatesFunctions
         public IOrdinate F(IOrdinate x)
         {
             //todo: John, i tried to do F(1) and it came through as F(1.00000000001) which threw the exception. We might want to try to fix that?
-            if (Utilities.Validation.IsNull(x)) throw new ArgumentNullException("The specified x value is invalid because it is null");
+            if (x.IsNull()) throw new ArgumentNullException("The specified x value is invalid because it is null");
             for (int i = 0; i < Coordinates.Count; i++)
             {
                 if (Coordinates[i].X.Equals(x))
@@ -132,7 +130,7 @@ namespace Functions.CoordinatesFunctions
         #region InverseF()
         public IOrdinate InverseF(IOrdinate y)
         {
-            if (Utilities.Validation.IsNull(y)) throw new ArgumentNullException("The specified y value is invalid because it is null");
+            if (y.IsNull()) throw new ArgumentNullException("The specified y value is invalid because it is null");
             if (IsInvertible == false) throw new InvalidOperationException("The function InverseF(y) is invalid for this set of coordinates. The inverse of F(x) is not a function, because one or more y values maps to multiple x values");
             for (int i = 0; i < Coordinates.Count; i++)
             {

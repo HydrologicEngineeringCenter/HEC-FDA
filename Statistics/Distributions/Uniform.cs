@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
 using Utilities.Serialization;
+using Utilities;
 
 namespace Statistics.Distributions
 {
-    internal class Uniform: IDistribution //IOrdinate<IDistribution>
+    internal class Uniform: IDistribution: IValidate<Uniform>
     {
         #region Fields and Properties
         private readonly MathNet.Numerics.Distributions.ContinuousUniform _Distribution;
@@ -18,15 +19,11 @@ namespace Statistics.Distributions
         public double Variance => _Distribution.Variance;
         public double StandardDeviation => _Distribution.StdDev;
         public double Skewness => _Distribution.Skewness;
-        //public double Minimum => _Distribution.Minimum;
-        //public double Maximum => _Distribution.Maximum;
         public Utilities.IRange<double> Range { get; }
         public int SampleSize { get; }
         #endregion
-        //#region IOrdinate Properties
-        //public bool IsVariable => true;
-        //public Type OrdinateType => typeof(IDistribution);
-        //#endregion
+        public bool IsValid { get; }
+        public IEnumerable<IMessage> Messages { get; }
         #endregion
 
         #region Constructor
@@ -39,6 +36,9 @@ namespace Statistics.Distributions
         #endregion
 
         #region Functions
+
+        internal static string Print(IRange<double> range) => $"Uniform(range: {range.Print(true)})";
+        internal static string Requirements() => $"The Uniform distribution requires the following parameterization: Uniform({Validation.Resources.DoubleRangeRequirements()}).";
         #region IDistribution Functions
         public double PDF(double x) => _Distribution.Density(x);
         public double CDF(double x) => _Distribution.CumulativeDistribution(x);
@@ -54,31 +54,22 @@ namespace Statistics.Distributions
             return sample;
         }
         public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(SampleSize, numberGenerator));
-        public string Print() => $"Uniform(range: {Range.Print()})";
+        public string Print(bool round = false) => round ? Print(Range) : $"Uniform(range: {Range.Print()})";
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
-        //#region Iordinate Functions
-        //public double GetValue(double sampleProbability) => InverseCDF(sampleProbability);
-        //public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
-        //#endregion
 
         public static Uniform Fit(IEnumerable<double> sample)
         {
             SummaryStatistics stats = new SummaryStatistics(IDataFactory.Factory(sample));
             return new Uniform(stats.Range.Min, stats.Range.Max, stats.SampleSize);
         }
-
-       
-
-      
-
         public XElement WriteToXML()
         {
             XElement ordinateElem = new XElement(SerializationConstants.UNIFORM);
             //min
-            ordinateElem.SetAttributeValue(SerializationConstants.MIN, Minimum);
+            ordinateElem.SetAttributeValue(SerializationConstants.MIN, Range.Min);
             //max
-            ordinateElem.SetAttributeValue(SerializationConstants.MAX, Maximum);
+            ordinateElem.SetAttributeValue(SerializationConstants.MAX, Range.Max);
             //sample size
             ordinateElem.SetAttributeValue(SerializationConstants.SAMPLE_SIZE, SampleSize);
 

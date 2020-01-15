@@ -11,44 +11,48 @@ namespace Statistics.Distributions
     /// A specific truncated distribution that places density from outside the truncation value(s) at the truncation value(s) without altering the statistics of the underlying distribution.
     /// </summary>
     /// <remarks> Measures of central tendency and dispersion are based on the underlying distribution NOT the truncated copy. </remarks>
-    internal class TruncatedDistribution : IDistribution //IOrdinate<IDistribution>
+    internal class TruncatedDistribution : IDistribution, IValidate<TruncatedDistribution>
     {
         // TODO: Validation lower bound below mean, median, mode and upper bound above mean, median mode - valid range of lower and upper bounds 
 
         #region Fields and Properties
         private readonly IDistribution _Distribution;
 
-        #region IDistribution Properties
         public IDistributions Type => (IDistributions)((int)_Distribution.Type * 10);
         public double Mean => _Distribution.Mean;
         public double Median => _Distribution.Median;
         public double Variance => _Distribution.Variance;
         public double StandardDeviation => _Distribution.StandardDeviation;
         public double Skewness => _Distribution.Skewness;
-        //public double Minimum { get; }
-        //public double Maximum { get; }
         public Utilities.IRange<double> Range { get; }
         public int SampleSize => _Distribution.SampleSize;
-        #endregion
-        //#region IOrdinate Properties
-        //public bool IsVariable => true;
-        //public Type OrdinateType => typeof(IDistribution);
-        //#endregion
+        public bool IsValid { get; }
+        public IEnumerable<IMessage> Messages { get; }
         #endregion
 
         #region Constructor
         public TruncatedDistribution(IDistribution distribution, double lowerBound = double.NegativeInfinity, double upperBound = double.PositiveInfinity)
         {
+            if (distribution.IsNull()) throw new ArgumentNullException(nameof(distribution), "The specified distribution parameter is invalid because it is nulll.");
             _Distribution = distribution;
+            IMessageBoard msgBoard = IMessageBoardFactory.Factory(_Distribution);
             Utilities.IRangeFactory.Factory(lowerBound == double.NegativeInfinity ? _Distribution.Range.Min : lowerBound, upperBound == double.PositiveInfinity ? _Distribution.Range.Max : upperBound);
+            IsValid = Validate(new Validation.TruncatedDistributionValidator(), out IEnumerable<IMessage> msgs);
+            msgBoard.PostMessages(msgs);
+            Messages = msgBoard.ReadMessages();
         }
         #endregion
 
         #region Functions
+        public bool Validate(IValidator<TruncatedDistribution> validator, out IEnumerable<IMessage> msgs)
+        {
+            return validator.IsValid(this, out msgs);
+        }
+        internal static string Print(IDistribution distribution, IRange<double> range) => $"TruncatedDistribution(distribution: {distribution.Print(true)}, truncated range: {range.Print(true)})";
         #region IDistribution Functions
         public double PDF(double x)
         {
-            // Inbetween truncation points density is computed normally
+            // In between truncation points density is computed normally
             if (x > Range.Min && x < Range.Max) return _Distribution.PDF(x);
             else
             {
@@ -57,12 +61,12 @@ namespace Statistics.Distributions
                 else if (x == Range.Min) return _Distribution.CDF(x); // all the density below the lower bound has been added to this point.
                 // IF x is at or above the upper bound
                 else if (x == Range.Max) return _Distribution.CDF(_Distribution.Range.Max) - _Distribution.CDF(Range.Max); // all the density above the upper bound is added at this point.
-                else return 0; // since it must be true that x > Maximum (and there is no denisity above the upper bound).
+                else return 0; // since it must be true that x > Maximum (and there is no density above the upper bound).
             }
         }
         public double CDF(double x)
         {
-            // Inbetween truncation points density is computed normally
+            // In between truncation points density is computed normally
             if (x > Range.Min && x < Range.Max) return _Distribution.CDF(x);
             else
             {
@@ -93,7 +97,7 @@ namespace Statistics.Distributions
             IDistribution distribution = IDistributionFactory.Fit(Sample(SampleSize, numberGenerator), _Distribution.Type);
             return new TruncatedDistribution(distribution, Range.Min, Range.Max);
         }
-        public string Print() => $"TruncatedDistribution(distribution: {_Distribution.Print()}, truncated range: [{Range.Min}, {Range.Max}])";
+        public string Print(bool round = false) => round ? Print(_Distribution, Range) : $"TruncatedDistribution(distribution: {_Distribution.Print()}, truncated range: {Range.Print()})";
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
 
        
@@ -108,10 +112,6 @@ namespace Statistics.Distributions
             throw new NotImplementedException();
         }
         #endregion
-        //#region Iordinate Functions
-        //public double GetValue(double sampleProbability) => InverseCDF(sampleProbability);
-        //public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
-        //#endregion
         #endregion
     }
 }

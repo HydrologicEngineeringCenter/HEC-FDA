@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using Utilities;
 using Utilities.Serialization;
 
 namespace Statistics.Distributions
 {
-    internal class LogPearsonIII: IDistribution //IOrdinate<IDistribution>
+    internal class LogPearsonIII: IDistribution, IValidate<LogPearsonIII> 
     {
-        //TODO: Validate
-        //TODO: PDF, CDF Functions throw Exceptions
-
         #region Properties
         public IDistributions Type => IDistributions.LogPearsonIII;
         public double Mean { get; }
@@ -20,12 +18,9 @@ namespace Statistics.Distributions
         public double StandardDeviation { get; }
         public double Skewness { get; }
         public Utilities.IRange<double> Range { get; }
-        //public double Minimum { get; }
-        //public double Maximum { get; }
         public int SampleSize { get; }
-        //#region IOrdinate Properties
-        //public bool IsVariable => true;
-        //public Type OrdinateType => typeof(IDistribution);
+        public bool IsValid { get; }
+        public IEnumerable<Utilities.IMessage> Messages { get; }
         //#endregion
         #endregion
 
@@ -38,11 +33,24 @@ namespace Statistics.Distributions
             StandardDeviation = standardDeviation;
             Skewness = skew;
             SampleSize = sampleSize;
-            Range = Utilities.IRangeFactory.Factory(InverseCDF(0), InverseCDF(1));
+            Range = IRangeFactory.Factory(InverseCDF(0), InverseCDF(1));
+            IsValid = Validate(new Validation.LogPearsonIIIValidator(), out IEnumerable<Utilities.IMessage> msgs);
         }
         #endregion
 
         #region Functions
+        public bool Validate(IValidator<LogPearsonIII> validator, out IEnumerable<Utilities.IMessage> msgs)
+        {
+            return validator.IsValid(this, out msgs);
+        }
+        internal static string Print(double mean, double sd, double skew, int n) => $"log PearsonIII(mean: {mean.Print()}, sd: {sd.Print()}, skew: {skew.Print()}, sample size: {n.Print()})";
+        public static string Requirements(bool printNotes = true)
+        {
+            string s = $"The log PearsonIII distribution requires the following parameterization: log PearsonIII(mean: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sd: [{double.MinValue.Print()}, {double.MaxValue.Print()}], skew: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sample size: > 0).";
+            if (printNotes) s += RequirementNotes();
+            return s;
+        }
+        public static string RequirementNotes() => $"The distribution parameters are computed from log base 10 random numbers (e.g. the log Pearson III distribution is a Pearson III distribution of log base 10 values).";
         #region IDistribution Functions
         public double PDF(double x)
         {
@@ -83,16 +91,9 @@ namespace Statistics.Distributions
             return sample;
         }
         public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(SampleSize, numberGenerator));
-        #endregion
-        #region IParameter Functions
-        public double Value(double p = 0.5) => InverseCDF(p);
-        public string Print() => $"LogPearsonIII(mean: {Mean}, sd: {StandardDeviation}, skew: {Skewness}, sample size: {SampleSize})";
+        public string Print(bool round = false) => round ? Print(Mean, StandardDeviation, Skewness, SampleSize) : $"log PearsonIII(mean: {Mean}, sd: {StandardDeviation}, skew: {Skewness}, sample size: {SampleSize})";
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
-        //#region IOrdinate Functions
-        //public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
-        //public double GetValue(double sampleProbability = 0.5) => InverseCDF(sampleProbability);
-        //#endregion
 
         public static LogPearsonIII Fit(IEnumerable<double> sample)
         {
@@ -106,9 +107,6 @@ namespace Statistics.Distributions
         {
             return $"{Mean}, {StandardDeviation}, {Skewness}, {SampleSize}";
         }
-
-       
-
         XElement ISerializeToXML<IDistribution>.WriteToXML()
         {
             throw new NotImplementedException();

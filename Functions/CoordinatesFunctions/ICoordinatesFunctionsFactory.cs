@@ -8,7 +8,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Utilities;
-using Utilities.Validation;
 
 namespace Functions
 {
@@ -31,6 +30,7 @@ namespace Functions
                 }
                 coordinates.Add(coordinate);
             }
+            //TODO: This had no return value?
         }
         
         
@@ -225,7 +225,7 @@ namespace Functions
             //for example: func1, interp1, func2, interp2, func3
             bool needsInterpolators = (interpolators == null);
             //sort the functions on the domain so that the xValues are increasing
-            List<ICoordinatesFunction> sortedFunctions = functions.OrderBy(func => func.Domain.Item1).ToList();
+            List<ICoordinatesFunction> sortedFunctions = functions.OrderBy(func => func.Domain.Min).ToList();
             //make sure there is no overlapping domains
             string error = ValidateDomains(sortedFunctions);
             if (error != null)
@@ -247,13 +247,13 @@ namespace Functions
         private static string ValidateDomains(List<ICoordinatesFunction> functions)
         {
             if (functions.Count == 0) { return "No functions were passed in."; }
-            double min = functions[0].Domain.Item1;
-            double max = functions[0].Domain.Item2;
+            double min = functions[0].Domain.Min;
+            double max = functions[0].Domain.Max;
 
             for(int i = 1;i<functions.Count;i++)// (ICoordinatesFunction func in functions)
             {
-                double funcMin = functions[i].Domain.Item1;
-                double funcMax = functions[i].Domain.Item2;
+                double funcMin = functions[i].Domain.Min;
+                double funcMax = functions[i].Domain.Max;
                 //if this function's domain falls within the previously established domain
                 //then this list of funcs is invalid.
                 if (funcMin < max)

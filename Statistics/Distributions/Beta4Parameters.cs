@@ -8,35 +8,62 @@ using Utilities.Serialization;
 
 namespace Statistics.Distributions
 {
-    internal class Beta4Parameters: MathNet.Numerics.Distributions.BetaScaled,  IDistribution // IOrdinate<IDistribution>
+    internal class Beta4Parameters: IDistribution, IValidate<Beta4Parameters> // IOrdinate<IDistribution>
     {
-        //TODO: Validation
-        //TODO: Cleanup commented out code
+        private readonly MathNet.Numerics.Distributions.BetaScaled _Distribution;
         
         #region Properties
-        public double StandardDeviation => StdDev;
+        public double Mean { get; }
+        public double Median { get; }
+        public double Variance { get; }
+        public double StandardDeviation { get; }
+        public double Skewness { get; }
         public IDistributions Type => IDistributions.Beta4Parameters;
         public IRange<double> Range { get; }
         public int SampleSize { get; }
-        //#region IOrdinate Properties
-        //public bool IsVariable => true;
-        //public Type OrdinateType => typeof(IDistribution);
-        //#endregion
+        public bool IsValid { get; }
+        public IEnumerable<IMessage> Messages { get; }
         #endregion
 
         #region Constructor
-        public Beta4Parameters(double alpha, double beta, double location, double scale, int sampleSize = int.MaxValue) : base(a: alpha, b: beta, location, scale)
+        public Beta4Parameters(double alpha, double beta, double location, double scale, int sampleSize = int.MaxValue)
         {
-            Range = IRangeFactory.Factory(this.Minimum, this.Maximum);
-            SampleSize = sampleSize;
+            if (Validation.Beta4ParameterValidator.IsConstructable(alpha, beta, location, scale, sampleSize, out string error)) throw new InvalidConstructorArgumentsException(error);
+            else
+            {
+                _Distribution = new MathNet.Numerics.Distributions.BetaScaled(alpha, beta, location, scale);
+                Mean = _Distribution.Mean;
+                Median = _Distribution.Median;
+                Variance = _Distribution.Variance;
+                StandardDeviation = _Distribution.StdDev;
+                Skewness = _Distribution.Skewness;
+                Range = IRangeFactory.Factory(_Distribution.Minimum, _Distribution.Maximum);
+                SampleSize = sampleSize;
+                IsValid = Validate(new Validation.Beta4ParameterValidator(), out IEnumerable<IMessage> msgs);
+                Messages = msgs;
+            }   
         }
         #endregion
 
         #region Functions
+        public bool Validate(IValidator<Beta4Parameters> validator, out IEnumerable<IMessage> msgs)
+        {
+            return validator.IsValid(this, out msgs);
+        }
+        internal static string Print(double alpha, double beta, double location, double scale, int n) => $"ScaledBeta(alpha: {alpha.Print()}, beta: {beta.Print()}, range: [{location.Print()}, {(location + scale).Print()}], sample size: {n.Print()})";
+        //The Unicode character \u2265 should produce a greater than or equal to character.
+        public static string Requirements(bool printNotes = true)
+        {
+            string msg = $"The Scaled Beta distribution requires the following parameterization: ScaledBeta(alpha: \u2265 0, beta: \u2265 0, {Validation.Resources.DoubleRangeRequirements()}, sample size: > 0).";
+            if (printNotes) msg += " " + RequirementNotes();
+            return msg;
+        }
+        public static string RequirementNotes() => $"The range parameter is sometimes expressed in terms of location and scale, where location equals the range minimum and scale equals the range maximum minus the range minimum.";
+
         #region IDistribution Functions
-        public double PDF(double x) => Density(x);
-        public double CDF(double x) => CumulativeDistribution(x);
-        public double InverseCDF(double p) => InverseCumulativeDistribution(p);
+        public double PDF(double x) => _Distribution.Density(x);
+        public double CDF(double x) => _Distribution.CumulativeDistribution(x);
+        public double InverseCDF(double p) => _Distribution.InverseCumulativeDistribution(p);
 
         public double Sample(Random r = null) => InverseCDF(r == null ? new Random().NextDouble() : r.NextDouble());
         //public double[] Sample(Random numberGenerator = null) => Sample(SampleSize, numberGenerator);
@@ -49,12 +76,9 @@ namespace Statistics.Distributions
         }
         public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(SampleSize, numberGenerator));
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
-        public string Print() => $"ScaledBeta(alpha: {base.A}, beta: {base.B}, range: [{Minimum}, {Maximum}], sample size: {SampleSize})";
-        #endregion
-        //#region IOrdinate Functions
-        //public double GetValue(double sampleProbability = 0.5) => InverseCDF(sampleProbability);
-        //public bool Equals<T>(IOrdinate<T> ordinate) => ordinate.OrdinateType == typeof(IDistribution) ? Equals((IDistribution)ordinate) : false;
-        //#endregion        
+        public string Print(bool round = false) => round ? Print(_Distribution.A, _Distribution.B, Range.Min, (Range.Max - Range.Min), SampleSize): $"ScaledBeta(alpha: {_Distribution.A}, beta: {_Distribution.B}, range: [{_Distribution.Location}, {(_Distribution.Location + _Distribution.Scale).Print()}], sample size: {SampleSize})";
+
+        #endregion        
         public static Beta4Parameters Fit(IEnumerable<double> data)
         {
             if (data.IsNullOrEmpty()) throw new ArgumentException("The provided data is invalid because it is null or an empty.");
@@ -88,7 +112,7 @@ namespace Statistics.Distributions
                 double sampleSize = 3 * bound1 / bound2;
                 double intermediateParameterQuantity = Math.Sqrt(1 + (16 * (sampleSize + 1) / (sampleSize + 2) * (sampleSize + 2) * skew * skew));
                 double alpha = 0.5 * sampleSize * (1 + 1 / intermediateParameterQuantity), beta = 0.5 * sampleSize * (1 - 1 / intermediateParameterQuantity);
-                if (!(alpha > 0 && beta > 0)) throw new ArgumentException("The provided data can not be approximated by a beta distribution");
+                if (!(alpha > 0 && beta > 0)) throw new ArgumentException($"The data can not be approximated by a beta distribution because beta distributions are defined by 2 positive exponential shape parameters, referred to as alpha and beta. In this case: Beta(alpha: {alpha}, beta: {beta}) the specified or computed parameters are invalid.");
                 else
                 {
                     MathNet.Numerics.Distributions.Beta fit = new MathNet.Numerics.Distributions.Beta(alpha, beta);
@@ -115,6 +139,7 @@ namespace Statistics.Distributions
                      *      - skewness and kurtosis are non-dimensional and therefore require no transformation (i.e. they are normalized by (proportional to) standard deviation 
                      */
                     double location = fit.Mean * (right - left) + left, variance = fit.Variance * Math.Pow(right - left, 2);
+                    // I may be over thinking the equation above. location may be a and a - c may be the scale. 
                     return new Beta4Parameters(alpha, beta, location, Math.Pow(variance, 1 / 2), data.Count());
                 }
             }

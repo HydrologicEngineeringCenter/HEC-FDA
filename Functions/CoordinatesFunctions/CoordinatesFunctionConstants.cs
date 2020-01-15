@@ -13,8 +13,10 @@ namespace Functions.CoordinatesFunctions
         #region Properties
         public List<ICoordinate> Coordinates { get; }
 
-        public Tuple<double, double> Range { get; }
-        public Tuple<double, double> Domain { get; }
+        //public Tuple<double, double> Range { get; }
+        public Utilities.IRange<double> Range { get; }
+        //public Tuple<double, double> Domain { get; }
+        public Utilities.IRange<double> Domain { get; }
         public InterpolationEnum Interpolator { get; }
         public OrderedSetEnum Order { get; }
         private Func<int, double, double> InterpolationFunction { get; }
@@ -34,8 +36,10 @@ namespace Functions.CoordinatesFunctions
                 IsInvertible = IsInvertibleFunction();
             }
             Order = SetTheOrder(); //ComputeSetOrder();
-            Range = new Tuple<double, double>(Coordinates[0].Y.Value(), Coordinates[Coordinates.Count - 1].Y.Value());
-            Domain = new Tuple<double, double>(Coordinates[0].X.Value(), Coordinates[Coordinates.Count - 1].X.Value());
+            Range = Utilities.IRangeFactory.Factory(Coordinates.First().Y.Value(), Coordinates.Last().Y.Value());
+            //Range = new Tuple<double, double>(Coordinates[0].Y.Value(), Coordinates[Coordinates.Count - 1].Y.Value());
+            Domain = Utilities.IRangeFactory.Factory(Coordinates.First().X.Value(), Coordinates.Last().X.Value());
+            //Domain = new Tuple<double, double>(Coordinates[0].X.Value(), Coordinates[Coordinates.Count - 1].X.Value());
             Interpolator = interpolation;
             InterpolationFunction = SetInterpolator(interpolation);
             InverseInterpolationFunction = IsInvertible ? SetInverseInterpolator(interpolation) : null;
@@ -87,7 +91,7 @@ namespace Functions.CoordinatesFunctions
 
         private bool IsValid(List<ICoordinate> coordinates)
         {
-            if (Utilities.Validation.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate>))
+            if (Utilities.Validate.IsNullOrEmpty(coordinates as ICollection<ICoordinate>))
             {
                 return false;
             }
@@ -369,7 +373,7 @@ namespace Functions.CoordinatesFunctions
         #region F(x)
         public Constant F(Constant x)
         {
-            if (Utilities.Validation.IsNull(x)) throw new ArgumentNullException("The specified x value is invalid because it is null");
+            if (Utilities.Validate.IsNull(x)) throw new ArgumentNullException("The specified x value is invalid because it is null");
             else return F(x);
         }
         public IOrdinate F(IOrdinate x)
@@ -395,15 +399,15 @@ namespace Functions.CoordinatesFunctions
             }
             return new Constant(InterpolationFunction(j, x.Value()));
         }
-        private bool IsOnDomain(double x) => x < Domain.Item1 || x > Domain.Item2 ? false : true;
+        private bool IsOnDomain(double x) => x < Domain.Min || x > Domain.Max ? false : true;
         #endregion
 
         #region InverseF(y)
        
         public IOrdinate InverseF(IOrdinate y)
         {
-            if (Utilities.Validation.IsNull(y)) throw new ArgumentNullException("The specified y value is invalid because it is null");
-            if (!Utilities.Validation.IsFinite(y.Value())) throw new ArgumentOutOfRangeException(string.Format("The specified y value: {0} is not finite.", y));
+            if (Utilities.Validate.IsNull(y)) throw new ArgumentNullException("The specified y value is invalid because it is null");
+            if (!Utilities.Validate.IsFinite(y.Value())) throw new ArgumentOutOfRangeException(string.Format("The specified y value: {0} is not finite.", y));
             if (!IsInvertible) throw new InvalidOperationException("The function InverseF(y) is invalid for this set of coordinates. The inverse of F(x) is not a function, because one or more y values maps to multiple x values");
             if (!IsOnRange(y.Value())) throw new ArgumentOutOfRangeException(string.Format("The specified y values: {0} is invalid because it is not on the domain of the inverse coordinates function [{1}, {2}] (e.g. range of coordinates function).",
                 y, Coordinates[0].Y.Value(), Coordinates[Coordinates.Count - 1].Y.Value()));
@@ -418,7 +422,7 @@ namespace Functions.CoordinatesFunctions
         private double InverseF(double y, int i)
         {
             // TODO: IsFinite() IsNaN() check
-            if (!Utilities.Validation.IsFinite(y)) throw new ArgumentOutOfRangeException(string.Format("The specified y value: {0} is not finite.", y));
+            if ( !Utilities.Validate.IsFinite(y)) throw new ArgumentOutOfRangeException(string.Format("The specified y value: {0} is not finite.", y));
             // TODO: OnRange()  check  - so this works with decreasing functions.
             if (!IsOnRange(y)) throw new ArgumentOutOfRangeException(string.Format("The specified y values: {0} is invalid because it is not on the domain of the inverse coordinates function [{1}, {2}] (e.g. range of coordinates function).",
                 y, Coordinates[0].Y.Value(), Coordinates[Coordinates.Count - 1].Y.Value()));
@@ -428,7 +432,7 @@ namespace Functions.CoordinatesFunctions
             if (Coordinates[i + 1].Y.Value() == y) return Coordinates[i + 1].Y.Value();
             else return InverseInterpolationFunction(i, y);
         }
-        private bool IsOnRange(double y) => y < Range.Item1 || y > Range.Item2 ? false : true;     
+        private bool IsOnRange(double y) => y < Range.Min || y > Range.Max ? false : true;     
         #endregion
 
         #region Compose()
@@ -539,7 +543,7 @@ namespace Functions.CoordinatesFunctions
             bool retval = (i == I || j == J);
             return retval;
         }
-        private string NoOverlapMessage(IFunction g) => string.Format("The functional composition operation could not be performed. The range of F: [{0}, {1}] in the composition equation F(G(x)) does not overlap the domain of G: [{2}, {3}].", Range.Item1, Range.Item2, g.Domain.Item1, g.Domain.Item2);
+        private string NoOverlapMessage(IFunction g) => string.Format("The functional composition operation could not be performed. The range of F: [{0}, {1}] in the composition equation F(G(x)) does not overlap the domain of G: [{2}, {3}].", Range.Min, Range.Max, g.Domain.Min, g.Domain.Max);
         #endregion
 
         #region RiemannSum()

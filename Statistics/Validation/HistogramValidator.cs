@@ -1,25 +1,46 @@
-﻿using System.Collections.Generic;
+﻿using Statistics;
+using System.Collections.Generic;
 using System.Linq;
-
+using System.Text;
 using Utilities;
 
 namespace Statistics.Validation
 {
     public class HistogramValidator : IValidator<IHistogram>
     {
-        public bool IsValid(IHistogram entity, out IEnumerable<IMessage> errors)
+        public bool IsValid(IHistogram obj, out IEnumerable<IMessage> msgs)
         {
-            errors = ReportErrors(entity);
-            return !errors.Any();
+            msgs = ReportErrors(obj);
+            return msgs.Max() < IMessageLevels.Error;
         }
-        public IEnumerable<IMessage> ReportErrors(IHistogram entity)
+        public IEnumerable<IMessage> ReportErrors(IHistogram obj)
         {
-            List<IMessage> errors = new List<IMessage>();
-            if (entity.IsNull()) throw new System.ArgumentNullException(nameof(entity), "The required IHistogram parameter is null.");
-            if (entity.SampleSize < 1) errors.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The histogram contains no observations (SampleSize: {entity.SampleSize}) and therefore cannot be used."));
-            if (entity.Bins.Length < 1) errors.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The histogram contains no bins and therefore cannot be used."));
-            if (entity.Bins.Length == 1) errors.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The histogram only contains 1 bin. This is likely to lead to unexpected results."));
-            return errors;
+            List<IMessage> msgs = new List<IMessage>();
+            if (obj.IsNull()) throw new System.ArgumentNullException(nameof(obj), "The IHistogram can not be validated because it is null.");
+            if (obj.SampleSize < 1 || obj.Bins.Length < 1) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"{Resources.InvalidParameterizationNotice(obj.Print(true))} It requires: {Parameters()}."));
+            if (obj.Bins.Length == 1) msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The histogram only contains 1 bin. This is likely to lead to unexpected results."));
+            msgs.AddRange(PrintBinErrors(obj.Bins));
+            return msgs;
+        }
+        private IEnumerable<IMessage> PrintBinErrors(IBin[] bins)
+        {
+            List<IMessage> ret = new List<IMessage>();
+            for (int i = 0; i < bins.Length; i++)
+            {
+                if (bins[i].Messages.Any())
+                {
+                    IMessage[] msgs = bins[i].Messages.ToArray();
+                    IMessageLevels level = IMessageLevels.NotSet;
+                    StringBuilder binMsg = new StringBuilder($"Histogram bin {i + 1} of {bins.Length.Print()} contains the following {msgs.Length} messages: \r\n");
+                    for (int j = 0; j < msgs.Length; j++)
+                    {
+                        if (msgs[j].Level < level) level = msgs[j].Level;
+                        binMsg.Append($"\t{msgs[j].Notice}.\r\n");
+                    }
+                    ret.Add(IMessageFactory.Factory(level, binMsg.ToString()));
+                }
+            }
+            return ret;
         }
 
         /// <summary>
@@ -34,7 +55,7 @@ namespace Statistics.Validation
         public static bool IsConstructable(double min, double max, int nBins, out IList<string> errors)
         {
             errors = new List<string>();
-            if (nBins < 1) errors.Add($"The requested number of bins: {nBins} is invalid, because it is not a positive integer.");           
+            if (nBins < 1) errors.Add($"The requested number of bins: {nBins.Print()} is invalid, because it is not a positive integer.");           
             bool returnvalue2 = nBins < 1 ? IsConstructable(min, max, double.MinValue, out IList<string> errors2) : IsConstructable(min, max, (max - min) / nBins, out errors2);
             errors.Concat(errors2);
             return errors.Any() || !returnvalue2;
@@ -51,8 +72,8 @@ namespace Statistics.Validation
         {
             errors = new List<string>();
             if (!binwidths.IsFinite() || !(binwidths > 0)) errors.Add($"The requested bin width: {binwidths} is not valid because it is not a positive finite value.");
-            if (max - min < binwidths) errors.Add($"The requested bin width: {binwidths} is invalid because it is great than the requested {typeof(Histograms.Histogram)} range: [{min}, {max}).");
-            if (!(min.IsFinite() && max.IsFinite() && Validate.IsRange(min, max))) errors.Add($"The requested range: [{min}, {max}) is invalid.");
+            if (max - min < binwidths) errors.Add($"The requested bin width: {binwidths.Print()} is invalid because it is great than the requested {typeof(Histograms.Histogram)} range: [{min.Print()}, {max.Print()}).");
+            if (!(min.IsFinite() && max.IsFinite() && Validate.IsRange(min, max))) errors.Add($"The requested range: [{min.Print()}, {max.Print()}) is invalid.");
             return !errors.Any();
         }
         public static bool IsConstructable(IData data, double min, double max, double width, out IList<string> errors)
@@ -79,6 +100,7 @@ namespace Statistics.Validation
             if (criterias.IsNullOrEmpty()) errors.Add($"The required {nameof(data)} parameter is null or empty.");
             return !errors.Any();
         }
+        private static string Parameters() => $"(1) one or more binned observations in (2) one or more valid bins on (3) a logical finite range.";
         //public static bool IsConstructable(double min, double max, IEnumerable<double> data, double binwidths, out IList<string> errors)
         //{
         //    errors = new List<string>();

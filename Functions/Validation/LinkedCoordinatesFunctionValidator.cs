@@ -2,9 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Utilities;
-using Utilities.Validation;
 
 namespace Functions.Validation
 {
@@ -32,7 +30,7 @@ namespace Functions.Validation
             for (int i = 0; i < entity.Functions.Count - 2; i++)
             {
                 //is the previous function's max xValue less than the next function's min xValue
-                if (entity.Functions[i].Domain.Item2 >= entity.Functions[i + 1].Domain.Item1)
+                if (entity.Functions[i].Domain.Max >= entity.Functions[i + 1].Domain.Min)
                 {
                     errors.Add(IMessageFactory.Factory(IMessageLevels.FatalError, "The list of functions have overlapping domains. This is not allowed."));
                     break;

@@ -7,7 +7,7 @@ namespace Utilities
     /// <summary>
     /// Defines the minimum and maximum values of a numerical range.
     /// </summary>
-    public interface IRange<T>
+    public interface IRange<T>: IMessagePublisher
     {
         /// <summary>
         /// The minimum value.
@@ -20,8 +20,9 @@ namespace Utilities
         /// <summary>
         /// Prints a representation of the range.
         /// </summary>
+        /// <param name="round"> <see langword="true"/> if some values should be rounded to produce a more readable string. </param>
         /// <returns> A string representing the range. </returns>
-        string Print();
+        string Print(bool round = false);
         bool Equals<U>(IRange<U> range); 
     }
 }

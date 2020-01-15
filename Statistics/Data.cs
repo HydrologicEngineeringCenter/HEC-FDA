@@ -11,8 +11,6 @@ namespace Statistics
         #region Properties
         public bool IsValid { get; }
         public IEnumerable<IMessage> Messages { get; }
-        //public double Minimum { get; }
-        //public double Maximum { get; }
         public IRange<double> Range { get; }
         public IOrderedEnumerable<double> Elements { get; }
         public int SampleSize { get; }
@@ -20,13 +18,15 @@ namespace Statistics
 
         #region Constructor
         public Data(IEnumerable<double> data)
-        {
-            var datasets = SplitData(data);
-            Elements = datasets.Item1.OrderBy(i => i);
-            Range = IRangeFactory.Factory(Elements.First(), Elements.Last());
+        {         
+            var sets = SplitData(data);
             SampleSize = Elements.Count();
+            Elements = sets.Item1.OrderBy(i => i);
+            Range = IRangeFactory.Factory(Elements.First(), Elements.Last());
+            IMessageBoard msgBoard = IMessageBoardFactory.Factory(DataMessages(sets.Item2));
             IsValid = Validate(new Validation.DataValidator(), out IEnumerable<IMessage> errors);
-            Messages = AddDataMessages(errors, datasets.Item2);
+            msgBoard.PostMessages(errors);
+            Messages = msgBoard.ReadMessages();
         }
         #endregion
 
@@ -46,17 +46,14 @@ namespace Statistics
             return new Tuple<IEnumerable<double>, IEnumerable<double>>(finite, nonfinite);
         }
         /// <summary>
-        /// Adds data messages to the validator error messages.
+        /// Generates data message if one is necessary.
         /// </summary>
-        /// <param name="errors"> The validator error messages. </param>
         /// <param name="nonFiniteData"> The non-finite data elements returned from the <see cref="SplitData(IEnumerable{double})"/> method. </param>
-        /// <param name="requestedRange"> The requested histogram range expressed as a Tuple. </param>
-        /// <returns></returns>
-        private IEnumerable<IMessage> AddDataMessages(IEnumerable<IMessage> errors, IEnumerable<double> nonFiniteData)
+        /// <returns> An <see cref="IMessage"/> or an empty message. </returns>
+        private IMessage DataMessages(IEnumerable<double> nonFiniteData)
         {
-            var msgs = errors.ToList();
-            if (!nonFiniteData.IsNullOrEmpty()) msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"{nonFiniteData.Count()} {double.NegativeInfinity}, {double.PositiveInfinity}, {double.NaN} elements where removed from the provided data."));
-            return msgs;
+            if (!nonFiniteData.IsNullOrEmpty()) return IMessageFactory.Factory(IMessageLevels.Message, $"{nonFiniteData.Count()} {double.NegativeInfinity}, {double.PositiveInfinity} or {double.NaN} elements where removed from the provided data elements.");
+            else return IMessageFactory.Factory(IMessageLevels.NotSet, "");
         }
         #endregion 
         public bool Validate(IValidator<IData> validator, out IEnumerable<IMessage> errors)
