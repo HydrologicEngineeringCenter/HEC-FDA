@@ -19,7 +19,7 @@ namespace Statistics.Validation
         {
             List<IMessage> msgs = new List<IMessage>();
             if (obj.IsNull()) throw new ArgumentNullException(nameof(obj), "The scaled beta distribution could not be validated because it is null.");
-            if (!(obj.SampleSize > 0)) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"{Resources.InvalidParameterizationNotice(obj.Print())} {Beta4Parameters.Requirements(false)} {Resources.SampleSizeSuggestion()}"));
+            if (!(obj.SampleSize > 0)) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"{Resources.InvalidParameterizationNotice(obj.Print())} {obj.Requirements(false)} {Resources.SampleSizeSuggestion()}"));
             return msgs;    
         }
 
@@ -33,7 +33,7 @@ namespace Statistics.Validation
             string error = "";
             if (!alpha.IsOnRange(0, double.MaxValue) || !beta.IsOnRange(0, double.MaxValue) || !scale.IsOnRange(0, double.MaxValue, false))
             {
-                error += $"{Resources.FatalParameterizationNotice(Beta4Parameters.Print(alpha, beta, location, scale, n))} {Beta4Parameters.Requirements(true)} {Resources.SampleSizeSuggestion()}";
+                error += $"{Resources.FatalParameterizationNotice(Beta4Parameters.Print(alpha, beta, location, scale, n))} {Beta4Parameters.RequiredParameterization(true)} {Resources.SampleSizeSuggestion()}";
             }
             return error;
         }

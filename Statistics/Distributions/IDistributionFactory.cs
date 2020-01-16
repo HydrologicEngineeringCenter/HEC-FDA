@@ -14,7 +14,34 @@ namespace Statistics
         //TODO: Validate
         //TODO: Call other constructors with inputs and IDistributions Enum (may require switch case on enum values) 
         
-       
+       public static string PrintParamaterizationRequirements(IDistributions type)
+        {
+            switch (type) 
+            {
+                case IDistributions.Histogram:
+                    return Histograms.Histogram.RequiremedParameterization(true);
+                case IDistributions.Beta4Parameters:
+                    return Distributions.Beta4Parameters.RequiredParameterization(true);
+                case IDistributions.LogPearsonIII:
+                    return Distributions.LogPearsonIII.RequiredParameterization(true);
+                case IDistributions.Normal:
+                    return Distributions.Normal.RequiredParameterization(true);
+                case IDistributions.Triangular:
+                    return Distributions.Triangular.RequiredParameterization(true);
+                case IDistributions.Uniform:
+                    return Distributions.Uniform.RequiredParameterization(true);
+                case IDistributions.TruncatedBeta4Parameter:
+                case IDistributions.TruncatedHistogram:
+                case IDistributions.TruncatedNormal:
+                case IDistributions.TruncatedTriangular:
+                case IDistributions.TruncatedUniform:
+                    return Distributions.TruncatedDistribution.RequiredParameterization(true);
+                case IDistributions.NotSupported:
+                default:
+                    throw new NotImplementedException();
+            }
+
+        }
 
         public static IDistribution Fit(IEnumerable<double> sample, IDistributions returnType)
         {

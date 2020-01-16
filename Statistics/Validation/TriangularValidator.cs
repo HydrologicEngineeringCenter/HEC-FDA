@@ -22,7 +22,7 @@ namespace Statistics.Validation
         {
             List<IMessage> msgs = new List<IMessage>();
             if (obj.IsNull()) throw new ArgumentNullException(nameof(obj), "The triangular distribution cannot be validated because it is null.");
-            if (obj.SampleSize < 1) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"{Resources.InvalidParameterizationNotice(obj.Print(true))} {Triangular.Requirements(false)} {Resources.SampleSizeSuggestion()}"));
+            if (obj.SampleSize < 1) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"{Resources.InvalidParameterizationNotice(obj.Print(true))} {obj.Requirements(false)} {Resources.SampleSizeSuggestion()}"));
             return msgs;
         }
 
@@ -35,7 +35,7 @@ namespace Statistics.Validation
         {
             string msg = "";
             if (range.IsNull()) msg += "The triangular distribution cannot be constructed because it range is null.";
-            if (!mode.IsFinite() || range.Messages.Max() > IMessageLevels.Message || !Validate.IsOnRange(mode, range.Min, range.Max)) msg += $"{Resources.FatalParameterizationNotice(Triangular.Print(mode, range))} {Triangular.Requirements(true)} {Resources.SampleSizeSuggestion()}";
+            if (!mode.IsFinite() || range.Messages.Max() > IMessageLevels.Message || !Validate.IsOnRange(mode, range.Min, range.Max)) msg += $"{Resources.FatalParameterizationNotice(Triangular.Print(mode, range))} {Triangular.RequiredParameterization(true)} {Resources.SampleSizeSuggestion()}";
             return msg;
         }
     }

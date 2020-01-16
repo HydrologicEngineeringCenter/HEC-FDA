@@ -44,13 +44,15 @@ namespace Statistics.Distributions
             return validator.IsValid(this, out msgs);
         }
         internal static string Print(double mean, double sd, double skew, int n) => $"log PearsonIII(mean: {mean.Print()}, sd: {sd.Print()}, skew: {skew.Print()}, sample size: {n.Print()})";
-        public static string Requirements(bool printNotes = true)
+        internal static string RequiredParameterization(bool printNotes = true)
         {
-            string s = $"The log PearsonIII distribution requires the following parameterization: log PearsonIII(mean: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sd: [{double.MinValue.Print()}, {double.MaxValue.Print()}], skew: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sample size: > 0).";
+            string s = $"The log PearsonIII distribution requires the following parameterization: {Parameterization()}.";
             if (printNotes) s += RequirementNotes();
             return s;
         }
-        public static string RequirementNotes() => $"The distribution parameters are computed from log base 10 random numbers (e.g. the log Pearson III distribution is a Pearson III distribution of log base 10 values).";
+        internal static string Parameterization() => $"log PearsonIII(mean: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sd: [{double.MinValue.Print()}, {double.MaxValue.Print()}], skew: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sample size: > 0)";       
+        internal static string RequirementNotes() => $"The distribution parameters are computed from log base 10 random numbers (e.g. the log Pearson III distribution is a Pearson III distribution of log base 10 values).";
+        
         #region IDistribution Functions
         public double PDF(double x)
         {
@@ -92,6 +94,7 @@ namespace Statistics.Distributions
         }
         public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(SampleSize, numberGenerator));
         public string Print(bool round = false) => round ? Print(Mean, StandardDeviation, Skewness, SampleSize) : $"log PearsonIII(mean: {Mean}, sd: {StandardDeviation}, skew: {Skewness}, sample size: {SampleSize})";
+        public string Requirements(bool printNotes) => RequiredParameterization(printNotes);
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
 

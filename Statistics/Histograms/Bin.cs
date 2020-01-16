@@ -70,11 +70,12 @@ namespace Statistics.Histograms
         internal static string Print(double min, double max, int n) => $"Bin(count: {n.Print()}, range: [{min.Print()}, {max.Print()}]).";
         public static string Requirements(bool printNotes = true)
         {
-            string s = $"Histogram bins require the following parameterization: Bin(count: > 0, {Validation.Resources.DoubleRangeRequirements()}).";
+            string s = $"Histogram bins require the following parameterization: {Parameterization()}.";
             if (printNotes) s += RequirementNotes();
             return s;
         }
-        public static string RequirementNotes() => $"The number of observation in the bin, represented by the count parameter cannot exceed the maximum integer: {int.MaxValue.Print()} value.";
+        internal static string Parameterization() => $"Bin(count: [{0}, {int.MaxValue.Print()}], {Validation.Resources.DoubleRangeRequirements()})";
+        internal static string RequirementNotes() => $"The number of observation in the bin, represented by the count parameter cannot exceed the maximum integer: {int.MaxValue.Print()} value.";
         #endregion
 
         /// <summary>

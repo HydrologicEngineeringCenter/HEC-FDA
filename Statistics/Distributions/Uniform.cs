@@ -7,7 +7,7 @@ using Utilities;
 
 namespace Statistics.Distributions
 {
-    internal class Uniform: IDistribution: IValidate<Uniform>
+    internal class Uniform: IDistribution, IValidate<Uniform>
     {
         #region Fields and Properties
         private readonly MathNet.Numerics.Distributions.ContinuousUniform _Distribution;
@@ -36,9 +36,14 @@ namespace Statistics.Distributions
         #endregion
 
         #region Functions
-
+        public bool Validate(IValidator<Uniform> validator, out IEnumerable<IMessage> msgs)
+        {
+            return validator.IsValid(this, out msgs);
+        }
         internal static string Print(IRange<double> range) => $"Uniform(range: {range.Print(true)})";
-        internal static string Requirements() => $"The Uniform distribution requires the following parameterization: Uniform({Validation.Resources.DoubleRangeRequirements()}).";
+        internal static string RequiredParameterization(bool printNotes = false) => $"The Uniform distribution requires the following parameterization: {Parameterization()}.";
+        internal static string Parameterization() => $"Uniform({Validation.Resources.DoubleRangeRequirements()})"; 
+        
         #region IDistribution Functions
         public double PDF(double x) => _Distribution.Density(x);
         public double CDF(double x) => _Distribution.CumulativeDistribution(x);
@@ -55,6 +60,7 @@ namespace Statistics.Distributions
         }
         public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(SampleSize, numberGenerator));
         public string Print(bool round = false) => round ? Print(Range) : $"Uniform(range: {Range.Print()})";
+        public string Requirements(bool printNotes) => RequiredParameterization(printNotes);
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
 

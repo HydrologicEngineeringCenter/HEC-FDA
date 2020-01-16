@@ -36,7 +36,7 @@ namespace Statistics
         /// Computes the density of the distribution at the point x.
         /// </summary>
         /// <param name="x"> A value from the distribution. </param>
-        /// <returns> The portion of the distibution found at the point of <paramref name="x"/>. </returns>
+        /// <returns> The portion of the distribution found at the point of <paramref name="x"/>. </returns>
         double PDF(double x);        
         /// <summary>
         /// Computes the CDF of the distribution.
@@ -83,6 +83,12 @@ namespace Statistics
         /// <param name="round"> <see langword="true"/> if some values should be rounded to produce a more readable string. </param>
         /// <returns> A string in the form: <see cref="IDistribution.Type"/>(parameter1: value, parameter2: value, ...). </returns>
         string Print(bool round = false);
+        /// <summary>
+        /// Prints a string describing the parameterization requirements for the distribution
+        /// </summary>
+        /// <param name="printNotes"> Additional notes on the valid parameterization of the distribution, if any exist. </param>
+        /// <returns></returns>
+        string Requirements(bool printNotes);
         /// <summary>
         /// Compares two distributions for value equality.
         /// </summary>

@@ -50,8 +50,8 @@ namespace Statistics.Validation
         /// <param name="min"> The requested histogram minimum value (inclusive). </param>
         /// <param name="max"> The requested histogram maximum value (exclusive). </param>
         /// <param name="nBins"> The requested number of histogram bins. </param>
-        /// <param name="errors"> Error messages which are returned if the histogram is not constructable. </param>
-        /// <returns> A boolean describing the constructability of the requested histogram. </returns>
+        /// <param name="errors"> Error messages which are returned if the histogram is not constructible. </param>
+        /// <returns> A boolean describing the constructibility of the requested histogram. </returns>
         public static bool IsConstructable(double min, double max, int nBins, out IList<string> errors)
         {
             errors = new List<string>();
@@ -66,8 +66,8 @@ namespace Statistics.Validation
         /// <param name="min"> The requested histogram minimum value (inclusive). </param>
         /// <param name="max"> The requested histogram maximum value (exclusive). </param>
         /// <param name="binwidths"> The requested width of the histogram bins. </param>
-        /// <param name="errors"> Error messages which are returned if the histogram is not constructable. </param>
-        /// <returns> A boolean describing the constructability of the requested histogram. </returns>
+        /// <param name="errors"> Error messages which are returned if the histogram is not constructible. </param>
+        /// <returns> A boolean describing the constructibility of the requested histogram. </returns>
         public static bool IsConstructable(double min, double max, double binwidths, out IList<string> errors)
         {
             errors = new List<string>();

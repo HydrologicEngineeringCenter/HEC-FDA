@@ -33,7 +33,7 @@ namespace Statistics.Distributions
         #region Constructor
         public TruncatedDistribution(IDistribution distribution, double lowerBound = double.NegativeInfinity, double upperBound = double.PositiveInfinity)
         {
-            if (distribution.IsNull()) throw new ArgumentNullException(nameof(distribution), "The specified distribution parameter is invalid because it is nulll.");
+            if (distribution.IsNull()) throw new ArgumentNullException(nameof(distribution), "The specified distribution parameter is invalid because it is null.");
             _Distribution = distribution;
             IMessageBoard msgBoard = IMessageBoardFactory.Factory(_Distribution);
             Utilities.IRangeFactory.Factory(lowerBound == double.NegativeInfinity ? _Distribution.Range.Min : lowerBound, upperBound == double.PositiveInfinity ? _Distribution.Range.Max : upperBound);
@@ -49,6 +49,13 @@ namespace Statistics.Distributions
             return validator.IsValid(this, out msgs);
         }
         internal static string Print(IDistribution distribution, IRange<double> range) => $"TruncatedDistribution(distribution: {distribution.Print(true)}, truncated range: {range.Print(true)})";
+        internal static string RequiredParameterization(bool printNotes)
+        {
+            string msg = $"Truncated distributions replace values on the tail(s) of an IDistribution with specified maximum or minimum values. Thus a valid IDistribution and logical range: max > min are required as Truncated Distribution parameters.";
+            if (printNotes) msg += RequirementNotes();
+            return msg;
+        }
+        internal static string RequirementNotes() => $"If the minimum value is set to {double.NegativeInfinity} the left hand tail of the IDistribution will not be truncated. Similarly, if the maximum is set to {double.PositiveInfinity} the right hand tail of the IDistribution will not be truncated.";
         #region IDistribution Functions
         public double PDF(double x)
         {
@@ -98,6 +105,12 @@ namespace Statistics.Distributions
             return new TruncatedDistribution(distribution, Range.Min, Range.Max);
         }
         public string Print(bool round = false) => round ? Print(_Distribution, Range) : $"TruncatedDistribution(distribution: {_Distribution.Print()}, truncated range: {Range.Print()})";
+        public string Requirements(bool printNotes)
+        {
+            string msg = $"The truncated distribution requires the following parameterization: TruncatedDistribution(distribution: {_Distribution.Requirements(false)}, truncated range: [{double.NegativeInfinity}, {double.PositiveInfinity}] with range min < range max)";
+            if (printNotes) msg += RequirementNotes();
+            return msg;
+        }
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
 
        

@@ -80,7 +80,7 @@ namespace Statistics.Histograms
         public static IHistogram Fit(IData data, int nBins = 100) => IHistogramFactory.Factory(data, nBins);
         public static IHistogram Fit(IHistogram histogram, IData sample, IList<IConvergenceCriteria> criterias)
         {
-            // 1. Expand histogram bins to accomidate new sample data, place new data in the expended bins.
+            // 1. Expand histogram bins to accommodate new sample data, place new data in the expended bins.
             IHistogram newHistogram = new HistogramBinnedData(FillHistogramBins(ExpandHistogramRange(histogram, sample.Range), sample).ToArray());
             // 2. Get convergence results
             List<IConvergenceResult> results = CriteriaResults(criterias, histogram, newHistogram, sample.SampleSize);
@@ -98,7 +98,7 @@ namespace Statistics.Histograms
         /// <summary>
         /// Generates a list of quantile values for convergence testing (<seealso cref="IDistribution.InverseCDF(double)"/>). 
         /// </summary>
-        /// <param name="criteria"> Convergence critera containing the quantile values to be tested. </param>
+        /// <param name="criteria"> Convergence criteria containing the quantile values to be tested. </param>
         /// <returns> A <see cref="List{double}"/> containing the quantile values. </returns>
         private static List<double> QuantileValues(IHistogram histogram, IEnumerable<IConvergenceCriteria> criteria)
         {
@@ -217,12 +217,20 @@ namespace Statistics.Histograms
             bins.Add(new Bin(nextBin, n));
             return bins;
         }
-        #region IValidate Function
+        
         public bool Validate(IValidator<IHistogram> validator, out IEnumerable<IMessage> messages)
         {
             return validator.IsValid(this, out messages);
         }
-        #endregion
+        public static string Print(int n, int nBins, IRange<double> range) => $"Histogram(observations: {n.Print()}, bins: {nBins.Print()}, range: {range.Print(true)})";
+        public static string RequiremedParameterization(bool printNotes)
+        {
+            string msg = $"Histograms require the following parameterization: {Parameterization()}.";
+            if (printNotes) msg += RequirementNotes();
+            return msg;
+        }
+        public static string RequirementNotes() => $"The histogram must contain 1 or more bins (only one bin is unlikely to produce the desired results).";
+        public static string Parameterization() => $"Histogram(observations: [{1}, {int.MaxValue.Print()}], bins: {Bin.Parameterization()}, range: {Resources.DoubleRangeRequirements()})";
         #endregion
         #region IDistribution Functions
         public abstract double PDF(double x);
@@ -231,7 +239,8 @@ namespace Statistics.Histograms
         public abstract double Sample(Random r = null);
         public abstract double[] Sample(int n, Random r = null);
         public abstract IDistribution SampleDistribution(Random r);
-        public string Print() => $"Histogram(observations: {SampleSize}, bins: {Bins.Length}, range: {Range.Print()})";
+        public string Print(bool round) => round ? Print(SampleSize, Bins.Length, Range) : $"Histogram(observations: {SampleSize}, bins: {Bins.Length}, range: {Range.Print()})";
+        public string Requirements(bool printNotes) => RequiremedParameterization(printNotes);
         public bool Equals(IDistribution distribution) => distribution.Type == IDistributions.Histogram ? Equals((IHistogram)distribution) : false;
 
         public XElement WriteToXML()

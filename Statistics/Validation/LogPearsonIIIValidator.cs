@@ -22,7 +22,7 @@ namespace Statistics.Validation
         {
             List<IMessage> msgs = new List<IMessage>();
             if (obj.IsNull()) throw new ArgumentNullException(nameof(obj), "The log Pearson III distribution could not be validated because it is null.");
-            if (!(obj.SampleSize > 0)) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"{Resources.InvalidParameterizationNotice(obj.Print(true))} {LogPearsonIII.Requirements(false)} {Resources.SampleSizeSuggestion()}."));
+            if (!(obj.SampleSize > 0)) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"{Resources.InvalidParameterizationNotice(obj.Print(true))} {obj.Requirements(false)} {Resources.SampleSizeSuggestion()}."));
             if (!obj.Range.IsFinite()) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"{Resources.NonFiniteRangeNotice(obj)}"));
             return msgs;
         }
@@ -34,7 +34,7 @@ namespace Statistics.Validation
         internal static string ReportFatalError(double mean, double sd, double skew, int n)
         {
             string msg = "";
-            if (!mean.IsFinite() || !sd.IsFinite() || !skew.IsFinite()) msg += $"{Resources.FatalParameterizationNotice(LogPearsonIII.Print(mean, sd, skew, n))} {LogPearsonIII.Requirements(true)} {Resources.SampleSizeSuggestion()}";
+            if (!mean.IsFinite() || !sd.IsFinite() || !skew.IsFinite()) msg += $"{Resources.FatalParameterizationNotice(LogPearsonIII.Print(mean, sd, skew, n))} {LogPearsonIII.RequiredParameterization(true)} {Resources.SampleSizeSuggestion()}";
             return msg;
         }
     }
