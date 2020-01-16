@@ -51,7 +51,7 @@ namespace FdaViewModel.GeoTech
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/FailureFunction.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FailureFunction.png");
 
             Description = description;
             if (Description == null) Description = "";
@@ -183,6 +183,10 @@ namespace FdaViewModel.GeoTech
             vm.Description = element.Description;
             vm.Curve = element.Curve;
             vm.SelectedLateralStructure = element.SelectedLateralStructure;
+            if (vm.EditorVM != null)
+            {
+                vm.EditorVM.Function = element.Curve.Function;
+            }
         }
         #endregion
 

@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FdaLogging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Perforce\HEC_FDA\FDA_dev\FdaLogger\FdaLogger\bin\Debug\netstandard2.0\FdaLogging.dll</HintPath>
+    </Reference>
     <Reference Include="netstandard" />
     <Reference Include="Consequences_Assist">
       <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\Consequences_Assist.dll</HintPath>
@@ -42,9 +46,6 @@
     <Reference Include="DatabaseManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\DatabaseManager.dll</HintPath>
-    </Reference>
-    <Reference Include="FdaLogging">
-      <HintPath>..\lib\FdaLogging.dll</HintPath>
     </Reference>
     <Reference Include="LifeSimGIS, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -104,13 +105,14 @@
     <Compile Include="Conditions\AddRatingCurveToConditionVM.cs" />
     <Compile Include="Conditions\AddStageDamageToConditionVM.cs" />
     <Compile Include="Conditions\ConditionBuilder.cs" />
-    <Compile Include="Conditions\ConditionFactory.cs" />
+    <Compile Include="Conditions\ConditionsElementFactory.cs" />
     <Compile Include="Conditions\ConditionsEditorVM.cs" />
     <Compile Include="Conditions\ConditionsElement.cs" />
     <Compile Include="Conditions\ConditionsOwnerElement.cs" />
     <Compile Include="Conditions\ConditionsTreeOwnerElement.cs" />
     <Compile Include="Editors\AnalyticalFrequencyCurveEditor.cs" />
     <Compile Include="Editors\BaseEditorVM.cs" />
+    <Compile Include="Editors\BaseLoggingEditorVM.cs" />
     <Compile Include="Editors\CurveEditorFactory.cs" />
     <Compile Include="Editors\CurveEditorVM.cs" />
     <Compile Include="Editors\EditorActionManager.cs" />
@@ -166,6 +168,7 @@
     <Compile Include="Inventory\OccupancyTypes\deleteMeTestClass.cs" />
     <Compile Include="Inventory\StructureInventoryBaseElement.cs" />
     <Compile Include="Inventory\StructureInventoryOwnerElement.cs" />
+    <Compile Include="NamespaceDoc.cs" />
     <Compile Include="Output\CreateEconImportFileVM.cs" />
     <Compile Include="Output\IndexLocationsVM.cs" />
     <Compile Include="Output\LinkedPlotsUpdatedVM.cs" />
@@ -249,7 +252,7 @@
     <Compile Include="Utilities\RemoveMapFeatureEventArgs.cs" />
     <Compile Include="Utilities\RenameVM.cs" />
     <Compile Include="Utilities\RowItem.cs" />
-    <Compile Include="Utilities\Transactions\ITransactionsAndMessages.cs" />
+    <Compile Include="Utilities\Transactions\IDisplayLogMessages.cs" />
     <Compile Include="Utilities\Transactions\Transaction.cs" />
     <Compile Include="Utilities\Transactions\TransactionAndMessageBase.cs" />
     <Compile Include="Utilities\Transactions\TransactionEnum.cs" />
@@ -287,7 +290,7 @@
       <Name>Functions</Name>
     </ProjectReference>
     <ProjectReference Include="..\Model\Model.csproj">
-      <Project>{7fe104fd-b277-4dbe-b892-01f61262a82f}</Project>
+      <Project>{b4909c07-fc85-49d6-867a-0e00d311a991}</Project>
       <Name>Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\Model\Model.csproj">

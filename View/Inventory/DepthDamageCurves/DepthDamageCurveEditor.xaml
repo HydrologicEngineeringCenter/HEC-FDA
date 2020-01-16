@@ -1,12 +1,12 @@
-﻿<UserControl x:Class="Fda.Inventory.DepthDamageCurves.DepthDamageCurveEditor"
+﻿<UserControl x:Class="View.Inventory.DepthDamageCurves.DepthDamageCurveEditor"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Fda.Inventory.DepthDamageCurves"
+             xmlns:local="clr-namespace:View.Inventory.DepthDamageCurves"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
-                          xmlns:utils="clr-namespace:Fda.Utilities"
+                          xmlns:utils="clr-namespace:View.Utilities"
 
              d:DesignHeight="700" d:DesignWidth="1000">
     <Grid>
@@ -33,13 +33,13 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Button Name="CreateNewButton" Margin="0" Width="20" Height="20" Grid.Column="0" ToolTip="Add New Depth-Damage Curve" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" Click="CreateNewButton_Click">
-                <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
+                <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Add.png"/>
             </Button>
             <Button Name="CopyButton" Margin="3,0,0,0" Padding="0" Grid.Column="2" Height="20" Width="20" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Copy Current Depth-Damage Curve" Click="CopyButton_Click">
-                <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Copy.png"/>
+                <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Copy.png"/>
             </Button>
             <Button Name="DeleteButton" Margin="3,0,0,0" Width="20" Height="20" Grid.Column="1" ToolTip="Delete Depth-Damage Curve" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" Click="DeleteButton_Click">
-                <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Delete.png"/>
+                <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Delete.png"/>
             </Button>
             
 

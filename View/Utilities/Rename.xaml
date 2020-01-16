@@ -1,10 +1,10 @@
-﻿<UserControl x:Class="Fda.Utilities.Rename"
+﻿<UserControl x:Class="View.Utilities.Rename"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Fda.Utilities"
-        xmlns:OkClose="clr-namespace:Fda.Utilities"
+        xmlns:local="clr-namespace:View.Utilities"
+        xmlns:OkClose="clr-namespace:View.Utilities"
         xmlns:ViewModel="clr-namespace:FdaViewModel.Utilities;assembly=FdaViewModel"
         mc:Ignorable="d"
          >

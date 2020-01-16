@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using FdaViewModel.Utilities;
 using Model;
+using Model.Inputs.Functions.ImpactAreaFunctions;
 
 namespace FdaViewModel.StageTransforms
 {
@@ -78,7 +79,7 @@ namespace FdaViewModel.StageTransforms
             List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
-            ImpactAreaFunctionFactory.Factory(func, Model.Condition.ComputePoint.ImpactAreaFunctions.ImpactAreaFunctionEnum.Rating);
+            ImpactAreaFunctionFactory.Factory(func, ImpactAreaFunctionEnum.Rating);
             //Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(97), new Statistics.None(99), new Statistics.None(104), new Statistics.None(109), new Statistics.None(110), new Statistics.None(114), new Statistics.None(116), new Statistics.None(119), new Statistics.None(120), new Statistics.None(121) };
             //Curve = new Statistics.UncertainCurveIncreasing(xValues, yValues,true,true,Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 

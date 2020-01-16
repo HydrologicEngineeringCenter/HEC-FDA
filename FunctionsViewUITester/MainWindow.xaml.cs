@@ -2,6 +2,7 @@
 using Functions.CoordinatesFunctions;
 using FunctionsView.ViewModel;
 using Model;
+using Model.Inputs.Functions.ImpactAreaFunctions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -48,7 +49,7 @@ namespace FunctionsViewUITester
             List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
-            IFdaFunction defaultCurve = ImpactAreaFunctionFactory.Factory(func, Model.Condition.ComputePoint.ImpactAreaFunctions.ImpactAreaFunctionEnum.Rating);
+            IFdaFunction defaultCurve = ImpactAreaFunctionFactory.Factory(func, ImpactAreaFunctionEnum.Rating);
             return defaultCurve;
         }
 

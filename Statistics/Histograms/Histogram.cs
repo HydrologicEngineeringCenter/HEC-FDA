@@ -24,6 +24,7 @@ namespace Statistics.Histograms
         public double StandardDeviation { get; }
         public IRange<double> Range { get; }
         public int SampleSize { get; }
+        public double Mode { get; }
         public IDistributions Type => IDistributions.Histogram;
         #endregion
         #region IConverge Properties

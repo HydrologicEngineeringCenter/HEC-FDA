@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Conditions
+namespace View.Conditions
 {
     /// <summary>
     /// Interaction logic for AddRatingCurveToCondition.xaml

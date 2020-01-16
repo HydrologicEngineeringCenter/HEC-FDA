@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FdaViewModel.Utilities;
 using Model;
+using Model.Inputs.Functions.ImpactAreaFunctions;
 using Statistics;
 
 namespace FdaViewModel.GeoTech
@@ -74,7 +75,7 @@ namespace FdaViewModel.GeoTech
             List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
-            Curve = ImpactAreaFunctionFactory.Factory(func, Model.Condition.ComputePoint.ImpactAreaFunctions.ImpactAreaFunctionEnum.LeveeFailure);
+            Curve = ImpactAreaFunctionFactory.Factory(func, ImpactAreaFunctionEnum.LeveeFailure);
 
             LateralStructureList = leveeList;
             SaveAction = saveAction;

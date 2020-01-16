@@ -70,7 +70,7 @@ public override Type[] ChangeTableColumnTypes
         #region utilities
         private object[] GetRowDataFromElement(AnalyticalFrequencyElement element)
         {
-            return new object[] { element.Name, element.LastEditDate, element.Description };
+            return new object[] { element.Name, element.LastEditDate, element.Description};
             //todo: Refactor: CO
                 //element.Distribution.GetMean, element.Distribution.GetStDev, element.Distribution.GetG,
                 //element.Distribution.GetSampleSize };

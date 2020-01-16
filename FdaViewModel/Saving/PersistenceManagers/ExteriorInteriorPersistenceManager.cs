@@ -2,6 +2,7 @@
 using FdaViewModel.Utilities;
 using Model;
 using Model.Condition.ComputePoint.ImpactAreaFunctions;
+using Model.Inputs.Functions.ImpactAreaFunctions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,11 +16,11 @@ namespace FdaViewModel.Saving.PersistenceManagers
     public class ExteriorInteriorPersistenceManager : UndoRedoBase, IPersistableWithUndoRedo
     {
         private const int NAME_COL = 1;
-        private const int LAST_EDIT_DATE_COL = 1;
-        private const int DESC_COL = 1;
-        private const int CURVE_DIST_TYPE_COL = 1;
-        private const int CURVE_TYPE_COL = 1;
-        private const int CURVE_COL = 1;
+        private const int LAST_EDIT_DATE_COL = 2;
+        private const int DESC_COL = 3;
+        private const int CURVE_DIST_TYPE_COL = 4;
+        private const int CURVE_TYPE_COL = 5;
+        private const int CURVE_COL = 6;
 
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("ExteriorInteriorPersistenceManager");
         //ELEMENT_TYPE is used to store the type of element in the log tables.
@@ -44,8 +45,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             get
             {
-                //TODO: get rid of state index col here
-                return new string[] {ELEMENT_ID_COL_NAME,NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE_DISTRIBUTION_TYPE, CURVE_TYPE, CURVE , STATE_INDEX_COL_NAME};
+               
+                return new string[] {NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE_DISTRIBUTION_TYPE, CURVE_TYPE, CURVE};
             }
         }
         /// <summary>

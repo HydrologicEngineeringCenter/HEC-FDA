@@ -153,6 +153,12 @@ namespace FdaViewModel
             vm.Name = element.Name;
             vm.Description = element.Description;
             vm.Curve = element.Curve;
+            //vm.EditorVM = new FunctionsView.ViewModel.CoordinatesFunctionEditorVM(element.Curve.Function);
+            if (vm.EditorVM != null)
+            {
+                vm.EditorVM.Function = element.Curve.Function;
+            }
+            //todo: Refactor: can i get rid of "Curve" alltogether?
         }
 
         #endregion

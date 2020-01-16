@@ -1,4 +1,5 @@
 ﻿using FdaViewModel.Utilities;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Conditions
 {
-    class ConditionBuilder
+    internal class ConditionBuilder
     {
         private string _name;
         private string _description;
@@ -38,18 +39,18 @@ namespace FdaViewModel.Conditions
 
         private bool _usesThreshold = false;
 
-        private Model.ComputationPoint.PerformanceThresholdTypes _thresholdType;
+        private MetricEnum _metricType;
         private double _thresholdValue;
 
         public ConditionBuilder(string name, string desc, int analysisYear, ImpactArea.ImpactAreaElement impactAreaElem, 
-            ImpactArea.ImpactAreaRowItem indexLocation, Model.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue)
+            ImpactArea.ImpactAreaRowItem indexLocation, MetricEnum metricType, double thresholdValue)
         {
             _name = name;
             _description = desc;
             _analysisYear = analysisYear;
             _impactAreaElem = impactAreaElem;
             _indexLocation = indexLocation;
-            _thresholdType = thresholdType;
+            _metricType = metricType;
             _thresholdValue = thresholdValue;
             _usesThreshold = true;
         }
@@ -116,7 +117,7 @@ namespace FdaViewModel.Conditions
             return new ConditionsElement(_name, _description,_analysisYear,_impactAreaElem,_indexLocation,_usesAnalyticalFlowFreq,
                 _analyticalFreqElem,_usesInflowOutflow,_inflowOutflowElem,_usesRating,_ratingElem,_usesExtIntStage,_extIntElem,
                 _usesLevee,_leveeElem,_usesFailureFunction,_failureFunctionElem,_usesAggStageDamage,_stageDamageElem,
-                _usesThreshold,_thresholdType,_thresholdValue);
+                _usesThreshold,_metricType,_thresholdValue);
         }
 
     }

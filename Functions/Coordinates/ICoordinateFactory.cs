@@ -87,10 +87,10 @@ namespace Functions
                     case SerializationConstants.TRIANGULAR:
                         {
                             double min = Convert.ToDouble(child.Attribute(SerializationConstants.MIN).Value);
-                            double mean = Convert.ToDouble(child.Attribute(SerializationConstants.MEAN).Value);
+                            double mostLikely = Convert.ToDouble(child.Attribute(SerializationConstants.MODE).Value);
                             double max = Convert.ToDouble(child.Attribute(SerializationConstants.MAX).Value);
                             int sample = Convert.ToInt32(child.Attribute(SerializationConstants.SAMPLE_SIZE).Value);
-                            IDistribution dist = IDistributionFactory.FactoryTriangular(min, mean, max, sample);
+                            IDistribution dist = IDistributionFactory.FactoryTriangular(min, mostLikely, max, sample);
                             IDistributedValue distribution = new DistributedValue(dist);
                             return new Distribution(distribution);
                         }

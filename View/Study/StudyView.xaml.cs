@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Study
+namespace View.Study
 {
     /// <summary>
     /// Interaction logic for StudyView.xaml

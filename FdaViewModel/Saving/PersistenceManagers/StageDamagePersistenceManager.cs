@@ -2,6 +2,7 @@
 using FdaViewModel.Utilities;
 using Model;
 using Model.Condition.ComputePoint.ImpactAreaFunctions;
+using Model.Inputs.Functions.ImpactAreaFunctions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -133,8 +134,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             if (elementToSave.Description == null) { elementToSave.Description = ""; }
 
-            if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((AggregatedStageDamageElement)elementToSave),oldElement.Name, TableName) 
-                || !oldElement.Curve.Equals(elementToSave.Curve) )//AreCurvesDifferent(oldElement.Curve, elementToSave.Curve))
+            //if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((AggregatedStageDamageElement)elementToSave),oldElement.Name, TableName) 
+              //  || !oldElement.Curve.Equals(elementToSave.Curve) )//AreCurvesDifferent(oldElement.Curve, elementToSave.Curve))
             {
                 base.SaveExisting(oldElement, elementToSave, changeTableIndex);
             }

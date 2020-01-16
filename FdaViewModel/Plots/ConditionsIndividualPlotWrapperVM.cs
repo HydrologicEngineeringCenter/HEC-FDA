@@ -33,14 +33,14 @@ namespace FdaViewModel.Plots
         private IndividualLinkedPlotVM _PlotVM;
 
         private bool _OutOfRange;
-        private Model.ComputationPoint.PerformanceThreshold _Threshold;
+        private Model.IMetric  _Metric;
         #endregion
         #region Properties
      
-        public Model.ComputationPoint.PerformanceThreshold Threshold
+        public Model.IMetric Metric
         {
-            get { return _Threshold; }
-            set { _Threshold = value; NotifyPropertyChanged(); }
+            get { return _Metric; }
+            set { _Metric = value; NotifyPropertyChanged(); }
         }
         public bool AreaPlotVisible
         {

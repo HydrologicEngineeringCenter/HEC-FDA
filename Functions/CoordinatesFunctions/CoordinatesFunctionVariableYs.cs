@@ -11,7 +11,7 @@ using Utilities;
 
 namespace Functions.CoordinatesFunctions
 {
-    internal sealed class CoordinatesFunctionVariableYs: ICoordinatesFunction
+    internal sealed class CoordinatesFunctionVariableYs: ICoordinatesFunction, IValidate<ICoordinatesFunction>
     {
         #region Properties
         public bool IsInvertible { get; }
@@ -43,6 +43,10 @@ namespace Functions.CoordinatesFunctions
 
         public bool IsLinkedFunction => false;
 
+        public bool IsValid { get; internal set; }
+
+        public IEnumerable<IMessage> Messages { get; set; }
+
         #endregion
 
         #region Constructor
@@ -50,7 +54,10 @@ namespace Functions.CoordinatesFunctions
         internal CoordinatesFunctionVariableYs(List<ICoordinate> coordinates, InterpolationEnum interpolation = InterpolationEnum.None)
         {
             Interpolator = interpolation;
-            if (IsValid(coordinates))
+            Coordinates = coordinates;
+            IsValid = Validate(new Validation.CoordinatesFunctionVariableYsValidator(), out IEnumerable<IMessage> errors);
+            Messages = errors;
+            //if (IsValid(coordinates))
             {
                 Coordinates = SortByXs(coordinates);
                 IsInvertible = IsInvertibleFunction();
@@ -176,6 +183,11 @@ namespace Functions.CoordinatesFunctions
 
             functionsElem.Add(funcElem);
             return functionsElem;
+        }
+
+        public bool Validate(IValidator<ICoordinatesFunction> validator, out IEnumerable<IMessage> errors)
+        {
+            return validator.IsValid(this, out errors);
         }
 
 

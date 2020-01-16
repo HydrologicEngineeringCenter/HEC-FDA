@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fda.Commands
+namespace View.Commands
 {
     class OkCommandConverter : System.Windows.Data.IMultiValueConverter
     {
@@ -25,7 +25,8 @@ namespace Fda.Commands
             FdaViewModel.BaseViewModel vm = (FdaViewModel.BaseViewModel)values[0];
             if (vm != null)
             {
-                vm.Validate();
+                //todo: Cody commented out on 1/2/20. I am not sure if it was needed.
+               // vm.Validate();
                 return values.Clone();
             }
             else

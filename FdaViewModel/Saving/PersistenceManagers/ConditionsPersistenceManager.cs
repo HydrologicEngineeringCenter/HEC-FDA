@@ -6,7 +6,6 @@ using FdaViewModel.FrequencyRelationships;
 using FdaViewModel.GeoTech;
 using FdaViewModel.StageTransforms;
 using FdaViewModel.Utilities;
-using Model.ComputationPoint;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -110,7 +109,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 element.UseLevee,LeveeName,
                 element.UseFailureFunction,FailureFuncName,
                 element.UseAggregatedStageDamage, StageDamageName,
-                element.UseThreshold, element.ThresholdType,element.ThresholdValue};
+                element.UseThreshold, element.MetricType,element.ThresholdValue};
             //db won't allow anything to be null, so if it is I make it an empty string
             for(int i = 0;i<retval.Length;i++)
             {
@@ -143,7 +142,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
                 //threshold stuff
                 bool useThreshold = Convert.ToBoolean( rowData[USE_THRESHOLD_COL]);
-                PerformanceThresholdTypes thresholdType = PerformanceThresholdTypes.InteriorStage;
+                Model.MetricEnum thresholdType = Model.MetricEnum.InteriorStage;
                 Enum.TryParse((string)rowData[THRESHOLD_TYPE_COL], out thresholdType);
                 double thresholdValue = Convert.ToDouble( rowData[THRESHOLD_VALUE_COL]);
 

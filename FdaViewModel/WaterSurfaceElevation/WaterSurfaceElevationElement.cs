@@ -53,7 +53,7 @@ namespace FdaViewModel.WaterSurfaceElevation
             }
             RelativePathAndProbability = relativePathAndProbabilities;
             IsDepthGrids = isDepthGrids;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/WaterSurfaceElevation.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/WaterSurfaceElevation.png");
 
 
             Utilities.NamedAction remove = new Utilities.NamedAction();

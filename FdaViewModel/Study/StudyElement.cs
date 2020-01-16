@@ -51,7 +51,7 @@ namespace FdaViewModel.Study
 
             FontSize = 18;
             Name = "Study";
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png");
             _Elements = new System.Collections.ObjectModel.ObservableCollection<BaseFdaElement>();
 
             NamedAction open = new NamedAction();

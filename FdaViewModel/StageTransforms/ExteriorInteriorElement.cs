@@ -32,7 +32,7 @@ namespace FdaViewModel.StageTransforms
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/ExteriorInteriorStage.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ExteriorInteriorStage.png");
 
             Description = desc;
             if (Description == null) Description = "";

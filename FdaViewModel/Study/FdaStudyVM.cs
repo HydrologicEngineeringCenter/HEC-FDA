@@ -16,10 +16,11 @@ using FdaViewModel.Tabs;
 using System.Threading;
 using System.Reflection;
 using System.Diagnostics;
+using FdaLogging;
 
 namespace FdaViewModel.Study
 {
-    public class FdaStudyVM : BaseViewModel, IDisposable, ITransactionsAndMessages
+    public class FdaStudyVM : BaseViewModel, IDisposable, IDisplayLogMessages
     {
         #region Notes
         #endregion
@@ -33,7 +34,7 @@ namespace FdaViewModel.Study
 
 
         private ObservableCollection<TransactionRowItem> _TransactionRows;
-        private ObservableCollection<FdaLogging.LogItem> _MessageRows;
+        private ObservableCollection<FdaLogging.LogItem> _MessageRows = new ObservableCollection<LogItem>();
         private bool _TransactionsMessagesVisible;
 
         private MapWindowMapTreeViewConnector _MWMTVConn;
@@ -51,6 +52,7 @@ namespace FdaViewModel.Study
         //    get { return (string)GetValue(FilterStringProperty); }
         //    set { SetValue(FilterStringProperty, value); }
         //}
+
         public bool MapViewVisible
         {
             get { return _MapViewVisible; }
@@ -166,6 +168,22 @@ namespace FdaViewModel.Study
         public TabController TabFactoryInstance
         {
             get; set;
+        }
+        //todo: implement error level?
+        public LoggingLevel SaveStatusLevel
+        {
+            get { return LoggingLevel.Debug; }
+        }
+
+        public bool IsExpanded
+        {
+            get;
+            set;
+        }
+        public List<LogItem> TempErrors
+        {
+            get;
+            set;
         }
 
         #endregion
@@ -383,7 +401,7 @@ namespace FdaViewModel.Study
 
             //FdaModel.Utilities.Messager.ErrorMessage err = new FdaModel.Utilities.Messager.ErrorMessage("Test message when opening", FdaModel.Utilities.Messager.ErrorMessageEnum.Report, nameof(CurrentStudyElement));
 
-            TransactionHelper.LoadTransactionsAndMessages(this, CurrentStudyElement);
+            //TransactionHelper.LoadTransactionsAndMessages(this, CurrentStudyElement);
         }
      
         //private void Instance_RequestFlushLogFile(object sender, EventArgs e)
@@ -464,6 +482,25 @@ namespace FdaViewModel.Study
         public void DisplayAllMessages()
         {
             MessageRows = FdaLogging.RetrieveFromDB.GetMessageRowsForType(GetType());
+        }
+
+        public void UpdateMessages(bool saving = false)
+        {
+            ObservableCollection<FdaLogging.LogItem> tempList = new ObservableCollection<FdaLogging.LogItem>();
+            foreach (LogItem li in MessageRows)
+            {
+                //exclude any temp logs
+                if (!li.IsTempLog())
+                {
+                    tempList.Add(li);
+                }
+            }
+
+            foreach (LogItem li in TempErrors)
+            {
+                tempList.Insert(0, li);
+            }
+            MessageRows = tempList;
         }
 
 

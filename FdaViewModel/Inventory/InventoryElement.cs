@@ -40,7 +40,7 @@ namespace FdaViewModel.Inventory
         //public InventoryElement(StructureInventoryBaseElement structureInventory, DefineSIAttributesVM defSIAttributes, AttributeLinkingListVM attLinkVM) : base()
         //{
             //Name = structureInventory.Name;
-            //CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/StructureInventory.png");
+            //CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/StructureInventory.png");
 
             //StructureInventory = structureInventory;
             //DefineSIAttributes = defSIAttributes;
@@ -79,7 +79,7 @@ namespace FdaViewModel.Inventory
         {
             
             Name = structInventoryBaseElement.Name;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/StructureInventory.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/StructureInventory.png");
 
             Description = structInventoryBaseElement.Description;
             if(Description == null) { Description = ""; }
@@ -179,7 +179,7 @@ namespace FdaViewModel.Inventory
         //        StructureInventoryBaseElement SIBase = new StructureInventoryBaseElement(vm.Name , vm.Description);
         //        this.StructureInventory = SIBase;
         //        this.DefineSIAttributes = vm.DefineSIAttributes;
-        //        CustomTreeViewHeader = new Utilities.CustomHeaderVM(vm.Name, "pack://application:,,,/Fda;component/Resources/StructureInventory.png");
+        //        CustomTreeViewHeader = new Utilities.CustomHeaderVM(vm.Name, "pack://application:,,,/View;component/Resources/StructureInventory.png");
 
 
         //    }

@@ -31,7 +31,7 @@ namespace FdaViewModel.StageTransforms
             //FdaLogging.RetrieveFromDB.GetMessageRowsForType(GetType(), Name);
             LastEditDate = creationDate;
             Name = userprovidedname;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/RatingCurve.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/RatingCurve.png");
 
             Curve = ratingCurve;
             Description = desc;

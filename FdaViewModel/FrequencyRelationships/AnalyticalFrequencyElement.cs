@@ -31,7 +31,7 @@ namespace FdaViewModel.FrequencyRelationships
         {
             LastEditDate = lastEditDate;
             Name = name;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/FrequencyCurve.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
 
             Description = desc;
             if (Description == null) Description = "";

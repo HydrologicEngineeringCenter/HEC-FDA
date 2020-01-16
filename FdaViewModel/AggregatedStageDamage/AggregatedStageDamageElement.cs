@@ -55,7 +55,7 @@ namespace FdaViewModel.AggregatedStageDamage
         {
             LastEditDate = lastEditDate;
             Name = name;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/StageDamage.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/StageDamage.png");
 
             Description = description;
             Curve = curve;

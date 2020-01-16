@@ -7,6 +7,7 @@ using FdaViewModel.Utilities;
 using FdaViewModel.Editors;
 using System.Collections.ObjectModel;
 using Model;
+using Model.Inputs.Functions.ImpactAreaFunctions;
 
 namespace FdaViewModel.GeoTech
 {
@@ -76,7 +77,7 @@ namespace FdaViewModel.GeoTech
             List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
-            IFdaFunction defaultCurve = ImpactAreaFunctionFactory.Factory(func, Model.Condition.ComputePoint.ImpactAreaFunctions.ImpactAreaFunctionEnum.Rating);
+            IFdaFunction defaultCurve = ImpactAreaFunctionFactory.Factory(func, ImpactAreaFunctionEnum.Rating);
 
             Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFailureFunctionManager()
                 , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
@@ -175,6 +176,10 @@ namespace FdaViewModel.GeoTech
             vm.Name = element.Name;
             vm.Description = element.Description;
             vm.Curve = element.Curve;
+            if(vm.EditorVM != null)
+            {
+                vm.EditorVM.Function = element.Curve.Function;
+            }
             vm.SelectedLateralStructure = element.SelectedLateralStructure;
         }
 

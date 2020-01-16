@@ -1,6 +1,7 @@
 ﻿using Functions;
 using Functions.CoordinatesFunctions;
 using Functions.Ordinates;
+using FunctionsView.Validation;
 using FunctionsView.View;
 using System;
 using System.Collections.Generic;
@@ -9,19 +10,29 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utilities;
 
 namespace FunctionsView.ViewModel
 {
-    public class CoordinatesFunctionEditorVM 
+    public class CoordinatesFunctionEditorVM :IValidate<CoordinatesFunctionEditorVM>
     {
         public event EventHandler UpdateView;
+        public event EventHandler TableChanged;
+        private ICoordinatesFunction _Function;
+        private IEnumerable<IMessage> _Messages;
         public bool HasLoaded { get; set; }
+        public ICoordinatesFunction Function
+        {
+            get { return _Function; }
+            set { _Function = value; CreateTables(_Function);  }
+        }
         public CoordinatesFunctionEditorVM()
         {
             Tables = new List<CoordinatesFunctionTableVM>();
         }
         public CoordinatesFunctionEditorVM(ICoordinatesFunction function)
         {
+            _Function = function;
             Tables = new List<CoordinatesFunctionTableVM>();
             CreateTables(function);
         }
@@ -32,13 +43,25 @@ namespace FunctionsView.ViewModel
             set;
         }
 
+        public bool IsValid
+        {
+            get
+            {
+                bool isValid = Validate(new CoordinatesFunctionEditorVMValidator(), out IEnumerable<IMessage> errors);
+                _Messages = errors;
+                return isValid;
+            }
+        }
+
+        public IEnumerable<IMessage> Messages => _Messages;
+
         //public ICoordinatesFunction Function
         //{
-            //get { return (ICoordinatesFunction)this.GetValue(FunctionProperty); }
-            //set { this.SetValue(FunctionProperty, value); }
-       // }
+        //get { return (ICoordinatesFunction)this.GetValue(FunctionProperty); }
+        //set { this.SetValue(FunctionProperty, value); }
+        // }
 
-        
+
 
         /// <summary>
         /// This is used when the editor is opened to load the tables from a coordinates function.
@@ -61,7 +84,7 @@ namespace FunctionsView.ViewModel
 
         public ICoordinatesFunction CreateFunctionFromTables()
         {
-            if(Tables.Count == 1)
+            if (Tables.Count == 1)
             {
                 //if there is only one table then we know that this is not
                 //a linked coordinates function.
@@ -135,7 +158,7 @@ namespace FunctionsView.ViewModel
                 }
                 //need to create the final table
                 CreateTable(rows);
-                UpdateView?.Invoke(this, new EventArgs());
+                //UpdateView?.Invoke(this, new EventArgs());
                 //lst_tables.Items.Add(new TableBottomControl(tableType));
             }
         }
@@ -355,6 +378,39 @@ namespace FunctionsView.ViewModel
                             .Build();
                         return row;
                     }
+                case DistributionType.Triangular:
+                    {
+                        IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
+                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
+                            .WithTriangularDist(dist.Mode, dist.Minimum, dist.Maximum, interpolator)
+                            .Build();
+                        return row;
+                    }
+                case DistributionType.Uniform:
+                    {
+                        IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
+                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
+                            .WithUniformDist(dist.Minimum, dist.Maximum, interpolator)
+                            .Build();
+                        return row;
+                    }
+                case DistributionType.TruncatedNormal:
+                    {
+                        IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
+                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
+                            .WithTruncatedNormalDist(dist.Mean, dist.StandardDeviation, dist.Minimum, dist.Maximum, interpolator)
+                            .Build();
+                        return row;
+                    }
+                //case DistributionType.Beta4Parameters:
+                //    {
+                //        IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
+                //        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
+                //            .WithBetaDist(dist.dist.Minimum, dist.Maximum, interpolator)
+                //            .Build();
+                //        return row;
+
+                //    }
                 default:
                     {
                         throw new ArgumentException("The coordinate has a distributed y value that is not supported.");
@@ -367,9 +423,15 @@ namespace FunctionsView.ViewModel
             CoordinatesFunctionTableVM newTable = new CoordinatesFunctionTableVM(rows);
             newTable.RowIsLeavingTable += Table_RowIsLeaving;
             newTable.NoMoreRows += NewTable_NoMoreRows;
+            newTable.TableWasModified += CellWasEdited;
             Tables.Insert(index, newTable);
             UpdateView?.Invoke(this, new EventArgs());
 
+        }
+
+        private void CellWasEdited(object sender, EventArgs e)
+        {
+            TableChanged?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -383,6 +445,7 @@ namespace FunctionsView.ViewModel
             CoordinatesFunctionTableVM newTable = new CoordinatesFunctionTableVM(rows);
             newTable.RowIsLeavingTable += Table_RowIsLeaving;
             newTable.NoMoreRows += NewTable_NoMoreRows;
+            newTable.TableWasModified += CellWasEdited;
             Tables.Add(newTable);
             UpdateView?.Invoke(this, new EventArgs());
         }
@@ -410,5 +473,11 @@ namespace FunctionsView.ViewModel
             CreateTable(rows);
             
         }
+
+        public bool Validate(IValidator<CoordinatesFunctionEditorVM> validator, out IEnumerable<IMessage> errors)
+        {
+            return validator.IsValid(this, out errors);
+        }
+
     }
 }

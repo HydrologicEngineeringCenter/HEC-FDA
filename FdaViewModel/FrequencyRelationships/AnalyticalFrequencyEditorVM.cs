@@ -11,7 +11,7 @@ using Statistics;
 
 namespace FdaViewModel.FrequencyRelationships
 {
-    public class AnalyticalFrequencyEditorVM :Editors.BaseEditorVM,  Utilities.Transactions.ITransactionsAndMessages, ISaveUndoRedo
+    public class AnalyticalFrequencyEditorVM :Editors.BaseLoggingEditorVM, ISaveUndoRedo
     {
         #region Notes
         #endregion
@@ -41,6 +41,11 @@ namespace FdaViewModel.FrequencyRelationships
         //    get { return _Description; }
         //    set { _Description = value; NotifyPropertyChanged(); }
         //}
+        public FunctionsView.ViewModel.CoordinatesFunctionEditorVM EditorVM
+        {
+            get;
+            set;
+        }
         public IFdaFunction Curve
         {
             get { return _Curve; }
@@ -153,8 +158,10 @@ namespace FdaViewModel.FrequencyRelationships
 
         #endregion
         #region Constructors
-        public AnalyticalFrequencyEditorVM(Editors.EditorActionManager actionManager) : base(actionManager)
+        public AnalyticalFrequencyEditorVM(IFdaFunction defaultCurve, Editors.EditorActionManager actionManager) : base(defaultCurve, actionManager)
         {
+            //EditorVM = new FunctionsView.ViewModel.CoordinatesFunctionEditorVM(defaultCurve.Function);
+
             _Curve = null;//todo: Refactor: CO new Statistics.LogPearsonIII(4, .4, .5, 50);
             Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };
             ActionManager = actionManager;
@@ -169,7 +176,7 @@ namespace FdaViewModel.FrequencyRelationships
             Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };
             AssignValuesFromElementToEditor(elem);
             ActionManager = actionManager;
-            TransactionHelper.LoadTransactionsAndMessages(this, elem);
+            //TransactionHelper.LoadTransactionsAndMessages(this, elem);
             SavingText = elem.Name + " last saved: " + elem.LastEditDate;
 
             //DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());

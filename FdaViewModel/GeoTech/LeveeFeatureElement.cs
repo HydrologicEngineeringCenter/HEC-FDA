@@ -35,7 +35,7 @@ namespace FdaViewModel.GeoTech
         public LeveeFeatureElement(string userProvidedName, string description, double elevation) : base()
         {
             Name = userProvidedName;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/LeveeFeature.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/LeveeFeature.png");
 
             Description = description;
             if (Description == null) Description = "";

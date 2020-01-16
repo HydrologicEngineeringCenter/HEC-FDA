@@ -1,5 +1,8 @@
 ﻿using FdaViewModel.StageTransforms;
 using FdaViewModel.Utilities;
+using Model;
+using Model.Inputs.Conditions;
+using Model.Inputs.Functions;
 using Statistics;
 using System;
 using System.Collections.Generic;
@@ -48,7 +51,7 @@ namespace FdaViewModel.Conditions
         private bool _UseAggregatedStageDamage;
         private AggregatedStageDamage.AggregatedStageDamageElement _StageDamage;
         private bool _UseThreshold;
-        private Model.ComputationPoint.PerformanceThresholdTypes _ThresholdType;//dollars or stage. need enum.
+        private Model.MetricEnum _MetricType;//dollars or stage. need enum.
         private double _ThresholdValue;
         //private ParentElement _ConditionsOwnerElement;
         private List<BaseFdaElement> _ConditionsTreeNodes;
@@ -171,9 +174,9 @@ namespace FdaViewModel.Conditions
             get { return _UseThreshold; }
             set { _UseThreshold = value; NotifyPropertyChanged(); }
         }
-        public Model.ComputationPoint.PerformanceThresholdTypes ThresholdType {
-            get { return _ThresholdType; }
-            set { _ThresholdType = value; NotifyPropertyChanged(); }
+        public Model.MetricEnum MetricType {
+            get { return _MetricType; }
+            set { _MetricType = value; NotifyPropertyChanged(); }
         }
         public double ThresholdValue
         {
@@ -238,7 +241,7 @@ namespace FdaViewModel.Conditions
             StageDamageElement = elem.StageDamageElement;
 
             UseThreshold = elem.UseThreshold;
-            ThresholdType = elem.ThresholdType;
+            MetricType = elem.MetricType;
             ThresholdValue = elem.ThresholdValue;
 
             NamedAction edit = new NamedAction();
@@ -308,11 +311,11 @@ namespace FdaViewModel.Conditions
             bool usesAnalyiticalFlowFrequency, FrequencyRelationships.AnalyticalFrequencyElement aFlowFreq, bool usesInflowOutflow, FlowTransforms.InflowOutflowElement inflowOutflowElement,
             bool useRating, StageTransforms.RatingCurveElement rc, bool useIntExtStage, StageTransforms.ExteriorInteriorElement extInt, bool useLevee, GeoTech.LeveeFeatureElement leveeElement,
             bool useFailureFunction, GeoTech.FailureFunctionElement failureFunctionElement, bool useAggStageDamage, AggregatedStageDamage.AggregatedStageDamageElement stageDamage,
-            bool useThreshold, Model.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue ) : base()
+            bool useThreshold, Model.MetricEnum thresholdType, double thresholdValue ) : base()
         {
             Name = name;
            // _ConditionsOwnerElement = owner;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Condition.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
 
             Description = description;
             AnalysisYear = analysisYear;
@@ -341,7 +344,7 @@ namespace FdaViewModel.Conditions
             StageDamageElement = stageDamage;
 
             UseThreshold = useThreshold;
-            ThresholdType = thresholdType;
+            MetricType = thresholdType;
             ThresholdValue = thresholdValue;
 
             Utilities.NamedAction edit = new Utilities.NamedAction();
@@ -541,83 +544,83 @@ namespace FdaViewModel.Conditions
 
         private void ComputeCondition(object arg1, EventArgs arg2)
         {
-            //todo: Refactor: I commented out this method
-           // //convert to model types, run model compute, show results in window.
-           // //ImpactArea.Name
-           // //AnalyticalFlowFrequency.Distribution;
-           // //RatingCurve.RatingCurve //isvalid //distribution //getx gety
-           // //StageDamage.Curve same as above.
-           // //convert to model objects
-           // //compute model objects
-           // //take result and pass to results viewmodel
-           // List<FdaModel.Functions.BaseFunction> listOfBaseFunctions = new List<FdaModel.Functions.BaseFunction>();
-           // FdaModel.Functions.FrequencyFunctions.LogPearsonIII LP3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(AnalyticalFlowFrequency.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
+            ////todo: Refactor: I commented out this method
+            ////convert to model types, run model compute, show results in window.
+            ////ImpactArea.Name
+            ////AnalyticalFlowFrequency.Distribution;
+            ////RatingCurve.RatingCurve //isvalid //distribution //getx gety
+            ////StageDamage.Curve same as above.
+            ////convert to model objects
+            ////compute model objects
+            ////take result and pass to results viewmodel
+            //List<FdaModel.Functions.BaseFunction> listOfBaseFunctions = new List<FdaModel.Functions.BaseFunction>();
+            //FdaModel.Functions.FrequencyFunctions.LogPearsonIII LP3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(AnalyticalFlowFrequency.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
 
-           // listOfBaseFunctions.Add(LP3);
+            //listOfBaseFunctions.Add(LP3);
 
-           // //FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction inflowOutflow = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)InflowOutflowElement.InflowOutflowCurve, FdaModel.Functions.FunctionTypes.InflowOutflow);
+            ////FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction inflowOutflow = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)InflowOutflowElement.InflowOutflowCurve, FdaModel.Functions.FunctionTypes.InflowOutflow);
 
-           //// listOfBaseFunctions.Add(inflowOutflow);
+            //// listOfBaseFunctions.Add(inflowOutflow);
 
-           // FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)RatingCurveElement.Curve, FdaModel.Functions.FunctionTypes.Rating);
+            //FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)RatingCurveElement.Curve, FdaModel.Functions.FunctionTypes.Rating);
 
-           // listOfBaseFunctions.Add(rating);
+            //listOfBaseFunctions.Add(rating);
 
-           // //FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extIntStage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)ExteriorInteriorElement.ExteriorInteriorCurve, FdaModel.Functions.FunctionTypes.ExteriorInteriorStage);
+            ////FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extIntStage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)ExteriorInteriorElement.ExteriorInteriorCurve, FdaModel.Functions.FunctionTypes.ExteriorInteriorStage);
 
-           // //listOfBaseFunctions.Add(extIntStage);
+            ////listOfBaseFunctions.Add(extIntStage);
 
-           // FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)StageDamageElement.Curve, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
+            //FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)StageDamageElement.Curve, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
 
-           // listOfBaseFunctions.Add(stageDamage);
+            //listOfBaseFunctions.Add(stageDamage);
 
-           // FdaModel.ComputationPoint.PerformanceThreshold threshold;
+            //FdaModel.ComputationPoint.PerformanceThreshold threshold;
 
-           //     //ThresholdValue = 120;
-           // //when i do the real compute I will need to handle every threshold type
-           // if (ThresholdType == FdaModel.ComputationPoint.PerformanceThresholdTypes.InteriorStage)
-           // {
-           //     threshold = new FdaModel.ComputationPoint.PerformanceThreshold(FdaModel.ComputationPoint.PerformanceThresholdTypes.InteriorStage, ThresholdValue);
+            ////ThresholdValue = 120;
+            ////when i do the real compute I will need to handle every threshold type
+            //if (ThresholdType == FdaModel.ComputationPoint.PerformanceThresholdTypes.InteriorStage)
+            //{
+            //    threshold = new FdaModel.ComputationPoint.PerformanceThreshold(FdaModel.ComputationPoint.PerformanceThresholdTypes.InteriorStage, ThresholdValue);
 
-           // }
-           // else // ThresholdType == "Dollars"
-           // {
-           //     threshold = new FdaModel.ComputationPoint.PerformanceThreshold(FdaModel.ComputationPoint.PerformanceThresholdTypes.Damage, ThresholdValue);
+            //}
+            //else // ThresholdType == "Dollars"
+            //{
+            //    threshold = new FdaModel.ComputationPoint.PerformanceThreshold(FdaModel.ComputationPoint.PerformanceThresholdTypes.Damage, ThresholdValue);
 
-           // }
+            //}
 
 
-           // FdaModel.ComputationPoint.Condition condition = new FdaModel.ComputationPoint.Condition(AnalysisYear, ImpactAreaElement.Name, listOfBaseFunctions, threshold, null); //this constructor will call Validate
+            //FdaModel.ComputationPoint.Condition condition = new FdaModel.ComputationPoint.Condition(AnalysisYear, ImpactAreaElement.Name, listOfBaseFunctions, threshold, null); //this constructor will call Validate
 
-           // //FdaModel.ComputationPoint.Outputs.Realization realization = new FdaModel.ComputationPoint.Outputs.Realization(condition, false, false);
-           // //Random randomNumGenerator = new Random(0);
-           // //realization.Compute(randomNumGenerator);
+            ////FdaModel.ComputationPoint.Outputs.Realization realization = new FdaModel.ComputationPoint.Outputs.Realization(condition, false, false);
+            ////Random randomNumGenerator = new Random(0);
+            ////realization.Compute(randomNumGenerator);
 
-           // FdaModel.ComputationPoint.Outputs.Result result = new FdaModel.ComputationPoint.Outputs.Result(condition, 10);
+            //FdaModel.ComputationPoint.Outputs.Result result = new FdaModel.ComputationPoint.Outputs.Result(condition, 10);
 
-           // List<string> selectedElementNames = new List<string>();
-           // selectedElementNames.Add(AnalyticalFlowFrequency.Name);
-           // selectedElementNames.Add(RatingCurveElement.Name);
-           // if (ExteriorInteriorElement != null)
-           // {
-           //     selectedElementNames.Add(ExteriorInteriorElement.Name);
-           // }
-           // selectedElementNames.Add(StageDamageElement.Name);
-           // selectedElementNames.Add("Computed Stage Frequency");
-           // // write out results for testing purposes.
-           // if (result.Realizations.Count != 0)
-           // {
-           //     Plots.LinkedPlotsVM vem = new Plots.LinkedPlotsVM(result, ThresholdType, ThresholdValue, selectedElementNames);
-           //     string title = "Condition " + Name;
-           //     DynamicTabVM tab = new DynamicTabVM(title, vem, "ComputedCondition" + Name);
-           //     Navigate(tab, false, false);
-           // }
-           // else
-           // {
-           //     MessageBox.Show("The compute produced no realizations");
-           // }
-           // //Output.LinkedPlotsVM vm = new Output.LinkedPlotsVM(result);
-           // //Navigate(vm);
+            //List<string> selectedElementNames = new List<string>();
+            //selectedElementNames.Add(AnalyticalFlowFrequency.Name);
+            //selectedElementNames.Add(RatingCurveElement.Name);
+            //if (ExteriorInteriorElement != null)
+            //{
+            //    selectedElementNames.Add(ExteriorInteriorElement.Name);
+            //}
+            //selectedElementNames.Add(StageDamageElement.Name);
+            //selectedElementNames.Add("Computed Stage Frequency");
+            //// write out results for testing purposes.
+            //if (result.Realizations.Count != 0)
+            //{
+            //    Plots.LinkedPlotsVM vem = new Plots.LinkedPlotsVM(result, ThresholdType, ThresholdValue, selectedElementNames);
+            //    string title = "Condition " + Name;
+            //    DynamicTabVM tab = new DynamicTabVM(title, vem, "ComputedCondition" + Name);
+            //    Navigate(tab, false, false);
+            //}
+            //else
+            //{
+            //    MessageBox.Show("The compute produced no realizations");
+            //}
+            ////Output.LinkedPlotsVM vm = new Output.LinkedPlotsVM(result);
+            ////Navigate(vm);
         }
         #endregion
         #region Voids
@@ -715,6 +718,34 @@ namespace FdaViewModel.Conditions
         {
             ConditionsElement elem = (ConditionsElement)elementToClone;
             return new ConditionsElement(elem);
+        }
+
+
+        public ICondition CreateCondition()
+        {
+            return ConditionFactory.Factory(Name, AnalysisYear, GetEntryFrequencyFunction(), GetTransformFunctions(),
+                GetMetrics());
+
+        }
+
+        private IFrequencyFunction GetEntryFrequencyFunction()
+        {
+            if(_UsesAnalyiticalFlowFrequency)
+            {
+                return (IFrequencyFunction)AnalyticalFlowFrequency.Curve.Function;
+            }
+            //todo: shouldn't there be an outflow freq option here? and the other frequency options?
+            throw new NotImplementedException();
+        }
+        private List<ITransformFunction> GetTransformFunctions()
+        {
+            throw new NotImplementedException();
+        }
+
+        private List<IMetric> GetMetrics()
+        {
+            throw new NotImplementedException();
+
         }
         #endregion
 

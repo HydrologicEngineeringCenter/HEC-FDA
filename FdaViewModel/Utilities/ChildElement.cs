@@ -275,7 +275,7 @@ namespace FdaViewModel.Utilities
         //    {
         //        CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "Could not delete terrain file: " + ((Watershed.TerrainElement)this).GetTerrainPath());
         //        Navigate(messageBox);
-        //        CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
+        //        CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png");
         //        return;
         //    }
         //    o.Elements.Remove(this);
@@ -298,7 +298,7 @@ namespace FdaViewModel.Utilities
         //    {
         //        CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "Could not delete water surface elevation files");
         //        Navigate(messageBox);
-        //        CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/WaterSurfaceElevation.png");
+        //        CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/WaterSurfaceElevation.png");
         //        return;
         //    }
         //    o.Elements.Remove(this);
@@ -322,14 +322,14 @@ namespace FdaViewModel.Utilities
         //            //special logic for deleting the terrain file from the study directory
         //            if (this.GetType() == typeof(Watershed.TerrainElement))
         //            {
-        //                CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png", " -Deleting", true);
+        //                CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png", " -Deleting", true);
         //                this.Actions.Clear();
         //                RemoveTerrainFileOnBackgroundThread(o);
         //            }
         //            //special logic for deleting the terrain file from the study directory
         //            else if (this.GetType() == typeof(WaterSurfaceElevation.WaterSurfaceElevationElement))
         //            {
-        //                //CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/WaterSurfaceElevation.png");
+        //                //CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/WaterSurfaceElevation.png");
         //                //this.Actions.Clear();
         //                RemoveWaterSurfElev(o);
         //            }

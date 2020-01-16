@@ -22,19 +22,22 @@ namespace FdaViewModel.Editors
     public abstract class BaseEditorVM : BaseViewModel
     {
         //public static event EventHandler EditorLogAdded;
-
         private string _Description;
         public string Description
         {
             get { return _Description; }
             set { _Description = value; NotifyPropertyChanged(); }
         }
+        //This lets me not add the sibling rules to itself when saving.
+        public bool InTheProcessOfSaving = false;
         public bool IsImporter { get; set; }
         public bool HasSaved { get; set; } = false;
         public ChildElement OriginalElement { get; set; }
         public EditorActionManager ActionManager { get; set; }
 
-        public ChildElement CurrentElement { get; set; }
+        public ChildElement CurrentElement { 
+            get; 
+            set; }
 
         /// <summary>
         /// Call this one for importers.
@@ -79,11 +82,11 @@ namespace FdaViewModel.Editors
             }
         }
 
-        public static void UpdateErrorMessage(string level, string message)
-        {
-            MessageRowItem mri = new MessageRowItem("", message, "", level, "BaseEditorVM");
-            //EditorLogAdded?.Invoke(mri, new EventArgs());
-        }
+        //public static void UpdateErrorMessage(string level, string message)
+        //{
+        //    MessageRowItem mri = new MessageRowItem("", message, "", level, "BaseEditorVM");
+        //    //EditorLogAdded?.Invoke(mri, new EventArgs());
+        //}
 
         /// <summary>
         /// This needs to happen when the importer save button gets clicked. 
@@ -168,10 +171,12 @@ namespace FdaViewModel.Editors
             List<string> existingElements = new List<string>();
             //List<ChildElement> siblings = StudyCache.GetSiblingsOfChild(element);
            //Type elementType = ;
+
+            //get all elements of this type. This will include itself
             List<ChildElement> siblings = StudyCache.GetChildElementsOfType(element.GetType());
 
             string originalName = element.Name;
-
+            //exclude itself
             foreach (ChildElement elem in siblings)
             {
                 if ( elem.Name.Equals(originalName))
@@ -266,17 +271,33 @@ namespace FdaViewModel.Editors
         }
         private void SiblingNameChanged(object sender, Saving.ElementUpdatedEventArgs args)
         {
+            string newName = args.NewElement.Name;
+            //this gets called even if it is changing its own name
+            //don't add rule if that is the case
+            if(InTheProcessOfSaving)
+            {
+                InTheProcessOfSaving = false;
+                return;
+            }
             AddRule(nameof(Name), () =>
             {
-                return Name != args.NewElement.Name;
+                return Name != newName;
             }, "This name is already used. Names must be unique.");
         }
 
         private void SiblingWasAdded(object sender, Saving.ElementAddedEventArgs args)
         {
+            string newName = args.Element.Name;
+            //this gets called even if it is changing its own name
+            //don't add rule if that is the case
+            if (InTheProcessOfSaving)
+            {
+                InTheProcessOfSaving = false;
+                return;
+            }
             AddRule(nameof(Name), () =>
             {
-                return Name != args.Element.Name;
+                return Name != newName;
             }, "This name is already used. Names must be unique.");
         }
 

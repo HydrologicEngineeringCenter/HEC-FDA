@@ -37,7 +37,7 @@ namespace FdaViewModel.FlowTransforms
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/InflowOutflowCircle.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/InflowOutflowCircle.png");
             
             Description = description;
             if (Description == null) Description = "";

@@ -2,6 +2,7 @@
 using FdaViewModel.Utilities;
 using Model;
 using Model.Condition.ComputePoint.ImpactAreaFunctions;
+using Model.Inputs.Functions.ImpactAreaFunctions;
 using Statistics;
 using System;
 using System.Collections.Generic;

@@ -1,12 +1,12 @@
-﻿<UserControl x:Class="Fda.WaterSurfaceElevation.WaterSurfaceElevationImporter"
+﻿<UserControl x:Class="View.WaterSurfaceElevation.WaterSurfaceElevationImporter"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Utilities="clr-namespace:Fda.Utilities"
-             xmlns:local="clr-namespace:Fda.WaterSurfaceElevation"
+             xmlns:Utilities="clr-namespace:View.Utilities"
+             xmlns:local="clr-namespace:View.WaterSurfaceElevation"
              mc:Ignorable="d" 
-                          xmlns:Util="clr-namespace:Fda.Utilities"
+                          xmlns:Util="clr-namespace:View.Utilities"
 
                  xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
 

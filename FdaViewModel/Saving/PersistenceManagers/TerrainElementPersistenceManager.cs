@@ -110,7 +110,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 string header = "Error";
                 DynamicTabVM tab = new DynamicTabVM(header, messageBox, "MessageBoxError");
                 Navigate(tab);
-                element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
+                element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png");
                 return;
             }
             StudyCacheForSaving.RemoveElement((TerrainElement)element);
@@ -131,14 +131,14 @@ namespace FdaViewModel.Saving.PersistenceManagers
                         actions.Add(act);
                     }
                     newElement.Actions.Clear();
-                    newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name, "pack://application:,,,/Fda;component/Resources/Terrain.png",  " -Renaming File", true);
+                    newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name, "pack://application:,,,/View;component/Resources/Terrain.png",  " -Renaming File", true);
                     try
                     {
                         await Task.Run(() =>
                         {
                             FileInfo currentFile = new FileInfo(oldFilePath);
                             currentFile.MoveTo(currentFile.Directory.FullName + "\\" + newElement.Name + currentFile.Extension);
-                            newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
+                            newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name, "pack://application:,,,/View;component/Resources/Terrain.png");
                             newElement.Actions = actions;
                            // newElement.AddToMapWindow
                         });
@@ -177,7 +177,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
-            element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png", element.Name + " -Deleting", true);
+            element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png", element.Name + " -Deleting", true);
             element.Actions.Clear();
             RemoveTerrainFileOnBackgroundThread((TerrainElement)element);
             //System.IO.File.Delete(((TerrainElement)element).FileName);

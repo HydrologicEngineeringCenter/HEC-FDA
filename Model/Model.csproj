@@ -1,22 +1,21 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Condition\ComputePoint\Output\**" />
-    <EmbeddedResource Remove="Condition\ComputePoint\Output\**" />
-    <None Remove="Condition\ComputePoint\Output\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Plan\" />
-    <Folder Include="Project\" />
+    <Compile Remove="ComputePoint.cs" />
+    <Compile Remove="IComputePoint.cs" />
+    <Compile Remove="Inputs\Conditions\ConditionPerformanceCompute.cs" />
+    <Compile Remove="Inputs\Functions\FrequencyFunction.cs" />
+    <Compile Remove="Inputs\Functions\IFunctionCompose.cs" />
+    <Compile Remove="Inputs\Functions\IFunctionRegistry.cs" />
+    <Compile Remove="Inputs\Functions\ImpactAreaFunctions\ComputationPointFunctionRegistry.cs" />
+    <Compile Remove="Inputs\Functions\ImpactAreaFunctions\IStageDamageTransform.cs" />
+    <Compile Remove="Inputs\Functions\Ordinate.cs" />
+    <Compile Remove="Inputs\Functions\OrdinatesFunction.cs" />
+    <Compile Remove="Inputs\Functions\UncertainOrdinatesFunction.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,27 +27,6 @@
   <ItemGroup>
     <Reference Include="GDALAssist">
       <HintPath>..\..\..\..\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\GDALAssist.dll</HintPath>
-    </Reference>
-    <Reference Include="gdalconst_csharp">
-      <HintPath>..\..\..\..\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\gdalconst_csharp.dll</HintPath>
-    </Reference>
-    <Reference Include="gdal_csharp">
-      <HintPath>..\..\..\..\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\gdal_csharp.dll</HintPath>
-    </Reference>
-    <Reference Include="ogr_csharp">
-      <HintPath>..\..\..\..\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\ogr_csharp.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenGLMapping">
-      <HintPath>..\..\..\..\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\OpenGLMapping.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK">
-      <HintPath>..\..\..\..\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\OpenTK.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK.GLControl">
-      <HintPath>..\..\..\..\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\OpenTK.GLControl.dll</HintPath>
-    </Reference>
-    <Reference Include="osr_csharp">
-      <HintPath>..\..\..\..\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\osr_csharp.dll</HintPath>
     </Reference>
   </ItemGroup>
 

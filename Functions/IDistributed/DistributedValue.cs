@@ -50,7 +50,7 @@ namespace Functions
                         }
                     case IDistributions.Triangular:
                         {
-                            retval = DistributionType.NotSupported;
+                            retval = DistributionType.Triangular;
                             break;
                         }
                     case IDistributions.TruncatedBeta4Parameter:
@@ -97,6 +97,8 @@ namespace Functions
         //public double Maximum => _distribution.Maximum;
         public int SampleSize => _distribution.SampleSize;
         public bool IsValid => _distribution.
+
+        public double Mode => _distribution.Mode;
 
         public double CDF(double x)
         {

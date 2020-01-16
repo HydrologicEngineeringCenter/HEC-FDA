@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Fda.Watershed
+namespace View.Watershed
 {
     /// <summary>
     /// Interaction logic for TerrainBrowser.xaml

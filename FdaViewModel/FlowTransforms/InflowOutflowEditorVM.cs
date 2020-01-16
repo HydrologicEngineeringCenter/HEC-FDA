@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using FdaViewModel.Utilities;
 using Statistics;
 using Model;
+using Model.Inputs.Functions.ImpactAreaFunctions;
 
 namespace FdaViewModel.FlowTransforms
 {
@@ -86,7 +87,7 @@ namespace FdaViewModel.FlowTransforms
             List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
-            IFdaFunction defaultFunction = ImpactAreaFunctionFactory.Factory(func, Model.Condition.ComputePoint.ImpactAreaFunctions.ImpactAreaFunctionEnum.InflowOutflow);
+            IFdaFunction defaultFunction = ImpactAreaFunctionFactory.Factory(func, ImpactAreaFunctionEnum.InflowOutflow);
 
             SaveAction = saveAction;
             Curve = defaultFunction;

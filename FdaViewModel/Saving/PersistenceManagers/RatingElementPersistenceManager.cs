@@ -2,6 +2,7 @@
 using FdaViewModel.Utilities;
 using Model;
 using Model.Condition.ComputePoint.ImpactAreaFunctions;
+using Model.Inputs.Functions.ImpactAreaFunctions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -188,15 +189,16 @@ namespace FdaViewModel.Saving.PersistenceManagers
             //this will save to the parent table and to the change table
             base.SaveExisting(oldElement, elementToSave, changeTableIndex);
             //log that we are saving
-            if (!oldElement.Name.Equals(elementToSave.Name))
-            {
-                Log(FdaLogging.LoggingLevel.Info, "Saved rating curve with name change from " + oldElement.Name +
-                    " to " + elementToSave.Name + ".", elementToSave.Name);
-            }
-            else
-            {
-                Log(FdaLogging.LoggingLevel.Info, "Saved rating curve: " + elementToSave.Name, elementToSave.Name);
-            }
+            //if (!oldElement.Name.Equals(elementToSave.Name))
+            //{
+            //    Log(FdaLogging.LoggingLevel.Info, "Saved rating curve with name change from " + oldElement.Name +
+            //        " to " + elementToSave.Name + ".", elementToSave.Name);
+            //}
+            //else
+            //{
+            //    Log(FdaLogging.LoggingLevel.Info, "Saved rating curve: " + elementToSave.Name, elementToSave.Name);
+            //}
+            //UpdateLastSaved(elementToSave.Name);
         }
 
         /// <summary>
@@ -210,6 +212,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 StudyCacheForSaving.AddElement(elem);
             }
         }
+
+        //private void UpdateLastSaved(string elementName)
+        //{
+        //    int elementId = GetElementId(TableName, elementName);
+        //    LOGGER.UpdateLastSaved( ELEMENT_TYPE, elementId);
+            
+        //}
 
         /// <summary>
         /// This will put a log into the log tables. Logs are only unique by element id and

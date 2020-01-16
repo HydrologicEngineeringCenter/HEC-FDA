@@ -53,9 +53,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Fda.App</StartupObject>
+    <StartupObject>View.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FdaLogging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Perforce\HEC_FDA\FDA_dev\FdaLogger\FdaLogger\bin\Debug\netstandard2.0\FdaLogging.dll</HintPath>
+    </Reference>
     <Reference Include="netstandard" />
     <Reference Include="Consequences_Assist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
@@ -63,13 +67,6 @@
     </Reference>
     <Reference Include="DatabaseManager">
       <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\DatabaseManager.dll</HintPath>
-    </Reference>
-    <Reference Include="FdaLogging">
-      <HintPath>..\..\..\FdaLogger\FdaLogger\bin\Debug\netstandard2.0\FdaLogging.dll</HintPath>
-    </Reference>
-    <Reference Include="FdaModel, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OldModel\bin\Debug\FdaModel.dll</HintPath>
     </Reference>
     <Reference Include="GDALAssist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
@@ -113,10 +110,6 @@
     <Reference Include="QuickHelp">
       <HintPath>..\lib\QuickHelp.dll</HintPath>
     </Reference>
-    <Reference Include="Statistics, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\Statistics.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -156,9 +149,13 @@
       <DependentUpon>AggregatedStageDamage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Commands\CloseCommand.cs" />
+    <Compile Include="Commands\ErrorLevelToBackgroundColorConverter.cs" />
     <Compile Include="Commands\HasErrorConverter.cs" />
     <Compile Include="Commands\OkCommand.cs" />
     <Compile Include="Commands\OkCommandConverter.cs" />
+    <Compile Include="Commands\SaveButtonEnabledConverter.cs" />
+    <Compile Include="Commands\SaveButtonTooltipConverter.cs" />
+    <Compile Include="Commands\SaveCommand.cs" />
     <Compile Include="Conditions\AddExteriorInteriorStageToCondition.xaml.cs">
       <DependentUpon>AddExteriorInteriorStageToCondition.xaml</DependentUpon>
     </Compile>
@@ -177,6 +174,7 @@
     <Compile Include="Conditions\ConditionsEditor.xaml.cs">
       <DependentUpon>ConditionsEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DeleteMeClass.cs" />
     <Compile Include="FlowTransforms\InflowOutflowEditor.xaml.cs">
       <DependentUpon>InflowOutflowEditor.xaml</DependentUpon>
     </Compile>
@@ -226,23 +224,8 @@
       <DependentUpon>ImportFromShapefile.xaml</DependentUpon>
     </Compile>
     <Compile Include="Inventory\OccupancyTypes\DeleteMe.cs" />
-    <Compile Include="Output\CreateEconImportFile.xaml.cs">
-      <DependentUpon>CreateEconImportFile.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Output\DamageWithUncertainty.xaml.cs">
-      <DependentUpon>DamageWithUncertainty.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Output\HistogramViewer.xaml.cs">
-      <DependentUpon>HistogramViewer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Output\LinkedPlots.xaml.cs">
-      <DependentUpon>LinkedPlots.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Output\IndexLocations.xaml.cs">
       <DependentUpon>IndexLocations.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Output\LinkedPlotsUpdated.xaml.cs">
-      <DependentUpon>LinkedPlotsUpdated.xaml</DependentUpon>
     </Compile>
     <Compile Include="Plots\ILinkedPlot.cs" />
     <Compile Include="StageTransforms\ExteriorInteriorEditor.xaml.cs">
@@ -308,6 +291,9 @@
     <Compile Include="Utilities\Rename.xaml.cs">
       <DependentUpon>Rename.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\SaveCloseControl.xaml.cs">
+      <DependentUpon>SaveCloseControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\SaveControl.xaml.cs">
       <DependentUpon>SaveControl.xaml</DependentUpon>
     </Compile>
@@ -316,9 +302,6 @@
       <DependentUpon>TabHeaderControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\TableWithPlotCurveConverter.cs" />
-    <Compile Include="Utilities\TransactionMessageControl.xaml.cs">
-      <DependentUpon>TransactionMessageControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Utilities\TransactionView.xaml.cs">
       <DependentUpon>TransactionView.xaml</DependentUpon>
     </Compile>
@@ -431,27 +414,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Output\CreateEconImportFile.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Output\DamageWithUncertainty.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Output\HistogramViewer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Output\LinkedPlots.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Output\IndexLocations.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Output\LinkedPlotsUpdated.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -527,15 +490,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Utilities\SaveCloseControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Utilities\SaveControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Utilities\TabHeaderControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Utilities\TransactionMessageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -618,13 +581,17 @@
       <Project>{8e8c8388-f610-44cd-8746-bc2559e02424}</Project>
       <Name>FunctionsView</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Model\Model.csproj">
-      <Project>{7fe104fd-b277-4dbe-b892-01f61262a82f}</Project>
-      <Name>Model</Name>
-    </ProjectReference>
     <ProjectReference Include="..\OpenGLMapper\geospatial\OpenGLMapping\OpenGLMapping.vbproj">
       <Project>{e6dd31c5-1388-4b1d-8291-c317dde22388}</Project>
       <Name>OpenGLMapping</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UserControls\UserControls.vbproj">
+      <Project>{80eb938b-bc8f-44f7-b4dd-6127010f2d96}</Project>
+      <Name>UserControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utilities\Utilities.csproj">
+      <Project>{9038add9-59ca-4e3a-b665-6b086fde5f18}</Project>
+      <Name>Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

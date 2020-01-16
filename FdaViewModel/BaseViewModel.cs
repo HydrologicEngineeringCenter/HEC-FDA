@@ -1,7 +1,9 @@
-﻿using FdaViewModel.Editors;
+﻿using FdaLogging;
+using FdaViewModel.Editors;
 using FdaViewModel.Study;
 using FdaViewModel.Tabs;
 using FdaViewModel.Utilities;
+using FdaViewModel.Utilities.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -39,24 +41,25 @@ namespace FdaViewModel
         public TransactionEventHandler TransactionEvent;
 
 
+
         #endregion
         #region Fields
         /// <summary>
         /// This is a dictionary of property names, and any rules that go with that property.
         /// </summary>
         private Dictionary<string, PropertyRule> ruleMap = new Dictionary<string, PropertyRule>();
-        
+
         //private Utilities.NamedAction _MessagesAction;
         //private Utilities.NamedAction _ErrorsAction;
         //private Utilities.NamedAction _HelpAction;
 
-
-
+        private bool _HasChanges;
 
         private string _Name;
 
         #endregion
         #region Properties
+      
         /// <summary>
         /// The StudyCache holds all the elements used in FDA. You can use this to get any of them 
         /// as well as listen for events where elements are added, removed, or updated
@@ -127,7 +130,15 @@ namespace FdaViewModel
         //public List<FdaModel.Utilities.Messager.ErrorMessage> Messages { get; private set; }
         public bool HasError { get; private set; }
         public bool HasFatalError { get; private set; }
-        public bool HasChanges { get; private set; }
+        /// <summary>
+        /// Primarily used to determine if a class needs to save. Gets set when the notify property change fires.
+        /// It is up to the save method to turn this back to false. 
+        /// </summary>
+        public bool HasChanges 
+        {
+            get { return _HasChanges; }
+            set { _HasChanges = value; NotifyPropertyChanged(); } 
+        }
         public bool WasCanceled { get; set; }
        
 
@@ -157,7 +168,7 @@ namespace FdaViewModel
         virtual public void AddValidationRules() { }
 
         /// <summary>
-        /// 
+        /// Loops over and evaluates the property rules.
         /// </summary>
         public void Validate()
         {
@@ -166,105 +177,112 @@ namespace FdaViewModel
             NotifyPropertyChanged("HasError");
             NotifyPropertyChanged("HasFatalError");
             StringBuilder errors = new StringBuilder();
+            List<LogItem> errorMessages = new List<LogItem>();
             Error = "";
             foreach (PropertyRule pr in ruleMap.Values)
             {
+                
                 pr.Update();
                 if (pr.HasError)
                 {
                     if (pr.HasFatalError == true)
                     {
-                        //test logging from validate
-                        //LogEventInfo theEvent = new LogEventInfo(LogLevel.Fatal, "", pr.Error);
-                        //theEvent.Properties["ID"] = this.GetType();
-                        //Logger.Log(theEvent);
-                        //UpdateMessages();
-                        AddErrorMessage(pr.Error);
-
-
-
-                        //if (GetType().IsSubclassOf(typeof(BaseEditorVM)))
-                        //{
-                        //    BaseEditorVM baseEditor = (BaseEditorVM)this;
-                        //    ChildElement elem = baseEditor.OriginalElement;
-                        //    if (elem != null)
-                        //    {
-                        //        Saving.PersistenceFactory.GetElementManager(elem).Log(FdaLogging.LoggingLevel.Fatal, pr.Error, Name);
-                        //    }
-                        //}
-                        ///////////////////////////
                         HasFatalError = true;
                         NotifyPropertyChanged("HasFatalError");
                     }
                     errors.AppendLine(pr.Error);
+                    errorMessages.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, pr.Error));
                     HasError = true;
                     NotifyPropertyChanged("HasError");
                 }
             }
             if (HasError)
             {
+                //this is used to display the tooltip on the OK and SAVE buttons
                 Error = errors.ToString().Remove(errors.ToString().Length - 2);
+
             }
-            else
+
+            if (this is IDisplayLogMessages)
             {
-                Error = null;
-                //todo: clear out fatal logs
+                ((IDisplayLogMessages)this).TempErrors = errorMessages;
+                ((IDisplayLogMessages)this).UpdateMessages(false);
             }
             NotifyPropertyChanged(nameof(Error));
-
         }
         //virtual public void Save() { }
 
-            /// <summary>
-            /// Gets called anytime a property gets changed. The main purpose of this is to call validate() 
-            /// which will go over the rules and see if any are in error.
-            /// </summary>
-            /// <param name="propertyName"></param>
+        /// <summary>
+        /// <h1>This is a Heading</h1>
+        ///<p>This is a paragraph.</p>
+        ///<ol>
+        ///<li>Coffee</li>
+        ///<li>Tea</li>
+        ///<li>Milk</li>
+        ///</ol>
+        /// Gets called anytime a property gets changed. The main purpose of this is to call validate() 
+        /// which will go over the rules and see if any are in error. <b>Is this in bold?</b>
+        /// 
+        /// <list type="bullet">
+        ///<item>
+        /// <term>Optional term</term>
+        /// <description>Required description.  If term is omitted, the description can be
+        ///listed as the item element's inner text.</description>
+        /// </item>
+        ///</list>
+        ///
+        /// <para>
+        /// This is a paragraph using the para tag.
+        /// </para>
+        /// <para>
+        /// This is another paragraph using the para tag.
+        /// </para>
+        /// </summary>
+        /// <remarks>
+        /// My remark is a great remark.
+        /// </remarks>
+        /// <example>
+        /// <h3>Example 1</h3>
+        /// <para>For example: My example is a great example.</para>
+        /// <code>x = 2; = new list(int)()</code>
+        /// <h3>Example 2</h3>
+        /// <para>For example: My example is a great example.</para>
+        /// </example>
+        /// <param name="propertyName"></param>
         protected void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
-            HasChanges = true;
 
-
+            //todo: I don't like excluding properties like this, but if the validate is going to update
+            //properties, then you will get an infinite loop if you don't exclude them.
             if (propertyName.Equals(nameof(HasError))
                 || propertyName.Equals(nameof(HasFatalError))
                 || propertyName.Equals(nameof(Error))
-                //|| propertyName.Equals(nameof(Messages))
+                || propertyName.Equals(nameof(HasChanges))
                 || propertyName.Equals("MessageRows")
-                || propertyName.Equals("MessageCount"))
+                || propertyName.Equals("MessageCount")
+                || propertyName.Equals("SaveStatusLevel")
+                || propertyName.Equals("IsExpanded")
+                || propertyName.Equals("SaveStatusVisible"))
+
+
             {
-                //do nothing
-                //if (propertyName.Equals(nameof(HasError)))
-                //{
-                //    if (HasError)
-                //    {
-                //       // _ErrorsAction.IsEnabled = true;
-                //       // _ErrorsAction.IsVisible = true;
-
-                //        //_MessagesAction.IsEnabled = true;
-                //       // _MessagesAction.IsVisible = true;
-
-                //    }else
-                //    {
-                //        //_ErrorsAction.IsEnabled = false;
-                //       // _ErrorsAction.IsVisible = false;
-                //    }
-                //}
+                //don't validate
             }
             else
             {
+                HasChanges = true;
                 Validate();
-                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("The property " + propertyName + " has changed", FdaModel.Utilities.Messager.ErrorMessageEnum.Fatal, GetType().Name));
             }
             this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
 
-        public virtual void AddErrorMessage(string error)
-        {
+        //public virtual void AddMessage(string error, LoggingLevel level)
+        //{
 
-        }
-        public virtual void UpdateMessages()
-        {
-        }
+        //}
+        //public virtual void UpdateMessages()
+        //{
+        //}
 
         /// <summary>
         /// Adds a rule to a property in this VM. If that property changes, all rules attached to that property will get
