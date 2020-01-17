@@ -11,7 +11,7 @@ using Utilities;
 
 namespace Functions.CoordinatesFunctions
 {
-    public class CoordinatesFunctionLinked : CoordinatesFunctionLinkedBase, ICoordinatesFunction, IValidate<CoordinatesFunctionLinked>
+    public class CoordinatesFunctionLinked : CoordinatesFunctionLinkedBase, ICoordinatesFunction, IValidate<ICoordinatesFunction>
     {
 
         public bool IsDistributed
@@ -31,7 +31,24 @@ namespace Functions.CoordinatesFunctions
                 return retval;
             }
         }
+        public bool IsLinkedFunction => true;
+
         public IEnumerable<IMessage> Messages => null;
+
+        public DistributionType DistributionType
+        {
+            get
+            {
+                if (Coordinates.Count > 0)
+                {
+                    return Coordinates[0].Y.DistributionType;
+                }
+                else
+                {
+                    return DistributionType.NotSupported;
+                }
+            }
+        }
 
         /// <summary>
         /// The list of functions must be in the correct order.
@@ -268,7 +285,7 @@ namespace Functions.CoordinatesFunctions
             return retval;
         }
 
-        public bool Validate(IValidator<CoordinatesFunctionLinked> validator, out IEnumerable<IMessage> errors)
+        public bool Validate(IValidator<ICoordinatesFunction> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);
         }
@@ -345,7 +362,7 @@ namespace Functions.CoordinatesFunctions
                 XElement funcElem = new XElement("Function");
                 funcElem.SetAttributeValue("Interpolator", Interpolator);
 
-                foreach (ICoordinate coord in Coordinates)
+                foreach (ICoordinate coord in func.Coordinates)
                 {
                     funcElem.Add(coord.WriteToXML());
                 }

@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Globalization;
 
-namespace Fda.Utilities
+namespace View.Utilities
 {
     //[Author(q0heccdm, 12 / 1 / 2017 2:16:52 PM)]
     public class BoolToVisibilityConverter : IValueConverter

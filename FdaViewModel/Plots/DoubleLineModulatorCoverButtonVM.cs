@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 
 namespace FdaViewModel.Plots
@@ -26,16 +24,16 @@ namespace FdaViewModel.Plots
             get { return _IsEnabled; }
             set { _IsEnabled = value; NotifyPropertyChanged(); }
         }
-        public IndividualLinkedPlotControlVM Parent { get; set; }
+        //public IndividualLinkedPlotControlVM Parent { get; set; }
         #endregion
         #region Constructors
         public DoubleLineModulatorCoverButtonVM():base()
         {
         }
-        public DoubleLineModulatorCoverButtonVM(IndividualLinkedPlotControlVM parent)
-        {
-            Parent = parent;
-        }
+        //public DoubleLineModulatorCoverButtonVM(IndividualLinkedPlotControlVM parent)
+        //{
+        //    Parent = parent;
+        //}
         #endregion
         #region Voids
         public void ButtonClicked()

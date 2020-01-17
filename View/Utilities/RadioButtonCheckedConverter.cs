@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Globalization;
 
-namespace Fda.Utilities
+namespace View.Utilities
 {
     //[Author("q0heccdm", "10 / 18 / 2016 9:03:42 AM")]
     public class RadioButtonConverterLeft : IValueConverter

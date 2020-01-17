@@ -9,7 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
 
-namespace Fda.Utilities
+namespace View.Utilities
 {
     /// <summary>
     /// The tab control by default reloads each tab everytime they are selected. This was causing all kinds of problems

@@ -1,5 +1,6 @@
 ﻿using FdaViewModel.Editors;
 using FdaViewModel.Utilities;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,22 +16,22 @@ namespace FdaViewModel.FrequencyRelationships
         #region Fields
         private const string _TableConstant = "Analytical Frequency - ";
 
-        private Statistics.LogPearsonIII _Distribution;
+        private IFdaFunction _Distribution;
         #endregion
         #region Properties
       
-        public Statistics.LogPearsonIII Distribution
+        public IFdaFunction Distribution
         {
             get { return _Distribution; }
             set { _Distribution = value; NotifyPropertyChanged(); }
         }
         #endregion
         #region Constructors
-        public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, Statistics.LogPearsonIII dist) : base()
+        public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, IFdaFunction dist) : base()
         {
             LastEditDate = lastEditDate;
             Name = name;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/FrequencyCurve.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FrequencyCurve.png");
 
             Description = desc;
             if (Description == null) Description = "";
@@ -101,7 +102,7 @@ namespace FdaViewModel.FrequencyRelationships
             AnalyticalFrequencyElement element = (AnalyticalFrequencyElement)elem;
             element.Name = vm.Name;
             element.Description = vm.Description;
-            element.Distribution = vm.Distribution;
+            element.Distribution = vm.Curve;
             element.UpdateTreeViewHeader(vm.Name);
         }
 
@@ -112,14 +113,14 @@ namespace FdaViewModel.FrequencyRelationships
 
             vm.Name = element.Name;
             vm.Description = element.Description;
-            vm.Distribution = element.Distribution;
+            vm.Curve = element.Distribution;
 
         }
 
         public ChildElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
         {
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            return new AnalyticalFrequencyElement(editorVM.Name, editDate, editorVM.Description, ((AnalyticalFrequencyEditorVM)editorVM).Distribution);
+            return new AnalyticalFrequencyElement(editorVM.Name, editDate, editorVM.Description, ((AnalyticalFrequencyEditorVM)editorVM).Curve);
             //return null;
         }
         //public override void Save()
@@ -168,18 +169,19 @@ namespace FdaViewModel.FrequencyRelationships
                 {
                     retval = false;
                 }
-                if (!Double.Equals(Distribution.GetMean, elem.Distribution.GetMean))
-                {
-                    retval = false;
-                }
-                if (!Double.Equals(Distribution.GetStDev, elem.Distribution.GetStDev))
-                {
-                    retval = false;
-                }
-                if (!Double.Equals(Distribution.GetG, elem.Distribution.GetG))
-                {
-                    retval = false;
-                }
+                //todo: Refactor: Commented Out
+                //if (!Double.Equals(Distribution.GetMean, elem.Distribution.GetMean))
+                //{
+                //    retval = false;
+                //}
+                //if (!Double.Equals(Distribution.GetStDev, elem.Distribution.GetStDev))
+                //{
+                //    retval = false;
+                //}
+                //if (!Double.Equals(Distribution.GetG, elem.Distribution.GetG))
+                //{
+                //    retval = false;
+                //}
             }
             else
             {

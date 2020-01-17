@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
+using Utilities;
 using Utilities.Serialization;
 
 namespace Functions
 {
-    public interface ICoordinatesFunction : ISerializeToXML<ICoordinatesFunction>
+    public interface ICoordinatesFunction : ISerializeToXML<ICoordinatesFunction>, IValidate<ICoordinatesFunction>
     {
         IOrdinate F(IOrdinate x);
         IOrdinate InverseF(IOrdinate y);
@@ -20,7 +21,9 @@ namespace Functions
 
         bool Equals(ICoordinatesFunction function);
 
+        Functions.DistributionType DistributionType { get; }
 
+        bool IsLinkedFunction { get; }
         //bool IsDistributed { get; }
 
         //IFunction Sample(double p);

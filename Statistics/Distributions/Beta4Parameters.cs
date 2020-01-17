@@ -52,14 +52,13 @@ namespace Statistics.Distributions
         }
         internal static string Print(double alpha, double beta, double location, double scale, int n) => $"ScaledBeta(alpha: {alpha.Print()}, beta: {beta.Print()}, range: [{location.Print()}, {(location + scale).Print()}], sample size: {n.Print()})";
         //The Unicode character \u2265 should produce a greater than or equal to character.
-        internal static string RequiredParameterization(bool printNotes = true)
+        public static string Requirements(bool printNotes = true)
         {
-            string msg = $"The Scaled Beta distribution requires the following parameterization: {Parameterization()}.";
+            string msg = $"The Scaled Beta distribution requires the following parameterization: ScaledBeta(alpha: \u2265 0, beta: \u2265 0, {Validation.Resources.DoubleRangeRequirements()}, sample size: > 0).";
             if (printNotes) msg += " " + RequirementNotes();
             return msg;
         }
-        internal static string Parameterization() => $"ScaledBeta(alpha: [0, {double.MaxValue.Print()}], beta: [0, {double.MaxValue.Print()}], {Validation.Resources.DoubleRangeRequirements()}, sample size: > 0)";
-        internal static string RequirementNotes() => $"The range parameter is sometimes expressed in terms of location and scale, where location equals the range minimum and scale equals the range maximum minus the range minimum.";
+        public static string RequirementNotes() => $"The range parameter is sometimes expressed in terms of location and scale, where location equals the range minimum and scale equals the range maximum minus the range minimum.";
 
         #region IDistribution Functions
         public double PDF(double x) => _Distribution.Density(x);
@@ -78,7 +77,7 @@ namespace Statistics.Distributions
         public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(SampleSize, numberGenerator));
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         public string Print(bool round = false) => round ? Print(_Distribution.A, _Distribution.B, Range.Min, (Range.Max - Range.Min), SampleSize): $"ScaledBeta(alpha: {_Distribution.A}, beta: {_Distribution.B}, range: [{_Distribution.Location}, {(_Distribution.Location + _Distribution.Scale).Print()}], sample size: {SampleSize})";
-        public string Requirements(bool printNotes) => RequiredParameterization(printNotes);
+
         #endregion        
         public static Beta4Parameters Fit(IEnumerable<double> data)
         {
@@ -161,6 +160,8 @@ namespace Statistics.Distributions
             double bound1 = kurtosis - skew * skew - 1, bound2 = 1.5 * skew * skew + 3 - kurtosis;
             return (bound1 < 0.00001 || bound2 < 0.00001) ? new Tuple<double, double, bool>(bound1, bound2, false) : new Tuple<double, double, bool>(bound1, bound2, true);
         }
+
+       
 
         public string WriteToXML()
         {

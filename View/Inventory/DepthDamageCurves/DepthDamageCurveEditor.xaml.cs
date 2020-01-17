@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 
 
-namespace Fda.Inventory.DepthDamageCurves
+namespace View.Inventory.DepthDamageCurves
 {
     /// <summary>
     /// Interaction logic for DepthDamageCurveEditor.xaml

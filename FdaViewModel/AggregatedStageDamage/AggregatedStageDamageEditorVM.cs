@@ -4,7 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FdaViewModel.Utilities;
-using Statistics;
+using Functions;
+using Model;
+using Model.Condition.ComputePoint.ImpactAreaFunctions;
+using Model.Inputs.Functions.ImpactAreaFunctions;
 
 namespace FdaViewModel.AggregatedStageDamage
 {
@@ -17,7 +20,7 @@ namespace FdaViewModel.AggregatedStageDamage
         private string _Description = "";
         private bool _ReadOnly = false;
         private readonly string _Title = "Aggregated Stage Damage";
-        private Statistics.UncertainCurveDataCollection _Curve;
+        private IFdaFunction _Curve;
 
         #endregion
         #region Properties
@@ -44,7 +47,7 @@ namespace FdaViewModel.AggregatedStageDamage
         {
             get { return _Title; }
         }
-        public Statistics.UncertainCurveDataCollection Curve
+        public IFdaFunction Curve
         {
             get { return _Curve; }
             set { _Curve = value;  NotifyPropertyChanged(); }
@@ -62,13 +65,14 @@ namespace FdaViewModel.AggregatedStageDamage
         /// <param name="ownerValidationRules"></param>
         public AggregatedStageDamageEditorVM(Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) : base()
         {
-            double[] xValues = new double[16] { 95, 97, 99, 101, 103, 105, 107, 110, 112, 115, 117, 120, 122, 125, 127, 130 };
-            Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[16] { new Statistics.None(0), new Statistics.None(0), new Statistics.None(0), new Statistics.None(1), new Statistics.None(3), new Statistics.None(10), new Statistics.None(50), new Statistics.None(1000), new Statistics.None(2000), new Statistics.None(4000), new Statistics.None(8000), new Statistics.None(10000), new Statistics.None(11000), new Statistics.None(11500), new Statistics.None(11750), new Statistics.None(11875) };
+            List<double> xValues = new List<double>() { 95, 97, 99, 101, 103, 105, 107, 110, 112, 115, 117, 120, 122, 125, 127, 130 };
+            List<double> yValues = new List<double>() { 95, 97, 99, 101, 103, 105, 107, 110, 112, 115, 117, 120, 122, 125, 127, 130 };
 
             SaveAction = saveAction;
             ownerValidationRules(this);
 
-            Curve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xValues, yValues);
+            Curve = ImpactAreaFunctionFactory.Factory(func, ImpactAreaFunctionEnum.InteriorStageDamage);
         }
 
         public AggregatedStageDamageEditorVM(AggregatedStageDamageElement elem, Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) :base(elem)
@@ -139,12 +143,12 @@ namespace FdaViewModel.AggregatedStageDamage
         }
        
 
-        public UncertainCurveDataCollection GetTheElementsCurve()
+        public IFdaFunction GetTheElementsCurve()
         {
             return ((AggregatedStageDamageElement)CurrentElement).Curve;
         }
 
-        public UncertainCurveDataCollection GetTheEditorsCurve()
+        public IFdaFunction GetTheEditorsCurve()
         {
             return Curve;
         }

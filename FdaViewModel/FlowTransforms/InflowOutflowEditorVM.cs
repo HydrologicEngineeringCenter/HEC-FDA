@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using FdaViewModel.Utilities;
 using Statistics;
+using Model;
+using Model.Inputs.Functions.ImpactAreaFunctions;
 
 namespace FdaViewModel.FlowTransforms
 {
@@ -21,7 +21,7 @@ namespace FdaViewModel.FlowTransforms
         #region Fields
         private string _Name;
         private string _Description;
-        private Statistics.UncertainCurveDataCollection _Curve;
+        private Model.IFdaFunction _Curve;
         private string _PlotTitle = "Inflow-Outflow Curve";
         private List<Utilities.Transactions.TransactionRowItem> _Transactions;
         private ObservableCollection<Utilities.UndoRedoRowItem> _UndoRedoRows = new ObservableCollection<UndoRedoRowItem>();
@@ -54,7 +54,7 @@ namespace FdaViewModel.FlowTransforms
         public int SelectedIndexInRedoList { get; set; }
 
         public ChildElement CurrentElement { get; set; }
-        public Statistics.UncertainCurveDataCollection Curve
+        public IFdaFunction Curve
         {
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
@@ -79,13 +79,19 @@ namespace FdaViewModel.FlowTransforms
         {
 
             ownerValidationRules(this);
-     
-            double[] xs = new double[] { 0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000 };
-            //double[] ys = new double[] { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
-            Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(2000), new Statistics.None(3000), new Statistics.None(4000), new Statistics.None(5000), new Statistics.None(6000), new Statistics.None(7000), new Statistics.None(8000), new Statistics.None(9000), new Statistics.None(10000), new Statistics.None(11000) };
+
+            //double[] xs = new double[] { 0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000 };
+            ////double[] ys = new double[] { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
+            //Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(2000), new Statistics.None(3000), new Statistics.None(4000), new Statistics.None(5000), new Statistics.None(6000), new Statistics.None(7000), new Statistics.None(8000), new Statistics.None(9000), new Statistics.None(10000), new Statistics.None(11000) };
+
+            List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
+            IFdaFunction defaultFunction = ImpactAreaFunctionFactory.Factory(func, ImpactAreaFunctionEnum.InflowOutflow);
 
             SaveAction = saveAction;
-            Curve = new Statistics.UncertainCurveIncreasing(xs, yValues, true, false,Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            Curve = defaultFunction;
+        
         }
         public InflowOutflowEditorVM(InflowOutflowElement elem, Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel,string> ownerValidationRules) : base(elem)
         {
@@ -181,12 +187,12 @@ namespace FdaViewModel.FlowTransforms
             ((InflowOutflowElement)CurrentElement).Curve = Curve;
         }
 
-        public UncertainCurveDataCollection GetTheElementsCurve()
+        public IFdaFunction GetTheElementsCurve()
         {
             return ((InflowOutflowElement)CurrentElement).Curve;
         }
 
-        public UncertainCurveDataCollection GetTheEditorsCurve()
+        public IFdaFunction GetTheEditorsCurve()
         {
             return Curve;
         }

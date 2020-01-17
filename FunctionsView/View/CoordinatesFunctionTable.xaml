@@ -25,7 +25,7 @@
                   Width="520" HorizontalAlignment="Left" Margin="5,0,5,0" BorderThickness="1,0,1,0" 
                   HorizontalGridLinesBrush="#808080" VerticalGridLinesBrush="#808080"
                   CanUserAddRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False"
-                  SelectionMode="Extended" SelectionUnit="Cell" >
+                  SelectionMode="Extended" SelectionUnit="Cell"  CellEditEnding="dg_table_CellEditEnding">
             
             <DataGrid.Columns>
                 <DataGridTextColumn x:Name="col_x"  Binding="{Binding Path=X, UpdateSourceTrigger=LostFocus}" />

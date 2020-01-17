@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using FdaViewModel.Utilities;
-using FdaModel.ComputationPoint;
-using FdaModel.Functions.OrdinatesFunctions;
 using System.Collections.ObjectModel;
 using FdaViewModel.Conditions;
 using FdaViewModel.Tabs;
@@ -53,7 +51,7 @@ namespace FdaViewModel.Study
 
             FontSize = 18;
             Name = "Study";
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png");
             _Elements = new System.Collections.ObjectModel.ObservableCollection<BaseFdaElement>();
 
             NamedAction open = new NamedAction();
@@ -373,8 +371,8 @@ namespace FdaViewModel.Study
             }
             else
             {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("A study with that name already exists.",
-                    FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.View));
+                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("A study with that name already exists.",
+                    //FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.View));
 
                 Storage.Connection.Instance.ProjectFile = vm.Path + "\\" + vm.StudyName + "\\" + vm.StudyName + ".sqlite";
             }
@@ -419,7 +417,7 @@ namespace FdaViewModel.Study
             }
             else
             {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Study Properties was accessed without the study path or study name being defined.", FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel));
+                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Study Properties was accessed without the study path or study name being defined.", FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel));
             }
         }
 
@@ -598,7 +596,8 @@ namespace FdaViewModel.Study
             Saving.PersistenceFactory.GetStageDamageManager().Load();
             Saving.PersistenceFactory.GetStructureInventoryManager().Load();
             Saving.PersistenceFactory.GetConditionsManager().Load();
-            Saving.PersistenceFactory.GetOccTypeManager().Load();
+            //todo: Refactor: CO
+            //Saving.PersistenceFactory.GetOccTypeManager().Load();
 
         }
 

@@ -152,11 +152,11 @@ Namespace UserControls
             '
             UniqueRows.Sort()
             Dim items As ComponentModel.IEditableCollectionView = Me.Items
-            For i As Int32 = 0 To UniqueRows.Count - 1
-                If items.CanRemove Then
-                    items.RemoveAt(UniqueRows(i) - i)
-                End If
-            Next
+            'For i As Int32 = 0 To UniqueRows.Count - 1
+            '    If items.CanRemove Then
+            '        items.RemoveAt(UniqueRows(i) - i)
+            '    End If
+            'Next
             RaiseEvent RowsDeleted(UniqueRows)
         End Sub
 

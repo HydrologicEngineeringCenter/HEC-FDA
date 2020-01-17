@@ -16,6 +16,7 @@ namespace FunctionsView.ViewModel
         public delegate void RowIsLeavingEventHandler(RowLeavingEventArgs e);
         public event RowIsLeavingEventHandler RowIsLeavingTable;
         public event EventHandler NoMoreRows;
+        public event EventHandler TableWasModified;
 
         public DistributionType DistributionType
         {
@@ -50,12 +51,27 @@ namespace FunctionsView.ViewModel
             return ICoordinatesFunctionsFactory.Factory(coordinates, interpType);
         }
 
-        public void RowDeleted()
+        //public void RowDeleted()
+        //{
+        //    if (Rows.Count == 0)
+        //    {
+        //        NoMoreRows?.Invoke(this, new EventArgs());
+        //    }
+        //    TableWasModified?.Invoke(this, new EventArgs());
+        //}
+
+        public void DeleteRows(List<int> indexes)
         {
+            for(int i = 0;i<indexes.Count;i++)
+            {
+                Rows.RemoveAt(indexes[i] - i);
+            }
+            //if all rows are gone then tell the parent so that it can delete this table
             if (Rows.Count == 0)
             {
                 NoMoreRows?.Invoke(this, new EventArgs());
             }
+            TableWasModified?.Invoke(this, new EventArgs());
         }
 
         private void Row_RowIsLeavingTable(object sender, EventArgs e)
@@ -76,12 +92,14 @@ namespace FunctionsView.ViewModel
             {
                 NoMoreRows?.Invoke(this, new EventArgs());
             }
+            TableWasModified?.Invoke(this, new EventArgs());
         }
 
         public void AddRow(CoordinatesFunctionRowItem row)
         {
             row.RowIsLeavingTable += Row_RowIsLeavingTable;
             Rows.Add(row);
+            TableWasModified?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -93,6 +111,7 @@ namespace FunctionsView.ViewModel
             {
                 Rows.Add(CreateDefaultRow());
             }
+            TableWasModified?.Invoke(this, new EventArgs());
         }
         /// <summary>
         /// This gets called by the table in the view for the context menu options: Add, insert
@@ -105,19 +124,27 @@ namespace FunctionsView.ViewModel
             {
                 Rows.Insert(startRow, CreateDefaultRow());
             }
+            TableWasModified?.Invoke(this, new EventArgs());
         }
 
         public void InsertRow(int index, CoordinatesFunctionRowItem row)
         {
             row.RowIsLeavingTable += Row_RowIsLeavingTable;
             Rows.Insert(index, row);
+            TableWasModified?.Invoke(this, new EventArgs());
         }
 
         public void InsertRow(int index)
         {
             Rows.Insert(index, CreateDefaultRow());
+            TableWasModified?.Invoke(this, new EventArgs());
         }
 
+
+        public void CellEditEnding()
+        {
+            TableWasModified?.Invoke(this, new EventArgs());
+        }
         /// <summary>
         /// Grabs the distribution type and interpolation type from the first row
         /// and then adds a row to the end of the table with that dist type and interp type.

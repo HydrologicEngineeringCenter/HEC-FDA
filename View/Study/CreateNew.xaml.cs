@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Fda.Study
+namespace View.Study
 {
     /// <summary>
     /// Interaction logic for CreateNew.xaml

@@ -1,7 +1,9 @@
-﻿using FdaViewModel.Utilities;
+﻿using FdaLogging;
+using FdaViewModel.Utilities;
 using FdaViewModel.Utilities.Transactions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Utilities
+namespace View.Utilities
 {
     /// <summary>
     /// Interaction logic for MessageExpanderControl.xaml
@@ -24,6 +26,10 @@ namespace Fda.Utilities
     {
         public static readonly DependencyProperty ExpandedHeightProperty = DependencyProperty.Register("ExpandedHeight", typeof(int), typeof(MessageExpanderControl), new FrameworkPropertyMetadata(300, new PropertyChangedCallback(ExpandedHeightCallBack)));
         public static readonly DependencyProperty HeaderTextProperty = DependencyProperty.Register("HeaderText", typeof(String), typeof(MessageExpanderControl), new FrameworkPropertyMetadata("Errors", new PropertyChangedCallback(HeaderTextCallBack)));
+        public static readonly DependencyProperty StatusLevelProperty = DependencyProperty.Register("StatusLevel", typeof(LoggingLevel), typeof(MessageExpanderControl), new FrameworkPropertyMetadata(LoggingLevel.Debug, new PropertyChangedCallback(StatusLevelCallBack)));
+        public static readonly DependencyProperty StatusVisibleProperty = DependencyProperty.Register("StatusVisible", typeof(bool), typeof(MessageExpanderControl), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(StatusVisibleCallBack)));
+
+        private static readonly int LIST_ROW = 0;
 
         public int ExpandedHeight
         {
@@ -35,16 +41,63 @@ namespace Fda.Utilities
             get { return (String)GetValue(HeaderTextProperty); }
             set { SetValue(HeaderTextProperty, value); }
         }
+
+        public LoggingLevel StatusLevel
+        {
+            get { return (LoggingLevel)GetValue(StatusLevelProperty); }
+            set { SetValue(StatusLevelProperty, value); }
+        }
+
+        public bool StatusVisible
+        {
+            get { return (bool)GetValue(StatusVisibleProperty); }
+            set { SetValue(StatusVisibleProperty, value); }
+        }
         public MessageExpanderControl()
         {
             InitializeComponent();
             cmb_Filter.Items.Add("All");
-            cmb_Filter.Items.Add(FdaLogging.LoggingLevel.Fatal);
-            cmb_Filter.Items.Add(FdaLogging.LoggingLevel.Error);
-            cmb_Filter.Items.Add(FdaLogging.LoggingLevel.Warn);
-            cmb_Filter.Items.Add(FdaLogging.LoggingLevel.Info);
+            cmb_Filter.Items.Add(LoggingLevel.Fatal);
+            cmb_Filter.Items.Add(LoggingLevel.Error);
+            cmb_Filter.Items.Add(LoggingLevel.Warn);
+            cmb_Filter.Items.Add(LoggingLevel.Info);
             cmb_Filter.SelectedIndex = 0;
+        }
+        private void UpdateStatusText(LoggingLevel level)
+        {
+            switch(level)
+            {
+                case LoggingLevel.Fatal:
+                    {
+                        StatusPanel.Height = 25;
 
+                        lbl_StatusMessage.Content = "Could not save because of the following ";
+                        lbl_StatusEnding.Content = "fatal errors:";
+                        break;
+                    }
+                case LoggingLevel.Error:
+                    {
+                        StatusPanel.Height = 25;
+
+                        lbl_StatusMessage.Content = "Saved successfully with the following ";
+                        lbl_StatusEnding.Content = "errors:";
+                        break;
+                    }
+                case LoggingLevel.Warn:
+                    {
+                        StatusPanel.Height = 25;
+
+                        lbl_StatusMessage.Content = "Saved successfully with the follwing ";
+                        lbl_StatusEnding.Content = "messages:";
+                        break;
+                    }
+                default:
+                    {
+                        //anything else will collapse the panel
+                        StatusPanel.Height = 0;
+                        break;
+                    }
+            }
         }
         private static void HeaderTextCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -53,11 +106,32 @@ namespace Fda.Utilities
             owner.MessagesExpander.Header = headerText;
             
         }
+        private static void StatusLevelCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            MessageExpanderControl owner = d as MessageExpanderControl;
+            LoggingLevel level = (LoggingLevel)e.NewValue;
+            owner.UpdateStatusText(level);
+
+        }
+        private static void StatusVisibleCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            MessageExpanderControl owner = d as MessageExpanderControl;
+            bool showStatus = (bool)e.NewValue;
+            if (showStatus)
+            {
+                owner.StatusPanel.Height = 25;
+            }
+            else
+            {
+                owner.StatusPanel.Height = 0;
+            }
+
+        }
         private static void ExpandedHeightCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             MessageExpanderControl owner = d as MessageExpanderControl;
             int maxHeight = (int)e.NewValue;
-            owner.MainGrid.RowDefinitions[0].MaxHeight = maxHeight;
+            owner.MainGrid.RowDefinitions[LIST_ROW].MaxHeight = maxHeight;
             if (maxHeight > 50)
             {
                 //this is in order to actually see the bottom of the scrolling
@@ -69,7 +143,7 @@ namespace Fda.Utilities
         {
             if (sender == e.OriginalSource)
             {
-                MainGrid.RowDefinitions[0].Height = GridLength.Auto;
+                MainGrid.RowDefinitions[LIST_ROW].Height = GridLength.Auto;
                 MessagesExpander.Margin = new Thickness(5, 5, 5, 5);
 
             }
@@ -79,7 +153,7 @@ namespace Fda.Utilities
         {
             if (sender == e.OriginalSource)
             {
-                MainGrid.RowDefinitions[0].Height = new GridLength(1,GridUnitType.Star);
+                MainGrid.RowDefinitions[LIST_ROW].Height = new GridLength(1,GridUnitType.Star);
                 MessagesExpander.Margin = new Thickness(5, 5, 5, 40);
             }
 
@@ -87,24 +161,24 @@ namespace Fda.Utilities
 
         private void cmb_Filter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(cmb_Filter.SelectedItem is FdaLogging.LoggingLevel)
+            if(cmb_Filter.SelectedItem is LoggingLevel)
             {
-                FdaLogging.LoggingLevel level = (FdaLogging.LoggingLevel)cmb_Filter.SelectedItem;
-                if(level == FdaLogging.LoggingLevel.Fatal)
+                LoggingLevel level = (LoggingLevel)cmb_Filter.SelectedItem;
+                if(level == LoggingLevel.Fatal)
                 {
-                    SetMessageRows(FdaLogging.LoggingLevel.Fatal);
+                    SetMessageRows(LoggingLevel.Fatal);
                 }
-                else if (level == FdaLogging.LoggingLevel.Error)
+                else if (level == LoggingLevel.Error)
                 {
-                    SetMessageRows(FdaLogging.LoggingLevel.Error);
+                    SetMessageRows(LoggingLevel.Error);
                 }
-                else if (level == FdaLogging.LoggingLevel.Warn)
+                else if (level == LoggingLevel.Warn)
                 {
-                    SetMessageRows(FdaLogging.LoggingLevel.Warn);
+                    SetMessageRows(LoggingLevel.Warn);
                 }
-                else if (level == FdaLogging.LoggingLevel.Info)
+                else if (level == LoggingLevel.Info)
                 {
-                    SetMessageRows(FdaLogging.LoggingLevel.Info);
+                    SetMessageRows(LoggingLevel.Info);
                 }
             }
             else
@@ -116,17 +190,17 @@ namespace Fda.Utilities
 
         private void DisplayAllMessages()
         {
-            if (this.DataContext is ITransactionsAndMessages)
+            if (this.DataContext is IDisplayLogMessages)
             {
-                ITransactionsAndMessages messageVM = (ITransactionsAndMessages)this.DataContext;
+                IDisplayLogMessages messageVM = (IDisplayLogMessages)this.DataContext;
                 messageVM.DisplayAllMessages();
             }
         }
-        private void SetMessageRows(FdaLogging.LoggingLevel level)
+        private void SetMessageRows(LoggingLevel level)
         {
-            if(this.DataContext is ITransactionsAndMessages)
+            if(this.DataContext is IDisplayLogMessages)
             {
-                ITransactionsAndMessages messageVM = (ITransactionsAndMessages)this.DataContext;
+                IDisplayLogMessages messageVM = (IDisplayLogMessages)this.DataContext;
                 messageVM.FilterRowsByLevel(level);
             }
             //WindowVM vm = (WindowVM)this.DataContext;
@@ -149,4 +223,38 @@ namespace Fda.Utilities
         //    }
         //}
     }
+
+    [ValueConversion(typeof(string), typeof(SolidColorBrush))]
+    public class LogLevelToTextColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value != null)
+            {
+                LoggingLevel logLevel = (LoggingLevel)value;
+                switch (logLevel)
+                {
+                    case LoggingLevel.Fatal:
+                        {
+                            return new SolidColorBrush(Colors.Red);
+                        }
+                    case LoggingLevel.Error:
+                        {
+                            return new SolidColorBrush(Colors.Orange);
+                        }
+                    case LoggingLevel.Warn:
+                        {
+                            return new SolidColorBrush(Colors.Green);
+                        }
+                }
+            }
+            return new SolidColorBrush(Colors.Black);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return Brushes.Black;
+        }
+    }
+
 }

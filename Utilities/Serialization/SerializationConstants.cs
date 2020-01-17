@@ -30,6 +30,7 @@ namespace Utilities.Serialization
 
         //distribution parameters
         public const string MEAN = "Mean";
+        public const string MODE = "Mode";
         public const string ST_DEV = "StandardDeviation";
         public const string SAMPLE_SIZE = "SampleSize";
         public const string MIN = "Min";

@@ -44,7 +44,7 @@ namespace Functions
             {
                 return new CoordinatesFunctionVariableYs(coordinates, interpolator);
             }
-            //todo add the linked plots option
+            //todo add the linked plots option. not sure i need to do this anymore
             else throw new ArgumentException("Could not turn the coordinates provided into a function.");
         }
         private static bool IsDistributedYValues(List<ICoordinate> coordinates)

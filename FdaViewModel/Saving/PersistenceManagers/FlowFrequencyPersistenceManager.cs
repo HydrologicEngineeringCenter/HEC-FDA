@@ -70,7 +70,10 @@ public override Type[] ChangeTableColumnTypes
         #region utilities
         private object[] GetRowDataFromElement(AnalyticalFrequencyElement element)
         {
-            return new object[] { element.Name, element.LastEditDate, element.Description, element.Distribution.GetMean, element.Distribution.GetStDev, element.Distribution.GetG, element.Distribution.GetSampleSize };
+            return new object[] { element.Name, element.LastEditDate, element.Description};
+            //todo: Refactor: CO
+                //element.Distribution.GetMean, element.Distribution.GetStDev, element.Distribution.GetG,
+                //element.Distribution.GetSampleSize };
         }
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
@@ -79,7 +82,13 @@ public override Type[] ChangeTableColumnTypes
             double stdev = Convert.ToDouble(rowData[ST_DEV_COL]);
             double skew = Convert.ToDouble(rowData[SKEW_COL]);
             Int64 n = Convert.ToInt64( rowData[YEARS_OF_RECORD_COL]);
-            return new AnalyticalFrequencyElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESC_COL], new Statistics.LogPearsonIII(mean, stdev, skew, (int)n));
+
+            //todo: Refactor: I should be  able to pass the xml string into the factory and it create it.
+            //Model.ImpactAreaFunctionFactory.Factory()
+            return new AnalyticalFrequencyElement((string)rowData[NAME_COL],
+                (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESC_COL],null);
+                //todo: Refactor: CO and added the null in the line above
+                //new Statistics.LogPearsonIII(mean, stdev, skew, (int)n));
 
         }
         #endregion
@@ -191,8 +200,9 @@ public override Type[] ChangeTableColumnTypes
             AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)element;
             //the new statId will be one higher than the max that is in the table already.
             int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
-            return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
-                elem.Distribution.GetMean, elem.Distribution.GetStDev, elem.Distribution.GetG, elem.Distribution.GetSampleSize, stateId};
+            return new object[] { elemId, element.Name, element.LastEditDate, element.Description };
+                //todo: Refactor: CO
+                //elem.Distribution.GetMean, elem.Distribution.GetStDev, elem.Distribution.GetG, elem.Distribution.GetSampleSize, stateId};
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)

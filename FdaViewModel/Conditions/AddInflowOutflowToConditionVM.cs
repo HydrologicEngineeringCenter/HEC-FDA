@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
-using System.Threading.Tasks;
-using FdaModel.Functions;
 using Statistics;
 using FdaViewModel.Utilities;
 using FdaViewModel.FlowTransforms;
+using Model;
 
 namespace FdaViewModel.Conditions
 {
@@ -47,34 +44,35 @@ namespace FdaViewModel.Conditions
             set { _ListOfInflowOutflowElements = value; NotifyPropertyChanged(); }
         }
 
-        public CurveIncreasing SelectedCurve
+        public IFdaFunction SelectedCurve
         {
             get
             {
-                UncertainCurveDataCollection curve = ((FlowTransforms.InflowOutflowElement)SelectedElement).Curve;
-                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction infOut = 
-                    new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InflowOutflow);
-                List<double> ys = new List<double>();
-                List<double> xs = new List<double>();
-                foreach (double y in (infOut.GetOrdinatesFunction().Function.YValues))
-                {
-                    ys.Add(y);
-                }
-                foreach (double x in (infOut.GetOrdinatesFunction().Function.XValues))
-                {
-                    xs.Add(x);
-                }
-                return new Statistics.CurveIncreasing(xs.ToArray(), ys.ToArray(), true, false);
+                return ((FlowTransforms.InflowOutflowElement)SelectedElement).Curve;
+                //UncertainCurveDataCollection curve = ((FlowTransforms.InflowOutflowElement)SelectedElement).Curve;
+                //FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction infOut = 
+                //    new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InflowOutflow);
+                //List<double> ys = new List<double>();
+                //List<double> xs = new List<double>();
+                //foreach (double y in (infOut.GetOrdinatesFunction().Function.YValues))
+                //{
+                //    ys.Add(y);
+                //}
+                //foreach (double x in (infOut.GetOrdinatesFunction().Function.XValues))
+                //{
+                //    xs.Add(x);
+                //}
+                //return new Statistics.CurveIncreasing(xs.ToArray(), ys.ToArray(), true, false);
             }
         }
 
-        public BaseFunction BaseFunction
-        {
-            get
-            {
-                return new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(SelectedCurve, FunctionTypes.InflowOutflow);
-            }
-        }
+        //public BaseFunction BaseFunction
+        //{
+        //    get
+        //    {
+        //        return new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(SelectedCurve, FunctionTypes.InflowOutflow);
+        //    }
+        //}
 
         public string SelectedElementName
         {

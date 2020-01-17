@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
-using System.Threading.Tasks;
-using Statistics;
-using FdaModel.Functions;
 using FdaViewModel.Utilities;
 using FdaViewModel.StageTransforms;
+using Model;
 
 namespace FdaViewModel.Conditions
 {
@@ -46,35 +40,38 @@ namespace FdaViewModel.Conditions
             set { _ListOfExteriorInteriorStageElements = value; NotifyPropertyChanged(); }
         }
 
-        public CurveIncreasing SelectedCurve
+        public IFdaFunction SelectedCurve
         {
             get
             {
-                UncertainCurveDataCollection curve = ((StageTransforms.ExteriorInteriorElement)SelectedElement).Curve;
+                //todo: Refactor: What is this thing doing? Can't i just return the original curve. Looks like was making a new one
+                //and returning the copy? I think we are getting rid of all this oxy plot stuff anyway.
+                return  ((ExteriorInteriorElement)SelectedElement).Curve;
 
-                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extInt = 
-                    new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve,FunctionTypes.ExteriorInteriorStage);
-                List<double> ys = new List<double>();
-                List<double> xs = new List<double>();
-                foreach (double y in (extInt.GetOrdinatesFunction().Function.YValues))
-                {
-                    ys.Add(y);
-                }
-                foreach (double x in (extInt.GetOrdinatesFunction().Function.XValues))
-                {
-                    xs.Add(x);
-                }
-                return new CurveIncreasing(xs.ToArray(), ys.ToArray(), true, false);
+                //IFdaFunction extInt = 
+                //    new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve,FunctionTypes.ExteriorInteriorStage);
+                //List<double> ys = new List<double>();
+                //List<double> xs = new List<double>();
+                //foreach (double y in (extInt.GetOrdinatesFunction().Function.YValues))
+                //{
+                //    ys.Add(y);
+                //}
+                //foreach (double x in (extInt.GetOrdinatesFunction().Function.XValues))
+                //{
+                //    xs.Add(x);
+                //}
+                //return new CurveIncreasing(xs.ToArray(), ys.ToArray(), true, false);
             }
         }
 
-        public BaseFunction BaseFunction
-        {
-            get
-            {
-                return new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(SelectedCurve, FunctionTypes.ExteriorInteriorStage);
-            }
-        }
+        //todo: Refactor: commenting this out
+        //public BaseFunction BaseFunction
+        //{
+        //    get
+        //    {
+        //        return new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(SelectedCurve, FunctionTypes.ExteriorInteriorStage);
+        //    }
+        //}
 
         public string SelectedElementName
         {

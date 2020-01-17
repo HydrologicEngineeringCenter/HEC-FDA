@@ -44,17 +44,17 @@ namespace FunctionsTests.Ordinates
             Assert.True(range.Item1 == range.Item2 && range.Item1 == value);
         }
 
-        /// <summary>
-        /// Tests that the IsDistributed property always returns false.
-        /// </summary>
-        /// <param name="value"></param>
-        [Theory]
-        [InlineData(0)]
-        public void IsDistributed_GoodInput_Returns_Bool(double value)
-        {
-            Constant constant = new Constant(value);
-            Assert.False(constant.IsDistributed);
-        }
+        ///// <summary>
+        ///// Tests that the IsDistributed property always returns false.
+        ///// </summary>
+        ///// <param name="value"></param>
+        //[Theory]
+        //[InlineData(0)]
+        //public void IsDistributed_GoodInput_Returns_Bool(double value)
+        //{
+        //    Constant constant = new Constant(value);
+        //    Assert.False(constant.IsDistributed);
+        //}
 
         /// <summary>
         /// Tests the Equals method returns true for Constants that have been given the same value.

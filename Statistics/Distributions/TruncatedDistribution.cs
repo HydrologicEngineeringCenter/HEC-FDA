@@ -112,18 +112,6 @@ namespace Statistics.Distributions
             return msg;
         }
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
-
-       
-
-        public string WriteToXML()
-        {
-            throw new NotImplementedException();
-        }
-
-        XElement ISerializeToXML<IDistribution>.WriteToXML()
-        {
-            throw new NotImplementedException();
-        }
         #endregion
         #endregion
     }

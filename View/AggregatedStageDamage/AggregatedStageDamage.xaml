@@ -1,10 +1,10 @@
-﻿<UserControl x:Class="Fda.AggregatedStageDamage.AggregatedStageDamage"
+﻿<UserControl x:Class="View.AggregatedStageDamage.AggregatedStageDamage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Fda.AggregatedStageDamage"
-             xmlns:Utilities="clr-namespace:Fda.Utilities"
+             xmlns:local="clr-namespace:View.AggregatedStageDamage"
+             xmlns:Utilities="clr-namespace:View.Utilities"
              xmlns:CA="clr-namespace:Consequences_Assist;assembly=Consequences_Assist"
              xmlns:CAC="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              mc:Ignorable="d" 
@@ -47,9 +47,9 @@
             --><!--<Label Content="Damage Category:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <ComboBox Grid.Column="1" Margin="5" ItemsSource="{Binding DamageCategories}" SelectedItem="{Binding DamageCategory}" DisplayMemberPath="Name" />--><!--
         </Grid>-->
-        <CA:TableWithPlot MinHeight="300" MinWidth="600" TableWidth="250"  MaxYValue="9999999999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Margin="5" plotTitle="{Binding PlotTitle}" IsStrictY="False" xAxisLabel="Stage" yAxisLabel="Damage ($)" xColumnHeader="Stage" yColumnHeader="Damage ($)" IsReadOnly="{Binding ReadOnly}" Curve="{Binding Curve}"/>
+        <!--<CA:TableWithPlot MinHeight="300" MinWidth="600" TableWidth="250"  MaxYValue="9999999999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Margin="5" plotTitle="{Binding PlotTitle}" IsStrictY="False" xAxisLabel="Stage" yAxisLabel="Damage ($)" xColumnHeader="Stage" yColumnHeader="Damage ($)" IsReadOnly="{Binding ReadOnly}" Curve="{Binding Curve}"/>-->
         <GridSplitter Grid.Row="3" Height="5" HorizontalAlignment="Stretch" />
-        <Utilities:TransactionMessageControl Grid.Row="4" />
+        <!--<Utilities:TransactionMessageControl Grid.Row="4" />-->
         <Utilities:OKCloseControl Grid.Row="5"/>
     </Grid>
 </UserControl>

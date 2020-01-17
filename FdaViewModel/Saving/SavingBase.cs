@@ -443,31 +443,32 @@ namespace FdaViewModel.Saving
         //    }
         //}
 
-        public bool AreCurvesDifferent(Statistics.UncertainCurveDataCollection oldCurve, Statistics.UncertainCurveDataCollection newCurve)
-        {
-            bool isModified = false;
-            if (oldCurve.Distribution != newCurve.Distribution) { isModified = true; }
-            if (oldCurve.Count != newCurve.Count) { isModified = true; }
-            if (oldCurve.GetType() != newCurve.GetType()) { isModified = true; }
-            //are all x values the same
-            for (int i = 0; i < oldCurve.XValues.Count(); i++)
-            {
-                if (oldCurve.XValues[i] != newCurve.XValues[i])
-                {
-                    isModified = true;
-                    break;
-                }
-            }
-            for (int i = 0; i < oldCurve.YValues.Count(); i++)
-            {
-                if (oldCurve.YValues[i] != newCurve.YValues[i])
-                {
-                    isModified = true;
-                    break;
-                }
-            }
-            return isModified;
-        }
+            //todo: Refactor: CO
+        //public bool AreCurvesDifferent(Statistics.UncertainCurveDataCollection oldCurve, Statistics.UncertainCurveDataCollection newCurve)
+        //{
+        //    bool isModified = false;
+        //    if (oldCurve.Distribution != newCurve.Distribution) { isModified = true; }
+        //    if (oldCurve.Count != newCurve.Count) { isModified = true; }
+        //    if (oldCurve.GetType() != newCurve.GetType()) { isModified = true; }
+        //    //are all x values the same
+        //    for (int i = 0; i < oldCurve.XValues.Count(); i++)
+        //    {
+        //        if (oldCurve.XValues[i] != newCurve.XValues[i])
+        //        {
+        //            isModified = true;
+        //            break;
+        //        }
+        //    }
+        //    for (int i = 0; i < oldCurve.YValues.Count(); i++)
+        //    {
+        //        if (oldCurve.YValues[i] != newCurve.YValues[i])
+        //        {
+        //            isModified = true;
+        //            break;
+        //        }
+        //    }
+        //    return isModified;
+        //}
 
 
 

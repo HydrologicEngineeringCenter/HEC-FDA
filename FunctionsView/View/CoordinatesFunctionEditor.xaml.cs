@@ -156,15 +156,32 @@ namespace FunctionsView.View
             if (tableIndex > 1)
             {
                 CoordinatesFunctionTable previousTable = lst_tables.Items[tableIndex - 1] as CoordinatesFunctionTable;
-                int columnToSelect = column;
-                int lastEditableColumn = previousTable.dg_table.Columns.Count - 1;
-
-                if (column > lastEditableColumn)
-                {
-                    columnToSelect = lastEditableColumn;
-                }
+                int columnToSelect = DetermineWhichColumnToSelect(senderTable.dg_table.Columns.Count, previousTable.dg_table.Columns.Count, column);
                 previousTable.SelectCellByIndex(previousTable.TableVM.Rows.Count-1, columnToSelect);
             }
+        }
+
+        private int DetermineWhichColumnToSelect(int senderTableNumCols, int destinationTableNumCols, int currentCol)
+        {
+            int columnToSelect = currentCol;
+            //if we are in the last column, then go to the last column in the next table
+            if (currentCol == senderTableNumCols-1)
+            {
+                columnToSelect = destinationTableNumCols-1;
+            }
+            //if we are in the second to last column, then go to the second to last column in the next table.
+            else if (currentCol == senderTableNumCols - 2)
+            {
+                columnToSelect = destinationTableNumCols - 2;
+            }
+            //now we know that the sender is not in the last two rows
+            //if we are not in a combobox but going straight down would put the next table
+            //in a combobox, then go down to the highest column that is not a combobox
+            else if(currentCol>=destinationTableNumCols-2)
+            {
+                columnToSelect = destinationTableNumCols - 3;
+            }
+            return columnToSelect;
         }
 
         private void NewTable_LastRowDownArrowPressed(object sender, EventArgs e)
@@ -176,24 +193,13 @@ namespace FunctionsView.View
             //only go down to another table if we aren't already in the last table
             if (tableIndex != lst_tables.Items.Count - 2)
             {
+                //there is a table below us. Go on down.
                 senderTable.dg_table.SelectedCells.Clear();
                 CoordinatesFunctionTable nextTable = lst_tables.Items[tableIndex + 1] as CoordinatesFunctionTable;
-                int columnToSelect = column;
-                int lastColumn = nextTable.dg_table.Columns.Count - 1;
-                //get the currently selected column. If the selected column in the current table is greater
-                //than the columns in the next table then just select the last column
-                if (column > lastColumn)
-                {
-                    columnToSelect = lastColumn;
-                }
+                int columnToSelect = DetermineWhichColumnToSelect(senderTable.dg_table.Columns.Count, nextTable.dg_table.Columns.Count, column);
                 nextTable.SelectCellByIndex(0, columnToSelect);
             }
-        }
-
-        private void SelectCellInFirstRowOfNextTable(CoordinatesFunctionTable currentTable, int tableIndex, int currentColumn)
-        {
-            
-        }
+        }     
 
         /// <summary>
         /// Enter was pressed in the last row of a table. If it is the last table
@@ -221,15 +227,19 @@ namespace FunctionsView.View
             {
                 senderTable.dg_table.SelectedCells.Clear();
                 CoordinatesFunctionTable nextTable = lst_tables.Items[tableIndex + 1] as CoordinatesFunctionTable;
-                int columnToSelect = column;
-                int lastEditableColumn = nextTable.dg_table.Columns.Count - 3;
-                //get the currently selected column. If the selected column in the current table is greater
-                //than the columns in the next table then just select the largest editable column
-                if (column > lastEditableColumn)
-                {
-                    columnToSelect = lastEditableColumn;
-                }
+
+                int columnToSelect = DetermineWhichColumnToSelect(senderTable.dg_table.Columns.Count, nextTable.dg_table.Columns.Count, column);
                 nextTable.SelectCellByIndex(0, columnToSelect);
+
+                //int columnToSelect = column;
+                //int lastEditableColumn = nextTable.dg_table.Columns.Count - 3;
+                ////get the currently selected column. If the selected column in the current table is greater
+                ////than the columns in the next table then just select the largest editable column
+                //if (column > lastEditableColumn)
+                //{
+                //    columnToSelect = lastEditableColumn;
+                //}
+                //nextTable.SelectCellByIndex(0, columnToSelect);
             }
         }
     }
