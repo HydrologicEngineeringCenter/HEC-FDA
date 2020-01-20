@@ -49,6 +49,27 @@ namespace Utilities
             var n = data.Count(x => x.IsFinite());
             return n >= nRequiredFiniteElements;
         }
+
+        /// <summary>
+        /// Checks a collection for a null value or count of 0
+        /// </summary>
+        /// <typeparam name="T"> The collection type </typeparam>
+        /// <param name="collection"> The collection to check for a null value or count of 0</param>
+        /// <param name="throwsArgumentException"> If true a argument exception is thrown when a null or empty collection is encountered If false the boolean value true is returned when a null or empty collection is encountered.</param>
+        /// <returns> A boolean value or arguement exception depending on the specified collection and throwsArguemntException parameters </returns>
+        public static bool IsNullOrEmptyCollection<T>(ICollection<T> collection, bool throwsArgumentException = true)
+        {
+            if (IsNull(collection) || collection.Count == 0 || IsNullItemInCollection(collection))
+                if (throwsArgumentException) throw new ArgumentException("The specified collection is invalid because it is empty or contains null values.");
+                else return true;
+            else return false;
+        }
+        private static bool IsNullItemInCollection<T>(ICollection<T> collection)
+        {
+            foreach (var i in collection) if (i == null) return true;
+            return false;
+        }
+
         /// <summary>
         /// Test that the <paramref name="min"/> &lt <paramref name="max"/>. Warning: <see cref="double.NaN"/> may produce unexpected results.
         /// </summary>

@@ -5,6 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Condition\**" />
+    <Compile Remove="Validation\**" />
+    <EmbeddedResource Remove="Condition\**" />
+    <EmbeddedResource Remove="Validation\**" />
+    <None Remove="Condition\**" />
+    <None Remove="Validation\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="ComputePoint.cs" />
     <Compile Remove="IComputePoint.cs" />
     <Compile Remove="Inputs\Conditions\ConditionPerformanceCompute.cs" />

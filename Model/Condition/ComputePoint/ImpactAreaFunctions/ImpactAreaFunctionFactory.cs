@@ -13,74 +13,74 @@ namespace Model
     public static class ImpactAreaFunctionFactory
     {
 
-        public static IFdaFunction Factory(String xmlString, ImpactAreaFunctionEnum type)
-        {
-            XDocument doc =  XDocument.Parse(xmlString);
-            XElement functionsElem = doc.Element(SerializationConstants.FUNCTIONS);
-            bool singleFunction = SerializationConstants.NOT_LINKED.Equals( functionsElem.Attribute(SerializationConstants.TYPE).Value);
+        //public static IFdaFunction Factory(String xmlString, ImpactAreaFunctionEnum type)
+        //{
+        //    XDocument doc =  XDocument.Parse(xmlString);
+        //    XElement functionsElem = doc.Element(SerializationConstants.FUNCTIONS);
+        //    bool singleFunction = SerializationConstants.NOT_LINKED.Equals( functionsElem.Attribute(SerializationConstants.TYPE).Value);
 
-            if(singleFunction)
-            {
-                XElement functionElement = functionsElem.Element(SerializationConstants.FUNCTION);
-                InterpolationEnum interpolator = GetInterpolator(functionElement);
-                List<ICoordinate> coordinates = GetCoordinates(functionElement);
-                ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(coordinates, interpolator);
-                return Factory(func, type);
-            }
-            else
-            {
-                //todo add the linked option
-                //its linked
+        //    if(singleFunction)
+        //    {
+        //        XElement functionElement = functionsElem.Element(SerializationConstants.FUNCTION);
+        //        InterpolationEnum interpolator = GetInterpolator(functionElement);
+        //        List<ICoordinate> coordinates = GetCoordinates(functionElement);
+        //        ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(coordinates, interpolator);
+        //        return Factory(func, type);
+        //    }
+        //    else
+        //    {
+        //        //todo add the linked option
+        //        //its linked
 
-            }
-            throw new ArgumentException("Could not convert the xml text into a function.");
-        }
+        //    }
+        //    throw new ArgumentException("Could not convert the xml text into a function.");
+        //}
 
-        private static InterpolationEnum GetInterpolator(XElement functionElement)
-        {
-            string interp = functionElement.Attribute(SerializationConstants.INTERPOLATOR).Value;
-            return (InterpolationEnum)Enum.Parse(typeof(InterpolationEnum), interp);
+        //private static InterpolationEnum GetInterpolator(XElement functionElement)
+        //{
+        //    string interp = functionElement.Attribute(SerializationConstants.INTERPOLATOR).Value;
+        //    return (InterpolationEnum)Enum.Parse(typeof(InterpolationEnum), interp);
 
-        }
+        //}
 
-        private static List<ICoordinate> GetCoordinates(XElement functionElement)
-        {
-            List<ICoordinate> coordinates = new List<ICoordinate>();
-            foreach (XElement coordElem in functionElement.Elements(SerializationConstants.COORDINATE))
-            {
-                coordinates.Add(GetCoordinate(coordElem));
-            }
+        //private static List<ICoordinate> GetCoordinates(XElement functionElement)
+        //{
+        //    List<ICoordinate> coordinates = new List<ICoordinate>();
+        //    foreach (XElement coordElem in functionElement.Elements(SerializationConstants.COORDINATE))
+        //    {
+        //        coordinates.Add(GetCoordinate(coordElem));
+        //    }
 
-            return coordinates;
-        }
+        //    return coordinates;
+        //}
 
-        private static ICoordinate GetCoordinate(XElement coordinateElement)
-        {
-            IEnumerable<XElement> ordinates = coordinateElement.Elements(SerializationConstants.ORDINATE);
-            if(ordinates.Count() != 2)
-            {
-                throw new ArgumentException("An XElement did not have two ordinates. There should be one for X and one for Y.");
-            }
-            XElement xElem = ordinates.First();
-            XElement yElem = ordinates.Last();
+        //private static ICoordinate GetCoordinate(XElement coordinateElement)
+        //{
+        //    IEnumerable<XElement> ordinates = coordinateElement.Elements(SerializationConstants.ORDINATE);
+        //    if(ordinates.Count() != 2)
+        //    {
+        //        throw new ArgumentException("An XElement did not have two ordinates. There should be one for X and one for Y.");
+        //    }
+        //    XElement xElem = ordinates.First();
+        //    XElement yElem = ordinates.Last();
 
-            return ICoordinateFactory.Factory(xElem, yElem);
-        }
+        //    return ICoordinateFactory.Factory(xElem, yElem);
+        //}
 
-        public static IFdaFunction Factory(ICoordinatesFunction function, ImpactAreaFunctionEnum type) 
-        {
-            if (type == ImpactAreaFunctionEnum.InflowOutflow)
-            {
-                InflowOutflow inflowOutflow = new InflowOutflow(function);
-                return inflowOutflow;
-            }
-            else if(type == ImpactAreaFunctionEnum.InflowFrequency)
-            {
-                InflowFrequency inflowFrequency = new InflowFrequency(function);
-                return inflowFrequency;
-            }
-            else return null;
-        }
+        //public static IFdaFunction Factory(ICoordinatesFunction function, ImpactAreaFunctionEnum type) 
+        //{
+        //    if (type == ImpactAreaFunctionEnum.InflowOutflow)
+        //    {
+        //        InflowOutflow inflowOutflow = new InflowOutflow(function);
+        //        return inflowOutflow;
+        //    }
+        //    else if(type == ImpactAreaFunctionEnum.InflowFrequency)
+        //    {
+        //        InflowFrequency inflowFrequency = new InflowFrequency(function);
+        //        return inflowFrequency;
+        //    }
+        //    else return null;
+        //}
 
 
         //public static ITransformFunction<YType> CreateNewTransformFunction<YType>(ICoordinatesFunction<double, YType> function, ImpactAreaFunctionEnum type)

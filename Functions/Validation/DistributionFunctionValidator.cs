@@ -17,7 +17,8 @@ namespace Functions.Validation
         public IEnumerable<IMessage> ReportErrors(DistributionFunction entity)
         {
             List<IMessage> msg = new List<IMessage>();
-            if (entity.Is)
+            //if (entity.Is)
+            return msg;
         }
         internal static bool IsConstructable(IDistributedValue distribution, out string msg)
         {

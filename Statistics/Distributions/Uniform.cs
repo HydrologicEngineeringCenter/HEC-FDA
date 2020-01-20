@@ -20,6 +20,7 @@ namespace Statistics.Distributions
         public double StandardDeviation => _Distribution.StdDev;
         public double Skewness => _Distribution.Skewness;
         public Utilities.IRange<double> Range { get; }
+        public double Mode => _Distribution.Mode;
         public int SampleSize { get; }
         #endregion
         public bool IsValid { get; }

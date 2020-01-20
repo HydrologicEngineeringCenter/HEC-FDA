@@ -26,6 +26,7 @@ namespace Statistics.Distributions
         public int SampleSize { get; }
         public bool IsValid { get; }
         public IEnumerable<IMessage> Messages { get; }
+        public double Mode => _Distribution.Mode;
         #endregion
         #endregion
 

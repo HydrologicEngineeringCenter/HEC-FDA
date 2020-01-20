@@ -54,7 +54,7 @@ namespace FdaViewModel
                     {
                         ICoordinate coord = coords[i];
                         IDistributedValue distValue = ((Distribution)coord.Y).GetDistribution;
-                        rows[i] = new object[] { coord.X, distValue.Minimum, distValue.Mean, distValue.Maximum };
+                        rows[i] = new object[] { coord.X, distValue.Range.Min, distValue.Mean, distValue.Range.Max };
                     }
                     break;
                 case Functions.DistributionType.Uniform:
@@ -64,7 +64,7 @@ namespace FdaViewModel
                     {
                         ICoordinate coord = coords[i];
                         IDistributedValue distValue = ((Distribution)coord.Y).GetDistribution;
-                        rows[i] = new object[] { coord.X, distValue.Minimum, distValue.Maximum };
+                        rows[i] = new object[] { coord.X, distValue.Range.Min, distValue.Range.Max };
                     }
                     break;
                 case Functions.DistributionType.Constant:

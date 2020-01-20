@@ -382,7 +382,7 @@ namespace FunctionsView.ViewModel
                     {
                         IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
                         CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
-                            .WithTriangularDist(dist.Mode, dist.Minimum, dist.Maximum, interpolator)
+                            .WithTriangularDist(dist.Mode, dist.Range.Min, dist.Range.Max, interpolator)
                             .Build();
                         return row;
                     }
@@ -390,7 +390,7 @@ namespace FunctionsView.ViewModel
                     {
                         IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
                         CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
-                            .WithUniformDist(dist.Minimum, dist.Maximum, interpolator)
+                            .WithUniformDist(dist.Range.Min, dist.Range.Max, interpolator)
                             .Build();
                         return row;
                     }
@@ -398,7 +398,7 @@ namespace FunctionsView.ViewModel
                     {
                         IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
                         CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
-                            .WithTruncatedNormalDist(dist.Mean, dist.StandardDeviation, dist.Minimum, dist.Maximum, interpolator)
+                            .WithTruncatedNormalDist(dist.Mean, dist.StandardDeviation, dist.Range.Min, dist.Range.Max, interpolator)
                             .Build();
                         return row;
                     }

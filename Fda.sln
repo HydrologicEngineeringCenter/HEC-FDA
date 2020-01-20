@@ -27,7 +27,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UtilitiesTests", "UtilitiesTests\UtilitiesTests.csproj", "{446520E4-603F-4468-B9B3-C2FE8A65BCA4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Functions", "Functions\Functions.csproj", "{C33A0F59-FE11-4E06-B85E-BD84E6C1106D}"
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Functions", "Functions\Functions.csproj", "{C33A0F59-FE11-4E06-B85E-BD84E6C1106D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionsTests", "FunctionsTests\FunctionsTests.csproj", "{4AFE6338-04B8-4D17-A750-48707E9B6539}"
 EndProject
@@ -41,15 +40,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionsViewTests", "Funct
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViewModelTests", "ViewModelTests\ViewModelTests.csproj", "{7F4D29BC-5698-4129-B0D7-07E2D498506A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionsTests", "FunctionsTests\FunctionsTests.csproj", "{4AFE6338-04B8-4D17-A750-48707E9B6539}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionsView", "FunctionsView\FunctionsView.csproj", "{8E8C8388-F610-44CD-8746-BC2559E02424}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionsViewUITester", "FunctionsViewUITester\FunctionsViewUITester.csproj", "{A2334ACB-7AB0-4DC0-B881-C66A585C6ACE}"
-EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "UserControls", "UserControls\UserControls.vbproj", "{80EB938B-BC8F-44F7-B4DD-6127010F2D96}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionsViewTests", "FunctionsViewTests\FunctionsViewTests.csproj", "{8595F51B-E997-4F7E-A6E0-424A592B4A27}"
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{B4909C07-FC85-49D6-867A-0E00D311A991}"
 EndProject
 Global

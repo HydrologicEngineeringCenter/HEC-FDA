@@ -22,6 +22,7 @@ namespace Statistics
         double StandardDeviation { get; }
         double Skewness { get; }
         Utilities.IRange<double> Range { get; }
+        double Mode { get; }
         //double Minimum { get; }
         //double Maximum { get; }
         /// <summary>

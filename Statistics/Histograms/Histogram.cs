@@ -224,6 +224,15 @@ namespace Statistics.Histograms
             return validator.IsValid(this, out messages);
         }
         #endregion
+        public static string Print(int n, int nBins, IRange<double> range) => $"Histogram(observations: {n.Print()}, bins: {nBins.Print()}, range: {range.Print(true)})";
+        public static string RequiremedParameterization(bool printNotes)
+        {
+            string msg = $"Histograms require the following parameterization: {Parameterization()}.";
+            if (printNotes) msg += RequirementNotes();
+            return msg;
+        }
+        public static string RequirementNotes() => $"The histogram must contain 1 or more bins (only one bin is unlikely to produce the desired results).";
+        public static string Parameterization() => $"Histogram(observations: [{1}, {int.MaxValue.Print()}], bins: {Bin.Parameterization()}, range: {Resources.DoubleRangeRequirements()})";
         #endregion
         #region IDistribution Functions
         public abstract double PDF(double x);
@@ -232,7 +241,8 @@ namespace Statistics.Histograms
         public abstract double Sample(Random r = null);
         public abstract double[] Sample(int n, Random r = null);
         public abstract IDistribution SampleDistribution(Random r);
-        public string Print() => $"Histogram(observations: {SampleSize}, bins: {Bins.Length}, range: {Range.Print()})";
+        public string Print(bool round) => round ? Print(SampleSize, Bins.Length, Range) : $"Histogram(observations: {SampleSize}, bins: {Bins.Length}, range: {Range.Print()})";
+        public string Requirements(bool printNotes) => RequiremedParameterization(printNotes);
         public bool Equals(IDistribution distribution) => distribution.Type == IDistributions.Histogram ? Equals((IHistogram)distribution) : false;
 
         public XElement WriteToXML()

@@ -113,25 +113,25 @@ namespace Functions.CoordinatesFunctions
             }
             return true;
         }
-        private bool IsValid(List<ICoordinate> coordinates)
-        {
-            if (Utilities.Validate.IsNullOrEmpty(coordinates as ICollection<ICoordinate>)) return false;
-            if (!IsFunction(coordinates)) throw new ArgumentException("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).");
-            return true;
-        }
-        private bool IsFunction(List<ICoordinate> xys)
-        {
-            for (int i = 0; i < xys.Count; i++)
-            {
-                int j = i + 1;
-                while (j < xys.Count)
-                {
-                    if (xys[i].X.Equals(xys[j].X)) return false;
-                    else j++;
-                }
-            }
-            return true;
-        }
+        //private bool IsValid(List<ICoordinate> coordinates)
+        //{
+        //    if (Utilities.Validate.IsNullOrEmpty(coordinates as ICollection<ICoordinate>)) return false;
+        //    if (!IsFunction(coordinates)) throw new ArgumentException("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).");
+        //    return true;
+        //}
+        //private bool IsFunction(List<ICoordinate> xys)
+        //{
+        //    for (int i = 0; i < xys.Count; i++)
+        //    {
+        //        int j = i + 1;
+        //        while (j < xys.Count)
+        //        {
+        //            if (xys[i].X.Equals(xys[j].X)) return false;
+        //            else j++;
+        //        }
+        //    }
+        //    return true;
+        //}
         public List<ICoordinate> SortByXs(List<ICoordinate> coordinates) 
             => coordinates.OrderBy(xy => xy.X.Value()).ToList();
 

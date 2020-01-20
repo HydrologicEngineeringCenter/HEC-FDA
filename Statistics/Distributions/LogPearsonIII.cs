@@ -21,6 +21,9 @@ namespace Statistics.Distributions
         public int SampleSize { get; }
         public bool IsValid { get; }
         public IEnumerable<Utilities.IMessage> Messages { get; }
+
+        public double Mode => throw new NotImplementedException();
+
         //#endregion
         #endregion
 
