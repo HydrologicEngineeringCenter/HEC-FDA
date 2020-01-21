@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Utilities
+namespace View.Utilities
 {
     /// <summary>
     /// Interaction logic for SaveControl.xaml
@@ -88,7 +88,7 @@ namespace Fda.Utilities
 
         private void btn_Save_Click(object sender, RoutedEventArgs e)
         {
-            //img_saveEnabled.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(new Uri(@"pack://application:,,,/Fda;component/Resources/save_disabled.png"));
+            //img_saveEnabled.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(new Uri(@"pack://application:,,,/View;component/Resources/save_disabled.png"));
             FdaViewModel.Utilities.ISaveUndoRedo vm = (FdaViewModel.Utilities.ISaveUndoRedo)this.DataContext;
             vm.SaveWhileEditing();
         }

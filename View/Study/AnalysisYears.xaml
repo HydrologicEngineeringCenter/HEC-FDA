@@ -1,10 +1,10 @@
-﻿<UserControl x:Class="Fda.Study.AnalysisYears"
+﻿<UserControl x:Class="View.Study.AnalysisYears"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Fda.Study"
-        xmlns:OkClose="clr-namespace:Fda.Utilities"
+        xmlns:local="clr-namespace:View.Study"
+        xmlns:OkClose="clr-namespace:View.Utilities"
         mc:Ignorable="d"
         xmlns:ViewModel="clr-namespace:FdaViewModel.Study;assembly=FdaViewModel"
         Height="140" Width="300">

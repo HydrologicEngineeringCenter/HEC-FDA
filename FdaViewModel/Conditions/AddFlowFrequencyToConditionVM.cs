@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
+
 using System.Threading.Tasks;
 using FdaViewModel.Utilities;
+using Model;
 
 namespace FdaViewModel.Conditions
 {
@@ -25,8 +25,8 @@ namespace FdaViewModel.Conditions
         //private FrequencyRelationships.AnalyticalFrequencyElement _SelectedFlowFrequencyElement;
        // private ParentElement _owner;
         private List<FrequencyRelationships.AnalyticalFrequencyElement> _InflowFrequencyCurves;
-        private Statistics.CurveIncreasing _SelectedCurve;
-        private FdaModel.Functions.BaseFunction _BaseFunction;
+        private IFdaFunction _SelectedCurve;
+        //private FdaModel.Functions.BaseFunction _BaseFunction;
         #endregion
         #region Properties
         public bool IsPoppedOut { get; set; } 
@@ -37,18 +37,19 @@ namespace FdaViewModel.Conditions
         }
         public Utilities.ChildElement SelectedElement { get;
             set; }
-        public Statistics.CurveIncreasing SelectedCurve
+        public IFdaFunction SelectedCurve
         {
-            get { return new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(((FrequencyRelationships.AnalyticalFrequencyElement)SelectedElement).Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency).GetOrdinatesFunction().Function; }
+            //todo: Refactor: commenting out
+            get { return null; }// new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(((FrequencyRelationships.AnalyticalFrequencyElement)SelectedElement).Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency).GetOrdinatesFunction().Function; }
             
         }
 
-        public FdaModel.Functions.BaseFunction BaseFunction
-        {
-            get { return new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(((FrequencyRelationships.AnalyticalFrequencyElement)SelectedElement).Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency); }
+        //public FdaModel.Functions.BaseFunction BaseFunction
+        //{
+        //    get { return new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(((FrequencyRelationships.AnalyticalFrequencyElement)SelectedElement).Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency); }
         
 
-        }
+        //}
         //public FrequencyRelationships.AnalyticalFrequencyElement SelectedFlowFrequencyElement
         //{
         //    get { return _SelectedFlowFrequencyElement; }

@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Fda.Commands
+namespace View.Commands
 {
     class OkCommand : System.Windows.Input.ICommand
     {
@@ -61,15 +61,15 @@ namespace Fda.Commands
             //{
                 vm.Validate();
                
-                if (vm.HasError)
-                {
-                bool yesClicked = DisplayErrors(vm, window);
-                    if(!yesClicked)
-                    {
-                        return;
-                    }
+                //if (vm.HasError)
+                //{
+                //bool yesClicked = DisplayErrors(vm, window);
+                //    if(!yesClicked)
+                //    {
+                //        return;
+                //    }
                     
-                }
+                //}
                 //call save if its an editor?
                 if (vm.GetType().IsSubclassOf(typeof(FdaViewModel.Editors.BaseEditorVM)))
                 {

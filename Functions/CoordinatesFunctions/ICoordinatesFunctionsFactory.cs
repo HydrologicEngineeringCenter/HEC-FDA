@@ -16,7 +16,7 @@ namespace Functions
         public static ICoordinatesFunction Factory(IDistributedValue distribution, InterpolationEnum interpolator)
         {
             List<ICoordinate> coordinates = new List<ICoordinate>();
-            double epsilon = (distribution.Maximum - distribution.Minimum) * 0.01, y = distribution.Minimum + epsilon;
+            double epsilon = (distribution.Range.Max - distribution.Range.Min) * 0.01, y = distribution.Range.Min + epsilon;
             for (int p = 0; p < 100; p++)
             {
                 ICoordinate coordinate = ICoordinateFactory.Factory(p * 0.01, distribution.InverseCDF(p * 0.01));
@@ -31,6 +31,7 @@ namespace Functions
                 coordinates.Add(coordinate);
             }
             //TODO: This had no return value?
+            return null;
         }
         
         
@@ -44,7 +45,7 @@ namespace Functions
             {
                 return new CoordinatesFunctionVariableYs(coordinates, interpolator);
             }
-            //todo add the linked plots option
+            //todo add the linked plots option. not sure i need to do this anymore
             else throw new ArgumentException("Could not turn the coordinates provided into a function.");
         }
         private static bool IsDistributedYValues(List<ICoordinate> coordinates)

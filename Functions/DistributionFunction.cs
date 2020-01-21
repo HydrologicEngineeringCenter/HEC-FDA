@@ -19,10 +19,16 @@ namespace Functions
         public IRange<double> Domain => throw new NotImplementedException();
         public IEnumerable<IMessage> Messages { get; }
 
+        public DistributionType DistributionType => throw new NotImplementedException();
+
+        public bool IsLinkedFunction => throw new NotImplementedException();
+
+        public bool IsValid => throw new NotImplementedException();
+
         internal DistributionFunction(IDistributedValue distribution)
         {
             _Distribution = distribution;
-            Messages = _Distribution.
+            //Messages = _Distribution.
         }
 
         public IFunction Compose(IFunction g)
@@ -46,6 +52,16 @@ namespace Functions
             throw new NotImplementedException();
         }
         public XElement WriteToXML()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Validate(IValidator<ICoordinatesFunction> validator, out IEnumerable<IMessage> errors)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Validate(IValidator<DistributionFunction> validator, out IEnumerable<IMessage> errors)
         {
             throw new NotImplementedException();
         }

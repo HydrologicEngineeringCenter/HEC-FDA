@@ -1,10 +1,10 @@
-﻿<Window x:Class="Fda.ViewWindow"
+﻿<Window x:Class="View.ViewWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Fda"
-        xmlns:utils="clr-namespace:Fda.Utilities"
+        xmlns:local="clr-namespace:View"
+        xmlns:utils="clr-namespace:View.Utilities"
         xmlns:ViewModel="clr-namespace:FdaViewModel.Utilities;assembly=FdaViewModel"
         xmlns:qh="clr-namespace:QuickHelp;assembly=QuickHelp"
         mc:Ignorable="d"
@@ -194,7 +194,7 @@
             </Border.BorderBrush>
         </Border>-->
             <!--<Button Grid.Row="0" Name="btn_PopWindowInToTabs" Background="Transparent" ToolTip="Move To Tabs" BorderThickness="0" Margin="5,0,70,0" HorizontalAlignment="Right"  Click="btn_PopWindowInToTabs_Click" >
-                <Image Width="15" Height="14" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/PopIn.png"/>
+                <Image Width="15" Height="14" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopIn.png"/>
             </Button>-->
             <ContentControl Grid.Row="1" Name="masterControl" Content="{Binding CurrentView}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
             <!--<GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" />-->

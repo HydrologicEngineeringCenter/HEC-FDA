@@ -318,8 +318,8 @@ namespace FunctionsView.ViewModel
         {
             X = 0;
             Y = 0;
-            //SelectedDistributionType = DistributionType.Constant;
-           //SelectedInterpolationType = InterpolationEnum.Linear;
+            SelectedDistributionType = DistributionType.Constant;
+           SelectedInterpolationType = InterpolationEnum.Linear;
         }
         /// <summary>
         /// You should never have to call this directly. Use the RowItemBuilder to build this object.

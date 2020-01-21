@@ -1,6 +1,8 @@
-﻿using FdaModel.Functions;
-using FdaViewModel.StageTransforms;
+﻿using FdaViewModel.StageTransforms;
 using FdaViewModel.Utilities;
+using Model;
+using Model.Inputs.Conditions;
+using Model.Inputs.Functions;
 using Statistics;
 using System;
 using System.Collections.Generic;
@@ -49,7 +51,7 @@ namespace FdaViewModel.Conditions
         private bool _UseAggregatedStageDamage;
         private AggregatedStageDamage.AggregatedStageDamageElement _StageDamage;
         private bool _UseThreshold;
-        private FdaModel.ComputationPoint.PerformanceThresholdTypes _ThresholdType;//dollars or stage. need enum.
+        private Model.MetricEnum _MetricType;//dollars or stage. need enum.
         private double _ThresholdValue;
         //private ParentElement _ConditionsOwnerElement;
         private List<BaseFdaElement> _ConditionsTreeNodes;
@@ -172,9 +174,9 @@ namespace FdaViewModel.Conditions
             get { return _UseThreshold; }
             set { _UseThreshold = value; NotifyPropertyChanged(); }
         }
-        public FdaModel.ComputationPoint.PerformanceThresholdTypes ThresholdType {
-            get { return _ThresholdType; }
-            set { _ThresholdType = value; NotifyPropertyChanged(); }
+        public Model.MetricEnum MetricType {
+            get { return _MetricType; }
+            set { _MetricType = value; NotifyPropertyChanged(); }
         }
         public double ThresholdValue
         {
@@ -239,7 +241,7 @@ namespace FdaViewModel.Conditions
             StageDamageElement = elem.StageDamageElement;
 
             UseThreshold = elem.UseThreshold;
-            ThresholdType = elem.ThresholdType;
+            MetricType = elem.MetricType;
             ThresholdValue = elem.ThresholdValue;
 
             NamedAction edit = new NamedAction();
@@ -309,11 +311,11 @@ namespace FdaViewModel.Conditions
             bool usesAnalyiticalFlowFrequency, FrequencyRelationships.AnalyticalFrequencyElement aFlowFreq, bool usesInflowOutflow, FlowTransforms.InflowOutflowElement inflowOutflowElement,
             bool useRating, StageTransforms.RatingCurveElement rc, bool useIntExtStage, StageTransforms.ExteriorInteriorElement extInt, bool useLevee, GeoTech.LeveeFeatureElement leveeElement,
             bool useFailureFunction, GeoTech.FailureFunctionElement failureFunctionElement, bool useAggStageDamage, AggregatedStageDamage.AggregatedStageDamageElement stageDamage,
-            bool useThreshold, FdaModel.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue ) : base()
+            bool useThreshold, Model.MetricEnum thresholdType, double thresholdValue ) : base()
         {
             Name = name;
            // _ConditionsOwnerElement = owner;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Condition.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
 
             Description = description;
             AnalysisYear = analysisYear;
@@ -342,7 +344,7 @@ namespace FdaViewModel.Conditions
             StageDamageElement = stageDamage;
 
             UseThreshold = useThreshold;
-            ThresholdType = thresholdType;
+            MetricType = thresholdType;
             ThresholdValue = thresholdValue;
 
             Utilities.NamedAction edit = new Utilities.NamedAction();
@@ -378,292 +380,247 @@ namespace FdaViewModel.Conditions
         }
 
         #region BuildControlsFromElement
-        private Plots.IndividualLinkedPlotControlVM BuildLP3ControlFromElement()
-        {
-            List<FrequencyRelationships.AnalyticalFrequencyElement> listOfLp3 = StudyCache.GetChildElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();// StudyCache.FlowFrequencyElements;// GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
-                FdaModel.Functions.FrequencyFunctions.LogPearsonIII lp3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(AnalyticalFlowFrequency.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
-                Statistics.CurveIncreasing curve = lp3.GetOrdinatesFunction().Function;
-                Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(lp3, AnalyticalFlowFrequency.Name);
-                Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, true, "LP3", "Probability", "Inflow");
-                plotWrapper.PlotVM = plotVM;
-                AddFlowFrequencyToConditionVM importer = new AddFlowFrequencyToConditionVM(listOfLp3, AnalyticalFlowFrequency);
-                //importer.RequestNavigation += Navigate;
-                return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Flow Frequency Curve"), importer);
-        }
+            //todo: Refactor: commented out
+        //private Plots.IndividualLinkedPlotControlVM BuildLP3ControlFromElement()
+        //{
+        //    List<FrequencyRelationships.AnalyticalFrequencyElement> listOfLp3 = StudyCache.GetChildElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();// StudyCache.FlowFrequencyElements;// GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
+        //    FdaModel.Functions.FrequencyFunctions.LogPearsonIII lp3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(AnalyticalFlowFrequency.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
+        //    Statistics.CurveIncreasing curve = lp3.GetOrdinatesFunction().Function;
+        //    Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(lp3, AnalyticalFlowFrequency.Name);
+        //    Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, true, "LP3", "Probability", "Inflow");
+        //    plotWrapper.PlotVM = plotVM;
+        //    AddFlowFrequencyToConditionVM importer = new AddFlowFrequencyToConditionVM(listOfLp3, AnalyticalFlowFrequency);
+        //    //importer.RequestNavigation += Navigate;
+        //    return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Flow Frequency Curve"), importer);
 
-        private Plots.IndividualLinkedPlotControlVM BuildInflowOutflowControlFromElement()
-        {
-            List<FlowTransforms.InflowOutflowElement> listOfInfOut = StudyCache.GetChildElementsOfType<FlowTransforms.InflowOutflowElement>();
-            UncertainCurveDataCollection curve = InflowOutflowElement.Curve;
-            FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction infOut =
-                new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InflowOutflow);
+        //}
 
-            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(infOut, InflowOutflowElement.Name);
+        //private Plots.IndividualLinkedPlotControlVM BuildInflowOutflowControlFromElement()
+        //{
+        //    List<FlowTransforms.InflowOutflowElement> listOfInfOut = StudyCache.GetChildElementsOfType<FlowTransforms.InflowOutflowElement>();
+        //    UncertainCurveDataCollection curve = InflowOutflowElement.Curve;
+        //    FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction infOut =
+        //        new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InflowOutflow);
 
-            Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Inflow Outflow", "Inflow", "OutFlow");
-            plotWrapper.PlotVM = plotVM;
-            AddInflowOutflowToConditionVM importer = new AddInflowOutflowToConditionVM(listOfInfOut, InflowOutflowElement);
-            //importer.RequestNavigation += Navigate;
-            return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Inflow Outflow"), importer,
-                new Plots.DoubleLineModulatorCoverButtonVM(),
-                new Plots.DoubleLineModulatorWrapperVM(plotVM));
-        }
+        //    Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(infOut, InflowOutflowElement.Name);
 
-        private Plots.IndividualLinkedPlotControlVM BuildRatingControlFromElement()
-        {
-            List<StageTransforms.RatingCurveElement> listOfRatingCurves = StudyCache.GetChildElementsOfType<StageTransforms.RatingCurveElement>();
-            UncertainCurveDataCollection curve = RatingCurveElement.Curve;
-            FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction ratFunc =
-                new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.Rating);
+        //    Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Inflow Outflow", "Inflow", "OutFlow");
+        //    plotWrapper.PlotVM = plotVM;
+        //    AddInflowOutflowToConditionVM importer = new AddInflowOutflowToConditionVM(listOfInfOut, InflowOutflowElement);
+        //    //importer.RequestNavigation += Navigate;
+        //    return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Inflow Outflow"), importer,
+        //        new Plots.DoubleLineModulatorCoverButtonVM(),
+        //        new Plots.DoubleLineModulatorWrapperVM(plotVM));
+        //}
 
-            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(ratFunc, RatingCurveElement.Name);
+        //private Plots.IndividualLinkedPlotControlVM BuildRatingControlFromElement()
+        //{
+        //    List<StageTransforms.RatingCurveElement> listOfRatingCurves = StudyCache.GetChildElementsOfType<StageTransforms.RatingCurveElement>();
+        //    UncertainCurveDataCollection curve = RatingCurveElement.Curve;
+        //    FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction ratFunc =
+        //        new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.Rating);
 
-            Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Rating", "Exterior Stage", "OutFlow");
-            plotWrapper.PlotVM = plotVM;
-            AddRatingCurveToConditionVM importer = new AddRatingCurveToConditionVM(listOfRatingCurves, RatingCurveElement);
-            //importer.RequestNavigation += Navigate;
-           // Navigate(importer, false, false, "mytest");
-            return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Rating Curve"), importer);
-        }
+        //    Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(ratFunc, RatingCurveElement.Name);
 
-        private Plots.IndividualLinkedPlotControlVM BuildExtIntControlFromElement()
-        {
-            List<StageTransforms.ExteriorInteriorElement> listOfExtIntElements = StudyCache.GetChildElementsOfType<StageTransforms.ExteriorInteriorElement>();
-            UncertainCurveDataCollection curve = ExteriorInteriorElement.Curve;
-            FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extIntCurve =
-                new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.ExteriorInteriorStage);
+        //    Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Rating", "Exterior Stage", "OutFlow");
+        //    plotWrapper.PlotVM = plotVM;
+        //    AddRatingCurveToConditionVM importer = new AddRatingCurveToConditionVM(listOfRatingCurves, RatingCurveElement);
+        //    //importer.RequestNavigation += Navigate;
+        //   // Navigate(importer, false, false, "mytest");
+        //    return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Rating Curve"), importer);
+        //}
 
-            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(extIntCurve, ExteriorInteriorElement.Name);
+        //private Plots.IndividualLinkedPlotControlVM BuildExtIntControlFromElement()
+        //{
+        //    List<StageTransforms.ExteriorInteriorElement> listOfExtIntElements = StudyCache.GetChildElementsOfType<StageTransforms.ExteriorInteriorElement>();
+        //    UncertainCurveDataCollection curve = ExteriorInteriorElement.Curve;
+        //    FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extIntCurve =
+        //        new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.ExteriorInteriorStage);
 
-            Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Exterior Interior Stage", "Exterior Stage", "Interior Stage");
-            plotWrapper.PlotVM = plotVM;
-            AddExteriorInteriorStageToConditionVM importer = new AddExteriorInteriorStageToConditionVM(listOfExtIntElements, ExteriorInteriorElement);
-            //importer.RequestNavigation += Navigate;
-            return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Ext Int Stage Curve"),importer,
-                new Plots.DoubleLineModulatorHorizontalCoverButtonVM(),
-                new Plots.HorizontalDoubleLineModulatorWrapperVM(plotVM));
-        }
-        private Plots.IndividualLinkedPlotControlVM BuildStageDamageControlFromElement()
-        {
-            List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamage = StudyCache.GetChildElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
-            UncertainCurveDataCollection curve = StageDamageElement.Curve;
-            FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamageCurve =
-                new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InteriorStageDamage);
+        //    Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(extIntCurve, ExteriorInteriorElement.Name);
 
-            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(stageDamageCurve, StageDamageElement.Name);
+        //    Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Exterior Interior Stage", "Exterior Stage", "Interior Stage");
+        //    plotWrapper.PlotVM = plotVM;
+        //    AddExteriorInteriorStageToConditionVM importer = new AddExteriorInteriorStageToConditionVM(listOfExtIntElements, ExteriorInteriorElement);
+        //    //importer.RequestNavigation += Navigate;
+        //    return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Ext Int Stage Curve"),importer,
+        //        new Plots.DoubleLineModulatorHorizontalCoverButtonVM(),
+        //        new Plots.HorizontalDoubleLineModulatorWrapperVM(plotVM));
+        //}
+        //private Plots.IndividualLinkedPlotControlVM BuildStageDamageControlFromElement()
+        //{
+        //    List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamage = StudyCache.GetChildElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
+        //    UncertainCurveDataCollection curve = StageDamageElement.Curve;
+        //    FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamageCurve =
+        //        new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InteriorStageDamage);
 
-            Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Stage Damage", "Interior Stage", "Damage");
-            plotWrapper.PlotVM = plotVM;
-            AddStageDamageToConditionVM importer = new AddStageDamageToConditionVM(listOfStageDamage, StageDamageElement);
-            //importer.RequestNavigation += Navigate;
-            return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Int Stage Damage Curve"), importer);
-        }
+        //    Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(stageDamageCurve, StageDamageElement.Name);
+
+        //    Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Stage Damage", "Interior Stage", "Damage");
+        //    plotWrapper.PlotVM = plotVM;
+        //    AddStageDamageToConditionVM importer = new AddStageDamageToConditionVM(listOfStageDamage, StageDamageElement);
+        //    //importer.RequestNavigation += Navigate;
+        //    return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Int Stage Damage Curve"), importer);
+        //}
         #endregion
         public void EditCondition(object arg1, EventArgs arg2)
         {
-            List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.GetChildElementsOfType<ImpactArea.ImpactAreaElement>();
-            List<FrequencyRelationships.AnalyticalFrequencyElement> freqeles = StudyCache.GetChildElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
-            List<FlowTransforms.InflowOutflowElement> inflowOutflowList = StudyCache.GetChildElementsOfType<FlowTransforms.InflowOutflowElement>();
-            List<StageTransforms.RatingCurveElement> ratingeles = StudyCache.GetChildElementsOfType<StageTransforms.RatingCurveElement>();
+            //todo: Refactor: CO the body of this method.
+            //List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.GetChildElementsOfType<ImpactArea.ImpactAreaElement>();
+            //List<FrequencyRelationships.AnalyticalFrequencyElement> freqeles = StudyCache.GetChildElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
+            //List<FlowTransforms.InflowOutflowElement> inflowOutflowList = StudyCache.GetChildElementsOfType<FlowTransforms.InflowOutflowElement>();
+            //List<StageTransforms.RatingCurveElement> ratingeles = StudyCache.GetChildElementsOfType<StageTransforms.RatingCurveElement>();
 
-            List<StageTransforms.ExteriorInteriorElement> extIntList = StudyCache.GetChildElementsOfType<StageTransforms.ExteriorInteriorElement>();
-            List<GeoTech.LeveeFeatureElement> leveeList = StudyCache.GetChildElementsOfType<GeoTech.LeveeFeatureElement>();
-            List<GeoTech.FailureFunctionElement> failureFunctionList = StudyCache.GetChildElementsOfType<GeoTech.FailureFunctionElement>();
+            //List<StageTransforms.ExteriorInteriorElement> extIntList = StudyCache.GetChildElementsOfType<StageTransforms.ExteriorInteriorElement>();
+            //List<GeoTech.LeveeFeatureElement> leveeList = StudyCache.GetChildElementsOfType<GeoTech.LeveeFeatureElement>();
+            //List<GeoTech.FailureFunctionElement> failureFunctionList = StudyCache.GetChildElementsOfType<GeoTech.FailureFunctionElement>();
 
 
-            List<AggregatedStageDamage.AggregatedStageDamageElement> damageles = StudyCache.GetChildElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
-            //if (impactAreas.Count == 0)
+            //List<AggregatedStageDamage.AggregatedStageDamageElement> damageles = StudyCache.GetChildElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
+        
+
+            ////////////////////////////////
+
+            //Plots.IndividualLinkedPlotControlVM lp3Control;
+            //Plots.IndividualLinkedPlotControlVM infOutControl;
+            //Plots.IndividualLinkedPlotControlVM ratingControl;
+            //Plots.IndividualLinkedPlotControlVM extIntStageControl;
+            //Plots.IndividualLinkedPlotControlVM stageDamageControl;
+            //Plots.IndividualLinkedPlotControlVM damageFrequencyControl;
+
+            //if (UseAnalyiticalFlowFrequency)
             //{
-            //    ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("No Impact Area Sets have been defined.", FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel));
-            //    return;
+            //    //lp3Control = BuildLP3ControlFromElement();
+            //}
+            //else
+            //{
+            //    lp3Control = ConditionsOwnerElement.BuildDefaultLP3Control(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
             //}
 
-            //////////////////////////////
-
-            Plots.IndividualLinkedPlotControlVM lp3Control;
-            Plots.IndividualLinkedPlotControlVM infOutControl;
-            Plots.IndividualLinkedPlotControlVM ratingControl;
-            Plots.IndividualLinkedPlotControlVM extIntStageControl;
-            Plots.IndividualLinkedPlotControlVM stageDamageControl;
-            Plots.IndividualLinkedPlotControlVM damageFrequencyControl;
-
-            if (UseAnalyiticalFlowFrequency)
-            {
-                lp3Control = BuildLP3ControlFromElement();
-            }
-            else
-            {
-                lp3Control = ConditionsOwnerElement.BuildDefaultLP3Control(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
-            }
-
-            if (UseInflowOutflow)
-            {
-                infOutControl = BuildInflowOutflowControlFromElement();
-            }
-            else
-            {
-                infOutControl = ConditionsOwnerElement.BuildDefaultInflowOutflowControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
-            }
-
-            if (UseRatingCurve)
-            {
-                ratingControl = BuildRatingControlFromElement();
-            }
-            else
-            {
-                ratingControl = ConditionsOwnerElement.BuildDefaultRatingControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
-            }
-
-            if (UseExteriorInteriorStage)
-            {
-                extIntStageControl = BuildExtIntControlFromElement();
-
-            }
-            else
-            {
-                extIntStageControl = ConditionsOwnerElement.BuildDefaultExtIntStageControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
-            }
-
-            if (_UseAggregatedStageDamage)
-            {
-                stageDamageControl = BuildStageDamageControlFromElement();
-
-            }
-            else
-            {
-                stageDamageControl = ConditionsOwnerElement.BuildDefaultStageDamageControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
-            }
-
-            damageFrequencyControl = ConditionsOwnerElement.BuildDefaultDamageFrequencyControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
-
-            lp3Control.RequestNavigation += Navigate;
-            infOutControl.RequestNavigation += Navigate;
-            ratingControl.RequestNavigation += Navigate;
-            extIntStageControl.RequestNavigation += Navigate;
-            stageDamageControl.RequestNavigation += Navigate;
-
-
-
-            //    Plots.IndividualLinkedPlotControlVM inflowOutflowControl = new Plots.IndividualLinkedPlotControlVM(new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Inflow Outflow", "Inflow", "OutFlow"), new Plots.IndividualLinkedPlotCoverButtonVM("Inflow Outflow"), new AddInflowOutflowToConditionVM(listOfInfOut, this), new Plots.DoubleLineModulatorCoverButtonVM(), new Plots.DoubleLineModulatorWrapperVM());
-            //Plots.IndividualLinkedPlotControlVM ratingControl = new Plots.IndividualLinkedPlotControlVM(new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Rating", "Exterior Stage", "OutFlow"), new Plots.IndividualLinkedPlotCoverButtonVM("Rating Curve"), new AddRatingCurveToConditionVM(ratingeles, this));
-            //Plots.IndividualLinkedPlotControlVM extIntStageControl = new Plots.IndividualLinkedPlotControlVM(new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Exterior Interior Stage", "Exterior Stage", "Interior Stage"), new Plots.IndividualLinkedPlotCoverButtonVM("Ext Int Stage Curve"), new AddExteriorInteriorStageToConditionVM(listOfExtIntElements, this), new Plots.DoubleLineModulatorHorizontalCoverButtonVM(), new Plots.HorizontalDoubleLineModulatorWrapperVM());
-            //Plots.IndividualLinkedPlotControlVM StageDamageControl = new Plots.IndividualLinkedPlotControlVM(new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Stage Damage", "Interior Stage", "Damage"), new Plots.IndividualLinkedPlotCoverButtonVM("Int Stage Damage Curve"), new AddStageDamageToConditionVM(listOfStageDamage, this));
-            //Plots.IndividualLinkedPlotControlVM DamageFrequencyControl = new Plots.IndividualLinkedPlotControlVM(new Plots.ConditionsIndividualPlotWrapperVM(true, true, "Damage Frequency", "Probability", "Damage", false), new Plots.IndividualLinkedPlotCoverButtonVM("Preview Compute"), null);
-
-
-            // ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, infOutControl, ratingControl, extIntStageControl, stageDamageControl, damageFrequencyControl,
-            //   UseAnalyiticalFlowFrequency, UseInflowOutflow, UseRatingCurve,UseExteriorInteriorStage,UseAggregatedStageDamage);
-
-
-
-
-
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                 .WithSiblingRules(this);
-              // .WithParentGuid(this.GUID)
-               //.WithCanOpenMultipleTimes(false);
-
-            ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, infOutControl, ratingControl, extIntStageControl, stageDamageControl, damageFrequencyControl, this, actionManager);
-            ///////////////////////////////////////
-
-
-            //ConditionsEditorVM vm = new ConditionsEditorVM(Name,Description, AnalysisYear, impactAreas,ImpactAreaSet,ImpactArea, UseAnalyiticalFlowFrequency, freqeles, AnalyticalFlowFrequency, UseInflowOutflow, inflowOutflowList,InflowOutflowElement,UseRatingCurve, ratingeles,RatingCurve, UseExteriorInteriorStage, extIntList,ExteriorInteriorElement,UseLevee,leveeList,LeveeElement,UseFailureFunction,failureFunctionList,FailureFunctionElement,UseAggregatedStageDamage, damageles, StageDamage,UseThreshold,ThresholdType,ThresholdValue, (ConditionsOwnerElement)_Owner);
-            string title = "Edit " + vm.Name;
-            DynamicTabVM tab = new DynamicTabVM(title, vm, "EditCondition" + Name);
-            Navigate( tab, false,false);
-            //if (!vm.WasCanceled)
+            //if (UseInflowOutflow)
             //{
-            //    if (!vm.HasError)
-            //    {
-            //        string oldName = Name;
-            //        //its just easier to create a new one and then copy the values from that one to this one
-            //        ConditionsElement newElem = ConditionFactory.BuildConditionsElement(vm, _ConditionsOwnerElement);
-            //        ConditionFactory.CopyConditionsElement(newElem, this);
-
-            //        ((ConditionsOwnerElement)_Owner).UpdateTableRowIfModified((ParentElement)_Owner, oldName, this);
-                   
-            //    }
+            //    //infOutControl = BuildInflowOutflowControlFromElement();
             //}
+            //else
+            //{
+            //    infOutControl = ConditionsOwnerElement.BuildDefaultInflowOutflowControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
+            //}
+
+            //if (UseRatingCurve)
+            //{
+            //    //ratingControl = BuildRatingControlFromElement();
+            //}
+            //else
+            //{
+            //    ratingControl = ConditionsOwnerElement.BuildDefaultRatingControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
+            //}
+
+            //if (UseExteriorInteriorStage)
+            //{
+            //    //extIntStageControl = BuildExtIntControlFromElement();
+
+            //}
+            //else
+            //{
+            //    extIntStageControl = ConditionsOwnerElement.BuildDefaultExtIntStageControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
+            //}
+
+            //if (_UseAggregatedStageDamage)
+            //{
+            //    //stageDamageControl = BuildStageDamageControlFromElement();
+
+            //}
+            //else
+            //{
+            //    stageDamageControl = ConditionsOwnerElement.BuildDefaultStageDamageControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
+            //}
+
+            //damageFrequencyControl = ConditionsOwnerElement.BuildDefaultDamageFrequencyControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
+
+            //Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+            //     .WithSiblingRules(this);
+             
         }
 
         private void ComputeCondition(object arg1, EventArgs arg2)
         {
-            //convert to model types, run model compute, show results in window.
-            //ImpactArea.Name
-            //AnalyticalFlowFrequency.Distribution;
-            //RatingCurve.RatingCurve //isvalid //distribution //getx gety
-            //StageDamage.Curve same as above.
-            //convert to model objects
-            //compute model objects
-            //take result and pass to results viewmodel
-            List<FdaModel.Functions.BaseFunction> listOfBaseFunctions = new List<FdaModel.Functions.BaseFunction>();
-            FdaModel.Functions.FrequencyFunctions.LogPearsonIII LP3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(AnalyticalFlowFrequency.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
+            ////todo: Refactor: I commented out this method
+            ////convert to model types, run model compute, show results in window.
+            ////ImpactArea.Name
+            ////AnalyticalFlowFrequency.Distribution;
+            ////RatingCurve.RatingCurve //isvalid //distribution //getx gety
+            ////StageDamage.Curve same as above.
+            ////convert to model objects
+            ////compute model objects
+            ////take result and pass to results viewmodel
+            //List<FdaModel.Functions.BaseFunction> listOfBaseFunctions = new List<FdaModel.Functions.BaseFunction>();
+            //FdaModel.Functions.FrequencyFunctions.LogPearsonIII LP3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(AnalyticalFlowFrequency.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
 
-            listOfBaseFunctions.Add(LP3);
+            //listOfBaseFunctions.Add(LP3);
 
-            //FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction inflowOutflow = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)InflowOutflowElement.InflowOutflowCurve, FdaModel.Functions.FunctionTypes.InflowOutflow);
+            ////FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction inflowOutflow = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)InflowOutflowElement.InflowOutflowCurve, FdaModel.Functions.FunctionTypes.InflowOutflow);
 
-           // listOfBaseFunctions.Add(inflowOutflow);
+            //// listOfBaseFunctions.Add(inflowOutflow);
 
-            FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)RatingCurveElement.Curve, FdaModel.Functions.FunctionTypes.Rating);
+            //FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)RatingCurveElement.Curve, FdaModel.Functions.FunctionTypes.Rating);
 
-            listOfBaseFunctions.Add(rating);
+            //listOfBaseFunctions.Add(rating);
 
-            //FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extIntStage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)ExteriorInteriorElement.ExteriorInteriorCurve, FdaModel.Functions.FunctionTypes.ExteriorInteriorStage);
+            ////FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extIntStage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)ExteriorInteriorElement.ExteriorInteriorCurve, FdaModel.Functions.FunctionTypes.ExteriorInteriorStage);
 
-            //listOfBaseFunctions.Add(extIntStage);
+            ////listOfBaseFunctions.Add(extIntStage);
 
-            FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)StageDamageElement.Curve, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
+            //FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)StageDamageElement.Curve, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
 
-            listOfBaseFunctions.Add(stageDamage);
+            //listOfBaseFunctions.Add(stageDamage);
 
-            FdaModel.ComputationPoint.PerformanceThreshold threshold;
+            //FdaModel.ComputationPoint.PerformanceThreshold threshold;
 
-                //ThresholdValue = 120;
-            //when i do the real compute I will need to handle every threshold type
-            if (ThresholdType == FdaModel.ComputationPoint.PerformanceThresholdTypes.InteriorStage)
-            {
-                threshold = new FdaModel.ComputationPoint.PerformanceThreshold(FdaModel.ComputationPoint.PerformanceThresholdTypes.InteriorStage, ThresholdValue);
+            ////ThresholdValue = 120;
+            ////when i do the real compute I will need to handle every threshold type
+            //if (ThresholdType == FdaModel.ComputationPoint.PerformanceThresholdTypes.InteriorStage)
+            //{
+            //    threshold = new FdaModel.ComputationPoint.PerformanceThreshold(FdaModel.ComputationPoint.PerformanceThresholdTypes.InteriorStage, ThresholdValue);
 
-            }
-            else // ThresholdType == "Dollars"
-            {
-                threshold = new FdaModel.ComputationPoint.PerformanceThreshold(FdaModel.ComputationPoint.PerformanceThresholdTypes.Damage, ThresholdValue);
+            //}
+            //else // ThresholdType == "Dollars"
+            //{
+            //    threshold = new FdaModel.ComputationPoint.PerformanceThreshold(FdaModel.ComputationPoint.PerformanceThresholdTypes.Damage, ThresholdValue);
 
-            }
+            //}
 
 
-            FdaModel.ComputationPoint.Condition condition = new FdaModel.ComputationPoint.Condition(AnalysisYear, ImpactAreaElement.Name, listOfBaseFunctions, threshold, null); //this constructor will call Validate
+            //FdaModel.ComputationPoint.Condition condition = new FdaModel.ComputationPoint.Condition(AnalysisYear, ImpactAreaElement.Name, listOfBaseFunctions, threshold, null); //this constructor will call Validate
 
-            //FdaModel.ComputationPoint.Outputs.Realization realization = new FdaModel.ComputationPoint.Outputs.Realization(condition, false, false);
-            //Random randomNumGenerator = new Random(0);
-            //realization.Compute(randomNumGenerator);
+            ////FdaModel.ComputationPoint.Outputs.Realization realization = new FdaModel.ComputationPoint.Outputs.Realization(condition, false, false);
+            ////Random randomNumGenerator = new Random(0);
+            ////realization.Compute(randomNumGenerator);
 
-            FdaModel.ComputationPoint.Outputs.Result result = new FdaModel.ComputationPoint.Outputs.Result(condition, 10);
+            //FdaModel.ComputationPoint.Outputs.Result result = new FdaModel.ComputationPoint.Outputs.Result(condition, 10);
 
-            List<string> selectedElementNames = new List<string>();
-            selectedElementNames.Add(AnalyticalFlowFrequency.Name);
-            selectedElementNames.Add(RatingCurveElement.Name);
-            if (ExteriorInteriorElement != null)
-            {
-                selectedElementNames.Add(ExteriorInteriorElement.Name);
-            }
-            selectedElementNames.Add(StageDamageElement.Name);
-            selectedElementNames.Add("Computed Stage Frequency");
-            // write out results for testing purposes.
-            if (result.Realizations.Count != 0)
-            {
-                Plots.LinkedPlotsVM vem = new Plots.LinkedPlotsVM(result, ThresholdType, ThresholdValue, selectedElementNames);
-                string title = "Condition " + Name;
-                DynamicTabVM tab = new DynamicTabVM(title, vem, "ComputedCondition" + Name);
-                Navigate(tab, false, false);
-            }
-            else
-            {
-                MessageBox.Show("The compute produced no realizations");
-            }
-            //Output.LinkedPlotsVM vm = new Output.LinkedPlotsVM(result);
-            //Navigate(vm);
+            //List<string> selectedElementNames = new List<string>();
+            //selectedElementNames.Add(AnalyticalFlowFrequency.Name);
+            //selectedElementNames.Add(RatingCurveElement.Name);
+            //if (ExteriorInteriorElement != null)
+            //{
+            //    selectedElementNames.Add(ExteriorInteriorElement.Name);
+            //}
+            //selectedElementNames.Add(StageDamageElement.Name);
+            //selectedElementNames.Add("Computed Stage Frequency");
+            //// write out results for testing purposes.
+            //if (result.Realizations.Count != 0)
+            //{
+            //    Plots.LinkedPlotsVM vem = new Plots.LinkedPlotsVM(result, ThresholdType, ThresholdValue, selectedElementNames);
+            //    string title = "Condition " + Name;
+            //    DynamicTabVM tab = new DynamicTabVM(title, vem, "ComputedCondition" + Name);
+            //    Navigate(tab, false, false);
+            //}
+            //else
+            //{
+            //    MessageBox.Show("The compute produced no realizations");
+            //}
+            ////Output.LinkedPlotsVM vm = new Output.LinkedPlotsVM(result);
+            ////Navigate(vm);
         }
         #endregion
         #region Voids
@@ -761,6 +718,34 @@ namespace FdaViewModel.Conditions
         {
             ConditionsElement elem = (ConditionsElement)elementToClone;
             return new ConditionsElement(elem);
+        }
+
+
+        public ICondition CreateCondition()
+        {
+            return ConditionFactory.Factory(Name, AnalysisYear, GetEntryFrequencyFunction(), GetTransformFunctions(),
+                GetMetrics());
+
+        }
+
+        private IFrequencyFunction GetEntryFrequencyFunction()
+        {
+            if(_UsesAnalyiticalFlowFrequency)
+            {
+                return (IFrequencyFunction)AnalyticalFlowFrequency.Curve.Function;
+            }
+            //todo: shouldn't there be an outflow freq option here? and the other frequency options?
+            throw new NotImplementedException();
+        }
+        private List<ITransformFunction> GetTransformFunctions()
+        {
+            throw new NotImplementedException();
+        }
+
+        private List<IMetric> GetMetrics()
+        {
+            throw new NotImplementedException();
+
         }
         #endregion
 

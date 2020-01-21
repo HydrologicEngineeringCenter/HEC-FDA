@@ -61,6 +61,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Validation\CoordinatesFunctionEditorVMValidator.cs" />
     <Compile Include="ViewModel\CoordinatesFunctionEditorVM.cs" />
     <Compile Include="ViewModel\CoordinatesFunctionRowItem.cs" />
     <Compile Include="ViewModel\CoordinatesFunctionRowItemBuilder.cs" />

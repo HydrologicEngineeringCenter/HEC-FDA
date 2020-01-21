@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 
-namespace Fda.WaterSurfaceElevation
+namespace View.WaterSurfaceElevation
 {
     /// <summary>
     /// Interaction logic for WaterSurfaceElevationImporter.xaml

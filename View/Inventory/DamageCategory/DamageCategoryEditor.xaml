@@ -1,11 +1,11 @@
-﻿<UserControl x:Class="Fda.Inventory.DamageCategory.DamageCategoryEditor"
+﻿<UserControl x:Class="View.Inventory.DamageCategory.DamageCategoryEditor"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Fda.Inventory.DamageCategory"
+             xmlns:local="clr-namespace:View.Inventory.DamageCategory"
              xmlns:ca="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
-             xmlns:Utils ="clr-namespace:Fda.Utilities"
+             xmlns:Utils ="clr-namespace:View.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="320" d:DesignWidth="300">
     <Grid>

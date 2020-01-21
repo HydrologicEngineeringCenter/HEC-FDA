@@ -38,7 +38,7 @@ namespace FunctionsView.View
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Row != null)
+            if (Row != null && cmb_DistTypes.Items.Count>0)
             {
                 Row.SelectedDistributionType = (DistributionType)cmb_DistTypes.SelectedValue;
             }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
+using Utilities;
 
 namespace Functions
 {
@@ -50,7 +51,7 @@ namespace Functions
                         }
                     case IDistributions.Triangular:
                         {
-                            retval = DistributionType.NotSupported;
+                            retval = DistributionType.Triangular;
                             break;
                         }
                     case IDistributions.TruncatedBeta4Parameter:
@@ -96,7 +97,11 @@ namespace Functions
         //public double Minimum => _distribution.Range.MIn;
         //public double Maximum => _distribution.Maximum;
         public int SampleSize => _distribution.SampleSize;
-        public bool IsValid => _distribution.
+        public bool IsValid => throw new NotImplementedException(); //_distribution.
+
+        public double Mode => _distribution.Mode;
+
+        public IEnumerable<IMessage> Messages => throw new NotImplementedException();
 
         public double CDF(double x)
         {
@@ -141,6 +146,11 @@ namespace Functions
         public IDistributedValue SampleDistribution(Random numberGenerator = null)
         {
             return new DistributedValue( _distribution.SampleDistribution(numberGenerator));
+        }
+
+        public bool Validate(IValidator<IDistributedValue> validator, out IEnumerable<IMessage> errors)
+        {
+            throw new NotImplementedException();
         }
 
         public XElement WriteToXML()

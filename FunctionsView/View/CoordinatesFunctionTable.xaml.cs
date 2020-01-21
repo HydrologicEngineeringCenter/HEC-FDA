@@ -137,10 +137,10 @@ namespace FunctionsView.View
 
         private void Dg_table_RowsDeleted(List<int> rowindices)
         {
-            if(TableVM.Rows.Count == 0)
+            //if(TableVM.Rows.Count == 0)
             {
-
-                TableVM.RowDeleted();
+                TableVM.DeleteRows(rowindices);
+                //TableVM.RowDeleted();
             }
         }
 
@@ -477,7 +477,11 @@ namespace FunctionsView.View
             return null;
         }
 
-#endregion
+        #endregion
 
+        private void dg_table_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            TableVM.CellEditEnding();
+        }
     }
 }

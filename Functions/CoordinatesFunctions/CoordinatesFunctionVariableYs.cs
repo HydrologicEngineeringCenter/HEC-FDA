@@ -11,7 +11,7 @@ using Utilities;
 
 namespace Functions.CoordinatesFunctions
 {
-    internal sealed class CoordinatesFunctionVariableYs: ICoordinatesFunction
+    internal sealed class CoordinatesFunctionVariableYs: ICoordinatesFunction, IValidate<ICoordinatesFunction>
     {
         #region Properties
         public bool IsInvertible { get; }
@@ -25,7 +25,28 @@ namespace Functions.CoordinatesFunctions
         //public Tuple<double, double> Domain { get; }
         public IRange<double> Domain { get; }
         public InterpolationEnum Interpolator { get; }
-      
+        public DistributionType DistributionType
+        {
+            get
+            {
+                if (Coordinates.Count > 0)
+                {
+                    return Coordinates[0].Y.DistributionType;
+                }
+                else
+                {
+                    return DistributionType.NotSupported;
+                }
+
+            }
+        }
+
+        public bool IsLinkedFunction => false;
+
+        public bool IsValid { get; internal set; }
+
+        public IEnumerable<IMessage> Messages { get; set; }
+
         #endregion
 
         #region Constructor
@@ -33,7 +54,10 @@ namespace Functions.CoordinatesFunctions
         internal CoordinatesFunctionVariableYs(List<ICoordinate> coordinates, InterpolationEnum interpolation = InterpolationEnum.None)
         {
             Interpolator = interpolation;
-            if (IsValid(coordinates))
+            Coordinates = coordinates;
+            IsValid = Validate(new Validation.CoordinatesFunctionVariableYsValidator(), out IEnumerable<IMessage> errors);
+            Messages = errors;
+            //if (IsValid(coordinates))
             {
                 Coordinates = SortByXs(coordinates);
                 IsInvertible = IsInvertibleFunction();
@@ -89,25 +113,25 @@ namespace Functions.CoordinatesFunctions
             }
             return true;
         }
-        private bool IsValid(List<ICoordinate> coordinates)
-        {
-            if (Utilities.Validate.IsNullOrEmpty(coordinates as ICollection<ICoordinate>)) return false;
-            if (!IsFunction(coordinates)) throw new ArgumentException("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).");
-            return true;
-        }
-        private bool IsFunction(List<ICoordinate> xys)
-        {
-            for (int i = 0; i < xys.Count; i++)
-            {
-                int j = i + 1;
-                while (j < xys.Count)
-                {
-                    if (xys[i].X.Equals(xys[j].X)) return false;
-                    else j++;
-                }
-            }
-            return true;
-        }
+        //private bool IsValid(List<ICoordinate> coordinates)
+        //{
+        //    if (Utilities.Validate.IsNullOrEmpty(coordinates as ICollection<ICoordinate>)) return false;
+        //    if (!IsFunction(coordinates)) throw new ArgumentException("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).");
+        //    return true;
+        //}
+        //private bool IsFunction(List<ICoordinate> xys)
+        //{
+        //    for (int i = 0; i < xys.Count; i++)
+        //    {
+        //        int j = i + 1;
+        //        while (j < xys.Count)
+        //        {
+        //            if (xys[i].X.Equals(xys[j].X)) return false;
+        //            else j++;
+        //        }
+        //    }
+        //    return true;
+        //}
         public List<ICoordinate> SortByXs(List<ICoordinate> coordinates) 
             => coordinates.OrderBy(xy => xy.X.Value()).ToList();
 
@@ -159,6 +183,11 @@ namespace Functions.CoordinatesFunctions
 
             functionsElem.Add(funcElem);
             return functionsElem;
+        }
+
+        public bool Validate(IValidator<ICoordinatesFunction> validator, out IEnumerable<IMessage> errors)
+        {
+            return validator.IsValid(this, out errors);
         }
 
 

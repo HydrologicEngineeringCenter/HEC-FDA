@@ -129,7 +129,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 throw new NotImplementedException();
                 //CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "Could not delete water surface elevation files");
                 //Navigate(messageBox);
-                //CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/WaterSurfaceElevation.png");
+                //CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/WaterSurfaceElevation.png");
                 //return;
             }
             

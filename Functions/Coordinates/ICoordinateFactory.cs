@@ -32,6 +32,12 @@ namespace Functions
             }
             throw new ArgumentException("The ordinate XElement provided did not contain a child element.");
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xOrdinate">Should look like: <Ordinate Type="Constant"><Constant Value="1"/></Ordinate></param>
+        /// <param name="yOrdinate"></param>
+        /// <returns></returns>
         public static ICoordinate Factory(XElement xOrdinate, XElement yOrdinate)
         {
             //process the x ordinate
@@ -81,10 +87,10 @@ namespace Functions
                     case SerializationConstants.TRIANGULAR:
                         {
                             double min = Convert.ToDouble(child.Attribute(SerializationConstants.MIN).Value);
-                            double mean = Convert.ToDouble(child.Attribute(SerializationConstants.MEAN).Value);
+                            double mostLikely = Convert.ToDouble(child.Attribute(SerializationConstants.MODE).Value);
                             double max = Convert.ToDouble(child.Attribute(SerializationConstants.MAX).Value);
                             int sample = Convert.ToInt32(child.Attribute(SerializationConstants.SAMPLE_SIZE).Value);
-                            IDistribution dist = IDistributionFactory.FactoryTriangular(min, mean, max, sample);
+                            IDistribution dist = IDistributionFactory.FactoryTriangular(min, mostLikely, max, sample);
                             IDistributedValue distribution = new DistributedValue(dist);
                             return new Distribution(distribution);
                         }

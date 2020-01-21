@@ -12,6 +12,14 @@ namespace Statistics
         /// A set of bins containing the histogram data.
         /// </summary>
         IBin[] Bins { get; }
+        /// <summary>
+        /// The number of elements binned in the histogram.
+        /// </summary>
+        int SampleSize { get; }
+        ///// <summary>
+        ///// The width of the histogram bins.
+        ///// </summary>
+        //double BinWidths { get; }
         #endregion
 
         #region Functions

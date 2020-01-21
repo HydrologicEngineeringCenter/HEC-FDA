@@ -1,6 +1,7 @@
 ﻿using FdaViewModel.Editors;
 using FdaViewModel.Saving;
 using FdaViewModel.WaterSurfaceElevation;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,7 +22,7 @@ namespace FdaViewModel.Utilities
 
         //private object _CustomTreeViewHeader;
         private string _Description;
-        private Statistics.UncertainCurveDataCollection _Curve;
+        private IFdaFunction _Curve;
         private bool _IsExpanded = true;
         private int _FontSize = 14;
         private bool _IsBold = false;
@@ -47,7 +48,7 @@ namespace FdaViewModel.Utilities
             get { return _IsBold; }
             set { _IsBold = value; NotifyPropertyChanged(nameof(IsBold)); }
         }
-        public Statistics.UncertainCurveDataCollection Curve
+        public IFdaFunction Curve
         {
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
@@ -274,7 +275,7 @@ namespace FdaViewModel.Utilities
         //    {
         //        CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "Could not delete terrain file: " + ((Watershed.TerrainElement)this).GetTerrainPath());
         //        Navigate(messageBox);
-        //        CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
+        //        CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png");
         //        return;
         //    }
         //    o.Elements.Remove(this);
@@ -297,7 +298,7 @@ namespace FdaViewModel.Utilities
         //    {
         //        CustomMessageBoxVM messageBox = new CustomMessageBoxVM(CustomMessageBoxVM.ButtonsEnum.OK, "Could not delete water surface elevation files");
         //        Navigate(messageBox);
-        //        CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/WaterSurfaceElevation.png");
+        //        CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/WaterSurfaceElevation.png");
         //        return;
         //    }
         //    o.Elements.Remove(this);
@@ -321,14 +322,14 @@ namespace FdaViewModel.Utilities
         //            //special logic for deleting the terrain file from the study directory
         //            if (this.GetType() == typeof(Watershed.TerrainElement))
         //            {
-        //                CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png", " -Deleting", true);
+        //                CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png", " -Deleting", true);
         //                this.Actions.Clear();
         //                RemoveTerrainFileOnBackgroundThread(o);
         //            }
         //            //special logic for deleting the terrain file from the study directory
         //            else if (this.GetType() == typeof(WaterSurfaceElevation.WaterSurfaceElevationElement))
         //            {
-        //                //CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/WaterSurfaceElevation.png");
+        //                //CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/WaterSurfaceElevation.png");
         //                //this.Actions.Clear();
         //                RemoveWaterSurfElev(o);
         //            }

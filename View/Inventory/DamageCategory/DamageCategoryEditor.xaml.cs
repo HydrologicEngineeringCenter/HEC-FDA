@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Inventory.DamageCategory
+namespace View.Inventory.DamageCategory
 {
     /// <summary>
     /// Interaction logic for DamageCategoryEditor.xaml

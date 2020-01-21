@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.AggregatedStageDamage
+namespace View.AggregatedStageDamage
 {
     /// <summary>
     /// Interaction logic for AggregatedStageDamage.xaml

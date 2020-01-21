@@ -13,7 +13,7 @@ namespace Functions.Ordinates
         {
             GetDistribution = distribution;
         }
-        public Tuple<double, double> Range => new Tuple<double, double>(GetDistribution.Minimum, GetDistribution.Maximum);
+        public Tuple<double, double> Range => new Tuple<double, double>(GetDistribution.Range.Min, GetDistribution.Range.Max);
 
         public DistributionType DistributionType { get { return GetDistribution.Type; } }
 

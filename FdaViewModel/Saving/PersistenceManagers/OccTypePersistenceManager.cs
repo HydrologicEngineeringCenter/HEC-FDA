@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FdaViewModel.Inventory.OccupancyTypes;
 using FdaViewModel.Utilities;
+using Functions;
 
 namespace FdaViewModel.Saving.PersistenceManagers
 {
@@ -38,34 +39,41 @@ namespace FdaViewModel.Saving.PersistenceManagers
             StudyCacheForSaving = studyCache;
         }
 
-
-        private Statistics.ContinuousDistribution CreateContinuousDistributionFromRow(object[] row, int start, int end)
+        //todo: Refactor: removing Statistics.ContinuousDistribution and making it an IDistribution
+        //I think this is taking each row and making a distribution
+        private IDistributedValue CreateContinuousDistributionFromRow(object[] row, int start, int end)
         {
 
             if (row[start].ToString() == "Normal")
             {
-                Statistics.Normal norm = new Statistics.Normal(0, Convert.ToDouble(row[end]));
-                return norm;
+                IDistributedValue normDist = DistributedValueFactory.FactoryNormal(0, Convert.ToDouble(row[end]));
+                //ICoordinatesFunction norm = ICoordinatesFunctionsFactory. new Statistics.Normal(0, Convert.ToDouble(row[end]));
+                return normDist;
             }
             else if (row[start].ToString() == "Uniform")
             {
-                Statistics.Uniform uni = new Statistics.Uniform(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]));
-                return uni;
+                IDistributedValue uniformDist = DistributedValueFactory.FactoryUniform(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]));
+                //Statistics.Uniform uni = new Statistics.Uniform(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]));
+                return uniformDist;
             }
             else if (row[start].ToString() == "None")
             {
-                Statistics.None non = new Statistics.None();
-                return non;
+                //todo: Refactor: Finish this
+                //IDistributedValue constantDist = DistributedValueFactory.fact(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]));
+                //Statistics.None non = new Statistics.None();
+                //return non;
 
             }
             else if (row[start].ToString() == "Triangular")
             {
+                //todo: Refactor: Make sure these inputs are in the correct order, min-max-mostlikely?
+                IDistributedValue tri = DistributedValueFactory.FactoryTriangular(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]), Convert.ToDouble(row[start + 3]));
                 //Statistics.Uniform tri = new Statistics.Uniform(Convert.ToDouble(row[start]), Convert.ToDouble(row[start + 1]));
-                Statistics.Triangular tri = new Statistics.Triangular(Convert.ToDouble(row[start+1]), Convert.ToDouble(row[start + 2]), Convert.ToDouble(row[start + 3]));
+                //Statistics.Triangular tri = new Statistics.Triangular(Convert.ToDouble(row[start+1]), Convert.ToDouble(row[start + 2]), Convert.ToDouble(row[start + 3]));
                 return tri;
             }
 
-            return new Statistics.Normal(); // it should never get here.
+            return null;// new Statistics.Normal(); // it should never get here.
         }
         /// <summary>
         /// Creates an element base off the row from the parent table

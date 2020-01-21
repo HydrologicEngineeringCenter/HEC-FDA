@@ -13,7 +13,7 @@ using System.Windows.Interop;
 using System.Timers;
 using System.Windows.Shapes;
 
-namespace Fda
+namespace View
 {
     /// <summary>
     /// Interaction logic for ViewWindow.xaml
@@ -296,14 +296,14 @@ namespace Fda
             //if (this.WindowState == WindowState.Maximized)
             //{
             //    this.WindowState = System.Windows.WindowState.Normal;
-            //    MaximizeButton.Content = new Image() { Source = new System.Windows.Media.Imaging.BitmapImage(new System.Uri("pack://application:,,,/Fda;component/Resources/Maximize.png")) };
+            //    MaximizeButton.Content = new Image() { Source = new System.Windows.Media.Imaging.BitmapImage(new System.Uri("pack://application:,,,/View;component/Resources/Maximize.png")) };
             //    MaximizeButton.ToolTip = "Maximize";
             //}
             //else
             //{
             //    this.WindowState = System.Windows.WindowState.Maximized;
             //    MaximizeButton.ToolTip = "Restore";
-            //    MaximizeButton.Content = new Image() { Source = new System.Windows.Media.Imaging.BitmapImage(new System.Uri("pack://application:,,,/Fda;component/Resources/Restore.png")) };
+            //    MaximizeButton.Content = new Image() { Source = new System.Windows.Media.Imaging.BitmapImage(new System.Uri("pack://application:,,,/View;component/Resources/Restore.png")) };
             //}
 
         }
@@ -338,12 +338,12 @@ namespace Fda
         //    if (this.WindowState == WindowState.Maximized)
         //    {
         //        max.Header = "Restore";
-        //        max.Icon = new Image() { Source = new System.Windows.Media.Imaging.BitmapImage(new System.Uri("pack://application:,,,/Fda;component/Resources/Restore.png")) };
+        //        max.Icon = new Image() { Source = new System.Windows.Media.Imaging.BitmapImage(new System.Uri("pack://application:,,,/View;component/Resources/Restore.png")) };
         //    }
         //    else
         //    {
         //        max.Header = "Maximize";
-        //        max.Icon = new Image() { Source = new System.Windows.Media.Imaging.BitmapImage(new System.Uri("pack://application:,,,/Fda;component/Resources/Maximize.png")) };
+        //        max.Icon = new Image() { Source = new System.Windows.Media.Imaging.BitmapImage(new System.Uri("pack://application:,,,/View;component/Resources/Maximize.png")) };
         //    }
 
         //    max.Click += MaximizeWindow;

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Globalization;
 
-namespace Fda.ImpactArea
+namespace View.ImpactArea
 {
     //[Author("q0heccdm", "10 / 18 / 2016 11:47:33 AM")]
     public class RadioButtonConverterLeft : IValueConverter

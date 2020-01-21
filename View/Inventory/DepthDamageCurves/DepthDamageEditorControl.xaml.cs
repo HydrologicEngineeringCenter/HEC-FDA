@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Inventory.DepthDamageCurves
+namespace View.Inventory.DepthDamageCurves
 {
     /// <summary>
     /// Interaction logic for DepthDamageEditorControl.xaml

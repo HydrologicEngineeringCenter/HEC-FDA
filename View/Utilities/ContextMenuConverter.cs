@@ -5,7 +5,7 @@ using System.Windows.Data;
 using System.Globalization;
 
 
-namespace Fda.Utilities
+namespace View.Utilities
 {
     class ContextMenuConverter : IValueConverter
     {

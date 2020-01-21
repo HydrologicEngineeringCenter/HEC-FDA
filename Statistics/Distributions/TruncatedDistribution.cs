@@ -28,6 +28,8 @@ namespace Statistics.Distributions
         public int SampleSize => _Distribution.SampleSize;
         public bool IsValid { get; }
         public IEnumerable<IMessage> Messages { get; }
+
+        public double Mode => _Distribution.Mode;
         #endregion
 
         #region Constructor
@@ -112,19 +114,11 @@ namespace Statistics.Distributions
             return msg;
         }
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
-
-       
-
-        public string WriteToXML()
-        {
-            throw new NotImplementedException();
-        }
-
+        #endregion
+        #endregion
         XElement ISerializeToXML<IDistribution>.WriteToXML()
         {
             throw new NotImplementedException();
         }
-        #endregion
-        #endregion
     }
 }

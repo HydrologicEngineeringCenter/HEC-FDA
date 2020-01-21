@@ -5,10 +5,11 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using Utilities;
 
 namespace Functions.CoordinatesFunctions
 {
-    internal sealed class CoordinatesFunctionConstants : IFunction
+    internal sealed class CoordinatesFunctionConstants : IFunction, IValidate<ICoordinatesFunction>
     {
         #region Properties
         public List<ICoordinate> Coordinates { get; }
@@ -24,13 +25,37 @@ namespace Functions.CoordinatesFunctions
         public bool IsInvertible { get; }
 
         public bool IsDistributed => false;
+        public DistributionType DistributionType 
+        { 
+            get
+            {
+                if(Coordinates.Count>0)
+                {
+                    return Coordinates[0].Y.DistributionType;
+                }
+                else
+                {
+                    return DistributionType.NotSupported;
+                }
+
+            }
+        }
+        public bool IsLinkedFunction => false;
+
+        public bool IsValid { get; internal set; }
+
+        public IEnumerable<IMessage> Messages { get; set; }
+
 
         #endregion
 
         #region Constructor
         internal CoordinatesFunctionConstants(List<ICoordinate> coordinates, InterpolationEnum interpolation = InterpolationEnum.None)
         {
-            if (IsValid(coordinates))
+            Coordinates = coordinates;
+            IsValid = Validate(new Validation.CoordinatesFunctionConstantsValidator(), out IEnumerable<IMessage> errors);
+            Messages = errors;
+            //if (IsValid(coordinates))
             {
                 Coordinates = SortByXs(coordinates);
                 IsInvertible = IsInvertibleFunction();
@@ -89,25 +114,25 @@ namespace Functions.CoordinatesFunctions
             return coordinates.OrderBy(xy => xy.X.Value()).ToList();
         }
 
-        private bool IsValid(List<ICoordinate> coordinates)
-        {
-            if (Utilities.Validate.IsNullOrEmpty(coordinates as ICollection<ICoordinate>))
-            {
-                return false;
-            }
-            foreach(ICoordinate coord in coordinates)
-            {
-                if(!IsCoordinateValid(coord))
-                {
-                    throw new ArgumentException("One or more coordinates have an invalid value.");
-                }
-            }
-            if (!IsFunction(coordinates))
-            {
-                throw new ArgumentException("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).");
-            }
-            return true;
-        }
+        //private bool IsValid(List<ICoordinate> coordinates)
+        //{
+        //    if (Utilities.Validation.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate>))
+        //    {
+        //        return false;
+        //    }
+        //    foreach(ICoordinate coord in coordinates)
+        //    {
+        //        if(!IsCoordinateValid(coord))
+        //        {
+        //            throw new ArgumentException("One or more coordinates have an invalid value.");
+        //        }
+        //    }
+        //    if (!IsFunction(coordinates))
+        //    {
+        //        throw new ArgumentException("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).");
+        //    }
+        //    return true;
+        //}
         /// <summary>
         /// Checks that no two X values are the same. 
         /// </summary>
@@ -172,6 +197,7 @@ namespace Functions.CoordinatesFunctions
         #region Set The Order
         private OrderedSetEnum SetTheOrder()
         {
+            //todo this is 
             if(IsStraightLine())
             {
                 return OrderedSetEnum.NonMonotonic;
@@ -203,6 +229,10 @@ namespace Functions.CoordinatesFunctions
 
         private bool IsStraightLine()
         {
+            if(Coordinates.Count<2)
+            {
+                return false;
+            }
             for (int i = 0; i < Coordinates.Count - 1; i++)
             {
                 ICoordinate coord1 = Coordinates[i];
@@ -618,6 +648,16 @@ namespace Functions.CoordinatesFunctions
 
             functionsElem.Add(funcElem);
             return functionsElem;
+        }
+
+        //public bool Validate(IValidator<CoordinatesFunctionConstants> validator, out IEnumerable<IMessage> errors)
+        //{
+        //    return validator.IsValid(this, out errors);
+        //}
+
+        public bool Validate(IValidator<ICoordinatesFunction> validator, out IEnumerable<IMessage> errors)
+        {
+            return validator.IsValid(this, out errors);
         }
 
         #endregion

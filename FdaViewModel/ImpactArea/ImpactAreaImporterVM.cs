@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using FdaViewModel.Editors;
@@ -94,7 +92,7 @@ namespace FdaViewModel.ImpactArea
         {
             if (!System.IO.File.Exists(System.IO.Path.ChangeExtension(path, "dbf")))
             {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
+                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
                 return;
             }
             SelectedPath = path; //isnt this bound??
@@ -116,7 +114,7 @@ namespace FdaViewModel.ImpactArea
             }
             if (!(uniqueNameList.Count > 0))
             {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("The selected path: " + SelectedPath + "/ndoes not contain any string fields.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
+                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("The selected path: " + SelectedPath + "/ndoes not contain any string fields.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
                 return;
             }
             UniqueFields = uniqueNameList;
@@ -126,7 +124,7 @@ namespace FdaViewModel.ImpactArea
         {
             if (!System.IO.File.Exists(System.IO.Path.ChangeExtension(SelectedPath, "dbf")))
             {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
+                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
                 return;
             }
 

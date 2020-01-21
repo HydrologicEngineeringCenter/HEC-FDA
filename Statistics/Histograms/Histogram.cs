@@ -24,6 +24,7 @@ namespace Statistics.Histograms
         public double StandardDeviation { get; }
         public IRange<double> Range { get; }
         public int SampleSize { get; }
+        public double Mode { get; }
         public IDistributions Type => IDistributions.Histogram;
         #endregion
         #region IConverge Properties
@@ -217,11 +218,12 @@ namespace Statistics.Histograms
             bins.Add(new Bin(nextBin, n));
             return bins;
         }
-        
+        #region IValidate Function
         public bool Validate(IValidator<IHistogram> validator, out IEnumerable<IMessage> messages)
         {
             return validator.IsValid(this, out messages);
         }
+        #endregion
         public static string Print(int n, int nBins, IRange<double> range) => $"Histogram(observations: {n.Print()}, bins: {nBins.Print()}, range: {range.Print(true)})";
         public static string RequiremedParameterization(bool printNotes)
         {
