@@ -23,6 +23,7 @@ namespace Utilities
         /// <param name="round"> <see langword="true"/> if some values should be rounded to produce a more readable string. </param>
         /// <returns> A string representing the range. </returns>
         string Print(bool round = false);
-        bool Equals<U>(IRange<U> range); 
+        bool Equals<U>(IRange<U> range);
+        bool IsOnRange(T x);
     }
 }

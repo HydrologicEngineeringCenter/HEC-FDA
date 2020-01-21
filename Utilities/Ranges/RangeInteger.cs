@@ -25,5 +25,10 @@ namespace Utilities.Ranges
         public string Print(bool round = false) => round ? $"[{Min.Print()}, {Max.Print()}]" : $"[{Min}, {Max}]";
         public static string Requirements() => $"range: [{int.MinValue.Print()}, {int.MaxValue.Print()}] with range min < range max";
         public bool Equals<T>(IRange<T> range) => range.GetType() == typeof(RangeInteger) && Print() == range.Print(); 
+        public bool IsOnRange(int x)
+        {
+            if (IsValid) return x.IsOnRange(Min, Max);
+            else throw new InvalidOperationException(Utilities.Validate.InvalidOperationExceptionMessage("IRange", Messages));
+        }
     }
 }

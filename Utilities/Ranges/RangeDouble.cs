@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Utilities;
 
 namespace Utilities.Ranges
 {
     internal class RangeDouble : IRange<double>, IValidate<IRange<double>>
     {
         private readonly bool _FiniteRequirement;
-        
+
         #region Properties
         public double Min { get; }
         public double Max { get; }
@@ -31,5 +32,10 @@ namespace Utilities.Ranges
         public string Print(bool round = false) => round ? $"[{Min.Print()}, {Max.Print()}]" : $"[{Min}, {Max}]";
         public static string Requirements() => $"range: [{double.MinValue.Print()}, {double.MaxValue.Print()}] with range min < range max";
         public bool Equals<T>(IRange<T> range) => range.GetType() == typeof(RangeDouble) && Print() == range.Print();
+        public bool IsOnRange(double x)
+        {
+            if (IsValid) return x.IsOnRange(Min, Max);
+            else throw new InvalidOperationException(Utilities.Validate.InvalidOperationExceptionMessage("IRange", Messages));
+        }
     }
 }
