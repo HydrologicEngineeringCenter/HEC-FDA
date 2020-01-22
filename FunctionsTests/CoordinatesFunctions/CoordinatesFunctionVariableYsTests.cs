@@ -104,13 +104,13 @@ namespace FunctionsTests.CoordinatesFunctions
         #endregion
         #region IsDistributedXs Property Tests
         /// <summary> Tests that the IsDistributedXs Property returns False. </summary>
-        [Theory]
-        [MemberData(nameof(GoodDataDistributed))]
-        public void CoordinatesFunctionVariableYs_IsDistributedXs_Returns_True(List<ICoordinate> value)
-        {
-            ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(value);
-            Assert.False(((CoordinatesFunctionVariableYs)testObj).IsDistributedXs);
-        }
+        //[Theory]
+        //[MemberData(nameof(GoodDataDistributed))]
+        //public void CoordinatesFunctionVariableYs_IsDistributedXs_Returns_True(List<ICoordinate> value)
+        //{
+        //    ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(value);
+        //    Assert.False(((CoordinatesFunctionVariableYs)testObj).IsDistributedXs);
+        //}
 
         #endregion
         #region IsDistributedYs Property Tests

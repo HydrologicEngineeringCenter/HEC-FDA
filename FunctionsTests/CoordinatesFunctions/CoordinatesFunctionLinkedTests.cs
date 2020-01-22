@@ -7,7 +7,6 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Utilities;
-using Utilities.Validation;
 using Xunit;
 
 
@@ -317,7 +316,10 @@ namespace FunctionsTests.CoordinatesFunctions
             interpolators.Add(InterpolationEnum.Linear);
 
             CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
-            Assert.Equal(func.Domain, new Tuple<double, double>(0, 11));
+            Assert.Equal(func.Domain.Min, 0);
+            Assert.Equal(func.Domain.Max, 11);
+
+            //Assert.Equal(func.Domain, new Tuple<double, double>(0, 11));
         }
 
         /// <summary>
@@ -333,7 +335,9 @@ namespace FunctionsTests.CoordinatesFunctions
             interpolators.Add(InterpolationEnum.Linear);
 
             CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
-            Assert.Equal(func.Domain, new Tuple<double, double>(0, 3));
+            Assert.Equal(func.Domain.Min, 0);
+            Assert.Equal(func.Domain.Max, 3);
+            //Assert.Equal(func.Domain, new Tuple<double, double>(0, 3));
         }
 
         #endregion

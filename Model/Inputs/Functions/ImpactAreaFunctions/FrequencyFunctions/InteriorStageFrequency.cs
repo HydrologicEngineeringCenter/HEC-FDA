@@ -14,6 +14,8 @@ namespace Model.Inputs.Functions.ImpactAreaFunctions
         public override string XLabel => "Stage";
 
         public override string YLabel => "Flow";
+        public List<ImpactAreaFunctionEnum> ComposeableTypes => new List<ImpactAreaFunctionEnum>() { ImpactAreaFunctionEnum.InteriorStageDamage};
+
         #endregion
 
         #region Constructor
@@ -24,28 +26,28 @@ namespace Model.Inputs.Functions.ImpactAreaFunctions
         #endregion
 
         #region IFunctionCompose Methods
-        public IFrequencyFunction Compose(ITransformFunction transform, double frequencyFunctionProbability, double transformFunctionProbability)
-        {
-            //if (transform.Type - 1 == Type)
-            //    return ImpactAreaFunctionFactory.CreateNew(Function.Sample(frequencyFunctionProbability).Compose(transform.Sample(transformFunctionProbability).Ordinates), transform.Type + 1);
-            //else ReportCompositionError(); return null;
+        //public IFrequencyFunction Compose(ITransformFunction transform, double frequencyFunctionProbability, double transformFunctionProbability)
+        //{
+        //    //if (transform.Type - 1 == Type)
+        //    //    return ImpactAreaFunctionFactory.CreateNew(Function.Sample(frequencyFunctionProbability).Compose(transform.Sample(transformFunctionProbability).Ordinates), transform.Type + 1);
+        //    //else ReportCompositionError(); return null;
 
-            if (transform.Type - 1 == Type)
-            {
-                IFunction intStageFreq = Sampler.Sample(Function, frequencyFunctionProbability);
-                IFunction transformFunc = Sampler.Sample(transform.Function, transformFunctionProbability);
-                IFunction composedFunc = intStageFreq.Compose(transformFunc);
-                return new ExteriorStageFrequency(composedFunc);
-            }
-            else
-            {
-                throw new ArgumentException(ReportCompositionError());
-            }
-        }
-        private string ReportCompositionError()
-        {
-            return "Composition could not be initialized because no transform function was provided or the two functions do not share a common set of ordinates.";
-        }
+        //    if (transform.Type - 1 == Type)
+        //    {
+        //        IFunction intStageFreq = Sampler.Sample(Function, frequencyFunctionProbability);
+        //        IFunction transformFunc = Sampler.Sample(transform.Function, transformFunctionProbability);
+        //        IFunction composedFunc = intStageFreq.Compose(transformFunc);
+        //        return new DamageFrequency(composedFunc);
+        //    }
+        //    else
+        //    {
+        //        throw new ArgumentException(ReportCompositionError());
+        //    }
+        //}
+        //private string ReportCompositionError()
+        //{
+        //    return "Composition could not be initialized because no transform function was provided or the two functions do not share a common set of ordinates.";
+        //}
         #endregion
 
         #region IValidateData Methods

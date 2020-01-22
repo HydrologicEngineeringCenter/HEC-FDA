@@ -11,9 +11,10 @@ namespace Model.Outputs
     public interface IRealization
     { 
         ICondition Condition { get; }
+        //todo: maybe get rid of this 
         double[] SampleProbabilities { get; }
-        IFrequencyFunction[] FrequencyFunctions { get; }
-        ITransformFunction[] TransformFunctions { get; }
+        //IFrequencyFunction[] FrequencyFunctions { get; }
+        //ITransformFunction[] TransformFunctions { get; }
         IDictionary<IMetric, double> Metrics { get; }
     }
 }
