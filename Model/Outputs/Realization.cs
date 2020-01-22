@@ -47,33 +47,40 @@ namespace Model.Outputs
         public static IRealization Compute(ICondition condition, int seed, bool test = false)
         {
             IRealization R = new Realization(condition, seed, test);
-            
-            int j = 0, J = R.Condition.Metrics.Count; j++;
+            //the dummy probability gets used for functions that we know are already a constant.
+            double dummyProbability = .5;
+            int j = 0;
+            int J = R.Condition.Metrics.Count;
 
-            IFrequencyFunction entryFreqFunc = R.Condition.EntryPoint;
-            double frequencyProbability = R.SampleProbabilities[0];
-            IFunction entryFunc = Sampler.Sample(entryFreqFunc.Function, frequencyProbability);
-            IFrequencyFunction frequencyFunction = (IFrequencyFunction)ImpactAreaFunctionFactory.Factory(entryFunc, entryFreqFunc.Type);
-            
-            //IFrequencyFunction frequencyFunction = R.Condition.EntryPoint.Sample(R.SampleProbabilities[0]);
-            for (int i = 0; i < R.TransformFunctions.Length; i++)
+
+            IFrequencyFunction frequencyFunction = R.Condition.EntryPoint;
+    
+            bool isFirstFreqFunc = true;
+            for (int i = 0; i < R.Condition.TransformFunctions.Count; i++)
             {
-                //sample the transform function
                 ITransformFunction transformFunc = R.Condition.TransformFunctions[i];
-                double transformProbability = R.SampleProbabilities[i + 1];
-                IFunction sampledTransformFunc = Sampler.Sample(transformFunc.Function,transformProbability);
-                R.TransformFunctions[i] = (ITransformFunction) ImpactAreaFunctionFactory.Factory(sampledTransformFunc, transformFunc.Type);
-
-                //compose the transform with the frequency function to create a new frequency function
-                frequencyFunction = frequencyFunction.Compose(R.TransformFunctions[i],frequencyProbability,transformProbability );
+                
+                //we only want to pull a random number for the first frequency function because we do not know if it is a constant or not
+                double freqFuncProb;
+                if (isFirstFreqFunc)
+                {
+                    freqFuncProb = R.SampleProbabilities[i];
+                    isFirstFreqFunc = false;
+                }
+                else
+                {
+                    freqFuncProb = dummyProbability;
+                }
+                    frequencyFunction = frequencyFunction.Compose(transformFunc, freqFuncProb, R.SampleProbabilities[i + 1]);
                 while (frequencyFunction.Type == R.Condition.Metrics[j].TargetFunction())
                 {
-                    R.Metrics.Add(R.Condition.Metrics[j], R.Condition.Metrics[j].Compute(frequencyFunction, .5));
+                    //right now we are just using ".5" for the probability because we know that it won't ever be used
+                    //The frequencyFunction has already been sampled during the compose above
+                    R.Metrics.Add(R.Condition.Metrics[j], R.Condition.Metrics[j].Compute(frequencyFunction, dummyProbability));
                     if (j + 1 < R.Condition.Metrics.Count) j++; else break;
                 }
             }
-            R.FrequencyFunctions[1] = frequencyFunction;
-            return R;
+             return R;
         }
         #endregion
     }

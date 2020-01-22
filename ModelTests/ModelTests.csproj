@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="InputsTests\FunctionsTests\ImpactAreaFunctionsTests\**" />
+    <Compile Remove="InputsTests\FunctionsTests\PercentDamageFunctionsTests\**" />
+    <EmbeddedResource Remove="InputsTests\FunctionsTests\ImpactAreaFunctionsTests\**" />
+    <EmbeddedResource Remove="InputsTests\FunctionsTests\PercentDamageFunctionsTests\**" />
+    <None Remove="InputsTests\FunctionsTests\ImpactAreaFunctionsTests\**" />
+    <None Remove="InputsTests\FunctionsTests\PercentDamageFunctionsTests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="InputsTests\ConditionTests.cs" />
+    <Compile Remove="InputsTests\FunctionsTests\DecoratorTests.cs" />
+    <Compile Remove="InputsTests\FunctionsTests\FrequencyFunctionTests.cs" />
+    <Compile Remove="InputsTests\FunctionsTests\FunctionRegistryTests.cs" />
+    <Compile Remove="InputsTests\FunctionsTests\OrdinatesFunctionTests.cs" />
+    <Compile Remove="InputsTests\FunctionsTests\UncertainOrdinatesFunctionTests.cs" />
+    <Compile Remove="InputsTests\ThresholdTests.cs" />
+    <Compile Remove="InputsTests\WaterSurfaceProfileTests.cs" />
+    <Compile Remove="Utilities\DataGenerators\FunctionGeneratorsTests.cs" />
+    <Compile Remove="Utilities\DataGenerators\TestCaseGeneratorsTests.cs" />
+    <Compile Remove="Utilities\TestCases\ExampleOrdinatesFunctions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="coverlet.collector" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="InputsTests\FunctionsTests\" />
+    <Folder Include="InputsTests\InventoriesTests\" />
+    <Folder Include="Properties\" />
+    <Folder Include="OutputsTests\" />
+    <Folder Include="Utilities\DataGenerators\" />
+    <Folder Include="Utilities\TestCases\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Model\Model.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -93,8 +93,80 @@ namespace Model.Inputs.Functions.ImpactAreaFunctions
             return func;
         }
 
+        public static ITransformFunction FactoryTransform(ICoordinatesFunction function, ImpactAreaFunctionEnum type)
+        {
+            if (type == ImpactAreaFunctionEnum.InflowOutflow)
+            {
+                InflowOutflow inflowOutflow = new InflowOutflow(function);
+                return inflowOutflow;
+            }
+            else if (type == ImpactAreaFunctionEnum.Rating)
+            {
+                Rating rating = new Rating(function);
+                return rating;
+            }
+            else if (type == ImpactAreaFunctionEnum.ExteriorInteriorStage)
+            {
+
+                ExteriorInteriorStage extInt = new ExteriorInteriorStage(function);
+                return extInt;
+            }
+            else if (type == ImpactAreaFunctionEnum.LeveeFailure)
+            {
+
+                LeveeFailure failure = new LeveeFailure(function);
+                return failure;
+            }
+            else if (type == ImpactAreaFunctionEnum.InteriorStageDamage)
+            {
+
+                StageDamage stageDamage = new StageDamage(function);
+                return stageDamage;
+            }
+            else
+            {
+                throw new ArgumentException("Cannot create a transform function from the function type: " + type);
+
+            }
+        }
+
+        public static IFrequencyFunction FactoryFrequency(ICoordinatesFunction function, ImpactAreaFunctionEnum type)
+        {
+             if (type == ImpactAreaFunctionEnum.DamageFrequency)
+            {
+                DamageFrequency damageFrequency = new DamageFrequency(function);
+                return damageFrequency;
+            }
+            else if (type == ImpactAreaFunctionEnum.ExteriorStageFrequency)
+            {
+                ExteriorStageFrequency extStageFreq = new ExteriorStageFrequency(function);
+                return extStageFreq;
+            }
+            else if (type == ImpactAreaFunctionEnum.InflowFrequency)
+            {
+                InflowFrequency inflowFrequency = new InflowFrequency(function);
+                return inflowFrequency;
+            }
+            else if (type == ImpactAreaFunctionEnum.InteriorStageFrequency)
+            {
+                InteriorStageFrequency intStageFreq = new InteriorStageFrequency(function);
+                return intStageFreq;
+            }
+            else if (type == ImpactAreaFunctionEnum.OutflowFrequency)
+            {
+                OutflowFrequency outflowFreq = new OutflowFrequency(function);
+                return outflowFreq;
+            }
+            else
+            {
+                throw new ArgumentException("Cannot create a frequency function from the function type: " + type);
+
+            }
+        }
+
         public static IFdaFunction Factory(ICoordinatesFunction function, ImpactAreaFunctionEnum type)
         {
+            //todo: i could delete this and just use the FactoryFrequency and the FactoryTransform above.
             if (type == ImpactAreaFunctionEnum.InflowOutflow)
             {
                 InflowOutflow inflowOutflow = new InflowOutflow(function);

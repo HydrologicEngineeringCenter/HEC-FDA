@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Utilities;
 using Xunit;
 
 namespace FunctionsTests.CoordinatesFunctions
@@ -341,6 +342,26 @@ namespace FunctionsTests.CoordinatesFunctions
             IFunction fog = testObj.Compose(testObj2);
             Assert.True(fog.Equals(testObj));
         }
+
+        [Fact]
+        public void CoordinatesFunctionConstants_Compose_LP3AndRating_Returns_IFunction()
+        {
+            List<double> LP3xs = new List<double>() { 0, .5, 1 };
+            List<double> LP3ys = new List<double>() { 0, 10000, 100000 };
+
+
+            List<double> ratFlows = new List<double>() { 0, 100, 10000, 100000 };
+            List<double> ratStages = new List<double>() { 0, 1, 10, 100 };
+
+            IFunction lp3CoordFunc = (IFunction)ICoordinatesFunctionsFactory.Factory(LP3xs, LP3ys, InterpolationEnum.Linear);
+            IFunction ratCoordFunc = (IFunction)ICoordinatesFunctionsFactory.Factory(ratFlows, ratStages, InterpolationEnum.Linear);
+
+            IFunction fog = lp3CoordFunc.Compose(ratCoordFunc);
+            int test = 0;
+            //Assert.True(fog.Equals(testObj));
+        }
+       
+
         /// <summary> Tests that with basic input, Linear Interpolation it returns an IFunction. </summary>
         [Fact]
         public void CoordinatesFunctionConstants_Compose_LinearDifferentCoordinates_Returns_Function()
@@ -375,7 +396,7 @@ namespace FunctionsTests.CoordinatesFunctions
             IFunction testObj2 = CreateCoordinatesFunctionConstants(xs2, ys2);
             Assert.Throws<ArgumentException>(() => testObj.Compose(testObj2));
         }
-        /// <summary> Tests that with zero input, No Interpolation it throws an <see cref="InvalidOperationException"/>. </summary>
+        /// <summary> Tests that with non overlapping input, No Interpolation it throws an <see cref="InvalidOperationException"/>. </summary>
         [Fact]
         public void CoordinatesFunctionConstants_BadCompose_Throws_InvalidOperationException()
         {
@@ -390,6 +411,21 @@ namespace FunctionsTests.CoordinatesFunctions
 
             Assert.Throws<InvalidOperationException>(() => testObj.Compose(testObj2));
         }
+
+        /// <summary> Tests that with zero input, No Interpolation it throws an <see cref="InvalidConstructorArgumentsException"/>. </summary>
+        [Fact]
+        public void CoordinatesFunctionConstants_BadCompose_NoXsOrYs_Throws_InvalidConstructorArgumentsException()
+        {
+            //this is not really a compose test, but i wanted to make sure that a coordinates function with zero coordinates could not be created.
+            List<double> xs1 = new List<double>();
+            List<double> ys1 = new List<double>();
+
+            List<double> xs2 = new List<double>();
+            List<double> ys2 = new List<double>();  
+
+            Assert.Throws<InvalidConstructorArgumentsException>(() => CreateCoordinatesFunctionConstants(xs1, ys1));
+        }
+
 
         #endregion
         #region RiemannSum() Tests
