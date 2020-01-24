@@ -498,7 +498,7 @@ namespace Functions.CoordinatesFunctions
                     {
                         // Add new ordinate to FoG if F allows Interpolation between ordinates
                         if (!(Interpolator == InterpolationEnum.None))
-                            fog.Add(ICoordinateFactory.Factory(new Constant(InverseF(g.Coordinates[j].X.Value(), i - 1)).Value(), new Constant(g.Coordinates[j].Y.Value()).Value()));
+                            fog.Add(ICoordinateFactory.Factory(InverseF(g.Coordinates[j].X.Value(), i - 1), g.Coordinates[j].Y.Value()));
                         j++;
                     }
                 }
@@ -534,7 +534,7 @@ namespace Functions.CoordinatesFunctions
         }
         private bool IsComplete(int i, int I, int j, int J, IFunction g)
         {
-            return (IsFinalIndex(i, I, j, J) || IsXOffOverlap(i, J, g) || IsZOffOverlap(I, j, g));
+            return (IsFinalIndex(i, I, j, J) || (IsXOffOverlap(i, J, g) && IsZOffOverlap(I, j, g)));
         }
         private bool IsXOffOverlap(int i, int J, IFunction g)
         {

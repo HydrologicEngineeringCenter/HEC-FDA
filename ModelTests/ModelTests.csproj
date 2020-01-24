@@ -40,7 +40,6 @@
     <Folder Include="InputsTests\FunctionsTests\" />
     <Folder Include="InputsTests\InventoriesTests\" />
     <Folder Include="Properties\" />
-    <Folder Include="OutputsTests\" />
     <Folder Include="Utilities\DataGenerators\" />
     <Folder Include="Utilities\TestCases\" />
   </ItemGroup>

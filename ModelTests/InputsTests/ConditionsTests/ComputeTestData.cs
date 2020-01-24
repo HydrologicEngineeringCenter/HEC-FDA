@@ -1,4 +1,6 @@
 ﻿using Functions;
+using Functions.CoordinatesFunctions;
+using Model;
 using Model.Inputs.Functions.ImpactAreaFunctions;
 using Statistics.Distributions;
 using System;
@@ -12,8 +14,41 @@ namespace ModelTests.InputsTests.ConditionsTests
 {
     [ExcludeFromCodeCoverage]
 
-    class ComputeTestData
+    public abstract class ComputeTestData
     {
+        internal void RegisterSamplers()
+        {
+            Sampler.RegisterSampler(new ConstantSampler());
+            Sampler.RegisterSampler(new DistributionSampler());
+            Sampler.RegisterSampler(new LinkedFunctionsSampler());
+        }
+
+        internal List<IMetric> CreateMetrics(List<MetricEnum> types, List<double> values)
+        {
+            if(types.Count != values.Count)
+            {
+                throw new Exception("Metric types and values were different lengths.");
+            }
+            List<IMetric> metrics = new List<IMetric>();
+            for(int i = 0;i<types.Count;i++)
+            {
+                metrics.Add( new Metric(types[i], values[i]));
+            }
+            return metrics;
+        }
+
+        internal IFrequencyFunction CreateFrequencyFunction(List<double> xs, List<double> ys, InterpolationEnum interpolator, ImpactAreaFunctionEnum type)
+        {
+            ICoordinatesFunction lpsCoordFunc = ICoordinatesFunctionsFactory.Factory(xs,ys, interpolator);
+            return ImpactAreaFunctionFactory.FactoryFrequency(lpsCoordFunc, type);
+        }
+
+        internal ITransformFunction CreateTransformFunction(List<double> xs, List<double> ys, InterpolationEnum interpolator, ImpactAreaFunctionEnum type)
+        {
+            ICoordinatesFunction lpsCoordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, interpolator);
+            return ImpactAreaFunctionFactory.FactoryTransform(lpsCoordFunc, type);
+        }
+
         internal static InflowOutflow CreateInflowOutflowFunction()
         {
             List<double> xs = new List<double>()

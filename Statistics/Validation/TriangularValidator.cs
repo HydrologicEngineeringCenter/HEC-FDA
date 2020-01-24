@@ -29,7 +29,7 @@ namespace Statistics.Validation
         internal static bool IsConstructable(double mode, IRange<double> range, out string msg)
         {
             msg = ReportFatalError(mode, range);
-            return !(msg.Length == 0);
+            return msg.Length == 0;
         }
         private static string ReportFatalError(double mode, IRange<double> range)
         {

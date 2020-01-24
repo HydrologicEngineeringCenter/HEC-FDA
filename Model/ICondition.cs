@@ -16,6 +16,6 @@ namespace Model
         IList<IMetric> Metrics { get; }
         #endregion
 
-        IRealization Compute(int seed);
+        IDictionary<IMetric, double> Compute(List<double> randomNumbers);
     }
 }

@@ -25,6 +25,8 @@
     <Compile Remove="Inputs\Functions\Ordinate.cs" />
     <Compile Remove="Inputs\Functions\OrdinatesFunction.cs" />
     <Compile Remove="Inputs\Functions\UncertainOrdinatesFunction.cs" />
+    <Compile Remove="Outputs\IRealization.cs" />
+    <Compile Remove="Outputs\Realization.cs" />
   </ItemGroup>
 
   <ItemGroup>
