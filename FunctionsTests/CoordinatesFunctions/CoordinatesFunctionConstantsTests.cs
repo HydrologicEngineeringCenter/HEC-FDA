@@ -148,8 +148,8 @@ namespace FunctionsTests.CoordinatesFunctions
         [Fact]
         public void CoordinatesFunctionConstants_OrderProperty_Returns_OrderEnum_StrictlyDecreasing()
         {
-            List<double> xs = new List<double>() { 1,2,3,4 };
-            List<double> ys = new List<double>() { 10,9,8,7 };
+            List<double> xs = new List<double>() { 1, 2, 3, 4 };
+            List<double> ys = new List<double>() { 10, 9, 8, 7 };
 
             CoordinatesFunctionConstants func = CreateCoordinatesFunctionConstants(xs, ys);
             Assert.True(func.Order == OrderedSetEnum.StrictlyDecreasing);
@@ -174,7 +174,7 @@ namespace FunctionsTests.CoordinatesFunctions
         public void CoordinatesFunctionConstants_OrderProperty_Returns_OrderEnum_WeaklyIncreasing()
         {
             List<double> xs = new List<double>() { 1, 2, 3, 4 };
-            List<double> ys = new List<double>() { 7,9,9,12 };
+            List<double> ys = new List<double>() { 7, 9, 9, 12 };
 
             CoordinatesFunctionConstants func = CreateCoordinatesFunctionConstants(xs, ys);
             Assert.True(func.Order == OrderedSetEnum.WeaklyIncreasing);
@@ -330,6 +330,134 @@ namespace FunctionsTests.CoordinatesFunctions
         }
         #endregion
         #region Compose() Tests
+
+        #region Tests Using Default Data
+        /// <summary>
+        /// Tests that a function composed with itself will return the same thing as itself
+        /// </summary>
+        [Fact]
+        public void CoordinatesFunctionConstants_Compose_BaseToBase_Returns_IFunction()
+        {
+            IFunction base1 = CreateCoordinatesFunctionConstants(TestData.DefaultFunctionData.BaseXs_1_10, TestData.DefaultFunctionData.BaseYs_1_10);
+            IFunction base2 = CreateCoordinatesFunctionConstants(TestData.DefaultFunctionData.BaseXs_1_10, TestData.DefaultFunctionData.BaseYs_1_10);
+            IFunction baseComposed = base1.Compose(base2);
+            Assert.True(baseComposed.Equals(base2));
+            Assert.True(baseComposed.Equals(base1));
+
+        }
+
+        /// <summary>
+        /// Tests that the base function composed with a function completely above it returns an invalid operation exception
+        /// </summary>
+        [Fact]
+        public void CoordinatesFunctionConstants_Compose_BaseToAboveBase_Returns_InvalidOperationException()
+        {
+            IFunction func1 = CreateCoordinatesFunctionConstants(TestData.DefaultFunctionData.BaseXs_1_10, TestData.DefaultFunctionData.BaseYs_1_10);
+            IFunction func2 = CreateCoordinatesFunctionConstants(TestData.DefaultFunctionData.AboveBaseXs_20_29, TestData.DefaultFunctionData.AboveBaseYs_20_29);
+            Assert.Throws<InvalidOperationException>(() => func1.Compose(func2));
+        }
+
+        /// <summary>
+        /// Tests that the base function composed with a function completely below it returns an invalid operation exception
+        /// </summary>
+        [Fact]
+        public void CoordinatesFunctionConstants_Compose_BaseToBelowBase_Returns_InvalidOperationException()
+        {
+            IFunction func1 = CreateCoordinatesFunctionConstants(TestData.DefaultFunctionData.BaseXs_1_10, TestData.DefaultFunctionData.BaseYs_1_10);
+            IFunction func2 = CreateCoordinatesFunctionConstants(TestData.DefaultFunctionData.BelowBaseXs_Neg29_Neg20, TestData.DefaultFunctionData.BelowBaseYs_Neg29_Neg20);
+            Assert.Throws<InvalidOperationException>(() => func1.Compose(func2));
+        }
+
+        /// <summary>
+        /// Tests that the base function composed with a function that is below it but has some overlapping range will pick up points from both functions.
+        /// </summary>
+        [Fact]
+        public void CoordinatesFunctionConstants_Compose_BaseToBelowBaseWithOverlap_Returns_IFunction()
+        {
+            IFunction func1 = CreateCoordinatesFunctionConstants(TestData.DefaultFunctionData.BaseXs_1_10, TestData.DefaultFunctionData.BaseYs_1_10, InterpolationEnum.Linear);
+            IFunction func2 = CreateCoordinatesFunctionConstants(TestData.DefaultFunctionData.BelowAndOverlappingBaseXs_Neg3_5, TestData.DefaultFunctionData.BelowAndOverlappingBaseYs_Neg3_5, InterpolationEnum.Linear);
+            IFunction expectedFunc = CreateCoordinatesFunctionConstants(new List<double>() { 1, 5 }, new List<double>() { 1, 5 }, InterpolationEnum.Linear);
+            IFunction composedFunc = func1.Compose(func2);
+            Assert.True(composedFunc.Equals(expectedFunc));
+
+        }
+
+        [Fact]
+        public void CoordinatesFunctionConstants_Compose_BaseToBelowBaseWithOverlap_Returns_IFunction2()
+        {
+            IFunction func1 = CreateCoordinatesFunctionConstants(new List<double>() { 1, 3 }, new List<double>() { 1, 3 }, InterpolationEnum.Linear);
+            IFunction func2 = CreateCoordinatesFunctionConstants(new List<double>() { 0, 2 }, new List<double>() { 0, 2 }, InterpolationEnum.Linear);
+            IFunction expectedFunc = CreateCoordinatesFunctionConstants(new List<double>() { 1, 2 }, new List<double>() { 1, 2 }, InterpolationEnum.Linear);
+            IFunction composedFunc = func2.Compose(func1);
+            Assert.True(composedFunc.Equals(expectedFunc));
+
+        }
+
+        /// <summary>
+        /// Tests that the base function composed with a function that is above it but has some overlapping range will pick up points from both functions.
+        /// </summary>
+        [Fact]
+        public void CoordinatesFunctionConstants_Compose_BaseToAboveBaseWithOverlap_Returns_IFunction()
+        {
+            IFunction func1 = CreateCoordinatesFunctionConstants(TestData.DefaultFunctionData.BaseXs_1_10, TestData.DefaultFunctionData.BaseYs_1_10, InterpolationEnum.Linear);
+            IFunction func2 = CreateCoordinatesFunctionConstants(TestData.DefaultFunctionData.AboveAndOverlappingBaseXs_7_15, TestData.DefaultFunctionData.AboveAndOverlappingBaseYs_7_15, InterpolationEnum.Linear);
+            IFunction expectedFunc = CreateCoordinatesFunctionConstants(new List<double>() { 7, 10 }, new List<double>() { 7, 10 }, InterpolationEnum.Linear);
+            IFunction composedFunc = func1.Compose(func2);
+            Assert.True(composedFunc.Equals(expectedFunc));
+
+        }
+
+        /// <summary>
+        /// Tests that the base function composed with a function that is inside the base will get the points from the inside function.
+        /// </summary>
+        [Fact]
+        public void CoordinatesFunctionConstants_Compose_BaseToInsideBase_Returns_IFunction()
+        {
+            IFunction func1 = CreateCoordinatesFunctionConstants(TestData.DefaultFunctionData.BaseXs_1_10, TestData.DefaultFunctionData.BaseYs_1_10, InterpolationEnum.Linear);
+            IFunction func2 = CreateCoordinatesFunctionConstants(TestData.DefaultFunctionData.InsideBaseXs_3_7, TestData.DefaultFunctionData.InsideBaseYs_3_7, InterpolationEnum.Linear);
+            IFunction expectedFunc = CreateCoordinatesFunctionConstants(new List<double>() { 3, 7 }, new List<double>() { 3, 7 }, InterpolationEnum.Linear);
+            IFunction composedFunc = func1.Compose(func2);
+            Assert.True(composedFunc.Equals(expectedFunc));
+
+        }
+
+        /// <summary>
+        /// Tests that the base function composed with a function that completely contains the base will get the points from the base function.
+        /// </summary>
+        [Fact]
+        public void CoordinatesFunctionConstants_Compose_BaseToContainsBase_Returns_IFunction()
+        {
+            IFunction func1 = CreateCoordinatesFunctionConstants(TestData.DefaultFunctionData.BaseXs_1_10, TestData.DefaultFunctionData.BaseYs_1_10, InterpolationEnum.Linear);
+            IFunction func2 = CreateCoordinatesFunctionConstants(TestData.DefaultFunctionData.ContainsBaseXs_Neg3_13, TestData.DefaultFunctionData.ContainsBaseYs_Neg3_13, InterpolationEnum.Linear);
+            IFunction expectedFunc = CreateCoordinatesFunctionConstants(new List<double>() { 1, 10 }, new List<double>() { 1, 10 }, InterpolationEnum.Linear);
+            IFunction composedFunc = func1.Compose(func2);
+            Assert.True(composedFunc.Equals(expectedFunc));
+
+        }
+        #endregion
+        /// <summary>
+        /// Uses the same values for the xs as the ys. Uses linear interpolation.
+        /// </summary>
+        /// <param name="func1Vals">An array of doubles that will be used for function1's xvalues and yvalues</param>
+        /// <param name="func2Vals">An array of doubles that will be used for function2's xvalues and yvalues</param>
+        /// <param name="expectedResult">An array of doubles that will be used for the expected function's xvalues and yvalues</param>
+        [Theory]
+        [InlineData(new double[] { 1 }, new double[] {1 }, new double[] { 1})]
+        [InlineData(new double[] { 1, 3,5,7 }, new double[] { 0,2,4,6 }, new double[] { 1, 2,3,4,5,6 })]
+        [InlineData(new double[] { 1, 2 }, new double[] { 0, 3 }, new double[] { 1, 2 })]
+        [InlineData(new double[] { 0, 3 }, new double[] { 1, 2 }, new double[] { 1, 2 })]
+        [InlineData(new double[] { -1, 1 }, new double[] { 0, 2 }, new double[] { 0, 1 })]
+        [InlineData(new double[]{1, 2}, new double[]{ 1, 2 }, new double[] { 1, 2 })]
+        public void CoordinatesFunctionConstants_Compose_SimpleIntegers_Returns_IFunction(double[] func1Vals, double[] func2Vals, double[] expectedResult)
+        {
+            IFunction func1 = CreateCoordinatesFunctionConstants(func1Vals.ToList(), func1Vals.ToList(), InterpolationEnum.Linear);
+            IFunction func2 = CreateCoordinatesFunctionConstants(func2Vals.ToList(), func2Vals.ToList(), InterpolationEnum.Linear);
+            IFunction expectedFunc = CreateCoordinatesFunctionConstants(expectedResult.ToList(), expectedResult.ToList(), InterpolationEnum.Linear);
+            IFunction composedFunc = func1.Compose(func2);
+            Assert.True(composedFunc.Equals(expectedFunc));
+
+        }
+
         /// <summary> Tests that with basic input, No Interpolation it returns an IFunction. </summary>
         [Fact]
         public void CoordinatesFunctionConstants_Compose_SameCoordinates_Returns_IFunction()
@@ -372,8 +500,8 @@ namespace FunctionsTests.CoordinatesFunctions
             List<double> xs2 = new List<double>() { 1, 3, 6 };
             List<double> ys2 = new List<double>() { 4, 2, 6 };
 
-            List<double> xs3 = new List<double>() { 0, 1.5, 3 };
-            List<double> ys3 = new List<double>() { 3, 2, 3.333333333333333 };
+            List<double> xs3 = new List<double>() { 0, 1.5, 3, 4.333333333333333 };
+            List<double> ys3 = new List<double>() { 3, 2, 3.333333333333333, 6 };
 
 
             IFunction testObj = CreateCoordinatesFunctionConstants(xs1, ys1, InterpolationEnum.Linear);
@@ -382,6 +510,8 @@ namespace FunctionsTests.CoordinatesFunctions
             IFunction testObj3 = CreateCoordinatesFunctionConstants(xs3, ys3, InterpolationEnum.Linear);
             Assert.True(fog.Equals(testObj3));
         }
+
+     
         /// <summary> Tests that with basic input, No Interpolation it throws an <see cref="ArgumentException"/>. </summary>
         [Fact]
         public void CoordinatesFunctionConstants_Compose_DifferentCoordinates_Throw_ArgumentException()

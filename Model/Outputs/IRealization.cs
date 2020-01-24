@@ -12,7 +12,7 @@ namespace Model.Outputs
     { 
         ICondition Condition { get; }
         //todo: maybe get rid of this 
-        double[] SampleProbabilities { get; }
+        //double[] SampleProbabilities { get; }
         //IFrequencyFunction[] FrequencyFunctions { get; }
         //ITransformFunction[] TransformFunctions { get; }
         IDictionary<IMetric, double> Metrics { get; }
