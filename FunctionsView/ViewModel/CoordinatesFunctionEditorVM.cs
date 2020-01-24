@@ -102,15 +102,11 @@ namespace FunctionsView.ViewModel
             //of the previous table. Since any rows in a table all have the same interpolator
             //i can grab the interpolator from any row in the table.
             List<ICoordinatesFunction> functions = new List<ICoordinatesFunction>();
-            List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
             foreach (CoordinatesFunctionTableVM table in Tables)
             {
                 functions.Add(table.CreateCoordinatesFunctionFromTable());
-                interpolators.Add(table.InterpolationType);
             }
-            //dump the last interpolator
-            interpolators.RemoveAt(interpolators.Count - 1);
-            return ICoordinatesFunctionsFactory.Factory(functions, interpolators);
+            return ICoordinatesFunctionsFactory.Factory(functions);
         }
 
         /// <summary>

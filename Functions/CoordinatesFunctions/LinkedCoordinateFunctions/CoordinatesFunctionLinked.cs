@@ -55,14 +55,13 @@ namespace Functions.CoordinatesFunctions
         /// </summary>
         /// <param name="functions"></param>
         /// <param name="interpolators"></param>
-        internal CoordinatesFunctionLinked(List<ICoordinatesFunction> functions, List<InterpolationEnum> interpolators)
+        internal CoordinatesFunctionLinked(List<ICoordinatesFunction> functions)
         {
             //the list of functions are not gauranteed to be in the correct order.
             //sort them on the min x value of each function
             //todo: if i sort, i will lose track of the list of interpolators.
             //List<ICoordinatesFunction<IOrdinate, IOrdinate>> sortedFunctions = Functions.OrderBy(func => func.Domain.Item1).ToList();
             Functions = functions;
-            Interpolators = interpolators;
 
             IsValid = Validate(new LinkedCoordinatesFunctionValidator(), out IEnumerable<IMessage> errors);
             CombineCoordinates();
@@ -180,7 +179,7 @@ namespace Functions.CoordinatesFunctions
                 if (x.Value() > func1Domain.Max && x.Value() < func2Domain.Min)
                 {
                     //then this x is between func1 and func2
-                    InterpolationEnum interpolator = Interpolators[i];
+                    InterpolationEnum interpolator = Functions[i].Interpolator;
                     double yValue = Interpolate(interpolator, Functions[i].Coordinates.Last(), Functions[i + 1].Coordinates.First(), x.Value());
                     return new Constant(yValue);
                 }
@@ -259,7 +258,7 @@ namespace Functions.CoordinatesFunctions
                         if (y.Value() > func1Range.Max && y.Value() < func2Range.Min)
                         {
                             //then this y is between func1 and func2
-                            InterpolationEnum interpolator = Interpolators[i];
+                            InterpolationEnum interpolator = Functions[i].Interpolator;
                             return new Constant(InverseInterpolate(interpolator, Functions[i].Coordinates.Last(), Functions[i + 1].Coordinates.Last(), y.Value()));
 
                         }
@@ -370,12 +369,12 @@ namespace Functions.CoordinatesFunctions
                 functionsElem.Add(funcElem);
             }
 
-            foreach(InterpolationEnum interpolator in Interpolators)
-            {
-                XElement interpElem = new XElement("Interpolator");
-                interpElem.SetAttributeValue("Type", interpolator);
-                functionsElem.Add(interpElem);
-            }
+            //foreach(InterpolationEnum interpolator in Interpolators)
+            //{
+            //    XElement interpElem = new XElement("Interpolator");
+            //    interpElem.SetAttributeValue("Type", interpolator);
+            //    functionsElem.Add(interpElem);
+            //}
 
             return functionsElem;
         }

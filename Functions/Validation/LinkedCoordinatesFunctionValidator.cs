@@ -23,10 +23,10 @@ namespace Functions.Validation
             if (entity.Functions == null) throw new InvalidConstructorArgumentsException("The list of functions was null");
             if (entity.Functions.Count == 0) throw new InvalidConstructorArgumentsException("There were no functions to link together");
 
-            if (entity.Interpolators.IsNull() || entity.Interpolators.Count != entity.Functions.Count - 1)
-            {
-                errors.Add(IMessageFactory.Factory(IMessageLevels.FatalError, "Not enough interpolators. There should be an interpolator between every function."));
-            }
+            //if (entity.Interpolators.IsNull() || entity.Interpolators.Count != entity.Functions.Count - 1)
+            //{
+            //    errors.Add(IMessageFactory.Factory(IMessageLevels.FatalError, "Not enough interpolators. There should be an interpolator between every function."));
+            //}
 
             //check that the domains don't overlap
             for (int i = 0; i < entity.Functions.Count - 1; i++)

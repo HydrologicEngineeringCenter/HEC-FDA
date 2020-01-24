@@ -32,8 +32,7 @@ namespace Model.Inputs.Functions.ImpactAreaFunctions
                 {
                     functions.Add(CreateFunctionFromFunctionElement(elem));
                 }
-                List<InterpolationEnum> interpolators = GetInterpolatorsFromFunctions(functions);
-                ICoordinatesFunction linkedFunc = ICoordinatesFunctionsFactory.Factory(functions, interpolators);
+                ICoordinatesFunction linkedFunc = ICoordinatesFunctionsFactory.Factory(functions);
                 return Factory(linkedFunc, type);
             }
             throw new ArgumentException("Could not convert the xml text into a function.");
@@ -72,18 +71,17 @@ namespace Model.Inputs.Functions.ImpactAreaFunctions
         }
 
 
-        //todo: i think we can get rid of the list of interpolators when making linked functions
-        private static List<InterpolationEnum> GetInterpolatorsFromFunctions(List<ICoordinatesFunction> functions)
-        {
-            List<InterpolationEnum> interps = new List<InterpolationEnum>();
-            foreach (ICoordinatesFunction func in functions)
-            {
-                interps.Add(func.Interpolator);
-            }
-            //remove the last one
-            interps.RemoveAt(interps.Count - 1);
-            return interps;
-        }
+        //private static List<InterpolationEnum> GetInterpolatorsFromFunctions(List<ICoordinatesFunction> functions)
+        //{
+        //    List<InterpolationEnum> interps = new List<InterpolationEnum>();
+        //    foreach (ICoordinatesFunction func in functions)
+        //    {
+        //        interps.Add(func.Interpolator);
+        //    }
+        //    //remove the last one
+        //    interps.RemoveAt(interps.Count - 1);
+        //    return interps;
+        //}
 
         private static ICoordinatesFunction CreateFunctionFromFunctionElement(XElement functionElement)
         {
