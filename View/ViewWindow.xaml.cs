@@ -409,6 +409,8 @@ namespace View
         private void EXIT(object sender, MouseButtonEventArgs e)
         {
             Close();
+            //Not sure why this was necessary but without it FDA wasn't actually closing down. (Cody 1/28/2020)
+            Environment.Exit(0);
         }
 
         private void MINIMIZE(object sender, MouseButtonEventArgs e)

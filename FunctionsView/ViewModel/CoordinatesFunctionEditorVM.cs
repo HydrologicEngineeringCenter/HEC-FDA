@@ -3,6 +3,8 @@ using Functions.CoordinatesFunctions;
 using Functions.Ordinates;
 using FunctionsView.Validation;
 using FunctionsView.View;
+using HEC.Plotting.SciChart2D.DataModel;
+using HEC.Plotting.SciChart2D.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,38 +12,158 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using Utilities;
 
 namespace FunctionsView.ViewModel
 {
-    public class CoordinatesFunctionEditorVM :IValidate<CoordinatesFunctionEditorVM>
+    public class CoordinatesFunctionEditorVM : IValidate<CoordinatesFunctionEditorVM>
     {
+        private string CHART_TITLE = "test title";
         public event EventHandler UpdateView;
         public event EventHandler TableChanged;
         private ICoordinatesFunction _Function;
         private IEnumerable<IMessage> _Messages;
+        private bool _IsChartInError;
+        public string XLabel { get; }
+        public string YLabel { get; }
+        public string ChartTitle { get; }
         public bool HasLoaded { get; set; }
+        public bool IsChartInError
+        {
+            get
+            { return _IsChartInError;  }
+            set
+            { _IsChartInError = value;  }
+        }
+
+        public SciChart2DChartViewModel CoordinatesChartViewModel { get; } = new SciChart2DChartViewModel("chart title"); 
         public ICoordinatesFunction Function
         {
             get { return _Function; }
             set { _Function = value; CreateTables(_Function);  }
         }
-        public CoordinatesFunctionEditorVM()
-        {
-            Tables = new List<CoordinatesFunctionTableVM>();
-        }
-        public CoordinatesFunctionEditorVM(ICoordinatesFunction function)
-        {
-            _Function = function;
-            Tables = new List<CoordinatesFunctionTableVM>();
-            CreateTables(function);
-        }
-
         public List<CoordinatesFunctionTableVM> Tables
         {
             get;
             set;
         }
+
+
+        public CoordinatesFunctionEditorVM()
+        {
+            Tables = new List<CoordinatesFunctionTableVM>();
+        }
+        public CoordinatesFunctionEditorVM(ICoordinatesFunction function, string xLabel, string yLabel, string chartTitle)
+        {
+            
+            XLabel = xLabel;
+            YLabel = yLabel;
+            ChartTitle = chartTitle;
+            _Function = function;
+            Tables = new List<CoordinatesFunctionTableVM>();
+            CreateTables(function);
+            UpdateChartViewModel();
+        }
+
+        public void UpdateChartViewModel()
+        {
+            try
+            {
+                ICoordinatesFunction func = CreateFunctionFromTables();
+
+                var x = new double[func.Coordinates.Count];
+                var y_05 = new double[func.Coordinates.Count];
+                var y_50 = new double[func.Coordinates.Count];
+                var y_95 = new double[func.Coordinates.Count];
+                for (int i = 0; i < func.Coordinates.Count; i++)
+                {
+                    ICoordinate coord = func.Coordinates[i];
+                    x[i] = coord.X.Value();
+                    y_05[i] = coord.Y.Value(.05);
+                    y_50[i] = coord.Y.Value(.5);
+                    y_95[i] = coord.Y.Value(.95);
+                }
+                //var lineData05To50 = InitXyyLineData(x, y_05, y_50,"5% to 50%");
+                //var lineData50To95 = InitXyyLineData(x, y_50, y_95, "50% to 95%");
+
+                //lineData50To95.StrokeColorY1 = lineData05To50.StrokeColor;
+                //lineData50To95.StrokeColor = lineData05To50.StrokeColorY1;
+
+                NumericLineData ninetyFivePercent = new NumericLineData(x, y_95, ChartTitle, "95%", XLabel, YLabel, PlotType.Line);
+                NumericLineData fiftyPercent = new NumericLineData(x, y_50, ChartTitle, "50%", XLabel, YLabel, PlotType.Line);
+                NumericLineData fivePercent = new NumericLineData(x, y_05, "ChartName", "5%", XLabel, YLabel, PlotType.Line);
+
+                // List<XyySciLineData2D<double, double>> lineData = new List<XyySciLineData2D<double, double>>() { lineData1, lineData2 };
+
+                List<SciLineData> lineData = new List<SciLineData>() { ninetyFivePercent, fiftyPercent,  fivePercent, };
+                //lineData.Add(fivePercent);
+                // lineData.Add(fiftyPercent);
+                // lineData.Add(ninetyFivePercent);
+                CoordinatesChartViewModel.LineData.Set(lineData);
+            }
+            catch (Exception ex)
+            {
+                CoordinatesChartViewModel.LineData.Set(new List<SciLineData>());
+
+            }
+        }
+
+        private XyySciLineData2D<double, double> InitXyyLineData(double[] xArray, double[] yArray, double[] y1Array, string seriesName)
+        {
+            return new XyySciLineData2D<double, double>(xArray, yArray, y1Array, CHART_TITLE, seriesName, "xAxisName", "yAxisName")
+            {
+                Sorted = false,
+                ChartTitle = CHART_TITLE,
+                ChartName = CHART_TITLE,
+                StrokeColor = Colors.Black,
+                StrokeThickness = 1.0,
+                StrokeColorY1 = Colors.Red,
+                AntiAliasing = true,
+                FillColor = Color.FromArgb(0x55, 0xFF, 0x00, 0x00),
+                FillColorY1 = Color.FromArgb(0x55, 0xAD, 0xFF, 0x2F),
+            };
+        }
+
+        //we can call this one or the one commented out above. They are probably about the same amount of 
+        //time to process.
+        //public void UpdateChartViewModel()
+        //{
+        //    try
+        //    {
+        //        List<SciLineData> lineData = new List<SciLineData>();
+
+        //        foreach (CoordinatesFunctionTableVM table in Tables)
+        //        {
+        //            lineData.Add(GetLineDataForTable(table,.05, "5%"));
+        //            lineData.Add(GetLineDataForTable(table, .5, "50%"));
+        //            lineData.Add(GetLineDataForTable(table, .95, "95%"));
+
+        //        }
+        //        CoordinatesChartViewModel.LineData.Set(lineData);
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        //don't do anything? we were unable to create valid coordinates
+        //        CoordinatesChartViewModel.LineData.Set(new List<SciLineData>());
+        //    }
+        //}
+
+        //private SciLineData GetLineDataForTable(CoordinatesFunctionTableVM table, double probability, string seriesName)
+        //{
+        //    List<SciLineData> lineData = new List<SciLineData>();
+        //    double[] xs = new double[table.Rows.Count];
+        //    double[] ys = new double[table.Rows.Count];
+        //    for(int i = 0;i<table.Rows.Count;i++)
+        //    //foreach (CoordinatesFunctionRowItem row in table.Rows)
+        //    {
+        //        CoordinatesFunctionRowItem row = table.Rows[i];
+        //        ICoordinate coord = row.CreateCoordinateFromRow();
+        //        xs[i] =coord.X.Value();
+        //        ys[i] = coord.Y.Value(probability);
+        //    }
+        //        return new NumericLineData(xs,ys,"chartName", seriesName,"xAxisName", "yAxisName",PlotType.Line) ;
+        //}
 
         public bool IsValid
         {
@@ -286,7 +408,7 @@ namespace FunctionsView.ViewModel
                     }
             }
             //UpdateView?.Invoke(this, new EventArgs());
-
+            UpdateChartViewModel();
         }
 
         private void MoveRowForeward(int tableIndex, CoordinatesFunctionRowItem row)
@@ -428,6 +550,7 @@ namespace FunctionsView.ViewModel
         private void CellWasEdited(object sender, EventArgs e)
         {
             TableChanged?.Invoke(this, new EventArgs());
+            UpdateChartViewModel();
         }
 
         /// <summary>

@@ -39,6 +39,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Perforce\HEC_FDA\FDA_dev\FdaLogger\FdaLogger\bin\Debug\netstandard2.0\FdaLogging.dll</HintPath>
     </Reference>
+    <Reference Include="HecCs">
+      <HintPath>..\lib\HecCs.dll</HintPath>
+    </Reference>
     <Reference Include="netstandard" />
     <Reference Include="Consequences_Assist">
       <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\Consequences_Assist.dll</HintPath>
@@ -62,8 +65,53 @@
     <Reference Include="OxyPlot.Wpf">
       <HintPath>..\lib\OxyPlot.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="PlottingLibrary2D">
+      <HintPath>..\lib\PlottingLibrary2D.dll</HintPath>
+    </Reference>
+    <Reference Include="PlottingLibraryCore">
+      <HintPath>..\lib\PlottingLibraryCore.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="SciChart.Charting">
+      <HintPath>..\lib\SciChart.Charting.dll</HintPath>
+    </Reference>
+    <Reference Include="SciChart.Charting3D">
+      <HintPath>..\lib\SciChart.Charting3D.dll</HintPath>
+    </Reference>
+    <Reference Include="SciChart.Core">
+      <HintPath>..\lib\SciChart.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SciChart.Data">
+      <HintPath>..\lib\SciChart.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="SciChart.Drawing">
+      <HintPath>..\lib\SciChart.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="SciChart.Drawing.DirectX">
+      <HintPath>..\lib\SciChart.Drawing.DirectX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX">
+      <HintPath>..\lib\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.D3DCompiler">
+      <HintPath>..\lib\SharpDX.D3DCompiler.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11">
+      <HintPath>..\lib\SharpDX.Direct3D11.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11.Effects">
+      <HintPath>..\lib\SharpDX.Direct3D11.Effects.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9">
+      <HintPath>..\lib\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DXGI">
+      <HintPath>..\lib\SharpDX.DXGI.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics">
+      <HintPath>..\lib\SharpDX.Mathematics.dll</HintPath>
+    </Reference>
     <Reference Include="StructureInventoryLibrary">
       <HintPath>..\lib\StructureInventoryLibrary.dll</HintPath>
     </Reference>
@@ -221,6 +269,7 @@
     <Compile Include="Study\MonetaryUnitsEnum.cs" />
     <Compile Include="Study\NewStudyVM.cs" />
     <Compile Include="Study\PropertiesVM.cs" />
+    <Compile Include="Study\SciChartTestingVM.cs" />
     <Compile Include="Study\StudyElement.cs" />
     <Compile Include="Study\StudyStatusBar.cs" />
     <Compile Include="Study\UnitsSystemEnum.cs" />
@@ -313,7 +362,11 @@
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="sharpdx_direct3d11_1_effects_x64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

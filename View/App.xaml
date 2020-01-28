@@ -276,6 +276,10 @@
         <DataTemplate DataType="{x:Type StudyVM:NewStudyVM }" >
             <StudyView:CreateNew/>
         </DataTemplate>
+      
+        <DataTemplate DataType="{x:Type StudyVM:SciChartTestingVM }" >
+            <StudyView:SciChartTest/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type StudyVM:ExistingStudyVM }" >
             <StudyView:OpenExisting/>
         </DataTemplate>
