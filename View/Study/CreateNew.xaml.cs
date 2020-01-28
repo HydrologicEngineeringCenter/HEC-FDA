@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HEC.Plotting.SciChart2D.Charts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,5 +30,6 @@ namespace View.Study
             FdaViewModel.Study.NewStudyVM vm = (FdaViewModel.Study.NewStudyVM)this.DataContext;
             vm.Path = fullpath;
         }
+
     }
 }

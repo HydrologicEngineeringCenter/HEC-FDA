@@ -324,6 +324,9 @@ namespace FdaViewModel.Study
             DynamicTabVM newStudyTab = new DynamicTabVM("Create New Study", vm, "CreateNewStudy", false, true);
             newStudyTab.Name = "CreateStudyTab";
             TabController.Instance.AddTab(newStudyTab);
+            //todo: delete me. This is just for testing
+            //DynamicTabVM sciChartTab = new DynamicTabVM("test", new SciChartTestingVM(), "tester345");
+            //TabController.Instance.AddTab(sciChartTab);
         }
 
        

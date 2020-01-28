@@ -26,7 +26,7 @@ namespace FdaViewModel.Editors
         }        //public EditorActionManager ActionManager { get; set; }
 
 
-        public FailureFunctionCurveEditorVM(IFdaFunction defaultCurve, ObservableCollection<LeveeFeatureElement> latStructList, EditorActionManager actionManager) :base(defaultCurve, actionManager)
+        public FailureFunctionCurveEditorVM(IFdaFunction defaultCurve, ObservableCollection<LeveeFeatureElement> latStructList, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) :base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
         {
             LateralStructureList = latStructList;
             StudyCache.LeveeAdded += StudyCache_LeveeAdded;
@@ -34,7 +34,7 @@ namespace FdaViewModel.Editors
         }
 
 
-        public FailureFunctionCurveEditorVM(ChildElement element, ObservableCollection<LeveeFeatureElement> latStructList, EditorActionManager actionManager) : base(element, actionManager)
+        public FailureFunctionCurveEditorVM(ChildElement element, ObservableCollection<LeveeFeatureElement> latStructList, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(element, xLabel, yLabel, chartTitle, actionManager)
         {
             LateralStructureList = latStructList;
             StudyCache.LeveeAdded += StudyCache_LeveeAdded;

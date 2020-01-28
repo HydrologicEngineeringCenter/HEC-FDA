@@ -9,6 +9,7 @@
              xmlns:CAC="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              xmlns:functions="clr-namespace:FunctionsView.View;assembly=FunctionsView"
              mc:Ignorable="d" 
+             Loaded="UserControl_Loaded"
              xmlns:UserControls="clr-namespace:UserControls;assembly=UserControls"
              d:DesignHeight="420" d:DesignWidth="610">
     <Grid>
@@ -45,8 +46,15 @@
             <UserControls:TextBoxDescription Grid.Column="1" Description="{Binding Description}" Margin="5"/>
             <!--<CAC:TextBoxDescription Grid.Column="1" Text="{Binding Description}" Margin="5"/>-->
         </Grid>
-
-        <functions:CoordinatesFunctionEditor Grid.Row="2" Margin="5" EditorVM="{Binding EditorVM}" />
+        <Grid x:Name="editorGrid" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <!--<ColumnDefinition Width="5" />-->
+                <ColumnDefinition x:Name="plotColumn" Width="*" MinWidth="200"/>
+            </Grid.ColumnDefinitions>
+            <functions:CoordinatesFunctionEditor  Grid.Column="0" Margin="5" EditorVM="{Binding EditorVM}" />
+            <!--<GridSplitter Grid.Column="1" Width="3"/>-->
+        </Grid>
         <!--<CA:TableWithPlot MinHeight="300" MinWidth="600"  TableWidth="250"  Grid.Row="2" Margin="5" plotTitle="{Binding PlotTitle}" 
                           IsStrictX="True" xColumnHeader="Flow" yColumnHeader="Stage" xAxisLabel="Flow" yAxisLabel="Stage" 
                           IsReadOnly="{Binding ReadOnly}" Curve="{Binding Curve}" IsMonotonicallyIncreasing="True"/>-->

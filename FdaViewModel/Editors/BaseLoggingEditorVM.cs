@@ -88,9 +88,9 @@ namespace FdaViewModel.Editors
             set; 
         }
         #region Constructors
-        public BaseLoggingEditorVM(IFdaFunction defaultCurve, EditorActionManager actionManager) : base(actionManager)
+        public BaseLoggingEditorVM(IFdaFunction defaultCurve, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(actionManager)
         {
-            EditorVM = new CoordinatesFunctionEditorVM(defaultCurve.Function);
+            EditorVM = new CoordinatesFunctionEditorVM(defaultCurve.Function, xLabel, yLabel, chartTitle);
             EditorVM.TableChanged += EditorVM_TableChanged;
             //if(Error != null && Error != "")
             //{
@@ -99,9 +99,9 @@ namespace FdaViewModel.Editors
             //}
         }
 
-        public BaseLoggingEditorVM(Utilities.ChildElement elem, EditorActionManager actionManager):base(elem, actionManager)
+        public BaseLoggingEditorVM(Utilities.ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager):base(elem, actionManager)
         {
-            EditorVM = new CoordinatesFunctionEditorVM(elem.Curve.Function);
+            EditorVM = new CoordinatesFunctionEditorVM(elem.Curve.Function, xLabel, yLabel, chartTitle);
             EditorVM.TableChanged += EditorVM_TableChanged;
             ReloadMessages();
         }

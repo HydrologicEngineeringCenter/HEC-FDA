@@ -1,4 +1,7 @@
-﻿using System;
+﻿using FdaViewModel.Editors;
+using FunctionsView.ViewModel;
+using HEC.Plotting.SciChart2D.Charts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +26,19 @@ namespace View.StageTransforms
         public RatingCurveEditor()  
         {
             InitializeComponent();
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            CurveEditorVM vm = (CurveEditorVM)this.DataContext;
+            CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
+            Chart2D chart = new Chart2D(editorVM.CoordinatesChartViewModel);
+            //Binding myBinding = new Binding("EditorVM.CoordinatesChartViewModel");
+            //myBinding.Source = this.DataContext;
+            //chart.SetBinding(Chart2D.DataContextProperty, myBinding);
+
+            editorGrid.Children.Add(chart);
+            Grid.SetColumn(chart, 2);
         }
     }
 }
