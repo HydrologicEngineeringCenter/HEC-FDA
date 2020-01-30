@@ -15,10 +15,11 @@ namespace Statistics.Distributions
         #region Properties
         public double Mean { get; }
         public double Median { get; }
+        public double Mode { get; }
         public double Variance { get; }
         public double StandardDeviation { get; }
         public double Skewness { get; }
-        public IDistributions Type => IDistributions.Beta4Parameters;
+        public IDistributionEnum Type => IDistributionEnum.Beta4Parameters;
         public IRange<double> Range { get; }
         public int SampleSize { get; }
         public bool IsValid { get; }
@@ -34,6 +35,7 @@ namespace Statistics.Distributions
                 _Distribution = new MathNet.Numerics.Distributions.BetaScaled(alpha, beta, location, scale);
                 Mean = _Distribution.Mean;
                 Median = _Distribution.Median;
+                Mode = _Distribution.Mode;
                 Variance = _Distribution.Variance;
                 StandardDeviation = _Distribution.StdDev;
                 Skewness = _Distribution.Skewness;
@@ -80,6 +82,77 @@ namespace Statistics.Distributions
         public string Print(bool round = false) => round ? Print(_Distribution.A, _Distribution.B, Range.Min, (Range.Max - Range.Min), SampleSize): $"ScaledBeta(alpha: {_Distribution.A}, beta: {_Distribution.B}, range: [{_Distribution.Location}, {(_Distribution.Location + _Distribution.Scale).Print()}], sample size: {SampleSize})";
         public string Requirements(bool printNotes) => RequiredParameterization(printNotes);
         #endregion        
+
+        public static Beta4Parameters Fit(IData data)
+        {
+            // These are the 4 parameters we attempt to fit:
+            double alpha, beta, min, max;
+            var stats = new SampleStatistics(data);
+            if (!stats.IsValid) throw new ArgumentException();
+            else
+            {
+                /* This attempts to follow the Beta Distribution 4 unknown parameters (alpha, beta, min, max)
+                 * method of moments estimation routine described on Wikipedia:
+                 *      https://en.wikipedia.org/wiki/Beta_distribution
+                 * A fundamental concept is that the 4 parameter Beta distribution kurtosis is bound by the square of skewness.
+                 * The relationship between these two properties determine the shape of the distribution which can appear uniform, normal, skewed, etc.
+                 */
+                double excessKurtosis = stats.Kurtosis - 3;
+                double squareSkewness = stats.Skewness * stats.Skewness;
+                if (squareSkewness - 2 < excessKurtosis && excessKurtosis < 1.5 * squareSkewness)
+                {
+                    double v;
+                    if (stats.Skewness == 0)
+                    {
+                        /* 0 skewness simplifies the equation in the else block and results in:
+                         *      alpha = beta = v / 2     
+                         */
+                        alpha = (1.5 * excessKurtosis + 3) / -1 * excessKurtosis;
+                        beta = alpha;
+                        v = beta * 2;
+                    }
+                    else
+                    {
+                        // v = alpha + beta
+                        v = 3 * (excessKurtosis - squareSkewness + 2) / (1.5 * squareSkewness - excessKurtosis);
+                        double denominator = Math.Sqrt(1 + (16 * (v + 1)) / ((v + 2) * (v + 2) * squareSkewness));
+                        double shapePlus = v * 0.5 * (1 + 1 / denominator), shapeMinus = v * 0.5 * (1 - 1 / denominator);
+                        if (stats.Skewness > 0)
+                        {
+                            alpha = Math.Min(shapePlus, shapeMinus);
+                            beta = Math.Max(shapePlus, shapeMinus);
+                        }
+                        else
+                        {
+                            // In this case: skewness < 0
+                            alpha = Math.Max(shapePlus, shapeMinus);
+                            beta = Math.Min(shapePlus, shapeMinus);
+                        }
+                    }
+                    // another option for range = standard deviation * sqrt(6 + (5 * v) + ((v + 2) * (v + 3)) / 6 * excess kurtosis
+                    double range = stats.StandardDeviation * 0.5 * Math.Sqrt((v + 2) * (v + 2) * squareSkewness + 16 * (v + 1));
+                    min = stats.Mean - (alpha / v) * range;
+                    max = range + min;
+                }
+                else
+                {
+                    /* Distribution parameters in this block have surpassed a boundary conditions:
+                     *      (1) square skewness - 2 >= excess kurtosis is and invalid result.
+                     *              - The 'Impossible Boundary Line' is formed where: 
+                     *              excess kurtosis = square skewness - 2 
+                     *              (e.g. excess kurtosis + 2 - square skewness = 0)
+                     *      (2) excess kurtosis >= 1.5 * square skewness is an invalid result.
+                     *             - The 'Gamma Line' is formed where:
+                     *             excess kurtosis = 1.5 * square skewness
+                     *             (e.g. excess kurtosis - 1.5 * square skewness = 0)
+                     *             this is where the denominator approaches infinity (and therefore has been described as dangerously near to chaos)
+                     */
+                    throw new ArgumentException("The provided data cannot be approximated by a 4 parameter beta distribution with 4 unknown parameters.");
+                }
+            }
+            return new Beta4Parameters(alpha, beta, min, (max - min));
+        }
+
         public static Beta4Parameters Fit(IEnumerable<double> data)
         {
             if (data.IsNullOrEmpty()) throw new ArgumentException("The provided data is invalid because it is null or an empty.");

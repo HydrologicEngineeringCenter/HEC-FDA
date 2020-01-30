@@ -24,62 +24,62 @@ namespace Functions
                 DistributionType retval = DistributionType.NotSupported;
                 switch (_distribution.Type)
                 {
-                    case IDistributions.Beta4Parameters:
+                    case IDistributionEnum.Beta4Parameters:
                         {
                             retval = DistributionType.Beta4Parameters;
                             break;
                         }
-                    case IDistributions.Histogram:
+                    case IDistributionEnum.Histogram:
                         {
                             retval = DistributionType.Histogram;
                             break;
                         }
-                    case IDistributions.LogPearsonIII:
+                    case IDistributionEnum.LogPearsonIII:
                         {
                             retval = DistributionType.LogPearsonIII;
                             break;
                         }
-                    case IDistributions.Normal:
+                    case IDistributionEnum.Normal:
                         {
                             retval = DistributionType.Normal;
                             break;
                         }
-                    case IDistributions.NotSupported:
+                    case IDistributionEnum.NotSupported:
                         {
                             retval = DistributionType.NotSupported;
                             break;
                         }
-                    case IDistributions.Triangular:
+                    case IDistributionEnum.Triangular:
                         {
                             retval = DistributionType.Triangular;
                             break;
                         }
-                    case IDistributions.TruncatedBeta4Parameter:
+                    case IDistributionEnum.TruncatedBeta4Parameter:
                         {
                             retval = DistributionType.TruncatedBeta4Parameter;
                             break;
                         }
-                    case IDistributions.TruncatedHistogram:
+                    case IDistributionEnum.TruncatedHistogram:
                         {
                             retval = DistributionType.TruncatedHistogram;
                             break;
                         }
-                    case IDistributions.TruncatedNormal:
+                    case IDistributionEnum.TruncatedNormal:
                         {
                             retval = DistributionType.TruncatedNormal;
                             break;
                         }
-                    case IDistributions.TruncatedTriangular:
+                    case IDistributionEnum.TruncatedTriangular:
                         {
                             retval = DistributionType.TruncatedTriangular;
                             break;
                         }
-                    case IDistributions.TruncatedUniform:
+                    case IDistributionEnum.TruncatedUniform:
                         {
                             retval = DistributionType.TruncatedUniform;
                             break;
                         }
-                    case IDistributions.Uniform:
+                    case IDistributionEnum.Uniform:
                         {
                             retval = DistributionType.Uniform;
                             break;

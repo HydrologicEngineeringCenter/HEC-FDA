@@ -29,7 +29,7 @@ namespace Statistics.Histograms
         public int Count { get; }
         public Utilities.IRange<double> Range { get; }
         /// <summary>
-        /// The midpoint value computed with equation: (Maximum - Minimum) / 2
+        /// The midpoint value computed with equation: (<see cref="IBin.Range.Max"/> - <see cref="IBin.Range.Min"/>) / 2
         /// </summary>
         public double MidPoint { get; }
         public double Width { get; }

@@ -55,7 +55,7 @@ namespace Model
             IFunction sampledFreqFunc = Sampler.Sample(frequencyFunction.Function, probability);
             if (Type == MetricEnum.ExpectedAnnualDamage)
             {
-                return sampledFreqFunc.RiemannSum();
+                return sampledFreqFunc.TrapizoidalRiemannSum();
                 //return frequencyFunction.Integrate();
             }
             else

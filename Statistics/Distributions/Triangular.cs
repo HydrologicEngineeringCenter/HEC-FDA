@@ -16,7 +16,7 @@ namespace Statistics.Distributions
         private readonly MathNet.Numerics.Distributions.Triangular _Distribution;
 
         #region IDistribution Properties
-        public IDistributions Type => IDistributions.Triangular;
+        public IDistributionEnum Type => IDistributionEnum.Triangular;
         public double Mean => _Distribution.Mean;
         public double Median => _Distribution.Median;
         public double Variance => _Distribution.Variance;

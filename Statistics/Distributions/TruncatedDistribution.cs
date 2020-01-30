@@ -18,7 +18,7 @@ namespace Statistics.Distributions
         #region Fields and Properties
         private readonly IDistribution _Distribution;
 
-        public IDistributions Type => (IDistributions)((int)_Distribution.Type * 10);
+        public IDistributionEnum Type => (IDistributionEnum)((int)_Distribution.Type * 10);
         public double Mean => _Distribution.Mean;
         public double Median => _Distribution.Median;
         public double Variance => _Distribution.Variance;

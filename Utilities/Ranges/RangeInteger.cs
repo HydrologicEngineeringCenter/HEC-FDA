@@ -28,7 +28,7 @@ namespace Utilities.Ranges
         public bool IsOnRange(int x)
         {
             if (IsValid) return x.IsOnRange(Min, Max);
-            else throw new InvalidOperationException(Utilities.Validate.InvalidOperationExceptionMessage("IRange", Messages));
+            else throw new InvalidOperationException(Utilities.ValidationExtensions.InvalidOperationExceptionMessage("IRange", Messages));
         }
     }
 }

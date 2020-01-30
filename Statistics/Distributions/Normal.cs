@@ -14,7 +14,7 @@ namespace Statistics.Distributions
         #region Fields and Properties
         private readonly MathNet.Numerics.Distributions.Normal _Distribution;
         #region IDistribution Properties
-        public IDistributions Type => IDistributions.Normal;
+        public IDistributionEnum Type => IDistributionEnum.Normal;
         public double Mean => _Distribution.Mean;
         public double Median => _Distribution.Median;
         public double Mode => _Distribution.Mode;

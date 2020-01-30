@@ -7,28 +7,72 @@ using Utilities;
 
 namespace Functions
 {
-    internal class DistributionFunction : IFunction, IValidate<DistributionFunction>
+    internal class DistributionFunction : IFunction, IValidate<ICoordinatesFunction>
     {
         private readonly IDistributedValue _Distribution;
         
-        public bool IsInvertible => throw new NotImplementedException();
-        public IRange<double> Range => throw new NotImplementedException();
-        public List<ICoordinate> Coordinates => throw new NotImplementedException();
-        public OrderedSetEnum Order => throw new NotImplementedException();
-        public InterpolationEnum Interpolator => throw new NotImplementedException();
-        public IRange<double> Domain => throw new NotImplementedException();
+        public bool IsInvertible => true;
+        public IRange<double> Domain { get; }
+        public IRange<double> Range => _Distribution.Range;
+        public DistributionType DistributionType => _Distribution.Type;
+        public OrderedSetEnum Order => OrderedSetEnum.StrictlyIncreasing;
+        public InterpolationEnum Interpolator => InterpolationEnum.Statistical;
+        public List<ICoordinate> Coordinates { get; }
+        public bool IsLinkedFunction => false;
+
+        public bool IsValid { get; }
         public IEnumerable<IMessage> Messages { get; }
-
-        public DistributionType DistributionType => throw new NotImplementedException();
-
-        public bool IsLinkedFunction => throw new NotImplementedException();
-
-        public bool IsValid => throw new NotImplementedException();
 
         internal DistributionFunction(IDistributedValue distribution)
         {
             _Distribution = distribution;
-            //Messages = _Distribution.
+            Domain = IRangeFactory.Factory(0, 1);
+            Coordinates = GetCoordinates();
+            IsValid = Validate(new Validation.DistributionFunctionValidator(), out IEnumerable<IMessage> msgs);
+            Messages = msgs;
+        }
+        private List<ICoordinate> GetCoordinates()
+        {
+            double x = 0d, y = Range.Min;
+            //Initialize coordinates list with x = 0, P(X <=0) = Range.Min coordinate.
+            List<ICoordinate> coordinates = new List<ICoordinate>() { ICoordinateFactory.Factory(x, y) };
+            //Interpolation is over a minimum of 1% or the x values or 1% of the y values.
+            double xEpsilon = 0.01, nextX = x + xEpsilon, yEpsilon = (Range.Max - Range.Min) / 100, nextY = y + yEpsilon;
+            while (!IsLastOrdinate(nextX, nextY))
+            {
+                if (UseNextX(nextX, nextY, out y))
+                {
+                    x = nextX;
+                    nextX += xEpsilon;
+                    coordinates.Add(ICoordinateFactory.Factory(x, y));
+                }
+                else
+                {
+                    y = nextY;
+                    nextY += yEpsilon;
+                    coordinates.Add(ICoordinateFactory.Factory(_Distribution.CDF(y), y));
+                }
+            }
+            return coordinates;            
+        }
+        private bool IsLastOrdinate(double nextX, double nextY) => nextX >= 1 && nextY >= Range.Max;
+        private bool UseNextX(double candidateX, double candidateY, out double nextY)
+        {
+            nextY = _Distribution.InverseCDF(candidateX);
+            if (nextY < candidateY)
+            {
+                return true;
+            }
+            else
+            {
+                nextY = candidateY;
+                return false;
+            }
+        }
+
+        public bool Validate(IValidator<ICoordinatesFunction> validator, out IEnumerable<IMessage> errors)
+        {
+            return validator.IsValid(this, out errors);
         }
 
         public IFunction Compose(IFunction g)
@@ -47,7 +91,7 @@ namespace Functions
         {
             throw new NotImplementedException();
         }
-        public double RiemannSum()
+        public double TrapizoidalRiemannSum()
         {
             throw new NotImplementedException();
         }
@@ -56,14 +100,6 @@ namespace Functions
             throw new NotImplementedException();
         }
 
-        public bool Validate(IValidator<ICoordinatesFunction> validator, out IEnumerable<IMessage> errors)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Validate(IValidator<DistributionFunction> validator, out IEnumerable<IMessage> errors)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

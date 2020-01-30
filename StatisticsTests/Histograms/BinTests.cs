@@ -8,9 +8,11 @@ using Xunit;
 
 using Statistics.Histograms;
 using Utilities;
+using Statistics;
 
 namespace StatisticsTests.Histograms
 {
+      
     [ExcludeFromCodeCoverage]
     public class BinTests
     {

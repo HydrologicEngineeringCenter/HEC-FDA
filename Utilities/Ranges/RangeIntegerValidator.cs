@@ -18,7 +18,7 @@ namespace Utilities.Ranges
         public IEnumerable<IMessage> ReportErrors(RangeInteger obj)
         {
             List<IMessage> msgs = new List<IMessage>();
-            if (!Validate.IsRange(obj.Min, obj.Max)) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The specified range: {obj.Print()} is invalid because it does not represent a logical range."));
+            if (!ValidationExtensions.IsRange(obj.Min, obj.Max)) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The specified range: {obj.Print()} is invalid because it does not represent a logical range."));
             return msgs;
         }
     }

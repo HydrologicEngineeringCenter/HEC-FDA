@@ -25,7 +25,7 @@ namespace Statistics.Histograms
         public IRange<double> Range { get; }
         public int SampleSize { get; }
         public double Mode { get; }
-        public IDistributions Type => IDistributions.Histogram;
+        public IDistributionEnum Type => IDistributionEnum.Histogram;
         #endregion
         #region IConverge Properties
         public bool IsConverged { get; }
@@ -243,7 +243,7 @@ namespace Statistics.Histograms
         public abstract IDistribution SampleDistribution(Random r);
         public string Print(bool round) => round ? Print(SampleSize, Bins.Length, Range) : $"Histogram(observations: {SampleSize}, bins: {Bins.Length}, range: {Range.Print()})";
         public string Requirements(bool printNotes) => RequiremedParameterization(printNotes);
-        public bool Equals(IDistribution distribution) => distribution.Type == IDistributions.Histogram ? Equals((IHistogram)distribution) : false;
+        public bool Equals(IDistribution distribution) => distribution.Type == IDistributionEnum.Histogram ? Equals((IHistogram)distribution) : false;
 
         public XElement WriteToXML()
         {

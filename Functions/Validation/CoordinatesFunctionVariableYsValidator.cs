@@ -84,7 +84,7 @@ namespace Functions.Validation
 
         private bool IsValid(List<ICoordinate> coordinates)
         {
-            if (Utilities.Validate.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate>)) return false;
+            if (Utilities.ValidationExtensions.IsNullOrEmptyCollection(coordinates as ICollection<ICoordinate>)) return false;
             if (!IsFunction(coordinates)) throw new ArgumentException("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).");
             return true;
         }

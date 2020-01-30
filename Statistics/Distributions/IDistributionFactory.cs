@@ -14,36 +14,36 @@ namespace Statistics
         //TODO: Validate
         //TODO: Call other constructors with inputs and IDistributions Enum (may require switch case on enum values) 
         
-       public static string PrintParamaterizationRequirements(IDistributions type)
+       public static string PrintParamaterizationRequirements(IDistributionEnum type)
         {
             switch (type) 
             {
-                case IDistributions.Histogram:
+                case IDistributionEnum.Histogram:
                     return Histograms.Histogram.RequiremedParameterization(true);
-                case IDistributions.Beta4Parameters:
+                case IDistributionEnum.Beta4Parameters:
                     return Distributions.Beta4Parameters.RequiredParameterization(true);
-                case IDistributions.LogPearsonIII:
+                case IDistributionEnum.LogPearsonIII:
                     return Distributions.LogPearsonIII.RequiredParameterization(true);
-                case IDistributions.Normal:
+                case IDistributionEnum.Normal:
                     return Distributions.Normal.RequiredParameterization(true);
-                case IDistributions.Triangular:
+                case IDistributionEnum.Triangular:
                     return Distributions.Triangular.RequiredParameterization(true);
-                case IDistributions.Uniform:
+                case IDistributionEnum.Uniform:
                     return Distributions.Uniform.RequiredParameterization(true);
-                case IDistributions.TruncatedBeta4Parameter:
-                case IDistributions.TruncatedHistogram:
-                case IDistributions.TruncatedNormal:
-                case IDistributions.TruncatedTriangular:
-                case IDistributions.TruncatedUniform:
+                case IDistributionEnum.TruncatedBeta4Parameter:
+                case IDistributionEnum.TruncatedHistogram:
+                case IDistributionEnum.TruncatedNormal:
+                case IDistributionEnum.TruncatedTriangular:
+                case IDistributionEnum.TruncatedUniform:
                     return Distributions.TruncatedDistribution.RequiredParameterization(true);
-                case IDistributions.NotSupported:
+                case IDistributionEnum.NotSupported:
                 default:
                     throw new NotImplementedException();
             }
 
         }
 
-        public static IDistribution Fit(IEnumerable<double> sample, IDistributions returnType)
+        public static IDistribution Fit(IEnumerable<double> sample, IDistributionEnum returnType)
         {
             if ((int)returnType >= 10)
             {
@@ -54,17 +54,17 @@ namespace Statistics
             {
                 switch (returnType)
                 {
-                    case IDistributions.Normal:
+                    case IDistributionEnum.Normal:
                         return Distributions.Normal.Fit(sample);
-                    case IDistributions.Uniform:
+                    case IDistributionEnum.Uniform:
                         return Distributions.Uniform.Fit(sample);
-                    case IDistributions.Beta4Parameters:
+                    case IDistributionEnum.Beta4Parameters:
                         return Distributions.Beta4Parameters.Fit(sample);
-                    case IDistributions.Triangular:
+                    case IDistributionEnum.Triangular:
                         return Distributions.Triangular.Fit(sample);
-                    case IDistributions.Histogram:
+                    case IDistributionEnum.Histogram:
                         return (IDistribution)IHistogramFactory.Factory(IDataFactory.Factory(sample), nBins: 100);
-                    case IDistributions.LogPearsonIII:
+                    case IDistributionEnum.LogPearsonIII:
                         return Distributions.LogPearsonIII.Fit(sample);
                     default:
                         throw new NotImplementedException($"An unexpected error occured. The requested return type: {returnType} is unsupported");
@@ -75,7 +75,7 @@ namespace Statistics
         {
             return IHistogramFactory.Factory(IDataFactory.Factory(sample), nBins);
         }
-        public static IDistribution Fit(IEnumerable<double> sample, double minimum, double maximum, IDistributions returnType)
+        public static IDistribution Fit(IEnumerable<double> sample, double minimum, double maximum, IDistributionEnum returnType)
         {
             if ((int)returnType < 10)
             {

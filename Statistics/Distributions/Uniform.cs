@@ -13,7 +13,7 @@ namespace Statistics.Distributions
         private readonly MathNet.Numerics.Distributions.ContinuousUniform _Distribution;
 
         #region IDistribution Properties
-        public IDistributions Type => IDistributions.Uniform;
+        public IDistributionEnum Type => IDistributionEnum.Uniform;
         public double Mean => _Distribution.Mean;
         public double Median => _Distribution.Median;
         public double Variance => _Distribution.Variance;

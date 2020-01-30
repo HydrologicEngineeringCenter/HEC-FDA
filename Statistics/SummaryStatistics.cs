@@ -15,8 +15,6 @@ namespace Statistics
         public double StandardDeviation { get; }
         public double Skewness { get; }
         public IRange<double> Range { get; }
-        //public double Minimum { get; }
-        //public double Maximum { get; }
         public int SampleSize { get; }
         public bool IsValid { get; }
         public IEnumerable<IMessage> Messages { get; }
@@ -36,7 +34,7 @@ namespace Statistics
                     if (i == iMid + 1 && iMidMod != 0) median = (median + x) / 2;
                     deviations2 += (x - Mean) * (x - Mean);
                     deviations3 += (x - Mean) * (x - Mean) * (x - Mean);
-                    // could attempt to outwit compiler by caculating deviation, deviation2 first, or having iterator for median calculations.
+                    // could attempt to outwit compiler by calculating deviation, deviation2 first, or having iterator for median calculations.
                 }
                 Variance = deviations2 / (double)(SampleSize - 1);
                 StandardDeviation = Math.Sqrt(Variance);
@@ -65,21 +63,7 @@ namespace Statistics
             }
             IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<IMessage> msgs);
             Messages = data.Messages.Concat(msgs);
-        }
-        //public SummaryStatistics()
-        //{
-        //    Mean = double.NaN;
-        //    Median = double.NaN;
-        //    Variance = double.NaN;
-        //    StandardDeviation = double.NaN;
-        //    Skewness = double.NaN;
-        //    Minimum = double.NaN;
-        //    Maximum = double.NaN;
-        //    SampleSize = 0;
-        //    IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<IMessage> errors);
-        //    Messages = errors;
-        //}
-       
+        }       
         public bool Validate(IValidator<ISummaryStatistics> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);

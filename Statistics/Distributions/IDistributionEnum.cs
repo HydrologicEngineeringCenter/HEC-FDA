@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Functions
+namespace Statistics
 {
-    public enum DistributionType
+    /// <summary>
+    /// An enumeration of supported IDistribution types
+    /// </summary>
+    public enum IDistributionEnum
     {
         /// <summary>
         /// Default value likely to lead to an error.
         /// </summary>
-        NotSupported = -1,
-        /// <summary>
-        /// Single y value for every x.
-        /// </summary>
-        Constant = 0,
+        NotSupported = 0,
         /// <summary>
         /// Normal distribution.
         /// </summary>

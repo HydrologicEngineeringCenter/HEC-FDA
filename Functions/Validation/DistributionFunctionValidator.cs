@@ -6,19 +6,22 @@ using Utilities;
 
 namespace Functions.Validation
 {
-    internal class DistributionFunctionValidator : Utilities.IValidator<DistributionFunction>
+    internal class DistributionFunctionValidator : Utilities.IValidator<ICoordinatesFunction>
     {
-        public bool IsValid(DistributionFunction entity, out IEnumerable<IMessage> errors)
+        public bool IsValid(ICoordinatesFunction obj, out IEnumerable<IMessage> msgs)
         {
-            errors = ReportErrors(entity);
-            return !errors.Any();
+            if (obj.GetType() != typeof(DistributionFunction)) throw new ArgumentException($"The {this.GetType()} can only validated {typeof(DistributionFunction)} objects. It was called by a {obj.GetType()} object.");
+            else
+            {
+                msgs = ReportErrors(obj);
+                return msgs.Max() < IMessageLevels.Error;
+            }  
         }
-
-        public IEnumerable<IMessage> ReportErrors(DistributionFunction entity)
+        public IEnumerable<IMessage> ReportErrors(ICoordinatesFunction obj)
         {
-            List<IMessage> msg = new List<IMessage>();
-            //if (entity.Is)
-            return msg;
+            List<IMessage> msgs = new List<IMessage>();
+            if (!obj.IsValid) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The provided distribution is invalid and contains the following messages:{obj.Messages.PrintTabbedListOfMessages()}"));
+            return msgs;
         }
         internal static bool IsConstructable(IDistributedValue distribution, out string msg)
         {

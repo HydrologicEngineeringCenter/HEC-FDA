@@ -73,7 +73,7 @@ namespace Statistics.Validation
             errors = new List<string>();
             if (!binwidths.IsFinite() || !(binwidths > 0)) errors.Add($"The requested bin width: {binwidths} is not valid because it is not a positive finite value.");
             if (max - min < binwidths) errors.Add($"The requested bin width: {binwidths.Print()} is invalid because it is great than the requested {typeof(Histograms.Histogram)} range: [{min.Print()}, {max.Print()}).");
-            if (!(min.IsFinite() && max.IsFinite() && Validate.IsRange(min, max))) errors.Add($"The requested range: [{min.Print()}, {max.Print()}) is invalid.");
+            if (!(min.IsFinite() && max.IsFinite() && ValidationExtensions.IsRange(min, max))) errors.Add($"The requested range: [{min.Print()}, {max.Print()}) is invalid.");
             return !errors.Any();
         }
         public static bool IsConstructable(IData data, double min, double max, double width, out IList<string> errors)

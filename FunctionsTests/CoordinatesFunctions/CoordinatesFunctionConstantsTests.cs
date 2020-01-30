@@ -401,7 +401,7 @@ namespace FunctionsTests.CoordinatesFunctions
             List<double> ys1 = new List<double>() { 0, 1 };
 
             IFunction testObj = CreateCoordinatesFunctionConstants(xs1, ys1);
-            Assert.True(testObj.RiemannSum() == 0.5);
+            Assert.True(testObj.TrapizoidalRiemannSum() == 0.5);
         }
         #endregion
         #region Equals() Tests

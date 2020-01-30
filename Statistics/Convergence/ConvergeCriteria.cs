@@ -34,7 +34,7 @@ namespace Statistics
         }
         private bool IsBelowRange(int observations) => _TestRange == null || (_TestRange != null && _TestRange.Min <= observations) ? false : true;
         private bool IsAboveRange(int observations) => _TestRange == null || (_TestRange != null && _TestRange.Max >= observations) ? false : true;
-        private bool IsOnRange(int observations) => _TestRange == null || Utilities.Validate.IsOnRange(_TestRange.Min, _TestRange.Max, observations) ? true : false;
+        private bool IsOnRange(int observations) => _TestRange == null || Utilities.ValidationExtensions.IsOnRange(_TestRange.Min, _TestRange.Max, observations) ? true : false;
         private string PrintTestResult(bool passed, int sampleObs, bool isBelowRange, bool isAboveRange, int totalObs, bool isInTolerance, double deviation)
         {
             string result = passed ? "CONVERGED: " : "FAILED to converge: ";

@@ -40,7 +40,7 @@ namespace Statistics.Validation
         internal static string ReportFatalErrors(double min, double max, int n)
         {
             string msg = "";
-            if (!Validate.IsRange(min, max)) msg += $"{Resources.FatalParameterizationNotice(Bin.Print(min, max, n))} {Bin.Requirements(true)}";
+            if (!ValidationExtensions.IsRange(min, max)) msg += $"{Resources.FatalParameterizationNotice(Bin.Print(min, max, n))} {Bin.Requirements(true)}";
             return msg;
         }
         internal static string ReportFatalErrors(IBin oldBin, int addN)

@@ -36,6 +36,33 @@ namespace Utilities
         {
             return Math.Abs(left - right) < _7;
         }
-
+        /// <summary>
+        /// Converts a <see cref="long"/> value to an <see cref="int"/> value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns> An <see cref="int"/> value. Returns the <see cref="int.MaxValue"/> if the <see cref="long"/> value exceeds the <see cref="int.MaxValue"/>. </returns>
+        public static int CastToInt(this long value)
+        {
+            try
+            {
+                return Convert.ToInt32(value);
+            }
+            catch (OverflowException)
+            {
+                return int.MaxValue;
+            }
+        }
+        /// <summary>
+        /// Provides a human readable representation of an <see cref="double"/> value, using rounding to reduce decimal values to 2 digits and rounding to shorten very small or large values.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        public static string Print(this double x) => x.IsOnRange(-1000000, 1000000, false, false) ? string.Format("{0:n}", x) : x.ToString("E2");
+        /// <summary>
+        /// Provides a human readable representation of an <see cref="int"/> value, using scientific notation to shorten the representation of very small or large values.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        public static string Print(this int x) => x.IsOnRange(-1000000, 1000000, false, false) ? string.Format("{0:n0}", x) : x.ToString("E2");
     }
 }

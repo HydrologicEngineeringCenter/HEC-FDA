@@ -13,9 +13,8 @@ namespace Statistics.Histograms
         public double Variance { get; }
         public double StandardDeviation { get; }
         public double Skewness { get; }
+        public double Kurtosis { get; }
         public IRange<double> Range { get; }
-        //public double Minimum { get; }
-        //public double Maximum { get; }
         public int SampleSize { get; }
         public bool IsValid { get; }
         public IEnumerable<IMessage> Messages { get; }

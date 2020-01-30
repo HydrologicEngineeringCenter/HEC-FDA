@@ -82,7 +82,7 @@ namespace StatisticsTests.Histograms
         /// <summary>
         /// Tests the <see cref="HistogramBinnedData.HistogramBinnedData(IData, double, double, double)"/> constructor to ensure that when the requested <see cref="Histogram.Bins"/> width is greater than the specified range an <see cref="InvalidConstructorArgumentsException"/> is thrown.
         /// </summary>
-        /// <param name="data"> 'Good' data to be binned in the histogram if an expection in not thrown. </param>
+        /// <param name="data"> 'Good' data to be binned in the histogram if an exception in not thrown. </param>
         /// <param name="min"> The requested <see cref="Histogram.Minimum"/>. </param>
         /// <param name="max"> The requested <see cref="Histogram.Maximum"/>. </param>
         /// <param name="width"> The requested constant <see cref="Histogram.Bins"/> width. </param>

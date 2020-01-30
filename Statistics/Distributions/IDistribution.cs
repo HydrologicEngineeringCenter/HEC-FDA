@@ -14,7 +14,7 @@ namespace Statistics
         /// <summary>
         /// Enumerated type of the distribution.
         /// </summary>
-        IDistributions Type { get; }
+        IDistributionEnum Type { get; }
 
         double Mean { get; }
         double Median { get;}
@@ -23,8 +23,6 @@ namespace Statistics
         double Skewness { get; }
         Utilities.IRange<double> Range { get; }
         double Mode { get; }
-        //double Minimum { get; }
-        //double Maximum { get; }
         /// <summary>
         /// The sample size used to fit the distribution.
         /// </summary>
@@ -57,14 +55,7 @@ namespace Statistics
         /// <param name="numberGenerator"> A <see cref="Random"/> Number Generator. If left <see langword="null""/> a random number generator is constructed by the function.</param>
         /// <returns> A single double value drawn from the distribution. </returns>
         double Sample(Random numberGenerator);
-        
-        ///// <summary>
-        ///// Draws a random sample from the distribution, with the same length as the distribution <see cref="IDistribution.SampleSize"/>.
-        ///// </summary>
-        ///// <param name="numberGenerator"> A <see cref="Random"/> Number Generator. If it is <see langword="null""/> a random number generator is constructed by the function. </param>
-        ///// <returns> An array of double values drawn from the distribution. </returns>
-        /////double[] Sample(Random numberGenerator = null);
-        
+
         /// <summary>
         /// Draws a random sample from the distribution, with the specified length (<paramref name="sampleSize"/>).
         /// </summary>

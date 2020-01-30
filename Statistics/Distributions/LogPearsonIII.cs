@@ -11,7 +11,7 @@ namespace Statistics.Distributions
     internal class LogPearsonIII: IDistribution, IValidate<LogPearsonIII> 
     {
         #region Properties
-        public IDistributions Type => IDistributions.LogPearsonIII;
+        public IDistributionEnum Type => IDistributionEnum.LogPearsonIII;
         public double Mean { get; }
         public double Median { get; }
         public double Variance { get; }

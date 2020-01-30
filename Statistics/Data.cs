@@ -20,8 +20,8 @@ namespace Statistics
         public Data(IEnumerable<double> data)
         {         
             var sets = SplitData(data);
-            SampleSize = Elements.Count();
             Elements = sets.Item1.OrderBy(i => i);
+            SampleSize = Elements.Count();
             Range = IRangeFactory.Factory(Elements.First(), Elements.Last());
             IMessageBoard msgBoard = IMessageBoardFactory.Factory(DataMessages(sets.Item2));
             IsValid = Validate(new Validation.DataValidator(), out IEnumerable<IMessage> errors);

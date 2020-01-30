@@ -403,7 +403,7 @@ namespace Functions.CoordinatesFunctions
         #region F(x)
         public Constant F(Constant x)
         {
-            if (Utilities.Validate.IsNull(x)) throw new ArgumentNullException("The specified x value is invalid because it is null");
+            if (Utilities.ValidationExtensions.IsNull(x)) throw new ArgumentNullException("The specified x value is invalid because it is null");
             else return F(x);
         }
         public IOrdinate F(IOrdinate x)
@@ -436,8 +436,8 @@ namespace Functions.CoordinatesFunctions
        
         public IOrdinate InverseF(IOrdinate y)
         {
-            if (Utilities.Validate.IsNull(y)) throw new ArgumentNullException("The specified y value is invalid because it is null");
-            if (!Utilities.Validate.IsFinite(y.Value())) throw new ArgumentOutOfRangeException(string.Format("The specified y value: {0} is not finite.", y));
+            if (Utilities.ValidationExtensions.IsNull(y)) throw new ArgumentNullException("The specified y value is invalid because it is null");
+            if (!Utilities.ValidationExtensions.IsFinite(y.Value())) throw new ArgumentOutOfRangeException(string.Format("The specified y value: {0} is not finite.", y));
             if (!IsInvertible) throw new InvalidOperationException("The function InverseF(y) is invalid for this set of coordinates. The inverse of F(x) is not a function, because one or more y values maps to multiple x values");
             if (!IsOnRange(y.Value())) throw new ArgumentOutOfRangeException(string.Format("The specified y values: {0} is invalid because it is not on the domain of the inverse coordinates function [{1}, {2}] (e.g. range of coordinates function).",
                 y, Coordinates[0].Y.Value(), Coordinates[Coordinates.Count - 1].Y.Value()));
@@ -452,7 +452,7 @@ namespace Functions.CoordinatesFunctions
         private double InverseF(double y, int i)
         {
             // TODO: IsFinite() IsNaN() check
-            if ( !Utilities.Validate.IsFinite(y)) throw new ArgumentOutOfRangeException(string.Format("The specified y value: {0} is not finite.", y));
+            if ( !Utilities.ValidationExtensions.IsFinite(y)) throw new ArgumentOutOfRangeException(string.Format("The specified y value: {0} is not finite.", y));
             // TODO: OnRange()  check  - so this works with decreasing functions.
             if (!IsOnRange(y)) throw new ArgumentOutOfRangeException(string.Format("The specified y values: {0} is invalid because it is not on the domain of the inverse coordinates function [{1}, {2}] (e.g. range of coordinates function).",
                 y, Coordinates[0].Y.Value(), Coordinates[Coordinates.Count - 1].Y.Value()));
@@ -462,7 +462,7 @@ namespace Functions.CoordinatesFunctions
             if (Coordinates[i + 1].Y.Value() == y) return Coordinates[i + 1].Y.Value();
             else return InverseInterpolationFunction(i, y);
         }
-        private bool IsOnRange(double y) => y < Range.Min || y > Range.Max ? false : true;     
+        private bool IsOnRange(double y) => y < Range.Min || y > Range.Max ? false : true;
         #endregion
 
         #region Compose()
@@ -577,7 +577,7 @@ namespace Functions.CoordinatesFunctions
         #endregion
 
         #region RiemannSum()
-        public double RiemannSum()
+        public double TrapizoidalRiemannSum()
         {
             double riemannSum = 0;
             for (int i = 0; i < Coordinates.Count - 1; i++)
