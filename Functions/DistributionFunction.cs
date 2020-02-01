@@ -10,6 +10,7 @@ namespace Functions
     internal class DistributionFunction : IFunction, IValidate<ICoordinatesFunction>
     {
         private readonly IDistributedValue _Distribution;
+        private readonly CoordinatesFunctionConstants _CoordinatesFunction;
         
         public bool IsInvertible => true;
         public IRange<double> Domain { get; }
@@ -28,6 +29,7 @@ namespace Functions
             _Distribution = distribution;
             Domain = IRangeFactory.Factory(0, 1);
             Coordinates = GetCoordinates();
+            _CoordinatesFunction = new CoordinatesFunctionConstants(Coordinates, InterpolationEnum.Linear);
             IsValid = Validate(new Validation.DistributionFunctionValidator(), out IEnumerable<IMessage> msgs);
             Messages = msgs;
         }
@@ -77,23 +79,25 @@ namespace Functions
 
         public IFunction Compose(IFunction g)
         {
-            throw new NotImplementedException();
+            return _CoordinatesFunction.Compose(g);
         }
         public bool Equals(ICoordinatesFunction function)
         {
-            throw new NotImplementedException();
+            if (!(function.IsLinkedFunction == IsLinkedFunction && function.Interpolator == Interpolator && function.Order == Order && function.Coordinates.Count == Coordinates.Count)) return false;
+            for (int i = 0; i < Coordinates.Count; i++) if (!function.Coordinates[i].Equals(Coordinates[i])) return false;
+            return true;
         }
         public IOrdinate F(IOrdinate x)
         {
-            throw new NotImplementedException();
+            return new Ordinates.Constant(_Distribution.CDF(x.Value()));
         }
         public IOrdinate InverseF(IOrdinate y)
         {
-            throw new NotImplementedException();
+            return new Ordinates.Constant(_Distribution.InverseCDF(y.Value()));
         }
         public double TrapizoidalRiemannSum()
         {
-            throw new NotImplementedException();
+            return _CoordinatesFunction.TrapizoidalRiemannSum();
         }
         public XElement WriteToXML()
         {

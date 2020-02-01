@@ -35,6 +35,36 @@ namespace Utilities
         /// <returns> <see langword="true"/> if the specified <see cref="IEnumerable{T}"/> is not <see langword="null"/> and contains one or more elements, <see langword="false"/> otherwise. </returns>
         public static bool IsNullOrEmpty<T>(this IEnumerable<T> data) => data.IsNull() || !data.Any() ? true : false;
         /// <summary>
+        /// Tests if an <see cref="IEnumerable{T}"/> is <see langword="null"/> or contains <see langword="null"/> data elements.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <returns> <see langword="true"/> if <see langword="null"/> values are encountered, <see langword="false"/> otherwise. </returns>
+        public static bool IsNullItem<T>(this IEnumerable<T> data)
+        {
+            if (data.IsNullOrEmpty()) return true;
+            else
+            {
+                foreach (var x in data) if(x.IsNull()) return true;
+                return false;
+            }  
+        }
+        /// <summary>
+        /// Tests if an <see cref="IEnumerable{T}"/> is <see langword="null"/> or contains <see langword="null"/> or non-finite numeric data elements.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <returns> <see langword="true"/> if <see langword="null"/> values are encountered, <see langword="false"/> otherwise. </returns>
+        public static bool IsNullorNonFiniteItem(this IEnumerable<double> data)
+        {
+            if (data.IsNullOrEmpty()) return true;
+            else
+            {
+                foreach (var x in data) if (x.IsNull() || !x.IsFinite()) return true;
+                return false;
+            }
+        }
+        /// <summary>
         /// Tests a specified <see cref="IEnumerable{T}"/> of <see cref="Type"/> <see cref="double"/> for a required number of finite elements.
         /// </summary>
         /// <param name="data"> The specified <see cref="IEnumerable{T}"/> of <see cref="Type"/> <see cref="double"/> values to test. </param>

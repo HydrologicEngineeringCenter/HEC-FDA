@@ -92,20 +92,20 @@ namespace Statistics.Distributions
             else return _Distribution.InverseCDF(p);
         }
 
-        public double Sample(Random r = null) => InverseCDF(r == null ? new Random().NextDouble() : r.NextDouble());
-        //public double[] Sample(Random numberGenerator = null) => Sample(SampleSize, numberGenerator);
-        public double[] Sample(int sampleSize, Random numberGenerator = null)
-        {
-            if (numberGenerator == null) numberGenerator = new Random();
-            double[] sample = new double[sampleSize];
-            for (int i = 0; i < sample.Length; i++) sample[i] = InverseCDF(numberGenerator.NextDouble());
-            return sample;
-        }
-        public IDistribution SampleDistribution(Random numberGenerator = null)
-        {
-            IDistribution distribution = IDistributionFactory.Fit(Sample(SampleSize, numberGenerator), _Distribution.Type);
-            return new TruncatedDistribution(distribution, Range.Min, Range.Max);
-        }
+        //public double Sample(Random r = null) => InverseCDF(r == null ? new Random().NextDouble() : r.NextDouble());
+        ////public double[] Sample(Random numberGenerator = null) => Sample(SampleSize, numberGenerator);
+        //public double[] Sample(int sampleSize, Random numberGenerator = null)
+        //{
+        //    if (numberGenerator == null) numberGenerator = new Random();
+        //    double[] sample = new double[sampleSize];
+        //    for (int i = 0; i < sample.Length; i++) sample[i] = InverseCDF(numberGenerator.NextDouble());
+        //    return sample;
+        //}
+        //public IDistribution SampleDistribution(Random numberGenerator = null)
+        //{
+        //    IDistribution distribution = IDistributionFactory.Fit(Sample(SampleSize, numberGenerator), _Distribution.Type);
+        //    return new TruncatedDistribution(distribution, Range.Min, Range.Max);
+        //}
         public string Print(bool round = false) => round ? Print(_Distribution, Range) : $"TruncatedDistribution(distribution: {_Distribution.Print()}, truncated range: {Range.Print()})";
         public string Requirements(bool printNotes)
         {

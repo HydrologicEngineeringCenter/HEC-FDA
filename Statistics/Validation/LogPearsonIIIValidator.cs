@@ -29,12 +29,12 @@ namespace Statistics.Validation
         internal static bool IsConstructable(double mean, double sd, double skew, int n, out string error)
         {
             error = ReportFatalError(mean, sd, skew, n);
-            return !(error.Length == 0);
+            return error.Length == 0;
         }
         internal static string ReportFatalError(double mean, double sd, double skew, int n)
         {
             string msg = "";
-            if (!mean.IsFinite() || !sd.IsFinite() || !skew.IsFinite()) msg += $"{Resources.FatalParameterizationNotice(LogPearsonIII.Print(mean, sd, skew, n))} {LogPearsonIII.RequiredParameterization(true)} {Resources.SampleSizeSuggestion()}";
+            if (!mean.IsFinite() || !sd.IsFinite() || !skew.IsFinite() || !(mean > 0) || !(sd > 0) || !(n > 0)) msg += $"{Resources.FatalParameterizationNotice(LogPearsonIII.Print(mean, sd, skew, n))} {LogPearsonIII.RequiredParameterization(true)} {Resources.SampleSizeSuggestion()}";
             return msg;
         }
     }

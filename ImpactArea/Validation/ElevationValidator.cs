@@ -36,7 +36,7 @@ namespace ImpactArea.Validation
         {
             string msg = "";
             if (height.IsNull()) return "The IElevation object cannot be created because it is null.";
-            if (!height.IsValid) msg += $"The height ordinate is invalid it contains the following messages: {Utilities.Validate.PrintTabbedListOfMessages(height.Messages)}";
+            if (!height.IsValid) msg += $"The height ordinate is invalid it contains the following messages: {Utilities.ValidationExtensions.PrintTabbedListOfMessages(height.Messages)}";
             return msg;
         }
     }

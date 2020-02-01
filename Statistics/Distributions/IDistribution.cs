@@ -49,31 +49,31 @@ namespace Statistics
         /// <param name="p"> A non-exceedance probability. </param>
         /// <returns> The value from the distribution at the point of the non-exceedance probability <paramref name="p"/>.</returns>
         double InverseCDF(double p);
-        /// <summary>
-        /// Draws a single random value from the distribution.
-        /// </summary>
-        /// <param name="numberGenerator"> A <see cref="Random"/> Number Generator. If left <see langword="null""/> a random number generator is constructed by the function.</param>
-        /// <returns> A single double value drawn from the distribution. </returns>
-        double Sample(Random numberGenerator);
+        ///// <summary>
+        ///// Draws a single random value from the distribution.
+        ///// </summary>
+        ///// <param name="numberGenerator"> A <see cref="Random"/> Number Generator. If left <see langword="null""/> a random number generator is constructed by the function.</param>
+        ///// <returns> A single double value drawn from the distribution. </returns>
+        //double Sample(Random numberGenerator);
 
-        /// <summary>
-        /// Draws a random sample from the distribution, with the specified length (<paramref name="sampleSize"/>).
-        /// </summary>
-        /// <param name="numberGenerator"> A <see cref="Random"/> Number Generator. If left <see langword="null""/> a random number generator is constructed by the function. </param>
-        /// <param name="sampleSize"> The desired sample size. </param>
-        /// <returns> An array of double values drawn from the distribution.</returns>
-        double[] Sample(int sampleSize, Random numberGenerator = null);
-        /// <summary>
-        /// Uses parametric bootstrapping technique to draw a new distribution.
-        /// </summary>
-        /// <param name="numberGenerator"> A <see cref="Random"/> Number Generator. If left <see langword="null"/> a random number generator is constructed by the function.  </param>
-        /// <returns> A new distribution based on the a sample of <see cref="SampleSize"/> values drawn from the distribution. </returns>
-        IDistribution SampleDistribution(Random numberGenerator = null);
-        /// <summary>
-        /// Prints a string describing the distribution.
-        /// </summary>
-        /// <param name="round"> <see langword="true"/> if some values should be rounded to produce a more readable string. </param>
-        /// <returns> A string in the form: <see cref="IDistribution.Type"/>(parameter1: value, parameter2: value, ...). </returns>
+        ///// <summary>
+        ///// Draws a random sample from the distribution, with the specified length (<paramref name="sampleSize"/>).
+        ///// </summary>
+        ///// <param name="numberGenerator"> A <see cref="Random"/> Number Generator. If left <see langword="null""/> a random number generator is constructed by the function. </param>
+        ///// <param name="sampleSize"> The desired sample size. </param>
+        ///// <returns> An array of double values drawn from the distribution.</returns>
+        //double[] Sample(int sampleSize, Random numberGenerator = null);
+        ///// <summary>
+        ///// Uses parametric bootstrapping technique to draw a new distribution.
+        ///// </summary>
+        ///// <param name="numberGenerator"> A <see cref="Random"/> Number Generator. If left <see langword="null"/> a random number generator is constructed by the function.  </param>
+        ///// <returns> A new distribution based on the a sample of <see cref="SampleSize"/> values drawn from the distribution. </returns>
+        //IDistribution SampleDistribution(Random numberGenerator = null);
+        ///// <summary>
+        ///// Prints a string describing the distribution.
+        ///// </summary>
+        ///// <param name="round"> <see langword="true"/> if some values should be rounded to produce a more readable string. </param>
+        ///// <returns> A string in the form: <see cref="IDistribution.Type"/>(parameter1: value, parameter2: value, ...). </returns>
         string Print(bool round = false);
         /// <summary>
         /// Prints a string describing the parameterization requirements for the distribution
