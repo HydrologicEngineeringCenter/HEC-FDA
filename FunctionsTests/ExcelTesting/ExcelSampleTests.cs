@@ -1,22 +1,49 @@
 ﻿using Functions;
+using Functions.CoordinatesFunctions;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Xunit;
 
 namespace FunctionsTests.ExcelTesting
 {
+    [ExcludeFromCodeCoverage]
     public class ExcelSampleTests
     {
+        private  const string _TestDataRelativePath = "ExcelTesting\\ExcelData\\ComposeTestData.xlsx";
+        
+        private DataTable CreateDataTable(ICoordinatesFunction actualFunction)
+        {
+            DataTable dt = new DataTable("DataTable");
+            dt.Columns.Add("XValues");
+            dt.Columns.Add("YValues");
+            for (int i = 0; i < actualFunction.Coordinates.Count; i++)
+            {
+                ICoordinate coord = actualFunction.Coordinates[i];
+                dt.Rows.Add(coord.X.Value(), coord.Y.Value());
+            }
+
+            return dt;
+        }
+
         [Theory]
-        [ExcelData("ExcelTesting\\ExcelData\\ComposeTestData.xlsx", 1)]
-        public void ExcelXlsTests(ICoordinatesFunction func1, ICoordinatesFunction func2,
-           ICoordinatesFunction expectedFunc, ICoordinatesFunction actualFunc)
+        [ExcelData(_TestDataRelativePath, 1)]
+        public void ExcelXlsTests(List<double> xs1, List<double> ys1, List<double> xs2, List<double> ys2,
+           List<double> expectedxs, List<double> expectedys, int rowToWriteTo, int columnToWriteTo )
         //List<double> expectedxs, List<double> expectedys, IXLWorkbook workBook)
         {
-            //ExcelDataAttribute.SaveData("ExcelTesting\\ExcelData\\ComposeTestData.xlsx");
-            Assert.True(expectedFunc.Equals(actualFunc));
-            int test = 0;
+            IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1, InterpolationEnum.Linear);
+            IFunction func2 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs2, ys2, InterpolationEnum.Linear);
+            ICoordinatesFunction expectedFunc = ICoordinatesFunctionsFactory.Factory(expectedxs,expectedys, InterpolationEnum.Linear);
+
+            ICoordinatesFunction actualFunc = func1.Compose(func2);
+            bool testPassed = expectedFunc.Equals(actualFunc);
+            ExcelDataAttribute.SaveData(_TestDataRelativePath, 1, rowToWriteTo, columnToWriteTo, CreateDataTable(actualFunc), testPassed);
+            
+            Assert.True(testPassed);
+
             //testing how to write to the excel file
             // DataTable dt = new DataTable("TestTable");
             // dt.Columns.Add("XValues");
@@ -26,7 +53,6 @@ namespace FunctionsTests.ExcelTesting
             //     dt.Rows.Add(xs[i], ys[i]);
             // }
 
-            // ExcelDataAttribute.SaveDataTableToNewFile(workBook,1,)
             // var ws = workBook.Worksheet(1);
 
             //// ws.Cell(4, 10).Value = dt.AsEnumerable();

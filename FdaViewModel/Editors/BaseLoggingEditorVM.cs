@@ -276,14 +276,22 @@ namespace FdaViewModel.Editors
 
         private List<LogItem> GetTempLogsFromCoordinatesFunctionEditor()
         {
-            //todo: There are possibly messages on the Editor itself right?
-            if(EditorVM == null || EditorVM.Function.Messages == null)
-            {
-                return new List<LogItem>();
-            }
-            IEnumerable<IMessage> messages = EditorVM.Function.Messages;
             List<LogItem> logs = new List<LogItem>();
-            foreach (IMessage message in messages)
+            List<IMessage> messagesFromEditor = new List<IMessage>();
+            if(EditorVM == null)
+            {
+                return logs;
+            }
+            //get messages from the editor
+            messagesFromEditor.AddRange(EditorVM.Messages);
+
+            //get messages from the editor's function
+            if( EditorVM.Function.Messages != null)
+            {
+                messagesFromEditor.AddRange(EditorVM.Function.Messages);
+            }
+            //IEnumerable<IMessage> messages = EditorVM.Function.Messages;
+            foreach (IMessage message in messagesFromEditor)
             {
                 LoggingLevel level = TranslateValidationLevelToLogLevel(message.Level);
                 logs.Add(LogItemFactory.FactoryTemp(level, message.Notice));

@@ -218,19 +218,19 @@ namespace View.Study
 
             System.Timers.Timer updateMapWindowTimer;
             updateMapWindowTimer = new System.Timers.Timer(100);
-            updateMapWindowTimer.Elapsed += OnTimedEvent;
+            //updateMapWindowTimer.Elapsed += OnTimedEvent;
             updateMapWindowTimer.AutoReset = false;
             updateMapWindowTimer.Enabled = true;
         }
 
-        private void OnTimedEvent(Object source, ElapsedEventArgs e)
-        {
-            Dispatcher.Invoke(new Action(() =>
-            {
-                FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
-                //testing only
-                vm.UpdateMapTabTest();
-            }));
-        }
+        //private void OnTimedEvent(Object source, ElapsedEventArgs e)
+        //{
+        //    Dispatcher.Invoke(new Action(() =>
+        //    {
+        //        FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+        //        //todo: testing only
+        //        vm.UpdateMapTabTest();
+        //    }));
+        //}
     }
 }

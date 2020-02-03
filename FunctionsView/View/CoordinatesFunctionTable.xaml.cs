@@ -50,6 +50,13 @@ namespace FunctionsView.View
             dg_table.PreviewLastRowTab += Dg_table_PreviewLastRowTab;
             dg_table.ArrowDownInLastRow += Dg_table_ArrowDownInLastRow;
             dg_table.ArrowUpInFirstRow += Dg_table_ArrowUpInFirstRow;
+            dg_table.PostPasteData += Dg_table_PostPasteData;
+        }
+
+        private void Dg_table_PostPasteData()
+        {
+            //this just calls the update event so that the chart will redraw
+            TableVM.CellEditEnding();
         }
 
         private void Dg_table_ArrowUpInFirstRow()

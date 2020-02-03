@@ -239,8 +239,9 @@ namespace FdaViewModel.Editors
             }
             catch(Exception ex)
             {
-                //we were unsuccessful in creating the coordinates function
-                UpdateMessages();
+                //we were unsuccessful in creating the coordinates function                
+                TempErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, ex.Message));
+                UpdateMessages(true);
                 return;
             }
             //update the messages that show up in the expander

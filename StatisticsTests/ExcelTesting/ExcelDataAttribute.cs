@@ -1,6 +1,4 @@
 ﻿using ClosedXML.Excel;
-using Functions;
-using Functions.CoordinatesFunctions;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,13 +10,20 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Xunit.Sdk;
 
-namespace FunctionsTests.ExcelTesting
+namespace StatisticsTests.ExcelTesting
 {
     [ExcludeFromCodeCoverage]
-
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public sealed class ExcelDataAttribute: DataAttribute
+    public sealed class ExcelDataAttribute : DataAttribute
     {
+        private const int MODE_COL = 1;
+        private const int MIN_COL = 2;
+        private const int MAX_COL = 3;
+        private const int OTHER_COL = 4;
+        private const int EXPECTED_COL = 5;
+        private const int ACTUAL_COL = 6;
+
+
         public string FileName { get; private set; }
         public int WorksheetNumber { get; }
 
@@ -53,52 +58,45 @@ namespace FunctionsTests.ExcelTesting
             while (moreExcelTestsToRun)
             {
                 //these are the parameters that will get passed into the test method
-                object[] test1 = new object[8];
+                object[] test = new object[7];
 
                 //x and y values from Excel in columns 1 and 2
-                List<double> xs1 = GetValues(dataStartIndex, 1, ws);
-                List<double> ys1 = GetValues(dataStartIndex, 2, ws);
-                //ICoordinatesFunction func1 = ICoordinatesFunctionsFactory.Factory(xs1, ys1, InterpolationEnum.Linear);
-                test1[0] = xs1;
-                test1[1] = ys1;
-                //x and y values from Excel in columns 4 and 5
-                List<double> xs2 = GetValues(dataStartIndex, 4, ws);
-                List<double> ys2 = GetValues(dataStartIndex, 5, ws);
-                //ICoordinatesFunction func2 = ICoordinatesFunctionsFactory.Factory(xs2, ys2, InterpolationEnum.Linear);
-                test1[2] = xs2;
-                test1[3] = ys2;
+                double mode = GetValue(dataStartIndex, MODE_COL, ws);
+                double min = GetValue(dataStartIndex, MIN_COL, ws);
+                double max = GetValue(dataStartIndex, MAX_COL, ws);
 
-                //x and y values from Excel in columns 7 and 8
-                List<double> xs3 = GetValues(dataStartIndex, 7, ws);
-                List<double> ys3 = GetValues(dataStartIndex, 8, ws);
-                //ICoordinatesFunction expectedFunc = ICoordinatesFunctionsFactory.Factory(xs3, ys3, InterpolationEnum.Linear);
-                test1[4] = xs3;
-                test1[5] = ys3;
+                double other = -9999;
+                if(IsThereAValue(dataStartIndex, OTHER_COL, ws))
+                {
+                    other = GetValue(dataStartIndex, OTHER_COL, ws);
+                }
 
-                //IFunction actualFunc = ((IFunction)func1).Compose((IFunction)func2);
-                // test1[3] = actualFunc;
+                double expected = GetValue(dataStartIndex, EXPECTED_COL, ws);
 
-                test1[6] = dataStartIndex - 1;
-                test1[7] = 10;
+                test[0] = mode;
+                test[1] = min;
+                test[2] = max;
+                test[3] = other;
+                test[4] = expected;
 
-                listOfTests.Add(test1);
+                test[5] = dataStartIndex - 1;
+                test[6] = ACTUAL_COL;
 
-                //write out the actual results to the excel file
-               // SaveData(workbook, ws, actualFunc, dataStartIndex, 10, expectedFunc.Equals(actualFunc));
+                //add the test to the list and look for another
+                listOfTests.Add(test);
 
                 //find the next test
-                int firstEmptyRow = FindNextEmptyRowIndex(dataStartIndex, xs1, ys1, xs2, ys2);
-                int nextTestIndex = FindNextTestIndex(ws, firstEmptyRow);
-                if(nextTestIndex == -1)
+                //int firstEmptyRow = FindNextEmptyRowIndex(dataStartIndex, xs1, ys1, xs2, ys2);
+                int nextTestIndex = FindNextTestIndex(ws, dataStartIndex + 1);
+                if (nextTestIndex == -1)
                 {
+                    //no more tests, break out of the loop
                     break;
                 }
                 else
                 {
                     dataStartIndex = nextTestIndex;
                 }
-                //get the longest length from xs and ys from func1 and func2
-                //search the next 10 rows
             }
 
             return listOfTests;
@@ -107,39 +105,48 @@ namespace FunctionsTests.ExcelTesting
 
         private static int FindNextTestIndex(IXLWorksheet ws, int startLookingAtRow)
         {
-            for(int i = startLookingAtRow; i< startLookingAtRow + 10; i++)
+            for (int i = startLookingAtRow; i < startLookingAtRow + 10; i++)
             {
                 object value = ws.Row(i).Cell(1).Value;
                 double dbl;
-                bool isDouble = Double.TryParse(value.ToString(),out dbl);
-                if(isDouble)
+                bool isDouble = Double.TryParse(value.ToString(), out dbl);
+                if (isDouble)
                 {
                     return i;
                 }
             }
             return -1;
         }
-        
-        private static int FindNextEmptyRowIndex(int currentTestStartIndex, List<double> xs1, List<double> ys1, List<double> xs2, List<double> ys2)
+
+        //private static int FindNextEmptyRowIndex(int currentTestStartIndex, List<double> xs1, List<double> ys1, List<double> xs2, List<double> ys2)
+        //{
+        //    //get the longest list so that we can start looking for other tests after that.
+        //    List<int> listOfCount = new List<int>() { xs1.Count, ys1.Count, xs2.Count, ys2.Count };
+        //    int currentTestNumberOfRows = listOfCount.Max();
+
+        //    return currentTestNumberOfRows + currentTestStartIndex;
+        //}
+
+        private static bool IsThereAValue(int startRow, int startCol, IXLWorksheet ws)
         {
-            //get the longest list so that we can start looking for other tests after that.
-            List<int> listOfCount = new List<int>() { xs1.Count, ys1.Count, xs2.Count, ys2.Count };
-            int currentTestNumberOfRows = listOfCount.Max();
-            
-            return currentTestNumberOfRows + currentTestStartIndex;
+            bool retval = false;
+            object value = ws.Row(startRow).Cell(startCol).Value;
+            if (value != "")
+            {
+                retval = true;
+            }
+            return retval;
         }
 
-        private static List<double> GetValues(int startRow, int startCol, IXLWorksheet ws)
+        private static double GetValue(int startRow, int startCol, IXLWorksheet ws)
         {
-            List<double> values = new List<double>();
+            double retval = -1;
             object value = ws.Row(startRow).Cell(startCol).Value;
-            while (value != "")
+            if (value != "")
             {
-                values.Add(Convert.ToDouble(value));
-                startRow++;
-                value = ws.Row(startRow).Cell(startCol).Value;
+                retval = Convert.ToDouble(value);
             }
-            return values;
+            return retval;
         }
 
 
@@ -174,39 +181,6 @@ namespace FunctionsTests.ExcelTesting
             return appRoot;
         }
 
-        private static void SaveData(IXLWorkbook wb, IXLWorksheet ws, ICoordinatesFunction function, int rowIndex, int colIndex, bool passedTest)
-        {
-            DataTable dt = new DataTable("TestTable");
-            dt.Columns.Add("XValues");
-            dt.Columns.Add("YValues");
-            for (int i = 0; i < function.Coordinates.Count; i++)
-            {
-                double x = function.Coordinates[i].X.Value();
-                double y = function.Coordinates[i].Y.Value();
-                dt.Rows.Add(x, y);
-            }
-            ws.Cell(rowIndex - 1, colIndex).Value = "x";
-            ws.Cell(rowIndex - 1, colIndex+1).Value = "y";
-            //write out if the test passed
-            if (passedTest)
-            {
-                ws.Cell(rowIndex - 1, colIndex+2).Style.Fill.BackgroundColor = XLColor.Green;
-                ws.Cell(rowIndex - 1, colIndex + 2).Value = "Passed";
-            }
-            else
-            {
-                ws.Cell(rowIndex - 1, colIndex + 2).Style.Fill.BackgroundColor = XLColor.Red;
-                ws.Cell(rowIndex - 1, colIndex + 2).Value = "Failed";
-            }
-
-            //write out the date of the test
-            ws.Cell(rowIndex - 1, colIndex + 3).Value = DateTime.Now.ToString(@"MM\/dd\/yyyy h\:mm tt");
-            ws.Column(colIndex+3).AdjustToContents();
-
-            ws.Cell(rowIndex, colIndex).InsertData(dt);
-            wb.Save();
-        }
-
         public static void SaveData(string relativePath, int worksheetNum, int row, int col, DataTable data, bool testPassed)
         {
             //The column headers, the test result, and the timestamp will start at row. The data in the table will start at row + 1.
@@ -215,7 +189,7 @@ namespace FunctionsTests.ExcelTesting
             var ws = workbook.Worksheet(worksheetNum);
 
             //write out the data table columns
-            for(int i = 0;i<data.Columns.Count;i++)
+            for (int i = 0; i < data.Columns.Count; i++)
             {
 
                 ws.Cell(row, col + i).Value = data.Columns[i].ColumnName;
@@ -229,7 +203,7 @@ namespace FunctionsTests.ExcelTesting
             if (testPassed)
             {
                 ws.Cell(row, colForTestResult).Value = "Passed";
-                ws.Cell(row,colForTestResult).Style.Fill.BackgroundColor = XLColor.Green;
+                ws.Cell(row, colForTestResult).Style.Fill.BackgroundColor = XLColor.Green;
             }
             else
             {
@@ -238,12 +212,10 @@ namespace FunctionsTests.ExcelTesting
             }
 
             //write out the timestamp
-            ws.Cell(row, colForTestResult+1).Value = DateTime.Now.ToString(@"MM\/dd\/yyyy h\:mm tt");
+            ws.Cell(row, colForTestResult + 1).Value = DateTime.Now.ToString(@"MM\/dd\/yyyy h\:mm tt");
 
 
             workbook.Save();
         }
-
-      
     }
 }
