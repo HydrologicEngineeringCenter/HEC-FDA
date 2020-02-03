@@ -100,7 +100,7 @@ namespace Statistics.Distributions
             //min
             ordinateElem.SetAttributeValue(SerializationConstants.MIN, Range.Min);
             //most likely
-            ordinateElem.SetAttributeValue(SerializationConstants.MEAN, Mean);
+            ordinateElem.SetAttributeValue(SerializationConstants.MODE, Mode);
             //max
             ordinateElem.SetAttributeValue(SerializationConstants.MAX, Range.Max);
 
