@@ -19,7 +19,7 @@ namespace Functions.Validation
         {
             List<IMessage> errors = new List<IMessage>();
             if (entity.Coordinates == null) throw new InvalidConstructorArgumentsException("The list of coordinates were null.");
-
+            if (entity.Coordinates.Count == 0) throw new InvalidConstructorArgumentsException("There were zero coordinates.");
             if (AreAnyXsTheSame(entity))
             {
                 //todo: John, should this be fatal?

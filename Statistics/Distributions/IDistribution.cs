@@ -7,7 +7,7 @@ namespace Statistics
     /// <summary>
     /// Provides and interface for double precision numbers stored as distributions rather than static values.
     /// </summary>
-    public interface IDistribution: Utilities.Serialization.ISerializeToXML<IDistribution>, Utilities.IMessagePublisher
+    public interface IDistribution: Utilities.ISerializeToXML<IDistribution>, Utilities.IMessagePublisher
     {
 
         #region Properties

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
 
-namespace Utilities.Serialization
+namespace Utilities
 {
     public interface ISerializeToXML<T>
     {

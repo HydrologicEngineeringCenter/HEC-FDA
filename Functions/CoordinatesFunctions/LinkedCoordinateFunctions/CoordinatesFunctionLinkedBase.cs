@@ -19,7 +19,6 @@ namespace Functions.CoordinatesFunctions
         /// These interpolators go between the functions. The number of interpolators
         /// should always be the number of functions -1
         /// </summary>
-        public List<InterpolationEnum> Interpolators { get; internal set; }
 
         public IEnumerable<IMessage> Errors { get; internal set; }
 

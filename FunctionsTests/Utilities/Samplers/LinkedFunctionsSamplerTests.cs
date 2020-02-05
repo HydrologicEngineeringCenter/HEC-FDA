@@ -23,11 +23,7 @@ namespace FunctionsTests.Utilities.Samplers
 
             List<ICoordinatesFunction> functions = Create_3Constant_StrictlyIncreasing_NonOverlappingXs_OrdinateFunctions();
 
-            List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
-            interpolators.Add(InterpolationEnum.Linear);
-            interpolators.Add(InterpolationEnum.Linear);
-
-            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions);
             Assert.True( linkedSampler.CanSample(func));
             
         }
@@ -58,11 +54,7 @@ namespace FunctionsTests.Utilities.Samplers
 
             List<ICoordinatesFunction> functions = new List<ICoordinatesFunction>() { const1Func, const2Func, const3Func };
 
-            List<InterpolationEnum> interpolators = new List<InterpolationEnum>();
-            interpolators.Add(InterpolationEnum.Linear);
-            interpolators.Add(InterpolationEnum.Linear);
-
-            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions, interpolators);
+            CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions);
             IFunction sampledFunc = linkedSampler.Sample(func, .5);
             //spot check a value.
             ICoordinate coord = sampledFunc.Coordinates[5];

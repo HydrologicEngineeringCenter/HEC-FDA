@@ -11,7 +11,9 @@ namespace Model.Validation
     {
         public bool IsValid(DamageFrequency entity, out IEnumerable<IMessage> errors)
         {
-            throw new NotImplementedException();
+            errors = new List<IMessage>();
+            return true; //todo do this right
+            //throw new NotImplementedException();
         }
 
         public IEnumerable<IMessage> ReportErrors(DamageFrequency entity)

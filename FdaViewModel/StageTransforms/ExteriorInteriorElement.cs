@@ -83,7 +83,7 @@ namespace FdaViewModel.StageTransforms
               // .WithParentGuid(this.GUID)
               // .WithCanOpenMultipleTimes(false);
 
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
+            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, "Exterior - Interior Stage", "Exterior Stage", "Interior Stage", actionManager);
             //StudyCache.AddSiblingRules(vm, this);
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditExtInt"+vm.Name);

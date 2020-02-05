@@ -60,6 +60,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Perforce\HEC_FDA\FDA_dev\FdaLogger\FdaLogger\bin\Debug\netstandard2.0\FdaLogging.dll</HintPath>
     </Reference>
+    <Reference Include="HecCs, Version=1.2.7326.22211, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\HecCs.dll</HintPath>
+    </Reference>
     <Reference Include="netstandard" />
     <Reference Include="Consequences_Assist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
@@ -107,8 +111,67 @@
     <Reference Include="OxyPlot.Wpf">
       <HintPath>..\lib\OxyPlot.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="PlottingLibrary2D, Version=1.1.7328.27161, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\PlottingLibrary2D.dll</HintPath>
+    </Reference>
+    <Reference Include="PlottingLibraryCore, Version=1.1.7328.27159, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\PlottingLibraryCore.dll</HintPath>
+    </Reference>
     <Reference Include="QuickHelp">
       <HintPath>..\lib\QuickHelp.dll</HintPath>
+    </Reference>
+    <Reference Include="SciChart.Charting, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\SciChart.Charting.dll</HintPath>
+    </Reference>
+    <Reference Include="SciChart.Charting3D">
+      <HintPath>..\lib\SciChart.Charting3D.dll</HintPath>
+    </Reference>
+    <Reference Include="SciChart.Core, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\SciChart.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SciChart.Data, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\SciChart.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="SciChart.Drawing, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\SciChart.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="SciChart.Drawing.DirectX, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\SciChart.Drawing.DirectX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.D3DCompiler, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\SharpDX.D3DCompiler.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\SharpDX.Direct3D11.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11.Effects, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\SharpDX.Direct3D11.Effects.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DXGI, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\SharpDX.DXGI.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -245,6 +308,9 @@
     </Compile>
     <Compile Include="Study\Properties.xaml.cs">
       <DependentUpon>Properties.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Study\SciChartTest.xaml.cs">
+      <DependentUpon>SciChartTest.xaml</DependentUpon>
     </Compile>
     <Compile Include="Study\StudyView.xaml.cs">
       <DependentUpon>StudyView.xaml</DependentUpon>
@@ -442,6 +508,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Study\SciChartTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Study\StudyView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -533,6 +603,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Content Include="sharpdx_direct3d11_1_effects_x64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="UI_RES\ClosedExpander.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

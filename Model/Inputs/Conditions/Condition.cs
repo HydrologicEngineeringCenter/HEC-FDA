@@ -12,6 +12,7 @@ namespace Model.Inputs.Conditions
     internal sealed class Condition : ICondition
     {
         #region Properties
+
         public string Id
         {
             get
@@ -34,24 +35,59 @@ namespace Model.Inputs.Conditions
             Year = year;
             EntryPoint = frequencyFunction;
             TransformFunctions = transformFunctions.OrderBy(i => i.Type).ToList();
-            Metrics = metrics;
+            Metrics = metrics.OrderBy(x=>x.TargetFunction).ToList();
             IsValid = Validate();
         }
         #endregion
 
         #region Methods
-        public IRealization Compute(int seed)
+        public IDictionary<IMetric, double> Compute(List<double> randomNums)
         {
-            return Realization.Compute(this, seed);
+            IDictionary<IMetric, double> metricsDictionary = new Dictionary<IMetric, double>();
+
+        //IRealization R = new Realization(condition, seed, test);
+        //the dummy probability gets used for functions that we know are already a constant.
+        double dummyProbability = .5;
+            int j = 0;
+            int J = Metrics.Count;
+
+
+            IFrequencyFunction frequencyFunction = EntryPoint;
+
+            bool isFirstFreqFunc = true;
+            for (int i = 0; i < TransformFunctions.Count; i++)
+            {
+                ITransformFunction transformFunc = TransformFunctions[i];
+
+                //we only want to pull a random number for the first frequency function because we do not know if it is a constant or not
+                double freqFuncProb;
+                if (isFirstFreqFunc)
+                {
+                    freqFuncProb = randomNums[i];
+                    isFirstFreqFunc = false;
+                }
+                else
+                {
+                    freqFuncProb = dummyProbability;
+                }
+                frequencyFunction = frequencyFunction.Compose(transformFunc, freqFuncProb, randomNums[i + 1]);
+                while (frequencyFunction.Type == Metrics[j].TargetFunction)
+                {
+                    //right now we are just using ".5" for the probability because we know that it won't ever be used
+                    //The frequencyFunction has already been sampled during the compose above
+                    metricsDictionary.Add(Metrics[j], Metrics[j].Compute(frequencyFunction, dummyProbability));
+                    if (j + 1 < Metrics.Count) j++; else break;
+                }
+            }
+            return metricsDictionary;
         }
-        public bool TestCompute(int seed = 0, int nTests = 100)
+        public bool TestCompute(List<double> randomNums, int nTests = 100)
         {
-            Random random = new Random(seed);
             for (int i = 0; i < nTests; i++)
             {
                 try
                 {
-                    Realization.Compute(this, random.Next(), true);
+                    Compute(randomNums);
                 }
                 catch
                 {
@@ -207,11 +243,11 @@ namespace Model.Inputs.Conditions
             foreach (ITransformFunction tFunction in TransformFunctions)
             {
                 if (tFunction.Type < EntryPoint.Type ||
-                    tFunction.Type > Metrics[Metrics.Count - 1].TargetFunction()) return false;
+                    tFunction.Type > Metrics[Metrics.Count - 1].TargetFunction) return false;
             }
             foreach (IMetric metric in Metrics)
             {
-                ImpactAreaFunctionEnum exit = metric.TargetFunction();
+                ImpactAreaFunctionEnum exit = metric.TargetFunction;
                 if (exit < EntryPoint.Type ||
                     exit > TransformFunctions[TransformFunctions.Count - 1].Type + 1) return false;
             }
@@ -219,7 +255,15 @@ namespace Model.Inputs.Conditions
         }
         internal bool ValidateCompute()
         {
-            return TestCompute();
+            int seed = 1;
+            int randomPacketSize = TransformFunctions.Count + 1;
+            List<double> randomNumbers = new List<double>();
+            Random randomNumberGenerator = new Random(seed);
+            for (int k = 0; k < randomPacketSize; k++)
+            {
+                randomNumbers.Add(randomNumberGenerator.NextDouble());
+            }
+            return TestCompute(randomNumbers);
         }
         public IEnumerable<string> ReportValidationErrors()
         {
@@ -262,7 +306,7 @@ namespace Model.Inputs.Conditions
             foreach (ITransformFunction function in TransformFunctions)
             {
                 if (function.Type < EntryPoint.Type &&
-                    function.Type > Metrics[Metrics.Count - 1].TargetFunction())
+                    function.Type > Metrics[Metrics.Count - 1].TargetFunction)
                 {
                     TransformFunctions.Remove(function);
                     transformFunctionMessages.AppendLine("A ")
@@ -277,7 +321,7 @@ namespace Model.Inputs.Conditions
             StringBuilder thresholdMessages = new StringBuilder();
             foreach (IMetric metric in Metrics)
             {
-                ImpactAreaFunctionEnum exit = metric.TargetFunction();
+                ImpactAreaFunctionEnum exit = metric.TargetFunction;
                 if (exit < EntryPoint.Type ||
                     exit > TransformFunctions[TransformFunctions.Count - 1].Type + 1)
                 {

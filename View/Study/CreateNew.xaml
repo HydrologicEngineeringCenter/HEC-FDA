@@ -39,7 +39,7 @@
         <!--just for testing __ delete me-->
         <!--<Utils:CurveGenerator Grid.ColumnSpan="2" Grid.Row="3" Height="200" Width="Auto"/>-->
         <!--<FunctionsView:CoordinatesFunctionEditor Grid.Row="3" Grid.ColumnSpan="2" Rows="{Binding Path=Curve.RowItems}"/>-->
-
+            
         <Utils:OKCloseControl Grid.Column="1" Grid.Row="3" VerticalAlignment="Bottom"/>
 
     </Grid>

@@ -15,6 +15,10 @@ namespace Model.Inputs.Functions.ImpactAreaFunctions
 
         public override string YLabel => "Damage";
         public bool IsValid { get; }
+        /// <summary>
+        /// The damage frequency doesn't get composed with anything. It is the last step.
+        /// </summary>
+        public List<ImpactAreaFunctionEnum> ComposeableTypes => new List<ImpactAreaFunctionEnum>();
 
         public IEnumerable<IMessage> Errors { get; }
 
@@ -31,20 +35,20 @@ namespace Model.Inputs.Functions.ImpactAreaFunctions
         #endregion
 
         #region IFunctionCompose Methods
-        public IFrequencyFunction Compose(ITransformFunction transform, double frequencyFunctionProbability, double transformFunctionProbability)
-        {
-            //if (transform.Type - 1 == Type)
-            //    return ImpactAreaFunctionFactory.CreateNew(Function.Sample(frequencyFunctionProbability).Compose(transform.Sample(transformFunctionProbability).Ordinates), transform.Type + 1);
-            //else ReportCompositionError(); return null;
+        //public IFrequencyFunction Compose(ITransformFunction transform, double frequencyFunctionProbability, double transformFunctionProbability)
+        //{
+        //    //if (transform.Type - 1 == Type)
+        //    //    return ImpactAreaFunctionFactory.CreateNew(Function.Sample(frequencyFunctionProbability).Compose(transform.Sample(transformFunctionProbability).Ordinates), transform.Type + 1);
+        //    //else ReportCompositionError(); return null;
 
-            //nothing should try to compose with this.
-            throw new NotImplementedException();
+        //    //nothing should try to compose with this.
+        //    throw new NotImplementedException();
 
-        }
-        private string ReportCompositionError()
-        {
-            return "Composition could not be initialized because no transform function was provided or the two functions do not share a common set of ordinates.";
-        }
+        //}
+        //private string ReportCompositionError()
+        //{
+        //    return "Composition could not be initialized because no transform function was provided or the two functions do not share a common set of ordinates.";
+        //}
         //public double GetXFromY(double y)
         //{
         //    return Function.GetXfromY(y);
