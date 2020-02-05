@@ -158,7 +158,7 @@ namespace FdaViewModel.FrequencyRelationships
 
         #endregion
         #region Constructors
-        public AnalyticalFrequencyEditorVM(IFdaFunction defaultCurve, Editors.EditorActionManager actionManager) : base(defaultCurve, actionManager)
+        public AnalyticalFrequencyEditorVM(IFdaFunction defaultCurve, string xLabel,string yLabel,string chartTitle, Editors.EditorActionManager actionManager) : base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
         {
             //EditorVM = new FunctionsView.ViewModel.CoordinatesFunctionEditorVM(defaultCurve.Function);
 
@@ -168,7 +168,7 @@ namespace FdaViewModel.FrequencyRelationships
             TransactionRows = new ObservableCollection<TransactionRowItem>();
             MessageRows = new ObservableCollection<FdaLogging.LogItem>();
         }
-        public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem, Editors.EditorActionManager actionManager) :base(elem, actionManager)// string name, Statistics.LogPearsonIII lpiii, string description, Utilities.OwnerElement owner) : base()
+        public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem,string xLabel,string yLabel,string chartTitle, Editors.EditorActionManager actionManager) :base(elem, xLabel, yLabel, chartTitle, actionManager)// string name, Statistics.LogPearsonIII lpiii, string description, Utilities.OwnerElement owner) : base()
         {
             //OriginalName = elem.Name;
             CurrentElement = elem;

@@ -10,7 +10,8 @@ namespace Model
     {
         #region Properties
         public double ExceedanceTarget { get; } = 0;
-        public MetricEnum Type { get; } = MetricEnum.NotSet; 
+        public MetricEnum Type { get; } = MetricEnum.NotSet;
+        public ImpactAreaFunctionEnum TargetFunction { get; }
         #endregion
 
         #region Constructors
@@ -20,15 +21,17 @@ namespace Model
             if (type != MetricEnum.ExpectedAnnualDamage && double.IsNaN(exceedanceTarget) || double.IsInfinity(exceedanceTarget)) throw new ArgumentException("A computable target value must be provided.");
             Type = type;
             ExceedanceTarget = exceedanceTarget;
+            TargetFunction = GetTargetFunction();
         }
         public Metric ()
         {
             Type = MetricEnum.Damages;
+            TargetFunction = GetTargetFunction();
         }
         #endregion
 
         #region Methods
-        public ImpactAreaFunctionEnum TargetFunction()
+        private ImpactAreaFunctionEnum GetTargetFunction()
         {
             switch (Type)
             {
@@ -46,7 +49,7 @@ namespace Model
         }
         public double Compute(IFrequencyFunction frequencyFunction, double probability)
         {
-            ImpactAreaFunctionEnum targetFunction = TargetFunction();
+            ImpactAreaFunctionEnum targetFunction = TargetFunction;
             if (frequencyFunction.Type != targetFunction)
             {
                 throw new ArgumentException(string.Format("A {0} metric cannot be computed from the provided {1} function. Provide a {2} function and try again.", Type, frequencyFunction.Type, targetFunction));

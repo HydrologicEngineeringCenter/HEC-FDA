@@ -112,6 +112,7 @@ namespace FunctionsView.View
         private void UpdateView(object sender, EventArgs e)
         {
             CreateTables();
+            //EditorVM.UpdateChartViewModel();
         }
        
         

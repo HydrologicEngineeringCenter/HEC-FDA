@@ -14,6 +14,8 @@ namespace Model.Inputs.Functions.ImpactAreaFunctions
         public override string XLabel => "Frequency";
 
         public override string YLabel => "Exterior Stage";
+
+        public List<ImpactAreaFunctionEnum> ComposeableTypes => new List<ImpactAreaFunctionEnum>() { ImpactAreaFunctionEnum.InteriorStageDamage, ImpactAreaFunctionEnum.ExteriorInteriorStage };
         #endregion
 
         #region Constructor
@@ -28,32 +30,57 @@ namespace Model.Inputs.Functions.ImpactAreaFunctions
         {
             throw new NotImplementedException();
         }
-        public IFrequencyFunction Compose(ITransformFunction transformFunction, double frequencyFunctionProbability, double transformFunctionProbability)
-        {
-            //if (IsValidComposition(transform) == true)
-            //    return ImpactAreaFunctionFactory.CreateNew(Function.Sample(frequencyFunctionProbability).Compose(transform.Sample(transformFunctionProbability).Ordinates), transform.Type + 1);
-            //else ReportCompositionError(); return null;
-            if (transformFunction.Type - 1 == Type)
-            {
-                IFunction extStageFreq = Sampler.Sample(Function, frequencyFunctionProbability);
-                IFunction transformFunc = Sampler.Sample(transformFunction.Function, transformFunctionProbability);
-                IFunction composedFunc = extStageFreq.Compose(transformFunc);
-                return new DamageFrequency(composedFunc);
-            }
-            else
-            {
-                throw new ArgumentException("Unable to compose the transform function to this outflow frequency function. The transform function " +
-                    "must be a rating curve.");
-            }
-        }
+        //public IFrequencyFunction Compose(ITransformFunction transformFunction, double frequencyFunctionProbability, double transformFunctionProbability)
+        //{
+        //    Composer.compose(this,transformFunction)
+        //    //acceptable transform could be an inflow outflow or a rating curve
+        //    if (IsValidComposition(transform) == true)
+        //    {
+        //        IFunction inflowFreq = Sampler.Sample(Function, frequencyFunctionProbability);
+        //        IFunction transformFunc = Sampler.Sample(transform.Function, transformFunctionProbability);
+        //        IFunction newFrequencyFunction = inflowFreq.Compose(transformFunc);
+        //        return (IFrequencyFunction)ImpactAreaFunctionFactory.Factory(newFrequencyFunction, transform.Type + 1);
+        //    }
+        //    else
+        //    {
+        //        throw new ArgumentException("Composition could not be initialized because the two functions do not share a common set of ordinates.");
+        //    }
+
+
+        //    //if (IsValidComposition(transform) == true)
+        //    //    return ImpactAreaFunctionFactory.CreateNew(Function.Sample(frequencyFunctionProbability).Compose(transform.Sample(transformFunctionProbability).Ordinates), transform.Type + 1);
+        //    //else ReportCompositionError(); return null;
+        //    if (transformFunction.Type - 1 == Type)
+        //    {
+        //        IFunction extStageFreq = Sampler.Sample(Function, frequencyFunctionProbability);
+        //        IFunction transformFunc = Sampler.Sample(transformFunction.Function, transformFunctionProbability);
+        //        IFunction composedFunc = extStageFreq.Compose(transformFunc);
+        //        return new DamageFrequency(composedFunc);
+        //    }
+        //    else if(transformFunction.Type == ImpactAreaFunctionEnum.InteriorStageDamage)
+        //    {
+        //        //then we assume that this exterior stage frequency is the same as interior stage frequency
+        //        IFunction extStageFreq = Sampler.Sample(Function, frequencyFunctionProbability);
+        //        IFunction transformFunc = Sampler.Sample(transformFunction.Function, transformFunctionProbability);
+        //        IFunction composedFunc = extStageFreq.Compose(transformFunc);
+        //        return new DamageFrequency(composedFunc);
+        //    }
+        //    else
+        //    {
+        //        throw new ArgumentException("Unable to compose the transform function to this outflow frequency function. The transform function " +
+        //            "must be a rating curve.");
+        //    }
+        //}
         //private bool IsValidComposition(ITransformFunction transform)
         //{
-        //    if (transform.Type == ImpactAreaFunctionEnum.InteriorStageDamage)
+        //    if (transform.Type == ImpactAreaFunctionEnum.InteriorStageDamage || transform.Type == ImpactAreaFunctionEnum.ExteriorInteriorStage)
         //    {
-        //        UseType = ImpactAreaFunctionEnum.InteriorStageFrequency;
+        //        return true;
         //    }
-        //    if (transform.Type - 1 == UseType) return true;
-        //    else return false;
+        //    else
+        //    {
+        //        return false;
+        //    }
         //}
         //private string ReportCompositionError()
         //{

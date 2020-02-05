@@ -9,6 +9,7 @@
              xmlns:CAC="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              xmlns:functions="clr-namespace:FunctionsView.View;assembly=FunctionsView"
              mc:Ignorable="d" 
+             Loaded="UserControl_Loaded"
              d:DesignHeight="420" d:DesignWidth="610">
     <Grid>
         <Grid.RowDefinitions>
@@ -54,7 +55,13 @@
             <Label Grid.Column="3"  Content="{Binding Path=SelectedLateralStructure.Elevation}" HorizontalAlignment="Left" VerticalAlignment="Center" />
         </Grid>
         <!--<CA:TableWithPlot Name="TableWithPlot" MinHeight="300" MinWidth="600"  TableWidth="250"  Grid.Row="3" Margin="5" plotTitle="{Binding PlotTitle}" IsStrictX="True" xColumnHeader="Stage" yColumnHeader="Frequency" xAxisLabel="Stage" yAxisLabel="Frequency" IsReadOnly="{Binding ReadOnly}" Curve="{Binding Curve}" IsMonotonicallyIncreasing="True"/>-->
-        <functions:CoordinatesFunctionEditor Grid.Row="3" Margin="5" EditorVM="{Binding EditorVM}" />
+        <Grid x:Name="PlotGrid" Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <functions:CoordinatesFunctionEditor Grid.Column="0" Margin="5" EditorVM="{Binding EditorVM}" />
+        </Grid>
         <GridSplitter Grid.Row="4" Height="5" HorizontalAlignment="Stretch" />
         <!--<Utilities:TransactionMessageControl Grid.Row="5" />-->
         <Utilities:OKCloseControl Grid.Row="6"/>

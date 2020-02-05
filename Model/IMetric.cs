@@ -14,7 +14,7 @@ namespace Model
         #region Properties
         MetricEnum Type { get; }
         double ExceedanceTarget { get; }
-        ImpactAreaFunctionEnum TargetFunction();
+        ImpactAreaFunctionEnum TargetFunction { get; }
         #endregion
 
         double Compute(IFrequencyFunction frequencyFunction, double probability);

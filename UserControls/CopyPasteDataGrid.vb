@@ -13,6 +13,7 @@ Namespace UserControls
         Public Event ArrowDownInLastRow()
         Public Event ArrowUpInFirstRow()
         Public Event PreviewPasteData()
+        Public Event PostPasteData()
         Public Event PreviewAddRows()
 
         Public Event PreviewLastRowEnter()
@@ -52,6 +53,7 @@ Namespace UserControls
                 If e.Key = Key.V Then
                     RaiseEvent PreviewPasteData()
                     PasteClipboard()
+                    RaiseEvent PostPasteData()
                 End If
             End If
 

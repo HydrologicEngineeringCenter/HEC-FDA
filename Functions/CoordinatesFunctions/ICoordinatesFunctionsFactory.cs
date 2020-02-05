@@ -219,12 +219,9 @@ namespace Functions
         /// <param name="function"></param>
         /// <param name="additionalCoordinates"></param>
         /// <returns></returns>
-        public static ICoordinatesFunction Factory(List<ICoordinatesFunction> functions, List<InterpolationEnum> interpolators)
+        public static ICoordinatesFunction Factory(List<ICoordinatesFunction> functions)
         {
             //the functions cant have any overlap. They can't have points on top of each other. 
-            //the interpolators should be functions.count -1
-            //for example: func1, interp1, func2, interp2, func3
-            bool needsInterpolators = (interpolators == null);
             //sort the functions on the domain so that the xValues are increasing
             List<ICoordinatesFunction> sortedFunctions = functions.OrderBy(func => func.Domain.Min).ToList();
             //make sure there is no overlapping domains

@@ -47,11 +47,10 @@ namespace FunctionsViewTests
             ICoordinatesFunction func1 = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
             ICoordinatesFunction func2 = ICoordinatesFunctionsFactory.Factory(xs2, ys2, InterpolationEnum.Piecewise);
             List<ICoordinatesFunction> functions = new List<ICoordinatesFunction>() { func1, func2 };
-            List<InterpolationEnum> interps = new List<InterpolationEnum>();
-            interps.Add(func1.Interpolator);
-            ICoordinatesFunction linkedFunc = ICoordinatesFunctionsFactory.Factory(functions, interps);
+            
+            ICoordinatesFunction linkedFunc = ICoordinatesFunctionsFactory.Factory(functions);
 
-            CoordinatesFunctionEditorVM editorVM = new CoordinatesFunctionEditorVM(linkedFunc);
+            CoordinatesFunctionEditorVM editorVM = new CoordinatesFunctionEditorVM(linkedFunc, "","","");
             ICoordinatesFunction returnedFunction = editorVM.CreateFunctionFromTables();
 
             Assert.True(returnedFunction.Equals(linkedFunc));
@@ -108,7 +107,7 @@ namespace FunctionsViewTests
 
             ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xs, ys);
 
-            CoordinatesFunctionEditorVM editorVM = new CoordinatesFunctionEditorVM(func);
+            CoordinatesFunctionEditorVM editorVM = new CoordinatesFunctionEditorVM(func,"","","");
             ICoordinatesFunction returnedFunction = editorVM.CreateFunctionFromTables();
 
             Assert.True(returnedFunction.Equals(func));
@@ -129,7 +128,7 @@ namespace FunctionsViewTests
 
             ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xs, ys);
 
-            CoordinatesFunctionEditorVM editorVM = new CoordinatesFunctionEditorVM(func);
+            CoordinatesFunctionEditorVM editorVM = new CoordinatesFunctionEditorVM(func,"","","");
             ICoordinatesFunction returnedFunction = editorVM.CreateFunctionFromTables();
 
             Assert.True(returnedFunction.Equals(func));

@@ -109,7 +109,7 @@ namespace FdaViewModel.AggregatedStageDamage
                 .WithSaveUndoRedo(saveHelper)
                  .WithSiblingRules(this);
 
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
+            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, "Stage - Damage", "Stage", "Damage", actionManager);
             vm.AddSiblingRules( this);
 
             string title = "Edit " + vm.Name;

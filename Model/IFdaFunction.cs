@@ -4,6 +4,7 @@ using Functions;
 using Functions.CoordinatesFunctions;
 using Functions.Ordinates;
 using Model.Inputs.Functions.ImpactAreaFunctions;
+using Utilities;
 using Utilities.Serialization;
 
 namespace Model

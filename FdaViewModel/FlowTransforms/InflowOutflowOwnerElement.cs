@@ -85,7 +85,7 @@ namespace FdaViewModel.FlowTransforms
                //.WithParentGuid(this.GUID)
                //.WithCanOpenMultipleTimes(true);
 
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
+            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, "Inflow", "Outflow", "Inflow - Outflow", actionManager);
             //vm.ParentGUID = this.GUID;
             //StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);

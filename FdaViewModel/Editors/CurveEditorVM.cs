@@ -15,6 +15,8 @@ using Utilities;
 using FdaViewModel.Saving;
 using FdaLogging;
 using Model.Inputs.Functions.ImpactAreaFunctions;
+using HEC.Plotting.Core.ViewModel;
+using HEC.Plotting.SciChart2D.ViewModel;
 
 namespace FdaViewModel.Editors
 {
@@ -23,6 +25,7 @@ namespace FdaViewModel.Editors
 
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("CurveEditorVM");
 
+        public ChartViewModel MixedViewModel { get; } = new SciChart2DChartViewModel("Test Title");
 
         private IFdaFunction _Curve;
         private string _SavingText;
@@ -113,7 +116,7 @@ namespace FdaViewModel.Editors
         #endregion
 
         #region constructors
-        public CurveEditorVM(IFdaFunction defaultCurve, EditorActionManager actionManager) :base(defaultCurve, actionManager)
+        public CurveEditorVM(IFdaFunction defaultCurve,string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) :base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
         {
             
            // _Curve = defaultCurve;
@@ -123,10 +126,9 @@ namespace FdaViewModel.Editors
 
         
 
-        public CurveEditorVM(Utilities.ChildElement elem, EditorActionManager actionManager) :base(elem, actionManager)
+        public CurveEditorVM(Utilities.ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) :base(elem, xLabel, yLabel, chartTitle, actionManager)
         {
             
-
             //TransactionHelper.LoadTransactionsAndMessages(this, elem);
             PlotTitle = Name;
 
@@ -237,8 +239,9 @@ namespace FdaViewModel.Editors
             }
             catch(Exception ex)
             {
-                //we were unsuccessful in creating the coordinates function
-                UpdateMessages();
+                //we were unsuccessful in creating the coordinates function                
+                TempErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, ex.Message));
+                UpdateMessages(true);
                 return;
             }
             //update the messages that show up in the expander

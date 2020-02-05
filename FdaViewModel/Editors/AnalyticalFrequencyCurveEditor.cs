@@ -84,12 +84,12 @@ namespace FdaViewModel.Editors
         }
 
 
-        public AnalyticalFrequencyCurveEditor(IFdaFunction defaultCurve, EditorActionManager actionManager) : base(defaultCurve, actionManager)
+        public AnalyticalFrequencyCurveEditor(IFdaFunction defaultCurve,string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(defaultCurve, xLabel, yLabel,chartTitle, actionManager)
         {
 
         }
 
-        public AnalyticalFrequencyCurveEditor(ChildElement element, EditorActionManager actionManager) : base(element, actionManager)
+        public AnalyticalFrequencyCurveEditor(ChildElement element, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(element, xLabel, yLabel,chartTitle, actionManager)
         {
             
         }

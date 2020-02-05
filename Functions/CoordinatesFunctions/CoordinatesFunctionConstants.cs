@@ -483,24 +483,9 @@ namespace Functions.CoordinatesFunctions
         }
 
         #region Compose()
+        
         public IFunction Compose(IFunction g)
         {
-            //todo: delete this testing code at some point
-            ///////////// for testing //////////////////////////
-            Console.WriteLine("...Composing...");
-            Console.WriteLine("Function1 Coordinates:");
-            foreach(ICoordinate coord in Coordinates)
-            {
-                Console.WriteLine(coord.X.Value() + " |  " + coord.Y.Value());
-            }
-            Console.WriteLine("");
-            Console.WriteLine("Function2 Coordinates:");
-            foreach (ICoordinate coord in g.Coordinates)
-            {
-                Console.WriteLine(coord.X.Value() + " |  " + coord.Y.Value());
-            }
-            /////////////////////////end of for testing///////////////////////////////////////////
-
             // Advance F Ordinate index until F[i].y >= G[0].x 
             int i = FirstX(g), I = Coordinates.Count; // - 1;
             if (i == I) throw new InvalidOperationException(NoOverlapMessage(g));
@@ -530,24 +515,17 @@ namespace Functions.CoordinatesFunctions
                     {
                         // Add new ordinate to FoG if F allows Interpolation between ordinates
                         if (!(Interpolator == InterpolationEnum.None))
-                            fog.Add(ICoordinateFactory.Factory(new Constant(InverseF(g.Coordinates[j].X.Value(), i - 1)).Value(), new Constant(g.Coordinates[j].Y.Value()).Value()));
+                            fog.Add(ICoordinateFactory.Factory(InverseF(g.Coordinates[j].X.Value(), i - 1), g.Coordinates[j].Y.Value()));
                         j++;
                     }
                 }
             }
+            if(fog.Count == 0)
+            {
+                throw new ArgumentException("Error composing two functions. The composition produced zero coordinates.");
+            }
             // Past overlapping area or at end of both functions
             IFunction composedFunction = IFunctionFactory.Factory(fog, g.Interpolator);
-
-            //todo: delete this testing code at some point
-            ///////////// for testing //////////////////////////
-            Console.WriteLine("");
-            Console.WriteLine("ComposedFunction Coordinates:");
-            foreach (ICoordinate coord in composedFunction.Coordinates)
-            {
-                Console.WriteLine(coord.X.Value() + " |  " + coord.Y.Value());
-            }
-            Console.WriteLine("");
-            /////////////////////////end of for testing///////////////////////////////////////////
 
             return composedFunction;
         }
@@ -573,7 +551,7 @@ namespace Functions.CoordinatesFunctions
         }
         private bool IsComplete(int i, int I, int j, int J, IFunction g)
         {
-            return (IsFinalIndex(i, I, j, J) || IsXOffOverlap(i, J, g) || IsZOffOverlap(I, j, g));
+            return (IsFinalIndex(i, I, j, J) || (IsXOffOverlap(i, J, g) && IsZOffOverlap(I, j, g)));
         }
         private bool IsXOffOverlap(int i, int J, IFunction g)
         {

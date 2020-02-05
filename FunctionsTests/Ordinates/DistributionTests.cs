@@ -35,8 +35,8 @@ namespace FunctionsTests.Ordinates
         [MemberData(nameof(GoodData_Distributed))]
         public void Range_GoodInput_Returns_Tuple(IDistributedOrdinate value)
         {
-            double min = value.Minimum;
-            double max = value.Maximum;
+            double min = value.Range.Min;
+            double max = value.Range.Max;
             Distribution dist = new Distribution(value);
 
             Tuple<double, double> range = dist.Range;

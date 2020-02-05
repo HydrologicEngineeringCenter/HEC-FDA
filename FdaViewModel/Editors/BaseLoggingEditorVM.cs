@@ -88,9 +88,9 @@ namespace FdaViewModel.Editors
             set; 
         }
         #region Constructors
-        public BaseLoggingEditorVM(IFdaFunction defaultCurve, EditorActionManager actionManager) : base(actionManager)
+        public BaseLoggingEditorVM(IFdaFunction defaultCurve, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(actionManager)
         {
-            EditorVM = new CoordinatesFunctionEditorVM(defaultCurve.Function);
+            EditorVM = new CoordinatesFunctionEditorVM(defaultCurve.Function, xLabel, yLabel, chartTitle);
             EditorVM.TableChanged += EditorVM_TableChanged;
             //if(Error != null && Error != "")
             //{
@@ -99,9 +99,9 @@ namespace FdaViewModel.Editors
             //}
         }
 
-        public BaseLoggingEditorVM(Utilities.ChildElement elem, EditorActionManager actionManager):base(elem, actionManager)
+        public BaseLoggingEditorVM(Utilities.ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager):base(elem, actionManager)
         {
-            EditorVM = new CoordinatesFunctionEditorVM(elem.Curve.Function);
+            EditorVM = new CoordinatesFunctionEditorVM(elem.Curve.Function, xLabel, yLabel, chartTitle);
             EditorVM.TableChanged += EditorVM_TableChanged;
             ReloadMessages();
         }
@@ -113,7 +113,7 @@ namespace FdaViewModel.Editors
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void EditorVM_TableChanged(object sender, EventArgs e)
-        {
+        {            
             HasChanges = true;
             //something has changed. Turn off the save status header message
             SaveStatusLevel = LoggingLevel.Debug;
@@ -276,14 +276,22 @@ namespace FdaViewModel.Editors
 
         private List<LogItem> GetTempLogsFromCoordinatesFunctionEditor()
         {
-            //todo: There are possibly messages on the Editor itself right?
-            if(EditorVM == null || EditorVM.Function.Messages == null)
-            {
-                return new List<LogItem>();
-            }
-            IEnumerable<IMessage> messages = EditorVM.Function.Messages;
             List<LogItem> logs = new List<LogItem>();
-            foreach (IMessage message in messages)
+            List<IMessage> messagesFromEditor = new List<IMessage>();
+            if(EditorVM == null)
+            {
+                return logs;
+            }
+            //get messages from the editor
+            messagesFromEditor.AddRange(EditorVM.Messages);
+
+            //get messages from the editor's function
+            if( EditorVM.Function.Messages != null)
+            {
+                messagesFromEditor.AddRange(EditorVM.Function.Messages);
+            }
+            //IEnumerable<IMessage> messages = EditorVM.Function.Messages;
+            foreach (IMessage message in messagesFromEditor)
             {
                 LoggingLevel level = TranslateValidationLevelToLogLevel(message.Level);
                 logs.Add(LogItemFactory.FactoryTemp(level, message.Notice));

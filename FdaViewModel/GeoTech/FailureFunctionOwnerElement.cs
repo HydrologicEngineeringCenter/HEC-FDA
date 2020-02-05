@@ -89,7 +89,7 @@ namespace FdaViewModel.GeoTech
                //.WithParentGuid(this.GUID)
                //.WithCanOpenMultipleTimes(true);
 
-            Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(defaultCurve, leveeCollection, actionManager);
+            Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(defaultCurve, leveeCollection, "Frequency", "Stage", "Failure Function", actionManager);
             string header = "Create Failure Function";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "NewFailureFunction");
             Navigate(tab, false, false );
