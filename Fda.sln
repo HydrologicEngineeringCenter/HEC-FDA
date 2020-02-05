@@ -44,9 +44,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Model\Model.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImpactArea", "ImpactArea\ImpactArea.csproj", "{BFED81FA-94DB-4D6B-B301-EB3B715D1601}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbMemory", "..\..\..\Documents\hecfda\_V200\20200203\DbMemory\DbMemory.csproj", "{D1F4D4CC-1ABD-4BC4-B3D0-B844E90FE2B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbMemory", "DbMemory\DbMemory.csproj", "{D1F4D4CC-1ABD-4BC4-B3D0-B844E90FE2B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportAsciiMain1", "..\..\..\Documents\hecfda\_V200\20200203\ImportAsciiMain1\ImportAsciiMain1.csproj", "{8D5C5630-F0C9-4076-816C-50792F4BC071}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportAsciiMain1", "ImportAsciiMain1\ImportAsciiMain1.csproj", "{8D5C5630-F0C9-4076-816C-50792F4BC071}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
