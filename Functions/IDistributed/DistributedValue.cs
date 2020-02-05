@@ -130,22 +130,26 @@ namespace Functions
 
         public double Sample()
         {
-            return _distribution.Sample(new Random());
+            //todo: use the commented out code
+            return 0;// _distribution.Sample(new Random());
         }
 
         public double[] Sample(Random numberGenerator = null)
         {
-            return _distribution.Sample(1,numberGenerator);
+            //todo: use the commented out code
+            return null;// _distribution.Sample(1,numberGenerator);
         }
 
         public double[] Sample(int sampleSize, Random numberGenerator = null)
         {
-            return _distribution.Sample(sampleSize, numberGenerator);
+            //todo: use the commented out code
+            return null;// _distribution.Sample(sampleSize, numberGenerator);
         }
 
         public IDistributedValue SampleDistribution(Random numberGenerator = null)
         {
-            return new DistributedValue( _distribution.SampleDistribution(numberGenerator));
+            //todo: use the commented out code
+            return null;// new DistributedValue( _distribution.SampleDistribution(numberGenerator));
         }
 
         public bool Validate(IValidator<IDistributedValue> validator, out IEnumerable<IMessage> errors)
