@@ -38,10 +38,10 @@ namespace Statistics.Histograms
         #region Constructors
         internal Bin (double min, double max, int n)
         {
-            Range = IRangeFactory.Factory(min, max);
-            Width = max - min;
-            MidPoint = (Range.Max - Range.Min) / 2d + Range.Min;
             Count = n;
+            Width = max - min;
+            Range = IRangeFactory.Factory(min, max);           
+            MidPoint = Width / 2d + Range.Min;           
             IsValid = Validate(new BinValidator(), out IEnumerable<IMessage> errors);
             Messages = errors;
         }

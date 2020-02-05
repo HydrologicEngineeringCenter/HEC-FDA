@@ -40,7 +40,7 @@ namespace FunctionsView.View
         {
             if (Row != null && cmb_DistTypes.Items.Count>0)
             {
-                Row.SelectedDistributionType = (DistributionType)cmb_DistTypes.SelectedValue;
+                Row.SelectedDistributionType = (IOrdinateEnum)cmb_DistTypes.SelectedValue;
             }
         }
 

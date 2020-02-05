@@ -110,25 +110,25 @@ namespace FunctionsTests.CoordinatesFunctions
            new TheoryData<List<ICoordinate>>
            {
                 { DistributedCoordinates(new double[]{0}, 
-                    new IDistributedValue[] {
-                    DistributedValueFactory.Factory(new Normal(1,0))
+                    new IDistributedOrdinate[] {
+                    IDistributedOrdinateFactory.Factory(new Normal(1,0))
                 })},
-                { DistributedCoordinates(new double[]{0, 1}, new IDistributedValue[]{
-                    DistributedValueFactory.Factory(new Normal(1,0)),
-                    DistributedValueFactory.Factory(new Normal(1,1))})},
-                { DistributedCoordinates(new double[]{0, 1}, new IDistributedValue[]{
-                    DistributedValueFactory.Factory(new Triangular(1,2,3)),
-                    DistributedValueFactory.Factory(new Triangular(3,4,5))})},
-                { DistributedCoordinates(new double[]{0, 1}, new IDistributedValue[]{
-                    DistributedValueFactory.Factory(new Uniform(1,2)),
-                    DistributedValueFactory.Factory(new Uniform(3,4))})},
+                { DistributedCoordinates(new double[]{0, 1}, new IDistributedOrdinate[]{
+                    IDistributedOrdinateFactory.Factory(new Normal(1,0)),
+                    IDistributedOrdinateFactory.Factory(new Normal(1,1))})},
+                { DistributedCoordinates(new double[]{0, 1}, new IDistributedOrdinate[]{
+                    IDistributedOrdinateFactory.Factory(new Triangular(1,2,3)),
+                    IDistributedOrdinateFactory.Factory(new Triangular(3,4,5))})},
+                { DistributedCoordinates(new double[]{0, 1}, new IDistributedOrdinate[]{
+                    IDistributedOrdinateFactory.Factory(new Uniform(1,2)),
+                    IDistributedOrdinateFactory.Factory(new Uniform(3,4))})},
                 { DistributedCoordinates(new double[]{0, 1,2,3},
-                   new IDistributedValue[]
+                   new IDistributedOrdinate[]
                    {
-                       DistributedValueFactory.Factory(new Normal(1,2)),
-                       DistributedValueFactory.Factory(new Triangular(3,4,5)),
-                       DistributedValueFactory.Factory(new Uniform(5,6)),
-                       DistributedValueFactory.Factory(new Normal(0,1))
+                       IDistributedOrdinateFactory.Factory(new Normal(1,2)),
+                       IDistributedOrdinateFactory.Factory(new Triangular(3,4,5)),
+                       IDistributedOrdinateFactory.Factory(new Uniform(5,6)),
+                       IDistributedOrdinateFactory.Factory(new Normal(0,1))
                    })
                 },
 
@@ -140,7 +140,7 @@ namespace FunctionsTests.CoordinatesFunctions
         public static TheoryData<List<ICoordinate>> BadDataDistributed_RepeatXs =>
             new TheoryData<List<ICoordinate>>
             {
-                { DistributedCoordinates(new double[]{1,1},new IDistributedValue[]{ DistributedValueFactory.Factory( new Normal(0,1)), DistributedValueFactory.Factory(new Normal(0,1)) }) },
+                { DistributedCoordinates(new double[]{1,1},new IDistributedOrdinate[]{ IDistributedOrdinateFactory.Factory( new Normal(0,1)), IDistributedOrdinateFactory.Factory(new Normal(0,1)) }) },
                 //{ new List<ICoordinate<IOrdinate, IOrdinate>>(new UnivariateCoordinate(new ScalarDistributed(new Normal()), new ScalarDistributed(new Normal()), map)) },
                 //{ new List<ICoordinate<IOrdinate, IOrdinate>>(new UnivariateCoordinate(new ScalarHistogram(), IScalarFactory.Factory(0), map), new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarHistogram(), map)) },
                 //{ new List<ICoordinate<IOrdinate, IOrdinate>>(new UnivariateCoordinate(IScalarFactory.Factory(0), new ScalarHistogram(), map), new UnivariateCoordinate(new ScalarHistogram(), IScalarFactory.Factory(0), map)) },
@@ -152,23 +152,23 @@ namespace FunctionsTests.CoordinatesFunctions
         internal CoordinatesFunctionVariableYs CreateDistributedCoordinatesFunctionBasic()
         {
             List<double> xs = new List<double>() { 0, 1, 2, 3 };
-            List<IDistributedValue> ys = new List<IDistributedValue>() 
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>() 
             { 
-                DistributedValueFactory.Factory( new Normal(1, 0)),
-                DistributedValueFactory.Factory( new Normal(1, 0)),
-                DistributedValueFactory.Factory( new Normal(1, 0)),
-                DistributedValueFactory.Factory( new Normal(1, 0)) 
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)) 
             };
             return (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
         }
 
-        internal CoordinatesFunctionVariableYs CreateDistributedCoordinatesFunction(List<double> xs, List<IDistributedValue> ys)
+        internal CoordinatesFunctionVariableYs CreateDistributedCoordinatesFunction(List<double> xs, List<IDistributedOrdinate> ys)
         {
             return (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
         }
         #endregion
 
-        internal static List<ICoordinate> DistributedCoordinates(double[] xs, IDistributedValue[] ys)
+        internal static List<ICoordinate> DistributedCoordinates(double[] xs, IDistributedOrdinate[] ys)
         {
             if (xs.Length != ys.Length)
             {
@@ -320,12 +320,12 @@ namespace FunctionsTests.CoordinatesFunctions
             List<double> ys1 = new List<double>() { 5, 6, 7, 8 };
 
             List<double> xs2 = new List<double>() { 4, 5, 6, 7 };
-            List<IDistributedValue> ys2 = new List<IDistributedValue>() 
+            List<IDistributedOrdinate> ys2 = new List<IDistributedOrdinate>() 
             { 
-                DistributedValueFactory.Factory(new Normal(1, 0)),
-                DistributedValueFactory.Factory( new Normal(1, 0)),
-                DistributedValueFactory.Factory( new Normal(1, 0)),
-                DistributedValueFactory.Factory( new Normal(1, 0)) 
+                IDistributedOrdinateFactory.Factory(new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)) 
             };
 
             List<double> xs3 = new List<double>() { 8, 9, 10, 11 };

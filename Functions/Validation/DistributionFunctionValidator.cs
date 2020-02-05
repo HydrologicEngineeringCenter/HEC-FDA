@@ -23,12 +23,12 @@ namespace Functions.Validation
             if (!obj.IsValid) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The provided distribution is invalid and contains the following messages:{obj.Messages.PrintTabbedListOfMessages()}"));
             return msgs;
         }
-        internal static bool IsConstructable(IDistributedValue distribution, out string msg)
+        internal static bool IsConstructable(IDistributedOrdinate distribution, out string msg)
         {
             msg = ReportFatalErrors(distribution);
             return !(msg.Length == 0);
         }
-        internal static string ReportFatalErrors(IDistributedValue distribution)
+        internal static string ReportFatalErrors(IDistributedOrdinate distribution)
         {
             string msg = "";
             if (distribution.IsNull()) msg = "The function cannot be constructed because the specified distribution is null.";

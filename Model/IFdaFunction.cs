@@ -10,7 +10,7 @@ namespace Model
 {
     public interface IFdaFunction : ISerializeToXML<IFdaFunction>
     {
-       string XLabel { get; }
+        string XLabel { get; }
         string YLabel { get; }
         ImpactAreaFunctionEnum Type { get; }
         ICoordinatesFunction Function { get; }

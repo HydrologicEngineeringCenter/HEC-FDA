@@ -12,7 +12,7 @@ namespace FunctionsView.ViewModel
     {
         private double _X;
         private double _Y;
-        private DistributionType _distType;
+        private IOrdinateEnum _distType;
         private InterpolationEnum _interpType;
 
         private double _alpha;
@@ -26,20 +26,20 @@ namespace FunctionsView.ViewModel
         public CoordinatesFunctionRowItemBuilder(double x)
         {
             _X = x;
-            _distType = DistributionType.NotSupported;
+            _distType = IOrdinateEnum.NotSupported;
         }
         public CoordinatesFunctionRowItemBuilder WithTriangularDist(double mostLikely, double min, double max, InterpolationEnum interpolator)
         {
             _mostLikely = mostLikely;
             _min = min;
             _max = max;
-            _distType = DistributionType.Triangular;
+            _distType = IOrdinateEnum.Triangular;
             _interpType = interpolator;
             return this;
         }
         public CoordinatesFunctionRowItemBuilder WithNormalDist(double mean, double standardDeviation, InterpolationEnum interpolator)
         {
-            _distType = DistributionType.Normal;
+            _distType = IOrdinateEnum.Normal;
             _mean = mean;
             _standDev = standardDeviation;
             _interpType = interpolator;
@@ -49,7 +49,7 @@ namespace FunctionsView.ViewModel
         public CoordinatesFunctionRowItemBuilder WithConstantDist(double y, InterpolationEnum interpolator)
         {
             _Y = y;
-            _distType = DistributionType.Constant;
+            _distType = IOrdinateEnum.Constant;
             _interpType = interpolator;
             return this;
         }
@@ -58,13 +58,13 @@ namespace FunctionsView.ViewModel
         {
             _min = min;
             _max = max;
-            _distType = DistributionType.Uniform;
+            _distType = IOrdinateEnum.Uniform;
             _interpType = interpolator;
             return this;
         }
         public CoordinatesFunctionRowItemBuilder WithTruncatedNormalDist(double mean, double stDev, double min, double max, InterpolationEnum interpolator)
         {
-            _distType = DistributionType.TruncatedNormal;
+            _distType = IOrdinateEnum.TruncatedNormal;
             _mean = mean;
             _standDev = stDev;
             _min = min;
@@ -75,7 +75,7 @@ namespace FunctionsView.ViewModel
 
         public CoordinatesFunctionRowItemBuilder WithBetaDist(double alpha, double beta, double min, double max, InterpolationEnum interpolator)
         {
-            _distType = DistributionType.Beta4Parameters;
+            _distType = IOrdinateEnum.Beta4Parameters;
             _alpha = alpha;
             _beta = beta;
             _min = min;

@@ -12,10 +12,10 @@ namespace FunctionsView.ViewModel
     public class CoordinatesFunctionRowItem
     {
         public event EventHandler RowIsLeavingTable;
-        private readonly List<DistributionType> SupportedDistributionTypes = new List<DistributionType>() { DistributionType.Constant, DistributionType.Normal, 
-            DistributionType.Triangular, DistributionType.Uniform, DistributionType.TruncatedNormal, DistributionType.Beta4Parameters };
+        private readonly List<IOrdinateEnum> SupportedDistributionTypes = new List<IOrdinateEnum>() { IOrdinateEnum.Constant, IOrdinateEnum.Normal, 
+            IOrdinateEnum.Triangular, IOrdinateEnum.Uniform, IOrdinateEnum.TruncatedNormal, IOrdinateEnum.Beta4Parameters };
 
-        private DistributionType _selectedDistType = DistributionType.NotSupported;// = DistributionType.Constant;
+        private IOrdinateEnum _selectedDistType = IOrdinateEnum.NotSupported;// = DistributionType.Constant;
         private InterpolationEnum _selectedInterpolationType;// = InterpolationEnum.Linear;
 
         #region Properties
@@ -39,7 +39,7 @@ namespace FunctionsView.ViewModel
             get { return this; }
         }
 
-        public IEnumerable<DistributionType> DistributionTypes
+        public IEnumerable<IOrdinateEnum> DistributionTypes
         {
             get
             {
@@ -67,7 +67,7 @@ namespace FunctionsView.ViewModel
             }
         }
 
-        public DistributionType SelectedDistributionType
+        public IOrdinateEnum SelectedDistributionType
         {
             get { return _selectedDistType; }
             set
@@ -75,11 +75,11 @@ namespace FunctionsView.ViewModel
                 
                 if (!value.Equals(_selectedDistType))
                 {
-                    DistributionType originalType = _selectedDistType;
-                    DistributionType newType = value;
+                    IOrdinateEnum originalType = _selectedDistType;
+                    IOrdinateEnum newType = value;
                     //i don't want to clear the values if this is the first time values are getting set
                     //The first time the row will have a type of NotSupported
-                    if (originalType != DistributionType.NotSupported)
+                    if (originalType != IOrdinateEnum.NotSupported)
                     {
                         TranslateValuesBetweenDistributionTypes(originalType, newType);
                     }
@@ -96,36 +96,36 @@ namespace FunctionsView.ViewModel
         /// </summary>
         /// <param name="originalType"></param>
         /// <param name="newType"></param>
-        private void TranslateValuesBetweenDistributionTypes( DistributionType originalType, DistributionType newType)
+        private void TranslateValuesBetweenDistributionTypes( IOrdinateEnum originalType, IOrdinateEnum newType)
         {
             switch(originalType)
             {
-                case DistributionType.Constant:
+                case IOrdinateEnum.Constant:
                     {
                         TranslateValuesFromConstantTo(newType);
                         break;
                     }
-                case DistributionType.Normal:
+                case IOrdinateEnum.Normal:
                     {
                         TranslateValuesFromNormalTo(newType);
                         break;
                     }
-                case DistributionType.Uniform:
+                case IOrdinateEnum.Uniform:
                     {
                         TranslateValuesFromUniformTo(newType);
                         break;
                     }
-                case DistributionType.Triangular:
+                case IOrdinateEnum.Triangular:
                     {
                         TranslateValuesFromTriangularTo(newType);
                         break;
                     }
-                case DistributionType.TruncatedNormal:
+                case IOrdinateEnum.TruncatedNormal:
                     {
                         TranslateValuesFromTruncNormalTo(newType);
                         break;
                     }
-                case DistributionType.Beta4Parameters:
+                case IOrdinateEnum.Beta4Parameters:
                     {
                         TranslateValuesFromBetaTo(newType);
                         break;
@@ -133,16 +133,16 @@ namespace FunctionsView.ViewModel
             }
         }
 
-        private void TranslateValuesFromBetaTo(DistributionType newDist)
+        private void TranslateValuesFromBetaTo(IOrdinateEnum newDist)
         {
             double tempMin = Min;
             double tempMax = Max;
             ClearAllPropertiesExceptX();
             switch (newDist)
             {
-                case DistributionType.TruncatedNormal:
-                case DistributionType.Triangular:
-                case DistributionType.Uniform:
+                case IOrdinateEnum.TruncatedNormal:
+                case IOrdinateEnum.Triangular:
+                case IOrdinateEnum.Uniform:
                     {
                         Min = tempMin;
                         Max = tempMax;
@@ -151,16 +151,16 @@ namespace FunctionsView.ViewModel
             }
         }
 
-        private void TranslateValuesFromUniformTo(DistributionType newDist)
+        private void TranslateValuesFromUniformTo(IOrdinateEnum newDist)
         {
             double tempMin = Min;
             double tempMax = Max;
             ClearAllPropertiesExceptX();
             switch (newDist)
             {
-                case DistributionType.TruncatedNormal:
-                case DistributionType.Triangular:
-                case DistributionType.Beta4Parameters:
+                case IOrdinateEnum.TruncatedNormal:
+                case IOrdinateEnum.Triangular:
+                case IOrdinateEnum.Beta4Parameters:
                     {
                         Min = tempMin;
                         Max = tempMax;
@@ -169,7 +169,7 @@ namespace FunctionsView.ViewModel
             }
         }
 
-        private void TranslateValuesFromTriangularTo(DistributionType newDist)
+        private void TranslateValuesFromTriangularTo(IOrdinateEnum newDist)
         {
             double tempMostLikely = MostLikely;
             double tempMin = Min;
@@ -177,37 +177,37 @@ namespace FunctionsView.ViewModel
             ClearAllPropertiesExceptX();
             switch (newDist)
             {
-                case DistributionType.Uniform:
+                case IOrdinateEnum.Uniform:
                     {
                         Min = tempMin;
                         Max = tempMax;
                         break;
                     }
-                case DistributionType.Constant:
+                case IOrdinateEnum.Constant:
                     {
                         Y = tempMostLikely;
                         break;
                     }
-                case DistributionType.Normal:
+                case IOrdinateEnum.Normal:
                     {
                         Mean = tempMostLikely;
                         break;
                     }
-                case DistributionType.TruncatedNormal:
+                case IOrdinateEnum.TruncatedNormal:
                     {
                         Mean = tempMostLikely;
                         Min = tempMin;
                         Max = tempMax;
                         break;
                     }
-                case DistributionType.Triangular:
+                case IOrdinateEnum.Triangular:
                     {
                         MostLikely = tempMostLikely;
                         Min = tempMin;
                         Max = tempMax;
                         break;
                     }
-                case DistributionType.Beta4Parameters:
+                case IOrdinateEnum.Beta4Parameters:
                     {
                         Min = tempMin;
                         Max = tempMax;
@@ -216,7 +216,7 @@ namespace FunctionsView.ViewModel
             }
         }
 
-        private void TranslateValuesFromTruncNormalTo(DistributionType newDist)
+        private void TranslateValuesFromTruncNormalTo(IOrdinateEnum newDist)
         {
             double tempMean = Mean;
             double tempStDev = StandardDeviation;
@@ -225,31 +225,31 @@ namespace FunctionsView.ViewModel
             ClearAllPropertiesExceptX();
             switch (newDist)
             {
-                case DistributionType.Uniform:
+                case IOrdinateEnum.Uniform:
                     {
                         Min = tempMin;
                         Max = tempMax;
                         break;
                     }
-                case DistributionType.Constant:
+                case IOrdinateEnum.Constant:
                     {
                         Y = tempMean;
                         break;
                     }
-                case DistributionType.Normal:
+                case IOrdinateEnum.Normal:
                     {
                         Mean = tempMean;
                         StandardDeviation = tempStDev;
                         break;
                     }
-                case DistributionType.Triangular:
+                case IOrdinateEnum.Triangular:
                     {
                         MostLikely = tempMean;
                         Min = tempMin;
                         Max = tempMax;
                         break;
                     }
-                case DistributionType.Beta4Parameters:
+                case IOrdinateEnum.Beta4Parameters:
                     {
                         Min = tempMin;
                         Max = tempMax;
@@ -258,19 +258,19 @@ namespace FunctionsView.ViewModel
             }
         }
 
-        private void TranslateValuesFromConstantTo(DistributionType newDist)
+        private void TranslateValuesFromConstantTo(IOrdinateEnum newDist)
         {
             double tempY = Y;
             ClearAllPropertiesExceptX();
             switch (newDist)
             {
-                case DistributionType.Normal:
-                case DistributionType.TruncatedNormal:
+                case IOrdinateEnum.Normal:
+                case IOrdinateEnum.TruncatedNormal:
                     {
                         Mean = tempY;
                         break;
                     }
-                case DistributionType.Triangular:
+                case IOrdinateEnum.Triangular:
                     {
                         MostLikely = tempY;
                         break;
@@ -278,25 +278,25 @@ namespace FunctionsView.ViewModel
             }
         }
 
-        private void TranslateValuesFromNormalTo(DistributionType newDist)
+        private void TranslateValuesFromNormalTo(IOrdinateEnum newDist)
         {
             double tempMean = Mean;
             double tempStDev = StandardDeviation;
             ClearAllPropertiesExceptX();
             switch (newDist)
             {
-                case DistributionType.Constant:
+                case IOrdinateEnum.Constant:
                     {
                         Y = tempMean;
                         break;
                     }
-                case DistributionType.TruncatedNormal:
+                case IOrdinateEnum.TruncatedNormal:
                     {
                         Mean = tempMean;
                         StandardDeviation = tempStDev;
                         break;
                     }
-                case DistributionType.Triangular:
+                case IOrdinateEnum.Triangular:
                     {
                         MostLikely = tempMean;
                         break;
@@ -318,7 +318,7 @@ namespace FunctionsView.ViewModel
         {
             X = 0;
             Y = 0;
-            SelectedDistributionType = DistributionType.Constant;
+            SelectedDistributionType = IOrdinateEnum.Constant;
            SelectedInterpolationType = InterpolationEnum.Linear;
         }
         /// <summary>
@@ -334,7 +334,7 @@ namespace FunctionsView.ViewModel
         /// <param name="distType"></param>
         /// <param name="interpType"></param>
         public CoordinatesFunctionRowItem(double x, double y, double standDev,double mean, double min, double max, double mostLikely, 
-            double alpha, double beta, DistributionType distType,InterpolationEnum interpType)
+            double alpha, double beta, IOrdinateEnum distType,InterpolationEnum interpType)
         {
             X = x;
             Y = y;
@@ -359,7 +359,7 @@ namespace FunctionsView.ViewModel
         {
             double x = X;
 
-            if(SelectedDistributionType == DistributionType.Constant)
+            if(SelectedDistributionType == IOrdinateEnum.Constant)
             {
                 return ICoordinateFactory.Factory(x, Y);
             }
@@ -369,34 +369,34 @@ namespace FunctionsView.ViewModel
             }
         }
 
-        private IDistributedValue CreateDistributedValueFromRow()
+        private IDistributedOrdinate CreateDistributedValueFromRow()
         {
-            IDistributedValue retval = null;
+            IDistributedOrdinate retval = null;
             switch (SelectedDistributionType)
             {
-                case DistributionType.Normal:
+                case IOrdinateEnum.Normal:
                     {
-                        retval = DistributedValueFactory.FactoryNormal(Mean, StandardDeviation);
+                        retval = IDistributedOrdinateFactory.FactoryNormal(Mean, StandardDeviation);
                         break;
                     }
-                case DistributionType.TruncatedNormal:
+                case IOrdinateEnum.TruncatedNormal:
                     {
-                        retval = DistributedValueFactory.FactoryTruncatedNormal(Mean, StandardDeviation, Min, Max);
+                        retval = IDistributedOrdinateFactory.FactoryTruncatedNormal(Mean, StandardDeviation, Min, Max);
                         break;
                     }
-                case DistributionType.Uniform:
+                case IOrdinateEnum.Uniform:
                     {
-                        retval = DistributedValueFactory.FactoryUniform(Min, Max);
+                        retval = IDistributedOrdinateFactory.FactoryUniform(Min, Max);
                         break;
                     }
-                case DistributionType.Beta4Parameters:
+                case IOrdinateEnum.Beta4Parameters:
                     {
-                        retval = DistributedValueFactory.FactoryBeta(Alpha, Beta, Min, Max);
+                        retval = IDistributedOrdinateFactory.FactoryBeta(Alpha, Beta, Min, Max);
                         break;
                     }
-                case DistributionType.Triangular:
+                case IOrdinateEnum.Triangular:
                     {
-                        retval = DistributedValueFactory.FactoryTriangular(MostLikely, Min, Max);
+                        retval = IDistributedOrdinateFactory.FactoryTriangular(MostLikely, Min, Max);
                         break;
                     }
             }

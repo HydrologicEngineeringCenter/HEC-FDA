@@ -35,17 +35,17 @@ namespace Functions.CoordinatesFunctions
 
         public IEnumerable<IMessage> Messages => null;
 
-        public DistributionType DistributionType
+        public IOrdinateEnum DistributionType
         {
             get
             {
                 if (Coordinates.Count > 0)
                 {
-                    return Coordinates[0].Y.DistributionType;
+                    return Coordinates[0].Y.Type;
                 }
                 else
                 {
-                    return DistributionType.NotSupported;
+                    return IOrdinateEnum.NotSupported;
                 }
             }
         }
@@ -55,15 +55,13 @@ namespace Functions.CoordinatesFunctions
         /// </summary>
         /// <param name="functions"></param>
         /// <param name="interpolators"></param>
-        internal CoordinatesFunctionLinked(List<ICoordinatesFunction> functions, List<InterpolationEnum> interpolators)
+        internal CoordinatesFunctionLinked(List<ICoordinatesFunction> functions)
         {
             //the list of functions are not gauranteed to be in the correct order.
             //sort them on the min x value of each function
             //todo: if i sort, i will lose track of the list of interpolators.
             //List<ICoordinatesFunction<IOrdinate, IOrdinate>> sortedFunctions = Functions.OrderBy(func => func.Domain.Item1).ToList();
             Functions = functions;
-            Interpolators = interpolators;
-
             IsValid = Validate(new LinkedCoordinatesFunctionValidator(), out IEnumerable<IMessage> errors);
             CombineCoordinates();
             SetOrder();

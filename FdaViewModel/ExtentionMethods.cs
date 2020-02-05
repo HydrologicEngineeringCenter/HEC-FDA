@@ -37,43 +37,43 @@ namespace FdaViewModel
                 //        rows[i] = new object[] { curve.get_X(i), ((Statistics.LogNormal)curve.get_Y(i)).GetMean, ((Statistics.LogNormal)curve.get_Y(i)).GetStDev };
                 //    }
                 //    break;
-                case Functions.DistributionType.Normal:
+                case Functions.IOrdinateEnum.Normal:
                     colNames = new string[] { "X Value", "Mean", "Standard Deviation" };
                     colTypes = new Type[] { typeof(double), typeof(double), typeof(double) };
                     for (int i = 0; i < coords.Count; i++)
                     {
                         ICoordinate coord = coords[i];
-                        IDistributedValue distValue = ((Distribution)coord.Y).GetDistribution;
+                        IDistributedOrdinate distValue = ((Distribution)coord.Y).GetDistribution;
                         rows[i] = new object[] { coord.X, distValue.Mean, distValue.StandardDeviation };
                     }
                     break;
-                case Functions.DistributionType.Triangular:
+                case Functions.IOrdinateEnum.Triangular:
                     colNames = new string[] { "X Value", "Minimum", "Most Likely", "Maximum" };
                     colTypes = new Type[] { typeof(double), typeof(double), typeof(double), typeof(double) };
                     for (int i = 0; i < coords.Count; i++)
                     {
                         ICoordinate coord = coords[i];
-                        IDistributedValue distValue = ((Distribution)coord.Y).GetDistribution;
+                        IDistributedOrdinate distValue = ((Distribution)coord.Y).GetDistribution;
                         rows[i] = new object[] { coord.X, distValue.Range.Min, distValue.Mean, distValue.Range.Max };
                     }
                     break;
-                case Functions.DistributionType.Uniform:
+                case Functions.IOrdinateEnum.Uniform:
                     colNames = new string[] { "X Value", "Minimum", "Maximum" };
                     colTypes = new Type[] { typeof(double), typeof(double), typeof(double) };
                     for (int i = 0; i < coords.Count; i++)
                     {
                         ICoordinate coord = coords[i];
-                        IDistributedValue distValue = ((Distribution)coord.Y).GetDistribution;
+                        IDistributedOrdinate distValue = ((Distribution)coord.Y).GetDistribution;
                         rows[i] = new object[] { coord.X, distValue.Range.Min, distValue.Range.Max };
                     }
                     break;
-                case Functions.DistributionType.Constant:
+                case Functions.IOrdinateEnum.Constant:
                     colNames = new string[] { "X Value", "Y Value" };
                     colTypes = new Type[] { typeof(double), typeof(double) };
                     for (int i = 0; i < coords.Count; i++)
                     {
                         ICoordinate coord = coords[i];
-                        IDistributedValue distValue = ((Distribution)coord.Y).GetDistribution;
+                        IDistributedOrdinate distValue = ((Distribution)coord.Y).GetDistribution;
                         rows[i] = new object[] { coord.X, distValue.Mean };
                     }
                     break;

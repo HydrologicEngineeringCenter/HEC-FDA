@@ -25,17 +25,17 @@ namespace Functions.CoordinatesFunctions
         //public Tuple<double, double> Domain { get; }
         public IRange<double> Domain { get; }
         public InterpolationEnum Interpolator { get; }
-        public DistributionType DistributionType
+        public IOrdinateEnum DistributionType
         {
             get
             {
                 if (Coordinates.Count > 0)
                 {
-                    return Coordinates[0].Y.DistributionType;
+                    return Coordinates[0].Y.Type;
                 }
                 else
                 {
-                    return DistributionType.NotSupported;
+                    return IOrdinateEnum.NotSupported;
                 }
 
             }
@@ -70,16 +70,19 @@ namespace Functions.CoordinatesFunctions
         #region Functions
         public bool Equals(ICoordinatesFunction function)
         {
-            //I don't think i have to check the domain, range, or order because
-            //if the coordinates and interpolator are all the same then those values
-            //should be the same.
-            if (!function.GetType().Equals(typeof(CoordinatesFunctionVariableYs)))
+            /* 
+             * For 2 coordinate function with variable Y values to be VALUE equal they must have:
+             *      (1) Type equality (e.g. both are CoordinatesFunctionVariableYs)
+             *      (2) the same number of coordinates.
+             *      (3) the same interpolation scheme.
+             *      (4) have VALUE equal coordinates.
+             * criteria (1) - (3) are check here...
+             */
+            if (!(function.GetType().Equals(typeof(CoordinatesFunctionVariableYs)) &&
+                Coordinates.Count == function.Coordinates.Count && Interpolator == function.Interpolator)) return false;
+            else
             {
-                return false;
-            }
-            if (Coordinates.Count != function.Coordinates.Count)
-            {
-                return false;
+                // Check for equal coordinates
             }
             for (int i = 0; i < Coordinates.Count; i++)
             {
@@ -91,10 +94,6 @@ namespace Functions.CoordinatesFunctions
                 {
                     return false;
                 }
-            }
-            if (Interpolator != function.Interpolator)
-            {
-                return false;
             }
             return true;
         }

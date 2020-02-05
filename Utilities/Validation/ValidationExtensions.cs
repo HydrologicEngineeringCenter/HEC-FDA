@@ -55,12 +55,12 @@ namespace Utilities
         /// <typeparam name="T"></typeparam>
         /// <param name="data"></param>
         /// <returns> <see langword="true"/> if <see langword="null"/> values are encountered, <see langword="false"/> otherwise. </returns>
-        public static bool IsNullorNonFiniteItem(this IEnumerable<double> data)
+        public static bool IsNullOrNonFiniteItem(this IEnumerable<double> data)
         {
             if (data.IsNullOrEmpty()) return true;
             else
             {
-                foreach (var x in data) if (x.IsNull() || !x.IsFinite()) return true;
+                foreach (var x in data) if (!x.IsFinite()) return true;
                 return false;
             }
         }
@@ -97,13 +97,28 @@ namespace Utilities
             return false;
         }
         /// <summary>
-        /// Test that the <paramref name="min"/> &lt <paramref name="max"/>. Warning: <see cref="double.NaN"/> may produce unexpected results.
+        /// Test that the <paramref name="min"/> &lt <paramref name="max"/>.
         /// </summary>
         /// <typeparam name="T"> An <see cref="IComparable"/> type parameter.</typeparam>
         /// <param name="min"> The minimum of the range. </param>
         /// <param name="max"> The maximum of the range. </param>
         /// <returns> <see langword="true"/> if <paramref name="min"/> &lt <paramref name="max"/> or <see langword="false"/> otherwise. </returns>
-        public static bool IsRange<T>(T min, T max) where T : IComparable => min.CompareTo(max) < 0 ? true : false;
+        /// <remarks> If the <paramref name="min"/> equals the <paramref name="max"/> <see langword="true"/> is returned. Note that <see cref="double.NaN"/> values may produce unexpected results. </remarks>
+        public static bool IsRange<T>(T min, T max, bool allowSingleValueRange = false) where T : IComparable //=> min.CompareTo(max) < (allowSingleValueRange ? -1 : 0) ? true : false;
+        {
+            /*
+             * The CompareTo() compares the instance to the parameter value.
+             *      a - returns -1 if min < max
+             *      b - returns  0 if min = max
+             *      c - returns  1 if max > min
+             * If a single value range is allowed, then:
+             *      - must return -1 (min < max) or 0 (min = max) e.g. a or b is allowed.
+             * Otherwise:
+             *      - must return -1 (min < max) only a is allowed.
+             */
+            int threshold = allowSingleValueRange ? 1 : 0, val = min.CompareTo(max);
+            return val < threshold;
+        }
         /// <summary>
         /// Tests if the value is on the range specified by the <paramref name="min"/> and <paramref name="max"/> parameters.
         /// </summary>

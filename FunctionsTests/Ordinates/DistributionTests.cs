@@ -21,7 +21,7 @@ namespace FunctionsTests.Ordinates
 
         [Theory]
         [MemberData(nameof(GoodData_Distributed))]
-        public void Distribution_GoodInput_Returns_Distribution(IDistributedValue value)
+        public void Distribution_GoodInput_Returns_Distribution(IDistributedOrdinate value)
         {
             Distribution distribution = new Distribution(value);
             Assert.NotNull(distribution);
@@ -33,7 +33,7 @@ namespace FunctionsTests.Ordinates
         /// <param name="value"></param>
         [Theory]
         [MemberData(nameof(GoodData_Distributed))]
-        public void Range_GoodInput_Returns_Tuple(IDistributedValue value)
+        public void Range_GoodInput_Returns_Tuple(IDistributedOrdinate value)
         {
             double min = value.Minimum;
             double max = value.Maximum;
@@ -60,7 +60,7 @@ namespace FunctionsTests.Ordinates
 
         [Theory]
         [MemberData(nameof(GoodData_Distributed))]
-        public void Equals_GoodInput_Returns_Bool(IDistributedValue value)
+        public void Equals_GoodInput_Returns_Bool(IDistributedOrdinate value)
         {
             Distribution dist1 = new Distribution(value);
             Distribution dist2 = new Distribution(value);
@@ -75,8 +75,8 @@ namespace FunctionsTests.Ordinates
         [Fact]
         public void Equals_BadInput_Returns_Bool()
         {
-            Distribution dist1 = new Distribution(new DistributedValue(new Normal(1, 1)));
-            Distribution dist2 = new Distribution(new DistributedValue(new Normal(.5, 1)));
+            Distribution dist1 = new Distribution(new Distribution(new Normal(1, 1)));
+            Distribution dist2 = new Distribution(new Distribution(new Normal(.5, 1)));
 
 
             Assert.False(dist1.Equals(dist2));
@@ -88,7 +88,7 @@ namespace FunctionsTests.Ordinates
         [Fact]
         public void Value_GoodInput_Returns_Double()
         {
-            Distribution dist1 = new Distribution(new DistributedValue(new Normal(1, 1)));
+            Distribution dist1 = new Distribution(new Distribution(new Normal(1, 1)));
             double distValue = dist1.Value(.5);
             Assert.True(distValue == 1);
         }

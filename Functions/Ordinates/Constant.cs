@@ -2,39 +2,42 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
+using Utilities;
 using Utilities.Serialization;
 
 namespace Functions.Ordinates
 {
     public class Constant : IOrdinate
     {
-        private double _ConstantValue;
+        #region Fields and Properties
+        private readonly double _ConstantValue;
+
+        public IRange<double> Range { get; }
+        public IOrdinateEnum Type => IOrdinateEnum.Constant;
+        #endregion
+
+        #region Constructor
         public Constant(double value)
         {
             _ConstantValue = value;
+            Range = IRangeFactory.Factory(_ConstantValue, _ConstantValue);
         }
-
-        public Tuple<double, double> Range
-        {
-            get { return new Tuple<double, double>(_ConstantValue, _ConstantValue); }
-        }
-
-        public DistributionType DistributionType { get { return DistributionType.Constant; } }
+        #endregion
 
 
-        public bool Equals(IOrdinate constant)
-        {
-            return constant.Print().Equals(this.Print());
-        }
-
-        public string Print()
-        {
-            return $"Double(value: {_ConstantValue}";
-        }
-
+        #region Functions
         public double Value(double p = 0.5)
         {
             return _ConstantValue;
+        }
+        public bool Equals(IOrdinate constant)
+        {
+            return constant.Print().Equals(Print());
+        }
+        public string Print(bool round = false)
+        {
+            if (round) return $"Double(value: {_ConstantValue.Print()})";
+            else return $"Double(value: {_ConstantValue}";
         }
 
         public XElement WriteToXML()
@@ -48,5 +51,6 @@ namespace Functions.Ordinates
             ordinateElem.Add(constantElem);
             return ordinateElem;
         }
+#endregion
     }
 }

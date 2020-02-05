@@ -76,35 +76,35 @@ namespace FunctionsView.View
 
             if (TableVM.Rows.Count > 0)
             {
-                DistributionType distType = TableVM.Rows[0].SelectedDistributionType;
+                IOrdinateEnum distType = TableVM.Rows[0].SelectedDistributionType;
                 switch (distType)
                 {
-                    case DistributionType.Constant:
+                    case IOrdinateEnum.Constant:
                         {
                             AddNoneColumn(columnWidths);
                             break;
                         }
-                    case DistributionType.Normal:
+                    case IOrdinateEnum.Normal:
                         {
                             AddNormalColumns(columnWidths);
                             break;
                         }
-                    case DistributionType.Triangular:
+                    case IOrdinateEnum.Triangular:
                         {
                             AddTriangularColumns(columnWidths);
                             break;
                         }
-                    case DistributionType.Uniform:
+                    case IOrdinateEnum.Uniform:
                         {
                             AddUniformColumns(columnWidths);
                             break;
                         }
-                    case DistributionType.TruncatedNormal:
+                    case IOrdinateEnum.TruncatedNormal:
                         {
                             AddTruncatedNormalColumns(columnWidths);
                             break;
                         }
-                    case DistributionType.Beta4Parameters:
+                    case IOrdinateEnum.Beta4Parameters:
                         {
                             AddBetaColumns(columnWidths);
                             break;

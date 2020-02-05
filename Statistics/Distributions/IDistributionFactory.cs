@@ -54,7 +54,7 @@ namespace Statistics
         {
             if (distribution.IsNull()) throw new ArgumentNullException(paramName: nameof(distribution));
             if (sampleProbabilities.IsNull()) sampleProbabilities = GenerateSampleProbabilities(distribution.SampleSize);
-            if (sampleProbabilities.IsNullorNonFiniteItem()) throw new ArgumentNullException(nameof(sampleProbabilities), "The specified or generated sample probabilities contain one or more null or non-finite numerical elements.");
+            if (sampleProbabilities.IsNullOrNonFiniteItem()) throw new ArgumentNullException(nameof(sampleProbabilities), "The specified or generated sample probabilities contain one or more null or non-finite numerical elements.");
             List<double> randoms = new List<double>();
             foreach (var p in sampleProbabilities) randoms.Add(distribution.InverseCDF(p));
             return Fit(randoms, distribution.Type);

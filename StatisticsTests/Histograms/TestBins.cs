@@ -41,12 +41,12 @@ namespace StatisticsTests.Histograms
     [ExcludeFromCodeCoverage]
     public class Test 
     {
-        [Theory]
-        [ClassData(typeof(TestBins))]
-        public void TestMidPoint(IBin bin, double min, double max, double midPoint, int n)
-        {
-            Assert.Equal(midPoint, bin.MidPoint);
-        }
+        //[Theory]
+        //[ClassData(typeof(TestBins))]
+        //public void TestMidPoint(IBin bin, double min, double max, double midPoint, int n)
+        //{
+        //    Assert.Equal(midPoint, bin.MidPoint);
+        //}
     }
 
     

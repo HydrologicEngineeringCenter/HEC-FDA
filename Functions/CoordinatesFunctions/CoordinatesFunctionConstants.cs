@@ -13,10 +13,7 @@ namespace Functions.CoordinatesFunctions
     {
         #region Properties
         public List<ICoordinate> Coordinates { get; }
-
-        //public Tuple<double, double> Range { get; }
         public Utilities.IRange<double> Range { get; }
-        //public Tuple<double, double> Domain { get; }
         public Utilities.IRange<double> Domain { get; }
         public InterpolationEnum Interpolator { get; }
         public OrderedSetEnum Order { get; }
@@ -25,17 +22,17 @@ namespace Functions.CoordinatesFunctions
         public bool IsInvertible { get; }
 
         public bool IsDistributed => false;
-        public DistributionType DistributionType 
+        public IOrdinateEnum DistributionType 
         { 
             get
             {
                 if(Coordinates.Count>0)
                 {
-                    return Coordinates[0].Y.DistributionType;
+                    return Coordinates[0].Y.Type;
                 }
                 else
                 {
-                    return DistributionType.NotSupported;
+                    return IOrdinateEnum.NotSupported;
                 }
 
             }
@@ -464,6 +461,26 @@ namespace Functions.CoordinatesFunctions
         }
         private bool IsOnRange(double y) => y < Range.Min || y > Range.Max ? false : true;
         #endregion
+
+        //This is a bit of code I'm adding slowly - to allow me to interpolate graphical frequency functions.
+        public ICoordinate Spline(double t)
+        {
+            // I think this requires that t is a double [0, 1]
+            t = t - (int)t;
+            double t2 = t * t, t3 = t2 * t;
+            // These ps are index points.
+            // I think the ps below *might need to* be adjusted based on the value of the actual coordinates.
+            int p0 = (int)t, p1 = p0 + 1, p2 = p1 + 1, p3 = p2 + 1;
+            //these are influential field values (how much the line is being pulled toward each point.
+            double q1 = -t3 + 2d * t2 - t;
+            double q2 =  3d * t3 - 5d * t2 + 2d;
+            double q3 = -3d * 4d * t2 + t;
+            double q4 = t3 - t2;
+            // tx
+            double tx = 0.5 * Coordinates[p0].X.Value() * q1 + Coordinates[p1].X.Value() * q2 + Coordinates[p2].X.Value() * q3 + Coordinates[p3].X.Value() * q4;
+            double ty = 0.5 * Coordinates[p0].Y.Value() * q1 + Coordinates[p1].Y.Value() * q2 + Coordinates[p2].Y.Value() * q3 + Coordinates[p3].Y.Value() * q4;
+            return ICoordinateFactory.Factory(tx, ty);
+        }
 
         #region Compose()
         public IFunction Compose(IFunction g)

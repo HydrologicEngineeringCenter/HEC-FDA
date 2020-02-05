@@ -58,12 +58,12 @@ namespace ModelTests.Condition.ComputePoint
             {
                 1,2,3,4,5
             };
-            List<IDistributedValue> ys = new List<IDistributedValue>();
-            ys.Add(DistributedValueFactory.Factory(new Normal(1, 0)));
-            ys.Add(DistributedValueFactory.Factory(new Normal(1, .1)));
-            ys.Add(DistributedValueFactory.Factory(new Normal(1, .2)));
-            ys.Add(DistributedValueFactory.Factory(new Normal(1, .3)));
-            ys.Add(DistributedValueFactory.Factory(new Normal(1, .4)));
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>();
+            ys.Add(IDistributedOrdinateFactory.Factory(new Normal(1, 0)));
+            ys.Add(IDistributedOrdinateFactory.Factory(new Normal(1, .1)));
+            ys.Add(IDistributedOrdinateFactory.Factory(new Normal(1, .2)));
+            ys.Add(IDistributedOrdinateFactory.Factory(new Normal(1, .3)));
+            ys.Add(IDistributedOrdinateFactory.Factory(new Normal(1, .4)));
 
 
             ICoordinatesFunction function = ICoordinatesFunctionsFactory.Factory(xs, ys);

@@ -22,12 +22,12 @@ namespace FunctionsTests.Utilities.Samplers
             DistributionSampler distSampler = new DistributionSampler();
 
             List<double> xs = new List<double>() { 0, 1, 2, 3 };
-            List<IDistributedValue> ys = new List<IDistributedValue>()
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
             {
-                DistributedValueFactory.Factory( new Normal(1, 0)),
-                DistributedValueFactory.Factory( new Normal(1, 0)),
-                DistributedValueFactory.Factory( new Normal(1, 0)),
-                DistributedValueFactory.Factory( new Normal(1, 0))
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0))
             };
             CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
 
@@ -59,12 +59,12 @@ namespace FunctionsTests.Utilities.Samplers
             DistributionSampler distSampler = new DistributionSampler();
 
             List<double> xs = new List<double>() { 0, 1, 2, 3 };
-            List<IDistributedValue> ys = new List<IDistributedValue>()
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
             {
-                DistributedValueFactory.Factory( new Normal(1, 0)),
-                DistributedValueFactory.Factory( new Normal(2, 1)),
-                DistributedValueFactory.Factory( new Normal(3, 2)),
-                DistributedValueFactory.Factory( new Normal(4, 3))
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(2, 1)),
+                IDistributedOrdinateFactory.Factory( new Normal(3, 2)),
+                IDistributedOrdinateFactory.Factory( new Normal(4, 3))
             };
             CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
 
@@ -154,12 +154,12 @@ namespace FunctionsTests.Utilities.Samplers
             DistributionSampler distSampler = new DistributionSampler();
 
             List<double> xs = new List<double>() { 0, 1, 2, 3 };
-            List<IDistributedValue> ys = new List<IDistributedValue>()
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
             {
-                DistributedValueFactory.Factory( new Triangular(5, 10, 15)),
-                DistributedValueFactory.Factory( new Triangular(10,20,30)),
-                DistributedValueFactory.Factory( new Triangular(20,30,40)),
-                DistributedValueFactory.Factory( new Triangular(30,40,50))
+                IDistributedOrdinateFactory.Factory( new Triangular(5, 10, 15)),
+                IDistributedOrdinateFactory.Factory( new Triangular(10,20,30)),
+                IDistributedOrdinateFactory.Factory( new Triangular(20,30,40)),
+                IDistributedOrdinateFactory.Factory( new Triangular(30,40,50))
             };
             CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
 
@@ -185,12 +185,12 @@ namespace FunctionsTests.Utilities.Samplers
             DistributionSampler distSampler = new DistributionSampler();
 
             List<double> xs = new List<double>() { 0, 1, 2, 3 };
-            List<IDistributedValue> ys = new List<IDistributedValue>()
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
             {
-                DistributedValueFactory.Factory( new Triangular(5, 10, 15)),
-                DistributedValueFactory.Factory( new Triangular(10,20,30)),
-                DistributedValueFactory.Factory( new Triangular(20,30,40)),
-                DistributedValueFactory.Factory( new Triangular(30,40,50))
+                IDistributedOrdinateFactory.Factory( new Triangular(5, 10, 15)),
+                IDistributedOrdinateFactory.Factory( new Triangular(10,20,30)),
+                IDistributedOrdinateFactory.Factory( new Triangular(20,30,40)),
+                IDistributedOrdinateFactory.Factory( new Triangular(30,40,50))
             };
             CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
 
@@ -216,12 +216,12 @@ namespace FunctionsTests.Utilities.Samplers
             DistributionSampler distSampler = new DistributionSampler();
 
             List<double> xs = new List<double>() { 0, 1, 2, 3 };
-            List<IDistributedValue> ys = new List<IDistributedValue>()
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
             {
-                DistributedValueFactory.Factory( new Triangular(5, 10, 15)),
-                DistributedValueFactory.Factory( new Triangular(10,20,30)),
-                DistributedValueFactory.Factory( new Triangular(20,30,40)),
-                DistributedValueFactory.Factory( new Triangular(30,40,50))
+                IDistributedOrdinateFactory.Factory( new Triangular(5, 10, 15)),
+                IDistributedOrdinateFactory.Factory( new Triangular(10,20,30)),
+                IDistributedOrdinateFactory.Factory( new Triangular(20,30,40)),
+                IDistributedOrdinateFactory.Factory( new Triangular(30,40,50))
             };
             CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
 
@@ -250,10 +250,10 @@ namespace FunctionsTests.Utilities.Samplers
             DistributionSampler distSampler = new DistributionSampler();
 
             List<double> xs = new List<double>() { 0, 1};
-            List<IDistributedValue> ys = new List<IDistributedValue>()
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
             {
-                DistributedValueFactory.Factory( new Uniform(5, 10)),
-                DistributedValueFactory.Factory( new Uniform(10,20)),
+                IDistributedOrdinateFactory.Factory( new Uniform(5, 10)),
+                IDistributedOrdinateFactory.Factory( new Uniform(10,20)),
             };
             CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
 
@@ -277,10 +277,10 @@ namespace FunctionsTests.Utilities.Samplers
             DistributionSampler distSampler = new DistributionSampler();
 
             List<double> xs = new List<double>() { 0, 1 };
-            List<IDistributedValue> ys = new List<IDistributedValue>()
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
             {
-                DistributedValueFactory.Factory( new Uniform(5, 10)),
-                DistributedValueFactory.Factory( new Uniform(10,20)),
+                IDistributedOrdinateFactory.Factory( new Uniform(5, 10)),
+                IDistributedOrdinateFactory.Factory( new Uniform(10,20)),
             };
             CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
 
@@ -303,10 +303,10 @@ namespace FunctionsTests.Utilities.Samplers
             DistributionSampler distSampler = new DistributionSampler();
 
             List<double> xs = new List<double>() { 0, 1 };
-            List<IDistributedValue> ys = new List<IDistributedValue>()
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
             {
-                DistributedValueFactory.Factory( new Uniform(5, 10)),
-                DistributedValueFactory.Factory( new Uniform(10,20)),
+                IDistributedOrdinateFactory.Factory( new Uniform(5, 10)),
+                IDistributedOrdinateFactory.Factory( new Uniform(10,20)),
             };
             CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
 

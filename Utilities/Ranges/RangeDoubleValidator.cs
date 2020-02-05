@@ -5,27 +5,32 @@ using System.Text;
 
 namespace Utilities.Ranges
 {
-    internal class RangeDoubleValidator: IValidator<IRange<double>>
+    internal class RangeDoubleValidator: IValidator<RangeDouble>
     {
         internal RangeDoubleValidator()
         {
         }
 
-        public bool IsValid(IRange<double> obj, out IEnumerable<IMessage> msgs)
+        public bool IsValid(RangeDouble obj, out IEnumerable<IMessage> msgs)
         {
             msgs = ReportErrors(obj);
             return msgs.Max() < IMessageLevels.Error;
         }
-        public IEnumerable<IMessage> ReportErrors(IRange<double> obj)
+        public IEnumerable<IMessage> ReportErrors(RangeDouble obj)
         {
+            bool requirements = false;
             List<IMessage> msgs = new List<IMessage>();
             if (obj.IsNull()) throw new ArgumentNullException(nameof(obj), "The could not be validated because it is null.");
-            if (!ValidationExtensions.IsRange(obj.Min, obj.Max))
+            if (!ValidationExtensions.IsRange(obj.Min, obj.Max, true)) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The range: {obj.Print(true)} is invalid. It does not represent a logical range."));
+            if (!obj.Min.IsFinite() || !obj.Max.IsFinite())
             {
-                if (!obj.Min.IsFinite() || !obj.Max.IsFinite()) 
-                    msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The specified range: {obj.Print()} is invalid because it does not represent a finite logical range."));
-                else 
-                    msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The specified range: {obj.Print()} is invalid because it does not represent a logical range."));
+                if (obj._FiniteRequirement) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The range: {obj.Print(true)} is invalid because it is not a finite range."));
+                else msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The range: {obj.Print(true)} is not finite. This is allowed but may generate illogical results."));
+            }
+            if (obj.Min == obj.Max)
+            {
+                if (obj._MoreThanSingleValueRequirement) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The range: {obj.Print(true)} is invalid. It does not represent a logical range containing more than a single value."));
+                else msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The range minimum and maximum values: {obj.Min} are identical. This is allowed but makes results in a range that contains a single point."));
             }
             return msgs;
         }

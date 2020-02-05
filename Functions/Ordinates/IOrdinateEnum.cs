@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Functions
 {
-    public enum DistributionType
+    public enum IOrdinateEnum
     {
         /// <summary>
         /// Default value likely to lead to an error.

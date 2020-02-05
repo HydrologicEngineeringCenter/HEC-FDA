@@ -14,7 +14,6 @@ namespace FunctionsTests.Ordinates
         /// Tests the Constant constructor with double value.
         /// </summary>
         /// <param name="value"></param>
-
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]
@@ -37,24 +36,11 @@ namespace FunctionsTests.Ordinates
         [InlineData(99)]
         [InlineData(Double.MaxValue)]
         [InlineData(Double.MinValue)]
-        public void Range_GoodInput_Returns_Tuple(double value)
+        public void Range_GoodInput_Returns_RangeEqualToValue(double value)
         {
             Constant constant = new Constant(value);
-            Tuple<double, double> range = constant.Range;
-            Assert.True(range.Item1 == range.Item2 && range.Item1 == value);
+            Assert.True(constant.Range.Min == constant.Range.Max && constant.Range.Min == value);
         }
-
-        ///// <summary>
-        ///// Tests that the IsDistributed property always returns false.
-        ///// </summary>
-        ///// <param name="value"></param>
-        //[Theory]
-        //[InlineData(0)]
-        //public void IsDistributed_GoodInput_Returns_Bool(double value)
-        //{
-        //    Constant constant = new Constant(value);
-        //    Assert.False(constant.IsDistributed);
-        //}
 
         /// <summary>
         /// Tests the Equals method returns true for Constants that have been given the same value.

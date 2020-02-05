@@ -9,14 +9,14 @@ namespace FunctionsTests.Ordinates
 {
     public class DistributionTestData
     {
-        public static TheoryData<IDistributedValue> GoodData_Distributed =>
-            new TheoryData<IDistributedValue>
+        public static TheoryData<IDistributedOrdinate> GoodData_Distributed =>
+            new TheoryData<IDistributedOrdinate>
             {
-                { new DistributedValue( new Normal(1,1))},
-                { new DistributedValue( new Normal(0,0))},
-                { new DistributedValue( new Normal(2,2))},
-                { new DistributedValue( new Normal(3,3))},
-                { new DistributedValue( new Normal(4,4))},
+                { new Distribution( new Normal(1,1))},
+                { new Distribution( new Normal(0,0))},
+                { new Distribution( new Normal(2,2))},
+                { new Distribution( new Normal(3,3))},
+                { new Distribution( new Normal(4,4))},
 
             };
     }

@@ -22,7 +22,8 @@ namespace Statistics.Validation
         {
             List<IMessage> msgs = new List<IMessage>();
             if (obj.IsNull()) throw new ArgumentNullException(nameof(obj), "The Bin could not be validated because it is null.");
-            if (!obj.Range.IsFinite() || !obj.Count.IsOnRange(0, int.MaxValue)) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"{Resources.InvalidParameterizationNotice(obj.Print(true))} {Bin.Requirements(false)}."));            
+            if (obj.Range.Messages.Max() > IMessageLevels.Message || obj.Count < 0) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"{Resources.InvalidParameterizationNotice(obj.Print(true))} {Bin.Requirements(false)}."));
+            if (obj.Range.Messages.Any()) msgs.Add(IMessageFactory.Factory(obj.Range.Messages.Max(), $"The {obj.Print(true)} contains the following messages: \r\n{obj.Range.Messages.PrintTabbedListOfMessages()}"));
             if (!obj.MidPoint.IsFinite()) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The histogram {obj.Print(true)} is invalid because its midpoint value: {obj.MidPoint.Print()} defined by the equations: (BinMax: {obj.Range.Max} - BinMin: {obj.Range.Min}) / 2 + BinMin: {obj.Range.Min}, is not a finite numerical value."));
             return msgs;
         }

@@ -32,12 +32,12 @@ namespace FunctionsTests.Utilities.Samplers
             ConstantSampler constSampler = new ConstantSampler();
 
             List<double> xs = new List<double>() { 0, 1, 2, 3 };
-            List<IDistributedValue> ys = new List<IDistributedValue>()
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
             {
-                DistributedValueFactory.Factory( new Normal(1, 0)),
-                DistributedValueFactory.Factory( new Normal(1, 0)),
-                DistributedValueFactory.Factory( new Normal(1, 0)),
-                DistributedValueFactory.Factory( new Normal(1, 0))
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0))
             };
             CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
             Assert.False(constSampler.CanSample(distributedFunc));

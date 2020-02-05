@@ -21,14 +21,14 @@ namespace FunctionsView.View
         public static int COL_DIST_WIDTH = 100;
         public static int COL_INTERP_WIDTH = 100;
 
-        private static readonly Dictionary<DistributionType, int[]> DYNAMIC_COL_WIDTHS = new Dictionary<DistributionType, int[]>()
+        private static readonly Dictionary<IOrdinateEnum, int[]> DYNAMIC_COL_WIDTHS = new Dictionary<IOrdinateEnum, int[]>()
         {
-            { DistributionType.Constant, new int[]{100 } },
-            {DistributionType.Normal, new int[]{100,50} },
-            { DistributionType.Uniform, new int[]{100,100 } },
-            { DistributionType.Triangular, new int[]{100,100,100 } },
-            { DistributionType.Beta4Parameters, new int[]{50,50,100,100 } },
-            { DistributionType.TruncatedNormal, new int[]{100,50,100,100 } },
+            { IOrdinateEnum.Constant, new int[]{100 } },
+            {IOrdinateEnum.Normal, new int[]{100,50} },
+            { IOrdinateEnum.Uniform, new int[]{100,100 } },
+            { IOrdinateEnum.Triangular, new int[]{100,100,100 } },
+            { IOrdinateEnum.Beta4Parameters, new int[]{50,50,100,100 } },
+            { IOrdinateEnum.TruncatedNormal, new int[]{100,50,100,100 } },
 
         };
 
@@ -129,9 +129,9 @@ namespace FunctionsView.View
             return (COL_X_WIDTH + totalDynamicWidths + COL_DIST_WIDTH + COL_INTERP_WIDTH);
         }
 
-        private static List<DistributionType> GetUniqueListOfDistributionsFromRows(List<CoordinatesFunctionRowItem> rows)
+        private static List<IOrdinateEnum> GetUniqueListOfDistributionsFromRows(List<CoordinatesFunctionRowItem> rows)
         {
-            List<DistributionType> retval = new List<DistributionType>();
+            List<IOrdinateEnum> retval = new List<IOrdinateEnum>();
             foreach(CoordinatesFunctionRowItem row in rows)
             {
                 if(!retval.Contains(row.SelectedDistributionType))
@@ -143,10 +143,10 @@ namespace FunctionsView.View
         }
 
 
-        private static int GetLargestNumberOfColumns(List<DistributionType> distributions)
+        private static int GetLargestNumberOfColumns(List<IOrdinateEnum> distributions)
         {
             int max = 0;
-            foreach(DistributionType dist in distributions)
+            foreach(IOrdinateEnum dist in distributions)
             {
                 if(DYNAMIC_COL_WIDTHS[dist].Length > max)
                 {
@@ -156,7 +156,7 @@ namespace FunctionsView.View
             return max;
         }
 
-        private static int[] GetColumnWidths(List<DistributionType> distributions)
+        private static int[] GetColumnWidths(List<IOrdinateEnum> distributions)
         {
             //I potentially have rows of several different distribution types
             //Find the type with the most number of columns. Then loop over all the dist types
@@ -167,7 +167,7 @@ namespace FunctionsView.View
             for (int i = 0; i < numColumns; i++)
             {
                 int maxWidth = 0;
-                foreach (DistributionType dist in distributions)
+                foreach (IOrdinateEnum dist in distributions)
                 {
                     if (i < DYNAMIC_COL_WIDTHS[dist].Length)
                     {
@@ -191,7 +191,7 @@ namespace FunctionsView.View
         /// <returns></returns>
         public static int[] GetComputedColumnWidths(List<CoordinatesFunctionRowItem> rows)
         {
-            List<DistributionType> uniqueDistributionTypes = GetUniqueListOfDistributionsFromRows(rows);
+            List<IOrdinateEnum> uniqueDistributionTypes = GetUniqueListOfDistributionsFromRows(rows);
             return GetColumnWidths(uniqueDistributionTypes);
         }   
 

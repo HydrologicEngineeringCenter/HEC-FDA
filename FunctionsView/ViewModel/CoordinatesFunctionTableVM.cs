@@ -18,7 +18,7 @@ namespace FunctionsView.ViewModel
         public event EventHandler NoMoreRows;
         public event EventHandler TableWasModified;
 
-        public DistributionType DistributionType
+        public IOrdinateEnum DistributionType
         {
             get { return Rows[0].SelectedDistributionType; }
         }
@@ -153,36 +153,36 @@ namespace FunctionsView.ViewModel
         private CoordinatesFunctionRowItem CreateDefaultRow()
         {
             InterpolationEnum interpType = Rows[0].SelectedInterpolationType;
-            DistributionType distType = Rows[0].SelectedDistributionType;
+            IOrdinateEnum distType = Rows[0].SelectedDistributionType;
             CoordinatesFunctionRowItem row = null;
             switch (distType)
             {
-                case DistributionType.Constant:
+                case IOrdinateEnum.Constant:
                     {
                         row = new CoordinatesFunctionRowItemBuilder(0).WithConstantDist(0, interpType).Build();
                         break;
                     }
-                case DistributionType.Normal:
+                case IOrdinateEnum.Normal:
                     {
                         row = new CoordinatesFunctionRowItemBuilder(0).WithNormalDist(0, 0, interpType).Build();
                         break;
                     }
-                case DistributionType.Triangular:
+                case IOrdinateEnum.Triangular:
                     {
                         row = new CoordinatesFunctionRowItemBuilder(0).WithTriangularDist(0, 0, 0, interpType).Build();
                         break;
                     }
-                case DistributionType.Uniform:
+                case IOrdinateEnum.Uniform:
                     {
                         row = new CoordinatesFunctionRowItemBuilder(0).WithUniformDist(0, 0, interpType).Build();
                         break;
                     }
-                case DistributionType.TruncatedNormal:
+                case IOrdinateEnum.TruncatedNormal:
                     {
                         row = new CoordinatesFunctionRowItemBuilder(0).WithTruncatedNormalDist(0, 0, 0, 0, interpType).Build();
                         break;
                     }
-                case DistributionType.Beta4Parameters:
+                case IOrdinateEnum.Beta4Parameters:
                     {
                         row = new CoordinatesFunctionRowItemBuilder(0).WithBetaDist(0, 0, 0, 0, interpType).Build();
                         break;

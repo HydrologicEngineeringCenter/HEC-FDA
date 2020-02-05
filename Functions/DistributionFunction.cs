@@ -9,13 +9,13 @@ namespace Functions
 {
     internal class DistributionFunction : IFunction, IValidate<ICoordinatesFunction>
     {
-        private readonly IDistributedValue _Distribution;
+        private readonly IDistributedOrdinate _Distribution;
         private readonly CoordinatesFunctionConstants _CoordinatesFunction;
         
         public bool IsInvertible => true;
         public IRange<double> Domain { get; }
         public IRange<double> Range => _Distribution.Range;
-        public DistributionType DistributionType => _Distribution.Type;
+        public IOrdinateEnum DistributionType => _Distribution.Type;
         public OrderedSetEnum Order => OrderedSetEnum.StrictlyIncreasing;
         public InterpolationEnum Interpolator => InterpolationEnum.Statistical;
         public List<ICoordinate> Coordinates { get; }
@@ -24,7 +24,7 @@ namespace Functions
         public bool IsValid { get; }
         public IEnumerable<IMessage> Messages { get; }
 
-        internal DistributionFunction(IDistributedValue distribution)
+        internal DistributionFunction(IDistributedOrdinate distribution)
         {
             _Distribution = distribution;
             Domain = IRangeFactory.Factory(0, 1);
@@ -102,8 +102,6 @@ namespace Functions
         public XElement WriteToXML()
         {
             throw new NotImplementedException();
-        }
-
-        
+        }  
     }
 }

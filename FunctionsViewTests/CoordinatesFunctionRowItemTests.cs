@@ -49,7 +49,7 @@ namespace FunctionsViewTests
                 .WithNormalDist(mean,stDev, InterpolationEnum.None);
             CoordinatesFunctionRowItem row = builder.Build();
 
-            IDistributedValue distValue = DistributedValueFactory.FactoryNormal(mean, stDev);
+            IDistributedOrdinate distValue = IDistributedOrdinateFactory.FactoryNormal(mean, stDev);
             ICoordinate testCoord = ICoordinateFactory.Factory(x, distValue);
 
             ICoordinate coord = row.CreateCoordinateFromRow();
@@ -72,7 +72,7 @@ namespace FunctionsViewTests
                 .WithUniformDist(min,max, InterpolationEnum.None);
             CoordinatesFunctionRowItem row = builder.Build();
 
-            IDistributedValue distValue = DistributedValueFactory.FactoryUniform(min,max);
+            IDistributedOrdinate distValue = IDistributedOrdinateFactory.FactoryUniform(min,max);
             ICoordinate testCoord = ICoordinateFactory.Factory(x, distValue);
 
             ICoordinate coord = row.CreateCoordinateFromRow();

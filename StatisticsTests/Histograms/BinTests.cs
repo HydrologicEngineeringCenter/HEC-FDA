@@ -131,7 +131,8 @@ namespace StatisticsTests.Histograms
         [InlineData(0,-1)]
         public void IsValid_BadRange_Returns_False(double min, double max)
         {
-            Assert.False(new Bin(min, max, n: 0).IsValid);
+            var testObj = new Bin(min, max, n: 0);
+            Assert.False(testObj.IsValid);
         }
 
         /// <summary>
@@ -168,9 +169,8 @@ namespace StatisticsTests.Histograms
         [InlineData(double.PositiveInfinity)]
         public void Errors_NewBinNotFiniteMinimumValue_Returns_TwoErrorString(double min)
         {
-            //ValidationRegistry.Register(new BinValidator());
-            if (min == double.PositiveInfinity) Assert.True(new Bin(min, max: 2, n: 0).Messages.Count() == 3);
-            else Assert.True(new Bin(min, max: 2, n: 0).Messages.Count() == 2);
+            var testObj = new Bin(min, max: 2, n: 0);
+            Assert.True(testObj.Messages.Count() == 3);
         }
         /// <summary>
         /// Test that new bin non finite <see cref="Bin.Maximum"/> values: (<see cref="double.NegativeInfinity"/>, <see cref="double.PositiveInfinity"/>, <see cref="double.NaN"/>) return two errors (not finite range, not finite midpoint) in the <see cref="Bin.Errors"/> property.

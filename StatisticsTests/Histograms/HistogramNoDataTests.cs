@@ -113,7 +113,7 @@ namespace StatisticsTests.Histograms
 
         #region Properties Tests
         /// <summary>
-        /// Test that for a variety of good data examples the requested minimum value is provided as the <see cref="Histogram.Minimum"/> property.
+        /// Test that for a variety of good data examples the requested <paramref name="min"/> value is provided as the <see cref="Histogram.Range.Min"/> property.
         /// </summary>
         /// <param name="min"></param>
         /// <param name="max"></param>
@@ -131,7 +131,7 @@ namespace StatisticsTests.Histograms
         }
         
         /// <summary>
-        /// Test that for a variety of good data examples the requested maximum value is provided as the <see cref="Histogram.Minimum"/> property.
+        /// Test that for a variety of good data examples the requested <paramref name="max"/> value is provided as the <see cref="Histogram.Range.Max"/> property.
         /// </summary>
         /// <param name="min"></param>
         /// <param name="max"></param>
@@ -145,7 +145,7 @@ namespace StatisticsTests.Histograms
         public void Max_GoodDataEmptyHistogram_Returns_SpecifiedMax(double min, double max, double width)
         {
             var testobj = new HistogramNoData(min, max, width);
-            Assert.InRange(testobj.Range.Max, max, max + width - double.Epsilon);
+            Assert.InRange(testobj.Range.Max, max, max + width);
         }
         
         /// <summary>

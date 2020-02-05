@@ -172,13 +172,13 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             Sampler.RegisterSampler(new DistributionSampler());
 
             List<double> xs = new List<double>() { 0, .25, .5, .75, 1 };
-            List<IDistributedValue> ys = new List<IDistributedValue>()
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
                    {
-                       DistributedValueFactory.Factory( new Normal(1,2)),
-                       DistributedValueFactory.Factory(new Triangular(3,4,5)),
-                       DistributedValueFactory.Factory(new Uniform(5,6)),
-                       DistributedValueFactory.Factory(new Normal(6,1)),
-                       DistributedValueFactory.Factory(new Uniform(7,8)),
+                       IDistributedOrdinateFactory.Factory( new Normal(1,2)),
+                       IDistributedOrdinateFactory.Factory(new Triangular(3,4,5)),
+                       IDistributedOrdinateFactory.Factory(new Uniform(5,6)),
+                       IDistributedOrdinateFactory.Factory(new Normal(6,1)),
+                       IDistributedOrdinateFactory.Factory(new Uniform(7,8)),
 
                    };
 
@@ -213,13 +213,13 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             Sampler.RegisterSampler(new DistributionSampler());
 
             List<double> xs = new List<double>() { 0, .25, .5, .75, 1 };
-            List<IDistributedValue> ys = new List<IDistributedValue>()
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
                    {
-                       DistributedValueFactory.Factory( new Normal(1,2)),
-                       DistributedValueFactory.Factory(new Triangular(3,4,5)),
-                       DistributedValueFactory.Factory(new Uniform(5,6)),
-                       DistributedValueFactory.Factory(new Normal(6,1)),
-                       DistributedValueFactory.Factory(new Uniform(7,8)),
+                       IDistributedOrdinateFactory.Factory( new Normal(1,2)),
+                       IDistributedOrdinateFactory.Factory(new Triangular(3,4,5)),
+                       IDistributedOrdinateFactory.Factory(new Uniform(5,6)),
+                       IDistributedOrdinateFactory.Factory(new Normal(6,1)),
+                       IDistributedOrdinateFactory.Factory(new Uniform(7,8)),
 
                    };
 
@@ -254,13 +254,13 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             Sampler.RegisterSampler(new DistributionSampler());
 
             List<double> xs = new List<double>() { 0, .25, .5, .75, 1 };
-            List<IDistributedValue> ys = new List<IDistributedValue>()
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
                    {
-                       DistributedValueFactory.Factory( new Normal(1,2)),
-                       DistributedValueFactory.Factory(new Triangular(3,4,5)),
-                       DistributedValueFactory.Factory(new Uniform(5,6)),
-                       DistributedValueFactory.Factory(new Normal(6,1)),
-                       DistributedValueFactory.Factory(new Uniform(7,8)),
+                       IDistributedOrdinateFactory.Factory( new Normal(1,2)),
+                       IDistributedOrdinateFactory.Factory(new Triangular(3,4,5)),
+                       IDistributedOrdinateFactory.Factory(new Uniform(5,6)),
+                       IDistributedOrdinateFactory.Factory(new Normal(6,1)),
+                       IDistributedOrdinateFactory.Factory(new Uniform(7,8)),
 
                    };
 
@@ -334,13 +334,13 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions.FrequencyFunctio
             ICoordinatesFunction coordFunction1 = ICoordinatesFunctionsFactory.Factory(xs, ys);
 
             List<double> xs2 = new List<double>() {.5,.6,.7,.8,.9 };
-            List<IDistributedValue> ys2 = new List<IDistributedValue>()
+            List<IDistributedOrdinate> ys2 = new List<IDistributedOrdinate>()
                    {
-                       DistributedValueFactory.Factory( new Normal(1,2)),
-                       DistributedValueFactory.Factory(new Triangular(3,4,5)),
-                       DistributedValueFactory.Factory(new Uniform(5,6)),
-                       DistributedValueFactory.Factory(new Normal(6,1)),
-                       DistributedValueFactory.Factory(new Uniform(7,8)),
+                       IDistributedOrdinateFactory.Factory( new Normal(1,2)),
+                       IDistributedOrdinateFactory.Factory(new Triangular(3,4,5)),
+                       IDistributedOrdinateFactory.Factory(new Uniform(5,6)),
+                       IDistributedOrdinateFactory.Factory(new Normal(6,1)),
+                       IDistributedOrdinateFactory.Factory(new Uniform(7,8)),
 
                    };
 

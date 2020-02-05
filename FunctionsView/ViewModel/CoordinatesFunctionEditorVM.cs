@@ -133,7 +133,7 @@ namespace FunctionsView.ViewModel
                 //lst_tables.Items.Add(new TableTopControl(tableType));
 
                 ObservableCollection<CoordinatesFunctionRowItem> rows = new ObservableCollection<CoordinatesFunctionRowItem>();
-                DistributionType distType = rowItems[0].SelectedDistributionType;
+                IOrdinateEnum distType = rowItems[0].SelectedDistributionType;
                 InterpolationEnum interpType = rowItems[0].SelectedInterpolationType;
                 rows.Add(rowItems[0]);
                 for (int i = 1; i < rowItems.Count; i++)
@@ -359,10 +359,10 @@ namespace FunctionsView.ViewModel
         private CoordinatesFunctionRowItem CreateRowItemFromCoordinate(ICoordinate coord, InterpolationEnum interpolator)
         {
             double x = coord.X.Value();
-            DistributionType type = coord.Y.DistributionType;
+            IOrdinateEnum type = coord.Y.Type;
             switch (type)
             {
-                case DistributionType.Constant:
+                case IOrdinateEnum.Constant:
                     {
                         double y = coord.Y.Value();
                         CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
@@ -370,33 +370,33 @@ namespace FunctionsView.ViewModel
                                 .Build();
                         return row;
                     }
-                case DistributionType.Normal:
+                case IOrdinateEnum.Normal:
                     {
-                        IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
+                        IDistributedOrdinate dist = ((Distribution)coord.Y).GetDistribution;
                         CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
                             .WithNormalDist(dist.Mean, dist.StandardDeviation, interpolator)
                             .Build();
                         return row;
                     }
-                case DistributionType.Triangular:
+                case IOrdinateEnum.Triangular:
                     {
-                        IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
+                        IDistributedOrdinate dist = ((Distribution)coord.Y).GetDistribution;
                         CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
                             .WithTriangularDist(dist.Mode, dist.Range.Min, dist.Range.Max, interpolator)
                             .Build();
                         return row;
                     }
-                case DistributionType.Uniform:
+                case IOrdinateEnum.Uniform:
                     {
-                        IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
+                        IDistributedOrdinate dist = ((Distribution)coord.Y).GetDistribution;
                         CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
                             .WithUniformDist(dist.Range.Min, dist.Range.Max, interpolator)
                             .Build();
                         return row;
                     }
-                case DistributionType.TruncatedNormal:
+                case IOrdinateEnum.TruncatedNormal:
                     {
-                        IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
+                        IDistributedOrdinate dist = ((Distribution)coord.Y).GetDistribution;
                         CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
                             .WithTruncatedNormalDist(dist.Mean, dist.StandardDeviation, dist.Range.Min, dist.Range.Max, interpolator)
                             .Build();

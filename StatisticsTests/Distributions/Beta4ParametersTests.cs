@@ -14,8 +14,8 @@ namespace StatisticsTests.Distributions
             //Random r = new Random(1);
             //double[] data = new double[100];
             //for (int i = 0; i < 100; i++) data[i] = r.NextDouble();
-            var data = Statistics.IDataFactory.Factory(BoxMuller());
-            var testObj = Statistics.Distributions.Beta4Parameters.Fit(data);
+            //var data = Statistics.IDataFactory.Factory(BoxMuller());
+            var testObj = Statistics.Distributions.Beta4Parameters.Fit(BoxMuller());
             //throws exception due to bounds 1 and 2 - check this
             Assert.True(false);
         }

@@ -29,7 +29,7 @@ namespace Functions
             List<ICoordinate> coords = new List<ICoordinate>();
             foreach (ICoordinate coord in Coordinates)
             {
-                coords.Add(new CoordinateConstants(new Constant(coord.X.Value()), new Constant(((Distribution)coord.Y).GetDistribution.InverseCDF(p))));
+                coords.Add(new CoordinateConstants(new Constant(coord.X.Value()), new Constant(((Distribution)coord.Y).InverseCDF(p))));
             }
             return coords;
         }

@@ -9,18 +9,18 @@ namespace Functions
     public interface IFunction : ICoordinatesFunction
     {
         /// <summary>
-        /// True if the inverse of the <see cref="IFunction"/> is a function (e.g. attempts to compute F(y) = x from F(x) = y).
+        /// <see langword="true"/> if the inverse of the <see cref="IFunction"/> is also a function (e.g. attempts to compute F(y) = x from F(x) = y).
         /// </summary>
         bool IsInvertible { get; }
         /// <summary>
-        /// Provides the minimum and maximum Y values for the function.
+        /// Provides the minimum and maximum Y values for the <see cref="IFunction"/>.
         /// </summary>
         Utilities.IRange<double> Range { get; }
         /// <summary>
-        /// Weights the Y ordinates with the X ordinate values to compute the trapezoidal Riemann sum for the <see cref="IFunction"/>.
+        /// Approximates the <see cref="IFunction"/> integral. For more information see: https://en.wikipedia.org/wiki/Trapezoidal_rule.
         /// </summary>
-        /// <remarks> Primarily intended for frequency functions, where the X ordinates represent the probability with which the Y ordinates occur. </remarks>
-        /// <returns> A double represented the expected value of Y ordinates, weighted by the X ordinate values. </returns>
+        /// <returns> The area under the xy-plane bounded by the <see cref="IFunction"/> <see cref="ICoordinatesFunction.Domain"/>. </returns>
+        /// <remarks> In the case that the <see cref="IFunction"/> <see cref="ICoordinatesFunction.Domain"/> describes the probability of the <see cref="IFunction.Range"/> values occurrence what is produced is a probability weighted expected value for the <see cref="IFunction"/>. </remarks>
         double TrapizoidalRiemannSum();
         /// <summary>
         /// Performs functional composition, producing a new <see cref="IFunction"/> h(x) such that h(x) = g(f(x)) where g(*) is the <paramref name="g"/> parameter. For more information see: https://en.wikipedia.org/wiki/Function_composition. 

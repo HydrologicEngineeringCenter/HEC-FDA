@@ -16,7 +16,7 @@ namespace Functions
             return new CoordinateConstants(new Constant(x),new Constant(y));
         }
 
-        public static ICoordinate Factory(double x, IDistributedValue y)
+        public static ICoordinate Factory(double x, Statistics.IDistribution y)
         {
             return new CoordinateVariableY(new Constant(x),new Distribution(y));
         }
@@ -80,8 +80,7 @@ namespace Functions
                             double mean = Convert.ToDouble(child.Attribute(SerializationConstants.MEAN).Value);
                             double stDev = Convert.ToDouble(child.Attribute(SerializationConstants.ST_DEV).Value);
                             int sample = Convert.ToInt32(child.Attribute(SerializationConstants.SAMPLE_SIZE).Value);
-                            IDistribution dist = IDistributionFactory.FactoryNormal(mean, stDev, sample);
-                            IDistributedValue distribution = new DistributedValue(dist);
+                            IDistribution distribution = IDistributionFactory.FactoryNormal(mean, stDev, sample);
                             return new Distribution(distribution);
                         }
                     case SerializationConstants.TRIANGULAR:
@@ -90,8 +89,7 @@ namespace Functions
                             double mostLikely = Convert.ToDouble(child.Attribute(SerializationConstants.MODE).Value);
                             double max = Convert.ToDouble(child.Attribute(SerializationConstants.MAX).Value);
                             int sample = Convert.ToInt32(child.Attribute(SerializationConstants.SAMPLE_SIZE).Value);
-                            IDistribution dist = IDistributionFactory.FactoryTriangular(min, mostLikely, max, sample);
-                            IDistributedValue distribution = new DistributedValue(dist);
+                            IDistribution distribution = IDistributionFactory.FactoryTriangular(min, mostLikely, max, sample);
                             return new Distribution(distribution);
                         }
                     case SerializationConstants.UNIFORM:
@@ -99,8 +97,7 @@ namespace Functions
                             double min = Convert.ToDouble(child.Attribute(SerializationConstants.MIN).Value);
                             double max = Convert.ToDouble(child.Attribute(SerializationConstants.MAX).Value);
                             int sample = Convert.ToInt32(child.Attribute(SerializationConstants.SAMPLE_SIZE).Value);
-                            IDistribution dist = IDistributionFactory.FactoryUniform(min, max, sample);
-                            IDistributedValue distribution = new DistributedValue(dist);
+                            IDistribution distribution = IDistributionFactory.FactoryUniform(min, max, sample);
                             return new Distribution(distribution);
                         }
                 }

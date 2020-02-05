@@ -59,12 +59,12 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions
             {
                 1,2,3,4,5
             };
-            List<IDistributedValue> ys = new List<IDistributedValue>();
-            ys.Add(DistributedValueFactory.Factory(new Normal(1, 0)));
-            ys.Add(DistributedValueFactory.Factory(new Normal(1, .1)));
-            ys.Add(DistributedValueFactory.Factory(new Normal(1, .2)));
-            ys.Add(DistributedValueFactory.Factory(new Normal(1, .3)));
-            ys.Add(DistributedValueFactory.Factory(new Normal(1, .4)));
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>();
+            ys.Add(IDistributedOrdinateFactory.Factory(new Normal(1, 0)));
+            ys.Add(IDistributedOrdinateFactory.Factory(new Normal(1, .1)));
+            ys.Add(IDistributedOrdinateFactory.Factory(new Normal(1, .2)));
+            ys.Add(IDistributedOrdinateFactory.Factory(new Normal(1, .3)));
+            ys.Add(IDistributedOrdinateFactory.Factory(new Normal(1, .4)));
 
 
             ICoordinatesFunction function = ICoordinatesFunctionsFactory.Factory(xs, ys);
@@ -93,12 +93,12 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions
             {
                 1,2,3,4,5
             };
-            List<IDistributedValue> ys = new List<IDistributedValue>();
-            ys.Add(DistributedValueFactory.Factory(new Triangular(.1,1,2)));
-            ys.Add(DistributedValueFactory.Factory(new Triangular(.2, 1, 3)));
-            ys.Add(DistributedValueFactory.Factory(new Triangular(.3, 1, 4)));
-            ys.Add(DistributedValueFactory.Factory(new Triangular(.4, 1, 5)));
-            ys.Add(DistributedValueFactory.Factory(new Triangular(.5, 1, 6)));
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>();
+            ys.Add(IDistributedOrdinateFactory.Factory(new Triangular(.1,1,2)));
+            ys.Add(IDistributedOrdinateFactory.Factory(new Triangular(.2, 1, 3)));
+            ys.Add(IDistributedOrdinateFactory.Factory(new Triangular(.3, 1, 4)));
+            ys.Add(IDistributedOrdinateFactory.Factory(new Triangular(.4, 1, 5)));
+            ys.Add(IDistributedOrdinateFactory.Factory(new Triangular(.5, 1, 6)));
 
 
             ICoordinatesFunction function = ICoordinatesFunctionsFactory.Factory(xs, ys);
@@ -127,12 +127,12 @@ namespace ModelTests.Condition.ComputePoint.ImpactAreaFunctions
             {
                 1,2,3,4,5
             };
-            List<IDistributedValue> ys = new List<IDistributedValue>();
-            ys.Add(DistributedValueFactory.Factory(new Uniform(.1, 2)));
-            ys.Add(DistributedValueFactory.Factory(new Uniform(.2,  3)));
-            ys.Add(DistributedValueFactory.Factory(new Uniform(.3,  4)));
-            ys.Add(DistributedValueFactory.Factory(new Uniform(.4,  5)));
-            ys.Add(DistributedValueFactory.Factory(new Uniform(.5,  6)));
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>();
+            ys.Add(IDistributedOrdinateFactory.Factory(new Uniform(.1, 2)));
+            ys.Add(IDistributedOrdinateFactory.Factory(new Uniform(.2,  3)));
+            ys.Add(IDistributedOrdinateFactory.Factory(new Uniform(.3,  4)));
+            ys.Add(IDistributedOrdinateFactory.Factory(new Uniform(.4,  5)));
+            ys.Add(IDistributedOrdinateFactory.Factory(new Uniform(.5,  6)));
 
 
             ICoordinatesFunction function = ICoordinatesFunctionsFactory.Factory(xs, ys);

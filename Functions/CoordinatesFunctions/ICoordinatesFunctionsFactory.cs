@@ -13,7 +13,7 @@ namespace Functions
 {
     public static class ICoordinatesFunctionsFactory
     {
-        public static ICoordinatesFunction Factory(IDistributedValue distribution, InterpolationEnum interpolator)
+        public static ICoordinatesFunction Factory(IDistributedOrdinate distribution, InterpolationEnum interpolator)
         {
             List<ICoordinate> coordinates = new List<ICoordinate>();
             double epsilon = (distribution.Range.Max - distribution.Range.Min) * 0.01, y = distribution.Range.Min + epsilon;
@@ -107,7 +107,7 @@ namespace Functions
         //    }
         //}
 
-        public static ICoordinatesFunction Factory(List<double> xs, List<IDistributedValue> ys)
+        public static ICoordinatesFunction Factory(List<double> xs, List<Statistics.IDistribution> ys)
         {
             //are lengths the same
             if (xs.Count == ys.Count)
@@ -127,26 +127,26 @@ namespace Functions
             }
         }
 
-        public static ICoordinatesFunction Factory(List<double> xs, List<IDistribution> ys)
-        {
-            //are lengths the same
-            if (xs.Count == ys.Count)
-            {
-                List<ICoordinate> coordinates = new List<ICoordinate>();
-                for (int i = 0; i < xs.Count; i++)
-                {
-                    IDistributedValue y = new DistributedValue(ys[i]);
-                    ICoordinate coordinate = ICoordinateFactory.Factory(xs[i], y);
-                    coordinates.Add(coordinate);
-                }
+        //public static ICoordinatesFunction Factory(List<double> xs, List<IDistribution> ys)
+        //{
+        //    //are lengths the same
+        //    if (xs.Count == ys.Count)
+        //    {
+        //        List<ICoordinate> coordinates = new List<ICoordinate>();
+        //        for (int i = 0; i < xs.Count; i++)
+        //        {
+        //            IDistributedOrdinate y = new Distribution(ys[i]);
+        //            ICoordinate coordinate = ICoordinateFactory.Factory(xs[i], y);
+        //            coordinates.Add(coordinate);
+        //        }
 
-                return new CoordinatesFunctionVariableYs(coordinates);
-            }
-            else
-            {
-                throw new ArgumentException("X values are a different length than the Y values.");
-            }
-        }
+        //        return new CoordinatesFunctionVariableYs(coordinates);
+        //    }
+        //    else
+        //    {
+        //        throw new ArgumentException("X values are a different length than the Y values.");
+        //    }
+        //}
         /// <summary>
         /// Inserts/adds coordinates to the function based off the x value of the coordinates.
         /// Coordinates have to be of the same type as the coordinates in the function. ie (double, double) or (double, IDistribution)
@@ -235,7 +235,7 @@ namespace Functions
                 throw new ArgumentException("Overlapping domains were detected. This is not allowed.");
             }
 
-            CoordinatesFunctionLinked linkedFunction = new CoordinatesFunctionLinked(sortedFunctions, interpolators);
+            CoordinatesFunctionLinked linkedFunction = new CoordinatesFunctionLinked(sortedFunctions);
 
             return linkedFunction;
 

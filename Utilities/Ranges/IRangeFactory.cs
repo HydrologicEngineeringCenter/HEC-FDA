@@ -6,6 +6,6 @@ namespace Utilities
 {
     public static class IRangeFactory
     {
-        public static IRange<double> Factory(double min, double max, bool inclusiveMin = true, bool inclusiveMax = true, bool finiteRequirement = true) => new Ranges.RangeDouble(min, max, inclusiveMin, inclusiveMax, finiteRequirement);
+        public static IRange<double> Factory(double min, double max, bool inclusiveMin = true, bool inclusiveMax = true, bool finiteRequirement = true, bool minNotEqualToMaxRequirement = true) => new Ranges.RangeDouble(min, max, inclusiveMin, inclusiveMax, finiteRequirement, minNotEqualToMaxRequirement);
     }
 }

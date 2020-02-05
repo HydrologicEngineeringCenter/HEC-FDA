@@ -16,10 +16,14 @@ namespace Functions
 
         public IFunction Sample(ICoordinatesFunction coordinatesFunction, double probability)
         {
+            /* 2 options for this method:
+             *      (1) Loop over the coordinates, convert them to constants, then create a constant coordinates function
+             *      (2) Loop over the functions, sample them to get a list of constant coordinate functions, then use the coordinates from them to create a constant coordinates function
+             */
             //i could either loop over all coordinates and convert to constant and then create a constant coord func
             //or i could loop over all the funcitons and sample them to get a list of constant coord funcs and then
             //get all their coords to create a constant coord func.
-            //todo: john what is the interpolation enum for a linked coord function. It has so many, one for each func and one inbetween each funcs.
+            //todo: john what is the interpolation enum for a linked coordinates function. It has so many, one for each func and one in between each funcs.
             return new CoordinatesFunctionConstants(ConvertCoordinatesToConstants(coordinatesFunction.Coordinates, probability));
         }
         private List<ICoordinate> ConvertCoordinatesToConstants(List<ICoordinate> Coordinates, double p)
@@ -31,7 +35,7 @@ namespace Functions
                 {
                     if (coord.Y.GetType() == typeof(Distribution))
                     {
-                        coords.Add(new CoordinateConstants(new Constant(coord.X.Value()), new Constant(((Distribution)coord.Y).GetDistribution.InverseCDF(p))));
+                        coords.Add(new CoordinateConstants(new Constant(coord.X.Value()), new Constant(((Distribution)coord.Y).InverseCDF(p))));
 
                     }
                     else if (coord.Y.GetType() == typeof(Constant))
