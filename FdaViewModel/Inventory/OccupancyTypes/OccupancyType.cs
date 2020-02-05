@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
-    class OccupancyType
+    internal class OccupancyType
     {
+
     }
 }

@@ -203,6 +203,7 @@
     <Compile Include="Inventory\DamageCategory\DamageCategoriesVM.cs" />
     <Compile Include="Inventory\DamageCategory\DamageCategoryOwnedElement.cs" />
     <Compile Include="Inventory\DamageCategory\DamageCategoryRowItem.cs" />
+    <Compile Include="Inventory\DamageCategory\IDamageCategory.cs" />
     <Compile Include="Inventory\DefineSIAttributesVM.cs" />
     <Compile Include="Inventory\DepthDamage\DepthDamageCurve.cs" />
     <Compile Include="Inventory\DepthDamage\DepthDamageCurveEditorControlVM.cs" />
@@ -213,7 +214,13 @@
     <Compile Include="Inventory\ImportFromNSIVM.cs" />
     <Compile Include="Inventory\ImportFromShapefileVM.cs" />
     <Compile Include="Inventory\InventoryElement.cs" />
+    <Compile Include="Inventory\OccupancyTypes\CreateNewDamCatVM.cs" />
     <Compile Include="Inventory\OccupancyTypes\deleteMeTestClass.cs" />
+    <Compile Include="Inventory\OccupancyTypes\ImportOccupancyTypesVM.cs" />
+    <Compile Include="Inventory\OccupancyTypes\IOccupancyType.cs" />
+    <Compile Include="Inventory\OccupancyTypes\OccupancyType.cs" />
+    <Compile Include="Inventory\OccupancyTypes\OccupancyTypesElement.cs" />
+    <Compile Include="Inventory\OccupancyTypes\OccupancyTypesOwnerElement.cs" />
     <Compile Include="Inventory\StructureInventoryBaseElement.cs" />
     <Compile Include="Inventory\StructureInventoryOwnerElement.cs" />
     <Compile Include="NamespaceDoc.cs" />
