@@ -95,13 +95,14 @@ namespace Functions.Ordinates
         public Utilities.IRange<double> Range => _Distribution.Range;
         public int SampleSize => _Distribution.SampleSize;
         
-        public bool IsValid => throw new NotImplementedException(); //_distribution.
-        public IEnumerable<IMessage> Messages => throw new NotImplementedException();
+        public bool IsValid => _Distribution.Messages.Max() < IMessageLevels.Error; //_distribution.
+        public IEnumerable<IMessage> Messages => _Distribution.Messages;
         #endregion
 
         #region Constructor
         internal Distribution(Statistics.IDistribution distribution)
         {
+            if (distribution.IsNull()) throw new Utilities.InvalidConstructorArgumentsException($"The {nameof(Distribution)} cannot be constructed because it is null");
             _Distribution = distribution;
         }
         #endregion

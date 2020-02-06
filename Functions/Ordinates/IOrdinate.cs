@@ -9,7 +9,7 @@ namespace Functions
     /// <summary>
     /// An interface for invariant and distributed numeric function parameters
     /// </summary>
-    public interface IOrdinate
+    public interface IOrdinate: IMessagePublisher
     {
         #region Properties
         /// <summary>

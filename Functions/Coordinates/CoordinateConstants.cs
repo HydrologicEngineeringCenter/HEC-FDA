@@ -4,31 +4,46 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
+using Utilities;
 
 namespace Functions.Coordinates
 {
-    internal class CoordinateConstants: ICoordinate
+    internal class CoordinateConstants: ICoordinate, IValidate<CoordinateConstants>
     {
-        //TODO: Validation
-
+        #region Properties
         public IOrdinate X { get; }
         public IOrdinate Y { get; }
+        public bool IsValid { get; }
+        public IEnumerable<IMessage> Messages { get; }
+        #endregion
 
+        #region Constructor
         public CoordinateConstants(Constant x, Constant y)
         {
-            X = x;
-            Y = y;
+            if (!Validation.CoordinateConstanstsValidator.IsConstructable(x, y, out string msg)) throw new Utilities.InvalidConstructorArgumentsException(msg);
+            else
+            {
+                X = x;
+                Y = y;
+                IsValid = Validate(new Validation.CoordinateConstanstsValidator(), out IEnumerable<IMessage> msgs);
+                Messages = msgs;
+            }
+        }
+        #endregion
+
+        #region Functions
+        public bool Validate(IValidator<CoordinateConstants> validator, out IEnumerable<IMessage> msgs)
+        {
+            return validator.IsValid(this, out msgs);
         }
 
-       // public ICoordinate Sample(double p = 0.50) => this;
-
+        public string Print(bool round = false) => round ? $"({X.Value().Print()}, {Y.Value().Print()})" : $"({X.Value()}, {Y.Value()})";
         public override bool Equals(object obj)
         {
             return obj is CoordinateConstants constants &&
                    X.Equals(constants.X) &&
                    Y.Equals(constants.Y);
         }
-
         public override int GetHashCode()
         {
             var hashCode = 1861411795;
@@ -46,5 +61,6 @@ namespace Functions.Coordinates
             coordElem.Add(yVal);
             return coordElem;
         }
+        #endregion
     }
 }

@@ -26,8 +26,6 @@ namespace UtilitiesTests.Ranges
             var testObj = new RangeDouble(min, max, inclusiveMin, inclusiveMax, finiteReq, notSingleValReq);
             Assert.Equal(expected, testObj.Min);
         }
-
-
         [Theory]
         [InlineData(0d, 0d)]
         public void Messages_MinEqualsMaxAllowed_Returns_ExpectedMessage(double min, double max)

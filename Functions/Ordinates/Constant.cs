@@ -7,13 +7,15 @@ using Utilities.Serialization;
 
 namespace Functions.Ordinates
 {
-    public class Constant : IOrdinate
+    public class Constant : IOrdinate, IValidate<Constant>
     {
         #region Fields and Properties
         private readonly double _ConstantValue;
 
         public IRange<double> Range { get; }
         public IOrdinateEnum Type => IOrdinateEnum.Constant;
+        public bool IsValid { get; }
+        public IEnumerable<IMessage> Messages { get; }
         #endregion
 
         #region Constructor
@@ -21,11 +23,18 @@ namespace Functions.Ordinates
         {
             _ConstantValue = value;
             Range = IRangeFactory.Factory(_ConstantValue, _ConstantValue);
+            IsValid = Validate(new Validation.ConstantValidator(), out IEnumerable<IMessage> msgs);
+            Messages = msgs;
         }
         #endregion
 
 
         #region Functions
+        public bool Validate(IValidator<Constant> validator, out IEnumerable<IMessage> msgs)
+        {
+            return validator.IsValid(this, out msgs);
+        }
+
         public double Value(double p = 0.5)
         {
             return _ConstantValue;

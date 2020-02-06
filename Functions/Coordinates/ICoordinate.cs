@@ -9,10 +9,11 @@ namespace Functions
     //TODO: Comment
     //TODO: Factory Method
 
-    public interface ICoordinate 
+    public interface ICoordinate: Utilities.IMessagePublisher
     {
         IOrdinate X { get; }
         IOrdinate Y { get; }
+        string Print(bool round);
         XElement WriteToXML();
         //ICoordinate<double, double> Sample(double p);
 

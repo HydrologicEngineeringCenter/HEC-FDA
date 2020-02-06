@@ -5,39 +5,39 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
 using Utilities.Serialization;
+using Utilities;
 
 namespace Functions.Coordinates
 {
-    internal class CoordinateVariableY: ICoordinate
+    internal class CoordinateVariableY: ICoordinate, IValidate<CoordinateVariableY>
     {
-        //TODO: Validate
-
+        #region Properties
         public IOrdinate X { get; }
         public IOrdinate Y { get; }
+        public bool IsValid { get; }
+        public IEnumerable<IMessage> Messages { get; }
+        #endregion
 
+        #region Constructor
         public CoordinateVariableY(Constant x, Distribution y)
         {
-            X = x;
-            Y = y;
+            if (!Validation.CoordinateVariableYValidator.IsConstructable(x, y, out string msg)) throw new InvalidConstructorArgumentsException(msg);
+            else
+            {
+                X = x;
+                Y = y;
+                IsValid = Validate(new Validation.CoordinateVariableYValidator(), out IEnumerable<IMessage> msgs);
+                Messages = msgs;
+            }
         }
-        //public ScalarCoordinateVariableY(IOrdinate<double> x, IDistribution y)
-        //{
-        //    XOrdinate = x;
-        //    YOrdinate = y;
-        //}
-        //public ScalarCoordinateVariableY(IOrdinate<double> x, IOrdinate<IDistribution> y)
-        //{
-        //    XOrdinate = x;
-        //    YOrdinate = y;
-        //}
-        //public ScalarCoordinateVariableY(double x, IOrdinate<IDistribution> y)
-        //{
-        //    XOrdinate = new Constant(x);
-        //    YOrdinate = y;
-        //}
+        #endregion
 
-        //public ICoordinate<double, double> Sample(double p) => new CoordinateConstants(X, Y.InverseCDF(p));
-
+        #region Functions
+        public bool Validate(IValidator<CoordinateVariableY> validator, out IEnumerable<IMessage> msgs)
+        {
+            return validator.IsValid(this, out msgs);
+        }
+        public string Print(bool round = false) => $"({X.Print(round)}, {Y.Print(round)})";
         public override bool Equals(object obj)
         {
             return obj is CoordinateVariableY coord &&
@@ -64,5 +64,6 @@ namespace Functions.Coordinates
             coordElem.Add(yVal);
             return coordElem;
         }
+        #endregion
     }
 }

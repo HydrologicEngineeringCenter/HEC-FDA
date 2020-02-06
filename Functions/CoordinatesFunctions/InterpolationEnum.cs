@@ -15,6 +15,8 @@ namespace Functions.CoordinatesFunctions
         Piecewise = 2,
         /// <summary> The function is the CDF of a statistical distribution. </summary>
         Statistical = 3,
+        /// <summary> The specified function coordinates are  </summary>
+        NaturalCubicSpline = 4,
     }
 
     

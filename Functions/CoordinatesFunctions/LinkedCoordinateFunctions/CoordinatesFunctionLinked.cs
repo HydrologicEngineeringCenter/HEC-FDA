@@ -57,7 +57,7 @@ namespace Functions.CoordinatesFunctions
         /// <param name="interpolators"></param>
         internal CoordinatesFunctionLinked(List<ICoordinatesFunction> functions)
         {
-            //the list of functions are not gauranteed to be in the correct order.
+            //the list of functions are not guaranteed to be in the correct order.
             //sort them on the min x value of each function
             //todo: if i sort, i will lose track of the list of interpolators.
             //List<ICoordinatesFunction<IOrdinate, IOrdinate>> sortedFunctions = Functions.OrderBy(func => func.Domain.Item1).ToList();
