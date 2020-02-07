@@ -145,6 +145,7 @@
     <Compile Include="AggregatedStageDamage\AggregatedStageDamageElement.cs" />
     <Compile Include="AggregatedStageDamage\AggregatedStageDamageOwnerElement.cs" />
     <Compile Include="AggregatedStageDamage\CreationMethodEnum.cs" />
+    <Compile Include="AggregatedStageDamage\StageDamageAssetType.cs" />
     <Compile Include="BaseFdaElement.cs" />
     <Compile Include="BaseViewModel.cs" />
     <Compile Include="Conditions\AddExteriorInteriorStageToConditionVM.cs" />
@@ -214,13 +215,9 @@
     <Compile Include="Inventory\ImportFromNSIVM.cs" />
     <Compile Include="Inventory\ImportFromShapefileVM.cs" />
     <Compile Include="Inventory\InventoryElement.cs" />
-    <Compile Include="Inventory\OccupancyTypes\CreateNewDamCatVM.cs" />
     <Compile Include="Inventory\OccupancyTypes\deleteMeTestClass.cs" />
-    <Compile Include="Inventory\OccupancyTypes\ImportOccupancyTypesVM.cs" />
     <Compile Include="Inventory\OccupancyTypes\IOccupancyType.cs" />
     <Compile Include="Inventory\OccupancyTypes\OccupancyType.cs" />
-    <Compile Include="Inventory\OccupancyTypes\OccupancyTypesElement.cs" />
-    <Compile Include="Inventory\OccupancyTypes\OccupancyTypesOwnerElement.cs" />
     <Compile Include="Inventory\StructureInventoryBaseElement.cs" />
     <Compile Include="Inventory\StructureInventoryOwnerElement.cs" />
     <Compile Include="NamespaceDoc.cs" />
@@ -272,6 +269,7 @@
     <Compile Include="Study\FDACache.cs" />
     <Compile Include="Study\ExistingStudyVM.cs" />
     <Compile Include="Study\FdaStudyVM.cs" />
+    <Compile Include="Study\ImportFromOldFdaVM.cs" />
     <Compile Include="Study\IStudyCache.cs" />
     <Compile Include="Study\MonetaryUnitsEnum.cs" />
     <Compile Include="Study\NewStudyVM.cs" />

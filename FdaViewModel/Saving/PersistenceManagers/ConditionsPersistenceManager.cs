@@ -157,7 +157,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 {
                     string flowFreqName = (string)rowData[FLOW_FREQ_COL];
                     AnalyticalFrequencyElement flowFreqElem = GetSelectedElementOfType<AnalyticalFrequencyElement>(StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>(), flowFreqName);
-                    builder.WithAnalyticalFreqElem(flowFreqElem);
+                builder.WithAnalyticalFreqElem(flowFreqElem);
+                    
                 }
 
                 bool useInflowOutflow = Convert.ToBoolean(rowData[USE_INFLOW_OUTFLOW_COL]);

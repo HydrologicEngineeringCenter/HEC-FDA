@@ -303,6 +303,9 @@
     <Compile Include="Study\CreateNew.xaml.cs">
       <DependentUpon>CreateNew.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Study\ImportFromOldFda.xaml.cs">
+      <DependentUpon>ImportFromOldFda.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Study\OpenExisting.xaml.cs">
       <DependentUpon>OpenExisting.xaml</DependentUpon>
     </Compile>
@@ -500,6 +503,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Study\ImportFromOldFda.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Study\OpenExisting.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -653,6 +660,10 @@
     <ProjectReference Include="..\FunctionsView\FunctionsView.csproj">
       <Project>{8e8c8388-f610-44cd-8746-bc2559e02424}</Project>
       <Name>FunctionsView</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Importer\Importer.csproj">
+      <Project>{2db60c23-9754-4548-bcf3-4d1bba79570c}</Project>
+      <Name>Importer</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenGLMapper\geospatial\OpenGLMapping\OpenGLMapping.vbproj">
       <Project>{e6dd31c5-1388-4b1d-8291-c317dde22388}</Project>

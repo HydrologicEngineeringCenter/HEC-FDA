@@ -95,14 +95,41 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 element.Curve.WriteToXML().ToString() };
 
         }
+
+        private bool canStageDamageElementBeEdited(CreationMethodEnum creationMethod)
+        {
+            switch(creationMethod)
+            {
+                case CreationMethodEnum.Imported:
+                case CreationMethodEnum.InventoryBased:
+                    {
+                        return false;
+                    }
+                case CreationMethodEnum.UserDefined:
+                    {
+                        return true;
+                    }
+                default:
+                    {
+                        return false;
+                    }
+            }
+
+        }
+
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             IFdaFunction function = ImpactAreaFunctionFactory.Factory((String)rowData[CURVE_COL], ImpactAreaFunctionEnum.InteriorStageDamage);
 
             //Statistics.UncertainCurveDataCollection emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
             //    (string)rowData[CURVE_DIST_TYPE_COL]));
+
+            CreationMethodEnum creationMethod = (CreationMethodEnum)Enum.Parse(typeof(CreationMethodEnum), (string)rowData[CREATION_METHOD_COL]);
+
+
+
             AggregatedStageDamageElement asd = new AggregatedStageDamageElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL], 
-                (string)rowData[DESC_COL], function, (CreationMethodEnum)Enum.Parse(typeof(CreationMethodEnum), (string)rowData[CREATION_METHOD_COL]));
+                (string)rowData[DESC_COL], function, creationMethod);
             //asd.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);
             //asd.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_COL], 
             //    (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), 
@@ -110,7 +137,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
             return asd;
         }
         #endregion
-
+        public void SaveAssetCurve(ChildElement element, StageDamageAssetType type, string nameOfTotalFunctionInParentTable)
+        {
+            if (element.GetType() == typeof(AggregatedStageDamageElement))
+            {
+                object[] data = GetRowDataForAssetTable(element, type, nameOfTotalFunctionInParentTable);
+            }
+        }
 
         public void SaveNew(ChildElement element)
         {
@@ -196,6 +229,22 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
+        }
+
+        public object[] GetRowDataForAssetTable(ChildElement element,StageDamageAssetType assetType, string nameOfTotalFunctionInParentTable)
+        {
+            if (element.Description == null)
+            {
+                element.Description = "";
+            }
+
+            int elemId = GetElementId(TableName, nameOfTotalFunctionInParentTable);
+           
+            
+            return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
+                element.Curve.Function.DistributionType, ((AggregatedStageDamageElement)element).Method,
+                element.Curve.WriteToXML().ToString(),
+                assetType};
         }
 
         public override object[] GetRowDataForChangeTable(ChildElement element)
