@@ -22,6 +22,7 @@ namespace FdaViewModel.AggregatedStageDamage
         private readonly CreationMethodEnum _Method;
         #endregion
         #region Properties
+        public bool CanEdit { get; }
         public CreationMethodEnum Method
         {
             get { return _Method; }

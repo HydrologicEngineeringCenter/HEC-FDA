@@ -58,6 +58,10 @@ namespace FdaViewModel.Study
             open.Header = "Open Study";
             open.Action = OpenStudy;
 
+            NamedAction importStudyFromOldFda = new NamedAction();
+            importStudyFromOldFda.Header = "Import Study From Fda 1";
+            importStudyFromOldFda.Action = ImportStudyFromOldFda;
+
             NamedAction create = new NamedAction();
             create.Header = "Create Study";
             create.Action = CreateStudyFromWindow;
@@ -94,6 +98,7 @@ namespace FdaViewModel.Study
             List<NamedAction> localactions = new List<NamedAction>();
             localactions.Add(create);
             localactions.Add(open);
+            localactions.Add(importStudyFromOldFda);
            // localactions.Add(rename);
             localactions.Add(properties);
             localactions.Add(save);
@@ -355,14 +360,18 @@ namespace FdaViewModel.Study
             //}
         }
 
+        public void CreateStudyFromOldFdaImportFile(ImportFromOldFdaVM vm)
+        {
+
+        }
       
 
-        public void CreateStudyFromViewModel(NewStudyVM vm)
+        public void CreateStudyFromViewModel(string studyName, string folderPathForNewStudy)
         {
-            Name = vm.StudyName;
+            Name = studyName;
             UpdateTreeViewHeader(Name);
             //check if file exists.
-            string newStudyPath = vm.Path + "\\" + vm.StudyName + "\\" + vm.StudyName + ".sqlite";
+            string newStudyPath = folderPathForNewStudy + "\\" + studyName + "\\" + studyName + ".sqlite";
             if (!System.IO.File.Exists(newStudyPath))
             {
                 Storage.Connection.Instance.ProjectFile = newStudyPath;
@@ -371,14 +380,11 @@ namespace FdaViewModel.Study
             }
             else
             {
-                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("A study with that name already exists.",
-                    //FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.View));
-
-                Storage.Connection.Instance.ProjectFile = vm.Path + "\\" + vm.StudyName + "\\" + vm.StudyName + ".sqlite";
+                Storage.Connection.Instance.ProjectFile = folderPathForNewStudy + "\\" + studyName + "\\" + studyName + ".sqlite";
             }
-            PropertiesVM properties = new PropertiesVM(vm.StudyName, vm.Path);
+            PropertiesVM properties = new PropertiesVM(studyName, folderPathForNewStudy);
             properties.Save();
-            AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.StudyName, Utilities.Transactions.TransactionEnum.CreateNew, "Initialize study"));
+            AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(studyName, Utilities.Transactions.TransactionEnum.CreateNew, "Initialize study"));
             foreach (NamedAction action in Actions)
             {
                 if (action.Header == "Save Study")
@@ -470,6 +476,15 @@ namespace FdaViewModel.Study
             StudyStatusBar.SaveStatus = "Study Loaded: " + DateTime.Now.ToString("G");
 
         }
+
+        private void ImportStudyFromOldFda(object sender, EventArgs e)
+        {
+            ImportFromOldFdaVM vm = new ImportFromOldFdaVM(this);
+            string header = "Import Study From Fda 1.0";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStudy");
+            Navigate(tab, false, false);
+        }
+
         private void OpenStudy(object sender, EventArgs e)
         {
             Study.ExistingStudyVM ESVM = new ExistingStudyVM(this);
