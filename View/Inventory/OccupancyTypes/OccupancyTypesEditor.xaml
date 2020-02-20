@@ -1,12 +1,12 @@
-﻿<UserControl x:Class="Fda.Inventory.OccupancyTypes.OccupancyTypesEditor"
+﻿<UserControl x:Class="View.Inventory.OccupancyTypes.OccupancyTypesEditor"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Fda.Inventory.OccupancyTypes"
-             xmlns:controls="clr-namespace:Fda.Inventory.OccupancyTypes.Controls"
+             xmlns:local="clr-namespace:View.Inventory.OccupancyTypes"
+             xmlns:controls="clr-namespace:View.Inventory.OccupancyTypes.Controls"
              mc:Ignorable="d" 
-                          xmlns:Utils="clr-namespace:Fda.Utilities"
+                          xmlns:Utils="clr-namespace:View.Utilities"
 
              Loaded="UserControl_Loaded"
              d:DesignHeight="1000" d:DesignWidth="1000" MinWidth="700" MinHeight="700">

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Inventory.OccupancyTypes.Controls
+namespace View.Inventory.OccupancyTypes.Controls
 {
     /// <summary>
     /// Interaction logic for CreateNewDamCat.xaml

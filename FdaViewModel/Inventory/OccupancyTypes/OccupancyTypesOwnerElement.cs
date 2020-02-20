@@ -7,6 +7,7 @@ using System.ComponentModel;
 using FdaViewModel.Utilities;
 using System.Xml.Linq;
 using System.Xml;
+using Functions;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -292,67 +293,67 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         //    return null;
         //}
 
-        private Statistics.UncertainCurveIncreasing GetNormalDistributionFromXML(string xmlString)
-        {
-            List<double> xValues = new List<double>();
-            List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
+        //private ICoordinatesFunction GetNormalDistributionFromXML(string xmlString)
+        //{
+        //    List<double> xValues = new List<double>();
+        //    List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
 
-            XDocument xDoc = XDocument.Parse(xmlString);
-            XElement normalElement = xDoc.Element("NormalDistribution");
-            foreach(XElement ele in normalElement.Elements("Ordinate"))
-            {
-                xValues.Add((double)ele.Attribute("x"));
-                yValues.Add(new Statistics.Normal(Convert.ToDouble(ele.Attribute("mean").Value), Convert.ToDouble(ele.Attribute("stDev").Value)));
+        //    XDocument xDoc = XDocument.Parse(xmlString);
+        //    XElement normalElement = xDoc.Element("NormalDistribution");
+        //    foreach(XElement ele in normalElement.Elements("Ordinate"))
+        //    {
+        //        xValues.Add((double)ele.Attribute("x"));
+        //        yValues.Add(new Statistics.Normal(Convert.ToDouble(ele.Attribute("mean").Value), Convert.ToDouble(ele.Attribute("stDev").Value)));
 
-            }
+        //    }
 
-            return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal); 
-        }
+        //    return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal); 
+        //}
 
-        private Statistics.UncertainCurveIncreasing GetTriangularDistributionFromXML(string xmlString)
-        {
-            List<double> xValues = new List<double>();
-            List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
+        //private Statistics.UncertainCurveIncreasing GetTriangularDistributionFromXML(string xmlString)
+        //{
+        //    List<double> xValues = new List<double>();
+        //    List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
 
-            XDocument xDoc = XDocument.Parse(xmlString);
-            XElement normalElement = xDoc.Element("TriangularDistribution");
-            foreach (XElement ele in normalElement.Elements("Ordinate"))
-            {
-                xValues.Add((double)ele.Attribute("x"));
-                yValues.Add(new Statistics.Triangular(Convert.ToDouble(ele.Attribute("min").Value), Convert.ToDouble(ele.Attribute("max").Value), Convert.ToDouble(ele.Attribute("mostLikely").Value)));
-            }
-            return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
-        }
+        //    XDocument xDoc = XDocument.Parse(xmlString);
+        //    XElement normalElement = xDoc.Element("TriangularDistribution");
+        //    foreach (XElement ele in normalElement.Elements("Ordinate"))
+        //    {
+        //        xValues.Add((double)ele.Attribute("x"));
+        //        yValues.Add(new Statistics.Triangular(Convert.ToDouble(ele.Attribute("min").Value), Convert.ToDouble(ele.Attribute("max").Value), Convert.ToDouble(ele.Attribute("mostLikely").Value)));
+        //    }
+        //    return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
+        //}
 
-        private Statistics.UncertainCurveIncreasing GetUniformDistributionFromXML(string xmlString)
-        {
-            List<double> xValues = new List<double>();
-            List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
+        //private Statistics.UncertainCurveIncreasing GetUniformDistributionFromXML(string xmlString)
+        //{
+        //    List<double> xValues = new List<double>();
+        //    List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
 
-            XDocument xDoc = XDocument.Parse(xmlString);
-            XElement normalElement = xDoc.Element("UniformDistribution");
-            foreach (XElement ele in normalElement.Elements("Ordinate"))
-            {
-                xValues.Add((double)ele.Attribute("x"));
-                yValues.Add(new Statistics.Uniform(Convert.ToDouble(ele.Attribute("min").Value), Convert.ToDouble(ele.Attribute("max").Value)));
-            }
-            return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
-        }
+        //    XDocument xDoc = XDocument.Parse(xmlString);
+        //    XElement normalElement = xDoc.Element("UniformDistribution");
+        //    foreach (XElement ele in normalElement.Elements("Ordinate"))
+        //    {
+        //        xValues.Add((double)ele.Attribute("x"));
+        //        yValues.Add(new Statistics.Uniform(Convert.ToDouble(ele.Attribute("min").Value), Convert.ToDouble(ele.Attribute("max").Value)));
+        //    }
+        //    return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
+        //}
 
-        private Statistics.UncertainCurveIncreasing GetNoneDistributionFromXML(string xmlString)
-        {
-            List<double> xValues = new List<double>();
-            List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
+        //private Statistics.UncertainCurveIncreasing GetNoneDistributionFromXML(string xmlString)
+        //{
+        //    List<double> xValues = new List<double>();
+        //    List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
 
-            XDocument xDoc = XDocument.Parse(xmlString);
-            XElement normalElement = xDoc.Element("NoneDistribution");
-            foreach (XElement ele in normalElement.Elements("Ordinate"))
-            {
-                xValues.Add((double)ele.Attribute("x"));
-                yValues.Add(new Statistics.None(Convert.ToDouble(ele.Attribute("y").Value)));
-            }
-            return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-        }
+        //    XDocument xDoc = XDocument.Parse(xmlString);
+        //    XElement normalElement = xDoc.Element("NoneDistribution");
+        //    foreach (XElement ele in normalElement.Elements("Ordinate"))
+        //    {
+        //        xValues.Add((double)ele.Attribute("x"));
+        //        yValues.Add(new Statistics.None(Convert.ToDouble(ele.Attribute("y").Value)));
+        //    }
+        //    return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+        //}
 
         /// <summary>
         /// This gets called when loading the study.
@@ -635,33 +636,33 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         //}
 
        
-        private Statistics.ContinuousDistribution CreateContinuousDistributionFromRow(object[] row,int start, int end)
-        {
+        //private Statistics.ContinuousDistribution CreateContinuousDistributionFromRow(object[] row,int start, int end)
+        //{
 
-            if (row[start].ToString() == "Normal")
-            {
-                Statistics.Normal norm = new Statistics.Normal(0, Convert.ToDouble(row[end]));
-                return norm;
-            }
-            else if (row[start].ToString() == "Uniform")
-            {
-                Statistics.Uniform uni = new Statistics.Uniform(Convert.ToDouble(row[start]) , Convert.ToDouble(row[start+1]));
-                return uni;
-            }
-            else if (row[start].ToString() == "None")
-            {
-                Statistics.None non = new Statistics.None();
-                return non;
+        //    if (row[start].ToString() == "Normal")
+        //    {
+        //        Statistics.Normal norm = new Statistics.Normal(0, Convert.ToDouble(row[end]));
+        //        return norm;
+        //    }
+        //    else if (row[start].ToString() == "Uniform")
+        //    {
+        //        Statistics.Uniform uni = new Statistics.Uniform(Convert.ToDouble(row[start]) , Convert.ToDouble(row[start+1]));
+        //        return uni;
+        //    }
+        //    else if (row[start].ToString() == "None")
+        //    {
+        //        Statistics.None non = new Statistics.None();
+        //        return non;
 
-            }
-            else if (row[start].ToString() == "Triangular")
-            {
-                Statistics.Uniform tri = new Statistics.Uniform(Convert.ToDouble(row[start]), Convert.ToDouble(row[start + 1]));
-                return tri;
-            }
+        //    }
+        //    else if (row[start].ToString() == "Triangular")
+        //    {
+        //        Statistics.Uniform tri = new Statistics.Uniform(Convert.ToDouble(row[start]), Convert.ToDouble(row[start + 1]));
+        //        return tri;
+        //    }
 
-                return new Statistics.Normal(); // it should never get here.
-        }
+        //        return new Statistics.Normal(); // it should never get here.
+        //}
 
 
     }

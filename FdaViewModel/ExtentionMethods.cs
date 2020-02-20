@@ -43,7 +43,9 @@ namespace FdaViewModel
                     for (int i = 0; i < coords.Count; i++)
                     {
                         ICoordinate coord = coords[i];
-                        IDistributedOrdinate distValue = ((Distribution)coord.Y).GetDistribution;
+                        //the coordinates should be CoordinateVariableY
+                        //the Y value should be a distribution
+                        IDistributedOrdinate distValue = (IDistributedOrdinate)coord.Y;
                         rows[i] = new object[] { coord.X, distValue.Mean, distValue.StandardDeviation };
                     }
                     break;
@@ -53,7 +55,7 @@ namespace FdaViewModel
                     for (int i = 0; i < coords.Count; i++)
                     {
                         ICoordinate coord = coords[i];
-                        IDistributedOrdinate distValue = ((Distribution)coord.Y).GetDistribution;
+                        IDistributedOrdinate distValue = (IDistributedOrdinate)coord.Y;
                         rows[i] = new object[] { coord.X, distValue.Range.Min, distValue.Mean, distValue.Range.Max };
                     }
                     break;
@@ -63,7 +65,7 @@ namespace FdaViewModel
                     for (int i = 0; i < coords.Count; i++)
                     {
                         ICoordinate coord = coords[i];
-                        IDistributedOrdinate distValue = ((Distribution)coord.Y).GetDistribution;
+                        IDistributedOrdinate distValue = (IDistributedOrdinate)coord.Y;
                         rows[i] = new object[] { coord.X, distValue.Range.Min, distValue.Range.Max };
                     }
                     break;
@@ -73,7 +75,7 @@ namespace FdaViewModel
                     for (int i = 0; i < coords.Count; i++)
                     {
                         ICoordinate coord = coords[i];
-                        IDistributedOrdinate distValue = ((Distribution)coord.Y).GetDistribution;
+                        IDistributedOrdinate distValue = (IDistributedOrdinate)coord.Y;
                         rows[i] = new object[] { coord.X, distValue.Mean };
                     }
                     break;

@@ -629,11 +629,11 @@ namespace FdaViewModel.Inventory
             // 1.) create the string name
             string groupName = Name + " > Occupancy Types";
             //2.) create the list of occtype 
-            List<Consequences_Assist.ComputableObjects.OccupancyType> newListOfOccType = new List<Consequences_Assist.ComputableObjects.OccupancyType>();
+            List<IOccupancyType> newListOfOccType = new List<IOccupancyType>();
             List<string> listOfKeys = AttributeLinkingList.OccupancyTypesDictionary.Keys.ToList();
             for (int i = 0; i < listOfKeys.Count; i++)
             {
-                Consequences_Assist.ComputableObjects.OccupancyType ot = new Consequences_Assist.ComputableObjects.OccupancyType();
+                IOccupancyType ot = new OccupancyType();
                 if (AttributeLinkingList.OccupancyTypesDictionary[listOfKeys[i]] != "")
                 {
                     //find the chosen occtype and replace the name with the name from the file
@@ -653,7 +653,7 @@ namespace FdaViewModel.Inventory
 
             Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
 
-            foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in newListOfOccType)
+            foreach (IOccupancyType ot in newListOfOccType)
             {
                 bool[] tabsCheckedArray = new bool[] { true, true, true, false };
                 _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
@@ -691,13 +691,13 @@ namespace FdaViewModel.Inventory
             }
         }
 
-        private Consequences_Assist.ComputableObjects.OccupancyType GetOcctypeFromGroup(string occtypeName, string groupName)
+        private IOccupancyType GetOcctypeFromGroup(string occtypeName, string groupName)
         {
             foreach (OccupancyTypes.OccupancyTypesElement group in StudyCache.GetChildElementsOfType<OccupancyTypesElement>())// OccupancyTypes.OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups)
             {
                 if (group.Name == groupName)
                 {
-                    foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in group.ListOfOccupancyTypes)
+                    foreach (IOccupancyType ot in group.ListOfOccupancyTypes)
                     {
                         if (ot.Name == occtypeName)
                         {
@@ -706,7 +706,7 @@ namespace FdaViewModel.Inventory
                     }
                 }
             }
-            return new Consequences_Assist.ComputableObjects.OccupancyType(); // if it gets here then no occtype matching the names given exists. Should we send an error message?
+            return new OccupancyType(); // if it gets here then no occtype matching the names given exists. Should we send an error message?
         }
 
         

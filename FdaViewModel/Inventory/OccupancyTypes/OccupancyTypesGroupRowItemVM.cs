@@ -20,7 +20,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         private string _Name;
         private string _Path;
         //private OccupancyTypesElement _OccupancyTypeGroup;
-        private List<Consequences_Assist.ComputableObjects.OccupancyType> _ListOfOccTypes;
+        private List<IOccupancyType> _ListOfOccTypes;
         private int _NumberOfOccTypes;
         #endregion
         #region Properties
@@ -46,7 +46,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             get;set;
         }
 
-        public List<Consequences_Assist.ComputableObjects.OccupancyType> ListOfOccTypes
+        public List<IOccupancyType> ListOfOccTypes
         {
             get { return _ListOfOccTypes; }
             set { _ListOfOccTypes = value; NotifyPropertyChanged(); }
@@ -65,7 +65,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         {
 
         }
-        public OccupancyTypesGroupRowItemVM(string path, string name, List<Consequences_Assist.ComputableObjects.OccupancyType> listOfOccTypes,List<DepthDamage.DepthDamageCurve> listOfDepthDamageCurves) : base()
+        public OccupancyTypesGroupRowItemVM(string path, string name, List<IOccupancyType> listOfOccTypes,List<DepthDamage.DepthDamageCurve> listOfDepthDamageCurves) : base()
         {
 
             Name = name;

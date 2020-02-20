@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Inventory.OccupancyTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,7 @@ namespace FdaViewModel.Inventory
         private List<string> _OccupancyTypesInStudy;
         private bool _UseDefaultsIsChecked = true;
         private bool _FromFileIsChecked;
-        private List<Consequences_Assist.ComputableObjects.OccupancyType> _ListOfSelectedOccupancyTypes = new List<Consequences_Assist.ComputableObjects.OccupancyType>();
+        private List<IOccupancyType> _ListOfSelectedOccupancyTypes = new List<IOccupancyType>();
         private List<OccupancyTypes.OccupancyTypesElement> _ListOfSelectedOccTypeGroups = new List<OccupancyTypes.OccupancyTypesElement>();
         private List<string> _SelectedListOfOccTypeStrings = new List<string>();
 

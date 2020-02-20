@@ -12,6 +12,56 @@ namespace FdaViewModel.Saving.PersistenceManagers
 {
     public class OccTypePersistenceManager : SavingBase, IElementManager
     {
+        //These are the columns for the parent table
+        private const int PARENT_GROUP_NAME_COL = 0;
+        private const int PARENT_IS_SELECTED_COL = 1;
+
+
+        //These are the columns for the child table
+        private const int NAME_COL = 0;
+        private const int DESC_COL = 1;
+        private const int DAM_CAT_COL = 2;
+        private const int VAR_FOUND_HT_COL = 3;
+        private const int FOUND_HT_MIN_COL = 4;
+        private const int FOUND_HT_MAX_COL = 5;
+        private const int FOUND_HT_STDEV_COL = 6;
+
+        private const int IS_STRUCT_SELECTED_COL = 7;
+        private const int VAR_STRUCT_VALUE_COL = 8;
+        private const int STRUCT_MIN_COL = 9;
+        private const int STRUCT_MAX_COL = 10;
+        private const int STRUCT_STDEV_COL = 11;
+        private const int STRUCT_DIST_TYPE_COL = 12;
+
+        private const int IS_CONT_SELECTED_COL = 13;
+        private const int VAR_CONT_VALUE_COL = 14;
+        private const int CONT_MIN_COL = 15;
+        private const int CONT_MAX_COL = 16;
+        private const int CONT_STDEV_COL = 17;
+        private const int CONT_DIST_TYPE_COL = 18;
+
+        private const int IS_VEH_SELECTED_COL = 19;
+        private const int VAR_VEH_VALUE_COL = 20;
+        private const int VEH_MIN_COL = 21;
+        private const int VEH_MAX_COL = 22;
+        private const int VEH_STDEV_COL = 23;
+        private const int VEH_DIST_TYPE_COL = 24;
+
+        private const int IS_OTHER_SELECTED_COL = 25;
+        private const int VAR_OTHER_VALUE_COL = 26;
+        private const int OTHER_MIN_COL = 27;
+        private const int OTHER_MAX_COL = 28;
+        private const int OTHER_STDEV_COL = 29;
+        private const int OTHER_DIST_TYPE_COL = 30;
+
+        private const int GROUP_NAME_COL = 31;
+        private const int STRUCT_CURVE_COL = 32;
+        private const int CONTENT_CURVE_COL = 33;
+        private const int VEHICLE_CURVE_COL = 34;
+        private const int OTHER_CURVE_COL = 35;
+
+
+
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
         //you would no longer get any of the old logs. So i use this constant.
@@ -41,40 +91,40 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         //todo: Refactor: removing Statistics.ContinuousDistribution and making it an IDistribution
         //I think this is taking each row and making a distribution
-        private IDistributedValue CreateContinuousDistributionFromRow(object[] row, int start, int end)
-        {
+        //private IDistributedValue CreateContinuousDistributionFromRow(object[] row, int start, int end)
+        //{
 
-            if (row[start].ToString() == "Normal")
-            {
-                IDistributedValue normDist = DistributedValueFactory.FactoryNormal(0, Convert.ToDouble(row[end]));
-                //ICoordinatesFunction norm = ICoordinatesFunctionsFactory. new Statistics.Normal(0, Convert.ToDouble(row[end]));
-                return normDist;
-            }
-            else if (row[start].ToString() == "Uniform")
-            {
-                IDistributedValue uniformDist = DistributedValueFactory.FactoryUniform(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]));
-                //Statistics.Uniform uni = new Statistics.Uniform(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]));
-                return uniformDist;
-            }
-            else if (row[start].ToString() == "None")
-            {
-                //todo: Refactor: Finish this
-                //IDistributedValue constantDist = DistributedValueFactory.fact(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]));
-                //Statistics.None non = new Statistics.None();
-                //return non;
+        //    if (row[start].ToString() == "Normal")
+        //    {
+        //        IDistributedValue normDist = DistributedValueFactory.FactoryNormal(0, Convert.ToDouble(row[end]));
+        //        //ICoordinatesFunction norm = ICoordinatesFunctionsFactory. new Statistics.Normal(0, Convert.ToDouble(row[end]));
+        //        return normDist;
+        //    }
+        //    else if (row[start].ToString() == "Uniform")
+        //    {
+        //        IDistributedValue uniformDist = DistributedValueFactory.FactoryUniform(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]));
+        //        //Statistics.Uniform uni = new Statistics.Uniform(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]));
+        //        return uniformDist;
+        //    }
+        //    else if (row[start].ToString() == "None")
+        //    {
+        //        //todo: Refactor: Finish this
+        //        //IDistributedValue constantDist = DistributedValueFactory.fact(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]));
+        //        //Statistics.None non = new Statistics.None();
+        //        //return non;
 
-            }
-            else if (row[start].ToString() == "Triangular")
-            {
-                //todo: Refactor: Make sure these inputs are in the correct order, min-max-mostlikely?
-                IDistributedValue tri = DistributedValueFactory.FactoryTriangular(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]), Convert.ToDouble(row[start + 3]));
-                //Statistics.Uniform tri = new Statistics.Uniform(Convert.ToDouble(row[start]), Convert.ToDouble(row[start + 1]));
-                //Statistics.Triangular tri = new Statistics.Triangular(Convert.ToDouble(row[start+1]), Convert.ToDouble(row[start + 2]), Convert.ToDouble(row[start + 3]));
-                return tri;
-            }
+        //    }
+        //    else if (row[start].ToString() == "Triangular")
+        //    {
+        //        //todo: Refactor: Make sure these inputs are in the correct order, min-max-mostlikely?
+        //        IDistributedValue tri = DistributedValueFactory.FactoryTriangular(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]), Convert.ToDouble(row[start + 3]));
+        //        //Statistics.Uniform tri = new Statistics.Uniform(Convert.ToDouble(row[start]), Convert.ToDouble(row[start + 1]));
+        //        //Statistics.Triangular tri = new Statistics.Triangular(Convert.ToDouble(row[start+1]), Convert.ToDouble(row[start + 2]), Convert.ToDouble(row[start + 3]));
+        //        return tri;
+        //    }
 
-            return null;// new Statistics.Normal(); // it should never get here.
-        }
+        //    return null;// new Statistics.Normal(); // it should never get here.
+        //}
         /// <summary>
         /// Creates an element base off the row from the parent table
         /// </summary>
@@ -84,165 +134,166 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             int testing = 0;
             Dictionary<string, bool[]> selectedTabsDictionary = new Dictionary<string, bool[]>();
-            List<Consequences_Assist.ComputableObjects.OccupancyType> listOfOccTypes = new List<Consequences_Assist.ComputableObjects.OccupancyType>();
-            List<Consequences_Assist.ComputableObjects.OccupancyType> TempOccTypes = new List<Consequences_Assist.ComputableObjects.OccupancyType>();
+            List<IOccupancyType> listOfOccTypes = new List<IOccupancyType>();
+            List<IOccupancyType> TempOccTypes = new List<IOccupancyType>();
             Dictionary<string, bool[]> dummyDictionary = new Dictionary<string, bool[]>();
-            string groupName = rowData[0].ToString();
+            string groupName = rowData[PARENT_GROUP_NAME_COL].ToString();
             //create an empty element. Then loop through all the rows in the table to add the actual occtypes for this elem.
             OccupancyTypesElement ele = new OccupancyTypesElement(groupName, TempOccTypes, dummyDictionary);
-            ele.IsSelected = (bool)rowData[1];
-            string elementTableName = GroupTablePrefix + groupName;
+            //ele.IsSelected = (bool)rowData[PARENT_IS_SELECTED_COL];
+            //string elementTableName = GroupTablePrefix + groupName;
 
-            if (Storage.Connection.Instance.TableNames().Contains(elementTableName))
-            {
-                DatabaseManager.DataTableView elementTable = Storage.Connection.Instance.GetTable(elementTableName);
-                List<object[]> occTypeRows = elementTable.GetRows(0, elementTable.NumberOfRows - 1);
+            //if (Storage.Connection.Instance.TableNames().Contains(elementTableName))
+            //{
+            //    DatabaseManager.DataTableView elementTable = Storage.Connection.Instance.GetTable(elementTableName);
+            //    List<object[]> occTypeRows = elementTable.GetRows(0, elementTable.NumberOfRows - 1);
 
-            foreach (object[] row in occTypeRows)//Storage.Connection.Instance.GetTable(tableName).GetRows(0, lastRow))
-            {
-                    testing++;
-                bool[] selectedTabs = new bool[] { Convert.ToBoolean(row[7]), Convert.ToBoolean(row[13]), Convert.ToBoolean(row[19]), Convert.ToBoolean(row[25]) };
-                selectedTabsDictionary.Add(row[0].ToString(), selectedTabs);
-                //ele.RelativePathAndProbability.Add(new PathAndProbability(row[0].ToString(), Convert.ToDouble(row[1])));
-                Consequences_Assist.ComputableObjects.OccupancyType ot = new Consequences_Assist.ComputableObjects.OccupancyType();
-                ot.Name = row[0].ToString();
-                ot.Description = row[1].ToString();
-                ot.DamageCategoryName = row[2].ToString();
+            //foreach (object[] row in occTypeRows)//Storage.Connection.Instance.GetTable(tableName).GetRows(0, lastRow))
+            //{
+            //        testing++;
+            //    bool[] selectedTabs = new bool[] { Convert.ToBoolean(row[IS_STRUCT_SELECTED_COL]), Convert.ToBoolean(row[IS_CONT_SELECTED_COL]), Convert.ToBoolean(row[IS_VEH_SELECTED_COL]), Convert.ToBoolean(row[IS_OTHER_SELECTED_COL]) };
+            //    selectedTabsDictionary.Add(row[NAME_COL].ToString(), selectedTabs);
+            //    //ele.RelativePathAndProbability.Add(new PathAndProbability(row[0].ToString(), Convert.ToDouble(row[1])));
+            //    IOccupancyType ot = new OccupancyType();
+            //    ot.Name = row[NAME_COL].ToString();
+            //    ot.Description = row[DESC_COL].ToString();
+            //    ot.DamageCategory.Name = row[DAM_CAT_COL].ToString();
 
-                ot.FoundationHeightUncertainty = CreateContinuousDistributionFromRow(row, 3, 6);
+            //    ot.FoundationHeightUncertaintyFunction = CreateContinuousDistributionFromRow(row, VAR_FOUND_HT_COL, FOUND_HT_STDEV_COL);
 
-                //***************************
-                //structures
-                //*****************************
+            //    //***************************
+            //    //structures
+            //    //*****************************
 
-                // if(Convert.ToBoolean(row[7]) == true) // if structures tab is checked
+            //    // if(Convert.ToBoolean(row[7]) == true) // if structures tab is checked
                 
-                    ot.StructureValueUncertainty = CreateContinuousDistributionFromRow(row, 8, 11);
+            //        ot.StructureValueUncertainty = CreateContinuousDistributionFromRow(row, VAR_STRUCT_VALUE_COL, STRUCT_STDEV_COL);
 
-                    if (row[12].ToString() == "Normal")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetNormalDistributionFromXML(row[32].ToString());
-                        ot.SetStructurePercentDD = uci;
-                    }
-                    else if (row[12].ToString() == "None")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetNoneDistributionFromXML(row[32].ToString());
-                        ot.SetStructurePercentDD = uci;
-                    }
-                    else if (row[12].ToString() == "Triangular")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetTriangularDistributionFromXML(row[32].ToString());
-                        ot.SetStructurePercentDD = uci;
-                    }
-                    else if (row[12].ToString() == "Uniform")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetUniformDistributionFromXML(row[32].ToString());
-                        ot.SetStructurePercentDD = uci;
-                    }
+            //        if (row[STRUCT_DIST_TYPE_COL].ToString() == "Normal")
+            //        {
+            //            Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetNormalDistributionFromXML(row[STRUCT_CURVE_COL].ToString());
+            //            ot.StructureDepthDamageFunction = uci;
+            //        }
+            //        else if (row[STRUCT_DIST_TYPE_COL].ToString() == "None")
+            //        {
+            //            Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetNoneDistributionFromXML(row[STRUCT_CURVE_COL].ToString());
+            //            ot.StructureDepthDamageFunction = uci;
+            //        }
+            //        else if (row[STRUCT_DIST_TYPE_COL].ToString() == "Triangular")
+            //        {
+            //            Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetTriangularDistributionFromXML(row[STRUCT_CURVE_COL].ToString());
+            //            ot.StructureDepthDamageFunction = uci;
+            //        }
+            //        else if (row[STRUCT_DIST_TYPE_COL].ToString() == "Uniform")
+            //        {
+            //            Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetUniformDistributionFromXML(row[STRUCT_CURVE_COL].ToString());
+            //            ot.StructureDepthDamageFunction = uci;
+            //        }
 
                 
 
 
 
-                    //*****************************
-                    //content
-                    //*****************************
+            //        //*****************************
+            //        //content
+            //        //*****************************
 
-                    //if (Convert.ToBoolean(row[13]) == true) // if content tab is checked
-
-                    ot.ContentValueUncertainty = CreateContinuousDistributionFromRow(row, 14, 17);
-                    if (row[18].ToString() == "Normal")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetNormalDistributionFromXML(row[33].ToString());
-                        ot.SetContentPercentDD = uci;
-                    }
-                    else if (row[18].ToString() == "None")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetNoneDistributionFromXML(row[33].ToString());
-                        ot.SetContentPercentDD = uci;
-                    }
-                    else if (row[18].ToString() == "Triangular")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetTriangularDistributionFromXML(row[33].ToString());
-                        ot.SetContentPercentDD = uci;
-                    }
-                    else if (row[18].ToString() == "Uniform")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetUniformDistributionFromXML(row[33].ToString());
-                        ot.SetContentPercentDD = uci;
-                    }
-
-
+            //        //if (Convert.ToBoolean(row[13]) == true) // if content tab is checked
+            //        //14,17
+            //        ot.ContentValueUncertainty = CreateContinuousDistributionFromRow(row, VAR_CONT_VALUE_COL, CONT_STDEV_COL);
+            //        if (row[CONT_DIST_TYPE_COL].ToString() == "Normal")
+            //        {
+            //            Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetNormalDistributionFromXML(row[CONTENT_CURVE_COL].ToString());
+            //            ot.ContentDepthDamageFunction = uci;
+            //        }
+            //        else if (row[CONT_DIST_TYPE_COL].ToString() == "None")
+            //        {
+            //            Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetNoneDistributionFromXML(row[CONTENT_CURVE_COL].ToString());
+            //            ot.ContentDepthDamageFunction = uci;
+            //        }
+            //        else if (row[CONT_DIST_TYPE_COL].ToString() == "Triangular")
+            //        {
+            //            Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetTriangularDistributionFromXML(row[CONTENT_CURVE_COL].ToString());
+            //            ot.ContentDepthDamageFunction = uci;
+            //        }
+            //        else if (row[CONT_DIST_TYPE_COL].ToString() == "Uniform")
+            //        {
+            //            Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetUniformDistributionFromXML(row[CONTENT_CURVE_COL].ToString());
+            //            ot.ContentDepthDamageFunction = uci;
+            //        }
 
 
 
-                    //*****************************
-                    //vehicle
-                    //*****************************
 
-                    //if (Convert.ToBoolean(row[19]) == true) // if vehicle tab is checked
+
+            //        //*****************************
+            //        //vehicle
+            //        //*****************************
+
+            //        //if (Convert.ToBoolean(row[19]) == true) // if vehicle tab is checked
                     
-                    ot.VehicleValueUncertainty = CreateContinuousDistributionFromRow(row, 20, 23);
-                    if (row[24].ToString() == "Normal")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetNormalDistributionFromXML(row[34].ToString());
-                        ot.SetVehiclePercentDD = uci;
-                    }
-                    else if (row[24].ToString() == "None")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetNoneDistributionFromXML(row[34].ToString());
-                        ot.SetVehiclePercentDD = uci;
-                    }
-                    else if (row[24].ToString() == "Triangular")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetTriangularDistributionFromXML(row[34].ToString());
-                        ot.SetVehiclePercentDD = uci;
-                    }
-                    else if (row[24].ToString() == "Uniform")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetUniformDistributionFromXML(row[34].ToString());
-                        ot.SetVehiclePercentDD = uci;
-                    }
+            //        //20,23
+            //        ot.VehicleValueUncertainty = CreateContinuousDistributionFromRow(row, VAR_VEH_VALUE_COL, VEH_STDEV_COL);
+            //        if (row[VEH_DIST_TYPE_COL].ToString() == "Normal")
+            //        {
+            //            Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetNormalDistributionFromXML(row[VEHICLE_CURVE_COL].ToString());
+            //            ot.VehicleDepthDamageFunction = uci;
+            //        }
+            //        else if (row[VEH_DIST_TYPE_COL].ToString() == "None")
+            //        {
+            //            Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetNoneDistributionFromXML(row[VEHICLE_CURVE_COL].ToString());
+            //            ot.VehicleDepthDamageFunction = uci;
+            //        }
+            //        else if (row[VEH_DIST_TYPE_COL].ToString() == "Triangular")
+            //        {
+            //            Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetTriangularDistributionFromXML(row[VEHICLE_CURVE_COL].ToString());
+            //            ot.VehicleDepthDamageFunction = uci;
+            //        }
+            //        else if (row[VEH_DIST_TYPE_COL].ToString() == "Uniform")
+            //        {
+            //            Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetUniformDistributionFromXML(row[VEHICLE_CURVE_COL].ToString());
+            //            ot.VehicleDepthDamageFunction = uci;
+            //        }
 
 
 
 
-                    //*****************************
-                    //Other
-                    //*****************************
+            //        //*****************************
+            //        //Other
+            //        //*****************************
 
-                    //if (Convert.ToBoolean(row[25]) == true) // if other tab is checked
+            //        //if (Convert.ToBoolean(row[25]) == true) // if other tab is checked
+            //        //26,29
+            //        ot.OtherValueUncertainty = CreateContinuousDistributionFromRow(row, VAR_OTHER_VALUE_COL, OTHER_STDEV_COL);
+            //        if (row[OTHER_DIST_TYPE_COL].ToString() == "Normal")
+            //        {
+            //            Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetNormalDistributionFromXML(row[OTHER_CURVE_COL].ToString());
+            //            ot.OtherDepthDamageFunction = uci;
+            //        }
+            //        else if (row[OTHER_DIST_TYPE_COL].ToString() == "None")
+            //        {
+            //            Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetNoneDistributionFromXML(row[OTHER_CURVE_COL].ToString());
+            //            ot.OtherDepthDamageFunction = uci;
+            //        }
+            //        else if (row[OTHER_DIST_TYPE_COL].ToString() == "Triangular")
+            //        {
+            //            Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetTriangularDistributionFromXML(row[OTHER_CURVE_COL].ToString());
+            //            ot.OtherDepthDamageFunction = uci;
+            //        }
+            //        else if (row[OTHER_DIST_TYPE_COL].ToString() == "Uniform")
+            //        {
+            //            Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetUniformDistributionFromXML(row[OTHER_CURVE_COL].ToString());
+            //            ot.OtherDepthDamageFunction = uci;
+            //        }
 
-                    ot.OtherValueUncertainty = CreateContinuousDistributionFromRow(row, 26, 29);
-                    if (row[30].ToString() == "Normal")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetNormalDistributionFromXML(row[35].ToString());
-                        ot.SetOtherPercentDD = uci;
-                    }
-                    else if (row[30].ToString() == "None")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetNoneDistributionFromXML(row[35].ToString());
-                        ot.SetOtherPercentDD = uci;
-                    }
-                    else if (row[30].ToString() == "Triangular")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetTriangularDistributionFromXML(row[35].ToString());
-                        ot.SetOtherPercentDD = uci;
-                    }
-                    else if (row[30].ToString() == "Uniform")
-                    {
-                        Statistics.UncertainCurveIncreasing uci = ExtentionMethods.GetUniformDistributionFromXML(row[35].ToString());
-                        ot.SetOtherPercentDD = uci;
-                    }
 
 
-
-                    listOfOccTypes.Add(ot);
-            }
-            ele.ListOfOccupancyTypes = listOfOccTypes;
-            ele.OccTypesSelectedTabsDictionary = selectedTabsDictionary;
-            //OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(ele);
-            }
+            //        listOfOccTypes.Add(ot);
+            //}
+            //ele.ListOfOccupancyTypes = listOfOccTypes;
+            //ele.OccTypesSelectedTabsDictionary = selectedTabsDictionary;
+            ////OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(ele);
+            //}
             return ele;
                 //AddElement(ele,false);
         }
@@ -481,7 +532,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         private void SaveNewGroupTable(OccupancyTypesElement element)
         {
             string groupName = element.Name;
-            List<Consequences_Assist.ComputableObjects.OccupancyType> ListOfOccupancyTypes = ((OccupancyTypesElement)element).ListOfOccupancyTypes;
+            List<IOccupancyType> ListOfOccupancyTypes = ((OccupancyTypesElement)element).ListOfOccupancyTypes;
             Dictionary<string, bool[]> OccTypesSelectedTabsDictionary = ((OccupancyTypesElement)element).OccTypesSelectedTabsDictionary;
 
 
@@ -505,7 +556,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
             List<object[]> rows = new List<object[]>();
 
-            foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in ListOfOccupancyTypes)
+            foreach (IOccupancyType ot in ListOfOccupancyTypes)
             {
 
                 rows.Add(GetOccTypeRowForParentTable(ot, OccTypesSelectedTabsDictionary, groupName).ToArray());
@@ -522,94 +573,94 @@ namespace FdaViewModel.Saving.PersistenceManagers
         /// </summary>
         /// <param name="ot"></param>
         /// <returns></returns>
-        private List<object> GetOccTypeRowForParentTable(Consequences_Assist.ComputableObjects.OccupancyType ot, Dictionary<string, bool[]> OccTypesSelectedTabsDictionary, string groupName)
+        private List<object> GetOccTypeRowForParentTable(IOccupancyType ot, Dictionary<string, bool[]> OccTypesSelectedTabsDictionary, string groupName)
         {
             List<object> rowsList = new List<object>();
-            bool[] checkedTabs = new bool[4];
-            if (OccTypesSelectedTabsDictionary.ContainsKey(ot.Name))
-            {
-                checkedTabs = OccTypesSelectedTabsDictionary[ot.Name];
-            }
-            else
-            {
-                //can't find the key in the dictionary
-                throw new Exception();
-            }
+            //bool[] checkedTabs = new bool[4];
+            //if (OccTypesSelectedTabsDictionary.ContainsKey(ot.Name))
+            //{
+            //    checkedTabs = OccTypesSelectedTabsDictionary[ot.Name];
+            //}
+            //else
+            //{
+            //    //can't find the key in the dictionary
+            //    throw new Exception();
+            //}
 
 
-            //name, description, damacat name
-            foreach (object o in GetOccTypeInfoArray(ot))
-            {
-                rowsList.Add(o);
-            }
+            ////name, description, damacat name
+            //foreach (object o in GetOccTypeInfoArray(ot))
+            //{
+            //    rowsList.Add(o);
+            //}
 
-            //found ht variation type, min, max, st dev
-            foreach (object o in GetContinuousDistributionArray(ot.FoundationHeightUncertainty))
-            {
-                rowsList.Add(o);
-            }
+            ////found ht variation type, min, max, st dev
+            //foreach (object o in GetContinuousDistributionArray(ot.FoundationHeightUncertaintyFunction))
+            //{
+            //    rowsList.Add(o);
+            //}
 
-            //is struct checked
-            rowsList.Add(checkedTabs[0]);
+            ////is struct checked
+            //rowsList.Add(checkedTabs[0]);
 
-            //structure variation in value type, min, max, st dev
-            foreach (object o in GetContinuousDistributionArray(ot.StructureValueUncertainty))
-            {
-                rowsList.Add(o);
-            }
+            ////structure variation in value type, min, max, st dev
+            //foreach (object o in GetContinuousDistributionArray(ot.StructureValueUncertainty))
+            //{
+            //    rowsList.Add(o);
+            //}
 
-            //structure dist type
-            rowsList.Add(ot.GetStructurePercentDD.Distribution);
+            ////structure dist type
+            //rowsList.Add(ot.GetStructurePercentDD.Distribution);
 
-            //is content checked
-            rowsList.Add(checkedTabs[1]);
+            ////is content checked
+            //rowsList.Add(checkedTabs[1]);
 
-            //content variation in value type, min, max, st dev
-            foreach (object o in GetContinuousDistributionArray(ot.ContentValueUncertainty))
-            {
-                rowsList.Add(o);
-            }
+            ////content variation in value type, min, max, st dev
+            //foreach (object o in GetContinuousDistributionArray(ot.ContentValueUncertainty))
+            //{
+            //    rowsList.Add(o);
+            //}
 
-            //cont dist type
-            rowsList.Add(ot.GetContentPercentDD.Distribution);
+            ////cont dist type
+            //rowsList.Add(ot.GetContentPercentDD.Distribution);
 
-            //is vehicle checked
-            rowsList.Add(checkedTabs[2]);
+            ////is vehicle checked
+            //rowsList.Add(checkedTabs[2]);
 
-            //vehicle variation in value type, min, max, st dev
-            foreach (object o in GetContinuousDistributionArray(ot.VehicleValueUncertainty))
-            {
-                rowsList.Add(o);
-            }
+            ////vehicle variation in value type, min, max, st dev
+            //foreach (object o in GetContinuousDistributionArray(ot.VehicleValueUncertainty))
+            //{
+            //    rowsList.Add(o);
+            //}
 
-            //vehicle dist type
-            rowsList.Add(ot.GetVehiclePercentDD.Distribution);
+            ////vehicle dist type
+            //rowsList.Add(ot.GetVehiclePercentDD.Distribution);
 
-            //is other checked
-            rowsList.Add(checkedTabs[3]);
+            ////is other checked
+            //rowsList.Add(checkedTabs[3]);
 
-            //Other variation in value type, min, max, st dev
-            foreach (object o in GetContinuousDistributionArray(ot.OtherValueUncertainty))
-            {
-                rowsList.Add(o);
-            }
+            ////Other variation in value type, min, max, st dev
+            //foreach (object o in GetContinuousDistributionArray(ot.OtherValueUncertainty))
+            //{
+            //    rowsList.Add(o);
+            //}
 
-            //other dist type
-            rowsList.Add(ot.GetOtherPercentDD.Distribution);
+            ////other dist type
+            //rowsList.Add(ot.GetOtherPercentDD.Distribution);
 
-            //damcats and occtypes group name
-            rowsList.Add(groupName);
+            ////damcats and occtypes group name
+            //rowsList.Add(groupName);
 
 
-            //structure curve xml
-            rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetStructurePercentDD.Distribution, ot.GetStructurePercentDD.XValues, ot.GetStructurePercentDD.YValues));
+            ////structure curve xml
+            //rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetStructurePercentDD.Distribution, ot.GetStructurePercentDD.XValues, ot.GetStructurePercentDD.YValues));
 
-            //content curve xml
-            rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetContentPercentDD.Distribution, ot.GetContentPercentDD.XValues, ot.GetContentPercentDD.YValues));
-            //vehicle curve xml
-            rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetVehiclePercentDD.Distribution, ot.GetVehiclePercentDD.XValues, ot.GetVehiclePercentDD.YValues));
-            //other curve xml
-            rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetOtherPercentDD.Distribution, ot.GetOtherPercentDD.XValues, ot.GetOtherPercentDD.YValues));
+            ////content curve xml
+            //rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetContentPercentDD.Distribution, ot.GetContentPercentDD.XValues, ot.GetContentPercentDD.YValues));
+            ////vehicle curve xml
+            //rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetVehiclePercentDD.Distribution, ot.GetVehiclePercentDD.XValues, ot.GetVehiclePercentDD.YValues));
+            ////other curve xml
+            //rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetOtherPercentDD.Distribution, ot.GetOtherPercentDD.XValues, ot.GetOtherPercentDD.YValues));
 
 
             return rowsList;
@@ -621,37 +672,37 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         }
 
-        private object[] GetContinuousDistributionArray(Statistics.ContinuousDistribution cd)
-        {
-            object[] rowItems = new object[4];
+        //private object[] GetContinuousDistributionArray(ICoordinatesFunction cd)
+        //{
+        //    object[] rowItems = new object[4];
 
-            if (cd.GetType() == typeof(Statistics.None))
-            {
-                return new object[] { "None", 0, 0, 0 };
-            }
-            else if (cd.GetType() == typeof(Statistics.Normal))
-            {
-                double stDev = ((Statistics.Normal)cd).GetStDev;
-                return new object[] { "Normal", 0, 0, stDev };
+        //    if (cd.GetType() == typeof(Statistics.None))
+        //    {
+        //        return new object[] { "None", 0, 0, 0 };
+        //    }
+        //    else if (cd.GetType() == typeof(Statistics.Normal))
+        //    {
+        //        double stDev = ((Statistics.Normal)cd).GetStDev;
+        //        return new object[] { "Normal", 0, 0, stDev };
 
-            }
-            else if (cd.GetType() == typeof(Statistics.Triangular))
-            {
-                double min = ((Statistics.Triangular)cd).getMin;
-                double max = ((Statistics.Triangular)cd).getMax;
-                return new object[] { "Triangular", min, max, 0 };
+        //    }
+        //    else if (cd.GetType() == typeof(Statistics.Triangular))
+        //    {
+        //        double min = ((Statistics.Triangular)cd).getMin;
+        //        double max = ((Statistics.Triangular)cd).getMax;
+        //        return new object[] { "Triangular", min, max, 0 };
 
-            }
-            else if (cd.GetType() == typeof(Statistics.Uniform))
-            {
-                double min = ((Statistics.Uniform)cd).GetMin;
-                double max = ((Statistics.Uniform)cd).GetMax;
-                return new object[] { "Uniform", min, max, 0 };
+        //    }
+        //    else if (cd.GetType() == typeof(Statistics.Uniform))
+        //    {
+        //        double min = ((Statistics.Uniform)cd).GetMin;
+        //        double max = ((Statistics.Uniform)cd).GetMax;
+        //        return new object[] { "Uniform", min, max, 0 };
 
-            }
+        //    }
 
-            return rowItems;
-        }
+        //    return rowItems;
+        //}
 
 
 

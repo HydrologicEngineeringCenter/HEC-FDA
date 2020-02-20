@@ -611,8 +611,7 @@ namespace FdaViewModel.Study
             Saving.PersistenceFactory.GetStageDamageManager().Load();
             Saving.PersistenceFactory.GetStructureInventoryManager().Load();
             Saving.PersistenceFactory.GetConditionsManager().Load();
-            //todo: Refactor: CO
-            //Saving.PersistenceFactory.GetOccTypeManager().Load();
+            Saving.PersistenceFactory.GetOccTypeManager().Load();
 
         }
 

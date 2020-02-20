@@ -38,7 +38,7 @@ namespace Fda.Inventory
 
             if (!System.IO.File.Exists(System.IO.Path.ChangeExtension(path, "dbf")))
             {
-                vm.ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
+                //vm.ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
                 NextButton.IsEnabled = false;
                 return;
             }

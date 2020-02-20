@@ -651,7 +651,7 @@ namespace FunctionsView.ViewModel
                     }
                 case IOrdinateEnum.Normal:
                     {
-                        IDistributedOrdinate dist = ((Distribution)coord.Y).GetDistribution;
+                        IDistributedOrdinate dist = (IDistributedOrdinate)coord.Y;
                         CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
                             .WithNormalDist(dist.Mean, dist.StandardDeviation, interpolator)
                             .Build();
@@ -659,7 +659,7 @@ namespace FunctionsView.ViewModel
                     }
                 case IOrdinateEnum.Triangular:
                     {
-                        IDistributedOrdinate dist = ((Distribution)coord.Y).GetDistribution;
+                        IDistributedOrdinate dist = (IDistributedOrdinate)coord.Y;
                         CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
                             .WithTriangularDist(dist.Mode, dist.Range.Min, dist.Range.Max, interpolator)
                             .Build();
@@ -667,7 +667,7 @@ namespace FunctionsView.ViewModel
                     }
                 case IOrdinateEnum.Uniform:
                     {
-                        IDistributedOrdinate dist = ((Distribution)coord.Y).GetDistribution;
+                        IDistributedOrdinate dist = (IDistributedOrdinate)coord.Y;
                         CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
                             .WithUniformDist(dist.Range.Min, dist.Range.Max, interpolator)
                             .Build();
@@ -675,7 +675,7 @@ namespace FunctionsView.ViewModel
                     }
                 case IOrdinateEnum.TruncatedNormal:
                     {
-                        IDistributedOrdinate dist = ((Distribution)coord.Y).GetDistribution;
+                        IDistributedOrdinate dist = (IDistributedOrdinate)coord.Y;
                         CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
                             .WithTruncatedNormalDist(dist.Mean, dist.StandardDeviation, dist.Range.Min, dist.Range.Max, interpolator)
                             .Build();

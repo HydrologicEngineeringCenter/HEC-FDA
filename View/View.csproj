@@ -265,6 +265,12 @@
     <Compile Include="ImpactArea\RadioButtonConverterLeft.cs" />
     <Compile Include="ImpactArea\RadioButtonConverterBoth.cs" />
     <Compile Include="ImpactArea\RadioButtonConverterRight.cs" />
+    <Compile Include="Inventory\AttributeLinkingList.xaml.cs">
+      <DependentUpon>AttributeLinkingList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Inventory\AttributeLinkingListRowItem.xaml.cs">
+      <DependentUpon>AttributeLinkingListRowItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Inventory\DamageCategory\DamageCategoryEditor.xaml.cs">
       <DependentUpon>DamageCategoryEditor.xaml</DependentUpon>
     </Compile>
@@ -286,7 +292,25 @@
     <Compile Include="Inventory\ImportFromShapefile.xaml.cs">
       <DependentUpon>ImportFromShapefile.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Inventory\ImportStructuresFromShapefile.xaml.cs">
+      <DependentUpon>ImportStructuresFromShapefile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Inventory\OccupancyTypesFromFile.xaml.cs">
+      <DependentUpon>OccupancyTypesFromFile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Inventory\OccupancyTypes\Controls\CreateNewDamCat.xaml.cs">
+      <DependentUpon>CreateNewDamCat.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Inventory\OccupancyTypes\DeleteMe.cs" />
+    <Compile Include="Inventory\OccupancyTypes\ImportOccupancyTypeGroups.xaml.cs">
+      <DependentUpon>ImportOccupancyTypeGroups.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Inventory\OccupancyTypes\ImportOccupancyTypes.xaml.cs">
+      <DependentUpon>ImportOccupancyTypes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Inventory\OccupancyTypes\OccTypeGroupRowItem.xaml.cs">
+      <DependentUpon>OccTypeGroupRowItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Output\IndexLocations.xaml.cs">
       <DependentUpon>IndexLocations.xaml</DependentUpon>
     </Compile>
@@ -443,6 +467,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Inventory\AttributeLinkingList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Inventory\AttributeLinkingListRowItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Inventory\DamageCategory\DamageCategoryEditor.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -470,6 +502,30 @@
     <Page Include="Inventory\ImportFromShapefile.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Inventory\ImportStructuresFromShapefile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Inventory\OccupancyTypesFromFile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Inventory\OccupancyTypes\Controls\CreateNewDamCat.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Inventory\OccupancyTypes\ImportOccupancyTypeGroups.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Inventory\OccupancyTypes\ImportOccupancyTypes.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Inventory\OccupancyTypes\OccTypeGroupRowItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

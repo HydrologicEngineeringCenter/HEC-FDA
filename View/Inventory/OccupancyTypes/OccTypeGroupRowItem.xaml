@@ -1,9 +1,9 @@
-﻿<UserControl x:Class="Fda.Inventory.OccupancyTypes.OccTypeGroupRowItem"
+﻿<UserControl x:Class="View.Inventory.OccupancyTypes.OccTypeGroupRowItem"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Fda.Inventory.OccupancyTypes"
+             xmlns:local="clr-namespace:View.Inventory.OccupancyTypes"
              mc:Ignorable="d" 
              d:DesignHeight="27" d:DesignWidth="720">
     <Border CornerRadius="2" BorderThickness="1" BorderBrush="DarkGray">
@@ -27,7 +27,7 @@
         <TextBlock Name="txt_NumOcctypes" Text="{Binding NumberOfOccTypes}" Grid.Column="2"  HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
         <Button  HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="3" Margin="2"  Click="Button_Click">
-            <Image Width="16" Height="16" VerticalAlignment="Bottom" HorizontalAlignment="Center" Grid.Row="1" Source="pack://application:,,,/Fda;component/Resources/Delete.png"/>
+            <Image Width="16" Height="16" VerticalAlignment="Bottom" HorizontalAlignment="Center" Grid.Row="1" Source="pack://application:,,,/View;component/Resources/Delete.png"/>
             <Button.ToolTip>
                 <ToolTip>
                     <TextBlock>Remove</TextBlock>

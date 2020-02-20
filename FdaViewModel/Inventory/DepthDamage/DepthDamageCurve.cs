@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Functions;
 using Model;
 using Statistics;
 
@@ -20,7 +21,7 @@ namespace FdaViewModel.Inventory.DepthDamage
 
         private DamageTypeEnum _DamageType;
         private string _Name;
-        private IFdaFunction _Curve;
+        private ICoordinatesFunction _Curve;
         private string _Description;
         
 
@@ -42,7 +43,7 @@ namespace FdaViewModel.Inventory.DepthDamage
             set { _Description = value; }
         }
 
-        public IFdaFunction Curve
+        public ICoordinatesFunction Curve
         {
             get { return _Curve; }
             set { _Curve = value; }
@@ -55,7 +56,7 @@ namespace FdaViewModel.Inventory.DepthDamage
         //    _Curve = curve;
         //    _DamageType = damageType;
         //}
-        public DepthDamageCurve(string name, string description, IFdaFunction curve, DamageTypeEnum damageType)
+        public DepthDamageCurve(string name, string description, ICoordinatesFunction curve, DamageTypeEnum damageType)
         {
             _Name = name;
             _Curve = curve;

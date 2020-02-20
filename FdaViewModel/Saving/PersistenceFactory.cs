@@ -92,12 +92,11 @@ namespace FdaViewModel.Saving
             RatingElementPersistenceManager manager = new RatingElementPersistenceManager(StudyCacheForSaving);
             return manager;
         }
-        //todo: Refactor: CO
-        //public static OccTypePersistenceManager GetOccTypeManager()
-        //{
-        //    OccTypePersistenceManager manager = new OccTypePersistenceManager(StudyCacheForSaving);
-        //    return manager;
-        //}
+        public static OccTypePersistenceManager GetOccTypeManager()
+        {
+            OccTypePersistenceManager manager = new OccTypePersistenceManager(StudyCacheForSaving);
+            return manager;
+        }
         public static StudyPropertiesPersistenceManager GetStudyPropertiesManager()
         {
             StudyPropertiesPersistenceManager manager = new StudyPropertiesPersistenceManager(StudyCacheForSaving);
