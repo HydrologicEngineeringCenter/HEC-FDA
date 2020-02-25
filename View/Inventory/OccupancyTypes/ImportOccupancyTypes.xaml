@@ -1,11 +1,11 @@
-﻿<UserControl x:Class="Fda.Inventory.OccupancyTypes.ImportOccupancyTypes"
+﻿<UserControl x:Class="View.Inventory.OccupancyTypes.ImportOccupancyTypes"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-                     xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
-xmlns:Util="clr-namespace:Fda.Utilities"
-             xmlns:local="clr-namespace:Fda.Inventory.OccupancyTypes"
+             xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
+             xmlns:Util="clr-namespace:View.Utilities"
+             xmlns:local="clr-namespace:View.Inventory.OccupancyTypes"
              mc:Ignorable="d" 
              d:DesignHeight="105" d:DesignWidth="560">
     <Grid>

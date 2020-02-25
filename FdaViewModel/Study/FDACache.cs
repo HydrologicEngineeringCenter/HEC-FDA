@@ -15,6 +15,7 @@ using FdaViewModel.AggregatedStageDamage;
 using FdaViewModel.Inventory;
 using FdaViewModel.Conditions;
 using System.Collections.ObjectModel;
+using FdaViewModel.Inventory.OccupancyTypes;
 //using FdaViewModel.Inventory.OccupancyTypes;
 
 namespace FdaViewModel.Study
@@ -78,8 +79,7 @@ namespace FdaViewModel.Study
 
 
         private List<RatingCurveElement> _Ratings = new List<RatingCurveElement>();
-        //todo: Refactor: CO
-       // private List<OccupancyTypesElement> _OccTypes = new List<OccupancyTypesElement>();
+        private List<OccupancyTypesElement> _OccTypes = new List<OccupancyTypesElement>();
         private List<TerrainElement> _Terrains = new List<TerrainElement>();
         private List<ImpactAreaElement> _ImpactAreas = new List<ImpactAreaElement>();
         private List<WaterSurfaceElevationElement> _WaterSurfaceElevations = new List<WaterSurfaceElevationElement>();
@@ -93,10 +93,8 @@ namespace FdaViewModel.Study
         private List<ConditionsElement> _Conditions = new List<ConditionsElement>();
 
         #region Properties
-        public List<RatingCurveElement> RatingCurveElements { get { return _Ratings; }  }
-        //todo: Refactor: CO
-        //public List<OccupancyTypesElement> OccTypeElements { get { return _OccTypes; } }
-
+        public List<RatingCurveElement> RatingCurveElements { get { return _Ratings; }  }      
+        public List<OccupancyTypesElement> OccTypeElements { get { return _OccTypes; } }
         public List<TerrainElement> TerrainElements { get { return _Terrains; } }
         public List<ImpactAreaElement> ImpactAreaElements { get { return _ImpactAreas; } }
         public List<WaterSurfaceElevationElement> WaterSurfaceElements { get { return _WaterSurfaceElevations; } }
@@ -117,8 +115,8 @@ namespace FdaViewModel.Study
         public RatingCurveOwnerElement RatingCurveParent { get; set; }
         public ExteriorInteriorOwnerElement ExteriorInteriorParent { get; set; }
         public AggregatedStageDamageOwnerElement StageDamageParent { get; set; }
-        //todo: Refactor: CO
-        //public OccupancyTypesOwnerElement OccTypeParent { get; set; }
+
+        public OccupancyTypesOwnerElement OccTypeParent { get; set; }
 
         public ConditionsOwnerElement ConditionsParent { get; set; }
         public ConditionsTreeOwnerElement ConditionsTreeParent { get; set; }
@@ -190,12 +188,12 @@ namespace FdaViewModel.Study
                 FailureFunctionElements.Remove((FailureFunctionElement)elem);
                 FailureFunctionRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
             }
-            //todo: Refactor: CO
-            //if (elem.GetType() == typeof(OccupancyTypesElement))
-            //{
-            //    OccTypeElements.Remove((OccupancyTypesElement)elem);
-            //    OccTypeElementRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
-            //}
+           
+            if (elem.GetType() == typeof(OccupancyTypesElement))
+            {
+                OccTypeElements.Remove((OccupancyTypesElement)elem);
+                OccTypeElementRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+            }
             if (elem.GetType() == typeof(InventoryElement))
             {
                 StructureInventoryElements.Remove((InventoryElement)elem);
@@ -269,12 +267,11 @@ namespace FdaViewModel.Study
                 FailureFunctionElements.Add((FailureFunctionElement)elem);
                 FailureFunctionAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
             }
-            //todo: Refactor: CO
-            //else if (elem.GetType() == typeof(OccupancyTypesElement))
-            //{
-            //    OccTypeElements.Add((OccupancyTypesElement)elem);
-            //    OccTypeElementAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
-            //}
+            else if (elem.GetType() == typeof(OccupancyTypesElement))
+            {
+                OccTypeElements.Add((OccupancyTypesElement)elem);
+                OccTypeElementAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+            }
             else if (elem.GetType() == typeof(InventoryElement))
             {
                 StructureInventoryElements.Add((InventoryElement)elem);
@@ -569,24 +566,24 @@ namespace FdaViewModel.Study
             }
         }
 
-        //public void UpdateOccTypeElement(InventoryElement oldElement, InventoryElement newElement)
-        //{
-        //    int index = -1;
-        //    for (int i = 0; i < StructureInventoryElements.Count; i++)
-        //    {
-        //        if (StructureInventoryElements[i].Name.Equals(oldElement.Name))
-        //        {
-        //            index = i;
-        //            break;
-        //        }
-        //    }
-        //    if (index != -1)
-        //    {
-        //        StructureInventoryElements.RemoveAt(index);
-        //        StructureInventoryElements.Insert(index, newElement);
-        //        StructureInventoryUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
-        //    }
-        //}
+        public void UpdateOccTypeElement(InventoryElement oldElement, InventoryElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < StructureInventoryElements.Count; i++)
+            {
+                if (StructureInventoryElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                StructureInventoryElements.RemoveAt(index);
+                StructureInventoryElements.Insert(index, newElement);
+                StructureInventoryUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
         #endregion
 
         #region Rename

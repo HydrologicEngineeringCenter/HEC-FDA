@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 
-namespace Fda.Inventory.OccupancyTypes
+namespace View.Inventory.OccupancyTypes
 {
     /// <summary>
     /// Interaction logic for OccupancyTypesEditor.xaml

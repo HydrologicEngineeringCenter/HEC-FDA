@@ -8,24 +8,44 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
-    interface IOccupancyType
+    public interface IOccupancyType
     {
-        string Name { get; }
-
-        string Description { get; }
-
-        IDamageCategory DamageCategory { get; }
+        string Name { get; set; }
+        string Description { get; set; }
+        IDamageCategory DamageCategory { get; set; }
 
         bool CalculateStructureDamage { get; }
         bool CalcualateContentDamage { get; }
         bool CalculateVehicleDamage { get; }
         bool CalculateOtherDamage { get; }
 
-        ICoordinatesFunction StructureDepthDamageFunction { get; }
-        ICoordinatesFunction ContentDepthDamageFunction { get; }
-        ICoordinatesFunction VehicleDepthDamageFunction { get; }
-        ICoordinatesFunction OtherDepthDamageFunction { get; }
+        ICoordinatesFunction StructureDepthDamageFunction { get; set; }
 
+        ICoordinatesFunction ContentDepthDamageFunction { get; set; }
+        ICoordinatesFunction VehicleDepthDamageFunction { get; set; }
+        ICoordinatesFunction OtherDepthDamageFunction { get; set; }
+
+        ICoordinatesFunction StructureValueUncertainty { get; set; }
+        ICoordinatesFunction ContentValueUncertainty { get; set; }
+        ICoordinatesFunction VehicleValueUncertainty { get; set; }
+        ICoordinatesFunction OtherValueUncertainty { get; set; }
+        ICoordinatesFunction FoundationHeightUncertaintyFunction { get; set; }
+        
+
+
+        string StructureDepthDamageName { get; set; }
+        string ContentDepthDamageName { get; set; }
+        string VehicleDepthDamageName { get; set; }
+        string OtherDepthDamageName { get; set; }
+
+
+        IOccupancyType Clone();
+        //public SampledOccupancyType GenerateSampledOccupancyType(ref Random Randy);
+        //public void LoadFromFDAInformation(StringBuilder occtype, int startdata, int parameter);
+        //public string WriteToFDAString();
+        //public XElement WriteToXElement();
+
+        //public delegate void ReportMessageEventHandler(string message);
 
 
     }

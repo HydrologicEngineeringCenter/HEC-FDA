@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using FdaViewModel.Utilities;
+using FdaViewModel.Inventory.DepthDamage;
+using Model;
+using Model.Inputs.Functions.ImpactAreaFunctions;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -108,14 +111,14 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         }
         public bool Import()
         {
-            List<Consequences_Assist.ComputableObjects.OccupancyType> ListOfOccupancyTypes = new List<Consequences_Assist.ComputableObjects.OccupancyType>();
+            List<IOccupancyType> ListOfOccupancyTypes = new List<IOccupancyType>();
 
             string errorMessage = "";
             if (IsValid(ref errorMessage) == true)
             {
                 try
                 {
-                    Consequences_Assist.ComputableObjects.OccupancyTypes ot = new Consequences_Assist.ComputableObjects.OccupancyTypes(SelectedPath);
+                    IOccupancyTypeGroup ot = new OccupancyTypeGroup(SelectedPath);
                     //ot.LoadFromFile(SelectedPath);
                     ListOfOccupancyTypes = ot.OccupancyTypes;
 
@@ -140,7 +143,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 //}
 
 
-                List<DepthDamage.DepthDamageCurve> listOfDDCurves = new List<DepthDamage.DepthDamageCurve>();
+                List<DepthDamageCurve> listOfDDCurves = new List<DepthDamageCurve>();
 
                 for (int j = 0; j < ListOfOccupancyTypes.Count(); j++)
                 {
@@ -150,13 +153,15 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                     string newVehicleDDCurveName = ListOfOccupancyTypes[j].Name + " Vehicle Depth Damage Curve" ;
                     string newOtherDDCurveName = ListOfOccupancyTypes[j].Name + " Other Depth Damage Curve" ;
 
+                    string structDesc = "Structural depth damage curve for " + ListOfOccupancyTypes[j].Name;
+                    string contentDesc = "Content depth damage curve for " + ListOfOccupancyTypes[j].Name;
+                    string vehicleDesc = "Vehicle depth damage curve for " + ListOfOccupancyTypes[j].Name;
+                    string otherDesc = "Other depth damage curve for " + ListOfOccupancyTypes[j].Name;
 
-
-
-                    DepthDamage.DepthDamageCurve newStructuralDDCurve = new DepthDamage.DepthDamageCurve(newStructuralDDCurveName, "Structural depth damage curve for " + ListOfOccupancyTypes[j].Name, ListOfOccupancyTypes[j].GetStructurePercentDD, DepthDamage.DepthDamageCurve.DamageTypeEnum.Structural);
-                    DepthDamage.DepthDamageCurve newContentDDCurve = new DepthDamage.DepthDamageCurve(newContentDDCurveName, "Content depth damage curve for " + ListOfOccupancyTypes[j].Name, ListOfOccupancyTypes[j].GetContentPercentDD, DepthDamage.DepthDamageCurve.DamageTypeEnum.Content);
-                    DepthDamage.DepthDamageCurve newVehicleDDCurve = new DepthDamage.DepthDamageCurve(newVehicleDDCurveName, "Vehicle depth damage curve for " + ListOfOccupancyTypes[j].Name, ListOfOccupancyTypes[j].GetVehiclePercentDD, DepthDamage.DepthDamageCurve.DamageTypeEnum.Vehicle);
-                    DepthDamage.DepthDamageCurve newOtherDDCurve = new DepthDamage.DepthDamageCurve(newOtherDDCurveName, "Other depth damage curve for " + ListOfOccupancyTypes[j].Name, ListOfOccupancyTypes[j].GetOtherPercentDD, DepthDamage.DepthDamageCurve.DamageTypeEnum.Other);
+                    DepthDamageCurve newStructuralDDCurve = new DepthDamageCurve(newStructuralDDCurveName, structDesc, ListOfOccupancyTypes[j].StructureDepthDamageFunction, DepthDamageCurve.DamageTypeEnum.Structural);
+                    DepthDamageCurve newContentDDCurve = new DepthDamageCurve(newContentDDCurveName, contentDesc, ListOfOccupancyTypes[j].ContentDepthDamageFunction, DepthDamageCurve.DamageTypeEnum.Content);
+                    DepthDamageCurve newVehicleDDCurve = new DepthDamageCurve(newVehicleDDCurveName, vehicleDesc, ListOfOccupancyTypes[j].VehicleDepthDamageFunction, DepthDamageCurve.DamageTypeEnum.Vehicle);
+                    DepthDamageCurve newOtherDDCurve = new DepthDamageCurve(newOtherDDCurveName, otherDesc, ListOfOccupancyTypes[j].OtherDepthDamageFunction, DepthDamageCurve.DamageTypeEnum.Other);
 
 
                     ListOfOccupancyTypes[j].StructureDepthDamageName = newStructuralDDCurveName;

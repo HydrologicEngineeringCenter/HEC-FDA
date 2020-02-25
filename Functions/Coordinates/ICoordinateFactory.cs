@@ -21,6 +21,20 @@ namespace Functions
             return new CoordinateVariableY(new Constant(x),new Distribution(y));
         }
 
+        public static ICoordinate Factory(double x, IDistributedOrdinate y)
+        {
+            if (y is Distribution)
+            {
+                return new CoordinateVariableY(new Constant(x), (Distribution)y);
+            }
+            else
+            {
+                //right now (2/19/2020), Distribution is the only thing that implements IDistributedOrdinate
+                //so y has to be a Distribution. So we should never hit this.
+                return null;
+            }
+        }
+
         private static XElement GetOrdinateChildElement(XElement element)
         {
             //This is kind of weird but there should only be one child element in an ordinates element.

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Inventory.OccupancyTypes
+namespace View.Inventory.OccupancyTypes
 {
     /// <summary>
     /// Interaction logic for OccTypeGroupRowItem.xaml

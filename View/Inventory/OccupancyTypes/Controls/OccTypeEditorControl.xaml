@@ -31,7 +31,7 @@
             <TextBlock Grid.Column="0" Name="NameLabel" Text="Occupancy Type Name: " HorizontalAlignment="Left" VerticalAlignment="Center"/>
             <TextBox Grid.Column="1" Margin="2,0,0,0" Name="OccTypeNameBox" Text="{Binding SelectedOccTypeName,Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" LostFocus="OccTypeNameBox_LostFocus" />
             <Button Name="CreateNewButton" Margin="3,0,0,0" Width="20" Height="20" Grid.Row="2" Grid.Column="2" ToolTip="Add New Damage Category" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" Click="CreateNewDamCat_Click" >
-                <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
+                <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Add.png"/>
             </Button>
 
             <TextBlock Grid.Row="1" TextAlignment="Right" Text="Description: " VerticalAlignment="Center"/>
@@ -78,7 +78,7 @@
                             <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/EditButtonIcon_Disabled.png"/>
                         </Button>-->
                     </Grid>
-                    <CA:TableWithPlot x:Name="tableWithPlot_Structures" Grid.Row="2" Curve="{Binding StructureDepthDamageCurve}" IsReadOnly="False" TableWidth="250" xColumnHeader="Depth" yColumnHeader="% Damage" xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Structural Depth-Damage Curve" />
+                    <!--<CA:TableWithPlot x:Name="tableWithPlot_Structures" Grid.Row="2" Curve="{Binding StructureDepthDamageCurve}" IsReadOnly="False" TableWidth="250" xColumnHeader="Depth" yColumnHeader="% Damage" xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Structural Depth-Damage Curve" />-->
                     <!--<local:CurveEditorControl x:Name="StructureCurveEditor" Margin="5,0,0,0" Grid.Row="2" IsReadOnly="True" TableWidth=".75*" plotTitle="Structural Depth-Damage Curve" xAxisLabel="Depth" yAxisLabel="% Damage" yAxisMaximum="100" yAxisMinimum="0" yColumnHeader="% Damage" xColumnHeader="Depth" MinYValue="0" MaxYValue="100" IsAscending="True" IsStrictX="True" IsStrictY="False"></local:CurveEditorControl>-->
                 </Grid>
             </TabItem>
@@ -119,7 +119,7 @@
                         </Button>-->
                     </Grid>
 
-                    <CA:TableWithPlot x:Name="tableWithPlot_Content" Grid.Row="2" Curve="{Binding ContentDepthDamageCurve}" IsReadOnly="False" xColumnHeader="Depth" yColumnHeader="% Damage"  xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Content Depth-Damage Curve" Grid.ColumnSpan="2"  />
+                    <!--<CA:TableWithPlot x:Name="tableWithPlot_Content" Grid.Row="2" Curve="{Binding ContentDepthDamageCurve}" IsReadOnly="False" xColumnHeader="Depth" yColumnHeader="% Damage"  xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Content Depth-Damage Curve" Grid.ColumnSpan="2"  />-->
                     <!--<local:CurveEditorControl x:Name="ContentCurveEditor" Margin="5,0,0,0" Grid.Row="2" IsReadOnly="True" TableWidth=".75*" plotTitle="Content Depth-Damage Curve" xAxisLabel="Depth" yAxisLabel="% Damage" yAxisMaximum="100" yAxisMinimum="0" yColumnHeader="% Damage" xColumnHeader="Depth" MinYValue="0" MaxYValue="100" IsAscending="True" IsStrictX="True" IsStrictY="False"></local:CurveEditorControl>-->
                 </Grid>
             </TabItem>
@@ -152,7 +152,7 @@
                             --><!--<Image Width="16" Height="16" Source="pack://application:,,,/HEC-LifeSim;component/Resources/EditButtonIcon_Disabled.png"/>--><!--
                         </Button>-->
                     </Grid>
-                    <CA:TableWithPlot x:Name="tableWithPlot_vehicle" Grid.Row="2" Curve="{Binding VehicleDepthDamageCurve}" IsReadOnly="False" xColumnHeader="Depth" yColumnHeader="% Damage" xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Vehicle Depth-Damage Curve" />
+                    <!--<CA:TableWithPlot x:Name="tableWithPlot_vehicle" Grid.Row="2" Curve="{Binding VehicleDepthDamageCurve}" IsReadOnly="False" xColumnHeader="Depth" yColumnHeader="% Damage" xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Vehicle Depth-Damage Curve" />-->
                     <!--<local:CurveEditorControl x:Name="VehicleCurveEditor" Margin="5,0,0,0" Grid.Row="2" IsReadOnly="True" TableWidth=".75*" plotTitle="Vehicle Depth-Damage Curve" xAxisLabel="Depth" yAxisLabel="% Damage" yAxisMaximum="100" yAxisMinimum="0" yColumnHeader="% Damage" xColumnHeader="Depth" MinYValue="0" MaxYValue="100" IsAscending="True" IsStrictX="True" IsStrictY="False"></local:CurveEditorControl>-->
                 </Grid>
             </TabItem>
@@ -186,7 +186,7 @@
                             <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/EditButtonIcon.png"/>
                         </Button>-->
                     </Grid>
-                    <CA:TableWithPlot x:Name="tableWithPlot_other" Grid.Row="2" Curve="{Binding OtherDepthDamageCurve}" IsReadOnly="False" xColumnHeader="Depth" yColumnHeader="% Damage"  xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Other Depth-Damage Curve"  />
+                    <!--<CA:TableWithPlot x:Name="tableWithPlot_other" Grid.Row="2" Curve="{Binding OtherDepthDamageCurve}" IsReadOnly="False" xColumnHeader="Depth" yColumnHeader="% Damage"  xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Other Depth-Damage Curve"  />-->
                     <!--<local:CurveEditorControl x:Name="OtherCurveEditor" Margin="5,0,0,0" Grid.Row="2" IsReadOnly="True" TableWidth=".75*" plotTitle="Other Depth-Damage Curve" xAxisLabel="Depth" yAxisLabel="% Damage" yAxisMaximum="100" yAxisMinimum="0" yColumnHeader="% Damage" xColumnHeader="Depth" MinYValue="0" MaxYValue="100" IsAscending="True" IsStrictX="True" IsStrictY="False"></local:CurveEditorControl>-->
                 </Grid>
             </TabItem>

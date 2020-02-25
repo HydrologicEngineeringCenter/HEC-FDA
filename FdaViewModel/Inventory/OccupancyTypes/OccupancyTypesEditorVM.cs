@@ -8,6 +8,7 @@ using System.ComponentModel;
 using FdaViewModel.Utilities;
 using Consequences_Assist.ComputableObjects;
 using FdaViewModel.Saving.PersistenceManagers;
+using Functions;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -21,17 +22,16 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         #region Fields
         private List<OccupancyTypesElement> _OccTypeGroups;
         private OccupancyTypesElement _SelectedOccTypeGroup;
-        private Consequences_Assist.ComputableObjects.OccupancyType _SelectedOccType;
+        private IOccupancyType _SelectedOccType;
         private Dictionary<string,DepthDamage.DepthDamageCurve> _DepthDamageCurveDictionary;
         //this dictionary is to keep track of the checkboxes that have been clicked in the tabs for each occtype
         private Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary;
         //private string _SelectedStructureDepthDamage;
 
-            //todo: Refactor: Commenting out
-        //private Statistics.UncertainCurveDataCollection _StructureDepthDamageCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);// Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-        //private Statistics.UncertainCurveDataCollection _ContentDepthDamageCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-        //private Statistics.UncertainCurveDataCollection _VehicleDepthDamageCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-        //private Statistics.UncertainCurveDataCollection _OtherDepthDamageCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+        private ICoordinatesFunction _StructureDepthDamageCurve;// = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);// Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+        private ICoordinatesFunction _ContentDepthDamageCurve;// = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+        private ICoordinatesFunction _VehicleDepthDamageCurve;// = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+        private ICoordinatesFunction _OtherDepthDamageCurve;// = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
         private List<string> _StructureDepthDamageStringNames = new List<string>();
         private List<string> _ContentDepthDamageStringNames = new List<string>();
@@ -170,8 +170,8 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         }
         public string SelectedDamageCategory
         {
-            get { if (_SelectedOccType == null) { return ""; } return _SelectedOccType.DamageCategoryName; }
-            set { if (_SelectedOccType != null && value != null) { _SelectedOccType.DamageCategoryName = value; } NotifyPropertyChanged(); }
+            get { if (_SelectedOccType == null) { return ""; } return _SelectedOccType.DamageCategory.Name; }
+            set { if (_SelectedOccType != null && value != null) { _SelectedOccType.DamageCategory.Name = value; } NotifyPropertyChanged(); }
         }
 
 
@@ -206,15 +206,22 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 NotifyPropertyChanged();
             }
         }
-        public Consequences_Assist.ComputableObjects.OccupancyType SelectedOccType
+        public IOccupancyType SelectedOccType
         {
             get { return _SelectedOccType; }
             set { _SelectedOccType = value; SetDepthDamageCurves(); SetDamageCategory(); SetTheCheckboxesOnTheTabs(); NotifyPropertyChanged("SelectedOccTypeName");  NotifyPropertyChanged(); }//SelectedOccTypeName = _SelectedOccType.Name;
         }
-        public Statistics.UncertainCurveDataCollection StructureDepthDamageCurve
+        public ICoordinatesFunction StructureDepthDamageCurve
         {
             get{return _StructureDepthDamageCurve;}
-            set { _StructureDepthDamageCurve = value; if (_SelectedOccType != null) { _SelectedOccType.SetStructurePercentDD = (Statistics.UncertainCurveIncreasing)value; } NotifyPropertyChanged(); }
+            set 
+            {
+                _StructureDepthDamageCurve = value; 
+                if (_SelectedOccType != null) 
+                { 
+                    _SelectedOccType.StructureDepthDamageFunction = value; 
+                } 
+                NotifyPropertyChanged(); }
         }
 
       
@@ -252,10 +259,17 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 NotifyPropertyChanged();
             }
         }
-        public Statistics.UncertainCurveDataCollection ContentDepthDamageCurve
+        public ICoordinatesFunction ContentDepthDamageCurve
         {
             get{ return _ContentDepthDamageCurve; }
-            set { _ContentDepthDamageCurve = value; if (_SelectedOccType != null) { _SelectedOccType.SetContentPercentDD = (Statistics.UncertainCurveIncreasing)value; } NotifyPropertyChanged(); }
+            set 
+            { 
+                _ContentDepthDamageCurve = value; 
+                if (_SelectedOccType != null) 
+                { 
+                    _SelectedOccType.ContentDepthDamageFunction = value; 
+                }
+                NotifyPropertyChanged(); }
         }
 
         #endregion
@@ -292,10 +306,17 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             }
         }
 
-        public Statistics.UncertainCurveDataCollection VehicleDepthDamageCurve
+        public ICoordinatesFunction VehicleDepthDamageCurve
         {
             get {return _VehicleDepthDamageCurve;}
-            set { _VehicleDepthDamageCurve = value; if (_SelectedOccType != null) { _SelectedOccType.SetVehiclePercentDD = (Statistics.UncertainCurveIncreasing)value; } NotifyPropertyChanged(); }
+            set 
+            {
+                _VehicleDepthDamageCurve = value; 
+                if (_SelectedOccType != null) 
+                {
+                    _SelectedOccType.VehicleDepthDamageFunction = value; 
+                }
+                NotifyPropertyChanged(); }
         }
 
         #endregion
@@ -332,10 +353,17 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 NotifyPropertyChanged();
             }
         }
-        public Statistics.UncertainCurveDataCollection OtherDepthDamageCurve
+        public ICoordinatesFunction OtherDepthDamageCurve
         {
             get{return _OtherDepthDamageCurve;}
-            set { _OtherDepthDamageCurve = value; if (_SelectedOccType != null) { _SelectedOccType.SetOtherPercentDD = (Statistics.UncertainCurveIncreasing)value; } NotifyPropertyChanged(); }
+            set 
+            { 
+                _OtherDepthDamageCurve = value; 
+                if (_SelectedOccType != null) 
+                { 
+                    _SelectedOccType.OtherDepthDamageFunction = value; 
+                } 
+                NotifyPropertyChanged(); }
         }
 
         #endregion
@@ -365,17 +393,13 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public OccupancyTypesEditorVM(OccupancyTypesElement selectedOccTypeElement, Editors.EditorActionManager manager):base(manager)
         {
             Name = "OccTypeEditor";//I just needed some name so that it doesn't fail the empty name test that is now universal.
-           // _OcctypeTabsSelectedDictionary = _SelectedOccTypeGroup.OccTypesSelectedTabsDictionary;//new Dictionary<string, bool[]>();
-            DepthDamage.DepthDamageCurveData ddcd = new DepthDamage.DepthDamageCurveData(); //this call will load the default DD curves dictionary
+            //this call will load the default DD curves dictionary
+            DepthDamage.DepthDamageCurveData ddcd = new DepthDamage.DepthDamageCurveData(); 
             DepthDamageCurveDictionary = DepthDamage.DepthDamageCurveData.CurveDictionary;
             LoadDepthDamageCurveNames();
-            OccTypeGroups = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();// OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups;
+            OccTypeGroups = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
 
-            //ListOfDataTables = new List<DataTable>();
-            //foreach(OccupancyTypesElement ote in OccTypeGroups)
-            //{
-            //    ListOfDataTables.Add(CreateDataTable(ote));
-            //}
+         
             AddEmptyCurvesToEmptyDepthDamages();
 
             //set the selected occtype group
@@ -443,28 +467,30 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         }
         private void AddEmptyCurvesToEmptyDepthDamages()
         {
-            Statistics.UncertainCurveIncreasing newCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-            newCurve.Add(0, new Statistics.None(0));
+            List<double> xs = new List<double>() { 0 };
+            List<double> ys = new List<double>() { 0};
+            ICoordinatesFunction newCurve = ICoordinatesFunctionsFactory.Factory(xs,ys);
+            //newCurve.Add(0, new Statistics.None(0));
 
             foreach (OccupancyTypesElement element in OccTypeGroups)
             {
-                foreach( Consequences_Assist.ComputableObjects.OccupancyType ot in element.ListOfOccupancyTypes)
+                foreach( IOccupancyType ot in element.ListOfOccupancyTypes)
                 {
-                    if (ot.GetStructurePercentDD.Count == 0)
+                    if (ot.StructureDepthDamageFunction.Coordinates.Count == 0)
                     {
-                        ot.SetStructurePercentDD = newCurve;
+                        ot.StructureDepthDamageFunction = newCurve;
                     }
-                    if (ot.GetContentPercentDD.Count == 0)
+                    if (ot.ContentDepthDamageFunction.Coordinates.Count == 0)
                     {
-                        ot.SetContentPercentDD = newCurve;
+                        ot.ContentDepthDamageFunction = newCurve;
                     }
-                    if (ot.GetVehiclePercentDD.Count == 0)
+                    if (ot.VehicleDepthDamageFunction.Coordinates.Count == 0)
                     {
-                        ot.SetVehiclePercentDD = newCurve;
+                        ot.VehicleDepthDamageFunction = newCurve;
                     }
-                    if (ot.GetOtherPercentDD.Count == 0)
+                    if (ot.OtherDepthDamageFunction.Coordinates.Count == 0)
                     {
-                        ot.SetOtherPercentDD = newCurve;
+                        ot.OtherDepthDamageFunction = newCurve;
                     }
                 }
             }
@@ -545,7 +571,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 if(vm.HasError == false)
                 {
                     //store the new damage category
-                    _SelectedOccType.DamageCategory = new Consequences_Assist.ComputableObjects.DamageCategory(vm.Name);
+                    _SelectedOccType.DamageCategory = new DamageCategory.DamageCategory(vm.Name);
 
                     SetDamageCategory();
                     LoadDamageCategoriesList();
@@ -576,7 +602,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 if (vm.HasError == false)
                 {
                     //create the new occupancy type
-                    Consequences_Assist.ComputableObjects.OccupancyType newOT = new Consequences_Assist.ComputableObjects.OccupancyType(vm.Name, SelectedDamageCategory);
+                    IOccupancyType newOT = new OccupancyType(vm.Name, SelectedDamageCategory);
 
                     //load all the values you can
                     newOT.StructureDepthDamageName = SelectedStructureDepthDamage;
@@ -584,20 +610,21 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                     newOT.VehicleDepthDamageName = SelectedVehicleDepthDamage;
                     newOT.OtherDepthDamageName = SelectedOtherDepthDamage;
 
-                    newOT.StructureValueUncertainty = new Statistics.None();
-                    newOT.ContentValueUncertainty = new Statistics.None();
-                    newOT.VehicleValueUncertainty = new Statistics.None();
-                    newOT.OtherValueUncertainty = new Statistics.None();
+                    ICoordinatesFunction newCurve = ICoordinatesFunctionsFactory.DefaultOccTypeFunction();
 
-                    Statistics.UncertainCurveIncreasing newCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-                    newCurve.Add(0, new Statistics.None(0));
+                    newOT.StructureValueUncertainty = newCurve;
+                    newOT.ContentValueUncertainty = newCurve;
+                    newOT.VehicleValueUncertainty = newCurve;
+                    newOT.OtherValueUncertainty = newCurve;
 
-                    newOT.SetStructurePercentDD = newCurve;
-                    newOT.SetContentPercentDD = newCurve;
-                    newOT.SetOtherPercentDD = newCurve;
-                    newOT.SetVehiclePercentDD = newCurve;
+                    //newCurve.Add(0, new Statistics.None(0));
 
-                    newOT.FoundationHeightUncertainty = new Statistics.None();
+                    newOT.StructureDepthDamageFunction = newCurve;
+                    newOT.ContentDepthDamageFunction = newCurve;
+                    newOT.OtherDepthDamageFunction = newCurve;
+                    newOT.VehicleDepthDamageFunction = newCurve;
+
+                    newOT.FoundationHeightUncertaintyFunction = newCurve;
 
                     _OcctypeTabsSelectedDictionary.Add(newOT.Name, new bool[] { true, true, true, false });
 
@@ -624,7 +651,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 if (vm.HasError == false)
                 {
                     //create the new occupancy type
-                    Consequences_Assist.ComputableObjects.OccupancyType newOT = new Consequences_Assist.ComputableObjects.OccupancyType(vm.Name, SelectedDamageCategory);
+                    IOccupancyType newOT = new OccupancyType(vm.Name, SelectedDamageCategory);
 
                     //load all the values you can
                     newOT.StructureDepthDamageName = SelectedStructureDepthDamage;
@@ -636,13 +663,13 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                     newOT.ContentValueUncertainty = SelectedOccType.ContentValueUncertainty;
                     newOT.VehicleValueUncertainty = SelectedOccType.VehicleValueUncertainty;
                     newOT.OtherValueUncertainty = SelectedOccType.OtherValueUncertainty;
-                    newOT.FoundationHeightUncertainty = SelectedOccType.FoundationHeightUncertainty;
+                    newOT.FoundationHeightUncertaintyFunction = SelectedOccType.FoundationHeightUncertaintyFunction;
 
 
-                    newOT.SetStructurePercentDD = SelectedOccType.GetStructurePercentDD;
-                    newOT.SetContentPercentDD = SelectedOccType.GetContentPercentDD;
-                    newOT.SetOtherPercentDD = SelectedOccType.GetOtherPercentDD;
-                    newOT.SetVehiclePercentDD = SelectedOccType.GetVehiclePercentDD;
+                    newOT.StructureDepthDamageFunction = SelectedOccType.StructureDepthDamageFunction;
+                    newOT.ContentDepthDamageFunction = SelectedOccType.ContentDepthDamageFunction;
+                    newOT.OtherDepthDamageFunction = SelectedOccType.OtherDepthDamageFunction;
+                    newOT.VehicleDepthDamageFunction = SelectedOccType.VehicleDepthDamageFunction;
 
                     bool[] values = _OcctypeTabsSelectedDictionary[SelectedOccType.Name];
                     _OcctypeTabsSelectedDictionary.Add(newOT.Name, values);
@@ -668,7 +695,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             //set the selected occtype to be the one before, unless at 0
             if (selectedIndex>0)
             {
-                Consequences_Assist.ComputableObjects.OccupancyType ot = SelectedOccTypeGroup.ListOfOccupancyTypes[selectedIndex - 1];
+                IOccupancyType ot = SelectedOccTypeGroup.ListOfOccupancyTypes[selectedIndex - 1];
                 SelectedOccType = ot;
             }
             else //we just deleted the zeroth item
@@ -742,7 +769,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         {
             if (_SelectedOccType != null)
             {
-                SelectedDamageCategory = _SelectedOccType.DamageCategoryName;
+                SelectedDamageCategory = _SelectedOccType.DamageCategory.Name;
             }
            
         }
@@ -817,10 +844,10 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             //if (_SelectedOccType.OtherDepthDamageName == null) { _SelectedOccType.OtherDepthDamageName = ""; }
             //if (_SelectedOccType.VehicleDepthDamageName == null) { _SelectedOccType.VehicleDepthDamageName = ""; }
 
-            StructureDepthDamageCurve = _SelectedOccType.GetStructurePercentDD;
-            ContentDepthDamageCurve = _SelectedOccType.GetContentPercentDD;
-            VehicleDepthDamageCurve = _SelectedOccType.GetVehiclePercentDD;
-            OtherDepthDamageCurve = _SelectedOccType.   GetOtherPercentDD;
+            StructureDepthDamageCurve = _SelectedOccType.StructureDepthDamageFunction;
+            ContentDepthDamageCurve = _SelectedOccType.ContentDepthDamageFunction;
+            VehicleDepthDamageCurve = _SelectedOccType.VehicleDepthDamageFunction;
+            OtherDepthDamageCurve = _SelectedOccType.OtherDepthDamageFunction;
 
             //SelectedStructureDepthDamage = _SelectedOccType.GetStructurePercentDD;
             //SelectedContentDepthDamage = _SelectedOccType.ContentDepthDamageName;

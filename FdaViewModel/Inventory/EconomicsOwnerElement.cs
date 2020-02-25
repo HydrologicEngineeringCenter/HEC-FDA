@@ -34,10 +34,10 @@ namespace FdaViewModel.Inventory
         }
         public void AddBaseElements(Study.FDACache cache)
         {
-            //todo: Refactor: CO
-            //OccupancyTypes.OccupancyTypesOwnerElement o = new OccupancyTypes.OccupancyTypesOwnerElement();
-            //this.AddElement(o);
-            //cache.OccTypeParent = o;
+           
+            OccupancyTypes.OccupancyTypesOwnerElement o = new OccupancyTypes.OccupancyTypesOwnerElement();
+            this.AddElement(o);
+            cache.OccTypeParent = o;
 
             StructureInventoryOwnerElement sioe = new StructureInventoryOwnerElement();
             this.AddElement(sioe);

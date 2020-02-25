@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Xml.Linq;
 using FdaViewModel.Utilities;
 using Consequences_Assist.ComputableObjects;
+using Functions;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -33,7 +34,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public bool IsSelected { get; set; }
         public Dictionary<string,bool[]> OccTypesSelectedTabsDictionary { get; set; }
             //public string OccTypesGroupName { get; set; }
-        public List<Consequences_Assist.ComputableObjects.OccupancyType> ListOfOccupancyTypes { get; set; }
+        public List<IOccupancyType> ListOfOccupancyTypes { get; set; }
 
         
 
@@ -43,7 +44,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         {
 
         }
-        public OccupancyTypesElement(string occTypesGroupName, List<Consequences_Assist.ComputableObjects.OccupancyType> listOfOccTypes, Dictionary<string,bool[]> occtypesSelectedTabs):base()
+        public OccupancyTypesElement(string occTypesGroupName, List<IOccupancyType> listOfOccTypes, Dictionary<string,bool[]> occtypesSelectedTabs):base()
         {
             Name = occTypesGroupName;
             OccTypesSelectedTabsDictionary = occtypesSelectedTabs;
@@ -61,7 +62,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         }
 
         #region SaveTables
-        
+
 
         //public static string CreateNormalDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
         //{
@@ -79,7 +80,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         //    return xElement.ToString();
         //}
 
-    
+
         //private string CreateTriangularDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
         //{
         //    XElement xElement = new XElement("TriangularDistribution");
@@ -98,7 +99,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         //}
 
 
-   
+
 
         //private string CreateUniformDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
         //{
@@ -119,7 +120,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         //private string CreateNoneDistributionXML(ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
         //{
-            
+
         //    XElement xElement = new XElement("NoneDistribution");
         //    for (int j = 0; j < XValues.Count; j++)
         //    {
@@ -133,153 +134,153 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         //    return xElement.ToString();
         //}
 
-      
+
 
         #endregion
 
 
-        //public  void Save()
-        //{
-
-        //    //if (!Storage.Connection.Instance.IsConnectionNull)
-        //    //{
-        //    //    if (!Storage.Connection.Instance.IsOpen)
-        //    //    {
-        //    //        Storage.Connection.Instance.Open();
-        //    //    }
-        //    //    if (Storage.Connection.Instance.TableNames().Contains(TableName))
-        //    //    {
-        //    //        //already exists... delete?
-        //    //        Storage.Connection.Instance.DeleteTable(TableName);
-        //    //    }
-
-        //    //    string[] colNames = new string[] { "Name", "Description", "DamageCategory","VarInFoundHtType","FdHtMin","FdHtMax","FdHtStDev",
-        //    //        "IsStructChecked","VarInStructValueType","StructMin","StructMax","StructStDev","StructDistType", "IsContChecked",
-        //    //        "VarInContValueType", "ContMin", "ContMax", "ContStDev", "ContDistType", "IsVehChecked", "VarInVehValueType",
-        //    //        "VehMin", "VehMax", "VehStDev", "VehDistType", "IsOtherChecked", "VarInOtherValueType", "OtherMin", "OtherMax",
-        //    //        "OtherStDev", "OtherDistType","GroupName", "StructureCurve","ContentCurve","VehicleCurve","OtherCurve" };
-        //    //    Type[] colTypes = new Type[] { typeof(string), typeof(string), typeof(string), typeof(string), typeof(double),
-        //    //        typeof(double), typeof(double), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double),
-        //    //        typeof(string), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),
-        //    //        typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string), typeof(bool),
-        //    //        typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),typeof(string),typeof(string),
-        //    //        typeof(string),typeof(string),typeof(string)};
-
-        //    //    Storage.Connection.Instance.CreateTable(TableName, colNames, colTypes);
-        //    //    DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
-
-        //    //    List<object[]> rows = new List<object[]>();
-
-        //    //    foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in ListOfOccupancyTypes)
-        //    //    {
-
-        //    //        rows.Add(GetOccTypeRowForParentTable(ot).ToArray());
-        //    //    }
-        //    //    tbl.AddRows(rows);
-        //    //    tbl.ApplyEdits();
-        //    //    Storage.Connection.Instance.Close();
-
-        //    //}
-        //    //Saving.PersistenceFactory.GetOccTypeManager().SaveNew(ListOfOccupancyTypes, OccTypesSelectedTabsDictionary, Name);
-        //}
-        /// <summary>
-        /// This method is used to create the row for the parent occtype table. 
-        /// This table has a lot of columns
-        /// </summary>
-        /// <param name="ot"></param>
-        /// <returns></returns>
-        private List<object> GetOccTypeRowForParentTable(Consequences_Assist.ComputableObjects.OccupancyType ot)
+        public void Save()
         {
-            List<object> rowsList = new List<object>();
-            bool[] checkedTabs = new bool[4];
-            if (OccTypesSelectedTabsDictionary.ContainsKey(ot.Name))
-            {
-                checkedTabs = OccTypesSelectedTabsDictionary[ot.Name];
-            }
-            else
-            {
-                //can't find the key in the dictionary
-                throw new Exception();
-            }
 
+            //if (!Storage.Connection.Instance.IsConnectionNull)
+            //{
+            //    if (!Storage.Connection.Instance.IsOpen)
+            //    {
+            //        Storage.Connection.Instance.Open();
+            //    }
+            //    if (Storage.Connection.Instance.TableNames().Contains(TableName))
+            //    {
+            //        //already exists... delete?
+            //        Storage.Connection.Instance.DeleteTable(TableName);
+            //    }
 
-            //name, description, damacat name
-            foreach (object o in GetOccTypeInfoArray(ot))
-            {
-                rowsList.Add(o);
-            }
+            //    string[] colNames = new string[] { "Name", "Description", "DamageCategory","VarInFoundHtType","FdHtMin","FdHtMax","FdHtStDev",
+            //        "IsStructChecked","VarInStructValueType","StructMin","StructMax","StructStDev","StructDistType", "IsContChecked",
+            //        "VarInContValueType", "ContMin", "ContMax", "ContStDev", "ContDistType", "IsVehChecked", "VarInVehValueType",
+            //        "VehMin", "VehMax", "VehStDev", "VehDistType", "IsOtherChecked", "VarInOtherValueType", "OtherMin", "OtherMax",
+            //        "OtherStDev", "OtherDistType","GroupName", "StructureCurve","ContentCurve","VehicleCurve","OtherCurve" };
+            //    Type[] colTypes = new Type[] { typeof(string), typeof(string), typeof(string), typeof(string), typeof(double),
+            //        typeof(double), typeof(double), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double),
+            //        typeof(string), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),
+            //        typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string), typeof(bool),
+            //        typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),typeof(string),typeof(string),
+            //        typeof(string),typeof(string),typeof(string)};
 
-            //found ht variation type, min, max, st dev
-            foreach (object o in GetContinuousDistributionArray(ot.FoundationHeightUncertainty))
-            {
-                rowsList.Add(o);
-            }
+            //    Storage.Connection.Instance.CreateTable(TableName, colNames, colTypes);
+            //    DataBase_Reader.DataTableView tbl = Storage.Connection.Instance.GetTable(TableName);
 
-            //is struct checked
-            rowsList.Add(checkedTabs[0]);
+            //    List<object[]> rows = new List<object[]>();
 
-            //structure variation in value type, min, max, st dev
-            foreach (object o in GetContinuousDistributionArray(ot.StructureValueUncertainty))
-            {
-                rowsList.Add(o);
-            }
+            //    foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in ListOfOccupancyTypes)
+            //    {
 
-            //structure dist type
-            rowsList.Add(ot.GetStructurePercentDD.Distribution); 
+            //        rows.Add(GetOccTypeRowForParentTable(ot).ToArray());
+            //    }
+            //    tbl.AddRows(rows);
+            //    tbl.ApplyEdits();
+            //    Storage.Connection.Instance.Close();
 
-            //is content checked
-            rowsList.Add(checkedTabs[1]);
-
-            //content variation in value type, min, max, st dev
-            foreach (object o in GetContinuousDistributionArray(ot.ContentValueUncertainty))
-            {
-                rowsList.Add(o);
-            }
-
-            //cont dist type
-            rowsList.Add(ot.GetContentPercentDD.Distribution);
-
-            //is vehicle checked
-            rowsList.Add(checkedTabs[2]);
-
-            //vehicle variation in value type, min, max, st dev
-            foreach (object o in GetContinuousDistributionArray(ot.VehicleValueUncertainty))
-            {
-                rowsList.Add(o);
-            }
-
-            //vehicle dist type
-            rowsList.Add(ot.GetVehiclePercentDD.Distribution);
-
-            //is other checked
-            rowsList.Add(checkedTabs[3]);
-
-            //Other variation in value type, min, max, st dev
-            foreach (object o in GetContinuousDistributionArray(ot.OtherValueUncertainty))
-            {
-                rowsList.Add(o);
-            }
-
-            //other dist type
-            rowsList.Add(ot.GetOtherPercentDD.Distribution);
-
-            //damcats and occtypes group name
-            rowsList.Add(Name);
-
-
-            //structure curve xml
-            rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetStructurePercentDD.Distribution, ot.GetStructurePercentDD.XValues, ot.GetStructurePercentDD.YValues));
-
-            //content curve xml
-            rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetContentPercentDD.Distribution, ot.GetContentPercentDD.XValues, ot.GetContentPercentDD.YValues));
-            //vehicle curve xml
-            rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetVehiclePercentDD.Distribution, ot.GetVehiclePercentDD.XValues, ot.GetVehiclePercentDD.YValues));
-            //other curve xml
-            rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetOtherPercentDD.Distribution, ot.GetOtherPercentDD.XValues, ot.GetOtherPercentDD.YValues));
-
-
-            return rowsList;
+            //}
+            //Saving.PersistenceFactory.GetOccTypeManager().SaveNew(ListOfOccupancyTypes, OccTypesSelectedTabsDictionary, Name);
         }
+        ///// <summary>
+        ///// This method is used to create the row for the parent occtype table. 
+        ///// This table has a lot of columns
+        ///// </summary>
+        ///// <param name="ot"></param>
+        ///// <returns></returns>
+        //private List<object> GetOccTypeRowForParentTable(IOccupancyType ot)
+        //{
+        //    List<object> rowsList = new List<object>();
+        //    bool[] checkedTabs = new bool[4];
+        //    if (OccTypesSelectedTabsDictionary.ContainsKey(ot.Name))
+        //    {
+        //        checkedTabs = OccTypesSelectedTabsDictionary[ot.Name];
+        //    }
+        //    else
+        //    {
+        //        //can't find the key in the dictionary
+        //        throw new Exception();
+        //    }
+
+
+        //    //name, description, damacat name
+        //    foreach (object o in GetOccTypeInfoArray(ot))
+        //    {
+        //        rowsList.Add(o);
+        //    }
+
+        //    //found ht variation type, min, max, st dev
+        //    foreach (object o in GetContinuousDistributionArray(ot.FoundationHeightUncertaintyFunction))
+        //    {
+        //        rowsList.Add(o);
+        //    }
+
+        //    //is struct checked
+        //    rowsList.Add(checkedTabs[0]);
+
+        //    //structure variation in value type, min, max, st dev
+        //    foreach (object o in GetContinuousDistributionArray(ot.StructureValueUncertainty))
+        //    {
+        //        rowsList.Add(o);
+        //    }
+
+        //    //structure dist type
+        //    rowsList.Add(ot.StructureDepthDamageFunction.Distribution); 
+
+        //    //is content checked
+        //    rowsList.Add(checkedTabs[1]);
+
+        //    //content variation in value type, min, max, st dev
+        //    foreach (object o in GetContinuousDistributionArray(ot.ContentValueUncertainty))
+        //    {
+        //        rowsList.Add(o);
+        //    }
+
+        //    //cont dist type
+        //    rowsList.Add(ot.ContentDepthDamageFunction.Distribution);
+
+        //    //is vehicle checked
+        //    rowsList.Add(checkedTabs[2]);
+
+        //    //vehicle variation in value type, min, max, st dev
+        //    foreach (object o in GetContinuousDistributionArray(ot.VehicleValueUncertainty))
+        //    {
+        //        rowsList.Add(o);
+        //    }
+
+        //    //vehicle dist type
+        //    rowsList.Add(ot.VehicleDepthDamageFunction.Distribution);
+
+        //    //is other checked
+        //    rowsList.Add(checkedTabs[3]);
+
+        //    //Other variation in value type, min, max, st dev
+        //    foreach (object o in GetContinuousDistributionArray(ot.OtherValueUncertainty))
+        //    {
+        //        rowsList.Add(o);
+        //    }
+
+        //    //other dist type
+        //    rowsList.Add(ot.OtherDepthDamageFunction.Distribution);
+
+        //    //damcats and occtypes group name
+        //    rowsList.Add(Name);
+
+
+        //    //structure curve xml
+        //    rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetStructurePercentDD.Distribution, ot.GetStructurePercentDD.XValues, ot.GetStructurePercentDD.YValues));
+
+        //    //content curve xml
+        //    rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetContentPercentDD.Distribution, ot.GetContentPercentDD.XValues, ot.GetContentPercentDD.YValues));
+        //    //vehicle curve xml
+        //    rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetVehiclePercentDD.Distribution, ot.GetVehiclePercentDD.XValues, ot.GetVehiclePercentDD.YValues));
+        //    //other curve xml
+        //    rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetOtherPercentDD.Distribution, ot.GetOtherPercentDD.XValues, ot.GetOtherPercentDD.YValues));
+
+
+        //    return rowsList;
+        //}
 
         //private string CreateXMLCurveString(Statistics.UncertainCurveDataCollection.DistributionsEnum distType, ReadOnlyCollection<double> XValues, ReadOnlyCollection<Statistics.ContinuousDistribution> YValues)
         //{
@@ -300,42 +301,46 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         
 
-        private object[] GetOccTypeInfoArray(Consequences_Assist.ComputableObjects.OccupancyType ot)
+        private object[] GetOccTypeInfoArray(IOccupancyType ot)
         {
             return new object[] { ot.Name, ot.Description, ot.DamageCategory.Name };
 
         }
-        private object[] GetContinuousDistributionArray(Statistics.ContinuousDistribution cd)
-        {
-            object[] rowItems = new object[4];
+        //private object[] GetContinuousDistributionArray(ICoordinatesFunction cd)
+        //{
+        //    object[] rowItems = new object[4];
+        //    switch (cd.DistributionType)
+        //    {
+        //        case IOrdinateEnum.Constant:
+        //            {
+        //                return new object[] { "None", 0, 0, 0 };
+        //            }
+        //        case IOrdinateEnum.Normal:
+        //            {
+        //                double stDev = cd. ((Statistics.Normal)cd).GetStDev;
+        //                return new object[] { "Normal", 0, 0, stDev };
 
-            if(cd.GetType() == typeof(Statistics.None))
-            {
-                return new object[] { "None", 0, 0, 0 };
-            }
-            else if(cd.GetType() == typeof(Statistics.Normal))
-            {
-                double stDev = ((Statistics.Normal)cd).GetStDev;
-                return new object[] { "Normal", 0, 0, stDev };
+        //            }
+        //        case IOrdinateEnum.Triangular:
+        //            //else if (cd.GetType() == typeof(Statistics.Triangular))
+        //            {
+        //                double min = ((Statistics.Triangular)cd).getMin;
+        //                double max = ((Statistics.Triangular)cd).getMax;
+        //                return new object[] { "Triangular", min, max, 0 };
 
-            }
-            else if(cd.GetType() == typeof(Statistics.Triangular))
-            {
-                double min = ((Statistics.Triangular)cd).getMin;
-                double max = ((Statistics.Triangular)cd).getMax;
-                return new object[] { "Triangular", min, max, 0 };
+        //            }
+        //        case IOrdinateEnum.Uniform:
+        //            //else if (cd.GetType() == typeof(Statistics.Uniform))
+        //            {
+        //                double min = ((Statistics.Uniform)cd).GetMin;
+        //                double max = ((Statistics.Uniform)cd).GetMax;
+        //                return new object[] { "Uniform", min, max, 0 };
 
-            }
-            else if(cd.GetType() == typeof(Statistics.Uniform))
-            {
-                double min = ((Statistics.Uniform)cd).GetMin;
-                double max = ((Statistics.Uniform)cd).GetMax;
-                return new object[] { "Uniform", min,max, 0 };
+        //            }
+        //    }
 
-            }
-
-            return rowItems;
-        }
+        //    return rowItems;
+        //}
 
         //public override object[] RowData()
         //{
@@ -369,8 +374,8 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         {
             OccupancyTypesElement elem = (OccupancyTypesElement)elementToClone;
 
-            List<OccupancyType> occTypes = new List<OccupancyType>(); 
-            foreach(OccupancyType ot in elem.ListOfOccupancyTypes)
+            List<IOccupancyType> occTypes = new List<IOccupancyType>(); 
+            foreach(IOccupancyType ot in elem.ListOfOccupancyTypes)
             {
                 occTypes.Add(ot);
             }

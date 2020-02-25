@@ -48,7 +48,8 @@
              xmlns:ConditionVM="clr-namespace:FdaViewModel.Conditions;assembly=FdaViewModel"
              xmlns:ConditionsView="clr-namespace:View.Conditions"
              
-             
+             xmlns:OccupancyTypesVM="clr-namespace:FdaViewModel.Inventory.OccupancyTypes;assembly=FdaViewModel"
+             xmlns:OccupancyTypesView="clr-namespace:View.Inventory.OccupancyTypes"
 
              
              xmlns:UtilitiesView="clr-namespace:View.Utilities"
@@ -137,16 +138,15 @@
         </DataTemplate>
         
         <!--Occupancy Types Region-->
-        <!--todo: Refactor: CO-->
         <!--<DataTemplate DataType="{x:Type OccupancyTypesVM:OccupancyTypesEditorVM }" >
             <OccupancyTypesView:OccupancyTypesEditor/>
-        </DataTemplate>
+        </DataTemplate>-->
         <DataTemplate DataType="{x:Type OccupancyTypesVM:OccupancyTypesGroupRowItemVM }" >
             <OccupancyTypesView:OccTypeGroupRowItem/>
-        </DataTemplate>-->
+        </DataTemplate>
 
         <!--Occupancy Types Controls Region-->
-        <!--todo: Refactor: CO-->
+        
         <!--<DataTemplate DataType="{x:Type OccupancyTypesControlsVM:CreateNewDamCatVM }" >
             <OccupancyTypesControlsView:CreateNewDamCat/>
         </DataTemplate>-->
@@ -184,15 +184,12 @@
         <DataTemplate DataType="{x:Type DamageCategoryVM:DamageCategoriesVM }" >
             <DamageCategoryView:DamageCategoryEditor/>
         </DataTemplate>
-
-        <!--todo: Refactor: CO-->
-        <!--<DataTemplate DataType="{x:Type OccupancyTypesVM:ImportOccupancyTypesVM }" >
+        <DataTemplate DataType="{x:Type OccupancyTypesVM:ImportOccupancyTypesVM }" >
             <OccupancyTypesView:ImportOccupancyTypeGroups/>
-        </DataTemplate>-->
+        </DataTemplate>
 
 
         <!--Output Region-->
-        <!--todo: Refactor: CO-->
         <!--<DataTemplate DataType="{x:Type OutputVM:CreateEconImportFileVM }" >
             <OutputView:CreateEconImportFile/>
         </DataTemplate>-->
@@ -276,7 +273,9 @@
         <DataTemplate DataType="{x:Type StudyVM:NewStudyVM }" >
             <StudyView:CreateNew/>
         </DataTemplate>
-      
+        <DataTemplate DataType="{x:Type StudyVM:ImportFromOldFdaVM }" >
+            <StudyView:ImportFromOldFda/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type StudyVM:SciChartTestingVM }" >
             <StudyView:SciChartTest/>
         </DataTemplate>
