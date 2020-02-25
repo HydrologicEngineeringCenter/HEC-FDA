@@ -14,7 +14,7 @@ namespace Functions.Ordinates
 
         public IRange<double> Range { get; }
         public IOrdinateEnum Type => IOrdinateEnum.Constant;
-        public bool IsValid { get; }
+        public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
         #endregion
 
@@ -23,14 +23,13 @@ namespace Functions.Ordinates
         {
             _ConstantValue = value;
             Range = IRangeFactory.Factory(_ConstantValue, _ConstantValue);
-            IsValid = Validate(new Validation.ConstantValidator(), out IEnumerable<IMessage> msgs);
+            State = Validate(new Validation.ConstantValidator(), out IEnumerable<IMessage> msgs);
             Messages = msgs;
         }
         #endregion
 
-
         #region Functions
-        public bool Validate(IValidator<Constant> validator, out IEnumerable<IMessage> msgs)
+        public IMessageLevels Validate(IValidator<Constant> validator, out IEnumerable<IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }

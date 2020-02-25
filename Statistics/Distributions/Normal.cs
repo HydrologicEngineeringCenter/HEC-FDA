@@ -25,8 +25,8 @@ namespace Statistics.Distributions
         public Utilities.IRange<double> Range { get; }
         public int SampleSize { get; }
         #endregion
-        #region IValidate Properties
-        public bool IsValid { get; }
+        #region IMessagePublisher Properties
+        public IMessageLevels State { get; }
         public IEnumerable<Utilities.IMessage> Messages { get; }
         #endregion
 
@@ -40,13 +40,13 @@ namespace Statistics.Distributions
             _ProbabilityRange = FiniteRange();
             Range = IRangeFactory.Factory(_Distribution.InverseCumulativeDistribution(_ProbabilityRange.Min), _Distribution.InverseCumulativeDistribution(_ProbabilityRange.Max));           
             SampleSize = sampleSize;
-            IsValid = Validate(new Validation.NormalValidator(), out IEnumerable<Utilities.IMessage> msgs);
+            State = Validate(new Validation.NormalValidator(), out IEnumerable<Utilities.IMessage> msgs);
             Messages = msgs;
         }
         #endregion
 
         #region Functions
-        public bool Validate(Utilities.IValidator<Normal> validator, out IEnumerable<Utilities.IMessage> msgs)
+        public IMessageLevels Validate(Utilities.IValidator<Normal> validator, out IEnumerable<Utilities.IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }

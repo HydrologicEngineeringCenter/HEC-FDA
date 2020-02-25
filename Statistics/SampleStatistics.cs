@@ -18,7 +18,7 @@ namespace Statistics
         public double Kurtosis => _Statistics.Kurtosis;
         public Utilities.IRange<double> Range { get; }
         public int SampleSize => Utilities.ExtensionMethods.CastToInt(_Statistics.Count);
-        public bool IsValid { get; }
+        public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
 
         internal SampleStatistics(IData data)
@@ -26,11 +26,11 @@ namespace Statistics
             _Statistics = new MathNet.Numerics.Statistics.DescriptiveStatistics(data.Elements);
             Median = MathNet.Numerics.Statistics.SortedArrayStatistics.Median(data.Elements.ToArray());
             Range = Utilities.IRangeFactory.Factory(_Statistics.Minimum, _Statistics.Maximum);
-            IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<IMessage> msgs);
+            State = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<IMessage> msgs);
             Messages = msgs;
         }
 
-        public bool Validate(Utilities.IValidator<ISummaryStatistics> validator, out IEnumerable<IMessage> msgs)
+        public IMessageLevels Validate(Utilities.IValidator<ISummaryStatistics> validator, out IEnumerable<IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }

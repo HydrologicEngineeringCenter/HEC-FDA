@@ -9,11 +9,11 @@ namespace Statistics
     internal class Data : IData, IValidate<IData>
     {
         #region Properties
-        public bool IsValid { get; }
-        public IEnumerable<IMessage> Messages { get; }
         public IRange<double> Range { get; }
         public IOrderedEnumerable<double> Elements { get; }
         public int SampleSize { get; }
+        public IMessageLevels State { get; }
+        public IEnumerable<IMessage> Messages { get; }
         #endregion
 
         #region Constructor
@@ -24,7 +24,7 @@ namespace Statistics
             SampleSize = Elements.Count();
             Range = IRangeFactory.Factory(Elements.First(), Elements.Last());
             IMessageBoard msgBoard = IMessageBoardFactory.Factory(DataMessages(sets.Item2));
-            IsValid = Validate(new Validation.DataValidator(), out IEnumerable<IMessage> errors);
+            State = Validate(new Validation.DataValidator(), out IEnumerable<IMessage> errors);
             msgBoard.PostMessages(errors);
             Messages = msgBoard.ReadMessages();
         }
@@ -53,10 +53,10 @@ namespace Statistics
         private IMessage DataMessages(IEnumerable<double> nonFiniteData)
         {
             if (!nonFiniteData.IsNullOrEmpty()) return IMessageFactory.Factory(IMessageLevels.Message, $"{nonFiniteData.Count()} {double.NegativeInfinity}, {double.PositiveInfinity} or {double.NaN} elements where removed from the provided data elements.");
-            else return IMessageFactory.Factory(IMessageLevels.NotSet, "");
+            else return IMessageFactory.Factory(IMessageLevels.None, "");
         }
         #endregion 
-        public bool Validate(IValidator<IData> validator, out IEnumerable<IMessage> errors)
+        public IMessageLevels Validate(IValidator<IData> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);
         }

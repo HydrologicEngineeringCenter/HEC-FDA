@@ -14,7 +14,7 @@ namespace Functions.Coordinates
         #region Properties
         public IOrdinate X { get; }
         public IOrdinate Y { get; }
-        public bool IsValid { get; }
+        public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
         #endregion
 
@@ -26,14 +26,14 @@ namespace Functions.Coordinates
             {
                 X = x;
                 Y = y;
-                IsValid = Validate(new Validation.CoordinateVariableYValidator(), out IEnumerable<IMessage> msgs);
+                State = Validate(new Validation.CoordinateVariableYValidator(), out IEnumerable<IMessage> msgs);
                 Messages = msgs;
             }
         }
         #endregion
 
         #region Functions
-        public bool Validate(IValidator<CoordinateVariableY> validator, out IEnumerable<IMessage> msgs)
+        public IMessageLevels Validate(IValidator<CoordinateVariableY> validator, out IEnumerable<IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }

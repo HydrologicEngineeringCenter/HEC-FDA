@@ -8,10 +8,10 @@ namespace Statistics.Validation
 {
     public class HistogramValidator : IValidator<IHistogram>
     {
-        public bool IsValid(IHistogram obj, out IEnumerable<IMessage> msgs)
+        public IMessageLevels IsValid(IHistogram obj, out IEnumerable<IMessage> msgs)
         {
             msgs = ReportErrors(obj);
-            return msgs.Max() < IMessageLevels.Error;
+            return msgs.Max();
         }
         public IEnumerable<IMessage> ReportErrors(IHistogram obj)
         {
@@ -30,7 +30,7 @@ namespace Statistics.Validation
                 if (bins[i].Messages.Any())
                 {
                     IMessage[] msgs = bins[i].Messages.ToArray();
-                    IMessageLevels level = IMessageLevels.NotSet;
+                    IMessageLevels level = IMessageLevels.None;
                     StringBuilder binMsg = new StringBuilder($"Histogram bin {i + 1} of {bins.Length.Print()} contains the following {msgs.Length} messages: \r\n");
                     for (int j = 0; j < msgs.Length; j++)
                     {

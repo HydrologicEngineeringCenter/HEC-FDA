@@ -62,7 +62,7 @@ namespace Functions.CoordinatesFunctions
             //todo: if i sort, i will lose track of the list of interpolators.
             //List<ICoordinatesFunction<IOrdinate, IOrdinate>> sortedFunctions = Functions.OrderBy(func => func.Domain.Item1).ToList();
             Functions = functions;
-            IsValid = Validate(new LinkedCoordinatesFunctionValidator(), out IEnumerable<IMessage> errors);
+            State = Validate(new LinkedCoordinatesFunctionValidator(), out IEnumerable<IMessage> errors);
             CombineCoordinates();
             SetOrder();
             Errors = errors;
@@ -283,7 +283,7 @@ namespace Functions.CoordinatesFunctions
             return retval;
         }
 
-        public bool Validate(IValidator<ICoordinatesFunction> validator, out IEnumerable<IMessage> errors)
+        public IMessageLevels Validate(IValidator<ICoordinatesFunction> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);
         }

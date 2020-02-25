@@ -10,8 +10,6 @@ namespace Statistics.Distributions
     internal class Triangular: IDistribution, IValidate<Triangular> 
     {
         //TODO: Sample
-        //TODO: Validation
-
         #region Fields and Properties
         private readonly MathNet.Numerics.Distributions.Triangular _Distribution;
 
@@ -24,7 +22,7 @@ namespace Statistics.Distributions
         public double Skewness => _Distribution.Skewness;
         public IRange<double> Range { get; }
         public int SampleSize { get; }
-        public bool IsValid { get; }
+        public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
         public double Mode => _Distribution.Mode;
         #endregion
@@ -40,17 +38,14 @@ namespace Statistics.Distributions
                 _Distribution = new MathNet.Numerics.Distributions.Triangular(lower: min, upper: max, mode: mode);
                 Range = range;
                 SampleSize = sampleSize;
-                IsValid = Validate(new Validation.TriangularValidator(), out IEnumerable<IMessage> msgs);
+                State = Validate(new Validation.TriangularValidator(), out IEnumerable<IMessage> msgs);
                 Messages = msgs;
             }
-            
-            //TODO: Validation
-            
         }
         #endregion
 
         #region Functions
-        public bool Validate(IValidator<Triangular> validator, out IEnumerable<IMessage> msgs)
+        public IMessageLevels Validate(IValidator<Triangular> validator, out IEnumerable<IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }

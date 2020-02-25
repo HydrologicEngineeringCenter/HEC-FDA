@@ -12,10 +12,10 @@ namespace Statistics.Validation
         internal TruncatedDistributionValidator()
         {
         }
-        public bool IsValid(TruncatedDistribution obj, out IEnumerable<IMessage> msgs)
+        public IMessageLevels IsValid(TruncatedDistribution obj, out IEnumerable<IMessage> msgs)
         {
             msgs = ReportErrors(obj);
-            return msgs.Max() < IMessageLevels.Error;
+            return msgs.Max();
         }
         public IEnumerable<IMessage> ReportErrors(TruncatedDistribution obj)
         {

@@ -21,16 +21,16 @@ namespace Functions
         public List<ICoordinate> Coordinates { get; }
         public bool IsLinkedFunction => false;
 
-        public bool IsValid { get; }
+        public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
 
         internal DistributionFunction(IDistributedOrdinate distribution)
         {
             _Distribution = distribution;
-            Domain = IRangeFactory.Factory(0, 1);
+            Domain = IRangeFactory.Factory(0d, 1d);
             Coordinates = GetCoordinates();
             _CoordinatesFunction = new CoordinatesFunctionConstants(Coordinates, InterpolationEnum.Linear);
-            IsValid = Validate(new Validation.DistributionFunctionValidator(), out IEnumerable<IMessage> msgs);
+            State = Validate(new Validation.DistributionFunctionValidator(), out IEnumerable<IMessage> msgs);
             Messages = msgs;
         }
         private List<ICoordinate> GetCoordinates()
@@ -72,7 +72,7 @@ namespace Functions
             }
         }
 
-        public bool Validate(IValidator<ICoordinatesFunction> validator, out IEnumerable<IMessage> errors)
+        public IMessageLevels Validate(IValidator<ICoordinatesFunction> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);
         }

@@ -92,7 +92,7 @@ namespace StatisticsTests.Histograms
         [Fact]
         public void IsValid_NewBin_GoodData_Returns_True()
         {
-            Assert.True(new Bin(0, 2, 0).IsValid);
+            Assert.True(new Bin(0, 2, 0).State < IMessageLevels.Error);
         }
         /// <summary>
         /// Test that new bin non-finite <see cref="Bin.Minimum"/> values: (<see cref="double.NegativeInfinity"/>, <see cref="double.PositiveInfinity"/>, <see cref="double.NaN"/>) sets <see cref="Bin.IsValid"/> to <see langword="false"/>.
@@ -105,7 +105,7 @@ namespace StatisticsTests.Histograms
         public void IsValid_NewBinNotFiniteMinimumValue_Returns_False(double min)
         {
             //ValidationRegistry.Register(new BinValidator());
-            Assert.False(new Bin(min, max: 2, n: 0).IsValid);
+            Assert.True(new Bin(min, max: 2, n: 0).State == IMessageLevels.Error);
         }
         /// <summary>
         /// Test that new bin non-finite <see cref="Bin.Maximum"/> values: (<see cref="double.NegativeInfinity"/>, <see cref="double.PositiveInfinity"/>, <see cref="double.NaN"/>) sets <see cref="Bin.IsValid"/> to <see langword="false"/>.
@@ -118,7 +118,7 @@ namespace StatisticsTests.Histograms
         public void IsValid_NewBinNotFiniteMaximumValue_Returns_False(double max)
         {
             //ValidationRegistry.Register(new BinValidator());
-            Assert.False(new Bin(min: 0, max, n: 0).IsValid);
+            Assert.True(new Bin(min: 0, max, n: 0).State == IMessageLevels.Error);
         }
         /// <summary>
         /// Tests that new <see cref="Bin"/> with bad range [<see cref="Bin.Minimum"/>, <see cref="Bin.Maximum"/>) including: <see cref="Bin.Minimum"/> &gt;= <see cref="Bin.Maximum"/>
@@ -132,7 +132,7 @@ namespace StatisticsTests.Histograms
         public void IsValid_BadRange_Returns_False(double min, double max)
         {
             var testObj = new Bin(min, max, n: 0);
-            Assert.False(testObj.IsValid);
+            Assert.True(testObj.State == IMessageLevels.Error);
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace StatisticsTests.Histograms
         public void IsValid_NewBinNegativeCountValue_Returns_False(int count)
         {
             //ValidationRegistry.Register(new BinValidator());
-            Assert.False(new Bin(min: 0, max: 2, n: count).IsValid);
+            Assert.True(new Bin(min: 0, max: 2, n: count).State == IMessageLevels.Error);
         }
 
         #endregion
@@ -212,7 +212,7 @@ namespace StatisticsTests.Histograms
         public void IsValid_OldBin_GoodDataPlusPositiveValues_Returns_True(int addN)
         {
             Bin oldBin = new Bin(0, 2, 0);
-            Assert.True(new Bin(oldBin, addN).IsValid);
+            Assert.True(new Bin(oldBin, addN).State < IMessageLevels.Error);
         }
         /// <summary>
         /// Tests that when additional observations are added to an existing <see cref="Bin"/> with non finite <see cref="Bin.Minimum"/> or <see cref="Bin.Maximum"/> property values, the <see cref="Bin.IsValid"/> property reamins <see langword="false"/>.
@@ -229,7 +229,7 @@ namespace StatisticsTests.Histograms
         public void IsValid_OldBin_NotFiniteBounds_Returns_False(double min, double max)
         {
             Bin oldBin = new Bin(min, max, n: 0);
-            Assert.False(new Bin(oldBin, 0).IsValid);
+            Assert.False(new Bin(oldBin, 0).State == IMessageLevels.Error);
         }
         /// <summary>
         /// Tests that when additional observations are added to an existing <see cref="Bin"/> that causes the <see cref="Bin.Count"/> property to return a negative value the <see cref="Bin.IsValid"/> property is set to <see langword="false"/>.
@@ -241,7 +241,7 @@ namespace StatisticsTests.Histograms
         public void IsValid_OldBin_GoodDataPlusNegativeCount_Returns_False(int addN)
         {
             Bin oldBin = new Bin(0, 2, n: 0);
-            Assert.False(new Bin(oldBin, addN).IsValid);
+            Assert.False(new Bin(oldBin, addN).State == IMessageLevels.Error);
         }
 
         #endregion

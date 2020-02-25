@@ -43,6 +43,7 @@ namespace Statistics
 
         }
 
+        #region Sample Stuff To Remove
         /// <summary>
         /// Generates a parametric bootstrap sample, yielding a new <see cref="IDistribution"/> based on the specified <paramref name="distribution"/>.
         /// </summary>
@@ -66,8 +67,9 @@ namespace Statistics
             for (int i = 0; i < n; i++) probs.Add(rng.NextDouble());
             return probs;
         }
+        #endregion
 
-        public static IDistribution Fit(IEnumerable<double> sample, IDistributionEnum returnType)
+        internal static IDistribution Fit(IEnumerable<double> sample, IDistributionEnum returnType)
         {
             if ((int)returnType >= 10)
             {
@@ -91,15 +93,15 @@ namespace Statistics
                     case IDistributionEnum.LogPearsonIII:
                         return Distributions.LogPearsonIII.Fit(sample);
                     default:
-                        throw new NotImplementedException($"An unexpected error occured. The requested return type: {returnType} is unsupported");
+                        throw new NotImplementedException($"An unexpected error occurred. The requested return type: {returnType} is unsupported");
                 }
             }          
         }
-        public static IHistogram Fit(IEnumerable<double> sample, int nBins)
+        internal static IHistogram Fit(IEnumerable<double> sample, int nBins)
         {
             return IHistogramFactory.Factory(IDataFactory.Factory(sample), nBins);
         }
-        public static IDistribution Fit(IEnumerable<double> sample, double minimum, double maximum, IDistributionEnum returnType)
+        internal static IDistribution Fit(IEnumerable<double> sample, double minimum, double maximum, IDistributionEnum returnType)
         {
             if ((int)returnType < 10)
             {
@@ -107,26 +109,26 @@ namespace Statistics
             }
             else
             {
-                IDistribution distribution = (IDistribution)Fit(sample, (int)returnType / 10);
+                IDistribution distribution = Fit(sample, (int)returnType / 10);
                 return new Distributions.TruncatedDistribution(distribution, minimum, maximum);
             }
         }
-
-        public static IDistribution FactoryNormal(double mean, double stDev, int sample = 2147483647)
+        
+        public static IDistribution FactoryNormal(double mean, double stDev, int sampleSize = 2147483647)
         {
-            return new Distributions.Normal(mean, stDev, sample);
+            return new Distributions.Normal(mean, stDev, sampleSize);
         }
-        public static IDistribution FactoryTriangular(double min, double mostLikely, double max, int sample = 2147483647)
+        public static IDistribution FactoryTriangular(double min, double mostLikely, double max, int sampleSize = int.MaxValue)
         {
-            return new Distributions.Triangular(min, mostLikely, max, sample);
+            return new Distributions.Triangular(min, mostLikely, max, sampleSize);
         }
-        public static IDistribution FactoryUniform(double min, double max, int sample = 2147483647)
+        public static IDistribution FactoryUniform(double min, double max, int sampleSize = int.MaxValue)
         {
-            return new Distributions.Uniform(min, max, sample);
+            return new Distributions.Uniform(min, max, sampleSize);
         }
-        public static IDistribution FactoryTruncatedNormal(double mean, double stDev, double min, double max, int sample = 2147483647)
+        public static IDistribution FactoryTruncatedNormal(double mean, double stDev, double min, double max, int sampleSize = int.MaxValue)
         {
-            IDistribution normal = new Distributions.Normal(mean, stDev, sample);
+            IDistribution normal = new Distributions.Normal(mean, stDev, sampleSize);
             return new Distributions.TruncatedDistribution(normal, min, max);
         }
         /// <summary>
@@ -137,9 +139,9 @@ namespace Statistics
         /// <param name="location"> The lower bound or minimum of the scaled distribution (e.g. shift from an unscaled distribution). </param>
         /// <param name="scale"> The range of the distribution (e.g. upper bound or maximum minus the lower bound or minimum), must be positive scale > 0. </param>
         /// <returns> A scaled beta distribution. </returns>
-        public static IDistribution FactoryBeta(double alpha, double beta, double location, double scale)
+        public static IDistribution FactoryBeta(double alpha, double beta, double location, double scale, int sampleSize = int.MaxValue)
         {
-            return new Distributions.Beta4Parameters(alpha, beta, location, scale); 
+            return new Distributions.Beta4Parameters(alpha, beta, location, scale, sampleSize); 
         }
     }
 }

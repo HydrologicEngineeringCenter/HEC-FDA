@@ -9,6 +9,49 @@ using System.Xml.Linq;
 
 namespace Statistics.Histograms
 {
+    //public interface IHistogramBuilder 
+    //{       
+    //    void AddBinCount(int nBins);
+    //    void AddBinWidth(double binWidth);
+    //    void AddHistogramRange(double min, double max);
+    //    void BuildFromDataRange(IEnumerable<double> data);
+    //    void BuildFromBetaDistribution(IEnumerable<double> data);
+    //    void AddData(IEnumerable<double> data);
+    //    void AddData(double data);
+    //    IHistogram Build();
+    //}
+
+
+    //internal class HistogramBuilder : IHistogramBuilder
+    //{
+    //    private IHistogram _Histogram;
+
+    //    private IRange<double> Range { get; set; }
+    //    private IMessageBoard Messages { get; set; }
+
+    //    void AddRange(double min, double max)
+    //    {
+    //        IRange<double> range = IRangeFactory.Factory(min, max);
+    //        if (range.State < IMessageLevels.Error)
+    //        {
+    //            Messages.PostMessage(IMessageFactory.Factory(range.Messages.Max(), $"The specified range: {range.Print(true)} contains the following messages: {range.Messages.PrintTabbedListOfMessages()}"));
+    //        }
+    //        else throw new InvalidConstructorArgumentsException($"The specified range: {range.Print(true)} generates an exception and cannot be used. It contains the following messages: {range.Messages.PrintTabbedListOfMessages()}");
+    //        Range = range;
+    //    }
+         
+    //}
+
+    //internal class TheHistogram 
+    //{
+    //    public IBin[] Bins { get; }
+    //    public double Width { get; }
+    //    public IRange<double> Range { get; }
+
+
+    //}
+
+
     internal abstract class Histogram : IHistogram
     {
         private readonly IBin[] _Bins;
@@ -30,8 +73,8 @@ namespace Statistics.Histograms
         #region IConverge Properties
         public bool IsConverged { get; }
         #endregion 
-        #region IValidate Properties
-        public bool IsValid { get; }
+        #region IMessagePublisher Properties
+        public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
         #endregion
         #endregion
@@ -43,14 +86,12 @@ namespace Statistics.Histograms
             var stats = ISummaryStatisticsFactory.Factory(bins);
             Mean = stats.Mean;
             Median = stats.Median;
-            //Minimum = stats.Minimum;
-            //Maximum = stats.Maximum;
             Variance = stats.Variance;
             Skewness = stats.Skewness;
             StandardDeviation = stats.StandardDeviation;
             Range = stats.Range;
             SampleSize = stats.SampleSize;
-            IsValid = Validate(new Validation.HistogramValidator(), out IEnumerable<IMessage> msgs);
+            State = Validate(new Validation.HistogramValidator(), out IEnumerable<IMessage> msgs);
             Messages = stats.Messages.Concat(msgs);
             IsConverged = false;
         }
@@ -64,7 +105,7 @@ namespace Statistics.Histograms
             StandardDeviation = histogram.StandardDeviation;
             Range = histogram.Range;
             SampleSize = histogram.SampleSize;
-            IsValid = histogram.IsValid;
+            State = histogram.State;
             bool isConverged = true;
             List<IMessage> msgs = new List<IMessage>(histogram.Messages);
             foreach (var result in convergenceResults)
@@ -219,7 +260,7 @@ namespace Statistics.Histograms
             return bins;
         }
         #region IValidate Function
-        public bool Validate(IValidator<IHistogram> validator, out IEnumerable<IMessage> messages)
+        public IMessageLevels Validate(IValidator<IHistogram> validator, out IEnumerable<IMessage> messages)
         {
             return validator.IsValid(this, out messages);
         }

@@ -8,10 +8,10 @@ namespace Functions.Validation
 {
     internal class CoordinatesFunctionVariableYsValidator : IValidator<ICoordinatesFunction>
     {
-        public bool IsValid(ICoordinatesFunction entity, out IEnumerable<IMessage> errors)
+        public IMessageLevels IsValid(ICoordinatesFunction entity, out IEnumerable<IMessage> errors)
         {
             errors = ReportErrors(entity);
-            return !errors.Any();
+            return errors.Max();
         }
 
         public IEnumerable<IMessage> ReportErrors(ICoordinatesFunction entity)

@@ -24,7 +24,7 @@ namespace Utilities
         /// <returns> The most severe <see cref="IMessage.Level"/> in <paramref name="msgs"/>. </returns>
         public static Utilities.IMessageLevels Max(this IEnumerable<IMessage> msgs)
         {
-            Utilities.IMessageLevels level = Utilities.IMessageLevels.NotSet;
+            Utilities.IMessageLevels level = Utilities.IMessageLevels.None;
             foreach (Utilities.IMessage msg in msgs)
             {
                 if (msg.Level == Utilities.IMessageLevels.FatalError) return IMessageLevels.FatalError;

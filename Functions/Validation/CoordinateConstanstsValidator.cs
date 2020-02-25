@@ -9,13 +9,13 @@ namespace Functions.Validation
 {
     internal class CoordinateConstanstsValidator : IValidator<Coordinates.CoordinateConstants>
     {
-        public bool IsValid(CoordinateConstants obj, out IEnumerable<IMessage> msgs)
+        public IMessageLevels IsValid(CoordinateConstants obj, out IEnumerable<IMessage> msgs)
         {
             if (obj.IsNull()) throw new ArgumentNullException($"The {nameof(CoordinateConstants)} could not be validated because it is null.");
             else
             {
                 msgs = ReportErrors(obj);
-                return msgs.Max() < IMessageLevels.Error;
+                return msgs.Max();
             }
         }
 

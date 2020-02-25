@@ -94,8 +94,8 @@ namespace Functions.Ordinates
         public double Skewness => _Distribution.Skewness;
         public Utilities.IRange<double> Range => _Distribution.Range;
         public int SampleSize => _Distribution.SampleSize;
-        
-        public bool IsValid => _Distribution.Messages.Max() < IMessageLevels.Error; //_distribution.
+
+        public IMessageLevels State => _Distribution.State; //_distribution.
         public IEnumerable<IMessage> Messages => _Distribution.Messages;
         #endregion
 
@@ -109,7 +109,7 @@ namespace Functions.Ordinates
 
         #region Functions
         
-        public bool Validate(IValidator<IDistributedOrdinate> validator, out IEnumerable<IMessage> errors)
+        public IMessageLevels Validate(IValidator<IDistributedOrdinate> validator, out IEnumerable<IMessage> errors)
         {
             throw new NotImplementedException();
         }

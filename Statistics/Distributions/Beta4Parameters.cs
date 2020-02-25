@@ -22,7 +22,7 @@ namespace Statistics.Distributions
         public IDistributionEnum Type => IDistributionEnum.Beta4Parameters;
         public IRange<double> Range { get; }
         public int SampleSize { get; }
-        public bool IsValid { get; }
+        public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
         #endregion
 
@@ -41,14 +41,14 @@ namespace Statistics.Distributions
                 Skewness = _Distribution.Skewness;
                 Range = IRangeFactory.Factory(_Distribution.Minimum, _Distribution.Maximum);
                 SampleSize = sampleSize;
-                IsValid = Validate(new Validation.Beta4ParameterValidator(), out IEnumerable<IMessage> msgs);
+                State = Validate(new Validation.Beta4ParameterValidator(), out IEnumerable<IMessage> msgs);
                 Messages = msgs;
             }   
         }
         #endregion
 
         #region Functions
-        public bool Validate(IValidator<Beta4Parameters> validator, out IEnumerable<IMessage> msgs)
+        public IMessageLevels Validate(IValidator<Beta4Parameters> validator, out IEnumerable<IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }
@@ -82,6 +82,7 @@ namespace Statistics.Distributions
         public string Print(bool round = false) => round ? Print(_Distribution.A, _Distribution.B, Range.Min, (Range.Max - Range.Min), SampleSize): $"ScaledBeta(alpha: {_Distribution.A}, beta: {_Distribution.B}, range: [{_Distribution.Location}, {(_Distribution.Location + _Distribution.Scale).Print()}], sample size: {SampleSize})";
         public string Requirements(bool printNotes) => RequiredParameterization(printNotes);
         #endregion        
+        
 
         public static Beta4Parameters Fit(IEnumerable<double> sample)
         {
@@ -89,7 +90,7 @@ namespace Statistics.Distributions
             double alpha, beta, min, max;
             var data = IDataFactory.Factory(sample);
             var stats = new SampleStatistics(data);
-            if (!stats.IsValid) throw new ArgumentException();
+            if (!(stats.State < IMessageLevels.Error)) throw new ArgumentException($"The 4 Parameter Data Distribution cannot be created because the provided sample data is invalid and contains the following errors: {stats.Messages.PrintTabbedListOfMessages()}");
             else
             {
                 /* This attempts to follow the Beta Distribution 4 unknown parameters (alpha, beta, min, max)
@@ -240,7 +241,6 @@ namespace Statistics.Distributions
         {
             throw new NotImplementedException();
         }
-
         XElement ISerializeToXML<IDistribution>.WriteToXML()
         {
             throw new NotImplementedException();

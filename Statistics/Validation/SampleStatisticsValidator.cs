@@ -11,10 +11,10 @@ namespace Statistics.Validation
         {
         }
 
-        public bool IsValid(ISummaryStatistics obj, out IEnumerable<Utilities.IMessage> msgs)
+        public IMessageLevels IsValid(ISummaryStatistics obj, out IEnumerable<Utilities.IMessage> msgs)
         {
             msgs = ReportErrors(obj);
-            return msgs.Max() < IMessageLevels.Error;
+            return msgs.Max();
         }
         public IEnumerable<Utilities.IMessage> ReportErrors(ISummaryStatistics obj)
         {

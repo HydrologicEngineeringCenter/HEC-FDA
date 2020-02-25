@@ -18,8 +18,8 @@ namespace Statistics.Histograms
     internal sealed class Bin: IBin, IValidate<IBin>
     {
         #region Properties
-        #region IValidate Properties
-        public bool IsValid { get; }
+        #region IMessagePublisher Properties
+        public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
         #endregion
 
@@ -42,7 +42,7 @@ namespace Statistics.Histograms
             Width = max - min;
             Range = IRangeFactory.Factory(min, max);           
             MidPoint = Width / 2d + Range.Min;           
-            IsValid = Validate(new BinValidator(), out IEnumerable<IMessage> errors);
+            State = Validate(new BinValidator(), out IEnumerable<IMessage> errors);
             Messages = errors;
         }
         /// <summary>
@@ -56,14 +56,14 @@ namespace Statistics.Histograms
             Width = oldBin.Range.Max - oldBin.Range.Min;
             MidPoint = oldBin.MidPoint;
             Count = oldBin.Count + addN;
-            IsValid = Validate(new BinValidator(), out IEnumerable<IMessage> errors);
+            State = Validate(new BinValidator(), out IEnumerable<IMessage> errors);
             Messages = errors;
         }
         #endregion
 
         #region Functions
         #region IValidate Functions
-        public bool Validate(IValidator<IBin> validator, out IEnumerable<IMessage> errors)
+        public IMessageLevels Validate(IValidator<IBin> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);
         }

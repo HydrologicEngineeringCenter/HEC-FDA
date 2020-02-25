@@ -42,7 +42,7 @@ namespace Functions.CoordinatesFunctions
         }
         public bool IsLinkedFunction => false;
 
-        public bool IsValid { get; internal set; }
+        public IMessageLevels State { get; internal set; }
         public IEnumerable<IMessage> Messages { get; set; }
         #endregion
 
@@ -403,7 +403,7 @@ namespace Functions.CoordinatesFunctions
             }
             return true;
         }
-        public bool Validate(IValidator<ICoordinatesFunction> validator, out IEnumerable<IMessage> errors)
+        public IMessageLevels Validate(IValidator<ICoordinatesFunction> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);
         }

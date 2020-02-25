@@ -13,7 +13,7 @@ namespace Utilities.Ranges
         #region Properties
         public double Min { get; }
         public double Max { get; }
-        public bool IsValid { get; }
+        public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
         #endregion
 
@@ -38,10 +38,10 @@ namespace Utilities.Ranges
             _MoreThanSingleValueRequirement = maxNotEqualToMinRequirement;
             Min = inclusiveMin ? min : min + double.Epsilon;
             Max = inclusiveMax ? max : max - double.Epsilon;
-            IsValid = Validate(new RangeDoubleValidator(), out IEnumerable<IMessage> msgs);
+            State = Validate(new RangeDoubleValidator(), out IEnumerable<IMessage> msgs);
             Messages = msgs;
         }
-        public bool Validate(IValidator<RangeDouble> validator, out IEnumerable<IMessage> msgs)
+        public IMessageLevels Validate(IValidator<RangeDouble> validator, out IEnumerable<IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }
@@ -51,7 +51,7 @@ namespace Utilities.Ranges
         public bool Equals<T>(IRange<T> range) => range.GetType() == typeof(RangeDouble) && Print() == range.Print();
         public bool IsOnRange(double x)
         {
-            if (IsValid) return x.IsOnRange(Min, Max);
+            if (State < IMessageLevels.Error) return x.IsOnRange(Min, Max);
             else throw new InvalidOperationException(Utilities.ValidationExtensions.InvalidOperationExceptionMessage("IRange", Messages));
         }
     }

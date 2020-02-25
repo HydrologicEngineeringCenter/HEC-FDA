@@ -26,7 +26,7 @@ namespace Statistics.Distributions
         public double Skewness => _Distribution.Skewness;
         public Utilities.IRange<double> Range { get; }
         public int SampleSize => _Distribution.SampleSize;
-        public bool IsValid { get; }
+        public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
 
         public double Mode => _Distribution.Mode;
@@ -39,14 +39,14 @@ namespace Statistics.Distributions
             _Distribution = distribution;
             IMessageBoard msgBoard = IMessageBoardFactory.Factory(_Distribution);
             Utilities.IRangeFactory.Factory(lowerBound == double.NegativeInfinity ? _Distribution.Range.Min : lowerBound, upperBound == double.PositiveInfinity ? _Distribution.Range.Max : upperBound);
-            IsValid = Validate(new Validation.TruncatedDistributionValidator(), out IEnumerable<IMessage> msgs);
+            State = Validate(new Validation.TruncatedDistributionValidator(), out IEnumerable<IMessage> msgs);
             msgBoard.PostMessages(msgs);
             Messages = msgBoard.ReadMessages();
         }
         #endregion
 
         #region Functions
-        public bool Validate(IValidator<TruncatedDistribution> validator, out IEnumerable<IMessage> msgs)
+        public IMessageLevels Validate(IValidator<TruncatedDistribution> validator, out IEnumerable<IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }

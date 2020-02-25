@@ -10,10 +10,10 @@ namespace Utilities.Ranges
         {
         }
 
-        public bool IsValid(RangeInteger obj, out IEnumerable<IMessage> msgs)
+        public IMessageLevels IsValid(RangeInteger obj, out IEnumerable<IMessage> msgs)
         {
             msgs = ReportErrors(obj);
-            return msgs.Max() < IMessageLevels.Error;
+            return msgs.Max();
         }
         public IEnumerable<IMessage> ReportErrors(RangeInteger obj)
         {

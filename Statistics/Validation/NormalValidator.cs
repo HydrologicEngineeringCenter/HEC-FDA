@@ -15,10 +15,10 @@ namespace Statistics.Validation
         {
         }
 
-        public bool IsValid(Distributions.Normal entity, out IEnumerable<IMessage> msgs)
+        public IMessageLevels IsValid(Distributions.Normal entity, out IEnumerable<IMessage> msgs)
         {
             msgs = ReportErrors(entity);
-            return msgs.Max() < IMessageLevels.Error;
+            return msgs.Max();
         }
         public IEnumerable<IMessage> ReportErrors(Distributions.Normal obj)
         {

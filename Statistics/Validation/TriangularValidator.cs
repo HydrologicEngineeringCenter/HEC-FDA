@@ -13,10 +13,10 @@ namespace Statistics.Validation
         {
         }
 
-        public bool IsValid(Triangular obj, out IEnumerable<IMessage> msgs)
+        public IMessageLevels IsValid(Triangular obj, out IEnumerable<IMessage> msgs)
         {
             msgs = ReportErrors(obj);
-            return msgs.Max() < IMessageLevels.Error;
+            return msgs.Max();
         }
         public IEnumerable<IMessage> ReportErrors(Triangular obj)
         {

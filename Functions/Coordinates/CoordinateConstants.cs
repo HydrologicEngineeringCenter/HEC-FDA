@@ -13,7 +13,7 @@ namespace Functions.Coordinates
         #region Properties
         public IOrdinate X { get; }
         public IOrdinate Y { get; }
-        public bool IsValid { get; }
+        public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
         #endregion
 
@@ -25,19 +25,19 @@ namespace Functions.Coordinates
             {
                 X = x;
                 Y = y;
-                IsValid = Validate(new Validation.CoordinateConstanstsValidator(), out IEnumerable<IMessage> msgs);
+                State = Validate(new Validation.CoordinateConstanstsValidator(), out IEnumerable<IMessage> msgs);
                 Messages = msgs;
             }
         }
         #endregion
 
         #region Functions
-        public bool Validate(IValidator<CoordinateConstants> validator, out IEnumerable<IMessage> msgs)
+        public IMessageLevels Validate(IValidator<CoordinateConstants> validator, out IEnumerable<IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }
 
-        public string Print(bool round = false) => round ? $"({X.Value().Print()}, {Y.Value().Print()})" : $"({X.Value()}, {Y.Value()})";
+        public string Print(bool round = false) => $"({X.Print(round)}, {Y.Print(round)})";
         public override bool Equals(object obj)
         {
             return obj is CoordinateConstants constants &&

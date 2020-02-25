@@ -13,10 +13,10 @@ namespace Statistics.Validation
         internal BinValidator()
         {
         }
-        public bool IsValid(IBin obj, out IEnumerable<IMessage> msgs)
+        public IMessageLevels IsValid(IBin obj, out IEnumerable<IMessage> msgs)
         {
             msgs = ReportErrors(obj);
-            return msgs.Max() < IMessageLevels.Error;
+            return msgs.Max();
         }
         public IEnumerable<IMessage> ReportErrors(IBin obj)
         {

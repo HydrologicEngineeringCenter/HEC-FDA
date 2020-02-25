@@ -19,7 +19,7 @@ namespace Statistics.Distributions
         public double Skewness { get; }
         public Utilities.IRange<double> Range { get; }
         public int SampleSize { get; }
-        public bool IsValid { get; }
+        public IMessageLevels State { get; }
         public IEnumerable<Utilities.IMessage> Messages { get; }
 
         public double Mode => throw new NotImplementedException();
@@ -38,13 +38,14 @@ namespace Statistics.Distributions
                 Variance = Math.Pow(standardDeviation, 2);
                 Median = InverseCDF(0.50);
                 Range = IRangeFactory.Factory(InverseCDF(0), InverseCDF(1));
-                IsValid = Validate(new Validation.LogPearsonIIIValidator(), out IEnumerable<Utilities.IMessage> msgs);
+                State = Validate(new Validation.LogPearsonIIIValidator(), out IEnumerable<Utilities.IMessage> msgs);
+                Messages = msgs;
             }
         }
         #endregion
 
         #region Functions
-        public bool Validate(IValidator<LogPearsonIII> validator, out IEnumerable<Utilities.IMessage> msgs)
+        public IMessageLevels Validate(IValidator<LogPearsonIII> validator, out IEnumerable<Utilities.IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }

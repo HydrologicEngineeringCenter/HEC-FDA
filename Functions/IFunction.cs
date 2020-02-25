@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Functions
 {
+    /// <summary>
+    /// Provides an interface for functions non-distributed Y values.
+    /// </summary>
     public interface IFunction : ICoordinatesFunction
     {
         /// <summary>
@@ -19,8 +22,8 @@ namespace Functions
         /// <summary>
         /// Approximates the <see cref="IFunction"/> integral. For more information see: https://en.wikipedia.org/wiki/Trapezoidal_rule.
         /// </summary>
-        /// <returns> The area under the xy-plane bounded by the <see cref="IFunction"/> <see cref="ICoordinatesFunction.Domain"/>. </returns>
-        /// <remarks> In the case that the <see cref="IFunction"/> <see cref="ICoordinatesFunction.Domain"/> describes the probability of the <see cref="IFunction.Range"/> values occurrence what is produced is a probability weighted expected value for the <see cref="IFunction"/>. </remarks>
+        /// <returns> The area under the xy-plane bounded by the <see cref="IFunction"/> domain. </returns>
+        /// <remarks> In the case that the <see cref="IFunction"/> domain describes the probability of the <see cref="IFunction.Range"/> values a probability weighted expected value for the <see cref="IFunction"/> is produced. </remarks>
         double TrapizoidalRiemannSum();
         /// <summary>
         /// Performs functional composition, producing a new <see cref="IFunction"/> h(x) such that h(x) = g(f(x)) where g(*) is the <paramref name="g"/> parameter. For more information see: https://en.wikipedia.org/wiki/Function_composition. 

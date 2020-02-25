@@ -8,17 +8,17 @@ namespace Utilities.Ranges
     {
         public int Min { get; }
         public int Max { get; }
-        public bool IsValid { get; }
+        public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
 
         internal RangeInteger(int min, int max, bool isMinInclusive, bool isMaxInclusive)
         {
             Min = isMaxInclusive ? min : min + 1;
             Max = isMaxInclusive ? max : max - 1;
-            IsValid = Validate(new RangeIntegerValidator(), out IEnumerable<IMessage> msgs);
+            State = Validate(new RangeIntegerValidator(), out IEnumerable<IMessage> msgs);
             Messages = msgs;
         }
-        public bool Validate(IValidator<RangeInteger> validator, out IEnumerable<IMessage> msgs)
+        public IMessageLevels Validate(IValidator<RangeInteger> validator, out IEnumerable<IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }
@@ -27,7 +27,7 @@ namespace Utilities.Ranges
         public bool Equals<T>(IRange<T> range) => range.GetType() == typeof(RangeInteger) && Print() == range.Print(); 
         public bool IsOnRange(int x)
         {
-            if (IsValid) return x.IsOnRange(Min, Max);
+            if (State < IMessageLevels.Error) return x.IsOnRange(Min, Max);
             else throw new InvalidOperationException(Utilities.ValidationExtensions.InvalidOperationExceptionMessage("IRange", Messages));
         }
     }

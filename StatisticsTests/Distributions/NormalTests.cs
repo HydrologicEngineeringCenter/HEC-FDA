@@ -26,7 +26,7 @@ namespace StatisticsTests.Distributions
         public void NotPositiveSampleSize_Returns_IsValid_Equals_False(double mean, double sd, int n)
         {
             var testObj = new Statistics.Distributions.Normal(mean, sd, n);
-            Assert.False(testObj.IsValid);
+            Assert.True(testObj.State == Utilities.IMessageLevels.Error);
         }
     }
 }

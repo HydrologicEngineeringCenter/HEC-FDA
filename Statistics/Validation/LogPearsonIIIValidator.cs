@@ -13,10 +13,10 @@ namespace Statistics.Validation
         {
         }
 
-        public bool IsValid(LogPearsonIII obj, out IEnumerable<Utilities.IMessage> msgs)
+        public IMessageLevels IsValid(LogPearsonIII obj, out IEnumerable<Utilities.IMessage> msgs)
         {
             msgs = ReportErrors(obj);
-            return msgs.Max() < IMessageLevels.Error;
+            return msgs.Max();
         }
         public IEnumerable<IMessage> ReportErrors(LogPearsonIII obj)
         {

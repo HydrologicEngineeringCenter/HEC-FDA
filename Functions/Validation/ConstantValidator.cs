@@ -8,13 +8,13 @@ namespace Functions.Validation
 {
     internal class ConstantValidator : IValidator<Ordinates.Constant>
     {
-        public bool IsValid(Constant obj, out IEnumerable<IMessage> msgs)
+        public IMessageLevels IsValid(Constant obj, out IEnumerable<IMessage> msgs)
         {
             if (obj.IsNull()) throw new ArgumentNullException($"The {nameof(Constant)} cannot be validated because it is null.");
             else
             {
                 msgs = ReportErrors(obj);
-                return msgs.Max() < IMessageLevels.Error;
+                return msgs.Max();
             }
         }
         public IEnumerable<IMessage> ReportErrors(Constant obj)

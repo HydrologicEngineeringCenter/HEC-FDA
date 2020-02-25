@@ -251,7 +251,7 @@ namespace UtilitiesTests
         public void IsNullOrEmptyCollection_NoItem_Returns_True()
         {
             var testObj = new List<double>();
-            Assert.True(ValidationExtensions.IsNullOrEmptyCollection(testObj));
+            Assert.True(ValidationExtensions.IsNullOrEmptyCollection(testObj, false));
         }
         /// <summary>
         /// Test that the <see cref="ValidationExtensions.IsNullOrEmptyCollection{T}(ICollection{T}, bool)"/> function returns <see langword="true"/> for a null <see cref="List{object}"/> input.
@@ -260,7 +260,7 @@ namespace UtilitiesTests
         public void IsNullOrEmptyCollection_NullInput_Returns_True()
         {
             List<object> testObj = null;
-            Assert.True(ValidationExtensions.IsNullOrEmptyCollection(testObj));
+            Assert.True(ValidationExtensions.IsNullOrEmptyCollection(testObj, false));
         }
         /// <summary>
         /// Test that the <see cref="ValidationExtensions.IsNullOrEmptyCollection{T}(ICollection{T}, bool)"/> function returns <see langword="true"/> for an <see cref="List{object}"/> input with a null element: { 1, null, 3 }.
@@ -269,7 +269,7 @@ namespace UtilitiesTests
         public void IsNullOrEmptyCollection_NullItem_Returns_True()
         {
             List<object> testObj = new List<object>() { 1, null, 3 };
-            Assert.True(ValidationExtensions.IsNullOrEmptyCollection(testObj));
+            Assert.True(ValidationExtensions.IsNullOrEmptyCollection(testObj, false));
         }
         /// <summary>
         /// Test that the <see cref="ValidationExtensions.IsNullOrEmptyCollection{T}(ICollection{T}, bool)"/> function returns <see langword="false"/> for an <see cref="IEnumerable{Object}"/> input with no null elements: { 1, 2, 3 }.

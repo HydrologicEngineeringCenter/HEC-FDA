@@ -6,7 +6,7 @@ namespace Utilities
 {
     public interface IValidator<T>
     {
-        bool IsValid(T entity, out IEnumerable<IMessage> errors);
+        IMessageLevels IsValid(T entity, out IEnumerable<IMessage> errors);
         IEnumerable<IMessage> ReportErrors(T entity);
     }
 }

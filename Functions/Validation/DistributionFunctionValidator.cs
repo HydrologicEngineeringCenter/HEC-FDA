@@ -8,19 +8,19 @@ namespace Functions.Validation
 {
     internal class DistributionFunctionValidator : Utilities.IValidator<ICoordinatesFunction>
     {
-        public bool IsValid(ICoordinatesFunction obj, out IEnumerable<IMessage> msgs)
+        public IMessageLevels IsValid(ICoordinatesFunction obj, out IEnumerable<IMessage> msgs)
         {
             if (obj.GetType() != typeof(DistributionFunction)) throw new ArgumentException($"The {this.GetType()} can only validated {typeof(DistributionFunction)} objects. It was called by a {obj.GetType()} object.");
             else
             {
                 msgs = ReportErrors(obj);
-                return msgs.Max() < IMessageLevels.Error;
+                return msgs.Max();
             }  
         }
         public IEnumerable<IMessage> ReportErrors(ICoordinatesFunction obj)
         {
             List<IMessage> msgs = new List<IMessage>();
-            if (!obj.IsValid) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The provided distribution is invalid and contains the following messages:{obj.Messages.PrintTabbedListOfMessages()}"));
+            if (obj.State > IMessageLevels.Message) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The provided distribution is invalid and contains the following messages:{obj.Messages.PrintTabbedListOfMessages()}"));
             return msgs;
         }
         internal static bool IsConstructable(IDistributedOrdinate distribution, out string msg)

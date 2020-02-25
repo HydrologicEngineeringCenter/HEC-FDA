@@ -93,7 +93,7 @@ namespace Utilities
         }
         private static bool IsNullItemInCollection<T>(ICollection<T> collection)
         {
-            foreach (var i in collection) if (i == null) return true;
+            foreach (var i in collection) if (i.IsNull()) return true;
             return false;
         }
         /// <summary>

@@ -10,13 +10,13 @@ namespace Functions.Validation
 {
     internal class CoordinateVariableYValidator : IValidator<Coordinates.CoordinateVariableY>
     {
-        public bool IsValid(CoordinateVariableY obj, out IEnumerable<IMessage> msgs)
+        public IMessageLevels IsValid(CoordinateVariableY obj, out IEnumerable<IMessage> msgs)
         {
             if (obj.IsNull()) throw new ArgumentNullException($"The {nameof(CoordinateVariableY)} cannot be validated because it is null.");
             else
             {
                 msgs = ReportErrors(obj);
-                return msgs.Max() < IMessageLevels.Error;
+                return msgs.Max();
             }
         }
 

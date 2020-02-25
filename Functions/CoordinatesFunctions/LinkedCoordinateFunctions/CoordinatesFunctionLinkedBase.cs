@@ -13,7 +13,7 @@ namespace Functions.CoordinatesFunctions
 
         public List<ICoordinate> Coordinates { get; internal set; }
 
-        public bool IsValid { get; internal set; }
+        public IMessageLevels State { get; internal set; }
         public OrderedSetEnum Order { get; internal set; }
         /// <summary>
         /// These interpolators go between the functions. The number of interpolators

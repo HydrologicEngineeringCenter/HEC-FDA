@@ -9,10 +9,10 @@ namespace Statistics.Validation
 {
     internal class DataValidator : IValidator<IData>
     {
-        public bool IsValid(IData entity, out IEnumerable<IMessage> msgs)
+        public IMessageLevels IsValid(IData entity, out IEnumerable<IMessage> msgs)
         {
             msgs = ReportErrors(entity);
-            return msgs.Max() < IMessageLevels.Error;
+            return msgs.Max();
         }
         public IEnumerable<IMessage> ReportErrors(IData entity)
         {

@@ -10,10 +10,10 @@ namespace Statistics.Validation
 {
     internal class Beta4ParameterValidator: IValidator<Beta4Parameters>
     {
-        public bool IsValid(Beta4Parameters entity, out IEnumerable<IMessage> errors)
+        public IMessageLevels IsValid(Beta4Parameters entity, out IEnumerable<IMessage> errors)
         {
             errors = ReportErrors(entity);
-            return errors.Max() < IMessageLevels.Error;
+            return errors.Max();
         } 
         public IEnumerable<IMessage> ReportErrors(Beta4Parameters obj)
         {

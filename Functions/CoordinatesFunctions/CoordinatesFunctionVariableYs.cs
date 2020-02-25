@@ -43,7 +43,7 @@ namespace Functions.CoordinatesFunctions
 
         public bool IsLinkedFunction => false;
 
-        public bool IsValid { get; internal set; }
+        public IMessageLevels State { get; internal set; }
 
         public IEnumerable<IMessage> Messages { get; set; }
 
@@ -55,7 +55,7 @@ namespace Functions.CoordinatesFunctions
         {
             Interpolator = interpolation;
             Coordinates = coordinates;
-            IsValid = Validate(new Validation.CoordinatesFunctionVariableYsValidator(), out IEnumerable<IMessage> errors);
+            State = Validate(new Validation.CoordinatesFunctionVariableYsValidator(), out IEnumerable<IMessage> errors);
             Messages = errors;
             //if (IsValid(coordinates))
             {
@@ -184,7 +184,7 @@ namespace Functions.CoordinatesFunctions
             return functionsElem;
         }
 
-        public bool Validate(IValidator<ICoordinatesFunction> validator, out IEnumerable<IMessage> errors)
+        public IMessageLevels Validate(IValidator<ICoordinatesFunction> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);
         }

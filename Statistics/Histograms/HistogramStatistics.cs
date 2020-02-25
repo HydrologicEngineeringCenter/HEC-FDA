@@ -16,7 +16,7 @@ namespace Statistics.Histograms
         public double Kurtosis { get; }
         public IRange<double> Range { get; }
         public int SampleSize { get; }
-        public bool IsValid { get; }
+        public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
         #endregion
 
@@ -67,11 +67,9 @@ namespace Statistics.Histograms
                     Skewness = double.NaN;
                     StandardDeviation = double.NaN;
                     Range = IRangeFactory.Factory(bins[0].Range.Min, bins[bins.Length - 1].Range.Max);
-                    //Minimum = bins[0].Minimum;
-                    //Maximum = bins[bins.Length - 1].Maximum;
                 }
             }
-            IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<IMessage> messages);
+            State = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<IMessage> messages);
             Messages = messages;
         }
         #endregion
@@ -139,7 +137,7 @@ namespace Statistics.Histograms
             return new Tuple<double, double, double>(variance, stdev, skew);
         }
         #endregion
-        public bool Validate(IValidator<ISummaryStatistics> validator, out IEnumerable<IMessage> messages)
+        public IMessageLevels Validate(IValidator<ISummaryStatistics> validator, out IEnumerable<IMessage> messages)
         {
             return validator.IsValid(this, out messages);
         }

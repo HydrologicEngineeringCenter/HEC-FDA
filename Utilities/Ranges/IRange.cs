@@ -17,6 +17,7 @@ namespace Utilities
         /// The maximum value.
         /// </summary>
         T Max { get; }
+        
         /// <summary>
         /// Prints a representation of the range.
         /// </summary>

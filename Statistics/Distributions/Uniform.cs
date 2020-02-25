@@ -9,6 +9,7 @@ namespace Statistics.Distributions
 {
     internal class Uniform: IDistribution, IValidate<Uniform>
     {
+        //TODO: Validation
         #region Fields and Properties
         private readonly MathNet.Numerics.Distributions.ContinuousUniform _Distribution;
 
@@ -23,7 +24,7 @@ namespace Statistics.Distributions
         public double Mode => _Distribution.Mode;
         public int SampleSize { get; }
         #endregion
-        public bool IsValid { get; }
+        public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
         #endregion
 
@@ -37,7 +38,7 @@ namespace Statistics.Distributions
         #endregion
 
         #region Functions
-        public bool Validate(IValidator<Uniform> validator, out IEnumerable<IMessage> msgs)
+        public IMessageLevels Validate(IValidator<Uniform> validator, out IEnumerable<IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }

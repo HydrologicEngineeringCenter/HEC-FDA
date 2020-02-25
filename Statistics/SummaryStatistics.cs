@@ -16,7 +16,7 @@ namespace Statistics
         public double Skewness { get; }
         public IRange<double> Range { get; }
         public int SampleSize { get; }
-        public bool IsValid { get; }
+        public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
 
         public SummaryStatistics(IData data)
@@ -61,10 +61,10 @@ namespace Statistics
                     Range = IRangeFactory.Factory(double.NaN, double.NaN);
                 }
             }
-            IsValid = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<IMessage> msgs);
+            State = Validate(new Validation.SummaryStatisticsValidator(), out IEnumerable<IMessage> msgs);
             Messages = data.Messages.Concat(msgs);
         }       
-        public bool Validate(IValidator<ISummaryStatistics> validator, out IEnumerable<IMessage> errors)
+        public IMessageLevels Validate(IValidator<ISummaryStatistics> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);
         }
