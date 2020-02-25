@@ -191,7 +191,7 @@ namespace FunctionsTests.CoordinatesFunctions
         public void CoordinatesFunctionVariableYs_FDistributed_Throws_ArgumentOutOfRangeException(List<ICoordinate> value)
         {
             ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(value);
-            Assert.Throws<ArgumentOutOfRangeException>(() => testObj.F(new Distribution(new Distribution(new Normal(1, 0)))));
+            Assert.Throws<ArgumentOutOfRangeException>(() => testObj.F(new Distribution(new Normal(1, 0))));
         }
         #endregion
         #region InverseF() Tests
@@ -212,7 +212,7 @@ namespace FunctionsTests.CoordinatesFunctions
         public void CoordinatesFunctionVariableYs_InverseF_Throws_ArgumentException(List<ICoordinate> value)
         {
             ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(value);
-            Assert.Throws<ArgumentOutOfRangeException>(() => testObj.InverseF(new Distribution(new Distribution(new Normal(99, 0)))));
+            Assert.Throws<ArgumentOutOfRangeException>(() => testObj.InverseF(new Distribution(new Normal(99, 0))));
         }
         /// <summary> Tests that the Inverse F Function returns ArgumentNullException if input is null. </summary>
         [Theory]

@@ -20,6 +20,7 @@ namespace Importer
         #endregion
         #region Properties
         public long IdCurrent { get; set; }
+        public List<RatingFunction> RatingFunctions { get; }
         #endregion
         #region Constructors
         public RatingFunctionList()
@@ -29,6 +30,7 @@ namespace Importer
         #region Voids
         public void Add(RatingFunction theFunc)
         {
+            RatingFunctions.Add(theFunc);
             RatingFunction aRatingFunc = Importer.ObjectCopier.Clone(theFunc);
             _RatingFunctionListSort.Add(aRatingFunc.Name.Trim(), aRatingFunc);
             WriteLine($"Add Rating Function to SortList.  {aRatingFunc.Name}");

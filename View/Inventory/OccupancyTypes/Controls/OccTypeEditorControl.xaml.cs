@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Inventory.OccupancyTypes.Controls
+namespace View.Inventory.OccupancyTypes.Controls
 {
     /// <summary>
     /// Interaction logic for OccTypeEditorControl.xaml
@@ -33,7 +33,6 @@ namespace Fda.Inventory.OccupancyTypes.Controls
 
         private void DamageCategoryComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //redraw the list view so that the occtype that changed dam cats will be in the correct group
             if(this.ListViewNeedsUpdating != null)
             {
@@ -64,18 +63,6 @@ namespace Fda.Inventory.OccupancyTypes.Controls
             }
         }
 
-        //private void EditStructureDamageButton_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
-        //{
-        //    if(EditStructureDamageButton.IsEnabled == true)
-        //    {
-        //        ((Image)EditStructureDamageButton.Content).Source = new BitmapImage(new Uri("pack://application:,,,/Fda;component/Resources/Edit.png"));
-        //    }
-        //    else
-        //    {
-        //        ((Image)EditStructureDamageButton.Content).Source = new BitmapImage(new Uri("pack://application:,,,/Fda;component/Resources/EditButtonIcon_Disabled.png"));
-
-        //    }
-        //}
 
         private void EditStructureDamageButton_Click(object sender, RoutedEventArgs e)
         {
@@ -88,28 +75,28 @@ namespace Fda.Inventory.OccupancyTypes.Controls
         {
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             if (vm == null) { return; }
-            vm.SelectedOccType.StructureValueUncertainty = StructureValueUncertainty.ReturnDistribution();
+            //vm.SelectedOccType.StructureValueUncertainty = StructureValueUncertainty.ReturnDistribution();
         }
 
         private void ContentValueUncertainty_LostFocus(object sender, RoutedEventArgs e)
         {
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             if (vm == null) { return; }
-            vm.SelectedOccType.ContentValueUncertainty = ContentValueUncertainty.ReturnDistribution();
+            //vm.SelectedOccType.ContentValueUncertainty = ContentValueUncertainty.ReturnDistribution();
         }
 
         private void VehicleValueUncertainty_LostFocus(object sender, RoutedEventArgs e)
         {
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             if (vm == null) { return; }
-            vm.SelectedOccType.VehicleValueUncertainty = VehicleValueUncertainty.ReturnDistribution();
+            //vm.SelectedOccType.VehicleValueUncertainty = VehicleValueUncertainty.ReturnDistribution();
         }
 
         private void OtherValueUncertainty_LostFocus(object sender, RoutedEventArgs e)
         {
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             if (vm == null) { return; }
-            vm.SelectedOccType.OtherValueUncertainty = OtherValueUncertainty.ReturnDistribution();
+            //vm.SelectedOccType.OtherValueUncertainty = OtherValueUncertainty.ReturnDistribution();
         }
 
         private void OccTypeDescriptionBox_LostFocus(object sender, RoutedEventArgs e)
@@ -128,7 +115,7 @@ namespace Fda.Inventory.OccupancyTypes.Controls
         {
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             if(vm == null) { return; }
-            vm.SelectedOccType.FoundationHeightUncertainty = FoundationHeightUncertainty.ReturnDistribution();
+            //vm.SelectedOccType.FoundationHeightUncertainty = FoundationHeightUncertainty.ReturnDistribution();
         }
     }
 }

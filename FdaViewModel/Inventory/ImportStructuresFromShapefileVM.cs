@@ -633,7 +633,7 @@ namespace FdaViewModel.Inventory
             List<string> listOfKeys = AttributeLinkingList.OccupancyTypesDictionary.Keys.ToList();
             for (int i = 0; i < listOfKeys.Count; i++)
             {
-                IOccupancyType ot = new OccupancyType();
+                IOccupancyType ot = OccupancyTypeFactory.Factory();
                 if (AttributeLinkingList.OccupancyTypesDictionary[listOfKeys[i]] != "")
                 {
                     //find the chosen occtype and replace the name with the name from the file
@@ -660,9 +660,9 @@ namespace FdaViewModel.Inventory
 
             }
 
-            OccupancyTypes.OccupancyTypesElement newOccTypeGroup = new OccupancyTypes.OccupancyTypesElement(groupName, newListOfOccType, _OcctypeTabsSelectedDictionary);
-           // OccupancyTypes.OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(newOccTypeGroup);
-            Saving.PersistenceFactory.GetOccTypeManager().SaveNew(newOccTypeGroup);
+            OccupancyTypesElement newOccTypeGroup = new OccupancyTypesElement(groupName, newListOfOccType, _OcctypeTabsSelectedDictionary);
+            //todo: cody commented out on 2/20/2020 - put back in when occtypes are working
+            //Saving.PersistenceFactory.GetOccTypeManager().SaveNew(newOccTypeGroup);
 
             StructureInventoryBaseElement SIBase = new StructureInventoryBaseElement(Name, Description);
             InventoryElement elementToSave = new InventoryElement(SIBase);
@@ -706,7 +706,7 @@ namespace FdaViewModel.Inventory
                     }
                 }
             }
-            return new OccupancyType(); // if it gets here then no occtype matching the names given exists. Should we send an error message?
+            return OccupancyTypeFactory.Factory(); // if it gets here then no occtype matching the names given exists. Should we send an error message?
         }
 
         

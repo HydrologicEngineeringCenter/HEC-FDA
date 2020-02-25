@@ -13,7 +13,7 @@ using Functions;
 namespace Importer
 {
     [Serializable]
-    public class OccupancyType : FdObjectData
+    public class OccupancyType : FdObjectData, ISaveToSqlite
     {
         #region Notes
         // Created By: q0hecrdc
@@ -633,6 +633,11 @@ namespace Importer
                     break;
             }
             return theCode;
+        }
+
+        public void SaveToSqlite()
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

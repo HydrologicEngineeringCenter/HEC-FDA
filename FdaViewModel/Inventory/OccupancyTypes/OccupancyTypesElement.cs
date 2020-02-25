@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
 using FdaViewModel.Utilities;
-using Consequences_Assist.ComputableObjects;
 using Functions;
 
 namespace FdaViewModel.Inventory.OccupancyTypes

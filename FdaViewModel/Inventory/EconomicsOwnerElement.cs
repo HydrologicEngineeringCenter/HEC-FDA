@@ -41,6 +41,7 @@ namespace FdaViewModel.Inventory
 
             StructureInventoryOwnerElement sioe = new StructureInventoryOwnerElement();
             this.AddElement(sioe);
+            cache.StructureInventoryParent = sioe;
 
             AggregatedStageDamage.AggregatedStageDamageOwnerElement a = new AggregatedStageDamage.AggregatedStageDamageOwnerElement();
             this.AddElement(a);

@@ -56,6 +56,14 @@ namespace Importer
         private bool _FlushOccType = false;
         private WspSectionData _WspSectData = null;
         protected bool _PrevKeyRecord = false;
+
+        public enum ImportOptions
+        {
+            ImportEverything,
+            ImportOcctypesOnly,
+            ImportWaterSurfaceProfilesOnly
+        }
+
         #endregion
         #region Properties
         public bool UsesDollar
@@ -69,7 +77,7 @@ namespace Importer
         }
         #endregion
         #region Voids
-        public void ImportAsciiData(string theImportFilename)
+        public void ImportAsciiData(string theImportFilename, ImportOptions importOptions)
         {
             char delimiterChar = '\t';
 
@@ -140,6 +148,41 @@ namespace Importer
                 }
             }
             reader.Close();
+
+            switch(importOptions)
+            {
+                case ImportOptions.ImportEverything:
+                    {
+                        //write everything you can to sqlite
+                        
+                        //write rating curves
+                        RatingFunctionList ratings = GlobalVariables.mp_fdaStudy.GetRatingFunctionList();
+                        foreach(RatingFunction rat in ratings.RatingFunctions)
+                        {
+                            rat.SaveToSqlite();
+                        }
+                        break;
+                    }
+                case ImportOptions.ImportOcctypesOnly:
+                    {
+                        //write only the occtypes out
+                        OccupancyTypeList occtypes = GlobalVariables.mp_fdaStudy.GetOccupancyTypeList();
+                        foreach(OccupancyType ot in occtypes.Occtypes)
+                        {
+                            ot.SaveToSqlite();
+                        }
+                        break;
+                    }
+                case ImportOptions.ImportWaterSurfaceProfilesOnly:
+                    {
+                        //write only the wsp's out
+
+                        break;
+                    }
+            }
+            
+
+
             WriteLine($"\n\nPrint Plans at end of Import.");
             GlobalVariables.mp_fdaStudy.GetPlanList().Print();
             WriteLine($"\nPrint Years at end of Import.");
@@ -1979,7 +2022,7 @@ namespace Importer
         {
             if (_MustFlushRatingFunc)
             {
-                _RatingFunction.SaveToSqlite();
+               // _RatingFunction.SaveToSqlite();
                 GlobalVariables.mp_fdaStudy.GetRatingFunctionList().Add(_RatingFunction);
             }
             _MustFlushRatingFunc = false;

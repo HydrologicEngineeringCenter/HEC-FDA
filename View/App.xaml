@@ -25,7 +25,6 @@
               xmlns:DepthDamageView="clr-namespace:View.Inventory.DepthDamageCurves"
              xmlns:DepthDamageVM="clr-namespace:FdaViewModel.Inventory.DepthDamage;assembly=FdaViewModel"
              
-          
              
              xmlns:FlowTransformsView="clr-namespace:View.FlowTransforms"
              xmlns:FlowTransformsVM="clr-namespace:FdaViewModel.FlowTransforms;assembly=FdaViewModel"
@@ -51,6 +50,8 @@
              xmlns:OccupancyTypesVM="clr-namespace:FdaViewModel.Inventory.OccupancyTypes;assembly=FdaViewModel"
              xmlns:OccupancyTypesView="clr-namespace:View.Inventory.OccupancyTypes"
 
+             xmlns:OccupancyTypesControlsVM="clr-namespace:FdaViewModel.Inventory.OccupancyTypes;assembly=FdaViewModel"
+             xmlns:OccupancyTypesControlsView="clr-namespace:View.Inventory.OccupancyTypes.Controls"
              
              xmlns:UtilitiesView="clr-namespace:View.Utilities"
              xmlns:UtilitiesVM="clr-namespace:FdaViewModel.Utilities;assembly=FdaViewModel"
@@ -138,18 +139,18 @@
         </DataTemplate>
         
         <!--Occupancy Types Region-->
-        <!--<DataTemplate DataType="{x:Type OccupancyTypesVM:OccupancyTypesEditorVM }" >
+        <DataTemplate DataType="{x:Type OccupancyTypesVM:OccupancyTypesEditorVM }" >
             <OccupancyTypesView:OccupancyTypesEditor/>
-        </DataTemplate>-->
+        </DataTemplate>
         <DataTemplate DataType="{x:Type OccupancyTypesVM:OccupancyTypesGroupRowItemVM }" >
             <OccupancyTypesView:OccTypeGroupRowItem/>
         </DataTemplate>
 
         <!--Occupancy Types Controls Region-->
         
-        <!--<DataTemplate DataType="{x:Type OccupancyTypesControlsVM:CreateNewDamCatVM }" >
+        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:CreateNewDamCatVM }" >
             <OccupancyTypesControlsView:CreateNewDamCat/>
-        </DataTemplate>-->
+        </DataTemplate>
        
 
         <!--Inventory Region-->
@@ -160,24 +161,25 @@
         <DataTemplate DataType="{x:Type DepthDamageVM:DepthDamageCurveEditorControlVM }" >
             <DepthDamageView:DepthDamageEditorControl/>
         </DataTemplate>
-        <!--todo: Refactor: CO-->
-        <!--<DataTemplate DataType="{x:Type InventoryVM:AttributeLinkingListVM }" >
+        
+        <DataTemplate DataType="{x:Type InventoryVM:AttributeLinkingListVM }" >
             <InventoryView:AttributeLinkingList/>
-        </DataTemplate>-->
+        </DataTemplate>
         <DataTemplate DataType="{x:Type InventoryVM:DefineSIAttributesVM }" >
             <InventoryView:DefineSIAttributes/>
         </DataTemplate>
-        <!--todo: Refactor: CO-->
-        <!--<DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromShapefileVM }" >
+        
+        <DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromShapefileVM }" >
             <InventoryView:ImportStructuresFromShapefile/>
-        </DataTemplate>-->
+        </DataTemplate>
         <DataTemplate DataType="{x:Type InventoryVM:ImportFromHAZUSVM }" >
             <InventoryView:ImportFromHAZUS/>
         </DataTemplate>
-        <!--todo: Refactor: CO-->
-        <!--<DataTemplate DataType="{x:Type InventoryVM:ImportFromNSIVM }" >
+        
+        
+        <DataTemplate DataType="{x:Type InventoryVM:ImportFromNSIVM }" >
             <InventoryView:ImportFromNSI/>
-        </DataTemplate>-->
+        </DataTemplate>
         <DataTemplate DataType="{x:Type InventoryVM:ImportFromShapefileVM }" >
             <InventoryView:ImportFromShapefile/>
         </DataTemplate>

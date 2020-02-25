@@ -39,7 +39,7 @@ namespace FunctionsTests.Utilities.Samplers
                 IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
                 IDistributedOrdinateFactory.Factory( new Normal(1, 0))
             };
-            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
+            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
             Assert.False(constSampler.CanSample(distributedFunc));
         }
 

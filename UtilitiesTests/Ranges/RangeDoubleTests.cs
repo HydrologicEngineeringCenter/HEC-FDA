@@ -6,12 +6,15 @@ using Xunit;
 
 using Utilities.Ranges;
 using System.Linq;
+using System.IO;
+using System.Reflection;
 
 namespace UtilitiesTests.Ranges
 {
     [ExcludeFromCodeCoverage]
     public class RangeDoubleTests
     {
+
         [Theory]
         [InlineData(0d, 1d, true, true, true, true, 0d)]
         [InlineData(0d, 1d, true, false, true, true, 0d)]

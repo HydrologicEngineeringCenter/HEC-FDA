@@ -19,6 +19,10 @@ namespace Importer
         private SortedList<string, OccupancyType> _OcctypeListSort = new SortedList<string, OccupancyType>();
         #endregion
         #region Properties
+        public List<OccupancyType> Occtypes
+        {
+            get;
+        }
         #endregion
         #region Constructors
         public OccupancyTypeList()
@@ -28,6 +32,7 @@ namespace Importer
         #region Voids
         public void Add(OccupancyType theOcctype)
         {
+            Occtypes.Add(theOcctype);
             OccupancyType aOccType = ObjectCopier.Clone(theOcctype);
             _OcctypeListSort.Add(aOccType.Name.Trim(), aOccType);
             WriteLine($"Add Occupancy Type to SortList. {aOccType.Name}");

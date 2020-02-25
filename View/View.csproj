@@ -301,6 +301,9 @@
     <Compile Include="Inventory\OccupancyTypes\Controls\CreateNewDamCat.xaml.cs">
       <DependentUpon>CreateNewDamCat.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Inventory\OccupancyTypes\Controls\OccTypeEditorControl.xaml.cs">
+      <DependentUpon>OccTypeEditorControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Inventory\OccupancyTypes\DeleteMe.cs" />
     <Compile Include="Inventory\OccupancyTypes\ImportOccupancyTypeGroups.xaml.cs">
       <DependentUpon>ImportOccupancyTypeGroups.xaml</DependentUpon>
@@ -310,6 +313,9 @@
     </Compile>
     <Compile Include="Inventory\OccupancyTypes\OccTypeGroupRowItem.xaml.cs">
       <DependentUpon>OccTypeGroupRowItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Inventory\OccupancyTypes\OccupancyTypesEditor.xaml.cs">
+      <DependentUpon>OccupancyTypesEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Output\IndexLocations.xaml.cs">
       <DependentUpon>IndexLocations.xaml</DependentUpon>
@@ -515,6 +521,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Inventory\OccupancyTypes\Controls\OccTypeEditorControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Inventory\OccupancyTypes\ImportOccupancyTypeGroups.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -524,6 +534,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Inventory\OccupancyTypes\OccTypeGroupRowItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Inventory\OccupancyTypes\OccupancyTypesEditor.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -720,6 +734,10 @@
     <ProjectReference Include="..\Importer\Importer.csproj">
       <Project>{2db60c23-9754-4548-bcf3-4d1bba79570c}</Project>
       <Name>Importer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OccupancyTypes\OccupancyTypes.csproj">
+      <Project>{4AD0B5FE-D2D7-403F-B740-5F2377A14117}</Project>
+      <Name>OccupancyTypes</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenGLMapper\geospatial\OpenGLMapping\OpenGLMapping.vbproj">
       <Project>{e6dd31c5-1388-4b1d-8291-c317dde22388}</Project>

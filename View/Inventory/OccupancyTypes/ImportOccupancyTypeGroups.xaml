@@ -30,7 +30,7 @@
             <CA:TextBoxFileBrowser Grid.Row="0" Grid.Column="1" Margin="5"  Filter="Textfiles (*.txt) |*.txt|All files (*.*) |*.*" DisplayPath="True"   Name="cmb_Path"   />
 
             <Button Name="btn_Add" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" Click="btn_Add_Click" >
-                <Image Width="16" Height="16" VerticalAlignment="Bottom" HorizontalAlignment="Center" Grid.Row="1" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
+                <Image Width="16" Height="16" VerticalAlignment="Bottom" HorizontalAlignment="Center" Grid.Row="1" Source="pack://application:,,,/View;component/Resources/Add.png"/>
                 <Button.ToolTip>
                     <ToolTip>
                         <TextBlock>Create New</TextBlock>

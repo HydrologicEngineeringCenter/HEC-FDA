@@ -12,6 +12,7 @@ namespace Functions
             return new Distribution(distribution);
         }
 
+      
         public static IDistributedOrdinate FactoryNormal(double mean, double stDev, int sampleSize = 2147483647)
         {
             return new Distribution(Statistics.IDistributionFactory.FactoryNormal(mean, stDev, sampleSize));

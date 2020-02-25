@@ -14,10 +14,10 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         string Description { get; set; }
         IDamageCategory DamageCategory { get; set; }
 
-        bool CalculateStructureDamage { get; }
-        bool CalcualateContentDamage { get; }
-        bool CalculateVehicleDamage { get; }
-        bool CalculateOtherDamage { get; }
+        bool CalculateStructureDamage { get; set; }
+        bool CalcualateContentDamage { get; set; }
+        bool CalculateVehicleDamage { get; set; }
+        bool CalculateOtherDamage { get; set; }
 
         ICoordinatesFunction StructureDepthDamageFunction { get; set; }
 
@@ -25,11 +25,11 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         ICoordinatesFunction VehicleDepthDamageFunction { get; set; }
         ICoordinatesFunction OtherDepthDamageFunction { get; set; }
 
-        ICoordinatesFunction StructureValueUncertainty { get; set; }
-        ICoordinatesFunction ContentValueUncertainty { get; set; }
-        ICoordinatesFunction VehicleValueUncertainty { get; set; }
-        ICoordinatesFunction OtherValueUncertainty { get; set; }
-        ICoordinatesFunction FoundationHeightUncertaintyFunction { get; set; }
+        IDistributedOrdinate StructureValueUncertainty { get; set; }
+        IDistributedOrdinate ContentValueUncertainty { get; set; }
+        IDistributedOrdinate VehicleValueUncertainty { get; set; }
+        IDistributedOrdinate OtherValueUncertainty { get; set; }
+        IDistributedOrdinate FoundationHeightUncertainty { get; set; }
         
 
 

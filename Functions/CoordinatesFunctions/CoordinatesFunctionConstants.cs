@@ -60,10 +60,11 @@ namespace Functions.CoordinatesFunctions
                 Order = SetTheOrder();
                 Domain = IRangeFactory.Factory(_ProvidedCoordinates.First().X.Value(), _ProvidedCoordinates.Last().X.Value());
                 Range = SetRange();
+                IsInvertible = IsInvertibleFunction();
                 if (IsInvertible)
                 {
                     if (Interpolator == InterpolationEnum.NaturalCubicSpline) _InverseNaturalCublicSpline = SetInverseCubicSplineFunction(xys);
-                    SetInverseInterpolator(Interpolator);
+                    InverseInterpolationFunction = SetInverseInterpolator(Interpolator);
                 }            
                 Coordinates = SetSortedCoordinates(_ProvidedCoordinates);
             }

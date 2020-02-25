@@ -159,12 +159,12 @@ namespace FunctionsTests.CoordinatesFunctions
                 IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
                 IDistributedOrdinateFactory.Factory( new Normal(1, 0)) 
             };
-            return (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
+            return (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
         }
 
         internal CoordinatesFunctionVariableYs CreateDistributedCoordinatesFunction(List<double> xs, List<IDistributedOrdinate> ys)
         {
-            return (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
+            return (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
         }
         #endregion
 
@@ -333,7 +333,7 @@ namespace FunctionsTests.CoordinatesFunctions
 
             //create a constant func
             functions.Add(CreateCoordinatesFunctionConstants(xs1, ys1));
-            functions.Add(ICoordinatesFunctionsFactory.Factory(xs2, ys2));
+            functions.Add(ICoordinatesFunctionsFactory.Factory(xs2, ys2, InterpolationEnum.None));
             functions.Add(CreateCoordinatesFunctionConstants(xs3, ys3));
 
             return functions;

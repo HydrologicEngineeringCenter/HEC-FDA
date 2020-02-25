@@ -202,11 +202,12 @@
     <Compile Include="ImpactArea\RadioButtonConverterRight.cs" />
     <Compile Include="FlowTransforms\InflowOutflowOwnerElement.cs" />
     <Compile Include="Inventory\AttributeLinkingListVM.cs" />
-    <Compile Include="Inventory\DamageCategory\DamageCategoriesVM.cs" />
-    <Compile Include="Inventory\DamageCategory\DamageCategory.cs" />
-    <Compile Include="Inventory\DamageCategory\DamageCategoryOwnedElement.cs" />
-    <Compile Include="Inventory\DamageCategory\DamageCategoryRowItem.cs" />
-    <Compile Include="Inventory\DamageCategory\IDamageCategory.cs" />
+    <Compile Include="Inventory\DamageCategories\DamageCategoriesVM.cs" />
+    <Compile Include="Inventory\DamageCategories\DamageCategory.cs" />
+    <Compile Include="Inventory\DamageCategories\DamageCategoryFactory.cs" />
+    <Compile Include="Inventory\DamageCategories\DamageCategoryOwnedElement.cs" />
+    <Compile Include="Inventory\DamageCategories\DamageCategoryRowItem.cs" />
+    <Compile Include="Inventory\DamageCategories\IDamageCategory.cs" />
     <Compile Include="Inventory\DefineSIAttributesVM.cs" />
     <Compile Include="Inventory\DepthDamage\DepthDamageCurve.cs" />
     <Compile Include="Inventory\DepthDamage\DepthDamageCurveData.cs" />
@@ -224,7 +225,9 @@
     <Compile Include="Inventory\OccupancyTypes\ImportOccupancyTypesVM.cs" />
     <Compile Include="Inventory\OccupancyTypes\IOccupancyType.cs" />
     <Compile Include="Inventory\OccupancyTypes\IOccupancyTypeGroup.cs" />
+    <Compile Include="Inventory\OccupancyTypes\OccTypeReader\OccTypeReader.cs" />
     <Compile Include="Inventory\OccupancyTypes\OccupancyType.cs" />
+    <Compile Include="Inventory\OccupancyTypes\OccupancyTypeFactory.cs" />
     <Compile Include="Inventory\OccupancyTypes\OccupancyTypeGroup.cs" />
     <Compile Include="Inventory\OccupancyTypes\OccupancyTypesEditorVM.cs" />
     <Compile Include="Inventory\OccupancyTypes\OccupancyTypesElement.cs" />

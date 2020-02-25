@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using System.Data;
 using System.ComponentModel;
 using FdaViewModel.Utilities;
-using Consequences_Assist.ComputableObjects;
 using FdaViewModel.Saving.PersistenceManagers;
 using Functions;
+using FunctionsView.ViewModel;
+using Model.Inputs.Functions.ImpactAreaFunctions;
+using FdaViewModel.Inventory.DamageCategory;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -43,8 +45,12 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         private string _Year;
         private string _Module;
+        private CoordinatesFunctionEditorVM _StructureEditorVM;
+        private CoordinatesFunctionEditorVM _ContentEditorVM;
+        private CoordinatesFunctionEditorVM _VehicleEditorVM;
+        private CoordinatesFunctionEditorVM _OtherEditorVM;
 
-        
+
 
         #endregion
         #region Properties
@@ -388,10 +394,33 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             get { return _OccTypeGroups; }
             set { _OccTypeGroups = value; NotifyPropertyChanged(); }
         }
+
+        public CoordinatesFunctionEditorVM StructureEditorVM
+        {
+            get { return _StructureEditorVM; }
+            set { _StructureEditorVM = value; NotifyPropertyChanged(); }
+        }
+        public CoordinatesFunctionEditorVM ContentEditorVM
+        {
+            get { return _ContentEditorVM; }
+            set { _ContentEditorVM = value; NotifyPropertyChanged(); }
+        }
+        public CoordinatesFunctionEditorVM VehicleEditorVM
+        {
+            get { return _VehicleEditorVM; }
+            set { _VehicleEditorVM = value; NotifyPropertyChanged(); }
+        }
+        public CoordinatesFunctionEditorVM OtherEditorVM
+        {
+            get { return _OtherEditorVM; }
+            set { _OtherEditorVM = value; NotifyPropertyChanged(); }
+        }
         #endregion
         #region Constructors
         public OccupancyTypesEditorVM(OccupancyTypesElement selectedOccTypeElement, Editors.EditorActionManager manager):base(manager)
         {
+            LoadTheEditorVMs();
+
             Name = "OccTypeEditor";//I just needed some name so that it doesn't fail the empty name test that is now universal.
             //this call will load the default DD curves dictionary
             DepthDamage.DepthDamageCurveData ddcd = new DepthDamage.DepthDamageCurveData(); 
@@ -411,6 +440,20 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         #endregion
         #region Voids
+
+        private void LoadTheEditorVMs()
+        {
+            ICoordinatesFunction defaultFunc = ICoordinatesFunctionsFactory.DefaultOccTypeFunction();
+            string xLabel = "xlabel";
+            string yLabel = "ylabel";
+            string chartTitle = "chartTitle";
+            StructureEditorVM = new CoordinatesFunctionEditorVM(defaultFunc, xLabel, yLabel, chartTitle);
+            ContentEditorVM = new CoordinatesFunctionEditorVM(defaultFunc, xLabel, yLabel, chartTitle);
+            VehicleEditorVM = new CoordinatesFunctionEditorVM(defaultFunc, xLabel, yLabel, chartTitle);
+            OtherEditorVM = new CoordinatesFunctionEditorVM(defaultFunc, xLabel, yLabel, chartTitle);
+
+        }
+
         private void OccTypeElementAdded(object sender, Saving.ElementAddedEventArgs e)
         {
             List<OccupancyTypesElement> tempList = new List<OccupancyTypesElement>();
@@ -571,7 +614,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 if(vm.HasError == false)
                 {
                     //store the new damage category
-                    _SelectedOccType.DamageCategory = new DamageCategory.DamageCategory(vm.Name);
+                    _SelectedOccType.DamageCategory = DamageCategoryFactory.Factory(vm.Name);
 
                     SetDamageCategory();
                     LoadDamageCategoriesList();
@@ -584,7 +627,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         {
             List<string> occtypeNames = new List<string>();
             if(SelectedOccTypeGroup == null) { return occtypeNames; }
-            foreach (OccupancyType ot in SelectedOccTypeGroup.ListOfOccupancyTypes)
+            foreach (IOccupancyType ot in SelectedOccTypeGroup.ListOfOccupancyTypes)
             {
                 occtypeNames.Add(ot.Name);
             }
@@ -602,7 +645,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 if (vm.HasError == false)
                 {
                     //create the new occupancy type
-                    IOccupancyType newOT = new OccupancyType(vm.Name, SelectedDamageCategory);
+                    IOccupancyType newOT = OccupancyTypeFactory.Factory(vm.Name, SelectedDamageCategory);
 
                     //load all the values you can
                     newOT.StructureDepthDamageName = SelectedStructureDepthDamage;
@@ -612,10 +655,13 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
                     ICoordinatesFunction newCurve = ICoordinatesFunctionsFactory.DefaultOccTypeFunction();
 
-                    newOT.StructureValueUncertainty = newCurve;
-                    newOT.ContentValueUncertainty = newCurve;
-                    newOT.VehicleValueUncertainty = newCurve;
-                    newOT.OtherValueUncertainty = newCurve;
+                    IDistributedOrdinate distOrd = IDistributedOrdinateFactory.FactoryNormal(0, 0);
+
+                    newOT.StructureValueUncertainty = distOrd;
+                    newOT.ContentValueUncertainty = distOrd;
+                    newOT.VehicleValueUncertainty = distOrd;
+                    newOT.OtherValueUncertainty = distOrd;
+                    newOT.FoundationHeightUncertainty = distOrd;
 
                     //newCurve.Add(0, new Statistics.None(0));
 
@@ -624,7 +670,6 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                     newOT.OtherDepthDamageFunction = newCurve;
                     newOT.VehicleDepthDamageFunction = newCurve;
 
-                    newOT.FoundationHeightUncertaintyFunction = newCurve;
 
                     _OcctypeTabsSelectedDictionary.Add(newOT.Name, new bool[] { true, true, true, false });
 
@@ -651,7 +696,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 if (vm.HasError == false)
                 {
                     //create the new occupancy type
-                    IOccupancyType newOT = new OccupancyType(vm.Name, SelectedDamageCategory);
+                    IOccupancyType newOT = OccupancyTypeFactory.Factory(vm.Name, SelectedDamageCategory);
 
                     //load all the values you can
                     newOT.StructureDepthDamageName = SelectedStructureDepthDamage;
@@ -663,7 +708,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                     newOT.ContentValueUncertainty = SelectedOccType.ContentValueUncertainty;
                     newOT.VehicleValueUncertainty = SelectedOccType.VehicleValueUncertainty;
                     newOT.OtherValueUncertainty = SelectedOccType.OtherValueUncertainty;
-                    newOT.FoundationHeightUncertaintyFunction = SelectedOccType.FoundationHeightUncertaintyFunction;
+                    newOT.FoundationHeightUncertainty = SelectedOccType.FoundationHeightUncertainty;
 
 
                     newOT.StructureDepthDamageFunction = SelectedOccType.StructureDepthDamageFunction;

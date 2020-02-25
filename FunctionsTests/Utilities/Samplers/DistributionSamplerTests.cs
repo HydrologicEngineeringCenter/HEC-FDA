@@ -29,7 +29,7 @@ namespace FunctionsTests.Utilities.Samplers
                 IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
                 IDistributedOrdinateFactory.Factory( new Normal(1, 0))
             };
-            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
+            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
 
             Assert.True(distSampler.CanSample(distributedFunc));
         }
@@ -66,7 +66,7 @@ namespace FunctionsTests.Utilities.Samplers
                 IDistributedOrdinateFactory.Factory( new Normal(3, 2)),
                 IDistributedOrdinateFactory.Factory( new Normal(4, 3))
             };
-            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
+            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
 
             IFunction sampledFunc = distSampler.Sample(distributedFunc, .5);
             //they should have the same number of coordinates.
@@ -161,7 +161,7 @@ namespace FunctionsTests.Utilities.Samplers
                 IDistributedOrdinateFactory.Factory( new Triangular(20,30,40)),
                 IDistributedOrdinateFactory.Factory( new Triangular(30,40,50))
             };
-            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
+            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
 
             IFunction sampledFunc = distSampler.Sample(distributedFunc, .5);
             //they should have the same number of coordinates.
@@ -192,7 +192,7 @@ namespace FunctionsTests.Utilities.Samplers
                 IDistributedOrdinateFactory.Factory( new Triangular(20,30,40)),
                 IDistributedOrdinateFactory.Factory( new Triangular(30,40,50))
             };
-            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
+            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
 
             IFunction sampledFunc = distSampler.Sample(distributedFunc, 0.0);
             //they should have the same number of coordinates.
@@ -223,7 +223,7 @@ namespace FunctionsTests.Utilities.Samplers
                 IDistributedOrdinateFactory.Factory( new Triangular(20,30,40)),
                 IDistributedOrdinateFactory.Factory( new Triangular(30,40,50))
             };
-            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
+            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
 
             IFunction sampledFunc = distSampler.Sample(distributedFunc, 1.0);
             //they should have the same number of coordinates.
@@ -255,7 +255,7 @@ namespace FunctionsTests.Utilities.Samplers
                 IDistributedOrdinateFactory.Factory( new Uniform(5, 10)),
                 IDistributedOrdinateFactory.Factory( new Uniform(10,20)),
             };
-            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
+            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
 
             IFunction sampledFunc = distSampler.Sample(distributedFunc, 1.0);
             //they should have the same number of coordinates.
@@ -282,7 +282,7 @@ namespace FunctionsTests.Utilities.Samplers
                 IDistributedOrdinateFactory.Factory( new Uniform(5, 10)),
                 IDistributedOrdinateFactory.Factory( new Uniform(10,20)),
             };
-            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
+            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
 
             IFunction sampledFunc = distSampler.Sample(distributedFunc, 0.0);
             //they should have the same number of coordinates.
@@ -308,7 +308,7 @@ namespace FunctionsTests.Utilities.Samplers
                 IDistributedOrdinateFactory.Factory( new Uniform(5, 10)),
                 IDistributedOrdinateFactory.Factory( new Uniform(10,20)),
             };
-            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
+            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
 
             IFunction sampledFunc = distSampler.Sample(distributedFunc, 0.5);
             //they should have the same number of coordinates.

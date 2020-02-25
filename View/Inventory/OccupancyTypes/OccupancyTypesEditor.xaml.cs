@@ -130,10 +130,11 @@ namespace View.Inventory.OccupancyTypes
 
             OccTypeEditorControl.FoundationHeightUncertainty.IsEnabled = false;
 
-            OccTypeEditorControl.tableWithPlot_Structures.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None) ;
-            OccTypeEditorControl.tableWithPlot_Content.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-            OccTypeEditorControl.tableWithPlot_vehicle.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-            OccTypeEditorControl.tableWithPlot_other.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            //todo: cody commented out on 2/20/2020
+            //OccTypeEditorControl.tableWithPlot_Structures.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None) ;
+            //OccTypeEditorControl.tableWithPlot_Content.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            //OccTypeEditorControl.tableWithPlot_vehicle.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            //OccTypeEditorControl.tableWithPlot_other.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
             OccTypeEditorControl.txt_YearBox.IsEnabled = false;
             OccTypeEditorControl.txt_Module.IsEnabled = false;
@@ -198,47 +199,32 @@ namespace View.Inventory.OccupancyTypes
 
             OccTypeEditorControl.OccTypeDescriptionBox.Text = ot.Description;
 
-            //set the cont dist values for the selected occtype
-            if (ot.StructureValueUncertainty != null)
-            {
-                OccTypeEditorControl.StructureValueUncertainty.LoadOccTypeData(ot.StructureValueUncertainty);
-            }
-            if (ot.ContentValueUncertainty != null)
-            {
-                OccTypeEditorControl.ContentValueUncertainty.LoadOccTypeData(ot.ContentValueUncertainty);
-            }
-            if (ot.VehicleValueUncertainty != null)
-            {
-                OccTypeEditorControl.VehicleValueUncertainty.LoadOccTypeData(ot.VehicleValueUncertainty);
-            }
-            if (ot.OtherValueUncertainty != null)
-            {
-                OccTypeEditorControl.OtherValueUncertainty.LoadOccTypeData(ot.OtherValueUncertainty);
-            }
+            //todo: cody commented out on 2/20/2020
+            ////set the cont dist values for the selected occtype
+            //if (ot.StructureValueUncertainty != null)
+            //{
+            //    OccTypeEditorControl.StructureValueUncertainty.LoadOccTypeData(ot.StructureValueUncertainty);
+            //}
+            //if (ot.ContentValueUncertainty != null)
+            //{
+            //    OccTypeEditorControl.ContentValueUncertainty.LoadOccTypeData(ot.ContentValueUncertainty);
+            //}
+            //if (ot.VehicleValueUncertainty != null)
+            //{
+            //    OccTypeEditorControl.VehicleValueUncertainty.LoadOccTypeData(ot.VehicleValueUncertainty);
+            //}
+            //if (ot.OtherValueUncertainty != null)
+            //{
+            //    OccTypeEditorControl.OtherValueUncertainty.LoadOccTypeData(ot.OtherValueUncertainty);
+            //}
 
-            //load the foundation height uncertainty
-            if(ot.FoundationHeightUncertainty != null)
-            {
-                OccTypeEditorControl.FoundationHeightUncertainty.LoadOccTypeData(ot.FoundationHeightUncertainty);
-            }
+            ////load the foundation height uncertainty
+            //if(ot.FoundationHeightUncertainty != null)
+            //{
+            //    OccTypeEditorControl.FoundationHeightUncertainty.LoadOccTypeData(ot.FoundationHeightUncertainty);
+            //}
 
-            ////if the structure, content, vehicle, or other, depth damage curve value is "", then set the combo box to -1;
-            //if (ot.StructureDepthDamageName == "" || ot.StructureDepthDamageName == null)
-            //{
-            //    OccTypeEditorControl.StructureDamageComboBox.SelectedIndex = -1;
-            //}
-            //if (ot.ContentDepthDamageName == "" || ot.ContentDepthDamageName == null)
-            //{
-            //    OccTypeEditorControl.ContentDamageComboBox.SelectedIndex = -1;
-            //}
-            //if (ot.VehicleDepthDamageName == "" || ot.VehicleDepthDamageName == null)
-            //{
-            //    OccTypeEditorControl.VehicleDamageComboBox.SelectedIndex = -1;
-            //}
-            //if (ot.OtherDepthDamageName == "" || ot.OtherDepthDamageName == null)
-            //{
-            //    OccTypeEditorControl.OtherDamageComboBox.SelectedIndex = -1;
-            //}
+
 
 
 

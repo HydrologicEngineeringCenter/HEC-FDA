@@ -84,13 +84,13 @@ namespace FdaViewModel.Inventory
 
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                  .WithSiblingRules(this);
+
             
-            //todo: Refactor: CO
-            //ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(collectionOfPointFiles, actionManager, false);
-            //string header = "Import Structure Inventory";
-            //DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStructureInventory");
-            //Navigate(tab, false, false);
-         
+            ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(collectionOfPointFiles, actionManager, false);
+            string header = "Import Structure Inventory";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStructureInventory");
+            Navigate(tab, false, false);
+
         }
 
 
