@@ -40,7 +40,7 @@ namespace Model
             double[] values = new double[packets.Count];
             for (int i  = 0; i < packets.Count; i++)
             {
-                values[i] = SampleMethod(inputs, packets[i]);
+                //values[i] = SampleMethod(inputs, packets[i]);
             }
             return IElevationFactory.Factory(Functions.IOrdinateFactory.Factory(Statistics.IHistogramFactory.Factory(Statistics.IDataFactory.Factory(values), 100)), IElevationEnum.Asset);
         }

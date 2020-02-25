@@ -38,7 +38,9 @@ namespace Model
              *      (4) this approach
              * The approach here is just to get something working.
              */
-             var sampler = new SampleAssetElevation().Sample(new IElevation[2] { ground, assetHeight}, )
+            //var sampler = new SampleAssetElevation().Sample(new IElevation[2] { ground, assetHeight}, )
+            //todo: don't submit this. This needs to get finished.
+            return null;
         }
         #endregion
 

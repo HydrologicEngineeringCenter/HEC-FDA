@@ -8,6 +8,7 @@ using System.Xml.Linq;
 
 namespace Model.Inputs.Functions.ImpactAreaFunctions
 {
+
     internal sealed class DamageFrequency : ImpactAreaFunctionBase, IFrequencyFunction, IValidate<DamageFrequency>
     {
         #region Properties
@@ -23,13 +24,15 @@ namespace Model.Inputs.Functions.ImpactAreaFunctions
         public IEnumerable<IMessage> Errors { get; }
 
         public IEnumerable<IMessage> Messages => throw new NotImplementedException();
+
+        public IMessageLevels State { get; }
         #endregion
 
         #region Constructor
         internal DamageFrequency(ICoordinatesFunction function) : base(function, ImpactAreaFunctionEnum.DamageFrequency)
         {
             //IsValid = Validate();
-            IsValid = Validate(new DamageFrequencyValidator(), out IEnumerable<IMessage> errors);
+            State = Validate(new DamageFrequencyValidator(), out IEnumerable<IMessage> errors);
             Errors = errors;
         }
         #endregion
@@ -69,7 +72,7 @@ namespace Model.Inputs.Functions.ImpactAreaFunctions
         #endregion
 
         #region IValidateData Methods
-        public bool Validate(IValidator<DamageFrequency> validator, out IEnumerable<IMessage> errors)
+        public IMessageLevels Validate(IValidator<DamageFrequency> validator, out IEnumerable<IMessage> errors)
         {
             //if (AreValidOrdinates() && 
             //    Function.IsValid) return true;
@@ -108,6 +111,11 @@ namespace Model.Inputs.Functions.ImpactAreaFunctions
         #endregion
 
         public override XElement WriteToXML()
+        {
+            throw new NotImplementedException();
+        }
+
+        IMessageLevels IValidate<DamageFrequency>.Validate(IValidator<DamageFrequency> validator, out IEnumerable<IMessage> errors)
         {
             throw new NotImplementedException();
         }

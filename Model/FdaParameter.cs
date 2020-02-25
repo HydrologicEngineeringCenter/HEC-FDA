@@ -19,6 +19,8 @@ namespace Model
         public IOrdinateEnum Type => _Parameter.Type;
         public IRange<double> Range => _Parameter.Range;
         public IEnumerable<IMessage> Messages => throw new NotImplementedException();
+
+        public IMessageLevels State => throw new NotImplementedException();
         #endregion
         #endregion
 

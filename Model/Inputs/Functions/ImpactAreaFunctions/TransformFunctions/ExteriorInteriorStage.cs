@@ -7,6 +7,7 @@ using System.Xml.Linq;
 
 namespace Model.Inputs.Functions.ImpactAreaFunctions
 {
+
     internal sealed class ExteriorInteriorStage: ImpactAreaFunctionBase, ITransformFunction, IValidate<ExteriorInteriorStage>
     {
         #region Properties
@@ -19,6 +20,8 @@ namespace Model.Inputs.Functions.ImpactAreaFunctions
         public IEnumerable<IMessage> Errors => throw new NotImplementedException();
 
         public IEnumerable<IMessage> Messages => throw new NotImplementedException();
+
+        public IMessageLevels State => throw new NotImplementedException();
         #endregion
 
         #region Constructor
@@ -68,6 +71,11 @@ namespace Model.Inputs.Functions.ImpactAreaFunctions
         #endregion
 
         public override XElement WriteToXML()
+        {
+            throw new NotImplementedException();
+        }
+
+        IMessageLevels IValidate<ExteriorInteriorStage>.Validate(IValidator<ExteriorInteriorStage> validator, out IEnumerable<IMessage> errors)
         {
             throw new NotImplementedException();
         }

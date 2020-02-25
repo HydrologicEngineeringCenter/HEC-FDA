@@ -8,12 +8,13 @@ using Utilities;
 
 namespace Model.Validation
 {
+
     internal class ElevationValidator: IValidator<IElevation>
     {
-        public bool IsValid(IElevation obj, out IEnumerable<IMessage> msgs)
+        public IMessageLevels IsValid(IElevation obj, out IEnumerable<IMessage> msgs)
         {
             msgs = ReportErrors(obj);
-            return msgs.Max() < IMessageLevels.Error;
+            return msgs.Max();
         }
         public IEnumerable<IMessage> ReportErrors(IElevation obj)
         {
@@ -59,6 +60,11 @@ namespace Model.Validation
             if (t == IElevationEnum.NotSet) msg += $"The {nameof(IElevation)} cannot be constructed because the {nameof(IElevation.Type)} is not set.";
             if (value.Value().IsFinite()) msg += $"The {nameof(IElevation)} cannot be constructed because the height is not a finite numerical value.";
             return msg.Length == 0;
+        }
+
+        IMessageLevels IValidator<IElevation>.IsValid(IElevation entity, out IEnumerable<IMessage> errors)
+        {
+            throw new NotImplementedException();
         }
     }
 }

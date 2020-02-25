@@ -7,6 +7,7 @@ using Utilities;
 
 namespace Model.Validation
 {
+
     class DamageFrequencyValidator : IValidator<DamageFrequency>
     {
         public bool IsValid(DamageFrequency entity, out IEnumerable<IMessage> errors)
@@ -17,6 +18,11 @@ namespace Model.Validation
         }
 
         public IEnumerable<IMessage> ReportErrors(DamageFrequency entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        IMessageLevels IValidator<DamageFrequency>.IsValid(DamageFrequency entity, out IEnumerable<IMessage> errors)
         {
             throw new NotImplementedException();
         }

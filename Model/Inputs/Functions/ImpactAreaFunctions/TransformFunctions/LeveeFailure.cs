@@ -18,6 +18,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 
         public IEnumerable<IMessage> Messages => throw new NotImplementedException();
 
+        public IMessageLevels State => throw new NotImplementedException();
 
         internal LeveeFailure(Functions.ICoordinatesFunction function):base(function, ImpactAreaFunctionEnum.LeveeFailure)
         { 
@@ -29,6 +30,11 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
         }
 
         public override XElement WriteToXML()
+        {
+            throw new NotImplementedException();
+        }
+
+        IMessageLevels IValidate<LeveeFailure>.Validate(IValidator<LeveeFailure> validator, out IEnumerable<IMessage> errors)
         {
             throw new NotImplementedException();
         }
