@@ -301,8 +301,20 @@
     <Compile Include="Inventory\OccupancyTypes\Controls\CreateNewDamCat.xaml.cs">
       <DependentUpon>CreateNewDamCat.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Inventory\OccupancyTypes\Controls\NormalControl.xaml.cs">
+      <DependentUpon>NormalControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Inventory\OccupancyTypes\Controls\OccTypeEditorControl.xaml.cs">
       <DependentUpon>OccTypeEditorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Inventory\OccupancyTypes\Controls\TriangularControl.xaml.cs">
+      <DependentUpon>TriangularControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Inventory\OccupancyTypes\Controls\UniformControl.xaml.cs">
+      <DependentUpon>UniformControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Inventory\OccupancyTypes\Controls\ValueUncertaintyControl.xaml.cs">
+      <DependentUpon>ValueUncertaintyControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Inventory\OccupancyTypes\DeleteMe.cs" />
     <Compile Include="Inventory\OccupancyTypes\ImportOccupancyTypeGroups.xaml.cs">
@@ -521,9 +533,25 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Inventory\OccupancyTypes\Controls\NormalControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Inventory\OccupancyTypes\Controls\OccTypeEditorControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Inventory\OccupancyTypes\Controls\TriangularControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Inventory\OccupancyTypes\Controls\UniformControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Inventory\OccupancyTypes\Controls\ValueUncertaintyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Inventory\OccupancyTypes\ImportOccupancyTypeGroups.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -9,6 +9,7 @@ using FdaViewModel.Utilities;
 using FdaViewModel.Inventory.DepthDamage;
 using Model;
 using Model.Inputs.Functions.ImpactAreaFunctions;
+using System.IO;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -109,8 +110,20 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             
             return true;
         }
-        public bool Import()
+        public bool Import(List<IOccupancyType> occtypes)
         {
+            string groupName = Path.GetFileNameWithoutExtension(SelectedPath);
+            Dictionary<string, bool[]> selectedTabsDictionary = new Dictionary<string, bool[]>();
+
+            //OccTypePersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetOccTypeManager();
+            //OccupancyTypesElement elem = new OccupancyTypesElement(occtypeGroupName, occtypes, selectedTabsDictionary);
+
+            OccupancyTypesGroupRowItemVM rowVM = new OccupancyTypesGroupRowItemVM(SelectedPath, System.IO.Path.GetFileNameWithoutExtension(SelectedPath), occtypes, null);
+            ListOfRowVMs.Add(rowVM);
+            SelectedPath = "";
+            return true;
+
+
             //List<IOccupancyType> ListOfOccupancyTypes = new List<IOccupancyType>();
 
             //string errorMessage = "";

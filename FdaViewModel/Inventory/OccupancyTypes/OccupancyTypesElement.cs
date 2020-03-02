@@ -31,6 +31,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         /// only ever be one element that is turned to "true".
         /// </summary>
         public bool IsSelected { get; set; }
+        //todo: maybe this should be an occtype id and not a string?
         public Dictionary<string,bool[]> OccTypesSelectedTabsDictionary { get; set; }
             //public string OccTypesGroupName { get; set; }
         public List<IOccupancyType> ListOfOccupancyTypes { get; set; }

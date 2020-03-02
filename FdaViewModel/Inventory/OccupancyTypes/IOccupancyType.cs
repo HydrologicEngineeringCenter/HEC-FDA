@@ -10,6 +10,8 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 {
     public interface IOccupancyType
     {
+        int GroupID { get; set; }
+        int ID { get; set; }
         string Name { get; set; }
         string Description { get; set; }
         IDamageCategory DamageCategory { get; set; }
@@ -25,18 +27,18 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         ICoordinatesFunction VehicleDepthDamageFunction { get; set; }
         ICoordinatesFunction OtherDepthDamageFunction { get; set; }
 
-        IDistributedOrdinate StructureValueUncertainty { get; set; }
-        IDistributedOrdinate ContentValueUncertainty { get; set; }
-        IDistributedOrdinate VehicleValueUncertainty { get; set; }
-        IDistributedOrdinate OtherValueUncertainty { get; set; }
-        IDistributedOrdinate FoundationHeightUncertainty { get; set; }
+        IOrdinate StructureValueUncertainty { get; set; }
+        IOrdinate ContentValueUncertainty { get; set; }
+        IOrdinate VehicleValueUncertainty { get; set; }
+        IOrdinate OtherValueUncertainty { get; set; }
+        IOrdinate FoundationHeightUncertainty { get; set; }
         
 
 
-        string StructureDepthDamageName { get; set; }
-        string ContentDepthDamageName { get; set; }
-        string VehicleDepthDamageName { get; set; }
-        string OtherDepthDamageName { get; set; }
+        //string StructureDepthDamageName { get; set; }
+        //string ContentDepthDamageName { get; set; }
+        //string VehicleDepthDamageName { get; set; }
+        //string OtherDepthDamageName { get; set; }
 
 
         IOccupancyType Clone();

@@ -151,8 +151,18 @@
         <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:CreateNewDamCatVM }" >
             <OccupancyTypesControlsView:CreateNewDamCat/>
         </DataTemplate>
-       
 
+        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:NormalControlVM}">
+            <OccupancyTypesControlsView:NormalControl/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:TriangularControlVM}">
+            <OccupancyTypesControlsView:TriangularControl/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:UniformControlVM}">
+            <OccupancyTypesControlsView:UniformControl/>
+        </DataTemplate>
         <!--Inventory Region-->
       
         <DataTemplate DataType="{x:Type DepthDamageVM:DepthDamageCurveEditorVM }" >

@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
+using FdaViewModel.Inventory.OccupancyTypes;
 
 namespace View.Inventory.OccupancyTypes
 {
@@ -60,23 +61,17 @@ namespace View.Inventory.OccupancyTypes
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             if (vm.SelectedOccTypeGroup == null) { return; }
 
-            ObservableCollection<Consequences_Assist.ComputableObjects.OccupancyType> collectionOfOccTypes = new ObservableCollection<Consequences_Assist.ComputableObjects.OccupancyType>();
-            foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in vm.SelectedOccTypeGroup.ListOfOccupancyTypes)
+            ObservableCollection<IOccupancyType> collectionOfOccTypes = new ObservableCollection<IOccupancyType>();
+            foreach (IOccupancyType ot in vm.SelectedOccTypeGroup.ListOfOccupancyTypes)
             {
                 collectionOfOccTypes.Add(ot);
             }
             ListCollectionView lcv = new ListCollectionView(collectionOfOccTypes);
 
-            lcv.GroupDescriptions.Add(new PropertyGroupDescription(nameof(Consequences_Assist.ComputableObjects.OccupancyType.DamageCategoryName)));
+            lcv.GroupDescriptions.Add(new PropertyGroupDescription("DamageCategory.Name"));        
 
-            // var groupedOcctypes = collectionOfOccTypes.GroupBy(ot => ot.DamageCategory.Name);
-            //foreach(var group in groupedOcctypes)
-            //{
-            //    string name = group.Key;
-            //}
-
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Consequences_Assist.ComputableObjects.OccupancyType.DamageCategoryName), System.ComponentModel.ListSortDirection.Ascending));
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Consequences_Assist.ComputableObjects.OccupancyType.Name), System.ComponentModel.ListSortDirection.Ascending));
+            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("DamageCategory.Name", System.ComponentModel.ListSortDirection.Ascending));
+            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(IOccupancyType.Name), System.ComponentModel.ListSortDirection.Ascending));
 
             OccTypeListView.ItemsSource = lcv;
         }
@@ -88,14 +83,14 @@ namespace View.Inventory.OccupancyTypes
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             if(vm.SelectedOccTypeGroup == null) { return; }
 
-            ObservableCollection<Consequences_Assist.ComputableObjects.OccupancyType> collectionOfOccTypes = new ObservableCollection<Consequences_Assist.ComputableObjects.OccupancyType>();
-            foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in vm.SelectedOccTypeGroup.ListOfOccupancyTypes)
+            ObservableCollection<IOccupancyType> collectionOfOccTypes = new ObservableCollection<IOccupancyType>();
+            foreach (IOccupancyType ot in vm.SelectedOccTypeGroup.ListOfOccupancyTypes)
             {
                 collectionOfOccTypes.Add(ot);
             }
             ListCollectionView lcv = new ListCollectionView(collectionOfOccTypes);
 
-            lcv.GroupDescriptions.Add(new PropertyGroupDescription(nameof(Consequences_Assist.ComputableObjects.OccupancyType.DamageCategoryName)));
+            lcv.GroupDescriptions.Add(new PropertyGroupDescription(nameof(IOccupancyType.DamageCategory.Name)));
 
            // var groupedOcctypes = collectionOfOccTypes.GroupBy(ot => ot.DamageCategory.Name);
             //foreach(var group in groupedOcctypes)
@@ -103,8 +98,8 @@ namespace View.Inventory.OccupancyTypes
             //    string name = group.Key;
             //}
             
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Consequences_Assist.ComputableObjects.OccupancyType.DamageCategoryName), System.ComponentModel.ListSortDirection.Ascending));
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Consequences_Assist.ComputableObjects.OccupancyType.Name), System.ComponentModel.ListSortDirection.Ascending));
+            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(IOccupancyType.DamageCategory.Name), System.ComponentModel.ListSortDirection.Ascending));
+            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(IOccupancyType.Name), System.ComponentModel.ListSortDirection.Ascending));
              
             OccTypeListView.ItemsSource = lcv;
             if (OccTypeListView.Items.Count == 0)
@@ -170,7 +165,7 @@ namespace View.Inventory.OccupancyTypes
             ////assign the continuous distributions for the previously selected "percentofmeanuncertaintyWarning" control
             //if (e.RemovedItems.Count > 0)
             //{
-            //    Consequences_Assist.ComputableObjects.OccupancyType prev = (Consequences_Assist.ComputableObjects.OccupancyType)e.RemovedItems[0];
+            //    IOccupancyType prev = (IOccupancyType)e.RemovedItems[0];
             //    FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //    //structure
             //    prev.StructureValueUncertainty = OccTypeEditorControl.StructureValueUncertainty.ReturnDistribution();
@@ -195,7 +190,7 @@ namespace View.Inventory.OccupancyTypes
             ListView lv = (ListView)sender;
             if(lv.Items.Count == 0) { return; }
             if(lv.SelectedItem == null) { lv.SelectedItem = lv.Items[0]; }
-            Consequences_Assist.ComputableObjects.OccupancyType ot = lv.SelectedItem as Consequences_Assist.ComputableObjects.OccupancyType;
+            IOccupancyType ot = lv.SelectedItem as IOccupancyType;
 
             OccTypeEditorControl.OccTypeDescriptionBox.Text = ot.Description;
 

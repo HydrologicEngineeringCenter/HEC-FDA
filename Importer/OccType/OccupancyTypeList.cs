@@ -21,8 +21,19 @@ namespace Importer
         #region Properties
         public List<OccupancyType> Occtypes
         {
-            get;
+            get
+            {
+                List<OccupancyType> occtypes = new List<OccupancyType>();
+                OccupancyType aOcctype;
+                for (int i = 0; i < _OcctypeListSort.Count; i++)
+                {
+                    occtypes.Add( _OcctypeListSort.ElementAt(i).Value);
+                    
+                }
+                return occtypes;
+            }
         }
+
         #endregion
         #region Constructors
         public OccupancyTypeList()
@@ -32,7 +43,6 @@ namespace Importer
         #region Voids
         public void Add(OccupancyType theOcctype)
         {
-            Occtypes.Add(theOcctype);
             OccupancyType aOccType = ObjectCopier.Clone(theOcctype);
             _OcctypeListSort.Add(aOccType.Name.Trim(), aOccType);
             WriteLine($"Add Occupancy Type to SortList. {aOccType.Name}");
@@ -58,6 +68,7 @@ namespace Importer
                 aOcctype.PrintToFile();
             }
         }
+
         public void Export(StreamWriter wr, char delimt)
         {
             OccupancyType aOccType = new OccupancyType();

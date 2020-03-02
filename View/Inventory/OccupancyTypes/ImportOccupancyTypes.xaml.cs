@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Importer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,19 +48,23 @@ namespace View.Inventory.OccupancyTypes
         //}
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
-            vm.OccupancyTypesGroupName = txt_Name.Text;
-            if (vm.Import() == true) //this lets you know if the import was successful
-            {
-                lbl_PassFail.Content = "Imported " + txt_Name.Text + " Successfully!";
-                cmb_Path.Path = "";
-                txt_Name.Text = "";
+            //todo: i don't think this class is being used anywhere. Delete?
+            //FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
 
-            }
-            else
-            {
-                lbl_PassFail.Content = "Import of " + txt_Name.Text + " Failed!";
-            }
+ 
+
+            //vm.OccupancyTypesGroupName = txt_Name.Text;
+            //if (vm.Import() == true) //this lets you know if the import was successful
+            //{
+            //    lbl_PassFail.Content = "Imported " + txt_Name.Text + " Successfully!";
+            //    cmb_Path.Path = "";
+            //    txt_Name.Text = "";
+
+            //}
+            //else
+            //{
+            //    lbl_PassFail.Content = "Import of " + txt_Name.Text + " Failed!";
+            //}
         }
 
        

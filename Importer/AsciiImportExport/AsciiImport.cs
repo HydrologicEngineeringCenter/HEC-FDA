@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.IO;
 using static System.Console;
 using Functions;
+using FdaViewModel.Inventory.OccupancyTypes;
+using FdaViewModel.Saving.PersistenceManagers;
 
 namespace Importer
 {
@@ -66,6 +68,7 @@ namespace Importer
 
         #endregion
         #region Properties
+        public List<IOccupancyType> OccupancyTypes { get; set; }
         public bool UsesDollar
         { get; set; }
         #endregion
@@ -165,18 +168,20 @@ namespace Importer
                     }
                 case ImportOptions.ImportOcctypesOnly:
                     {
-                        //write only the occtypes out
+                        //I don't actually want to save here. I just want to grab them
+                        List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
                         OccupancyTypeList occtypes = GlobalVariables.mp_fdaStudy.GetOccupancyTypeList();
-                        foreach(OccupancyType ot in occtypes.Occtypes)
+                        foreach (OccupancyType ot in occtypes.Occtypes)
                         {
-                            ot.SaveToSqlite();
+                            fda2Occtypes.Add(ot.GetFDA2OccupancyType());
                         }
+                        //SaveOccupancyTypes(fda2Occtypes);
+                        OccupancyTypes = fda2Occtypes;
                         break;
                     }
                 case ImportOptions.ImportWaterSurfaceProfilesOnly:
                     {
                         //write only the wsp's out
-
                         break;
                     }
             }
@@ -210,6 +215,17 @@ namespace Importer
             WriteLine($"\nPrint Aggregated Damage Functions at end of Import.");
             GlobalVariables.mp_fdaStudy.GetAggDamgFuncList().Print();
         }
+
+        private void SaveOccupancyTypes(List<IOccupancyType> occtypes)
+        {
+            string occtypeGroupName = "";
+            Dictionary<string, bool[]> selectedTabsDictionary = new Dictionary<string, bool[]>();
+
+            OccTypePersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetOccTypeManager();
+            OccupancyTypesElement elem = new OccupancyTypesElement(occtypeGroupName, occtypes, selectedTabsDictionary);
+            manager.SaveNew(elem);
+        }
+
         #region findFields
         void FindFields()
         {

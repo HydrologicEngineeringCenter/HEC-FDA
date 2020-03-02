@@ -31,7 +31,7 @@ namespace Statistics.Distributions
         #region Constructor
         public Triangular(double min, double mode, double max, int sampleSize = int.MaxValue)
         {
-            IRange<double> range = IRangeFactory.Factory(min, max);
+            IRange<double> range = IRangeFactory.Factory(min, max,true,true,true,false);
             if (!Validation.TriangularValidator.IsConstructable(mode, range, out string error)) throw new InvalidConstructorArgumentsException(error);
             else
             {
@@ -57,7 +57,7 @@ namespace Statistics.Distributions
             return s;
         }
         internal static string Parameterization() => $"Triangular(mode: range minimum \u2264 mode \u2264 range maximum, {Validation.Resources.DoubleRangeRequirements()}, sample size: > 0)";
-        internal static string RequirementNotes() => "The mode parameter is also sometimes referred to as the mostly likely value.";
+        internal static string RequirementNotes() => "The mode parameter is also sometimes referred to as the most likely value.";
         
         #region IDistribution Functions
         public double PDF(double x) => _Distribution.Density(x);

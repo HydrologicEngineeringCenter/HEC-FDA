@@ -11,12 +11,20 @@ using Functions;
 using FunctionsView.ViewModel;
 using Model.Inputs.Functions.ImpactAreaFunctions;
 using FdaViewModel.Inventory.DamageCategory;
+using Functions.Ordinates;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 14 / 2017 1:55:50 PM)]
     public class OccupancyTypesEditorVM : Editors.BaseEditorVM
     {
+        //i need a way to modify all the occtypes. 
+        //i should make a copy of the occtypes when they come in.
+        //then modify them as the user modifies them
+        //i could do this when the user changes tabs
+        //or do this when the user changes occtypes.
+        //i think i will do the later.
+
         #region Notes
         // Created By: q0heccdm
         // Created Date: 7/14/2017 1:55:50 PM
@@ -27,7 +35,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         private IOccupancyType _SelectedOccType;
         private Dictionary<string,DepthDamage.DepthDamageCurve> _DepthDamageCurveDictionary;
         //this dictionary is to keep track of the checkboxes that have been clicked in the tabs for each occtype
-        private Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary;
+        //private Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary;
         //private string _SelectedStructureDepthDamage;
 
         private ICoordinatesFunction _StructureDepthDamageCurve;// = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);// Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
@@ -51,97 +59,126 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         private CoordinatesFunctionEditorVM _OtherEditorVM;
 
 
-
         #endregion
         #region Properties
-        public string SelectedOccTypeName
+
+        public ValueUncertaintyVM StructureValueUncertainty
         {
-            get { if (SelectedOccType == null) { return ""; } return SelectedOccType.Name; }
-           // set { UpdateKeyInTabsDictionary(_SelectedOccType.Name, value); SelectedOccType.Name = value; NotifyPropertyChanged(); }
+            get;
+            set;
+        }
+        public ValueUncertaintyVM ContentValueUncertainty
+        {
+            get;
+            set;
+        }
+        public ValueUncertaintyVM VehicleValueUncertainty
+        {
+            get;
+            set;
+        }
+        public ValueUncertaintyVM OtherValueUncertainty
+        {
+            get;
+            set;
+        }
+        public ValueUncertaintyVM FoundationHtUncertainty
+        {
+            get;
+            set;
         }
 
-        public bool IsStructureTabChecked
-        {
-            get
-            {
-                if(SelectedOccType == null) { return false; }
-                if(_OcctypeTabsSelectedDictionary.ContainsKey(_SelectedOccType.Name))
-                {
-                    return (bool)_OcctypeTabsSelectedDictionary[_SelectedOccType.Name].GetValue(0);
-                }
-                else
-                {
-                    return true; // it should only hit this when the form is first open because the dictionary hasn't been loaded with values yet.
-                }
+        //public string SelectedOccTypeName
+        //{
+        //    get { if (SelectedOccType == null) { return ""; } return SelectedOccType.Name; }
+        //   // set { UpdateKeyInTabsDictionary(_SelectedOccType.Name, value); SelectedOccType.Name = value; NotifyPropertyChanged(); }
+        //}
+
+        //public bool IsStructureTabChecked
+        //{
+        //    get
+        //    {
+        //        if(SelectedOccType == null) { return false; }
+        //        if(_OcctypeTabsSelectedDictionary.ContainsKey(_SelectedOccType.Name))
+        //        {
+        //            return (bool)_OcctypeTabsSelectedDictionary[_SelectedOccType.Name].GetValue(0);
+        //        }
+        //        else
+        //        {
+        //            return true; // it should only hit this when the form is first open because the dictionary hasn't been loaded with values yet.
+        //        }
                 
-            }
-            set
-            {
-                if (SelectedOccType == null) { return; }
-                _OcctypeTabsSelectedDictionary[_SelectedOccType.Name].SetValue(value,0); 
-            }
-        }
+        //    }
+        //    set
+        //    {
+        //        if (SelectedOccType == null) { return; }
+        //        _OcctypeTabsSelectedDictionary[_SelectedOccType.Name].SetValue(value,0); 
+        //    }
+        //}
 
-        public bool IsContentTabChecked
-        {
-            get
-            {
-                if (SelectedOccType == null) { return false; }
-                if (_OcctypeTabsSelectedDictionary.ContainsKey(_SelectedOccType.Name))
-                {
-                    return (bool)_OcctypeTabsSelectedDictionary[_SelectedOccType.Name].GetValue(1);
-                }
-                else
-                {
-                    return true; // it should only hit this when the form is first open because the dictionary hasn't been loaded with values yet.
-                }
-            }
-            set
-            {
-                if (SelectedOccType == null) { return; }
-                _OcctypeTabsSelectedDictionary[_SelectedOccType.Name].SetValue(value, 1);
-            }
-        }
-        public bool IsVehicleTabChecked
-        {
-            get
-            {
-                if (SelectedOccType == null) { return false; }
-                if (_OcctypeTabsSelectedDictionary.ContainsKey(_SelectedOccType.Name))
-                {
-                    return (bool)_OcctypeTabsSelectedDictionary[_SelectedOccType.Name].GetValue(2);
-                }
-                else
-                {
-                    return true; // it should only hit this when the form is first open because the dictionary hasn't been loaded with values yet.
-                }
-            }
-            set
-            {
-                if (SelectedOccType == null) { return; }
-                _OcctypeTabsSelectedDictionary[_SelectedOccType.Name].SetValue(value, 2);
-            }
-        }
-        public bool IsOtherTabChecked
-        {
-            get
-            {
-                if (SelectedOccType == null) { return false; }
-                if (_OcctypeTabsSelectedDictionary.ContainsKey(_SelectedOccType.Name))
-                {
-                    return (bool)_OcctypeTabsSelectedDictionary[_SelectedOccType.Name].GetValue(3);
-                }
-                else
-                {
-                    return true; // it should only hit this when the form is first open because the dictionary hasn't been loaded with values yet.
-                }
-            }
-            set
-            {
-                if (SelectedOccType == null) { return; }
-                _OcctypeTabsSelectedDictionary[_SelectedOccType.Name].SetValue(value, 3);
-            }
-        }
+        //public bool IsContentTabChecked
+        //{
+        //    get
+        //    {
+        //        if (SelectedOccType == null) { return false; }
+        //        if (_OcctypeTabsSelectedDictionary.ContainsKey(_SelectedOccType.Name))
+        //        {
+        //            return (bool)_OcctypeTabsSelectedDictionary[_SelectedOccType.Name].GetValue(1);
+        //        }
+        //        else
+        //        {
+        //            return true; // it should only hit this when the form is first open because the dictionary hasn't been loaded with values yet.
+        //        }
+        //    }
+        //    set
+        //    {
+        //        if (SelectedOccType == null) { return; }
+        //        _OcctypeTabsSelectedDictionary[_SelectedOccType.Name].SetValue(value, 1);
+        //    }
+        //}
+        //public bool IsVehicleTabChecked
+        //{
+        //    get
+        //    {
+        //        if (SelectedOccType == null) 
+        //        { 
+        //            return false; 
+        //        }
+        //        if (_OcctypeTabsSelectedDictionary.ContainsKey(_SelectedOccType.Name))
+        //        {
+        //            return (bool)_OcctypeTabsSelectedDictionary[_SelectedOccType.Name].GetValue(2);
+        //        }
+        //        else
+        //        {
+        //            return true; // it should only hit this when the form is first open because the dictionary hasn't been loaded with values yet.
+        //        }
+        //    }
+        //    set
+        //    {
+        //        if (SelectedOccType == null) { return; }
+        //        _OcctypeTabsSelectedDictionary[_SelectedOccType.Name].SetValue(value, 2);
+        //    }
+        //}
+        //public bool IsOtherTabChecked
+        //{
+        //    get
+        //    {
+        //        if (SelectedOccType == null) { return false; }
+        //        if (_OcctypeTabsSelectedDictionary.ContainsKey(_SelectedOccType.Name))
+        //        {
+        //            return (bool)_OcctypeTabsSelectedDictionary[_SelectedOccType.Name].GetValue(3);
+        //        }
+        //        else
+        //        {
+        //            return true; // it should only hit this when the form is first open because the dictionary hasn't been loaded with values yet.
+        //        }
+        //    }
+        //    set
+        //    {
+        //        if (SelectedOccType == null) { return; }
+        //        _OcctypeTabsSelectedDictionary[_SelectedOccType.Name].SetValue(value, 3);
+        //    }
+        //}
         //public new string Description
         //{
         //    get
@@ -180,206 +217,220 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             set { if (_SelectedOccType != null && value != null) { _SelectedOccType.DamageCategory.Name = value; } NotifyPropertyChanged(); }
         }
 
-
-        #region structures
-        public List<string> StructureDepthDamageStringNames
-        {
-            get { return _StructureDepthDamageStringNames; }
-            set { _StructureDepthDamageStringNames = value; NotifyPropertyChanged(); }
-        }
-        public string SelectedStructureDepthDamage
-        {
-            get {
-                if (_SelectedOccType == null) { return ""; }
-                if(StructureDepthDamageStringNames.Contains(_SelectedOccType.StructureDepthDamageName))
-                {
-                    return _SelectedOccType.StructureDepthDamageName;
-
-                }
-                else
-                {
-                    return "";
-                }
-            }
-            set
-            {
-                if(value == null) { return; }
-                _SelectedOccType.StructureDepthDamageName = value;
-                if (DepthDamageCurveDictionary.ContainsKey(_SelectedOccType.StructureDepthDamageName))
-                {
-                    StructureDepthDamageCurve = DepthDamageCurveDictionary[_SelectedOccType.StructureDepthDamageName].Curve;
-                }
-                NotifyPropertyChanged();
-            }
-        }
         public IOccupancyType SelectedOccType
         {
             get { return _SelectedOccType; }
-            set { _SelectedOccType = value; SetDepthDamageCurves(); SetDamageCategory(); SetTheCheckboxesOnTheTabs(); NotifyPropertyChanged("SelectedOccTypeName");  NotifyPropertyChanged(); }//SelectedOccTypeName = _SelectedOccType.Name;
-        }
-        public ICoordinatesFunction StructureDepthDamageCurve
-        {
-            get{return _StructureDepthDamageCurve;}
-            set 
+            set
             {
-                _StructureDepthDamageCurve = value; 
-                if (_SelectedOccType != null) 
-                { 
-                    _SelectedOccType.StructureDepthDamageFunction = value; 
-                } 
-                NotifyPropertyChanged(); }
+                if (_SelectedOccType != null)
+                {
+                    //set the values on the occtype that we are leaving
+                    UpdateOcctypeValues(_SelectedOccType);
+                }
+                _SelectedOccType = value;
+                //set the new curves
+                SetValuesForNewlySelectedOcctype();
+                SetDamageCategory();
+                SetTheCheckboxesOnTheTabs();
+                NotifyPropertyChanged("SelectedOccTypeName");
+                NotifyPropertyChanged();
+            }
         }
+
+        #region structures
+        //public List<string> StructureDepthDamageStringNames
+        //{
+        //    get { return _StructureDepthDamageStringNames; }
+        //    set { _StructureDepthDamageStringNames = value; NotifyPropertyChanged(); }
+        //}
+        //public string SelectedStructureDepthDamage
+        //{
+        //    get {
+        //        if (_SelectedOccType == null) { return ""; }
+        //        if(StructureDepthDamageStringNames.Contains(_SelectedOccType.StructureDepthDamageName))
+        //        {
+        //            return _SelectedOccType.StructureDepthDamageName;
+
+        //        }
+        //        else
+        //        {
+        //            return "";
+        //        }
+        //    }
+        //    set
+        //    {
+        //        if(value == null) { return; }
+        //        _SelectedOccType.StructureDepthDamageName = value;
+        //        if (DepthDamageCurveDictionary.ContainsKey(_SelectedOccType.StructureDepthDamageName))
+        //        {
+        //            StructureDepthDamageCurve = DepthDamageCurveDictionary[_SelectedOccType.StructureDepthDamageName].Curve;
+        //        }
+        //        NotifyPropertyChanged();
+        //    }
+        //}
+        //public ICoordinatesFunction StructureDepthDamageCurve
+        //{
+        //    get{return _StructureDepthDamageCurve;}
+        //    set 
+        //    {
+        //        _StructureDepthDamageCurve = value; 
+        //        if (_SelectedOccType != null) 
+        //        { 
+        //            _SelectedOccType.StructureDepthDamageFunction = value; 
+        //        } 
+        //        NotifyPropertyChanged(); }
+        //}
 
       
 
         #endregion
         #region Content
-        public List<string> ContentDepthDamageStringNames
-        {
-            get { return _ContentDepthDamageStringNames; }
-            set { _ContentDepthDamageStringNames = value; NotifyPropertyChanged(); }
-        }
-        public string SelectedContentDepthDamage
-        {
-            get
-            {
-                if (_SelectedOccType == null) { return ""; }
-                if (ContentDepthDamageStringNames.Contains(_SelectedOccType.ContentDepthDamageName))
-                {
-                    return _SelectedOccType.ContentDepthDamageName;
+        //public List<string> ContentDepthDamageStringNames
+        //{
+        //    get { return _ContentDepthDamageStringNames; }
+        //    set { _ContentDepthDamageStringNames = value; NotifyPropertyChanged(); }
+        //}
+        //public string SelectedContentDepthDamage
+        //{
+        //    get
+        //    {
+        //        if (_SelectedOccType == null) { return ""; }
+        //        if (ContentDepthDamageStringNames.Contains(_SelectedOccType.ContentDepthDamageName))
+        //        {
+        //            return _SelectedOccType.ContentDepthDamageName;
 
-                }
-                else
-                {
-                    return "";
-                }
-            }
-            set
-            {
-                if (value == null) { return; }
-                _SelectedOccType.ContentDepthDamageName = value;
-                if (DepthDamageCurveDictionary.ContainsKey(SelectedOccType.ContentDepthDamageName))
-                {
-                    ContentDepthDamageCurve = DepthDamageCurveDictionary[_SelectedOccType.ContentDepthDamageName].Curve;
-                }
-                NotifyPropertyChanged();
-            }
-        }
-        public ICoordinatesFunction ContentDepthDamageCurve
-        {
-            get{ return _ContentDepthDamageCurve; }
-            set 
-            { 
-                _ContentDepthDamageCurve = value; 
-                if (_SelectedOccType != null) 
-                { 
-                    _SelectedOccType.ContentDepthDamageFunction = value; 
-                }
-                NotifyPropertyChanged(); }
-        }
+        //        }
+        //        else
+        //        {
+        //            return "";
+        //        }
+        //    }
+        //    set
+        //    {
+        //        if (value == null) { return; }
+        //        _SelectedOccType.ContentDepthDamageName = value;
+        //        if (DepthDamageCurveDictionary.ContainsKey(SelectedOccType.ContentDepthDamageName))
+        //        {
+        //            ContentDepthDamageCurve = DepthDamageCurveDictionary[_SelectedOccType.ContentDepthDamageName].Curve;
+        //        }
+        //        NotifyPropertyChanged();
+        //    }
+        //}
+        //public ICoordinatesFunction ContentDepthDamageCurve
+        //{
+        //    get{ return _ContentDepthDamageCurve; }
+        //    set 
+        //    { 
+        //        _ContentDepthDamageCurve = value; 
+        //        if (_SelectedOccType != null) 
+        //        { 
+        //            _SelectedOccType.ContentDepthDamageFunction = value; 
+        //        }
+        //        NotifyPropertyChanged(); }
+        //}
 
         #endregion
         #region Vehicle
-        public List<string> VehicleDepthDamageStringNames
-        {
-            get { return _VehicleDepthDamageStringNames; }
-            set { _VehicleDepthDamageStringNames = value; NotifyPropertyChanged(); }
-        }
-        public string SelectedVehicleDepthDamage
-        {
-            get
-            {
-                if (_SelectedOccType == null) { return ""; }
-                if (VehicleDepthDamageStringNames.Contains(_SelectedOccType.VehicleDepthDamageName))
-                {
-                    return _SelectedOccType.VehicleDepthDamageName;
+        //public List<string> VehicleDepthDamageStringNames
+        //{
+        //    get { return _VehicleDepthDamageStringNames; }
+        //    set { _VehicleDepthDamageStringNames = value; NotifyPropertyChanged(); }
+        //}
+        //public string SelectedVehicleDepthDamage
+        //{
+        //    get
+        //    {
+        //        if (_SelectedOccType == null) { return ""; }
+        //        if (VehicleDepthDamageStringNames.Contains(_SelectedOccType.VehicleDepthDamageName))
+        //        {
+        //            return _SelectedOccType.VehicleDepthDamageName;
 
-                }
-                else
-                {
-                    return "";
-                }
-            }
-            set
-            {
-                if (value == null) { return; }
-                _SelectedOccType.VehicleDepthDamageName = value;
-                if (DepthDamageCurveDictionary.ContainsKey(SelectedOccType.VehicleDepthDamageName))
-                {
-                    VehicleDepthDamageCurve = DepthDamageCurveDictionary[_SelectedOccType.VehicleDepthDamageName].Curve;
-                }
-                NotifyPropertyChanged();
-            }
-        }
+        //        }
+        //        else
+        //        {
+        //            return "";
+        //        }
+        //    }
+        //    set
+        //    {
+        //        if (value == null) { return; }
+        //        _SelectedOccType.VehicleDepthDamageName = value;
+        //        if (DepthDamageCurveDictionary.ContainsKey(SelectedOccType.VehicleDepthDamageName))
+        //        {
+        //            VehicleDepthDamageCurve = DepthDamageCurveDictionary[_SelectedOccType.VehicleDepthDamageName].Curve;
+        //        }
+        //        NotifyPropertyChanged();
+        //    }
+        //}
 
-        public ICoordinatesFunction VehicleDepthDamageCurve
-        {
-            get {return _VehicleDepthDamageCurve;}
-            set 
-            {
-                _VehicleDepthDamageCurve = value; 
-                if (_SelectedOccType != null) 
-                {
-                    _SelectedOccType.VehicleDepthDamageFunction = value; 
-                }
-                NotifyPropertyChanged(); }
-        }
+        //public ICoordinatesFunction VehicleDepthDamageCurve
+        //{
+        //    get {return _VehicleDepthDamageCurve;}
+        //    set 
+        //    {
+        //        _VehicleDepthDamageCurve = value; 
+        //        if (_SelectedOccType != null) 
+        //        {
+        //            _SelectedOccType.VehicleDepthDamageFunction = value; 
+        //        }
+        //        NotifyPropertyChanged(); }
+        //}
 
         #endregion
         #region Other
-        public List<string> OtherDepthDamageStringNames
-        {
-            get { return _OtherDepthDamageStringNames; }
-            set { _OtherDepthDamageStringNames = value; NotifyPropertyChanged(); }
-        }
+        //public List<string> OtherDepthDamageStringNames
+        //{
+        //    get { return _OtherDepthDamageStringNames; }
+        //    set { _OtherDepthDamageStringNames = value; NotifyPropertyChanged(); }
+        //}
 
-        public string SelectedOtherDepthDamage
-        {
-            get
-            {
-                if (_SelectedOccType == null) { return ""; }
-                if (OtherDepthDamageStringNames.Contains(_SelectedOccType.OtherDepthDamageName))
-                {
-                    return _SelectedOccType.OtherDepthDamageName;
+        //public string SelectedOtherDepthDamage
+        //{
+        //    get
+        //    {
+        //        if (_SelectedOccType == null) { return ""; }
+        //        if (OtherDepthDamageStringNames.Contains(_SelectedOccType.OtherDepthDamageName))
+        //        {
+        //            return _SelectedOccType.OtherDepthDamageName;
 
-                }
-                else
-                {
-                    return "";
-                }
-            }
-            set
-            {
-                if (value == null) { return; }
-                _SelectedOccType.OtherDepthDamageName = value;
-                if (DepthDamageCurveDictionary.ContainsKey(SelectedOccType.OtherDepthDamageName))
-                {
-                    OtherDepthDamageCurve = DepthDamageCurveDictionary[_SelectedOccType.OtherDepthDamageName].Curve;
-                }
-                NotifyPropertyChanged();
-            }
-        }
-        public ICoordinatesFunction OtherDepthDamageCurve
-        {
-            get{return _OtherDepthDamageCurve;}
-            set 
-            { 
-                _OtherDepthDamageCurve = value; 
-                if (_SelectedOccType != null) 
-                { 
-                    _SelectedOccType.OtherDepthDamageFunction = value; 
-                } 
-                NotifyPropertyChanged(); }
-        }
+        //        }
+        //        else
+        //        {
+        //            return "";
+        //        }
+        //    }
+        //    set
+        //    {
+        //        if (value == null) { return; }
+        //        _SelectedOccType.OtherDepthDamageName = value;
+        //        if (DepthDamageCurveDictionary.ContainsKey(SelectedOccType.OtherDepthDamageName))
+        //        {
+        //            OtherDepthDamageCurve = DepthDamageCurveDictionary[_SelectedOccType.OtherDepthDamageName].Curve;
+        //        }
+        //        NotifyPropertyChanged();
+        //    }
+        //}
+        //public ICoordinatesFunction OtherDepthDamageCurve
+        //{
+        //    get{return _OtherDepthDamageCurve;}
+        //    set 
+        //    { 
+        //        _OtherDepthDamageCurve = value; 
+        //        if (_SelectedOccType != null) 
+        //        { 
+        //            _SelectedOccType.OtherDepthDamageFunction = value; 
+        //        } 
+        //        NotifyPropertyChanged(); }
+        //}
 
         #endregion
 
 
-        public Dictionary<string, DepthDamage.DepthDamageCurve> DepthDamageCurveDictionary
-        {
-            get { return _DepthDamageCurveDictionary; }
-            set { _DepthDamageCurveDictionary = value; NotifyPropertyChanged(); }
-        }
+        //public Dictionary<string, DepthDamage.DepthDamageCurve> DepthDamageCurveDictionary
+        //{
+        //    get { return _DepthDamageCurveDictionary; }
+        //    set { _DepthDamageCurveDictionary = value; NotifyPropertyChanged(); }
+        //}
 
 
 
@@ -387,7 +438,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public OccupancyTypesElement SelectedOccTypeGroup
         {
             get { return _SelectedOccTypeGroup; }
-            set { if (value == null) { return; } _SelectedOccTypeGroup = value; UpdateTheIsSelectedBoolOnEachOccTypeGroup(); LoadDamageCategoriesList(); _OcctypeTabsSelectedDictionary = _SelectedOccTypeGroup.OccTypesSelectedTabsDictionary; NotifyPropertyChanged(); }
+            set { if (value == null) { return; } _SelectedOccTypeGroup = value; UpdateTheIsSelectedBoolOnEachOccTypeGroup(); LoadDamageCategoriesList();  NotifyPropertyChanged(); }
         }
         public List<OccupancyTypesElement> OccTypeGroups
         {
@@ -419,38 +470,146 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         #region Constructors
         public OccupancyTypesEditorVM(OccupancyTypesElement selectedOccTypeElement, Editors.EditorActionManager manager):base(manager)
         {
-            LoadTheEditorVMs();
 
             Name = "OccTypeEditor";//I just needed some name so that it doesn't fail the empty name test that is now universal.
             //this call will load the default DD curves dictionary
             DepthDamage.DepthDamageCurveData ddcd = new DepthDamage.DepthDamageCurveData(); 
-            DepthDamageCurveDictionary = DepthDamage.DepthDamageCurveData.CurveDictionary;
-            LoadDepthDamageCurveNames();
+            //DepthDamageCurveDictionary = DepthDamage.DepthDamageCurveData.CurveDictionary;
+            //LoadDepthDamageCurveNames();
             OccTypeGroups = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
 
          
             AddEmptyCurvesToEmptyDepthDamages();
+            //this has to be before the selectedOcctype gets set.
+            StructureValueUncertainty = new ValueUncertaintyVM(new Constant(0));
+            ContentValueUncertainty = new ValueUncertaintyVM(new Constant(0));
+            VehicleValueUncertainty = new ValueUncertaintyVM(new Constant(0));
+            OtherValueUncertainty = new ValueUncertaintyVM(new Constant(0));
 
             //set the selected occtype group
             SelectedOccTypeGroup = selectedOccTypeElement;
             SelectedOccType = SelectedOccTypeGroup.ListOfOccupancyTypes.FirstOrDefault();
             StudyCache.OccTypeElementAdded += OccTypeElementAdded;
             StudyCache.OccTypeElementRemoved += OccTypeElementRemoved;
+
+            LoadTheEditorVMs();
         }
 
         #endregion
         #region Voids
 
-        private void LoadTheEditorVMs()
+        /// <summary>
+        /// This method sets all the values that need to get set on an occtype when switching
+        /// to a new occtype or before saving the editor. Some values do not need to get updated
+        /// here becuase the binding updates them automatically.
+        /// </summary>
+        /// <param name="ot"></param>
+        private void UpdateOcctypeValues(IOccupancyType ot)
         {
-            ICoordinatesFunction defaultFunc = ICoordinatesFunctionsFactory.DefaultOccTypeFunction();
+            //todo: what if the tables can't create a function. Do we not allow the user to 
+            //move to another occtype?
+            ot.StructureDepthDamageFunction = StructureEditorVM.CreateFunctionFromTables();
+            ot.ContentDepthDamageFunction = ContentEditorVM.CreateFunctionFromTables();
+            ot.VehicleDepthDamageFunction = VehicleEditorVM.CreateFunctionFromTables();
+            ot.OtherDepthDamageFunction = OtherEditorVM.CreateFunctionFromTables();
+
+            //the check boxes for if the ot tab is selected gets updated automatically
+            //there is no need to update it here.
+            ot.StructureValueUncertainty = StructureValueUncertainty.CreateOrdinate();
+            ot.ContentValueUncertainty = ContentValueUncertainty.CreateOrdinate();
+            ot.VehicleValueUncertainty = VehicleValueUncertainty.CreateOrdinate();
+            ot.OtherValueUncertainty = OtherValueUncertainty.CreateOrdinate();
+
+
+        }
+
+        private void SetValuesForNewlySelectedOcctype()
+        {
             string xLabel = "xlabel";
             string yLabel = "ylabel";
             string chartTitle = "chartTitle";
-            StructureEditorVM = new CoordinatesFunctionEditorVM(defaultFunc, xLabel, yLabel, chartTitle);
-            ContentEditorVM = new CoordinatesFunctionEditorVM(defaultFunc, xLabel, yLabel, chartTitle);
-            VehicleEditorVM = new CoordinatesFunctionEditorVM(defaultFunc, xLabel, yLabel, chartTitle);
-            OtherEditorVM = new CoordinatesFunctionEditorVM(defaultFunc, xLabel, yLabel, chartTitle);
+            if (SelectedOccType != null)
+            {
+                StructureEditorVM = new CoordinatesFunctionEditorVM(SelectedOccType.StructureDepthDamageFunction, xLabel, yLabel, chartTitle);
+                ContentEditorVM = new CoordinatesFunctionEditorVM(SelectedOccType.ContentDepthDamageFunction, xLabel, yLabel, chartTitle);
+                VehicleEditorVM = new CoordinatesFunctionEditorVM(SelectedOccType.VehicleDepthDamageFunction, xLabel, yLabel, chartTitle);
+                OtherEditorVM = new CoordinatesFunctionEditorVM(SelectedOccType.OtherDepthDamageFunction, xLabel, yLabel, chartTitle);
+
+                StructureValueUncertainty.ValueUncertainty = SelectedOccType.StructureValueUncertainty;
+                ContentValueUncertainty.ValueUncertainty = SelectedOccType.ContentValueUncertainty;
+                VehicleValueUncertainty.ValueUncertainty = SelectedOccType.VehicleValueUncertainty;
+                OtherValueUncertainty.ValueUncertainty = SelectedOccType.OtherValueUncertainty;
+
+                //set the new value uncertainties 
+                //StructureValueUncertainty = new ValueUncertaintyVM(SelectedOccType.StructureValueUncertainty.Type);
+                //ContentValueUncertainty = new ValueUncertaintyVM(SelectedOccType.ContentValueUncertainty.Type);
+                //VehicleValueUncertainty = new ValueUncertaintyVM(SelectedOccType.VehicleValueUncertainty.Type);
+                //OtherValueUncertainty = new ValueUncertaintyVM(SelectedOccType.OtherValueUncertainty.Type);
+
+
+                // StructureEditorVM.UpdateChartViewModel();
+                //StructureDepthDamageCurve = null;
+                //ContentDepthDamageCurve = null;
+                //VehicleDepthDamageCurve = null;
+                //OtherDepthDamageCurve = null;
+                //return;
+            }
+
+            //StructureDepthDamageCurve = _SelectedOccType.StructureDepthDamageFunction;
+            //ContentDepthDamageCurve = _SelectedOccType.ContentDepthDamageFunction;
+            //VehicleDepthDamageCurve = _SelectedOccType.VehicleDepthDamageFunction;
+            //OtherDepthDamageCurve = _SelectedOccType.OtherDepthDamageFunction;
+
+
+
+
+            //if ( DepthDamageCurveDictionary.ContainsKey(_SelectedOccType.StructureDepthDamageName) )
+            //{
+            //    StructureDepthDamageCurve = DepthDamageCurveDictionary[_SelectedOccType.StructureDepthDamageName].Curve; 
+            //}
+            //else
+            //{
+            //    StructureDepthDamageCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            //}
+
+            //if (DepthDamageCurveDictionary.ContainsKey(SelectedOccType.ContentDepthDamageName))
+            //{
+            //    ContentDepthDamageCurve = DepthDamageCurveDictionary[_SelectedOccType.ContentDepthDamageName].Curve;
+            //}
+            //if (DepthDamageCurveDictionary.ContainsKey(SelectedOccType.VehicleDepthDamageName))
+            //{
+            //    VehicleDepthDamageCurve = DepthDamageCurveDictionary[_SelectedOccType.VehicleDepthDamageName].Curve;
+            //}
+            //if (DepthDamageCurveDictionary.ContainsKey(SelectedOccType.OtherDepthDamageName))
+            //{
+            //    OtherDepthDamageCurve = DepthDamageCurveDictionary[_SelectedOccType.OtherDepthDamageName].Curve;
+            //}
+
+
+
+        }
+
+        private void LoadTheEditorVMs()
+        {
+            string xLabel = "xlabel";
+            string yLabel = "ylabel";
+            string chartTitle = "chartTitle";
+            if (SelectedOccType != null)
+            {
+                StructureEditorVM = new CoordinatesFunctionEditorVM(SelectedOccType.StructureDepthDamageFunction, xLabel, yLabel, chartTitle);
+                ContentEditorVM = new CoordinatesFunctionEditorVM(SelectedOccType.ContentDepthDamageFunction, xLabel, yLabel, chartTitle);
+                VehicleEditorVM = new CoordinatesFunctionEditorVM(SelectedOccType.VehicleDepthDamageFunction, xLabel, yLabel, chartTitle);
+                OtherEditorVM = new CoordinatesFunctionEditorVM(SelectedOccType.OtherDepthDamageFunction, xLabel, yLabel, chartTitle);
+            }
+            else
+            {
+                ICoordinatesFunction defaultFunc = ICoordinatesFunctionsFactory.DefaultOccTypeFunction();
+
+                StructureEditorVM = new CoordinatesFunctionEditorVM(defaultFunc, xLabel, yLabel, chartTitle);
+                ContentEditorVM = new CoordinatesFunctionEditorVM(defaultFunc, xLabel, yLabel, chartTitle);
+                VehicleEditorVM = new CoordinatesFunctionEditorVM(defaultFunc, xLabel, yLabel, chartTitle);
+                OtherEditorVM = new CoordinatesFunctionEditorVM(defaultFunc, xLabel, yLabel, chartTitle);
+            }
 
         }
 
@@ -551,7 +710,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
 
             //assign each row
-            foreach(Consequences_Assist.ComputableObjects.OccupancyType ot in ote.ListOfOccupancyTypes)
+            foreach(IOccupancyType ot in ote.ListOfOccupancyTypes)
             {
                 DataRow dr = dt.NewRow();
                 dr[0] = ot.Name;
@@ -583,16 +742,16 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         /// </summary>
         /// <param name="oldName"></param>
         /// <param name="newName"></param>
-        public void UpdateKeyInTabsDictionary(string oldName, string newName)
-        {
-           if( _OcctypeTabsSelectedDictionary.ContainsKey(oldName) == true)
-            {
-                bool[] value = _OcctypeTabsSelectedDictionary[oldName];
-                //delete old one
-                _OcctypeTabsSelectedDictionary.Remove(oldName);
-                _OcctypeTabsSelectedDictionary.Add(newName, value);
-            }
-        }
+        //public void UpdateKeyInTabsDictionary(string oldName, string newName)
+        //{
+        //   if( _OcctypeTabsSelectedDictionary.ContainsKey(oldName) == true)
+        //    {
+        //        bool[] value = _OcctypeTabsSelectedDictionary[oldName];
+        //        //delete old one
+        //        _OcctypeTabsSelectedDictionary.Remove(oldName);
+        //        _OcctypeTabsSelectedDictionary.Add(newName, value);
+        //    }
+        //}
 
         private void SetTheCheckboxesOnTheTabs()
         {
@@ -648,10 +807,10 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                     IOccupancyType newOT = OccupancyTypeFactory.Factory(vm.Name, SelectedDamageCategory);
 
                     //load all the values you can
-                    newOT.StructureDepthDamageName = SelectedStructureDepthDamage;
-                    newOT.ContentDepthDamageName = SelectedContentDepthDamage;
-                    newOT.VehicleDepthDamageName = SelectedVehicleDepthDamage;
-                    newOT.OtherDepthDamageName = SelectedOtherDepthDamage;
+                    //newOT.StructureDepthDamageName = SelectedStructureDepthDamage;
+                    //newOT.ContentDepthDamageName = SelectedContentDepthDamage;
+                    //newOT.VehicleDepthDamageName = SelectedVehicleDepthDamage;
+                   // newOT.OtherDepthDamageName = SelectedOtherDepthDamage;
 
                     ICoordinatesFunction newCurve = ICoordinatesFunctionsFactory.DefaultOccTypeFunction();
 
@@ -671,7 +830,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                     newOT.VehicleDepthDamageFunction = newCurve;
 
 
-                    _OcctypeTabsSelectedDictionary.Add(newOT.Name, new bool[] { true, true, true, false });
+                    //_OcctypeTabsSelectedDictionary.Add(newOT.Name, new bool[] { true, true, true, false });
 
                     //add the occtype to the list and select it
                     SelectedOccTypeGroup.ListOfOccupancyTypes.Add(newOT);
@@ -699,10 +858,10 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                     IOccupancyType newOT = OccupancyTypeFactory.Factory(vm.Name, SelectedDamageCategory);
 
                     //load all the values you can
-                    newOT.StructureDepthDamageName = SelectedStructureDepthDamage;
-                    newOT.ContentDepthDamageName = SelectedContentDepthDamage;
-                    newOT.VehicleDepthDamageName = SelectedVehicleDepthDamage;
-                    newOT.OtherDepthDamageName = SelectedOtherDepthDamage;
+                    //newOT.StructureDepthDamageName = SelectedOccType.StructureDepthDamageFunction;
+                   // newOT.ContentDepthDamageName = SelectedContentDepthDamage;
+                   // newOT.VehicleDepthDamageName = SelectedVehicleDepthDamage;
+                   // newOT.OtherDepthDamageName = SelectedOtherDepthDamage;
 
                     newOT.StructureValueUncertainty = SelectedOccType.StructureValueUncertainty;
                     newOT.ContentValueUncertainty = SelectedOccType.ContentValueUncertainty;
@@ -716,8 +875,8 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                     newOT.OtherDepthDamageFunction = SelectedOccType.OtherDepthDamageFunction;
                     newOT.VehicleDepthDamageFunction = SelectedOccType.VehicleDepthDamageFunction;
 
-                    bool[] values = _OcctypeTabsSelectedDictionary[SelectedOccType.Name];
-                    _OcctypeTabsSelectedDictionary.Add(newOT.Name, values);
+                    //bool[] values = _OcctypeTabsSelectedDictionary[SelectedOccType.Name];
+                    //_OcctypeTabsSelectedDictionary.Add(newOT.Name, values);
 
 
                     //add the occtype to the list and select it
@@ -736,7 +895,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         {
             int selectedIndex = SelectedOccTypeGroup.ListOfOccupancyTypes.IndexOf(SelectedOccType);
             SelectedOccTypeGroup.ListOfOccupancyTypes.Remove(SelectedOccType);
-            _OcctypeTabsSelectedDictionary.Remove(SelectedOccType.Name);
+            //_OcctypeTabsSelectedDictionary.Remove(SelectedOccType.Name);
             //set the selected occtype to be the one before, unless at 0
             if (selectedIndex>0)
             {
@@ -752,7 +911,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 else //there are no more occtypes
                 {
                     SelectedOccType = null;
-                    SetBindingsToNull();
+                    //SetBindingsToNull();
                 }
             }
 
@@ -797,18 +956,18 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             //also add a listener in here to remove the occtype group if it is deleted that will remove from OccTypegroups
         }
 
-        private void SetBindingsToNull()
-        {
-             SelectedStructureDepthDamage = null;
-            SelectedContentDepthDamage = null;
-           SelectedVehicleDepthDamage = null;
-           SelectedOtherDepthDamage = null;
+        //private void SetBindingsToNull()
+        //{
+        //     SelectedStructureDepthDamage = null;
+        //    SelectedContentDepthDamage = null;
+        //   SelectedVehicleDepthDamage = null;
+        //   SelectedOtherDepthDamage = null;
 
-            //SelectedDamageCategory = null;
+        //    //SelectedDamageCategory = null;
 
-            SelectedOccType = null;         
+        //    SelectedOccType = null;         
             
-        }
+        //}
 
         private void SetDamageCategory()
         {
@@ -822,139 +981,89 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         {
             if(_SelectedOccTypeGroup == null) { return; }
             List<string> uniqueDamCats = new List<string>();
-            foreach(Consequences_Assist.ComputableObjects.OccupancyType ot in _SelectedOccTypeGroup.ListOfOccupancyTypes)
+            foreach(IOccupancyType ot in _SelectedOccTypeGroup.ListOfOccupancyTypes)
             {
-                if(uniqueDamCats.Contains(ot.DamageCategoryName))
+                if(uniqueDamCats.Contains(ot.DamageCategory.Name))
                 { }
                 else
                 {
-                    uniqueDamCats.Add(ot.DamageCategoryName);
+                    uniqueDamCats.Add(ot.DamageCategory.Name);
                 }
             }
             DamageCategoriesList = uniqueDamCats;
         }
-        private void LoadDepthDamageCurveNames()
-        {
-            List<string> structureDDnames = new List<string>();
-            List<string> contentDDnames = new List<string>();
-            List<string> vehicleDDnames = new List<string>();
-            List<string> otherDDnames = new List<string>();
+        //private void LoadDepthDamageCurveNames()
+        //{
+        //    List<string> structureDDnames = new List<string>();
+        //    List<string> contentDDnames = new List<string>();
+        //    List<string> vehicleDDnames = new List<string>();
+        //    List<string> otherDDnames = new List<string>();
 
 
-            foreach (string key in _DepthDamageCurveDictionary.Keys.ToList())
-            {
-                switch(_DepthDamageCurveDictionary[key].DamageType)
-                {
-                    case DepthDamage.DepthDamageCurve.DamageTypeEnum.Structural:
-                        {
-                            structureDDnames.Add(key);
-                            break;
-                        }
-                    case DepthDamage.DepthDamageCurve.DamageTypeEnum.Content:
-                        {
-                            contentDDnames.Add(key);
-                            break;
-                        }
-                    case DepthDamage.DepthDamageCurve.DamageTypeEnum.Vehicle:
-                        {
-                            vehicleDDnames.Add(key);
-                            break;
-                        }
-                    case DepthDamage.DepthDamageCurve.DamageTypeEnum.Other:
-                        {
-                            otherDDnames.Add(key);
-                            break;
-                        }
-                }
-            }
+        //    foreach (string key in _DepthDamageCurveDictionary.Keys.ToList())
+        //    {
+        //        switch(_DepthDamageCurveDictionary[key].DamageType)
+        //        {
+        //            case DepthDamage.DepthDamageCurve.DamageTypeEnum.Structural:
+        //                {
+        //                    structureDDnames.Add(key);
+        //                    break;
+        //                }
+        //            case DepthDamage.DepthDamageCurve.DamageTypeEnum.Content:
+        //                {
+        //                    contentDDnames.Add(key);
+        //                    break;
+        //                }
+        //            case DepthDamage.DepthDamageCurve.DamageTypeEnum.Vehicle:
+        //                {
+        //                    vehicleDDnames.Add(key);
+        //                    break;
+        //                }
+        //            case DepthDamage.DepthDamageCurve.DamageTypeEnum.Other:
+        //                {
+        //                    otherDDnames.Add(key);
+        //                    break;
+        //                }
+        //        }
+        //    }
 
-            StructureDepthDamageStringNames = structureDDnames;
-            ContentDepthDamageStringNames = contentDDnames;
-            VehicleDepthDamageStringNames = vehicleDDnames;
-            OtherDepthDamageStringNames = otherDDnames;
+        //    StructureDepthDamageStringNames = structureDDnames;
+        //    ContentDepthDamageStringNames = contentDDnames;
+        //    VehicleDepthDamageStringNames = vehicleDDnames;
+        //    OtherDepthDamageStringNames = otherDDnames;
 
-        }
-        private void SetDepthDamageCurves()
-        {
-            if (SelectedOccType == null)
-            {
-                StructureDepthDamageCurve = null;
-                ContentDepthDamageCurve = null;
-                VehicleDepthDamageCurve = null;
-                OtherDepthDamageCurve = null;
-                return;
-            }
-            //if(_SelectedOccType.StructureDepthDamageName == null) { _SelectedOccType.StructureDepthDamageName = ""; }
-            //if (_SelectedOccType.ContentDepthDamageName == null) { _SelectedOccType.ContentDepthDamageName = ""; }
-            //if (_SelectedOccType.OtherDepthDamageName == null) { _SelectedOccType.OtherDepthDamageName = ""; }
-            //if (_SelectedOccType.VehicleDepthDamageName == null) { _SelectedOccType.VehicleDepthDamageName = ""; }
+        //}
+        
 
-            StructureDepthDamageCurve = _SelectedOccType.StructureDepthDamageFunction;
-            ContentDepthDamageCurve = _SelectedOccType.ContentDepthDamageFunction;
-            VehicleDepthDamageCurve = _SelectedOccType.VehicleDepthDamageFunction;
-            OtherDepthDamageCurve = _SelectedOccType.OtherDepthDamageFunction;
+        //public void LaunchDepthDamageEditor()
+        //{
+        //    DepthDamage.DepthDamageCurveEditorVM vm = new DepthDamage.DepthDamageCurveEditorVM();
+        //    string header = "Depth Damage Curve Editor";
+        //    DynamicTabVM tab = new DynamicTabVM(header, vm, "DepthDamageCurveEditor");
+        //    Navigate(tab, true, true);
+        //    if (vm.WasCanceled == false)
+        //    {
+        //        if (vm.HasError == false)
+        //        {
+        //            //this is called if the user clicks "OK" button on the form
 
-            //SelectedStructureDepthDamage = _SelectedOccType.GetStructurePercentDD;
-            //SelectedContentDepthDamage = _SelectedOccType.ContentDepthDamageName;
-            //SelectedVehicleDepthDamage = _SelectedOccType.VehicleDepthDamageName;
-            //SelectedOtherDepthDamage = _SelectedOccType.OtherDepthDamageName;
+        //            //store the new dd curves in the dd curves dictionary
+        //            Dictionary<string, DepthDamage. DepthDamageCurve> tempDictionary = new Dictionary<string, DepthDamage.DepthDamageCurve>();
 
-
-            //if ( DepthDamageCurveDictionary.ContainsKey(_SelectedOccType.StructureDepthDamageName) )
-            //{
-            //    StructureDepthDamageCurve = DepthDamageCurveDictionary[_SelectedOccType.StructureDepthDamageName].Curve; 
-            //}
-            //else
-            //{
-            //    StructureDepthDamageCurve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-            //}
-
-            //if (DepthDamageCurveDictionary.ContainsKey(SelectedOccType.ContentDepthDamageName))
-            //{
-            //    ContentDepthDamageCurve = DepthDamageCurveDictionary[_SelectedOccType.ContentDepthDamageName].Curve;
-            //}
-            //if (DepthDamageCurveDictionary.ContainsKey(SelectedOccType.VehicleDepthDamageName))
-            //{
-            //    VehicleDepthDamageCurve = DepthDamageCurveDictionary[_SelectedOccType.VehicleDepthDamageName].Curve;
-            //}
-            //if (DepthDamageCurveDictionary.ContainsKey(SelectedOccType.OtherDepthDamageName))
-            //{
-            //    OtherDepthDamageCurve = DepthDamageCurveDictionary[_SelectedOccType.OtherDepthDamageName].Curve;
-            //}
-
-
-
-        }
-
-        public void LaunchDepthDamageEditor()
-        {
-            DepthDamage.DepthDamageCurveEditorVM vm = new DepthDamage.DepthDamageCurveEditorVM();
-            string header = "Depth Damage Curve Editor";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "DepthDamageCurveEditor");
-            Navigate(tab, true, true);
-            if (vm.WasCanceled == false)
-            {
-                if (vm.HasError == false)
-                {
-                    //this is called if the user clicks "OK" button on the form
-
-                    //store the new dd curves in the dd curves dictionary
-                    Dictionary<string, DepthDamage. DepthDamageCurve> tempDictionary = new Dictionary<string, DepthDamage.DepthDamageCurve>();
-
-                    foreach (DepthDamage.DepthDamageCurveEditorControlVM row in vm.ListOfDepthDamageVMs)
-                    {
-                        DepthDamage.DepthDamageCurve tempCurve = new DepthDamage.DepthDamageCurve(row.Name, row.Description, row.Curve, row.DamageType);
-                        tempDictionary.Add(row.Name, tempCurve);
-                    }
-                    //update the newly edited curves at the source
-                    DepthDamage.DepthDamageCurveData.CurveDictionary = tempDictionary;
-                    //bring the curves back into my own dictionary
-                    DepthDamageCurveDictionary = DepthDamage.DepthDamageCurveData.CurveDictionary;
-                    //in case new dd curves were added or removed, update the list of options
-                    LoadDepthDamageCurveNames();
-                }
-            }
-        }
+        //            foreach (DepthDamage.DepthDamageCurveEditorControlVM row in vm.ListOfDepthDamageVMs)
+        //            {
+        //                DepthDamage.DepthDamageCurve tempCurve = new DepthDamage.DepthDamageCurve(row.Name, row.Description, row.Curve, row.DamageType);
+        //                tempDictionary.Add(row.Name, tempCurve);
+        //            }
+        //            //update the newly edited curves at the source
+        //            DepthDamage.DepthDamageCurveData.CurveDictionary = tempDictionary;
+        //            //bring the curves back into my own dictionary
+        //            DepthDamageCurveDictionary = DepthDamage.DepthDamageCurveData.CurveDictionary;
+        //            //in case new dd curves were added or removed, update the list of options
+        //            LoadDepthDamageCurveNames();
+        //        }
+        //    }
+        //}
 
         public override void Save()
         {

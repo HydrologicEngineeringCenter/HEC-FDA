@@ -4,61 +4,53 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using FdaViewModel.Inventory.DamageCategory;
 using FdaViewModel.Inventory.OccupancyTypes;
 using FdaViewModel.Utilities;
 using Functions;
+using Model;
+using Model.Inputs.Functions.ImpactAreaFunctions;
 
 namespace FdaViewModel.Saving.PersistenceManagers
 {
     public class OccTypePersistenceManager : SavingBase, IElementManager
     {
         //These are the columns for the parent table
-        private const int PARENT_GROUP_NAME_COL = 0;
-        private const int PARENT_IS_SELECTED_COL = 1;
+        private const int PARENT_GROUP_ID_COL = 0;
+        private const int PARENT_GROUP_NAME_COL = 1;
+        private const int PARENT_IS_SELECTED_COL = 2;
 
 
         //These are the columns for the child table
-        private const int NAME_COL = 0;
-        private const int DESC_COL = 1;
-        private const int DAM_CAT_COL = 2;
-        private const int VAR_FOUND_HT_COL = 3;
-        private const int FOUND_HT_MIN_COL = 4;
-        private const int FOUND_HT_MAX_COL = 5;
-        private const int FOUND_HT_STDEV_COL = 6;
+        private const int GROUP_ID_COL = 0;
+        private const int OCCTYPE_ID_COL = 1;
 
-        private const int IS_STRUCT_SELECTED_COL = 7;
-        private const int VAR_STRUCT_VALUE_COL = 8;
-        private const int STRUCT_MIN_COL = 9;
-        private const int STRUCT_MAX_COL = 10;
-        private const int STRUCT_STDEV_COL = 11;
-        private const int STRUCT_DIST_TYPE_COL = 12;
+        private const int NAME_COL = 2;
+        private const int DESC_COL = 3;
+        private const int DAM_CAT_COL = 4;
+        private const int FOUND_HT_UNCERTAINTY_COL = 5;
+       
 
-        private const int IS_CONT_SELECTED_COL = 13;
-        private const int VAR_CONT_VALUE_COL = 14;
-        private const int CONT_MIN_COL = 15;
-        private const int CONT_MAX_COL = 16;
-        private const int CONT_STDEV_COL = 17;
-        private const int CONT_DIST_TYPE_COL = 18;
+        private const int IS_STRUCT_SELECTED_COL = 6;
+        private const int VAR_STRUCT_VALUE_COL = 7;
+        private const int STRUCT_CURVE_COL = 8;
 
-        private const int IS_VEH_SELECTED_COL = 19;
-        private const int VAR_VEH_VALUE_COL = 20;
-        private const int VEH_MIN_COL = 21;
-        private const int VEH_MAX_COL = 22;
-        private const int VEH_STDEV_COL = 23;
-        private const int VEH_DIST_TYPE_COL = 24;
 
-        private const int IS_OTHER_SELECTED_COL = 25;
-        private const int VAR_OTHER_VALUE_COL = 26;
-        private const int OTHER_MIN_COL = 27;
-        private const int OTHER_MAX_COL = 28;
-        private const int OTHER_STDEV_COL = 29;
-        private const int OTHER_DIST_TYPE_COL = 30;
+        private const int IS_CONT_SELECTED_COL = 9;
+        private const int VAR_CONT_VALUE_COL = 10;
+        private const int CONTENT_CURVE_COL = 11;
+    
 
-        private const int GROUP_NAME_COL = 31;
-        private const int STRUCT_CURVE_COL = 32;
-        private const int CONTENT_CURVE_COL = 33;
-        private const int VEHICLE_CURVE_COL = 34;
-        private const int OTHER_CURVE_COL = 35;
+        private const int IS_VEH_SELECTED_COL = 12;
+        private const int VAR_VEH_VALUE_COL = 13;
+        private const int VEHICLE_CURVE_COL = 14;
+
+
+        private const int IS_OTHER_SELECTED_COL = 15;
+        private const int VAR_OTHER_VALUE_COL = 16;
+        private const int OTHER_CURVE_COL = 17;
+
 
 
 
@@ -70,23 +62,50 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
 
         private const string GroupTablePrefix = "OccTypeGroup-";
-        private const string ParentTableName = "OccTypeGroups";
+        private const string ParentTableName = "occupancy_type_groups";
+        private const string OCCTYPES_TABLE_NAME = "occupancy_types";
+
         /// <summary>
         /// The types of the columns in the parent table
         /// </summary>
         public override Type[] TableColumnTypes
         {
-            get { return new Type[0]; }
+            get { return new Type[] { typeof(string), typeof(bool) }; }
         }
         internal override string ChangeTableConstant { get { return "OccType"; } }
 
-        public override string TableName => throw new NotImplementedException();
+        public override string TableName => ParentTableName;
 
-        public override string[] TableColumnNames => throw new NotImplementedException();
+        public override string[] TableColumnNames => new string[] { "GroupName", "IsSelected" };
 
         public OccTypePersistenceManager(Study.FDACache studyCache)
         {
             StudyCacheForSaving = studyCache;
+        }
+
+        public string[] OcctypeColumns
+        {
+            get
+            {
+                return new string[] {"GroupID","OcctypeID", "Name", "Description", "DamageCategory","FoundHtUncertainty",
+                    "IsStructChecked","StructValueUncertainty", "StuctureFunction",
+                    "IsContChecked", "ContentValueUncertainty", "ContentFunction",
+                    "IsVehicleChecked", "VehicleValueUncertainty", "VehicleFunction",
+                    "IsOtherChecked", "OtherValueUncertainty", "OtherFunction" };
+            }
+        }
+
+        public Type[] OcctypeTypes
+        {
+            get
+            {
+                return new Type[] {
+                    typeof(int), typeof(int), typeof(string), typeof(string), typeof(string), typeof(string),
+                    typeof(bool), typeof(string), typeof(string),
+                    typeof(bool), typeof(string), typeof(string),
+                    typeof(bool), typeof(string), typeof(string),
+                    typeof(bool), typeof(string), typeof(string) };
+            }
         }
 
         //todo: Refactor: removing Statistics.ContinuousDistribution and making it an IDistribution
@@ -132,7 +151,36 @@ namespace FdaViewModel.Saving.PersistenceManagers
         /// <returns></returns>
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            int testing = 0;
+            int groupId = (int)rowData[GROUP_ID_COL];
+            int occtypId = (int)rowData[OCCTYPE_ID_COL];
+
+            string name = (string)rowData[NAME_COL];
+            string desc = (string)rowData[DESC_COL];
+            string damCatName = (string)rowData[DAM_CAT_COL];
+
+            string foundHtUncertaintyXML = (string)rowData[FOUND_HT_UNCERTAINTY_COL];
+
+            //structures
+            bool isStructTabChecked = Convert.ToBoolean(rowData[IS_STRUCT_SELECTED_COL]);
+            string structValueUncertaintyXML = (string)rowData[VAR_STRUCT_VALUE_COL];
+            string structDepthDamageXML = (string)rowData[STRUCT_CURVE_COL];
+
+            //content
+            bool isContenTabChecked = Convert.ToBoolean(rowData[IS_CONT_SELECTED_COL]);
+            string contentValueUncertaintyXML = (string)rowData[VAR_CONT_VALUE_COL];
+            string contentDepthDamageXML = (string)rowData[CONTENT_CURVE_COL];
+
+            //vehicle
+            bool isVehicleTabChecked = Convert.ToBoolean(rowData[IS_VEH_SELECTED_COL]);
+            string vehicleValueUncertaintyXML = (string)rowData[VAR_VEH_VALUE_COL];
+            string vehicleDepthDamageXML = (string)rowData[VEHICLE_CURVE_COL];
+
+            //other
+            bool isOtherTabChecked = Convert.ToBoolean(rowData[IS_OTHER_SELECTED_COL]);
+            string otherValueUncertaintyXML = (string)rowData[VAR_OTHER_VALUE_COL];
+            string otherDepthDamageXML = (string)rowData[OTHER_CURVE_COL];
+
+
             Dictionary<string, bool[]> selectedTabsDictionary = new Dictionary<string, bool[]>();
             List<IOccupancyType> listOfOccTypes = new List<IOccupancyType>();
             List<IOccupancyType> TempOccTypes = new List<IOccupancyType>();
@@ -298,6 +346,9 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 //AddElement(ele,false);
         }
 
+
+        
+
         public void Load()
         {
             List<ChildElement> occTypeGroupsToReturn = new List<ChildElement>();
@@ -311,21 +362,39 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 }
                 if (Storage.Connection.Instance.TableNames().Contains(ParentTableName))
                 {
-                    DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable(ParentTableName);
-                    List<object[]> rowData = dtv.GetRows(0, dtv.NumberOfRows - 1);
 
-                    //go over each row in the parent table and create an occtype element
-                    for (int i = 0; i < dtv.NumberOfRows; i++)
+                    System.Data.DataTable table = Storage.Connection.Instance.GetDataTable(ParentTableName);
+
+                    foreach (System.Data.DataRow row in table.Rows)
                     {
-                        //OccupancyTypesElement ele = new OccupancyTypesElement(groupName, TempOccTypes, dummyDictionary);
-                        
-                            OccupancyTypesElement ele = (OccupancyTypesElement)CreateElementFromRowData(dtv.GetRow(i));
-                            occTypeGroupsToReturn.Add(ele);
+                        //each of these is a group
+                        int groupId = Convert.ToInt32(row[PARENT_GROUP_ID_COL]);
+                        string groupName = (string)row[PARENT_GROUP_NAME_COL];
+                        bool isGroupSelected = Convert.ToBoolean(row[PARENT_IS_SELECTED_COL]);
 
-                        
-
-
+                        //now read the child table and grab all the occtypes with this group id
+                        List<IOccupancyType> occtypes = LoadOcctypes(groupId);
+                        OccupancyTypesElement elem = new OccupancyTypesElement(groupName, occtypes, new Dictionary<string, bool[]>());
+                        occTypeGroupsToReturn.Add(elem);
                     }
+
+
+
+                    //        DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable(ParentTableName);
+                    //List<object[]> rowData = dtv.GetRows(0, dtv.NumberOfRows - 1);
+
+                    ////go over each row in the parent table and create an occtype element
+                    //for (int i = 0; i < dtv.NumberOfRows; i++)
+                    //{
+                    //    //OccupancyTypesElement ele = new OccupancyTypesElement(groupName, TempOccTypes, dummyDictionary);
+
+                    //        OccupancyTypesElement ele = (OccupancyTypesElement)CreateElementFromRowData(dtv.GetRow(i));
+                    //        occTypeGroupsToReturn.Add(ele);
+
+
+
+
+                    //}
                 }
             }
             foreach (Inventory.OccupancyTypes.OccupancyTypesElement elem in occTypeGroupsToReturn)
@@ -509,9 +578,44 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         private void SavingAction(ChildElement element)
         {
-            SaveGroupToParentTable(element.Name, ((OccupancyTypesElement)element).IsSelected);
-            SaveNewGroupTable((OccupancyTypesElement)element);
-            StudyCacheForSaving.AddElement((OccupancyTypesElement)element);
+            //this will save to the parent table
+            SaveNewElement(element);
+
+            //save the child table
+            SaveNewToOcctypesTable(element);
+
+            //SaveGroupToParentTable(element.Name, ((OccupancyTypesElement)element).IsSelected);
+            //SaveNewGroupTable((OccupancyTypesElement)element);
+            //StudyCacheForSaving.AddElement((OccupancyTypesElement)element);
+
+        }
+
+        public void SaveNewToOcctypesTable(ChildElement element)
+        {
+            //we should have already saved the element to the parent table so that we can grab the id from that table
+            int elemId = GetElementId(TableName, element.Name);
+            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+            if (tbl == null)
+            {
+                Storage.Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
+                tbl = Storage.Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+            }
+
+            List<IOccupancyType> ListOfOccupancyTypes = ((OccupancyTypesElement)element).ListOfOccupancyTypes;
+            Dictionary<string, bool[]> OccTypesSelectedTabsDictionary = ((OccupancyTypesElement)element).OccTypesSelectedTabsDictionary;
+            string groupName = element.Name;
+
+            List<object[]> rows = new List<object[]>();
+
+            int i = 1;
+            foreach (IOccupancyType ot in ListOfOccupancyTypes)
+            {
+
+                rows.Add(GetOccTypeRowForParentTable(elemId,i, ot, OccTypesSelectedTabsDictionary, groupName).ToArray());
+                i++;
+            }
+            tbl.AddRows(rows);
+            tbl.ApplyEdits();
 
         }
 
@@ -529,42 +633,131 @@ namespace FdaViewModel.Saving.PersistenceManagers
             dtv.ApplyEdits();
         }
 
-        private void SaveNewGroupTable(OccupancyTypesElement element)
+        //private void SaveNewGroupTable(OccupancyTypesElement element)
+        //{
+        //    string groupName = element.Name;
+        //    List<IOccupancyType> ListOfOccupancyTypes = ((OccupancyTypesElement)element).ListOfOccupancyTypes;
+        //    Dictionary<string, bool[]> OccTypesSelectedTabsDictionary = ((OccupancyTypesElement)element).OccTypesSelectedTabsDictionary;
+
+
+        //    string[] colNames = new string[] { "Name", "Description", "DamageCategory","FoundHtUncertainty",
+        //            "IsStructChecked","StructValueUncertainty", "StuctureFunction",
+        //            "IsContChecked", "ContentValueUncertainty", "ContentFunction",
+        //            "IsVehicleChecked", "VehicleValueUncertainty", "VehicleFunction",
+        //            "IsOtherChecked", "OtherValueUncertainty", "OtherFunction" };
+
+
+        //    Type[] colTypes = new Type[] {
+        //            typeof(string), typeof(string), typeof(string), typeof(string),
+        //            typeof(bool), typeof(string), typeof(string),
+        //            typeof(bool), typeof(string), typeof(string),
+        //            typeof(bool), typeof(string), typeof(string),
+        //            typeof(bool), typeof(string), typeof(string) };
+
+
+
+        //    Storage.Connection.Instance.CreateTable(GroupTablePrefix + groupName, colNames, colTypes);
+        //    DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(GroupTablePrefix + groupName);
+
+        //    List<object[]> rows = new List<object[]>();
+
+        //    foreach (IOccupancyType ot in ListOfOccupancyTypes)
+        //    {
+
+        //        rows.Add(GetOccTypeRowForParentTable(ot, OccTypesSelectedTabsDictionary, groupName).ToArray());
+        //    }
+        //    tbl.AddRows(rows);
+        //    tbl.ApplyEdits();
+        //}
+
+        private List<IOccupancyType> LoadOcctypes(int groupId)
         {
-            string groupName = element.Name;
-            List<IOccupancyType> ListOfOccupancyTypes = ((OccupancyTypesElement)element).ListOfOccupancyTypes;
-            Dictionary<string, bool[]> OccTypesSelectedTabsDictionary = ((OccupancyTypesElement)element).OccTypesSelectedTabsDictionary;
-
-
-            string[] colNames = new string[] { "Name", "Description", "DamageCategory","VarInFoundHtType","FdHtMin","FdHtMax","FdHtStDev",
-                    "IsStructChecked","VarInStructValueType","StructMin","StructMax","StructStDev","StructDistType", "IsContChecked",
-                    "VarInContValueType", "ContMin", "ContMax", "ContStDev", "ContDistType", "IsVehChecked", "VarInVehValueType",
-                    "VehMin", "VehMax", "VehStDev", "VehDistType", "IsOtherChecked", "VarInOtherValueType", "OtherMin",
-                    "OtherMax", "OtherStDev", "OtherDistType","GroupName", "StructureCurve","ContentCurve","VehicleCurve",
-                    "OtherCurve" };
-            Type[] colTypes = new Type[] {
-                    typeof(string), typeof(string), typeof(string), typeof(string), typeof(double),
-                    typeof(double), typeof(double), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double),
-                    typeof(string), typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),
-                    typeof(bool), typeof(string), typeof(double), typeof(double), typeof(double), typeof(string), typeof(bool),
-                    typeof(string), typeof(double), typeof(double), typeof(double), typeof(string),typeof(string),typeof(string),
-                    typeof(string),typeof(string),typeof(string)};
-
-           
-            Storage.Connection.Instance.CreateTable(GroupTablePrefix + groupName, colNames, colTypes);
-            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(GroupTablePrefix + groupName);
-
-            List<object[]> rows = new List<object[]>();
-
-            foreach (IOccupancyType ot in ListOfOccupancyTypes)
+            List<IOccupancyType> occtypes = new List<IOccupancyType>();
+            if (Storage.Connection.Instance.TableNames().Contains(OCCTYPES_TABLE_NAME))
             {
+                System.Data.DataTable table = Storage.Connection.Instance.GetDataTable(OCCTYPES_TABLE_NAME);
 
-                rows.Add(GetOccTypeRowForParentTable(ot, OccTypesSelectedTabsDictionary, groupName).ToArray());
+                foreach (System.Data.DataRow row in table.Rows)
+                {
+                    occtypes.Add(CreateOcctypeFromRow(row.ItemArray));
+                }
             }
-            tbl.AddRows(rows);
-            tbl.ApplyEdits();
+            return occtypes;
         }
 
+        private IOccupancyType CreateOcctypeFromRow(object[] rowData)
+        {
+            int groupId = Convert.ToInt32( rowData[GROUP_ID_COL]);
+            int occtypId = Convert.ToInt32(rowData[OCCTYPE_ID_COL]);
+
+            string name = (string)rowData[NAME_COL];
+            string desc = (string)rowData[DESC_COL];
+            string damCatName = (string)rowData[DAM_CAT_COL];
+
+            string foundHtUncertaintyXML = (string)rowData[FOUND_HT_UNCERTAINTY_COL];
+
+            //structures
+            bool isStructTabChecked = Convert.ToBoolean(rowData[IS_STRUCT_SELECTED_COL]);
+            string structValueUncertaintyXML = (string)rowData[VAR_STRUCT_VALUE_COL];
+            string structDepthDamageXML = (string)rowData[STRUCT_CURVE_COL];
+
+            //content
+            bool isContenTabChecked = Convert.ToBoolean(rowData[IS_CONT_SELECTED_COL]);
+            string contentValueUncertaintyXML = (string)rowData[VAR_CONT_VALUE_COL];
+            string contentDepthDamageXML = (string)rowData[CONTENT_CURVE_COL];
+
+            //vehicle
+            bool isVehicleTabChecked = Convert.ToBoolean(rowData[IS_VEH_SELECTED_COL]);
+            string vehicleValueUncertaintyXML = (string)rowData[VAR_VEH_VALUE_COL];
+            string vehicleDepthDamageXML = (string)rowData[VEHICLE_CURVE_COL];
+
+            //other
+            bool isOtherTabChecked = Convert.ToBoolean(rowData[IS_OTHER_SELECTED_COL]);
+            string otherValueUncertaintyXML = (string)rowData[VAR_OTHER_VALUE_COL];
+            string otherDepthDamageXML = (string)rowData[OTHER_CURVE_COL];
+
+            IOccupancyType occtype = OccupancyTypeFactory.Factory(name, damCatName);
+            occtype.GroupID = groupId;
+            occtype.ID = occtypId;
+            occtype.Name = name;
+            occtype.Description = desc;
+            occtype.DamageCategory = DamageCategoryFactory.Factory(damCatName);
+            occtype.FoundationHeightUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(foundHtUncertaintyXML));
+
+            //structures
+            occtype.CalculateStructureDamage = isStructTabChecked;
+            occtype.StructureValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(structValueUncertaintyXML));
+            //todo: this is ugly. I should put a method to read the xml for a coord func down to the icoordinatesfuntionfactory
+            //i am just creating a dummy impact area func because i want the icoord func inside it.
+            IFdaFunction structFunction = ImpactAreaFunctionFactory.Factory(structDepthDamageXML, ImpactAreaFunctionEnum.Rating);
+            occtype.StructureDepthDamageFunction = structFunction.Function;
+
+            //content
+            occtype.CalcualateContentDamage = isContenTabChecked;
+            occtype.ContentValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(contentValueUncertaintyXML));
+            //todo: this is ugly. I should put a method to read the xml for a coord func down to the icoordinatesfuntionfactory
+            //i am just creating a dummy impact area func because i want the icoord func inside it.
+            IFdaFunction contFunction = ImpactAreaFunctionFactory.Factory(contentDepthDamageXML, ImpactAreaFunctionEnum.Rating);
+            occtype.ContentDepthDamageFunction = structFunction.Function;
+
+            //vehicle
+            occtype.CalculateVehicleDamage = isVehicleTabChecked;
+            occtype.VehicleValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(vehicleValueUncertaintyXML));
+            //todo: this is ugly. I should put a method to read the xml for a coord func down to the icoordinatesfuntionfactory
+            //i am just creating a dummy impact area func because i want the icoord func inside it.
+            IFdaFunction vehFunction = ImpactAreaFunctionFactory.Factory(vehicleDepthDamageXML, ImpactAreaFunctionEnum.Rating);
+            occtype.VehicleDepthDamageFunction = vehFunction.Function;
+
+            //other
+            occtype.CalculateOtherDamage = isOtherTabChecked;
+            occtype.OtherValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(vehicleValueUncertaintyXML));
+            //todo: this is ugly. I should put a method to read the xml for a coord func down to the icoordinatesfuntionfactory
+            //i am just creating a dummy impact area func because i want the icoord func inside it.
+            IFdaFunction otherFunction = ImpactAreaFunctionFactory.Factory(otherDepthDamageXML, ImpactAreaFunctionEnum.Rating);
+            occtype.OtherDepthDamageFunction = otherFunction.Function;
+
+            return occtype;
+        }
 
 
         /// <summary>
@@ -573,35 +766,47 @@ namespace FdaViewModel.Saving.PersistenceManagers
         /// </summary>
         /// <param name="ot"></param>
         /// <returns></returns>
-        private List<object> GetOccTypeRowForParentTable(IOccupancyType ot, Dictionary<string, bool[]> OccTypesSelectedTabsDictionary, string groupName)
+        private List<object> GetOccTypeRowForParentTable(int elemId, int occtypeId, IOccupancyType ot, Dictionary<string, bool[]> OccTypesSelectedTabsDictionary, string groupName)
         {
             List<object> rowsList = new List<object>();
-            //bool[] checkedTabs = new bool[4];
-            //if (OccTypesSelectedTabsDictionary.ContainsKey(ot.Name))
-            //{
-            //    checkedTabs = OccTypesSelectedTabsDictionary[ot.Name];
-            //}
-            //else
-            //{
-            //    //can't find the key in the dictionary
-            //    throw new Exception();
-            //}
+            bool[] checkedTabs = new bool[4];
+            if (OccTypesSelectedTabsDictionary.ContainsKey(ot.Name))
+            {
+                checkedTabs = OccTypesSelectedTabsDictionary[ot.Name];
+            }
+            else
+            {
+                //can't find the key in the dictionary
+                throw new Exception();
+            }
+            //add the group id
+            rowsList.Add(elemId);
 
+            //add the occtype id
+            rowsList.Add(occtypeId);
 
-            ////name, description, damacat name
-            //foreach (object o in GetOccTypeInfoArray(ot))
-            //{
-            //    rowsList.Add(o);
-            //}
+            //name, description, damacat name
+            foreach (object o in GetOccTypeInfoArray(ot))
+            {
+                rowsList.Add(o);
+            }
 
+            //foundation height xml
+            rowsList.Add(ot.FoundationHeightUncertainty.WriteToXML().ToString());
             ////found ht variation type, min, max, st dev
             //foreach (object o in GetContinuousDistributionArray(ot.FoundationHeightUncertaintyFunction))
             //{
             //    rowsList.Add(o);
             //}
 
-            ////is struct checked
-            //rowsList.Add(checkedTabs[0]);
+            //is struct checked
+            rowsList.Add(checkedTabs[0]);
+
+            //structure value uncertainty
+            rowsList.Add(ot.StructureValueUncertainty.WriteToXML().ToString());
+
+            //structure depth damage function
+            rowsList.Add(ot.StructureDepthDamageFunction.WriteToXML().ToString());
 
             ////structure variation in value type, min, max, st dev
             //foreach (object o in GetContinuousDistributionArray(ot.StructureValueUncertainty))
@@ -612,8 +817,14 @@ namespace FdaViewModel.Saving.PersistenceManagers
             ////structure dist type
             //rowsList.Add(ot.GetStructurePercentDD.Distribution);
 
-            ////is content checked
-            //rowsList.Add(checkedTabs[1]);
+            //is content checked
+            rowsList.Add(checkedTabs[1]);
+
+            //content value uncertainty
+            rowsList.Add(ot.ContentValueUncertainty.WriteToXML().ToString());
+
+            //content depth damage function
+            rowsList.Add(ot.ContentDepthDamageFunction.WriteToXML().ToString());
 
             ////content variation in value type, min, max, st dev
             //foreach (object o in GetContinuousDistributionArray(ot.ContentValueUncertainty))
@@ -624,8 +835,15 @@ namespace FdaViewModel.Saving.PersistenceManagers
             ////cont dist type
             //rowsList.Add(ot.GetContentPercentDD.Distribution);
 
-            ////is vehicle checked
-            //rowsList.Add(checkedTabs[2]);
+            //is vehicle checked
+            rowsList.Add(checkedTabs[2]);
+
+            //vehicle value uncertainty
+            rowsList.Add(ot.VehicleValueUncertainty.WriteToXML().ToString());
+
+            //vehicle depth damage function 
+            rowsList.Add(ot.VehicleDepthDamageFunction.WriteToXML().ToString());
+
 
             ////vehicle variation in value type, min, max, st dev
             //foreach (object o in GetContinuousDistributionArray(ot.VehicleValueUncertainty))
@@ -636,8 +854,14 @@ namespace FdaViewModel.Saving.PersistenceManagers
             ////vehicle dist type
             //rowsList.Add(ot.GetVehiclePercentDD.Distribution);
 
-            ////is other checked
-            //rowsList.Add(checkedTabs[3]);
+            //is other checked
+            rowsList.Add(checkedTabs[3]);
+
+            //other value uncertainty
+            rowsList.Add(ot.OtherValueUncertainty.WriteToXML().ToString());
+
+            //other depth damage function
+            rowsList.Add(ot.OtherDepthDamageFunction.WriteToXML().ToString());
 
             ////Other variation in value type, min, max, st dev
             //foreach (object o in GetContinuousDistributionArray(ot.OtherValueUncertainty))
@@ -666,7 +890,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             return rowsList;
         }
 
-        private object[] GetOccTypeInfoArray(Consequences_Assist.ComputableObjects.OccupancyType ot)
+        private object[] GetOccTypeInfoArray(IOccupancyType ot)
         {
             return new object[] { ot.Name, ot.Description, ot.DamageCategory.Name };
 
@@ -755,7 +979,12 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            throw new NotImplementedException();
+            OccupancyTypesElement occElem = (OccupancyTypesElement)elem;
+            return new object[]
+            {
+                    occElem.Name,
+                    occElem.IsSelected
+            };
         }
     }
 }

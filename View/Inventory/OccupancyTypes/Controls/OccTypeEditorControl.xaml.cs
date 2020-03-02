@@ -52,29 +52,34 @@ namespace View.Inventory.OccupancyTypes.Controls
         }
         private void OccTypeNameBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
-            if (vm == null) { return; }
-            if (vm.SelectedOccType == null) { return; }
-            vm.UpdateKeyInTabsDictionary(vm.SelectedOccType.Name, OccTypeNameBox.Text);
-            vm.SelectedOccType.Name = OccTypeNameBox.Text;
-            if (this.ListViewNeedsUpdating != null)
-            {
-                this.ListViewNeedsUpdating(this, new EventArgs());
-            }
+            //FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //if (vm == null) { return; }
+            //if (vm.SelectedOccType == null) { return; }
+            //vm.UpdateKeyInTabsDictionary(vm.SelectedOccType.Name, OccTypeNameBox.Text);
+            //vm.SelectedOccType.Name = OccTypeNameBox.Text;
+            //if (this.ListViewNeedsUpdating != null)
+            //{
+            //    this.ListViewNeedsUpdating(this, new EventArgs());
+            //}
         }
 
 
-        private void EditStructureDamageButton_Click(object sender, RoutedEventArgs e)
-        {
-            FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
-            if (vm == null) { return; }
-            vm.LaunchDepthDamageEditor();
-        }
+        //private void EditStructureDamageButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+        //    if (vm == null) { return; }
+        //    vm.LaunchDepthDamageEditor();
+        //}
 
         private void StructureValueUncertainty_LostFocus(object sender, RoutedEventArgs e)
         {
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
-            if (vm == null) { return; }
+            if (vm == null) 
+            { 
+                return; 
+            }
+            //StructureValueUncertainty.ReturnDistribution();
+            //vm.SelectedOccType.StructureValueUncertainty = 
             //vm.SelectedOccType.StructureValueUncertainty = StructureValueUncertainty.ReturnDistribution();
         }
 
@@ -102,7 +107,7 @@ namespace View.Inventory.OccupancyTypes.Controls
         private void OccTypeDescriptionBox_LostFocus(object sender, RoutedEventArgs e)
         {
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
-            if (vm == null) { return; }
+            if (vm == null || vm.SelectedOccType == null) { return; }
             string desc = OccTypeDescriptionBox.Text;
             if(desc == null)
             {

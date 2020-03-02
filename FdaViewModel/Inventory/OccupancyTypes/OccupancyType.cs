@@ -11,6 +11,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 {
     internal class OccupancyType : IOccupancyType
     {
+        
         public string Name { get; set; }
 
         public string Description { get; set; }
@@ -33,15 +34,19 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public ICoordinatesFunction ContentDepthDamageFunction { get; set; }
         public ICoordinatesFunction VehicleDepthDamageFunction { get; set; }
         public ICoordinatesFunction OtherDepthDamageFunction { get; set; }
-        public IDistributedOrdinate StructureValueUncertainty { get; set; }
-        public IDistributedOrdinate ContentValueUncertainty { get; set; }
-        public IDistributedOrdinate VehicleValueUncertainty { get; set; }
-        public IDistributedOrdinate OtherValueUncertainty { get; set; }
-        public IDistributedOrdinate FoundationHeightUncertainty { get; set; }
-        public string StructureDepthDamageName { get; set; }
-        public string ContentDepthDamageName { get; set; }
-        public string VehicleDepthDamageName { get; set; }
-        public string OtherDepthDamageName { get; set; }
+        public IOrdinate StructureValueUncertainty { get; set; }
+        public IOrdinate ContentValueUncertainty { get; set; }
+        public IOrdinate VehicleValueUncertainty { get; set; }
+        public IOrdinate OtherValueUncertainty { get; set; }
+        public IOrdinate FoundationHeightUncertainty { get; set; }
+
+        //todo: are these name important or used anywhere?
+        //public string StructureDepthDamageName { get; set; }
+        //public string ContentDepthDamageName { get; set; }
+        //public string VehicleDepthDamageName { get; set; }
+        //public string OtherDepthDamageName { get; set; }
+        public int GroupID { get; set; }
+        public int ID { get; set; }
 
         public OccupancyType()
         {
