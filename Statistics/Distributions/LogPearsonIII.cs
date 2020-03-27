@@ -49,16 +49,7 @@ namespace Statistics.Distributions
         {
             return validator.IsValid(this, out msgs);
         }
-        internal static string Print(double mean, double sd, double skew, int n) => $"log PearsonIII(mean: {mean.Print()}, sd: {sd.Print()}, skew: {skew.Print()}, sample size: {n.Print()})";
-        internal static string RequiredParameterization(bool printNotes = true)
-        {
-            string s = $"The log PearsonIII distribution requires the following parameterization: {Parameterization()}.";
-            if (printNotes) s += RequirementNotes();
-            return s;
-        }
-        internal static string Parameterization() => $"log PearsonIII(mean: (0, {Math.Log10(double.MaxValue).Print()}], sd: (0, {Math.Log10(double.MaxValue).Print()}], skew: [{(Math.Log10(double.MaxValue) * - 1).Print()}, {Math.Log10(double.MaxValue).Print()}], sample size: > 0)";       
-        internal static string RequirementNotes() => $"The distribution parameters are computed from log base 10 random numbers (e.g. the log Pearson III distribution is a distribution of log base 10 Pearson III distributed random values). Therefore the mean and standard deviation parameters must be positive finite numbers and while a large range of numbers are acceptable a relative small rate will produce meaningful results.";
-        
+               
         #region IDistribution Functions
         public double PDF(double x)
         {
@@ -104,11 +95,23 @@ namespace Statistics.Distributions
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
 
-        public static LogPearsonIII Fit(IEnumerable<double> sample)
+        internal static string Print(double mean, double sd, double skew, int n) => $"log PearsonIII(mean: {mean.Print()}, sd: {sd.Print()}, skew: {skew.Print()}, sample size: {n.Print()})";
+        internal static string RequiredParameterization(bool printNotes = true)
         {
-            List<double> log10Sample = new List<double>();
-            foreach (double x in sample) log10Sample.Add(Math.Log10(x));
-            SummaryStatistics stats = new SummaryStatistics(IDataFactory.Factory(log10Sample));
+            string s = $"The log PearsonIII distribution requires the following parameterization: {Parameterization()}.";
+            if (printNotes) s += RequirementNotes();
+            return s;
+        }
+        internal static string Parameterization() => $"log PearsonIII(mean: (0, {Math.Log10(double.MaxValue).Print()}], sd: (0, {Math.Log10(double.MaxValue).Print()}], skew: [{(Math.Log10(double.MaxValue) * -1).Print()}, {Math.Log10(double.MaxValue).Print()}], sample size: > 0)";
+        internal static string RequirementNotes() => $"The distribution parameters are computed from log base 10 random numbers (e.g. the log Pearson III distribution is a distribution of log base 10 Pearson III distributed random values). Therefore the mean and standard deviation parameters must be positive finite numbers and while a large range of numbers are acceptable a relative small rate will produce meaningful results.";
+
+        public static LogPearsonIII Fit(IEnumerable<double> sample, bool islogSample = false)
+        {
+            List<double> logSample = new List<double>();
+            if (!islogSample) foreach (double x in sample) logSample.Add(Math.Log10(x));
+            IData data = sample.IsNullOrEmpty() ? throw new ArgumentNullException(nameof(sample)) : islogSample ? IDataFactory.Factory(sample) : IDataFactory.Factory(logSample);
+            if (!(data.State < IMessageLevels.Error) || data.Elements.Count() < 3) throw new ArgumentException($"The {nameof(sample)} is invalid because it contains an insufficient number of finite, numeric values (3 are required but only {data.Elements.Count()} were provided).");
+            ISampleStatistics stats = ISampleStatisticsFactory.Factory(data);
             return new LogPearsonIII(stats.Mean, stats.StandardDeviation, stats.Skewness, stats.SampleSize);
         }
 

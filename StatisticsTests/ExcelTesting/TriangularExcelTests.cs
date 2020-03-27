@@ -37,7 +37,7 @@ namespace StatisticsTests.ExcelTesting
             dt.Rows.Add(value);
             return dt;
         }
-   
+
 
         [Theory]
         [ExcelData(TEST_DATA_RELATIVE_PATH, MIN_WORKSHEET)]
@@ -47,7 +47,7 @@ namespace StatisticsTests.ExcelTesting
             double actualValue = tri.Range.Min;
             bool testPassed = (actualValue == expectedValue);
             ExcelDataAttribute.SaveData(TEST_DATA_RELATIVE_PATH, MIN_WORKSHEET, rowToWriteTo, columnToWriteTo, CreateDataTable(actualValue), testPassed);
-            Assert.True(testPassed);       
+            Assert.True(testPassed);
         }
 
         [Theory]
@@ -138,7 +138,7 @@ namespace StatisticsTests.ExcelTesting
             }
             else
             {
-                
+
                 tri = (Triangular)IDistributionFactory.FactoryTriangular(min, mode, max, (int)sampleSize);
             }
             double actualValue = tri.SampleSize;

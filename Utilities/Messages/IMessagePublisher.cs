@@ -10,6 +10,9 @@ namespace Utilities
     /// <remarks> No logic is provided to create <see cref="IMessagePublisher"/>s except through the creation of objects implementing the <see cref="IValidate{T}"/> interface. </remarks>
     public interface IMessagePublisher
     {
+        /// <summary>
+        /// The highest <see cref="IMessageLevels"/> error level in the set of <see cref="Messages"/>.
+        /// </summary>
         IMessageLevels State { get; }
         /// <summary>
         /// A set of <see cref="IMessage"/>s communicating errors and information about the objects that write them.

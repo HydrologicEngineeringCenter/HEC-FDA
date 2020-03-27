@@ -21,7 +21,6 @@ namespace Functions
         /// </summary>
         IOrdinateEnum Type { get; }
         #endregion
-
         #region Functions
         /// <summary>
         /// Provides a numerical value for the <see cref="IOrdinate"/>.

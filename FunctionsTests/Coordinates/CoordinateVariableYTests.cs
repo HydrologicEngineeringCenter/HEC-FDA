@@ -36,7 +36,7 @@ namespace FunctionsTests.Coordinates
 
         public void CoordinateVariableY_GoodInput_Returns_CoordinateConstants(double[] value)
         {
-            IDistributedOrdinate dist = new Distribution(new Normal(value[0], value[1]));
+            Statistics.IDistribution dist = new Normal(value[0], value[1]);
             CoordinateVariableY coord = new CoordinateVariableY(new Constant(value[0]), new Distribution(dist));
             Assert.NotNull(coord);
         }
@@ -47,7 +47,7 @@ namespace FunctionsTests.Coordinates
         [MemberData(nameof(GoodData_Normal))]
         public void X_GoodInput_Returns_Double(double[] value)
         {
-            IDistributedOrdinate dist = new Distribution(new Normal(value[0], value[1]));
+            Statistics.IDistribution dist = new Normal(value[0], value[1]);
             CoordinateVariableY coord = new CoordinateVariableY(new Constant(value[0]), new Distribution(dist));
             Assert.True(coord.X.Value() == value[0]);
         }
@@ -59,7 +59,7 @@ namespace FunctionsTests.Coordinates
         [MemberData(nameof(GoodData_Normal))]
         public void Y_GoodInput_Returns_Double(double[] value)
         {
-            IDistributedOrdinate dist = new Distribution(new Normal(value[0], value[1]));
+            Statistics.IDistribution dist = new Normal(value[0], value[1]);
             CoordinateVariableY coord = new CoordinateVariableY(new Constant(value[0]), new Distribution(dist));
             Assert.True(coord.Y.Value() == value[0]);
         }
@@ -70,7 +70,7 @@ namespace FunctionsTests.Coordinates
         [Fact]
         public void Equals_GoodInput_Returns_Bool()
         {
-            IDistributedOrdinate dist = new Distribution(new Normal(1, 1));
+            Statistics.IDistribution dist = new Normal(1, 1);
             CoordinateVariableY coord1 = new CoordinateVariableY(new Constant(1), new Distribution(dist));
 
             IDistributedOrdinate dist2 = new Distribution(new Normal(1, 1));
@@ -84,7 +84,7 @@ namespace FunctionsTests.Coordinates
         [Fact]
         public void WriteToXML_GoodInput_Returns_Bool()
         {
-            IDistributedOrdinate dist = new Distribution(new Normal(1, 1));
+            Statistics.IDistribution dist = new Normal(1, 1);
             CoordinateVariableY coord1 = new CoordinateVariableY(new Constant(1), new Distribution(dist));
             XElement xOrdXml = coord1.X.WriteToXML();
             XElement yOrdXml = coord1.Y.WriteToXML();

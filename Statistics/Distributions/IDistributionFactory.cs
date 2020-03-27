@@ -73,7 +73,7 @@ namespace Statistics
         {
             if ((int)returnType >= 10)
             {
-                SummaryStatistics stats = new SummaryStatistics(IDataFactory.Factory(sample));
+                ISampleStatistics stats = ISampleStatisticsFactory.Factory(sample);
                 return Fit(sample, stats.Range.Min, stats.Range.Max, returnType);
             }
             else

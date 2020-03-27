@@ -88,7 +88,7 @@ namespace Statistics
         /// <returns></returns>
         string Requirements(bool printNotes);
         /// <summary>
-        /// Compares two distributions for value equality.
+        /// Compares 2 distributions for <b>value</b> equality.
         /// </summary>
         /// <param name="distribution"> The distribution to be compared to the instance distribution. </param>
         /// <returns> True if the two distributions are equivalent, false otherwise. </returns>

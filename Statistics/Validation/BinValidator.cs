@@ -41,13 +41,18 @@ namespace Statistics.Validation
         internal static string ReportFatalErrors(double min, double max, int n)
         {
             string msg = "";
-            if (!ValidationExtensions.IsRange(min, max)) msg += $"{Resources.FatalParameterizationNotice(Bin.Print(min, max, n))} {Bin.Requirements(true)}";
+            if (!ValidationExtensions.IsRange(min, max, true, false)) msg += $"{Resources.FatalParameterizationNotice(Bin.Print(min, max, n))} {Bin.Requirements(true)}";
+            if (n < 0) msg += $"The specified number of bin observations {n} is invalid because it is not a positive number.";
             return msg;
         }
         internal static string ReportFatalErrors(IBin oldBin, int addN)
         {
             string msg = "";
-            if (addN < 0 || ((long)oldBin.Count + (long)addN > (long)int.MaxValue)) msg += $"{addN.Print()} observations cannot be added to the {oldBin.Print(true)} because {addN.Print()} is a negative number or the sum of the observations: ({addN.Print()} + {oldBin.Count.Print()}) exceeds the maximum integer: {int.MaxValue.Print()} value.";
+            if (oldBin.IsNull()) msg += "Observations cannot be added the bin because it is null";
+            else
+            {
+                if (addN < 0 || ((long)oldBin.Count + (long)addN > (long)int.MaxValue)) msg += $"{addN.Print()} observations cannot be added to the {oldBin.Print(true)} because {addN.Print()} is a negative number or the sum of the observations: ({addN.Print()} + {oldBin.Count.Print()}) exceeds the maximum integer: {int.MaxValue.Print()} value.";
+            }
             return msg;
         }
     }

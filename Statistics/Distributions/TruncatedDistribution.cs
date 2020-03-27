@@ -50,14 +50,7 @@ namespace Statistics.Distributions
         {
             return validator.IsValid(this, out msgs);
         }
-        internal static string Print(IDistribution distribution, IRange<double> range) => $"TruncatedDistribution(distribution: {distribution.Print(true)}, truncated range: {range.Print(true)})";
-        internal static string RequiredParameterization(bool printNotes)
-        {
-            string msg = $"Truncated distributions replace values on the tail(s) of an IDistribution with specified maximum or minimum values. Thus a valid IDistribution and logical range: max > min are required as Truncated Distribution parameters.";
-            if (printNotes) msg += RequirementNotes();
-            return msg;
-        }
-        internal static string RequirementNotes() => $"If the minimum value is set to {double.NegativeInfinity} the left hand tail of the IDistribution will not be truncated. Similarly, if the maximum is set to {double.PositiveInfinity} the right hand tail of the IDistribution will not be truncated.";
+        
         #region IDistribution Functions
         public double PDF(double x)
         {
@@ -115,7 +108,17 @@ namespace Statistics.Distributions
         }
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
+
+        internal static string Print(IDistribution distribution, IRange<double> range) => $"TruncatedDistribution(distribution: {distribution.Print(true)}, truncated range: {range.Print(true)})";
+        internal static string RequiredParameterization(bool printNotes)
+        {
+            string msg = $"Truncated distributions replace values on the tail(s) of an IDistribution with specified maximum or minimum values. Thus a valid IDistribution and logical range: max > min are required as Truncated Distribution parameters.";
+            if (printNotes) msg += RequirementNotes();
+            return msg;
+        }
+        internal static string RequirementNotes() => $"If the minimum value is set to {double.NegativeInfinity} the left hand tail of the IDistribution will not be truncated. Similarly, if the maximum is set to {double.PositiveInfinity} the right hand tail of the IDistribution will not be truncated.";
         #endregion
+
         XElement ISerializeToXML<IDistribution>.WriteToXML()
         {
             throw new NotImplementedException();

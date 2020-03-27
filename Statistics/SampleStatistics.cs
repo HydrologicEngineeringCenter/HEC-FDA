@@ -6,7 +6,7 @@ using Utilities;
 
 namespace Statistics
 {
-    internal class SampleStatistics : ISummaryStatistics
+    internal class SampleStatistics : ISampleStatistics
     {
         private readonly MathNet.Numerics.Statistics.DescriptiveStatistics _Statistics;
 
@@ -30,7 +30,7 @@ namespace Statistics
             Messages = msgs;
         }
 
-        public IMessageLevels Validate(Utilities.IValidator<ISummaryStatistics> validator, out IEnumerable<IMessage> msgs)
+        public IMessageLevels Validate(Utilities.IValidator<ISampleStatistics> validator, out IEnumerable<IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }

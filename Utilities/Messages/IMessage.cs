@@ -14,8 +14,12 @@ namespace Utilities
         /// </summary>
         IMessageLevels Level { get; }
         /// <summary>
-        /// The note to be posted with the message.
+        /// A note summarizing the message.
         /// </summary>
         string Notice { get; }
+        /// <summary>
+        /// A longer or more detailed message.
+        /// </summary>
+        string Details { get; }
     }
 }

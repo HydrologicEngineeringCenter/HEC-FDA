@@ -22,7 +22,7 @@ namespace Functions.Ordinates
         public Constant(double value)
         {
             _ConstantValue = value;
-            Range = IRangeFactory.Factory(_ConstantValue, _ConstantValue);
+            Range = IRangeFactory.Factory(_ConstantValue, _ConstantValue, true, true, true, false);
             State = Validate(new Validation.ConstantValidator(), out IEnumerable<IMessage> msgs);
             Messages = msgs;
         }
