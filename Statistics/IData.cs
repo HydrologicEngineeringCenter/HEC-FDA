@@ -7,25 +7,25 @@ using Utilities;
 namespace Statistics
 {
     /// <summary>
-    /// Provides an container for ordered, finite input data.
+    /// Provides an container organizing <see cref="IEnumerable{double}"/> datasets into: 
+    /// <ul>
+    /// <li> Usable, ordered finite date elements </li>
+    /// <li> Unusable, discarded invalid non-numeric data values </li>
+    /// </ul>
+    /// An option is provided specifying if an <see cref="Utilities.InvalidConstructorArgumentsException"/> should be thrown if the specified dataset contains 0 finite numeric values. 
     /// </summary>
-    public interface IData: IValidate<IData>
+    public interface IData: IMessagePublisher
     {
-        IRange<double> Range { get; }
-        ///// <summary>
-        ///// The minimum of the provided data minimum or the smallest data element.
-        ///// </summary>
-        //double Minimum { get; }
-        ///// <summary>
-        ///// The maximum of the provided data maximum or the largest data element.
-        ///// </summary>
-        //double Maximum { get; }
         /// <summary>
-        /// Finite data elements in accending order.
+        /// The fully inclusive range of data values (e.g. [min, max]). <seealso cref="IRange{double}"/>
+        /// </summary>
+        IRange<double> Range { get; }
+        /// <summary>
+        /// The set of finite, numeric data elements in acceding order.
         /// </summary>
         IOrderedEnumerable<double> Elements { get; }
         /// <summary>
-        /// The number of finite data elements.
+        /// The number of finite numeric data elements.
         /// </summary>
         int SampleSize { get; }
     }

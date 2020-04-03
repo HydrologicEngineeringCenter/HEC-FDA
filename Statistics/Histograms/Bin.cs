@@ -13,7 +13,7 @@ namespace Statistics.Histograms
     /// A bin for the histogram class.
     /// </summary>
     /// <remarks>
-    /// This class and its constructor are not accessible through the API.
+    /// This class and its constructors are not accessible through the API.
     /// </remarks>
     internal sealed class Bin: IBin, IValidate<IBin>
     {
@@ -23,14 +23,8 @@ namespace Statistics.Histograms
         public IEnumerable<IMessage> Messages { get; }
         #endregion
 
-        /// <summary>
-        /// The number of observation in the bin.
-        /// </summary>
         public int Count { get; }
         public Utilities.IRange<double> Range { get; }
-        /// <summary>
-        /// The midpoint value computed with equation: (<see cref="IBin.Range.Max"/> - <see cref="IBin.Range.Min"/>) / 2
-        /// </summary>
         public double MidPoint { get; }
         public double Width { get; }
         #endregion
@@ -38,20 +32,22 @@ namespace Statistics.Histograms
         #region Constructors
         internal Bin (double min, double max, int n)
         {
+            if (!Validation.BinValidator.IsConstructable(min, max, n, out string msg)) throw new Utilities.InvalidConstructorArgumentsException(msg);
             Count = n;
             Width = max - min;
-            Range = IRangeFactory.Factory(min, max);           
+            Range = IRangeFactory.Factory(min, max, true, false, true, true);           
             MidPoint = Width / 2d + Range.Min;           
             State = Validate(new BinValidator(), out IEnumerable<IMessage> errors);
             Messages = errors;
         }
         /// <summary>
-        /// Creates a new bin by adding <paramref name="n"/> observations to a pre-existing bin count.
+        /// Creates a new bin by adding <paramref name="n"/> observations to a preexisting bin count.
         /// </summary>
         /// <param name="oldBin"> A <see cref="Bin"/> with the desired <see cref="Bin.Minimum"/>, <see cref="Bin.MidPoint"/> and <see cref="Bin.Maximum"/> property values, to which <paramref name="n"/> observations are added to the <see cref="Bin.Count"/>. </param>
         /// <param name="addN"> The number of observations to add to the <paramref name="oldBin"/> <see cref="Bin.Count"/>. </param>
         internal Bin (IBin oldBin, int addN)
         {
+            if (!Validation.BinValidator.IsConstructable(oldBin, addN, out string msg)) throw new InvalidConstructorArgumentsException(msg);
             Range = oldBin.Range;
             Width = oldBin.Range.Max - oldBin.Range.Min;
             MidPoint = oldBin.MidPoint;
@@ -88,7 +84,7 @@ namespace Statistics.Histograms
             for (int i = 0; i < Count; i++) data[i] = MidPoint;
             return data;
         }
-        public string Print(bool round = false) => round ? Print(Range.Min, Range.Max, Count) : $"Bin(count: {Count}, range: [{Range.Min}, {Range.Max}])";
+        public string Print(bool round = false) => round ? Print(Range.Min, Range.Max, Count) : $"Bin(count: {Count.Print()}, range: {Range.Print(round)})";
         public bool Equals(IBin bin) => Range.Min == bin.Range.Min && Range.Max == bin.Range.Max && Count == bin.Count ? true : false;
         #endregion
     }

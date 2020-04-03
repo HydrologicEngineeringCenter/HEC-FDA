@@ -56,7 +56,7 @@ namespace Functions.CoordinatesFunctions
                 _ProvidedCoordinates = SortByXs(coordinates);
                 var xys = GetOrdinateArrays(_ProvidedCoordinates);
                 if (Interpolator == InterpolationEnum.NaturalCubicSpline) _NaturalCubicSpline = SetCubicSplineFunction(xys);
-                InterpolationFunction = SetInterpolator();
+                InterpolationFunction = SetInterpolator(Interpolator);
                 Order = SetTheOrder();
                 Domain = IRangeFactory.Factory(_ProvidedCoordinates.First().X.Value(), _ProvidedCoordinates.Last().X.Value());
                 Range = SetRange();

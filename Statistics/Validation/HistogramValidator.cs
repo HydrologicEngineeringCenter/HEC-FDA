@@ -30,7 +30,7 @@ namespace Statistics.Validation
                 if (bins[i].Messages.Any())
                 {
                     IMessage[] msgs = bins[i].Messages.ToArray();
-                    IMessageLevels level = IMessageLevels.None;
+                    IMessageLevels level = IMessageLevels.NoErrors;
                     StringBuilder binMsg = new StringBuilder($"Histogram bin {i + 1} of {bins.Length.Print()} contains the following {msgs.Length} messages: \r\n");
                     for (int j = 0; j < msgs.Length; j++)
                     {

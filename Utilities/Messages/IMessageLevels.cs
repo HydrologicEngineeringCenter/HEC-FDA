@@ -12,7 +12,7 @@ namespace Utilities
         /// <summary>
         /// Only intended for use as a <see cref="IMessagePublisher.State"/> variable for <see cref="IMessagePublisher"/> objects with no errors.
         /// </summary>
-        None = 0,
+        NoErrors = 0,
         /// <summary>
         /// This message level is reserved for non error messages.
         /// </summary>

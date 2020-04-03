@@ -61,9 +61,6 @@ namespace Statistics.Distributions
             }
             return IRangeFactory.Factory(epsilon, 1 - epsilon);
         }
-        internal static string Print(double mean, double sd, int n) => $"Normal(mean: {mean.Print()}, sd: {sd.Print()}, sample size: {n.Print()})";
-        public static string RequiredParameterization(bool printNotes = false) => $"The Normal distribution requires the following parameterization: {Parameterization()}.";
-        internal static string Parameterization() => $"Normal(mean: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sd: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sample size: > 0)";
         
         #region IDistribution Functions
         public double PDF(double x) => _Distribution.Density(x);
@@ -90,11 +87,19 @@ namespace Statistics.Distributions
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
 
+        internal static string Print(double mean, double sd, int n) => $"Normal(mean: {mean.Print()}, sd: {sd.Print()}, sample size: {n.Print()})";
+        public static string RequiredParameterization(bool printNotes = false) => $"The Normal distribution requires the following parameterization: {Parameterization()}.";
+        internal static string Parameterization() => $"Normal(mean: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sd: [{double.MinValue.Print()}, {double.MaxValue.Print()}], sample size: > 0)";
+
+
         public static Normal Fit(IEnumerable<double> sample)
         {
-            MathNet.Numerics.Distributions.Normal norm = MathNet.Numerics.Distributions.Normal.Estimate(sample);
-            return new Normal(norm.Mean, norm.StdDev, sample.Count());
+            IData data = sample.IsNullOrEmpty() ? throw new ArgumentNullException(nameof(sample)) : IDataFactory.Factory(sample);
+            if (!(data.State < IMessageLevels.Error) || data.Elements.Count() < 3) throw new ArgumentException($"The {nameof(sample)} is invalid because it contains an insufficient number of finite, numeric values (3 are required but only {data.Elements.Count()} were provided).");
+            ISampleStatistics stats = ISampleStatisticsFactory.Factory(data);
+            return new Normal(stats.Mean, stats.StandardDeviation, stats.SampleSize);
         }
+
         public XElement WriteToXML()
         {
             XElement ordinateElem = new XElement(SerializationConstants.NORMAL);

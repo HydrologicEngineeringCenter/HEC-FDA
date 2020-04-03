@@ -9,17 +9,8 @@ using System.Xml.Linq;
 
 namespace Statistics.Histograms
 {
-    //public interface IHistogramBuilder 
-    //{       
-    //    void AddBinCount(int nBins);
-    //    void AddBinWidth(double binWidth);
-    //    void AddHistogramRange(double min, double max);
-    //    void BuildFromDataRange(IEnumerable<double> data);
-    //    void BuildFromBetaDistribution(IEnumerable<double> data);
-    //    void AddData(IEnumerable<double> data);
-    //    void AddData(double data);
-    //    IHistogram Build();
-    //}
+    
+    
 
 
     //internal class HistogramBuilder : IHistogramBuilder
@@ -39,7 +30,7 @@ namespace Statistics.Histograms
     //        else throw new InvalidConstructorArgumentsException($"The specified range: {range.Print(true)} generates an exception and cannot be used. It contains the following messages: {range.Messages.PrintTabbedListOfMessages()}");
     //        Range = range;
     //    }
-         
+
     //}
 
     //internal class TheHistogram 
@@ -83,7 +74,7 @@ namespace Statistics.Histograms
         protected Histogram(IBin[] bins)
         {          
             _Bins = bins;
-            var stats = ISummaryStatisticsFactory.Factory(bins);
+            var stats = ISampleStatisticsFactory.Factory(bins);
             Mean = stats.Mean;
             Median = stats.Median;
             Variance = stats.Variance;

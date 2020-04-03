@@ -146,24 +146,24 @@ namespace FunctionsTests.CoordinatesFunctions
             Assert.True(fOfX.Equals(firstCoord.Y));
 
         }
-        /// <summary> Tests that the F Function throws an <see cref="ArgumentOutOfRangeException"/>. </summary>
-        [Theory]
-        [MemberData(nameof(GoodDataDistributed))]
-        public void CoordinatesFunctionVariableYs_NotDistributedF_Throws_ArgumentOutOfRangeException(List<ICoordinate> value)
-        {
+        ///// <summary> Tests that the F Function throws an <see cref="ArgumentOutOfRangeException"/>. </summary>
+        //[Theory]
+        //[MemberData(nameof(GoodDataDistributed))]
+        //public void CoordinatesFunctionVariableYs_NotDistributedF_Throws_ArgumentOutOfRangeException(List<ICoordinate> value)
+        //{
 
-            CoordinatesFunctionVariableYs func = CreateDistributedCoordinatesFunctionBasic();
-            Assert.Throws<ArgumentOutOfRangeException>(() => func.F(new Constant(99)));
+        //    CoordinatesFunctionVariableYs func = CreateDistributedCoordinatesFunctionBasic();
+        //    Assert.Throws<ArgumentOutOfRangeException>(() => func.F(new Constant(99)));
 
-        }
-        /// <summary> Tests that the F Function throws an <see cref="ArgumentNullException"/>. </summary>
-        [Theory]
-        [MemberData(nameof(GoodDataDistributed))]
-        public void CoordinatesFunctionVariableYs_NullF_Throws_ArgumentNullException(List<ICoordinate> value)
-        {
-            CoordinatesFunctionVariableYs func = CreateDistributedCoordinatesFunctionBasic();
-            Assert.Throws<ArgumentOutOfRangeException>(() => func.F(new Constant(double.NaN)));
-        }
+        //}
+        ///// <summary> Tests that the F Function throws an <see cref="ArgumentNullException"/>. </summary>
+        //[Theory]
+        //[MemberData(nameof(GoodDataDistributed))]
+        //public void CoordinatesFunctionVariableYs_NullF_Throws_ArgumentNullException(List<ICoordinate> value)
+        //{
+        //    CoordinatesFunctionVariableYs func = CreateDistributedCoordinatesFunctionBasic();
+        //    Assert.Throws<ArgumentOutOfRangeException>(() => func.F(new Constant(double.NaN)));
+        //}
 
 
 

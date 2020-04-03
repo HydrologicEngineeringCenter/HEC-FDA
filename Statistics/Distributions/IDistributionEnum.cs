@@ -38,6 +38,10 @@ namespace Statistics
         /// </summary>
         LogPearsonIII = 6,
         /// <summary>
+        /// Log Normal distribution.
+        /// </summary>
+        LogNormal = 7,
+        /// <summary>
         /// Specific form of a Truncated Normal Distribution with density above or below truncation value(s) reassigned to the truncation value(s). However, the reported measures of central tendency and dispersion continue to be those of the underlying distribution NOT the truncated copy.
         /// </summary>
         TruncatedNormal = 10,

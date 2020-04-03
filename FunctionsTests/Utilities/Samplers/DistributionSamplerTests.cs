@@ -264,43 +264,17 @@ namespace FunctionsTests.Utilities.Samplers
             ICoordinate coord2 = sampledFunc.Coordinates[1];
          
 
-            Assert.True(coord.X.Value() == 0 && coord.Y.Value() == 10);
-            Assert.True(coord2.X.Value() == 1 && coord2.Y.Value() == 20);
+        //    Assert.True(coord.X.Value() == 0 && coord.Y.Value() == 10);
+        //    Assert.True(coord2.X.Value() == 1 && coord2.Y.Value() == 20);
          
 
-        }
+        //}
 
-        /// <summary> Tests that the Sample method returns the min value for 0.0 probability for Uniform distribution. </summary>
-        [Fact]
-        public void DistributionSampler_Sample_Uniform_ZeroProbability_Returns_IFunction()
-        {
-            DistributionSampler distSampler = new DistributionSampler();
-
-            List<double> xs = new List<double>() { 0, 1 };
-            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
-            {
-                IDistributedOrdinateFactory.Factory( new Uniform(5, 10)),
-                IDistributedOrdinateFactory.Factory( new Uniform(10,20)),
-            };
-            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
-
-            IFunction sampledFunc = distSampler.Sample(distributedFunc, 0.0);
-            //they should have the same number of coordinates.
-            Assert.True(distributedFunc.Coordinates.Count == sampledFunc.Coordinates.Count);
-            ICoordinate coord = sampledFunc.Coordinates[0];
-            ICoordinate coord2 = sampledFunc.Coordinates[1];
-
-
-            Assert.True(coord.X.Value() == 0 && coord.Y.Value() == 5);
-            Assert.True(coord2.X.Value() == 1 && coord2.Y.Value() == 10);
-
-        }
-
-        /// <summary> Tests that the Sample method returns the mean value for 0.5 probability for Uniform distribution. </summary>
-        [Fact]
-        public void DistributionSampler_Sample_Uniform_Point5Probability_Returns_IFunction()
-        {
-            DistributionSampler distSampler = new DistributionSampler();
+        ///// <summary> Tests that the Sample method returns the min value for 0.0 probability for Uniform distribution. </summary>
+        //[Fact]
+        //public void DistributionSampler_Sample_Uniform_ZeroProbability_Returns_IFunction()
+        //{
+        //    DistributionSampler distSampler = new DistributionSampler();
 
             List<double> xs = new List<double>() { 0, 1 };
             List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
@@ -310,18 +284,44 @@ namespace FunctionsTests.Utilities.Samplers
             };
             CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
 
-            IFunction sampledFunc = distSampler.Sample(distributedFunc, 0.5);
-            //they should have the same number of coordinates.
-            Assert.True(distributedFunc.Coordinates.Count == sampledFunc.Coordinates.Count);
-            ICoordinate coord = sampledFunc.Coordinates[0];
-            ICoordinate coord2 = sampledFunc.Coordinates[1];
+        //    IFunction sampledFunc = distSampler.Sample(distributedFunc, 0.0);
+        //    //they should have the same number of coordinates.
+        //    Assert.True(distributedFunc.Coordinates.Count == sampledFunc.Coordinates.Count);
+        //    ICoordinate coord = sampledFunc.Coordinates[0];
+        //    ICoordinate coord2 = sampledFunc.Coordinates[1];
 
 
-            Assert.True(coord.X.Value() == 0 && coord.Y.Value() == 7.5);
-            Assert.True(coord2.X.Value() == 1 && coord2.Y.Value() == 15);
-        }
+        //    Assert.True(coord.X.Value() == 0 && coord.Y.Value() == 5);
+        //    Assert.True(coord2.X.Value() == 1 && coord2.Y.Value() == 10);
+
+        //}
+
+        ///// <summary> Tests that the Sample method returns the mean value for 0.5 probability for Uniform distribution. </summary>
+        //[Fact]
+        //public void DistributionSampler_Sample_Uniform_Point5Probability_Returns_IFunction()
+        //{
+        //    DistributionSampler distSampler = new DistributionSampler();
+
+            List<double> xs = new List<double>() { 0, 1 };
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
+            {
+                IDistributedOrdinateFactory.Factory( new Uniform(5, 10)),
+                IDistributedOrdinateFactory.Factory( new Uniform(10,20)),
+            };
+            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
+
+        //    IFunction sampledFunc = distSampler.Sample(distributedFunc, 0.5);
+        //    //they should have the same number of coordinates.
+        //    Assert.True(distributedFunc.Coordinates.Count == sampledFunc.Coordinates.Count);
+        //    ICoordinate coord = sampledFunc.Coordinates[0];
+        //    ICoordinate coord2 = sampledFunc.Coordinates[1];
 
 
-        #endregion
+        //    Assert.True(coord.X.Value() == 0 && coord.Y.Value() == 7.5);
+        //    Assert.True(coord2.X.Value() == 1 && coord2.Y.Value() == 15);
+        //}
+
+
+        //#endregion
     }
 }

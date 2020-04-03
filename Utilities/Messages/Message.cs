@@ -7,12 +7,16 @@ namespace Utilities.Messages
     internal class Message: IMessage
     {
         public string Notice { get; }
+        public string Details { get; }
         public IMessageLevels Level { get; }
 
-        internal Message(IMessageLevels level, string message)
+        internal Message(IMessageLevels level, string notice, string details = "")
         {
             Level = level;
-            Notice = message;
+            Notice = notice;
+            Details = details; 
         }
+
+        public string Concatenate() => $"{Level.ToString().ToUpper()}: {Notice} {Details}";//
     }
 }

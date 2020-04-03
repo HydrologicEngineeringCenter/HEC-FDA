@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml.Linq;
 using Utilities.Serialization;
 using Utilities;
+using System.Linq;
 
 namespace Statistics.Distributions
 {
@@ -42,9 +43,6 @@ namespace Statistics.Distributions
         {
             return validator.IsValid(this, out msgs);
         }
-        internal static string Print(IRange<double> range) => $"Uniform(range: {range.Print(true)})";
-        internal static string RequiredParameterization(bool printNotes = false) => $"The Uniform distribution requires the following parameterization: {Parameterization()}.";
-        internal static string Parameterization() => $"Uniform({Validation.Resources.DoubleRangeRequirements()})"; 
         
         #region IDistribution Functions
         public double PDF(double x) => _Distribution.Density(x);
@@ -66,11 +64,18 @@ namespace Statistics.Distributions
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
         #endregion
 
+        internal static string Print(IRange<double> range) => $"Uniform(range: {range.Print(true)})";
+        internal static string RequiredParameterization(bool printNotes = false) => $"The Uniform distribution requires the following parameterization: {Parameterization()}.";
+        internal static string Parameterization() => $"Uniform({Validation.Resources.DoubleRangeRequirements()})";
+
         public static Uniform Fit(IEnumerable<double> sample)
         {
-            SummaryStatistics stats = new SummaryStatistics(IDataFactory.Factory(sample));
+            IData data = sample.IsNullOrEmpty() ? throw new ArgumentNullException(nameof(sample)) : IDataFactory.Factory(sample);
+            if (!(data.State < IMessageLevels.Error) || data.Elements.Count() < 3) throw new ArgumentException($"The {nameof(sample)} is invalid because it contains an insufficient number of finite, numeric values (3 are required but only {data.Elements.Count()} were provided).");
+            ISampleStatistics stats = ISampleStatisticsFactory.Factory(data);
             return new Uniform(stats.Range.Min, stats.Range.Max, stats.SampleSize);
         }
+
         public XElement WriteToXML()
         {
             XElement ordinateElem = new XElement(SerializationConstants.UNIFORM);

@@ -20,7 +20,7 @@ namespace Functions.Validation
         public IEnumerable<IMessage> ReportErrors(Constant obj)
         {
             List<IMessage> msgs = new List<IMessage>();
-            if (!obj.Value().IsFinite()) msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The specified value: {obj.Value()} is not a finite numerical number. This is likely to cause errors in computation."));
+            if (!(obj.Value().IsFinite())) msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The specified value: {obj.Value()} is not a finite numerical number. This is likely to cause errors in computation."));
             return msgs;
         }
     }

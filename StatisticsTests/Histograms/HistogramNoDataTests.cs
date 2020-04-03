@@ -145,7 +145,7 @@ namespace StatisticsTests.Histograms
         public void Max_GoodDataEmptyHistogram_Returns_SpecifiedMax(double min, double max, double width)
         {
             var testobj = new HistogramNoData(min, max, width);
-            Assert.InRange(testobj.Range.Max, max, max + width);
+            Assert.InRange<double>(testobj.Range.Max, max - double.Epsilon, max + width);
         }
         
         /// <summary>

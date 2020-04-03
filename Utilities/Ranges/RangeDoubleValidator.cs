@@ -18,7 +18,6 @@ namespace Utilities.Ranges
         }
         public IEnumerable<IMessage> ReportErrors(RangeDouble obj)
         {
-            bool requirements = false;
             List<IMessage> msgs = new List<IMessage>();
             if (obj.IsNull()) throw new ArgumentNullException(nameof(obj), "The could not be validated because it is null.");
             if (!ValidationExtensions.IsRange(obj.Min, obj.Max, true)) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The range: {obj.Print(true)} is invalid. It does not represent a logical range."));

@@ -7,6 +7,10 @@ namespace Utilities.Ranges
 {
     internal class RangeDouble : IRange<double>, IValidate<RangeDouble>
     {
+        private readonly double _MinToPrint;
+        private readonly double _MaxToPrint;
+        private readonly bool _InclusiveMin;
+        private readonly bool _InclusiveMax;
         internal readonly bool _FiniteRequirement;
         internal readonly bool _MoreThanSingleValueRequirement;
 
@@ -34,6 +38,10 @@ namespace Utilities.Ranges
         /// <see langword="true"/> if the bounds of the range must span more than a single finite numerical value, <see langword="false"/> otherwise.</param>
         internal RangeDouble(double min, double max, bool inclusiveMin, bool inclusiveMax, bool finiteRequirement, bool maxNotEqualToMinRequirement)
         {
+            _MinToPrint = min;
+            _MaxToPrint = max;
+            _InclusiveMin = inclusiveMin;
+            _InclusiveMax = inclusiveMax;
             _FiniteRequirement = finiteRequirement;
             _MoreThanSingleValueRequirement = maxNotEqualToMinRequirement;
             Min = inclusiveMin ? min : min + double.Epsilon;
@@ -46,9 +54,16 @@ namespace Utilities.Ranges
             return validator.IsValid(this, out msgs);
         }
 
-        public string Print(bool round = false) => round ? $"[{Min.Print()}, {Max.Print()}]" : $"[{Min}, {Max}]";
+        public string Print(bool round = false)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(_InclusiveMin ? "[" : "(");
+            sb.Append(round ? $"{_MinToPrint.Print()} , {_MaxToPrint.Print()}" : $"{_MinToPrint} , {_MaxToPrint}");
+            sb.Append(_InclusiveMax ? "]" : ")");
+            return sb.ToString();
+        }
         public static string Requirements() => $"range: [{double.MinValue.Print()}, {double.MaxValue.Print()}] with range min < range max";
-        public bool Equals<T>(IRange<T> range) => range.GetType() == typeof(RangeDouble) && Print() == range.Print();
+        public bool Equals<T>(IRange<T> range) => range.GetType() == typeof(RangeDouble) && String.Compare(Print(), range.Print()) == 0 ? true : false;
         public bool IsOnRange(double x)
         {
             if (State < IMessageLevels.Error) return x.IsOnRange(Min, Max);

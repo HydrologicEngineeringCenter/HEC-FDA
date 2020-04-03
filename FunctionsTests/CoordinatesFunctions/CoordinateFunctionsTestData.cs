@@ -312,32 +312,32 @@ namespace FunctionsTests.CoordinatesFunctions
             return functions;
         }
 
-        internal List<ICoordinatesFunction> Create_Constant_Distributed_Constant_NonMonotonic_OrdinateFunctions()
-        {
-            List<ICoordinatesFunction> functions = new List<ICoordinatesFunction>();
+        //internal List<ICoordinatesFunction> Create_Constant_Distributed_Constant_NonMonotonic_OrdinateFunctions()
+        //{
+        //    List<ICoordinatesFunction> functions = new List<ICoordinatesFunction>();
 
-            List<double> xs1 = new List<double>() { 0, 1, 2, 3 };
-            List<double> ys1 = new List<double>() { 5, 6, 7, 8 };
+        //    List<double> xs1 = new List<double>() { 0, 1, 2, 3 };
+        //    List<double> ys1 = new List<double>() { 5, 6, 7, 8 };
 
-            List<double> xs2 = new List<double>() { 4, 5, 6, 7 };
-            List<IDistributedOrdinate> ys2 = new List<IDistributedOrdinate>() 
-            { 
-                IDistributedOrdinateFactory.Factory(new Normal(1, 0)),
-                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
-                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
-                IDistributedOrdinateFactory.Factory( new Normal(1, 0)) 
-            };
+        //    List<double> xs2 = new List<double>() { 4, 5, 6, 7 };
+        //    List<IDistributedOrdinate> ys2 = new List<IDistributedOrdinate>() 
+        //    { 
+        //        IDistributedOrdinateFactory.Factory(new Normal(1, 0)),
+        //        IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+        //        IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+        //        IDistributedOrdinateFactory.Factory( new Normal(1, 0)) 
+        //    };
 
-            List<double> xs3 = new List<double>() { 8, 9, 10, 11 };
-            List<double> ys3 = new List<double>() { 13, 14, 15, 16 };
+        //    List<double> xs3 = new List<double>() { 8, 9, 10, 11 };
+        //    List<double> ys3 = new List<double>() { 13, 14, 15, 16 };
 
             //create a constant func
             functions.Add(CreateCoordinatesFunctionConstants(xs1, ys1));
             functions.Add(ICoordinatesFunctionsFactory.Factory(xs2, ys2, InterpolationEnum.None));
             functions.Add(CreateCoordinatesFunctionConstants(xs3, ys3));
 
-            return functions;
-        }
+        //    return functions;
+        //}
 
 
         #endregion

@@ -53,11 +53,11 @@ namespace Utilities.Messages
         }
         public void PostMessages(IEnumerable<IMessage> messages)
         {
-            foreach (IMessage msg in messages) if(msg.Level > IMessageLevels.None && msg.Notice.Length > 0) _OtherMessages.Enqueue(msg);
+            foreach (IMessage msg in messages) if(msg.Level > IMessageLevels.NoErrors && msg.Notice.Length > 0) _OtherMessages.Enqueue(msg);
         }
         public void PostMessage(IMessage message)
         {
-            if (!message.IsNull() && message.Level > IMessageLevels.None && message.Notice.Length > 0) _OtherMessages.Enqueue(message);
+            if (!message.IsNull() && message.Level > IMessageLevels.NoErrors && message.Notice.Length > 0) _OtherMessages.Enqueue(message);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Statistics.Validation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using Utilities;
 
 namespace Statistics
 {
-    internal class Data : IData, IValidate<IData>
+    internal class Data : IData, IValidate<Data>
     {
         #region Properties
         public IRange<double> Range { get; }
@@ -14,19 +15,32 @@ namespace Statistics
         public int SampleSize { get; }
         public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
+        /// <summary>
+        /// Holds invalid data elements (e.g. double.NaN, double.NegativeInfinity, double.PositiveInfinity values)
+        /// </summary>
+        internal IEnumerable<double> InvalidElements { get; }
         #endregion
 
         #region Constructor
-        public Data(IEnumerable<double> data)
-        {         
+        public Data(IEnumerable<double> data, bool finiteNumericElementsRequirement = false)
+        {
+            if (!DataValidator.IsConstructable(data, out string msg)) throw new InvalidConstructorArgumentsException(msg);
             var sets = SplitData(data);
+            InvalidElements = sets.Item2;
             Elements = sets.Item1.OrderBy(i => i);
-            SampleSize = Elements.Count();
-            Range = IRangeFactory.Factory(Elements.First(), Elements.Last());
-            IMessageBoard msgBoard = IMessageBoardFactory.Factory(DataMessages(sets.Item2));
-            State = Validate(new Validation.DataValidator(), out IEnumerable<IMessage> errors);
-            msgBoard.PostMessages(errors);
-            Messages = msgBoard.ReadMessages();
+            if (!Elements.Any())
+            {
+                if (finiteNumericElementsRequirement) throw new InvalidConstructorArgumentsException("The provided data is invalid because it contains 0 finite, numeric values.");
+                SampleSize = 0;
+                Range = IRangeFactory.Factory(double.NaN, double.NaN, true, true, false, false);
+            }
+            else
+            {
+                SampleSize = sets.Item1.Count();
+                Range = IRangeFactory.Factory(Elements.First(), Elements.Last(), true, true, false, false);
+            }
+            State = Validate(new Validation.DataValidator(), out IEnumerable<IMessage> msgs);
+            Messages = msgs;
         }
         #endregion
 
@@ -45,18 +59,8 @@ namespace Statistics
                 else nonfinite.Add(x);
             return new Tuple<IEnumerable<double>, IEnumerable<double>>(finite, nonfinite);
         }
-        /// <summary>
-        /// Generates data message if one is necessary.
-        /// </summary>
-        /// <param name="nonFiniteData"> The non-finite data elements returned from the <see cref="SplitData(IEnumerable{double})"/> method. </param>
-        /// <returns> An <see cref="IMessage"/> or an empty message. </returns>
-        private IMessage DataMessages(IEnumerable<double> nonFiniteData)
-        {
-            if (!nonFiniteData.IsNullOrEmpty()) return IMessageFactory.Factory(IMessageLevels.Message, $"{nonFiniteData.Count()} {double.NegativeInfinity}, {double.PositiveInfinity} or {double.NaN} elements where removed from the provided data elements.");
-            else return IMessageFactory.Factory(IMessageLevels.None, "");
-        }
         #endregion 
-        public IMessageLevels Validate(IValidator<IData> validator, out IEnumerable<IMessage> errors)
+        public IMessageLevels Validate(IValidator<Data> validator, out IEnumerable<IMessage> errors)
         {
             return validator.IsValid(this, out errors);
         }
