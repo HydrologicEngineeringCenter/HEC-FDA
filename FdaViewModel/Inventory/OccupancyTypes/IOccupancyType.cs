@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static FdaViewModel.Saving.PersistenceManagers.OccTypePersistenceManager;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
     public interface IOccupancyType
     {
+        bool IsModified { get; set; }
         int GroupID { get; set; }
         int ID { get; set; }
         string Name { get; set; }
@@ -17,7 +19,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         IDamageCategory DamageCategory { get; set; }
 
         bool CalculateStructureDamage { get; set; }
-        bool CalcualateContentDamage { get; set; }
+        bool CalculateContentDamage { get; set; }
         bool CalculateVehicleDamage { get; set; }
         bool CalculateOtherDamage { get; set; }
 
@@ -33,15 +35,16 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         IOrdinate OtherValueUncertainty { get; set; }
         IOrdinate FoundationHeightUncertainty { get; set; }
         
+         ValueUncertaintyType StructureUncertaintyType { get; set; }
+        ValueUncertaintyType ContentUncertaintyType { get; set; }
+        ValueUncertaintyType VehicleUncertaintyType { get; set; }
+        ValueUncertaintyType OtherUncertaintyType { get; set; }
+        ValueUncertaintyType FoundationHtUncertaintyType { get; set; }
 
 
-        //string StructureDepthDamageName { get; set; }
-        //string ContentDepthDamageName { get; set; }
-        //string VehicleDepthDamageName { get; set; }
-        //string OtherDepthDamageName { get; set; }
 
 
-        IOccupancyType Clone();
+       
         //public SampledOccupancyType GenerateSampledOccupancyType(ref Random Randy);
         //public void LoadFromFDAInformation(StringBuilder occtype, int startdata, int parameter);
         //public string WriteToFDAString();

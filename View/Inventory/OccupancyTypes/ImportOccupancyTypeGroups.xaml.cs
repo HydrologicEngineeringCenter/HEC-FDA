@@ -133,7 +133,6 @@ namespace View.Inventory.OccupancyTypes
             cmb_Path.Text = "";
             vm.SelectedPath = "";
 
-
         }
 
         public void RemoveAndReDrawTheRows(object sender, EventArgs e)

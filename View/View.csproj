@@ -316,6 +316,7 @@
     <Compile Include="Inventory\OccupancyTypes\Controls\ValueUncertaintyControl.xaml.cs">
       <DependentUpon>ValueUncertaintyControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Inventory\OccupancyTypes\Controls\ValueUncertaintyTypeConverter.cs" />
     <Compile Include="Inventory\OccupancyTypes\DeleteMe.cs" />
     <Compile Include="Inventory\OccupancyTypes\ImportOccupancyTypeGroups.xaml.cs">
       <DependentUpon>ImportOccupancyTypeGroups.xaml</DependentUpon>

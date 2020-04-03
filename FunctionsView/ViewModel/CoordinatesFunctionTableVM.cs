@@ -33,8 +33,13 @@ namespace FunctionsView.ViewModel
             Rows = rows;
             foreach (CoordinatesFunctionRowItem row in rows)
             {
-                row.RowIsLeavingTable += Row_RowIsLeavingTable;
+                row.RowIsLeavingTable += Row_RowIsLeavingTable;                    
             }
+        }
+
+        public void Row_UpdateChart(object sender, EventArgs e)
+        {
+            TableWasModified?.Invoke(this, new EventArgs());
         }
 
         public ICoordinatesFunction CreateCoordinatesFunctionFromTable()

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Functions;
+using Functions.Ordinates;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,6 +34,44 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public static IOccupancyType Factory(string name, string selectedDamageCategoryName)
         {
             return new OccupancyType(name, selectedDamageCategoryName);
+        }
+
+        public static IOccupancyType Factory(string name, string damCatName, int groupId)
+        {
+            OccupancyType ot = new OccupancyType();
+            ot.Name = name;
+            //todo: default the occtype is selected values to false?
+            ot.CalculateStructureDamage = false;
+            ot.CalculateContentDamage = false;
+            ot.CalculateVehicleDamage = false;
+            ot.CalculateOtherDamage = false;
+
+            //todo: what about damage category?
+            ot.DamageCategory = new DamageCategory.DamageCategory(damCatName);
+            
+            //depth damage curves
+            List<double> xs = new List<double>() { 0 };
+            List<double> ys = new List<double>() { 0 };
+            ot.StructureDepthDamageFunction = ICoordinatesFunctionsFactory.Factory(xs, ys);
+            ot.ContentDepthDamageFunction = ICoordinatesFunctionsFactory.Factory(xs, ys);
+            ot.VehicleDepthDamageFunction = ICoordinatesFunctionsFactory.Factory(xs, ys);
+            ot.OtherDepthDamageFunction = ICoordinatesFunctionsFactory.Factory(xs, ys);
+
+            //value uncertainties
+            ot.StructureValueUncertainty = new Constant(0);
+            ot.ContentValueUncertainty = new Constant(0);
+            ot.VehicleValueUncertainty = new Constant(0);
+            ot.OtherValueUncertainty = new Constant(0);
+            ot.FoundationHeightUncertainty = new Constant(0);
+
+            //group id
+            ot.GroupID = groupId;
+
+            //use the group id to get the number of occtypes and give this one 
+            //an occtype id
+            ot.ID = Saving.PersistenceFactory.GetOccTypeManager().GetIdForNewOccType(groupId);
+
+            return ot;
         }
     }
 }

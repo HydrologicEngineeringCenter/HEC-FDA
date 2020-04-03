@@ -1,5 +1,6 @@
 ﻿using FdaViewModel.Inventory.DamageCategory;
 using Functions;
+using FunctionsView.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
     /// <summary>
     /// This is for use in the occtype editor. 
     /// </summary>
-    interface IOccupancyTypeEditable
+    public interface IOccupancyTypeEditable
     {
         IOccupancyType OccType { get; set; }
 
@@ -21,5 +22,10 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         ValueUncertaintyVM OtherValueUncertainty { get; set; }
         ValueUncertaintyVM FoundationHeightUncertainty { get; set; }
 
+        CoordinatesFunctionEditorVM StructureEditorVM { get; set; }
+        CoordinatesFunctionEditorVM ContentEditorVM { get; set; }
+        CoordinatesFunctionEditorVM VehicleEditorVM { get; set; }
+        CoordinatesFunctionEditorVM OtherEditorVM { get; set; }
+        bool IsModified { get; }
     }
 }

@@ -380,6 +380,10 @@ namespace FdaViewModel.Saving
         /// <param name="values">The values that you want in the columns listed in "columns"</param>
         public void UpdateTableRow(string tableName, int primaryKey, string primaryKeyColName, string[] columns, object[] values)
         {
+            if (!Storage.Connection.Instance.IsOpen)
+            {
+                Storage.Connection.Instance.Open();
+            }
             //columns and values need to be corespond to each other, you don't have to update columns that don't need it
             StringBuilder sb = new StringBuilder("update ").Append(tableName).Append(" set ");
             for(int i = 0;i<columns.Length;i++)
@@ -396,11 +400,85 @@ namespace FdaViewModel.Saving
 
         }
 
+        /// <summary>
+        /// This sends a sql "update" command to the database.
+        /// </summary>
+        /// <param name="tableName">The name of the sqlite table</param>
+        /// <param name="primaryKey">The id of the element. The column that the id is in must be "ID"</param>
+        /// <param name="columns">The columns that you want to update</param>
+        /// <param name="values">The values that you want in the columns listed in "columns"</param>
+        public void UpdateTableRowWithCompoundKey(string tableName, int[] primaryKeys, string[] primaryKeyColNames, string[] columns, object[] values)
+        {
+            //this sql query looks like this:
+            //update occupancy_types set Name = 'codyistesting' where GroupID = 1 and OcctypeID = 1
+            if (!Storage.Connection.Instance.IsOpen)
+            {
+                Storage.Connection.Instance.Open();
+            }
+            //columns and values need to be corespond to each other, you don't have to update columns that don't need it
+            StringBuilder sb = new StringBuilder("update ").Append(tableName).Append(" set ");
+            for (int i = 0; i < columns.Length; i++)
+            {
+                sb.Append(columns[i]).Append(" = '").Append(values[i]).Append("' ").Append(",");
+            }
+            //get rid of last comma
+            sb.Remove(sb.Length - 1, 1);
+            sb.Append(" where ");
+            for (int i = 0; i < primaryKeys.Length; i++)
+            {
+                sb.Append(primaryKeyColNames[i]).Append(" = ").Append(primaryKeys[i]).Append(" and ");
+            }
+            //remove the last "and"
+            sb.Remove(sb.Length - 4, 4);
+
+            SQLiteCommand command = Storage.Connection.Instance.Reader.DbConnection.CreateCommand();
+            command.CommandText = sb.ToString();
+            command.ExecuteNonQuery();
+
+        }
+
+        public void DeleteRowWithCompoundKey(string tableName, int[] primaryKeys, string[] primaryKeyColNames)
+        {
+            //this sql query looks like this:
+            //delete from occupancy_types where GroupID = 1 and OcctypeID = 27
+            if (!Storage.Connection.Instance.IsOpen)
+            {
+                Storage.Connection.Instance.Open();
+            }
+            StringBuilder sb = new StringBuilder("delete from ").Append(tableName).Append(" where ");
+            for (int i = 0; i < primaryKeys.Length; i++)
+            {
+                sb.Append(primaryKeyColNames[i]).Append(" = ").Append(primaryKeys[i]).Append(" and ");
+            }
+            //remove the last "and"
+            sb.Remove(sb.Length - 4, 4);
+
+            SQLiteCommand command = Storage.Connection.Instance.Reader.DbConnection.CreateCommand();
+            command.CommandText = sb.ToString();
+            command.ExecuteNonQuery();
+
+        }
+
+        public void DeleteRowWithKey(string tableName, int key, string keyColName)
+        {
+            //this sql query looks like this:
+            //delete from occupancy_types where GroupID = 1
+            if (!Storage.Connection.Instance.IsOpen)
+            {
+                Storage.Connection.Instance.Open();
+            }
+            StringBuilder sb = new StringBuilder("delete from ").Append(tableName).Append(" where ").Append(keyColName).Append(" = ").Append(key);
+            SQLiteCommand command = Storage.Connection.Instance.Reader.DbConnection.CreateCommand();
+            command.CommandText = sb.ToString();
+            command.ExecuteNonQuery();
+
+        }
+
         //public void UpdateChangeTableRow(string tableName, int elementId, string elementIdColName, int oldStateValue, int newStateValue, string stateValueColName)
         //{
         //    //columns and values need to be corespond to each other, you don't have to update columns that don't need it
         //    StringBuilder sb = new StringBuilder("update ").Append(tableName).Append(" set ");
-            
+
         //        sb.Append(stateValueColName).Append(" = '").Append(newStateValue).Append("' ")
         //        .Append(" where ").Append(elementIdColName).Append(" = ").Append(elementId).Append(" AND ")
         //        .Append(stateValueColName).Append(" = ").Append(oldStateValue);
@@ -785,6 +863,13 @@ namespace FdaViewModel.Saving
         #endregion
 
             internal virtual string ChangeTableConstant { get { return ""; } }
+        /// <summary>
+        /// Gets the ID for the element with the name provided. Note that the table column name
+        /// must be "Name" for this to work.
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <param name="elementName"></param>
+        /// <returns></returns>
         public int GetElementId(string tableName, string elementName)
         {
             int retval = -1;

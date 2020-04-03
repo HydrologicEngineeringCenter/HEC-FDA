@@ -21,6 +21,17 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         private NormalControlVM _NormalControlVM;
         private TriangularControlVM _TriangularControlVM;
         private UniformControlVM _UniformControlVM;
+        private ValueUncertaintyType _valueUncertaintyType;
+
+        public ValueUncertaintyType ValueUncertaintyType
+        {
+            get { return _valueUncertaintyType; }
+            set 
+            { 
+                _valueUncertaintyType = value; 
+                NotifyPropertyChanged();
+            }
+        }
 
         public IValueUncertainty CurrentVM
         {
@@ -90,8 +101,9 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         //}
             
 
-        public ValueUncertaintyVM(IOrdinate valueUncertaintyOrdinate)
+        public ValueUncertaintyVM(IOrdinate valueUncertaintyOrdinate, ValueUncertaintyType valueUncertaintyType)
         {
+            ValueUncertaintyType = ValueUncertaintyType;
             //create the options for the combobox
             UncertaintyTypes = new ObservableCollection<IOrdinateEnum>()
             {
@@ -102,12 +114,13 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             };
 
            
-            ValueUncertainty = valueUncertaintyOrdinate;
 
             //create the vm's for the individual distribution types
 
             //set what values you can, then set some defaults for the other dist types?
             CreateDistributionControls(valueUncertaintyOrdinate);
+
+            ValueUncertainty = valueUncertaintyOrdinate;
 
             //set the current vm to be of the selected tyep
             SelectedDistributionTypeChanged();

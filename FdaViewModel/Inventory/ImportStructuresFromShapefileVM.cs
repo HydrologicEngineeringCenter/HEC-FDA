@@ -651,16 +651,16 @@ namespace FdaViewModel.Inventory
                 newListOfOccType.Add(ot);
             }
 
-            Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
+            //Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
 
-            foreach (IOccupancyType ot in newListOfOccType)
-            {
-                bool[] tabsCheckedArray = new bool[] { true, true, true, false };
-                _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
+            //foreach (IOccupancyType ot in newListOfOccType)
+            //{
+            //    bool[] tabsCheckedArray = new bool[] { true, true, true, false };
+            //    _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
 
-            }
+            //}
 
-            OccupancyTypesElement newOccTypeGroup = new OccupancyTypesElement(groupName, newListOfOccType, _OcctypeTabsSelectedDictionary);
+            OccupancyTypesElement newOccTypeGroup = new OccupancyTypesElement(groupName, newListOfOccType);
             //todo: cody commented out on 2/20/2020 - put back in when occtypes are working
             //Saving.PersistenceFactory.GetOccTypeManager().SaveNew(newOccTypeGroup);
 

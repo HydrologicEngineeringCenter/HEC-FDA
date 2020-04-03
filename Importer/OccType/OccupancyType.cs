@@ -667,6 +667,17 @@ namespace Importer
             ot.OtherValueUncertainty = uncertainties[(int)OccTypeStrucComponent.OTHER];
             ot.FoundationHeightUncertainty = uncertainties[(int)OccTypeStrucComponent.FFLOOR];
 
+            //there is no concept of a value uncertainty type in old FDA, so default to percent of mean
+            ot.StructureUncertaintyType = ValueUncertaintyType.PercentOfMean;
+            ot.ContentUncertaintyType = ValueUncertaintyType.PercentOfMean;
+            ot.VehicleUncertaintyType = ValueUncertaintyType.PercentOfMean;
+            ot.OtherUncertaintyType = ValueUncertaintyType.PercentOfMean;
+
+            ot.CalculateStructureDamage = true;
+            ot.CalculateContentDamage = true;
+            ot.CalculateVehicleDamage = true;
+            ot.CalculateOtherDamage = false;
+
             return ot;
         }
 

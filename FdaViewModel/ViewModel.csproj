@@ -241,6 +241,7 @@
     <Compile Include="Inventory\OccupancyTypes\OccupancyTypesOwnerElement.cs" />
     <Compile Include="Inventory\OccupancyTypes\TriangularControlVM.cs" />
     <Compile Include="Inventory\OccupancyTypes\UniformControlVM.cs" />
+    <Compile Include="Inventory\OccupancyTypes\ValueUncertaintyType.cs" />
     <Compile Include="Inventory\OccupancyTypes\ValueUncertaintyVM.cs" />
     <Compile Include="Inventory\StructureInventoryBaseElement.cs" />
     <Compile Include="Inventory\StructureInventoryOwnerElement.cs" />

@@ -62,29 +62,29 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         }
         #endregion
         #region Voids
-        public void AddGroupsToOwnedElement()
-        {
-            foreach(OccupancyTypesGroupRowItemVM row in ListOfRowVMs)
-            {
-                //add the group
+        //public void AddGroupsToOwnedElement()
+        //{
+        //    foreach(OccupancyTypesGroupRowItemVM row in ListOfRowVMs)
+        //    {
+        //        //add the group
 
 
-                //OccupancyTypesElement ote = new OccupancyTypesElement(row.Name, row.ListOfOccTypes);
-                //OccupancyTypesOwnedElement.ListOfOccupancyTypesGroups.Add(ote);
+        //        //OccupancyTypesElement ote = new OccupancyTypesElement(row.Name, row.ListOfOccTypes);
+        //        //OccupancyTypesOwnedElement.ListOfOccupancyTypesGroups.Add(ote);
 
-                //add the depth damage curves
-                //foreach (DepthDamage.DepthDamageCurve ddc in row.ListOfDepthDamageCurves)
-                //{
-                //    string ddCurveName = ddc.Name + " from " + row.Name;
-                //    if (!DepthDamage.DepthDamageCurveData.CurveDictionary.ContainsKey(ddCurveName))
-                //    {
-                //        DepthDamage.DepthDamageCurveData.CurveDictionary.Add(ddCurveName, ddc);
+        //        //add the depth damage curves
+        //        //foreach (DepthDamage.DepthDamageCurve ddc in row.ListOfDepthDamageCurves)
+        //        //{
+        //        //    string ddCurveName = ddc.Name + " from " + row.Name;
+        //        //    if (!DepthDamage.DepthDamageCurveData.CurveDictionary.ContainsKey(ddCurveName))
+        //        //    {
+        //        //        DepthDamage.DepthDamageCurveData.CurveDictionary.Add(ddCurveName, ddc);
 
-                //    }
-                //}
+        //        //    }
+        //        //}
 
-            }
-        }
+        //    }
+        //}
         #endregion
         #region Functions
         private bool IsValid(ref string errorMessage)
@@ -301,21 +301,21 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             foreach (OccupancyTypesGroupRowItemVM row in ListOfRowVMs)
             {
                 //create a dummy tabs checked dictionary
-                Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
+                //Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
 
-                foreach (IOccupancyType ot in row.ListOfOccTypes)
-                {
-                    bool[] tabsCheckedArray = new bool[] { true, true, true, false };
-                    //if(_OcctypeTabsSelectedDictionary.ContainsKey(ot.Name))
-                    //{
-                    //    System.Windows.MessageBox.Show("Multiple occupancy types found with the same name: " + ot.Name, "Error", System.Windows.MessageBoxButton.OK);
-                    //    return;
-                    //}
-                    _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
+                //foreach (IOccupancyType ot in row.ListOfOccTypes)
+                //{
+                //    bool[] tabsCheckedArray = new bool[] { true, true, true, false };
+                //    //if(_OcctypeTabsSelectedDictionary.ContainsKey(ot.Name))
+                //    //{
+                //    //    System.Windows.MessageBox.Show("Multiple occupancy types found with the same name: " + ot.Name, "Error", System.Windows.MessageBoxButton.OK);
+                //    //    return;
+                //    //}
+                //    _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
 
-                }
+                //}
 
-                OccupancyTypesElement elem = new OccupancyTypesElement(row.Name, row.ListOfOccTypes, _OcctypeTabsSelectedDictionary);
+                OccupancyTypesElement elem = new OccupancyTypesElement( row.Name, row.ListOfOccTypes);
                 //OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(elem);
                 elementsToSave.Add(elem);
             }

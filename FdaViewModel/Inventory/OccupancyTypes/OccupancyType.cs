@@ -6,25 +6,121 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using FdaViewModel.Inventory.DamageCategory;
 using Functions;
+using static FdaViewModel.Saving.PersistenceManagers.OccTypePersistenceManager;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
-    internal class OccupancyType : IOccupancyType
+    internal class OccupancyType :  IOccupancyType
     {
-        
-        public string Name { get; set; }
 
-        public string Description { get; set; }
+        private string _Name;
+        private string _Description;
+        //todo: what about damage category changing name?
+        private bool _CalculateStructureDamage;
+        private bool _CalculateContentDamage;
+        private bool _CalculateVehicleDamage;
+        private bool _CalculateOtherDamage;
+
+        private bool _IsModified;
+
+        /// <summary>
+        /// This is used by the occtype editor to determine if this occtype
+        /// was edited. This value should be set to false every time the editor
+        /// is opened.
+        /// </summary>
+        public bool IsModified 
+        {
+            get
+            {
+                return _IsModified;
+            }
+            set
+            {
+                if(value = true && _Name.Last() != '*')
+                {
+                    _Name = _Name + '*';
+                }
+                else
+                {
+
+                }
+                _IsModified = value;
+            }
+        }
+
+        public string Name
+        {
+            get 
+            {
+                return _Name;
+                //if( IsModified)
+                //{
+                //    string retval = addStarIfDoesntExist();
+                //    return retval;
+                //}
+                //else
+                //{
+                //    return removeStarIfExists(); 
+                //}
+            }
+            set { _Name = value; IsModified = true; }
+        }
+
+        private String addStarIfDoesntExist()
+        {
+            if(_Name.Last() != '*')
+            {
+                String newName = _Name + '*'; // _Name.Insert(_Name.Length, '*'.ToString());
+                return newName;
+            }
+            else
+            {
+                return _Name;
+            }
+        }
+        private String removeStarIfExists()
+        {
+            if(_Name.Last().Equals('*'))
+            {
+                return _Name.Remove(_Name.Length - 1, 1);
+            }
+            else
+            {
+                return _Name;
+            }
+        }
+
+        public string Description
+        {
+            get { return _Description; }
+            set { _Description = value; IsModified = true; }
+        }
 
         public IDamageCategory DamageCategory { get; set; }
 
-        public bool CalculateStructureDamage { get; set; }
+        public bool CalculateStructureDamage
+        {
+            get { return _CalculateStructureDamage; }
+            set { _CalculateStructureDamage = value; IsModified = true; }
+        }
 
-        public bool CalcualateContentDamage { get; set; }
+        public bool CalculateContentDamage
+        {
+            get { return _CalculateContentDamage; }
+            set { _CalculateContentDamage = value; IsModified = true; }
+        }
 
-        public bool CalculateVehicleDamage { get; set; }
+        public bool CalculateVehicleDamage
+        {
+            get { return _CalculateVehicleDamage; }
+            set { _CalculateVehicleDamage = value; IsModified = true; }
+        }
 
-        public bool CalculateOtherDamage { get; set; }
+        public bool CalculateOtherDamage
+        {
+            get { return _CalculateOtherDamage; }
+            set { _CalculateOtherDamage = value; IsModified = true; }
+        }
 
         public ICoordinatesFunction StructureDepthDamageFunction 
         { 
@@ -39,6 +135,13 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public IOrdinate VehicleValueUncertainty { get; set; }
         public IOrdinate OtherValueUncertainty { get; set; }
         public IOrdinate FoundationHeightUncertainty { get; set; }
+
+        public ValueUncertaintyType StructureUncertaintyType { get; set; }
+        public  ValueUncertaintyType ContentUncertaintyType { get; set; }
+        public ValueUncertaintyType VehicleUncertaintyType { get; set; }
+        public ValueUncertaintyType OtherUncertaintyType { get; set; }
+        public ValueUncertaintyType FoundationHtUncertaintyType { get; set; }
+
 
         //todo: are these name important or used anywhere?
         //public string StructureDepthDamageName { get; set; }
@@ -57,8 +160,8 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         }
 
-        public OccupancyType(XElement Xel)
-        {
+        //public OccupancyType(XElement Xel)
+        //{
             //Name = Xel.Attribute("Name").Value;
             //if (Xel.Elements("Description").Any())
             //    Description = Xel.Element("Description").Value;
@@ -120,12 +223,44 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             //    _VehicleDDPercent = new MonotonicCurveUSingle(DDCurve.Element("MonotonicCurveUSingle"));
             //else
             //    _VehicleDDPercent = new MonotonicCurveUSingle();
-        }
+        //}
 
-        public IOccupancyType Clone()
-        {
-            throw new NotImplementedException();
-        }
+        //public IOccupancyType Clone()
+        //{
+        //    //todo: you need to actually craete a "new" for each sub element here.
+        //    OccupancyType ot = new OccupancyType();
+        //    ot.Name = Name;
+        //    ot.Description = Description;
+        //    ot.DamageCategory = DamageCategory;
+
+        //    ot.CalculateStructureDamage = CalculateStructureDamage;
+        //    ot.CalculateContentDamage = CalculateContentDamage;
+        //    ot.CalculateVehicleDamage = CalculateVehicleDamage;
+        //    ot.CalculateOtherDamage = CalculateOtherDamage;
+
+        //    ot.StructureDepthDamageFunction = StructureDepthDamageFunction;
+        //    ot.ContentDepthDamageFunction = ContentDepthDamageFunction;
+        //    ot.VehicleDepthDamageFunction = VehicleDepthDamageFunction;
+        //    ot.OtherDepthDamageFunction = OtherDepthDamageFunction;
+
+        //    ot.StructureValueUncertainty = StructureValueUncertainty;
+        //    ot.ContentValueUncertainty = ContentValueUncertainty;
+        //    ot.VehicleValueUncertainty = VehicleValueUncertainty;
+        //    ot.OtherValueUncertainty = OtherValueUncertainty;
+        //    ot.FoundationHeightUncertainty = FoundationHeightUncertainty;
+
+        //    ot.StructureUncertaintyType = StructureUncertaintyType;
+        //    ot.ContentUncertaintyType = ContentUncertaintyType;
+        //    ot.VehicleUncertaintyType = VehicleUncertaintyType;
+        //    ot.OtherUncertaintyType = OtherUncertaintyType;
+
+
+
+        //    ot.GroupID = GroupID;
+        //    ot.ID = ID;
+
+        //    return ot;
+        //}
 
         //    public void LoadFromFDAInformation(StringBuilder occtype, int startdata, int parameter)
         //    {

@@ -9,7 +9,7 @@
              xmlns:OpenGL="clr-namespace:OpenGLMapping;assembly=OpenGLMapping"
              xmlns:VMUtils="clr-namespace:FdaViewModel.Utilities;assembly=FdaViewModel"
              xmlns:study="clr-namespace:FdaViewModel.Study;assembly=FdaViewModel"
-           
+
            
 
              Loaded="UserControl_Loaded"             

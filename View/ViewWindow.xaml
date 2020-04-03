@@ -13,11 +13,9 @@
         Loaded="Window_Loaded"
         ContentRendered="Window_ContentRendered"
         StateChanged="Window_StateChanged"
-          MinHeight="500"
-        MinWidth="800"
-        Width="1000"
-        Height="800"
         WindowStyle="None"
+        MinHeight="500"
+        MinWidth="800"
         ResizeMode="CanResize"
         PreviewMouseUp="Window_PreviewMouseUp"
         Title="ViewWindow" >
@@ -196,7 +194,7 @@
             <!--<Button Grid.Row="0" Name="btn_PopWindowInToTabs" Background="Transparent" ToolTip="Move To Tabs" BorderThickness="0" Margin="5,0,70,0" HorizontalAlignment="Right"  Click="btn_PopWindowInToTabs_Click" >
                 <Image Width="15" Height="14" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopIn.png"/>
             </Button>-->
-            <ContentControl Grid.Row="1" Name="masterControl" Content="{Binding CurrentView}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <ContentControl Grid.Row="1" Name="masterControl" Content="{Binding CurrentView}"  HorizontalAlignment="Stretch"  VerticalAlignment="Stretch"/>
             <!--<GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" />-->
             <!--<utils:MessageExpanderControl Grid.Row="3"/>-->
             <!--<Expander Name="MessagesExpander" Header="Errors" Grid.Row="3" Collapsed="Expander_Collapsed" Expanded="MessagesExpander_Expanded" Margin="5" MaxHeight="200">

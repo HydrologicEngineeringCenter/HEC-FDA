@@ -52,6 +52,7 @@
                 <!--<ColumnDefinition Width="5" />-->
                 <ColumnDefinition x:Name="plotColumn" Width="*" MinWidth="200"/>
             </Grid.ColumnDefinitions>
+            <!--If you are looking for where the plot is, it is added in the code behind. -->
             <functions:CoordinatesFunctionEditor  Grid.Column="0" Margin="5" EditorVM="{Binding EditorVM}" />
             <!--<GridSplitter Grid.Column="1" Width="3"/>-->
         </Grid>

@@ -61,54 +61,51 @@ namespace View.Inventory.OccupancyTypes
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             if (vm.SelectedOccTypeGroup == null) { return; }
 
-            ObservableCollection<IOccupancyType> collectionOfOccTypes = new ObservableCollection<IOccupancyType>();
-            foreach (IOccupancyType ot in vm.SelectedOccTypeGroup.ListOfOccupancyTypes)
+            ObservableCollection<IOccupancyTypeEditable> collectionOfOccTypes = new ObservableCollection<IOccupancyTypeEditable>();
+            foreach (IOccupancyTypeEditable ot in vm.SelectedOccTypeGroup.Occtypes)
             {
                 collectionOfOccTypes.Add(ot);
             }
             ListCollectionView lcv = new ListCollectionView(collectionOfOccTypes);
 
-            lcv.GroupDescriptions.Add(new PropertyGroupDescription("DamageCategory.Name"));        
+            lcv.GroupDescriptions.Add(new PropertyGroupDescription("OccType.DamageCategory.Name"));        
 
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("DamageCategory.Name", System.ComponentModel.ListSortDirection.Ascending));
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(IOccupancyType.Name), System.ComponentModel.ListSortDirection.Ascending));
+            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("OccType.DamageCategory.Name", System.ComponentModel.ListSortDirection.Ascending));
+            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("OccType.Name", System.ComponentModel.ListSortDirection.Ascending));
 
             OccTypeListView.ItemsSource = lcv;
         }
 
         private void cmb_Group_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+            MessageBoxResult d;
+            d = MessageBox.Show("Welcome to C# Corner", "Learn C#",MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (d == MessageBoxResult.No)
+            {
+                return;
+            }
             //load the list view
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
-            if(vm.SelectedOccTypeGroup == null) { return; }
+            if (vm.SelectedOccTypeGroup == null) { return; }
 
-            ObservableCollection<IOccupancyType> collectionOfOccTypes = new ObservableCollection<IOccupancyType>();
-            foreach (IOccupancyType ot in vm.SelectedOccTypeGroup.ListOfOccupancyTypes)
+            ObservableCollection<IOccupancyTypeEditable> collectionOfOccTypes = new ObservableCollection<IOccupancyTypeEditable>();
+            foreach (IOccupancyTypeEditable ot in vm.SelectedOccTypeGroup.Occtypes)
             {
                 collectionOfOccTypes.Add(ot);
             }
             ListCollectionView lcv = new ListCollectionView(collectionOfOccTypes);
 
-            lcv.GroupDescriptions.Add(new PropertyGroupDescription(nameof(IOccupancyType.DamageCategory.Name)));
+            lcv.GroupDescriptions.Add(new PropertyGroupDescription("OccType.DamageCategory.Name"));
 
-           // var groupedOcctypes = collectionOfOccTypes.GroupBy(ot => ot.DamageCategory.Name);
-            //foreach(var group in groupedOcctypes)
-            //{
-            //    string name = group.Key;
-            //}
-            
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(IOccupancyType.DamageCategory.Name), System.ComponentModel.ListSortDirection.Ascending));
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(IOccupancyType.Name), System.ComponentModel.ListSortDirection.Ascending));
-             
+            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("OccType.DamageCategory.Name", System.ComponentModel.ListSortDirection.Ascending));
+            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("OccType.Name", System.ComponentModel.ListSortDirection.Ascending));
+
             OccTypeListView.ItemsSource = lcv;
             if (OccTypeListView.Items.Count == 0)
             {
                 return;
             }
             OccTypeListView.SelectedItem = OccTypeListView.Items[0];
-            vm.LoadTheIsTabsCheckedDictionary();
-
         }
 
         private void ClearAllControls()
@@ -160,7 +157,13 @@ namespace View.Inventory.OccupancyTypes
 
         private void OccTypeListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //I really don't like this but i was really struggling with how to update the chart
+            //when the user switches occtypes.
 
+            OccTypeEditorControl.AddChart();
+
+            //vm.
+            //OccTypeEditorControl.Chart
 
             ////assign the continuous distributions for the previously selected "percentofmeanuncertaintyWarning" control
             //if (e.RemovedItems.Count > 0)
@@ -187,12 +190,12 @@ namespace View.Inventory.OccupancyTypes
             
 
 
-            ListView lv = (ListView)sender;
-            if(lv.Items.Count == 0) { return; }
-            if(lv.SelectedItem == null) { lv.SelectedItem = lv.Items[0]; }
-            IOccupancyType ot = lv.SelectedItem as IOccupancyType;
+            //ListView lv = (ListView)sender;
+            //if(lv.Items.Count == 0) { return; }
+            //if(lv.SelectedItem == null) { lv.SelectedItem = lv.Items[0]; }
+            //IOccupancyTypeEditable ot = lv.SelectedItem as IOccupancyTypeEditable;
 
-            OccTypeEditorControl.OccTypeDescriptionBox.Text = ot.Description;
+            //OccTypeEditorControl.OccTypeDescriptionBox.Text = ot.Description;
 
             //todo: cody commented out on 2/20/2020
             ////set the cont dist values for the selected occtype

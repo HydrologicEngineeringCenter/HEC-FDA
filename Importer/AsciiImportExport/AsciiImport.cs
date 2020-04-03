@@ -216,15 +216,13 @@ namespace Importer
             GlobalVariables.mp_fdaStudy.GetAggDamgFuncList().Print();
         }
 
-        private void SaveOccupancyTypes(List<IOccupancyType> occtypes)
-        {
-            string occtypeGroupName = "";
-            Dictionary<string, bool[]> selectedTabsDictionary = new Dictionary<string, bool[]>();
-
-            OccTypePersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetOccTypeManager();
-            OccupancyTypesElement elem = new OccupancyTypesElement(occtypeGroupName, occtypes, selectedTabsDictionary);
-            manager.SaveNew(elem);
-        }
+        //private void SaveOccupancyTypes(List<IOccupancyType> occtypes)
+        //{
+        //    string occtypeGroupName = "";
+        //    OccTypePersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetOccTypeManager();
+        //    OccupancyTypesElement elem = new OccupancyTypesElement(occtypeGroupName, occtypes);
+        //    manager.SaveNew(elem);
+        //}
 
         #region findFields
         void FindFields()

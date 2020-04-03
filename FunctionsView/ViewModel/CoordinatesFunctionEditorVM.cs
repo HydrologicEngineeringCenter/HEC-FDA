@@ -94,7 +94,11 @@ namespace FunctionsView.ViewModel
             try
             {
                 CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(CreateFunctionFromTables());
-                CoordinatesChartViewModel.LineData.Set(chartHelper.CreateLineData());
+                List<SciLineData> lineData = chartHelper.CreateLineData();
+                CoordinatesChartViewModel.LineData.Set(lineData);
+                //UpdateView?.Invoke(this, new EventArgs());
+                
+                
                 //ICoordinatesFunction func = CreateFunctionFromTables();
                 //if(func.IsLinkedFunction)
                 //{

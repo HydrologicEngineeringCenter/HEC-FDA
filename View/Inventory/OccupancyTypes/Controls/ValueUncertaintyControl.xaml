@@ -7,6 +7,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
+        <Grid.Resources>
+            <local:ValueUncertaintyTypeConverter x:Key="enumBooleanConverter" />
+        </Grid.Resources>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
@@ -22,9 +25,9 @@
         <!--</Grid>-->
 
         <StackPanel Orientation="Vertical" Grid.Column="0" VerticalAlignment="Top" Margin="5">
-            <RadioButton x:Name="rad_PercentOfMean" Content="Percent of Mean:"/>
-            <RadioButton x:Name="rad_DeviationFromMean" Content="Deviation from Mean:"/>
-            <RadioButton x:Name="rad_ActualDistribution" Content="Actual Distribution:"/>
+            <RadioButton x:Name="rad_PercentOfMean" Content="Percent of Mean:" IsChecked="{Binding Path=ValueUncertaintyType, Mode=TwoWay, Converter={StaticResource enumBooleanConverter}, ConverterParameter=PercentOfMean}"/>
+            <RadioButton x:Name="rad_DeviationFromMean" Content="Deviation from Mean:" IsChecked="{Binding Path=ValueUncertaintyType, Mode=TwoWay, Converter={StaticResource enumBooleanConverter}, ConverterParameter=DeviationFromMean}" />
+            <RadioButton x:Name="rad_ActualDistribution" Content="Actual Distribution:" IsChecked="{Binding Path=ValueUncertaintyType, Mode=TwoWay, Converter={StaticResource enumBooleanConverter}, ConverterParameter=Actual}"/>
         </StackPanel>
 
         <StackPanel Orientation="Vertical" Grid.Column="1" VerticalAlignment="Top" Margin="5,0,5,0">

@@ -737,6 +737,10 @@ namespace Functions.CoordinatesFunctions
             double ty = 0.5 * Coordinates[p0].Y.Value() * q1 + Coordinates[p1].Y.Value() * q2 + Coordinates[p2].Y.Value() * q3 + Coordinates[p3].Y.Value() * q4;
             return ICoordinateFactory.Factory(tx, ty);
         }
+
+      
         #endregion
+
+
     }
 }

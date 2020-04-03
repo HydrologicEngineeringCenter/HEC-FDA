@@ -32,7 +32,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         /// </summary>
         public bool IsSelected { get; set; }
         //todo: maybe this should be an occtype id and not a string?
-        public Dictionary<string,bool[]> OccTypesSelectedTabsDictionary { get; set; }
+        //public Dictionary<string,bool[]> OccTypesSelectedTabsDictionary { get; set; }
             //public string OccTypesGroupName { get; set; }
         public List<IOccupancyType> ListOfOccupancyTypes { get; set; }
 
@@ -44,10 +44,10 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         {
 
         }
-        public OccupancyTypesElement(string occTypesGroupName, List<IOccupancyType> listOfOccTypes, Dictionary<string,bool[]> occtypesSelectedTabs):base()
+        public OccupancyTypesElement( string occTypesGroupName, List<IOccupancyType> listOfOccTypes):base()
         {
             Name = occTypesGroupName;
-            OccTypesSelectedTabsDictionary = occtypesSelectedTabs;
+            //OccTypesSelectedTabsDictionary = occtypesSelectedTabs;
             //OccTypesGroupName = occTypesGroupName;
             ListOfOccupancyTypes = listOfOccTypes;
         }
@@ -372,17 +372,19 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
-            OccupancyTypesElement elem = (OccupancyTypesElement)elementToClone;
+            //i don't think i need this method but it is required to have it here.
+            throw new NotImplementedException();
+        //    OccupancyTypesElement elem = (OccupancyTypesElement)elementToClone;
 
-            List<IOccupancyType> occTypes = new List<IOccupancyType>(); 
-            foreach(IOccupancyType ot in elem.ListOfOccupancyTypes)
-            {
-                occTypes.Add(ot);
-            }
+        //    List<IOccupancyType> occTypes = new List<IOccupancyType>();
+        //    foreach (IOccupancyType ot in elem.ListOfOccupancyTypes)
+        //    {
+        //        occTypes.Add(ot);
+        //    }
 
-            Dictionary<string, bool[]> dictionaryCopy = new Dictionary<string, bool[]>(elem.OccTypesSelectedTabsDictionary);
+        //    Dictionary<string, bool[]> dictionaryCopy = new Dictionary<string, bool[]>(elem.OccTypesSelectedTabsDictionary);
 
-            return new OccupancyTypesElement(elem.Name, occTypes, dictionaryCopy);
+        //    return new OccupancyTypesElement(elem.Name, occTypes, dictionaryCopy);
         }
 
     }

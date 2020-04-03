@@ -6,8 +6,17 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
-    interface IOccupancyTypeGroupEditable
+    public interface IOccupancyTypeGroupEditable
     {
+        string Name { get; set; }
+        /// <summary>
+        /// Used to find the correct child element in the study cache in order to 
+        /// remove it or update it when saving from the occtype editor.
+        /// </summary>
+        string OriginalName { get; set; }
         List<IOccupancyTypeEditable> Occtypes { get; set; }
+
+        bool IsModified { get; set; }
+         int ID { get; }
     }
 }
