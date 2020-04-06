@@ -20,7 +20,7 @@ namespace Utilities.Ranges
         {
             List<IMessage> msgs = new List<IMessage>();
             if (obj.IsNull()) throw new ArgumentNullException(nameof(obj), "The could not be validated because it is null.");
-            if (!ValidationExtensions.IsRange(obj.Min, obj.Max, true)) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The range: {obj.Print(true)} is invalid. It does not represent a logical range."));
+            if (!ValidationExtensions.IsRange(obj.Min, obj.Max, obj._FiniteRequirement, obj._MoreThanSingleValueRequirement)) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The range: {obj.Print(true)} is invalid. It does not represent a logical range."));
             if (!obj.Min.IsFinite() || !obj.Max.IsFinite())
             {
                 if (obj._FiniteRequirement) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The range: {obj.Print(true)} is invalid because it is not a finite range."));

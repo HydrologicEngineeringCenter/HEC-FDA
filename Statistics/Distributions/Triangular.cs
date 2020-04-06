@@ -32,7 +32,7 @@ namespace Statistics.Distributions
         #region Constructor
         public Triangular(double min, double mode, double max, int sampleSize = int.MaxValue)
         {
-            IRange<double> range = IRangeFactory.Factory(min, max);
+            IRange<double> range = IRangeFactory.Factory(min, max, true, true, true, false);
             if (!Validation.TriangularValidator.IsConstructable(mode, range, out string error)) throw new InvalidConstructorArgumentsException(error);
             else
             {
@@ -98,7 +98,6 @@ namespace Statistics.Distributions
             ordinateElem.SetAttributeValue(SerializationConstants.MODE, Mode);
             //max
             ordinateElem.SetAttributeValue(SerializationConstants.MAX, Range.Max);
-
             //sample size
             ordinateElem.SetAttributeValue(SerializationConstants.SAMPLE_SIZE, SampleSize);
 

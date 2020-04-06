@@ -41,7 +41,7 @@ namespace Statistics.Validation
         internal static string ReportFatalErrors(double min, double max, int n)
         {
             string msg = "";
-            if (!ValidationExtensions.IsRange(min, max, true, false)) msg += $"{Resources.FatalParameterizationNotice(Bin.Print(min, max, n))} {Bin.Requirements(true)}";
+            if (!ValidationExtensions.IsRange(min, max, true, true)) msg += $"{Resources.FatalParameterizationNotice(Bin.Print(min, max, n))} {Bin.Requirements(true)}";
             if (n < 0) msg += $"The specified number of bin observations {n} is invalid because it is not a positive number.";
             return msg;
         }

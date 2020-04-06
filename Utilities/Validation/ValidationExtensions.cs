@@ -102,9 +102,11 @@ namespace Utilities
         /// <typeparam name="T"> An <see cref="IComparable"/> type parameter.</typeparam>
         /// <param name="min"> The minimum of the range. </param>
         /// <param name="max"> The maximum of the range. </param>
+        /// <param name="finiteRequirement"> <see langword="true"/> If the range must be finite (i.e. must <b>not</b> contain <see cref="double.NegativeInfinity"/>, <see cref="double.PositiveInfinity"/>, or <see cref="double.NaN"/> values), <see langword="false"/> by default. </param>
+        /// <param name="notSingleValueRequirement"> <see langword="true"/> If the range must contain more than a single value, <see langword="false"/> by default. </param>
         /// <returns> <see langword="true"/> if <paramref name="min"/> &lt <paramref name="max"/> or <see langword="false"/> otherwise. </returns>
         /// <remarks> If the <paramref name="min"/> equals the <paramref name="max"/> <see langword="true"/> is returned. Note that <see cref="double.NaN"/> values may produce unexpected results. </remarks>
-        public static bool IsRange<T>(T min, T max, bool finiteRequirement = false, bool allowSingleValueRange = false) where T : IComparable //=> min.CompareTo(max) < (allowSingleValueRange ? -1 : 0) ? true : false;
+        public static bool IsRange<T>(T min, T max, bool finiteRequirement = false, bool notSingleValueRequirement = false) where T : IComparable //=> min.CompareTo(max) < (allowSingleValueRange ? -1 : 0) ? true : false;
         {
             /*
              * The CompareTo() compares the instance to the parameter value.
@@ -119,7 +121,7 @@ namespace Utilities
             if (finiteRequirement && typeof(T) == typeof(double) && !Convert.ToDouble(min).IsFinite() || !Convert.ToDouble(max).IsFinite()) return false;
             else
             {
-                int threshold = allowSingleValueRange ? 1 : 0, val = min.CompareTo(max);
+                int threshold = notSingleValueRequirement ? 0 : 1, val = min.CompareTo(max);
                 return val < threshold;
             }  
         }

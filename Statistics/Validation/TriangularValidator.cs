@@ -22,6 +22,7 @@ namespace Statistics.Validation
         {
             List<IMessage> msgs = new List<IMessage>();
             if (obj.IsNull()) throw new ArgumentNullException(nameof(obj), "The triangular distribution cannot be validated because it is null.");
+            if (obj.Range.Min == obj.Range.Max) msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The {obj.Print(true)} minimum and maximum values are equal. This is allowed but reduces the distribution to a constant."));
             if (obj.SampleSize < 1) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"{Resources.InvalidParameterizationNotice(obj.Print(true))} {obj.Requirements(false)} {Resources.SampleSizeSuggestion()}"));
             return msgs;
         }
