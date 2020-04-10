@@ -97,14 +97,17 @@ namespace FdaViewModel
                 return null;
             }
         }
+        private string _Error;
         /// <summary>
         /// WPF seems to not use the Error call, theoretically it is used to invalidate an object.
         /// This is required to implement IDataErrorInfo interface.
+        /// 
+        /// This is used to display a tooltip message on the "Save" button in the SaveCloseControl.
         /// </summary>
         public string Error
         {
-            get;
-            set;
+            get { return _Error; }
+            set { _Error = value; NotifyPropertyChanged(); }
         }
 
         public string ValidationErrorMessage { get; set; }
@@ -129,7 +132,12 @@ namespace FdaViewModel
         //todo: Refactor: I commented out the Messages and the ReportMessage down below. I shouldn't need it with the new NLog stuff.
         //public List<FdaModel.Utilities.Messager.ErrorMessage> Messages { get; private set; }
         public bool HasError { get; private set; }
-        public bool HasFatalError { get; private set; }
+        private bool _HasFatalError;
+        public bool HasFatalError
+        {
+            get { return _HasFatalError; }
+            set { _HasFatalError = value; NotifyPropertyChanged(); }
+        }
         /// <summary>
         /// Primarily used to determine if a class needs to save. Gets set when the notify property change fires.
         /// It is up to the save method to turn this back to false. 

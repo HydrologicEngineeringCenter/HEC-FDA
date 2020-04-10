@@ -31,16 +31,16 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Column="0" Name="NameLabel" Text="Occupancy Type Name: " HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            <TextBox Grid.Column="1" Margin="2,0,0,0" Name="OccTypeNameBox" Text="{Binding SelectedOccType.OccType.Name,Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" LostFocus="OccTypeNameBox_LostFocus" />
+            <TextBox Grid.Column="1" Margin="2,0,0,0" Name="OccTypeNameBox" Text="{Binding SelectedOccType.Name,Mode=TwoWay,ValidatesOnDataErrors=True}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" LostFocus="OccTypeNameBox_LostFocus" />
             <Button Name="CreateNewButton" Margin="3,0,0,0" Width="20" Height="20" Grid.Row="2" Grid.Column="2" ToolTip="Add New Damage Category" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" Click="CreateNewDamCat_Click" >
                 <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Add.png"/>
             </Button>
 
             <TextBlock Grid.Row="1" TextAlignment="Right" Text="Description: " VerticalAlignment="Center"/>
-            <cac:TextBoxDescription Grid.Row="1" Grid.Column="1" Margin="2,5,0,5" Text="{Binding SelectedOccType.OccType.Description}" Name="OccTypeDescriptionBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" />
+            <cac:TextBoxDescription Grid.Row="1" Grid.Column="1" Margin="2,5,0,5" Text="{Binding SelectedOccType.Description}" Name="OccTypeDescriptionBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" />
 
             <TextBlock Grid.Row="2" TextAlignment="Right" Text="Damage Category: " VerticalAlignment="Center"/>
-            <ComboBox Grid.Row="2" Grid.Column="1" Margin="2,0,0,0" Name="DamageCategoryComboBox" ItemsSource="{Binding DamageCategoriesList}" SelectedItem="{Binding SelectedOccType.OccType.DamageCategory.Name}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="DamageCategoryComboBox_SelectionChanged" />
+            <ComboBox Grid.Row="2" Grid.Column="1" Margin="2,0,0,0" Name="DamageCategoryComboBox" ItemsSource="{Binding DamageCategoriesList}" SelectedItem="{Binding SelectedOccType.DamageCategory.Name}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="DamageCategoryComboBox_SelectionChanged" />
         </Grid>
 
         <Border BorderBrush="Black" BorderThickness=".5" Margin="0,5,0,5" CornerRadius="1.5" Padding="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top">
@@ -52,7 +52,7 @@
             <TabItem Name="StructureDDTabItem">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <CheckBox Margin="0" IsChecked="{Binding SelectedOccType.OccType.CalculateStructureDamage}" Name="StructureCheck" VerticalAlignment="Center"/>
+                        <CheckBox Margin="0" IsChecked="{Binding SelectedOccType.CalculateStructureDamage}" Name="StructureCheck" VerticalAlignment="Center"/>
                         <TextBlock VerticalAlignment="Center" Text="Structure Damage" Margin="2,0,0,0"/>
                     </StackPanel>
                 </TabItem.Header>
@@ -79,7 +79,7 @@
             <TabItem Name="ContentDDTabItem" >
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <CheckBox Margin="0,0,0,0" IsChecked="{Binding SelectedOccType.OccType.CalculateContentDamage}" IsEnabled="True" Name="ContentCheck" VerticalAlignment="Center"/>
+                        <CheckBox Margin="0,0,0,0" IsChecked="{Binding SelectedOccType.CalculateContentDamage}" IsEnabled="True" Name="ContentCheck" VerticalAlignment="Center"/>
                         <TextBlock VerticalAlignment="Center" Text="Content Damage" Margin="2,0,0,0"/>
                     </StackPanel>
                 </TabItem.Header>
@@ -121,7 +121,7 @@
             <TabItem Name="VehicleDDTabItem">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <CheckBox Margin="0" IsChecked="{Binding SelectedOccType.OccType.CalculateVehicleDamage}" IsEnabled="True" Name="VehicleCheck" VerticalAlignment="Center"/>
+                        <CheckBox Margin="0" IsChecked="{Binding SelectedOccType.CalculateVehicleDamage}" IsEnabled="True" Name="VehicleCheck" VerticalAlignment="Center"/>
                         <TextBlock VerticalAlignment="Center" Text="Vehicle Damage" Margin="2,0,0,0"/>
                     </StackPanel>
                 </TabItem.Header>
@@ -156,7 +156,7 @@
             <TabItem Name="OtherDDTabItem">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <CheckBox Margin="0" IsChecked="{Binding SelectedOccType.OccType.CalculateOtherDamage}" IsEnabled="True" Name="OtherCheck" VerticalAlignment="Center"/>
+                        <CheckBox Margin="0" IsChecked="{Binding SelectedOccType.CalculateOtherDamage}" IsEnabled="True" Name="OtherCheck" VerticalAlignment="Center"/>
                         <TextBlock VerticalAlignment="Center" Text="Other Damage" Margin="2,0,0,0"/>
                     </StackPanel>
                 </TabItem.Header>

@@ -9,6 +9,9 @@
              xmlns:Utils="clr-namespace:View.Utilities"
              Loaded="UserControl_Loaded"
              d:DesignHeight="1000" d:DesignWidth="1000" >
+    <UserControl.Resources>
+        <Utils:BoolToModifiedConverter x:Key="boolToModifiedConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
@@ -77,7 +80,7 @@
                                                 <Expander IsExpanded="True">
                                                     <ItemsPresenter />
                                                 </Expander>
-                                                <TextBlock Name="ExpanderHeaderTextBlock" Text="{Binding Name, Mode=OneWay}" HorizontalAlignment="Stretch" Margin="21,0,0,0" Padding="4,3,0,0" VerticalAlignment="Top" FontWeight="Bold" TextDecorations="Underline"  IsHitTestVisible="True" Focusable="True"/>
+                                                <TextBlock Name="ExpanderHeaderTextBlock" Text="{Binding Name, Mode=OneWay}" HorizontalAlignment="Left" Margin="21,0,0,0" Padding="4,3,0,0" VerticalAlignment="Top" FontWeight="Bold" TextDecorations="Underline"  IsHitTestVisible="True" Focusable="True"/>
                                             </Grid>
                                         </ControlTemplate>
                                     </Setter.Value>
@@ -89,7 +92,11 @@
 
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Margin="30,0,0,0" Text="{Binding OccType.Name}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="30,0,0,0" Text="{Binding Name, Mode=TwoWay}"/>
+                            <TextBlock Margin="0,0,0,0" Text="{Binding IsModified, Converter={StaticResource boolToModifiedConverter},Mode=TwoWay}"/>
+                        </StackPanel>
+
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
@@ -119,11 +126,11 @@
             <Button Content="Cancel" Height="23" Name="CancelButton" Width="45" Margin="5,0,0,0" />
         </StackPanel>-->
 
-        <Button Grid.Row="1" Grid.Column="0" Width="50" Height="22" Margin="5" HorizontalAlignment="Right" Content="Save All" VerticalAlignment="Bottom" />
+        <Button Name="btn_SaveAll" Grid.Row="1" Grid.Column="0" Width="50" Height="22" Margin="5" HorizontalAlignment="Right" Content="Save All" VerticalAlignment="Bottom" Click="btn_SaveAll_Click"/>
 
+        <Utils:MessageExpanderControl Grid.Row="1" Grid.Column="1"  ExpandedHeight="250" StatusLevel="{Binding SaveStatusLevel}" StatusVisible="{Binding SaveStatusVisible}" />
         <Utils:SaveCloseControl Grid.Row="1" HorizontalAlignment="Right" Grid.ColumnSpan="2" VerticalAlignment="Bottom"/>
         <!--<Utils:OKCloseControl Grid.Row="2" HorizontalAlignment="Right" Grid.ColumnSpan="2"/>-->
-        <Utils:MessageExpanderControl Grid.Row="1" Grid.Column="1"  ExpandedHeight="250" StatusLevel="{Binding SaveStatusLevel}" StatusVisible="{Binding SaveStatusVisible}" />
 
     </Grid>
 </UserControl>

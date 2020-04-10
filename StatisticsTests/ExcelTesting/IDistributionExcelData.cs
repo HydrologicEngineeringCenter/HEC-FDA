@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using Xunit;
 using Xunit.Sdk;
 
-namespace StatisticsTests.ExcelTesting.ExcelData
+namespace StatisticsTests.ExcelTesting
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public sealed class IDistributionExcelData : DataAttribute

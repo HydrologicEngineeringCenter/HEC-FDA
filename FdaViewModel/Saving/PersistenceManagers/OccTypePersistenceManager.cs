@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -154,7 +155,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         //    return null;// new Statistics.Normal(); // it should never get here.
         //}
         /// <summary>
-        /// Creates an element base off the row from the parent table
+        /// Creates an element based off the row from the parent table
         /// </summary>
         /// <param name="rowData">row from parent table. Only one column of the group name</param>
         /// <returns></returns>
@@ -200,7 +201,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             List<IOccupancyType> TempOccTypes = new List<IOccupancyType>();
             string groupName = rowData[PARENT_GROUP_NAME_COL].ToString();
             //create an empty element. Then loop through all the rows in the table to add the actual occtypes for this elem.
-            OccupancyTypesElement ele = new OccupancyTypesElement(groupName, TempOccTypes);
+            OccupancyTypesElement ele = new OccupancyTypesElement(groupName, groupId, TempOccTypes);
             //ele.IsSelected = (bool)rowData[PARENT_IS_SELECTED_COL];
             //string elementTableName = GroupTablePrefix + groupName;
 
@@ -360,13 +361,9 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
 
 
-        
-
-        public void Load()
+        private List<DataRow> GetParentTableRows()
         {
-            List<ChildElement> occTypeGroupsToReturn = new List<ChildElement>();
-            
-            //each row in the parent table will be an occtype element (same as occtype group)
+            List<DataRow> retval = new List<DataRow>();
             if (!Storage.Connection.Instance.IsConnectionNull)
             {
                 if (!Storage.Connection.Instance.IsOpen)
@@ -377,8 +374,32 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 {
 
                     System.Data.DataTable table = Storage.Connection.Instance.GetDataTable(ParentTableName);
+                    foreach(DataRow row in table.Rows)
+                    {
+                        retval.Add(row);
+                    }
+                }
+            }
+            return retval;
+        }
 
-                    foreach (System.Data.DataRow row in table.Rows)
+        public void Load()
+        {
+            List<ChildElement> occTypeGroupsToReturn = new List<ChildElement>();
+            
+            //each row in the parent table will be an occtype element (same as occtype group)
+            //if (!Storage.Connection.Instance.IsConnectionNull)
+            //{
+                //if (!Storage.Connection.Instance.IsOpen)
+                //{
+                //    Storage.Connection.Instance.Open();
+                //}
+                //if (Storage.Connection.Instance.TableNames().Contains(ParentTableName))
+                //{
+
+                    //System.Data.DataTable table = Storage.Connection.Instance.GetDataTable(ParentTableName);
+
+                    foreach (DataRow row in GetParentTableRows())
                     {
                         //each of these is a group
                         int groupId = Convert.ToInt32(row[PARENT_GROUP_ID_COL]);
@@ -387,7 +408,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
                         //now read the child table and grab all the occtypes with this group id
                         List<IOccupancyType> occtypes = LoadOcctypes(groupId);
-                        OccupancyTypesElement elem = new OccupancyTypesElement( groupName, occtypes);
+                        OccupancyTypesElement elem = new OccupancyTypesElement( groupName,groupId, occtypes);
                         occTypeGroupsToReturn.Add(elem);
                     }
 
@@ -408,8 +429,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
 
                     //}
-                }
-            }
+               // }
+           // }
             foreach (Inventory.OccupancyTypes.OccupancyTypesElement elem in occTypeGroupsToReturn)
             {
                 StudyCacheForSaving.AddElement(elem);
@@ -446,17 +467,17 @@ namespace FdaViewModel.Saving.PersistenceManagers
         //    StudyCacheForSaving.RemoveElement((OccupancyTypesElement)element);
         }
 
-        public void DeleteOcctypeGroup(IOccupancyTypeGroupEditable group)
+        public void DeleteOcctypeGroup(int groupID)
         {
             //delete the row from the parent table
-            DeleteRowWithKey(TableName, group.ID, "ID");
+            DeleteRowWithKey(TableName, groupID, "ID");
 
             //delete all the occtypes associated with this group from the occtypes table
             //this one call will delete all the rows with that group id
-            DeleteRowWithKey(OCCTYPES_TABLE_NAME, group.ID, "GroupID");
+            DeleteRowWithKey(OCCTYPES_TABLE_NAME, groupID, "GroupID");
 
             //remove from the study cache
-            RemoveElementFromCache(group); 
+            RemoveElementFromCache(groupID); 
         }
 
         /// <summary>
@@ -464,13 +485,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
         /// occupancy types editor. 
         /// </summary>
         /// <param name="group"></param>
-        private void RemoveElementFromCache(IOccupancyTypeGroupEditable group)
+        private void RemoveElementFromCache(int groupID)
         {
             List<OccupancyTypesElement> elems = StudyCacheForSaving.OccTypeElements;
             int indexToRemove = -1;
             for (int i = 0; i < elems.Count(); i++)
             {
-                if (elems[i].Name.Equals(group.OriginalName))
+                if (elems[i].ID == groupID)
                 {
                     indexToRemove = i;
                     break;
@@ -486,7 +507,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             foreach (IOccupancyTypeEditable ot in occtypesToDelete)
             {
-                int[] keys = new int[] { ot.OccType.GroupID, ot.OccType.ID };
+                int[] keys = new int[] { ot.GroupID, ot.ID };
                 string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
 
                 DeleteRowWithCompoundKey(OCCTYPES_TABLE_NAME, keys, keyColNames);
@@ -526,7 +547,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
 
 
-        public void SaveNewOcctypes(List<IOccupancyTypeEditable> newOcctypes)
+        public void SaveNewOcctypes(List<IOccupancyType> newOcctypes)
         {
 
             DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
@@ -538,10 +559,10 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
             List<object[]> rows = new List<object[]>();
 
-            foreach (IOccupancyTypeEditable ot in newOcctypes)
+            foreach (IOccupancyType ot in newOcctypes)
             {
                 //when this occtype was created it should have gotten a unique id of its own.
-                rows.Add(GetOccTypeRowForOccTypesTable(ot.OccType.GroupID, ot.OccType.ID, ot.OccType).ToArray());
+                rows.Add(GetOccTypeRowForOccTypesTable(ot.GroupID, ot.ID, ot).ToArray());
             }
             tbl.AddRows(rows);
             tbl.ApplyEdits();
@@ -559,43 +580,104 @@ namespace FdaViewModel.Saving.PersistenceManagers
       
         }
 
+        //public void UpdateOccTypeInStudyCache(IOccupancyTypeGroupEditable group, IOccupancyTypeEditable ot)
+        //{
+        //    //find the occtype group
+
+        //    List<OccupancyTypesElement> elems = StudyCacheForSaving.OccTypeElements;
+        //    int index = -1;
+        //    for (int i = 0; i < elems.Count(); i++)
+        //    {
+        //        if (elems[i].Name.Equals(group.OriginalName))
+        //        {
+        //            index = i;
+        //            break;
+        //        }
+        //    }
+        //    if (index != -1)
+        //    {
+        //        //update the occtype
+        //        UpdateOccType(elems[index], ot.OccType);
+        //    }
+        //}
+
+        //private void UpdateOccType(OccupancyTypesElement group, IOccupancyType ot)
+        //{
+        //    //find the original occtype and replace with this new one
+        //    IOccupancyType originalOT = null;
+        //    foreach(IOccupancyType otype in group.ListOfOccupancyTypes)
+        //    {
+                
+        //        if(otype.ID == ot.ID)
+        //        {
+        //            originalOT = otype;
+        //            break;
+        //        }
+        //    }
+        //    if(originalOT != null)
+        //    {
+        //        originalOT = ot;
+        //    }
+        //}
+
         /// <summary>
         /// This removes all the matching elements from the study cache and replaces it with a new
-        /// element that is created from the group.
+        /// element that is created from the group. This is done when saving from the occupancy type editor.
         /// </summary>
         /// <param name="groupsToUpdateInCache"></param>
-        public void UpdateStudyCache(List<IOccupancyTypeGroupEditable> groupsToUpdateInCache)
+        public void UpdateOccTypeGroupsInStudyCache(List<IOccupancyTypeGroup> groupsToUpdateInCache)
         {
-            foreach(IOccupancyTypeGroupEditable group in groupsToUpdateInCache)
+            foreach(IOccupancyTypeGroup group in groupsToUpdateInCache)
             {
-                RemoveElementFromCache(group);
+                RemoveElementFromCache(group.ID);
 
                 //create new element to add to the cache
                 List<IOccupancyType> occtypes = new List<IOccupancyType>();
-                foreach(IOccupancyTypeEditable otEdit in group.Occtypes)
+                foreach(IOccupancyType ot in group.OccupancyTypes)
                 {
-                    occtypes.Add(otEdit.OccType);
+                    occtypes.Add(ot);
                 }
-                OccupancyTypesElement elem = new OccupancyTypesElement(group.Name, occtypes);
+                OccupancyTypesElement elem = new OccupancyTypesElement(group.Name, group.ID, occtypes);
                 StudyCacheForSaving.AddElement(elem);
             }
         }
 
-        public void SaveModifiedOcctypes(List<IOccupancyTypeEditable> occtypes)
+        public void SaveModifiedOcctypes(List<IOccupancyType> occtypes)
         {
-            foreach(IOccupancyTypeEditable ot in occtypes)
+            foreach(IOccupancyType ot in occtypes)
             {
-                int[] keys = new int[] { ot.OccType.GroupID, ot.OccType.ID };
-                string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
-
-                //update the whole row
-                string[] columnsToUpdate = OcctypeColumns;
-                object[] newValues = GetOccTypeRowForOccTypesTable(ot.OccType.GroupID, ot.OccType.ID, ot.OccType).ToArray();
-
-                UpdateTableRowWithCompoundKey(OCCTYPES_TABLE_NAME, keys, keyColNames, columnsToUpdate, newValues);
+                SaveModifiedOcctype(ot);
             }
         }
 
+        /// <summary>
+        /// Used when creating new occtypeElements. Gets the first unused ID so that the in memory version 
+        /// knows what it's id is.
+        /// </summary>
+        /// <returns></returns>
+        public int GetUnusedId()
+        {
+            List<DataRow> rows = GetParentTableRows();
+            List<int> idNums = new List<int>();
+            foreach(DataRow row in rows)
+            {
+                idNums.Add(Convert.ToInt32(row[PARENT_GROUP_ID_COL]));
+            }
+            //now we have all the id's in the parent table
+            return idNums.Max() + 1;
+        }
+
+        public void SaveModifiedOcctype(IOccupancyType ot)
+        {
+            int[] keys = new int[] { ot.GroupID, ot.ID };
+            string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
+
+            //update the whole row
+            string[] columnsToUpdate = OcctypeColumns;
+            object[] newValues = GetOccTypeRowForOccTypesTable(ot.GroupID, ot.ID, ot).ToArray();
+
+            UpdateTableRowWithCompoundKey(OCCTYPES_TABLE_NAME, keys, keyColNames, columnsToUpdate, newValues);
+        }
 
 
         /// <summary>

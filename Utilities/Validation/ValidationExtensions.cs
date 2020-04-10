@@ -133,7 +133,10 @@ namespace Utilities
         /// <param name="inclusiveMin"> <see langword="true"/> if the <paramref name="min"/> is a valid part of the range, <see langword="false"/> otherwise. </param>
         /// <param name="inclusiveMax"> <see langword="true"/> if the <paramref name="max"/> is a valid part of the range, <see langword="false"/> otherwise. </param>
         /// <returns> <see langword="true"/> if the value is on the specified range, <see langword="false"/> otherwise. </returns>
-        public static bool IsOnRange<T>(this T value, T min, T max, bool inclusiveMin = true, bool inclusiveMax = true) where T : IComparable => value.CompareTo(min) > (inclusiveMin ? -1 : 0) && value.CompareTo(max) < (inclusiveMax ? 1 : 0);       
+        public static bool IsOnRange<T>(this T value, T min, T max, bool inclusiveMin = true, bool inclusiveMax = true) where T : IComparable
+        {
+            return value.CompareTo(min) > (inclusiveMin ? -1 : 0) && value.CompareTo(max) < (inclusiveMax ? 1 : 0);
+        }
         /// <summary>
         /// Produces an <see cref="InvalidOperationException"/> message for objects implementing the <see cref="IValidate{T}"/> interface attempting an operation in an invalid state. (see: <seealso cref="IValidate{T}.IsValid"/>)
         /// </summary>

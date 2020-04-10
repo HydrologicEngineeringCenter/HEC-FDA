@@ -366,6 +366,7 @@
     </Compile>
     <Compile Include="Utilities\BoolToBoldConverter.cs" />
     <Compile Include="Utilities\BoolToInverseVisibilityConverter.cs" />
+    <Compile Include="Utilities\BoolToModifiedConverter.cs" />
     <Compile Include="Utilities\BoolToVisibilityConverter.cs" />
     <Compile Include="Utilities\ContextMenuConverter.cs" />
     <Compile Include="Utilities\CurveGenerator.xaml.cs">

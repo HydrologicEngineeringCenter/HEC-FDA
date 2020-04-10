@@ -14,8 +14,15 @@ namespace FdaViewModel.Inventory.OccupancyTypes
     /// </summary>
     public interface IOccupancyTypeEditable
     {
-        IOccupancyType OccType { get; set; }
+        event EventHandler UpdateMessagesEvent;
 
+        //IOccupancyType OccType { get; set; }
+        string Name { get; set; }
+        int ID { get; set; }
+        int GroupID { get; set; }
+        string Description { get; set; }
+        IDamageCategory DamageCategory { get; set; }
+        bool IsModified { get; set; }
         ValueUncertaintyVM StructureValueUncertainty { get; set; }
         ValueUncertaintyVM ContentValueUncertainty { get; set; }
         ValueUncertaintyVM VehicleValueUncertainty { get; set; }
@@ -26,6 +33,11 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         CoordinatesFunctionEditorVM ContentEditorVM { get; set; }
         CoordinatesFunctionEditorVM VehicleEditorVM { get; set; }
         CoordinatesFunctionEditorVM OtherEditorVM { get; set; }
-        bool IsModified { get; }
+
+         bool CalculateStructureDamage { get; set; }
+        bool CalculateContentDamage { get; set; }
+        bool CalculateVehicleDamage { get; set; }
+        bool CalculateOtherDamage { get; set; }
+
     }
 }

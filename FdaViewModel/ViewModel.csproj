@@ -220,6 +220,7 @@
     <Compile Include="Inventory\ImportFromShapefileVM.cs" />
     <Compile Include="Inventory\ImportStructuresFromShapefileVM.cs" />
     <Compile Include="Inventory\InventoryElement.cs" />
+    <Compile Include="Inventory\OccupancyTypes\BaseOcctypeLoggingEditor.cs" />
     <Compile Include="Inventory\OccupancyTypes\CreateNewDamCatVM.cs" />
     <Compile Include="Inventory\OccupancyTypes\deleteMeTestClass.cs" />
     <Compile Include="Inventory\OccupancyTypes\ImportOccupancyTypesVM.cs" />

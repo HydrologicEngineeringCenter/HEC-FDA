@@ -26,10 +26,10 @@ namespace FunctionsTests.Utilities.Samplers
         }
 
         ///// <summary> Tests that with a non constant function, the "CanSample()" returns false </summary>
-        //[Fact]
-        //public void ConstantSampler_CanSample_BadInput_Returns_Bool()
-        //{
-        //    ConstantSampler constSampler = new ConstantSampler();
+        [Fact]
+        public void ConstantSampler_CanSample_BadInput_Returns_Bool()
+        {
+            ConstantSampler constSampler = new ConstantSampler();
 
             List<double> xs = new List<double>() { 0, 1, 2, 3 };
             List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()

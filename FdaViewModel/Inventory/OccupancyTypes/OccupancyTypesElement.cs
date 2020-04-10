@@ -35,7 +35,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         //public Dictionary<string,bool[]> OccTypesSelectedTabsDictionary { get; set; }
             //public string OccTypesGroupName { get; set; }
         public List<IOccupancyType> ListOfOccupancyTypes { get; set; }
-
+        public int ID { get; set; }
         
 
         #endregion
@@ -44,9 +44,10 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         {
 
         }
-        public OccupancyTypesElement( string occTypesGroupName, List<IOccupancyType> listOfOccTypes):base()
+        public OccupancyTypesElement( string occTypesGroupName, int groupID, List<IOccupancyType> listOfOccTypes):base()
         {
             Name = occTypesGroupName;
+            ID = groupID;
             //OccTypesSelectedTabsDictionary = occtypesSelectedTabs;
             //OccTypesGroupName = occTypesGroupName;
             ListOfOccupancyTypes = listOfOccTypes;

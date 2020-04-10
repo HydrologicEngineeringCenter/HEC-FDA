@@ -32,7 +32,7 @@
 
         <StackPanel Orientation="Vertical" Grid.Column="1" VerticalAlignment="Top" Margin="5,0,5,0">
             <Label Content="Uncertainty Type"/>
-            <ComboBox Name="cmb_UncertaintyType" ItemsSource="{Binding UncertaintyTypes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="22" SelectedItem="{Binding ValueUncertainty.Type, Mode=OneWay}" />
+            <ComboBox Name="cmb_UncertaintyType" ItemsSource="{Binding UncertaintyTypes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="22" SelectedItem="{Binding ValueUncertainty.Type, Mode=OneWay}" SelectionChanged="ComboBox_SelectionChanged" />
         </StackPanel>
 
         <ContentControl Name="ContentControl" Grid.Column="2" Content="{Binding CurrentVM, Mode=TwoWay}" VerticalAlignment="Top" />

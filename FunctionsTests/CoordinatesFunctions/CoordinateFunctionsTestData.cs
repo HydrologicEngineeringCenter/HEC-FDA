@@ -332,9 +332,9 @@ namespace FunctionsTests.CoordinatesFunctions
         //    List<double> ys3 = new List<double>() { 13, 14, 15, 16 };
 
             //create a constant func
-            functions.Add(CreateCoordinatesFunctionConstants(xs1, ys1));
-            functions.Add(ICoordinatesFunctionsFactory.Factory(xs2, ys2, InterpolationEnum.None));
-            functions.Add(CreateCoordinatesFunctionConstants(xs3, ys3));
+            //functions.Add(CreateCoordinatesFunctionConstants(xs1, ys1));
+            //functions.Add(ICoordinatesFunctionsFactory.Factory(xs2, ys2, InterpolationEnum.None));
+            //functions.Add(CreateCoordinatesFunctionConstants(xs3, ys3));
 
         //    return functions;
         //}

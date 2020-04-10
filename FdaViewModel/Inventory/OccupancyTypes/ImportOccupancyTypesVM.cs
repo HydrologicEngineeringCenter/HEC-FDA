@@ -314,8 +314,8 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 //    _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
 
                 //}
-
-                OccupancyTypesElement elem = new OccupancyTypesElement( row.Name, row.ListOfOccTypes);
+                int newGroupID = Saving.PersistenceFactory.GetOccTypeManager().GetUnusedId();
+                OccupancyTypesElement elem = new OccupancyTypesElement( row.Name, newGroupID, row.ListOfOccTypes);
                 //OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(elem);
                 elementsToSave.Add(elem);
             }

@@ -12,6 +12,8 @@ namespace ImpactArea
         public bool IsValid { get; }
         public IEnumerable<IMessage> Messages { get; }
 
+        public IMessageLevels State => throw new NotImplementedException();
+
         internal DistributedValue(Statistics.IDistribution distribution)
         {
             if (!IsConstructable(distribution, out string msg)) throw new InvalidConstructorArgumentsException(msg);
@@ -43,5 +45,10 @@ namespace ImpactArea
         }
 
         public double Value(double p = 0.50) => _Distribution.InverseCDF(p);
+
+        IMessageLevels IValidate<IOrdinate>.Validate(IValidator<IOrdinate> validator, out IEnumerable<IMessage> errors)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

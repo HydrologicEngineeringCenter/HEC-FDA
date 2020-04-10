@@ -25,7 +25,10 @@ namespace Functions
         {
             if (y is Distribution)
             {
-                return new CoordinateVariableY(new Constant(x), (Distribution)y);
+                Constant c = new Constant(x);
+                Distribution dist = (Distribution)y;
+                CoordinateVariableY coord = new CoordinateVariableY(c, dist);
+                return coord; //new CoordinateVariableY(new Constant(x), (Distribution)y);
             }
             else
             {
