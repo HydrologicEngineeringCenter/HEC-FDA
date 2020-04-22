@@ -8,6 +8,8 @@ using FdaViewModel.Utilities;
 using System.Xml.Linq;
 using System.Xml;
 using Functions;
+using FdaViewModel.Saving;
+using System.Collections.ObjectModel;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -19,6 +21,8 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         // Created Date: 7/6/2017 10:22:36 AM
         #endregion
         #region Fields
+        private OccupancyTypesEditorVM _OccTypeEditor;
+        private bool _IsEditorOpen = false;
         //private static List<Consequences_Assist.ComputableObjects.OccupancyType> _ListOfOccupancyTypes;
         #endregion
         #region Properties
@@ -70,7 +74,12 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         private void OccTypeElementWasAdded(object sender, Saving.ElementAddedEventArgs e)
         {
-            ListOfOccupancyTypesGroups.Add((OccupancyTypesElement)e.Element);
+            OccupancyTypesElement elem = (OccupancyTypesElement)e.Element;
+            ListOfOccupancyTypesGroups.Add(elem);
+            if(_IsEditorOpen)
+            {
+                _OccTypeEditor.AddGroup(CreateEditableGroup(elem));
+            }          
         }
         //private void UpdateRatingCurveElement(object sender, Saving.ElementUpdatedEventArgs e)
         //{
@@ -98,47 +107,56 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             }
 
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager();
-               //.WithSaveUndoRedo(saveHelper)
-               //.WithSiblingRules(this)
-               //.WithParentGuid(this.GUID)
-               //.WithCanOpenMultipleTimes(false);
+            //.WithSaveUndoRedo(saveHelper)
+            //.WithSiblingRules(this)
+            //.WithParentGuid(this.GUID)
+            //.WithCanOpenMultipleTimes(false);
 
-            OccupancyTypesEditorVM vm = new OccupancyTypesEditorVM(GetSelectedOccTypeElement(), actionManager);
-            vm.RequestNavigation += Navigate;
+
+
+            ObservableCollection<IOccupancyTypeGroupEditable> editableGroups = CreateEditableOcctypeGroups();          
+
+            _OccTypeEditor = new OccupancyTypesEditorVM(editableGroups, actionManager);
+            _OccTypeEditor.RequestNavigation += Navigate;
             string header = "Edit Occupancy Types";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditOccupancyTypes");
+            DynamicTabVM tab = new DynamicTabVM(header, _OccTypeEditor, "EditOccupancyTypes");
+            tab.RemoveTabEvent += Tab_RemoveTabEvent;
+            tab.RemoveWindowEvent += Tab_RemoveTabEvent;
+            _IsEditorOpen = true;
             Navigate(tab, false, false);
 
-
-            //Navigate(vm);
-            //if (!vm.WasCanceled)
-            //{
-            //    if (!vm.HasError)
-            //    {
-            //        //foreach (OccupancyTypesElement ote in ListOfOccupancyTypesGroups)
-            //        for(int i = 0;i<ListOfOccupancyTypesGroups.Count;i++)
-            //        {
-            //            //foreach (OccupancyTypesElement ote in vm.OccTypeGroups)
-            //            for(int j = 0;j<vm.OccTypeGroups.Count;j++)
-            //            {
-            //                if (ListOfOccupancyTypesGroups[i].Name == vm.OccTypeGroups[j].Name)
-            //                {
-            //                    ListOfOccupancyTypesGroups[i] = vm.OccTypeGroups[j];
-            //                }
-            //            }
-            //        }
-            //        //now save the changes
-            //        //CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "", "Loading...");
-
-            //        //SaveFilesOnBackgroundThread(this, new DoWorkEventArgs(ListOfOccupancyTypesGroups));
-            //        foreach (OccupancyTypesElement elem in ListOfOccupancyTypesGroups)
-            //        {
-            //            elem.Save();
-            //        }
-            //    }
-            //}
-
         }
+
+        private void Tab_RemoveTabEvent(object sender, EventArgs e)
+        {
+            //i need to know if the editor is still open so that i can update the editor
+            _IsEditorOpen = false;
+        }
+
+        private ObservableCollection<IOccupancyTypeGroupEditable> CreateEditableOcctypeGroups()
+        {
+            List<OccupancyTypesElement> groups = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
+            ObservableCollection<IOccupancyTypeGroupEditable> editableGroups = new ObservableCollection<IOccupancyTypeGroupEditable>();
+            foreach (OccupancyTypesElement group in groups)
+            {
+                editableGroups.Add(CreateEditableGroup(group));
+            }
+            return editableGroups;
+        }
+
+        private IOccupancyTypeGroupEditable CreateEditableGroup(OccupancyTypesElement group)
+        {
+            List<IOccupancyTypeEditable> editableOcctypes = new List<IOccupancyTypeEditable>();
+            foreach (IOccupancyType ot in group.ListOfOccupancyTypes)
+            {
+                editableOcctypes.Add(new OccupancyTypeEditable(ot));
+            }
+            //now we have a list of all the occtypes. They get cloned in the OccupancyTypeEditable ctor.
+            int groupID = PersistenceFactory.GetOccTypeManager().GetGroupId(group.Name);
+            return new OccupancyTypeGroupEditable(groupID, group.Name, editableOcctypes);
+        }
+
+
         private OccupancyTypesElement GetSelectedOccTypeElement()
         {
             OccupancyTypesElement returnElement = null;

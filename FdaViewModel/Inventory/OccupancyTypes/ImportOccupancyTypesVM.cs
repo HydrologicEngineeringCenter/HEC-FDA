@@ -9,6 +9,7 @@ using FdaViewModel.Utilities;
 using FdaViewModel.Inventory.DepthDamage;
 using Model;
 using Model.Inputs.Functions.ImpactAreaFunctions;
+using System.IO;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -61,29 +62,29 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         }
         #endregion
         #region Voids
-        public void AddGroupsToOwnedElement()
-        {
-            foreach(OccupancyTypesGroupRowItemVM row in ListOfRowVMs)
-            {
-                //add the group
+        //public void AddGroupsToOwnedElement()
+        //{
+        //    foreach(OccupancyTypesGroupRowItemVM row in ListOfRowVMs)
+        //    {
+        //        //add the group
 
 
-                //OccupancyTypesElement ote = new OccupancyTypesElement(row.Name, row.ListOfOccTypes);
-                //OccupancyTypesOwnedElement.ListOfOccupancyTypesGroups.Add(ote);
+        //        //OccupancyTypesElement ote = new OccupancyTypesElement(row.Name, row.ListOfOccTypes);
+        //        //OccupancyTypesOwnedElement.ListOfOccupancyTypesGroups.Add(ote);
 
-                //add the depth damage curves
-                //foreach (DepthDamage.DepthDamageCurve ddc in row.ListOfDepthDamageCurves)
-                //{
-                //    string ddCurveName = ddc.Name + " from " + row.Name;
-                //    if (!DepthDamage.DepthDamageCurveData.CurveDictionary.ContainsKey(ddCurveName))
-                //    {
-                //        DepthDamage.DepthDamageCurveData.CurveDictionary.Add(ddCurveName, ddc);
+        //        //add the depth damage curves
+        //        //foreach (DepthDamage.DepthDamageCurve ddc in row.ListOfDepthDamageCurves)
+        //        //{
+        //        //    string ddCurveName = ddc.Name + " from " + row.Name;
+        //        //    if (!DepthDamage.DepthDamageCurveData.CurveDictionary.ContainsKey(ddCurveName))
+        //        //    {
+        //        //        DepthDamage.DepthDamageCurveData.CurveDictionary.Add(ddCurveName, ddc);
 
-                //    }
-                //}
+        //        //    }
+        //        //}
 
-            }
-        }
+        //    }
+        //}
         #endregion
         #region Functions
         private bool IsValid(ref string errorMessage)
@@ -109,116 +110,117 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             
             return true;
         }
-        public bool Import()
+        public bool Import(List<IOccupancyType> occtypes)
         {
-            List<IOccupancyType> ListOfOccupancyTypes = new List<IOccupancyType>();
+            string groupName = Path.GetFileNameWithoutExtension(SelectedPath);
+            Dictionary<string, bool[]> selectedTabsDictionary = new Dictionary<string, bool[]>();
 
-            string errorMessage = "";
-            if (IsValid(ref errorMessage) == true)
-            {
-                try
-                {
-                    IOccupancyTypeGroup ot = new OccupancyTypeGroup(SelectedPath);
-                    //ot.LoadFromFile(SelectedPath);
-                    ListOfOccupancyTypes = ot.OccupancyTypes;
+            //OccTypePersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetOccTypeManager();
+            //OccupancyTypesElement elem = new OccupancyTypesElement(occtypeGroupName, occtypes, selectedTabsDictionary);
 
-
-
-                }
-                catch (Exception e)
-                {
-                    Utilities.CustomMessageBoxVM cmb = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, e.Message);
-                    string header = "Error";
-                    DynamicTabVM tab = new DynamicTabVM(header, cmb, "ErrorMessage");
-                    Navigate(tab);
-                    return false;
-                }
-                //I added a rule for this, so this shouldn't be possible
-                //if (ListOfOccupancyTypes.Count == 0)
-                //{
-                //    errorMessage = "No occupancy types were detected in the selected file.";
-                //    Utilities.CustomMessageBoxVM cmb = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, errorMessage);
-                //    Navigate(cmb);
-                //    return false;
-                //}
+            OccupancyTypesGroupRowItemVM rowVM = new OccupancyTypesGroupRowItemVM(SelectedPath, System.IO.Path.GetFileNameWithoutExtension(SelectedPath), occtypes, null);
+            ListOfRowVMs.Add(rowVM);
+            SelectedPath = "";
+            return true;
 
 
-                List<DepthDamageCurve> listOfDDCurves = new List<DepthDamageCurve>();
+            //List<IOccupancyType> ListOfOccupancyTypes = new List<IOccupancyType>();
 
-                for (int j = 0; j < ListOfOccupancyTypes.Count(); j++)
-                {
+            //string errorMessage = "";
+            //if (IsValid(ref errorMessage) == true)
+            //{
+            //    try
+            //    {
+            //        Consequences_Assist.ComputableObjects.OccupancyTypes oldGroup = new Consequences_Assist.ComputableObjects.OccupancyTypes(SelectedPath);
 
-                    string newStructuralDDCurveName = ListOfOccupancyTypes[j].Name + " Structure Depth Damage Curve"  ;
-                    string newContentDDCurveName = ListOfOccupancyTypes[j].Name + " Content Depth Damage Curve" ;
-                    string newVehicleDDCurveName = ListOfOccupancyTypes[j].Name + " Vehicle Depth Damage Curve" ;
-                    string newOtherDDCurveName = ListOfOccupancyTypes[j].Name + " Other Depth Damage Curve" ;
+            //        //this will load the occtype group with all the occtypes
+            //        IOccupancyTypeGroup ot = OccTypeGroupReader.ReadOccupancyTypeGroup(SelectedPath); //new OccupancyTypeGroup(SelectedPath);
+            //        ListOfOccupancyTypes = ot.OccupancyTypes;
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Utilities.CustomMessageBoxVM cmb = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, e.Message);
+            //        string header = "Error";
+            //        DynamicTabVM tab = new DynamicTabVM(header, cmb, "ErrorMessage");
+            //        Navigate(tab);
+            //        return false;
+            //    }       
 
-                    string structDesc = "Structural depth damage curve for " + ListOfOccupancyTypes[j].Name;
-                    string contentDesc = "Content depth damage curve for " + ListOfOccupancyTypes[j].Name;
-                    string vehicleDesc = "Vehicle depth damage curve for " + ListOfOccupancyTypes[j].Name;
-                    string otherDesc = "Other depth damage curve for " + ListOfOccupancyTypes[j].Name;
+            //    //the depth damage curve just holds an ICoordinatesFunction with an enum of Struct, Cont, Vehicle, Other
+            //    List<DepthDamageCurve> listOfDDCurves = new List<DepthDamageCurve>();
 
-                    DepthDamageCurve newStructuralDDCurve = new DepthDamageCurve(newStructuralDDCurveName, structDesc, ListOfOccupancyTypes[j].StructureDepthDamageFunction, DepthDamageCurve.DamageTypeEnum.Structural);
-                    DepthDamageCurve newContentDDCurve = new DepthDamageCurve(newContentDDCurveName, contentDesc, ListOfOccupancyTypes[j].ContentDepthDamageFunction, DepthDamageCurve.DamageTypeEnum.Content);
-                    DepthDamageCurve newVehicleDDCurve = new DepthDamageCurve(newVehicleDDCurveName, vehicleDesc, ListOfOccupancyTypes[j].VehicleDepthDamageFunction, DepthDamageCurve.DamageTypeEnum.Vehicle);
-                    DepthDamageCurve newOtherDDCurve = new DepthDamageCurve(newOtherDDCurveName, otherDesc, ListOfOccupancyTypes[j].OtherDepthDamageFunction, DepthDamageCurve.DamageTypeEnum.Other);
+            //    for (int j = 0; j < ListOfOccupancyTypes.Count(); j++)
+            //    {
+            //        //create names for the four curves
+            //        string newStructuralDDCurveName = ListOfOccupancyTypes[j].Name + " Structure Depth Damage Curve"  ;
+            //        string newContentDDCurveName = ListOfOccupancyTypes[j].Name + " Content Depth Damage Curve" ;
+            //        string newVehicleDDCurveName = ListOfOccupancyTypes[j].Name + " Vehicle Depth Damage Curve" ;
+            //        string newOtherDDCurveName = ListOfOccupancyTypes[j].Name + " Other Depth Damage Curve" ;
 
+            //        //create descriptions for the four curves
+            //        string structDesc = "Structural depth damage curve for " + ListOfOccupancyTypes[j].Name;
+            //        string contentDesc = "Content depth damage curve for " + ListOfOccupancyTypes[j].Name;
+            //        string vehicleDesc = "Vehicle depth damage curve for " + ListOfOccupancyTypes[j].Name;
+            //        string otherDesc = "Other depth damage curve for " + ListOfOccupancyTypes[j].Name;
 
-                    ListOfOccupancyTypes[j].StructureDepthDamageName = newStructuralDDCurveName;
-                    ListOfOccupancyTypes[j].ContentDepthDamageName = newContentDDCurveName;
-                    ListOfOccupancyTypes[j].VehicleDepthDamageName = newVehicleDDCurveName;
-                    ListOfOccupancyTypes[j].OtherDepthDamageName = newOtherDDCurveName;
+            //        DepthDamageCurve newStructuralDDCurve = new DepthDamageCurve(newStructuralDDCurveName, structDesc, ListOfOccupancyTypes[j].StructureDepthDamageFunction, DepthDamageCurve.DamageTypeEnum.Structural);
+            //        DepthDamageCurve newContentDDCurve = new DepthDamageCurve(newContentDDCurveName, contentDesc, ListOfOccupancyTypes[j].ContentDepthDamageFunction, DepthDamageCurve.DamageTypeEnum.Content);
+            //        DepthDamageCurve newVehicleDDCurve = new DepthDamageCurve(newVehicleDDCurveName, vehicleDesc, ListOfOccupancyTypes[j].VehicleDepthDamageFunction, DepthDamageCurve.DamageTypeEnum.Vehicle);
+            //        DepthDamageCurve newOtherDDCurve = new DepthDamageCurve(newOtherDDCurveName, otherDesc, ListOfOccupancyTypes[j].OtherDepthDamageFunction, DepthDamageCurve.DamageTypeEnum.Other);
 
-                    //add the four dd curves to the list of curves for this group
+            //        //update the name on the occtype
+            //        ListOfOccupancyTypes[j].StructureDepthDamageName = newStructuralDDCurveName;
+            //        ListOfOccupancyTypes[j].ContentDepthDamageName = newContentDDCurveName;
+            //        ListOfOccupancyTypes[j].VehicleDepthDamageName = newVehicleDDCurveName;
+            //        ListOfOccupancyTypes[j].OtherDepthDamageName = newOtherDDCurveName;
 
-                    listOfDDCurves.Add(newStructuralDDCurve);
-                    listOfDDCurves.Add(newContentDDCurve);
-                    listOfDDCurves.Add(newVehicleDDCurve);
-                    listOfDDCurves.Add(newOtherDDCurve);
-
-
-                    //if (!DepthDamage.DepthDamageCurveData.CurveDictionary.ContainsKey(newStructuralDDCurveName))
-                    //{
-                    //    DepthDamage.DepthDamageCurveData.CurveDictionary.Add(newStructuralDDCurveName, newStructuralDDCurve);
-
-                    //}
-                    //if (!DepthDamage.DepthDamageCurveData.CurveDictionary.ContainsKey(newContentDDCurveName))
-                    //{
-                    //    DepthDamage.DepthDamageCurveData.CurveDictionary.Add(newContentDDCurveName, newContentDDCurve);
-                    //}
-                    //if (!DepthDamage.DepthDamageCurveData.CurveDictionary.ContainsKey(newVehicleDDCurveName))
-                    //{
-                    //    DepthDamage.DepthDamageCurveData.CurveDictionary.Add(newVehicleDDCurveName, newVehicleDDCurve);
-                    //}
-                    //if (!DepthDamage.DepthDamageCurveData.CurveDictionary.ContainsKey(newOtherDDCurveName))
-                    //{
-                    //    DepthDamage.DepthDamageCurveData.CurveDictionary.Add(newOtherDDCurveName, newOtherDDCurve);
-                    //}
-
-
+            //        //add the four dd curves to the list of curves for this group
+            //        listOfDDCurves.Add(newStructuralDDCurve);
+            //        listOfDDCurves.Add(newContentDDCurve);
+            //        listOfDDCurves.Add(newVehicleDDCurve);
+            //        listOfDDCurves.Add(newOtherDDCurve);
 
 
-                }
+            //        //if (!DepthDamage.DepthDamageCurveData.CurveDictionary.ContainsKey(newStructuralDDCurveName))
+            //        //{
+            //        //    DepthDamage.DepthDamageCurveData.CurveDictionary.Add(newStructuralDDCurveName, newStructuralDDCurve);
+
+            //        //}
+            //        //if (!DepthDamage.DepthDamageCurveData.CurveDictionary.ContainsKey(newContentDDCurveName))
+            //        //{
+            //        //    DepthDamage.DepthDamageCurveData.CurveDictionary.Add(newContentDDCurveName, newContentDDCurve);
+            //        //}
+            //        //if (!DepthDamage.DepthDamageCurveData.CurveDictionary.ContainsKey(newVehicleDDCurveName))
+            //        //{
+            //        //    DepthDamage.DepthDamageCurveData.CurveDictionary.Add(newVehicleDDCurveName, newVehicleDDCurve);
+            //        //}
+            //        //if (!DepthDamage.DepthDamageCurveData.CurveDictionary.ContainsKey(newOtherDDCurveName))
+            //        //{
+            //        //    DepthDamage.DepthDamageCurveData.CurveDictionary.Add(newOtherDDCurveName, newOtherDDCurve);
+            //        //}
 
 
 
 
-                OccupancyTypesGroupRowItemVM rowVM = new OccupancyTypesGroupRowItemVM(SelectedPath, System.IO.Path.GetFileNameWithoutExtension(SelectedPath),ListOfOccupancyTypes,listOfDDCurves);
-                ListOfRowVMs.Add(rowVM);
-                //OccupancyTypesElement ote = new OccupancyTypesElement(OccupancyTypesGroupName, ListOfOccupancyTypes);
-                //ListOfOccTypeElements.Add(ote);
-                //OccupancyTypesOwnedElement.ListOfOccupancyTypesGroups.Add(ote);
-                SelectedPath = "";
-                return true;
-            }
-            else
-            {
-                Utilities.CustomMessageBoxVM cmb = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, errorMessage);
-                string header = "Error";
-                DynamicTabVM tab = new DynamicTabVM(header, cmb, "ErrorMessage");
-                Navigate(tab);
-                return false;
-            }
+            //    }
+
+
+
+
+            //    OccupancyTypesGroupRowItemVM rowVM = new OccupancyTypesGroupRowItemVM(SelectedPath, System.IO.Path.GetFileNameWithoutExtension(SelectedPath),ListOfOccupancyTypes,listOfDDCurves);
+            //    ListOfRowVMs.Add(rowVM);
+            //    SelectedPath = "";
+            //    return true;
+            //}
+            //else
+            //{
+            //    Utilities.CustomMessageBoxVM cmb = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, errorMessage);
+            //    string header = "Error";
+            //    DynamicTabVM tab = new DynamicTabVM(header, cmb, "ErrorMessage");
+            //    Navigate(tab);
+            //    return false;
+            //}
+            return false;
 
         }
         #endregion
@@ -263,7 +265,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 //create a dummy tabs checked dictionary
                 Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
 
-                foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in row.ListOfOccTypes)
+                foreach (IOccupancyType ot in row.ListOfOccTypes)
                 {
                     if (_OcctypeTabsSelectedDictionary.ContainsKey(ot.Name))
                     {
@@ -299,21 +301,21 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             foreach (OccupancyTypesGroupRowItemVM row in ListOfRowVMs)
             {
                 //create a dummy tabs checked dictionary
-                Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
+                //Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
 
-                foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in row.ListOfOccTypes)
-                {
-                    bool[] tabsCheckedArray = new bool[] { true, true, true, false };
-                    //if(_OcctypeTabsSelectedDictionary.ContainsKey(ot.Name))
-                    //{
-                    //    System.Windows.MessageBox.Show("Multiple occupancy types found with the same name: " + ot.Name, "Error", System.Windows.MessageBoxButton.OK);
-                    //    return;
-                    //}
-                    _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
+                //foreach (IOccupancyType ot in row.ListOfOccTypes)
+                //{
+                //    bool[] tabsCheckedArray = new bool[] { true, true, true, false };
+                //    //if(_OcctypeTabsSelectedDictionary.ContainsKey(ot.Name))
+                //    //{
+                //    //    System.Windows.MessageBox.Show("Multiple occupancy types found with the same name: " + ot.Name, "Error", System.Windows.MessageBoxButton.OK);
+                //    //    return;
+                //    //}
+                //    _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
 
-                }
+                //}
 
-                OccupancyTypesElement elem = new OccupancyTypesElement(row.Name, row.ListOfOccTypes, _OcctypeTabsSelectedDictionary);
+                OccupancyTypesElement elem = new OccupancyTypesElement( row.Name, row.ListOfOccTypes);
                 //OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(elem);
                 elementsToSave.Add(elem);
             }

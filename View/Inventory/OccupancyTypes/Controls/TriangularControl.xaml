@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="View.Inventory.OccupancyTypes.Controls.TriangularControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:View.Inventory.OccupancyTypes.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center">
+            <Label Content="Minimum"/>
+            <TextBox Width="60" Height="22" Text="{Binding Min, Mode=TwoWay}" TextAlignment="Center"/>
+        </StackPanel>
+        
+        <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center">
+            <Label Content="Most Likely"/>
+            <TextBox Text="0" IsEnabled="False" Width="60" Height="22" TextAlignment="Center"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Orientation="Vertical" VerticalAlignment="Center">
+            <Label Content="Maximum" />
+            <TextBox x:Name="txt_StandDeviation" Text="{Binding Max, Mode=TwoWay}" Width="60" Height="22" TextAlignment="Center"/>
+        </StackPanel>
+
+    </Grid>
+</UserControl>

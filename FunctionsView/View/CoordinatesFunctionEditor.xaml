@@ -8,7 +8,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
-    <ListBox x:Name="lst_tables" Grid.Row="1" KeyboardNavigation.TabNavigation="Continue" >
+    <ListBox x:Name="lst_tables" Grid.Row="1" KeyboardNavigation.TabNavigation="Continue">
         <!--this style is here to remove the padding between the list items-->
         <!--and to be able to tabe between tables-->
         <ListBox.ItemContainerStyle>

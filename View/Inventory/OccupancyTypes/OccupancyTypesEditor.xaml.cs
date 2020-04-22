@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
+using FdaViewModel.Inventory.OccupancyTypes;
 
 namespace View.Inventory.OccupancyTypes
 {
@@ -60,60 +61,51 @@ namespace View.Inventory.OccupancyTypes
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             if (vm.SelectedOccTypeGroup == null) { return; }
 
-            ObservableCollection<Consequences_Assist.ComputableObjects.OccupancyType> collectionOfOccTypes = new ObservableCollection<Consequences_Assist.ComputableObjects.OccupancyType>();
-            foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in vm.SelectedOccTypeGroup.ListOfOccupancyTypes)
+            ObservableCollection<IOccupancyTypeEditable> collectionOfOccTypes = new ObservableCollection<IOccupancyTypeEditable>();
+            foreach (IOccupancyTypeEditable ot in vm.SelectedOccTypeGroup.Occtypes)
             {
                 collectionOfOccTypes.Add(ot);
             }
             ListCollectionView lcv = new ListCollectionView(collectionOfOccTypes);
 
-            lcv.GroupDescriptions.Add(new PropertyGroupDescription(nameof(Consequences_Assist.ComputableObjects.OccupancyType.DamageCategoryName)));
+            lcv.GroupDescriptions.Add(new PropertyGroupDescription("OccType.DamageCategory.Name"));        
 
-            // var groupedOcctypes = collectionOfOccTypes.GroupBy(ot => ot.DamageCategory.Name);
-            //foreach(var group in groupedOcctypes)
-            //{
-            //    string name = group.Key;
-            //}
-
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Consequences_Assist.ComputableObjects.OccupancyType.DamageCategoryName), System.ComponentModel.ListSortDirection.Ascending));
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Consequences_Assist.ComputableObjects.OccupancyType.Name), System.ComponentModel.ListSortDirection.Ascending));
+            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("OccType.DamageCategory.Name", System.ComponentModel.ListSortDirection.Ascending));
+            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("OccType.Name", System.ComponentModel.ListSortDirection.Ascending));
 
             OccTypeListView.ItemsSource = lcv;
         }
 
         private void cmb_Group_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+            MessageBoxResult d;
+            d = MessageBox.Show("Welcome to C# Corner", "Learn C#",MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (d == MessageBoxResult.No)
+            {
+                return;
+            }
             //load the list view
             FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
-            if(vm.SelectedOccTypeGroup == null) { return; }
+            if (vm.SelectedOccTypeGroup == null) { return; }
 
-            ObservableCollection<Consequences_Assist.ComputableObjects.OccupancyType> collectionOfOccTypes = new ObservableCollection<Consequences_Assist.ComputableObjects.OccupancyType>();
-            foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in vm.SelectedOccTypeGroup.ListOfOccupancyTypes)
+            ObservableCollection<IOccupancyTypeEditable> collectionOfOccTypes = new ObservableCollection<IOccupancyTypeEditable>();
+            foreach (IOccupancyTypeEditable ot in vm.SelectedOccTypeGroup.Occtypes)
             {
                 collectionOfOccTypes.Add(ot);
             }
             ListCollectionView lcv = new ListCollectionView(collectionOfOccTypes);
 
-            lcv.GroupDescriptions.Add(new PropertyGroupDescription(nameof(Consequences_Assist.ComputableObjects.OccupancyType.DamageCategoryName)));
+            lcv.GroupDescriptions.Add(new PropertyGroupDescription("OccType.DamageCategory.Name"));
 
-           // var groupedOcctypes = collectionOfOccTypes.GroupBy(ot => ot.DamageCategory.Name);
-            //foreach(var group in groupedOcctypes)
-            //{
-            //    string name = group.Key;
-            //}
-            
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Consequences_Assist.ComputableObjects.OccupancyType.DamageCategoryName), System.ComponentModel.ListSortDirection.Ascending));
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(Consequences_Assist.ComputableObjects.OccupancyType.Name), System.ComponentModel.ListSortDirection.Ascending));
-             
+            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("OccType.DamageCategory.Name", System.ComponentModel.ListSortDirection.Ascending));
+            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("OccType.Name", System.ComponentModel.ListSortDirection.Ascending));
+
             OccTypeListView.ItemsSource = lcv;
             if (OccTypeListView.Items.Count == 0)
             {
                 return;
             }
             OccTypeListView.SelectedItem = OccTypeListView.Items[0];
-            vm.LoadTheIsTabsCheckedDictionary();
-
         }
 
         private void ClearAllControls()
@@ -130,10 +122,11 @@ namespace View.Inventory.OccupancyTypes
 
             OccTypeEditorControl.FoundationHeightUncertainty.IsEnabled = false;
 
-            OccTypeEditorControl.tableWithPlot_Structures.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None) ;
-            OccTypeEditorControl.tableWithPlot_Content.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-            OccTypeEditorControl.tableWithPlot_vehicle.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-            OccTypeEditorControl.tableWithPlot_other.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            //todo: cody commented out on 2/20/2020
+            //OccTypeEditorControl.tableWithPlot_Structures.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None) ;
+            //OccTypeEditorControl.tableWithPlot_Content.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            //OccTypeEditorControl.tableWithPlot_vehicle.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            //OccTypeEditorControl.tableWithPlot_other.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
             OccTypeEditorControl.txt_YearBox.IsEnabled = false;
             OccTypeEditorControl.txt_Module.IsEnabled = false;
@@ -164,12 +157,18 @@ namespace View.Inventory.OccupancyTypes
 
         private void OccTypeListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //I really don't like this but i was really struggling with how to update the chart
+            //when the user switches occtypes.
 
+            OccTypeEditorControl.AddChart();
+
+            //vm.
+            //OccTypeEditorControl.Chart
 
             ////assign the continuous distributions for the previously selected "percentofmeanuncertaintyWarning" control
             //if (e.RemovedItems.Count > 0)
             //{
-            //    Consequences_Assist.ComputableObjects.OccupancyType prev = (Consequences_Assist.ComputableObjects.OccupancyType)e.RemovedItems[0];
+            //    IOccupancyType prev = (IOccupancyType)e.RemovedItems[0];
             //    FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //    //structure
             //    prev.StructureValueUncertainty = OccTypeEditorControl.StructureValueUncertainty.ReturnDistribution();
@@ -191,54 +190,39 @@ namespace View.Inventory.OccupancyTypes
             
 
 
-            ListView lv = (ListView)sender;
-            if(lv.Items.Count == 0) { return; }
-            if(lv.SelectedItem == null) { lv.SelectedItem = lv.Items[0]; }
-            Consequences_Assist.ComputableObjects.OccupancyType ot = lv.SelectedItem as Consequences_Assist.ComputableObjects.OccupancyType;
+            //ListView lv = (ListView)sender;
+            //if(lv.Items.Count == 0) { return; }
+            //if(lv.SelectedItem == null) { lv.SelectedItem = lv.Items[0]; }
+            //IOccupancyTypeEditable ot = lv.SelectedItem as IOccupancyTypeEditable;
 
-            OccTypeEditorControl.OccTypeDescriptionBox.Text = ot.Description;
+            //OccTypeEditorControl.OccTypeDescriptionBox.Text = ot.Description;
 
-            //set the cont dist values for the selected occtype
-            if (ot.StructureValueUncertainty != null)
-            {
-                OccTypeEditorControl.StructureValueUncertainty.LoadOccTypeData(ot.StructureValueUncertainty);
-            }
-            if (ot.ContentValueUncertainty != null)
-            {
-                OccTypeEditorControl.ContentValueUncertainty.LoadOccTypeData(ot.ContentValueUncertainty);
-            }
-            if (ot.VehicleValueUncertainty != null)
-            {
-                OccTypeEditorControl.VehicleValueUncertainty.LoadOccTypeData(ot.VehicleValueUncertainty);
-            }
-            if (ot.OtherValueUncertainty != null)
-            {
-                OccTypeEditorControl.OtherValueUncertainty.LoadOccTypeData(ot.OtherValueUncertainty);
-            }
+            //todo: cody commented out on 2/20/2020
+            ////set the cont dist values for the selected occtype
+            //if (ot.StructureValueUncertainty != null)
+            //{
+            //    OccTypeEditorControl.StructureValueUncertainty.LoadOccTypeData(ot.StructureValueUncertainty);
+            //}
+            //if (ot.ContentValueUncertainty != null)
+            //{
+            //    OccTypeEditorControl.ContentValueUncertainty.LoadOccTypeData(ot.ContentValueUncertainty);
+            //}
+            //if (ot.VehicleValueUncertainty != null)
+            //{
+            //    OccTypeEditorControl.VehicleValueUncertainty.LoadOccTypeData(ot.VehicleValueUncertainty);
+            //}
+            //if (ot.OtherValueUncertainty != null)
+            //{
+            //    OccTypeEditorControl.OtherValueUncertainty.LoadOccTypeData(ot.OtherValueUncertainty);
+            //}
 
-            //load the foundation height uncertainty
-            if(ot.FoundationHeightUncertainty != null)
-            {
-                OccTypeEditorControl.FoundationHeightUncertainty.LoadOccTypeData(ot.FoundationHeightUncertainty);
-            }
+            ////load the foundation height uncertainty
+            //if(ot.FoundationHeightUncertainty != null)
+            //{
+            //    OccTypeEditorControl.FoundationHeightUncertainty.LoadOccTypeData(ot.FoundationHeightUncertainty);
+            //}
 
-            ////if the structure, content, vehicle, or other, depth damage curve value is "", then set the combo box to -1;
-            //if (ot.StructureDepthDamageName == "" || ot.StructureDepthDamageName == null)
-            //{
-            //    OccTypeEditorControl.StructureDamageComboBox.SelectedIndex = -1;
-            //}
-            //if (ot.ContentDepthDamageName == "" || ot.ContentDepthDamageName == null)
-            //{
-            //    OccTypeEditorControl.ContentDamageComboBox.SelectedIndex = -1;
-            //}
-            //if (ot.VehicleDepthDamageName == "" || ot.VehicleDepthDamageName == null)
-            //{
-            //    OccTypeEditorControl.VehicleDamageComboBox.SelectedIndex = -1;
-            //}
-            //if (ot.OtherDepthDamageName == "" || ot.OtherDepthDamageName == null)
-            //{
-            //    OccTypeEditorControl.OtherDamageComboBox.SelectedIndex = -1;
-            //}
+
 
 
 

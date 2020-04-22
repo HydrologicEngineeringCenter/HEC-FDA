@@ -5,7 +5,7 @@ using System.Xml.Linq;
 
 namespace Functions
 {
-    public interface IDistributedOrdinate
+    public interface IDistributedOrdinate : IOrdinate
     {
         XElement WriteToXML();
 

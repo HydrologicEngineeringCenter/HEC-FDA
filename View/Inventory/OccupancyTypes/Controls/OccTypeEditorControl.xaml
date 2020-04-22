@@ -1,19 +1,21 @@
-﻿<UserControl x:Class="Fda.Inventory.OccupancyTypes.Controls.OccTypeEditorControl"
+﻿<UserControl x:Class="View.Inventory.OccupancyTypes.Controls.OccTypeEditorControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Fda.Inventory.OccupancyTypes.Controls"
+             xmlns:local="clr-namespace:View.Inventory.OccupancyTypes.Controls"
+             xmlns:FuncView="clr-namespace:FunctionsView.View;assembly=FunctionsView"
              xmlns:CA="clr-namespace:Consequences_Assist;assembly=Consequences_Assist"
              xmlns:cac="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              xmlns:CACSup="clr-namespace:Consequences_Assist.Controls.SupportingObjects;assembly=Consequences_Assist"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"  
+             Loaded="UserControl_Loaded"
              d:DesignHeight="580" d:DesignWidth="700">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="600"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Name="NameStackPanel" VerticalAlignment="Top">
@@ -29,16 +31,16 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Column="0" Name="NameLabel" Text="Occupancy Type Name: " HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            <TextBox Grid.Column="1" Margin="2,0,0,0" Name="OccTypeNameBox" Text="{Binding SelectedOccTypeName,Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" LostFocus="OccTypeNameBox_LostFocus" />
+            <TextBox Grid.Column="1" Margin="2,0,0,0" Name="OccTypeNameBox" Text="{Binding SelectedOccType.OccType.Name,Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" LostFocus="OccTypeNameBox_LostFocus" />
             <Button Name="CreateNewButton" Margin="3,0,0,0" Width="20" Height="20" Grid.Row="2" Grid.Column="2" ToolTip="Add New Damage Category" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" Click="CreateNewDamCat_Click" >
                 <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Add.png"/>
             </Button>
 
             <TextBlock Grid.Row="1" TextAlignment="Right" Text="Description: " VerticalAlignment="Center"/>
-            <cac:TextBoxDescription Grid.Row="1" Grid.Column="1" Margin="2,5,0,5" Name="OccTypeDescriptionBox" LostFocus="OccTypeDescriptionBox_LostFocus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" />
+            <cac:TextBoxDescription Grid.Row="1" Grid.Column="1" Margin="2,5,0,5" Text="{Binding SelectedOccType.OccType.Description}" Name="OccTypeDescriptionBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2" />
 
             <TextBlock Grid.Row="2" TextAlignment="Right" Text="Damage Category: " VerticalAlignment="Center"/>
-            <ComboBox Grid.Row="2" Grid.Column="1" Margin="2,0,0,0" Name="DamageCategoryComboBox" ItemsSource="{Binding DamageCategoriesList}" SelectedItem="{Binding SelectedDamageCategory}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="DamageCategoryComboBox_SelectionChanged" />
+            <ComboBox Grid.Row="2" Grid.Column="1" Margin="2,0,0,0" Name="DamageCategoryComboBox" ItemsSource="{Binding DamageCategoriesList}" SelectedItem="{Binding SelectedOccType.OccType.DamageCategory.Name}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="DamageCategoryComboBox_SelectionChanged" />
         </Grid>
 
         <Border BorderBrush="Black" BorderThickness=".5" Margin="0,5,0,5" CornerRadius="1.5" Padding="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top">
@@ -50,34 +52,26 @@
             <TabItem Name="StructureDDTabItem">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <CheckBox Margin="0" IsChecked="{Binding IsStructureTabChecked}" Name="StructureCheck" VerticalAlignment="Center"/>
+                        <CheckBox Margin="0" IsChecked="{Binding SelectedOccType.OccType.CalculateStructureDamage}" Name="StructureCheck" VerticalAlignment="Center"/>
                         <TextBlock VerticalAlignment="Center" Text="Structure Damage" Margin="2,0,0,0"/>
                     </StackPanel>
                 </TabItem.Header>
-                <Grid IsEnabled="{Binding ElementName=StructureCheck, Path=IsChecked, Mode=TwoWay}">
+                <Grid x:Name="StructureTabGrid" IsEnabled="{Binding ElementName=StructureCheck, Path=IsChecked, Mode=TwoWay}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
                     <Border Grid.Row="0" Grid.ColumnSpan="2" BorderBrush="Black" BorderThickness=".5" CornerRadius="1.5" Padding="2" HorizontalAlignment="Stretch" VerticalAlignment="Top">
                         <!--<local:PercentOfMeanUncertainty x:Name="StructureValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Structure Value as %:"/>-->
-                        <CACSup:PercentOfMeanUncertaintyWarning x:Name="StructureValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Structure Value as %:" LostFocus="StructureValueUncertainty_LostFocus"/>
+                        <!--<CACSup:PercentOfMeanUncertaintyWarning x:Name="StructureValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Structure Value as %:" LostFocus="StructureValueUncertainty_LostFocus"/>-->
+                        <local:ValueUncertaintyControl DataContext="{Binding SelectedOccType.StructureValueUncertainty}" />
                     </Border>
 
-                    <Grid Grid.Row="1" Margin="5,5,0,5" Name="StructureDamagePanel" VerticalAlignment="Top" HorizontalAlignment="Stretch">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <!--<TextBlock Name="StructureDamageLabel" Grid.Column="0" Text="Structure Damage Relationship: " TextAlignment="Right" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <ComboBox Name="StructureDamageComboBox" Grid.Column="1" ItemsSource="{Binding StructureDepthDamageStringNames}"  SelectedItem="{Binding SelectedStructureDepthDamage}" />
-                        <Button Name="EditStructureDamageButton" Grid.Column="2" Margin="3,0,0,0"  IsEnabledChanged="EditStructureDamageButton_IsEnabledChanged"  Padding="0" Height="20" Width="20" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Edit Depth-Damage Data" ToolTipService.ShowOnDisabled="True" Click="EditStructureDamageButton_Click" >
-                            <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/EditButtonIcon_Disabled.png"/>
-                        </Button>-->
-                    </Grid>
+                    <FuncView:CoordinatesFunctionEditor Grid.Row="1" EditorVM="{Binding SelectedOccType.StructureEditorVM, Mode=TwoWay}" />
                     <!--<CA:TableWithPlot x:Name="tableWithPlot_Structures" Grid.Row="2" Curve="{Binding StructureDepthDamageCurve}" IsReadOnly="False" TableWidth="250" xColumnHeader="Depth" yColumnHeader="% Damage" xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Structural Depth-Damage Curve" />-->
                     <!--<local:CurveEditorControl x:Name="StructureCurveEditor" Margin="5,0,0,0" Grid.Row="2" IsReadOnly="True" TableWidth=".75*" plotTitle="Structural Depth-Damage Curve" xAxisLabel="Depth" yAxisLabel="% Damage" yAxisMaximum="100" yAxisMinimum="0" yColumnHeader="% Damage" xColumnHeader="Depth" MinYValue="0" MaxYValue="100" IsAscending="True" IsStrictX="True" IsStrictY="False"></local:CurveEditorControl>-->
                 </Grid>
@@ -85,11 +79,11 @@
             <TabItem Name="ContentDDTabItem" >
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <CheckBox Margin="0,0,0,0" IsChecked="{Binding IsContentTabChecked}" IsEnabled="True" Name="ContentCheck" VerticalAlignment="Center"/>
+                        <CheckBox Margin="0,0,0,0" IsChecked="{Binding SelectedOccType.OccType.CalculateContentDamage}" IsEnabled="True" Name="ContentCheck" VerticalAlignment="Center"/>
                         <TextBlock VerticalAlignment="Center" Text="Content Damage" Margin="2,0,0,0"/>
                     </StackPanel>
                 </TabItem.Header>
-                <Grid IsEnabled="{Binding ElementName=ContentCheck, Path=IsChecked, Mode=TwoWay}">
+                <Grid x:Name="ContentTabGrid" IsEnabled="{Binding ElementName=ContentCheck, Path=IsChecked, Mode=TwoWay}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="97*"/>
                         <ColumnDefinition Width="133*"/>
@@ -102,7 +96,8 @@
 
                     <Border BorderBrush="Black" BorderThickness=".5" CornerRadius="1.5" Padding="2" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.ColumnSpan="2">
                         <!--<local:PercentOfMeanUncertainty x:Name="ContentValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Top" ParameterName="Variation in Content Value as %:"/>-->
-                        <CACSup:PercentOfMeanUncertaintyWarning x:Name="ContentValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Top" ParameterName="Variation in Content Value as %:" LostFocus="ContentValueUncertainty_LostFocus"/>
+                        <!--<CACSup:PercentOfMeanUncertaintyWarning x:Name="ContentValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Top" ParameterName="Variation in Content Value as %:" LostFocus="ContentValueUncertainty_LostFocus"/>-->
+                        <local:ValueUncertaintyControl DataContext="{Binding SelectedOccType.ContentValueUncertainty}" />
                     </Border>
                     <Grid Grid.Row="1" Margin="5,5,0,0" Name="ContentDamagePanel" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.ColumnSpan="2">
                         <Grid.ColumnDefinitions>
@@ -118,7 +113,7 @@
                         <!--
                         </Button>-->
                     </Grid>
-
+                    <FuncView:CoordinatesFunctionEditor Grid.Row="2" EditorVM="{Binding SelectedOccType.ContentEditorVM, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <!--<CA:TableWithPlot x:Name="tableWithPlot_Content" Grid.Row="2" Curve="{Binding ContentDepthDamageCurve}" IsReadOnly="False" xColumnHeader="Depth" yColumnHeader="% Damage"  xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Content Depth-Damage Curve" Grid.ColumnSpan="2"  />-->
                     <!--<local:CurveEditorControl x:Name="ContentCurveEditor" Margin="5,0,0,0" Grid.Row="2" IsReadOnly="True" TableWidth=".75*" plotTitle="Content Depth-Damage Curve" xAxisLabel="Depth" yAxisLabel="% Damage" yAxisMaximum="100" yAxisMinimum="0" yColumnHeader="% Damage" xColumnHeader="Depth" MinYValue="0" MaxYValue="100" IsAscending="True" IsStrictX="True" IsStrictY="False"></local:CurveEditorControl>-->
                 </Grid>
@@ -126,11 +121,11 @@
             <TabItem Name="VehicleDDTabItem">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <CheckBox Margin="0" IsChecked="{Binding IsVehicleTabChecked}" IsEnabled="True" Name="VehicleCheck" VerticalAlignment="Center"/>
+                        <CheckBox Margin="0" IsChecked="{Binding SelectedOccType.OccType.CalculateVehicleDamage}" IsEnabled="True" Name="VehicleCheck" VerticalAlignment="Center"/>
                         <TextBlock VerticalAlignment="Center" Text="Vehicle Damage" Margin="2,0,0,0"/>
                     </StackPanel>
                 </TabItem.Header>
-                <Grid IsEnabled="{Binding ElementName=VehicleCheck, Path=IsChecked, Mode=TwoWay}">
+                <Grid x:Name="VehicleTabGrid" IsEnabled="{Binding ElementName=VehicleCheck, Path=IsChecked, Mode=TwoWay}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -138,7 +133,8 @@
                     </Grid.RowDefinitions>
                     <Border BorderBrush="Black" BorderThickness=".5" CornerRadius="1.5" Padding="2" HorizontalAlignment="Stretch" VerticalAlignment="Top">
                         <!--<local:PercentOfMeanUncertainty x:Name="VehicleValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Vehicle Value as %:"/>-->
-                        <CACSup:PercentOfMeanUncertaintyWarning x:Name="VehicleValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Vehicle Value as %:" LostFocus="VehicleValueUncertainty_LostFocus"/>
+                        <!--<CACSup:PercentOfMeanUncertaintyWarning x:Name="VehicleValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Vehicle Value as %:" LostFocus="VehicleValueUncertainty_LostFocus"/>-->
+                        <local:ValueUncertaintyControl DataContext="{Binding SelectedOccType.VehicleValueUncertainty}" />
                     </Border>
                     <Grid Grid.Row="1" Margin="5,5,0,5" Name="VehicleDamagePanel" VerticalAlignment="Top" HorizontalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
@@ -152,6 +148,7 @@
                             --><!--<Image Width="16" Height="16" Source="pack://application:,,,/HEC-LifeSim;component/Resources/EditButtonIcon_Disabled.png"/>--><!--
                         </Button>-->
                     </Grid>
+                    <FuncView:CoordinatesFunctionEditor Grid.Row="2" EditorVM="{Binding SelectedOccType.VehicleEditorVM}" />
                     <!--<CA:TableWithPlot x:Name="tableWithPlot_vehicle" Grid.Row="2" Curve="{Binding VehicleDepthDamageCurve}" IsReadOnly="False" xColumnHeader="Depth" yColumnHeader="% Damage" xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Vehicle Depth-Damage Curve" />-->
                     <!--<local:CurveEditorControl x:Name="VehicleCurveEditor" Margin="5,0,0,0" Grid.Row="2" IsReadOnly="True" TableWidth=".75*" plotTitle="Vehicle Depth-Damage Curve" xAxisLabel="Depth" yAxisLabel="% Damage" yAxisMaximum="100" yAxisMinimum="0" yColumnHeader="% Damage" xColumnHeader="Depth" MinYValue="0" MaxYValue="100" IsAscending="True" IsStrictX="True" IsStrictY="False"></local:CurveEditorControl>-->
                 </Grid>
@@ -159,11 +156,11 @@
             <TabItem Name="OtherDDTabItem">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <CheckBox Margin="0" IsChecked="{Binding IsOtherTabChecked}" IsEnabled="True" Name="OtherCheck" VerticalAlignment="Center"/>
+                        <CheckBox Margin="0" IsChecked="{Binding SelectedOccType.OccType.CalculateOtherDamage}" IsEnabled="True" Name="OtherCheck" VerticalAlignment="Center"/>
                         <TextBlock VerticalAlignment="Center" Text="Other Damage" Margin="2,0,0,0"/>
                     </StackPanel>
                 </TabItem.Header>
-                <Grid IsEnabled="{Binding ElementName=OtherCheck, Path=IsChecked, Mode=TwoWay}">
+                <Grid x:Name="OtherTabGrid" IsEnabled="{Binding ElementName=OtherCheck, Path=IsChecked, Mode=TwoWay}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -172,7 +169,8 @@
 
                     <Border BorderBrush="Black" BorderThickness=".5" CornerRadius="1.5" Padding="2" HorizontalAlignment="Stretch" VerticalAlignment="Top">
                         <!--<local:PercentOfMeanUncertainty x:Name="OtherValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Other Value as %:"/>-->
-                        <CACSup:PercentOfMeanUncertaintyWarning x:Name="OtherValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Other Value as %:" LostFocus="OtherValueUncertainty_LostFocus"/>
+                        <!--<CACSup:PercentOfMeanUncertaintyWarning x:Name="OtherValueUncertainty" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" ParameterName="Variation in Other Value as %:" LostFocus="OtherValueUncertainty_LostFocus"/>-->
+                        <local:ValueUncertaintyControl DataContext="{Binding SelectedOccType.OtherValueUncertainty}" />
                     </Border>
                     <Grid Grid.Row="1" Margin="5,5,0,5" Name="OtherDamagePanel" VerticalAlignment="Top" HorizontalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
@@ -186,6 +184,7 @@
                             <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/EditButtonIcon.png"/>
                         </Button>-->
                     </Grid>
+                    <FuncView:CoordinatesFunctionEditor Grid.Row="2" EditorVM="{Binding SelectedOccType.OtherEditorVM}" />
                     <!--<CA:TableWithPlot x:Name="tableWithPlot_other" Grid.Row="2" Curve="{Binding OtherDepthDamageCurve}" IsReadOnly="False" xColumnHeader="Depth" yColumnHeader="% Damage"  xAxisLabel="Depth" yAxisLabel="% Damage" plotTitle="Other Depth-Damage Curve"  />-->
                     <!--<local:CurveEditorControl x:Name="OtherCurveEditor" Margin="5,0,0,0" Grid.Row="2" IsReadOnly="True" TableWidth=".75*" plotTitle="Other Depth-Damage Curve" xAxisLabel="Depth" yAxisLabel="% Damage" yAxisMaximum="100" yAxisMinimum="0" yColumnHeader="% Damage" xColumnHeader="Depth" MinYValue="0" MaxYValue="100" IsAscending="True" IsStrictX="True" IsStrictY="False"></local:CurveEditorControl>-->
                 </Grid>

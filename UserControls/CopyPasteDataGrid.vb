@@ -28,6 +28,11 @@ Namespace UserControls
         Public Sub New()
             '
         End Sub
+
+        Private Function DataGridUnloading() As RoutedEvent
+            Throw New NotImplementedException()
+        End Function
+
         Private Sub Me_PreviewKeyDown(sender As Object, e As KeyEventArgs) Handles Me.PreviewKeyDown
             If IsLastRowSelected() Then
                 If e.Key = Key.Enter Then

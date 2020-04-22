@@ -117,7 +117,7 @@ namespace FdaViewModel.Study
         public AggregatedStageDamageOwnerElement StageDamageParent { get; set; }
 
         public OccupancyTypesOwnerElement OccTypeParent { get; set; }
-
+        public StructureInventoryOwnerElement StructureInventoryParent { get; set; }
         public ConditionsOwnerElement ConditionsParent { get; set; }
         public ConditionsTreeOwnerElement ConditionsTreeParent { get; set; }
         #endregion
@@ -752,14 +752,13 @@ namespace FdaViewModel.Study
             {
 
             }
-            //todo: Refactor: CO
-            //if (parentType == typeof(OccupancyTypesOwnerElement))
-            //{
-            //    return OccTypeParent as T;
-            //}
+            if (parentType == typeof(OccupancyTypesOwnerElement))
+            {
+                return OccTypeParent as T;
+            }
             if (parentType == typeof(StructureInventoryOwnerElement))
             {
-
+                return StructureInventoryParent as T;
             }
             if (parentType == typeof(AggregatedStageDamageOwnerElement))
             {
@@ -847,15 +846,14 @@ namespace FdaViewModel.Study
                 }
                 return retVal;
             }
-            //todo: Refactor: CO
-            //if (childElementType == typeof(OccupancyTypesElement))
-            //{
-            //    foreach (ChildElement elem in OccTypeElements)
-            //    {
-            //        retVal.Add(elem );
-            //    }
-            //    return retVal;
-            //}
+            if (childElementType == typeof(OccupancyTypesElement))
+            {
+                foreach (ChildElement elem in OccTypeElements)
+                {
+                    retVal.Add(elem);
+                }
+                return retVal;
+            }
             if (childElementType == typeof(InventoryElement))
             {
                 foreach (ChildElement elem in StructureInventoryElements)

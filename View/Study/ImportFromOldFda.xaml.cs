@@ -37,7 +37,7 @@ namespace View.Study
                 //this line should write all the applicable data to the database.
                 //It creates the view model objects and then writes them to the sqlite db in the "flush" 
                 //for each fda element type. The sqlite db needs to already exist.
-                import.ImportAsciiData(vm.ImportFilePath);
+                import.ImportAsciiData(vm.ImportFilePath, AsciiImport.ImportOptions.ImportEverything);
             }
         }
 

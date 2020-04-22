@@ -18,6 +18,7 @@ namespace FunctionsView.ViewModel
         private IOrdinateEnum _selectedDistType = IOrdinateEnum.NotSupported;// = DistributionType.Constant;
         private InterpolationEnum _selectedInterpolationType;// = InterpolationEnum.Linear;
 
+
         #region Properties
         public double Alpha { get; set; }
         public double Beta { get; set; }

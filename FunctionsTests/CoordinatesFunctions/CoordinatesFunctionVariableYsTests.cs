@@ -206,14 +206,14 @@ namespace FunctionsTests.CoordinatesFunctions
             Assert.True(firstCoord.X.Equals(result));
         }
 
-        ///// <summary> Tests that the Inverse F Function throws ArgumentException if input is out of range. </summary>
-        //[Theory]
-        //[MemberData(nameof(GoodDataDistributed))]
-        //public void CoordinatesFunctionVariableYs_InverseF_Throws_ArgumentException(List<ICoordinate> value)
-        //{
-        //    ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(value);
-        //    Assert.Throws<ArgumentOutOfRangeException>(() => testObj.InverseF(new Distribution(new Distribution(new Normal(99, 0)))));
-        //}
+        /// <summary> Tests that the Inverse F Function throws ArgumentException if input is out of range. </summary>
+        [Theory]
+        [MemberData(nameof(GoodDataDistributed))]
+        public void CoordinatesFunctionVariableYs_InverseF_Throws_ArgumentException(List<ICoordinate> value)
+        {
+            ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(value);
+            Assert.Throws<ArgumentOutOfRangeException>(() => testObj.InverseF(new Distribution(new Normal(99, 0))));
+        }
         /// <summary> Tests that the Inverse F Function returns ArgumentNullException if input is null. </summary>
         [Theory]
         [MemberData(nameof(GoodDataDistributed))]

@@ -73,7 +73,7 @@ namespace Functions
 
         }
 
-        private static IOrdinate CreateOrdinate(XElement ordinateElement)
+        public static IOrdinate CreateOrdinate(XElement ordinateElement)
         {
             string ordinateType = ordinateElement.Attribute(SerializationConstants.TYPE).Value;
             if (ordinateType.Equals(SerializationConstants.CONSTANT))

@@ -486,9 +486,27 @@ namespace FunctionsView.View
 
         #endregion
 
+        
+            
         private void dg_table_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            TableVM.CellEditEnding();
+            //TableVM.CellEditEnding();  
+            TableVM.Row_UpdateChart(sender, e);
+        }
+
+        private void dg_table_Unloaded(object sender, RoutedEventArgs e)
+        {
+            int i = 0;
+        }
+
+        private void UserControl_LostFocus(object sender, RoutedEventArgs e)
+        {
+            int i = 0;
+        }
+
+        private void dg_table_CurrentCellChanged(object sender, EventArgs e)
+        {
+            int i = 0;
         }
     }
 }

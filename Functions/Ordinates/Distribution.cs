@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
 using Utilities;
+using Utilities.Serialization;
 
 namespace Functions.Ordinates
 {
@@ -167,8 +168,38 @@ namespace Functions.Ordinates
 
         public XElement WriteToXML()
         {
-            return _Distribution.WriteToXML();
+            XElement ordinateElem = new XElement(SerializationConstants.ORDINATE);
+            ordinateElem.SetAttributeValue(SerializationConstants.TYPE, GetSerializationConstantForDistributionType(Type));
+
+            XElement distElement = _Distribution.WriteToXML();
+
+            ordinateElem.Add(distElement);
+            return ordinateElem;
             
+        }
+        private string GetSerializationConstantForDistributionType(IOrdinateEnum type)
+        {
+            switch(type)
+            {
+                case IOrdinateEnum.Normal:
+                    {
+                        return SerializationConstants.NORMAL;
+                    }
+                case IOrdinateEnum.Triangular:
+                    {
+                        return SerializationConstants.TRIANGULAR;
+                    }
+                case IOrdinateEnum.Uniform:
+                    {
+                        return SerializationConstants.UNIFORM;
+                    }
+                    //todo: cody finish this out.
+                    //case IOrdinateEnum.Beta4Parameters:
+                    //    {
+                    //        return SerializationConstants.
+                    //    }
+            }
+            throw new NotImplementedException("Finish this code.");
         }
         #endregion
         #endregion

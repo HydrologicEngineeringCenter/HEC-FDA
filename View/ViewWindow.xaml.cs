@@ -410,7 +410,10 @@ namespace View
         {
             Close();
             //Not sure why this was necessary but without it FDA wasn't actually closing down. (Cody 1/28/2020)
-            Environment.Exit(0);
+            if (this == _MainWindow)
+            {
+                Environment.Exit(0);
+            }
         }
 
         private void MINIMIZE(object sender, MouseButtonEventArgs e)
@@ -471,6 +474,11 @@ namespace View
                 aTimer.Enabled = true;
                 DragMove();
                 TitleBarRectangle_MouseLeftButtonUp(null, null);
+            }
+            else
+            {
+                //then this is probably some little pop up dialog that we want the user to be able to drag
+                DragMove();
             }
         }
 
@@ -602,6 +610,10 @@ namespace View
             else
             {
 
+            }
+            if(aTimer == null)
+            {
+                return;
             }
             aTimer.Enabled = false;
             TabControl mainTabControl = GetTabControlFromMainWindow();

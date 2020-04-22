@@ -69,10 +69,13 @@ namespace View.Utilities
             if (_MouseDown && HasDraggedMinimumDistance(e))
             {
                 Mouse.Capture(null);//releases the capture
-                DynamicTabVM vm = (DynamicTabVM)this.DataContext;
-                if (vm.CanPopOut)
+                if (this.DataContext is DynamicTabVM)
                 {
-                    vm.PopTabIntoWindowDragging();
+                    DynamicTabVM vm = (DynamicTabVM)this.DataContext;
+                    if (vm.CanPopOut)
+                    {
+                        vm.PopTabIntoWindowDragging();
+                    }
                 }
             }
 

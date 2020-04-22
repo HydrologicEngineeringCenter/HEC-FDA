@@ -19,6 +19,21 @@ namespace Importer
         private SortedList<string, OccupancyType> _OcctypeListSort = new SortedList<string, OccupancyType>();
         #endregion
         #region Properties
+        public List<OccupancyType> Occtypes
+        {
+            get
+            {
+                List<OccupancyType> occtypes = new List<OccupancyType>();
+                OccupancyType aOcctype;
+                for (int i = 0; i < _OcctypeListSort.Count; i++)
+                {
+                    occtypes.Add( _OcctypeListSort.ElementAt(i).Value);
+                    
+                }
+                return occtypes;
+            }
+        }
+
         #endregion
         #region Constructors
         public OccupancyTypeList()
@@ -53,6 +68,7 @@ namespace Importer
                 aOcctype.PrintToFile();
             }
         }
+
         public void Export(StreamWriter wr, char delimt)
         {
             OccupancyType aOccType = new OccupancyType();

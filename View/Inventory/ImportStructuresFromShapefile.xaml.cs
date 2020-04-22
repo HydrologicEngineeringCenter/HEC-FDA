@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Inventory
+namespace View.Inventory
 {
     /// <summary>
     /// Interaction logic for ImportStructuresFromShapefile.xaml

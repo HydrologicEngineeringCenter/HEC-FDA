@@ -127,6 +127,26 @@ namespace Functions
             }
         }
 
+        public static ICoordinatesFunction Factory(List<double> xs, List<IDistributedOrdinate> ys, InterpolationEnum interpolationEnum)
+        {
+            //are lengths the same
+            if (xs.Count == ys.Count)
+            {
+                List<ICoordinate> coordinates = new List<ICoordinate>();
+                for (int i = 0; i < xs.Count; i++)
+                {
+                    ICoordinate coordinate = ICoordinateFactory.Factory(xs[i], ys[i]);
+                    coordinates.Add(coordinate);
+                }
+
+                return new CoordinatesFunctionVariableYs(coordinates,interpolationEnum);
+            }
+            else
+            {
+                throw new ArgumentException("X values are a different length than the Y values.");
+            }
+        }
+
         //public static ICoordinatesFunction Factory(List<double> xs, List<IDistribution> ys)
         //{
         //    //are lengths the same

@@ -149,23 +149,23 @@ namespace FunctionsTests.CoordinatesFunctions
         #endregion
 
         #region Functions
-        //internal CoordinatesFunctionVariableYs CreateDistributedCoordinatesFunctionBasic()
-        //{
-        //    List<double> xs = new List<double>() { 0, 1, 2, 3 };
-        //    List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>() 
-        //    { 
-        //        IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
-        //        IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
-        //        IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
-        //        IDistributedOrdinateFactory.Factory( new Normal(1, 0)) 
-        //    };
-        //    return (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
-        //}
+        internal CoordinatesFunctionVariableYs CreateDistributedCoordinatesFunctionBasic()
+        {
+            List<double> xs = new List<double>() { 0, 1, 2, 3 };
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>() 
+            { 
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)) 
+            };
+            return (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
+        }
 
-        //internal CoordinatesFunctionVariableYs CreateDistributedCoordinatesFunction(List<double> xs, List<IDistributedOrdinate> ys)
-        //{
-        //    return (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
-        //}
+        internal CoordinatesFunctionVariableYs CreateDistributedCoordinatesFunction(List<double> xs, List<IDistributedOrdinate> ys)
+        {
+            return (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
+        }
         #endregion
 
         internal static List<ICoordinate> DistributedCoordinates(double[] xs, IDistributedOrdinate[] ys)
@@ -331,10 +331,10 @@ namespace FunctionsTests.CoordinatesFunctions
         //    List<double> xs3 = new List<double>() { 8, 9, 10, 11 };
         //    List<double> ys3 = new List<double>() { 13, 14, 15, 16 };
 
-        //    //create a constant func
-        //    functions.Add(CreateCoordinatesFunctionConstants(xs1, ys1));
-        //    functions.Add(ICoordinatesFunctionsFactory.Factory(xs2, ys2));
-        //    functions.Add(CreateCoordinatesFunctionConstants(xs3, ys3));
+            //create a constant func
+            functions.Add(CreateCoordinatesFunctionConstants(xs1, ys1));
+            functions.Add(ICoordinatesFunctionsFactory.Factory(xs2, ys2, InterpolationEnum.None));
+            functions.Add(CreateCoordinatesFunctionConstants(xs3, ys3));
 
         //    return functions;
         //}

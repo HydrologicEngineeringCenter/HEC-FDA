@@ -31,17 +31,17 @@ namespace FunctionsTests.Utilities.Samplers
         //{
         //    ConstantSampler constSampler = new ConstantSampler();
 
-        //    List<double> xs = new List<double>() { 0, 1, 2, 3 };
-        //    List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
-        //    {
-        //        IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
-        //        IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
-        //        IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
-        //        IDistributedOrdinateFactory.Factory( new Normal(1, 0))
-        //    };
-        //    CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys);
-        //    Assert.False(constSampler.CanSample(distributedFunc));
-        //}
+            List<double> xs = new List<double>() { 0, 1, 2, 3 };
+            List<IDistributedOrdinate> ys = new List<IDistributedOrdinate>()
+            {
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0)),
+                IDistributedOrdinateFactory.Factory( new Normal(1, 0))
+            };
+            CoordinatesFunctionVariableYs distributedFunc = (CoordinatesFunctionVariableYs)ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.None);
+            Assert.False(constSampler.CanSample(distributedFunc));
+        }
 
         /// <summary> Tests that the "Sample()" method returns the constant function passed in.</summary>
         [Fact]

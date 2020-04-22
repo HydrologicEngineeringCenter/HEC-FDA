@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.IO;
 using static System.Console;
 using Functions;
+using FdaViewModel.Inventory.OccupancyTypes;
+using FdaViewModel.Saving.PersistenceManagers;
 
 namespace Importer
 {
@@ -56,8 +58,17 @@ namespace Importer
         private bool _FlushOccType = false;
         private WspSectionData _WspSectData = null;
         protected bool _PrevKeyRecord = false;
+
+        public enum ImportOptions
+        {
+            ImportEverything,
+            ImportOcctypesOnly,
+            ImportWaterSurfaceProfilesOnly
+        }
+
         #endregion
         #region Properties
+        public List<IOccupancyType> OccupancyTypes { get; set; }
         public bool UsesDollar
         { get; set; }
         #endregion
@@ -69,7 +80,7 @@ namespace Importer
         }
         #endregion
         #region Voids
-        public void ImportAsciiData(string theImportFilename)
+        public void ImportAsciiData(string theImportFilename, ImportOptions importOptions)
         {
             char delimiterChar = '\t';
 
@@ -140,6 +151,43 @@ namespace Importer
                 }
             }
             reader.Close();
+
+            switch(importOptions)
+            {
+                case ImportOptions.ImportEverything:
+                    {
+                        //write everything you can to sqlite
+                        
+                        //write rating curves
+                        RatingFunctionList ratings = GlobalVariables.mp_fdaStudy.GetRatingFunctionList();
+                        foreach(RatingFunction rat in ratings.RatingFunctions)
+                        {
+                            rat.SaveToSqlite();
+                        }
+                        break;
+                    }
+                case ImportOptions.ImportOcctypesOnly:
+                    {
+                        //I don't actually want to save here. I just want to grab them
+                        List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
+                        OccupancyTypeList occtypes = GlobalVariables.mp_fdaStudy.GetOccupancyTypeList();
+                        foreach (OccupancyType ot in occtypes.Occtypes)
+                        {
+                            fda2Occtypes.Add(ot.GetFDA2OccupancyType());
+                        }
+                        //SaveOccupancyTypes(fda2Occtypes);
+                        OccupancyTypes = fda2Occtypes;
+                        break;
+                    }
+                case ImportOptions.ImportWaterSurfaceProfilesOnly:
+                    {
+                        //write only the wsp's out
+                        break;
+                    }
+            }
+            
+
+
             WriteLine($"\n\nPrint Plans at end of Import.");
             GlobalVariables.mp_fdaStudy.GetPlanList().Print();
             WriteLine($"\nPrint Years at end of Import.");
@@ -167,6 +215,15 @@ namespace Importer
             WriteLine($"\nPrint Aggregated Damage Functions at end of Import.");
             GlobalVariables.mp_fdaStudy.GetAggDamgFuncList().Print();
         }
+
+        //private void SaveOccupancyTypes(List<IOccupancyType> occtypes)
+        //{
+        //    string occtypeGroupName = "";
+        //    OccTypePersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetOccTypeManager();
+        //    OccupancyTypesElement elem = new OccupancyTypesElement(occtypeGroupName, occtypes);
+        //    manager.SaveNew(elem);
+        //}
+
         #region findFields
         void FindFields()
         {
@@ -1979,7 +2036,7 @@ namespace Importer
         {
             if (_MustFlushRatingFunc)
             {
-                _RatingFunction.SaveToSqlite();
+               // _RatingFunction.SaveToSqlite();
                 GlobalVariables.mp_fdaStudy.GetRatingFunctionList().Add(_RatingFunction);
             }
             _MustFlushRatingFunc = false;

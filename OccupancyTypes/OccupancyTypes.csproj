@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Functions\Functions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Consequences_Assist">
+      <HintPath>..\..\..\..\Documents\HEC\HEC-FDA\Final Day Download Of Everything\DotNet\Consequences_Assist\Consequences_Assist\bin\Debug\Consequences_Assist.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FdaViewModel.Inventory.OccupancyTypes;
+using Importer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -92,9 +94,12 @@ namespace View.Inventory.OccupancyTypes
             FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
             vm.SelectedPath = cmb_Path.Text;
 
+            AsciiImport import = new AsciiImport();
+            //the importer will read the file and load the occtype property with any occtypes it found
+            import.ImportAsciiData(vm.SelectedPath, AsciiImport.ImportOptions.ImportOcctypesOnly);
+            //vm.Import(import.OccupancyTypes);
 
-
-            if (vm.Import() == true)//this lets you know if the import was successful. the row was now added to the vm's list of rows
+            if (vm.Import(import.OccupancyTypes) == true)//this lets you know if the import was successful. the row was now added to the vm's list of rows
             {
                 DrawAllTheRows();
                
@@ -127,7 +132,6 @@ namespace View.Inventory.OccupancyTypes
 
             cmb_Path.Text = "";
             vm.SelectedPath = "";
-
 
         }
 

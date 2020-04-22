@@ -199,7 +199,7 @@ namespace FdaViewModel.Editors
                 AssignValuesFromElementToEditor(prevElement);
                 SavingText = CreateLastSavedText(prevElement);
                 ReloadMessages();
-
+                EditorVM.UpdateChartViewModel();
             }
         }
 
@@ -211,6 +211,7 @@ namespace FdaViewModel.Editors
                 AssignValuesFromElementToEditor(nextElement);
                 SavingText = CreateLastSavedText(nextElement);
                 ReloadMessages();
+                EditorVM.UpdateChartViewModel();
             }
         }
 
