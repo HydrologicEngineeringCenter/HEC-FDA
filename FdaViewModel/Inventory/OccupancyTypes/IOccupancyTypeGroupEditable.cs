@@ -17,6 +17,10 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         List<IOccupancyTypeEditable> Occtypes { get; set; }
 
         bool IsModified { get; set; }
+        List<IOccupancyTypeEditable> ModifiedOcctypes { get; }
          int ID { get; }
+        void SaveAll();
+        string PrintUnsuccessfullySavedOcctypes();
+        string PrintSuccessfullySavedOcctypes();
     }
 }

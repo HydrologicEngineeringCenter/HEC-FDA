@@ -41,9 +41,9 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             OccupancyType ot = new OccupancyType();
             ot.Name = name;
             //todo: default the occtype is selected values to false?
-            ot.CalculateStructureDamage = false;
-            ot.CalculateContentDamage = false;
-            ot.CalculateVehicleDamage = false;
+            ot.CalculateStructureDamage = true;
+            ot.CalculateContentDamage = true;
+            ot.CalculateVehicleDamage = true;
             ot.CalculateOtherDamage = false;
 
             //todo: what about damage category?

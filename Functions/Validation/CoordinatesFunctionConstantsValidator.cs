@@ -46,7 +46,10 @@ namespace Functions.Validation
                     }
                 }              
             }
-            if (interpolator == InterpolationEnum.NaturalCubicSpline) msg += $"A natural cubic spline interpolation scheme was specified which requires at least 3 coordinates, but only {coordinates.Count} were provided.";
+            if (interpolator == InterpolationEnum.NaturalCubicSpline && coordinates.Count < 3)
+            {
+                msg += $"A natural cubic spline interpolation scheme was specified which requires at least 3 coordinates, but only {coordinates.Count} were provided.";
+            }
             return msg.Length == 0;
         }
 

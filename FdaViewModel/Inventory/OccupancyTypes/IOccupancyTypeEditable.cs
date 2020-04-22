@@ -1,8 +1,10 @@
-﻿using FdaViewModel.Inventory.DamageCategory;
+﻿using FdaLogging;
+using FdaViewModel.Inventory.DamageCategory;
 using Functions;
 using FunctionsView.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,10 +36,20 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         CoordinatesFunctionEditorVM VehicleEditorVM { get; set; }
         CoordinatesFunctionEditorVM OtherEditorVM { get; set; }
 
-         bool CalculateStructureDamage { get; set; }
+        bool CalculateStructureDamage { get; set; }
         bool CalculateContentDamage { get; set; }
         bool CalculateVehicleDamage { get; set; }
         bool CalculateOtherDamage { get; set; }
+
+        ObservableCollection<string> DamageCategoriesList { get; set; }
+        /// <summary>
+        /// If false, then this occtype was created during the editing process
+        /// and has never been saved.
+        /// </summary>
+        bool HasBeenSaved { get; }
+        bool SaveWithReturnValue();
+        IOccupancyType CreateOccupancyType(out List<LogItem> errors);
+
 
     }
 }

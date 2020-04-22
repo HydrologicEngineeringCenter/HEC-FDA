@@ -507,10 +507,15 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             foreach (IOccupancyTypeEditable ot in occtypesToDelete)
             {
-                int[] keys = new int[] { ot.GroupID, ot.ID };
-                string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
+                //only update the db if this occtype is actually in there.
+                //if the occtype has never been saved then there is nothing to remove.
+                if (ot.HasBeenSaved)
+                {
+                    int[] keys = new int[] { ot.GroupID, ot.ID };
+                    string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
 
-                DeleteRowWithCompoundKey(OCCTYPES_TABLE_NAME, keys, keyColNames);
+                    DeleteRowWithCompoundKey(OCCTYPES_TABLE_NAME, keys, keyColNames);
+                }
             }
         }
 
@@ -588,7 +593,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         //    int index = -1;
         //    for (int i = 0; i < elems.Count(); i++)
         //    {
-        //        if (elems[i].Name.Equals(group.OriginalName))
+        //        if (elems[i].ID == group.ID)
         //        {
         //            index = i;
         //            break;
@@ -596,29 +601,64 @@ namespace FdaViewModel.Saving.PersistenceManagers
         //    }
         //    if (index != -1)
         //    {
+        //        StudyCacheForSaving.RemoveElement
         //        //update the occtype
         //        UpdateOccType(elems[index], ot.OccType);
         //    }
         //}
 
-        //private void UpdateOccType(OccupancyTypesElement group, IOccupancyType ot)
-        //{
-        //    //find the original occtype and replace with this new one
-        //    IOccupancyType originalOT = null;
-        //    foreach(IOccupancyType otype in group.ListOfOccupancyTypes)
-        //    {
-                
-        //        if(otype.ID == ot.ID)
-        //        {
-        //            originalOT = otype;
-        //            break;
-        //        }
-        //    }
-        //    if(originalOT != null)
-        //    {
-        //        originalOT = ot;
-        //    }
-        //}
+        private OccupancyTypesElement GetElementFromGroupID(int groupId)
+        {
+            List<OccupancyTypesElement> occtypeElems = StudyCacheForSaving.OccTypeElements;
+            for (int i = 0; i < occtypeElems.Count; i++)
+            {
+                if (occtypeElems[i].ID == groupId)
+                {
+                    return occtypeElems[i];
+                }
+            }
+            return null;
+        }
+
+        private void AddNewOccTypeToCache(IOccupancyType ot)
+        {
+            //Because the study cache and the occtype owner element are hanging on to
+            //the same object. All i have to do is replace the occtype in the list of 
+            //occtypes and it will show up in all places. There is no need to remove
+            //a group and add a new one.
+            OccupancyTypesElement group = GetElementFromGroupID(ot.GroupID);
+            if (group == null)
+            {
+                return;
+            }
+            else
+            {
+                group.ListOfOccupancyTypes.Add(ot);
+            }
+        }
+        private void UpdateOccTypeInCache(IOccupancyType ot)
+        {
+            //Because the study cache and the occtype owner element are hanging on to
+            //the same object. All i have to do is replace the occtype in the list of 
+            //occtypes and it will show up in all places. There is no need to remove
+            //a group and add a new one.
+
+            OccupancyTypesElement group = GetElementFromGroupID(ot.GroupID);
+            if(group == null)
+            {
+                return;
+            }
+            //now replace the occtype with the new one
+            for(int i = 0;i< group.ListOfOccupancyTypes.Count;i++)
+            {
+                if(group.ListOfOccupancyTypes[i].ID == ot.ID)
+                {
+                    group.ListOfOccupancyTypes[i] = ot;
+                    break;
+                }
+            }
+
+        }
 
         /// <summary>
         /// This removes all the matching elements from the study cache and replaces it with a new
@@ -664,7 +704,14 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 idNums.Add(Convert.ToInt32(row[PARENT_GROUP_ID_COL]));
             }
             //now we have all the id's in the parent table
-            return idNums.Max() + 1;
+            if (idNums.Count == 0)
+            {
+                return 1;
+            }
+            else
+            {
+                return idNums.Max() + 1;
+            }
         }
 
         public void SaveModifiedOcctype(IOccupancyType ot)
@@ -677,8 +724,21 @@ namespace FdaViewModel.Saving.PersistenceManagers
             object[] newValues = GetOccTypeRowForOccTypesTable(ot.GroupID, ot.ID, ot).ToArray();
 
             UpdateTableRowWithCompoundKey(OCCTYPES_TABLE_NAME, keys, keyColNames, columnsToUpdate, newValues);
+            UpdateOccTypeInCache(ot);
         }
 
+        public void SaveNewOccType(IOccupancyType ot)
+        {
+            int[] keys = new int[] { ot.GroupID, ot.ID };
+            string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
+
+            //update the whole row
+            string[] columnsToUpdate = OcctypeColumns;
+            object[] newValues = GetOccTypeRowForOccTypesTable(ot.GroupID, ot.ID, ot).ToArray();
+            Storage.Connection.Instance.AddRowToTableWithPrimaryKey(newValues, OCCTYPES_TABLE_NAME, OcctypeColumns);
+
+            AddNewOccTypeToCache(ot);
+        }
 
         /// <summary>
         /// Looks at all the current occtypes in this group and returns the max ID plus 1.
@@ -803,7 +863,11 @@ namespace FdaViewModel.Saving.PersistenceManagers
         public void SaveNewElements(List<ChildElement> elements)
         {
             OccupancyTypesOwnerElement owner = StudyCacheForSaving.GetParentElementOfType<OccupancyTypesOwnerElement>();
-            SaveElementsOnBackGroundThread(elements, owner, (elem) => SavingAction(elem), " - Saving");
+            //SaveElementsOnBackGroundThread(elements, owner, (elem) => SavingAction(elem), " - Saving");
+            foreach (ChildElement elem in elements)
+            {
+                SavingAction(elem);
+            }
         }
 
         private void SavingAction(ChildElement element)

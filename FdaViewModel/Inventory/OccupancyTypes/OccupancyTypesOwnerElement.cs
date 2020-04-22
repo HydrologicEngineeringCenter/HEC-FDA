@@ -10,6 +10,7 @@ using System.Xml;
 using Functions;
 using FdaViewModel.Saving;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -62,7 +63,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             StudyCache.OccTypeElementAdded += OccTypeElementWasAdded;
 
             StudyCache.OccTypeElementRemoved += RemoveOccTypeElement;
-            // StudyCache.OccTypeElementUpdated += UpdateRatingCurveElement;
+            StudyCache.OccTypeElementUpdated += UpdateOccTypeElement;
 
         }
 
@@ -78,17 +79,27 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             ListOfOccupancyTypesGroups.Add(elem);
             if(_IsEditorOpen)
             {
-                _OccTypeEditor.AddGroup(CreateEditableGroup(elem));
+                _OccTypeEditor.AddGroup(elem);
             }          
         }
-        //private void UpdateRatingCurveElement(object sender, Saving.ElementUpdatedEventArgs e)
-        //{
-        //    UpdateElement(e.OldElement, e.NewElement);
-        //}
-        //private void AddRatingCurveElement(object sender, Saving.ElementAddedEventArgs e)
-        //{
-        //    AddElement(e.Element);
-        //}
+        private void UpdateOccTypeElement(object sender, Saving.ElementUpdatedEventArgs e)
+        {
+            OccupancyTypesElement newElement = (OccupancyTypesElement)e.NewElement;
+            int index = -1;
+            for (int i = 0; i < ListOfOccupancyTypesGroups.Count; i++)
+            {
+                if (ListOfOccupancyTypesGroups[i].ID == newElement.ID)
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                ListOfOccupancyTypesGroups.RemoveAt(index);
+                ListOfOccupancyTypesGroups.Insert(index, newElement);
+            }
+        }
         private void RemoveOccTypeElement(object sender, Saving.ElementAddedEventArgs e)
         {
             //RemoveElement(e.Element);
@@ -99,10 +110,11 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             //dont open the editor if there are no occtype groups to edit
             if (ListOfOccupancyTypesGroups.Count < 1)
             {
-                Utilities.CustomMessageBoxVM messageBox = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "There are no occupancy types to edit. You must first import a group of occupancy types.");
-                string title = "No Occupancy Types";
-                DynamicTabVM tabb = new DynamicTabVM(title, messageBox, "ErrorMessage");
-                Navigate(tabb);
+                //Utilities.CustomMessageBoxVM messageBox = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "There are no occupancy types to edit. You must first import a group of occupancy types.");
+                //string title = "No Occupancy Types";
+                //DynamicTabVM tabb = new DynamicTabVM(title, messageBox, "ErrorMessage");
+                //Navigate(tabb);
+                MessageBox.Show("There are no occupancy types to edit. You must first import a group of occupancy types.", "No Occupancy Types", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
 
@@ -114,9 +126,8 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
 
 
-            ObservableCollection<IOccupancyTypeGroupEditable> editableGroups = CreateEditableOcctypeGroups();          
 
-            _OccTypeEditor = new OccupancyTypesEditorVM(editableGroups, actionManager);
+            _OccTypeEditor = new OccupancyTypesEditorVM(ListOfOccupancyTypesGroups, actionManager);
             _OccTypeEditor.RequestNavigation += Navigate;
             string header = "Edit Occupancy Types";
             DynamicTabVM tab = new DynamicTabVM(header, _OccTypeEditor, "EditOccupancyTypes");
@@ -133,28 +144,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             _IsEditorOpen = false;
         }
 
-        private ObservableCollection<IOccupancyTypeGroupEditable> CreateEditableOcctypeGroups()
-        {
-            List<OccupancyTypesElement> groups = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
-            ObservableCollection<IOccupancyTypeGroupEditable> editableGroups = new ObservableCollection<IOccupancyTypeGroupEditable>();
-            foreach (OccupancyTypesElement group in groups)
-            {
-                editableGroups.Add(CreateEditableGroup(group));
-            }
-            return editableGroups;
-        }
-
-        private IOccupancyTypeGroupEditable CreateEditableGroup(OccupancyTypesElement group)
-        {
-            List<IOccupancyTypeEditable> editableOcctypes = new List<IOccupancyTypeEditable>();
-            foreach (IOccupancyType ot in group.ListOfOccupancyTypes)
-            {
-                editableOcctypes.Add(new OccupancyTypeEditable(ot));
-            }
-            //now we have a list of all the occtypes. They get cloned in the OccupancyTypeEditable ctor.
-            int groupID = PersistenceFactory.GetOccTypeManager().GetGroupId(group.Name);
-            return new OccupancyTypeGroupEditable(groupID, group.Name, editableOcctypes);
-        }
+       
 
 
         private OccupancyTypesElement GetSelectedOccTypeElement()

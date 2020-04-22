@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Inventory.OccupancyTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,14 @@ namespace View.Inventory.OccupancyTypes.Controls
     /// </summary>
     public partial class CreateNewDamCat : UserControl
     {
-        public CreateNewDamCat()
+        public CreateNewDamCat( )
         {
-            InitializeComponent();
+            InitializeComponent();          
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            txt_NameTextBox.Focus();
         }
     }
 }

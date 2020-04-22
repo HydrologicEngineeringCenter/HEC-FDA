@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using FdaViewModel.Inventory.OccupancyTypes;
+using View.Inventory.OccupancyTypes.Controls;
 
 namespace View.Inventory.OccupancyTypes
 {
@@ -39,6 +40,7 @@ namespace View.Inventory.OccupancyTypes
         {
             // I wanted the editor to open up with a group and occtype selected. This gets the first group and the first occtype.
             OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
+            UpdateTheListView(sender, e);
            // if (vm.OccTypeGroups.Count > 0)
            // {
                 //if (vm.OccTypeGroups.Count > 0)
@@ -84,19 +86,29 @@ namespace View.Inventory.OccupancyTypes
         private void cmb_Group_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
+            
             //i don't want to message that the occtype group is switching if this is we are setting it for the first time.
             if (!_isFirstSettingOfOcctypeGroup && handleSelection)
             {
-                MessageBoxResult d;
-                d = MessageBox.Show("Occupancy type group has unsaved changes. Do you wish to continue?", "Unsaved Changes", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (d == MessageBoxResult.No)
+                if (e.RemovedItems.Count > 0)
                 {
-                    //when i reset the combobox back to what it originally does, it was infanitely coming back into here because it is another selection changed event.
-                    //I had to add this handleSelection boolean to handle it.
-                    handleSelection = false;
-                    cmb_Group.SelectedItem = e.RemovedItems[0];
+                    IOccupancyTypeGroupEditable prevGroup = (IOccupancyTypeGroupEditable)e.RemovedItems[0];
+                    //if the prev group has occtype changes then message before switching
+                    if (prevGroup.ModifiedOcctypes.Count>0)
+                    {
+                        //todo: maybe list the occtypes with changes?
+                        MessageBoxResult d;
+                        d = MessageBox.Show("Occupancy type group has unsaved changes. By switching, you will not lose these changes. Do you wish to continue?", "Unsaved Changes", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        if (d == MessageBoxResult.No)
+                        {
+                            //when i reset the combobox back to what it originally does, it was infanitely coming back into here because it is another selection changed event.
+                            //I had to add this handleSelection boolean to handle it.
+                            handleSelection = false;
+                            cmb_Group.SelectedItem = e.RemovedItems[0];
 
-                    return;
+                            return;
+                        }
+                    }
                 }
             }
             handleSelection = true;
@@ -122,6 +134,7 @@ namespace View.Inventory.OccupancyTypes
             }
             OccTypeListView.SelectedItem = OccTypeListView.Items[0];
             _isFirstSettingOfOcctypeGroup = false;
+            UpdateTheListView(sender, e);
         }
 
         private void ClearAllControls()
@@ -176,7 +189,7 @@ namespace View.Inventory.OccupancyTypes
             //I really don't like this but i was really struggling with how to update the chart
             //when the user switches occtypes.
 
-            OccTypeEditorControl.AddChart();
+            //OccTypeEditorControl.AddChart();
 
             //vm.
             //OccTypeEditorControl.Chart
@@ -247,9 +260,16 @@ namespace View.Inventory.OccupancyTypes
 
         private void CreateNewOccTypeButton_Click(object sender, RoutedEventArgs e)
         {
+            //CreateNewDamCatVM vm = new CreateNewDamCatVM(new List<string>());
+            //CreateNewDamCat nameWindow = new CreateNewDamCat(vm);
+            //nameWindow.ShowDialog();
+            //if(!vm.WasCanceled) 
+            //{
+            //    vm.Name = "";
+            //}
             OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
             vm.LaunchNewOccTypeWindow();
-            UpdateTheListView(sender,e);
+            UpdateTheListView(sender, e);
             EnableAllControls();
         }
 

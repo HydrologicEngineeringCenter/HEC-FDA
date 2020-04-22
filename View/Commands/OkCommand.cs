@@ -60,7 +60,10 @@ namespace View.Commands
             //if (vm.HasChanges)//if the vm is loaded in an error state, the user will not be identified, we should consider not checking for changes.
             //{
                 vm.Validate();
-               
+               if(vm.HasFatalError)
+            {
+                return;
+            }
                 //if (vm.HasError)
                 //{
                 //bool yesClicked = DisplayErrors(vm, window);

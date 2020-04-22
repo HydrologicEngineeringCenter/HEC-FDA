@@ -22,7 +22,7 @@ namespace View.Commands
         #region Functions
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            FdaViewModel.BaseViewModel vm = (FdaViewModel.BaseViewModel)values[0];
+                FdaViewModel.BaseViewModel vm = (FdaViewModel.BaseViewModel)values[0];
             if (vm != null)
             {
                 //todo: Cody commented out on 1/2/20. I am not sure if it was needed.
