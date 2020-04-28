@@ -75,11 +75,15 @@ namespace Importer
         #region Constructors
         public AsciiImport()
         {
+            //clear the fda study. Because it is public static it hangs around forever.
+            //This might not be the first time we are importing during an open session, so the study should be cleared.
+            GlobalVariables.mp_fdaStudy = new Study();
             _SingleDamageFunction = new SingleDamageFunction[5];
             for (int i = 0; i < 5; i++) _SingleDamageFunction[i] = new SingleDamageFunction();
         }
         #endregion
         #region Voids
+
         public void ImportAsciiData(string theImportFilename, ImportOptions importOptions)
         {
             char delimiterChar = '\t';

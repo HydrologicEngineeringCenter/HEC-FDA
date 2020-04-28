@@ -219,6 +219,7 @@ namespace FdaViewModel.Editors
         {
             if(!HasChanges)
             {
+                //todo: it looks like this never gets hit. It always has changes.
                 String time = DateTime.Now.ToString();
                 
                 LogItem li =LogItemFactory.FactoryTemp(LoggingLevel.Info, "No new changes to save." + time );

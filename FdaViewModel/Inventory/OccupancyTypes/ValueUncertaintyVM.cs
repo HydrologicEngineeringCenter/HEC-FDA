@@ -15,6 +15,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
     /// </summary>
     public class ValueUncertaintyVM:BaseViewModel
     {
+        #region fields
         private IOrdinate _ValueUncertainty;
        // private IOrdinateEnum _SelectedType;
         private IValueUncertainty _CurrentVM;
@@ -23,6 +24,9 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         private UniformControlVM _UniformControlVM;
         private ValueUncertaintyType _valueUncertaintyType;
 
+        #endregion
+
+        #region properties
         public ValueUncertaintyType ValueUncertaintyType
         {
             get { return _valueUncertaintyType; }
@@ -99,8 +103,9 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         //    get;
         //    set;
         //}
-            
+        #endregion
 
+        #region constructors
         public ValueUncertaintyVM(IOrdinate valueUncertaintyOrdinate, ValueUncertaintyType valueUncertaintyType)
         {
             ValueUncertaintyType = ValueUncertaintyType;
@@ -122,9 +127,63 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
             ValueUncertainty = valueUncertaintyOrdinate;
 
-            //set the current vm to be of the selected tyep
+            //set the current vm to be of the selected type
             SelectedDistributionTypeChanged();
 
+        }
+
+        #endregion
+
+        /// <summary>
+        /// The selected type of ordinate has changed. This method will convert the current ordinate
+        /// into the new type using whatever values it can for the new one.
+        /// </summary>
+        /// <param name="newValue"></param>
+        public void SelectionChanged(Object newValue)
+        {
+            if(newValue is IOrdinateEnum)
+            {
+                IOrdinateEnum newType = (IOrdinateEnum)newValue;
+                //if newtype is the same as current then do nothing
+                if (newType != _ValueUncertainty.Type)
+                {
+                    //the original ordinate hasn't actually been assigned the values yet
+                    //you have to tell the current vm to turn the values into an ordinate
+                    //this might fail if the values are not correct to construct the ordinate
+
+                    _ValueUncertainty = _CurrentVM.CreateOrdinate();
+
+                    IOrdinate newOrdinate = IOrdinateTranslator.TranslateValuesBetweenDistributionTypes(_ValueUncertainty, newType);
+                    ValueUncertainty = newOrdinate;
+                }
+
+            }
+
+            //{
+            //    switch((IOrdinateEnum)newValue)
+            //    {
+            //        case IOrdinateEnum.Constant:
+            //            {
+
+            //                break;
+            //            }
+            //        case IOrdinateEnum.Normal:
+            //            {
+
+            //                break;
+            //            }
+            //        case IOrdinateEnum.Triangular:
+            //            {
+
+            //                break;
+            //            }
+            //        case IOrdinateEnum.Uniform:
+            //            {
+
+            //                break;
+            //            }
+            //    }
+            //}
         }
 
         /// <summary>
@@ -177,6 +236,11 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         }
 
+        /// <summary>
+        /// Grabs the appropriate values from the ordinate and sets those values on the view model that will be displayed
+        /// in the UI. Basically it makes sure that the correct values are in the text boxes.
+        /// </summary>
+        /// <param name="ordinate"></param>
         private void UpdateDistributionValues(IOrdinate ordinate)
         {
             IOrdinateEnum ordType = ordinate.Type;
@@ -220,7 +284,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         }
 
 
-        private void SelectedDistributionTypeChanged()
+        public void SelectedDistributionTypeChanged()
         {
             switch(_ValueUncertainty.Type)
             {

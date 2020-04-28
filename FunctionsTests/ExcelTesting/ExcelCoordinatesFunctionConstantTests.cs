@@ -1,0 +1,644 @@
+﻿using Functions;
+using Functions.CoordinatesFunctions;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
+using Xunit;
+using Xunit.Abstractions;
+
+namespace FunctionsTests.ExcelTesting
+{
+    [ExcludeFromCodeCoverage]
+
+    public class ExcelCoordinatesFunctionConstantTests
+    {
+        private readonly ITestOutputHelper output;
+
+        private const string _TestDataRelativePath = "ExcelTesting\\ExcelData\\CoordinatesFunctionsConstants.xlsx";
+        private const int ORDER_WORKSHEET = 1;
+        private const int F_OF_X_WORKSHEET = 2;
+        private const int INVERSE_F_OF_X_WORKSHEET = 3;
+        private const int F_OF_X_NONE = 4;
+        private const int F_OF_X_PIECEWISE = 5;
+        private const int F_OF_X_LINEAR = 6;
+        private const int F_OF_X_CUBIC_SPLINE = 7;
+
+        private const int INVERSE_F_OF_X_NONE = 8;
+        private const int INVERSE_F_OF_X_PIECEWISE = 9;
+        private const int INVERSE_F_OF_X_LINEAR = 10;
+        private const int INVERSE_F_OF_X_CUBIC_SPLINE = 11;
+
+        private const double INVALID_OPERATION_EXCEPTION = -9999;
+        private const double ARGUMENT_OUT_OF_RANGE_EXCEPTION = -8888;
+
+        public ExcelCoordinatesFunctionConstantTests(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+
+        #region Worksheet 1: Order
+
+        [Theory]
+        [ExcelOrderData(_TestDataRelativePath, ORDER_WORKSHEET)]
+        public void ExcelOrderTests(List<double> xs1, List<double> ys1, string interpolation,
+          string expectedOrder, int rowToWriteTo, int columnToWriteTo)
+        //List<double> expectedxs, List<double> expectedys, IXLWorkbook workBook)
+        {
+            InterpolationEnum interp = ConvertToInterpolationEnum(interpolation);
+            IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1, interp);
+
+            OrderedSetEnum order = func1.Order;
+            bool passedTest = order.ToString().ToUpper().Equals(expectedOrder.ToUpper());
+
+            ExcelDataAttributeBase.SaveData(_TestDataRelativePath, ORDER_WORKSHEET, rowToWriteTo, columnToWriteTo, CreateDataTable(order.ToString()), passedTest);
+            Assert.True(passedTest);
+
+        }
+
+        #endregion
+
+        #region worksheet 2: F(x)
+
+        //[Theory]
+        //[ExcelInterpolate(_TestDataRelativePath, F_OF_X_WORKSHEET)]
+        //public void ExcelInterpolateFofXTests(List<double> xs1, List<double> ys1, string interpolation,
+        //  List<double> knownXs, List<double> expectedys, int rowToWriteTo, int columnToWriteTo)
+        ////List<double> expectedxs, List<double> expectedys, IXLWorkbook workBook)
+        //{
+        //    InterpolationEnum interp = ConvertToInterpolationEnum(interpolation);
+        //    IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1,interp);
+
+
+        //    List<double> actualResults = new List<double>();
+        //    foreach(double xVal in knownXs)
+        //    {
+        //        double result = func1.F(IOrdinateFactory.Factory(xVal)).Value();
+        //        actualResults.Add(result);
+        //    }
+
+        //    bool passedTest = true;
+        //    for(int i = 0;i<expectedys.Count;i++)
+        //    {
+        //        if(!HasMinimalDifference( actualResults[i], expectedys[i],1))
+        //        {
+        //            passedTest = false;
+        //        }
+        //    }
+
+        //    ExcelDataAttributeBase.SaveData(_TestDataRelativePath, F_OF_X_WORKSHEET, rowToWriteTo, columnToWriteTo, CreateDataTable(actualResults), passedTest);
+        //    Assert.True(passedTest);
+
+        //}
+
+        #endregion
+
+        #region Worksheet 3: Inverse F(x)
+        //[Theory]
+        //[ExcelInterpolate(_TestDataRelativePath, INVERSE_F_OF_X_WORKSHEET)]
+        //public void ExcelInterpolateInverseFofXTests(List<double> xs1, List<double> ys1, string interpolation,
+        //  List<double> knownYs, List<double> expectedXs, int rowToWriteTo, int columnToWriteTo)
+        ////List<double> expectedxs, List<double> expectedys, IXLWorkbook workBook)
+        //{
+        //    InterpolationEnum interp = ConvertToInterpolationEnum(interpolation);
+        //    IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1, interp);
+
+        //    if(interp == InterpolationEnum.NaturalCubicSpline)
+        //    {
+        //        WriteFunctionToOutput(func1, "spline function");
+        //    }
+
+        //    List<double> actualResults = new List<double>();
+        //    foreach (double yVal in knownYs)
+        //    {
+        //        double result = func1.InverseF(IOrdinateFactory.Factory(yVal)).Value();
+        //        actualResults.Add(result);
+        //    }
+
+        //    bool passedTest = true;
+        //    for (int i = 0; i < expectedXs.Count; i++)
+        //    {
+        //        if (!HasMinimalDifference(actualResults[i], expectedXs[i], 1))
+        //        {
+        //            passedTest = false;
+        //        }
+        //    }
+
+        //    ExcelDataAttributeBase.SaveData(_TestDataRelativePath, INVERSE_F_OF_X_WORKSHEET, rowToWriteTo, columnToWriteTo, CreateDataTable(actualResults), passedTest);
+        //    Assert.True(passedTest);
+
+        //}
+
+        #endregion
+
+        #region Worksheet 4: Interpolation type None
+        //[Theory]
+        //[ExcelInterpolate(_TestDataRelativePath, F_OF_X_NONE)]
+        //public void ExcelInterpolateFofX_None_Tests(List<double> xs1, List<double> ys1, string interpolation,
+        // List<double> knownXs, List<double> expectedys, int rowToWriteTo, int columnToWriteTo)
+        ////List<double> expectedxs, List<double> expectedys, IXLWorkbook workBook)
+        //{
+        //    InterpolationEnum interp = ConvertToInterpolationEnum(interpolation);
+        //    IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1, interp);
+
+
+        //    List<double> actualResults = new List<double>();
+        //    foreach (double xVal in knownXs)
+        //    {
+
+        //        try
+        //        {
+        //            double result = func1.F(IOrdinateFactory.Factory(xVal)).Value();
+        //            actualResults.Add(result);
+        //        }
+        //        catch(InvalidOperationException ex)
+        //        {
+        //            actualResults.Add(INVALID_OPERATION_EXCEPTION);
+        //        }
+        //    }
+
+        //    bool passedTest = true;
+        //    for (int i = 0; i < expectedys.Count; i++)
+        //    {
+        //        if (!HasMinimalDifference(actualResults[i], expectedys[i], 1))
+        //        {
+        //            passedTest = false;
+        //        }
+        //    }
+
+        //    ExcelDataAttributeBase.SaveData(_TestDataRelativePath, F_OF_X_NONE, rowToWriteTo, columnToWriteTo, CreateDataTable(actualResults), passedTest);
+        //    Assert.True(passedTest);
+
+        //}
+        #endregion
+
+        #region Worksheet 5: Piecewise
+        //[Theory]
+        //[ExcelInterpolate(_TestDataRelativePath, F_OF_X_PIECEWISE)]
+        //public void ExcelInterpolateFofX_Piecewise_Tests(List<double> xs1, List<double> ys1, string interpolation,
+        // List<double> knownXs, List<double> expectedys, int rowToWriteTo, int columnToWriteTo)
+        ////List<double> expectedxs, List<double> expectedys, IXLWorkbook workBook)
+        //{
+        //    InterpolationEnum interp = ConvertToInterpolationEnum(interpolation);
+        //    IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1, interp);
+
+
+        //    List<double> actualResults = new List<double>();
+        //    foreach (double xVal in knownXs)
+        //    {
+
+        //        try
+        //        {
+        //            double result = func1.F(IOrdinateFactory.Factory(xVal)).Value();
+        //            actualResults.Add(result);
+        //        }
+        //        catch (InvalidOperationException ex)
+        //        {
+        //            actualResults.Add(INVALID_OPERATION_EXCEPTION);
+        //        }
+        //    }
+
+        //    bool passedTest = true;
+        //    for (int i = 0; i < expectedys.Count; i++)
+        //    {
+        //        if (!HasMinimalDifference(actualResults[i], expectedys[i], 1))
+        //        {
+        //            passedTest = false;
+        //        }
+        //    }
+
+        //    ExcelDataAttributeBase.SaveData(_TestDataRelativePath, F_OF_X_PIECEWISE, rowToWriteTo, columnToWriteTo, CreateDataTable(actualResults), passedTest);
+        //    Assert.True(passedTest);
+
+        //}
+        #endregion
+
+        #region Worksheet 6: Linear
+        //[Theory]
+        //[ExcelInterpolate(_TestDataRelativePath, F_OF_X_LINEAR)]
+        //public void ExcelInterpolateFofX_Linear_Tests(List<double> xs1, List<double> ys1, string interpolation,
+        // List<double> knownXs, List<double> expectedys, int rowToWriteTo, int columnToWriteTo)
+        ////List<double> expectedxs, List<double> expectedys, IXLWorkbook workBook)
+        //{
+        //    InterpolationEnum interp = ConvertToInterpolationEnum(interpolation);
+        //    IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1, interp);
+
+
+        //    List<double> actualResults = new List<double>();
+        //    foreach (double xVal in knownXs)
+        //    {
+
+        //        try
+        //        {
+        //            double result = func1.F(IOrdinateFactory.Factory(xVal)).Value();
+        //            actualResults.Add(result);
+        //        }
+        //        catch (InvalidOperationException ex)
+        //        {
+        //            actualResults.Add(INVALID_OPERATION_EXCEPTION);
+        //        }
+        //    }
+
+        //    bool passedTest = true;
+        //    for (int i = 0; i < expectedys.Count; i++)
+        //    {
+        //        if (!HasMinimalDifference(actualResults[i], expectedys[i], 1))
+        //        {
+        //            passedTest = false;
+        //        }
+        //    }
+
+        //    ExcelDataAttributeBase.SaveData(_TestDataRelativePath, F_OF_X_LINEAR, rowToWriteTo, columnToWriteTo, CreateDataTable(actualResults), passedTest);
+        //    Assert.True(passedTest);
+
+        //}
+        #endregion
+
+        #region Worksheet 7: cubic spline
+        [Theory]
+        [ExcelCubicSplineInterpolationData(_TestDataRelativePath, F_OF_X_CUBIC_SPLINE)]
+        public void ExcelInterpolateFofX_CubicSpline_Tests(List<double> xs1, List<double> ys1, string interpolation,
+         List<double> knownXs, List<double> expectedys, int rowToWriteTo, int columnToWriteTo)
+        {
+            InterpolationEnum interp = ConvertToInterpolationEnum(interpolation);
+            IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1, interp);
+
+
+            List<object> actualResults = new List<object>();
+            foreach (double xVal in knownXs)
+            {
+
+                try
+                {
+                    double result = func1.F(IOrdinateFactory.Factory(xVal)).Value();
+                    actualResults.Add(result);
+                }
+                catch (Exception ex)
+                {
+                    if (ex is InvalidOperationException)
+                    {
+                        actualResults.Add(INVALID_OPERATION_EXCEPTION);
+                    }
+                    else if (ex is ArgumentOutOfRangeException)
+                    {
+                        actualResults.Add(ARGUMENT_OUT_OF_RANGE_EXCEPTION);
+                    }
+                    else
+                    {
+                        actualResults.Add(ex.GetType().ToString() + ": " + ex.Message);
+                    }
+                }
+            }
+
+            bool passedTest = DidTestPass(actualResults, expectedys);
+
+            ExcelDataAttributeBase.SaveData(_TestDataRelativePath, F_OF_X_CUBIC_SPLINE, rowToWriteTo, columnToWriteTo, CreateDataTable(actualResults), passedTest);
+            Assert.True(passedTest);
+
+        }
+
+        [Theory]
+        [ExcelInverseCubicSplineData(_TestDataRelativePath, INVERSE_F_OF_X_CUBIC_SPLINE)]
+        public void ExcelInterpolate_InverseFofX_CubicSpline_Tests(List<double> xs1, List<double> ys1, string interpolation,
+         List<double> knownYs, List<double> expectedXs, int rowToWriteTo, int columnToWriteTo)
+        {
+            InterpolationEnum interp = ConvertToInterpolationEnum(interpolation);
+            IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1, interp);
+
+
+            List<object> actualResults = new List<object>();
+            foreach (double yVal in knownYs)
+            {
+
+                try
+                {
+                    double result = func1.InverseF(IOrdinateFactory.Factory(yVal)).Value();
+                    actualResults.Add(result);
+                }
+                catch (Exception ex)
+                {
+                    if (ex is InvalidOperationException)
+                    {
+                        actualResults.Add(INVALID_OPERATION_EXCEPTION);
+                    }
+                    else if (ex is ArgumentOutOfRangeException)
+                    {
+                        actualResults.Add(ARGUMENT_OUT_OF_RANGE_EXCEPTION);
+                    }
+                    else
+                    {
+                        actualResults.Add(ex.GetType().ToString() + ": " + ex.Message);
+                    }
+                }
+            }
+
+            bool passedTest = DidTestPass(actualResults, expectedXs);
+
+            ExcelDataAttributeBase.SaveData(_TestDataRelativePath, INVERSE_F_OF_X_CUBIC_SPLINE, rowToWriteTo, columnToWriteTo, CreateDataTable(actualResults), passedTest);
+            Assert.True(passedTest);
+
+        }
+        #endregion
+
+        #region Worksheet 8: Inverse No Interpolation
+        //[Theory]
+        //[ExcelInterpolate(_TestDataRelativePath, INVERSE_F_OF_X_NONE)]
+        //public void ExcelInterpolateInverseFofX_None_Tests(List<double> xs1, List<double> ys1, string interpolation,
+        // List<double> knownXs, List<double> expectedys, int rowToWriteTo, int columnToWriteTo)
+        ////List<double> expectedxs, List<double> expectedys, IXLWorkbook workBook)
+        //{
+        //    InterpolationEnum interp = ConvertToInterpolationEnum(interpolation);
+        //    IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1, interp);
+
+        //    List<object> actualResults = new List<object>();
+        //    foreach (double xVal in knownXs)
+        //    {
+
+        //        try
+        //        {
+        //            double result = func1.F(IOrdinateFactory.Factory(xVal)).Value();
+        //            actualResults.Add(result);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            if (ex is InvalidOperationException)
+        //            {
+        //                actualResults.Add(INVALID_OPERATION_EXCEPTION);
+        //            }
+        //            else
+        //            {
+        //                actualResults.Add("Error: " + ex.Message);
+        //            }
+        //        }
+        //    }
+
+        //    bool passedTest = true;
+        //    for (int i = 0; i < expectedys.Count; i++)
+        //    {
+        //        object result = actualResults[i];
+        //        if (result is double)
+        //        {
+        //            if (!HasMinimalDifference((double)result, expectedys[i], 1))
+        //            {
+        //                passedTest = false;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            passedTest = false;
+        //        }
+        //    }
+
+        //    ExcelDataAttributeBase.SaveData(_TestDataRelativePath, INVERSE_F_OF_X_NONE, rowToWriteTo, columnToWriteTo, CreateDataTable(actualResults), passedTest);
+        //    Assert.True(passedTest);
+
+        //}
+        #endregion
+
+        #region Worksheet 9: Inverse Piecewise
+        //[Theory]
+        //[ExcelInterpolate(_TestDataRelativePath, INVERSE_F_OF_X_PIECEWISE)]
+        //public void ExcelInterpolateInverseFofX_Piecewise_Tests(List<double> xs1, List<double> ys1, string interpolation,
+        // List<double> knownXs, List<double> expectedys, int rowToWriteTo, int columnToWriteTo)
+        ////List<double> expectedxs, List<double> expectedys, IXLWorkbook workBook)
+        //{
+        //    InterpolationEnum interp = ConvertToInterpolationEnum(interpolation);
+        //    IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1, interp);
+
+        //    List<object> actualResults = new List<object>();
+        //    foreach (double xVal in knownXs)
+        //    {
+
+        //        try
+        //        {
+        //            double result = func1.F(IOrdinateFactory.Factory(xVal)).Value();
+        //            actualResults.Add(result);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            if (ex is InvalidOperationException)
+        //            {
+        //                actualResults.Add(INVALID_OPERATION_EXCEPTION);
+        //            }
+        //            else
+        //            {
+        //                actualResults.Add("Error: " + ex.Message);
+        //            }
+        //        }
+        //    }
+
+        //    bool passedTest = true;
+        //    for (int i = 0; i < expectedys.Count; i++)
+        //    {
+        //        object result = actualResults[i];
+        //        if (result is double)
+        //        {
+        //            if (!HasMinimalDifference((double)result, expectedys[i], 1))
+        //            {
+        //                passedTest = false;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            passedTest = false;
+        //        }
+        //    }
+
+        //    ExcelDataAttributeBase.SaveData(_TestDataRelativePath, INVERSE_F_OF_X_PIECEWISE, rowToWriteTo, columnToWriteTo, CreateDataTable(actualResults), passedTest);
+        //    Assert.True(passedTest);
+
+        //}
+        #endregion
+
+        #region Multiple Worksheet Tests
+        //Note: When creating multiple worksheet tests you must include the worksheet number as the third to last parameter.
+        //If doing a single worksheet test, leave off the worksheet number
+        [Theory]
+        [ExcelInterpolate(_TestDataRelativePath, new int[] { INVERSE_F_OF_X_WORKSHEET, INVERSE_F_OF_X_NONE, INVERSE_F_OF_X_PIECEWISE, INVERSE_F_OF_X_LINEAR })] //3,8,9,10
+        public void ExcelInterpolation_Inverse_FofX_Tests(List<double> xs1, List<double> ys1, string interpolation,
+         List<double> knownYs, List<double> expectedXs, int worksheetNumber, int rowToWriteTo, int columnToWriteTo)
+        {
+            InterpolationEnum interp = ConvertToInterpolationEnum(interpolation);
+            IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1, interp);
+            List<object> actualResults = new List<object>();
+            foreach (double yVal in knownYs)
+            {
+                try
+                {
+                    double result = func1.InverseF(IOrdinateFactory.Factory(yVal)).Value();
+                    actualResults.Add(result);
+                }
+                catch (Exception ex)
+                {
+                    if (ex is InvalidOperationException)
+                    {
+                        actualResults.Add(INVALID_OPERATION_EXCEPTION);
+                    }
+                    else if (ex is ArgumentOutOfRangeException)
+                    {
+                        actualResults.Add(ARGUMENT_OUT_OF_RANGE_EXCEPTION);
+                    }
+                    else
+                    {
+                        actualResults.Add(ex.GetType().ToString() + ": " + ex.Message);
+                    }
+                }
+            }
+            bool passedTest = DidTestPass(actualResults, expectedXs);
+            ExcelDataAttributeBase.SaveData(_TestDataRelativePath, worksheetNumber, rowToWriteTo, columnToWriteTo, CreateDataTable(actualResults), passedTest);
+            Assert.True(passedTest);
+        }
+
+        [Theory]
+        [ExcelInterpolate(_TestDataRelativePath, new int[] { F_OF_X_WORKSHEET, F_OF_X_NONE, F_OF_X_PIECEWISE, F_OF_X_LINEAR } )] //2,4,5,6
+        public void ExcelInterpolation_FofX_Tests(List<double> xs1, List<double> ys1, string interpolation,
+         List<double> knownXs, List<double> expectedys, int worksheetNumber, int rowToWriteTo, int columnToWriteTo)
+        {
+            InterpolationEnum interp = ConvertToInterpolationEnum(interpolation);
+            IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1, interp);
+            List<object> actualResults = new List<object>();
+            foreach (double xVal in knownXs)
+            {
+                try
+                {
+                    double result = func1.F(IOrdinateFactory.Factory(xVal)).Value();
+                    actualResults.Add(result);
+                }
+                catch (Exception ex)
+                {
+                    if (ex is InvalidOperationException)
+                    {
+                        actualResults.Add(INVALID_OPERATION_EXCEPTION);
+                    }
+                    else if(ex is ArgumentOutOfRangeException)
+                    {
+                        actualResults.Add(ARGUMENT_OUT_OF_RANGE_EXCEPTION);
+                    }
+                    else
+                    {
+                        actualResults.Add(ex.GetType().ToString() +": "+ ex.Message);
+                    }
+                }
+            }
+            bool passedTest = DidTestPass(actualResults, expectedys);
+            ExcelDataAttributeBase.SaveData(_TestDataRelativePath, worksheetNumber, rowToWriteTo, columnToWriteTo, CreateDataTable(actualResults), passedTest);
+            Assert.True(passedTest);
+        }
+        #endregion
+
+        private bool DidTestPass(List<object> actualResults, List<double> expectedResults)
+        {
+            bool passedTest = true;
+            for (int i = 0; i < expectedResults.Count; i++)
+            {
+                object result = actualResults[i];
+                if (result is double)
+                {
+                    if (!HasMinimalDifference((double)result, expectedResults[i]))//, 1))
+                    {
+                        passedTest = false;
+                    }
+                }
+                else
+                {
+                    passedTest = false;
+                }
+            }
+            return passedTest;
+        }
+
+
+        private InterpolationEnum ConvertToInterpolationEnum(string interp)
+        {
+
+            if (interp.ToUpper().Equals("LINEAR"))
+            {
+                return InterpolationEnum.Linear;
+            }
+            else if (interp.ToUpper().Equals("PIECEWISE"))
+            {
+                return InterpolationEnum.Piecewise;
+            }
+            else if (interp.ToUpper().Equals("NONE"))
+            {
+                return InterpolationEnum.None;
+            }
+            else if (interp.ToUpper().Equals("NATURALCUBICSPLINE"))
+            {
+                return InterpolationEnum.NaturalCubicSpline;
+            }
+            else throw new ArgumentException("could not convert '" + interp + "'.");
+        }
+
+        private DataTable CreateDataTable(List<double> actualYs)
+        {
+            DataTable dt = new DataTable("DataTable");
+            dt.Columns.Add("Actual");
+            for (int i = 0; i < actualYs.Count; i++)
+            {
+                dt.Rows.Add(actualYs[i]);
+            }
+
+            return dt;
+        }
+        private DataTable CreateDataTable(List<object> actualYs)
+        {
+            DataTable dt = new DataTable("DataTable");
+            dt.Columns.Add("Actual");
+            for (int i = 0; i < actualYs.Count; i++)
+            {
+                dt.Rows.Add(actualYs[i]);
+            }
+
+            return dt;
+        }
+
+        private DataTable CreateDataTable(string result)
+        {
+            DataTable dt = new DataTable("DataTable");
+            dt.Columns.Add("Actual");
+            dt.Rows.Add(result);
+            return dt;
+        }
+
+        private bool HasMinimalDifference(double value1, double value2)
+        {
+            double diff = Math.Abs(value1 - value2);
+            return diff < .0001;
+        }
+        private bool HasMinimalDifference(double value1, double value2, int units)
+        {
+            long lValue1 = BitConverter.DoubleToInt64Bits(value1);
+            long lValue2 = BitConverter.DoubleToInt64Bits(value2);
+
+            // If the signs are different, return false except for +0 and -0.
+            if ((lValue1 >> 63) != (lValue2 >> 63))
+            {
+                if (value1 == value2)
+                    return true;
+
+                return false;
+            }
+
+            long diff = Math.Abs(lValue1 - lValue2);
+
+            if (diff <= (long)units)
+                return true;
+
+            return false;
+        }
+
+        private void WriteFunctionToOutput(ICoordinatesFunction function, string name)
+        {
+            output.WriteLine("");
+            output.WriteLine("Function: " + name);
+            foreach (ICoordinate coord in function.Coordinates)
+            {
+                output.WriteLine(coord.X.Value() + ", " + coord.Y.Value());
+            }
+
+        }
+    }
+
+}

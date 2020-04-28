@@ -659,8 +659,8 @@ namespace FdaViewModel.Inventory
             //    _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
 
             //}
-
-            OccupancyTypesElement newOccTypeGroup = new OccupancyTypesElement(groupName, newListOfOccType);
+            int newGroupID = Saving.PersistenceFactory.GetOccTypeManager().GetUnusedId();
+            OccupancyTypesElement newOccTypeGroup = new OccupancyTypesElement(groupName,newGroupID, newListOfOccType);
             //todo: cody commented out on 2/20/2020 - put back in when occtypes are working
             //Saving.PersistenceFactory.GetOccTypeManager().SaveNew(newOccTypeGroup);
 

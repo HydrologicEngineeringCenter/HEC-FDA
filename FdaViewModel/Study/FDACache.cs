@@ -566,12 +566,12 @@ namespace FdaViewModel.Study
             }
         }
 
-        public void UpdateOccTypeElement(InventoryElement oldElement, InventoryElement newElement)
+        public void UpdateOccTypeElement(OccupancyTypesElement element)
         {
             int index = -1;
-            for (int i = 0; i < StructureInventoryElements.Count; i++)
+            for (int i = 0; i < OccTypeElements.Count; i++)
             {
-                if (StructureInventoryElements[i].Name.Equals(oldElement.Name))
+                if (OccTypeElements[i].ID == element.ID)
                 {
                     index = i;
                     break;
@@ -579,9 +579,10 @@ namespace FdaViewModel.Study
             }
             if (index != -1)
             {
-                StructureInventoryElements.RemoveAt(index);
-                StructureInventoryElements.Insert(index, newElement);
-                StructureInventoryUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+                OccTypeElements.RemoveAt(index);
+                OccTypeElements.Insert(index, element);
+                //the old element parameter doesn't matter in this case. I only need the new one.
+                OccTypeElementUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(element, element));
             }
         }
         #endregion

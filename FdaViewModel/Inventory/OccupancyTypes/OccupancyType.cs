@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using FdaLogging;
 using FdaViewModel.Inventory.DamageCategory;
+using FdaViewModel.Utilities.Transactions;
 using Functions;
 using static FdaViewModel.Saving.PersistenceManagers.OccTypePersistenceManager;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
-    internal class OccupancyType :  IOccupancyType
+    internal class OccupancyType : BaseViewModel,  IOccupancyType//, IDisplayLogMessages
     {
 
         private string _Name;
@@ -36,15 +39,17 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             }
             set
             {
-                if(value = true && _Name.Last() != '*')
-                {
-                    _Name = _Name + '*';
-                }
-                else
-                {
-
-                }
                 _IsModified = value;
+                NotifyPropertyChanged();
+                //if(_IsModified == true)
+                //{
+                //    //_Name = _Name + '*';
+                //    addStarIfDoesntExist();
+                //}
+                //else
+                //{
+                //    removeStarIfExists();
+                //}
             }
         }
 
@@ -63,32 +68,35 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 //    return removeStarIfExists(); 
                 //}
             }
-            set { _Name = value; IsModified = true; }
+            set { _Name = value; IsModified = true; NotifyPropertyChanged(); }
         }
 
-        private String addStarIfDoesntExist()
-        {
-            if(_Name.Last() != '*')
-            {
-                String newName = _Name + '*'; // _Name.Insert(_Name.Length, '*'.ToString());
-                return newName;
-            }
-            else
-            {
-                return _Name;
-            }
-        }
-        private String removeStarIfExists()
-        {
-            if(_Name.Last().Equals('*'))
-            {
-                return _Name.Remove(_Name.Length - 1, 1);
-            }
-            else
-            {
-                return _Name;
-            }
-        }
+        //private void addStarIfDoesntExist()
+        //{
+        //    if(_Name.Last() != '*')
+        //    {
+        //        _Name = _Name + '*'; // _Name.Insert(_Name.Length, '*'.ToString());
+        //        NotifyPropertyChanged("Name");
+                
+        //    }
+        //    //else
+        //    //{
+        //    //    return _Name;
+        //    //}
+        //}
+        //private void removeStarIfExists()
+        //{
+        //    if(_Name.Last().Equals('*'))
+        //    {
+        //        _Name =  _Name.Remove(_Name.Length - 1, 1);
+        //        NotifyPropertyChanged("Name");
+
+        //    }
+        //    //else
+        //    //{
+        //    //    return _Name;
+        //    //}
+        //}
 
         public string Description
         {
@@ -96,7 +104,11 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             set { _Description = value; IsModified = true; }
         }
 
-        public IDamageCategory DamageCategory { get; set; }
+        public IDamageCategory DamageCategory 
+        { 
+            get; 
+            set; 
+        }
 
         public bool CalculateStructureDamage
         {
@@ -151,6 +163,8 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public int GroupID { get; set; }
         public int ID { get; set; }
 
+        
+
         public OccupancyType()
         {
 
@@ -160,69 +174,139 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         }
 
+
+        #region messages section
+        public LoggingLevel SaveStatusLevel => throw new NotImplementedException();
+
+        public bool IsExpanded { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ObservableCollection<LogItem> MessageRows { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public int MessageCount => throw new NotImplementedException();
+
+        public List<LogItem> TempErrors { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        /// <summary>
+        /// Gets rid of any temperary messages from the list of messages and adds the new list of temp
+        /// messages from "TempErrors" property.
+        /// </summary>
+        public void UpdateMessages(bool saving = false)
+        {
+            ////there are three places that messages come from.
+            //// 1.) The sqlite database
+            //// 2.) Temp messages from the validation of the "rules" (ie. Name cannot be blank)
+            //// 3.) Temp messages from any object that implements IValidate. These messages come out of the model, stats, functions
+
+            ////get rid of any temp logs
+            //ObservableCollection<LogItem> tempList = new ObservableCollection<LogItem>();
+            //foreach (LogItem li in MessageRows)
+            //{
+            //    //exclude any temp logs
+            //    if (!li.IsTempLog())
+            //    {
+            //        tempList.Add(li);
+            //    }
+
+            //}
+            
+            ////get IMessages from the coord func editor
+            ////and convert them into temp log messages
+            //List<LogItem> funcLogs = GetTempLogsFromCoordinatesFunctionEditor();
+            ////add them to the temp errors so that they will be included
+            //TempErrors.AddRange(funcLogs);
+
+            ////i want all of these messages to be put on the top of the list, but i want to respect their order. This 
+            ////means i need to insert at 0 and start with the last in the list
+            //for (int i = TempErrors.Count - 1; i >= 0; i--)
+            //{
+            //    tempList.Insert(0, TempErrors[i]);
+            //}
+            //MessageRows = tempList;
+            //TempErrors.Clear();
+            ////if we are saving then we want the save status to be visible
+            //if (saving)
+            //{
+            //    UpdateSaveStatusLevel();
+            //}
+            //else
+            //{
+            //    SaveStatusLevel = LoggingLevel.Debug;
+            //}
+        }
+
+        public void FilterRowsByLevel(LoggingLevel level)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DisplayAllMessages()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
         //public OccupancyType(XElement Xel)
         //{
-            //Name = Xel.Attribute("Name").Value;
-            //if (Xel.Elements("Description").Any())
-            //    Description = Xel.Element("Description").Value;
-            //else
-            //    Description = "";
-            //if (Xel.Elements("DamageCategory").Any())
-            //    DamageCategory = new DamageCategory(Xel.Element("DamageCategory"));
-            //else
-            //    DamageCategory = new DamageCategory();
-            //if (Xel.Elements("FoundationHeightUncertainty").Any)
-            //    FndHeightAsPcntOfMean = ContinuousDistribution.readfromXElement(Xel.Element("FoundationHeightUncertainty").Descendants.First);
-            //else
-            //    _FndHeightAsPcntOfMean = new None();
-            //// 
-            //if (Xel.Elements("StructureUncertainty").Any)
-            //    _StructureValAsPcntOfMean = ContinuousDistribution.readfromXElement(Xel.Element("StructureUncertainty").Descendants.First);
-            //else
-            //    _StructureValAsPcntOfMean = new None();
-            //// 
-            //if (Xel.Elements("ContentUncertainty").Any)
-            //    _ContentValAsPcntOfMean = ContinuousDistribution.readfromXElement(Xel.Element("ContentUncertainty").Descendants.First);
-            //else
-            //    _ContentValAsPcntOfMean = new None();
-            //// 
-            //if (Xel.Elements("OtherUncertainty").Any)
-            //    _OtherValAsPcntOfMean = ContinuousDistribution.readfromXElement(Xel.Element("OtherUncertainty").Descendants.First);
-            //else
-            //    _OtherValAsPcntOfMean = new None();
-            //// 
-            //if (Xel.Elements("VehicleUncertainty").Any)
-            //    _VehicleValAsPcntOfMean = ContinuousDistribution.readfromXElement(Xel.Element("VehicleUncertainty").Descendants.First);
-            //else
-            //    _VehicleValAsPcntOfMean = new None();
-            //// 
-            //XElement DDCurve = Xel.Element("StructureDD");
-            //_CalcStructDamage = System.Convert.ToBoolean(DDCurve.Attribute("CalculateDamage").Value);
-            //if (DDCurve.Elements.Count > 0)
-            //    _StructureDDPercent = new MonotonicCurveUSingle(DDCurve.Element("MonotonicCurveUSingle"));
-            //else
-            //    _StructureDDPercent = new MonotonicCurveUSingle();
-            //// 
-            //DDCurve = Xel.Element("ContentDD");
-            //_CalcContentDamage = System.Convert.ToBoolean(DDCurve.Attribute("CalculateDamage").Value);
-            //if (DDCurve.Elements.Count > 0)
-            //    _ContentDDPercent = new MonotonicCurveUSingle(DDCurve.Element("MonotonicCurveUSingle"));
-            //else
-            //    _ContentDDPercent = new MonotonicCurveUSingle();
-            //// 
-            //DDCurve = Xel.Element("OtherDD");
-            //_CalcOtherDamage = System.Convert.ToBoolean(DDCurve.Attribute("CalculateDamage").Value);
-            //if (DDCurve.Elements.Count > 0)
-            //    _OtherDDPercent = new MonotonicCurveUSingle(DDCurve.Element("MonotonicCurveUSingle"));
-            //else
-            //    _OtherDDPercent = new MonotonicCurveUSingle();
-            //// 
-            //DDCurve = Xel.Element("VehicleDD");
-            //_CalcVehicleDamage = System.Convert.ToBoolean(DDCurve.Attribute("CalculateDamage").Value);
-            //if (DDCurve.Elements.Count > 0)
-            //    _VehicleDDPercent = new MonotonicCurveUSingle(DDCurve.Element("MonotonicCurveUSingle"));
-            //else
-            //    _VehicleDDPercent = new MonotonicCurveUSingle();
+        //Name = Xel.Attribute("Name").Value;
+        //if (Xel.Elements("Description").Any())
+        //    Description = Xel.Element("Description").Value;
+        //else
+        //    Description = "";
+        //if (Xel.Elements("DamageCategory").Any())
+        //    DamageCategory = new DamageCategory(Xel.Element("DamageCategory"));
+        //else
+        //    DamageCategory = new DamageCategory();
+        //if (Xel.Elements("FoundationHeightUncertainty").Any)
+        //    FndHeightAsPcntOfMean = ContinuousDistribution.readfromXElement(Xel.Element("FoundationHeightUncertainty").Descendants.First);
+        //else
+        //    _FndHeightAsPcntOfMean = new None();
+        //// 
+        //if (Xel.Elements("StructureUncertainty").Any)
+        //    _StructureValAsPcntOfMean = ContinuousDistribution.readfromXElement(Xel.Element("StructureUncertainty").Descendants.First);
+        //else
+        //    _StructureValAsPcntOfMean = new None();
+        //// 
+        //if (Xel.Elements("ContentUncertainty").Any)
+        //    _ContentValAsPcntOfMean = ContinuousDistribution.readfromXElement(Xel.Element("ContentUncertainty").Descendants.First);
+        //else
+        //    _ContentValAsPcntOfMean = new None();
+        //// 
+        //if (Xel.Elements("OtherUncertainty").Any)
+        //    _OtherValAsPcntOfMean = ContinuousDistribution.readfromXElement(Xel.Element("OtherUncertainty").Descendants.First);
+        //else
+        //    _OtherValAsPcntOfMean = new None();
+        //// 
+        //if (Xel.Elements("VehicleUncertainty").Any)
+        //    _VehicleValAsPcntOfMean = ContinuousDistribution.readfromXElement(Xel.Element("VehicleUncertainty").Descendants.First);
+        //else
+        //    _VehicleValAsPcntOfMean = new None();
+        //// 
+        //XElement DDCurve = Xel.Element("StructureDD");
+        //_CalcStructDamage = System.Convert.ToBoolean(DDCurve.Attribute("CalculateDamage").Value);
+        //if (DDCurve.Elements.Count > 0)
+        //    _StructureDDPercent = new MonotonicCurveUSingle(DDCurve.Element("MonotonicCurveUSingle"));
+        //else
+        //    _StructureDDPercent = new MonotonicCurveUSingle();
+        //// 
+        //DDCurve = Xel.Element("ContentDD");
+        //_CalcContentDamage = System.Convert.ToBoolean(DDCurve.Attribute("CalculateDamage").Value);
+        //if (DDCurve.Elements.Count > 0)
+        //    _ContentDDPercent = new MonotonicCurveUSingle(DDCurve.Element("MonotonicCurveUSingle"));
+        //else
+        //    _ContentDDPercent = new MonotonicCurveUSingle();
+        //// 
+        //DDCurve = Xel.Element("OtherDD");
+        //_CalcOtherDamage = System.Convert.ToBoolean(DDCurve.Attribute("CalculateDamage").Value);
+        //if (DDCurve.Elements.Count > 0)
+        //    _OtherDDPercent = new MonotonicCurveUSingle(DDCurve.Element("MonotonicCurveUSingle"));
+        //else
+        //    _OtherDDPercent = new MonotonicCurveUSingle();
+        //// 
+        //DDCurve = Xel.Element("VehicleDD");
+        //_CalcVehicleDamage = System.Convert.ToBoolean(DDCurve.Attribute("CalculateDamage").Value);
+        //if (DDCurve.Elements.Count > 0)
+        //    _VehicleDDPercent = new MonotonicCurveUSingle(DDCurve.Element("MonotonicCurveUSingle"));
+        //else
+        //    _VehicleDDPercent = new MonotonicCurveUSingle();
         //}
 
         //public IOccupancyType Clone()

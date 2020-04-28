@@ -358,7 +358,7 @@ namespace Functions.CoordinatesFunctions
             {
 
                 XElement funcElem = new XElement("Function");
-                funcElem.SetAttributeValue("Interpolator", Interpolator);
+                funcElem.SetAttributeValue("Interpolator", func.Interpolator);
 
                 foreach (ICoordinate coord in func.Coordinates)
                 {

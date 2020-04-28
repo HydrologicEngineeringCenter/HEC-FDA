@@ -101,7 +101,21 @@ namespace Functions.CoordinatesFunctions
             }
         }
         private double LinearInterpolator(int i, double x) => Coordinates[i].Y.Value() + (x - Coordinates[i].X.Value()) / (Coordinates[i + 1].X.Value() - Coordinates[i].X.Value()) * (Coordinates[i + 1].Y.Value() - Coordinates[i].Y.Value());
-        private double PiecewiseInterpolator(int i, double x) => ((x - Coordinates[i].X.Value()) < (Coordinates[i + 1].X.Value() - Coordinates[i].X.Value()) / 2) ? Coordinates[i].Y.Value() : Coordinates[i + 1].Y.Value();
+        private double PiecewiseInterpolator(int i, double x)
+        {
+            double currentX = Coordinates[i].X.Value();
+            double nextX = Coordinates[i + 1].X.Value();
+            double distanceFromCurrentX = x - currentX;
+            if (x < nextX)
+            {
+                return Coordinates[i].Y.Value();
+            }
+            else
+            {
+                return Coordinates[i + 1].Y.Value();
+            }
+
+        }
         private MathNet.Numerics.Interpolation.CubicSpline SetCubicSplineFunction(Tuple<double[], double[]> xys)
         {
             return MathNet.Numerics.Interpolation.CubicSpline.InterpolateNaturalSorted(xys.Item1, xys.Item2);
@@ -119,7 +133,9 @@ namespace Functions.CoordinatesFunctions
         private double NaturalCubicSplineInterpolator(int i, double x)
         {
             //The index value is irrelevant for this interpolator.
-            return _NaturalCubicSpline.Interpolate(x);
+            double result = _NaturalCubicSpline.Interpolate(x);
+            double result2 = _InverseNaturalCublicSpline.Interpolate(x);
+            return result;
         }      
         private double NoInterpolator(int i, double x) => x == Coordinates[i].X.Value() ? Coordinates[i].Y.Value() : throw new InvalidOperationException(String.Format("The F(x) operation cannot produce a result because no interpolation method has been set and the specified x value: {0} was not explicitly provided as part of the function domain.", x));
 
@@ -134,7 +150,19 @@ namespace Functions.CoordinatesFunctions
             }
         }
         private double InverseLinearInterpolator(int i, double y) => Coordinates[i].X.Value() + (y - Coordinates[i].Y.Value()) / (Coordinates[i + 1].Y.Value() - Coordinates[i].Y.Value()) * (Coordinates[i + 1].X.Value() - Coordinates[i].X.Value());
-        private double InversePiecewiseInterpolator(int i, double y) => ((y - Coordinates[i].Y.Value()) < (Coordinates[i + 1].Y.Value() - Coordinates[i].Y.Value()) / 2) ? Coordinates[i].X.Value() : Coordinates[i + 1].X.Value();
+        private double InversePiecewiseInterpolator(int i, double y)
+        {
+            double currentY = Coordinates[i].Y.Value();
+            double nextY = Coordinates[i + 1].Y.Value();
+            if (y == currentY)
+            {
+               return Coordinates[i].X.Value();
+            }
+            else
+            {
+                return Coordinates[i + 1].X.Value();
+            }
+        }
         private MathNet.Numerics.Interpolation.CubicSpline SetInverseCubicSplineFunction(Tuple<double[], double[]> xys)
         {
             return MathNet.Numerics.Interpolation.CubicSpline.InterpolateNaturalSorted(xys.Item2, xys.Item1);
@@ -176,7 +204,7 @@ namespace Functions.CoordinatesFunctions
         #region Order
         /* This seems to contain 2 rival methods:
          *      (1) Cody's SetTheOrder() Function
-         *      (2) My (John's) ComputeSetOerder() Function
+         *      (2) My (John's) ComputeSetOrder() Function
          * SetTheOrder() e.g. #1 is currently being called by the constructor
          */
         private OrderedSetEnum SetTheOrder()
@@ -187,11 +215,25 @@ namespace Functions.CoordinatesFunctions
             }
             else if (IsStrictlyIncreasing())
             {
-                return OrderedSetEnum.StrictlyIncreasing;
+                if(Interpolator == InterpolationEnum.Piecewise)
+                {
+                    return OrderedSetEnum.WeaklyIncreasing;
+                }
+                else 
+                { 
+                    return OrderedSetEnum.StrictlyIncreasing;
+                }
             }
             else if (IsStrictlyDecreasing())
             {
-                return OrderedSetEnum.StrictlyDecreasing;
+                if (Interpolator == InterpolationEnum.Piecewise)
+                {
+                    return OrderedSetEnum.WeaklyDecreasing;
+                }
+                else
+                {
+                    return OrderedSetEnum.StrictlyDecreasing;
+                }
             }
             else if (IsAtLeastWeaklyIncreasing())
             {
@@ -493,9 +535,11 @@ namespace Functions.CoordinatesFunctions
             int i = 0;
             if (!(i == Coordinates.Count - 1))
             {
+                //Find the next y value that is >= the y value
                 while (Coordinates[i + 1].Y.Value() < y.Value()) i++;
                 if (Coordinates[i + 1].Y.Value() == y.Value()) return Coordinates[i + 1].X;
             }
+            double d = InverseInterpolationFunction(i, y.Value());
             return new Constant( SetInverseInterpolator(Interpolator)(i, y.Value()));
         }
         private double InverseF(double y, int i)

@@ -10,9 +10,10 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 {
     internal class OccupancyTypeGroup : IOccupancyTypeGroup
     {
+        public string Name { get; set; }
         public List<IOccupancyType> OccupancyTypes { get; set; }
         public List<IDamageCategory> DamageCategories { get; set; }
-
+        public int ID { get; set; }
 
         public OccupancyTypeGroup(string selectedPath)
         {

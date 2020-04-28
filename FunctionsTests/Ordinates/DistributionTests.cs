@@ -19,12 +19,12 @@ namespace FunctionsTests.Ordinates
     //    /// </summary>
     //    /// <param name="value"></param>
 
-        [Theory]
-        [MemberData(nameof(GoodData_Distributed))]
-        public void Distribution_GoodInput_Returns_Distribution(IDistributedOrdinate distribution)
-        {
-            Assert.NotNull(distribution);
-        }
+        //[Theory]
+        //[MemberData(nameof(GoodData_Distributed))]
+        //public void Distribution_GoodInput_Returns_Distribution(IDistributedOrdinate distribution)
+        //{
+        //    Assert.NotNull(distribution);
+        //}
 
         ///// <summary>
         ///// Tests the range property returns correct value.

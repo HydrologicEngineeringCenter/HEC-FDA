@@ -37,11 +37,16 @@ namespace View.Inventory.OccupancyTypes.Controls
             }
         }
 
-        //private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    ValueUncertaintyVM vm = (ValueUncertaintyVM)this.DataContext;
-        //    vm.SelectedDistributionTypeChanged();
-        //}
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
+            ValueUncertaintyVM vm = (ValueUncertaintyVM)this.DataContext;
+            if (e.AddedItems.Count > 0)
+            {
+                vm.SelectionChanged(e.AddedItems[0]);
+                //vm.SelectedDistributionTypeChanged();
+            }
+        }
 
         private static void ValueUncertaintyVMChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

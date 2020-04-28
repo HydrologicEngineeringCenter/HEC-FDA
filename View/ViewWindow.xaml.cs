@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using System.Timers;
 using System.Windows.Shapes;
+using FdaViewModel;
 
 namespace View
 {
@@ -252,7 +253,13 @@ namespace View
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-           
+            
+            //if(masterControl.Content is UserControl)
+            //{
+            //    UserControl uc = (UserControl)masterControl.Content;
+            //    this.Width = uc.Width;
+            //    this.Height = uc.Height;
+            //}
             //if(masterControl.Content.GetType() == typeof(Utilities.IPopOut))
             //{
             //    this.Width = ((Utilities.IPopOut)masterControl.Content).PopOutWidth;

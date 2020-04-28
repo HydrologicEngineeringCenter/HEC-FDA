@@ -342,6 +342,8 @@ namespace FunctionsView.ViewModel
 
         public IEnumerable<IMessage> Messages => _Messages;
 
+        public IMessageLevels State => throw new NotImplementedException();
+
         //public ICoordinatesFunction Function
         //{
         //get { return (ICoordinatesFunction)this.GetValue(FunctionProperty); }
@@ -760,8 +762,15 @@ namespace FunctionsView.ViewModel
 
         public bool Validate(IValidator<CoordinatesFunctionEditorVM> validator, out IEnumerable<IMessage> errors)
         {
-            return validator.IsValid(this, out errors);
+            //return validator.IsValid(this, out errors);
+            //todo: John how does this work now? 4/3/2020
+            errors = new List<IMessage>();
+            return true;
         }
 
+        IMessageLevels IValidate<CoordinatesFunctionEditorVM>.Validate(IValidator<CoordinatesFunctionEditorVM> validator, out IEnumerable<IMessage> errors)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -35,6 +35,8 @@ namespace Statistics.Distributions
             _Distribution = new MathNet.Numerics.Distributions.ContinuousUniform(lower: min, upper: max);
             Range = Utilities.IRangeFactory.Factory(_Distribution.Minimum, _Distribution.Maximum);
             SampleSize = sampleSize;
+            State = Validate(new Validation.UniformValidator(), out IEnumerable<Utilities.IMessage> msgs);
+            Messages = msgs;
         }
         #endregion
 

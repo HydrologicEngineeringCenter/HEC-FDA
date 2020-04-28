@@ -36,16 +36,21 @@ namespace FunctionsView.Validation
             {
                 //todo: Cody to Cody, is this the best way to validate the function?
                 ICoordinatesFunction func = entity.CreateFunctionFromTables();
-                if(!func.IsValid)
-                {
-                    errors.AddRange(func.Messages);
-                }
+                //if(!func.IsValid)
+                //{
+                //    errors.AddRange(func.Messages);
+                //}
             }
             catch(Exception ex)
             {
                 errors.Add(IMessageFactory.Factory(IMessageLevels.FatalError, ex.Message));
             }
             return errors;
+        }
+
+        IMessageLevels IValidator<CoordinatesFunctionEditorVM>.IsValid(CoordinatesFunctionEditorVM entity, out IEnumerable<IMessage> errors)
+        {
+            throw new NotImplementedException();
         }
     }
 }
