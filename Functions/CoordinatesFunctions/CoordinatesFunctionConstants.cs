@@ -68,22 +68,6 @@ namespace Functions.CoordinatesFunctions
                 }            
                 Coordinates = SetSortedCoordinates(_ProvidedCoordinates);
             }
-            //Coordinates = coordinates;
-            //IsValid = Validate(new Validation.CoordinatesFunctionConstantsValidator(), out IEnumerable<IMessage> errors);
-            //Messages = errors;
-            ////if (IsValid(coordinates))
-            //{
-            //    Coordinates = SortByXs(coordinates);
-            //    IsInvertible = IsInvertibleFunction();
-            //}
-            //Order = SetTheOrder(); //ComputeSetOrder();
-            //Range = Utilities.IRangeFactory.Factory(Coordinates.First().Y.Value(), Coordinates.Last().Y.Value());
-            ////Range = new Tuple<double, double>(Coordinates[0].Y.Value(), Coordinates[Coordinates.Count - 1].Y.Value());
-            //Domain = Utilities.IRangeFactory.Factory(Coordinates.First().X.Value(), Coordinates.Last().X.Value());
-            ////Domain = new Tuple<double, double>(Coordinates[0].X.Value(), Coordinates[Coordinates.Count - 1].X.Value());
-            //Interpolator = interpolation;
-            //InterpolationFunction = SetInterpolator(interpolation);
-            //InverseInterpolationFunction = IsInvertible ? SetInverseInterpolator(interpolation) : null;
         }
         #endregion
 
@@ -163,20 +147,27 @@ namespace Functions.CoordinatesFunctions
             if (Interpolator == InterpolationEnum.NaturalCubicSpline)
             {
                 int i = 0;
-                List <ICoordinate> displayCoordinates = new List<ICoordinate>();
-                double x = coordinates[0].X.Value(),  maxX = coordinates[coordinates.Count - 1].X.Value(), xEpsilon = maxX - x / 100;
-                while(x < maxX)
+                List<ICoordinate> displayCoordinates = new List<ICoordinate>();
+                /* 
+                 * Limit Interpolation for plots of curved functions
+                 *  (1) limit x steps to 1% of x range.
+                 *  (2) limit y steps to 1% of y range
+                 * Only necessary for curved functions, currently is restricted to cubic splines.
+                 */
+                ICoordinate min = coordinates[0], max = coordinates[coordinates.Count - 1];
+                double minX = min.X.Value(), minY = min.Y.Value(), maxX = max.X.Value(), maxY = max.Y.Value();
+                double xEpsilon = (maxX - minX) / 100, yEpsilon = (maxY - minY) / 100, x = minX, y = minY;
+                // while condition implies y < maxY
+                while (x < maxX)
                 {
-                    if (coordinates[i].X.Value() < x)
-                    {
-                        displayCoordinates.Add(coordinates[i]);
-                        i++;
-                    }
+                    if (i == 0) displayCoordinates.Add(ICoordinateFactory.Factory(x, y));
                     else
                     {
+                        x = x + xEpsilon < coordinates[i + 1].X.Value() ?
+                            x + xEpsilon : coordinates[i + 1].X.Value();
                         displayCoordinates.Add(ICoordinateFactory.Factory(x, F(x)));
-                        x += xEpsilon;
                     }
+                    if (x == coordinates[i + 1].X.Value() && x != maxX) i++;
                 }
                 return displayCoordinates;
             }
@@ -309,7 +300,6 @@ namespace Functions.CoordinatesFunctions
             bool areYsDecreasing = coord1.Y.Value() > coord2.Y.Value();
             return areXsIncreasing && areYsDecreasing;
         }
-
         // ComputeSetOrder e.g. Method #2
         private OrderedSetEnum ComputeSetOrder()
         {
