@@ -191,6 +191,14 @@ namespace Functions.CoordinatesFunctions
 
 
         #endregion
+
+        #region GetExpandedCoordinates()
+        public List<ICoordinate> GetExpandedCoordinates()
+        {
+            //todo: add a message here that this might be expanded when sampled?
+            return Coordinates;
+        }
+        #endregion
         #endregion
     }
 }
