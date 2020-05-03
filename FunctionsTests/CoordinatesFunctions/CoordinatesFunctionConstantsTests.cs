@@ -24,7 +24,6 @@ namespace FunctionsTests.CoordinatesFunctions
         //#endregion
 
         #region Good Constructor Data Tests
-
         /// <summary> Tests that with good input a CoordinatesFunctionConstants object is constructed. </summary>
         [Theory]
         [MemberData(nameof(GoodData_Constant))]
@@ -49,8 +48,8 @@ namespace FunctionsTests.CoordinatesFunctions
             IFunction testObj = new CoordinatesFunctionConstants(value, InterpolationEnum.Piecewise);
             Assert.True(true);
         }
-        #endregion
 
+        #endregion
         #region Bad Constructor Data Tests
         ///// <summary> Tests that with bad input it throws an <see cref="ArgumentException"/>. </summary>
         [Theory]
@@ -84,10 +83,15 @@ namespace FunctionsTests.CoordinatesFunctions
             Assert.Throws<ArgumentException>(() => new CoordinatesFunctionConstants(value));
         }
         #endregion
-
         #region Property Tests
         #region Range Property Tests 
-
+        [Theory]
+        [InlineData(new double[4] {1d, 2d, 3d, 4d}, new double[4] {1d, 2d, 3d, 4d}, Functions.InterpolationEnum.None)]
+        public void Range_StandardGoodData_Returns_ExpectedRange(double[] Xs, double[] Ys, InterpolationEnum interpolation)
+        {
+            var f = (Functions.CoordinatesFunctions.CoordinatesFunctionConstants)ICoordinatesFunctionsFactory.Factory(Xs, Ys, interpolation);
+            Assert.Equal(IRangeFactory.Factory(1d, 4d), f.Range);
+        }
         #endregion
         #region Domain Property Tests 
 

@@ -71,23 +71,23 @@ namespace Functions
             return true;
         }
 
-        public static ICoordinatesFunction Factory(List<double> xs, List<double> ys, InterpolationEnum interpolation = InterpolationEnum.None)
+        public static ICoordinatesFunction Factory(IEnumerable<double> xs, IEnumerable<double> ys, InterpolationEnum interpolation = InterpolationEnum.None)
         {
             //are lengths the same
-            if (xs.Count == ys.Count)
+            if (xs.Count() == ys.Count())
             {
+                List<double> Xs = xs.ToList(), Ys = ys.ToList();
                 List<ICoordinate> coordinates = new List<ICoordinate>();
-
-                for (int i = 0; i < xs.Count; i++)
+                for (int i = 0; i < Xs.Count; i++)
                 {
-                    ICoordinate coordinate = ICoordinateFactory.Factory(xs[i], ys[i]);
+                    ICoordinate coordinate = ICoordinateFactory.Factory(Xs[i], Ys[i]);
                     coordinates.Add(coordinate);
                 }
                 return new CoordinatesFunctionConstants(coordinates, interpolation);
             }
             else
             {
-                throw new InvalidConstructorArgumentsException("X values are a different length than the Y values.");
+                throw new InvalidConstructorArgumentsException("The coordinate function cannot be created because the X and Y values are not the same lengths.");
             }
         }
 

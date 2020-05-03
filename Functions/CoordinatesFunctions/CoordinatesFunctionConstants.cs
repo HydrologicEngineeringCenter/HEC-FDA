@@ -11,7 +11,7 @@ namespace Functions.CoordinatesFunctions
 {
     internal sealed class CoordinatesFunctionConstants : IFunction, IValidate<ICoordinatesFunction>
     {
-        private readonly List<ICoordinate> _ProvidedCoordinates;
+        private readonly List<ICoordinate> _ExpandedCoordinates;
         private readonly MathNet.Numerics.Interpolation.CubicSpline _NaturalCubicSpline;
         private readonly MathNet.Numerics.Interpolation.CubicSpline _InverseNaturalCublicSpline;
         #region Properties
@@ -53,12 +53,12 @@ namespace Functions.CoordinatesFunctions
             else
             {
                 Interpolator = interpolation;
-                _ProvidedCoordinates = SortByXs(coordinates);
-                var xys = GetOrdinateArrays(_ProvidedCoordinates);
+                Coordinates = SortByXs(coordinates);
+                var xys = GetOrdinateArrays(Coordinates);
                 if (Interpolator == InterpolationEnum.NaturalCubicSpline) _NaturalCubicSpline = SetCubicSplineFunction(xys);
                 InterpolationFunction = SetInterpolator(Interpolator);
                 Order = SetTheOrder();
-                Domain = IRangeFactory.Factory(_ProvidedCoordinates.First().X.Value(), _ProvidedCoordinates.Last().X.Value());
+                Domain = IRangeFactory.Factory(Coordinates.First().X.Value(), Coordinates.Last().X.Value());
                 Range = SetRange();
                 IsInvertible = IsInvertibleFunction();
                 if (IsInvertible)
@@ -66,7 +66,7 @@ namespace Functions.CoordinatesFunctions
                     if (Interpolator == InterpolationEnum.NaturalCubicSpline) _InverseNaturalCublicSpline = SetInverseCubicSplineFunction(xys);
                     InverseInterpolationFunction = SetInverseInterpolator(Interpolator);
                 }            
-                Coordinates = SetSortedCoordinates(_ProvidedCoordinates);
+                _ExpandedCoordinates = SetSortedCoordinates(Coordinates);
             }
         }
         #endregion
@@ -170,12 +170,13 @@ namespace Functions.CoordinatesFunctions
         private double InverseNaturalCubicSpline(int i, double y) => _InverseNaturalCublicSpline.Interpolate(y);
         private double InverseNoInterpolator(int i, double y) => y == Coordinates[i].Y.Value() ? Coordinates[i].X.Value() : throw new InvalidOperationException(string.Format("The InverseF(y) operation cannot produce a result because no interpolation method has been set and the specified y value: {0} was not explicityly provided as part of the function domain.", y));
         #endregion
+
         private List<ICoordinate> SetSortedCoordinates(List<ICoordinate> coordinates)
         {
             if (Interpolator == InterpolationEnum.NaturalCubicSpline)
             {
                 int i = 0;
-                List<ICoordinate> displayCoordinates = new List<ICoordinate>();
+                List<ICoordinate> expandedCoordinates = new List<ICoordinate>();
                 /* 
                  * Limit Interpolation for plots of curved functions
                  *  (1) limit x steps to 1% of x range.
@@ -188,16 +189,16 @@ namespace Functions.CoordinatesFunctions
                 // while condition implies y < maxY
                 while (x < maxX)
                 {
-                    if (i == 0) displayCoordinates.Add(ICoordinateFactory.Factory(x, y));
+                    if (i == 0) expandedCoordinates.Add(ICoordinateFactory.Factory(x, y));
                     else
                     {
                         x = x + xEpsilon < coordinates[i + 1].X.Value() ?
                             x + xEpsilon : coordinates[i + 1].X.Value();
-                        displayCoordinates.Add(ICoordinateFactory.Factory(x, F(x)));
+                        expandedCoordinates.Add(ICoordinateFactory.Factory(x, F(x)));
                     }
                     if (x == coordinates[i + 1].X.Value() && x != maxX) i++;
                 }
-                return displayCoordinates;
+                return expandedCoordinates;
             }
             else return coordinates;
         }
@@ -251,14 +252,14 @@ namespace Functions.CoordinatesFunctions
         }
         private bool IsStraightLine()
         {
-            if (_ProvidedCoordinates.Count < 2)
+            if (Coordinates.Count < 2)
             {
                 return false;
             }
-            for (int i = 0; i < _ProvidedCoordinates.Count - 1; i++)
+            for (int i = 0; i < Coordinates.Count - 1; i++)
             {
-                ICoordinate coord1 = _ProvidedCoordinates[i];
-                ICoordinate coord2 = _ProvidedCoordinates[i + 1];
+                ICoordinate coord1 = Coordinates[i];
+                ICoordinate coord2 = Coordinates[i + 1];
                 if (!coord1.Y.Equals(coord2.Y))
                 {
                     return false;
@@ -268,10 +269,10 @@ namespace Functions.CoordinatesFunctions
         }
         private bool IsAtLeastWeaklyDecreasing()
         {
-            for (int i = 0; i < _ProvidedCoordinates.Count - 1; i++)
+            for (int i = 0; i < Coordinates.Count - 1; i++)
             {
-                ICoordinate coord1 = _ProvidedCoordinates[i];
-                ICoordinate coord2 = _ProvidedCoordinates[i + 1];
+                ICoordinate coord1 = Coordinates[i];
+                ICoordinate coord2 = Coordinates[i + 1];
                 if (!IsAtLeastWeaklyDecreasing(coord1, coord2))
                 {
                     return false;
@@ -281,10 +282,10 @@ namespace Functions.CoordinatesFunctions
         }
         private bool IsAtLeastWeaklyIncreasing()
         {
-            for (int i = 0; i < _ProvidedCoordinates.Count - 1; i++)
+            for (int i = 0; i < Coordinates.Count - 1; i++)
             {
-                ICoordinate coord1 = _ProvidedCoordinates[i];
-                ICoordinate coord2 = _ProvidedCoordinates[i + 1];
+                ICoordinate coord1 = Coordinates[i];
+                ICoordinate coord2 = Coordinates[i + 1];
                 if (!IsAtLeastWeaklyIncreasing(coord1, coord2))
                 {
                     return false;
@@ -294,10 +295,10 @@ namespace Functions.CoordinatesFunctions
         }
         private bool IsStrictlyDecreasing()
         {
-            for (int i = 0; i < _ProvidedCoordinates.Count - 1; i++)
+            for (int i = 0; i < Coordinates.Count - 1; i++)
             {
-                ICoordinate coord1 = _ProvidedCoordinates[i];
-                ICoordinate coord2 = _ProvidedCoordinates[i + 1];
+                ICoordinate coord1 = Coordinates[i];
+                ICoordinate coord2 = Coordinates[i + 1];
                 if (!IsCoordinatesStrictlyDecreasing(coord1, coord2))
                 {
                     return false;
@@ -307,10 +308,10 @@ namespace Functions.CoordinatesFunctions
         }
         private bool IsStrictlyIncreasing()
         {
-            for (int i = 0; i < _ProvidedCoordinates.Count - 1; i++)
+            for (int i = 0; i < Coordinates.Count - 1; i++)
             {
-                ICoordinate coord1 = _ProvidedCoordinates[i];
-                ICoordinate coord2 = _ProvidedCoordinates[i + 1];
+                ICoordinate coord1 = Coordinates[i];
+                ICoordinate coord2 = Coordinates[i + 1];
                 if (!IsCoordinatesStrictlyIncreasing(coord1, coord2))
                 {
                     return false;
@@ -407,7 +408,7 @@ namespace Functions.CoordinatesFunctions
             {
                 case OrderedSetEnum.NonMonotonic:
                     double minY = double.PositiveInfinity, maxY = double.NegativeInfinity;
-                    foreach (var coordinate in _ProvidedCoordinates)
+                    foreach (var coordinate in Coordinates)
                     {
                         if (coordinate.Y.Value() < minY) minY = coordinate.Y.Value();
                         if (coordinate.Y.Value() > maxY) maxY = coordinate.Y.Value(); 
@@ -415,22 +416,22 @@ namespace Functions.CoordinatesFunctions
                     return IRangeFactory.Factory(minY, maxY);
                 case OrderedSetEnum.StrictlyIncreasing:
                 case OrderedSetEnum.WeaklyIncreasing:
-                    return IRangeFactory.Factory(_ProvidedCoordinates.First().Y.Value(), _ProvidedCoordinates.Last().Y.Value());
+                    return IRangeFactory.Factory(Coordinates.First().Y.Value(), Coordinates.Last().Y.Value());
                 case OrderedSetEnum.StrictlyDecreasing:
                 case OrderedSetEnum.WeaklyDecreasing:
-                    return IRangeFactory.Factory(_ProvidedCoordinates.Last().Y.Value(), _ProvidedCoordinates.First().Y.Value());
+                    return IRangeFactory.Factory(Coordinates.Last().Y.Value(), Coordinates.First().Y.Value());
                 default:
                     throw new InvalidOperationException($"The {nameof(Order)} property value: {Order} was not properly captured by the SetRange() function.");
             }
         }
         public bool IsInvertibleFunction()
         {
-            for (int i = 0; i < _ProvidedCoordinates.Count; i++)
+            for (int i = 0; i < Coordinates.Count; i++)
             {
                 int j = i + 1;
-                while (j < _ProvidedCoordinates.Count)
+                while (j < Coordinates.Count)
                 {
-                    if (_ProvidedCoordinates[i].Y.Value().Equals(_ProvidedCoordinates[j].Y.Value()) && !_ProvidedCoordinates[i].X.Value().Equals(_ProvidedCoordinates[j].Y.Value())) return false;
+                    if (Coordinates[i].Y.Value().Equals(Coordinates[j].Y.Value()) && !Coordinates[i].X.Value().Equals(Coordinates[j].Y.Value())) return false;
                     else j++;
                 }
             }
@@ -557,39 +558,47 @@ namespace Functions.CoordinatesFunctions
         }
         private bool IsOnRange(double y) => y < Range.Min || y > Range.Max ? false : true;
         #endregion
+        #region GetExpandedCoordinates()
+        public List<ICoordinate> GetExpandedCoordinates()
+        {
+            return _ExpandedCoordinates;
+        }
+        #endregion
         #region Compose()     
         public IFunction Compose(IFunction g)
         {
+            // Get Expanded Coordinates if G is Curved.
+            List<ICoordinate> gCoordinates = g.GetExpandedCoordinates();
             // Advance F Ordinate index until F[i].y >= G[0].x 
-            int i = FirstX(g), I = Coordinates.Count; // - 1;
+            int i = FirstX(gCoordinates), I = _ExpandedCoordinates.Count; // - 1;
             if (i == I) throw new InvalidOperationException(NoOverlapMessage(g));
-            // Advance G Ordinate index until G[j].x >= F[0].y - then move back to j - 1.
-            int j = FirstZ(g), J = g.Coordinates.Count; // - 1;
+            // Advance G Ordinate index until G[j].x >= F[0].y - then move back to j - 1.       
+            int j = FirstZ(gCoordinates), J = gCoordinates.Count; // - 1;
             if (j == J) throw new InvalidOperationException(NoOverlapMessage(g));
-
+            
             List<ICoordinate> fog = new List<ICoordinate>();
-            while (!IsComplete(i, I, j, J, g)) // InOverlapping Portion
+            while (!IsComplete(i, I, j, J, gCoordinates)) // InOverlapping Portion
             {
-                if (Coordinates[i].Y.Value() == g.Coordinates[j].X.Value()) //Matching ordinate
+                if (_ExpandedCoordinates[i].Y.Value() == gCoordinates[j].X.Value()) //Matching ordinate
                 {
-                    fog.Add(ICoordinateFactory.Factory(Coordinates[i].X.Value(), new Constant(g.Coordinates[j].Y.Value()).Value()));
+                    fog.Add(ICoordinateFactory.Factory(_ExpandedCoordinates[i].X.Value(), new Constant(gCoordinates[j].Y.Value()).Value()));
                     i++;
                     j++;
                 }
                 else // Mismatching ordinate
                 {
-                    if (Coordinates[i].Y.Value() < g.Coordinates[j].X.Value()) // An X should be added and Z interpolated
+                    if (_ExpandedCoordinates[i].Y.Value() < gCoordinates[j].X.Value()) // An X should be added and Z interpolated
                     {
                         // Add new ordinate to FoG if G allows interpolation between ordinates
                         if (!(g.Interpolator == InterpolationEnum.None))
-                            fog.Add(ICoordinateFactory.Factory(Coordinates[i].X.Value(), g.F(Coordinates[i].Y).Value()));
+                            fog.Add(ICoordinateFactory.Factory(_ExpandedCoordinates[i].X.Value(), g.F(_ExpandedCoordinates[i].Y).Value()));
                         i++;
                     }
                     else // A Z should be added and X interpolated
                     {
                         // Add new ordinate to FoG if F allows Interpolation between ordinates
                         if (!(Interpolator == InterpolationEnum.None))
-                            fog.Add(ICoordinateFactory.Factory(InverseF(g.Coordinates[j].X.Value(), i - 1), g.Coordinates[j].Y.Value()));
+                            fog.Add(ICoordinateFactory.Factory(InverseF(gCoordinates[j].X.Value(), i - 1), gCoordinates[j].Y.Value()));
                         j++;
                     }
                 }
@@ -603,38 +612,38 @@ namespace Functions.CoordinatesFunctions
 
             return composedFunction;
         }
-        private int FirstX(IFunction g)
+        private int FirstX(List<ICoordinate> gCoordinates)
         {
             int i = 0, I = Coordinates.Count;
-            while (Coordinates[i].Y.Value() < g.Coordinates[0].X.Value())
+            while (Coordinates[i].Y.Value() < gCoordinates[0].X.Value())
             {
                 i++;
                 if (i == I) break;
             }
             return i;
         }
-        private int FirstZ(IFunction g)
+        private int FirstZ(List<ICoordinate> gCoordinates)
         {
-            int j = 0, J = g.Coordinates.Count; //- 1;
-            while (g.Coordinates[j].X.Value() < Coordinates[0].Y.Value())
+            int j = 0, J = gCoordinates.Count; //- 1;
+            while (gCoordinates[j].X.Value() < Coordinates[0].Y.Value())
             {
                 j++;
                 if (j == J) break;
             }
             return j;
         }
-        private bool IsComplete(int i, int I, int j, int J, IFunction g)
+        private bool IsComplete(int i, int I, int j, int J, List<ICoordinate> gCoordinates)
         {
-            return (IsFinalIndex(i, I, j, J) || (IsXOffOverlap(i, J, g) && IsZOffOverlap(I, j, g)));
+            return (IsFinalIndex(i, I, j, J) || (IsXOffOverlap(i, J, gCoordinates) && IsZOffOverlap(I, j, gCoordinates)));
         }
-        private bool IsXOffOverlap(int i, int J, IFunction g)
+        private bool IsXOffOverlap(int i, int J, List<ICoordinate> gCoordinates)
         {
-            bool retval = Coordinates[i].Y.Value() > g.Coordinates[J - 1].X.Value();
+            bool retval = Coordinates[i].Y.Value() > gCoordinates[J - 1].X.Value();
             return retval;
         }
-        private bool IsZOffOverlap(int I, int j, IFunction g)
+        private bool IsZOffOverlap(int I, int j, List<ICoordinate> gCoordinates)
         {
-            bool retval = Coordinates[I - 1].Y.Value() < g.Coordinates[j].X.Value();
+            bool retval = Coordinates[I - 1].Y.Value() < gCoordinates[j].X.Value();
             return retval;
         }
         private bool IsFinalIndex(int i, int I, int j, int J)

@@ -58,6 +58,7 @@ namespace Functions
         /// <param name="coordinateFunction"> The specified <see cref="ICoordinatesFunction"/> to be compared with the instance object. </param>
         /// <returns> <see langword="true"/> if the functions are equal in value, <see langword="false"/> otherwise. </returns>
         bool Equals(ICoordinatesFunction coordinateFunction);
+        List<ICoordinate> GetExpandedCoordinates();
         //IFunction Sample(double p);
         //IFunction Sample(double p, InterpolationEnum interpolator);
 

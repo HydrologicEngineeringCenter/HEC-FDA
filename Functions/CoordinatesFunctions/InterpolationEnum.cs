@@ -1,6 +1,6 @@
 ﻿
 
-namespace Functions.CoordinatesFunctions
+namespace Functions
 {
     /// <summary> Describes how y values are interpolated on the domain of the function. </summary>
     public enum InterpolationEnum
