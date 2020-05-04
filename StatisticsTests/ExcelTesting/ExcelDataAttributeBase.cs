@@ -3,16 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Xunit.Sdk;
 
-namespace FunctionsTests.ExcelTesting
+namespace StatisticsTests.ExcelTesting
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public abstract class ExcelDataAttributeBase : DataAttribute
+
+    public abstract class ExcelDataAttributeBase: DataAttribute
     {
         protected enum DataLength
         {
@@ -20,10 +20,10 @@ namespace FunctionsTests.ExcelTesting
             FirstLineOnly
         }
 
-        protected abstract List<Type> ColumnTypes 
-        { 
-            get; 
-            set; 
+        protected abstract List<Type> ColumnTypes
+        {
+            get;
+            set;
         }
         /// <summary>
         /// I have to know if this is a single value column or a column that can be a list. I can't
@@ -69,7 +69,7 @@ namespace FunctionsTests.ExcelTesting
             int highestNumberOfRowsInTest = 1;
             //these are the parameters that will get passed into the test method
             object[] test1 = new object[ColumnIndices.Count + 3];
-            if(!MultipleWorksheets)
+            if (!MultipleWorksheets)
             {
                 //doesnt need the worksheet number added to test
                 test1 = new object[ColumnIndices.Count + 2];
@@ -81,7 +81,7 @@ namespace FunctionsTests.ExcelTesting
                 int colNumber = ColumnIndices[i];
                 if (ColumnTypes[i] == typeof(double))
                 {
-                    switch(ColumnDataLengths[i])
+                    switch (ColumnDataLengths[i])
                     {
                         case DataLength.VariableLength:
                             {
@@ -100,7 +100,7 @@ namespace FunctionsTests.ExcelTesting
                                 break;
                             }
                     }
-                    
+
                 }
                 else if (ColumnTypes[i] == typeof(int))
                 {
@@ -124,7 +124,7 @@ namespace FunctionsTests.ExcelTesting
                             }
                     }
                 }
-                else if(ColumnTypes[i] == typeof(string))
+                else if (ColumnTypes[i] == typeof(string))
                 {
                     switch (ColumnDataLengths[i])
                     {
@@ -195,11 +195,11 @@ namespace FunctionsTests.ExcelTesting
 
             //return listOfTests;
             List<object[]> tests = new List<object[]>();
-            if(MultipleWorksheets)
+            if (MultipleWorksheets)
             {
-                foreach(int wsNumber in Worksheets)
+                foreach (int wsNumber in Worksheets)
                 {
-                    tests.AddRange( GetTestsForWorksheet(workbook, wsNumber));
+                    tests.AddRange(GetTestsForWorksheet(workbook, wsNumber));
                 }
             }
             else
@@ -266,7 +266,7 @@ namespace FunctionsTests.ExcelTesting
         {
             object value = ws.Row(startRow).Cell(startCol).Value;
             return value.ToString();
-            
+
         }
         protected static List<string> GetStringValuesVariableLength(int startRow, int startCol, IXLWorksheet ws)
         {
@@ -295,7 +295,18 @@ namespace FunctionsTests.ExcelTesting
         protected static int GetIntValueSingleRow(int startRow, int startCol, IXLWorksheet ws)
         {
             object value = ws.Row(startRow).Cell(startCol).Value;
-            return Convert.ToInt32( value);
+            return Convert.ToInt32(value);
+
+            int intValue;
+            bool isInteger = int.TryParse(value.ToString(), out intValue);
+            if (isInteger)
+            {
+                return intValue;
+            }
+            else
+            {
+                return 0;
+            }
 
         }
 
@@ -314,8 +325,16 @@ namespace FunctionsTests.ExcelTesting
         protected static double GetDoubleValueSingleRow(int startRow, int startCol, IXLWorksheet ws)
         {
             object value = ws.Row(startRow).Cell(startCol).Value;
-            return Convert.ToDouble(value);
-
+            double dbl;
+            bool isDouble = Double.TryParse(value.ToString(), out dbl);
+            if (isDouble)
+            {
+                return dbl;
+            }
+            else
+            {
+                return double.NaN;
+            }
         }
 
         public static string GetApplicationRoot()
@@ -364,6 +383,5 @@ namespace FunctionsTests.ExcelTesting
 
             workbook.Save();
         }
-
     }
 }

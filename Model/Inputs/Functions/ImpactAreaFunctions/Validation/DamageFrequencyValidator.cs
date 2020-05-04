@@ -24,7 +24,9 @@ namespace Model.Validation
 
         IMessageLevels IValidator<DamageFrequency>.IsValid(DamageFrequency entity, out IEnumerable<IMessage> errors)
         {
-            throw new NotImplementedException();
+            //todo: finish this
+            errors = new List<IMessage>();
+            return IMessageLevels.NoErrors;
         }
     }
 }

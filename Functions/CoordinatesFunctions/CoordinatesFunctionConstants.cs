@@ -1,4 +1,5 @@
 ﻿using Functions.Ordinates;
+using MathNet.Numerics.Interpolation;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -63,7 +64,7 @@ namespace Functions.CoordinatesFunctions
                 IsInvertible = IsInvertibleFunction();
                 if (IsInvertible)
                 {
-                    if (Interpolator == InterpolationEnum.NaturalCubicSpline) _InverseNaturalCublicSpline = SetInverseCubicSplineFunction(xys);
+                    //if (Interpolator == InterpolationEnum.NaturalCubicSpline) _InverseNaturalCublicSpline = SetInverseCubicSplineFunction(xys);
                     InverseInterpolationFunction = SetInverseInterpolator(Interpolator);
                 }            
                 // This part must go last.
@@ -132,10 +133,47 @@ namespace Functions.CoordinatesFunctions
             return new Tuple<double[], double[]>(xs, ys);
         }
         private double NaturalCubicSplineInterpolator(int i, double x)
-        {
+        {//i is the index of the coordinate that is to the left of x?
+            //double[] xs = new double[4];
+            //double[] ys = new double[4];
+            ////we need 4 coordinates to do a cubic spline
+            //if(Coordinates.Count<4)
+            //{
+            //    throw new InvalidOperationException("Cannot interpolate a cubic spline function with less than 4 coordinates.");
+            //}
+            //if(i <3)
+            //{
+            //    //grab the first coordinates
+            //    for(int j = 0;j<4;j++)
+            //    {
+            //        xs[j] = (Coordinates[j].X.Value());
+            //        ys[j] = (Coordinates[j].Y.Value());
+            //    }
+            //}
+            //else
+            //{
+            //    //get the three before x and one after?
+            //    //"i" should never be the last coordinate right. So this shouldn't go out of bounds
+            //    xs[0] = Coordinates[i - 2].X.Value();
+            //    xs[1] = Coordinates[i - 1].X.Value();
+            //    xs[2] = Coordinates[i].X.Value();
+            //    xs[3] = Coordinates[i +1].X.Value();
+
+            //    ys[0] = Coordinates[i - 2].Y.Value();
+            //    ys[1] = Coordinates[i - 1].Y.Value();
+            //    ys[2] = Coordinates[i].Y.Value();
+            //    ys[3] = Coordinates[i + 1].Y.Value();
+
+            //}
+
+            //CubicSpline cs = CubicSpline.InterpolateNaturalSorted(xs, ys);
+            //double retval = cs.Interpolate(x);
+            //return retval;
+
+
             //The index value is irrelevant for this interpolator.
             double result = _NaturalCubicSpline.Interpolate(x);
-            double result2 = _InverseNaturalCublicSpline.Interpolate(x);
+            //double result2 = _InverseNaturalCublicSpline.Interpolate(x);
             return result;
         }      
         private double NoInterpolator(int i, double x) => x == Coordinates[i].X.Value() ? Coordinates[i].Y.Value() : throw new InvalidOperationException(String.Format("The F(x) operation cannot produce a result because no interpolation method has been set and the specified x value: {0} was not explicitly provided as part of the function domain.", x));
@@ -581,16 +619,71 @@ namespace Functions.CoordinatesFunctions
             if (!IsInvertible) throw new InvalidOperationException("The function InverseF(y) is invalid for this set of coordinates. The inverse of F(x) is not a function, because one or more y values maps to multiple x values");
             if (!IsOnRange(y.Value())) throw new ArgumentOutOfRangeException(string.Format("The specified y values: {0} is invalid because it is not on the domain of the inverse coordinates function [{1}, {2}] (e.g. range of coordinates function).",
                 y, Coordinates[0].Y.Value(), Coordinates[Coordinates.Count - 1].Y.Value()));
-            int i = 0;
-            if (!(i == Coordinates.Count - 1))
+            
+            
+            //if coming here from a linked function then we know that this "order" must be strictly increasing or decreasing
+            //we want to get the coordinate that is just to the left of the y we are looking for.
+          
+            int i = GetIndexOfCoordinateBeforeOrEqualToYValue(y);
+            if(Coordinates[i].Y.Value() == y.Value())
             {
-                //Find the next y value that is >= the y value
-                while (Coordinates[i + 1].Y.Value() < y.Value()) i++;
-                if (Coordinates[i + 1].Y.Value() == y.Value()) return Coordinates[i + 1].X;
+                return Coordinates[i].X;
             }
-            double d = InverseInterpolationFunction(i, y.Value());
-            return new Constant( SetInverseInterpolator(Interpolator)(i, y.Value()));
+            else
+            {
+                double d = InverseInterpolationFunction(i, y.Value());
+                return new Constant( SetInverseInterpolator(Interpolator)(i, y.Value()));
+            }
+
+
+            //if (Coordinates[0].Y.Value() == y.Value())
+            //{
+            //    return Coordinates[0].X;
+            //}
+            //if (!(i == Coordinates.Count - 1))
+            //{
+            //    //Find the next y value that is >= the y value
+            //    while (Coordinates[i + 1].Y.Value() < y.Value()) i++;
+            //    if (Coordinates[i + 1].Y.Value() == y.Value()) return Coordinates[i + 1].X;
+            //}         
+
         }
+
+        private int GetIndexOfCoordinateBeforeOrEqualToYValue(IOrdinate y)
+        {
+            for (int i = 0; i < Coordinates.Count - 1; i++)
+            {
+                ICoordinate leftCoord = Coordinates[i];
+                ICoordinate rightCoord = Coordinates[i + 1];
+                if(leftCoord.Y.Value() == y.Value())
+                {
+                    return i;
+                }
+                else if (Order == OrderedSetEnum.StrictlyIncreasing )
+                {
+                    if(leftCoord.Y.Value() < y.Value() && rightCoord.Y.Value() > y.Value())
+                    {
+                        return i;
+                    }
+                }
+                else if (Order == OrderedSetEnum.StrictlyDecreasing )
+                {
+                    if(leftCoord.Y.Value() > y.Value() && rightCoord.Y.Value() <y.Value())
+                    {
+                        return i;
+                    }
+                }
+            }
+            //check to see if y is right on the last coordinate
+            if (Coordinates.Last().Y.Value() == y.Value())
+            {
+                return Coordinates.Count-1;
+            }
+
+            //the y value must be out of range of this function
+            throw new ArgumentOutOfRangeException("The y value: " + y.Value() + " was outside the range of this function.");
+        }
+
         private double InverseF(double y, int i)
         {
             // TODO: IsFinite() IsNaN() check

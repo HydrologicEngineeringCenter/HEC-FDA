@@ -165,7 +165,7 @@ namespace Functions.CoordinatesFunctions
             else if (IsFunctionsWeaklyDecreasing(functionOrders))
             {
                 //need to check that the domains and ranges don't overlap
-                if (AreDomainsIncreasing() && AreRangesStrictlyDecreasing())
+                if (AreDomainsIncreasing() && AreRangesWeaklyDecreasing())
                 {
                     Order = OrderedSetEnum.WeaklyDecreasing;
                 }
@@ -183,7 +183,7 @@ namespace Functions.CoordinatesFunctions
         private bool AreDomainsIncreasing()
         {
             bool retval = true;
-            for (int i = 0; i < Functions.Count - 2; i++)
+            for (int i = 0; i < Functions.Count - 1; i++)
             {
                 //is the previous function's max xValue less than the next function's min xValue
                 if (Functions[i].Domain.Max >= Functions[i + 1].Domain.Min)
@@ -204,7 +204,7 @@ namespace Functions.CoordinatesFunctions
         private bool AreRangesWeaklyIncreasing()
         {
             bool retval = true;
-            for (int i = 0; i < Functions.Count - 2; i++)
+            for (int i = 0; i < Functions.Count - 1; i++)
             {
                 IFunction func1 = (IFunction)Functions[i];
                 IFunction func2 = (IFunction)Functions[i + 1];
@@ -221,12 +221,14 @@ namespace Functions.CoordinatesFunctions
         private bool AreRangesStrictlyDecreasing()
         {
             bool retval = true;
-            for (int i = 0; i < Functions.Count - 2; i++)
+            for (int i = 0; i < Functions.Count - 1; i++)
             {
                 IFunction func1 = (IFunction)Functions[i];
                 IFunction func2 = (IFunction)Functions[i + 1];
 
-                if (func1.Range.Max <= func2.Range.Min)
+                //if (func1.Range.Max <= func2.Range.Min)
+                //in order to be strictly decreasing, func1's min must be greater than func2's max
+                if(func1.Range.Min<= func2.Range.Max)
                 {
                     retval = false;
                     break;
@@ -238,12 +240,14 @@ namespace Functions.CoordinatesFunctions
         private bool AreRangesWeaklyDecreasing()
         {
             bool retval = true;
-            for (int i = 0; i < Functions.Count - 2; i++)
+            for (int i = 0; i < Functions.Count - 1; i++)
             {
                 IFunction func1 = (IFunction)Functions[i];
                 IFunction func2 = (IFunction)Functions[i + 1];
 
-                if (func1.Range.Max < func2.Range.Min)
+                //in order to be weakly decreasing, func1's min would need to be equal to func2's max
+                //or, one or more of the funcs have a piecewise interpolator
+                if(func1.Range.Min < func2.Range.Max)
                 {
                     retval = false;
                     break;

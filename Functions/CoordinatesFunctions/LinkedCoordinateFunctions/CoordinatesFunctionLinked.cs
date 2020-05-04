@@ -1,5 +1,6 @@
 ﻿using Functions.Ordinates;
 using Functions.Validation;
+using MathNet.Numerics.Interpolation;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -94,7 +95,8 @@ namespace Functions.CoordinatesFunctions
         }
         private double PiecewiseInterpolator(ICoordinate coordinateLeft, ICoordinate coordinateRight, double x)
         {
-            if ((x - coordinateLeft.X.Value()) < (coordinateRight.X.Value() - coordinateLeft.X.Value()) / 2)
+
+            if (x < coordinateRight.X.Value())
             {
                 return coordinateLeft.Y.Value();
             }
@@ -114,6 +116,87 @@ namespace Functions.CoordinatesFunctions
                 throw new InvalidOperationException(String.Format("The F(x) operation cannot produce a result because no interpolation method has been set and the specified x value: {0} was not explicitly provided as part of the function domain.", x));
             }
         }
+
+        private double CubicSplineInterpolator(ICoordinatesFunction leftFunction, ICoordinatesFunction rightFunction, double x)
+        {
+            //the only way we get here is if the x value is between two functions with the function on the left having a cubic spline interpolation type
+            //get xs and ys array
+            double[] xs = GetXValuesForCubicSplineInterpolation(leftFunction, rightFunction);
+            double[] ys = GetYValuesForCubicSplineInterpolation(leftFunction, rightFunction);
+
+            CubicSpline cs = CubicSpline.InterpolateNaturalSorted(xs, ys);
+            double retval = cs.Interpolate(x);
+            return retval;
+        }
+
+        private double InverseCubicSplineInterpolator(ICoordinatesFunction leftFunction, ICoordinatesFunction rightFunction, double x)
+        {
+            //the only way we get here is if the x value is between two functions with the function on the left having a cubic spline interpolation type
+            //get xs and ys array
+            double[] xs = GetXValuesForCubicSplineInterpolation(leftFunction, rightFunction);
+            double[] ys = GetYValuesForCubicSplineInterpolation(leftFunction, rightFunction);
+
+            CubicSpline cs = CubicSpline.InterpolateNaturalSorted(xs, ys);
+            double retval = cs.Interpolate(x);
+            return retval;
+        }
+
+        /// <summary>
+        /// Gets all the x values from the left function and the first x of the right function. 
+        /// </summary>
+        /// <param name="leftFunction"></param>
+        /// <param name="rightFunction"></param>
+        /// <returns></returns>
+        private double[] GetXValuesForCubicSplineInterpolation(ICoordinatesFunction leftFunction, ICoordinatesFunction rightFunction)
+        {
+            List<double> xs = new List<double>();
+            //foreach (ICoordinate coord in leftFunction.Coordinates)
+            //{
+            //    xs.Add(coord.X.Value());
+            //}
+
+            //skip the first one because it is a duplicate.
+            for(int i = 0;i<leftFunction.Coordinates.Count;i++)
+            {
+                xs.Add(leftFunction.Coordinates[i].X.Value());
+            }
+
+            //for(int i = leftFunction.Coordinates.Count-3;i<leftFunction.Coordinates.Count;i++)
+            //{
+            //    xs.Add(leftFunction.Coordinates[i].X.Value());
+            //}
+            xs.Add(rightFunction.Coordinates.First().X.Value());
+            return xs.ToArray();
+        }
+
+        /// <summary>
+        /// Gets all the y values from the left function and the first y of the right function. 
+        /// </summary>
+        /// <param name="leftFunction"></param>
+        /// <param name="rightFunction"></param>
+        /// <returns></returns>
+        private double[] GetYValuesForCubicSplineInterpolation(ICoordinatesFunction leftFunction, ICoordinatesFunction rightFunction)
+        {
+            List<double> ys = new List<double>();
+            //foreach (ICoordinate coord in leftFunction.Coordinates)
+            //{
+            //    ys.Add(coord.Y.Value());
+            //}
+
+            //skip the first one because it is a duplicate.
+            for (int i = 0; i < leftFunction.Coordinates.Count; i++)
+            {
+                ys.Add(leftFunction.Coordinates[i].Y.Value());
+            }
+
+            //for (int i = leftFunction.Coordinates.Count - 3; i < leftFunction.Coordinates.Count; i++)
+            //{
+            //    ys.Add(leftFunction.Coordinates[i].Y.Value());
+            //}
+            ys.Add(rightFunction.Coordinates.First().Y.Value());
+            return ys.ToArray();
+        }
+
         private double InverseLinearInterpolator(ICoordinate coordinateLeft, ICoordinate coordinateRight, double y)
         {
             return coordinateLeft.X.Value() + (y - coordinateLeft.Y.Value()) /
@@ -122,8 +205,14 @@ namespace Functions.CoordinatesFunctions
         }
         private double InversePiecewiseInterpolator(ICoordinate coordinateLeft, ICoordinate coordinateRight, double y)
         {
-            return ((y - coordinateLeft.Y.Value()) < (coordinateRight.Y.Value() - coordinateLeft.Y.Value()) / 2)
-                ? coordinateLeft.X.Value() : coordinateRight.X.Value();
+            if (y == coordinateLeft.Y.Value())
+            {
+                return coordinateLeft.X.Value();
+            }
+            else
+            {
+                return coordinateRight.X.Value();
+            }
         }
         private double InverseNoInterpolator(ICoordinate coordinateLeft, double y)
         {
@@ -176,23 +265,27 @@ namespace Functions.CoordinatesFunctions
             for (int i = 0; i < Functions.Count - 1; i++)
             {
 
-                IRange<double> func1Domain = Functions[i].Domain;
-                IRange<double> func2Domain = Functions[i + 1].Domain;
+                ICoordinatesFunction currentFunction = Functions[i];
+                ICoordinatesFunction nextFunction = Functions[i+1];
 
-                if (x.Value() > func1Domain.Max && x.Value() < func2Domain.Min)
+                if (x.Value() > currentFunction.Coordinates.Last().X.Value() && x.Value() < nextFunction.Coordinates.First().X.Value())
                 {
                     //then this x is between func1 and func2
                     InterpolationEnum interpolator = Functions[i].Interpolator;
-                    double yValue = Interpolate(interpolator, Functions[i].Coordinates.Last(), Functions[i + 1].Coordinates.First(), x.Value());
+                    double yValue = Interpolate(interpolator, currentFunction, nextFunction, x.Value());
                     return new Constant(yValue);
                 }
             }
             //if we get here then the x value is outside the range of all functions
-            return null;
+            throw new ArgumentOutOfRangeException("Could not calculate f(x) because the x-value: " + x.Value() + " was outside the domain of all functions.");
         }
-        private double Interpolate(InterpolationEnum interpolator, ICoordinate coordinateLeft, ICoordinate coordinateRight, double x)
+
+        private double Interpolate(InterpolationEnum interpolator, ICoordinatesFunction leftFunction, ICoordinatesFunction rightFunction, double x)
         {
             double retval = Double.NaN;
+
+            ICoordinate coordinateLeft = leftFunction.Coordinates.Last();
+            ICoordinate coordinateRight = rightFunction.Coordinates.First();
             if (interpolator == InterpolationEnum.Linear)
             {
                 retval = LinearInterpolator(coordinateLeft, coordinateRight, x);
@@ -204,6 +297,10 @@ namespace Functions.CoordinatesFunctions
             else if (interpolator == InterpolationEnum.None)
             {
                 retval = NoInterpolator(coordinateLeft, x);
+            }
+            else if(interpolator == InterpolationEnum.NaturalCubicSpline)
+            {
+                retval = CubicSplineInterpolator(leftFunction, rightFunction, x);
             }
             return retval;
 
@@ -257,12 +354,25 @@ namespace Functions.CoordinatesFunctions
                         IRange<double> func1Range = ((IFunction)Functions[i]).Range;
                         IRange<double> func2Range = ((IFunction)Functions[i + 1]).Range;
 
-                        if (y.Value() > func1Range.Max && y.Value() < func2Range.Min)
+                        if (Order == OrderedSetEnum.StrictlyIncreasing)
                         {
-                            //then this y is between func1 and func2
-                            InterpolationEnum interpolator = Functions[i].Interpolator;
-                            return new Constant(InverseInterpolate(interpolator, Functions[i].Coordinates.Last(), Functions[i + 1].Coordinates.Last(), y.Value()));
+                            if (y.Value() > func1Range.Max && y.Value() < func2Range.Min)
+                            {
+                                //then this y is between func1 and func2
+                                InterpolationEnum interpolator = Functions[i].Interpolator;
+                                return new Constant(InverseInterpolate(interpolator, Functions[i].Coordinates.Last(), Functions[i + 1].Coordinates.First(), y.Value()));
 
+                            }
+                        }
+                        else if(Order == OrderedSetEnum.StrictlyDecreasing)
+                        {
+                            if (y.Value() < func1Range.Min && y.Value() > func2Range.Max)
+                            {
+                                //then this y is between func1 and func2
+                                InterpolationEnum interpolator = Functions[i].Interpolator;
+                                return new Constant(InverseInterpolate(interpolator, Functions[i].Coordinates.Last(), Functions[i + 1].Coordinates.First(), y.Value()));
+
+                            }
                         }
                     }
                 }

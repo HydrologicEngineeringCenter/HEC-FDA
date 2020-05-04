@@ -2,28 +2,30 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Xunit.Sdk;
 
-namespace FunctionsTests.ExcelTesting
+namespace ModelTests.ExcelTesting
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+
     public abstract class ExcelDataAttributeBase : DataAttribute
     {
+
         protected enum DataLength
         {
             VariableLength,
             FirstLineOnly
         }
 
-        protected abstract List<Type> ColumnTypes 
-        { 
-            get; 
-            set; 
+        protected abstract List<Type> ColumnTypes
+        {
+            get;
+            set;
         }
         /// <summary>
         /// I have to know if this is a single value column or a column that can be a list. I can't
@@ -69,7 +71,7 @@ namespace FunctionsTests.ExcelTesting
             int highestNumberOfRowsInTest = 1;
             //these are the parameters that will get passed into the test method
             object[] test1 = new object[ColumnIndices.Count + 3];
-            if(!MultipleWorksheets)
+            if (!MultipleWorksheets)
             {
                 //doesnt need the worksheet number added to test
                 test1 = new object[ColumnIndices.Count + 2];
@@ -81,7 +83,7 @@ namespace FunctionsTests.ExcelTesting
                 int colNumber = ColumnIndices[i];
                 if (ColumnTypes[i] == typeof(double))
                 {
-                    switch(ColumnDataLengths[i])
+                    switch (ColumnDataLengths[i])
                     {
                         case DataLength.VariableLength:
                             {
@@ -100,7 +102,7 @@ namespace FunctionsTests.ExcelTesting
                                 break;
                             }
                     }
-                    
+
                 }
                 else if (ColumnTypes[i] == typeof(int))
                 {
@@ -124,7 +126,7 @@ namespace FunctionsTests.ExcelTesting
                             }
                     }
                 }
-                else if(ColumnTypes[i] == typeof(string))
+                else if (ColumnTypes[i] == typeof(string))
                 {
                     switch (ColumnDataLengths[i])
                     {
@@ -195,11 +197,11 @@ namespace FunctionsTests.ExcelTesting
 
             //return listOfTests;
             List<object[]> tests = new List<object[]>();
-            if(MultipleWorksheets)
+            if (MultipleWorksheets)
             {
-                foreach(int wsNumber in Worksheets)
+                foreach (int wsNumber in Worksheets)
                 {
-                    tests.AddRange( GetTestsForWorksheet(workbook, wsNumber));
+                    tests.AddRange(GetTestsForWorksheet(workbook, wsNumber));
                 }
             }
             else
@@ -266,7 +268,7 @@ namespace FunctionsTests.ExcelTesting
         {
             object value = ws.Row(startRow).Cell(startCol).Value;
             return value.ToString();
-            
+
         }
         protected static List<string> GetStringValuesVariableLength(int startRow, int startCol, IXLWorksheet ws)
         {
@@ -295,7 +297,7 @@ namespace FunctionsTests.ExcelTesting
         protected static int GetIntValueSingleRow(int startRow, int startCol, IXLWorksheet ws)
         {
             object value = ws.Row(startRow).Cell(startCol).Value;
-            return Convert.ToInt32( value);
+            return Convert.ToInt32(value);
 
         }
 
@@ -347,13 +349,13 @@ namespace FunctionsTests.ExcelTesting
 
             //write out if the test passed
             int colForTestResult = col + data.Columns.Count;
-            if (testPassed)
-            {
+if (testPassed)
+{
                 ws.Cell(row, colForTestResult).Value = "Passed";
                 ws.Cell(row, colForTestResult).Style.Fill.BackgroundColor = XLColor.Green;
             }
-            else
-            {
+else
+{
                 ws.Cell(row, colForTestResult).Value = "Failed";
                 ws.Cell(row, colForTestResult).Style.Fill.BackgroundColor = XLColor.Red;
             }
@@ -364,6 +366,7 @@ namespace FunctionsTests.ExcelTesting
 
             workbook.Save();
         }
+
 
     }
 }
