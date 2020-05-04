@@ -13,7 +13,7 @@ namespace Functions.CoordinatesFunctions
 {
     public class CoordinatesFunctionLinked : CoordinatesFunctionLinkedBase, ICoordinatesFunction, IValidate<ICoordinatesFunction>
     {
-
+        #region Properties
         public bool IsDistributed
         {
             //If any function is distributed then return true;
@@ -32,11 +32,10 @@ namespace Functions.CoordinatesFunctions
             }
         }
         public bool IsLinkedFunction => true;
-
         public IEnumerable<IMessage> Messages => null;
-
         public IOrdinateEnum DistributionType
         {
+            // todo: Cody this doesn't seem right.
             get
             {
                 if (Coordinates.Count > 0)
@@ -49,7 +48,9 @@ namespace Functions.CoordinatesFunctions
                 }
             }
         }
+        #endregion
 
+        #region Constructor
         /// <summary>
         /// The list of functions must be in the correct order.
         /// </summary>
@@ -67,6 +68,9 @@ namespace Functions.CoordinatesFunctions
             SetOrder();
             Errors = errors;
         }
+        #endregion
+
+        #region Functions
 
         #region setting the function order
         private void SetOrder()
@@ -186,7 +190,6 @@ namespace Functions.CoordinatesFunctions
             //if we get here then the x value is outside the range of all functions
             return null;
         }
-
         private double Interpolate(InterpolationEnum interpolator, ICoordinate coordinateLeft, ICoordinate coordinateRight, double x)
         {
             double retval = Double.NaN;
@@ -288,6 +291,16 @@ namespace Functions.CoordinatesFunctions
             return validator.IsValid(this, out errors);
         }
 
+        public List<ICoordinate> GetExpandedCoordinates()
+        {
+            List<ICoordinate> expandedCoordinates = new List<ICoordinate>();
+            foreach (ICoordinatesFunction fx in Functions)
+            {
+                expandedCoordinates.AddRange(fx.GetExpandedCoordinates());
+            }
+            return expandedCoordinates;
+        }
+
         //public IFunction Sample(double p)
         //{
         //    //todo check that 0<=p<=1 argument out of range
@@ -377,5 +390,6 @@ namespace Functions.CoordinatesFunctions
 
             return functionsElem;
         }
+        #endregion
     }
 }

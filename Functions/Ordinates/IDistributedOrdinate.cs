@@ -5,6 +5,9 @@ using System.Xml.Linq;
 
 namespace Functions
 {
+    /// <summary>
+    /// Provides an interface for <see cref="IOrdinate"/>s stored as statistical distributions. 
+    /// </summary>
     public interface IDistributedOrdinate : IOrdinate
     {
         XElement WriteToXML();

@@ -66,7 +66,8 @@ namespace Functions.CoordinatesFunctions
                     if (Interpolator == InterpolationEnum.NaturalCubicSpline) _InverseNaturalCublicSpline = SetInverseCubicSplineFunction(xys);
                     InverseInterpolationFunction = SetInverseInterpolator(Interpolator);
                 }            
-                _ExpandedCoordinates = SetSortedCoordinates(Coordinates);
+                // This part must go last.
+                _ExpandedCoordinates = SetExpandedCoordinates();
             }
         }
         #endregion
@@ -171,37 +172,66 @@ namespace Functions.CoordinatesFunctions
         private double InverseNoInterpolator(int i, double y) => y == Coordinates[i].Y.Value() ? Coordinates[i].X.Value() : throw new InvalidOperationException(string.Format("The InverseF(y) operation cannot produce a result because no interpolation method has been set and the specified y value: {0} was not explicityly provided as part of the function domain.", y));
         #endregion
 
-        private List<ICoordinate> SetSortedCoordinates(List<ICoordinate> coordinates)
+        private List<ICoordinate> SetExpandedCoordinates()
         {
             if (Interpolator == InterpolationEnum.NaturalCubicSpline)
             {
-                int i = 0;
-                List<ICoordinate> expandedCoordinates = new List<ICoordinate>();
-                /* 
-                 * Limit Interpolation for plots of curved functions
-                 *  (1) limit x steps to 1% of x range.
-                 *  (2) limit y steps to 1% of y range
-                 * Only necessary for curved functions, currently is restricted to cubic splines.
-                 */
-                ICoordinate min = coordinates[0], max = coordinates[coordinates.Count - 1];
-                double minX = min.X.Value(), minY = min.Y.Value(), maxX = max.X.Value(), maxY = max.Y.Value();
-                double xEpsilon = (maxX - minX) / 100, yEpsilon = (maxY - minY) / 100, x = minX, y = minY;
-                // while condition implies y < maxY
-                while (x < maxX)
-                {
-                    if (i == 0) expandedCoordinates.Add(ICoordinateFactory.Factory(x, y));
-                    else
-                    {
-                        x = x + xEpsilon < coordinates[i + 1].X.Value() ?
-                            x + xEpsilon : coordinates[i + 1].X.Value();
-                        expandedCoordinates.Add(ICoordinateFactory.Factory(x, F(x)));
-                    }
-                    if (x == coordinates[i + 1].X.Value() && x != maxX) i++;
-                }
-                return expandedCoordinates;
+                return FillInCoordinates();
             }
-            else return coordinates;
+            else return Coordinates;
         }
+        private List<ICoordinate> FillInCoordinates()
+        {
+            /* This should only be called curved (i.e. Cubic Spline Interpolators)
+             */
+            int i = 0;
+            List<ICoordinate> expandedCoordinates = new List<ICoordinate>();
+            /* 
+             * Limit Interpolation for plots of curved functions
+             *  (1) limit x steps to 1% of x range.
+             *  (2) limit y steps to 1% of y range
+             * Only necessary for curved functions, currently is restricted to cubic splines.
+             */
+            ICoordinate min = Coordinates[0], max = Coordinates[Coordinates.Count - 1];
+            double xMin = min.X.Value(), yMin = min.Y.Value(), xMax = max.X.Value(), yMax = max.Y.Value();
+            double xEpsilon = (xMax - xMin) / 100, yEpsilon = (yMax - yMin) / 100, x = xMin, y = yMin;
+            // while condition implies y < maxY
+            while (x < xMax)
+            {
+                if (i == 0) expandedCoordinates.Add(ICoordinateFactory.Factory(x, y));
+                else
+                {
+                    x = UpdateX(x + xEpsilon, y + yEpsilon, i);
+                    expandedCoordinates.Add(ICoordinateFactory.Factory(x, F(x)));
+                    y = expandedCoordinates[expandedCoordinates.Count - 1].Y.Value();
+                }
+                if (x == Coordinates[i + 1].X.Value() && x != xMax) i++;
+            }
+            return expandedCoordinates;
+        }
+        private double UpdateX(double nextX, double nextY, int nextIndex)
+        {
+            /* Finds the next coordinate to be added to the expanded list, candidates are:
+             *  (1) nextX - the x + xEpsilon ordinate
+             *  (2) the next coordinate x - Coordinates[nextIndex].X.Value()
+             *  (3) x value associated with nextY - InverseF(nextY) 
+             */
+            if (IsInvertible)
+            {
+                if (nextIndex < Coordinates.Count)
+                    //todo: check calling InverseF(nextY) this way
+                    return Math.Min(Math.Min(nextX, Coordinates[nextIndex].X.Value()), InverseF(nextY, nextIndex - 1));
+                else
+                    return Math.Min(nextX, InverseF(nextY, nextIndex - 1));
+            }
+            else
+            {
+                if (nextIndex < Coordinates.Count)
+                    return Math.Min(nextX, Coordinates[nextIndex].X.Value());
+                else
+                    return nextX;
+            }
+        } 
         #region Order
         /* This seems to contain 2 rival methods:
          *      (1) Cody's SetTheOrder() Function
