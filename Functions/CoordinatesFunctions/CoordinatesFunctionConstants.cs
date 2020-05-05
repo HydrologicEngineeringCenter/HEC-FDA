@@ -174,15 +174,20 @@ namespace Functions.CoordinatesFunctions
 
         private List<ICoordinate> SetExpandedCoordinates()
         {
-            if (Interpolator == InterpolationEnum.NaturalCubicSpline)
+            switch (Interpolator)
             {
-                return FillInCoordinates();
+                case InterpolationEnum.NaturalCubicSpline:
+                    return FillInCoordinates();
+                case InterpolationEnum.Piecewise:
+                    return FillInEndPointCoordinates();
+                default:
+                    return Coordinates;
             }
-            else return Coordinates;
         }
         private List<ICoordinate> FillInCoordinates()
         {
-            /* This should only be called curved (i.e. Cubic Spline Interpolators)
+            /* 
+             * This should only be called curved (i.e. Cubic Spline Interpolators)
              */
             int i = 0;
             List<ICoordinate> expandedCoordinates = new List<ICoordinate>();
@@ -198,7 +203,7 @@ namespace Functions.CoordinatesFunctions
             // while condition implies y < maxY
             while (x < xMax)
             {
-                if (i == 0) expandedCoordinates.Add(ICoordinateFactory.Factory(x, y));
+                if (i == 0) expandedCoordinates.Add(ICoordinateFactory.Factory(x, y)); 
                 else
                 {
                     x = UpdateX(x + xEpsilon, y + yEpsilon, i);
@@ -206,6 +211,19 @@ namespace Functions.CoordinatesFunctions
                     y = expandedCoordinates[expandedCoordinates.Count - 1].Y.Value();
                 }
                 if (x == Coordinates[i + 1].X.Value() && x != xMax) i++;
+            }
+            return expandedCoordinates;
+        }
+        private List<ICoordinate> FillInEndPointCoordinates()
+        {
+            /*
+             * To avoid linear interpolation in integration 'end' points are added directly before each provided coordinate.
+             */
+            List<ICoordinate> expandedCoordinates = new List<ICoordinate>() { Coordinates[0] };
+            for (int i = 1; i < Coordinates.Count; i++)
+            {
+                expandedCoordinates.Add(ICoordinateFactory.Factory(Coordinates[i].X.Value(), Coordinates[i].Y.Value() - double.Epsilon));
+                expandedCoordinates.Add(Coordinates[i]);
             }
             return expandedCoordinates;
         }
@@ -687,9 +705,9 @@ namespace Functions.CoordinatesFunctions
         public double TrapizoidalRiemannSum()
         {
             double riemannSum = 0;
-            for (int i = 0; i < Coordinates.Count - 1; i++)
+            for (int i = 0; i < _ExpandedCoordinates.Count - 1; i++)
             {
-                riemannSum += (Coordinates[i + 1].Y.Value() + Coordinates[i].Y.Value()) * (Coordinates[i + 1].X.Value() - Coordinates[i].X.Value()) / 2;
+                riemannSum += (_ExpandedCoordinates[i + 1].Y.Value() + _ExpandedCoordinates[i].Y.Value()) * (_ExpandedCoordinates[i + 1].X.Value() - _ExpandedCoordinates[i].X.Value()) / 2;
             }
             return riemannSum;
         }
@@ -789,29 +807,7 @@ namespace Functions.CoordinatesFunctions
 
             functionsElem.Add(funcElem);
             return functionsElem;
-        }
-
-        //This is a bit of code I'm adding slowly - to allow me to interpolate graphical frequency functions.
-        public ICoordinate Spline(double t)
-        {
-            // I think this requires that t is a double [0, 1]
-            t = t - (int)t;
-            double t2 = t * t, t3 = t2 * t;
-            // These ps are index points.
-            // I think the ps below *might need to* be adjusted based on the value of the actual coordinates.
-            int p0 = (int)t, p1 = p0 + 1, p2 = p1 + 1, p3 = p2 + 1;
-            //these are influential field values (how much the line is being pulled toward each point.
-            double q1 = -t3 + 2d * t2 - t;
-            double q2 =  3d * t3 - 5d * t2 + 2d;
-            double q3 = -3d * 4d * t2 + t;
-            double q4 = t3 - t2;
-            // tx
-            double tx = 0.5 * Coordinates[p0].X.Value() * q1 + Coordinates[p1].X.Value() * q2 + Coordinates[p2].X.Value() * q3 + Coordinates[p3].X.Value() * q4;
-            double ty = 0.5 * Coordinates[p0].Y.Value() * q1 + Coordinates[p1].Y.Value() * q2 + Coordinates[p2].Y.Value() * q3 + Coordinates[p3].Y.Value() * q4;
-            return ICoordinateFactory.Factory(tx, ty);
-        }
-
-      
+        }     
         #endregion
 
 

@@ -27,9 +27,17 @@ namespace Functions.Validation
         public static bool IsConstructable(List<ICoordinate> coordinates, InterpolationEnum interpolator, out string msg)
         {
             msg = "";
+            /*
+             * Check:
+             *  (1) Null or empty coordinate list
+             *  (2) Null coordinates
+             *  (3) Null ordinates
+             *  (4) Less than 4 coordinates & cubic spline Interpolator (it requires 4)
+             *  (5) Statistical interpolator - which must use Distribution Function.
+             */
             if (coordinates.IsNullOrEmpty())
             {
-                msg += $"The {nameof(ICoordinatesFunction)} cannot be constructed because the specified set of coordinates is null or empty.";
+                msg += $"The {nameof(ICoordinatesFunction)} cannot be constructed because the specified set of coordinates is null or empty. ";
                 return false;
             }
             else
@@ -46,10 +54,11 @@ namespace Functions.Validation
                     }
                 }              
             }
-            if (interpolator == InterpolationEnum.NaturalCubicSpline && coordinates.Count < 3)
+            if (interpolator == InterpolationEnum.NaturalCubicSpline && coordinates.Count < 4)
             {
-                msg += $"A natural cubic spline interpolation scheme was specified which requires at least 3 coordinates, but only {coordinates.Count} were provided.";
+                msg += $"A natural cubic spline interpolation scheme was specified which requires at least 4 coordinates, but only {coordinates.Count} were provided. ";
             }
+            if (interpolator == InterpolationEnum.Statistical) msg += $"A {typeof(CoordinatesFunctionConstants)} was requested with a statistical interpolation scheme. This interpolation scheme is only valid for {typeof(DistributionFunction)} instances.";
             return msg.Length == 0;
         }
 

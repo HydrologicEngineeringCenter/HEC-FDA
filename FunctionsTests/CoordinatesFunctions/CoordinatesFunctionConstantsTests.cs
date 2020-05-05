@@ -16,7 +16,6 @@ namespace FunctionsTests.CoordinatesFunctions
     [ExcludeFromCodeCoverage]
     public class CoordinatesFunctionConstantsTests : CoordinateFunctionsTestData
     {
-
         //#region Test Delegate Functions
 
         //public static ICoordinate<IOrdinate, IOrdinate> Square(double val) => (ICoordinate<IOrdinate, IOrdinate>)new CoordinateConstants(val, val * val);
