@@ -1,4 +1,5 @@
-﻿using Functions.CoordinatesFunctions;
+﻿using Functions;
+using Functions.CoordinatesFunctions;
 using Model;
 using Model.Inputs.Functions.ImpactAreaFunctions;
 using Model.Outputs;
@@ -52,7 +53,8 @@ namespace ModelTests.OutputsTests
             //TimeStampSeed = (int)new DateTime().Ticks;
             
             Result result = new Result(condition, seed);
-            result.Compute();
+            //todo: these numbers i am passing in are junk so that i can run the code for now.
+            result.Compute(CreateAllProbabilities(new Random(seed), 1000,1));
             bool converged = result.Converged;
            // result.Metrics
 
@@ -60,6 +62,21 @@ namespace ModelTests.OutputsTests
 
             //double exceedanceProb = retval[metrics[0]];
             //Assert.True(exceedanceProb == .5);
+        }
+
+        private List<List<double>> CreateAllProbabilities(Random RNG, int numComputes, int packetSize)
+        {
+            List<List<double>> allProbabilities = new List<List<double>>();
+            for (int i = 0; i < numComputes; i++)
+            {
+                List<double> probs = new List<double>();
+                for (int j = 0; j < packetSize; j++)
+                {
+                    probs.Add(RNG.NextDouble());
+                }
+                allProbabilities.Add(probs);
+            }
+            return allProbabilities;
         }
     }
 }

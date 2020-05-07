@@ -31,35 +31,42 @@ namespace ModelTests.ExcelTesting
             List<string> thresholdTypes, List<double> thresholdValues, List<double> expectedResults,
             int rowToWriteTo, int columnToWriteTo)
         {
-            Sampler.RegisterSampler(new ConstantSampler());
+           // try
+            //{
+                Sampler.RegisterSampler(new ConstantSampler());
 
-            IFrequencyFunction inflowFreq = null;
-            if (xs1.Count > 0)
-            {
-                InterpolationEnum interp1 = ConvertToInterpolationEnum(interpolation1);
-                IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1, interp1);
-                inflowFreq = ImpactAreaFunctionFactory.FactoryFrequency(func1, ImpactAreaFunctionEnum.InflowFrequency);
-            }
+                IFrequencyFunction inflowFreq = null;
+                if (xs1.Count > 0)
+                {
+                    InterpolationEnum interp1 = ConvertToInterpolationEnum(interpolation1);
+                    IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1, interp1);
+                    inflowFreq = ImpactAreaFunctionFactory.FactoryFrequency(func1, ImpactAreaFunctionEnum.InflowFrequency);
+                }
 
-            List<ITransformFunction> transformFunctions = GetTransformFunctions(xs2, ys2, interpolation2, xs3, ys3, interpolation3, xs4, ys4, interpolation4, xs5, ys5, interpolation5);
+                List<ITransformFunction> transformFunctions = GetTransformFunctions(xs2, ys2, interpolation2, xs3, ys3, interpolation3, xs4, ys4, interpolation4, xs5, ys5, interpolation5);
 
-            List<MetricEnum> metricThresholdTypes = new List<MetricEnum>();// { ConvertStringToMetricEnum(thresholdType) };
-            foreach(string thresholdType in thresholdTypes)
-            {
-                metricThresholdTypes.Add(ConvertStringToMetricEnum(thresholdType));
-            }
+                List<MetricEnum> metricThresholdTypes = new List<MetricEnum>();// { ConvertStringToMetricEnum(thresholdType) };
+                foreach (string thresholdType in thresholdTypes)
+                {
+                    metricThresholdTypes.Add(ConvertStringToMetricEnum(thresholdType));
+                }
 
-            List<IMetric> metrics = CreateMetrics(metricThresholdTypes,  thresholdValues);
-            ICondition condition = ConditionFactory.Factory("testName", 1987, inflowFreq, transformFunctions, metrics);
+                List<IMetric> metrics = CreateMetrics(metricThresholdTypes, thresholdValues);
+                ICondition condition = ConditionFactory.Factory("testName", 1987, inflowFreq, transformFunctions, metrics);
 
-            int randomPacketSize = transformFunctions.Count + 1;
-            IDictionary<IMetric, double> results = condition.Compute(GetRandomNumbers(randomPacketSize));
+                int randomPacketSize = transformFunctions.Count + 1;
+                IDictionary<IMetric, double> results = condition.Compute(GetRandomNumbers(randomPacketSize));
 
-            bool passedTest = DidTestPass(results, metrics, expectedResults);
-            ExcelDataAttributeBase.SaveData(_TestDataRelativePath, 1, rowToWriteTo, columnToWriteTo, CreateDataTable(results, metrics), passedTest);
-            //Assert.True(passedTest);
-            Assert.True(passedTest);
-
+                bool passedTest = DidTestPass(results, metrics, expectedResults);
+                ExcelDataAttributeBase.SaveData(_TestDataRelativePath, 1, rowToWriteTo, columnToWriteTo, CreateDataTable(results, metrics), passedTest);
+                //Assert.True(passedTest);
+                Assert.True(passedTest);
+            //}
+            //catch(Exception e)
+            //{
+            //    ExcelDataAttributeBase.SaveData(_TestDataRelativePath, 1, rowToWriteTo, columnToWriteTo, CreateDataTable("Epic Fail: " + e.Message), false);
+            //    Assert.True(false);
+            //}
 
         }
 
@@ -78,11 +85,11 @@ namespace ModelTests.ExcelTesting
 
         private MetricEnum ConvertStringToMetricEnum(string metric)
         {
-            if(metric.ToUpper().Equals("EXTERIORSTAGE"))
+            if(metric.ToUpper().Equals("EXTERIORSTAGE") || metric.ToUpper().Equals("EXTERIOR STAGE"))
             {
                 return MetricEnum.ExteriorStage;
             }
-            else if (metric.ToUpper().Equals("INTERIORSTAGE"))
+            else if (metric.ToUpper().Equals("INTERIORSTAGE") || metric.ToUpper().Equals("INTERIOR STAGE"))
             {
                 return MetricEnum.InteriorStage;
             }
@@ -90,7 +97,7 @@ namespace ModelTests.ExcelTesting
             {
                 return MetricEnum.Damages;
             }
-            else if (metric.ToUpper().Equals("EXPECTEDANNUALDAMAGE"))
+            else if (metric.ToUpper().Equals("EXPECTEDANNUALDAMAGE") || metric.ToUpper().Equals("EXPECTED ANNUAL DAMAGE"))
             {
                 return MetricEnum.ExpectedAnnualDamage;
             }
@@ -189,13 +196,27 @@ namespace ModelTests.ExcelTesting
             dt.Columns.Add("Actual");
             for(int i = 0;i<metrics.Count;i++)
             {
-                double actual = results[metrics[i]];
-                dt.Rows.Add(metrics[i].Type.ToString() + " = " + actual.ToString());
+                IMetric metric = metrics[i];
+                if (results.ContainsKey(metric))
+                {
+                    double actual = results[metric];
+                    dt.Rows.Add(metrics[i].Type.ToString() + " = " + actual.ToString());
+                }
+                else
+                {
+                    dt.Rows.Add("Metric: " + metric.Type.ToString() + " was not in the condition's results");
+                }
             }
             return dt;
         }
+        private DataTable CreateDataTable(string message)
+        {
+            DataTable dt = new DataTable("DataTable");
+            dt.Columns.Add("Actual");
+            dt.Rows.Add(message);
+            return dt;
+        }
 
-        
         private bool DidTestPass(IDictionary<IMetric, double> results, List<IMetric> metrics, List<double> expectedResults)
         {
             bool passedTest = true;
@@ -203,10 +224,19 @@ namespace ModelTests.ExcelTesting
        
             for (int i = 0; i < expectedResults.Count; i++)
             {
-                double metricResult = results[metrics[i]];
-                double expectedResult = expectedResults[i];
+                IMetric metric = metrics[i];
+                if (results.ContainsKey(metric))
+                {
+                    double metricResult = results[metric];
 
-                if (!HasMinimalDifference(metricResult, expectedResult))
+                    double expectedResult = expectedResults[i];
+
+                    if (!HasMinimalDifference(metricResult, expectedResult))
+                    {
+                        return false;
+                    }
+                }
+                else
                 {
                     return false;
                 }
@@ -251,7 +281,7 @@ namespace ModelTests.ExcelTesting
             {
                 return InterpolationEnum.None;
             }
-            else if (interp.ToUpper().Equals("NATURALCUBICSPLINE"))
+            else if (interp.ToUpper().Equals("NATURALCUBICSPLINE")|| interp.ToUpper().Equals("CUBICSPLINE"))
             {
                 return InterpolationEnum.NaturalCubicSpline;
             }

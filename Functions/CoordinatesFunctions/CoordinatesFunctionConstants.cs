@@ -241,7 +241,11 @@ namespace Functions.CoordinatesFunctions
             // while condition implies y < maxY
             while (x < xMax)
             {
-                if (i == 0) expandedCoordinates.Add(ICoordinateFactory.Factory(x, y)); 
+                if (i == 0)
+                {
+                    expandedCoordinates.Add(ICoordinateFactory.Factory(x, y));
+                    i++;
+                }
                 else
                 {
                     x = UpdateX(x + xEpsilon, y + yEpsilon, i);

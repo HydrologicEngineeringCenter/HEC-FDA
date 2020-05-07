@@ -37,8 +37,8 @@ namespace ModelTests.ExcelTesting
         protected abstract List<int> ColumnIndices { get; set; }
         protected abstract int ColumnToWriteResults { get; set; }
 
-        private bool MultipleWorksheets { get; set; }
-        private int[] Worksheets { get; set; }
+        protected bool MultipleWorksheets { get; set; }
+        protected int[] Worksheets { get; set; }
 
         public string FileName { get; private set; }
         public int WorksheetNumber { get; }
@@ -166,36 +166,11 @@ namespace ModelTests.ExcelTesting
             return test1;
         }
 
-        public IEnumerable<object[]> DataSource(string fileName)
+        public virtual IEnumerable<object[]> DataSource(string fileName)
         {
             string filePath = GetApplicationRoot() + "\\" + fileName;
             var workbook = new XLWorkbook(filePath);
-            //the worksheets and the rows are not 0 based. They start on 1.
-            //IXLWorksheet ws = workbook.Worksheet(WorksheetNumber);
-
-            //int dataStartIndex = FindNextTestIndex(ws, 1);
-
-            //List<object[]> listOfTests = new List<object[]>();
-
-            //bool moreExcelTestsToRun = true;
-            //while (moreExcelTestsToRun)
-            //{
-            //    int lastRowOfTest = -1;
-            //    object[] nextTest = ReadTestData(dataStartIndex, ws, out lastRowOfTest);
-            //    listOfTests.Add(nextTest);
-
-            //    int nextTestIndex = FindNextTestIndex(ws, lastRowOfTest);
-            //    if (nextTestIndex == -1)
-            //    {
-            //        break;
-            //    }
-            //    else
-            //    {
-            //        dataStartIndex = nextTestIndex;
-            //    }
-            //}
-
-            //return listOfTests;
+         
             List<object[]> tests = new List<object[]>();
             if (MultipleWorksheets)
             {
@@ -211,7 +186,7 @@ namespace ModelTests.ExcelTesting
             return tests;
         }
 
-        private IEnumerable<object[]> GetTestsForWorksheet(XLWorkbook workbook, int worksheetNumber)
+        protected List<object[]> GetTestsForWorksheet(XLWorkbook workbook, int worksheetNumber)
         {
             //the worksheets and the rows are not 0 based. They start on 1.
             IXLWorksheet ws = workbook.Worksheet(worksheetNumber);

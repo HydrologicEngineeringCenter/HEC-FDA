@@ -29,11 +29,8 @@ namespace Model.Outputs
         #endregion
 
         #region Constructor
-        public Result(ICondition condition)
-        {
-            int TimeStampSeed = (int)new DateTime().Ticks;
-
-            new Result(condition, TimeStampSeed);
+        public Result(ICondition condition) : this(condition, (int)new DateTime().Ticks)
+        { 
         }
        
         public Result(ICondition condition, int seed)
@@ -46,17 +43,16 @@ namespace Model.Outputs
         #endregion
 
         #region Methods
-        public void Compute()
+        public void Compute(List<List<double>> allProbabilities)
         {
             if (Condition.IsValid == false) { Condition.ReportValidationErrors(); return; }
 
             IterationCount = 0;
-            int randomPacketSize = Condition.TransformFunctions.Count + 1;
-            //TimeStampSeed = (int)new DateTime().Ticks;
-            Random randomNumberGenerator = new Random(Seed);
+            //int randomPacketSize = Condition.TransformFunctions.Count + 1;
+            //Random randomNumberGenerator = new Random(Seed);
             int localIteration, batchCount = 1000;
 
-            List<List<double>> allProbabilities = CreateAllProbabilities(randomNumberGenerator, batchCount, randomPacketSize);
+            //List<List<double>> allProbabilities = CreateAllProbabilities(randomNumberGenerator, batchCount, randomPacketSize);
             while (Converged == false &&
                    IterationCount < MaxIterations)
             {
