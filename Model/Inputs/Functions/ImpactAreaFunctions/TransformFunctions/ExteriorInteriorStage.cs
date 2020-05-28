@@ -72,7 +72,7 @@ namespace Model.Inputs.Functions.ImpactAreaFunctions
 
         public override XElement WriteToXML()
         {
-            throw new NotImplementedException();
+            return Function.WriteToXML();
         }
 
         IMessageLevels IValidate<ExteriorInteriorStage>.Validate(IValidator<ExteriorInteriorStage> validator, out IEnumerable<IMessage> errors)

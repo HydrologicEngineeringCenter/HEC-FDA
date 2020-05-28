@@ -218,7 +218,7 @@ namespace ModelTests.ExcelTesting
 
         protected static int FindNextTestIndex(IXLWorksheet ws, int startLookingAtRow)
         {
-            for (int i = startLookingAtRow; i < startLookingAtRow + 15; i++)
+            for (int i = startLookingAtRow; i < startLookingAtRow + 40; i++)
             {
                 object value = ws.Row(i).Cell(1).Value;
                 double dbl;

@@ -51,8 +51,8 @@
             <RadioButton Name="RdbFromWeb" Content="From Web" VerticalAlignment="Center" Grid.Column="0" Margin="5,5,5,5" IsChecked="{Binding Path=IsRadFromWebChecked}"/>
             <RadioButton Name="RdbFromShp" Content="From User Defined Shapefile" VerticalAlignment="Center" Grid.Column="1" />
             <!--<CA:ComboBoxWithBrowser Name="CmbUserDefinedNSIShape" Grid.Column="2" HorizontalAlignment="Stretch" Margin="5" ValidateToShapeTypes="True" IsEnabled="{Binding ElementName=RdbFromShp, Path=.IsChecked}" Filter="Shapefiles (*.shp) |*.shp|All files (*.*) |*.*" Title="Please Select an NSI Shapefile"/>-->
-            <TextBox Name="userDefinedPath" Grid.Column="2" Width="150" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" IsReadOnly="True" IsEnabled="{Binding ElementName=RdbFromShp, Path=.IsChecked}" Text="{Binding Path=UserDefinedPath, ValidatesOnDataErrors=True}" />
-            <Button Name="userDefinedButton" Grid.Column="2" HorizontalAlignment="Right" Width="18" Height="18" Margin="5" VerticalAlignment="Center" Click="studyAreaButton_Click" IsEnabled="{Binding ElementName=RdbFromShp, Path=.IsChecked}">
+            <TextBox Name="userDefinedPath" Grid.Column="2" Width="150" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" IsReadOnly="True" IsEnabled="{Binding ElementName=RdbFromShp, Path=IsChecked}" Text="{Binding Path=UserDefinedPath, ValidatesOnDataErrors=True}" />
+            <Button Name="userDefinedButton" Grid.Column="2" HorizontalAlignment="Right" Width="18" Height="18" Margin="5" VerticalAlignment="Center" Click="studyAreaButton_Click" IsEnabled="{Binding ElementName=RdbFromShp, Path=IsChecked}">
                 <TextBlock Text="..." HorizontalAlignment="Center"></TextBlock>
             </Button> 
             

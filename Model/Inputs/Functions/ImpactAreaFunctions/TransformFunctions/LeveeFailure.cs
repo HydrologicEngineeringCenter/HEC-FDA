@@ -31,7 +31,7 @@ namespace Model.Condition.ComputePoint.ImpactAreaFunctions
 
         public override XElement WriteToXML()
         {
-            throw new NotImplementedException();
+            return Function.WriteToXML();
         }
 
         IMessageLevels IValidate<LeveeFailure>.Validate(IValidator<LeveeFailure> validator, out IEnumerable<IMessage> errors)

@@ -125,7 +125,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
 
             int elemId = GetElementId(TableName, element.Name);
-            //the new statId will be one higher than the max that is in the table already.
+            //the new stateId will be one higher than the max that is in the table already.
             int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
             return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
                 element.Curve.Function.DistributionType, element.Curve.GetType(),

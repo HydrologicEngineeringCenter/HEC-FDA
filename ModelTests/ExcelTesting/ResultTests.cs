@@ -3,6 +3,7 @@ using Model;
 using Model.Inputs.Functions.ImpactAreaFunctions;
 using Model.Outputs;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
@@ -16,7 +17,7 @@ namespace ModelTests.ExcelTesting
 
         [Theory]
         [ResultData(_TestDataRelativePath, new int[] { 1})]
-        public void Excel_Compute_Tests(
+        public void Excel_Result_Tests(
             List<double> flowFreqProbs, ICoordinatesFunction flowFreqFunc,
             List<double> inOutProbs, ICoordinatesFunction inflowOutflowFunc,
             List<double> ratingProbs, ICoordinatesFunction ratingFunc,
@@ -63,19 +64,64 @@ namespace ModelTests.ExcelTesting
 
             ICondition condition = ConditionFactory.Factory("testName", 1987, inflowFrequencyFunction, transformFunctions, metrics);
 
+            //register samplers
+            Sampler.RegisterSampler(new ConstantSampler());
+
             Result result = new Result(condition);
             List<List<double>> probabilites = CreateProbabilities(flowFreqProbs, inOutProbs, ratingProbs, extIntProbs, failurProbs, stageDamageProbs);
             result.Compute(probabilites);
 
-            System.Collections.Concurrent.ConcurrentDictionary<int, IDictionary<IMetric, double>> computeResults = result.Realizations;
+            ConcurrentDictionary<int, IDictionary<IMetric, double>> computeResults = result.Realizations;
+
+            bool didTestsPass = DidTestsPass(computeResults, metrics, expectedDamages, expectedInteriorStage, expectedExteriorStage);
 
 
-            
+            DataTable dt = CreateDataTable(computeResults, metrics);
+            ExcelDataAttributeBase.SaveData(_TestDataRelativePath, 1, rowToWriteTo, columnToWriteTo, dt, didTestsPass);
+            Assert.True(didTestsPass);
 
-            //bool passedTest = DidTestPass(results, metrics, expectedResults);
-            //ExcelDataAttributeBase.SaveData(_TestDataRelativePath, 1, rowToWriteTo, columnToWriteTo, CreateDataTable(results, metrics), passedTest);
-            Assert.True(false);
+        }
 
+        private bool DidTestsPass(ConcurrentDictionary<int, IDictionary<IMetric, double>> results, List<IMetric> metrics, List<double> expectedDamages, List<double> expectedInterior, List<double> expectedExterior  )
+        {
+            bool DidAllIterationsPass = true;
+            for(int i = 0;i<results.Count;i++)
+            {
+                List<double> expectedResults = new List<double>() { expectedDamages[i], expectedInterior[i], expectedExterior[i] };
+                bool didIterationPass = DidTestPass(results[i], metrics, expectedResults);
+                if(!didIterationPass)
+                {
+                    return false;
+                }
+            }
+            return DidAllIterationsPass;
+        }
+
+        private bool DidTestPass(IDictionary<IMetric, double> results, List<IMetric> metrics, List<double> expectedResults)
+        {
+            bool passedTest = true;
+
+
+            for (int i = 0; i < expectedResults.Count; i++)
+            {
+                IMetric metric = metrics[i];
+                if (results.ContainsKey(metric))
+                {
+                    double metricResult = results[metric];
+
+                    double expectedResult = expectedResults[i];
+
+                    if (!HasMinimalDifference(metricResult, expectedResult))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return passedTest;
         }
 
         private List<List<double>> CreateProbabilities(List<double> flowFreqProbs, List<double> inOutProbs, List<double> ratingProbs, List<double>extIntProbs, List<double>failureProbs, List<double>stageDamageProbs)
@@ -115,11 +161,22 @@ namespace ModelTests.ExcelTesting
                     throw new Exception("Different number of probabilites in test.");
                 }
             }
-            return retval;
+
+            //i did this the wrong way. I need to switch the vertical and horizontal
+            List<List<double>> probabilities = new List<List<double>>();
+            for(int i = 0; i<num;i++)
+            {
+                List<double> singleRow = new List<double>();
+                foreach(List<double> oldRow in retval)
+                {
+                    singleRow.Add(oldRow[i]);
+                }
+                probabilities.Add(singleRow);
+
+            }
+
+            return probabilities;
         }
-
-
-
 
         internal List<IMetric> CreateMetrics(List<MetricEnum> types, List<double> values)
         {
@@ -160,6 +217,100 @@ namespace ModelTests.ExcelTesting
 
         }
 
+        private DataTable CreateDataTable(ConcurrentDictionary<int, IDictionary<IMetric, double>> results, List<IMetric> metrics)
+        {
+            //the user might not have put in all three metrics.
+            //use the list of metrics to just write out the ones the user defined.
+            DataTable dt = new DataTable("DataTable");
+            dt.Columns.Add("Damages AEP");
+            dt.Columns.Add("Interior Stage AEP");
+            dt.Columns.Add("Exterior Stage AEP");
+
+            for(int i= 0;i<results.Count;i++)
+            {
+                IDictionary<IMetric, double> singleRowResult = results[i];
+                List<object> actualRowValues = GetRowOfActualValues(singleRowResult, metrics);
+                DataRow dr = dt.NewRow();
+                dr["Damages AEP"] = actualRowValues[0];
+                dr["Interior Stage AEP"] = actualRowValues[1];
+                dr["Exterior Stage AEP"] = actualRowValues[2];
+                dt.Rows.Add(dr);
+            }
+            return dt;
+
+        }
+
+        private List<object> GetRowOfActualValues(IDictionary<IMetric, double> singleRowResult, List<IMetric> metrics)
+        {
+            bool hasDamages = false;
+            bool hasInterior = false;
+            bool hasExterior = false;
+
+            double damageVal = 0;
+            double intVal = 0;
+            double extVal = 0;
+
+            for (int j = 0; j < metrics.Count; j++)
+            {
+                IMetric met = metrics[j];
+                MetricEnum metType = met.Type;
+                if (singleRowResult.ContainsKey(met))
+                {
+                    switch (met.Type)// == MetricEnum.Damages)
+                    {
+                        case MetricEnum.Damages:
+                            {
+                                 damageVal = singleRowResult[met];
+                                hasDamages = true;
+                                break;
+                            }
+                        case MetricEnum.InteriorStage:
+                            {
+                                 intVal = singleRowResult[met];
+                                hasInterior = true;
+                                break;
+                            }
+                        case MetricEnum.ExteriorStage:
+                            {
+                                 extVal = singleRowResult[met];
+                                hasExterior = true;
+                                break;
+                            }
+                    }
+
+                }
+            }
+
+            //need to return in this order: damages, interior stage, exterior stage
+            List<object> retval = new List<object>();
+            if(hasDamages)
+            {
+                retval.Add(damageVal);
+            }
+            else
+            {
+                retval.Add("N/A");
+            }
+
+            if(hasInterior)
+            {
+                retval.Add(intVal);
+            }
+            else
+            {
+                retval.Add("N/A");
+            }
+            if (hasExterior)
+            {
+                retval.Add(extVal);
+            }
+            else
+            {
+                retval.Add("N/A");
+            }
+            return retval;
+        }
+
         private DataTable CreateDataTable(IDictionary<IMetric, double> results, List<IMetric> metrics)
         {
             DataTable dt = new DataTable("DataTable");
@@ -187,32 +338,7 @@ namespace ModelTests.ExcelTesting
             return dt;
         }
 
-        private bool DidTestPass(IDictionary<IMetric, double> results, List<IMetric> metrics, List<double> expectedResults)
-        {
-            bool passedTest = true;
-
-
-            for (int i = 0; i < expectedResults.Count; i++)
-            {
-                IMetric metric = metrics[i];
-                if (results.ContainsKey(metric))
-                {
-                    double metricResult = results[metric];
-
-                    double expectedResult = expectedResults[i];
-
-                    if (!HasMinimalDifference(metricResult, expectedResult))
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            return passedTest;
-        }
+      
 
 
         private bool DidTestPass(List<object> actualResults, List<double> expectedResults)

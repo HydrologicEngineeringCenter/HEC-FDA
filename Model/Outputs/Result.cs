@@ -47,19 +47,22 @@ namespace Model.Outputs
         {
             if (Condition.IsValid == false) { Condition.ReportValidationErrors(); return; }
 
+            int realizationNumber = allProbabilities.Count;
+            int numProbs = allProbabilities[0].Count;
             IterationCount = 0;
             //int randomPacketSize = Condition.TransformFunctions.Count + 1;
             //Random randomNumberGenerator = new Random(Seed);
-            int localIteration, batchCount = 1000;
+            //the current realization
+            int localIteration = 0;
+            int batchCount = 1000;
 
             //List<List<double>> allProbabilities = CreateAllProbabilities(randomNumberGenerator, batchCount, randomPacketSize);
             while (Converged == false &&
                    IterationCount < MaxIterations)
             {
                 localIteration = IterationCount;
+                batchCount = Math.Min(batchCount, MaxIterations);
 
-                //todo: John, why are we not starting at zero here.
-                //from 1,000 inclusive to 2,000 exclusive.
                 Parallel.For(localIteration, localIteration + batchCount, i =>
                 {
                     //List<double> randomNumbers = new List<double>();
@@ -67,7 +70,9 @@ namespace Model.Outputs
                     //{
                     //    randomNumbers.Add(randomNumberGenerator.NextDouble());
                     //}
-                    bool success = Realizations.TryAdd(i, Condition.Compute(allProbabilities[i]));
+
+                    IDictionary<IMetric, double> conditionResults = Condition.Compute(allProbabilities[i]);
+                    bool success = Realizations.TryAdd(i, conditionResults);
                     if(!success)
                     {
                         throw new Exception("The result compute tried to put the same id into the dictionary a second time.");

@@ -24,10 +24,10 @@ namespace FdaViewModel.WaterSurfaceElevation
         {
             Name = "Water Surface Elevations";
             IsBold = true;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+            CustomTreeViewHeader = new CustomHeaderVM(Name);
 
 
-            Utilities.NamedAction import = new Utilities.NamedAction();
+            NamedAction import = new NamedAction();
             import.Header = "Import Water Surface Elevations";
             import.Action = ImportWaterSurfaceElevations;
 
@@ -35,7 +35,7 @@ namespace FdaViewModel.WaterSurfaceElevation
             //importFromAscii.Header = "Import Inflow Outflow Relationship From ASCII";
             //importFromAscii.Action = ImportFromASCII;
 
-            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
+            List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(import);
             //localActions.Add(importFromAscii);
 

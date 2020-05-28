@@ -24,6 +24,9 @@ namespace FdaViewModel.Inventory
         public static string FirstFloorElevationField = "FirstFloorElevation";
         public static string YearField = "Year";
         public static string ModuleField = "Module";
+        public static string fidField = "fid";
+        public static string geomField = "geom";
+        public static string damCatField = "damage_category";
 
         //public string Path { get; set; }
         public string Description { get; set; }

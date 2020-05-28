@@ -1,8 +1,11 @@
-﻿using FdaViewModel.Inventory;
+﻿using DatabaseManager;
+using FdaViewModel.Inventory;
+using FdaViewModel.Inventory.OccupancyTypes;
 using FdaViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +18,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         private const int ID_COL = 0;
         private const int NAME_COL = 1;
         private const int DESC_COL = 2;
+        private const int IS_OLD_FDA = 3;
 
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
@@ -24,8 +28,11 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
 
         private const string TABLE_NAME = "structure_inventories";
-        internal override string ChangeTableConstant { get { return STRUCTURE_INVENTORY_TABLE_CONSTANT; } }
-       
+        internal override string ChangeTableConstant
+        {
+            get { return STRUCTURE_INVENTORY_TABLE_CONSTANT; }
+        }
+
         public override string TableName
         {
             get { return TABLE_NAME; }
@@ -39,8 +46,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
         }
 
-        private static readonly string[] TableColNames = { NAME, DESCRIPTION };
-        private static readonly Type[] TableColTypes = { typeof(string), typeof(string) };
+        private static readonly string[] TableColNames = { NAME, DESCRIPTION, "is_import_from_oldFDA" };
+        private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string) };
         /// <summary>
         /// The types of the columns in the parent table
         /// </summary>
@@ -55,23 +62,125 @@ namespace FdaViewModel.Saving.PersistenceManagers
             StudyCacheForSaving = studyCache;
         }
 
+        private string[] ChildTableColumns = new string[] {
+        StructureInventoryBaseElement.fidField,
+        StructureInventoryBaseElement.geomField,
+        StructureInventoryBaseElement.OccupancyTypeField,
+        StructureInventoryBaseElement.damCatField,
+        StructureInventoryBaseElement.OccupancyTypeGroupName,
+        StructureInventoryBaseElement.FoundationHeightField,
+        StructureInventoryBaseElement.StructureValueField,
+        StructureInventoryBaseElement.ContentValueField,
+        StructureInventoryBaseElement.OtherValueField,
+        StructureInventoryBaseElement.VehicleValueField,
+        StructureInventoryBaseElement.FirstFloorElevationField,
+        StructureInventoryBaseElement.GroundElevationField,
+        StructureInventoryBaseElement.YearField,
+        StructureInventoryBaseElement.ModuleField
+        };
+
+        private Type[] ChildTableTypes = new Type[] {typeof(int), typeof(string),
+        typeof(string),
+        typeof(string),
+        typeof(string),
+        typeof(double),
+        typeof(double),
+        typeof(double),
+        typeof(double),
+        typeof(double),
+        typeof(double),
+        typeof(double),
+        typeof(int),
+        typeof(string)
+        };
+
 
         #region utilities
+        public DataTable CreateEmptyStructuresTable()
+        {
+            DataTable newStructureTable = new DataTable(Name);
+            newStructureTable.Columns.Add(StructureInventoryBaseElement.fidField, typeof(string));
+            newStructureTable.Columns.Add(StructureInventoryBaseElement.geomField, typeof(string));
+
+            newStructureTable.Columns.Add(StructureInventoryBaseElement.OccupancyTypeField, typeof(string));
+            newStructureTable.Columns.Add(StructureInventoryBaseElement.damCatField, typeof(string));
+
+            newStructureTable.Columns.Add(StructureInventoryBaseElement.OccupancyTypeGroupName, typeof(string));
+            newStructureTable.Columns.Add(StructureInventoryBaseElement.FoundationHeightField, typeof(string));
+            newStructureTable.Columns.Add(StructureInventoryBaseElement.StructureValueField, typeof(string));
+            newStructureTable.Columns.Add(StructureInventoryBaseElement.ContentValueField, typeof(string));
+            newStructureTable.Columns.Add(StructureInventoryBaseElement.OtherValueField, typeof(string));
+            newStructureTable.Columns.Add(StructureInventoryBaseElement.VehicleValueField, typeof(string));
+            newStructureTable.Columns.Add(StructureInventoryBaseElement.FirstFloorElevationField, typeof(string));
+            newStructureTable.Columns.Add(StructureInventoryBaseElement.GroundElevationField, typeof(string));
+            newStructureTable.Columns.Add(StructureInventoryBaseElement.YearField, typeof(string));
+            newStructureTable.Columns.Add(StructureInventoryBaseElement.ModuleField, typeof(string));
+
+            return newStructureTable;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="structureDataTable">The data. Each row is a structure.</param>
+        /// <param name="name">The name of the table in the db.</param>
+        /// <param name="features">Geometry data for the structures.</param>
+        public void Save(DataTable structureDataTable, string name, LifeSimGIS.VectorFeatures features)
+        {
+            InMemoryReader myInMemoryReader = new InMemoryReader(structureDataTable);
+            DataTableView myDTView = myInMemoryReader.GetTableManager(name);
+
+            //create the geo package writer that will write the data out
+            LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
+
+            // write the data out
+            //myGeoPackWriter.AddFeatures(Name, myReader.ToFeatures(), myReader.GetAttributeTable());
+            string tableConst = STRUCTURE_INVENTORY_TABLE_CONSTANT;
+            myGeoPackWriter.AddFeatures(tableConst + name, features, myDTView);
+        }
+
+        /// <summary>
+        /// This is called when importing a structure inventory from an old fda study.
+        /// </summary>
+        /// <param name="structureData"></param>
+        /// <param name="structuresName"></param>
+        public void SaveNew(DataTable structureData, string structuresName)
+        {
+            string tableName = STRUCTURE_INVENTORY_TABLE_CONSTANT + structuresName;
+            if (!Storage.Connection.Instance.IsConnectionNull)
+            {
+
+                Storage.Connection.Instance.CreateTable(tableName, ChildTableColumns, ChildTableTypes);
+                DataTableView tbl = Storage.Connection.Instance.GetTable(tableName);
+                
+                for(int i = 0;i<structureData.Rows.Count;i++)
+                {
+                    tbl.AddRow(structureData.Rows[i].ItemArray);
+                }
+
+                tbl.ApplyEdits();
+
+
+            }
+        }
+
+        
+
         private object[] GetRowDataFromElement(InventoryElement element)
         {
-            return new object[] { element.Name, element.Description };
-
+            return new object[] { element.Name, element.Description, element.IsImportedFromOldFDA };
         }
+
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            //name, path, description
             if (StructureInventoryLibrary.SharedData.StudyDatabase == null)
             {
                 StructureInventoryLibrary.SharedData.StudyDatabase = new DatabaseManager.SQLiteManager(Storage.Connection.Instance.ProjectFile);
             }
             StructureInventoryBaseElement baseElement = new StructureInventoryBaseElement((string)rowData[NAME_COL], (string)rowData[DESC_COL]);
+            bool isImportedFromOldFDA = Convert.ToBoolean( rowData[IS_OLD_FDA]);
 
-            InventoryElement invEle = new InventoryElement(baseElement);
+            InventoryElement invEle = new InventoryElement(baseElement, isImportedFromOldFDA);
             return invEle;
         }
         #endregion
@@ -84,21 +193,34 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         }
 
-
+        /// <summary>
+        /// This is to be used when importing a structure inventory from an old fda study
+        /// </summary>
+        /// <param name="name"></param>
+        public void SaveNewInventoryToParentTable(string name)
+        {
+            StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(FdaViewModel.Storage.Connection.Instance.ProjectFile);
+            StructureInventoryBaseElement baseElem = new StructureInventoryBaseElement(name, "");
+            InventoryElement elem = new InventoryElement(baseElem, true);
+            SaveNew(elem);
+        }
 
         public void SaveNew(ChildElement element)
         {
             if (element.GetType() == typeof(InventoryElement))
             {
-
-                SaveNewElementToParentTable(GetRowDataFromElement((InventoryElement)element), TableName, TableColumnNames, TableColumnTypes);
-                //WriteAttributeTable(((InventoryElement)element).DefineSIAttributes, ((InventoryElement)element).AttributeLinkingList, ((InventoryElement)element).DefineSIAttributes.Path);
-                StudyCacheForSaving.AddElement((InventoryElement)element);
+                SaveNewElement(element);
+               // SaveNewElementToParentTable(GetRowDataFromElement((InventoryElement)element), TableName, TableColumnNames, TableColumnTypes);
+                //StudyCacheForSaving.AddElement((InventoryElement)element);
             }
         }
 
-       
 
+       
+        /// <summary>
+        /// Loading a structure inventory does not get all the structure data. It only brings in the name. If you want the structure data
+        /// you will need to read it in when you need it. This is happening when adding the structure to the map window.
+        /// </summary>
         public void Load()
         {
             List<Utilities.ChildElement> structures = CreateElementsFromRows(TableName, (asdf) => CreateElementFromRowData(asdf));

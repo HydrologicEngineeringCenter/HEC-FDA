@@ -97,10 +97,10 @@ namespace FdaViewModel.Inventory
         {
             List<string> dummyList = new List<string>(); //this is used to trigger the setter
             
-            foreach (OccupancyTypes.OccupancyTypesElement e in ListOfSelectedOccTypeGroups)
+            foreach (OccupancyTypesElement e in ListOfSelectedOccTypeGroups)
             {
                 
-                    foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in e.ListOfOccupancyTypes)
+                    foreach (OccupancyType ot in e.ListOfOccupancyTypes)
                     {
 
                         dummyList.Add(ot.Name + " from " + e.Name);

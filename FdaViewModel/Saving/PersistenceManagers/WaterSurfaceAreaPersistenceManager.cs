@@ -67,16 +67,14 @@ namespace FdaViewModel.Saving.PersistenceManagers
             List<PathAndProbability> ppList = new List<PathAndProbability>();
 
 
-            WaterSurfaceElevationElement wse = new WaterSurfaceElevationElement((string)rowData[1], (string)rowData[2], ppList, Convert.ToBoolean(rowData[3]));
 
-            //this isn't going to be correct. The table name here is not the parent table but the change table name.
             DatabaseManager.DataTableView tableView = Storage.Connection.Instance.GetTable(PathAndProbTableConstant + rowData[1]);
             foreach (object[] row in tableView.GetRows(0, tableView.NumberOfRows-1))
             {
-                wse.RelativePathAndProbability.Add(new PathAndProbability(row[0].ToString(), Convert.ToDouble(row[1])));
+                ppList.Add(new PathAndProbability(row[0].ToString(), Convert.ToDouble(row[1])));
             }
+            WaterSurfaceElevationElement wse = new WaterSurfaceElevationElement((string)rowData[1], (string)rowData[2], ppList, Convert.ToBoolean(rowData[3]));
             return wse;
-            //AddElement(wse, false);
         }
 
         private void SavePathAndProbabilitiesTable(WaterSurfaceElevationElement element)
@@ -228,7 +226,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public void Load()
         {
-            List<Utilities.ChildElement> waterSurfaceElevs = CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
+            List<ChildElement> waterSurfaceElevs = CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
             foreach (WaterSurfaceElevationElement elem in waterSurfaceElevs)
             {
                 StudyCacheForSaving.AddElement(elem);

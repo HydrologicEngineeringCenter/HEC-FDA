@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Functions;
+using Model.Inputs.Functions.ImpactAreaFunctions;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using static System.Console;
 
@@ -6,7 +9,7 @@ namespace Importer
 {
     [Serializable]
 
-    public class ProbabilityFunction : FdObjectData
+    public class ProbabilityFunction : FdObjectData, ISaveToSqlite
     {
         #region enums
         public enum FrequencyFunctionType { FF_UNKNOWN, ANALYTICAL, GRAPHICAL };
@@ -852,6 +855,165 @@ namespace Importer
                 wr.Write("\n");
             }
             return;
+        }
+
+        public void SaveToSqlite()
+        {
+            if (ProbabilityFunctionTypeId == FrequencyFunctionType.ANALYTICAL)
+            {
+                if (SourceOfStatisticsId == SourceOfStatistics.ENTERED)
+                {
+                    //LP3 moments
+                    double mean = MomentsLp3[0];
+                    double stdDev = MomentsLp3[1];
+                    double skew = MomentsLp3[2];
+                
+                }
+                else if (SourceOfStatisticsId == SourceOfStatistics.CALCULATED)
+                {
+                    //analytical synthetic points
+                    double flowPoint5 = PointsSynthetic[0];
+                    double flowPoint1 = PointsSynthetic[1];
+                    double flowPoint01 = PointsSynthetic[2];
+
+                }
+            }
+            else if(ProbabilityFunctionTypeId == FrequencyFunctionType.GRAPHICAL)
+            {
+                //get probabilities
+                List<double> probabilities = new List<double>();
+                for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                {
+                    probabilities.Add(ExceedanceProbability[i]);
+                }
+
+                if (ProbabilityDataTypeId == ProbabilityDataType.DISCHARGE_FREQUENCY)
+                {
+                    Write("\t\tDischarge: ");
+                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                        Write($"\t{Discharge[i]}");
+                }
+                else if (ProbabilityDataTypeId == ProbabilityDataType.STAGE_FREQUENCY)
+                {
+                    Write("\t\tStage: ");
+                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                        Write($"\t{Stage[i]}");
+                }
+                //User Defined Uncertainty
+                if (UncertTypeSpecification == UncertaintyTypeSpecification.NORMAL)
+                {
+                    Write("\t\tNormal: ");
+                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                        Write($"\t{_StdDevNormalUserDef[i]}");
+                    Write("\n");
+                }
+                else if (UncertTypeSpecification == UncertaintyTypeSpecification.LOG_NORMAL)
+                {
+                    Write("\t\tLog Normal: ");
+                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                        Write($"\t{_StdDevLogUserDef[i]}");
+                    Write("\n");
+                }
+                else if (UncertTypeSpecification == UncertaintyTypeSpecification.TRIANGULAR)
+                {
+                    Write("\t\tTriangular High: ");
+                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                        Write($"\t{_StdDevUpperUserDef[i]}");
+                    Write("\n");
+                    Write("\t\tTriangular Low: ");
+                    for (int i = 0; i < NumberOfGraphicalPoints; i++)
+                        Write($"\t{_StdDevLowerUserDef[i]}");
+                }
+            }
+
+
+            if (_ProbabilityDataTypeId == ProbabilityDataType.DISCHARGE_FREQUENCY)
+            {
+                //List<ICoordinate> flowFreqCoords = new List<ICoordinate>();
+                //foreach (Pair_xy xy in )
+                //{
+                //    double x = xy.GetX();
+                //    double y = xy.GetY();
+                //    flowFreqCoords.Add(ICoordinateFactory.Factory(x, y));
+                //}
+                //ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(flowFreqCoords, InterpolationEnum.Linear);
+                //ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory()
+                //ImpactAreaFunctionFactory.FactoryFrequency(, ImpactAreaFunctionEnum.InflowFrequency);
+            }
+            
+
+
+            //i think these are inflow outflow?
+            //Transform Flow Function
+            if (NumberOfTransFlowPoints > 0)
+            {
+                WriteLine("\n\tTransform Flow Function");
+                Write("\t\tInflow: ");
+                for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                    Write($"\t{TransFlowInflow[i]}");
+                Write("\n");
+                Write("\t\tOutflow: ");
+                for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                    Write($"\t{TransFlowOutflow[i]}");
+                Write("\n");
+                if (ErrorTypeTransformFlow == ErrorType.NORMAL)
+                {
+                    Write("\t\tNormal: ");
+                    for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                        Write($"\t{TransFlowStdDev[i]}");
+                    Write("\n");
+                }
+                else if (ErrorTypeTransformFlow == ErrorType.LOGNORMAL)
+                {
+                    Write("\t\tLog Normal: ");
+                    for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                        Write($"\t{TransFlowLogStdDev[i]}");
+                    Write("\n");
+                }
+                else if (ErrorTypeTransformFlow == ErrorType.TRIANGULAR)
+                {
+                    Write("\t\tTriangular High: ");
+                    for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                        Write($"\t{ TransFlowUpper[i]}");
+                    Write("\n");
+                    Write("\t\tTriangular Low: ");
+                    for (int i = 0; i < NumberOfTransFlowPoints; i++)
+                        Write($"\t{TransFlowLower[i]}");
+                    Write("\n");
+                }
+            }
+
+
+            //Calculation Points
+            if (_NumCalcPoints > 0)
+            {
+                WriteLine("\n\tCalculation Points");
+                Write("\t\tQ05: ");
+                for (int i = 0; i < _NumCalcPoints; i++)
+                    Write($"\t{Calc05[i]}");
+                Write("\n");
+
+                Write("\t\tQ25: ");
+                for (int i = 0; i < _NumCalcPoints; i++)
+                    Write($"\t{Calc25[i]}");
+                Write("\n");
+
+                Write("\t\tQ50: ");
+                for (int i = 0; i < _NumCalcPoints; i++)
+                    Write($"\t{Calc50[i]}");
+                Write("\n");
+
+                Write("\t\tQ75: ");
+                for (int i = 0; i < _NumCalcPoints; i++)
+                    Write($"\t{Calc75[i]}");
+                Write("\n");
+
+                Write("\t\tQ95: ");
+                for (int i = 0; i < _NumCalcPoints; i++)
+                    Write($"\t{Calc95[i]}");
+                Write("\n");
+            }
+
         }
         #endregion
         #region Functions

@@ -52,6 +52,11 @@ namespace ModelTests.ExcelTesting
             LoadFunctionsFromWorksheet(workbook, 2);
             LoadFunctionsFromWorksheet(workbook, 3);
             LoadFunctionsFromWorksheet(workbook, 4);
+            LoadFunctionsFromWorksheet(workbook, 5);
+            LoadFunctionsFromWorksheet(workbook, 6);
+            LoadFunctionsFromWorksheet(workbook, 7);
+
+
 
 
             List<object[]> tests = new List<object[]>();
@@ -242,7 +247,7 @@ namespace ModelTests.ExcelTesting
             return -1;
         }
 
-        private ICoordinatesFunction LoadFunction(IXLWorksheet ws, int row, int col, out int lastRowOfTest)
+        private void LoadFunction(IXLWorksheet ws, int row, int col, out int lastRowOfTest)
         {
             //the row should be the row that the name of the function is on.
             //the dist type will be next to it
@@ -252,11 +257,26 @@ namespace ModelTests.ExcelTesting
 
             InterpolationEnum interp = ConvertToInterpolationEnum(interpolator);
 
+            //todo: ignore dist type of truncated normal
+            if(distType.ToUpper() == "TRUNCATED NORMAL")
+            {
+                lastRowOfTest = row + 1;
+                return;
+            }
+
             List<ICoordinate> coordinates = ReadCoordinates(ws, row + 2, col, distType);
+           
+            //todo: ignore cubic spline for now
+            if(interp == InterpolationEnum.NaturalCubicSpline )
+            {
+                lastRowOfTest = row + coordinates.Count + 1;
+                return;
+            }
+
             ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(coordinates, interp);
             _FunctionsDictionary.Add(name, func);
             lastRowOfTest = row + coordinates.Count + 1;
-            return func;
+            
         }
 
         private List<ICoordinate> ReadCoordinates(IXLWorksheet ws, int row, int col, string distType)
@@ -278,6 +298,101 @@ namespace ModelTests.ExcelTesting
                         }
                         break;
                     }
+                case "NORMAL":
+                    {
+                        List<double> means = GetDoubleValuesVariableLength(row, col + 1, ws);
+                        List<double> stDevs = GetDoubleValuesVariableLength(row, col + 2, ws);
+
+                        if (xValues.Count != means.Count && means.Count != stDevs.Count)
+                        {
+                            throw new ArgumentException("X and Y values were different lengths on row: " + row + " col: " + col);
+                        }
+                        List<IDistributedOrdinate> ords = new List<IDistributedOrdinate>();
+                        for(int i = 0;i<means.Count;i++)
+                        {
+                            IDistributedOrdinate dist = IDistributedOrdinateFactory.FactoryNormal(means[i], stDevs[i]);
+                            coordinates.Add(ICoordinateFactory.Factory(xValues[i], dist));
+                        }
+                        break;
+                    }
+                case "TRIANGULAR":
+                    {
+                        List<double> min = GetDoubleValuesVariableLength(row, col + 1, ws);
+                        List<double> mode = GetDoubleValuesVariableLength(row, col + 2, ws);
+                        List<double> max = GetDoubleValuesVariableLength(row, col + 3, ws);
+
+                        if (xValues.Count != min.Count && min.Count != mode.Count && min.Count != max.Count)
+                        {
+                            throw new ArgumentException("X and Y values were different lengths on row: " + row + " col: " + col);
+                        }
+                        List<IDistributedOrdinate> ords = new List<IDistributedOrdinate>();
+                        for (int i = 0; i < min.Count; i++)
+                        {
+                            IDistributedOrdinate dist = IDistributedOrdinateFactory.FactoryTriangular(mode[i], min[i], max[i]);
+                            coordinates.Add(ICoordinateFactory.Factory(xValues[i], dist));
+                        }
+                        break;
+                    }
+                case "UNIFORM":
+                    {
+                        List<double> min = GetDoubleValuesVariableLength(row, col + 1, ws);
+                        List<double> max = GetDoubleValuesVariableLength(row, col + 2, ws);
+
+                        if (xValues.Count != min.Count && min.Count != max.Count)
+                        {
+                            throw new ArgumentException("X and Y values were different lengths on row: " + row + " col: " + col);
+                        }
+                        List<IDistributedOrdinate> ords = new List<IDistributedOrdinate>();
+                        for (int i = 0; i < min.Count; i++)
+                        {
+                            IDistributedOrdinate dist = IDistributedOrdinateFactory.FactoryUniform(min[i], max[i]);
+                            coordinates.Add(ICoordinateFactory.Factory(xValues[i], dist));
+                        }
+                        break;
+                    }
+                case "TRUNCATED NORMAL":
+                    {
+                        List<double> means = GetDoubleValuesVariableLength(row, col + 1, ws);
+                        List<double> stDevs = GetDoubleValuesVariableLength(row, col + 2, ws);
+                        List<double> min = GetDoubleValuesVariableLength(row, col + 3, ws);
+                        List<double> max = GetDoubleValuesVariableLength(row, col + 4, ws);
+
+                        if (xValues.Count != min.Count && min.Count != max.Count && means.Count != max.Count && means.Count != stDevs.Count)
+                        {
+                            throw new ArgumentException("X and Y values were different lengths on row: " + row + " col: " + col);
+                        }
+                        List<IDistributedOrdinate> ords = new List<IDistributedOrdinate>();
+                        for (int i = 0; i < min.Count; i++)
+                        {
+                            IDistributedOrdinate dist = IDistributedOrdinateFactory.FactoryTruncatedNormal(means[i], stDevs[i], min[i], max[i]);
+                            coordinates.Add(ICoordinateFactory.Factory(xValues[i], dist));
+                        }
+                        break;
+                    }
+                case "BETA":
+                    {
+                        List<double> alpha = GetDoubleValuesVariableLength(row, col + 1, ws);
+                        List<double> beta = GetDoubleValuesVariableLength(row, col + 2, ws);
+                        List<double> location = GetDoubleValuesVariableLength(row, col + 3, ws);
+                        List<double> scale = GetDoubleValuesVariableLength(row, col + 4, ws);
+
+                        if (xValues.Count != alpha.Count && alpha.Count != beta.Count && location.Count != beta.Count && location.Count != scale.Count)
+                        {
+                            throw new ArgumentException("X and Y values were different lengths on row: " + row + " col: " + col);
+                        }
+                        List<IDistributedOrdinate> ords = new List<IDistributedOrdinate>();
+                        for (int i = 0; i < alpha.Count; i++)
+                        {
+                            IDistributedOrdinate dist = IDistributedOrdinateFactory.FactoryBeta(alpha[i], beta[i], location[i], scale[i]);
+                            coordinates.Add(ICoordinateFactory.Factory(xValues[i], dist));
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        throw new Exception("Could not read coordinates because I could not match distribution type: " + distType);
+                    }
+
             }
             return coordinates;
         }

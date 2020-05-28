@@ -19,6 +19,10 @@ namespace Importer
         private SortedList<string, WaterSurfaceProfile> _WaterSurfaceProfileListSort = new SortedList<string, WaterSurfaceProfile>();
         #endregion
         #region Properties
+        public SortedList<string, WaterSurfaceProfile> WaterSurfaceProfiles
+        {
+            get { return _WaterSurfaceProfileListSort; }
+        }
         public long IdCurrent { get; set; }
         #endregion
         #region Constructors

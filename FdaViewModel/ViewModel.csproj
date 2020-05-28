@@ -146,6 +146,8 @@
     <Compile Include="AggregatedStageDamage\AggregatedStageDamageOwnerElement.cs" />
     <Compile Include="AggregatedStageDamage\CreationMethodEnum.cs" />
     <Compile Include="AggregatedStageDamage\StageDamageAssetType.cs" />
+    <Compile Include="Alternatives\CreateNewAlternativeVM.cs" />
+    <Compile Include="Alternatives\Increment.cs" />
     <Compile Include="BaseFdaElement.cs" />
     <Compile Include="BaseViewModel.cs" />
     <Compile Include="Conditions\AddExteriorInteriorStageToConditionVM.cs" />
@@ -250,6 +252,9 @@
     <Compile Include="Output\CreateEconImportFileVM.cs" />
     <Compile Include="Output\IndexLocationsVM.cs" />
     <Compile Include="Output\LinkedPlotsUpdatedVM.cs" />
+    <Compile Include="Alternatives\AlternativeOwnerElement.cs" />
+    <Compile Include="Plans\CreateNewPlanVM.cs" />
+    <Compile Include="Plans\PlansOwnerElement.cs" />
     <Compile Include="Plots\ConditionsIndividualPlotWrapperVM.cs" />
     <Compile Include="Plots\DoubleLineModulatorCoverButtonVM.cs" />
     <Compile Include="Plots\DoubleLineModulatorHorizontalCoverButtonVM.cs" />
@@ -328,6 +333,7 @@
     <Compile Include="Utilities\NamedAction.cs" />
     <Compile Include="Utilities\ChildElement.cs" />
     <Compile Include="Utilities\NLogDataBaseHelper.cs" />
+    <Compile Include="Utilities\OpenStructureAttributeTableEventArgs.cs" />
     <Compile Include="Utilities\ParentElement.cs" />
     <Compile Include="Utilities\RecentFileNamedAction.cs" />
     <Compile Include="Utilities\RemoveMapFeatureEventArgs.cs" />

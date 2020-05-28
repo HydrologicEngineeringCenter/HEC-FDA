@@ -39,6 +39,8 @@ namespace View.WaterSurfaceElevation
                 //MessageBox.Show("File does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+            //is this an old fda study?
+
 
             List<string> tifFiles = new List<string>();
             List<string> fltFiles = new List<string>();

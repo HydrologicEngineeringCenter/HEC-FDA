@@ -19,6 +19,10 @@ namespace Importer
         private SortedList<string, ProbabilityFunction> _ProbabilityFunctionListSort = new SortedList<string, ProbabilityFunction>();
         #endregion
         #region Properties
+        public SortedList<string, ProbabilityFunction> ProbabilityFunctions
+        {
+            get { return _ProbabilityFunctionListSort; }
+        }
         public long IdCurrent { get; set; }
         #endregion
         #region Constructors

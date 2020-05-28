@@ -56,14 +56,15 @@ namespace FdaViewModel.GeoTech
             Description = description;
             if (Description == null) Description = "";
             Curve = failureFunctionCurve;
-            if (selectedLatStructure == null)
-            {
-                SelectedLateralStructure = new LeveeFeatureElement("", "", 0);
-            }
-            else
-            {
-                SelectedLateralStructure = selectedLatStructure;
-            }
+            //commented out on 5/19/20, moving faillure function logic into levee feature
+            //if (selectedLatStructure == null)
+            //{
+            //    SelectedLateralStructure = new LeveeFeatureElement("", "", 0);
+            //}
+            //else
+            //{
+            //    SelectedLateralStructure = selectedLatStructure;
+            //}
 
             Utilities.NamedAction editFailureFunctionCurve = new Utilities.NamedAction();
             editFailureFunctionCurve.Header = "Edit Failure Function Curve";

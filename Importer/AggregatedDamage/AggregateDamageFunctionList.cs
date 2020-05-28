@@ -19,6 +19,10 @@ namespace Importer
         private SortedList<string, AggregateDamageFunction> _AggDamgFuncListSort = new SortedList<string, AggregateDamageFunction>();
         #endregion
         #region Properties
+        public SortedList<string, AggregateDamageFunction> GetAggDamageFunctions
+        {
+            get { return _AggDamgFuncListSort; }
+        }
         public long IdCurrent { get; set; }
         #endregion
         #region Constructors

@@ -115,12 +115,12 @@ namespace FdaViewModel.Saving
                 Storage.Connection.Instance.Open();
             }
 
-            System.Data.DataTable table = Storage.Connection.Instance.GetDataTable(tableName);
+            DataTable table = Storage.Connection.Instance.GetDataTable(tableName);
            // if (dtv != null)
             {
                 //add an element based on a row element;
                 //for (int i = 1; i < table.Rows.Count; i++)
-                foreach(System.Data.DataRow row in table.Rows)
+                foreach(DataRow row in table.Rows)
                 {
                    // Storage.Connection.Instance.GetRowQueryText(tableName);
                     //object[] row = dtv.GetRow(i);
@@ -188,7 +188,6 @@ namespace FdaViewModel.Saving
         }
         public void SaveNewElementToParentTable(object[] rowData, string tableName, string[] TableColumnNames, Type[] TableColumnTypes)
         {
-
             DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(tableName);
             if (tbl == null)
             {

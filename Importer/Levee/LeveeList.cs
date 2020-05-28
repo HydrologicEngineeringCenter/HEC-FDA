@@ -19,6 +19,10 @@ namespace Importer
         private SortedList<string, Levee> _LeveeListSort = new SortedList<string, Levee>();
         #endregion
         #region Properties
+        public SortedList<string, Levee> Levees
+        {
+            get { return _LeveeListSort; }
+        }
         public long IdCurrent { get; set; }
         #endregion
         #region Constructors

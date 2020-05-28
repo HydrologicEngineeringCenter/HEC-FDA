@@ -8,6 +8,8 @@ using static System.Console;
 using Functions;
 using FdaViewModel.Inventory.OccupancyTypes;
 using FdaViewModel.Saving.PersistenceManagers;
+using System.Data;
+using FdaViewModel.Inventory;
 
 namespace Importer
 {
@@ -58,11 +60,13 @@ namespace Importer
         private bool _FlushOccType = false;
         private WspSectionData _WspSectData = null;
         protected bool _PrevKeyRecord = false;
+        private string _FileName;
 
         public enum ImportOptions
         {
             ImportEverything,
             ImportOcctypesOnly,
+            ImportStructuresOnly,
             ImportWaterSurfaceProfilesOnly
         }
 
@@ -86,6 +90,7 @@ namespace Importer
 
         public void ImportAsciiData(string theImportFilename, ImportOptions importOptions)
         {
+            _FileName = Path.GetFileNameWithoutExtension( theImportFilename);
             char delimiterChar = '\t';
 
             FileStream fileStreamImport = File.OpenRead(theImportFilename);
@@ -161,37 +166,38 @@ namespace Importer
                 case ImportOptions.ImportEverything:
                     {
                         //write everything you can to sqlite
-                        
-                        //write rating curves
-                        RatingFunctionList ratings = GlobalVariables.mp_fdaStudy.GetRatingFunctionList();
-                        foreach(RatingFunction rat in ratings.RatingFunctions)
-                        {
-                            rat.SaveToSqlite();
-                        }
+                        SaveStructuresToNewFDA();
+                        SaveOccupancyTypes(_FileName);
+                        //flow-freq 
+                        SaveProbabilityFunctions();
+                        //failure function, ext-int stage
+                        SaveLevees();
+                        SaveRatingCurvesToNewFDA();
+                        SaveAggregatedStageDamageToNewFDA();
+                        SaveWaterSurfaceProfilesToNewFDA();
+
                         break;
                     }
                 case ImportOptions.ImportOcctypesOnly:
                     {
                         //I don't actually want to save here. I just want to grab them
-                        List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
-                        OccupancyTypeList occtypes = GlobalVariables.mp_fdaStudy.GetOccupancyTypeList();
-                        foreach (OccupancyType ot in occtypes.Occtypes)
-                        {
-                            fda2Occtypes.Add(ot.GetFDA2OccupancyType());
-                        }
-                        //SaveOccupancyTypes(fda2Occtypes);
-                        OccupancyTypes = fda2Occtypes;
+                        ReadOccTypes();
+                        break;
+                    }
+                case ImportOptions.ImportStructuresOnly:
+                    {
+                        SaveStructuresToNewFDA();
                         break;
                     }
                 case ImportOptions.ImportWaterSurfaceProfilesOnly:
                     {
                         //write only the wsp's out
+                        SaveWaterSurfaceProfilesToNewFDA();
                         break;
                     }
             }
-            
 
-
+            #region print statements
             WriteLine($"\n\nPrint Plans at end of Import.");
             GlobalVariables.mp_fdaStudy.GetPlanList().Print();
             WriteLine($"\nPrint Years at end of Import.");
@@ -218,15 +224,96 @@ namespace Importer
             GlobalVariables.mp_fdaStudy.GetLeveeList().Print();
             WriteLine($"\nPrint Aggregated Damage Functions at end of Import.");
             GlobalVariables.mp_fdaStudy.GetAggDamgFuncList().Print();
+            #endregion
         }
 
-        //private void SaveOccupancyTypes(List<IOccupancyType> occtypes)
-        //{
-        //    string occtypeGroupName = "";
-        //    OccTypePersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetOccTypeManager();
-        //    OccupancyTypesElement elem = new OccupancyTypesElement(occtypeGroupName, occtypes);
-        //    manager.SaveNew(elem);
-        //}
+        /// <summary>
+        /// Reads the occtypes from the ascii file and then converts them to FDA2.0 occtypes and sets them
+        /// to the OccupancyTypes property.
+        /// </summary>
+        private void ReadOccTypes()
+        {
+            List<IOccupancyType> fda2Occtypes = new List<IOccupancyType>();
+            OccupancyTypeList occtypes = GlobalVariables.mp_fdaStudy.GetOccupancyTypeList();
+            foreach (OccupancyType ot in occtypes.Occtypes)
+            {
+                fda2Occtypes.Add(ot.GetFDA2OccupancyType());
+            }
+            OccupancyTypes = fda2Occtypes;
+        }
+
+        /// <summary>
+        /// This will save out the failure function and the ext int stage function
+        /// </summary>
+        private void SaveLevees()
+        {
+            LeveeList leveeList = GlobalVariables.mp_fdaStudy.GetLeveeList();
+            foreach (KeyValuePair<string, Levee> kvp in leveeList.Levees)
+            {
+                kvp.Value.SaveToSqlite();
+            }
+        }
+
+        /// <summary>
+        /// This will save the discharge-frequency and ext-frequency functions
+        /// </summary>
+        private void SaveProbabilityFunctions()
+        {
+            ProbabilityFunctionList probFuncs = GlobalVariables.mp_fdaStudy.GetProbabilityFuncList();
+            foreach (KeyValuePair<string, ProbabilityFunction> kvp in probFuncs.ProbabilityFunctions)
+            {
+                kvp.Value.SaveToSqlite();
+            }
+        }
+
+        private void SaveAggregatedStageDamageToNewFDA()
+        {
+            AggregateDamageFunctionList aggDamageList = GlobalVariables.mp_fdaStudy.GetAggDamgFuncList();
+            foreach (KeyValuePair<string, AggregateDamageFunction> kvp in aggDamageList.GetAggDamageFunctions)
+            {
+                kvp.Value.SaveToSqlite();
+            }
+        }
+
+        private void SaveStructuresToNewFDA()
+        {
+            StructureList structureList = GlobalVariables.mp_fdaStudy.GetStructureList();
+            //move the create datatable into the pers manager and call it here
+            StructureInventoryPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetStructureInventoryManager();
+            DataTable dt = manager.CreateEmptyStructuresTable();
+            foreach (KeyValuePair<string, Structure> kvp in structureList.Structures)
+            {
+                object[] structRow = kvp.Value.CreateFDA2DatabaseRow(_FileName);
+                dt.Rows.Add(structRow);
+            }
+            //the data table needs to be saved first.
+            manager.SaveNew(dt, _FileName);
+            manager.SaveNewInventoryToParentTable(_FileName);
+        }
+
+        private void SaveWaterSurfaceProfilesToNewFDA()
+        {
+            WaterSurfaceProfileList wspList = GlobalVariables.mp_fdaStudy.GetWspList();
+            foreach (KeyValuePair<string, WaterSurfaceProfile> kvp in wspList.WaterSurfaceProfiles)
+            {
+                kvp.Value.SaveToSqlite();
+            }
+        }
+        private void SaveRatingCurvesToNewFDA()
+        {
+            RatingFunctionList ratings = GlobalVariables.mp_fdaStudy.GetRatingFunctionList();
+            foreach (KeyValuePair<string, RatingFunction> rat in ratings.RatingFunctions)
+            {
+                rat.Value.SaveToSqlite();
+            }
+        }
+
+        private void SaveOccupancyTypes(string groupName)
+        {
+            ReadOccTypes();
+            OccTypePersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetOccTypeManager();
+            manager.SaveNewOcctypes(OccupancyTypes, groupName);
+        }
 
         #region findFields
         void FindFields()
@@ -2438,7 +2525,6 @@ namespace Importer
         {
             if (_MustFlushAggDamgFunc)
             {
-                _AggregateDamageFunction.SaveToSqlite();
                 GlobalVariables.mp_fdaStudy.GetAggDamgFuncList().Add(_AggregateDamageFunction);
             }
             _MustFlushAggDamgFunc = false;

@@ -52,7 +52,7 @@ namespace Model.Inputs.Functions.ImpactAreaFunctions
 
         public override XElement WriteToXML()
         {
-            throw new NotImplementedException();
+            return Function.WriteToXML();
         }
 
     }

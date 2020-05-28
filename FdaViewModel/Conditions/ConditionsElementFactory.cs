@@ -12,15 +12,15 @@ namespace FdaViewModel.Conditions
         //todo: Refactor: CO
         //public static ConditionsElement BuildConditionsElement(ConditionsPlotEditorVM vm)
         //{
-        //    if(vm.Description == null) { vm.Description = ""; }
+        //    if (vm.Description == null) { vm.Description = ""; }
         //    ConditionBuilder builder = new ConditionBuilder(vm.Name, vm.Description, vm.Year, vm.SelectedImpactArea, vm.IndexLocation,
         //        vm.SelectedThresholdType, vm.ThresholdValue);
-            
-        //    foreach(Plots.IndividualLinkedPlotControlVM control in vm.AddedPlots)
+
+        //    foreach (Plots.IndividualLinkedPlotControlVM control in vm.AddedPlots)
         //    {
-        //        switch(control.IndividualPlotWrapperVM.PlotVM.BaseFunction.FunctionType)
+        //        switch (control.IndividualPlotWrapperVM.PlotVM.BaseFunction.FunctionType)
         //        {
-                    
+
         //            case FdaModel.Functions.FunctionTypes.InflowFrequency:
         //            case FdaModel.Functions.FunctionTypes.OutflowFrequency:
         //                builder.WithAnalyticalFreqElem((FrequencyRelationships.AnalyticalFrequencyElement)control.CurveImporterVM.SelectedElement);
@@ -37,7 +37,7 @@ namespace FdaViewModel.Conditions
         //            case FdaModel.Functions.FunctionTypes.InteriorStageDamage:
         //                builder.WithAggStageDamageElem((AggregatedStageDamage.AggregatedStageDamageElement)control.CurveImporterVM.SelectedElement);
         //                break;
-                        
+
         //        }
         //    }
         //    return builder.build();

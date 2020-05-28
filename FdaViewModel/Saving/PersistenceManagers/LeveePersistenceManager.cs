@@ -1,5 +1,7 @@
 ﻿using FdaViewModel.GeoTech;
 using FdaViewModel.Utilities;
+using Model;
+using Model.Inputs.Functions.ImpactAreaFunctions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,11 +11,14 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.Saving.PersistenceManagers
 {
-    public class LeveePersistenceManager : SavingBase, IElementManager
+    public class LeveePersistenceManager : UndoRedoBase, IPersistableWithUndoRedo
     {
         private const int NAME_COL = 1;
-        private const int DESC_COL = 2;
-        private const int ELEVATION_COL = 3;
+        private const int LAST_EDIT_DATE_COL = 2;
+        private const int DESC_COL = 3;
+        private const int ELEVATION_COL = 4;
+        private const int IS_DEFAULT_COL = 5;
+        private const int CURVE_COL = 6;
 
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
@@ -21,16 +26,12 @@ namespace FdaViewModel.Saving.PersistenceManagers
         private const string ELEMENT_TYPE = "levee";
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("LeveePersistenceManager");
 
-
-        private const string TABLE_NAME = "levee_features";
-        private static readonly string[] TableColNames = { NAME, DESCRIPTION, "elevation" };
-        private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(double) };
         /// <summary>
         /// The types of the columns in the parent table
         /// </summary>
         public override Type[] TableColumnTypes
         {
-            get { return TableColTypes; }
+            get { return new Type[] { typeof(string), typeof(string), typeof(string), typeof(double), typeof(bool), typeof(string)  }; }
         }
         internal override string ChangeTableConstant
         {
@@ -39,14 +40,31 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override string TableName
         {
-            get { return TABLE_NAME; }
+            get { return "levee_features"; }
         }
 
         public override string[] TableColumnNames
         {
-            get { return TableColNames; }
+            get { return new string[] { NAME,LAST_EDIT_DATE, DESCRIPTION, "elevation","is_default", CURVE }; }
         }
 
+        public override string ChangeTableName => "levee_failure_changes";
+
+        public override string[] ChangeTableColumnNames
+        {
+            get
+            {
+                return new string[] { ELEMENT_ID_COL_NAME, NAME, LAST_EDIT_DATE, DESCRIPTION, "elevation", "is_default", CURVE, STATE_INDEX_COL_NAME };
+            }
+        }
+
+        public override Type[] ChangeTableColumnTypes
+        {
+            get
+            {
+                return new Type[]{ typeof(int), typeof(string), typeof(string), typeof(string),typeof(double), typeof(bool), typeof(string), typeof(int) };
+            }
+        }
 
         public LeveePersistenceManager(Study.FDACache studyCache)
         {
@@ -54,24 +72,59 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
 
         #region utilities
-        private object[] GetRowDataFromElement(LeveeFeatureElement element)
+        /// <summary>
+        /// Turns the element into an object[] for the row in the parent table
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        public override object[] GetRowDataFromElement(ChildElement element)
         {
-            return new object[] { element.Name, element.Description, element.Elevation };
+            return new object[] { element.Name, element.LastEditDate, element.Description, ((LeveeFeatureElement)element).Elevation, ((LeveeFeatureElement)element).IsDefaultCurveUsed, element.Curve.WriteToXML().ToString() };
 
         }
+        /// <summary>
+        /// Turns the element into an object[] for the row in the change table
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        public override object[] GetRowDataForChangeTable(ChildElement element)
+        {
+            if (element.Description == null)
+            {
+                element.Description = "";
+            }
+
+            int elemId = GetElementId(TableName, element.Name);
+            //the new stateId will be one higher than the max that is in the table already.
+            int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
+            return new object[] {elemId, element.Name, element.LastEditDate, element.Description, ((LeveeFeatureElement)element).Elevation, ((LeveeFeatureElement)element).IsDefaultCurveUsed,
+                element.Curve.WriteToXML().ToString(), stateId};
+        }
+        /// <summary>
+        /// Creates an element from the row in the parent table.
+        /// </summary>
+        /// <param name="rowData"></param>
+        /// <returns></returns>
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            return new LeveeFeatureElement((string)rowData[NAME_COL], (string)rowData[DESC_COL], Convert.ToDouble( rowData[ELEVATION_COL]));
+            bool isDefault = Convert.ToBoolean(rowData[IS_DEFAULT_COL]);
+            IFdaFunction function = ImpactAreaFunctionFactory.Factory((String)rowData[CURVE_COL], ImpactAreaFunctionEnum.LeveeFailure);
+            return new LeveeFeatureElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESC_COL], Convert.ToDouble( rowData[ELEVATION_COL]), isDefault, function);
         }
+
+
         #endregion
 
         public void SaveNew(ChildElement element)
         {
-            if (element.GetType() == typeof(LeveeFeatureElement))
-            {
-                SaveNewElementToParentTable(GetRowDataFromElement((LeveeFeatureElement)element), TableName, TableColumnNames, TableColumnTypes);
-                StudyCacheForSaving.AddElement((LeveeFeatureElement)element);
-            }
+            //if (element.GetType() == typeof(LeveeFeatureElement))
+            //{
+            //    SaveNewElementToParentTable(GetRowDataFromElement((LeveeFeatureElement)element), TableName, TableColumnNames, TableColumnTypes);
+            //    StudyCacheForSaving.AddElement((LeveeFeatureElement)element);
+            //}
+            SaveNewElement(element);
+            SaveToChangeTable(element);
+            Log(FdaLogging.LoggingLevel.Info, "Created new levee failure element: " + element.Name, element.Name);
         }
         public void Remove(ChildElement element)
         {
@@ -81,10 +134,10 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )
         {
-            if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((LeveeFeatureElement)elementToSave), oldElement.Name, TableName))
-            {
-                base.SaveExisting(oldElement, elementToSave);
-            }
+            //if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((LeveeFeatureElement)elementToSave), oldElement.Name, TableName))
+            //{
+                base.SaveExisting(oldElement, elementToSave, changeTableIndex);
+            //}
         }
 
         public void Load()
@@ -96,10 +149,10 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
         }
 
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
+        //public override void AddValidationRules()
+        //{
+        //    //throw new NotImplementedException();
+        //}
 
         public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)
         {
@@ -145,9 +198,6 @@ namespace FdaViewModel.Saving.PersistenceManagers
             return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
         }
 
-        public override object[] GetRowDataFromElement(ChildElement elem)
-        {
-            return GetRowDataFromElement((LeveeFeatureElement)elem);
-        }
+        
     }
 }

@@ -64,7 +64,7 @@ namespace Functions.CoordinatesFunctions
                 IsInvertible = IsInvertibleFunction();
                 if (IsInvertible)
                 {
-                    //if (Interpolator == InterpolationEnum.NaturalCubicSpline) _InverseNaturalCublicSpline = SetInverseCubicSplineFunction(xys);
+                    if (Interpolator == InterpolationEnum.NaturalCubicSpline) _InverseNaturalCublicSpline = SetInverseCubicSplineFunction(xys);
                     InverseInterpolationFunction = SetInverseInterpolator(Interpolator);
                 }            
                 // This part must go last.
@@ -184,7 +184,7 @@ namespace Functions.CoordinatesFunctions
             {
                 case InterpolationEnum.Linear: return InverseLinearInterpolator;
                 case InterpolationEnum.Piecewise: return InversePiecewiseInterpolator;
-                case InterpolationEnum.NaturalCubicSpline: return NaturalCubicSplineInterpolator;
+                case InterpolationEnum.NaturalCubicSpline: return InverseNaturalCubicSpline;// NaturalCubicSplineInterpolator;
                 default: return InverseNoInterpolator;
             }
         }
@@ -235,9 +235,18 @@ namespace Functions.CoordinatesFunctions
              *  (2) limit y steps to 1% of y range
              * Only necessary for curved functions, currently is restricted to cubic splines.
              */
-            ICoordinate min = Coordinates[0], max = Coordinates[Coordinates.Count - 1];
-            double xMin = min.X.Value(), yMin = min.Y.Value(), xMax = max.X.Value(), yMax = max.Y.Value();
-            double xEpsilon = (xMax - xMin) / 100, yEpsilon = (yMax - yMin) / 100, x = xMin, y = yMin;
+            ICoordinate min = Coordinates[0];
+            ICoordinate max = Coordinates[Coordinates.Count - 1];
+            double xMin = min.X.Value();
+            double yMin = min.Y.Value();
+            double xMax = max.X.Value();
+            double yMax = max.Y.Value();
+            double xEpsilon = (xMax - xMin) / 100;
+            double yEpsilon = (yMax - yMin) / 100;
+            double x = xMin;
+            double y = yMin;
+
+            double prevX = -1;
             // while condition implies y < maxY
             while (x < xMax)
             {
@@ -248,14 +257,42 @@ namespace Functions.CoordinatesFunctions
                 }
                 else
                 {
-                    x = UpdateX(x + xEpsilon, y + yEpsilon, i);
-                    expandedCoordinates.Add(ICoordinateFactory.Factory(x, F(x)));
-                    y = expandedCoordinates[expandedCoordinates.Count - 1].Y.Value();
+
+                    //i think we need to check that x+epsilon is not greater than the next coordinate.
+                    //bool isXPlusEpsilonPastNextX = false;
+                   // bool isYPlusEpsilonPastNextY = false;
+                    //if(xPlusEpsilon >  Coordinates[i].X.Value())
+                    //{
+                    //    isXPlusEpsilonPastNextX = true;
+                    //}
+                    //if(y > Coordinates[i].Y.Value())
+                    //{
+                    //    isYPlusEpsilonPastNextY = true;
+                    //}
+
+                    //basically you can't evaluate the inverse f(x) if the y plus epsilon is past the next y
+                    //you need to increment "i". We need to add a point. Add it right at the coordinate?
+                    //if (isYPlusEpsilonPastNextY)
+                    //{
+                    //    expandedCoordinates.Add(Coordinates[i]);
+                    //    y = expandedCoordinates[expandedCoordinates.Count - 1].Y.Value();
+                    //    x = expandedCoordinates[expandedCoordinates.Count - 1].X.Value();
+                    //    i++;
+                    //}
+                    //else
+                    //{
+                        x = UpdateX(x + xEpsilon, y+yEpsilon, i, prevX);
+                        prevX = x;
+                        expandedCoordinates.Add(ICoordinateFactory.Factory(x, F(x)));
+                        y = expandedCoordinates[expandedCoordinates.Count - 1].Y.Value();
+                    //}
                 }
-                if (x == Coordinates[i + 1].X.Value() && x != xMax) i++;
+                if (i<Coordinates.Count-1 && x == Coordinates[i].X.Value() && x != xMax) i++;
             }
             return expandedCoordinates;
         }
+
+
         private List<ICoordinate> FillInEndPointCoordinates()
         {
             /*
@@ -269,7 +306,7 @@ namespace Functions.CoordinatesFunctions
             }
             return expandedCoordinates;
         }
-        private double UpdateX(double nextX, double nextY, int nextIndex)
+        private double UpdateX(double xPlusEpsilon, double yPlusEpsilon, int nextIndex, double prevXValue)
         {
             /* Finds the next coordinate to be added to the expanded list, candidates are:
              *  (1) nextX - the x + xEpsilon ordinate
@@ -279,17 +316,50 @@ namespace Functions.CoordinatesFunctions
             if (IsInvertible)
             {
                 if (nextIndex < Coordinates.Count)
+                {
                     //todo: check calling InverseF(nextY) this way
-                    return Math.Min(Math.Min(nextX, Coordinates[nextIndex].X.Value()), InverseF(nextY, nextIndex - 1));
+                    //get the smaller of the x+ epsilon, or the next x coordinate
+                    double nextXCoordinateValue = Coordinates[nextIndex].X.Value();
+                    double nextSmallestX = Math.Min(xPlusEpsilon, nextXCoordinateValue);
+
+                    if (Math.Abs(yPlusEpsilon) > Math.Abs(Coordinates[nextIndex].Y.Value()))
+                    {
+                        //if (nextSmallestX > prevXValue)
+                        //{
+                            return nextSmallestX;
+                        //}
+                        //else
+                        //{
+
+                        //}
+                    }
+                    else
+                    {
+                        //check against the next y's x value
+                        double nextYsXValue = InverseF(yPlusEpsilon, nextIndex - 1);
+                        if (nextYsXValue > prevXValue)
+                        {
+                            return Math.Min(nextSmallestX, nextYsXValue);
+                        }
+                        else
+                        {
+                            return nextSmallestX;
+                        }
+                    }
+                }
                 else
-                    return Math.Min(nextX, InverseF(nextY, nextIndex - 1));
+                {
+                    
+                        return Math.Min(xPlusEpsilon, InverseF(yPlusEpsilon, nextIndex - 1));
+                    
+                }
             }
             else
             {
                 if (nextIndex < Coordinates.Count)
-                    return Math.Min(nextX, Coordinates[nextIndex].X.Value());
+                    return Math.Min(xPlusEpsilon, Coordinates[nextIndex].X.Value());
                 else
-                    return nextX;
+                    return xPlusEpsilon;
             }
         } 
         #region Order
@@ -516,16 +586,27 @@ namespace Functions.CoordinatesFunctions
         }
         public bool IsInvertibleFunction()
         {
-            for (int i = 0; i < Coordinates.Count; i++)
+            if(Order == OrderedSetEnum.StrictlyDecreasing || Order == OrderedSetEnum.StrictlyIncreasing)
             {
-                int j = i + 1;
-                while (j < Coordinates.Count)
-                {
-                    if (Coordinates[i].Y.Value().Equals(Coordinates[j].Y.Value()) && !Coordinates[i].X.Value().Equals(Coordinates[j].Y.Value())) return false;
-                    else j++;
-                }
+                return true;
             }
-            return true;
+            else
+            {
+                return false;
+            }
+            //for (int i = 0; i < Coordinates.Count; i++)
+            //{
+            //    int j = i + 1;
+            //    while (j < Coordinates.Count)
+            //    {
+            //        double currentY = Coordinates[i].Y.Value();
+            //        double currentX = Coordinates[i].X.Value();
+            //        double futureY = Coordinates[j].Y.Value();
+            //        if (currentY.Equals(futureY) && !currentX.Equals(futureY)) return false;
+            //        else j++;
+            //    }
+            //}
+            //return true;
         }
         public IMessageLevels Validate(IValidator<ICoordinatesFunction> validator, out IEnumerable<IMessage> errors)
         {
@@ -695,12 +776,34 @@ namespace Functions.CoordinatesFunctions
             // TODO: OnRange()  check  - so this works with decreasing functions.
             if (!IsOnRange(y)) throw new ArgumentOutOfRangeException(string.Format("The specified y values: {0} is invalid because it is not on the domain of the inverse coordinates function [{1}, {2}] (e.g. range of coordinates function).",
                 y, Coordinates[0].Y.Value(), Coordinates[Coordinates.Count - 1].Y.Value()));
-            if (y < Coordinates[i].Y.Value() || y > Coordinates[i + 1].Y.Value()) throw new ArgumentException(
-                string.Format("The InverseF operation could not be completed because the specified y: {0} is not on the implicitly defined range: [{1}, {2}].",
-                y, Coordinates[i].Y.Value(), Coordinates[i + 1].Y.Value()));
+            CheckForOutOfRange(y, i);
             if (Coordinates[i + 1].Y.Value() == y) return Coordinates[i + 1].Y.Value();
             else return InverseInterpolationFunction(i, y);
         }
+
+        private void CheckForOutOfRange(double y, int i)
+        {
+            if (Order == OrderedSetEnum.StrictlyIncreasing)
+            {
+                if (y < Coordinates[i].Y.Value() || y > Coordinates[i + 1].Y.Value())
+                {
+                    throw new ArgumentException(
+                    string.Format("The InverseF operation could not be completed because the specified y: {0} is not on the implicitly defined range: [{1}, {2}].",
+                    y, Coordinates[i].Y.Value(), Coordinates[i + 1].Y.Value()));
+                }
+            }
+            else if(Order == OrderedSetEnum.StrictlyDecreasing)
+            {
+                if (y > Coordinates[i].Y.Value() || y < Coordinates[i + 1].Y.Value())
+                {
+                    throw new ArgumentException(
+                    string.Format("The InverseF operation could not be completed because the specified y: {0} is not on the implicitly defined range: [{1}, {2}].",
+                    y, Coordinates[i].Y.Value(), Coordinates[i + 1].Y.Value()));
+                }
+            }
+
+        }
+
         private bool IsOnRange(double y) => y < Range.Min || y > Range.Max ? false : true;
         #endregion
         #region GetExpandedCoordinates()

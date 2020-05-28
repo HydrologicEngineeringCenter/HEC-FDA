@@ -42,8 +42,8 @@ namespace FdaViewModel.GeoTech
             LeveeFeatureOwnerElement lf = new LeveeFeatureOwnerElement();
             AddElement(lf);
 
-            FailureFunctionOwnerElement ff = new FailureFunctionOwnerElement();
-            AddElement(ff);
+            //FailureFunctionOwnerElement ff = new FailureFunctionOwnerElement();
+            //AddElement(ff);
         }
 
         //public override void AddElementFromRowData(object[] rowData)
