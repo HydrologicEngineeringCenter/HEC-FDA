@@ -215,27 +215,31 @@ namespace FdaViewModel.Editors
             }
         }
 
+        public virtual ICoordinatesFunction GetCoordinatesFunction()
+        {
+            return EditorVM.CreateFunctionFromTables(); 
+        }
+
         public  void SaveWhileEditing()
         {
             if(!HasChanges)
             {
                 //todo: it looks like this never gets hit. It always has changes.
                 String time = DateTime.Now.ToString();
-                
                 LogItem li =LogItemFactory.FactoryTemp(LoggingLevel.Info, "No new changes to save." + time );
                 MessageRows.Insert(0, li);
                 SaveStatusLevel = LoggingLevel.Debug;
-                //TempErrors = new List<LogItem>() { li };
-                //UpdateMessages();
                 return;
             }
 
             try
             {
                 //try to construct the new coordinates function
-                ICoordinatesFunction coordFunc = EditorVM.CreateFunctionFromTables();
+                ICoordinatesFunction coordFunc = GetCoordinatesFunction();
                 EditorVM.Function = coordFunc;
-                Curve = ImpactAreaFunctionFactory.Factory(coordFunc, IFdaFunctionEnum.Rating);
+                //todo: what is this, i can't just assume its a rating curve? This line needs to be here to save the curve out properly.
+                //I think i just needed some enum to be there so i chose rating.
+                Curve = ImpactAreaFunctionFactory.Factory(coordFunc, ImpactAreaFunctionEnum.Rating);
 
 
             }

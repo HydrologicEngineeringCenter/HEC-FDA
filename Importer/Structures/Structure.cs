@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
 using System.IO;
+using FdaViewModel.Inventory;
+using FdaViewModel.Saving;
+using FdaViewModel.Saving.PersistenceManagers;
 
 namespace Importer
 {
@@ -252,6 +255,56 @@ namespace Importer
             wr.Write($"{this.ParcelNumber}{delimt}");
             wr.Write("\n");
         }
+
+        //public void SaveToSqlite()
+        //{
+           
+
+        //    StructureInventoryBaseElement baseElem = new StructureInventoryBaseElement(Name, Description);
+        //    InventoryElement newElem = new InventoryElement(baseElem);
+        //    StructureInventoryPersistenceManager manager = PersistenceFactory.GetStructureInventoryManager();
+        //    manager.SaveNew(newElem);
+        //}
+        //Basically i am going to have to build the datatable from all these structures and do what i did in the "next" button click
+        //in "ImportStrucuturesFromShape...". Somehow i will have to use the northing and easting to fill the geometry blob. 
+        public object[] CreateFDA2DatabaseRow(string occTypeGroupName)
+        {
+            //geom, occtype, occtypeGroupName, found ht, struct value, cont value, other value, veh value, firstfloorelev, ground elev, year, module
+            object[] row = new object[14];
+            //id, SID?
+            row[0] = SidReachId;
+            //geom, 
+            row[1] = NorthingCoordinate; //add easting coordinate
+            //occtype, 
+            row[2] = "??"; //CategoryName? - damage category - add dam cat column to db?
+            //dam cat
+            row[3] = GlobalVariables.mp_fdaStudy.GetDamageCategoryList().getName(CategoryId);
+            //occtypeGroupName, 
+            row[4] = occTypeGroupName;
+            //found ht, 
+            double foundHt = ElevationsStructure[(int)ElevationValue.FIRST_FLOOR] - ElevationsStructure[(int)ElevationValue.GROUND];
+            row[5] = foundHt; //foundation height is first floor - ground elev.
+            //struct value, 
+            row[6] = ValueOfStructure;
+            //cont value, 
+            row[7] = ValueOfContent;
+            //other value, 
+            row[8] = ValueOfOther;
+            //veh value, 
+            row[9] = ValueOfCar;
+            //firstfloorelev, 
+            row[10] = ElevationsStructure[(int)ElevationValue.FIRST_FLOOR];
+            //ground elev,
+            row[11] = ElevationsStructure[(int)ElevationValue.GROUND];
+            //year,
+            row[12] = YearInServiceInt;
+            //module
+            row[13] = StructureModuleName;
+
+            return row;
+
+        }
+
         #endregion
         #region Functions
         #endregion

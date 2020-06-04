@@ -5,11 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
 using System.IO;
+using FdaViewModel.WaterSurfaceElevation;
+using FdaViewModel.Saving.PersistenceManagers;
 
 namespace Importer
 {
     [Serializable]
-    public class WaterSurfaceProfile : FdObjectDataLook
+    public class WaterSurfaceProfile : FdObjectDataLook, ISaveToSqlite
     {
         #region Notes
         // Created By: $username$
@@ -292,6 +294,20 @@ namespace Importer
             }
 
             return _WspSectionDataList.Count;
+        }
+
+        public void SaveToSqlite()
+        {
+            //path and probability
+            List<double> probs = new List<double>();
+            for(int i = 0;i<NumberOfProfiles; i++)
+            {
+                probs.Add(wspProbs[i]);
+            }
+
+            WaterSurfaceElevationElement elem = new WaterSurfaceElevationElement(Name, Description, probs, true);
+            WaterSurfaceAreaPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetWaterSurfaceManager();
+            manager.SaveNew(elem);
         }
         #endregion
     }

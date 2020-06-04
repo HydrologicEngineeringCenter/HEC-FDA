@@ -27,8 +27,8 @@ namespace View.Utilities
         public object Convert(object value, Type targetType, object parameter,
            System.Globalization.CultureInfo culture)
         {
-            if (targetType != typeof(bool))
-                throw new InvalidOperationException("The target must be a boolean");
+            //if (targetType != typeof(Boolean))
+              //  throw new InvalidOperationException("The target must be a boolean");
 
             return !(bool)value;
         }
@@ -36,7 +36,8 @@ namespace View.Utilities
         public object ConvertBack(object value, Type targetType, object parameter,
             System.Globalization.CultureInfo culture)
         {
-            throw new NotSupportedException();
+            //throw new NotSupportedException();
+            return !(bool)value;
         }
     }
 }

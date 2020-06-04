@@ -16,6 +16,8 @@ using FdaViewModel.Inventory;
 using FdaViewModel.Conditions;
 using System.Collections.ObjectModel;
 using FdaViewModel.Inventory.OccupancyTypes;
+using FdaViewModel.Plans;
+using FdaViewModel.Alternatives;
 //using FdaViewModel.Inventory.OccupancyTypes;
 
 namespace FdaViewModel.Study
@@ -76,7 +78,9 @@ namespace FdaViewModel.Study
         public event UpdateElementEventHandler StructureInventoryUpdated;
         public event UpdateElementEventHandler ConditionsElementUpdated;
         public event UpdateElementEventHandler OccTypeElementUpdated;
-
+        public event AddElementEventHandler PlanAdded;
+        public event AddElementEventHandler PlanRemoved;
+        public event UpdateElementEventHandler PlanUpdated;
 
         private List<RatingCurveElement> _Ratings = new List<RatingCurveElement>();
         private List<OccupancyTypesElement> _OccTypes = new List<OccupancyTypesElement>();
@@ -120,6 +124,8 @@ namespace FdaViewModel.Study
         public StructureInventoryOwnerElement StructureInventoryParent { get; set; }
         public ConditionsOwnerElement ConditionsParent { get; set; }
         public ConditionsTreeOwnerElement ConditionsTreeParent { get; set; }
+        public PlansOwnerElement PlansParent { get; set; }
+        public AlternativeOwnerElement AlternativeParent { get; set; }
         #endregion
         #endregion
         private FDACache()

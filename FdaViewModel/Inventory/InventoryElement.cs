@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FdaViewModel.Utilities;
+using OpenGLMapping;
 
 namespace FdaViewModel.Inventory
 {
@@ -24,6 +25,7 @@ namespace FdaViewModel.Inventory
         //private string _Name;
         #endregion
         #region Properties
+        public bool IsImportedFromOldFDA { get; set; }
         public DefineSIAttributesVM DefineSIAttributes { get; set; }
         //todo: Refactor: CO
         //public AttributeLinkingListVM AttributeLinkingList { get; set; }
@@ -75,9 +77,9 @@ namespace FdaViewModel.Inventory
 
         //}
 
-        public InventoryElement(StructureInventoryBaseElement structInventoryBaseElement) : base()
+        public InventoryElement(StructureInventoryBaseElement structInventoryBaseElement, bool isImportedFromOldFDA) : base()
         {
-            
+            IsImportedFromOldFDA = isImportedFromOldFDA;
             Name = structInventoryBaseElement.Name;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/StructureInventory.png");
 
@@ -85,32 +87,41 @@ namespace FdaViewModel.Inventory
             if(Description == null) { Description = ""; }
 
             StructureInventory = structInventoryBaseElement;
-            
+
 
             //Utilities.NamedAction edit = new Utilities.NamedAction();
             //edit.Header = "Edit Structure inventory";
             //edit.Action = Edit;
 
-            Utilities.NamedAction mapWindow = new Utilities.NamedAction();
-            mapWindow.Header = "Add to Map Window";
-            mapWindow.Action = InventoryToMapWindow;
+            List<NamedAction> localactions = new List<NamedAction>();
 
-            Utilities.NamedAction removeInventory = new Utilities.NamedAction();
+            //don't have the add to map window option if this is
+            //an old fda structure inventory.
+            if (!isImportedFromOldFDA)
+            {
+                NamedAction mapWindow = new NamedAction();
+                mapWindow.Header = "Add to Map Window";
+                mapWindow.Action = InventoryToMapWindow;
+                localactions.Add(mapWindow);
+            }
+
+            NamedAction attributeTable = new NamedAction();
+            attributeTable.Header = "Open Attribute Table";
+            attributeTable.Action = OpenAttributeTable;
+
+            NamedAction removeInventory = new NamedAction();
             removeInventory.Header = "Remove";
             removeInventory.Action = RemoveElement;
 
-            Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
+            NamedAction renameElement = new NamedAction(this);
             renameElement.Header = "Rename";
             renameElement.Action = Rename;
 
-            List<Utilities.NamedAction> localactions = new List<Utilities.NamedAction>();
             //localactions.Add(addToMapWindow);
             //localactions.Add(edit);
-            localactions.Add(mapWindow);
-
+            localactions.Add(attributeTable);
             localactions.Add(removeInventory);
             localactions.Add(renameElement);
-
 
             Actions = localactions;
 
@@ -119,6 +130,22 @@ namespace FdaViewModel.Inventory
         }
         #endregion
         #region Voids
+        public void OpenAttributeTable(object sender, EventArgs e)
+        {
+            LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(Storage.Connection.Instance.Reader);
+            LifeSimGIS.PointFeatures pointFeatures = (LifeSimGIS.PointFeatures)gpr.ConvertToGisFeatures(_TableConstant + this.Name);
+            LifeSimGIS.VectorFeatures features = pointFeatures;
+            //read from table.
+            DatabaseManager.DataTableView dtv = Storage.Connection.Instance.Reader.GetTableManager(_TableConstant + this.Name);
+            int[] geometryColumns = { 0, 1 };
+            dtv.DeleteColumns(geometryColumns);
+
+            OpenGLDrawInfo ogldi = new OpenGLDrawInfo(15, OpenGLDrawInfo.GlyphType.House1, true, new OpenTK.Graphics.Color4((byte)0, 0, 0, 255), true, new OpenTK.Graphics.Color4((byte)0, 0, 255, 200), true);
+
+            OpenStructureAttributeTableEventArgs args = new OpenStructureAttributeTableEventArgs(Name, features, dtv, ogldi);
+
+            AddToMapWindow(this, args);
+        }
         public void RemoveElement(object sender, EventArgs e)
         {
             Saving.PersistenceFactory.GetStructureInventoryManager().Remove(this);
@@ -136,13 +163,13 @@ namespace FdaViewModel.Inventory
 
             OpenGLMapping.OpenGLDrawInfo ogldi = new OpenGLMapping.OpenGLDrawInfo(15, OpenGLMapping.OpenGLDrawInfo.GlyphType.House1, true, new OpenTK.Graphics.Color4((byte)0, 0, 0, 255), true, new OpenTK.Graphics.Color4((byte)0, 0, 255, 200), true);
 
-            Utilities.AddShapefileEventArgs args = new Utilities.AddShapefileEventArgs(Name, features, dtv, ogldi);
+            AddShapefileEventArgs args = new AddShapefileEventArgs(Name, features, dtv, ogldi);
 
             AddToMapWindow(this, args);
 
             _featureHashCode = args.MapFeatureHash;
 
-            foreach (Utilities.NamedAction a in Actions)
+            foreach (NamedAction a in Actions)
             {
                 if (a.Header.Equals("Add to Map Window"))
                 {
@@ -191,7 +218,7 @@ namespace FdaViewModel.Inventory
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             InventoryElement elem = (InventoryElement)elementToClone;
-            return new InventoryElement(elem.StructureInventory);
+            return new InventoryElement(elem.StructureInventory, elem.IsImportedFromOldFDA);
         }
         #endregion
 

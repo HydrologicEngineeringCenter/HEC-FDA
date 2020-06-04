@@ -105,9 +105,33 @@ namespace View
                 {
 
                 }
+            }
+            else if (args.GetType().Name == nameof(OpenStructureAttributeTableEventArgs))
+            {
+                OpenStructureAttributeTableEventArgs sargs = args as OpenStructureAttributeTableEventArgs;
 
+                //if (sender.GetType().Name == nameof(FdaViewModel.ImpactArea.ImpactAreaElement))
+                if (sargs.Features.GetType() == typeof(LifeSimGIS.PolygonFeatures))
+                {
+                    LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)sargs.Features;
+                    OpenGLDrawSingle drawInfo = new OpenGLMapping.OpenGLDrawSingle(sargs.DrawInfo);
+                    MapPolygons mapPolys = new MapPolygons(polyFeatures, sargs.Attributes, sargs.FeatureName, drawInfo, mtv.MapWindow);
+                    VectorFeatureNode vfn = new VectorFeatureNode(mapPolys, sargs.FeatureName);
 
+                    mtv.AddGisData(vfn, 0, true);
+                    args.MapFeatureHash = vfn.GetHashCode();
+                    vfn.RemoveLayerCalled += ((FdaViewModel.ImpactArea.ImpactAreaElement)sender).removedcallback;
+                }
+                //else if (sender.GetType().Name == nameof(FdaViewModel.Inventory.InventoryElement))
+                else if (sargs.Features.GetType() == typeof(LifeSimGIS.PointFeatures))
+                {
+                    MapPoints mapPoints = new MapPoints((LifeSimGIS.PointFeatures)sargs.Features, sargs.Attributes, sargs.FeatureName, new OpenGLMapping.OpenGLDrawSingle(sargs.DrawInfo), mtv.MapWindow);
+                    mapPoints.OpenAttributes();
+                }
+                else if (sargs.Features.GetType() == typeof(LifeSimGIS.LineFeatures))
+                {
 
+                }
             }
 
 

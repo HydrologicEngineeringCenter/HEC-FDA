@@ -111,6 +111,9 @@ namespace FdaViewModel.Study
         {
             //create the sqlite database for this study
             _StudyElement.CreateStudyFromViewModel(_StudyName, _FolderPath);
+
+            StructureInventoryLibrary.SharedData.StudyDatabase = new DatabaseManager.SQLiteManager(Storage.Connection.Instance.ProjectFile);
+
             //import all the data from the import file
             Import?.Invoke(this, new EventArgs());
         }

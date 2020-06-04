@@ -166,11 +166,15 @@ namespace FdaViewModel.Storage
         #region Cody's DB queries
         public void CreateTableWithPrimaryKey(string tablename, string[] colnames, Type[] coltypes)
         {
-           // string text = "CREATE TABLE people (person_id INTEGER PRIMARY KEY AUTOINCREMENT, first_name text NOT NULL,last_name text NOT NULL);";
-
+            // string text = "CREATE TABLE people (person_id INTEGER PRIMARY KEY AUTOINCREMENT, first_name text NOT NULL,last_name text NOT NULL);";
+            if(_SqliteReader.GetTableNames().Contains(tablename))
+            {
+                throw new Exception("table already exists.");
+            }
             SQLiteCommand command = _SqliteReader.DbConnection.CreateCommand();
             command.CommandText = GetCreateTableWithPrimaryKeyText(tablename, colnames, coltypes);
             command.ExecuteNonQuery();
+            
             
         }
 
@@ -311,7 +315,7 @@ namespace FdaViewModel.Storage
                 //FdaModel.Utilities.Messager.Logger.Instance.ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Table " + TableName + " requested from a null project", FdaModel.Utilities.Messager.ErrorMessageEnum.Model | FdaModel.Utilities.Messager.ErrorMessageEnum.Minor));
                 return null;
             }
-            if (_SqliteReader.TableNames.Contains(TableName))
+            if (_SqliteReader.GetTableNames().Contains(TableName))
             {
                 return _SqliteReader.GetTableManager(TableName);
             }else

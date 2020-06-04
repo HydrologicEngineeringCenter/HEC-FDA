@@ -339,6 +339,11 @@ namespace Importer
             //and will they always be in this order?
             //StructureValueType { STRUCTURE, CONTENT, OTHER, CAR, TOTAL };
 
+            bool hasAssetCar = false;
+            bool hasAssetOther = false;
+            bool hasAssetContent = false;
+            bool hasAssetDamage = false;
+
             SingleDamageFunction totalDamageFunc = _SingleDamageFunction[(int)StructureValueType.TOTAL];
             SingleDamageFunction carDamageFunc = _SingleDamageFunction[(int)StructureValueType.CAR];
             SingleDamageFunction otherDamageFunc = _SingleDamageFunction[(int)StructureValueType.OTHER];
@@ -351,10 +356,22 @@ namespace Importer
             StageDamagePersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetStageDamageManager();
             SaveTotalFunction(totalDamageFunc,manager);
             //todo: i am using Name here is that correct, or do i need to add the PYSR stuff to the front of the name?
-            SaveAssetFunction(carDamageFunc, Name, GetAssetTypeFromStructureValueType(StructureValueType.CAR), manager);
-            SaveAssetFunction(otherDamageFunc, Name, GetAssetTypeFromStructureValueType(StructureValueType.OTHER), manager);
-            SaveAssetFunction(contentDamageFunc, Name, GetAssetTypeFromStructureValueType(StructureValueType.CONTENT), manager);
-            SaveAssetFunction(structDamageFunc, Name, GetAssetTypeFromStructureValueType(StructureValueType.STRUCTURE), manager);
+            if (carDamageFunc.GetNumRows() > 0)
+            {
+                SaveAssetFunction(carDamageFunc, Name, GetAssetTypeFromStructureValueType(StructureValueType.CAR), manager);
+            }
+            if (otherDamageFunc.GetNumRows() > 0)
+            {
+                SaveAssetFunction(otherDamageFunc, Name, GetAssetTypeFromStructureValueType(StructureValueType.OTHER), manager);
+            }
+            if (contentDamageFunc.GetNumRows() > 0)
+            {
+                SaveAssetFunction(contentDamageFunc, Name, GetAssetTypeFromStructureValueType(StructureValueType.CONTENT), manager);
+            }
+            if (structDamageFunc.GetNumRows() > 0)
+            {
+                SaveAssetFunction(structDamageFunc, Name, GetAssetTypeFromStructureValueType(StructureValueType.STRUCTURE), manager);
+            }
 
         }
 

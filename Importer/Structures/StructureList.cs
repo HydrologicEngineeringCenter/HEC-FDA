@@ -15,10 +15,13 @@ namespace Importer
         // Created Date: Nov2017
         #endregion
         #region Fields
-        private Structure _Structure;
         private SortedList<string, Structure> _StructureListSort = new SortedList<string, Structure>();
         #endregion
         #region Properties
+        public SortedList<string, Structure> Structures
+        {
+            get { return _StructureListSort; }
+        }
         #endregion
         #region Constructors
         public StructureList()
@@ -129,9 +132,9 @@ namespace Importer
         public Structure GetStructure(string name)
         {
             int ixOfStruc = _StructureListSort.IndexOfKey(name);
-            _Structure = _StructureListSort.ElementAt(ixOfStruc).Value;
-            WriteLine($"Did I find the {name} Structure, name = {_Structure.Name}");
-            return _Structure;
+            Structure structure = _StructureListSort.ElementAt(ixOfStruc).Value;
+            WriteLine($"Did I find the {name} Structure, name = {structure.Name}");
+            return structure;
         }
         #endregion
     }

@@ -1,4 +1,5 @@
-﻿using Functions.CoordinatesFunctions;
+﻿using Functions;
+using Functions.CoordinatesFunctions;
 using FunctionsView.ViewModel;
 using System;
 using System.Collections.Generic;

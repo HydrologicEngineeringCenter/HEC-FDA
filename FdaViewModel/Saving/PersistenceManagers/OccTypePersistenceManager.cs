@@ -552,25 +552,34 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
 
 
-        public void SaveNewOcctypes(List<IOccupancyType> newOcctypes)
+        public void SaveNewOcctypes(List<IOccupancyType> newOcctypes, string groupName)
         {
+            //i need a group name
+            //create the element
+            //save it
 
-            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
-            if (tbl == null)
-            {
-                Storage.Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
-                tbl = Storage.Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
-            }
+            //DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+            //if (tbl == null)
+            //{
+            //    Storage.Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
+            //    tbl = Storage.Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+            //}
 
-            List<object[]> rows = new List<object[]>();
+            //List<object[]> rows = new List<object[]>();
 
-            foreach (IOccupancyType ot in newOcctypes)
-            {
-                //when this occtype was created it should have gotten a unique id of its own.
-                rows.Add(GetOccTypeRowForOccTypesTable(ot.GroupID, ot.ID, ot).ToArray());
-            }
-            tbl.AddRows(rows);
-            tbl.ApplyEdits();
+            //foreach (IOccupancyType ot in newOcctypes)
+            //{
+            //    //when this occtype was created it should have gotten a unique id of its own.
+            //    rows.Add(GetOccTypeRowForOccTypesTable(ot.GroupID, ot.ID, ot).ToArray());
+            //}
+            //tbl.AddRows(rows);
+            //tbl.ApplyEdits();
+
+
+            int newGroupID = Saving.PersistenceFactory.GetOccTypeManager().GetUnusedId();
+
+            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, newGroupID, newOcctypes);
+            SaveNew(elem);
         }
 
         public void SaveModifiedGroups(List<IOccupancyTypeGroupEditable> groups)

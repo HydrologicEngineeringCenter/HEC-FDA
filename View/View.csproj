@@ -211,6 +211,12 @@
     <Compile Include="AggregatedStageDamage\AggregatedStageDamage.xaml.cs">
       <DependentUpon>AggregatedStageDamage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Alternatives\CreateNewAlternative.xaml.cs">
+      <DependentUpon>CreateNewAlternative.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Alternatives\IncrementRowItem.xaml.cs">
+      <DependentUpon>IncrementRowItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Commands\CloseCommand.cs" />
     <Compile Include="Commands\ErrorLevelToBackgroundColorConverter.cs" />
     <Compile Include="Commands\HasErrorConverter.cs" />
@@ -270,6 +276,9 @@
     </Compile>
     <Compile Include="Inventory\AttributeLinkingListRowItem.xaml.cs">
       <DependentUpon>AttributeLinkingListRowItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Inventory\AttributeTable.xaml.cs">
+      <DependentUpon>AttributeTable.xaml</DependentUpon>
     </Compile>
     <Compile Include="Inventory\DamageCategory\DamageCategoryEditor.xaml.cs">
       <DependentUpon>DamageCategoryEditor.xaml</DependentUpon>
@@ -332,6 +341,9 @@
     </Compile>
     <Compile Include="Output\IndexLocations.xaml.cs">
       <DependentUpon>IndexLocations.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Plans\CreateNewPlan.xaml.cs">
+      <DependentUpon>CreateNewPlan.xaml</DependentUpon>
     </Compile>
     <Compile Include="Plots\ILinkedPlot.cs" />
     <Compile Include="StageTransforms\ExteriorInteriorEditor.xaml.cs">
@@ -431,6 +443,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Alternatives\CreateNewAlternative.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Alternatives\IncrementRowItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Conditions\AddExteriorInteriorStageToCondition.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -494,6 +514,10 @@
     <Page Include="Inventory\AttributeLinkingListRowItem.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Inventory\AttributeTable.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Inventory\DamageCategory\DamageCategoryEditor.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -584,6 +608,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Output\IndexLocations.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Plans\CreateNewPlan.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

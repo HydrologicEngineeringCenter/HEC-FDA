@@ -14,6 +14,7 @@ namespace FdaViewModel.Study
         List<T> GetChildElementsOfType<T>() where T : ChildElement ;
         T GetParentElementOfType<T>() where T : ParentElement;
 
+        event FDACache.AddElementEventHandler PlanAdded;
 
         event FDACache.AddElementEventHandler RatingAdded;
         event FDACache.AddElementEventHandler TerrainAdded;
@@ -29,6 +30,7 @@ namespace FdaViewModel.Study
         event FDACache.AddElementEventHandler ConditionsElementAdded;
         event FDACache.AddElementEventHandler OccTypeElementAdded;
 
+        event FDACache.AddElementEventHandler PlanRemoved;
         event FDACache.AddElementEventHandler RatingRemoved;
         event FDACache.AddElementEventHandler TerrainRemoved;
         event FDACache.AddElementEventHandler ImpactAreaRemoved;
@@ -43,6 +45,7 @@ namespace FdaViewModel.Study
         event FDACache.AddElementEventHandler ConditionsElementRemoved;
         event FDACache.AddElementEventHandler OccTypeElementRemoved;
 
+        event FDACache.UpdateElementEventHandler PlanUpdated;
         event FDACache.UpdateElementEventHandler RatingUpdated;
         event FDACache.UpdateElementEventHandler TerrainUpdated;
         event FDACache.UpdateElementEventHandler ImpactAreaUpdated;

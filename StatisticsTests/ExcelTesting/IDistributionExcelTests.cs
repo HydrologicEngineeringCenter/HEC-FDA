@@ -143,19 +143,190 @@ namespace StatisticsTests.ExcelTesting
             IDistributionExcelData.SaveData(
                 TestDataRelativePath + "Triangular.xlsx", 
                 (int)IDistributionTestEnum.Max, testRowIndex, resultsColumnIndex, results);
+
+
         }
-        //[Theory]
-        //[IDistributionExcelData(TestDataRelativePath + "Uniform.xlsx", IDistributionTestEnum.Max, Statistics.IDistributionEnum.Uniform)]
-        //public void Uniform_MaximumTests(double min, double max, int n, double expected, int testRowIndex, int resultsColumnIndex)
-        //{
-        //    Statistics.Distributions.Uniform testObj = new Statistics.Distributions.Uniform(min, max);
-        //    double actual = testObj.Range.Max;
-        //    bool passed = actual == expected;
-        //    DataTable results = CreateTestResultTable(actual, passed);
-        //    IDistributionExcelData.SaveData(
-        //        TestDataRelativePath + "Uniform.xlsx", 
-        //        (int)IDistributionTestEnum.Max, testRowIndex, resultsColumnIndex, results);
-        //}
+
         #endregion
+
+
+        #region Uniform Tests
+        private const int WS_MIN = 1;
+        private const int WS_MAX = 2;
+        private const int WS_MODE = 3;
+        private const int WS_MEAN = 4;
+        private const int WS_MEDIAN = 5;
+        private const int WS_VARIANCE = 6;
+        private const int WS_STDEV = 7;
+        private const int WS_SKEWNESS = 8;
+        private const int WS_SAMPLESIZE = 9;
+        private const int WS_PDF = 10;
+        private const int WS_CDF = 11;
+        private const int WS_INVERSE_CDF = 12;
+
+
+
+        [Theory]
+        [ExcelUniformData(TestDataRelativePath + "Uniform.xlsx", WS_MIN)]
+        public void Uniform_Min_Tests(double mode, double min, double max,double sampleSize, double expected, int testRowIndex, int resultsColumnIndex)
+        {
+            Statistics.Distributions.Uniform testObj = new Statistics.Distributions.Uniform(min, max);
+            double actual = testObj.Range.Min;
+            bool passed = actual == expected;
+            ExcelDataAttributeBase.SaveData(TestDataRelativePath + "Uniform.xlsx", WS_MIN, testRowIndex, resultsColumnIndex, CreateDataTable(actual), passed);
+            Assert.True(passed);
+        }
+
+        [Theory]
+        [ExcelUniformData(TestDataRelativePath + "Uniform.xlsx", WS_MAX)]
+        public void Uniform_Max_Tests(double mode, double min, double max, double sampleSize, double expected, int testRowIndex, int resultsColumnIndex)
+        {
+            Statistics.Distributions.Uniform testObj = new Statistics.Distributions.Uniform(min, max);
+            double actual = testObj.Range.Max;
+            bool passed = actual == expected;
+            ExcelDataAttributeBase.SaveData(TestDataRelativePath + "Uniform.xlsx", WS_MAX, testRowIndex, resultsColumnIndex, CreateDataTable(actual), passed);
+            Assert.True(passed);
+        }
+
+        [Theory]
+        [ExcelUniformData(TestDataRelativePath + "Uniform.xlsx", WS_MODE)]
+        public void Uniform_Mode_Tests(double mode, double min, double max, double sampleSize, double expected, int testRowIndex, int resultsColumnIndex)
+        {
+            Statistics.Distributions.Uniform testObj = new Statistics.Distributions.Uniform(min, max);
+            double actual = testObj.Mode;
+            bool passed = actual == expected;
+            ExcelDataAttributeBase.SaveData(TestDataRelativePath + "Uniform.xlsx", WS_MODE, testRowIndex, resultsColumnIndex, CreateDataTable(actual), passed);
+            Assert.True(passed);
+        }
+
+        [Theory]
+        [ExcelUniformData(TestDataRelativePath + "Uniform.xlsx", WS_MEAN)]
+        public void Uniform_Mean_Tests(double mode, double min, double max, double sampleSize, double expected, int testRowIndex, int resultsColumnIndex)
+        {
+            Statistics.Distributions.Uniform testObj = new Statistics.Distributions.Uniform(min, max);
+            double actual = testObj.Mean;
+            bool passed = actual == expected;
+            ExcelDataAttributeBase.SaveData(TestDataRelativePath + "Uniform.xlsx", WS_MEAN, testRowIndex, resultsColumnIndex, CreateDataTable(actual), passed);
+            Assert.True(passed);
+        }
+
+        [Theory]
+        [ExcelUniformData(TestDataRelativePath + "Uniform.xlsx", WS_MEDIAN)]
+        public void Uniform_Median_Tests(double mode, double min, double max, double sampleSize, double expected, int testRowIndex, int resultsColumnIndex)
+        {
+            Statistics.Distributions.Uniform testObj = new Statistics.Distributions.Uniform(min, max);
+            double actual = testObj.Median;
+            bool passed = actual == expected;
+            ExcelDataAttributeBase.SaveData(TestDataRelativePath + "Uniform.xlsx", WS_MEDIAN, testRowIndex, resultsColumnIndex, CreateDataTable(actual), passed);
+            Assert.True(passed);
+        }
+
+        [Theory]
+        [ExcelUniformData(TestDataRelativePath + "Uniform.xlsx", WS_VARIANCE)]
+        public void Uniform_Variance_Tests(double mode, double min, double max, double sampleSize, double expected, int testRowIndex, int resultsColumnIndex)
+        {
+            Statistics.Distributions.Uniform testObj = new Statistics.Distributions.Uniform(min, max);
+            double actual = testObj.Variance;
+            bool passed = actual == expected;
+            ExcelDataAttributeBase.SaveData(TestDataRelativePath + "Uniform.xlsx", WS_VARIANCE, testRowIndex, resultsColumnIndex, CreateDataTable(actual), passed);
+            Assert.True(passed);
+        }
+
+        [Theory]
+        [ExcelUniformData(TestDataRelativePath + "Uniform.xlsx", WS_STDEV)]
+        public void Uniform_StDev_Tests(double mode, double min, double max, double sampleSize, double expected, int testRowIndex, int resultsColumnIndex)
+        {
+            Statistics.Distributions.Uniform testObj = new Statistics.Distributions.Uniform(min, max);
+            double actual = testObj.StandardDeviation;
+            bool passed = actual == expected;
+            ExcelDataAttributeBase.SaveData(TestDataRelativePath + "Uniform.xlsx", WS_STDEV, testRowIndex, resultsColumnIndex, CreateDataTable(actual), passed);
+            Assert.True(passed);
+        }
+
+        [Theory]
+        [ExcelUniformData(TestDataRelativePath + "Uniform.xlsx", WS_SKEWNESS)]
+        public void Uniform_Skewness_Tests(double mode, double min, double max, double sampleSize, double expected, int testRowIndex, int resultsColumnIndex)
+        {
+            Statistics.Distributions.Uniform testObj = new Statistics.Distributions.Uniform(min, max);
+            double actual = testObj.Skewness;
+            bool passed = actual == expected;
+            ExcelDataAttributeBase.SaveData(TestDataRelativePath + "Uniform.xlsx", WS_SKEWNESS, testRowIndex, resultsColumnIndex, CreateDataTable(actual), passed);
+            Assert.True(passed);
+        }
+
+        [Theory]
+        [ExcelUniformData(TestDataRelativePath + "Uniform.xlsx", WS_SAMPLESIZE)]
+        public void Uniform_SampleSize_Tests(double mode, double min, double max, double sampleSize, double expected, int testRowIndex, int resultsColumnIndex)
+        {
+            Statistics.Distributions.Uniform testObj = new Statistics.Distributions.Uniform(min, max);
+            double actual = testObj.SampleSize;
+            bool passed = actual == expected;
+            ExcelDataAttributeBase.SaveData(TestDataRelativePath + "Uniform.xlsx", WS_SAMPLESIZE, testRowIndex, resultsColumnIndex, CreateDataTable(actual), passed);
+            Assert.True(passed);
+        }
+
+        [Theory]
+        [ExcelUniformData(TestDataRelativePath + "Uniform.xlsx", WS_PDF)]
+        public void Uniform_PDF_Tests(double mode, double min, double max, double xVal, double expected, int testRowIndex, int resultsColumnIndex)
+        {
+            Statistics.Distributions.Uniform testObj = new Statistics.Distributions.Uniform(min, max);
+            double actual = testObj.PDF(xVal);
+            bool passed = actual == expected;
+            ExcelDataAttributeBase.SaveData(TestDataRelativePath + "Uniform.xlsx", WS_PDF, testRowIndex, resultsColumnIndex, CreateDataTable(actual), passed);
+            Assert.True(passed);
+        }
+
+        [Theory]
+        [ExcelUniformData(TestDataRelativePath + "Uniform.xlsx", WS_CDF)]
+        public void Uniform_CDF_Tests(double mode, double min, double max, double xVal, double expected, int testRowIndex, int resultsColumnIndex)
+        {
+            Statistics.Distributions.Uniform testObj = new Statistics.Distributions.Uniform(min, max);
+            double actual = testObj.CDF(xVal);
+            bool passed = actual == expected;
+            ExcelDataAttributeBase.SaveData(TestDataRelativePath + "Uniform.xlsx", WS_CDF, testRowIndex, resultsColumnIndex, CreateDataTable(actual), passed);
+            Assert.True(passed);
+        }
+
+        [Theory]
+        [ExcelUniformData(TestDataRelativePath + "Uniform.xlsx", WS_INVERSE_CDF)]
+        public void Uniform_Inverse_CDF_Tests(double mode, double min, double max, double xVal, double expected, int testRowIndex, int resultsColumnIndex)
+        {
+            Statistics.Distributions.Uniform testObj = new Statistics.Distributions.Uniform(min, max);
+            double actual = testObj.InverseCDF(xVal);
+            bool passed = actual == expected;
+            ExcelDataAttributeBase.SaveData(TestDataRelativePath + "Uniform.xlsx", WS_INVERSE_CDF, testRowIndex, resultsColumnIndex, CreateDataTable(actual), passed);
+            Assert.True(passed);
+        }
+
+        #endregion
+
+
+        private DataTable CreateDataTable(List<object> actualYs)
+        {
+            DataTable dt = new DataTable("DataTable");
+            dt.Columns.Add("Actual");
+            for (int i = 0; i < actualYs.Count; i++)
+            {
+                dt.Rows.Add(actualYs[i]);
+            }
+
+            return dt;
+        }
+
+        private DataTable CreateDataTable(double result)
+        {
+            DataTable dt = new DataTable("DataTable");
+            dt.Columns.Add("Actual");
+            dt.Rows.Add(result);
+            return dt;
+        }
+        private DataTable CreateDataTable(string result)
+        {
+            DataTable dt = new DataTable("DataTable");
+            dt.Columns.Add("Actual");
+            dt.Rows.Add(result);
+            return dt;
+        }
+
     }
 }

@@ -113,7 +113,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public bool Import(List<IOccupancyType> occtypes)
         {
             string groupName = Path.GetFileNameWithoutExtension(SelectedPath);
-            Dictionary<string, bool[]> selectedTabsDictionary = new Dictionary<string, bool[]>();
+            //Dictionary<string, bool[]> selectedTabsDictionary = new Dictionary<string, bool[]>();
 
             //OccTypePersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetOccTypeManager();
             //OccupancyTypesElement elem = new OccupancyTypesElement(occtypeGroupName, occtypes, selectedTabsDictionary);

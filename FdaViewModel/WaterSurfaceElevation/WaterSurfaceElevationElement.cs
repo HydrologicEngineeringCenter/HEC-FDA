@@ -37,48 +37,80 @@ namespace FdaViewModel.WaterSurfaceElevation
             get { return _RelativePathAndProbability; }
             set { _RelativePathAndProbability = value;  }
         }
-
-     
+   
 
         #endregion
         #region Constructors
-        
+        /// <summary>
+        /// This constructor is only used when importing from old fda files. Old fda does not have paths to map layer files.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="description"></param>
+        /// <param name="isDepthGrids"></param>
+        public WaterSurfaceElevationElement(string name, string description,List<double> probabilites, bool isDepthGrids):base()
+        {
+            List<PathAndProbability> pathAndProbs = new List<PathAndProbability>();
+            foreach(double p in probabilites)
+            {
+                pathAndProbs.Add(new PathAndProbability("NA", p));
+            }
+            SetConstructorParams(name, description,pathAndProbs, isDepthGrids);
+        }
         public WaterSurfaceElevationElement(string name, string description, List<PathAndProbability> relativePathAndProbabilities,bool isDepthGrids) : base()
         {
+            SetConstructorParams(name, description,relativePathAndProbabilities, isDepthGrids);
+        }
+
+        private void SetConstructorParams(string name, string description,List<PathAndProbability> pathAndProbs, bool isDepthGrids)
+        {
+            RelativePathAndProbability = pathAndProbs;
             Name = name;
             Description = description;
-            if(Description == null)
+            if (Description == null)
             {
                 Description = "";
             }
-            RelativePathAndProbability = relativePathAndProbabilities;
             IsDepthGrids = isDepthGrids;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/WaterSurfaceElevation.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/WaterSurfaceElevation.png");
 
-
-            Utilities.NamedAction remove = new Utilities.NamedAction();
+            NamedAction remove = new NamedAction();
             remove.Header = "Remove";
             remove.Action = RemoveElement;
 
-            Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
+            NamedAction renameElement = new NamedAction(this);
             renameElement.Header = "Rename";
             renameElement.Action = Rename;
 
-
-
-            Utilities.NamedAction mapWindow = new Utilities.NamedAction();
+            NamedAction mapWindow = new NamedAction();
             mapWindow.Header = "Add to Map Window";
             mapWindow.Action = AddWSEToMapWindow;
 
-            List<Utilities.NamedAction> localactions = new List<Utilities.NamedAction>();
+            //"NA" has been placed in the "path" column of the database. That means that this WSE came
+            //from old FDA and doesn't have a path associated with it and so we disable this menu item.
+            bool hasMapLayers = true;
+            if(pathAndProbs.Count>0)
+            {
+                if(pathAndProbs[0].Path.Equals("NA"))
+                {
+                    hasMapLayers = false;
+                }
+            }
+
+            if (!hasMapLayers)
+            {
+                mapWindow.IsEnabled = false;
+                mapWindow.ToolTip = "No map layers exist when imported from FDA 1.0";
+            }
+
+            List<NamedAction> localactions = new List<Utilities.NamedAction>();
             localactions.Add(remove);
             localactions.Add(renameElement);
             localactions.Add(mapWindow);
 
             Actions = localactions;
             TableContainsGeoData = true;
-
         }
+
 
 
         #endregion

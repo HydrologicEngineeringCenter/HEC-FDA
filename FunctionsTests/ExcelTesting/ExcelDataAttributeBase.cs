@@ -93,12 +93,12 @@ namespace FunctionsTests.ExcelTesting
                                 }
                                 break;
                             }
-                        //case DataLength.FirstLineOnly:
-                        //    {
-                        //        double dbl = GetDoubleValueSingleRow(dataStartIndex, colNumber, ws);
-                        //        test1[i] = dbl;
-                        //        break;
-                        //    }
+                        case DataLength.FirstLineOnly:
+                            {
+                                double dbl = GetDoubleValueSingleRow(dataStartIndex, colNumber, ws);
+                                test1[i] = dbl;
+                                break;
+                            }
                     }
                     
                 }
@@ -197,9 +197,9 @@ namespace FunctionsTests.ExcelTesting
             List<object[]> tests = new List<object[]>();
             if(MultipleWorksheets)
             {
-                foreach(int ws in Worksheets)
+                foreach(int wsNumber in Worksheets)
                 {
-                    tests.AddRange( GetTestsForWorksheet(workbook, ws));
+                    tests.AddRange( GetTestsForWorksheet(workbook, wsNumber));
                 }
             }
             else
@@ -241,7 +241,7 @@ namespace FunctionsTests.ExcelTesting
 
         protected static int FindNextTestIndex(IXLWorksheet ws, int startLookingAtRow)
         {
-            for (int i = startLookingAtRow; i < startLookingAtRow + 10; i++)
+            for (int i = startLookingAtRow; i < startLookingAtRow + 15; i++)
             {
                 object value = ws.Row(i).Cell(1).Value;
                 double dbl;

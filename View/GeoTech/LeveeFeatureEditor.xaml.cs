@@ -1,4 +1,7 @@
-﻿using System;
+﻿using FdaViewModel.Editors;
+using FunctionsView.ViewModel;
+using HEC.Plotting.SciChart2D.Charts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,13 +29,31 @@ namespace View.GeoTech
          
         }
 
-        //private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    FdaViewModel.GeoTech.LeveeFeatureEditorVM vm = (FdaViewModel.GeoTech.LeveeFeatureEditorVM)this.DataContext;
-        //    if (vm.IsInEditMode == true)
-        //    {
-        //        txt_name.IsReadOnly = true;
-        //    }
-        //}
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            CurveEditorVM vm = (CurveEditorVM)this.DataContext;
+            CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
+            Chart2D chart = new Chart2D(editorVM.CoordinatesChartViewModel);
+            PlotGrid.Children.Add(chart);
+            Grid.SetColumn(chart, 2);
+            //Grid.SetColumnSpan(chart, 2);
+            //Grid.SetRow(chart, 3);
+        }
+
+        private void rad_default_Checked(object sender, RoutedEventArgs e)
+        {
+            //it comes in here when initializing
+            if(PlotGrid == null)
+            {
+                return;
+            }
+            PlotGrid.Visibility = Visibility.Hidden;
+        }
+
+        private void rad_userDefined_Checked(object sender, RoutedEventArgs e)
+        {
+            PlotGrid.Visibility = Visibility.Visible;
+
+        }
     }
 }

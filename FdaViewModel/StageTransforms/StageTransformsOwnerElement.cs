@@ -44,10 +44,7 @@ namespace FdaViewModel.StageTransforms
             AddElement(i);
             cache.ExteriorInteriorParent = i;
         }
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
+      
         #endregion
         #region Functions
  

@@ -4,6 +4,13 @@
              
              xmlns:EditorsVM ="clr-namespace:FdaViewModel.Editors;assembly=FdaViewModel"
              
+             
+             xmlns:AlternativeVM="clr-namespace:FdaViewModel.Alternatives;assembly=FdaViewModel"
+             xmlns:AlternativeView="clr-namespace:View.Alternatives"
+             
+             xmlns:PlansVM="clr-namespace:FdaViewModel.Plans;assembly=FdaViewModel"
+             xmlns:PlansView="clr-namespace:View.Plans"
+             
              xmlns:FrequencyRelationshipsVM ="clr-namespace:FdaViewModel.FrequencyRelationships;assembly=FdaViewModel"
              xmlns:FrequencyRelationshipsView ="clr-namespace:View.FrequencyRelationships"
              
@@ -87,6 +94,16 @@
         </Style>
         
         
+        <!--alternatives region-->
+        <DataTemplate DataType="{x:Type AlternativeVM:CreateNewAlternativeVM }" >
+            <AlternativeView:CreateNewAlternative/>
+        </DataTemplate>
+        
+        <!--Plans Region-->
+        <DataTemplate DataType="{x:Type PlansVM:CreateNewPlanVM }" >
+            <PlansView:CreateNewPlan/>
+        </DataTemplate>
+
         <!--Editors Region-->
         <DataTemplate DataType="{x:Type EditorsVM:CurveEditorVM }" >
             <StageTransformsView:RatingCurveEditor/>
@@ -190,9 +207,9 @@
         <DataTemplate DataType="{x:Type InventoryVM:ImportFromNSIVM }" >
             <InventoryView:ImportFromNSI/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type InventoryVM:ImportFromShapefileVM }" >
+        <!--<DataTemplate DataType="{x:Type InventoryVM:ImportFromShapefileVM }" >
             <InventoryView:ImportFromShapefile/>
-        </DataTemplate>
+        </DataTemplate>-->
         <DataTemplate DataType="{x:Type DamageCategoryVM:DamageCategoriesVM }" >
             <DamageCategoryView:DamageCategoryEditor/>
         </DataTemplate>

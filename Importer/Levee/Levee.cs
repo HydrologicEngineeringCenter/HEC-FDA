@@ -5,11 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
 using System.IO;
+using Functions;
+using FdaViewModel.GeoTech;
+using Model.Inputs.Functions.ImpactAreaFunctions;
+using FdaViewModel.StageTransforms;
 
 namespace Importer
 {
     [Serializable]
-    public class Levee : FdObjectDataLook
+    public class Levee : FdObjectDataLook, ISaveToSqlite
     {
         #region Notes
         // Created By: $username$
@@ -20,6 +24,14 @@ namespace Importer
         private List<Pair_xy> _GeoTech = new List<Pair_xy>();
         #endregion
         #region Properties
+        public List<Pair_xy> ExteriorInteriorPairs
+        {
+            get { return _IntExt; }
+        }
+        public List<Pair_xy> FailureFunctionPairs
+        {
+            get { return _GeoTech; }
+        }
         public double ElevationTopOfLevee
         { get; set; }
         public int NumOrdsIntExt { get; set; }
@@ -298,6 +310,53 @@ namespace Importer
             }
             return;
         }
+
+        public void SaveToSqlite()
+        {
+            if (FailureFunctionPairs.Count > 0)
+            {
+                SaveFailureFunction();
+            }
+            if (ExteriorInteriorPairs.Count > 0)
+            {
+                SaveExtIntFunction();
+            }
+        }
+
+        private void SaveExtIntFunction()
+        {
+            List<ICoordinate> extIntCoords = new List<ICoordinate>();
+            foreach (Pair_xy xy in ExteriorInteriorPairs)
+            {
+                double x = xy.GetX();
+                double y = xy.GetY();
+                extIntCoords.Add(ICoordinateFactory.Factory(x, y));
+            }
+            ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(extIntCoords, InterpolationEnum.Linear);
+            Model.IFdaFunction func = ImpactAreaFunctionFactory.Factory(coordsFunction, ImpactAreaFunctionEnum.ExteriorInteriorStage);
+            string editDate = DateTime.Now.ToString("G");
+            ExteriorInteriorElement elem = new ExteriorInteriorElement(Name, editDate, Description, func);
+            FdaViewModel.Saving.PersistenceFactory.GetExteriorInteriorManager().SaveNewElement(elem);
+        }
+
+        private void SaveFailureFunction()
+        {
+            List<ICoordinate> failureCoords = new List<ICoordinate>();
+            foreach (Pair_xy xy in FailureFunctionPairs)
+            {
+                double x = xy.GetX();
+                double y = xy.GetY();
+                failureCoords.Add(ICoordinateFactory.Factory(x, y));
+            }
+
+            ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(failureCoords, InterpolationEnum.Linear);
+            Model.IFdaFunction func = ImpactAreaFunctionFactory.Factory(coordsFunction, ImpactAreaFunctionEnum.LeveeFailure);
+            string editDate = DateTime.Now.ToString("G");
+           // FailureFunctionElement elem = new FailureFunctionElement(Name, editDate, Description, func, leveeFeatureElement);
+            //FdaViewModel.Saving.PersistenceFactory.GetFailureFunctionManager().SaveNewElement(elem);
+            LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(Name,editDate, Description, ElevationTopOfLevee, false,  func);
+        }
+
         #endregion
         #region Functions
         #endregion

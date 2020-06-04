@@ -18,6 +18,8 @@ namespace FdaViewModel.Study
 {
     public class StudyElement : ParentElement
     {
+        private const string IMPORT_FROM_OLD_FDA = "Import Study From Fda 1";
+
         public event EventHandler RenameTreeViewElement;
         public event EventHandler AddBackInTreeViewElement;
         public event EventHandler OpeningADifferentStudy;
@@ -59,7 +61,7 @@ namespace FdaViewModel.Study
             open.Action = OpenStudy;
 
             NamedAction importStudyFromOldFda = new NamedAction();
-            importStudyFromOldFda.Header = "Import Study From Fda 1";
+            importStudyFromOldFda.Header = IMPORT_FROM_OLD_FDA;
             importStudyFromOldFda.Action = ImportStudyFromOldFda;
 
             NamedAction create = new NamedAction();
@@ -123,6 +125,7 @@ namespace FdaViewModel.Study
 
 
             Actions = localactions;
+
 
             //Save();
         }
@@ -531,18 +534,18 @@ namespace FdaViewModel.Study
                 Saving.PersistenceFactory.StudyCacheForSaving = cache;
 
 
-                Watershed.TerrainOwnerElement t = new Watershed.TerrainOwnerElement();
+                TerrainOwnerElement t = new TerrainOwnerElement();
                 AddElement(t);
                 t.RenameMapTreeViewElement += RenameTreeViewElement;
                 t.AddMapTreeViewElementBackIn += AddBackInTreeViewElement;
                 cache.TerrainParent = t;
 
-                ImpactArea.ImpactAreaOwnerElement i = new ImpactArea.ImpactAreaOwnerElement();
+                ImpactAreaOwnerElement i = new ImpactAreaOwnerElement();
                 AddElement(i);
                 cache.ImpactAreaParent = i;
 
 
-                WaterSurfaceElevation.WaterSurfaceElevationOwnerElement wse = new WaterSurfaceElevation.WaterSurfaceElevationOwnerElement();
+                WaterSurfaceElevationOwnerElement wse = new WaterSurfaceElevationOwnerElement();
 
                 AddElement(wse);
 
@@ -564,6 +567,7 @@ namespace FdaViewModel.Study
                 //this.AddElement(h);
 
                 GeoTech.LateralStructuresOwnerElement ls = new GeoTech.LateralStructuresOwnerElement();
+                //todo: why doesn't this pass in the cache? is this just a mistake?
                 ls.AddBaseElements();
                 AddElement(ls);
 
@@ -575,6 +579,12 @@ namespace FdaViewModel.Study
 
                 Conditions.ConditionsOwnerElement c = new Conditions.ConditionsOwnerElement();
                 AddElement(c);
+
+                Plans.PlansOwnerElement plans = new Plans.PlansOwnerElement();
+                AddElement(plans);
+
+                Alternatives.AlternativeOwnerElement alt = new Alternatives.AlternativeOwnerElement();
+                AddElement(alt);
 
                 if (loadStudyCache)
                 {

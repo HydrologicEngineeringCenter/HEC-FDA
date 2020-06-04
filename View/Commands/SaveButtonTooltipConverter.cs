@@ -12,7 +12,7 @@ namespace View.Commands
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            bool hasFatalError = (bool)values[0];
+                bool hasFatalError = (bool)values[0];
             bool HasChanges = (bool)values[1];
             string errorMsg = (string)values[2];
 
