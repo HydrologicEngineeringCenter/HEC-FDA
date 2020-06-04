@@ -38,23 +38,13 @@ namespace Functions.Coordinates
             return validator.IsValid(this, out msgs);
         }
         public string Print(bool round = false) => $"({X.Print(round)}, {Y.Print(round)})";
-        public override bool Equals(object obj)
+        public bool Equals(ICoordinate obj)
         {
             return obj is CoordinateVariableY coord &&
                    X.Equals(coord.X) &&
-                   Y.Equals(coord.Y);
-                   
+                   Y.Equals(coord.Y);                  
                    //EqualityComparer<Distribution>.Default.Equals((Distribution)Y, (Distribution)coord.Y);
         }
-
-        public override int GetHashCode()
-        {
-            var hashCode = 1861411795;
-            hashCode = hashCode * -1521134295 + X.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<Distribution>.Default.GetHashCode((Distribution)Y);
-            return hashCode;
-        }
-
         public XElement WriteToXML()
         {
             XElement xVal = X.WriteToXML();
@@ -64,6 +54,13 @@ namespace Functions.Coordinates
             coordElem.Add(yVal);
             return coordElem;
         }
+        //public override int GetHashCode()
+        //{
+        //    var hashCode = 1861411795;
+        //    hashCode = hashCode * -1521134295 + X.GetHashCode();
+        //    hashCode = hashCode * -1521134295 + EqualityComparer<Distribution>.Default.GetHashCode((Distribution)Y);
+        //    return hashCode;
+        //}
         #endregion
     }
 }

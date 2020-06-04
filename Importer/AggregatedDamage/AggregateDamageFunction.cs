@@ -417,7 +417,7 @@ namespace Importer
             }
             //always use linear. This is the only option in Old Fda.
             ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(depthsList, damagesList, InterpolationEnum.Linear);
-            IFdaFunction stageDamage = ImpactAreaFunctionFactory.Factory(func, ImpactAreaFunctionEnum.InteriorStageDamage);
+            IFdaFunction stageDamage = ImpactAreaFunctionFactory.Factory(func, IFdaFunctionEnum.InteriorStageDamage);
             AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, CalculationDate, Description, stageDamage, CreationMethodEnum.Imported);
             return elem;
         }

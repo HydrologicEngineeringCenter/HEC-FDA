@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Functions
 {
-    public class ConstantSampler : ISampler
+    internal class ConstantSampler : ISampler
     {
         //I think the function will always be an OrdinateY function.
         public bool CanSample(ICoordinatesFunction coordinatesFunction)

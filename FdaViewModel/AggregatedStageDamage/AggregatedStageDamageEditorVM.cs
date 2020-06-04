@@ -72,7 +72,7 @@ namespace FdaViewModel.AggregatedStageDamage
             ownerValidationRules(this);
 
             ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xValues, yValues);
-            Curve = ImpactAreaFunctionFactory.Factory(func, ImpactAreaFunctionEnum.InteriorStageDamage);
+            Curve = ImpactAreaFunctionFactory.Factory(func, IFdaFunctionEnum.InteriorStageDamage);
         }
 
         public AggregatedStageDamageEditorVM(AggregatedStageDamageElement elem, Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) :base(elem)

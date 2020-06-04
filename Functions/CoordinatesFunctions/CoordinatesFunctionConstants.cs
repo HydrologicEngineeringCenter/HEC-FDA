@@ -713,6 +713,7 @@ namespace Functions.CoordinatesFunctions
         }
         #endregion
         #region Equals()
+        public bool Equals(IFunction fx) => fx.GetType() == typeof(CoordinatesFunctionConstants) ? Equals((CoordinatesFunctionConstants)fx) : false;
         public bool Equals(ICoordinatesFunction function)
         {
             //I don't think i have to check the domain, range, or order because
@@ -743,16 +744,31 @@ namespace Functions.CoordinatesFunctions
             }
             return true;
         }
-        public bool Equals(CoordinatesFunctionConstants n)
+        public bool Equals(CoordinatesFunctionConstants fx)
         {
             //return n.Range.Equals(Range) && n.Domain.Equals(Domain) && n.Coordinates.SequenceEqual(Coordinates);
-            bool rangesEqual = n.Range.Equals(Range);
-            bool domainsEqual = n.Domain.Equals(Domain);
-            bool coordsEqual = n.Coordinates.SequenceEqual(Coordinates);
-
-            return rangesEqual && domainsEqual && coordsEqual;
+            bool equalRange = Range.Equals(fx.Range);
+            bool equalDomain = Domain.Equals(fx.Domain); 
+            bool equalInterpolator = Interpolator == fx.Interpolator;
+            bool equalCoordinates = IsEqualCoordinates(fx.Coordinates);
+            return equalRange && equalDomain && equalInterpolator && equalCoordinates;
         }
-
+        private bool IsEqualCoordinates(List<ICoordinate> coordinates)
+        {
+            /* To be equal there must be:
+             *  (1) the same number of coordinates.
+             *  (2) each coordinate must be equal.
+             *  (3) the ordinates must be in the same order.
+             * As soon as one of these conditions is violated false is returned.
+             */
+            if (Coordinates.Count == coordinates.Count)
+            {
+                for (int i = 0; i < Coordinates.Count; i++)
+                    if (!Coordinates[i].Equals(coordinates[i])) return false;
+                return true;
+            }
+            else return false;
+        }
         /* This region contains 2 functions that can probably be deleted:
          *      (1) override bool Equals(Object)
          *      (2) override int GetHashCode()

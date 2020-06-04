@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Functions
 {
+    /// <summary>
+    /// Provides a public interface for internal classes that are used to sample 
+    /// </summary>
     public interface ISampler
     {
         IFunction Sample(ICoordinatesFunction coordinatesFunction, double probability);

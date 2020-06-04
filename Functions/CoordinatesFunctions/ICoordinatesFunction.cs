@@ -31,6 +31,10 @@ namespace Functions
         /// </summary>
         Utilities.IRange<double> Domain { get; }
         /// <summary>
+        /// Provides the minimum and maximum Y values for the <see cref="IFunction"/>.
+        /// </summary>
+        Utilities.IRange<double> Range { get; }
+        /// <summary>
         /// Describes the <see cref="IOrdinate.Type"/> of the <see cref="ICoordinate.Y"/> values in the set of <see cref="Coordinates"/>. 
         /// </summary>
         Functions.IOrdinateEnum DistributionType { get; }

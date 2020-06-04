@@ -9,62 +9,102 @@ using Utilities;
 namespace Model.Validation
 {
 
-    internal class ElevationValidator: IValidator<IElevation>
+    internal class ElevationValidator<T>: IValidator<IElevation<T>>
     {
-        public IMessageLevels IsValid(IElevation obj, out IEnumerable<IMessage> msgs)
+        internal const int _MinElevationParameterEnum = 20;
+        internal const int _MaxElevationParameterEnum = 29;
+        internal const double _LowestGroundElevation = -1365;
+        internal const double _HighestGroundElevation = 29035;
+        internal const double _TallestDamOrLevee = 1001;
+        internal const double _LowestAssetHeight = 0;
+        internal const double _HighestAssetHeight = 100;
+
+        public IMessageLevels IsValid(IElevation<T> obj, out IEnumerable<IMessage> msgs)
         {
             msgs = ReportErrors(obj);
             return msgs.Max();
         }
-        public IEnumerable<IMessage> ReportErrors(IElevation obj)
+        public IEnumerable<IMessage> ReportErrors(IElevation<T> obj)
         {
             List<IMessage> msgs = new List<IMessage>();
-            switch (obj.Type)
+            switch (obj.ParameterType)
             {
-                case IElevationEnum.Ground:
-                    if (obj.Height.Range.Min < -1355d || obj.Height.Range.Max > 29035)
+                case IParameterEnum.GroundElevation:
+                    if (obj.Range.Min < _LowestGroundElevation || 
+                        obj.Range.Max > _HighestGroundElevation)
                     {
-                        msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The specified ground elevation range: {obj.Height.Range.Print(true)} exceeds the approximate range of ground elevations on earth: [-1355, 29035] in feet. This is likely to produce undesirable results."));
+                        msgs.Add(IMessageFactory.Factory(IMessageLevels.Error,
+                            NoticeMessage(obj),
+                            ExtendedMessage(obj, _LowestGroundElevation, _HighestGroundElevation, obj.Units)));    
                     }
                     break;
-                case IElevationEnum.AssetHeight:
-                    if (obj.Height.Range.Min < -10d || obj.Height.Range.Max > 100)
+                case IParameterEnum.AssetHeight:
+                    if (obj.Range.Min < _LowestAssetHeight || 
+                        obj.Range.Max > _HighestAssetHeight)
                     {
-                        msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The specified asset height (relative to the land) range: {obj.Height.Range.Print(true)} exceeds the expected maximum and minimum range: [-10, 100] in feet. This is likely to produce undesirable results."));
+                        msgs.Add(IMessageFactory.Factory(IMessageLevels.Error,
+                            NoticeMessage(obj),
+                            ExtendedMessage(obj, _LowestAssetHeight, _HighestAssetHeight, obj.Units)));
                     }
                     break;
-                case IElevationEnum.Asset:
-                    if (obj.Height.Range.Min < -1365d || obj.Height.Range.Max > 29135)
+                case IParameterEnum.AssetElevation:
+                    if (obj.Range.Min < _LowestGroundElevation + _LowestAssetHeight || 
+                        obj.Range.Max > _HighestGroundElevation + _HighestAssetHeight)
                     {
-                        msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The specified asset elevation range: {obj.Height.Range.Print(true)} exceeds the expected range (based on maximum ground elevations on earth, plus the expected extremes in asset heights): [-1365, 29135] in feet. This is likely to produce undesirable results."));
+                        msgs.Add(IMessageFactory.Factory(IMessageLevels.Error,
+                            NoticeMessage(obj),
+                            ExtendedMessage(obj, _LowestGroundElevation + _LowestAssetHeight, _HighestGroundElevation + _HighestAssetHeight, obj.Units)));      
                     }
                     break;
-                case IElevationEnum.Levee:
-                    if (!obj.IsConstant) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The levee elevation is invalid because it is not constant.")); 
-                    if (obj.Height.Value() < -1355d || obj.Height.Value() > 29135)
+                case IParameterEnum.LateralStructureElevation:
+                    if (obj.Range.Min < _LowestGroundElevation || 
+                        obj.Range.Max > _HighestGroundElevation + _TallestDamOrLevee)
                     {
-                        msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The specified levee elevation: {obj.Height.Value().Print()} exceeds the approximate range of ground elevations on earth plus a reasonable levee height: [-1355, 29035] in feet. This is likely to produce undesirable results."));
+                        msgs.Add(IMessageFactory.Factory(IMessageLevels.Error,
+                            NoticeMessage(obj),
+                            ExtendedMessage(obj, _LowestGroundElevation, _HighestGroundElevation + _TallestDamOrLevee, obj.Units))); 
                     }
                     break;
                 default:
                     msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, "The elevation is invalid. It is not set to an acceptable type."));
                     break;
             }
-            if (obj.Height.Messages.Any()) msgs.Add(IMessageFactory.Factory(obj.Height.Messages.Max(), $"The elevation height contains the following messages: \r\n {obj.Height.Messages.PrintTabbedListOfMessages()}"));
             return msgs;
         }
-        public static bool IsConstructable(IElevationEnum t, IOrdinate value, out string msg)
+        private string NoticeMessage(IElevation<T> obj) => $"The specified {obj.Print(true, true)} is outside the allowable range.";
+        private string ExtendedMessage(IElevation<T> obj, double min, double max, UnitsEnum units)
         {
-            msg = "";
-            if (t.IsNull() || value.IsNull()) msg += $"The {nameof(IElevation)} cannot be constructed because the {nameof(IElevation.Type)} or {nameof(IElevation.Height)} is null.";
-            if (t == IElevationEnum.NotSet) msg += $"The {nameof(IElevation)} cannot be constructed because the {nameof(IElevation.Type)} is not set.";
-            if (value.Value().IsFinite()) msg += $"The {nameof(IElevation)} cannot be constructed because the height is not a finite numerical value.";
-            return msg.Length == 0;
+            return $"The specified {obj.ParameterType} range: {obj.Range.Print(true)} exceeds the allowable approximate range of {AllowableRangeMessage(obj.ParameterType)}: " +
+                $"[{UnitsUtilities.Print(UnitsUtilities.ConvertLengths(_LowestGroundElevation, UnitsEnum.Foot, units), units, true, false)}," +
+                $" {UnitsUtilities.Print(UnitsUtilities.ConvertLengths(_HighestGroundElevation, UnitsEnum.Foot, units), units, true, false)}].";
+        }
+        private string AllowableRangeMessage(IParameterEnum type)
+        {
+            switch (type)
+            {
+                case IParameterEnum.GroundElevation:
+                case IParameterEnum.ExteriorElevation:
+                case IParameterEnum.InteriorElevation:
+                    return "ground elevations on Earth";
+                case IParameterEnum.AssetHeight:
+                    return "reasonable height of assets above the ground";
+                case IParameterEnum.AssetElevation:
+                    return "reasonable elevation of assets (including ground elevations) on earth";
+                case IParameterEnum.LateralStructureElevation:
+                    return "ground elevations on earth plus a reasonable lateral structure height";
+                default:
+                    throw new NotSupportedException();
+            }
         }
 
-        IMessageLevels IValidator<IElevation>.IsValid(IElevation entity, out IEnumerable<IMessage> errors)
+        public static bool IsConstructable(IParameterEnum type, IOrdinate value, UnitsEnum units, out string msg)
         {
-            throw new NotImplementedException();
+            msg = "";
+            if (!IParameterUtilities.IsElevation(type)) msg += $"The {nameof(Elevations.Elevation)} parameter cannot be constructed because it is marked as a {type} parameter, not a elevation parameter.";
+            if (!UnitsUtilities.IsLength(units)) msg += $"The specified unit of measurement {units.ToString()} is invalid because it is not a supported measurement of length.";
+            if (value.IsNull()) msg += $"The {nameof(Elevations.Elevation)} parameter cannot be constructed because the elevation {nameof(value)} input parameter is null.";
+            if (value.Value().IsFinite()) msg += $"The {nameof(Elevations.Elevation)} parameter cannot be constructed because the elevation value is not a finite numerical value.";
+            return msg.Length == 0;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Functions;
-using Model.Inputs.Functions.ImpactAreaFunctions;
+using Model.Functions;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,21 +8,21 @@ namespace Model
 {
     public static class Composer
     {
-        public static IFrequencyFunction Compose(this IFrequencyFunction frequencyFunction, ITransformFunction transformFunction, double frequencyFunctionProbability, double transformFunctionProbability)
+        public static IFrequencyFunction Compose(this IFrequencyFunction frequencyFx, ITransformFunction transformFx, double pForFreqFx, double pForTransformFx)
         {
             //acceptable transform could be an inflow outflow or a rating curve
-            if(frequencyFunction.ComposeableTypes.Contains(transformFunction.Type))
-            { 
-                IFunction sampledFreq = Sampler.Sample(frequencyFunction.Function, frequencyFunctionProbability);
-                IFunction sampledTrans = Sampler.Sample(transformFunction.Function, transformFunctionProbability);
-                IFunction newFrequencyFunction = sampledFreq.Compose(sampledTrans);
-                return ImpactAreaFunctionFactory.FactoryFrequency(newFrequencyFunction, transformFunction.Type + 1);
-            }
-            else
+            if (frequencyFx.ComposeableTypes.Contains(transformFx.ParameterType))
             {
-                throw new ArgumentException($"The {frequencyFunction.Type} function can not be composed with the {transformFunction.Type} function because the frequency function yvalues ({frequencyFunction.YLabel})" +
-                    $" do not match the tranform function xvalues ({transformFunction.XLabel}).");
+                IFunction sampledFreqFx = Sampler.Sample(((FdaFunctionBase)frequencyFx)._Function, pForFreqFx);
+                IFunction sampledTranFx = Sampler.Sample(((FdaFunctionBase)transformFx)._Function, pForTransformFx);
+                IFunction composedFreqFx = sampledFreqFx.Compose(sampledTranFx);
+                return IFrequencyFunctionFactory.Factory(composedFreqFx, transformFx.ParameterType + 1,
+                    frequencyFx.XSeries.Label, transformFx.YSeries.Units, transformFx.YSeries.Label);
             }
+            else 
+                throw new ArgumentException($"{frequencyFx.ParameterType.ToString()} functions cannot be composed with {transformFx.ParameterType} functions." +
+                $"The {frequencyFx.ParameterType.ToString()} function Y parameters represent {frequencyFx.YSeries.ParameterType.ToString()}s while " +
+                $"the {transformFx.ParameterType.ToString()} function X parameters represent {transformFx.XSeries.ParameterType.ToString()}s, functional composition would produce an illogical Y axis.");
         }
 
        

@@ -14,6 +14,7 @@ namespace Functions.CoordinatesFunctions
     public class CoordinatesFunctionLinked : CoordinatesFunctionLinkedBase, ICoordinatesFunction, IValidate<ICoordinatesFunction>
     {
         #region Properties
+        public override IRange<double> Range { get; }
         public bool IsDistributed
         {
             //If any function is distributed then return true;
@@ -63,10 +64,12 @@ namespace Functions.CoordinatesFunctions
             //todo: if i sort, i will lose track of the list of interpolators.
             //List<ICoordinatesFunction<IOrdinate, IOrdinate>> sortedFunctions = Functions.OrderBy(func => func.Domain.Item1).ToList();
             Functions = functions;
-            State = Validate(new LinkedCoordinatesFunctionValidator(), out IEnumerable<IMessage> errors);
+            Range = SetRange();
             CombineCoordinates();
             SetOrder();
+            State = Validate(new LinkedCoordinatesFunctionValidator(), out IEnumerable<IMessage> errors);
             Errors = errors;
+            
         }
         #endregion
 
@@ -300,7 +303,23 @@ namespace Functions.CoordinatesFunctions
             }
             return expandedCoordinates;
         }
-
+        private IRange<double> SetRange()
+        {
+            double minRange = double.NaN, maxRange = double.NaN;
+            foreach (ICoordinatesFunction fx in Functions)
+            {
+                if (minRange == double.NaN || fx.Range.Min < minRange)
+                {
+                    minRange = fx.Range.Min;
+                }
+                if (maxRange == double.NaN || fx.Range.Max > maxRange)
+                {
+                    maxRange = fx.Range.Max;
+                }
+            }
+            if (!minRange.IsFinite() || !maxRange.IsFinite()) throw new InvalidOperationException("The range was never set because no component function with a non finite range was found.");
+            else return IRangeFactory.Factory(minRange, maxRange);
+        }
         //public IFunction Sample(double p)
         //{
         //    //todo check that 0<=p<=1 argument out of range

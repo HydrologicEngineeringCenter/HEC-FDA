@@ -116,7 +116,7 @@ namespace ModelTests.InputsTests.ConditionsTests
             //create inflow freq function
             List<double> inflowFreqxs = new List<double>() { 0, .5, 1 };
             List<double> inflowFreqys = new List<double>() { 0, 10000, 100000 };
-            IFrequencyFunction inflowFreq = CreateFrequencyFunction(inflowFreqxs, inflowFreqys, InterpolationEnum.Linear, ImpactAreaFunctionEnum.InflowFrequency);
+            IFrequencyFunction inflowFreq = CreateFrequencyFunction(inflowFreqxs, inflowFreqys, InterpolationEnum.Linear, IFdaFunctionEnum.InflowFrequency);
 
             //create list of transform functions
             List<ITransformFunction> transformFunctions = new List<ITransformFunction>();
@@ -124,12 +124,12 @@ namespace ModelTests.InputsTests.ConditionsTests
             //create rating curve
             List<double> ratFlows = new List<double>() { 0, 100, 10000, 100000 };
             List<double> ratStages = new List<double>() { 0, 1, 10, 100 };
-            transformFunctions.Add(CreateTransformFunction(ratFlows, ratStages, InterpolationEnum.Linear, ImpactAreaFunctionEnum.Rating));
+            transformFunctions.Add(CreateTransformFunction(ratFlows, ratStages, InterpolationEnum.Linear, IFdaFunctionEnum.Rating));
 
             //create interior stage damage transform function
             List<double> intStages = new List<double>() { 0, 1, 10, 100 };
             List<double> damage = new List<double>() { 0, 2000000, 200000000, 2000000000 };
-            transformFunctions.Add(CreateTransformFunction(intStages, damage, InterpolationEnum.Linear, ImpactAreaFunctionEnum.InteriorStageDamage));
+            transformFunctions.Add(CreateTransformFunction(intStages, damage, InterpolationEnum.Linear, IFdaFunctionEnum.InteriorStageDamage));
 
             //create the metrics
             List<IMetric> metrics = CreateMetrics(new List<MetricEnum>() { MetricEnum.Damages }, new List<double>() { thresholdValue });

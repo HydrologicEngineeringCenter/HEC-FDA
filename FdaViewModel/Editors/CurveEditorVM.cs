@@ -235,7 +235,7 @@ namespace FdaViewModel.Editors
                 //try to construct the new coordinates function
                 ICoordinatesFunction coordFunc = EditorVM.CreateFunctionFromTables();
                 EditorVM.Function = coordFunc;
-                Curve = ImpactAreaFunctionFactory.Factory(coordFunc, ImpactAreaFunctionEnum.Rating);
+                Curve = ImpactAreaFunctionFactory.Factory(coordFunc, IFdaFunctionEnum.Rating);
 
 
             }

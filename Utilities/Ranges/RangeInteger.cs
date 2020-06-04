@@ -30,5 +30,6 @@ namespace Utilities.Ranges
             if (State < IMessageLevels.Error) return x.IsOnRange(Min, Max);
             else throw new InvalidOperationException(Utilities.ValidationExtensions.InvalidOperationExceptionMessage("IRange", Messages));
         }
+        
     }
 }

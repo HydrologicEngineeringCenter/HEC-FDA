@@ -10,9 +10,7 @@ namespace Functions.CoordinatesFunctions
     public abstract class CoordinatesFunctionLinkedBase
     {
         public List<ICoordinatesFunction> Functions { get; internal set; }
-
         public List<ICoordinate> Coordinates { get; internal set; }
-
         public IMessageLevels State { get; internal set; }
         public OrderedSetEnum Order { get; internal set; }
         /// <summary>
@@ -57,7 +55,7 @@ namespace Functions.CoordinatesFunctions
                 //}
             }
         }
-
+        public abstract IRange<double> Range { get; }
         /// <summary>
         /// This interpolator is only if all the other interpolators are the same
         /// </summary>

@@ -90,12 +90,13 @@ namespace Functions
         {
             return _CoordinatesFunction.Compose(g);
         }
-        public bool Equals(ICoordinatesFunction function)
+        public bool Equals(IFunction function)
         {
             if (!(function.IsLinkedFunction == IsLinkedFunction && function.Interpolator == Interpolator && function.Order == Order && function.Coordinates.Count == Coordinates.Count)) return false;
             for (int i = 0; i < Coordinates.Count; i++) if (!function.Coordinates[i].Equals(Coordinates[i])) return false;
             return true;
         }
+        public bool Equals(ICoordinatesFunction fx) => false;
         /// <summary>
         /// Computes <see cref="IDistributedOrdinate.InverseCDF(double)"/>, returning the value from the <see cref="IDistributedOrdinate"/> distribution associated with the specified non-exceedance probability, <paramref name="p"/>.
         /// <b> Note</b>: this inverts the statistical convention of F(x) representing the non-exceedance probabilities, and x values representing the distributed random number values.

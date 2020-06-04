@@ -37,13 +37,13 @@ namespace ModelTests.InputsTests.ConditionsTests
             return metrics;
         }
 
-        internal IFrequencyFunction CreateFrequencyFunction(List<double> xs, List<double> ys, InterpolationEnum interpolator, ImpactAreaFunctionEnum type)
+        internal IFrequencyFunction CreateFrequencyFunction(List<double> xs, List<double> ys, InterpolationEnum interpolator, IFdaFunctionEnum type)
         {
             ICoordinatesFunction lpsCoordFunc = ICoordinatesFunctionsFactory.Factory(xs,ys, interpolator);
             return ImpactAreaFunctionFactory.FactoryFrequency(lpsCoordFunc, type);
         }
 
-        internal ITransformFunction CreateTransformFunction(List<double> xs, List<double> ys, InterpolationEnum interpolator, ImpactAreaFunctionEnum type)
+        internal ITransformFunction CreateTransformFunction(List<double> xs, List<double> ys, InterpolationEnum interpolator, IFdaFunctionEnum type)
         {
             ICoordinatesFunction lpsCoordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, interpolator);
             return ImpactAreaFunctionFactory.FactoryTransform(lpsCoordFunc, type);

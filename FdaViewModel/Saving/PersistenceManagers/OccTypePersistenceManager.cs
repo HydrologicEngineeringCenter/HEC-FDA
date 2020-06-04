@@ -1055,7 +1055,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             occtype.StructureUncertaintyType = GetValueUncertaintyType(structValueType);
             //todo: this is ugly. I should put a method to read the xml for a coord func down to the icoordinatesfuntionfactory
             //i am just creating a dummy impact area func because i want the icoord func inside it.
-            IFdaFunction structFunction = ImpactAreaFunctionFactory.Factory(structDepthDamageXML, ImpactAreaFunctionEnum.Rating);
+            IFdaFunction structFunction = ImpactAreaFunctionFactory.Factory(structDepthDamageXML, IFdaFunctionEnum.Rating);
             occtype.StructureDepthDamageFunction = structFunction.Function;
 
             //content
@@ -1064,7 +1064,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             occtype.ContentUncertaintyType = GetValueUncertaintyType(contValueType);
             //todo: this is ugly. I should put a method to read the xml for a coord func down to the icoordinatesfuntionfactory
             //i am just creating a dummy impact area func because i want the icoord func inside it.
-            IFdaFunction contFunction = ImpactAreaFunctionFactory.Factory(contentDepthDamageXML, ImpactAreaFunctionEnum.Rating);
+            IFdaFunction contFunction = ImpactAreaFunctionFactory.Factory(contentDepthDamageXML, IFdaFunctionEnum.Rating);
             occtype.ContentDepthDamageFunction = contFunction.Function;
 
             //vehicle
@@ -1073,7 +1073,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             occtype.VehicleUncertaintyType = GetValueUncertaintyType(vehicleValueType);
             //todo: this is ugly. I should put a method to read the xml for a coord func down to the icoordinatesfuntionfactory
             //i am just creating a dummy impact area func because i want the icoord func inside it.
-            IFdaFunction vehFunction = ImpactAreaFunctionFactory.Factory(vehicleDepthDamageXML, ImpactAreaFunctionEnum.Rating);
+            IFdaFunction vehFunction = ImpactAreaFunctionFactory.Factory(vehicleDepthDamageXML, IFdaFunctionEnum.Rating);
             occtype.VehicleDepthDamageFunction = vehFunction.Function;
 
             //other
@@ -1082,7 +1082,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             occtype.OtherUncertaintyType = GetValueUncertaintyType(otherValueType);
             //todo: this is ugly. I should put a method to read the xml for a coord func down to the icoordinatesfuntionfactory
             //i am just creating a dummy impact area func because i want the icoord func inside it.
-            IFdaFunction otherFunction = ImpactAreaFunctionFactory.Factory(otherDepthDamageXML, ImpactAreaFunctionEnum.Rating);
+            IFdaFunction otherFunction = ImpactAreaFunctionFactory.Factory(otherDepthDamageXML, IFdaFunctionEnum.Rating);
             occtype.OtherDepthDamageFunction = otherFunction.Function;
 
             //setting all these properties will set the "isModified" to true. But we just created this thing so turn back to false

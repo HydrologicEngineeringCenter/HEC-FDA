@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Functions
 {
+    /// <summary>
+    /// Enumerates supported ordinate types, mirrors <see cref="Statistics.IDistributionEnum"/>.
+    /// </summary>
     public enum IOrdinateEnum
     {
         /// <summary>

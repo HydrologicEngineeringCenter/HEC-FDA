@@ -10,25 +10,33 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Condition\**" />
-    <EmbeddedResource Remove="Condition\**" />
-    <None Remove="Condition\**" />
+    <Compile Remove="Condition-delete\**" />
+    <Compile Remove="Elevations\**" />
+    <Compile Remove="Inputs\**" />
+    <EmbeddedResource Remove="Condition-delete\**" />
+    <EmbeddedResource Remove="Elevations\**" />
+    <EmbeddedResource Remove="Inputs\**" />
+    <None Remove="Condition-delete\**" />
+    <None Remove="Elevations\**" />
+    <None Remove="Inputs\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="ComputePoint.cs" />
+    <Compile Remove="FdaOrdinate.cs" />
+    <Compile Remove="Functions\TransformFunctions\LeveeFailure.cs" />
     <Compile Remove="IComputePoint.cs" />
-    <Compile Remove="Inputs\Conditions\ConditionPerformanceCompute.cs" />
-    <Compile Remove="Inputs\Functions\FrequencyFunction.cs" />
-    <Compile Remove="Inputs\Functions\IFunctionCompose.cs" />
-    <Compile Remove="Inputs\Functions\IFunctionRegistry.cs" />
-    <Compile Remove="Inputs\Functions\ImpactAreaFunctions\ComputationPointFunctionRegistry.cs" />
-    <Compile Remove="Inputs\Functions\ImpactAreaFunctions\IStageDamageTransform.cs" />
-    <Compile Remove="Inputs\Functions\Ordinate.cs" />
-    <Compile Remove="Inputs\Functions\OrdinatesFunction.cs" />
-    <Compile Remove="Inputs\Functions\UncertainOrdinatesFunction.cs" />
+    <Compile Remove="IFdaOrdinate.cs" />
+    <Compile Remove="IFdaOrdinateEnum.cs" />
+    <Compile Remove="IFdaOrdinateFactory.cs" />
+    <Compile Remove="Conditions\ConditionPerformanceCompute.cs" />
     <Compile Remove="Outputs\IRealization.cs" />
     <Compile Remove="Outputs\Realization.cs" />
+    <Compile Remove="Validation\DamageFrequencyValidator.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="UnitsNet" Version="4.59.0" />
   </ItemGroup>
 
   <ItemGroup>

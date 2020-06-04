@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-using Model.Inputs.Functions;
+using Model.Functions;
 using Model.Outputs;
 
 namespace Model

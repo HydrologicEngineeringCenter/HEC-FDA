@@ -119,7 +119,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            IFdaFunction function = ImpactAreaFunctionFactory.Factory((String)rowData[CURVE_COL], ImpactAreaFunctionEnum.InteriorStageDamage);
+            IFdaFunction function = ImpactAreaFunctionFactory.Factory((String)rowData[CURVE_COL], IFdaFunctionEnum.InteriorStageDamage);
 
             //Statistics.UncertainCurveDataCollection emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
             //    (string)rowData[CURVE_DIST_TYPE_COL]));

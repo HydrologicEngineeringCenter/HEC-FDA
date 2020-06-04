@@ -16,10 +16,6 @@ namespace Functions
         /// </summary>
         bool IsInvertible { get; }
         /// <summary>
-        /// Provides the minimum and maximum Y values for the <see cref="IFunction"/>.
-        /// </summary>
-        Utilities.IRange<double> Range { get; }
-        /// <summary>
         /// Approximates the <see cref="IFunction"/> integral. For more information see: https://en.wikipedia.org/wiki/Trapezoidal_rule.
         /// </summary>
         /// <returns> The area under the xy-plane bounded by the <see cref="IFunction"/> domain. </returns>
@@ -36,6 +32,6 @@ namespace Functions
         /// Note that the f(x) coordinate: (3, 4) is dropped because the y value: 4 is not on the domain: [0, 3] of g(x). Similarly, the g(x) coordinate (0, 0) is dropped because the x value: 0 is not on the range: [1, 4] of f(x). 
         /// </example>
         IFunction Compose(IFunction g);
-        
+        bool Equals(IFunction fx);
     }
 }

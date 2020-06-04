@@ -97,7 +97,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            IFdaFunction function = ImpactAreaFunctionFactory.Factory((String)rowData[CURVE_COL], ImpactAreaFunctionEnum.InflowOutflow);
+            IFdaFunction function = ImpactAreaFunctionFactory.Factory((String)rowData[CURVE_COL], IFdaFunctionEnum.InflowOutflow);
 
             //UncertainCurveDataCollection ucdc = new UncertainCurveIncreasing((DistributionsEnum)Enum.Parse(typeof(DistributionsEnum), (string)rowData[CURVE_DIST_TYPE_COL]));
             InflowOutflowElement inout = new InflowOutflowElement((string)rowData[NAME_COL], 

@@ -15,15 +15,13 @@ namespace Functions.CoordinatesFunctions
     {
         #region Properties
         public bool IsInvertible { get; }
-        public bool IsDistributedYs => true;
-        public OrderedSetEnum Order { get; }
-
+        public static bool IsDistributedYs => true;
+        public OrderedSetEnum Order => OrderedSetEnum.NotSet;
         public List<ICoordinate> Coordinates { get; }
-
         public bool IsDistributed => true;
-
         //public Tuple<double, double> Domain { get; }
         public IRange<double> Domain { get; }
+        public IRange<double> Range { get; }
         public InterpolationEnum Interpolator { get; }
         public IOrdinateEnum DistributionType
         {
@@ -40,13 +38,9 @@ namespace Functions.CoordinatesFunctions
 
             }
         }
-
         public bool IsLinkedFunction => false;
-
         public IMessageLevels State { get; internal set; }
-
         public IEnumerable<IMessage> Messages { get; set; }
-
         #endregion
 
         #region Constructor
@@ -57,13 +51,10 @@ namespace Functions.CoordinatesFunctions
             Coordinates = coordinates;
             State = Validate(new Validation.CoordinatesFunctionVariableYsValidator(), out IEnumerable<IMessage> errors);
             Messages = errors;
-            //if (IsValid(coordinates))
-            {
-                Coordinates = SortByXs(coordinates);
-                IsInvertible = IsInvertibleFunction();
-            }
-            //Domain = new Tuple<double, double>(Coordinates[0].X.Value(), Coordinates[Coordinates.Count - 1].X.Value());
+            Coordinates = SortByXs(coordinates);
+            IsInvertible = IsInvertibleFunction();
             Domain = IRangeFactory.Factory(Coordinates.First().X.Value(), Coordinates.Last().X.Value());
+            Range = SetRange(Coordinates);
         }
         #endregion
 
@@ -97,7 +88,6 @@ namespace Functions.CoordinatesFunctions
             }
             return true;
         }
-
         public bool IsInvertibleFunction()
         {
             //todo: John, how is this working? How can you compare ys that are distributed?
@@ -112,28 +102,28 @@ namespace Functions.CoordinatesFunctions
             }
             return true;
         }
-        //private bool IsValid(List<ICoordinate> coordinates)
-        //{
-        //    if (Utilities.Validate.IsNullOrEmpty(coordinates as ICollection<ICoordinate>)) return false;
-        //    if (!IsFunction(coordinates)) throw new ArgumentException("The specified set of coordinate is invalid. At least one x value maps to more than one y value (e.g. the set does not meet the definition of a function).");
-        //    return true;
-        //}
-        //private bool IsFunction(List<ICoordinate> xys)
-        //{
-        //    for (int i = 0; i < xys.Count; i++)
-        //    {
-        //        int j = i + 1;
-        //        while (j < xys.Count)
-        //        {
-        //            if (xys[i].X.Equals(xys[j].X)) return false;
-        //            else j++;
-        //        }
-        //    }
-        //    return true;
-        //}
+        
         public List<ICoordinate> SortByXs(List<ICoordinate> coordinates) 
             => coordinates.OrderBy(xy => xy.X.Value()).ToList();
-
+        public IRange<double> SetRange(List<ICoordinate> coordinates)
+        {
+            bool set = false;
+            double minY = double.NaN, maxY = double.NaN;
+            foreach (ICoordinate coordinate in coordinates)
+            {
+                if (!set)
+                {
+                    minY = coordinate.Y.Range.Min;
+                    maxY = coordinate.Y.Range.Max;
+                }
+                else
+                {
+                    if (coordinate.Y.Range.Min < minY) minY = coordinate.Y.Range.Min;
+                    if (coordinate.Y.Range.Max > maxY) maxY = coordinate.Y.Range.Max;
+                }
+            }
+            return IRangeFactory.Factory(minY, maxY);
+        }
         #region F()
         public IOrdinate F(IOrdinate x)
         {
@@ -149,7 +139,6 @@ namespace Functions.CoordinatesFunctions
             throw new ArgumentOutOfRangeException("The specified x value was not found in any of the coordinates. Interpolation is not supported for coordinates with distributed x or y values");      
         }
         #endregion
-
         #region InverseF()
         public IOrdinate InverseF(IOrdinate y)
         {
@@ -191,7 +180,6 @@ namespace Functions.CoordinatesFunctions
 
 
         #endregion
-
         #region GetExpandedCoordinates()
         public List<ICoordinate> GetExpandedCoordinates()
         {

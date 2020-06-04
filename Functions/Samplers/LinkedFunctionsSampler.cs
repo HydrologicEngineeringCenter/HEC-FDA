@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Functions
 {
-    public class LinkedFunctionsSampler : ISampler
+    internal class LinkedFunctionsSampler : ISampler
     {
         public bool CanSample(ICoordinatesFunction coordinatesFunction)
         {

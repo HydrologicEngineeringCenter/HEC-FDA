@@ -7,7 +7,7 @@ namespace Functions.CoordinatesFunctions
     /// <summary> Describes the order of Y values respective to X values. Invertible function have odd enumerator values. </summary>
     public enum OrderedSetEnum
     {
-        /// <summary> The order of the Y values with repsect to the X valuse is indeterminate because on or more of the coordinates has a distribute X or Y parameter </summary>
+        /// <summary> The order of the Y values with respect to the X values is indeterminate because one or more of the coordinates has a distribute X or Y parameter </summary>
         NotSet = -1,
         /// <summary> Y value are neither increasing nor decreasing with respect to X values. </summary>
         NonMonotonic = 0,

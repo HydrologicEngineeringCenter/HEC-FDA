@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Functions
 {
-    public class DistributionSampler : ISampler
+    internal class DistributionSampler : ISampler
     {
         public bool CanSample(ICoordinatesFunction coordinatesFunction)
         {
@@ -20,7 +20,6 @@ namespace Functions
             {
                 return new CoordinatesFunctionConstants(ConvertCoordinatesToConstants(coordinatesFunction.Coordinates, probability));
             }
-
             throw new ArgumentException("Could not sample the coordinates function.");
         }
 

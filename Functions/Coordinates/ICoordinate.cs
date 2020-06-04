@@ -26,6 +26,12 @@ namespace Functions
         /// <returns> A string in the form: (<see cref="X"/>, <see cref="Y"/>) where the <see cref="X"/> and <see cref="Y"/> <see cref="IOrdinate"/> parameters are represented by their <see cref="IOrdinate.Print(bool)"/> strings. </returns>
         string Print(bool round);
         /// <summary>
+        /// Checks 2 coordinates for values equality.
+        /// </summary>
+        /// <param name="coordinate"> The <see cref="ICoordinate"/> to be compared to the instance <see cref="ICoordinate"/>. </param>
+        /// <returns> <see langword="true"/> if the 2 coordinates are equal in value, <see langword="false"/> otherwise. </returns>
+        bool Equals(ICoordinate coordinate);
+        /// <summary>
         /// Serializes the <see cref="ICoordinate"/> object to an XML format for persistence in the database.
         /// </summary>
         /// <returns> An <see cref="XElement"/> containing the <see cref="ICoordinate"/> parameters. </returns>
