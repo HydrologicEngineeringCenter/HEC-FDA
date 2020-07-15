@@ -240,8 +240,14 @@
     <Compile Include="Conditions\AddStageDamageToCondition.xaml.cs">
       <DependentUpon>AddStageDamageToCondition.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Conditions\ConditionsDoubleLineModulatorWrapper.xaml.cs">
+      <DependentUpon>ConditionsDoubleLineModulatorWrapper.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Conditions\ConditionsEditor.xaml.cs">
       <DependentUpon>ConditionsEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conditions\ConditionsPlotEditor.xaml.cs">
+      <DependentUpon>ConditionsPlotEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="DeleteMeClass.cs" />
     <Compile Include="FlowTransforms\InflowOutflowEditor.xaml.cs">
@@ -301,6 +307,9 @@
     <Compile Include="Inventory\ImportFromShapefile.xaml.cs">
       <DependentUpon>ImportFromShapefile.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Inventory\ImportStructuresFromFDA1.xaml.cs">
+      <DependentUpon>ImportStructuresFromFDA1.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Inventory\ImportStructuresFromShapefile.xaml.cs">
       <DependentUpon>ImportStructuresFromShapefile.xaml</DependentUpon>
     </Compile>
@@ -345,7 +354,42 @@
     <Compile Include="Plans\CreateNewPlan.xaml.cs">
       <DependentUpon>CreateNewPlan.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Plots\ILinkedPlot.cs" />
+    <Compile Include="Plots\ArrowPolygon.xaml.cs">
+      <DependentUpon>ArrowPolygon.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Plots\ConditionsIndividualPlotWrapper.xaml.cs">
+      <DependentUpon>ConditionsIndividualPlotWrapper.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Plots\DoubleLineModulator.xaml.cs">
+      <DependentUpon>DoubleLineModulator.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Plots\DoubleLineModulatorCoverButton.xaml.cs">
+      <DependentUpon>DoubleLineModulatorCoverButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Plots\DoubleLineModulatorHorizontal.xaml.cs">
+      <DependentUpon>DoubleLineModulatorHorizontal.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Plots\DoubleLineModulatorHorizontalCoverButton.xaml.cs">
+      <DependentUpon>DoubleLineModulatorHorizontalCoverButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Plots\HorizontalDoubleLineModulatorWrapper.xaml.cs">
+      <DependentUpon>HorizontalDoubleLineModulatorWrapper.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Plots\ILinkedPlotControl.cs" />
+    <Compile Include="Plots\IndividualLinkedPlotControl.xaml.cs">
+      <DependentUpon>IndividualLinkedPlotControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Plots\IndividualLinkedPlotCoverButton.xaml.cs">
+      <DependentUpon>IndividualLinkedPlotCoverButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Plots\IndividualSciChart.xaml.cs">
+      <DependentUpon>IndividualSciChart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Plots\PlotsUtil.cs" />
+    <Compile Include="Plots\SharedAxisEnum.cs" />
+    <Compile Include="Plots\SingleLinePlot.xaml.cs">
+      <DependentUpon>SingleLinePlot.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StageTransforms\ExteriorInteriorEditor.xaml.cs">
       <DependentUpon>ExteriorInteriorEditor.xaml</DependentUpon>
     </Compile>
@@ -439,6 +483,12 @@
     <Compile Include="WaterSurfaceElevation\WaterSurfaceElevationImporter.xaml.cs">
       <DependentUpon>WaterSurfaceElevationImporter.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WaterSurfaceElevation\WaterSurfaceElevationImporterFromFDA1.xaml.cs">
+      <DependentUpon>WaterSurfaceElevationImporterFromFDA1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WaterSurfaceElevation\WSERowItem.xaml.cs">
+      <DependentUpon>WSERowItem.xaml</DependentUpon>
+    </Compile>
     <Page Include="AggregatedStageDamage\AggregatedStageDamage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -471,7 +521,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Conditions\ConditionsDoubleLineModulatorWrapper.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Conditions\ConditionsEditor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Conditions\ConditionsPlotEditor.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -547,6 +605,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Inventory\ImportStructuresFromFDA1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Inventory\ImportStructuresFromShapefile.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -614,6 +676,50 @@
     <Page Include="Plans\CreateNewPlan.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Plots\ArrowPolygon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Plots\ConditionsIndividualPlotWrapper.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Plots\DoubleLineModulator.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Plots\DoubleLineModulatorCoverButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Plots\DoubleLineModulatorHorizontal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Plots\DoubleLineModulatorHorizontalCoverButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Plots\HorizontalDoubleLineModulatorWrapper.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Plots\IndividualLinkedPlotControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Plots\IndividualLinkedPlotCoverButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Plots\IndividualSciChart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Plots\SingleLinePlot.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="StageTransforms\ExteriorInteriorEditor.xaml">
       <SubType>Designer</SubType>
@@ -723,6 +829,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="WaterSurfaceElevation\WaterSurfaceElevationImporterFromFDA1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WaterSurfaceElevation\WSERowItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -792,6 +906,10 @@
     <ProjectReference Include="..\Importer\Importer.csproj">
       <Project>{2db60c23-9754-4548-bcf3-4d1bba79570c}</Project>
       <Name>Importer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Model\Model.csproj">
+      <Project>{B4909C07-FC85-49D6-867A-0E00D311A991}</Project>
+      <Name>Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\OccupancyTypes\OccupancyTypes.csproj">
       <Project>{4AD0B5FE-D2D7-403F-B740-5F2377A14117}</Project>

@@ -171,6 +171,11 @@ namespace FdaViewModel.Conditions
                 PopImporterOut(this, new EventArgs());
             }
         }
+
+        public override void OnClosing(object sender, EventArgs e)
+        {
+            Dispose();
+        }
         #endregion
         #region Functions
         #endregion

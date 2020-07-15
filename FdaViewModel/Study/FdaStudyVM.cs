@@ -17,6 +17,7 @@ using System.Threading;
 using System.Reflection;
 using System.Diagnostics;
 using FdaLogging;
+using Functions;
 
 namespace FdaViewModel.Study
 {
@@ -190,6 +191,9 @@ namespace FdaViewModel.Study
         #region Constructors
         public FdaStudyVM() : base()
         {
+            Sampler.RegisterSampler(new ConstantSampler());
+            Sampler.RegisterSampler(new DistributionSampler());
+
             TabController tabFactory = TabController.Instance;
             TabFactoryInstance = tabFactory;
             tabFactory.RequestNavigation += Navigate;
@@ -310,7 +314,7 @@ namespace FdaViewModel.Study
             TabController.Instance.MWMTVConnector = _MWMTVConn;
 
             //for testing, delete me
-            LoadMapLayers(null, null);
+            //LoadMapLayers(null, null);
             //
         }
 

@@ -1,4 +1,5 @@
 ﻿using Model;
+using Model.Inputs.Functions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,8 +17,7 @@ namespace FdaViewModel.Plots
 
         //properties
         IFdaFunction SelectedCurve { get;  }
-        //todo: Refactor: commenting out
-        //FdaModel.Functions.BaseFunction BaseFunction { get; }
+        //IFdaFunction BaseFunction { get; }
         string SelectedElementName { get; }
         Utilities.ChildElement SelectedElement { get; }
         bool IsPoppedOut { get; set; }

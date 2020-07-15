@@ -38,6 +38,8 @@ namespace FdaViewModel
         public event RequestAddToMapWindowHandler RequestAddToMapWindow;
         public event RequestRemoveFromMapWindowHandler RequestRemoveFromMapWindow;
 
+        
+
         public TransactionEventHandler TransactionEvent;
 
 

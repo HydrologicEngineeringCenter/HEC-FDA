@@ -37,7 +37,7 @@ namespace FdaViewModel.WaterSurfaceElevation
             get { return _RelativePathAndProbability; }
             set { _RelativePathAndProbability = value;  }
         }
-   
+        public bool HasAssociatedFiles { get; set; }
 
         #endregion
         #region Constructors
@@ -49,6 +49,7 @@ namespace FdaViewModel.WaterSurfaceElevation
         /// <param name="isDepthGrids"></param>
         public WaterSurfaceElevationElement(string name, string description,List<double> probabilites, bool isDepthGrids):base()
         {
+            HasAssociatedFiles = false;
             List<PathAndProbability> pathAndProbs = new List<PathAndProbability>();
             foreach(double p in probabilites)
             {
@@ -58,6 +59,7 @@ namespace FdaViewModel.WaterSurfaceElevation
         }
         public WaterSurfaceElevationElement(string name, string description, List<PathAndProbability> relativePathAndProbabilities,bool isDepthGrids) : base()
         {
+            HasAssociatedFiles = true;
             SetConstructorParams(name, description,relativePathAndProbabilities, isDepthGrids);
         }
 

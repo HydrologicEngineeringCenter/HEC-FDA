@@ -23,6 +23,7 @@ namespace View.Alternatives
     {
         //private const string ADD_MSG = "Add Increment";
         //private const string REMOVE_MSG = "Remove Increment";
+        private int _Index = 0;
         public CreateNewAlternative()
         {
             InitializeComponent();
@@ -33,7 +34,8 @@ namespace View.Alternatives
             //add increment
             vm.AddIncrement();
             //create row item without delete button
-            IncrementRowItem ri = new IncrementRowItem(true);
+            _Index++;
+            IncrementRowItem ri = new IncrementRowItem(_Index, true);
             ri.DataContext = vm.Increments.Last();
             ri.HorizontalAlignment = HorizontalAlignment.Stretch;
             ri.SetSpecialBindingForFirstRow(vm.Increments[0]);
@@ -50,7 +52,8 @@ namespace View.Alternatives
             // grab the latest increment from vm
 
             //create a new Row UI
-            IncrementRowItem ri = new IncrementRowItem();
+            _Index++;
+            IncrementRowItem ri = new IncrementRowItem(_Index);
             ri.DataContext = vm.Increments.Last();
             ri.HorizontalAlignment = HorizontalAlignment.Stretch;
             ri.DeleteThisRow += Ri_DeleteThisRow;
@@ -64,6 +67,7 @@ namespace View.Alternatives
 
         private void Ri_DeleteThisRow(object sender, EventArgs e)
         {
+            _Index--;
             IncrementRowItem ri = (IncrementRowItem)sender;
             int riIndex = lst_Increments.Items.IndexOf(ri);
             //remove this item from the vm and the ui

@@ -21,5 +21,9 @@ namespace FdaViewModel.Plots
         Model.IMetric Metric { get; set; }
 
         bool DisplayImportButton { get; set; }
+
+        string Title { get; }
+        string XAxisLabel { get; }
+        string YAxisLabel { get; }
     }
 }

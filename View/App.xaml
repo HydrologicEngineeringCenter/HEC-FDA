@@ -5,6 +5,9 @@
              xmlns:EditorsVM ="clr-namespace:FdaViewModel.Editors;assembly=FdaViewModel"
              
              
+             xmlns:PlotsVM="clr-namespace:FdaViewModel.Plots;assembly=FdaViewModel"
+             xmlns:PlotsView="clr-namespace:View.Plots"
+             
              xmlns:AlternativeVM="clr-namespace:FdaViewModel.Alternatives;assembly=FdaViewModel"
              xmlns:AlternativeView="clr-namespace:View.Alternatives"
              
@@ -202,8 +205,11 @@
         <DataTemplate DataType="{x:Type InventoryVM:ImportFromHAZUSVM }" >
             <InventoryView:ImportFromHAZUS/>
         </DataTemplate>
-        
-        
+
+        <DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromFDA1VM }" >
+            <InventoryView:ImportStructuresFromFDA1/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type InventoryVM:ImportFromNSIVM }" >
             <InventoryView:ImportFromNSI/>
         </DataTemplate>
@@ -237,10 +243,9 @@
         <DataTemplate DataType="{x:Type ConditionVM:AddStageDamageToConditionVM }" >
             <ConditionsView:AddStageDamageToCondition/>
         </DataTemplate>
-        <!--todo: Refactor: CO-->
-        <!--<DataTemplate DataType="{x:Type ConditionVM:ConditionsPlotEditorVM }" >
+        <DataTemplate DataType="{x:Type ConditionVM:ConditionsPlotEditorVM }" >
             <ConditionsView:ConditionsPlotEditor/>
-        </DataTemplate>-->
+        </DataTemplate>
         <DataTemplate DataType="{x:Type ConditionVM:AddFlowFrequencyToConditionVM }" >
             <ConditionsView:AddFlowFrequencyToCondition/>
         </DataTemplate>
@@ -259,7 +264,7 @@
         </DataTemplate>-->
         <!--<DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotVM }" >
             <PlotsView:IndividualLinkedPlot/>
-        </DataTemplate>
+        </DataTemplate>-->
 
         <DataTemplate DataType="{x:Type PlotsVM:ConditionsIndividualPlotWrapperVM }" >
             <PlotsView:ConditionsIndividualPlotWrapper/>
@@ -267,12 +272,12 @@
 
         <DataTemplate DataType="{x:Type PlotsVM:DoubleLineModulatorWrapperVM }" >
             <ConditionsView:ConditionsDoubleLineModulatorWrapper/>
-        </DataTemplate>-->
+        </DataTemplate>
         <!--todo: Refactor: CO-->
         <!--<DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotControlVM }" >
             <PlotsView:IndividualLinkedPlotControl/>
         </DataTemplate>-->
-        <!--<DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotCoverButtonVM }" >
+        <DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotCoverButtonVM }" >
             <PlotsView:IndividualLinkedPlotCoverButton/>
         </DataTemplate>
 
@@ -285,7 +290,7 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type PlotsVM:DoubleLineModulatorCoverButtonVM }" >
             <PlotsView:DoubleLineModulatorCoverButton/>
-        </DataTemplate>-->
+        </DataTemplate>
 
         <!--todo: Refactor: CO-->
         <!--<DataTemplate DataType="{x:Type PlotsVM:LinkedPlotsVM }" >
@@ -350,7 +355,9 @@
         <DataTemplate DataType="{x:Type WaterSurfaceElevationsVM:WaterSurfaceElevationImporterVM }" >
             <WaterSurfaceElevationsView:WaterSurfaceElevationImporter/>
         </DataTemplate>
-
+        <DataTemplate DataType="{x:Type WaterSurfaceElevationsVM:WaterSurfaceElevationImporterFDA1VM }" >
+            <WaterSurfaceElevationsView:WaterSurfaceElevationImporterFromFDA1/>
+        </DataTemplate>
         <!--<Image x:Key="ErrorImageKey" Source="pack://application:,,,/View;component/Resources/Error.png" IsHitTestVisible="false"/>
         <Image x:Key="MessageImageKey" Source="pack://application:,,,/View;component/Resources/Message.png" IsHitTestVisible="false"/>
         <Image x:Key="HelpImageKey" Source="pack://application:,,,/View;component/Resources/help.png" IsHitTestVisible="false"/>-->

@@ -61,7 +61,7 @@
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Margin="5,0,0,0">
                 <RadioButton Name="RDBWSE" Content="Water Surface Elevation" IsChecked="True" />
-                <RadioButton Name="RDBDepth" Content="Depth Grids*"  IsChecked="{Binding IsDepthGridChecked}" Margin="10,0,0,0"/>
+                <RadioButton Name="RDBDepth" Content="Depth Grids"  IsChecked="{Binding IsDepthGridChecked}" Margin="10,0,0,0"/>
             </StackPanel>
         </Grid>
         
@@ -174,7 +174,7 @@
             
             
         </ListView>
-        <Label Grid.Row="8" Grid.Column="0" VerticalAlignment="Top" Content="* An associated terrain will need to be defined before computing." />
+        <Label Grid.Row="8" Grid.Column="0" VerticalAlignment="Top" Content="An associated terrain may need to be defined before computing." />
 
         <!--<Button Name="btn_OK" Content="OK" Width="50" Height="22" Margin="5" Grid.Row="8" Grid.Column="1" HorizontalAlignment="Right" Click="btn_OK_Click"/>-->
         <Util:OKCloseControl HorizontalAlignment="Right" Grid.Row="8" Grid.Column="1" VerticalAlignment="Bottom"/>

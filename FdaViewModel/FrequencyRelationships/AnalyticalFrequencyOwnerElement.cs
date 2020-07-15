@@ -118,7 +118,7 @@ namespace FdaViewModel.FrequencyRelationships
             AnalyticalFrequencyElement element = (AnalyticalFrequencyElement)elem;
             element.Name = vm.Name;
             element.Description = vm.Description;
-            element.Distribution = vm.Curve;
+            element.Curve = vm.Curve;
             element.UpdateTreeViewHeader(vm.Name);
         }
 
@@ -129,7 +129,7 @@ namespace FdaViewModel.FrequencyRelationships
 
             vm.Name = element.Name;
             vm.Description = element.Description;
-            vm.Curve = element.Distribution;
+            vm.Curve = element.Curve;
            
         }
 

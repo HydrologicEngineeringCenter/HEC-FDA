@@ -146,6 +146,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
         /// <param name="structuresName"></param>
         public void SaveNew(DataTable structureData, string structuresName)
         {
+
+            
             string tableName = STRUCTURE_INVENTORY_TABLE_CONSTANT + structuresName;
             if (!Storage.Connection.Instance.IsConnectionNull)
             {
@@ -164,6 +166,14 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
         }
 
+        //private bool IsNameDifferentInTable(DataTable dt, string tableName)
+        //{
+        //    if(dt.Rows.Count == 0)
+        //    {
+        //        return false;
+        //    }
+        //    object[] firstRow = dt.Rows[0];
+        //}
         
 
         private object[] GetRowDataFromElement(InventoryElement element)
@@ -197,10 +207,10 @@ namespace FdaViewModel.Saving.PersistenceManagers
         /// This is to be used when importing a structure inventory from an old fda study
         /// </summary>
         /// <param name="name"></param>
-        public void SaveNewInventoryToParentTable(string name)
+        public void SaveNewInventoryToParentTable(string name, string description = "")
         {
             StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(FdaViewModel.Storage.Connection.Instance.ProjectFile);
-            StructureInventoryBaseElement baseElem = new StructureInventoryBaseElement(name, "");
+            StructureInventoryBaseElement baseElem = new StructureInventoryBaseElement(name, description);
             InventoryElement elem = new InventoryElement(baseElem, true);
             SaveNew(elem);
         }
