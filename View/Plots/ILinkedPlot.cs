@@ -12,9 +12,9 @@ namespace View.Plots
         double MaxY { get; set; }
         double MinX { get; set; }
         double MinY { get; set; }
-        //todo: Refactor: CO
-        //FdaModel.Functions.BaseFunction BaseFunction { get; set; }
-        //SharedAxisEnum NextPlotSharedAxisEnum { get; set; }
+        
+        FdaModel.Functions.BaseFunction BaseFunction { get; set; }
+        SharedAxisEnum NextPlotSharedAxisEnum { get; set; }
         bool IsStartNode { get; set; }
         bool IsEndNode { get; set; }
         bool FreezeNextTracker { get; set; }

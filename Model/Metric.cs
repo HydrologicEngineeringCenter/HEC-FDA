@@ -6,7 +6,7 @@ using Model.Inputs.Functions.ImpactAreaFunctions;
 
 namespace Model
 {
-    internal class Metric: IMetric
+    public class Metric: IMetric
     {
         #region Properties
         public double ExceedanceTarget { get; } = 0;

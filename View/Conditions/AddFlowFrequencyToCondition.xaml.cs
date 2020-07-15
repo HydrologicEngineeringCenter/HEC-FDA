@@ -118,5 +118,7 @@ namespace View.Conditions
                 stk_StageFreq.Visibility = Visibility.Collapsed;
             }
         }
+
+   
     }
 }

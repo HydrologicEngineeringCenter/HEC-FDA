@@ -32,8 +32,8 @@ namespace FdaViewModel.Inventory
             addStructureInventory.Action = AddStructureInventory;
 
             Utilities.NamedAction addStructureInventoryFromNonGeo = new Utilities.NamedAction();
-            addStructureInventoryFromNonGeo.Header = "Import From Non Geo Referenced File...";
-            addStructureInventoryFromNonGeo.Action = AddStructureInventory;
+            addStructureInventoryFromNonGeo.Header = "Import From Fda Version 1...";
+            addStructureInventoryFromNonGeo.Action = ImportStructuresFromFDA1;
 
             //Utilities.NamedAction ImportFromAscii = new Utilities.NamedAction();
             //ImportFromAscii.Header = "Import Exterior Interior Relationship From ASCII";
@@ -65,6 +65,18 @@ namespace FdaViewModel.Inventory
         private void AddStructureInventoryElement(object sender, Saving.ElementAddedEventArgs e)
         {
             AddElement(e.Element);
+        }
+
+        public void ImportStructuresFromFDA1(object arg1, EventArgs arg2)
+        {
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                 .WithSiblingRules(this);
+
+
+            ImportStructuresFromFDA1VM vm = new ImportStructuresFromFDA1VM( actionManager);
+            string header = "Import Structure Inventory";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStructureInventoryFromFDA1");
+            Navigate(tab, false, false);
         }
         public void AddStructureInventory(object arg1, EventArgs arg2)
         {

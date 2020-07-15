@@ -309,6 +309,18 @@ namespace Importer
             WaterSurfaceAreaPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetWaterSurfaceManager();
             manager.SaveNew(elem);
         }
+
+        public WaterSurfaceElevationElement ConvertToFDA2()
+        {
+            //path and probability
+            List<double> probs = new List<double>();
+            for (int i = 0; i < NumberOfProfiles; i++)
+            {
+                probs.Add(wspProbs[i]);
+            }
+            return new WaterSurfaceElevationElement(Name, Description, probs, false);
+        }
+
         #endregion
     }
 }

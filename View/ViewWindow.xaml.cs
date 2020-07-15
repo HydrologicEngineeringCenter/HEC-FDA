@@ -108,36 +108,72 @@ namespace View
             }
             else if (args.GetType().Name == nameof(OpenStructureAttributeTableEventArgs))
             {
+                OpenStructureAttributeTable(sender, sv, args);
+            }
+
+        }
+
+        private VectorFeatureNode GetMapTabFeature(int hashCode, MapTreeView mtv)
+        {
+            List<VectorFeatureNode> nodes = mtv.GetVectorFeatureNodes();
+            foreach (VectorFeatureNode node in nodes)
+            {
+                if (node.GetHashCode() == hashCode)
+                {
+                    return node;
+                }
+            }
+            return null;
+        }
+
+        private void OpenStructureAttributeTable(object sender, Study.StudyView sv, AddMapFeatureEventArgs args)
+        {
+            MapTreeView mtv = sv.MapTreeView;
+            VectorFeatureNode nodeInMapTab = GetMapTabFeature(args.MapFeatureHash, mtv);
+            if(nodeInMapTab != null)
+            {
+                nodeInMapTab.Features.OpenAttributes();
+                return;
+            }
+            else
+            {
                 OpenStructureAttributeTableEventArgs sargs = args as OpenStructureAttributeTableEventArgs;
 
-                //if (sender.GetType().Name == nameof(FdaViewModel.ImpactArea.ImpactAreaElement))
-                if (sargs.Features.GetType() == typeof(LifeSimGIS.PolygonFeatures))
-                {
-                    LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)sargs.Features;
-                    OpenGLDrawSingle drawInfo = new OpenGLMapping.OpenGLDrawSingle(sargs.DrawInfo);
-                    MapPolygons mapPolys = new MapPolygons(polyFeatures, sargs.Attributes, sargs.FeatureName, drawInfo, mtv.MapWindow);
-                    VectorFeatureNode vfn = new VectorFeatureNode(mapPolys, sargs.FeatureName);
-
-                    mtv.AddGisData(vfn, 0, true);
-                    args.MapFeatureHash = vfn.GetHashCode();
-                    vfn.RemoveLayerCalled += ((FdaViewModel.ImpactArea.ImpactAreaElement)sender).removedcallback;
-                }
-                //else if (sender.GetType().Name == nameof(FdaViewModel.Inventory.InventoryElement))
-                else if (sargs.Features.GetType() == typeof(LifeSimGIS.PointFeatures))
+                if (sargs.Features.GetType() == typeof(LifeSimGIS.PointFeatures))
                 {
                     MapPoints mapPoints = new MapPoints((LifeSimGIS.PointFeatures)sargs.Features, sargs.Attributes, sargs.FeatureName, new OpenGLMapping.OpenGLDrawSingle(sargs.DrawInfo), mtv.MapWindow);
                     mapPoints.OpenAttributes();
-                }
-                else if (sargs.Features.GetType() == typeof(LifeSimGIS.LineFeatures))
-                {
-
                 }
             }
 
 
 
+            //OpenStructureAttributeTableEventArgs sargs = args as OpenStructureAttributeTableEventArgs;
 
+            ////if (sender.GetType().Name == nameof(FdaViewModel.ImpactArea.ImpactAreaElement))
+            //if (sargs.Features.GetType() == typeof(LifeSimGIS.PolygonFeatures))
+            //{
+            //    LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)sargs.Features;
+            //    OpenGLDrawSingle drawInfo = new OpenGLMapping.OpenGLDrawSingle(sargs.DrawInfo);
+            //    MapPolygons mapPolys = new MapPolygons(polyFeatures, sargs.Attributes, sargs.FeatureName, drawInfo, mtv.MapWindow);
+            //    VectorFeatureNode vfn = new VectorFeatureNode(mapPolys, sargs.FeatureName);
+
+            //    mtv.AddGisData(vfn, 0, true);
+            //    args.MapFeatureHash = vfn.GetHashCode();
+            //    vfn.RemoveLayerCalled += ((FdaViewModel.ImpactArea.ImpactAreaElement)sender).removedcallback;
+            //}
+            ////else if (sender.GetType().Name == nameof(FdaViewModel.Inventory.InventoryElement))
+            //else if (sargs.Features.GetType() == typeof(LifeSimGIS.PointFeatures))
+            //{
+            //    MapPoints mapPoints = new MapPoints((LifeSimGIS.PointFeatures)sargs.Features, sargs.Attributes, sargs.FeatureName, new OpenGLMapping.OpenGLDrawSingle(sargs.DrawInfo), mtv.MapWindow);
+            //    mapPoints.OpenAttributes();
+            //}
+            //else if (sargs.Features.GetType() == typeof(LifeSimGIS.LineFeatures))
+            //{
+
+            //}
         }
+
 
         private void removedcallback(FeatureNodeHeader node, bool includeSelected)
         {

@@ -4,6 +4,9 @@ using FdaViewModel.FrequencyRelationships;
 using FdaViewModel.GeoTech;
 using FdaViewModel.StageTransforms;
 using FdaViewModel.Utilities;
+using Functions;
+using Model;
+using Model.Inputs.Functions.ImpactAreaFunctions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,115 +66,142 @@ namespace FdaViewModel.Conditions
         }
 
         #region BuildDefaultPlotControls
-        //todo: Refactor: CO the whole region
-        //public static Plots.IndividualLinkedPlotControlVM BuildDefaultLP3Control(ParentElement ownerElement)
-        //{
-        //    List<AnalyticalFrequencyElement> listOfLp3 = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
-        //    AddFlowFrequencyToConditionVM lp3Importer = new AddFlowFrequencyToConditionVM(listOfLp3);
-        //    lp3Importer.RequestNavigation += ownerElement.Navigate;
-        //    return new Plots.IndividualLinkedPlotControlVM(
-        //        new Plots.ConditionsIndividualPlotWrapperVM(true, true, "LP3", "Probability", "Inflow"),
-        //        new Plots.IndividualLinkedPlotCoverButtonVM("Flow Frequency Curve"),
-        //        lp3Importer);
-        //}
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultLP3Control(ParentElement ownerElement)
+        {
+            List<AnalyticalFrequencyElement> listOfLp3 = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
+            //todo: just for testing, delete this dummy lp3
+            List<double> xs = new List<double>() { .1,.3,.5,.7,.9 };
+            List<double> ys = new List<double>() { 1, 1000, 3000, 5000, 7000 };
+            IFdaFunction func = ImpactAreaFunctionFactory.Factory(ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear), ImpactAreaFunctionEnum.InflowFrequency);
+            AnalyticalFrequencyElement dummyElem = new AnalyticalFrequencyElement("dummyElem", "now", "desc", func);
+            listOfLp3.Add(dummyElem);
 
-        //public static Plots.IndividualLinkedPlotControlVM BuildDefaultInflowOutflowControl(ParentElement ownerElement)
-        //{
-        //    List<InflowOutflowElement> listOfInfOut = StudyCache.GetChildElementsOfType<InflowOutflowElement>();
-        //    AddInflowOutflowToConditionVM inOutImporter = new AddInflowOutflowToConditionVM(listOfInfOut);
-        //    inOutImporter.RequestNavigation += ownerElement.Navigate;
-        //    return new Plots.IndividualLinkedPlotControlVM(
-        //        new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Inflow Outflow", "Inflow", "OutFlow"),
-        //        new Plots.IndividualLinkedPlotCoverButtonVM("Inflow Outflow"),
-        //        inOutImporter,
-        //        new Plots.DoubleLineModulatorCoverButtonVM(),
-        //        new Plots.DoubleLineModulatorWrapperVM());
-        //}
+            AddFlowFrequencyToConditionVM lp3Importer = new AddFlowFrequencyToConditionVM(listOfLp3);
+            lp3Importer.RequestNavigation += ownerElement.Navigate;
 
-        //public static Plots.IndividualLinkedPlotControlVM BuildDefaultRatingControl(ParentElement ownerElement)
-        //{
-        //    List<RatingCurveElement> listOfRatingCurves = StudyCache.GetChildElementsOfType<RatingCurveElement>();
-        //    AddRatingCurveToConditionVM ratImporter = new AddRatingCurveToConditionVM(listOfRatingCurves);
-        //   // ratImporter.RequestNavigation += ownerElement.Navigate;
-        //    return new Plots.IndividualLinkedPlotControlVM(
-        //        new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Rating", "Exterior Stage", "OutFlow"),
-        //        new Plots.IndividualLinkedPlotCoverButtonVM("Rating Curve"),
-        //        ratImporter);
-        //}
+            bool isYAxisLog = true;
+            bool isProbabilityXAxis = true;
 
-        //public static Plots.IndividualLinkedPlotControlVM BuildDefaultExtIntStageControl(ParentElement ownerElement)
-        //{
-        //    List<StageTransforms.ExteriorInteriorElement> listOfExtIntElements = StudyCache.GetChildElementsOfType<ExteriorInteriorElement>();
-        //    AddExteriorInteriorStageToConditionVM extIntImporter = new AddExteriorInteriorStageToConditionVM(listOfExtIntElements);
-        //    extIntImporter.RequestNavigation += ownerElement.Navigate;
-        //    return new Plots.IndividualLinkedPlotControlVM(
-        //        new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Exterior Interior Stage", "Exterior Stage", "Interior Stage"),
-        //        new Plots.IndividualLinkedPlotCoverButtonVM("Ext Int Stage Curve"),
-        //        extIntImporter,
-        //        new Plots.DoubleLineModulatorHorizontalCoverButtonVM(),
-        //        new Plots.HorizontalDoubleLineModulatorWrapperVM());
-        //}
+            return new Plots.IndividualLinkedPlotControlVM(
+                new Plots.ConditionsIndividualPlotWrapperVM(true, true, "LP3", "Probability", "Inflow"), 
+                new Plots.IndividualLinkedPlotCoverButtonVM("Flow Frequency Curve"),
+                lp3Importer, isYAxisLog, isProbabilityXAxis, false, false);
+        }
 
-        //public static Plots.IndividualLinkedPlotControlVM BuildDefaultStageDamageControl(ParentElement ownerElement)
-        //{
-        //    List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamage = StudyCache.GetChildElementsOfType<AggregatedStageDamageElement>();
-        //    AddStageDamageToConditionVM stageDamageImporter = new AddStageDamageToConditionVM(listOfStageDamage);
-        //    stageDamageImporter.RequestNavigation += ownerElement.Navigate;
-        //    return new Plots.IndividualLinkedPlotControlVM(
-        //        new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Stage Damage", "Interior Stage", "Damage"),
-        //        new Plots.IndividualLinkedPlotCoverButtonVM("Int Stage Damage Curve"),
-        //        stageDamageImporter);
-        //}
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultInflowOutflowControl(ParentElement ownerElement)
+        {
+            List<InflowOutflowElement> listOfInfOut = StudyCache.GetChildElementsOfType<InflowOutflowElement>();
+            AddInflowOutflowToConditionVM inOutImporter = new AddInflowOutflowToConditionVM(listOfInfOut);
+            inOutImporter.RequestNavigation += ownerElement.Navigate;
 
-        //public static Plots.IndividualLinkedPlotControlVM BuildDefaultDamageFrequencyControl(ParentElement ownerElement)
-        //{
-        //    return new Plots.IndividualLinkedPlotControlVM(
-        //        new Plots.ConditionsIndividualPlotWrapperVM(true, true, "Damage Frequency", "Probability", "Damage", false),
-        //        new Plots.IndividualLinkedPlotCoverButtonVM("Preview Compute"),
-        //        null);
-        //}
+            bool isYAxisLog = false;
+            bool isProbabilityXAxis = false;
+
+            return new Plots.IndividualLinkedPlotControlVM(
+                new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Inflow Outflow", "Inflow", "OutFlow"),
+                new Plots.IndividualLinkedPlotCoverButtonVM("Inflow Outflow"),
+                inOutImporter, isYAxisLog, isProbabilityXAxis,true, true, 
+                new Plots.DoubleLineModulatorCoverButtonVM(),
+                new Plots.DoubleLineModulatorWrapperVM());
+        }
+
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultRatingControl(ParentElement ownerElement)
+        {
+            List<RatingCurveElement> listOfRatingCurves = StudyCache.GetChildElementsOfType<RatingCurveElement>();
+            AddRatingCurveToConditionVM ratImporter = new AddRatingCurveToConditionVM(listOfRatingCurves);
+
+            bool isYAxisLog = true;
+            bool isProbabilityXAxis = false;
+
+            return new Plots.IndividualLinkedPlotControlVM(
+                new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Rating", "Exterior Stage", "OutFlow"),
+                new Plots.IndividualLinkedPlotCoverButtonVM("Rating Curve"),
+                ratImporter, isYAxisLog, isProbabilityXAxis, false, true);
+        }
+
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultExtIntStageControl(ParentElement ownerElement)
+        {
+            List<StageTransforms.ExteriorInteriorElement> listOfExtIntElements = StudyCache.GetChildElementsOfType<ExteriorInteriorElement>();
+            AddExteriorInteriorStageToConditionVM extIntImporter = new AddExteriorInteriorStageToConditionVM(listOfExtIntElements);
+            extIntImporter.RequestNavigation += ownerElement.Navigate;
+
+            bool isYAxisLog = false;
+            bool isProbabilityXAxis = false;
+
+            return new Plots.IndividualLinkedPlotControlVM(
+                new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Exterior Interior Stage", "Exterior Stage", "Interior Stage"),
+                new Plots.IndividualLinkedPlotCoverButtonVM("Ext Int Stage Curve"),
+                extIntImporter, isYAxisLog, isProbabilityXAxis, true, true,
+                new Plots.DoubleLineModulatorHorizontalCoverButtonVM(),
+                new Plots.HorizontalDoubleLineModulatorWrapperVM());
+        }
+
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultStageDamageControl(ParentElement ownerElement)
+        {
+            List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamage = StudyCache.GetChildElementsOfType<AggregatedStageDamageElement>();
+            AddStageDamageToConditionVM stageDamageImporter = new AddStageDamageToConditionVM(listOfStageDamage);
+            stageDamageImporter.RequestNavigation += ownerElement.Navigate;
+
+            bool isYAxisLog = true;
+            bool isProbabilityXAxis = false;
+
+            return new Plots.IndividualLinkedPlotControlVM(
+                new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Stage Damage", "Interior Stage", "Damage"),
+                new Plots.IndividualLinkedPlotCoverButtonVM("Int Stage Damage Curve"),
+                stageDamageImporter, isYAxisLog, isProbabilityXAxis, true, true);
+        }
+
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultDamageFrequencyControl(ParentElement ownerElement)
+        {
+            bool isYAxisLog = true;
+            bool isProbabilityXAxis = true;
+
+            return new Plots.IndividualLinkedPlotControlVM(
+                new Plots.ConditionsIndividualPlotWrapperVM(true, true, "Damage Frequency", "Probability", "Damage", false),
+                new Plots.IndividualLinkedPlotCoverButtonVM("Preview Compute"),
+                null, isYAxisLog, isProbabilityXAxis, true,false);
+        }
 
         #endregion
 
         public void AddNewCondition(object arg1, EventArgs arg2)
         {
-            //todo: Refactor: CO
-            //List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.GetChildElementsOfType<ImpactArea.ImpactAreaElement>();
+            List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.GetChildElementsOfType<ImpactArea.ImpactAreaElement>();
 
-            //Plots.IndividualLinkedPlotControlVM lp3Control = BuildDefaultLP3Control(this);
+            Plots.IndividualLinkedPlotControlVM lp3Control = BuildDefaultLP3Control(this);
 
-            //Plots.IndividualLinkedPlotControlVM inflowOutflowControl = BuildDefaultInflowOutflowControl(this);
+            Plots.IndividualLinkedPlotControlVM inflowOutflowControl = BuildDefaultInflowOutflowControl(this);
 
-            //Plots.IndividualLinkedPlotControlVM ratingControl = BuildDefaultRatingControl(this);
-            //ratingControl.RequestNavigation += Navigate;
+            Plots.IndividualLinkedPlotControlVM ratingControl = BuildDefaultRatingControl(this);
+            ratingControl.RequestNavigation += Navigate;
 
-            //Plots.IndividualLinkedPlotControlVM extIntStageControl = BuildDefaultExtIntStageControl(this);
+            Plots.IndividualLinkedPlotControlVM extIntStageControl = BuildDefaultExtIntStageControl(this);
 
-            //Plots.IndividualLinkedPlotControlVM StageDamageControl = BuildDefaultStageDamageControl(this);
+            Plots.IndividualLinkedPlotControlVM StageDamageControl = BuildDefaultStageDamageControl(this);
 
-            //Plots.IndividualLinkedPlotControlVM DamageFrequencyControl = BuildDefaultDamageFrequencyControl(this);
+            Plots.IndividualLinkedPlotControlVM DamageFrequencyControl = BuildDefaultDamageFrequencyControl(this);
 
-            //Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-            //     .WithSiblingRules(this);
-            //  // .WithParentGuid(this.GUID)
-            //  // .WithCanOpenMultipleTimes(true);
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                 .WithSiblingRules(this);
+            // .WithParentGuid(this.GUID)
+            // .WithCanOpenMultipleTimes(true);
 
-            //ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl, StageDamageControl, DamageFrequencyControl, actionManager);
-            ////StudyCache.AddSiblingRules(vm, this);
-            ////vm.AddSiblingRules(this);
-            //vm.RequestNavigation += Navigate;
-            //string header = "Create Condition";
-            //DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateCondition");
-            //Navigate(tab, false, false);
+            ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl, StageDamageControl, DamageFrequencyControl, actionManager);
+            //StudyCache.AddSiblingRules(vm, this);
+            //vm.AddSiblingRules(this);
+            vm.RequestNavigation += Navigate;
+            string header = "Create Condition";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateCondition");
+            Navigate(tab, false, false);
 
-            ////if (!vm2.WasCanceled)
-            ////{
-            ////    if (!vm2.HasError)
-            ////    {
-            ////        ConditionsElement ce = ConditionFactory.BuildConditionsElement(vm2, this);
-            ////        AddElement(ce);
-            ////    }
-            ////}
+            //if (!vm2.WasCanceled)
+            //{
+            //    if (!vm2.HasError)
+            //    {
+            //        ConditionsElement ce = ConditionFactory.BuildConditionsElement(vm2, this);
+            //        AddElement(ce);
+            //    }
+            //}
         }
         #endregion
         #region Functions
@@ -198,7 +228,7 @@ namespace FdaViewModel.Conditions
         //public override Type[] TableColumnTypes()
         //{
         //    return new Type[] { typeof(string), typeof(string), typeof(int), typeof(string),
-                
+
         //        typeof(bool), typeof(string),
         //        typeof(bool), typeof(string),
         //        typeof(bool), typeof(string),

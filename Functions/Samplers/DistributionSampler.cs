@@ -18,7 +18,7 @@ namespace Functions
         {
             if (typeof(CoordinatesFunctionVariableYs).IsAssignableFrom(coordinatesFunction.GetType()))
             {
-                return new CoordinatesFunctionConstants(ConvertCoordinatesToConstants(coordinatesFunction.Coordinates, probability));
+                return new CoordinatesFunctionConstants(ConvertCoordinatesToConstants(coordinatesFunction.Coordinates, probability), coordinatesFunction.Interpolator);
             }
 
             throw new ArgumentException("Could not sample the coordinates function.");

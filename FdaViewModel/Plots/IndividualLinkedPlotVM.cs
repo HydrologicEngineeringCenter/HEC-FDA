@@ -1,9 +1,17 @@
-﻿using Model;
+﻿using FdaViewModel.Conditions;
+using FdaViewModel.Editors;
+using Functions;
+using Functions.CoordinatesFunctions;
+using FunctionsView.ViewModel;
+using HEC.Plotting.SciChart2D.DataModel;
+using HEC.Plotting.SciChart2D.ViewModel;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace FdaViewModel.Plots
 {
@@ -20,6 +28,16 @@ namespace FdaViewModel.Plots
         //public event EventHandler CurveUpdated;
         #endregion
         #region Properties
+
+        //public CurveEditorVM ChartVM
+        //{
+        //    get { return _ChartVM; }
+        //    set { _ChartVM = value;NotifyPropertyChanged(); }
+        //}
+
+        public ConditionChartViewModel CoordinatesChartViewModel { get; set; }
+
+
         public IFdaFunction Curve
         {
             get { return _MyCurve; }
@@ -27,11 +45,11 @@ namespace FdaViewModel.Plots
                 //CurveUpdated?.Invoke(this, new EventArgs()); }
         }
         public IFdaFunction NonStandardDeviationCurve { get; set; }
-        public string Title { get; set; }
-        public string SubTitle { get; set; }
-        public string XAxisLabel { get; set; } 
-        public string YAxisLabel { get; set; }
-        public bool XAxisIsStandardDeviation { get; set; }
+        //public string Title { get; set; }
+        //public string SubTitle { get; set; }
+        //public string XAxisLabel { get; set; } 
+        //public string YAxisLabel { get; set; }
+        //public bool XAxisIsStandardDeviation { get; set; }
 
         public bool IsVisible
         {
@@ -42,15 +60,20 @@ namespace FdaViewModel.Plots
        
 
         public IFdaFunction BaseFunction { get; set; }
+        public bool IsYAxisLog { get; set; }
+        public bool IsProbabilityXAxis { get; set; }
         #endregion
         #region Constructors
         public IndividualLinkedPlotVM():base()
         {
         }
 
-        public IndividualLinkedPlotVM(IFdaFunction baseFunction, string selectedElementName) : this(baseFunction,"","","",false,selectedElementName)
+        public IndividualLinkedPlotVM(IFdaFunction baseFunction, string selectedElementName, FdaCrosshairChartModifier chartModifier, bool isYAxisLog, bool isProbabilityXAxis, 
+            bool xAxisOnBottom, bool yAxisOnLeft) 
+            : this(baseFunction, isYAxisLog, isProbabilityXAxis, selectedElementName)
         {
-          
+            CoordinatesChartViewModel = new ConditionChartViewModel(selectedElementName);
+            CoordinatesChartViewModel.ModifierGroup.ChildModifiers.Add(chartModifier);
             //BaseFunction = baseFunction;
             //if(baseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency)
             //{
@@ -64,15 +87,23 @@ namespace FdaViewModel.Plots
             //{
             //    Curve = ((FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction)baseFunction).Function;
             //}
-            
+
             //_MyCurve = curve;
+            UpdateChart(BaseFunction.Function, xAxisOnBottom, yAxisOnLeft);
         }
-        public IndividualLinkedPlotVM(IFdaFunction baseFunction,string title, string xAxisLabel,string yAxisLabel, bool isXAxisStandardDeviations = false, string selectedElementName = "")
+       
+
+        public IndividualLinkedPlotVM(IFdaFunction baseFunction, bool isYAxisLog, bool isProbabilityXAxis, string selectedElementName = "")
         {
-            XAxisIsStandardDeviation = isXAxisStandardDeviations;
+
+            // ChartVM = new CurveEditorVM(baseFunction, xAxisLabel, yAxisLabel, title, asdf);
+
+            //XAxisIsStandardDeviation = isXAxisStandardDeviations;
+            IsYAxisLog = isYAxisLog;
+            IsProbabilityXAxis = isProbabilityXAxis;
             BaseFunction = baseFunction;
             SelectedElementName = selectedElementName;
-            SubTitle = selectedElementName;
+            //SubTitle = selectedElementName;
             //todo: Refactor: Commenting out
             //if (baseFunction.GetType().BaseType == typeof(FdaModel.Functions.FrequencyFunctions.FrequencyFunction))
             //{
@@ -119,13 +150,33 @@ namespace FdaViewModel.Plots
 
             //}
            
-            Title = title;
-            XAxisLabel = xAxisLabel;
-            YAxisLabel = yAxisLabel;
+            //Title = title;
+            //XAxisLabel = xAxisLabel;
+            //YAxisLabel = yAxisLabel;
         }
 
         #endregion
         #region Voids
+        private void UpdateChart(ICoordinatesFunction function, bool xAxisBottom, bool yAxisLeft)
+        {
+            CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(function);
+            List<SciLineData> lineData = chartHelper.CreateLineData(IsYAxisLog, IsProbabilityXAxis);
+            foreach(SciLineData ld in lineData)
+            {
+                if (!xAxisBottom)
+                {
+                    ld.XAxisAlignment = HEC.Plotting.Core.DataModel.AxisAlignment.Top;
+                }
+                if(!yAxisLeft)
+                {
+                    ld.YAxisAlignment = HEC.Plotting.Core.DataModel.AxisAlignment.Right;
+                }
+
+            }
+            CoordinatesChartViewModel.LineData.Set(lineData);
+        }
+
+       
         public override void AddValidationRules()
         {
             //throw new NotImplementedException();

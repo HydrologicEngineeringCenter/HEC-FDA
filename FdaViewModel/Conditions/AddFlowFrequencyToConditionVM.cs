@@ -26,6 +26,7 @@ namespace FdaViewModel.Conditions
        // private ParentElement _owner;
         private List<FrequencyRelationships.AnalyticalFrequencyElement> _InflowFrequencyCurves;
         private IFdaFunction _SelectedCurve;
+        private ChildElement _SelectedElement;
         //private FdaModel.Functions.BaseFunction _BaseFunction;
         #endregion
         #region Properties
@@ -35,12 +36,15 @@ namespace FdaViewModel.Conditions
         {
             get { if (SelectedElement != null) { return SelectedElement.Name; } else { return ""; } }
         }
-        public Utilities.ChildElement SelectedElement { get;
-            set; }
+        public ChildElement SelectedElement 
+        {
+            get { return _SelectedElement; }
+            set { _SelectedElement = value; }
+        }
         public IFdaFunction SelectedCurve
         {
             //todo: Refactor: commenting out
-            get { return null; }// new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(((FrequencyRelationships.AnalyticalFrequencyElement)SelectedElement).Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency).GetOrdinatesFunction().Function; }
+            get { return SelectedElement.Curve; } //new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(((FrequencyRelationships.AnalyticalFrequencyElement)SelectedElement).Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency).GetOrdinatesFunction().Function; }
             
         }
 
@@ -108,8 +112,14 @@ namespace FdaViewModel.Conditions
         //    InflowFrequencyCurves = tempList;//this is to hit the notify prop changed
         //}
 
+        //private void SetSelectedCurve()
+        //{
+        //    SelectedElement.
+        //}
+
         public void OKClicked()
         {
+            //SetSelectedCurve();
             Validate();
             if (!HasFatalError)
             {

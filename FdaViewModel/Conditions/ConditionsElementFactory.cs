@@ -1,4 +1,5 @@
 ﻿using FdaViewModel.Utilities;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,11 @@ namespace FdaViewModel.Conditions
         //        }
         //    }
         //    return builder.build();
+        //}
+
+        //public static ConditionsElement Factory(ICondition condition)
+        //{
+        //    ConditionBuilder builder = new ConditionBuilder(condition)
         //}
 
         public static void CopyConditionsElement(ConditionsElement fromElem, ConditionsElement toElem)

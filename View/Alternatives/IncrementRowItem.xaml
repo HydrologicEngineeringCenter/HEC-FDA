@@ -8,20 +8,21 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="120" />
-            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="85" />
+            <ColumnDefinition Width="80" />
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="100" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="40" />
 
         </Grid.ColumnDefinitions>
         <Label Name="lbl_IncrementName" Grid.Column="0" Content="Increment " Margin="5" />
-        <Label  Grid.Column="1" Content="With Project: " Margin="5" />
+        <Label  Grid.Column="1" Content="With Project: " Margin="0" VerticalAlignment="Center" HorizontalAlignment="Right"  />
 
         <ComboBox x:Name="cmb_Plans1" Grid.Column="2" Height="22" ItemsSource="{Binding Plans}" Margin="5,1,0,0" SelectedItem="{Binding SelectedPlan1}" HorizontalAlignment="Stretch" />
-        <Label Grid.Column="3" Content="Without Project: " Margin="5" />
+        <Label Grid.Column="3" Content="Without Project: " Margin="0" VerticalAlignment="Center" HorizontalAlignment="Right" />
         <ComboBox x:Name="cmb_Plans2" Grid.Column="4" Height="22" ItemsSource="{Binding Plans}"  HorizontalAlignment="Stretch"   />
+        <TextBlock x:Name="txt_plan2" Grid.Column="4" VerticalAlignment="Center" Visibility="Hidden" />
         <Button x:Name="btn_delete" Grid.Column="5" Content="X" Height="22" Width="22" Click="btn_delete_Click"/>
     </Grid>
 </UserControl>

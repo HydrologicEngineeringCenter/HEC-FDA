@@ -20,11 +20,11 @@ namespace FdaViewModel.FrequencyRelationships
         #endregion
         #region Properties
       
-        public IFdaFunction Distribution
-        {
-            get { return _Distribution; }
-            set { _Distribution = value; NotifyPropertyChanged(); }
-        }
+        //public IFdaFunction Distribution
+        //{
+        //    get { return _Distribution; }
+        //    set { _Distribution = value; NotifyPropertyChanged(); }
+        //}
         #endregion
         #region Constructors
         public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, IFdaFunction dist) : base()
@@ -35,7 +35,7 @@ namespace FdaViewModel.FrequencyRelationships
 
             Description = desc;
             if (Description == null) Description = "";
-            Distribution = dist;
+            Curve = dist;
             Utilities.NamedAction editflowfreq = new Utilities.NamedAction();
             editflowfreq.Header = "Edit Analyitical Flow Frequency Relationship";
             editflowfreq.Action = EditFlowFreq;
@@ -93,7 +93,7 @@ namespace FdaViewModel.FrequencyRelationships
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)elementToClone;
-            return new AnalyticalFrequencyElement(elem.Name, elem.LastEditDate, elem.Description,elem.Distribution);
+            return new AnalyticalFrequencyElement(elem.Name, elem.LastEditDate, elem.Description,elem.Curve);
         }
 
         public void AssignValuesFromEditorToElement(BaseEditorVM editorVM, ChildElement elem)
@@ -102,7 +102,7 @@ namespace FdaViewModel.FrequencyRelationships
             AnalyticalFrequencyElement element = (AnalyticalFrequencyElement)elem;
             element.Name = vm.Name;
             element.Description = vm.Description;
-            element.Distribution = vm.Curve;
+            element.Curve = vm.Curve;
             element.UpdateTreeViewHeader(vm.Name);
         }
 
@@ -113,7 +113,7 @@ namespace FdaViewModel.FrequencyRelationships
 
             vm.Name = element.Name;
             vm.Description = element.Description;
-            vm.Curve = element.Distribution;
+            vm.Curve = element.Curve;
 
         }
 

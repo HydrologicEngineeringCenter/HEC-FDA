@@ -3,7 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FdaViewModel.Conditions;
 using FdaViewModel.Utilities;
+using Functions;
+using HEC.Plotting.Core;
+using Model;
+using Model.Inputs.Functions.ImpactAreaFunctions;
 
 namespace FdaViewModel.Plots
 {
@@ -21,10 +26,73 @@ namespace FdaViewModel.Plots
         public event EventHandler PopPlotOut;
         public event EventHandler PreviewCompute;
 
+        public event EventHandler UpdateDLMLines;
+        public event EventHandler UpdateHorizontalDLMLines;
+
         private BaseViewModel _CurrentVM;
         private bool _UpdatePlots;
+        private bool _IsModulator = false;
+
+        private bool _IsYAxisLog;
+        private  bool _IsProbabilityXAxis;
+
+        private double _MinX;
+        private double _MaxX;
+        private double _MinY;
+        private double _MaxY;
+
+        private double _CurrentX;
+        private double _CurrentY;
+
+        private bool _XAxisOnBottom = true;
+        private bool _YAxisOnLeft = true;
+
         #endregion
         #region Properties
+
+        //public double SharedXAxisMin { get; set; }
+        //public double SharedXAxisMax { get; set; }
+        //public double SharedYAxisMin { get; set; }
+        //public double SharedYAxisMax { get; set; }
+
+        public double MinX
+        {
+            get { return _MinX; }
+            set { _MinX = value; NotifyPropertyChanged(); }
+        }
+
+        public double MaxX
+        {
+            get { return _MaxX; }
+            set { _MaxX = value; NotifyPropertyChanged(); }
+        }
+        public double MinY
+        {
+            get { return _MinY; }
+            set { _MinY = value; NotifyPropertyChanged(); }
+        }
+        public double MaxY
+        {
+            get { return _MaxY; }
+            set { _MaxY = value; NotifyPropertyChanged(); }
+        }
+        public double CurrentX
+        {
+            get { return _CurrentX; }
+            set { _CurrentX = value; NotifyPropertyChanged(); }
+        }
+        public double CurrentY
+        {
+            get { return _CurrentY; }
+            set { _CurrentY = value; NotifyPropertyChanged(); }
+        }
+        public bool IsModulator
+        {
+            get { return _IsModulator; }
+            set { _IsModulator = value; }
+        }
+        public bool IsPlotShowing { get; set; }
+
         /// <summary>
         /// this is not ideal but i needed a way to tell the view side to update the plots when a new curve is selected
         /// from the importer. The curve change callback works if the importer is in the editor but it does not trigger
@@ -55,13 +123,25 @@ namespace FdaViewModel.Plots
 
         public ICoverButton ModulatorCoverButtonVM { get; set; }
         public IIndividualLinkedPlotWrapper ModulatorPlotWrapperVM { get; set; }
+
+        public CrosshairData CrosshairData { get; set; } 
+        public FdaCrosshairChartModifier ChartModifier { get; set; }
         #endregion
         #region Constructors
         public IndividualLinkedPlotControlVM():base()
         {
+           
         }
-        public IndividualLinkedPlotControlVM(IIndividualLinkedPlotWrapper indLinkedPlotWrapperVM, ICoverButton coverButton, iConditionsImporter importerVM, ICoverButton modulatorCoverButton = null, IIndividualLinkedPlotWrapper modulatorPlotWrapper = null)//Conditions.AddFlowFrequencyToConditionVM addFlowFreqVM)
+        public IndividualLinkedPlotControlVM(IIndividualLinkedPlotWrapper indLinkedPlotWrapperVM, ICoverButton coverButton, iConditionsImporter importerVM, 
+            bool isYAxisLog, bool isProbabilityXAxis, bool isXAxisOnBottom, bool isYAxisOnLeft,
+             ICoverButton modulatorCoverButton = null, IIndividualLinkedPlotWrapper modulatorPlotWrapper = null)
         {
+            
+            _XAxisOnBottom = isXAxisOnBottom;
+            _YAxisOnLeft = isYAxisOnLeft;
+            _IsYAxisLog = isYAxisLog;
+            _IsProbabilityXAxis = isProbabilityXAxis;
+
             IndividualPlotWrapperVM = indLinkedPlotWrapperVM;
             IndividualPlotWrapperVM.ShowImportButton += new EventHandler(ShowTheImportButton);
             IndividualPlotWrapperVM.ShowTheImporter += new EventHandler(ImportButtonClicked);
@@ -82,26 +162,21 @@ namespace FdaViewModel.Plots
                 
             }
 
-            ModulatorCoverButtonVM = modulatorCoverButton;
-            //if (ModulatorCoverButtonVM != null)
-            //{
-            //    ModulatorCoverButtonVM.Clicked += new EventHandler(ModulatorCoverButtonClicked);
-            //}
-
-            ModulatorPlotWrapperVM = modulatorPlotWrapper;
-            //show import button
-            //show the importer
-
-            if(ModulatorCoverButtonVM != null)
+            if(modulatorCoverButton != null)
             {
+                _IsModulator = true;
+                ModulatorCoverButtonVM = modulatorCoverButton;
+                ModulatorPlotWrapperVM = modulatorPlotWrapper;
                 CurrentVM = (BaseViewModel)ModulatorCoverButtonVM;
             }
             else
             {
                 CurrentVM = (BaseViewModel)ImportButtonVM;
-
             }
-          
+            //if (ModulatorCoverButtonVM != null)
+            //{
+            //    ModulatorCoverButtonVM.Clicked += new EventHandler(ModulatorCoverButtonClicked);
+            //}
 
         }
         #endregion
@@ -121,7 +196,7 @@ namespace FdaViewModel.Plots
             ShowPreviousVM(sender, e);
             //CurveImporterVM.CancelClickedEvent += ImporterWasCanceled
             string header = "Importer";
-            DynamicTabVM tab = new DynamicTabVM(header, (BaseViewModel)CurveImporterVM, "PlotImporter");
+            DynamicTabVM tab = new DynamicTabVM(header, (BaseViewModel)CurveImporterVM, "Plot1Importer");
             Navigate(tab,false,false);
             //if (((BaseViewModel)CurveImporterVM).WasCanceled == true)
             //{
@@ -239,6 +314,131 @@ namespace FdaViewModel.Plots
             }
         }
 
+        private void SetChartModifier(IFdaFunction function)
+        {
+            CrosshairData = new CrosshairData(function.Function);
+            ImpactAreaFunctionEnum funcType = function.Type;
+            switch(funcType)
+            {
+                case ImpactAreaFunctionEnum.InflowFrequency:
+                    {
+                        ChartModifier = new FdaCrosshairChartModifier(false, false, CrosshairData);
+                        break;
+                    }
+                case ImpactAreaFunctionEnum.InflowOutflow:
+                    {
+                        ChartModifier = new FdaCrosshairChartModifier(true, true, CrosshairData);
+                        CrosshairData.UpdateModulator += UpdateDoubleLineModulator;
+                        break;
+                    }
+                case ImpactAreaFunctionEnum.Rating:
+                    {
+                        ChartModifier = new FdaCrosshairChartModifier(false, true, CrosshairData);
+                        break;
+                    }
+                case ImpactAreaFunctionEnum.ExteriorInteriorStage:
+                    {
+                        ChartModifier = new FdaCrosshairChartModifier(true, true, CrosshairData);
+                        CrosshairData.UpdateHorizontalModulator += UpdateHorizontalDoubleLineModulator;
+                        break;
+                    }
+                case ImpactAreaFunctionEnum.InteriorStageDamage:
+                    {
+                        ChartModifier = new FdaCrosshairChartModifier(true, true, CrosshairData);
+                        break;
+                    }
+                case ImpactAreaFunctionEnum.DamageFrequency:
+                    {
+                        ChartModifier = new FdaCrosshairChartModifier(true, false, CrosshairData);
+                        break;
+                    }
+                default:
+                    {
+                        int i = 0;
+                        break;
+                    }
+            }
+        }
+
+
+        public void PopPlotIntoModulator()
+        {
+            CurrentVM = (BaseViewModel)ModulatorPlotWrapperVM;
+            CrosshairData.IsPlot1Modulator = true;
+            SetMinMaxModulatorValues();
+            UpdateDLMLines?.Invoke(this, new EventArgs());
+            PlotIsShowing?.Invoke(this, new EventArgs());
+
+        }
+
+        public void PopPlot5IntoHorizontalModulator()
+        {
+            CurrentVM = (BaseViewModel)ModulatorPlotWrapperVM;
+            CrosshairData.IsPlot5Modulator = true;
+            SetMinMaxModulatorValues();
+            UpdateHorizontalDLMLines?.Invoke(this, new EventArgs());
+            PlotIsShowing?.Invoke(this, new EventArgs());
+
+        }
+
+        private void SetMinMaxModulatorValues()
+        {
+            ICoordinatesFunction func = IndividualPlotWrapperVM.PlotVM.BaseFunction.Function;
+            MinX = func.Coordinates[0].X.Value();
+            MinY = func.Coordinates[0].Y.Value();
+
+            MaxX = func.Coordinates[func.Coordinates.Count - 1].X.Value();
+            MaxY = func.Coordinates[func.Coordinates.Count - 1].Y.Value();
+
+
+        }
+
+        public void SetCurrentToModulatorCoverButton()
+        {
+            CurrentVM = (BaseViewModel)ModulatorCoverButtonVM;
+        }
+
+        public void AddCurveToPlot(IFdaFunction function, string elementName)
+        {
+            SetChartModifier(function);
+
+            //if(_IsModulator)
+            //{
+            //    ModulatorPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(function, elementName, ChartModifier, _IsYAxisLog, _IsProbabilityXAxis);
+            //    CurrentVM = (BaseViewModel)ModulatorPlotWrapperVM;
+            //}
+            //else
+            {
+                IndividualPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(function, elementName, ChartModifier, _IsYAxisLog, _IsProbabilityXAxis, _XAxisOnBottom,
+                    _YAxisOnLeft);
+                CurrentVM = (BaseViewModel)IndividualPlotWrapperVM;
+
+            }
+
+
+
+            //store the previouse curve
+            PreviousPlot = new IndividualLinkedPlotVM(function, elementName, null, _IsYAxisLog, _IsProbabilityXAxis, _XAxisOnBottom, _YAxisOnLeft);
+
+            //if (ModulatorPlotWrapperVM != null)
+            //{
+            //    ModulatorPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(function, elementName, ChartModifier);
+            //    CurrentVM = (BaseViewModel)ModulatorPlotWrapperVM;
+
+            //}
+
+            //tell the conditions plot editor vm that this plot is showing
+            IsPlotShowing = true;
+            PlotIsShowing?.Invoke(this, new EventArgs());
+
+            //raise the updateplots event - is this still necesarry i update the plots in the ind linked plots loaded event
+            if (SelectedCurveUpdated != null)
+            {
+                SelectedCurveUpdated(this, new EventArgs());
+            }
+            UpdateThePlots();
+        }
+
         /// <summary>
         /// This gets called when the user clicks the OK button on the importer form.
         /// </summary>
@@ -246,46 +446,56 @@ namespace FdaViewModel.Plots
         /// <param name="e"></param>
         public void AddCurveToPlot(object sender,EventArgs e)
         {
-          
+
             CurveImporterVM.IsPoppedOut = false;
             IndividualPlotWrapperVM.DisplayImportButton = true;
 
             IndividualPlotWrapperVM.SubTitle = CurveImporterVM.SelectedElement.Name;
-            //switch to the plot vm
-            if (IndividualPlotWrapperVM.PlotVM == null)
-            {
-                IndividualPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(CurveImporterVM.BaseFunction, CurveImporterVM.SelectedElementName);
-            }
-            else
-            {
-                IndividualPlotWrapperVM.PlotVM.BaseFunction = CurveImporterVM.BaseFunction;
-                IndividualPlotWrapperVM.PlotVM.SelectedElementName = CurveImporterVM.SelectedElementName;
-                IndividualPlotWrapperVM.PlotVM.Curve = CurveImporterVM.SelectedCurve;
-            }
 
-            CurrentVM = (BaseViewModel)IndividualPlotWrapperVM;
+            AddCurveToPlot(CurveImporterVM.SelectedCurve, CurveImporterVM.SelectedElementName);
 
-            //store the previouse curve
-            PreviousPlot = new IndividualLinkedPlotVM(CurveImporterVM.BaseFunction, CurveImporterVM.SelectedElementName); 
+            //SetChartModifier(CurveImporterVM.SelectedCurve);
 
-            if (ModulatorPlotWrapperVM != null)
-            {
-                ModulatorPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(CurveImporterVM.BaseFunction, CurveImporterVM.SelectedElementName);
-                //CurrentVM = (BaseViewModel)ModulatorPlotWrapperVM;
-            }
+            ////switch to the plot vm
+            ////if (IndividualPlotWrapperVM.PlotVM == null)
+            ////{
+            //    IndividualPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(CurveImporterVM.SelectedCurve, CurveImporterVM.SelectedElementName, ChartModifier);
+            ////}
+            ////else
+            ////{
+            ////    //clobbering the chart view model here in the hopes that the old chart modifier gets destroyed forever.
+            ////    IndividualPlotWrapperVM.PlotVM.CoordinatesChartViewModel = new ConditionChartViewModel(CurveImporterVM.SelectedElementName);
+            ////    IndividualPlotWrapperVM.PlotVM.CoordinatesChartViewModel.ModifierGroup.ChildModifiers.Add(ChartModifier);
+            ////    IndividualPlotWrapperVM.PlotVM.BaseFunction = CurveImporterVM.SelectedCurve;
+            ////    IndividualPlotWrapperVM.PlotVM.SelectedElementName = CurveImporterVM.SelectedElementName;
+            ////    IndividualPlotWrapperVM.PlotVM.Curve = CurveImporterVM.SelectedCurve;
+            ////}
 
-            //tell the conditions plot editor vm that this plot is showing
-            if (PlotIsShowing != null)
-            {
-                PlotIsShowing(sender, e);
-            }
+            //CurrentVM = (BaseViewModel)IndividualPlotWrapperVM;
 
-            //raise the updateplots event - is this still necesarry i update the plots in the ind linked plots loaded event
-            if (SelectedCurveUpdated != null)
-            {
-                SelectedCurveUpdated(sender, e);
-            }
-            UpdateThePlots();
+            ////store the previouse curve
+            //PreviousPlot = new IndividualLinkedPlotVM(CurveImporterVM.SelectedCurve, CurveImporterVM.SelectedElementName, null);
+
+            //if (ModulatorPlotWrapperVM != null)
+            //{
+            //    ModulatorPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(CurveImporterVM.SelectedCurve, CurveImporterVM.SelectedElementName, null);
+            //    //CurrentVM = (BaseViewModel)ModulatorPlotWrapperVM;
+            //}
+
+            ////tell the conditions plot editor vm that this plot is showing
+            //IsPlotShowing = true;
+            //if (PlotIsShowing != null)
+            //{
+            //    PlotIsShowing(sender, e);
+            //}
+
+
+            ////raise the updateplots event - is this still necesarry i update the plots in the ind linked plots loaded event
+            //if (SelectedCurveUpdated != null)
+            //{
+            //    SelectedCurveUpdated(sender, e);
+            //}
+            //UpdateThePlots();
         }
 
         public void PreviewTheCompute(object sender, EventArgs e)
@@ -298,6 +508,10 @@ namespace FdaViewModel.Plots
 
         public void PlotIsNotShowingAnymore(object sender, EventArgs e)
         {
+            //This is when you close the plot.
+            //it might be the case that we actually want to clobber the links?
+            //maybe clobber the chartModifier? 7/1/20
+            IsPlotShowing = false;
             if(PlotIsNotShowing != null)
             {
                 PlotIsNotShowing(sender, e);
@@ -318,6 +532,9 @@ namespace FdaViewModel.Plots
 
         public void SetCurrentViewToCoverButton()
         {
+            //This is when you close the plot.
+            //it might be the case that we actually want to clobber the links?
+            //maybe clobber the chartModifier? 7/1/20
             CurrentVM = (BaseViewModel)ImportButtonVM;
         }
 
@@ -327,6 +544,248 @@ namespace FdaViewModel.Plots
         }
 
        
+        //public void LinkToNothing()
+        //{
+        //    //todo: need to do a switch on the "type" of this in order to set the "false" "false" correctly.
+        //    ConditionChartViewModel currentChartVM = IndividualPlotWrapperVM.PlotVM.CoordinatesChartViewModel;
+
+        //    ImpactAreaFunctionEnum currentType = IndividualPlotWrapperVM.PlotVM.BaseFunction.Type;
+        //    currentChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(false, false, CrosshairData));
+        //}
+
+        private ImpactAreaFunctionEnum GetFunctionType(IndividualLinkedPlotControlVM control)
+        {
+            ImpactAreaFunctionEnum controlType;
+            //if (control.IsModulator)
+            //{
+            //    controlType = control.ModulatorPlotWrapperVM.PlotVM.BaseFunction.Type;
+            //}
+            //else
+            {
+                controlType = control.IndividualPlotWrapperVM.PlotVM.BaseFunction.Type;
+            }
+            return controlType;
+        }
+
+        public ConditionChartViewModel GetChartViewModel()
+        {
+            ConditionChartViewModel vm = null;
+            vm = IndividualPlotWrapperVM.PlotVM.CoordinatesChartViewModel;
+            return vm;
+        }
+
+        /// <summary>
+        /// This method exists so that the view side can resize shared plots along the shared axis.
+        /// </summary>
+        /// <param name="otherControl"></param>
+        /// <param name="isYAxis"></param>
+        private void SetSharedAxisValues(IndividualLinkedPlotControlVM otherControl, bool isYAxis)
+        {
+            //both this control and the other control should have a curve in them
+            //before we get here, but lets check here anyway.
+
+            ICoordinate thisFirstCoord = IndividualPlotWrapperVM.PlotVM.BaseFunction.Function.Coordinates[0];
+            ICoordinate thisLastCoord = IndividualPlotWrapperVM.PlotVM.BaseFunction.Function.Coordinates[IndividualPlotWrapperVM.PlotVM.BaseFunction.Function.Coordinates.Count-1];
+
+            ICoordinate otherFirstCoord = otherControl.IndividualPlotWrapperVM.PlotVM.BaseFunction.Function.Coordinates[0];
+            ICoordinate otherLastCoord = otherControl.IndividualPlotWrapperVM.PlotVM.BaseFunction.Function.Coordinates[otherControl.IndividualPlotWrapperVM.PlotVM.BaseFunction.Function.Coordinates.Count - 1];
+
+            if (isYAxis)
+            {
+                double min = getMinSharedAxisValue(thisFirstCoord, otherFirstCoord, true);
+                double max = getMaxSharedAxisValue(thisLastCoord, otherLastCoord, true);
+                GetChartViewModel().SharedYAxisMin = min;
+                GetChartViewModel().SharedYAxisMax = max;
+                otherControl.GetChartViewModel().SharedYAxisMin = min;
+                otherControl.GetChartViewModel().SharedYAxisMax = max;
+            }
+            else
+            {
+                double min = getMinSharedAxisValue(thisFirstCoord, otherFirstCoord, false);
+                double max = getMaxSharedAxisValue(thisLastCoord, otherLastCoord, false);
+                GetChartViewModel().SharedXAxisMin = min;
+                GetChartViewModel().SharedXAxisMax = max;
+                otherControl.GetChartViewModel().SharedXAxisMin = min;
+                otherControl.GetChartViewModel().SharedXAxisMax = max;
+            }
+        }
+
+        private double getMinSharedAxisValue(ICoordinate thisCoord, ICoordinate otherCoord, bool isYAxis)
+        {
+            double min = double.NaN;
+            if(isYAxis)
+            {
+                min = thisCoord.Y.Value();
+                if(otherCoord.Y.Value() < min)
+                {
+                    min = otherCoord.Y.Value();
+                }
+            }
+            else
+            {
+                min = thisCoord.X.Value();
+                if (otherCoord.X.Value() < min)
+                {
+                    min = otherCoord.X.Value();
+                }
+            }
+
+            return min;
+        }
+
+        private double getMaxSharedAxisValue(ICoordinate thisCoord, ICoordinate otherCoord, bool isYAxis)
+        {
+            double max = double.NaN;
+            if (isYAxis)
+            {
+                max = thisCoord.Y.Value();
+                if (otherCoord.Y.Value() > max)
+                {
+                    max = otherCoord.Y.Value();
+                }
+            }
+            else
+            {
+                max = thisCoord.X.Value();
+                if (otherCoord.X.Value() > max)
+                {
+                    max = otherCoord.X.Value();
+                }
+            }
+
+            return max;
+        }
+
+        public void LinkToNextControl(IndividualLinkedPlotControlVM nextControl)
+        {
+            ImpactAreaFunctionEnum thisType = GetFunctionType(this);
+            ImpactAreaFunctionEnum nextType = GetFunctionType(nextControl);
+
+            ConditionChartViewModel currentChartVM = GetChartViewModel();
+            ConditionChartViewModel nextChartVM = nextControl.GetChartViewModel();
+
+            bool nextControlIsModulator = nextControl.IsModulator;
+
+            CrosshairData currentCrosshairData = CrosshairData;
+            CrosshairData nextCrosshairData = nextControl.CrosshairData;
+
+            switch (thisType)
+            {
+                case ImpactAreaFunctionEnum.InflowFrequency:
+                    {
+                        SetSharedAxisValues(nextControl, true);
+                        //if i am inflow frequency, then i can only link to inflow outflow or to rating
+                        if (nextType == ImpactAreaFunctionEnum.InflowOutflow)
+                        {
+                            currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData,Axis.X, Axis.Y);
+                            nextCrosshairData.Previous = new SharedAxisCrosshairData(currentCrosshairData, Axis.Y, Axis.X);
+                        }
+                        else if (nextType == ImpactAreaFunctionEnum.Rating)
+                        {
+                            currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData, Axis.Y, Axis.Y);
+                            nextCrosshairData.Previous = new SharedAxisCrosshairData(currentCrosshairData, Axis.Y, Axis.Y);
+                            
+                        }
+                        break;
+                    }
+                case ImpactAreaFunctionEnum.InflowOutflow:
+                    {
+                        if (nextType == ImpactAreaFunctionEnum.Rating)
+                        {
+                            SetSharedAxisValues(nextControl, true);
+                            currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData, Axis.X, Axis.Y);
+                            nextCrosshairData.Previous = new SharedAxisCrosshairData(currentCrosshairData, Axis.Y, Axis.X);
+                        }
+                        break;
+                    }
+                case ImpactAreaFunctionEnum.Rating:
+                    {
+                        SetSharedAxisValues(nextControl, false);
+                        if (nextType == ImpactAreaFunctionEnum.ExteriorInteriorStage)
+                        {
+                            currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData, Axis.Y, Axis.X);
+                            nextCrosshairData.Previous = new SharedAxisCrosshairData(currentCrosshairData, Axis.X, Axis.Y);
+                            SetSharedAxisValues(nextControl, false);
+
+                        }
+                        else if (nextType == ImpactAreaFunctionEnum.InteriorStageDamage)
+                        {
+                            currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData, Axis.X, Axis.X);
+                            //currentChartVM.ModifierGroup.ChildModifiers.Clear();
+                            //currentChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(false, false, currentCrosshairData));
+
+                            nextCrosshairData.Previous = new SharedAxisCrosshairData(currentCrosshairData, Axis.X, Axis.X);
+                            //nextChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(true, true, nextCrosshairData));
+
+                        }
+                        break;
+                    }
+                case ImpactAreaFunctionEnum.ExteriorInteriorStage:
+                    {
+                        if (nextType == ImpactAreaFunctionEnum.InteriorStageDamage)
+                        {
+                            SetSharedAxisValues(nextControl, false);
+                            //todo: this might need to change once we get the mix and match axis binding worked out.
+                            currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData, Axis.X, Axis.Y);
+                            nextCrosshairData.Previous = new SharedAxisCrosshairData(currentCrosshairData, Axis.Y, Axis.X);
+                        }
+                        break;
+                    }
+                case ImpactAreaFunctionEnum.InteriorStageDamage:
+                    {
+                        if (nextType == ImpactAreaFunctionEnum.DamageFrequency)
+                        {
+                            SetSharedAxisValues(nextControl, true);
+                            currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData, Axis.Y, Axis.Y);
+                            //currentChartVM.ModifierGroup.ChildModifiers.Clear();
+                            //currentChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(false, false, currentCrosshairData));
+
+                            nextCrosshairData.Previous = new SharedAxisCrosshairData(currentCrosshairData, Axis.Y, Axis.Y);
+                            //nextChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(true, true, nextCrosshairData));
+
+                        }
+                        break;
+                    }
+            }
+
+        }
+
+        public void UpdateHorizontalDoubleLineModulator(object sender, ModulatorEventArgs args)
+        {
+            CurrentX = args.X;
+            try
+            {
+                CurrentY = IndividualPlotWrapperVM.PlotVM.BaseFunction.Function.F(IOrdinateFactory.Factory(args.X)).Value();
+            }
+            catch (Exception e)
+            {
+                //we are out of range. Just return?
+                return;
+            }
+
+            //this will tell the view side to draw the modulator lines
+            //based on the current x and y values.
+            UpdateHorizontalDLMLines?.Invoke(this, new EventArgs());
+        }
+
+        public void UpdateDoubleLineModulator(object sender, ModulatorEventArgs args)
+        {
+            //the y value we want to keep. The x value we need to calculate.
+            CurrentX = args.Y;
+            try
+            {
+                CurrentY = IndividualPlotWrapperVM.PlotVM.BaseFunction.Function.F(IOrdinateFactory.Factory(args.Y)).Value();
+            }
+            catch(Exception e)
+            {
+                //we are out of range. Just return?
+                return;
+            }
+
+            //this will tell the view side to draw the modulator lines
+            //based on the current x and y values.
+            UpdateDLMLines?.Invoke(this, new EventArgs());
+        }
         #endregion
         #region Functions
         #endregion

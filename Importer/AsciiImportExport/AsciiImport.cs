@@ -10,6 +10,7 @@ using FdaViewModel.Inventory.OccupancyTypes;
 using FdaViewModel.Saving.PersistenceManagers;
 using System.Data;
 using FdaViewModel.Inventory;
+using FdaViewModel.WaterSurfaceElevation;
 
 namespace Importer
 {
@@ -72,7 +73,9 @@ namespace Importer
 
         #endregion
         #region Properties
+        public DataTable StructuresForFDA2 { get; set; }
         public List<IOccupancyType> OccupancyTypes { get; set; }
+        public List<WaterSurfaceElevationElement> WaterSurfaceElevs {get;set;}
         public bool UsesDollar
         { get; set; }
         #endregion
@@ -186,13 +189,13 @@ namespace Importer
                     }
                 case ImportOptions.ImportStructuresOnly:
                     {
-                        SaveStructuresToNewFDA();
+                        ReadStructuresToNewFDA();
                         break;
                     }
                 case ImportOptions.ImportWaterSurfaceProfilesOnly:
                     {
                         //write only the wsp's out
-                        SaveWaterSurfaceProfilesToNewFDA();
+                        ReadWaterSurfaceProfiles();
                         break;
                     }
             }
@@ -275,6 +278,19 @@ namespace Importer
             }
         }
 
+        private void ReadStructuresToNewFDA()
+        {
+            StructureList structureList = GlobalVariables.mp_fdaStudy.GetStructureList();
+            StructureInventoryPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetStructureInventoryManager();
+            DataTable dt = manager.CreateEmptyStructuresTable();
+            foreach (KeyValuePair<string, Structure> kvp in structureList.Structures)
+            {
+                object[] structRow = kvp.Value.CreateFDA2DatabaseRow(_FileName);
+                dt.Rows.Add(structRow);
+            }
+            StructuresForFDA2 = dt;
+        }
+
         private void SaveStructuresToNewFDA()
         {
             StructureList structureList = GlobalVariables.mp_fdaStudy.GetStructureList();
@@ -289,6 +305,17 @@ namespace Importer
             //the data table needs to be saved first.
             manager.SaveNew(dt, _FileName);
             manager.SaveNewInventoryToParentTable(_FileName);
+        }
+
+        private void ReadWaterSurfaceProfiles()
+        {
+            List<WaterSurfaceElevationElement> elems = new List<WaterSurfaceElevationElement>();
+            WaterSurfaceProfileList wspList = GlobalVariables.mp_fdaStudy.GetWspList();
+            foreach (KeyValuePair<string, WaterSurfaceProfile> kvp in wspList.WaterSurfaceProfiles)
+            {
+                elems.Add( kvp.Value.ConvertToFDA2());
+            }
+            WaterSurfaceElevs = elems;
         }
 
         private void SaveWaterSurfaceProfilesToNewFDA()

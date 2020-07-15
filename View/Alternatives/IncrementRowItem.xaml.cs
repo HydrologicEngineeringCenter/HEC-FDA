@@ -29,7 +29,7 @@ namespace View.Alternatives
             get { return (Increment)this.GetValue(IncrementToBindWithProperty); }
             set { this.SetValue(IncrementToBindWithProperty, value); }
         }
-        public IncrementRowItem(bool isFirstRow = false)
+        public IncrementRowItem(int index, bool isFirstRow = false)
         {
             InitializeComponent();
             if(isFirstRow)
@@ -37,6 +37,7 @@ namespace View.Alternatives
                 btn_delete.Visibility = Visibility.Hidden;
                
             }
+            lbl_IncrementName.Content = "Increment " + index + ":";
         }
 
         public void SetSpecialBindingForFirstRow(Increment inc)
@@ -56,7 +57,10 @@ namespace View.Alternatives
             myBinding.Source = IncrementToBindWith;
             myBinding.Path = new PropertyPath("SelectedPlan1");
             myBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            BindingOperations.SetBinding(cmb_Plans2, ComboBox.SelectedValueProperty, myBinding);
+
+            cmb_Plans2.Visibility = Visibility.Hidden;
+            txt_plan2.Visibility = Visibility.Visible;
+            BindingOperations.SetBinding(txt_plan2, TextBlock.TextProperty, myBinding);
         }
 
         private static void IncrementToBindWithChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)

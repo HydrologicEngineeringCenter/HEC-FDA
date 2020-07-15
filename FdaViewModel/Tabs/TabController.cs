@@ -246,6 +246,7 @@ namespace FdaViewModel.Tabs
         private void RemoveWindow(object sender, EventArgs e)
         {
             DynamicTabVM tab = (DynamicTabVM)sender;
+            
             _Windows.Remove(tab);
         }
 

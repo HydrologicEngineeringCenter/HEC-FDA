@@ -19,7 +19,7 @@
             <StackPanel Height="23" Name="NameStackPanel" VerticalAlignment="Top" Orientation="Horizontal" Grid.ColumnSpan="2">
                 <TextBlock Name="NameLabel" Text="Name:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <TextBox Margin="5,0,0,0" Name="NameTextBox" Text="{Binding Path=Name,ValidatesOnDataErrors=True}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="156" />
-                <Label Content="Description:" />
+                <TextBlock Text="Description:" VerticalAlignment="Center" Margin="5,0,0,0" />
                 <CA:TextBoxDescription HorizontalAlignment="Stretch" Text="{Binding Description}"  Width="200" Margin="10,0,0,0"/>
             </StackPanel>
             <StackPanel Margin="0,5,0,0" Orientation="Vertical" Name="stack_ShapefilePath">
