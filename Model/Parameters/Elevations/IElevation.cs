@@ -11,7 +11,11 @@ namespace Model
     /// <summary>
     /// A container for elevation parameters.
     /// </summary>
-    public interface IElevation<T>: IParameter<T>, IMessagePublisher
+    public interface IElevation: IParameter, IMessagePublisher
     {
+        /// <summary>
+        /// The elevation parameter value.
+        /// </summary>
+        IOrdinate Parameter { get; }
     }
 }

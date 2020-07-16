@@ -43,17 +43,15 @@ namespace Model.Metrics
                     throw new InvalidOperationException($"The specified metric type: {type.ToString()} was not successfully matched with a valid target function.");
             }
         }
-        public double Compute(IFrequencyFunction fx, double p)
+        public double Compute(IFrequencyFunction frequencyFx, double p = 0.50)
         {
-            if (fx.ParameterType == TargetFunction)
+            if (frequencyFx.ParameterType == TargetFunction)
             {
-                IFrequencyFunction sampledFx = IFrequencyFunctionFactory.Factory(
-                    ((ICoordinatesFunction)fx).Sample(p), fx.ParameterType, 
-                    fx.XSeries.Label, fx.YSeries.Units, fx.YSeries.Label);
-                if (Type == MetricEnum.ExpectedAnnualDamage) return sampledFx.Integrate();
-                else return sampledFx.InverseF(IOrdinateFactory.Factory(ExceedanceTarget)).Value();
+                IFunction fx = frequencyFx.IsConstant ? ((FdaFunctionBase)frequencyFx)._Function : frequencyFx.Sample(p);
+                if (Type == MetricEnum.ExpectedAnnualDamage) return fx.TrapizoidalRiemannSum();
+                else return fx.InverseF(IOrdinateFactory.Factory(ExceedanceTarget)).Value();
             }
-            else throw new ArgumentException($"The {Type} metric cannot be computed with the provided {fx.ParameterType} function, a {TargetFunction} function is required.");
+            else throw new ArgumentException($"The {Type} metric cannot be computed with the provided {frequencyFx.ParameterType} function, a {TargetFunction} function is required.");
         }
         #endregion
     }

@@ -11,25 +11,25 @@ namespace Model
     public class IElevationFactory
     {
         /// <summary>
-        /// Creates an <see cref="IElevation{T}"/> parameter with a <see cref="IFdaOrdinateEnum.Constant"/> or invariant value.
+        /// Creates an <see cref="IElevation"/> parameter with a <see cref="IOrdinateEnum.Constant"/> or invariant value.
         /// </summary>
         /// <param name="elevation"> The height of the elevation. </param>
         /// <param name="units"> The unit of measurement for the elevation. </param>
         /// <param name="elevationEnum"> The type of elevation, <see cref="IParameterEnum"/>. </param>
-        /// <returns> An invariant <see cref="IElevation{T}"/> parameter. </returns>
-        public static IElevation<IOrdinate> Factory(double elevation, UnitsEnum units = UnitsEnum.Foot, IParameterEnum elevationEnum = IParameterEnum.GroundElevation, string label = "")
+        /// <returns> An invariant <see cref="IElevation"/> parameter. </returns>
+        public static IElevation Factory(double elevation, UnitsEnum units = UnitsEnum.Foot, IParameterEnum elevationEnum = IParameterEnum.GroundElevation, string label = "")
         {
             IOrdinate ordinate = IOrdinateFactory.Factory(elevation);
             return Factory(ordinate, units, elevationEnum, label);
         }
         /// <summary>
-        /// Creates an <see cref="IElevation{T}"/> parameter.
+        /// Creates an <see cref="IElevation"/> parameter.
         /// </summary>
         /// <param name="ordinate"> An <see cref="IOrdinate"/> containing the distributed or constant height of the elevation. </param>
         /// <param name="units"> The unit of measurement for the elevation. </param>
         /// <param name="elevationEnum"> The type of elevation, <see cref="IParameterEnum"/>. </param>
-        /// <returns> An <see cref="IElevation{T}"/> parameter. </returns>
-        public static IElevation<IOrdinate> Factory(IOrdinate ordinate, UnitsEnum units = UnitsEnum.Foot, IParameterEnum elevationEnum = IParameterEnum.GroundElevation, string label = "")
+        /// <returns> An <see cref="IElevation"/> parameter. </returns>
+        public static IElevation Factory(IOrdinate ordinate, UnitsEnum units = UnitsEnum.Foot, IParameterEnum elevationEnum = IParameterEnum.GroundElevation, string label = "")
         {
             return new Elevations.Elevation(ordinate, units, elevationEnum, label);
         }

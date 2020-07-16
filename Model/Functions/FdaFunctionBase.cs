@@ -15,6 +15,7 @@ namespace Model.Functions
         public OrderedSetEnum Order => _Function.Order;
         public IRange<double> Range => _Function.Range;
         public IRange<double> Domain => _Function.Domain;
+        public bool IsConstant { get; }
 
         public abstract IParameterSeries XSeries { get; }
         public abstract IParameterSeries YSeries { get; }
@@ -25,6 +26,7 @@ namespace Model.Functions
         internal FdaFunctionBase(IFunction fx)
         {
             _Function = fx;
+            IsConstant = _Function.DistributionType == IOrdinateEnum.Constant ? true : false;
         }
 
         public virtual IOrdinate F(IOrdinate x) => _Function.F(x); 

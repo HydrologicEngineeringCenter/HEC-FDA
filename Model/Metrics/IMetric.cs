@@ -35,6 +35,6 @@ namespace Model
         /// <param name="frequencyFunction"> The <see cref="TargetFunction"/> instance to evaluate. </param>
         /// <param name="p"> A sample probability for <see cref="IFrequencyFunction"/>s with distributed Y ordinate values. </param>
         /// <returns></returns>
-        double Compute(IFrequencyFunction frequencyFunction, double p);
+        double Compute(IFrequencyFunction frequencyFunction, double p = 0.50);
     }
 }

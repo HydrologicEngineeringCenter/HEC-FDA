@@ -30,16 +30,19 @@ namespace Model
         /// <summary>
         /// Describes the X axis of the function <see cref="UnitsEnum"/>, <see cref="ParameterType"/>, etc.
         /// </summary>
-        IParameterSeries XSeries { get; }
+        IParameter XSeries { get; }
         /// <summary>
         /// Describes the Y axis of the function <see cref="UnitsEnum"/>, <see cref="ParameterType"/>, etc.
         /// </summary>
-        IParameterSeries YSeries { get; }
+        IParameter YSeries { get; }
         /// <summary>
         /// The type of the function.
         /// </summary>
         IParameterEnum ParameterType { get; }    
-        
+        /// <summary>
+        /// True if the function ordinates are static values, false otherwise.
+        /// </summary>
+        bool IsConstant { get; }
         /// <summary>
         /// A set of coordinates describing the function.
         /// </summary>

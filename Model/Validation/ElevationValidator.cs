@@ -9,7 +9,7 @@ using Utilities;
 namespace Model.Validation
 {
 
-    internal class ElevationValidator<T>: IValidator<IElevation<T>>
+    internal class ElevationValidator: IValidator<IElevation>
     {
         internal const int _MinElevationParameterEnum = 20;
         internal const int _MaxElevationParameterEnum = 29;
@@ -19,12 +19,12 @@ namespace Model.Validation
         internal const double _LowestAssetHeight = 0;
         internal const double _HighestAssetHeight = 100;
 
-        public IMessageLevels IsValid(IElevation<T> obj, out IEnumerable<IMessage> msgs)
+        public IMessageLevels IsValid(IElevation obj, out IEnumerable<IMessage> msgs)
         {
             msgs = ReportErrors(obj);
             return msgs.Max();
         }
-        public IEnumerable<IMessage> ReportErrors(IElevation<T> obj)
+        public IEnumerable<IMessage> ReportErrors(IElevation obj)
         {
             List<IMessage> msgs = new List<IMessage>();
             switch (obj.ParameterType)
@@ -71,8 +71,8 @@ namespace Model.Validation
             }
             return msgs;
         }
-        private string NoticeMessage(IElevation<T> obj) => $"The specified {obj.Print(true, true)} is outside the allowable range.";
-        private string ExtendedMessage(IElevation<T> obj, double min, double max, UnitsEnum units)
+        private string NoticeMessage(IElevation obj) => $"The specified {obj.Print(true, true)} is outside the allowable range.";
+        private string ExtendedMessage(IElevation obj, double min, double max, UnitsEnum units)
         {
             return $"The specified {obj.ParameterType} range: {obj.Range.Print(true)} exceeds the allowable approximate range of {AllowableRangeMessage(obj.ParameterType)}: " +
                 $"[{UnitsUtilities.Print(UnitsUtilities.ConvertLengths(_LowestGroundElevation, UnitsEnum.Foot, units), units, true, false)}," +

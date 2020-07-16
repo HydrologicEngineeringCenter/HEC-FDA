@@ -154,21 +154,21 @@ namespace Model
         }
 
         /// <summary>
-        /// Prints a string representation of the <see cref="IParameter{T}.Parameter"/> value and its units.
+        /// Prints a string representation of the <see cref="IParameter"/> value and its units.
         /// </summary>
-        /// <param name="parameter"> The <see cref="IParameter{T}"/> to be printed. </param>
+        /// <param name="parameter"> The <see cref="IParameter"/> to be printed. </param>
         /// <param name="round"> <see langword="true"/> if some values should be rounded or displayed in scientific notation to produce a more human readable result. </param>
         /// <param name="abbreviate"> <see langword="true"/> if the unit name should be printed using the <a href="http://www.ieee.org/">IEEE</a> recommended abbreviation, <see langword="false"/> otherwise. </param>
-        /// <returns> A string in the form... <see cref="IParameter{T}.Parameter"/> <see cref="IParameter{T}.Units"/>, where <see cref="IParameter{T}.Parameter"/> is formated as a string by the <see cref="IOrdinate.Print(bool)"/> function. </returns>
-        public static string Print(IParameter<IOrdinate> parameter, bool round = false, bool abbreviate = false) => parameter.Parameter.Print(round) + " " + Print(parameter.Units, abbreviate);
+        /// <returns> A string in the form... <see cref="IParameter"/> <see cref="IParameter"/>, where <see cref="IParameter"/> is formated as a string by the <see cref="IOrdinate.Print(bool)"/> function. </returns>
+        public static string Print(IParameter parameter, bool round = false, bool abbreviate = false) => parameter.Print(round) + " " + Print(parameter.Units, abbreviate);
         /// <summary>
-        /// Prints a string representation of the <see cref="IParameter{T}.Parameter"/> value and its units.
+        /// Prints a string representation of the <see cref="IParameter"/> value and its units.
         /// </summary>
-        /// <param name="parameter"> The <see cref="IParameter{T}.Parameter"/> value to be printed. </param>
+        /// <param name="parameter"> The <see cref="IParameter"/> value to be printed. </param>
         /// <param name="units"> The <paramref name="parameter"/> units. </param>
         /// <param name="round"> <see langword="true"/> if some values should be rounded or displayed in scientific notation to produce a more human readable result. </param>
         /// <param name="abbreviate"> <see langword="true"/> if the unit name should be printed using the <a href="http://www.ieee.org/">IEEE</a> recommended abbreviation, <see langword="false"/> otherwise. </param>
-        /// <returns> A string in the form... <see cref="IParameter{T}.Parameter"/> <see cref="IParameter{T}.Units"/>, where <see cref="IParameter{T}.Parameter"/> is formated as a string by the <see cref="IOrdinate.Print(bool)"/> function. </returns>
+        /// <returns> A string in the form... <see cref="IParameter"/> <see cref="IParameter.Units"/>, where <see cref="IParameter"/> is formated as a string by the <see cref="IOrdinate.Print(bool)"/> function. </returns>
         public static string Print(double parameter, UnitsEnum units, bool round = false, bool abbreviate = false) => round ? parameter.Print() + " " + Print(units, abbreviate) : parameter.ToString() + " " + Print(units, abbreviate);
         /// <summary>
         /// Prints a string representation of the unit of measurement.

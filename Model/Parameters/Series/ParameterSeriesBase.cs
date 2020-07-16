@@ -8,13 +8,15 @@ using Utilities;
 
 namespace Model.Parameters.Series
 {
-    internal abstract class ParameterSeriesBase : IParameterSeries, IMessagePublisher
+    internal abstract class ParameterSeriesBase : IParameter, IMessagePublisher
     {
+        private readonly int _Elements;
         #region Properties
         #region Base Class properties
-        public IEnumerable<IOrdinate> Parameter { get; }
+        //public IEnumerable<IOrdinate> Parameter { get; }
         public IRange<double> Range { get; }
         public OrderedSetEnum Order { get; }
+        public bool IsConstant { get; }
         #endregion
         #region Abstract properties
         public abstract UnitsEnum Units { get; }
@@ -35,19 +37,10 @@ namespace Model.Parameters.Series
         /// <param name="x"> <see langword="true"/> if the desired parameter is the <see cref="IFdaFunction"/> x variable, <see langword="false"/> if the desired parameter is the y variable. </param>
         internal ParameterSeriesBase(IFdaFunction fx, bool x)
         {
-            Parameter = Ordinates(fx, x);
+            _Elements = fx.Coordinates.Count;
+            IsConstant = fx.IsConstant;
             Range = x ? fx.Domain : fx.Range;
             Order = x ? OrderedSetEnum.StrictlyIncreasing : fx.Order;
-        }
-        private List<IOrdinate> Ordinates(IFdaFunction fx, bool x)
-        {
-            List<IOrdinate> ordinates = new List<IOrdinate>();
-            foreach (ICoordinate coordinate in fx.Coordinates)
-            {
-                if (x) ordinates.Add(coordinate.X);
-                else ordinates.Add(coordinate.Y);
-            }
-            return ordinates;
         }
         #endregion
 
@@ -58,7 +51,7 @@ namespace Model.Parameters.Series
         }
         public string PrintValue(bool round = false, bool abbreviate = false)
         {
-            return $"{Parameter.Count()} {Order.ToString()} values on the range: {Range.Print(round)} { UnitsUtilities.Print(Units, abbreviate)}";
+            return $"{_Elements} {Order.ToString()} values on the range: {Range.Print(round)} { UnitsUtilities.Print(Units, abbreviate)}";
         }
         #endregion
     }

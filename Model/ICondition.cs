@@ -5,6 +5,9 @@ using Model.Outputs;
 
 namespace Model
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public interface ICondition : IValidateData
     {
         #region Properties

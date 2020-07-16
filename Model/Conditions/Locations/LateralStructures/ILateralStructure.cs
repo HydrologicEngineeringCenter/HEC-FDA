@@ -7,7 +7,7 @@ namespace Model
 {
     public interface ILateralStructure
     {
-        IElevation<IOrdinate> TopElevation { get; }
+        IElevation TopElevation { get; }
         IFdaFunction FailureFunction { get; }
     }
 }

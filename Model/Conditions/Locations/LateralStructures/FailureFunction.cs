@@ -6,7 +6,7 @@ using Functions;
 using Functions.CoordinatesFunctions;
 using Utilities;
 
-namespace Model.ComputePoint
+namespace Model.Conditions.Locations.LateralStructures
 {
     internal class FailureFunction : Functions.FdaFunctionBase, IFdaFunction
     {
@@ -14,10 +14,10 @@ namespace Model.ComputePoint
         public override IParameterSeries YSeries { get; }
         public override IParameterEnum ParameterType => IParameterEnum.LateralStructureFailure;
 
-        internal FailureFunction(IFunction fx, UnitsEnum xUnits = UnitsEnum.Foot, string xlabel = "", UnitsEnum yUnits = UnitsEnum.Probability, string ylabel = ""): base(fx)
+        internal FailureFunction(IFunction fx, UnitsEnum xUnits = UnitsEnum.Foot, string xlabel = "", string ylabel = ""): base(fx)
         {
             XSeries = IParameterFactory.Factory(this, true, xUnits, xlabel);
-            YSeries = IParameterFactory.Factory(this, false, yUnits, ylabel);
+            YSeries = IParameterFactory.Factory(this, false, UnitsEnum.Probability, ylabel);
         }
 
         public double F(double p)

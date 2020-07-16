@@ -6,8 +6,9 @@ using Utilities;
 
 namespace Model.Elevations
 {
-    internal class Elevation : IElevation<IOrdinate>, IValidate<IElevation<IOrdinate>>
+    internal class Elevation : IElevation, IValidate<IElevation>
     {
+        public bool IsConstant { get; }
         public UnitsEnum Units { get; }
         public IParameterEnum ParameterType { get; }
         public string Label { get; }
@@ -18,19 +19,20 @@ namespace Model.Elevations
 
         public Elevation(IOrdinate value, UnitsEnum units, IParameterEnum type, string label)
         {
-            if (!Validation.ElevationValidator<IOrdinate>.IsConstructable(type, value, units, out string msg)) throw new InvalidConstructorArgumentsException(msg);
+            if (!Validation.ElevationValidator.IsConstructable(type, value, units, out string msg)) throw new InvalidConstructorArgumentsException(msg);
             else
             {
                 Units = units;
                 Parameter = value;
+                IsConstant = Parameter.Type == IOrdinateEnum.Constant ? true : false;
                 ParameterType = type;
                 Label = label == "" ? type.ToString() : label;
-                State = Validate(new Validation.ElevationValidator<IOrdinate>(), out IEnumerable<IMessage> msgs);
+                State = Validate(new Validation.ElevationValidator(), out IEnumerable<IMessage> msgs);
                 Messages = msgs;
             }
         }
 
-        public IMessageLevels Validate(IValidator<IElevation<IOrdinate>> validator, out IEnumerable<IMessage> msgs)
+        public IMessageLevels Validate(IValidator<IElevation> validator, out IEnumerable<IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }

@@ -9,7 +9,7 @@ namespace Model
     /// <summary>
     /// Parameters used in Fda.
     /// </summary>
-    public interface IParameter<T>
+    public interface IParameter //<T>
     {
         /// <summary>
         /// The units of measurement.
@@ -23,14 +23,18 @@ namespace Model
         /// A <see cref="string"/> label if none is provided the <see cref="IParameterEnum"/> is used.
         /// </summary>
         string Label { get; }
-        /// <summary>
-        /// The parameter object, value or values.
-        /// </summary>
-        T Parameter { get; }
+        ///// <summary>
+        ///// The parameter object, value or values.
+        ///// </summary>
+        //T Parameter { get; }
         /// <summary>
         /// The range of parameter values.
         /// </summary>
         IRange<double> Range { get; }
+        /// <summary>
+        /// True if the parameter value is a static value, false otherwise. 
+        /// </summary>
+        bool IsConstant { get; }
 
         /// <summary>
         /// Print a string representation of the parameter.

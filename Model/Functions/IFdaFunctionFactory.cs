@@ -9,7 +9,7 @@ namespace Model
     /// Provides static factory methods for the construction of IFdaFunctions, usually returned 
     /// </summary>
     public static class IFdaFunctionFactory
-    {
+    {      
         /// <summary>
         /// Provides a method for creation of functions implementing the <see cref="IFdaFunction"/> interface.
         /// </summary>
@@ -41,5 +41,22 @@ namespace Model
                     throw new NotImplementedException($"The specified parameter type: {fType.ToString()} is not supported.");
             }
         }
-    }        
+        /// <summary>
+        /// Provides a method for creation of automatically failure functions implementing the <see cref="IFdaFunction"/> interface.
+        /// </summary>
+        /// <param name="topElevation"> A top of lateral structure height. This is the height at which failure is assumed (e.g. the probability of failure is 100 percent). </param>
+        /// <param name="elevationUnits"> Optional parameter describing the x axis units. Defaults to: <see cref="UnitsEnum.Foot"/> if no value is provided." </param>
+        /// <param name="elevationLabel"> Optional parameter describing the <see cref="IFdaFunction"/> x ordinates. If not set a default value is inferred based on the specified <see cref="IParameterEnum"/> value and the <paramref name="xUnits"/>. </param>      
+        /// <param name="yLabel"> Optional parameter describing the <see cref="IFdaFunction"/> y ordinates. If not set a default value is inferred based on the specified <see cref="IParameterEnum"/> value and the <paramref name="yUnits"/>. </param>
+        /// <returns> An object implementing the <see cref="IFdaFunction"/> interface. </returns>
+        /// <remarks> If a more specific implementation is required consider requesting an <see cref="IFrequencyFunction"/> using the <see cref="IFrequencyFunctionFactory"/> or an <see cref="ITransformFunction"/> using the <see cref="ITransformFunctionFactory"/>. </remarks>
+        public static IFdaFunction Factory(double topElevation, UnitsEnum elevationUnits = UnitsEnum.Foot, string elevationLabel = "", string failureLabel = "")
+        {
+            ICoordinate noFail = ICoordinateFactory.Factory(noFailElevation == double.NaN ? ModelUtilities.LateralStructureElevationRange.Min : invertElevation, 0.0);
+            ICoordinate doFail = ICoordinateFactory.Factory(topElevation, 1.0);
+            IFunction fx = IFunctionFactory.Factory(new List<ICoordinate>() { noFail, doFail }, InterpolationEnum.Piecewise);
+            return new Conditions.Locations.LateralStructures.FailureFunction(fx, elevationUnits, elevationLabel, failureLabel);
+        }
+    } 
+    
 }
