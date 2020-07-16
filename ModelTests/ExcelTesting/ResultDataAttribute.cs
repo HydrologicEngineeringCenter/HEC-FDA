@@ -224,7 +224,8 @@ namespace ModelTests.ExcelTesting
             for (int i = startLookingAtColumn; i < startLookingAtColumn + 15; i++)
             {
                 string value = (string)ws.Row(row).Cell(i).Value;
-                if (value.Length > 2 && value[2] == '-')
+                //if (value.Length > 2 && value[2] == '-')
+                if(value.Length >0 && value[0] == '#')
                 {
                     return i;
                 }
@@ -239,7 +240,8 @@ namespace ModelTests.ExcelTesting
                 object cellValue =  ws.Row(i).Cell(1).Value;
                 string value = Convert.ToString(cellValue);
 
-                if(value.Length>2 && value[2] == '-')
+                //if(value.Length>2 && value[2] == '-')
+                if(value.Length>0 && value[0] == '#')
                 {
                     return i;
                 }

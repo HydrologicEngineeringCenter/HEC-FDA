@@ -54,8 +54,8 @@ namespace Model.Outputs
             //Random randomNumberGenerator = new Random(Seed);
             //the current realization
             int localIteration = 0;
-            int batchCount = 1000;
-
+            int batchCount = 1;// 1000;
+            MaxIterations = 1;
             //List<List<double>> allProbabilities = CreateAllProbabilities(randomNumberGenerator, batchCount, randomPacketSize);
             while (Converged == false &&
                    IterationCount < MaxIterations)
