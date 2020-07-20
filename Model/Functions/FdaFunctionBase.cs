@@ -17,8 +17,10 @@ namespace Model.Functions
         public IRange<double> Domain => _Function.Domain;
         public bool IsConstant { get; }
 
-        public abstract IParameterSeries XSeries { get; }
-        public abstract IParameterSeries YSeries { get; }
+        public abstract string Label { get; }
+        public abstract UnitsEnum Units { get; }
+        public abstract IParameter XSeries { get; }
+        public abstract IParameter YSeries { get; }
         public abstract IParameterEnum ParameterType { get; }
 
         public List<ICoordinate> Coordinates => _Function.Coordinates;
@@ -36,6 +38,8 @@ namespace Model.Functions
             if (ParameterType == fx.ParameterType && _Function.Equals(fx)) return true;
             else return false;
         }
+        public string Print(bool round = false, bool abbreviate = false) => throw new NotImplementedException();
+        public string PrintValue(bool round = false, bool abbreviate = false) => throw new NotImplementedException();
         public XElement WriteToXML() => throw new NotImplementedException();
     }
 }

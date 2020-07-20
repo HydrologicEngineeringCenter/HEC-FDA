@@ -9,17 +9,21 @@ namespace Model.Functions
     internal sealed class InflowFrequency : FdaFunctionBase, IFrequencyFunction
     {
         #region Properties
-        public override IParameterSeries XSeries { get; }
-        public override IParameterSeries YSeries { get; }
+        public override string Label { get; }
+        public override IParameter XSeries { get; }
+        public override IParameter YSeries { get; }
+        public override UnitsEnum Units { get; }
         public override IParameterEnum ParameterType => IParameterEnum.InflowFrequency;
         public List<IParameterEnum> ComposeableTypes => new List<IParameterEnum>() { IParameterEnum.InflowOutflow, IParameterEnum.Rating };       
         #endregion
 
         #region Constructors
-        internal InflowFrequency(IFunction fx, string xLabel = "", UnitsEnum yUnits = UnitsEnum.CubicMeterPerSecond, string yLabel = "") : base(fx)
+        internal InflowFrequency(IFunction fx, string label = "", string xLabel = "", string yLabel = "", UnitsEnum yUnits = UnitsEnum.CubicMeterPerSecond) : base(fx)
         {
+            Label = label == "" ? ParameterType.Print() : label;
             XSeries = IParameterFactory.Factory(this, true, UnitsEnum.Probability, xLabel);
             YSeries = IParameterFactory.Factory(this, false, yUnits, yLabel);
+            Units = YSeries.Units;
         }
         #endregion
 

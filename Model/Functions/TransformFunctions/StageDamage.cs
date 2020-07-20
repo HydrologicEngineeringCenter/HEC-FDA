@@ -11,18 +11,22 @@ namespace Model.Functions
     internal sealed class StageDamage : FdaFunctionBase, ITransformFunction
     {
         #region Properties
-        public override IParameterSeries XSeries { get; }
-        public override IParameterSeries YSeries { get; }
+        public override string Label { get; }
+        public override IParameter XSeries { get; }
+        public override IParameter YSeries { get; }
+        public override UnitsEnum Units { get; }
         public override IParameterEnum ParameterType => IParameterEnum.InteriorStageDamage;
         #endregion
 
         #region Constructor
-        internal StageDamage(IFunction fx, UnitsEnum xUnits = UnitsEnum.Foot, string xlabel = "", UnitsEnum yUnits = UnitsEnum.Dollars, string ylabel = "") : base(fx)
+        internal StageDamage(IFunction fx, string label, UnitsEnum xUnits = UnitsEnum.Foot, string xlabel = "", UnitsEnum yUnits = UnitsEnum.Dollars, string ylabel = "") : base(fx)
         {
+            Label = label == "" ? ParameterType.Print() : label;
             xlabel = xlabel == "" ? $"Interior Stage ({xUnits.Print(true)})" : xlabel;
             ylabel = ylabel == "" ? $"Damages ({yUnits.Print(true)})" : ylabel;
             XSeries = IParameterFactory.Factory(this, true, xUnits, xlabel);
             YSeries = IParameterFactory.Factory(this, false, yUnits, ylabel);
+            Units = YSeries.Units;
         }
         #endregion
 

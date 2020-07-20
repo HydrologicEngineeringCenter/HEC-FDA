@@ -17,7 +17,7 @@ namespace Model
                 IFunction sampledTranFx = Sampler.Sample(((FdaFunctionBase)transformFx)._Function, pForTransformFx);
                 IFunction composedFreqFx = sampledFreqFx.Compose(sampledTranFx);
                 return IFrequencyFunctionFactory.Factory(composedFreqFx, transformFx.ParameterType + 1,
-                    frequencyFx.XSeries.Label, transformFx.YSeries.Units, transformFx.YSeries.Label);
+                    (transformFx.ParameterType + 1).Print(), frequencyFx.XSeries.Label, transformFx.YSeries.Label, transformFx.YSeries.Units);
             }
             else 
                 throw new ArgumentException($"{frequencyFx.ParameterType.ToString()} functions cannot be composed with {transformFx.ParameterType} functions." +

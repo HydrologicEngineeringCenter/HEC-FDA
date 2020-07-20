@@ -11,16 +11,20 @@ namespace Model.Functions
     internal sealed class ExteriorInteriorStage: FdaFunctionBase, ITransformFunction
     {
         #region Properties
-        public override IParameterSeries XSeries { get; }
-        public override IParameterSeries YSeries { get; }
+        public override string Label { get; }
+        public override IParameter XSeries { get; }
+        public override IParameter YSeries { get; }
+        public override UnitsEnum Units { get; }
         public override IParameterEnum ParameterType => IParameterEnum.ExteriorInteriorStage;
         #endregion
 
         #region Constructor
-        internal ExteriorInteriorStage(IFunction fx, UnitsEnum xUnits = UnitsEnum.Foot, string xLabel = "", UnitsEnum yUnits = UnitsEnum.Foot, string ylabel = ""): base(fx)
+        internal ExteriorInteriorStage(IFunction fx, string label, UnitsEnum xUnits = UnitsEnum.Foot, string xLabel = "", UnitsEnum yUnits = UnitsEnum.Foot, string ylabel = ""): base(fx)
         {
+            Label = label == "" ? ParameterType.Print() : label;
             XSeries = IParameterFactory.Factory(this, true, xUnits, xLabel);
             YSeries = IParameterFactory.Factory(this, false, yUnits, ylabel);
+            Units = YSeries.Units;
         }
         #endregion
 

@@ -14,7 +14,7 @@ namespace Model.Conditions.Locations.LateralStructures
         internal LateralStructure(double elevation, UnitsEnum units = UnitsEnum.Foot)
         {
             TopElevation = IElevationFactory.Factory(elevation, units, IParameterEnum.LateralStructureElevation);
-            FailureFunction = IFdaFunctionFactory.Factory(elevation, units);
+            FailureFunction = IFdaFunctionFactory.Factory(elevation, bottomElevation: double.NaN, units);
         }
         internal LateralStructure(IElevation elevation, FailureFunction fx)
         {

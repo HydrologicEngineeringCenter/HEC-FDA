@@ -12,16 +12,16 @@ namespace Model
     /// Provides a interface for functions in the Fda.
     /// Wraps <see cref="IFunction" />
     /// </summary>
-    public interface IFdaFunction : ISerializeToXML<IFdaFunction>
+    public interface IFdaFunction : IParameter, ISerializeToXML<IFdaFunction>
     {
         /// <summary>
         /// Describes the order of Y value relative to increasing X values.
         /// </summary>
         OrderedSetEnum Order { get; }
-        /// <summary>
-        /// The range of Y values.
-        /// </summary>
-        IRange<double> Range { get; }
+        ///// <summary>
+        ///// The range of Y values.
+        ///// </summary>
+        //new IRange<double> Range { get; }
         /// <summary>
         /// The range of X values.
         /// </summary>
@@ -35,14 +35,14 @@ namespace Model
         /// Describes the Y axis of the function <see cref="UnitsEnum"/>, <see cref="ParameterType"/>, etc.
         /// </summary>
         IParameter YSeries { get; }
-        /// <summary>
-        /// The type of the function.
-        /// </summary>
-        IParameterEnum ParameterType { get; }    
-        /// <summary>
-        /// True if the function ordinates are static values, false otherwise.
-        /// </summary>
-        bool IsConstant { get; }
+        ///// <summary>
+        ///// The type of the function.
+        ///// </summary>
+        //IParameterEnum ParameterType { get; }    
+        ///// <summary>
+        ///// True if the function ordinates are static values, false otherwise.
+        ///// </summary>
+        //bool IsConstant { get; }
         /// <summary>
         /// A set of coordinates describing the function.
         /// </summary>

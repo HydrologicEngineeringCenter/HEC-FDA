@@ -21,9 +21,9 @@ namespace Model.Validation
         public IEnumerable<IMessage> ReportErrors(FrequencySeries series)
         {
             List<IMessage> msgs = new List<IMessage>();
-            if (!IsOnRange(series.Parameter)) msgs.Add(
-                IMessageFactory.Factory(IMessageLevels.Error, 
-                $"The {series.ParameterType.ToString()} contains one or more probability values outside of the acceptable range of [0, 1]."));
+            //if (!IsOnRange(series.Parameter)) msgs.Add(
+            //    IMessageFactory.Factory(IMessageLevels.Error, 
+            //    $"The {series.ParameterType.ToString()} contains one or more probability values outside of the acceptable range of [0, 1]."));
             return msgs;
         }
         private bool IsOnRange(IEnumerable<IOrdinate> series)
@@ -35,7 +35,7 @@ namespace Model.Validation
         {
             msg = "";
             if (fx.IsNull()) 
-                msg += $"The {typeof(FrequencySeries)} cannot be constructed because the specified {typeof(IFdaFunction)} containing the {typeof(IParameterSeries)} is null. ";
+                msg += $"The {typeof(FrequencySeries)} cannot be constructed because the specified {typeof(IFdaFunction)} containing the {typeof(IParameter)} is null. ";
             if (!(parameterType == IParameterEnum.ExceedanceProbability ||
                 parameterType == IParameterEnum.NonExceedanceProbability ||
                 parameterType == IParameterEnum.LateralStructureFailure)) 

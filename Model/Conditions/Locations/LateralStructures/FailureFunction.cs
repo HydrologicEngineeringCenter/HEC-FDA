@@ -10,14 +10,18 @@ namespace Model.Conditions.Locations.LateralStructures
 {
     internal class FailureFunction : Functions.FdaFunctionBase, IFdaFunction
     {
-        public override IParameterSeries XSeries { get; }
-        public override IParameterSeries YSeries { get; }
+        public override string Label { get; }
+        public override IParameter XSeries { get; }
+        public override IParameter YSeries { get; }
+        public override UnitsEnum Units { get; }
         public override IParameterEnum ParameterType => IParameterEnum.LateralStructureFailure;
 
-        internal FailureFunction(IFunction fx, UnitsEnum xUnits = UnitsEnum.Foot, string xlabel = "", string ylabel = ""): base(fx)
+        internal FailureFunction(IFunction fx, UnitsEnum xUnits = UnitsEnum.Foot, string xlabel = "", string ylabel = "", string label = ""): base(fx)
         {
+            Label = label == "" ? ParameterType.Print() : label;
             XSeries = IParameterFactory.Factory(this, true, xUnits, xlabel);
             YSeries = IParameterFactory.Factory(this, false, UnitsEnum.Probability, ylabel);
+            Units = YSeries.Units;
         }
 
         public double F(double p)

@@ -7,11 +7,12 @@ using Model.Validation;
 
 namespace Model.Parameters.Series
 {
-    internal class ElevationSeries : ParameterSeriesBase, IElevation<IEnumerable<IOrdinate>>,  IValidate<IElevation<IEnumerable<IOrdinate>>>
+    internal class ElevationSeries : ParameterSeriesBase, IValidate<IElevation>, IElevation
     {
         public override UnitsEnum Units { get; }
         public override IParameterEnum ParameterType { get; }
         public override string Label { get;  }
+        public IOrdinate Parameter => throw new NotImplementedException();
         
         public override IMessageLevels State { get; }
         public override IEnumerable<IMessage> Messages { get; }
@@ -21,10 +22,10 @@ namespace Model.Parameters.Series
             Units = units;
             ParameterType = parameterType;
             Label = label == "" ? parameterType.ToString() : label;
-            State = Validate(new Validation.ElevationValidator<IEnumerable<IOrdinate>>(), out IEnumerable<IMessage> msgs);
+            State = Validate(new Validation.ElevationValidator(), out IEnumerable<IMessage> msgs);
             Messages = msgs;
         }
-        public IMessageLevels Validate(IValidator<IElevation<IEnumerable<IOrdinate>>> validator, out IEnumerable<IMessage> msgs)
+        public IMessageLevels Validate(IValidator<IElevation> validator, out IEnumerable<IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }

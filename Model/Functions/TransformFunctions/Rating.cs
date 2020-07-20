@@ -9,16 +9,20 @@ namespace Model.Functions
     internal sealed class Rating : FdaFunctionBase, ITransformFunction
     {
         #region Properties
-        public override IParameterSeries XSeries { get; }
-        public override IParameterSeries YSeries { get; }
+        public override string Label { get; }
+        public override IParameter XSeries { get; }
+        public override IParameter YSeries { get; }
+        public override UnitsEnum Units { get; }
         public override IParameterEnum ParameterType => IParameterEnum.Rating;
         #endregion
 
         #region Constructor
-        internal Rating(IFunction fx, UnitsEnum xUnits = UnitsEnum.CubicFootPerSecond, string xlabel = "", UnitsEnum yUnits = UnitsEnum.Foot, string ylabel = "") : base(fx)
+        internal Rating(IFunction fx, string label, UnitsEnum xUnits = UnitsEnum.CubicFootPerSecond, string xlabel = "", UnitsEnum yUnits = UnitsEnum.Foot, string ylabel = "") : base(fx)
         {
+            Label = label == "" ? ParameterType.Print() : label;
             XSeries = IParameterFactory.Factory(this, true, xUnits, xlabel);
             YSeries = IParameterFactory.Factory(this, false, yUnits, ylabel);
+            Units = YSeries.Units;
         }
         #endregion
 

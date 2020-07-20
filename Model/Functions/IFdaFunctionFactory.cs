@@ -21,7 +21,7 @@ namespace Model
         /// <param name="yLabel"> Optional parameter describing the <see cref="IFdaFunction"/> y ordinates. If not set a default value is inferred based on the specified <see cref="IParameterEnum"/> value and the <paramref name="yUnits"/>. </param>
         /// <returns> An object implementing the <see cref="IFdaFunction"/> interface. </returns>
         /// <remarks> If a more specific implementation is required consider requesting an <see cref="IFrequencyFunction"/> using the <see cref="IFrequencyFunctionFactory"/> or an <see cref="ITransformFunction"/> using the <see cref="ITransformFunctionFactory"/>. </remarks>
-        public static IFdaFunction Factory(IFunction fx, IParameterEnum fType, UnitsEnum xUnits = UnitsEnum.NotSet, string xLabel = "", UnitsEnum yUnits = UnitsEnum.NotSet, string yLabel = "")
+        public static IFdaFunction Factory(IFunction fx, IParameterEnum fType, string label = "", UnitsEnum xUnits = UnitsEnum.NotSet, string xLabel = "", UnitsEnum yUnits = UnitsEnum.NotSet, string yLabel = "")
         {
             switch (fType) 
             {
@@ -31,12 +31,12 @@ namespace Model
                 case IParameterEnum.InteriorStageFrequency:
                 case IParameterEnum.DamageFrequency:
                     if (!(xUnits == UnitsEnum.NotSet && xUnits == UnitsEnum.Probability)) throw new ArgumentException($"The {typeof(IFdaFunction)} cannot be constructed because the x ordinate units are set to: {xUnits.Print(false)}. The only valid selection for a {fType.ToString()} function is {UnitsEnum.Probability.ToString()}.");
-                    return IFrequencyFunctionFactory.Factory(fx, fType, xLabel, yUnits, yLabel);
+                    return IFrequencyFunctionFactory.Factory(fx, fType, label, xLabel, yLabel, yUnits);
                 case IParameterEnum.InflowOutflow:
                 case IParameterEnum.Rating:
                 case IParameterEnum.ExteriorInteriorStage:
                 case IParameterEnum.InteriorStageDamage:
-                    return ITransformFunctionFactory.Factory(fx, fType, xUnits, xLabel, yUnits, yLabel);
+                    return ITransformFunctionFactory.Factory(fx, fType, label, xUnits, xLabel, yUnits, yLabel);
                 default:
                     throw new NotImplementedException($"The specified parameter type: {fType.ToString()} is not supported.");
             }
@@ -46,16 +46,17 @@ namespace Model
         /// </summary>
         /// <param name="topElevation"> A top of lateral structure height. This is the height at which failure is assumed (e.g. the probability of failure is 100 percent). </param>
         /// <param name="elevationUnits"> Optional parameter describing the x axis units. Defaults to: <see cref="UnitsEnum.Foot"/> if no value is provided." </param>
-        /// <param name="elevationLabel"> Optional parameter describing the <see cref="IFdaFunction"/> x ordinates. If not set a default value is inferred based on the specified <see cref="IParameterEnum"/> value and the <paramref name="xUnits"/>. </param>      
-        /// <param name="yLabel"> Optional parameter describing the <see cref="IFdaFunction"/> y ordinates. If not set a default value is inferred based on the specified <see cref="IParameterEnum"/> value and the <paramref name="yUnits"/>. </param>
+        /// <param name="elevationLabel"> Optional parameter describing the <see cref="IFdaFunction"/> x ordinates. If not set a default value is inferred based on the specified <see cref="IParameterEnum"/> value and the <paramref name="elevationUnits"/>. </param>
+        /// <param name="label"> Optional parameter describing the <see cref="IFdaFunction"/>. </param>
+        /// <param name="failureLabel"> Optional parameter describing the <see cref="IFdaFunction"/> y ordinates. In this case <see cref="UnitsEnum.Probability"/>. </param>
         /// <returns> An object implementing the <see cref="IFdaFunction"/> interface. </returns>
         /// <remarks> If a more specific implementation is required consider requesting an <see cref="IFrequencyFunction"/> using the <see cref="IFrequencyFunctionFactory"/> or an <see cref="ITransformFunction"/> using the <see cref="ITransformFunctionFactory"/>. </remarks>
-        public static IFdaFunction Factory(double topElevation, UnitsEnum elevationUnits = UnitsEnum.Foot, string elevationLabel = "", string failureLabel = "")
+        public static IFdaFunction Factory(double topElevation, double bottomElevation = double.NaN, UnitsEnum elevationUnits = UnitsEnum.Foot, string elevationLabel = "", string failureLabel = "", string label = "")
         {
-            ICoordinate noFail = ICoordinateFactory.Factory(noFailElevation == double.NaN ? ModelUtilities.LateralStructureElevationRange.Min : invertElevation, 0.0);
+            ICoordinate noFail = ICoordinateFactory.Factory(bottomElevation == double.NaN ? ModelUtilities.LateralStructureElevationRange.Min : bottomElevation, 0.0);
             ICoordinate doFail = ICoordinateFactory.Factory(topElevation, 1.0);
             IFunction fx = IFunctionFactory.Factory(new List<ICoordinate>() { noFail, doFail }, InterpolationEnum.Piecewise);
-            return new Conditions.Locations.LateralStructures.FailureFunction(fx, elevationUnits, elevationLabel, failureLabel);
+            return new Conditions.Locations.LateralStructures.FailureFunction(fx, elevationUnits, elevationLabel, failureLabel, label);
         }
     } 
     
