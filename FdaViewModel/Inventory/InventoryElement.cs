@@ -17,6 +17,10 @@ namespace FdaViewModel.Inventory
         // Created Date: 12/1/2016 2:21:18 PM
         #endregion
         #region Fields
+        /// <summary>
+        /// This is a unique id that can be used to identify the element in the map window and map tree view.
+        /// This can be used when doing a rename from the study tree, or opening the attribute table from the study tree.
+        /// </summary>
         private int _featureHashCode;
         private string _TableConstant = Saving.PersistenceManagers.StructureInventoryPersistenceManager.STRUCTURE_INVENTORY_TABLE_CONSTANT;
 
@@ -25,6 +29,7 @@ namespace FdaViewModel.Inventory
         //private string _Name;
         #endregion
         #region Properties
+        public bool IsInMapWindow { get; set; }
         public bool IsImportedFromOldFDA { get; set; }
         public DefineSIAttributesVM DefineSIAttributes { get; set; }
         //todo: Refactor: CO
@@ -132,6 +137,7 @@ namespace FdaViewModel.Inventory
         #region Voids
         public void OpenAttributeTable(object sender, EventArgs e)
         {
+
             LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(Storage.Connection.Instance.Reader);
             LifeSimGIS.PointFeatures pointFeatures = (LifeSimGIS.PointFeatures)gpr.ConvertToGisFeatures(_TableConstant + this.Name);
             LifeSimGIS.VectorFeatures features = pointFeatures;
@@ -143,7 +149,7 @@ namespace FdaViewModel.Inventory
             OpenGLDrawInfo ogldi = new OpenGLDrawInfo(15, OpenGLDrawInfo.GlyphType.House1, true, new OpenTK.Graphics.Color4((byte)0, 0, 0, 255), true, new OpenTK.Graphics.Color4((byte)0, 0, 255, 200), true);
 
             OpenStructureAttributeTableEventArgs args = new OpenStructureAttributeTableEventArgs(Name, features, dtv, ogldi);
-
+            args.MapFeatureHash = _featureHashCode;
             AddToMapWindow(this, args);
         }
         public void RemoveElement(object sender, EventArgs e)
@@ -152,6 +158,7 @@ namespace FdaViewModel.Inventory
         }
         private void InventoryToMapWindow(object arg1, EventArgs arg2)
         {
+            IsInMapWindow = true;
             //DataBase_Reader.SqLiteReader sqr = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
             LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(Storage.Connection.Instance.Reader);
             LifeSimGIS.PointFeatures pointFeatures = (LifeSimGIS.PointFeatures)gpr.ConvertToGisFeatures(_TableConstant + this.Name);

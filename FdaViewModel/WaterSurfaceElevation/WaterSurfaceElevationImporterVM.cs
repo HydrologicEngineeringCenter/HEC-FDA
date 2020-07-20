@@ -20,8 +20,7 @@ namespace FdaViewModel.WaterSurfaceElevation
         private ObservableCollection<WaterSurfaceElevationRowItemVM> _ListOfRows;
         private List<PathAndProbability> _ListOfRelativePaths;
         private bool _IsDepthGridChecked;
-        private string _Name;
-        private string _Description;
+
         #endregion
         #region Properties
         public bool IsUsingTifFiles { get; set; }// it will either be all tif's or all vrt's. if there are flt's then i will convert them to tif's

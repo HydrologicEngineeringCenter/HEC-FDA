@@ -74,6 +74,10 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 ppList.Add(new PathAndProbability(row[0].ToString(), Convert.ToDouble(row[1])));
             }
             WaterSurfaceElevationElement wse = new WaterSurfaceElevationElement((string)rowData[1], (string)rowData[2], ppList, Convert.ToBoolean(rowData[3]));
+            if(ppList.Count>0 && ppList[0].Path.Equals("NA"))
+            {
+                wse.HasAssociatedFiles = false;
+            }
             return wse;
         }
 
@@ -197,7 +201,12 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             RemoveFromParentTable(element, TableName);
             Storage.Connection.Instance.DeleteTable(PathAndProbTableConstant + element.Name);
-            RemoveWaterSurfElevFiles((WaterSurfaceElevationElement)element);
+            //if the wse was imported from old fda, then it won't have associated files.
+            WaterSurfaceElevationElement elem = (WaterSurfaceElevationElement)element;
+            if (elem.HasAssociatedFiles)
+            {
+                RemoveWaterSurfElevFiles((WaterSurfaceElevationElement)element);
+            }
             StudyCacheForSaving.RemoveElement((WaterSurfaceElevationElement)element);
 
         }

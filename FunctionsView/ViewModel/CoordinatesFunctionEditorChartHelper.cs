@@ -18,7 +18,7 @@ namespace FunctionsView.ViewModel
     /// has been designed to make that pretty easy. Just add more probabilities to the PROBABILITIES array and add the associated styles
     /// to the styles dictionary and make sure the names are in the create names method.
     /// </remarks>
-    internal class CoordinatesFunctionEditorChartHelper
+    public class CoordinatesFunctionEditorChartHelper
     {
         //if you add to the probabilities just add the series name to "CreateSeriesName" method
         //add probabilities from high to low so that they show up in the legend that way
@@ -34,7 +34,7 @@ namespace FunctionsView.ViewModel
         private readonly string _YLabel = "YLabel";
         private readonly ICoordinatesFunction _function;
 
-        internal CoordinatesFunctionEditorChartHelper(ICoordinatesFunction function)
+        public CoordinatesFunctionEditorChartHelper(ICoordinatesFunction function)
         {
             LoadStylesDictionary();
             _function = function;
@@ -73,7 +73,7 @@ namespace FunctionsView.ViewModel
             symbolDictionay.Add(.95, new ChartStyle(dataStyle_95));
         }
 
-        internal  List<SciLineData> CreateLineData()
+        public List<SciLineData> CreateLineData(bool logYAxix = false, bool probabilityXAxis = false)
         {
             
             if (_function.IsLinkedFunction)
@@ -101,14 +101,37 @@ namespace FunctionsView.ViewModel
 
                     }
                     //with linked functions i need to add a point that is the same as the next point
-                    lineData.AddRange(CreateLineData(func.Coordinates, func.Interpolator, lineColor));
+                    lineData.AddRange(CreateDistributedLineData(func, func.Interpolator, lineColor, logYAxix, probabilityXAxis));
                 }
                 return lineData;
             }
             else
             {
                 //this is the case that there is only one table
-                return CreateLineData(_function.Coordinates, _function.Interpolator, _lineColors[0]);
+                //if the function is distributed then we will create a series for each of the probabilities defined at the top
+                //of this class
+                IOrdinateEnum type = _function.DistributionType;
+                if (type != IOrdinateEnum.Constant)
+                {
+                    return CreateDistributedLineData(_function, _function.Interpolator, _lineColors[0], logYAxix, probabilityXAxis);
+                }
+                else
+                {
+                    //if the function is not distributed then we only want to display a single 
+                    //line. We don't want to use the probabilities.
+                    double[] xValues = new double[_function.Coordinates.Count];
+                    double[] yValues = new double[_function.Coordinates.Count];
+
+                    for (int i = 0; i < _function.Coordinates.Count; i++)
+                    {
+                        ICoordinate coord = _function.Coordinates[i];
+                        xValues[i] = coord.X.Value();
+                        yValues[i] = coord.Y.Value();
+                    }
+                    SciLineData data = CreateLineData(xValues, yValues, _function.Interpolator, "Constant", .5, _lineColors[0], logYAxix, probabilityXAxis);
+                    return new List<SciLineData>() { data };
+
+                }
             }
         }
 
@@ -135,11 +158,15 @@ namespace FunctionsView.ViewModel
         /// <param name="coordinates"></param>
         /// <param name="interpolator"></param>
         /// <returns></returns>
-        private List<SciLineData> CreateLineData(List<ICoordinate> coordinates, InterpolationEnum interpolator, Color lineColor)
+        private List<SciLineData> CreateDistributedLineData(ICoordinatesFunction function, InterpolationEnum interpolator, Color lineColor, bool logYAxix = false, bool probabilityXAxis = false)
         {
+            List<ICoordinate> coordinates = function.Coordinates;
+            
             int numberOfYValues = PROBABILITIES.Length;
             double[] xValues = new double[coordinates.Count];
             List<double[]> yArrays = new List<double[]>();
+
+
             //initialize the arrays. 
             //each probability represents a line.
             for(int i = 0;i<PROBABILITIES.Length;i++)
@@ -167,10 +194,12 @@ namespace FunctionsView.ViewModel
             for(int i = 0;i< yArrays.Count;i++)
             {
                 string seriesName = CreateSeriesName(PROBABILITIES[i]);
-                lineDatas.Add(CreateLineData(xValues, yArrays[i], interpolator, seriesName, PROBABILITIES[i], lineColor));
+                lineDatas.Add(CreateLineData(xValues, yArrays[i], interpolator, seriesName, PROBABILITIES[i], lineColor, logYAxix, probabilityXAxis));
             }
             return lineDatas;
         }
+
+        
 
         private string CreateSeriesName(double probability)
         {
@@ -235,7 +264,7 @@ namespace FunctionsView.ViewModel
             }
         }
 
-        private SciLineData CreateLineData(double[] xs, double[] ys, InterpolationEnum interpolator, string seriesName, double probability, Color color)
+        private SciLineData CreateLineData(double[] xs, double[] ys, InterpolationEnum interpolator, string seriesName, double probability, Color color, bool logYAxix = false, bool probabilityXAxis = false)
         {
             bool assignPredefinedColor = false;
             if(color != Colors.Transparent)
@@ -251,7 +280,7 @@ namespace FunctionsView.ViewModel
 
                         lineData = new NumericLineData(xs, ys, _ChartTitle, seriesName, _XLabel, _YLabel, PlotType.Line);
                         if (symbolDictionay.ContainsKey(probability))
-                        {
+                        {    
                             ChartStyle style = symbolDictionay[probability];
                             lineData.SymbolSize = style.SymbolSize;
                             lineData.SymbolType = style.SymbolType;
@@ -344,6 +373,8 @@ namespace FunctionsView.ViewModel
                     }
 
             }
+            lineData.UseLogYAxis = logYAxix;
+            lineData.UseProbabilityXAxis = probabilityXAxis;
             return lineData;
         }
     }

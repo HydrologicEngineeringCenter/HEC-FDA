@@ -43,8 +43,14 @@ namespace FdaViewModel.GeoTech
             Curve = failureFunction;
 
             IsDefaultCurveUsed = isDefault;
-
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/LeveeFeature.png");
+            if (isDefault)
+            {
+                CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/LeveeFeature.png");
+            }
+            else
+            {
+                CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FailureFunction.png");
+            }
 
             Description = description;
             if (Description == null) Description = "";

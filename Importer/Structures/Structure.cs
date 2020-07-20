@@ -271,10 +271,11 @@ namespace Importer
         {
             //geom, occtype, occtypeGroupName, found ht, struct value, cont value, other value, veh value, firstfloorelev, ground elev, year, module
             object[] row = new object[14];
-            //id, SID?
-            row[0] = SidReachId;
+            //fid
+            //this is not a concept that old fda has. I will just put -1 for now.
+            row[0] = -1;// SidReachId;
             //geom, 
-            row[1] = NorthingCoordinate; //add easting coordinate
+            row[1] = -1;// NorthingCoordinate; //add easting coordinate
             //occtype, 
             row[2] = "??"; //CategoryName? - damage category - add dam cat column to db?
             //dam cat
@@ -285,13 +286,13 @@ namespace Importer
             double foundHt = ElevationsStructure[(int)ElevationValue.FIRST_FLOOR] - ElevationsStructure[(int)ElevationValue.GROUND];
             row[5] = foundHt; //foundation height is first floor - ground elev.
             //struct value, 
-            row[6] = ValueOfStructure;
+            row[6] = UseValueOrZeroIfBadNumber(ValueOfStructure);
             //cont value, 
-            row[7] = ValueOfContent;
+            row[7] = UseValueOrZeroIfBadNumber(ValueOfContent);
             //other value, 
-            row[8] = ValueOfOther;
+            row[8] = UseValueOrZeroIfBadNumber(ValueOfOther);
             //veh value, 
-            row[9] = ValueOfCar;
+            row[9] = UseValueOrZeroIfBadNumber(ValueOfCar);
             //firstfloorelev, 
             row[10] = ElevationsStructure[(int)ElevationValue.FIRST_FLOOR];
             //ground elev,
@@ -303,6 +304,18 @@ namespace Importer
 
             return row;
 
+        }
+
+        private double UseValueOrZeroIfBadNumber(double value)
+        {
+            if(value == Study.badNumber)
+            {
+                return 0;
+            }
+            else
+            {
+                return value;
+            }
         }
 
         #endregion

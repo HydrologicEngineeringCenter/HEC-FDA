@@ -25,6 +25,7 @@ namespace FdaViewModel.Plots
 
         #endregion
         #region Properties
+
         public bool DisplayImportButton
         {
             get;set;
@@ -55,6 +56,12 @@ namespace FdaViewModel.Plots
             get;
             set;
         }
+
+        public string Title => throw new NotImplementedException();
+
+        public string XAxisLabel => throw new NotImplementedException();
+
+        public string YAxisLabel => throw new NotImplementedException();
         #endregion
         #region Constructors
         public DoubleLineModulatorWrapperVM()

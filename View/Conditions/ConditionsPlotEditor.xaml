@@ -1,12 +1,12 @@
-﻿<UserControl x:Class="Fda.Conditions.ConditionsPlotEditor"
+﻿<UserControl x:Class="View.Conditions.ConditionsPlotEditor"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Fda.Conditions"
-             xmlns:utils="clr-namespace:Fda.Utilities"
-             xmlns:plot="clr-namespace:Fda.Plots"
+             xmlns:local="clr-namespace:View.Conditions"
+             xmlns:utils="clr-namespace:View.Utilities"
              x:Name="ConditionsPlotEditorWindow"
+             xmlns:plot="clr-namespace:View.Plots"
              xmlns:Cac="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              MinWidth="550"
              MinHeight="550"
@@ -18,10 +18,10 @@
         <utils:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
 
     </UserControl.Resources>
-    
-    
-    
-    
+
+
+
+
     <Grid Name="mainGrid" >
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -34,7 +34,7 @@
             <ColumnDefinition Width="0"/>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        
+
         <Grid Name="grid_TopRow" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="22"/>
@@ -52,29 +52,29 @@
 
                 </MenuItem>
             </Menu>
-        <ToolBarTray Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Name="tool_toolbar"  Margin="0" Height="32" >
-            <ToolBar  Margin="2" >
-                <Button Name="btn_HideTrackers" ToolTip="Hide Trackers" Width="40" Click="btn_HideTrackers_Click"  >
-                    <Image Name="img_HideTrackers" Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/HideTrackers.png"/>
+            <ToolBarTray Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Name="tool_toolbar"  Margin="0" Height="32" >
+                <ToolBar  Margin="2" >
+                    <Button Name="btn_HideTrackers" ToolTip="Hide Trackers" Width="40" Click="btn_HideTrackers_Click"  >
+                        <Image Name="img_HideTrackers" Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/HideTrackers.png"/>
 
-                </Button>
-                <!--<Button Name="btn_PopPlotsOut" Width="40" ToolTip="Pop Plots Out" Click="btn_PopPlotsOut_Click">
+                    </Button>
+                    <!--<Button Name="btn_PopPlotsOut" Width="40" ToolTip="Pop Plots Out" Click="btn_PopPlotsOut_Click">
                     <Image Name="img_PopPlotsOut" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/PopUp.png"/>
 
                 </Button>-->
-                <Button Name="btn_ToggleAreaPlots" Width="40" ToolTip="Hide Area Plots" Click="btn_ToggleAreaPlots_Click" >
-                    <Image Name="img_HideAreaPlots" Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/HideAreaPlots.png"/>
+                    <Button Name="btn_ToggleAreaPlots" Width="40" ToolTip="Hide Area Plots" Click="btn_ToggleAreaPlots_Click" >
+                        <Image Name="img_HideAreaPlots" Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/HideAreaPlots.png"/>
 
-                </Button>
+                    </Button>
                     <Button Name="btn_ToggleThresholdLines" Width="40" ToolTip="Hide Threshold Lines" Click="btn_ToggleThresholdLines_Click" >
-                        <Image Name="img_HideThresholdLines"  Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/HideThresholdLines.png"/>
+                        <Image Name="img_HideThresholdLines"  Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/HideThresholdLines.png"/>
 
                     </Button>
                     <!--<Separator Margin="10,0,10,0"/>-->
 
 
-            </ToolBar>
-            <!--<ToolBar>
+                </ToolBar>
+                <!--<ToolBar>
                 <Label Content="Plot:" />
                     <ComboBox Name="cmb_PlotNames" Width="150" ItemsSource="{Binding AddedPlots}" DisplayMemberPath="CurveImporterVM.SelectedElementName"  />
 
@@ -85,7 +85,7 @@
                   
             </ToolBar>-->
                 <ToolBar>
-                    <plot:LinkedPlotSpecificPointTool x:Name="PlotSpecificPointTool" AvailablePlotsFromVM="{Binding AvailablePlots}" />
+                    <!--<plot:LinkedPlotSpecificPointTool x:Name="PlotSpecificPointTool" AvailablePlotsFromVM="{Binding AvailablePlots}" />-->
                 </ToolBar>
 
 
@@ -95,56 +95,60 @@
                 <Label Content="EAD:" VerticalAlignment="Center"/>
                 <Label Content="{Binding EAD}" VerticalAlignment="Center"/>
             </ToolBar>-->
-        </ToolBarTray>
+            </ToolBarTray>
             <!--<StackPanel Grid.Row="2" Orientation="Horizontal">
                 <Label Content="LP3: "/>
                 <Label Name="lbl_LP3"  Visibility="{Binding IsPlot0Visible,Converter={StaticResource BoolToVisibilityConverter}}" Content="{Binding Plot0VM.SelectedElementName}"/>
             </StackPanel>-->
-            <Expander Grid.Row="2" Header="Condition Properties" IsExpanded="True">
-            <!--<WrapPanel  Orientation="Horizontal" Margin="5">-->
-                    <Grid>
+            <Expander Grid.Row="2" Header="Condition Properties" IsExpanded="True" BorderBrush="Black" BorderThickness="2" Margin="10,5,10,5">
+                <!--<WrapPanel  Orientation="Horizontal" Margin="5">-->
+                <Grid Name="ExpanderItemsGrid">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="32"/>
                         <RowDefinition Height="32"/>
-                       
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="3">
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Grid.Column="0" Margin="10,0,0,0">
-                            <Label  Content="Name:" />
-                    <TextBox Name="txt_Name" Width="175" Text="{Binding Name, ValidatesOnDataErrors=True}" Margin="2" />
-                </StackPanel>
-                    <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.Column="1" Margin="10,0,0,0">
-                    <Label  Content="Description:" />
-                    <Cac:TextBoxDescription Width="175" Text="{Binding Description}" Margin="2" />
-                </StackPanel>
-                <StackPanel Grid.Row="2" Orientation="Horizontal" Grid.Column="2" Margin="10,0,0,0">
-                    <Label Content="Year:"/>
-                    <TextBox Name="txt_year" Width="40" Text="{Binding Year}" Margin="2"/>
-                </StackPanel>
-              </StackPanel>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="3">
-                    <StackPanel Grid.Row="3" Orientation="Horizontal" Grid.Column="3" Margin="10,0,0,0">
-                    <Label Content="Impact Area:" />
-                    <ComboBox Name="cmb_ImpAreas" Width="210" ItemsSource="{Binding ImpactAreas}" SelectedItem="{Binding SelectedImpactArea}" Margin="2" />
-                    <Button Name="btn_AddImpactAreas" Width="30" Height="20" Click="btn_AddImpactAreas_Click" Margin="10,0,10,0" >
-                        <Image Width="20" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
+                    <Label  Content="Name:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Name="txt_Name"  Text="{Binding Name, ValidatesOnDataErrors=True}" Margin="2" HorizontalAlignment="Stretch" />
 
-                    </Button>
-                    </StackPanel>
-                    <StackPanel Grid.Row="4" Orientation="Horizontal">
-                    <Label Content="Threshold Type: " />
-                    <ComboBox Name="cmb_ThresholdType" Width="150" ItemsSource="{Binding ThresholdTypes}" SelectedItem="{Binding SelectedThresholdType}" Margin="2"  />
-                    <Label Content="Value: " />
-                    <TextBox Name="txt_ThresholdValue" Width="100" Text="{Binding ThresholdValue}" Margin="0,0,10,0" LostFocus="txt_ThresholdValue_LostFocus"/>
-                        </StackPanel>
-               </StackPanel>
+                    <Label Grid.Row="0" Grid.Column="2" Content="Description:" HorizontalAlignment="Right" />
+                    <Cac:TextBoxDescription Grid.Row="0" Grid.Column="3"  Text="{Binding Description}" Margin="2" HorizontalAlignment="Stretch" />
+
+                    <Label Grid.Row="0" Grid.Column="4" Content="Year:" HorizontalAlignment="Right" />
+                    <TextBox Grid.Row="0" Grid.Column="5" Name="txt_year" Text="{Binding Year}" Margin="2" HorizontalAlignment="Stretch"/>
+
+                    
+                    <Label Grid.Row="1" Grid.Column="0" Content="Impact Area:" HorizontalAlignment="Right" />
+
+                    <Grid Name="ImpactAreaAndAddButtonGrid" Grid.Row="1" Grid.Column="1"  HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                        </Grid.ColumnDefinitions>
+                        <ComboBox  Grid.Column="0" Name="cmb_ImpAreas"  ItemsSource="{Binding ImpactAreas}" SelectedItem="{Binding SelectedImpactArea}" Margin="2" HorizontalAlignment="Stretch" />
+                        <Button Grid.Column="1" Name="btn_AddImpactAreas" Width="30" Height="24" Click="btn_AddImpactAreas_Click"  >
+                            <Image Width="20" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/Add.png"/>
+                        </Button>
+                    </Grid>
+                    
+                    <Label Grid.Row="1" Grid.Column="2" Content="Threshold Type: " HorizontalAlignment="Right" />
+                    <ComboBox Grid.Row="1" Grid.Column="3" Name="cmb_ThresholdType" ItemsSource="{Binding ThresholdTypes}" SelectedItem="{Binding SelectedThresholdType}" Margin="2"  HorizontalAlignment="Stretch" />
+                    <Label Grid.Row="1" Grid.Column="4" Content="Threshold Value: " HorizontalAlignment="Right" />
+                    <TextBox Grid.Row="1" Grid.Column="5" Name="txt_ThresholdValue"  Text="{Binding ThresholdValue}"  LostFocus="txt_ThresholdValue_LostFocus" Margin="2" HorizontalAlignment="Stretch"/>
                     <!--<StackPanel Orientation="Horizontal" Grid.Column="2">
                 <Label Content="Structures:" />
                 <ComboBox Name="cmb_Structures" Width="150" ItemsSource="{Binding StructureInventories}" DisplayMemberPath="{Binding Name}"/>
                     
                 </StackPanel>-->
-                    </Grid>
+                </Grid>
                 <!--</WrapPanel>-->
             </Expander>
 
@@ -167,7 +171,7 @@
             <plot:IndividualLinkedPlotControl x:Name="Plot1Control" DataContext="{Binding Plot1ControlVM}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="2" MinWidth="80" MinHeight="100" Content="{Binding CurrentVM}"/>
 
             <Button Name="btn_CollapsePlot1"  Width="26" Height="26" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="White" BorderBrush="White" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,1,0,0" Click="btn_CollapsePlot1_Click" >
-                <Image Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/PopDown.png"/>
+                <Image Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopDown.png"/>
 
             </Button>
 
@@ -196,7 +200,7 @@
             <plot:IndividualLinkedPlotControl x:Name="Plot5Control" DataContext="{Binding Plot5ControlVM}" Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2"  Content="{Binding CurrentVM}"/>
 
             <Button Name="btn_CollapsePlot5" Width="26" Height="26" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Background="White" BorderBrush="White" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="1,0,0,0" Click="btn_CollapsePlot5_Click" >
-                <Image Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/PopRight.png"/>
+                <Image Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopRight.png"/>
 
             </Button>
 
@@ -254,7 +258,8 @@
 
             <!--<plot:IndividualLinkedPlot x:Name="plot3" Visibility="{Binding IsPlot3Visible,Converter={StaticResource BoolToVisibilityConverter}}" Grid.Row="10" Grid.RowSpan="2" Grid.Column="10" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot3VM.Curve}" BaseFunction="{Binding Path=Plot3VM.BaseFunction}" Title="{Binding Path=Plot3VM.Title}"  XAxisLabel="{Binding Plot3VM.XAxisLabel}" YAxisLabel="{Binding Plot3VM.YAxisLabel}"  SetYAxisToLogarithmic="True" />-->
             <!--<Button Name="btn_AddPlot3" Style="{StaticResource AddButton}" IsEnabled="{Binding IsPlot0Visible}" Visibility="{Binding IsPlot3Visible,Converter={StaticResource BoolToInverseVisibilityConverter}}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Content="Rating Curve" Click="btn_AddPlot3_Click"/>-->
-            <plot:IndividualLinkedPlotControl x:Name="Plot3Control" DataContext="{Binding Plot3ControlVM}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2"  Content="{Binding CurrentVM}" UpdatePlotsFromVM="{Binding UpdatePlots}" />
+            <plot:IndividualLinkedPlotControl x:Name="Plot3Control" DataContext="{Binding Plot3ControlVM}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2"  Content="{Binding CurrentVM}"  />
+            <!--UpdatePlotsFromVM="{Binding UpdatePlots}"-->
 
 
             <!--<local:FailureFunctionPlot x:Name="plot5" Grid.Row="4" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot5Curve}" Title="{Binding Path=Plot5Title}"  />-->
@@ -283,8 +288,8 @@
         </Grid>
 
         <utils:OKCloseControl Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,5,0"/>
-       
-        
+
+
         <!--<plot:IndividualLinkedPlot x:Name="plot5" Grid.Row="0" Grid.RowSpan="1" Grid.Column="0" Grid.ColumnSpan="1" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot5VM.Curve}" BaseFunction="{Binding Path=Plot5VM.BaseFunction}" Title="{Binding Path=Plot5VM.Title}" XAxisLabel="{Binding Plot5VM.XAxisLabel}" YAxisLabel="{Binding Plot5VM.YAxisLabel}"   />-->
 
     </Grid>

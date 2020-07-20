@@ -23,8 +23,7 @@ namespace FdaViewModel.Conditions
         public event EventHandler RenameConditionsTreeElement;
         public event EventHandler UpdateExpansionValueInTreeElement;
 
-        private const string _TableConstant = "Conditions - ";
-
+        //private const string _TableConstant = "Conditions - ";
 
         private string _Description;
         private int _AnalysisYear;
@@ -58,6 +57,8 @@ namespace FdaViewModel.Conditions
         private bool _IsExpanded;
         #endregion
         #region Properties
+
+        public ICondition Condition { get; set; }
 
         public bool IsExpanded
         {
@@ -99,7 +100,7 @@ namespace FdaViewModel.Conditions
             get { return _UseLevee; }
             set { _UseLevee = value; NotifyPropertyChanged(); }
         }
-        public StageTransforms.ExteriorInteriorElement ExteriorInteriorElement
+        public ExteriorInteriorElement ExteriorInteriorElement
         {
             get { return _ExteriorInteriorElement; }
             set { _ExteriorInteriorElement = value; NotifyPropertyChanged(); }

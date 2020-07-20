@@ -6,7 +6,6 @@
              xmlns:local="clr-namespace:View.Conditions"
              xmlns:Utils="clr-namespace:View.Utilities"
              mc:Ignorable="d" 
-             
              d:DesignHeight="150" d:DesignWidth="500">
     <UserControl.Resources>
         <Utils:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibility" />

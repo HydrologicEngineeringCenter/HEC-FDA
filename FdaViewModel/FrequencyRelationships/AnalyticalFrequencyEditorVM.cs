@@ -319,7 +319,7 @@ namespace FdaViewModel.FrequencyRelationships
             CurrentElement.LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             CurrentElement.Name = Name;
             ((AnalyticalFrequencyElement)CurrentElement).Description = Description;
-            ((AnalyticalFrequencyElement)CurrentElement).Distribution = _Curve;
+            ((AnalyticalFrequencyElement)CurrentElement).Curve = _Curve;
         }
 
         public void FilterRowsByLevel(FdaLogging.LoggingLevel level)

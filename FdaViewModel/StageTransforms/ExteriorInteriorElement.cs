@@ -116,6 +116,11 @@ namespace FdaViewModel.StageTransforms
 
         public override bool Equals(object obj)
         {
+            if(Description == null)
+            {
+                Description = "";
+            }
+
             bool retval = true;
             if(obj.GetType() == typeof(ExteriorInteriorElement))
             {
