@@ -15,6 +15,7 @@ namespace Model
         /// </summary>
         /// <param name="fx"> An <see cref="IFunction"/> that forms the basis of the <see cref="IFdaFunction"/>. </param>
         /// <param name="fType"> The <see cref="IParameterEnum"/> function type. </param>
+        /// <param name="label"> A title or label describing the function. </param>
         /// <param name="xUnits"> Optional parameter describing the <see cref="IFdaFunction"/> x units. If set to the default: <see cref="UnitsEnum.NotSet"/> value, then the default <see cref="UnitsEnum"/> for the specified <see cref="IParameterEnum"/> is inferred." </param>
         /// <param name="xLabel"> Optional parameter describing the <see cref="IFdaFunction"/> x ordinates. If not set a default value is inferred based on the specified <see cref="IParameterEnum"/> value and the <paramref name="xUnits"/>. </param>
         /// <param name="yUnits"> Optional parameter describing the <see cref="IFdaFunction"/> y units. If set to the default: <see cref="UnitsEnum.NotSet"/> value, then the default <see cref="UnitsEnum"/> for the specified <see cref="IParameterEnum"/> is inferred."</param>

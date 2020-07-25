@@ -1,8 +1,8 @@
 ﻿using System;
 using Functions;
 using Functions.Ordinates;
-using Model.Inputs.Functions;
-using Model.Inputs.Functions.ImpactAreaFunctions;
+using Model.Functions;
+
 
 namespace Model
 {
@@ -11,7 +11,7 @@ namespace Model
         #region Properties
         public double ExceedanceTarget { get; } = 0;
         public MetricEnum Type { get; } = MetricEnum.NotSet;
-        public ImpactAreaFunctionEnum TargetFunction { get; }
+        public IParameterEnum TargetFunction { get; }
         #endregion
 
         #region Constructors
@@ -31,31 +31,31 @@ namespace Model
         #endregion
 
         #region Methods
-        private ImpactAreaFunctionEnum GetTargetFunction()
+        private IParameterEnum GetTargetFunction()
         {
             switch (Type)
             {
                 case MetricEnum.ExteriorStage:
-                    return ImpactAreaFunctionEnum.ExteriorStageFrequency;
+                    return IParameterEnum.ExteriorStageFrequency;
                 case MetricEnum.InteriorStage:
-                    return ImpactAreaFunctionEnum.InteriorStageFrequency;
+                    return IParameterEnum.InteriorStageFrequency;
                 case MetricEnum.Damages:
-                    return ImpactAreaFunctionEnum.DamageFrequency;
+                    return IParameterEnum.DamageFrequency;
                 case MetricEnum.ExpectedAnnualDamage:
-                    return ImpactAreaFunctionEnum.DamageFrequency;
+                    return IParameterEnum.DamageFrequency;
                 default:
                     throw new InvalidOperationException("The application could not set a valid target function when calling Metric.TargetFunction()");
             }
         }
         public double Compute(IFrequencyFunction frequencyFunction, double probability)
         {
-            ImpactAreaFunctionEnum targetFunction = TargetFunction;
-            if (frequencyFunction.Type != targetFunction)
+            IParameterEnum targetFunction = TargetFunction;
+            if (frequencyFunction.ParameterType != targetFunction)
             {
-                throw new ArgumentException(string.Format("A {0} metric cannot be computed from the provided {1} function. Provide a {2} function and try again.", Type, frequencyFunction.Type, targetFunction));
+                throw new ArgumentException(string.Format("A {0} metric cannot be computed from the provided {1} function. Provide a {2} function and try again.", Type, frequencyFunction.ParameterType, targetFunction));
             }
 
-            IFunction sampledFreqFunc = Sampler.Sample(frequencyFunction.Function, probability);
+            IFunction sampledFreqFunc = Sampler.Sample(((FdaFunctionBase)frequencyFunction)._Function, probability);
             if (Type == MetricEnum.ExpectedAnnualDamage)
             {
                 return sampledFreqFunc.TrapizoidalRiemannSum();

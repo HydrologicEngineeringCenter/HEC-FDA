@@ -31,7 +31,7 @@ namespace Model
         /// <returns> An <see cref="IElevation"/> parameter. </returns>
         public static IElevation Factory(IOrdinate ordinate, UnitsEnum units = UnitsEnum.Foot, IParameterEnum elevationEnum = IParameterEnum.GroundElevation, string label = "")
         {
-            return new Elevations.Elevation(ordinate, units, elevationEnum, label);
+            return new Parameters.Elevations.ElevationOrdinate(ordinate, elevationEnum, units, label);
         }
 
 

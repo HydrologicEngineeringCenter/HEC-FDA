@@ -23,7 +23,6 @@ namespace Model
         /// </summary>
         NotSet = 0,
 
-
         /// <summary>
         /// The probability that an equal or larger value is selected or occurs.
         /// </summary>
@@ -36,7 +35,15 @@ namespace Model
         /// A chance of failure.
         /// </summary>
         FailureProbability = 3,
-
+        
+        /// <summary>
+        /// Annual peak unregulated flow.
+        /// </summary>
+        UnregulatedAnnualPeakFlow = 11,
+        /// <summary>
+        /// Regulated peak flow.
+        /// </summary>
+        RegulatedAnnualPeakFlow = 12,
 
         /// <summary>
         /// Ground elevation.
@@ -63,6 +70,10 @@ namespace Model
         /// </summary>
         InteriorElevation = 29,
 
+        /// <summary>
+        /// Flood damages.
+        /// </summary>
+        FloodDamages = 31,
 
         /// <summary>
         /// Annual peak inflow frequency function.

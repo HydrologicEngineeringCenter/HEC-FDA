@@ -1,4 +1,5 @@
 ﻿using Functions;
+using Model.Parameters.Elevations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using Utilities;
 namespace Model.Validation
 {
 
-    internal class ElevationValidator: IValidator<IElevation>
+    internal class ElevationValidator: IValidator<ElevationBase>
     {
         internal const int _MinElevationParameterEnum = 20;
         internal const int _MaxElevationParameterEnum = 29;
@@ -19,12 +20,12 @@ namespace Model.Validation
         internal const double _LowestAssetHeight = 0;
         internal const double _HighestAssetHeight = 100;
 
-        public IMessageLevels IsValid(IElevation obj, out IEnumerable<IMessage> msgs)
+        public IMessageLevels IsValid(ElevationBase obj, out IEnumerable<IMessage> msgs)
         {
             msgs = ReportErrors(obj);
             return msgs.Max();
         }
-        public IEnumerable<IMessage> ReportErrors(IElevation obj)
+        public IEnumerable<IMessage> ReportErrors(ElevationBase obj)
         {
             List<IMessage> msgs = new List<IMessage>();
             switch (obj.ParameterType)
@@ -71,8 +72,8 @@ namespace Model.Validation
             }
             return msgs;
         }
-        private string NoticeMessage(IElevation obj) => $"The specified {obj.Print(true, true)} is outside the allowable range.";
-        private string ExtendedMessage(IElevation obj, double min, double max, UnitsEnum units)
+        private string NoticeMessage(ElevationBase obj) => $"The specified {obj.Print(true, true)} is outside the allowable range.";
+        private string ExtendedMessage(ElevationBase obj, double min, double max, UnitsEnum units)
         {
             return $"The specified {obj.ParameterType} range: {obj.Range.Print(true)} exceeds the allowable approximate range of {AllowableRangeMessage(obj.ParameterType)}: " +
                 $"[{UnitsUtilities.Print(UnitsUtilities.ConvertLengths(_LowestGroundElevation, UnitsEnum.Foot, units), units, true, false)}," +
@@ -100,10 +101,10 @@ namespace Model.Validation
         public static bool IsConstructable(IParameterEnum type, IOrdinate value, UnitsEnum units, out string msg)
         {
             msg = "";
-            if (!IParameterUtilities.IsElevation(type)) msg += $"The {nameof(Elevations.Elevation)} parameter cannot be constructed because it is marked as a {type} parameter, not a elevation parameter.";
+            if (!IParameterUtilities.IsElevation(type)) msg += $"The {nameof(Parameters.Elevations.ElevationOrdinate)} parameter cannot be constructed because it is marked as a {type} parameter, not a elevation parameter.";
             if (!UnitsUtilities.IsLength(units)) msg += $"The specified unit of measurement {units.ToString()} is invalid because it is not a supported measurement of length.";
-            if (value.IsNull()) msg += $"The {nameof(Elevations.Elevation)} parameter cannot be constructed because the elevation {nameof(value)} input parameter is null.";
-            if (value.Value().IsFinite()) msg += $"The {nameof(Elevations.Elevation)} parameter cannot be constructed because the elevation value is not a finite numerical value.";
+            if (value.IsNull()) msg += $"The {nameof(Parameters.Elevations.ElevationOrdinate)} parameter cannot be constructed because the elevation {nameof(value)} input parameter is null.";
+            if (value.Value().IsFinite()) msg += $"The {nameof(Parameters.Elevations.ElevationOrdinate)} parameter cannot be constructed because the elevation value is not a finite numerical value.";
             return msg.Length == 0;
         }
     }
