@@ -15,6 +15,7 @@ namespace Model.Functions
         public OrderedSetEnum Order => _Function.Order;
         public IRange<double> Range => _Function.Range;
         public IRange<double> Domain => _Function.Domain;
+        public InterpolationEnum Interpolator => _Function.Interpolator;
         public bool IsConstant { get; }
 
         public abstract string Label { get; }

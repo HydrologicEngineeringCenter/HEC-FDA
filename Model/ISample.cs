@@ -18,24 +18,24 @@ namespace Model
         /// <summary>
         /// The nonexceedance probability to be used in a sample function, for instance <see cref="ModelUtilities.Sample(IFdaFunction, double)"/>.
         /// </summary>
-        double NonExceedanceProbability { get; }
+        double Probability { get; }
     }
 
     internal sealed class SampleRecord : ISampleRecord
     {
         public bool DoSample { get; }
-        public double NonExceedanceProbability { get; }
+        public double Probability { get; }
 
         internal SampleRecord()
         {
             DoSample = false;
-            NonExceedanceProbability = 0.50d; // default value.
+            Probability = 0.50d; // default value.
         }
         internal SampleRecord(double nonexceedanceProbability)
         {
             if (!nonexceedanceProbability.IsOnRange(0d, 1d)) throw new ArgumentOutOfRangeException();
             DoSample = true;
-            NonExceedanceProbability = nonexceedanceProbability;
+            Probability = nonexceedanceProbability;
         }
     }
 }

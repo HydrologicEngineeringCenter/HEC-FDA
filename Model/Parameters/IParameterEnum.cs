@@ -13,8 +13,8 @@ namespace Model
     /// <item> 011 - 019: flows. </item>
     /// <item> 021 - 029: elevation/lengths (odd values include ground elevation, even values do not). </item>
     /// <item> 101 - 109: compute point functions (i.e. index location) frequency functions (odd values) and transform functions (even values). </item>
-    /// <item> 110: lateral structure failure function. </item>
-    /// </list>
+    /// <item> 111 - 113: lateral structure, failure function, frequency of stage of failure. </item>
+    /// </list>C:\Users\q0hecjrk\Documents\_Source\Git\FloodDamageAssessment\Model\Parameters\IParameterEnum.cs
     /// </summary>
     public enum IParameterEnum
     {
@@ -113,8 +113,16 @@ namespace Model
         DamageFrequency = 109,            //AnnualExceedanceChance-> AggregatedDamage 
 
         /// <summary>
+        /// A lateral structure.
+        /// </summary>
+        LateralStructure = 111,
+        /// <summary>
         /// Lateral structure exterior stage failure probability function.
         /// </summary>
-        LateralStructureFailure = 110,   //ExteriorPeakStage     -> ChanceOfFailure
+        LateralStructureFailure = 112,   //ExteriorPeakStage     -> ChanceOfFailure
+        /// <summary>
+        /// The frequency of the exterior stage associated with the failure of the lateral structure in a realization. 
+        /// </summary>
+        LatralStructureFailureElevationFrequency = 113
     }
 }

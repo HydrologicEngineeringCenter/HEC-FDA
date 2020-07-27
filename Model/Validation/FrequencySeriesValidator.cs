@@ -28,7 +28,7 @@ namespace Model.Validation
         }
         private bool IsOnRange(IEnumerable<IOrdinate> series)
         {
-            foreach (var x in series) if (x.Range.IsOnRange(_ValidRange)) return false;
+            //foreach (var x in series) if (x.Range.IsOnRange(_ValidRange)) return false;
             return true;
         }
         public static bool IsConstructable(IFdaFunction fx, IParameterEnum parameterType, out string msg)

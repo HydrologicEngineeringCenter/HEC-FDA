@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Model
 {
+    //todo: This seems like it should be the result. the realization should store lateral structures frequency functions etc. 
     public interface IConditionLocationRealization
     {
         IReadOnlyDictionary<IParameterEnum, ISampleRecord> Samples { get; }
@@ -19,7 +20,6 @@ namespace Model
             //ToDo: Validation
             Metrics = (IReadOnlyDictionary<IMetric, double>)metrics;
             Samples = (IReadOnlyDictionary<IParameterEnum, ISampleRecord>)samples;
-
         }
     }
 

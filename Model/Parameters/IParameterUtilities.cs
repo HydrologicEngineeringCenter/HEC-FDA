@@ -7,6 +7,24 @@ namespace Model
 {
     internal static class IParameterUtilities
     {
+        /// <summary>
+        /// The acceptable range ground elevations. 
+        /// </summary>
+        /// <remarks>
+        /// The min is set to the lowest earth ground elevation: -1,355 feet, the Dead Sea Depression.
+        /// The max is set to the highest earth ground elevation: 29,035 feet, the summit of Mount Everest.
+        /// </remarks>
+        internal static IRange<double> GroundElevationRange = IRangeFactory.Factory(-1365d, 29035);
+        /// <summary>
+        /// The acceptable range of elevations for lateral structures in feet.
+        /// </summary>
+        /// <remarks> 
+        /// The min is set to the lowest earth ground elevation: -1,355 feet (the Dead Sea Depression). 
+        /// The max is set to the highest earth ground elevation 29,035 feet (the summit of Mount Everest) plus the elevation of the highest dam on earth: 1001 feet (the Jinping-I Dam).  
+        /// </remarks>
+        internal static IRange<double> LateralStructureElevationRange = IRangeFactory.Factory(-1365d, GroundElevationRange.Max + 1001d);
+
+
         private static IRange<int> _ProbabilityRange => IRangeFactory.Factory(1, 9);
         private static IRange<int> _FlowRange => IRangeFactory.Factory(11, 19);
         private static IRange<int> _ElevationRange => IRangeFactory.Factory(21, 29);
@@ -98,8 +116,14 @@ namespace Model
                     return abbreviate ? "Stage Damage Function" : "Interior (Floodplain) Water Surface Elevation Flood Damage Transform Function";
                 case IParameterEnum.DamageFrequency:
                     return abbreviate ? "Damage Frequency Function" : "Flood Damage Frequency Function";
+
+
+                case IParameterEnum.LateralStructure:
+                    return "Lateral Structure";
                 case IParameterEnum.LateralStructureFailure:
                     return abbreviate ? "Failure Function" : "Lateral Structure Elevation to Failure Probability Transform Function";
+                case IParameterEnum.LatralStructureFailureElevationFrequency:
+                    return abbreviate ? "Frequency of Failure Stage" : "Frequency of Exterior Stage Associated with Lateral Structure Failure";
                 default:
                     throw new NotImplementedException();
             }

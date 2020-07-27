@@ -5,9 +5,11 @@ using Functions;
 
 namespace Model
 {
-    public interface ILateralStructure
+    public interface ILateralStructure: IParameter
     {
         IElevation TopElevation { get; }
         IFdaFunction FailureFunction { get; }
+
+        ILateralStructureRealization Compute(double failureFxProbability, IFrequencyFunction extFreqFx, double extFailElevProbability);
     }
 }

@@ -26,6 +26,10 @@ namespace Model
         /// The range of X values.
         /// </summary>
         IRange<double> Domain { get; }
+        /// <summary>
+        /// The method of interpolation.
+        /// </summary>
+        InterpolationEnum Interpolator { get; }
 
         /// <summary>
         /// Describes the X axis of the function <see cref="UnitsEnum"/>, <see cref="ParameterType"/>, etc.

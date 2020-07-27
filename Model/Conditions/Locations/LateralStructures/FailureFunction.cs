@@ -16,11 +16,11 @@ namespace Model.Conditions.Locations.LateralStructures
         public override UnitsEnum Units { get; }
         public override IParameterEnum ParameterType => IParameterEnum.LateralStructureFailure;
 
-        internal FailureFunction(IFunction fx, UnitsEnum xUnits = UnitsEnum.Foot, string xlabel = "", string ylabel = "", string label = ""): base(fx)
+        internal FailureFunction(IFunction fx, UnitsEnum xUnits = UnitsEnum.Foot, string xLabel = "", string yLabel = "", string label = ""): base(fx)
         {
             Label = label == "" ? ParameterType.Print() : label;
-            XSeries = IParameterFactory.Factory(this, true, xUnits, xlabel);
-            YSeries = IParameterFactory.Factory(this, false, UnitsEnum.Probability, ylabel);
+            XSeries = IParameterFactory.Factory(this, true, xUnits, xLabel);
+            YSeries = IParameterFactory.Factory(this, false, UnitsEnum.Probability, yLabel);
             Units = YSeries.Units;
         }
 
