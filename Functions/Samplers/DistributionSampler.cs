@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Functions
 {
-    internal class DistributionSampler : ISampler
+    public class DistributionSampler : ISampler
     {
         public bool CanSample(ICoordinatesFunction coordinatesFunction)
         {

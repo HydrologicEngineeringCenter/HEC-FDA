@@ -1,7 +1,6 @@
 ﻿using Functions;
 using Functions.CoordinatesFunctions;
 using Model;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -40,7 +39,7 @@ namespace ModelTests.ExcelTesting
                 {
                     InterpolationEnum interp1 = ConvertToInterpolationEnum(interpolation1);
                     IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1, interp1);
-                    inflowFreq = ImpactAreaFunctionFactory.FactoryFrequency(func1, ImpactAreaFunctionEnum.InflowFrequency);
+                    inflowFreq = (IFrequencyFunction) IFdaFunctionFactory.Factory(func1, IParameterEnum.InflowFrequency);
                 }
 
                 List<ITransformFunction> transformFunctions = GetTransformFunctions(xs2, ys2, interpolation2, xs3, ys3, interpolation3, xs4, ys4, interpolation4, xs5, ys5, interpolation5);
@@ -127,7 +126,7 @@ namespace ModelTests.ExcelTesting
             {
                 InterpolationEnum interp2 = ConvertToInterpolationEnum(interpolation2);
                 IFunction func2 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs2, ys2, interp2);
-                inflowOutflow = ImpactAreaFunctionFactory.FactoryTransform(func2, ImpactAreaFunctionEnum.InflowOutflow);
+                inflowOutflow = (ITransformFunction)IFdaFunctionFactory.Factory(func2, IParameterEnum.InflowOutflow);
             }
 
             ITransformFunction rating = null;
@@ -135,7 +134,7 @@ namespace ModelTests.ExcelTesting
             {
                 InterpolationEnum interp3 = ConvertToInterpolationEnum(interpolation3);
                 IFunction func3 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs3, ys3, interp3);
-                rating = ImpactAreaFunctionFactory.FactoryTransform(func3, ImpactAreaFunctionEnum.Rating);
+                rating = (ITransformFunction)IFdaFunctionFactory.Factory(func3, IParameterEnum.Rating);
             }
 
             ITransformFunction exteriorInterior = null;
@@ -143,7 +142,7 @@ namespace ModelTests.ExcelTesting
             {
                 InterpolationEnum interp4 = ConvertToInterpolationEnum(interpolation4);
                 IFunction func4 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs4, ys4, interp4);
-                exteriorInterior = ImpactAreaFunctionFactory.FactoryTransform(func4, ImpactAreaFunctionEnum.ExteriorInteriorStage);
+                exteriorInterior = (ITransformFunction)IFdaFunctionFactory.Factory(func4, IParameterEnum.ExteriorInteriorStage);
 
             }
 
@@ -152,7 +151,7 @@ namespace ModelTests.ExcelTesting
             {
                 InterpolationEnum interp5 = ConvertToInterpolationEnum(interpolation5);
                 IFunction func5 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs5, ys5, interp5);
-                stageDamage = ImpactAreaFunctionFactory.FactoryTransform(func5, ImpactAreaFunctionEnum.InteriorStageDamage);
+                stageDamage = (ITransformFunction)IFdaFunctionFactory.Factory(func5, IParameterEnum.InteriorStageDamage);
             }
             List<ITransformFunction> transformFunctions = new List<ITransformFunction>();
             if (inflowOutflow != null)

@@ -2,7 +2,6 @@
 using FdaViewModel.Utilities;
 using Model;
 using Model.Inputs.Conditions;
-using Model.Inputs.Functions;
 using Statistics;
 using System;
 using System.Collections.Generic;
@@ -733,7 +732,7 @@ namespace FdaViewModel.Conditions
         {
             if(_UsesAnalyiticalFlowFrequency)
             {
-                return (IFrequencyFunction)AnalyticalFlowFrequency.Curve.Function;
+                return (IFrequencyFunction)AnalyticalFlowFrequency.Curve;
             }
             //todo: shouldn't there be an outflow freq option here? and the other frequency options?
             throw new NotImplementedException();

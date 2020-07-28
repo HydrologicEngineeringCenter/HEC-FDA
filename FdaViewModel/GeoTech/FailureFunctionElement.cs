@@ -6,6 +6,7 @@ using FdaViewModel.Editors;
 using System.Collections.ObjectModel;
 using Statistics;
 using Model;
+using Functions;
 
 namespace FdaViewModel.GeoTech
 {
@@ -186,7 +187,8 @@ namespace FdaViewModel.GeoTech
             vm.SelectedLateralStructure = element.SelectedLateralStructure;
             if (vm.EditorVM != null)
             {
-                vm.EditorVM.Function = element.Curve.Function;
+                ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(element.Curve.Coordinates, element.Curve.Interpolator);
+                vm.EditorVM.Function = coordFunc;
             }
         }
         #endregion

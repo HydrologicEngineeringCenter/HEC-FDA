@@ -89,7 +89,7 @@ namespace FdaViewModel.Plots
             //}
 
             //_MyCurve = curve;
-            UpdateChart(BaseFunction.Function, xAxisOnBottom, yAxisOnLeft);
+            UpdateChart(BaseFunction, xAxisOnBottom, yAxisOnLeft);
         }
        
 
@@ -157,9 +157,10 @@ namespace FdaViewModel.Plots
 
         #endregion
         #region Voids
-        private void UpdateChart(ICoordinatesFunction function, bool xAxisBottom, bool yAxisLeft)
+        private void UpdateChart(IFdaFunction function, bool xAxisBottom, bool yAxisLeft)
         {
-            CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(function);
+            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(function.Coordinates, function.Interpolator);
+            CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(func);
             List<SciLineData> lineData = chartHelper.CreateLineData(IsYAxisLog, IsProbabilityXAxis);
             foreach(SciLineData ld in lineData)
             {

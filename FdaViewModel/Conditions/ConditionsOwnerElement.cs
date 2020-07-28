@@ -1,17 +1,12 @@
 ﻿using FdaViewModel.AggregatedStageDamage;
 using FdaViewModel.FlowTransforms;
 using FdaViewModel.FrequencyRelationships;
-using FdaViewModel.GeoTech;
 using FdaViewModel.StageTransforms;
 using FdaViewModel.Utilities;
 using Functions;
 using Model;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FdaViewModel.Conditions
 {
@@ -72,7 +67,8 @@ namespace FdaViewModel.Conditions
             //todo: just for testing, delete this dummy lp3
             List<double> xs = new List<double>() { .1,.3,.5,.7,.9 };
             List<double> ys = new List<double>() { 1, 1000, 3000, 5000, 7000 };
-            IFdaFunction func = ImpactAreaFunctionFactory.Factory(ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear), ImpactAreaFunctionEnum.InflowFrequency);
+            ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+            IFdaFunction func = IFdaFunctionFactory.Factory((IFunction) coordFunc, IParameterEnum.InflowFrequency);
             AnalyticalFrequencyElement dummyElem = new AnalyticalFrequencyElement("dummyElem", "now", "desc", func);
             listOfLp3.Add(dummyElem);
 

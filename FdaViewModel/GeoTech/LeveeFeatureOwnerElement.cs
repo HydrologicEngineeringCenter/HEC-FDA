@@ -1,6 +1,6 @@
 ﻿using FdaViewModel.Utilities;
+using Functions;
 using Model;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,7 +69,7 @@ namespace FdaViewModel.GeoTech
             List<double> xValues = new List<double>() { 0};
             List<double> yValues = new List<double>() { 0 };
             Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
-            IFdaFunction defaultCurve = ImpactAreaFunctionFactory.Factory(func, ImpactAreaFunctionEnum.LeveeFailure);
+            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory((IFunction)func, IParameterEnum.LateralStructureFailure);
 
             LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(defaultCurve, actionManager);
             //StudyCache.AddSiblingRules(vm, this);

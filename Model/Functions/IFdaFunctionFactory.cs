@@ -1,7 +1,10 @@
 ﻿using Functions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Xml.Linq;
+using Utilities.Serialization;
 
 namespace Model
 {
@@ -65,6 +68,10 @@ namespace Model
             if (fType != IParameterEnum.LateralStructureFailure) Factory(failurefx, fType, label, xUnits, xLabel, yUnits: UnitsEnum.NotSet, yLabel);
             return new Conditions.Locations.LateralStructures.FailureFunction(failurefx, xUnits, xLabel, yLabel, label);
         }
+
+
+
+        
     } 
     
 }

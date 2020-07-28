@@ -43,7 +43,8 @@ namespace FdaViewModel.Conditions
             double retval = double.NaN;
             try
             {
-                IFunction sampledFunc = Sampler.Sample(_crosshairData.Function, .5);
+                ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(_crosshairData.Function.Coordinates, _crosshairData.Function.Interpolator);
+                IFunction sampledFunc = Sampler.Sample(func, .5);
                 retval = sampledFunc.F(ord).Value();
             }
             catch(Exception e)
@@ -74,7 +75,8 @@ namespace FdaViewModel.Conditions
             {
                 //if the function is distributed then we will throw an exception
                 //when doing an inverseF(x), so we need to sample the function first.
-                IFunction sampledFunc = Sampler.Sample(_crosshairData.Function, .5);
+                ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(_crosshairData.Function.Coordinates, _crosshairData.Function.Interpolator);
+                IFunction sampledFunc = Sampler.Sample(func, .5);
                 retval = sampledFunc.InverseF(ord).Value();
                 //retval = _crosshairData.Function.InverseF(ord).Value();
             }

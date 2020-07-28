@@ -1,8 +1,7 @@
 ﻿using FdaViewModel.GeoTech;
 using FdaViewModel.Utilities;
+using Functions;
 using Model;
-using Model.Condition.ComputePoint.ImpactAreaFunctions;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -87,7 +86,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
             FailureFunctionElement elem = (FailureFunctionElement)element;
             return new object[] { element.Name, element.LastEditDate, element.Description, elem.SelectedLateralStructure.Name,
-                element.Curve.Function.DistributionType,
+                element.Curve.DistributionType,
                 element.Curve.WriteToXML().ToString() };
                 //ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues) };
 
@@ -109,7 +108,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             //the new statId will be one higher than the max that is in the table already.
             int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
             return new object[] {elemId, element.Name, element.LastEditDate, element.Description, elem.SelectedLateralStructure.Name,
-                element.Curve.Function.DistributionType,
+                element.Curve.DistributionType,
                 element.Curve.WriteToXML().ToString(),  stateId};
 
         }
@@ -143,7 +142,9 @@ namespace FdaViewModel.Saving.PersistenceManagers
             string desc = (string)rowData[DESC_COL];
 
             //LeveeFeatureElement levee = (string)rowData[];
-            IFdaFunction function = ImpactAreaFunctionFactory.Factory((String)rowData[CURVE_COL], IFdaFunctionEnum.LateralStructureFailure);
+            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
+            IFunction func = IFunctionFactory.Factory(coordinatesFunction.Coordinates, coordinatesFunction.Interpolator);
+            IFdaFunction function = IFdaFunctionFactory.Factory(func, IParameterEnum.LateralStructureFailure);
 
             FailureFunctionElement failure = new FailureFunctionElement(name, lastEdit, desc, function, lfe);
             //failure.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);

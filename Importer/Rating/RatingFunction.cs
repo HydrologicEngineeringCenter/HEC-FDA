@@ -9,7 +9,6 @@ using FdaViewModel.StageTransforms;
 using Functions.CoordinatesFunctions;
 using Functions;
 using Model;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using FdaViewModel.Saving.PersistenceManagers;
 
 namespace Importer
@@ -416,7 +415,7 @@ namespace Importer
             }
             //always use linear. This is the only option in Old Fda.
             ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(stagesList, flowsList, InterpolationEnum.Linear);
-            IFdaFunction rating = ImpactAreaFunctionFactory.Factory(func, IFdaFunctionEnum.Rating);
+            IFdaFunction rating = IFdaFunctionFactory.Factory((IFunction)func, IParameterEnum.Rating);
             RatingCurveElement elem = new RatingCurveElement(Name,CalculationDate,Description,rating);
             RatingElementPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetRatingManager();
             manager.SaveNew(elem);

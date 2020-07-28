@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using FdaViewModel.Plots;
 using HEC.Plotting.SciChart2D.Charts;
-using Model.Inputs.Functions.ImpactAreaFunctions;
+using Model;
 
 namespace View.Plots
 {
@@ -47,7 +47,7 @@ namespace View.Plots
         #region Properties
         public string SelectedElementName { get; set; } = "cody test";
 
-        public ImpactAreaFunctionEnum FunctionType { get; set; }
+        public IParameterEnum FunctionType { get; set; }
 
         public Chart2D Chart { get; set; }
 

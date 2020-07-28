@@ -1,8 +1,7 @@
 ﻿using FdaViewModel.AggregatedStageDamage;
 using FdaViewModel.Utilities;
+using Functions;
 using Model;
-using Model.Condition.ComputePoint.ImpactAreaFunctions;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -91,7 +90,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         private object[] GetRowDataFromElement(AggregatedStageDamageElement element)
         {
             return new object[] { element.Name, element.LastEditDate, element.Description,
-               element.Curve.Function.DistributionType, element.Method,
+               element.Curve.DistributionType, element.Method,
                 element.Curve.WriteToXML().ToString() };
 
         }
@@ -119,7 +118,9 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            IFdaFunction function = ImpactAreaFunctionFactory.Factory((String)rowData[CURVE_COL], IFdaFunctionEnum.InteriorStageDamage);
+            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
+            IFunction func = IFunctionFactory.Factory(coordinatesFunction.Coordinates, coordinatesFunction.Interpolator);
+            IFdaFunction function = IFdaFunctionFactory.Factory(func, IParameterEnum.InteriorStageDamage);
 
             //Statistics.UncertainCurveDataCollection emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
             //    (string)rowData[CURVE_DIST_TYPE_COL]));
@@ -242,7 +243,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
            
             
             return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
-                element.Curve.Function.DistributionType, ((AggregatedStageDamageElement)element).Method,
+                element.Curve.DistributionType, ((AggregatedStageDamageElement)element).Method,
                 element.Curve.WriteToXML().ToString(),
                 assetType};
         }
@@ -259,7 +260,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             //the new statId will be one higher than the max that is in the table already.
             int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
             return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
-                element.Curve.Function.DistributionType, ((AggregatedStageDamageElement)element).Method,
+                element.Curve.DistributionType, ((AggregatedStageDamageElement)element).Method,
                 element.Curve.WriteToXML().ToString(),
                 stateId};
         }

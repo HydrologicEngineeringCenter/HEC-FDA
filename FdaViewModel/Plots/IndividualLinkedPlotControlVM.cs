@@ -8,7 +8,6 @@ using FdaViewModel.Utilities;
 using Functions;
 using HEC.Plotting.Core;
 using Model;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 
 namespace FdaViewModel.Plots
 {
@@ -316,38 +315,38 @@ namespace FdaViewModel.Plots
 
         private void SetChartModifier(IFdaFunction function)
         {
-            CrosshairData = new CrosshairData(function.Function);
-            ImpactAreaFunctionEnum funcType = function.Type;
+            CrosshairData = new CrosshairData(function);
+            IParameterEnum funcType = function.ParameterType;
             switch(funcType)
             {
-                case ImpactAreaFunctionEnum.InflowFrequency:
+                case IParameterEnum.InflowFrequency:
                     {
                         ChartModifier = new FdaCrosshairChartModifier(false, false, CrosshairData);
                         break;
                     }
-                case ImpactAreaFunctionEnum.InflowOutflow:
+                case IParameterEnum.InflowOutflow:
                     {
                         ChartModifier = new FdaCrosshairChartModifier(true, true, CrosshairData);
                         CrosshairData.UpdateModulator += UpdateDoubleLineModulator;
                         break;
                     }
-                case ImpactAreaFunctionEnum.Rating:
+                case IParameterEnum.Rating:
                     {
                         ChartModifier = new FdaCrosshairChartModifier(false, true, CrosshairData);
                         break;
                     }
-                case ImpactAreaFunctionEnum.ExteriorInteriorStage:
+                case IParameterEnum.ExteriorInteriorStage:
                     {
                         ChartModifier = new FdaCrosshairChartModifier(true, true, CrosshairData);
                         CrosshairData.UpdateHorizontalModulator += UpdateHorizontalDoubleLineModulator;
                         break;
                     }
-                case ImpactAreaFunctionEnum.InteriorStageDamage:
+                case IParameterEnum.InteriorStageDamage:
                     {
                         ChartModifier = new FdaCrosshairChartModifier(true, true, CrosshairData);
                         break;
                     }
-                case ImpactAreaFunctionEnum.DamageFrequency:
+                case IParameterEnum.DamageFrequency:
                     {
                         ChartModifier = new FdaCrosshairChartModifier(true, false, CrosshairData);
                         break;
@@ -383,7 +382,7 @@ namespace FdaViewModel.Plots
 
         private void SetMinMaxModulatorValues()
         {
-            ICoordinatesFunction func = IndividualPlotWrapperVM.PlotVM.BaseFunction.Function;
+            IFdaFunction func = IndividualPlotWrapperVM.PlotVM.BaseFunction;
             MinX = func.Coordinates[0].X.Value();
             MinY = func.Coordinates[0].Y.Value();
 
@@ -553,16 +552,16 @@ namespace FdaViewModel.Plots
         //    currentChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(false, false, CrosshairData));
         //}
 
-        private ImpactAreaFunctionEnum GetFunctionType(IndividualLinkedPlotControlVM control)
+        private IParameterEnum GetFunctionType(IndividualLinkedPlotControlVM control)
         {
-            ImpactAreaFunctionEnum controlType;
+            IParameterEnum controlType;
             //if (control.IsModulator)
             //{
             //    controlType = control.ModulatorPlotWrapperVM.PlotVM.BaseFunction.Type;
             //}
             //else
             {
-                controlType = control.IndividualPlotWrapperVM.PlotVM.BaseFunction.Type;
+                controlType = control.IndividualPlotWrapperVM.PlotVM.BaseFunction.ParameterType;
             }
             return controlType;
         }
@@ -584,11 +583,11 @@ namespace FdaViewModel.Plots
             //both this control and the other control should have a curve in them
             //before we get here, but lets check here anyway.
 
-            ICoordinate thisFirstCoord = IndividualPlotWrapperVM.PlotVM.BaseFunction.Function.Coordinates[0];
-            ICoordinate thisLastCoord = IndividualPlotWrapperVM.PlotVM.BaseFunction.Function.Coordinates[IndividualPlotWrapperVM.PlotVM.BaseFunction.Function.Coordinates.Count-1];
+            ICoordinate thisFirstCoord = IndividualPlotWrapperVM.PlotVM.BaseFunction.Coordinates[0];
+            ICoordinate thisLastCoord = IndividualPlotWrapperVM.PlotVM.BaseFunction.Coordinates[IndividualPlotWrapperVM.PlotVM.BaseFunction.Coordinates.Count-1];
 
-            ICoordinate otherFirstCoord = otherControl.IndividualPlotWrapperVM.PlotVM.BaseFunction.Function.Coordinates[0];
-            ICoordinate otherLastCoord = otherControl.IndividualPlotWrapperVM.PlotVM.BaseFunction.Function.Coordinates[otherControl.IndividualPlotWrapperVM.PlotVM.BaseFunction.Function.Coordinates.Count - 1];
+            ICoordinate otherFirstCoord = otherControl.IndividualPlotWrapperVM.PlotVM.BaseFunction.Coordinates[0];
+            ICoordinate otherLastCoord = otherControl.IndividualPlotWrapperVM.PlotVM.BaseFunction.Coordinates[otherControl.IndividualPlotWrapperVM.PlotVM.BaseFunction.Coordinates.Count - 1];
 
             if (isYAxis)
             {
@@ -658,8 +657,8 @@ namespace FdaViewModel.Plots
 
         public void LinkToNextControl(IndividualLinkedPlotControlVM nextControl)
         {
-            ImpactAreaFunctionEnum thisType = GetFunctionType(this);
-            ImpactAreaFunctionEnum nextType = GetFunctionType(nextControl);
+            IParameterEnum thisType = GetFunctionType(this);
+            IParameterEnum nextType = GetFunctionType(nextControl);
 
             ConditionChartViewModel currentChartVM = GetChartViewModel();
             ConditionChartViewModel nextChartVM = nextControl.GetChartViewModel();
@@ -671,16 +670,16 @@ namespace FdaViewModel.Plots
 
             switch (thisType)
             {
-                case ImpactAreaFunctionEnum.InflowFrequency:
+                case IParameterEnum.InflowFrequency:
                     {
                         SetSharedAxisValues(nextControl, true);
                         //if i am inflow frequency, then i can only link to inflow outflow or to rating
-                        if (nextType == ImpactAreaFunctionEnum.InflowOutflow)
+                        if (nextType == IParameterEnum.InflowOutflow)
                         {
                             currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData,Axis.X, Axis.Y);
                             nextCrosshairData.Previous = new SharedAxisCrosshairData(currentCrosshairData, Axis.Y, Axis.X);
                         }
-                        else if (nextType == ImpactAreaFunctionEnum.Rating)
+                        else if (nextType == IParameterEnum.Rating)
                         {
                             currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData, Axis.Y, Axis.Y);
                             nextCrosshairData.Previous = new SharedAxisCrosshairData(currentCrosshairData, Axis.Y, Axis.Y);
@@ -688,9 +687,9 @@ namespace FdaViewModel.Plots
                         }
                         break;
                     }
-                case ImpactAreaFunctionEnum.InflowOutflow:
+                case IParameterEnum.InflowOutflow:
                     {
-                        if (nextType == ImpactAreaFunctionEnum.Rating)
+                        if (nextType == IParameterEnum.Rating)
                         {
                             SetSharedAxisValues(nextControl, true);
                             currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData, Axis.X, Axis.Y);
@@ -698,17 +697,17 @@ namespace FdaViewModel.Plots
                         }
                         break;
                     }
-                case ImpactAreaFunctionEnum.Rating:
+                case IParameterEnum.Rating:
                     {
                         SetSharedAxisValues(nextControl, false);
-                        if (nextType == ImpactAreaFunctionEnum.ExteriorInteriorStage)
+                        if (nextType == IParameterEnum.ExteriorInteriorStage)
                         {
                             currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData, Axis.Y, Axis.X);
                             nextCrosshairData.Previous = new SharedAxisCrosshairData(currentCrosshairData, Axis.X, Axis.Y);
                             SetSharedAxisValues(nextControl, false);
 
                         }
-                        else if (nextType == ImpactAreaFunctionEnum.InteriorStageDamage)
+                        else if (nextType == IParameterEnum.InteriorStageDamage)
                         {
                             currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData, Axis.X, Axis.X);
                             //currentChartVM.ModifierGroup.ChildModifiers.Clear();
@@ -720,9 +719,9 @@ namespace FdaViewModel.Plots
                         }
                         break;
                     }
-                case ImpactAreaFunctionEnum.ExteriorInteriorStage:
+                case IParameterEnum.ExteriorInteriorStage:
                     {
-                        if (nextType == ImpactAreaFunctionEnum.InteriorStageDamage)
+                        if (nextType == IParameterEnum.InteriorStageDamage)
                         {
                             SetSharedAxisValues(nextControl, false);
                             //todo: this might need to change once we get the mix and match axis binding worked out.
@@ -731,9 +730,9 @@ namespace FdaViewModel.Plots
                         }
                         break;
                     }
-                case ImpactAreaFunctionEnum.InteriorStageDamage:
+                case IParameterEnum.InteriorStageDamage:
                     {
-                        if (nextType == ImpactAreaFunctionEnum.DamageFrequency)
+                        if (nextType == IParameterEnum.DamageFrequency)
                         {
                             SetSharedAxisValues(nextControl, true);
                             currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData, Axis.Y, Axis.Y);
@@ -755,7 +754,7 @@ namespace FdaViewModel.Plots
             CurrentX = args.X;
             try
             {
-                CurrentY = IndividualPlotWrapperVM.PlotVM.BaseFunction.Function.F(IOrdinateFactory.Factory(args.X)).Value();
+                CurrentY = IndividualPlotWrapperVM.PlotVM.BaseFunction.F(IOrdinateFactory.Factory(args.X)).Value();
             }
             catch (Exception e)
             {
@@ -774,7 +773,7 @@ namespace FdaViewModel.Plots
             CurrentX = args.Y;
             try
             {
-                CurrentY = IndividualPlotWrapperVM.PlotVM.BaseFunction.Function.F(IOrdinateFactory.Factory(args.Y)).Value();
+                CurrentY = IndividualPlotWrapperVM.PlotVM.BaseFunction.F(IOrdinateFactory.Factory(args.Y)).Value();
             }
             catch(Exception e)
             {

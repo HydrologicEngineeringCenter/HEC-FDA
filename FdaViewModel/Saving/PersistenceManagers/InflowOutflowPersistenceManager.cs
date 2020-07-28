@@ -1,9 +1,7 @@
 ﻿using FdaViewModel.FlowTransforms;
 using FdaViewModel.Utilities;
+using Functions;
 using Model;
-using Model.Condition.ComputePoint.ImpactAreaFunctions;
-using Model.Inputs.Functions.ImpactAreaFunctions;
-using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -92,12 +90,14 @@ namespace FdaViewModel.Saving.PersistenceManagers
         private object[] GetRowDataFromElement(InflowOutflowElement element)
         {
             return new object[] { element.Name, element.LastEditDate, element.Description,
-                element.Curve.Function.DistributionType, element.Curve.WriteToXML().ToString() };
+                element.Curve.DistributionType, element.Curve.WriteToXML().ToString() };
 
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            IFdaFunction function = ImpactAreaFunctionFactory.Factory((String)rowData[CURVE_COL], IFdaFunctionEnum.InflowOutflow);
+            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
+            IFunction func = IFunctionFactory.Factory(coordinatesFunction.Coordinates, coordinatesFunction.Interpolator);
+            IFdaFunction function = IFdaFunctionFactory.Factory(func, IParameterEnum.InflowOutflow);
 
             //UncertainCurveDataCollection ucdc = new UncertainCurveIncreasing((DistributionsEnum)Enum.Parse(typeof(DistributionsEnum), (string)rowData[CURVE_DIST_TYPE_COL]));
             InflowOutflowElement inout = new InflowOutflowElement((string)rowData[NAME_COL], 
@@ -227,7 +227,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             //the new statId will be one higher than the max that is in the table already.
             int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
             return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
-                element.Curve.Function.DistributionType,
+                element.Curve.DistributionType,
                 element.Curve.WriteToXML().ToString(), stateId};
         }
 

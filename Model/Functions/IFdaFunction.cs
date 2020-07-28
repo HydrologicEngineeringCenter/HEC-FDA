@@ -72,6 +72,13 @@ namespace Model
         /// <returns> <see langword="true"/> if the two objects are equal in value, <see langword="false"/> otherwise. </returns>
         bool Equals(IFdaFunction function);
 
+        InterpolationEnum Interpolator { get; }
+        bool IsLinkedFunction { get; }
+        /// <summary>
+        /// Describes the <see cref="IOrdinate.Type"/> of the <see cref="ICoordinate.Y"/> values in the set of <see cref="Coordinates"/>. 
+        /// </summary>
+        IOrdinateEnum DistributionType { get; }
+
         #region Replacement
         ///// <summary>
         ///// A enumerated value describing the type of function (e.g. Rating, Stage-Damage, etc.).
@@ -85,7 +92,7 @@ namespace Model
         ///// A string describing the Y values or dependent variable values.
         ///// </summary>
         //string YLabel { get; }
-        
+
         ///// <summary>
         ///// The <see cref="ICoordinatesFunction"/> containing the X-Y values.
         ///// </summary>

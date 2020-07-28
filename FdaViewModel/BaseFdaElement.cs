@@ -1,6 +1,7 @@
 ﻿using FdaViewModel.Editors;
 using FdaViewModel.Study;
 using FdaViewModel.Utilities;
+using Functions;
 using System;
 using System.Collections.Generic;
 
@@ -156,7 +157,8 @@ namespace FdaViewModel
             //vm.EditorVM = new FunctionsView.ViewModel.CoordinatesFunctionEditorVM(element.Curve.Function);
             if (vm.EditorVM != null)
             {
-                vm.EditorVM.Function = element.Curve.Function;
+                ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(element.Curve.Coordinates, element.Curve.Interpolator);
+                vm.EditorVM.Function = coordFunc;
             }
             //todo: Refactor: can i get rid of "Curve" alltogether?
         }

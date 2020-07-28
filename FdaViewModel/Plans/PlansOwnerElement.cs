@@ -2,7 +2,6 @@
 using FdaViewModel.Utilities;
 using Functions;
 using Model;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +42,7 @@ namespace FdaViewModel.Plans
             List<double> xs = new List<double>() { 1, 2 };
             List<double> ys = new List<double>() { 1, 2 };
             ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xs, ys);
-            IFdaFunction fdaFunction = ImpactAreaFunctionFactory.Factory(func, ImpactAreaFunctionEnum.InflowOutflow);
+            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory((IFunction)func, IParameterEnum.InflowOutflow);
             for (int i = 0; i < 100; i++)
             {
                 InflowOutflowElement elem = new InflowOutflowElement("Condition " + i, "", "", fdaFunction);

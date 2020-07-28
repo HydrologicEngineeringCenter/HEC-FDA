@@ -140,8 +140,12 @@ namespace Utilities
             return value.CompareTo(min) > (inclusiveMin ? -1 : 0) && value.CompareTo(max) < (inclusiveMax ? 1 : 0);
         }
         public static bool IsOnRange<T>(this IRange<T> range, IRange<T> comparison)
-        { 
-            if ((double)range.Min).CompareTo((double)comparison.Min)
+        {
+            //if ((double)range.Min).CompareTo((double)comparison.Min))
+            //{
+
+            //}
+            return true;
         }
         /// <summary>
         /// Produces an <see cref="InvalidOperationException"/> message for objects implementing the <see cref="IValidate{T}"/> interface attempting an operation in an invalid state. (see: <seealso cref="IValidate{T}.IsValid"/>)

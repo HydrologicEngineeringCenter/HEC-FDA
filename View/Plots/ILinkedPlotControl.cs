@@ -1,5 +1,5 @@
 ﻿using HEC.Plotting.SciChart2D.Charts;
-using Model.Inputs.Functions.ImpactAreaFunctions;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ namespace View.Plots
 {
     public interface ILinkedPlotControl
     {
-        ImpactAreaFunctionEnum FunctionType { get; }
+        IParameterEnum FunctionType { get; }
         Chart2D Chart { get; }
     }
 }

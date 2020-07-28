@@ -7,7 +7,6 @@ using static System.Console;
 using System.IO;
 using Functions.CoordinatesFunctions;
 using Functions;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using Model;
 using FdaViewModel.StageTransforms;
 using FdaViewModel.AggregatedStageDamage;
@@ -434,7 +433,7 @@ namespace Importer
             }
             //always use linear. This is the only option in Old Fda.
             ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(depthsList, damagesList, InterpolationEnum.Linear);
-            IFdaFunction stageDamage = ImpactAreaFunctionFactory.Factory(func, IFdaFunctionEnum.InteriorStageDamage);
+            IFdaFunction stageDamage = IFdaFunctionFactory.Factory((IFunction)func, IParameterEnum.InteriorStageDamage);
             AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, CalculationDate, Description, stageDamage, CreationMethodEnum.Imported);
             return elem;
         }

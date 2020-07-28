@@ -1,6 +1,7 @@
 ﻿using FdaLogging;
 using FdaViewModel.Saving;
 using FdaViewModel.Utilities.Transactions;
+using Functions;
 using FunctionsView.ViewModel;
 using Model;
 using System;
@@ -90,7 +91,9 @@ namespace FdaViewModel.Editors
         #region Constructors
         public BaseLoggingEditorVM(IFdaFunction defaultCurve, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(actionManager)
         {
-            EditorVM = new CoordinatesFunctionEditorVM(defaultCurve.Function, xLabel, yLabel, chartTitle);
+            ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(defaultCurve.Coordinates, defaultCurve.Interpolator);
+
+            EditorVM = new CoordinatesFunctionEditorVM(coordFunc, xLabel, yLabel, chartTitle);
             EditorVM.TableChanged += EditorVM_TableChanged;
             //if(Error != null && Error != "")
             //{
@@ -101,7 +104,8 @@ namespace FdaViewModel.Editors
 
         public BaseLoggingEditorVM(Utilities.ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager):base(elem, actionManager)
         {
-            EditorVM = new CoordinatesFunctionEditorVM(elem.Curve.Function, xLabel, yLabel, chartTitle);
+            ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(elem.Curve.Coordinates, elem.Curve.Interpolator);
+            EditorVM = new CoordinatesFunctionEditorVM(coordFunc, xLabel, yLabel, chartTitle);
             EditorVM.TableChanged += EditorVM_TableChanged;
             ReloadMessages();
         }

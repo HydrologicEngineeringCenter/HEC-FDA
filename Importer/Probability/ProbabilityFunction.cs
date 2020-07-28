@@ -1,5 +1,4 @@
 ﻿using Functions;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using System;
 using System.Collections.Generic;
 using System.IO;

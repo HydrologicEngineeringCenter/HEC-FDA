@@ -1,6 +1,5 @@
 ﻿using Functions;
 using Model;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using Model.Outputs;
 using System;
 using System.Collections.Concurrent;
@@ -18,12 +17,12 @@ namespace ModelTests.ExcelTesting
         [Theory]
         [ResultData(_TestDataRelativePath, new int[] { 1})]
         public void Excel_Result_Tests(
-            List<double> flowFreqProbs, ICoordinatesFunction flowFreqFunc,
-            List<double> inOutProbs, ICoordinatesFunction inflowOutflowFunc,
-            List<double> ratingProbs, ICoordinatesFunction ratingFunc,
-            List<double> extIntProbs, ICoordinatesFunction exteriorInteriorFunc,
-            List<double> failurProbs, ICoordinatesFunction failureFunc,
-            List<double> stageDamageProbs, ICoordinatesFunction stageDamageFunc,
+            List<double> flowFreqProbs, IFdaFunction flowFreqFunc,
+            List<double> inOutProbs, IFdaFunction inflowOutflowFunc,
+            List<double> ratingProbs, IFdaFunction ratingFunc,
+            List<double> extIntProbs, IFdaFunction exteriorInteriorFunc,
+            List<double> failurProbs, IFdaFunction failureFunc,
+            List<double> stageDamageProbs, IFdaFunction stageDamageFunc,
             List<string> thresholdTypes, List<double> thresholdValues,
             List<double> expectedDamages, List<double> expectedInteriorStage, List<double> expectedExteriorStage,
             int worksheetNumber, int rowToWriteTo, int columnToWriteTo)
@@ -40,27 +39,27 @@ namespace ModelTests.ExcelTesting
             List<ITransformFunction> transformFunctions = new List<ITransformFunction>();
             if (inflowOutflowFunc != null)
             {
-                transformFunctions.Add( ImpactAreaFunctionFactory.FactoryTransform(inflowOutflowFunc, ImpactAreaFunctionEnum.InflowFrequency));
+                transformFunctions.Add((ITransformFunction)inflowOutflowFunc);// IFdaFunctionFactory.Factory(inflowOutflowFunc, IParameterEnum.InflowFrequency));
             }
             if (ratingFunc != null)
             {
-                transformFunctions.Add(ImpactAreaFunctionFactory.FactoryTransform(ratingFunc, ImpactAreaFunctionEnum.Rating));
+                transformFunctions.Add((ITransformFunction)ratingFunc);// ImpactAreaFunctionFactory.FactoryTransform(ratingFunc, ImpactAreaFunctionEnum.Rating));
             }
             if (exteriorInteriorFunc != null)
             {
-                transformFunctions.Add(ImpactAreaFunctionFactory.FactoryTransform(exteriorInteriorFunc, ImpactAreaFunctionEnum.ExteriorInteriorStage));
+                transformFunctions.Add((ITransformFunction)exteriorInteriorFunc);// ImpactAreaFunctionFactory.FactoryTransform(exteriorInteriorFunc, ImpactAreaFunctionEnum.ExteriorInteriorStage));
             }
             if (failureFunc != null)
             {
-                transformFunctions.Add(ImpactAreaFunctionFactory.FactoryTransform(failureFunc, ImpactAreaFunctionEnum.LeveeFailure));
+                transformFunctions.Add((ITransformFunction)failureFunc);// ImpactAreaFunctionFactory.FactoryTransform(failureFunc, ImpactAreaFunctionEnum.LeveeFailure));
             }
             if (stageDamageFunc != null)
             {
-                transformFunctions.Add(ImpactAreaFunctionFactory.FactoryTransform(stageDamageFunc, ImpactAreaFunctionEnum.InteriorStageDamage));
+                transformFunctions.Add((ITransformFunction)stageDamageFunc);// ImpactAreaFunctionFactory.FactoryTransform(stageDamageFunc, ImpactAreaFunctionEnum.InteriorStageDamage));
             }
 
             //create the frequency function
-            IFrequencyFunction inflowFrequencyFunction = ImpactAreaFunctionFactory.FactoryFrequency(flowFreqFunc, ImpactAreaFunctionEnum.InflowFrequency);
+            IFrequencyFunction inflowFrequencyFunction = (IFrequencyFunction)flowFreqFunc;// ImpactAreaFunctionFactory.FactoryFrequency(flowFreqFunc, ImpactAreaFunctionEnum.InflowFrequency);
 
             ICondition condition = ConditionFactory.Factory("testName", 1987, inflowFrequencyFunction, transformFunctions, metrics);
 

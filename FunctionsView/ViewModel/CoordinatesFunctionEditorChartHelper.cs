@@ -1,6 +1,7 @@
 ﻿using Functions;
 using Functions.CoordinatesFunctions;
 using HEC.Plotting.SciChart2D.DataModel;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -101,7 +102,7 @@ namespace FunctionsView.ViewModel
 
                     }
                     //with linked functions i need to add a point that is the same as the next point
-                    lineData.AddRange(CreateDistributedLineData(func, func.Interpolator, lineColor, logYAxix, probabilityXAxis));
+                    lineData.AddRange(CreateDistributedLineData(func.Coordinates, func.Interpolator, lineColor, logYAxix, probabilityXAxis));
                 }
                 return lineData;
             }
@@ -113,7 +114,7 @@ namespace FunctionsView.ViewModel
                 IOrdinateEnum type = _function.DistributionType;
                 if (type != IOrdinateEnum.Constant)
                 {
-                    return CreateDistributedLineData(_function, _function.Interpolator, _lineColors[0], logYAxix, probabilityXAxis);
+                    return CreateDistributedLineData(_function.Coordinates, _function.Interpolator, _lineColors[0], logYAxix, probabilityXAxis);
                 }
                 else
                 {
@@ -158,9 +159,9 @@ namespace FunctionsView.ViewModel
         /// <param name="coordinates"></param>
         /// <param name="interpolator"></param>
         /// <returns></returns>
-        private List<SciLineData> CreateDistributedLineData(ICoordinatesFunction function, InterpolationEnum interpolator, Color lineColor, bool logYAxix = false, bool probabilityXAxis = false)
+        private List<SciLineData> CreateDistributedLineData(List<ICoordinate> coordinates, InterpolationEnum interpolator, Color lineColor, bool logYAxix = false, bool probabilityXAxis = false)
         {
-            List<ICoordinate> coordinates = function.Coordinates;
+           // List<ICoordinate> coordinates = function.Coordinates;
             
             int numberOfYValues = PROBABILITIES.Length;
             double[] xValues = new double[coordinates.Count];

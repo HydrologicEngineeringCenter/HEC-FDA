@@ -4,7 +4,7 @@ using HEC.Plotting.Core.DataModel;
 using HEC.Plotting.SciChart2D.Charts;
 using HEC.Plotting.SciChart2D.Controller;
 using HEC.Plotting.SciChart2D.DataModel;
-using Model.Inputs.Functions.ImpactAreaFunctions;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,7 +55,7 @@ namespace View.Plots
             set;
         }
 
-        public ImpactAreaFunctionEnum FunctionType 
+        public IParameterEnum FunctionType 
         { 
             get
             {
@@ -63,11 +63,11 @@ namespace View.Plots
                 if (vm.IndividualPlotWrapperVM != null && vm.IndividualPlotWrapperVM.PlotVM != null
                     && vm.IndividualPlotWrapperVM.PlotVM.BaseFunction != null)
                 {
-                    return vm.IndividualPlotWrapperVM.PlotVM.BaseFunction.Type;
+                    return vm.IndividualPlotWrapperVM.PlotVM.BaseFunction.ParameterType;
                 }
                 else
                 {
-                    return ImpactAreaFunctionEnum.NotSet;
+                    return IParameterEnum.NotSet;
                 }
             }
        
@@ -132,22 +132,22 @@ namespace View.Plots
 
         public void BindToNextPlot(ILinkedPlotControl nextControl, Chart2DController controller, Guid guid )
         {
-            ImpactAreaFunctionEnum thisType = FunctionType;
-            ImpactAreaFunctionEnum nextType = nextControl.FunctionType;
+            IParameterEnum thisType = FunctionType;
+            IParameterEnum nextType = nextControl.FunctionType;
 
             switch (thisType)
             {
-                case ImpactAreaFunctionEnum.InflowFrequency:
+                case IParameterEnum.InflowFrequency:
                     {
                         //if i am inflow frequency, then i can only link to inflow outflow or to rating
-                        if (nextType == ImpactAreaFunctionEnum.InflowOutflow)
+                        if (nextType == IParameterEnum.InflowOutflow)
                         {
                             controller.BindChart(ShareableAxis.Y, Chart, ShareableAxis.X, nextControl.Chart);
                             Chart.SetVerticalMouseEventGroup(guid.ToString());
                             nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
                             SetMinMaxAxisValues(Chart, nextControl, Axis.Y);
                         }
-                        else if (nextType == ImpactAreaFunctionEnum.Rating)
+                        else if (nextType == IParameterEnum.Rating)
                         {
                             controller.BindChart(ShareableAxis.Y, Chart, nextControl.Chart);
                             Chart.SetVerticalMouseEventGroup(guid.ToString());
@@ -156,10 +156,10 @@ namespace View.Plots
                         }
                         break;
                     }
-                case ImpactAreaFunctionEnum.InflowOutflow:
+                case IParameterEnum.InflowOutflow:
                     {
                         
-                        if (nextType == ImpactAreaFunctionEnum.Rating)
+                        if (nextType == IParameterEnum.Rating)
                         {
                             controller.BindChart(ShareableAxis.Y, Chart, nextControl.Chart);
                             Chart.SetVerticalMouseEventGroup(guid.ToString());
@@ -168,16 +168,16 @@ namespace View.Plots
                         }
                         break;
                     }
-                case ImpactAreaFunctionEnum.Rating:
+                case IParameterEnum.Rating:
                     {
-                        if (nextType == ImpactAreaFunctionEnum.ExteriorInteriorStage)
+                        if (nextType == IParameterEnum.ExteriorInteriorStage)
                         {
                             controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
                             Chart.SetVerticalMouseEventGroup(guid.ToString());
                             nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
                             SetMinMaxAxisValues(Chart, nextControl, Axis.X);
                         }
-                        else if (nextType == ImpactAreaFunctionEnum.InteriorStageDamage)
+                        else if (nextType == IParameterEnum.InteriorStageDamage)
                         {
                             controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
                             Chart.SetVerticalMouseEventGroup(guid.ToString());
@@ -189,9 +189,9 @@ namespace View.Plots
                         }
                         break;
                     }
-                case ImpactAreaFunctionEnum.ExteriorInteriorStage:
+                case IParameterEnum.ExteriorInteriorStage:
                     {
-                        if (nextType == ImpactAreaFunctionEnum.InteriorStageDamage)
+                        if (nextType == IParameterEnum.InteriorStageDamage)
                         {
                             controller.BindChart(ShareableAxis.Y, Chart, nextControl.Chart);
                             Chart.SetVerticalMouseEventGroup(guid.ToString());
@@ -200,9 +200,9 @@ namespace View.Plots
                         }
                         break;
                     }
-                case ImpactAreaFunctionEnum.InteriorStageDamage:
+                case IParameterEnum.InteriorStageDamage:
                     {
-                        if (nextType == ImpactAreaFunctionEnum.DamageFrequency)
+                        if (nextType == IParameterEnum.DamageFrequency)
                         {
                             controller.BindChart(ShareableAxis.Y, Chart, nextControl.Chart);
                             Chart.SetVerticalMouseEventGroup(guid.ToString());

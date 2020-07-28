@@ -1,7 +1,6 @@
 ﻿using Functions;
 using Functions.CoordinatesFunctions;
 using Model;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;

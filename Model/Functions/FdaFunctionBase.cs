@@ -26,10 +26,17 @@ namespace Model.Functions
 
         public List<ICoordinate> Coordinates => _Function.Coordinates;
 
+        public InterpolationEnum Interpolator { get; }
+        public bool IsLinkedFunction { get; }
+        public IOrdinateEnum DistributionType { get; }
+
         internal FdaFunctionBase(IFunction fx)
         {
             _Function = fx;
             IsConstant = _Function.DistributionType == IOrdinateEnum.Constant ? true : false;
+            Interpolator = _Function.Interpolator;
+            IsLinkedFunction = _Function.IsLinkedFunction;
+            DistributionType = _Function.DistributionType;
         }
 
         public virtual IOrdinate F(IOrdinate x) => _Function.F(x); 

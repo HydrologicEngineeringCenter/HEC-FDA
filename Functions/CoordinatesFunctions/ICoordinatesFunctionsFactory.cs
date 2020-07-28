@@ -7,7 +7,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using Utilities;
+using Utilities.Serialization;
 
 namespace Functions
 {
@@ -403,6 +405,80 @@ namespace Functions
             List<double> ys = new List<double>() { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
             return Factory(xs, ys);
         }
+
+
+
+
+        public static ICoordinatesFunction Factory(String xmlString)
+        {
+            XDocument doc = XDocument.Parse(xmlString);
+            XElement functionsElem = doc.Element(SerializationConstants.FUNCTIONS);
+            bool singleFunction = SerializationConstants.NOT_LINKED.Equals(functionsElem.Attribute(SerializationConstants.TYPE).Value);
+
+            if (singleFunction)
+            {
+                XElement functionElement = functionsElem.Element(SerializationConstants.FUNCTION);
+                ICoordinatesFunction func = CreateFunctionFromFunctionElement(functionElement);
+                return func;
+                //IFunction function = IFunctionFactory.Factory(func.Coordinates, func.Interpolator);
+                //return Factory(function, type);
+            }
+            else
+            {
+                //its linked
+                IEnumerable<XElement> functionElems = functionsElem.Elements(SerializationConstants.FUNCTION);
+                List<ICoordinatesFunction> functions = new List<ICoordinatesFunction>();
+                foreach (XElement elem in functionElems)
+                {
+                    functions.Add(CreateFunctionFromFunctionElement(elem));
+                }
+                ICoordinatesFunction linkedFunc = ICoordinatesFunctionsFactory.Factory(functions);
+                return linkedFunc;
+                //IFunction function = IFunctionFactory.Factory(linkedFunc.Coordinates, linkedFunc.Interpolator);
+                //return Factory(function, type);
+            }
+            throw new ArgumentException("Could not convert the xml text into a function.");
+        }
+
+        private static ICoordinatesFunction CreateFunctionFromFunctionElement(XElement functionElement)
+        {
+            InterpolationEnum interpolator = GetInterpolator(functionElement);
+            List<ICoordinate> coordinates = GetCoordinates(functionElement);
+            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(coordinates, interpolator);
+            return func;
+        }
+
+        private static InterpolationEnum GetInterpolator(XElement functionElement)
+        {
+            string interp = functionElement.Attribute(SerializationConstants.INTERPOLATOR).Value;
+            return (InterpolationEnum)Enum.Parse(typeof(InterpolationEnum), interp);
+
+        }
+
+        private static List<ICoordinate> GetCoordinates(XElement functionElement)
+        {
+            List<ICoordinate> coordinates = new List<ICoordinate>();
+            foreach (XElement coordElem in functionElement.Elements(SerializationConstants.COORDINATE))
+            {
+                coordinates.Add(GetCoordinate(coordElem));
+            }
+
+            return coordinates;
+        }
+
+        private static ICoordinate GetCoordinate(XElement coordinateElement)
+        {
+            IEnumerable<XElement> ordinates = coordinateElement.Elements(SerializationConstants.ORDINATE);
+            if (ordinates.Count() != 2)
+            {
+                throw new ArgumentException("An XElement did not have two ordinates. There should be one for X and one for Y.");
+            }
+            XElement xElem = ordinates.First();
+            XElement yElem = ordinates.Last();
+
+            return ICoordinateFactory.Factory(xElem, yElem);
+        }
+
 
     }
 }

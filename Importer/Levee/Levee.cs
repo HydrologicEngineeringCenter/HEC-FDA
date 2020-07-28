@@ -7,8 +7,8 @@ using static System.Console;
 using System.IO;
 using Functions;
 using FdaViewModel.GeoTech;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using FdaViewModel.StageTransforms;
+using Model;
 
 namespace Importer
 {
@@ -333,7 +333,8 @@ namespace Importer
                 extIntCoords.Add(ICoordinateFactory.Factory(x, y));
             }
             ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(extIntCoords, InterpolationEnum.Linear);
-            Model.IFdaFunction func = ImpactAreaFunctionFactory.Factory(coordsFunction, ImpactAreaFunctionEnum.ExteriorInteriorStage);
+            IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
+            Model.IFdaFunction func = IFdaFunctionFactory.Factory(function, IParameterEnum.ExteriorInteriorStage);
             string editDate = DateTime.Now.ToString("G");
             ExteriorInteriorElement elem = new ExteriorInteriorElement(Name, editDate, Description, func);
             FdaViewModel.Saving.PersistenceFactory.GetExteriorInteriorManager().SaveNewElement(elem);
@@ -350,7 +351,8 @@ namespace Importer
             }
 
             ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(failureCoords, InterpolationEnum.Linear);
-            Model.IFdaFunction func = ImpactAreaFunctionFactory.Factory(coordsFunction, ImpactAreaFunctionEnum.LeveeFailure);
+            IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
+            IFdaFunction func = IFdaFunctionFactory.Factory(function, IParameterEnum.LateralStructureFailure);
             string editDate = DateTime.Now.ToString("G");
            // FailureFunctionElement elem = new FailureFunctionElement(Name, editDate, Description, func, leveeFeatureElement);
             //FdaViewModel.Saving.PersistenceFactory.GetFailureFunctionManager().SaveNewElement(elem);

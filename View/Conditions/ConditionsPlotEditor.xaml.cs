@@ -16,7 +16,6 @@ using System.Windows.Shapes;
 using Fda.Plots;
 using System.Collections.ObjectModel;
 using FdaViewModel.Plots;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using FdaViewModel.Editors;
 using FunctionsView.ViewModel;
 using HEC.Plotting.SciChart2D.Charts;

@@ -1,5 +1,6 @@
 ﻿using Functions;
 using HEC.Plotting.Core;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,14 +34,14 @@ namespace FdaViewModel.Conditions
             get { return _yModulator.Invoke(_y); }
         }
 
-        public ICoordinatesFunction Function { get;  }
+        public IFdaFunction Function { get;  }
 
         private IComparable _x;
         private IComparable _y;
         private readonly Func<IComparable, IComparable> _xModulator;
         private readonly Func<IComparable, IComparable> _yModulator;
 
-        public CrosshairData(ICoordinatesFunction function, Func<IComparable, IComparable> xModulator = null,
+        public CrosshairData(IFdaFunction function, Func<IComparable, IComparable> xModulator = null,
             Func<IComparable, IComparable> yModulator = null)
         {
             Function = function;

@@ -1,17 +1,13 @@
 ﻿using FdaViewModel.Editors;
 using FdaViewModel.Utilities;
+using Functions;
 using Model;
-using Model.Inputs.Functions.ImpactAreaFunctions;
-using Statistics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FdaViewModel.FrequencyRelationships
 {
-    public class AnalyticalFrequencyOwnerElement : Utilities.ParentElement
+    public class AnalyticalFrequencyOwnerElement : ParentElement
     {
         #region Notes
         #endregion
@@ -82,7 +78,7 @@ namespace FdaViewModel.FrequencyRelationships
             List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
-            IFdaFunction defaultCurve = ImpactAreaFunctionFactory.Factory(func, IFdaFunctionEnum.Rating);
+            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory((IFunction)func, IParameterEnum.Rating);
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(defaultCurve, "Flow - Frequency", "Frequency", "Flow", actionManager);
             //LogPearsonIII curve = new Statistics.LogPearsonIII(4, .4, .5, 50);
             //Probabilities = 

@@ -3,7 +3,6 @@ using FdaViewModel.Editors;
 using FdaViewModel.FlowTransforms;
 using Functions;
 using Model;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

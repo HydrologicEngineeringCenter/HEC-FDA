@@ -9,7 +9,6 @@ using FdaViewModel.Utilities;
 using FdaViewModel.Saving.PersistenceManagers;
 using Functions;
 using FunctionsView.ViewModel;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using FdaViewModel.Inventory.DamageCategory;
 using Functions.Ordinates;
 using HEC.Plotting.SciChart2D.Charts;

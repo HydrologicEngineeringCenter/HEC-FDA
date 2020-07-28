@@ -24,9 +24,9 @@ namespace FdaViewModel
             //create the appropriate columns
             string[] colNames = null;
             Type[] colTypes = null;
-            List<ICoordinate> coords = curve.Function.Coordinates;
+            List<ICoordinate> coords = curve.Coordinates;
             object[][] rows = new object[coords.Count][];
-            switch (curve.Function.DistributionType)
+            switch (curve.DistributionType)
             {
                 //todo: Refactor: this should be log normal not normal.
                 //case Functions.DistributionType.Normal:// Statistics.UncertainCurveDataCollection.DistributionsEnum.LogNormal:

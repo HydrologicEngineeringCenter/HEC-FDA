@@ -8,7 +8,6 @@ using System.ComponentModel;
 using FdaViewModel.Utilities;
 using FdaViewModel.Inventory.DepthDamage;
 using Model;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using System.IO;
 
 namespace FdaViewModel.Inventory.OccupancyTypes

@@ -156,6 +156,10 @@
       <Project>{c33a0f59-fe11-4e06-b85e-bd84e6c1106d}</Project>
       <Name>Functions</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Model\Model.csproj">
+      <Project>{b4909c07-fc85-49d6-867a-0e00d311a991}</Project>
+      <Name>Model</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Statistics\Statistics.csproj">
       <Project>{c793991b-b5f7-4667-8478-713e97340d34}</Project>
       <Name>Statistics</Name>

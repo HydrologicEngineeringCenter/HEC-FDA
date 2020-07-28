@@ -10,7 +10,6 @@ using FunctionsView.ViewModel;
 using Functions;
 using HEC.Plotting.SciChart2D.Charts;
 using HEC.Plotting.SciChart2D.Controller;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using FdaViewModel.Plots;
 
 namespace FdaViewModel.Conditions
@@ -1144,7 +1143,7 @@ namespace FdaViewModel.Conditions
                     freqFuncProb = dummyProbability;
                 }
                 frequencyFunction = frequencyFunction.Compose(transformFunc, freqFuncProb, randomNums[i + 1]);
-                while (frequencyFunction.Type == ImpactAreaFunctionEnum.DamageFrequency)
+                while (frequencyFunction.ParameterType == IParameterEnum.DamageFrequency)
                 {
                     return frequencyFunction;
 

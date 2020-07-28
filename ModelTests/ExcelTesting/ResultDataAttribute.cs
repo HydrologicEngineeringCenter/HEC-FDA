@@ -1,5 +1,6 @@
 ﻿using ClosedXML.Excel;
 using Functions;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,7 @@ namespace ModelTests.ExcelTesting
     public class ResultDataAttribute : ExcelDataAttributeBase
     {
         //name, func
-        private Dictionary<string, ICoordinatesFunction> _FunctionsDictionary = new Dictionary<string, ICoordinatesFunction>();
+        private Dictionary<string, IFunction> _FunctionsDictionary = new Dictionary<string, IFunction>();
 
         protected override List<Type> ColumnTypes { get; set; }
         protected override List<DataLength> ColumnDataLengths { get; set; }
@@ -111,30 +112,42 @@ namespace ModelTests.ExcelTesting
             string stageDamageName = (string)testData[11];
 
             //assign the functions. They will either be there or be null
-            ICoordinatesFunction flowFreq = getFunctionFromName(flowFreqName);
-            ICoordinatesFunction inflowOutflow = getFunctionFromName(inOutName);
-            ICoordinatesFunction rating = getFunctionFromName(ratingName);
-            ICoordinatesFunction extInt = getFunctionFromName(extIntName);
-            ICoordinatesFunction failure = getFunctionFromName(failureName);
-            ICoordinatesFunction stageDamage = getFunctionFromName(stageDamageName);
+            IFunction flowFreq = getFunctionFromName(flowFreqName);
+            IFdaFunction ffFunc = IFdaFunctionFactory.Factory(flowFreq, IParameterEnum.InflowFrequency);
+
+            IFunction inflowOutflow = getFunctionFromName(inOutName);
+            IFdaFunction iOFunc = IFdaFunctionFactory.Factory(inflowOutflow, IParameterEnum.InflowOutflow);
+
+            IFunction rating = getFunctionFromName(ratingName);
+            IFdaFunction ratFunc = IFdaFunctionFactory.Factory(rating, IParameterEnum.Rating);
+
+            IFunction extInt = getFunctionFromName(extIntName);
+            IFdaFunction eIFunc = IFdaFunctionFactory.Factory(extInt, IParameterEnum.ExteriorInteriorStage);
+
+            IFunction failure = getFunctionFromName(failureName);
+            IFdaFunction failureFunc = IFdaFunctionFactory.Factory(failure, IParameterEnum.LateralStructureFailure);
+
+            IFunction stageDamage = getFunctionFromName(stageDamageName);
+            IFdaFunction sDFunction = IFdaFunctionFactory.Factory(stageDamage, IParameterEnum.InteriorStageDamage);
+
 
             retval[0] = flowFreqProbs;
-            retval[1] = flowFreq;
+            retval[1] = ffFunc;
 
             retval[2] = inOutProbs;
-            retval[3] = inflowOutflow;
+            retval[3] = iOFunc;
 
             retval[4] = ratingProbs;
-            retval[5] = rating;
+            retval[5] = ratFunc;
 
             retval[6] = extIntProbs;
-            retval[7] = extInt;
+            retval[7] = eIFunc;
 
             retval[8] = failureProbs;
-            retval[9] = failure;
+            retval[9] = failureFunc;
 
             retval[10] = stageDamageProbs;
-            retval[11] = stageDamage;
+            retval[11] = sDFunction;
 
             //add the threshold types and values
             retval[12] = testData[12];
@@ -153,7 +166,7 @@ namespace ModelTests.ExcelTesting
             return retval;
         }
 
-        private ICoordinatesFunction getFunctionFromName(string name)
+        private IFunction getFunctionFromName(string name)
         {
             if(_FunctionsDictionary.ContainsKey(name))
             {
@@ -275,7 +288,8 @@ namespace ModelTests.ExcelTesting
                 return;
             }
 
-            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(coordinates, interp);
+            IFunction func = IFunctionFactory.Factory(coordinates, interp);
+            //IFdaFunction fdaFunc = IFdaFunctionFactory.Factory(func, IParameterEnum.)
             _FunctionsDictionary.Add(name, func);
             lastRowOfTest = row + coordinates.Count + 1;
             

@@ -15,8 +15,6 @@ namespace Functions
             _Samplers.Add(sampler);
         }
 
-        //todo: John, I really didn't want this to be <Constant, IOrdinate>. I wanted <IOrdinate, IOrdinate> but
-        //then passing in a function that is <Constant, IOrdinate> wasn't working. I feel like it should but it wasn't
         public static IFunction Sample(this ICoordinatesFunction coordinatesFunction, double probability) 
         {
             foreach(ISampler sampler in _Samplers)

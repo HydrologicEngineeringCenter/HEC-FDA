@@ -11,7 +11,6 @@ using FdaViewModel.Inventory.OccupancyTypes;
 using FdaViewModel.Utilities;
 using Functions;
 using Model;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 
 namespace FdaViewModel.Saving.PersistenceManagers
 {
@@ -1064,35 +1063,26 @@ namespace FdaViewModel.Saving.PersistenceManagers
             occtype.StructureUncertaintyType = GetValueUncertaintyType(structValueType);
             //todo: this is ugly. I should put a method to read the xml for a coord func down to the icoordinatesfuntionfactory
             //i am just creating a dummy impact area func because i want the icoord func inside it.
-            IFdaFunction structFunction = ImpactAreaFunctionFactory.Factory(structDepthDamageXML, IFdaFunctionEnum.Rating);
-            occtype.StructureDepthDamageFunction = structFunction.Function;
+            //IFdaFunction structFunction = IFdaFunctionFactory.Factory(structDepthDamageXML, IParameterEnum.Rating);
+            occtype.StructureDepthDamageFunction = ICoordinatesFunctionsFactory.Factory(structDepthDamageXML);
 
             //content
             occtype.CalculateContentDamage = isContenTabChecked;
             occtype.ContentValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(contentValueUncertaintyXML));
             occtype.ContentUncertaintyType = GetValueUncertaintyType(contValueType);
-            //todo: this is ugly. I should put a method to read the xml for a coord func down to the icoordinatesfuntionfactory
-            //i am just creating a dummy impact area func because i want the icoord func inside it.
-            IFdaFunction contFunction = ImpactAreaFunctionFactory.Factory(contentDepthDamageXML, IFdaFunctionEnum.Rating);
-            occtype.ContentDepthDamageFunction = contFunction.Function;
+            occtype.ContentDepthDamageFunction = ICoordinatesFunctionsFactory.Factory(contentDepthDamageXML);
 
             //vehicle
             occtype.CalculateVehicleDamage = isVehicleTabChecked;
             occtype.VehicleValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(vehicleValueUncertaintyXML));
             occtype.VehicleUncertaintyType = GetValueUncertaintyType(vehicleValueType);
-            //todo: this is ugly. I should put a method to read the xml for a coord func down to the icoordinatesfuntionfactory
-            //i am just creating a dummy impact area func because i want the icoord func inside it.
-            IFdaFunction vehFunction = ImpactAreaFunctionFactory.Factory(vehicleDepthDamageXML, IFdaFunctionEnum.Rating);
-            occtype.VehicleDepthDamageFunction = vehFunction.Function;
+            occtype.VehicleDepthDamageFunction = ICoordinatesFunctionsFactory.Factory(vehicleDepthDamageXML);
 
             //other
             occtype.CalculateOtherDamage = isOtherTabChecked;
             occtype.OtherValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(vehicleValueUncertaintyXML));
             occtype.OtherUncertaintyType = GetValueUncertaintyType(otherValueType);
-            //todo: this is ugly. I should put a method to read the xml for a coord func down to the icoordinatesfuntionfactory
-            //i am just creating a dummy impact area func because i want the icoord func inside it.
-            IFdaFunction otherFunction = ImpactAreaFunctionFactory.Factory(otherDepthDamageXML, IFdaFunctionEnum.Rating);
-            occtype.OtherDepthDamageFunction = otherFunction.Function;
+            occtype.OtherDepthDamageFunction = ICoordinatesFunctionsFactory.Factory(otherDepthDamageXML);
 
             //setting all these properties will set the "isModified" to true. But we just created this thing so turn back to false
             occtype.IsModified = false;

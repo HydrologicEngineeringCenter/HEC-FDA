@@ -5,6 +5,7 @@ using FunctionsView.Validation;
 using FunctionsView.View;
 using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

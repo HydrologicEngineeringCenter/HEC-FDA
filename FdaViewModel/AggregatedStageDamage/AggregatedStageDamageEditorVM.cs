@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 using FdaViewModel.Utilities;
 using Functions;
 using Model;
-using Model.Condition.ComputePoint.ImpactAreaFunctions;
-using Model.Inputs.Functions.ImpactAreaFunctions;
+
 
 namespace FdaViewModel.AggregatedStageDamage
 {
@@ -72,7 +71,8 @@ namespace FdaViewModel.AggregatedStageDamage
             ownerValidationRules(this);
 
             ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xValues, yValues);
-            Curve = ImpactAreaFunctionFactory.Factory(func, IFdaFunctionEnum.InteriorStageDamage);
+            IFunction function = IFunctionFactory.Factory(func.Coordinates, func.Interpolator);
+            Curve = IFdaFunctionFactory.Factory(function, IParameterEnum.InteriorStageDamage);
         }
 
         public AggregatedStageDamageEditorVM(AggregatedStageDamageElement elem, Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) :base(elem)

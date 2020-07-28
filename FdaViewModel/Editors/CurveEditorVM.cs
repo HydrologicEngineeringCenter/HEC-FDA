@@ -1,20 +1,8 @@
 ﻿using FdaViewModel.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FdaViewModel.Utilities.Transactions;
-using FdaViewModel.StageTransforms;
 using Model;
 using Functions;
-using Model.Condition.ComputePoint.ImpactAreaFunctions;
-using FunctionsView.ViewModel;
-using Utilities;
-using FdaViewModel.Saving;
 using FdaLogging;
-using Model.Inputs.Functions.ImpactAreaFunctions;
 using HEC.Plotting.Core.ViewModel;
 using HEC.Plotting.SciChart2D.ViewModel;
 
@@ -239,7 +227,7 @@ namespace FdaViewModel.Editors
                 EditorVM.Function = coordFunc;
                 //todo: what is this, i can't just assume its a rating curve? This line needs to be here to save the curve out properly.
                 //I think i just needed some enum to be there so i chose rating.
-                Curve = ImpactAreaFunctionFactory.Factory(coordFunc, ImpactAreaFunctionEnum.Rating);
+                Curve = IFdaFunctionFactory.Factory((IFunction)coordFunc, IParameterEnum.Rating);
 
 
             }
