@@ -62,7 +62,7 @@ namespace FdaViewModel.StageTransforms
             List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
             IFunction function = IFunctionFactory.Factory(func.Coordinates, func.Interpolator);
-            Curve = IFdaFunctionFactory.Factory(function, IParameterEnum.Rating);// ImpactAreaFunctionFactory.Factory(func, IFdaFunctionEnum.Rating);
+            Curve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, function);// ImpactAreaFunctionFactory.Factory(func, IFdaFunctionEnum.Rating);
 
             SaveAction = saveAction;
 

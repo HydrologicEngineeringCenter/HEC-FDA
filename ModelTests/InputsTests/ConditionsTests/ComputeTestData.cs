@@ -1,6 +1,7 @@
 ﻿using Functions;
 using Functions.CoordinatesFunctions;
 using Model;
+using Model.Functions;
 using Statistics.Distributions;
 using System;
 using System.Collections.Generic;
@@ -36,16 +37,21 @@ namespace ModelTests.InputsTests.ConditionsTests
             return metrics;
         }
 
-        internal IFrequencyFunction CreateFrequencyFunction(List<double> xs, List<double> ys, InterpolationEnum interpolator, IFdaFunctionEnum type)
+        internal IFrequencyFunction CreateFrequencyFunction(List<double> xs, List<double> ys, InterpolationEnum interpolator, IParameterEnum type)
         {
             ICoordinatesFunction lpsCoordFunc = ICoordinatesFunctionsFactory.Factory(xs,ys, interpolator);
-            return ImpactAreaFunctionFactory.FactoryFrequency(lpsCoordFunc, type);
+
+            IFunction function = IFunctionFactory.Factory(lpsCoordFunc.Coordinates, lpsCoordFunc.Interpolator);
+            return (IFrequencyFunction) IFdaFunctionFactory.Factory(function, type);
+
         }
 
-        internal ITransformFunction CreateTransformFunction(List<double> xs, List<double> ys, InterpolationEnum interpolator, IFdaFunctionEnum type)
+        internal ITransformFunction CreateTransformFunction(List<double> xs, List<double> ys, InterpolationEnum interpolator, IParameterEnum type)
         {
             ICoordinatesFunction lpsCoordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, interpolator);
-            return ImpactAreaFunctionFactory.FactoryTransform(lpsCoordFunc, type);
+
+            IFunction function = IFunctionFactory.Factory(lpsCoordFunc.Coordinates, lpsCoordFunc.Interpolator);
+            return (ITransformFunction)IFdaFunctionFactory.Factory(function, type);
         }
 
         internal static InflowOutflow CreateInflowOutflowFunction()
@@ -60,7 +66,8 @@ namespace ModelTests.InputsTests.ConditionsTests
             };
 
             ICoordinatesFunction function = ICoordinatesFunctionsFactory.Factory(xs, ys);
-            return new InflowOutflow(function);
+            IFunction func = IFunctionFactory.Factory(function.Coordinates, function.Interpolator);
+            return new InflowOutflow(func, "Inflow Outflow");
 
         }
 
@@ -68,7 +75,8 @@ namespace ModelTests.InputsTests.ConditionsTests
         {
 
             ICoordinatesFunction function = ICoordinatesFunctionsFactory.Factory(xs, ys);
-            return new InflowOutflow(function);
+            IFunction func = IFunctionFactory.Factory(function.Coordinates, function.Interpolator);
+            return new InflowOutflow(func, "Inflow Outflow");
 
         }
 
@@ -84,7 +92,8 @@ namespace ModelTests.InputsTests.ConditionsTests
             };
 
             ICoordinatesFunction function = ICoordinatesFunctionsFactory.Factory(xs, ys);
-            return new InflowFrequency(function);
+            IFunction func = IFunctionFactory.Factory(function.Coordinates, function.Interpolator);
+            return new InflowFrequency(func, "Inflow Frequency");
 
         }
 
@@ -111,7 +120,8 @@ namespace ModelTests.InputsTests.ConditionsTests
         {
 
             ICoordinatesFunction function = ICoordinatesFunctionsFactory.Factory(xs, ys);
-            return new InflowFrequency(function);
+            IFunction func = IFunctionFactory.Factory(function.Coordinates, function.Interpolator);
+            return new InflowFrequency(func, "Inflow Frequency");
 
         }
     }

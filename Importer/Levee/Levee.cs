@@ -334,7 +334,7 @@ namespace Importer
             }
             ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(extIntCoords, InterpolationEnum.Linear);
             IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
-            Model.IFdaFunction func = IFdaFunctionFactory.Factory(function, IParameterEnum.ExteriorInteriorStage);
+            Model.IFdaFunction func = IFdaFunctionFactory.Factory( IParameterEnum.ExteriorInteriorStage, function);
             string editDate = DateTime.Now.ToString("G");
             ExteriorInteriorElement elem = new ExteriorInteriorElement(Name, editDate, Description, func);
             FdaViewModel.Saving.PersistenceFactory.GetExteriorInteriorManager().SaveNewElement(elem);
@@ -352,7 +352,7 @@ namespace Importer
 
             ICoordinatesFunction coordsFunction = ICoordinatesFunctionsFactory.Factory(failureCoords, InterpolationEnum.Linear);
             IFunction function = IFunctionFactory.Factory(coordsFunction.Coordinates, coordsFunction.Interpolator);
-            IFdaFunction func = IFdaFunctionFactory.Factory(function, IParameterEnum.LateralStructureFailure);
+            IFdaFunction func = IFdaFunctionFactory.Factory( IParameterEnum.LateralStructureFailure, function);
             string editDate = DateTime.Now.ToString("G");
            // FailureFunctionElement elem = new FailureFunctionElement(Name, editDate, Description, func, leveeFeatureElement);
             //FdaViewModel.Saving.PersistenceFactory.GetFailureFunctionManager().SaveNewElement(elem);

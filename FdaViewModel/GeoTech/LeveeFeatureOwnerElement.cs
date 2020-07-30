@@ -69,7 +69,7 @@ namespace FdaViewModel.GeoTech
             List<double> xValues = new List<double>() { 0};
             List<double> yValues = new List<double>() { 0 };
             Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
-            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory((IFunction)func, IParameterEnum.LateralStructureFailure);
+            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.LateralStructureFailure, (IFunction)func);
 
             LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(defaultCurve, actionManager);
             //StudyCache.AddSiblingRules(vm, this);

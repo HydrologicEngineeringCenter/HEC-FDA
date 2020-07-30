@@ -144,7 +144,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             //LeveeFeatureElement levee = (string)rowData[];
             ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
             IFunction func = IFunctionFactory.Factory(coordinatesFunction.Coordinates, coordinatesFunction.Interpolator);
-            IFdaFunction function = IFdaFunctionFactory.Factory(func, IParameterEnum.LateralStructureFailure);
+            IFdaFunction function = IFdaFunctionFactory.Factory( IParameterEnum.LateralStructureFailure, func);
 
             FailureFunctionElement failure = new FailureFunctionElement(name, lastEdit, desc, function, lfe);
             //failure.Curve.fromSqliteTable(ChangeTableConstant + (string)rowData[1]);

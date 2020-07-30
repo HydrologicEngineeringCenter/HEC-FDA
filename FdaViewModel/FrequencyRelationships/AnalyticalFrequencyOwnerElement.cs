@@ -78,7 +78,7 @@ namespace FdaViewModel.FrequencyRelationships
             List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
-            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory((IFunction)func, IParameterEnum.Rating);
+            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)func);
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(defaultCurve, "Flow - Frequency", "Frequency", "Flow", actionManager);
             //LogPearsonIII curve = new Statistics.LogPearsonIII(4, .4, .5, 50);
             //Probabilities = 

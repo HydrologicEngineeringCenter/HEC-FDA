@@ -25,7 +25,7 @@ namespace Model
         /// <param name="yLabel"> Optional parameter describing the <see cref="IFdaFunction"/> y ordinates. If not set a default value is inferred based on the specified <see cref="IParameterEnum"/> value and the <paramref name="yUnits"/>. </param>
         /// <returns> An object implementing the <see cref="IFdaFunction"/> interface. </returns>
         /// <remarks> If a more specific implementation is required consider requesting an <see cref="IFrequencyFunction"/> using the <see cref="IFrequencyFunctionFactory"/> or an <see cref="ITransformFunction"/> using the <see cref="ITransformFunctionFactory"/>. </remarks>
-        public static IFdaFunction Factory(IFunction fx, IParameterEnum fType, string label = "", UnitsEnum xUnits = UnitsEnum.NotSet, string xLabel = "", UnitsEnum yUnits = UnitsEnum.NotSet, string yLabel = "")
+        public static IFdaFunction Factory( IParameterEnum fType, IFunction fx, string label = "", UnitsEnum xUnits = UnitsEnum.NotSet, string xLabel = "", UnitsEnum yUnits = UnitsEnum.NotSet, string yLabel = "")
         {
             switch (fType) 
             {
@@ -65,7 +65,7 @@ namespace Model
         }
         internal static IFdaFunction Factory(IFunction failurefx, IParameterEnum fType = IParameterEnum.LateralStructureFailure, string label = "", UnitsEnum xUnits = UnitsEnum.Foot, string xLabel = "", string yLabel = "")
         {
-            if (fType != IParameterEnum.LateralStructureFailure) Factory(failurefx, fType, label, xUnits, xLabel, yUnits: UnitsEnum.NotSet, yLabel);
+            if (fType != IParameterEnum.LateralStructureFailure) Factory( fType, failurefx, label, xUnits, xLabel, yUnits: UnitsEnum.NotSet, yLabel);
             return new Conditions.Locations.LateralStructures.FailureFunction(failurefx, xUnits, xLabel, yLabel, label);
         }
 

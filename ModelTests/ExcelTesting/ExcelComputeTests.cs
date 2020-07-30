@@ -39,7 +39,7 @@ namespace ModelTests.ExcelTesting
                 {
                     InterpolationEnum interp1 = ConvertToInterpolationEnum(interpolation1);
                     IFunction func1 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs1, ys1, interp1);
-                    inflowFreq = (IFrequencyFunction) IFdaFunctionFactory.Factory(func1, IParameterEnum.InflowFrequency);
+                    inflowFreq = (IFrequencyFunction) IFdaFunctionFactory.Factory( IParameterEnum.InflowFrequency, func1, "Inflow Frequency", UnitsEnum.Probability, "Probability", UnitsEnum.CubicFootPerSecond, "Flow");
                 }
 
                 List<ITransformFunction> transformFunctions = GetTransformFunctions(xs2, ys2, interpolation2, xs3, ys3, interpolation3, xs4, ys4, interpolation4, xs5, ys5, interpolation5);

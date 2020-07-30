@@ -75,7 +75,7 @@ namespace FdaViewModel.GeoTech
             List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
-            Curve = IFdaFunctionFactory.Factory((IFunction)func, IParameterEnum.LateralStructureFailure);
+            Curve = IFdaFunctionFactory.Factory( IParameterEnum.LateralStructureFailure, (IFunction)func);
 
             LateralStructureList = leveeList;
             SaveAction = saveAction;

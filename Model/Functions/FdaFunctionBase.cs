@@ -26,7 +26,6 @@ namespace Model.Functions
 
         public List<ICoordinate> Coordinates => _Function.Coordinates;
 
-        public InterpolationEnum Interpolator { get; }
         public bool IsLinkedFunction { get; }
         public IOrdinateEnum DistributionType { get; }
 
@@ -34,7 +33,7 @@ namespace Model.Functions
         {
             _Function = fx;
             IsConstant = _Function.DistributionType == IOrdinateEnum.Constant ? true : false;
-            Interpolator = _Function.Interpolator;
+            //Interpolator = _Function.Interpolator;
             IsLinkedFunction = _Function.IsLinkedFunction;
             DistributionType = _Function.DistributionType;
         }

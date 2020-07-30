@@ -84,7 +84,7 @@ namespace Model
         {
             if (x)
             {
-                switch (fType) 
+                switch (fType)
                 {
                     case IParameterEnum.InflowFrequency:
                     case IParameterEnum.OutflowFrequency:
@@ -108,7 +108,7 @@ namespace Model
             }
             else //the Y axis
             {
-                switch (fType) 
+                switch (fType)
                 {
                     case IParameterEnum.InflowFrequency:
                     case IParameterEnum.InflowOutflow:

@@ -227,7 +227,7 @@ namespace FdaViewModel.Editors
                 EditorVM.Function = coordFunc;
                 //todo: what is this, i can't just assume its a rating curve? This line needs to be here to save the curve out properly.
                 //I think i just needed some enum to be there so i chose rating.
-                Curve = IFdaFunctionFactory.Factory((IFunction)coordFunc, IParameterEnum.Rating);
+                Curve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)coordFunc);
 
 
             }

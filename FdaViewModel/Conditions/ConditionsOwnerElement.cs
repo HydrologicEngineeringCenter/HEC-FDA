@@ -68,7 +68,7 @@ namespace FdaViewModel.Conditions
             List<double> xs = new List<double>() { .1,.3,.5,.7,.9 };
             List<double> ys = new List<double>() { 1, 1000, 3000, 5000, 7000 };
             ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-            IFdaFunction func = IFdaFunctionFactory.Factory((IFunction) coordFunc, IParameterEnum.InflowFrequency);
+            IFdaFunction func = IFdaFunctionFactory.Factory( IParameterEnum.InflowFrequency, (IFunction)coordFunc, "Inflow Freq", UnitsEnum.Probability);
             AnalyticalFrequencyElement dummyElem = new AnalyticalFrequencyElement("dummyElem", "now", "desc", func);
             listOfLp3.Add(dummyElem);
 

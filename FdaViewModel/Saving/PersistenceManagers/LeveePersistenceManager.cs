@@ -111,7 +111,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
             ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
             IFunction func = IFunctionFactory.Factory(coordinatesFunction.Coordinates, coordinatesFunction.Interpolator);
-            IFdaFunction function = IFdaFunctionFactory.Factory(func, IParameterEnum.LateralStructureFailure);
+            IFdaFunction function = IFdaFunctionFactory.Factory(IParameterEnum.LateralStructureFailure, func);
 
             return new LeveeFeatureElement((string)rowData[NAME_COL], (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESC_COL], Convert.ToDouble( rowData[ELEVATION_COL]), isDefault, function);
         }

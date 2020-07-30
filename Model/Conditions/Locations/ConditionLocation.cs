@@ -69,7 +69,7 @@ namespace Model.Locations
             {
                 if (!IsValidParameterDictionary(parameters, out List<IParameterEnum> missingParameters)) throw new ArgumentException($"The following required parameters: {PrintList(missingParameters)} are missing from the specified compute parameters.");
             }
-            if (_HasLateralStructure) 
+            if (_HasLateralStructure)
                 return ComputeWithLateralStructure(parameters);
             else
             {
@@ -85,7 +85,7 @@ namespace Model.Locations
                 }
                 return new ConditionLocationRealization(metricRealizations, parameters);
             }
-            
+
         }
         private IConditionLocationRealization ComputeWithLateralStructure(IDictionary<IParameterEnum, ISampleRecord> parameters)
         {
@@ -103,7 +103,7 @@ namespace Model.Locations
                     lateralStructure = LateralStructure.Compute(parameters[LateralStructure.FailureFunction.ParameterType].Probability, frequencyFx, parameters[IParameterEnum.LatralStructureFailureElevationFrequency].Probability);
                     if (transformFx.ParameterType == IParameterEnum.ExteriorInteriorStage)
                     {
-                        
+
                         ITransformFunction intExtFx = lateralStructure.InteriorExteriorGenerator(ITransformFunctionFactory.Factory(transformFx.Sample(parameters[IParameterEnum.ExteriorInteriorStage].Probability), transformFx.ParameterType, transformFx.Label, transformFx.XSeries.Units, transformFx.XSeries.Label, transformFx.YSeries.Units, transformFx.YSeries.Label));
                         frequencyFx = frequencyFx.Compose(intExtFx, parameters[frequencyFx.ParameterType].Probability, parameters[transformFx.ParameterType].Probability); // the transform probability is not really getting used since intExt is a constant.
                         while (frequencyFx.ParameterType == metrics[i].TargetFunction) metricRealizations.Add(metrics[i], metrics[i].Compute(frequencyFx));
@@ -141,7 +141,7 @@ namespace Model.Locations
                 else sb.Append($", {p.Print(true)}");
             }
             sb.Append("]");
-            return sb.ToString();    
+            return sb.ToString();
         }
     }
 }

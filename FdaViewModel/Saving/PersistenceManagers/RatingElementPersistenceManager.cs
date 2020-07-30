@@ -142,7 +142,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
             IFunction func = IFunctionFactory.Factory(coordinatesFunction.Coordinates, coordinatesFunction.Interpolator);
-            IFdaFunction function = IFdaFunctionFactory.Factory(func, IParameterEnum.Rating);
+            IFdaFunction function = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)func);
 
             //Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
                 //(string)rowData[CURVE_DIST_TYPE_COL]));

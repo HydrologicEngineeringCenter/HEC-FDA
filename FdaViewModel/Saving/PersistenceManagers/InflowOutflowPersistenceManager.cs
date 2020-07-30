@@ -97,7 +97,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
             IFunction func = IFunctionFactory.Factory(coordinatesFunction.Coordinates, coordinatesFunction.Interpolator);
-            IFdaFunction function = IFdaFunctionFactory.Factory(func, IParameterEnum.InflowOutflow);
+            IFdaFunction function = IFdaFunctionFactory.Factory( IParameterEnum.InflowOutflow, func);
 
             //UncertainCurveDataCollection ucdc = new UncertainCurveIncreasing((DistributionsEnum)Enum.Parse(typeof(DistributionsEnum), (string)rowData[CURVE_DIST_TYPE_COL]));
             InflowOutflowElement inout = new InflowOutflowElement((string)rowData[NAME_COL], 

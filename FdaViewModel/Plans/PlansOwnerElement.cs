@@ -42,7 +42,7 @@ namespace FdaViewModel.Plans
             List<double> xs = new List<double>() { 1, 2 };
             List<double> ys = new List<double>() { 1, 2 };
             ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xs, ys);
-            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory((IFunction)func, IParameterEnum.InflowOutflow);
+            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory( IParameterEnum.InflowOutflow, (IFunction)func);
             for (int i = 0; i < 100; i++)
             {
                 InflowOutflowElement elem = new InflowOutflowElement("Condition " + i, "", "", fdaFunction);

@@ -71,7 +71,7 @@ namespace FdaViewModel.StageTransforms
             List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
             IFunction function = IFunctionFactory.Factory(func.Coordinates, func.Interpolator);
-            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory(function, IParameterEnum.Rating);
+            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, function);
 
             //double[] xValues = new double[] { 90, 100, 105, 110, 112, 115, 116, 117, 118, 130 };
             //Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(100), new Statistics.None(105), new Statistics.None(106), new Statistics.None(107), new Statistics.None(113), new Statistics.None(119), new Statistics.None(120), new Statistics.None(130) };
