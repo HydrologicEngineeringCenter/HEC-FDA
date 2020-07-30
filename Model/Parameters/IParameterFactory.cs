@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Model
 {
+    /// <summary>
+    /// Methods for constructing objects implementing the <see cref="IParameter"/> interface.
+    /// </summary>
     public class IParameterFactory
     {
         //internal static IParameter Factory(IFdaFunction fx, bool x, UnitsEnum units = UnitsEnum.NotSet, string label = "")
@@ -79,7 +82,7 @@ namespace Model
                     case IParameterEnum.InteriorStageDamage:
                     case IParameterEnum.DamageFrequency:
                         // damage.
-                        throw new NotImplementedException();
+                        return new Parameters.Damages.Damage(fx.Range, true, IParameterEnum.FloodDamages, units, label);
                     case IParameterEnum.LateralStructureFailure:
                         // probability / frequency.
                         return new Parameters.Probabilities.Probability(fx.Range, isConstant, fType, units, label);
@@ -90,59 +93,59 @@ namespace Model
                 }
             }
         }
-        internal static IParameter Factory(IFunction fx, IParameterEnum fType, bool x = true, UnitsEnum units = UnitsEnum.NotSet, string label = "")
-        {
-            if (x)
-            {
-                switch (fType)
-                {
-                    case IParameterEnum.InflowFrequency:
-                    case IParameterEnum.OutflowFrequency:
-                    case IParameterEnum.ExteriorStageFrequency:
-                    case IParameterEnum.InteriorStageFrequency:
-                    case IParameterEnum.DamageFrequency:
-                        // frequency.
-                        throw new NotImplementedException();
-                    case IParameterEnum.InflowOutflow:
-                    case IParameterEnum.Rating:
-                        // flow.
-                        throw new NotImplementedException();
-                    case IParameterEnum.ExteriorInteriorStage:
-                    case IParameterEnum.LateralStructureFailure:
-                        return new Parameters.Elevations.Elevation(fx, IParameterEnum.ExteriorElevation, label, units == UnitsEnum.NotSet ? IParameterEnum.ExteriorElevation.DefaultUnits() : units);
-                    case IParameterEnum.InteriorStageDamage:
-                        return new Parameters.Elevations.Elevation(fx, IParameterEnum.InteriorElevation, label, units == UnitsEnum.NotSet ? IParameterEnum.InteriorElevation.DefaultUnits() : units);
-                    default:
-                        throw new ArgumentOutOfRangeException($"The specified parameter type: {fType.Print()} is not one of the required a {typeof(IFdaFunction)} {typeof(IParameterEnum)} types.");
-                }
-            }
-            else //the Y axis
-            {
-                switch (fType)
-                {
-                    case IParameterEnum.InflowFrequency:
-                    case IParameterEnum.InflowOutflow:
-                    case IParameterEnum.OutflowFrequency:
-                        // flow.
-                        throw new NotImplementedException();
-                    case IParameterEnum.ExteriorStageFrequency:
-                    case IParameterEnum.Rating:
-                        return new Parameters.Elevations.Elevation(fx, IParameterEnum.ExteriorElevation, label, units == UnitsEnum.NotSet ? IParameterEnum.ExteriorElevation.DefaultUnits() : units);
-                    case IParameterEnum.ExteriorInteriorStage:
-                    case IParameterEnum.InteriorStageFrequency:
-                        return new Parameters.Elevations.Elevation(fx, IParameterEnum.InteriorElevation, label, units == UnitsEnum.NotSet ? IParameterEnum.InteriorElevation.DefaultUnits() : units);
-                    case IParameterEnum.InteriorStageDamage:
-                    case IParameterEnum.DamageFrequency:
-                        // damage.
-                        throw new NotImplementedException();
-                    case IParameterEnum.LateralStructureFailure:
-                        // frequency.
-                        throw new NotImplementedException();
-                    default:
-                        throw new ArgumentOutOfRangeException($"The specified parameter type: {fType.Print()} is not one of the required a {typeof(IFdaFunction)} {typeof(IParameterEnum)} types.");
-                }
-            }
-        }
+        //internal static IParameter Factory(IFunction fx, IParameterEnum fType, bool x = true, UnitsEnum units = UnitsEnum.NotSet, string label = "")
+        //{
+        //    if (x)
+        //    {
+        //        switch (fType)
+        //        {
+        //            case IParameterEnum.InflowFrequency:
+        //            case IParameterEnum.OutflowFrequency:
+        //            case IParameterEnum.ExteriorStageFrequency:
+        //            case IParameterEnum.InteriorStageFrequency:
+        //            case IParameterEnum.DamageFrequency:
+        //                // frequency.
+        //                throw new NotImplementedException();
+        //            case IParameterEnum.InflowOutflow:
+        //            case IParameterEnum.Rating:
+        //                // flow.
+        //                throw new NotImplementedException();
+        //            case IParameterEnum.ExteriorInteriorStage:
+        //            case IParameterEnum.LateralStructureFailure:
+        //                return new Parameters.Elevations.Elevation(fx, IParameterEnum.ExteriorElevation, label, units == UnitsEnum.NotSet ? IParameterEnum.ExteriorElevation.DefaultUnits() : units);
+        //            case IParameterEnum.InteriorStageDamage:
+        //                return new Parameters.Elevations.Elevation(fx, IParameterEnum.InteriorElevation, label, units == UnitsEnum.NotSet ? IParameterEnum.InteriorElevation.DefaultUnits() : units);
+        //            default:
+        //                throw new ArgumentOutOfRangeException($"The specified parameter type: {fType.Print()} is not one of the required a {typeof(IFdaFunction)} {typeof(IParameterEnum)} types.");
+        //        }
+        //    }
+        //    else //the Y axis
+        //    {
+        //        switch (fType)
+        //        {
+        //            case IParameterEnum.InflowFrequency:
+        //            case IParameterEnum.InflowOutflow:
+        //            case IParameterEnum.OutflowFrequency:
+        //                // flow.
+        //                throw new NotImplementedException();
+        //            case IParameterEnum.ExteriorStageFrequency:
+        //            case IParameterEnum.Rating:
+        //                return new Parameters.Elevations.Elevation(fx, IParameterEnum.ExteriorElevation, label, units == UnitsEnum.NotSet ? IParameterEnum.ExteriorElevation.DefaultUnits() : units);
+        //            case IParameterEnum.ExteriorInteriorStage:
+        //            case IParameterEnum.InteriorStageFrequency:
+        //                return new Parameters.Elevations.Elevation(fx, IParameterEnum.InteriorElevation, label, units == UnitsEnum.NotSet ? IParameterEnum.InteriorElevation.DefaultUnits() : units);
+        //            case IParameterEnum.InteriorStageDamage:
+        //            case IParameterEnum.DamageFrequency:
+        //                // damage.
+        //                throw new NotImplementedException();
+        //            case IParameterEnum.LateralStructureFailure:
+        //                // frequency.
+        //                throw new NotImplementedException();
+        //            default:
+        //                throw new ArgumentOutOfRangeException($"The specified parameter type: {fType.Print()} is not one of the required a {typeof(IFdaFunction)} {typeof(IParameterEnum)} types.");
+        //        }
+        //    }
+        //}
 
         //public static IFdaParameter<IFdaOrdinate> Factory(double value, UnitsEnum units = UnitsEnum.NotSet,
         //    IFdaParameterEnum parameterEnum = IFdaParameterEnum.NotSet)
