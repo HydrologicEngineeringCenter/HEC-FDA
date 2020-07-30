@@ -53,7 +53,7 @@ namespace Model.Functions
         #endregion
         //public override XElement WriteToXML()
         //{
-        //    return Function.WriteToXML();
+        //    return _Function.WriteToXML();
         //}
     }
 }

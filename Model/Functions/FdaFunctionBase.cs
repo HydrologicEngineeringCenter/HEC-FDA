@@ -47,6 +47,6 @@ namespace Model.Functions
         }
         public string Print(bool round = false, bool abbreviate = false) => throw new NotImplementedException();
         public string PrintValue(bool round = false, bool abbreviate = false) => throw new NotImplementedException();
-        public XElement WriteToXML() => throw new NotImplementedException();
+        public virtual XElement WriteToXML() => _Function.WriteToXML();
     }
 }

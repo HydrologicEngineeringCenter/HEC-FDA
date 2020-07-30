@@ -9,10 +9,9 @@ namespace Model
     {
         //internal static IParameter Factory(IFdaFunction fx, bool x, UnitsEnum units = UnitsEnum.NotSet, string label = "")
         //{
-        //    switch (fx.ParameterType)
+        //    switch (fx.ParameterT        //            if (x) throw new NotImplementedException();
         //    {
         //        case IParameterEnum.LateralStructureElevation:
-        //            if (x) throw new NotImplementedException();
         //            //return new Parameters.Series.ElevationSeries(fx, true, IParameterEnum.ExteriorElevation, units == UnitsEnum.NotSet ? UnitsEnum.Foot : units, label);
         //            else
         //                return new Parameters.Series.FrequencySeries(fx, false, IParameterEnum.FailureProbability, label);
@@ -34,18 +33,23 @@ namespace Model
                     case IParameterEnum.ExteriorStageFrequency:
                     case IParameterEnum.InteriorStageFrequency:
                     case IParameterEnum.DamageFrequency:
+                    case IParameterEnum.NonExceedanceProbability:
                         // probability / frequency.
                         return new Parameters.Probabilities.Probability(fx.Domain, isConstant, IParameterEnum.NonExceedanceProbability, units, label);
                     case IParameterEnum.InflowOutflow:
+                    case IParameterEnum.UnregulatedAnnualPeakFlow:
                         //flow
                         return new Parameters.Flows.Flow(fx.Domain, isConstant, IParameterEnum.UnregulatedAnnualPeakFlow, units, label);
                     case IParameterEnum.Rating:
+                    case IParameterEnum.RegulatedAnnualPeakFlow:
                         // flow
                         return new Parameters.Flows.Flow(fx.Domain, isConstant, IParameterEnum.RegulatedAnnualPeakFlow, units, label);
                     case IParameterEnum.ExteriorInteriorStage:
                     case IParameterEnum.LateralStructureFailure:
+                    case IParameterEnum.ExteriorElevation:
                         return new Parameters.Elevations.Elevation(fx, IParameterEnum.ExteriorElevation, label, units == UnitsEnum.NotSet ? IParameterEnum.ExteriorElevation.DefaultUnits() : units);
                     case IParameterEnum.InteriorStageDamage:
+                    case IParameterEnum.InteriorElevation:
                         return new Parameters.Elevations.Elevation(fx, IParameterEnum.InteriorElevation, label, units == UnitsEnum.NotSet ? IParameterEnum.InteriorElevation.DefaultUnits() : units);
                     default:
                         throw new ArgumentOutOfRangeException($"The specified parameter type: {fType.Print()} is not one of the required a {typeof(IFdaFunction)} {typeof(IParameterEnum)} types.");
@@ -56,17 +60,21 @@ namespace Model
                 switch (fType) 
                 {
                     case IParameterEnum.InflowFrequency:
+                    case IParameterEnum.UnregulatedAnnualPeakFlow:
                         // flow.
                         return new Parameters.Flows.Flow(fx.Range, isConstant, IParameterEnum.UnregulatedAnnualPeakFlow, units, label);
                     case IParameterEnum.InflowOutflow:
                     case IParameterEnum.OutflowFrequency:
+                    case IParameterEnum.RegulatedAnnualPeakFlow:
                         // flow.
                         return new Parameters.Flows.Flow(fx.Range, isConstant, IParameterEnum.RegulatedAnnualPeakFlow, units, label);
                     case IParameterEnum.ExteriorStageFrequency:
                     case IParameterEnum.Rating:
+                    case IParameterEnum.ExteriorElevation:
                         return new Parameters.Elevations.Elevation(fx, IParameterEnum.ExteriorElevation, label, units == UnitsEnum.NotSet ? IParameterEnum.ExteriorElevation.DefaultUnits() : units);
                     case IParameterEnum.ExteriorInteriorStage:
                     case IParameterEnum.InteriorStageFrequency:
+                    case IParameterEnum.InteriorElevation:
                         return new Parameters.Elevations.Elevation(fx, IParameterEnum.InteriorElevation, label, units == UnitsEnum.NotSet ? IParameterEnum.InteriorElevation.DefaultUnits() : units);
                     case IParameterEnum.InteriorStageDamage:
                     case IParameterEnum.DamageFrequency:
@@ -75,6 +83,8 @@ namespace Model
                     case IParameterEnum.LateralStructureFailure:
                         // probability / frequency.
                         return new Parameters.Probabilities.Probability(fx.Range, isConstant, fType, units, label);
+                    case IParameterEnum.FloodDamages:
+                        return new Parameters.Damages.Damage(fx.Range, isConstant, fType, units, label);
                     default:
                         throw new ArgumentOutOfRangeException($"The specified parameter type: {fType.Print()} is not one of the required a {typeof(IFdaFunction)} {typeof(IParameterEnum)} types.");
                 }

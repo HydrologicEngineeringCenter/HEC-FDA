@@ -60,7 +60,7 @@ namespace FdaViewModel.StageTransforms
             //Curve = new Statistics.UncertainCurveIncreasing(xs, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
             List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
-            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
+            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
             IFunction function = IFunctionFactory.Factory(func.Coordinates, func.Interpolator);
             Curve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, function);// ImpactAreaFunctionFactory.Factory(func, IFdaFunctionEnum.Rating);
 
