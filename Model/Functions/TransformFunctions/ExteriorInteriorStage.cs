@@ -22,8 +22,8 @@ namespace Model.Functions
         internal ExteriorInteriorStage(IFunction fx, string label, UnitsEnum xUnits = UnitsEnum.Foot, string xLabel = "", UnitsEnum yUnits = UnitsEnum.Foot, string ylabel = ""): base(fx)
         {
             Label = label == "" ? ParameterType.Print() : label;
-            XSeries = IParameterFactory.Factory(this, true, xUnits, xLabel);
-            YSeries = IParameterFactory.Factory(this, false, yUnits, ylabel);
+            XSeries = IParameterFactory.Factory(fx, IParameterEnum.ExteriorElevation, true, true, xUnits, xLabel);
+            YSeries = IParameterFactory.Factory(fx, IParameterEnum.InteriorElevation, IsConstant, false, yUnits, ylabel);
             Units = YSeries.Units;
         }
         #endregion

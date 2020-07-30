@@ -13,6 +13,7 @@ namespace Model
     /// </summary>
     public static class UnitsUtilities
     {
+        internal static IRange<int> ProbabilityRange => IRangeFactory.Factory(-1, -1);
         internal static IRange<int> LengthEnumRange => IRangeFactory.Factory(1, 9);
         internal static IRange<int> AreaEnumRange => IRangeFactory.Factory(11, 19);
         internal static IRange<int> VolumeEnumRange => IRangeFactory.Factory(21, 29);
@@ -20,35 +21,41 @@ namespace Model
         internal static IRange<int> FlowEnumRange => IRangeFactory.Factory(41, 49);
 
         /// <summary>
+        /// Tests if the <paramref name="units"/> represent unit of probability. 
+        /// </summary>
+        /// <param name="units"> The unit type to be tested. </param>
+        /// <returns> <see langword="true"/> if the <paramref name="units"/> is a unit of measurement for probability, <see langword="false"/> otherwise. </returns>
+        public static bool IsProbability(this UnitsEnum units) => (int)units == -1;
+        /// <summary>
         /// Tests if the <paramref name="units"/> represent unit of length. 
         /// </summary>
         /// <param name="units"> The unit type to be tested. </param>
         /// <returns> <see langword="true"/> if the <paramref name="units"/> is a unit of measurement for length, <see langword="false"/> otherwise. </returns>
-        public static bool IsLength(UnitsEnum units) => LengthEnumRange.IsOnRange((int)units);
+        public static bool IsLength(this UnitsEnum units) => LengthEnumRange.IsOnRange((int)units);
         /// <summary>
         /// Tests if the <paramref name="units"/> represent unit of area. 
         /// </summary>
         /// <param name="units"> The unit type to be tested. </param>
         /// <returns> <see langword="true"/> if the <paramref name="units"/> is a unit of measurement for area, <see langword="false"/> otherwise. </returns>
-        public static bool IsArea(UnitsEnum units) => AreaEnumRange.IsOnRange((int)units);
+        public static bool IsArea(this UnitsEnum units) => AreaEnumRange.IsOnRange((int)units);
         /// <summary>
         /// Tests if the <paramref name="units"/> represent unit of volume. 
         /// </summary>
         /// <param name="units"> The unit type to be tested. </param>
         /// <returns> <see langword="true"/> if the <paramref name="units"/> is a unit of measurement for volume, <see langword="false"/> otherwise. </returns>
-        public static bool IsVolume(UnitsEnum units) => VolumeEnumRange.IsOnRange((int)units);
+        public static bool IsVolume(this UnitsEnum units) => VolumeEnumRange.IsOnRange((int)units);
         /// <summary>
         /// Tests if the <paramref name="units"/> represent unit of time. 
         /// </summary>
         /// <param name="units"> The unit type to be tested. </param>
         /// <returns> <see langword="true"/> if the <paramref name="units"/> is a unit of measurement for time, <see langword="false"/> otherwise. </returns>
-        public static bool IsTime(UnitsEnum units) => TimeEnumRange.IsOnRange((int)units);
+        public static bool IsTime(this UnitsEnum units) => TimeEnumRange.IsOnRange((int)units);
         /// <summary>
         /// Tests if the <paramref name="units"/> represent unit of flow. 
         /// </summary>
         /// <param name="units"> The unit type to be tested. </param>
         /// <returns> <see langword="true"/> if the <paramref name="units"/> is a unit of measurement for flow, <see langword="false"/> otherwise. </returns>
-        public static bool IsFlow(UnitsEnum units) => FlowEnumRange.IsOnRange((int)units);
+        public static bool IsFlow(this UnitsEnum units) => FlowEnumRange.IsOnRange((int)units);
         
         /// <summary>
         /// Converts between supported length units.
@@ -57,7 +64,7 @@ namespace Model
         /// <param name="fromUnits"> The units of the <paramref name="value"/> parameter. </param>
         /// <param name="toUnits"> The desired units for the <paramref name="value"/> parameter after conversion. </param>
         /// <returns> The provided <paramref name="value"/> as a <see cref="double"/> precision in the requested <paramref name="toUnits"/>. </returns>
-        public static double ConvertLengths(double value, UnitsEnum fromUnits, UnitsEnum toUnits)
+        public static double ConvertLengths(this double value, UnitsEnum fromUnits, UnitsEnum toUnits)
         {
             if (IsSameUnitsType(fromUnits, toUnits)) return UnitsNet.UnitConverter.Convert(value, ConvertLengthUnitEnum(fromUnits), ConvertLengthUnitEnum(toUnits));
             else throw new ArgumentException($"One or more the unit types in the requested length unit conversion from {fromUnits.ToString()} to {toUnits.ToString()} are not supported length unit types.");
@@ -69,7 +76,7 @@ namespace Model
         /// <param name="fromUnits"> The units of the <paramref name="value"/> parameter. </param>
         /// <param name="toUnits"> The desired units for the <paramref name="value"/> parameter after conversion. </param>
         /// <returns> The provided <paramref name="value"/> as a <see cref="double"/> precision in the requested <paramref name="toUnits"/>. </returns>
-        public static double ConvertAreas(double value, UnitsEnum fromUnits, UnitsEnum toUnits)
+        public static double ConvertAreas(this double value, UnitsEnum fromUnits, UnitsEnum toUnits)
         {
             if (IsSameUnitsType(fromUnits, toUnits)) return UnitsNet.UnitConverter.Convert(value, ConvertAreaUnitEnum(fromUnits), ConvertAreaUnitEnum(toUnits));
             else throw new ArgumentException($"One or more the unit types in the requested area unit conversion from {fromUnits.ToString()} to {toUnits.ToString()} are not supported area unit types.");
@@ -81,7 +88,7 @@ namespace Model
         /// <param name="fromUnits"> The units of the <paramref name="value"/> parameter. </param>
         /// <param name="toUnits"> The desired units for the <paramref name="value"/> parameter after conversion. </param>
         /// <returns> The provided <paramref name="value"/> as a <see cref="double"/> precision in the requested <paramref name="toUnits"/>. </returns>
-        public static double ConvertVolumes(double value, UnitsEnum fromUnits, UnitsEnum toUnits)
+        public static double ConvertVolumes(this double value, UnitsEnum fromUnits, UnitsEnum toUnits)
         {
             if (IsSameUnitsType(fromUnits, toUnits)) return UnitsNet.UnitConverter.Convert(value, ConvertVolumeUnitEnum(fromUnits), ConvertVolumeUnitEnum(toUnits));
             else throw new ArgumentException($"One or more the unit types in the requested volume unit conversion from {fromUnits.ToString()} to {toUnits.ToString()} are not supported volume unit types.");
@@ -93,11 +100,42 @@ namespace Model
         /// <param name="fromUnits"> The units of the <paramref name="value"/> parameter. </param>
         /// <param name="toUnits"> The desired units for the <paramref name="value"/> parameter after conversion. </param>
         /// <returns> The provided <paramref name="value"/> as a <see cref="double"/> precision in the requested <paramref name="toUnits"/>. </returns>
-        public static double ConvertFlows(double value, UnitsEnum fromUnits, UnitsEnum toUnits)
+        public static double ConvertFlows(this double value, UnitsEnum fromUnits, UnitsEnum toUnits)
         {
             if (IsSameUnitsType(fromUnits, toUnits)) return UnitsNet.UnitConverter.Convert(value, ConvertFlowUnitEnum(fromUnits), ConvertFlowUnitEnum(toUnits));
             else throw new ArgumentException($"One or more the unit types in the requested flow unit conversion from {fromUnits.ToString()} to {toUnits.ToString()} are not supported flow unit types.");
         }
+        public static IRange<double> ConvertLenghts(this IRange<double> range, UnitsEnum fromUnits, UnitsEnum toUnits)
+        {
+            if (IsSameUnitsType(fromUnits, toUnits))
+            {
+                return IRangeFactory.Factory(
+                    UnitsNet.UnitConverter.Convert(range.Min, ConvertLengthUnitEnum(fromUnits), ConvertLengthUnitEnum(toUnits)),
+                    UnitsNet.UnitConverter.Convert(range.Max, ConvertLengthUnitEnum(fromUnits), ConvertLengthUnitEnum(toUnits)));
+            }
+            else throw new ArgumentException($"One or more the unit types in the requested length unit conversion from {fromUnits.ToString()} to {toUnits.ToString()} are not supported length unit types.");
+        }
+        public static IRange<double> ConvertAreas(this IRange<double> range, UnitsEnum fromUnits, UnitsEnum toUnits)
+        {
+            if (IsSameUnitsType(fromUnits, toUnits))
+            {
+                return IRangeFactory.Factory(
+                    UnitsNet.UnitConverter.Convert(range.Min, ConvertAreaUnitEnum(fromUnits), ConvertAreaUnitEnum(toUnits)),
+                    UnitsNet.UnitConverter.Convert(range.Max, ConvertAreaUnitEnum(fromUnits), ConvertAreaUnitEnum(toUnits)));
+            }
+            else throw new ArgumentException($"One or more the unit types in the requested area unit conversion from {fromUnits.ToString()} to {toUnits.ToString()} are not supported area unit types.");
+        }
+        public static IRange<double> ConvertFlows(this IRange<double> range, UnitsEnum fromUnits, UnitsEnum toUnits)
+        {
+            if (IsSameUnitsType(fromUnits, toUnits))
+            {
+                return IRangeFactory.Factory(
+                    UnitsNet.UnitConverter.Convert(range.Min, ConvertFlowUnitEnum(fromUnits), ConvertFlowUnitEnum(toUnits)),
+                    UnitsNet.UnitConverter.Convert(range.Max, ConvertFlowUnitEnum(fromUnits), ConvertFlowUnitEnum(toUnits)));
+            }
+            else throw new ArgumentException($"One or more the unit types in the requested flow unit conversion from {fromUnits.ToString()} to {toUnits.ToString()} are not supported flow unit types.");
+        }
+
         private static bool IsSameUnitsType(this UnitsEnum fromUnits, UnitsEnum toUnits)
         {
             int floor = (int)Math.Floor((int)fromUnits / 10.0) * 10;
@@ -180,6 +218,8 @@ namespace Model
         {
             switch (units)
             {
+                case UnitsEnum.Probability:
+                    return "probability";
                 case UnitsEnum.Foot:
                     if (abbreviate) return "ft";
                     else return "feet";
@@ -225,6 +265,8 @@ namespace Model
                 case UnitsEnum.Dollars:
                     if (abbreviate) return "USD";
                     else return "US dollars";
+                case UnitsEnum.Unitless:
+                    return "unit less";
                 default:
                     throw new NotImplementedException($"The {units.ToString()} is not a supported length unit.");
             }

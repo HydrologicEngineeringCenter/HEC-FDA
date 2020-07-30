@@ -20,8 +20,8 @@ namespace Model.Functions
         internal InflowOutflow(IFunction fx, string label, UnitsEnum xUnits = UnitsEnum.CubicFootPerSecond, string xlabel = "", UnitsEnum yUnits = UnitsEnum.CubicFootPerSecond, string ylabel = ""): base(fx)
         {
             Label = label == "" ? ParameterType.Print() : label;
-            XSeries = IParameterFactory.Factory(this, true, xUnits, xlabel);
-            YSeries = IParameterFactory.Factory(this, false, yUnits, ylabel);
+            XSeries = IParameterFactory.Factory(fx, IParameterEnum.UnregulatedAnnualPeakFlow, true, true, xUnits, xlabel);
+            YSeries = IParameterFactory.Factory(fx, IParameterEnum.RegulatedAnnualPeakFlow, IsConstant, false, yUnits, ylabel);
             Units = YSeries.Units;
         }
         #endregion

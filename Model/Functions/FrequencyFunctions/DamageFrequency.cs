@@ -30,8 +30,8 @@ namespace Model.Functions
         internal DamageFrequency(IFunction fx, string label, string xLabel = "", string yLabel = "", UnitsEnum yUnits = UnitsEnum.Dollars) : base(fx)
         {
             Label = label == "" ? ParameterType.Print() : label;
-            XSeries = IParameterFactory.Factory(this, true, UnitsEnum.Probability, xLabel);
-            YSeries = IParameterFactory.Factory(this, false, yUnits, yLabel);
+            XSeries = IParameterFactory.Factory(fx, IParameterEnum.NonExceedanceProbability, true, true, UnitsEnum.Probability, xLabel);
+            YSeries = IParameterFactory.Factory(fx, IParameterEnum.FloodDamages, IsConstant, false, yUnits, yLabel);
             Units = YSeries.Units;
         }
         #endregion

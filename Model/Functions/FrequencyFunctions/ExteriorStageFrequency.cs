@@ -23,8 +23,8 @@ namespace Model.Functions
         internal ExteriorStageFrequency(IFunction fx, string label = "", string xLabel = "", string yLabel = "", UnitsEnum yUnits = UnitsEnum.Foot) : base(fx)
         {
             Label = label == "" ? ParameterType.Print() : label;
-            XSeries = IParameterFactory.Factory(this, true, UnitsEnum.Probability, xLabel);
-            YSeries = IParameterFactory.Factory(this, false, yUnits, yLabel);
+            XSeries = IParameterFactory.Factory(fx, IParameterEnum.NonExceedanceProbability, true, true, UnitsEnum.Probability, xLabel);
+            YSeries = IParameterFactory.Factory(fx, IParameterEnum.ExteriorElevation, IsConstant, false, yUnits, yLabel);
             Units = YSeries.Units;
         }
         #endregion

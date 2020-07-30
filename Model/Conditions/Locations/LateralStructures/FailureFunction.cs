@@ -19,8 +19,8 @@ namespace Model.Conditions.Locations.LateralStructures
         internal FailureFunction(IFunction fx, UnitsEnum xUnits = UnitsEnum.Foot, string xLabel = "", string yLabel = "", string label = ""): base(fx)
         {
             Label = label == "" ? ParameterType.Print() : label;
-            XSeries = IParameterFactory.Factory(this, true, xUnits, xLabel);
-            YSeries = IParameterFactory.Factory(this, false, UnitsEnum.Probability, yLabel);
+            XSeries = IParameterFactory.Factory(fx, IParameterEnum.ExteriorElevation, true, true, xUnits, xLabel);
+            YSeries = IParameterFactory.Factory(fx, IParameterEnum.FailureProbability, IsConstant, false, UnitsEnum.Probability, yLabel);
             Units = YSeries.Units;
         }
 

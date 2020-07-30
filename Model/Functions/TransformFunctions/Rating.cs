@@ -20,8 +20,8 @@ namespace Model.Functions
         internal Rating(IFunction fx, string label, UnitsEnum xUnits = UnitsEnum.CubicFootPerSecond, string xlabel = "", UnitsEnum yUnits = UnitsEnum.Foot, string ylabel = "") : base(fx)
         {
             Label = label == "" ? ParameterType.Print() : label;
-            XSeries = IParameterFactory.Factory(this, true, xUnits, xlabel);
-            YSeries = IParameterFactory.Factory(this, false, yUnits, ylabel);
+            XSeries = IParameterFactory.Factory(fx, IParameterEnum.RegulatedAnnualPeakFlow, true, true, xUnits, xlabel);
+            YSeries = IParameterFactory.Factory(fx, IParameterEnum.ExteriorElevation, IsConstant, false, yUnits, ylabel);
             Units = YSeries.Units;
         }
         #endregion

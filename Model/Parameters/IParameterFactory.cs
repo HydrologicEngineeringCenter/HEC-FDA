@@ -7,23 +7,23 @@ namespace Model
 {
     public class IParameterFactory
     {
-        internal static IParameter Factory(IFdaFunction fx, bool x, UnitsEnum units = UnitsEnum.NotSet, string label = "")
-        {
-            switch (fx.ParameterType)
-            {
-                case IParameterEnum.LateralStructureElevation:
-                    if (x) throw new NotImplementedException();
-                    //return new Parameters.Series.ElevationSeries(fx, true, IParameterEnum.ExteriorElevation, units == UnitsEnum.NotSet ? UnitsEnum.Foot : units, label);
-                    else
-                        return new Parameters.Series.FrequencySeries(fx, false, IParameterEnum.FailureProbability, label);
-                case IParameterEnum.InflowFrequency:
-                    return x ? new Parameters.Series.FrequencySeries(fx, true, IParameterEnum.InflowFrequency, label) :
-                        throw new NotImplementedException();
-                default:
-                    throw new NotImplementedException();
-            };
-        }
-        internal static IParameter Factory(IFunction fx, IParameterEnum fType, bool x = true, UnitsEnum units = UnitsEnum.NotSet, string label = "")
+        //internal static IParameter Factory(IFdaFunction fx, bool x, UnitsEnum units = UnitsEnum.NotSet, string label = "")
+        //{
+        //    switch (fx.ParameterType)
+        //    {
+        //        case IParameterEnum.LateralStructureElevation:
+        //            if (x) throw new NotImplementedException();
+        //            //return new Parameters.Series.ElevationSeries(fx, true, IParameterEnum.ExteriorElevation, units == UnitsEnum.NotSet ? UnitsEnum.Foot : units, label);
+        //            else
+        //                return new Parameters.Series.FrequencySeries(fx, false, IParameterEnum.FailureProbability, label);
+        //        case IParameterEnum.InflowFrequency:
+        //            return x ? new Parameters.Series.FrequencySeries(fx, true, IParameterEnum.InflowFrequency, label) :
+        //                throw new NotImplementedException();
+        //        default:
+        //            throw new NotImplementedException();
+        //    };
+        //}
+        internal static IParameter Factory(IFunction fx, IParameterEnum fType, bool isConstant, bool x = true, UnitsEnum units = UnitsEnum.NotSet, string label = "")
         {
             if (x)
             {
@@ -34,12 +34,14 @@ namespace Model
                     case IParameterEnum.ExteriorStageFrequency:
                     case IParameterEnum.InteriorStageFrequency:
                     case IParameterEnum.DamageFrequency:
-                        // frequency.
-                        throw new NotImplementedException();
+                        // probability / frequency.
+                        return new Parameters.Probabilities.Probability(fx.Domain, isConstant, IParameterEnum.NonExceedanceProbability, units, label);
                     case IParameterEnum.InflowOutflow:
+                        //flow
+                        return new Parameters.Flows.Flow(fx.Domain, isConstant, IParameterEnum.UnregulatedAnnualPeakFlow, units, label);
                     case IParameterEnum.Rating:
-                        // flow.
-                        throw new NotImplementedException();
+                        // flow
+                        return new Parameters.Flows.Flow(fx.Domain, isConstant, IParameterEnum.RegulatedAnnualPeakFlow, units, label);
                     case IParameterEnum.ExteriorInteriorStage:
                     case IParameterEnum.LateralStructureFailure:
                         return new Parameters.Elevations.Elevation(fx, IParameterEnum.ExteriorElevation, label, units == UnitsEnum.NotSet ? IParameterEnum.ExteriorElevation.DefaultUnits() : units);
@@ -54,10 +56,12 @@ namespace Model
                 switch (fType) 
                 {
                     case IParameterEnum.InflowFrequency:
+                        // flow.
+                        return new Parameters.Flows.Flow(fx.Range, isConstant, IParameterEnum.UnregulatedAnnualPeakFlow, units, label);
                     case IParameterEnum.InflowOutflow:
                     case IParameterEnum.OutflowFrequency:
                         // flow.
-                        throw new NotImplementedException();
+                        return new Parameters.Flows.Flow(fx.Range, isConstant, IParameterEnum.RegulatedAnnualPeakFlow, units, label);
                     case IParameterEnum.ExteriorStageFrequency:
                     case IParameterEnum.Rating:
                         return new Parameters.Elevations.Elevation(fx, IParameterEnum.ExteriorElevation, label, units == UnitsEnum.NotSet ? IParameterEnum.ExteriorElevation.DefaultUnits() : units);
@@ -69,8 +73,8 @@ namespace Model
                         // damage.
                         throw new NotImplementedException();
                     case IParameterEnum.LateralStructureFailure:
-                        // frequency.
-                        throw new NotImplementedException();
+                        // probability / frequency.
+                        return new Parameters.Probabilities.Probability(fx.Range, isConstant, fType, units, label);
                     default:
                         throw new ArgumentOutOfRangeException($"The specified parameter type: {fType.Print()} is not one of the required a {typeof(IFdaFunction)} {typeof(IParameterEnum)} types.");
                 }

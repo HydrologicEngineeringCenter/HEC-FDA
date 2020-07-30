@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using Utilities;
 
 namespace Model.Validation
@@ -101,10 +100,10 @@ namespace Model.Validation
         public static bool IsConstructable(IParameterEnum type, IOrdinate value, UnitsEnum units, out string msg)
         {
             msg = "";
-            if (!IParameterUtilities.IsElevation(type)) msg += $"The {nameof(Parameters.Elevations.ElevationOrdinate)} parameter cannot be constructed because it is marked as a {type} parameter, not a elevation parameter.";
+            if (!IParameterUtilities.IsElevation(type)) msg += $"The {nameof(ElevationOrdinate)} parameter cannot be constructed because it is marked as a {type} parameter, not a elevation parameter.";
             if (!UnitsUtilities.IsLength(units)) msg += $"The specified unit of measurement {units.ToString()} is invalid because it is not a supported measurement of length.";
-            if (value.IsNull()) msg += $"The {nameof(Parameters.Elevations.ElevationOrdinate)} parameter cannot be constructed because the elevation {nameof(value)} input parameter is null.";
-            if (value.Value().IsFinite()) msg += $"The {nameof(Parameters.Elevations.ElevationOrdinate)} parameter cannot be constructed because the elevation value is not a finite numerical value.";
+            if (value.IsNull()) msg += $"The {nameof(ElevationOrdinate)} parameter cannot be constructed because the elevation {nameof(value)} input parameter is null.";
+            if (value.Value().IsFinite()) msg += $"The {nameof(ElevationOrdinate)} parameter cannot be constructed because the elevation value is not a finite numerical value.";
             return msg.Length == 0;
         }
     }

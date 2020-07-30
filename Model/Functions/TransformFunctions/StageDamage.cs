@@ -24,8 +24,8 @@ namespace Model.Functions
             Label = label == "" ? ParameterType.Print() : label;
             xlabel = xlabel == "" ? $"Interior Stage ({xUnits.Print(true)})" : xlabel;
             ylabel = ylabel == "" ? $"Damages ({yUnits.Print(true)})" : ylabel;
-            XSeries = IParameterFactory.Factory(this, true, xUnits, xlabel);
-            YSeries = IParameterFactory.Factory(this, false, yUnits, ylabel);
+            XSeries = IParameterFactory.Factory(fx, IParameterEnum.InteriorElevation, true, true, xUnits, xlabel);
+            YSeries = IParameterFactory.Factory(fx, IParameterEnum.FloodDamages, IsConstant, false, yUnits, ylabel);
             Units = YSeries.Units;
         }
         #endregion
