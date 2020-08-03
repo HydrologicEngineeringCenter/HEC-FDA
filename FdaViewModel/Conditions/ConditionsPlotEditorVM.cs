@@ -62,6 +62,7 @@ namespace FdaViewModel.Conditions
         private Plots.IndividualLinkedPlotControlVM _Plot1ControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot3ControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot5ControlVM;
+        private Plots.IndividualLinkedPlotControlVM _PlotFailureControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot7ControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot8ControlVM;
 
@@ -193,6 +194,11 @@ namespace FdaViewModel.Conditions
         {
             get { return _Plot5ControlVM; }
             set { _Plot5ControlVM = value; NotifyPropertyChanged(); }
+        }
+        public Plots.IndividualLinkedPlotControlVM PlotFailureControlVM
+        {
+            get { return _PlotFailureControlVM; }
+            set { _PlotFailureControlVM = value; NotifyPropertyChanged(); }
         }
         public Plots.IndividualLinkedPlotControlVM Plot7ControlVM
         {
@@ -366,9 +372,9 @@ namespace FdaViewModel.Conditions
         /// <param name="defaultControl5VM"></param>
         /// <param name="DefaultControl7VM"></param>
         /// <param name="DefaultControl8VM"></param>
-        public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas, Plots.IndividualLinkedPlotControlVM defaultControl0VM, IndividualLinkedPlotControlVM defaultControl1VM, 
-            Plots.IndividualLinkedPlotControlVM defaultControl3VM, Plots.IndividualLinkedPlotControlVM defaultControl5VM, Plots.IndividualLinkedPlotControlVM DefaultControl7VM, 
-            Plots.IndividualLinkedPlotControlVM DefaultControl8VM, Editors.EditorActionManager actionManager) :base(actionManager)
+        public ConditionsPlotEditorVM(List<ImpactAreaElement> impAreas, IndividualLinkedPlotControlVM defaultControl0VM, IndividualLinkedPlotControlVM defaultControl1VM, 
+            IndividualLinkedPlotControlVM defaultControl3VM, IndividualLinkedPlotControlVM defaultControl5VM, IndividualLinkedPlotControlVM defaultControlFailureVM, IndividualLinkedPlotControlVM DefaultControl7VM, 
+            IndividualLinkedPlotControlVM DefaultControl8VM, Editors.EditorActionManager actionManager) :base(actionManager)
         {
            // _CrosshairData = new CrosshairData[6];
             //_CrosshairData[0] = defaultControl0VM.CrosshairData;
@@ -410,6 +416,7 @@ namespace FdaViewModel.Conditions
             Plot1ControlVM = defaultControl1VM;       
             Plot3ControlVM = defaultControl3VM;
             Plot5ControlVM = defaultControl5VM;
+            PlotFailureControlVM = defaultControlFailureVM;
             Plot7ControlVM = DefaultControl7VM;
             Plot8ControlVM = DefaultControl8VM;
 
@@ -517,6 +524,9 @@ namespace FdaViewModel.Conditions
             Plot5ControlVM.PlotIsShowing += Plot5IsShowing;
             Plot5ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
 
+            PlotFailureControlVM.PlotIsShowing += PlotFailureIsShowing;
+            PlotFailureControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
+
             Plot7ControlVM.PlotIsShowing += Plot7IsShowing;
             Plot7ControlVM.PlotIsNotShowing += Plot7IsNotShowing;
             Plot7ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
@@ -530,6 +540,7 @@ namespace FdaViewModel.Conditions
             _Plot1ControlVM.RequestNavigation += Navigate;
             _Plot3ControlVM.RequestNavigation += Navigate;
             _Plot5ControlVM.RequestNavigation += Navigate;
+            _PlotFailureControlVM.RequestNavigation += Navigate;
             _Plot7ControlVM.RequestNavigation += Navigate;
             _Plot8ControlVM.RequestNavigation += Navigate;
 
@@ -553,6 +564,10 @@ namespace FdaViewModel.Conditions
             Plot5ControlVM.PlotIsNotShowing += UpdatePreviewComputePlot;
             Plot5ControlVM.PlotIsShowing += UpdatePreviewComputePlot;
             Plot5ControlVM.SelectedCurveUpdated += UpdatePreviewComputePlot;
+
+            PlotFailureControlVM.PlotIsNotShowing += UpdatePreviewComputePlot;
+            PlotFailureControlVM.PlotIsShowing += UpdatePreviewComputePlot;
+            PlotFailureControlVM.SelectedCurveUpdated += UpdatePreviewComputePlot;
 
             Plot7ControlVM.PlotIsNotShowing += UpdatePreviewComputePlot;
             Plot7ControlVM.PlotIsShowing += UpdatePreviewComputePlot;
@@ -585,7 +600,10 @@ namespace FdaViewModel.Conditions
         //private void Plot5IsNotShowing(object sender, EventArgs e)
         //{
         //}
-
+        private void PlotFailureIsShowing(object sender, EventArgs e)
+        {
+            UpdateChartLinkages();
+        }
         private void Plot3IsShowing(object sender, EventArgs e)
         {
             
@@ -871,6 +889,10 @@ namespace FdaViewModel.Conditions
             {
                 _AddedPlots.Add(Plot5ControlVM);
             }
+            if(PlotFailureControlVM.IsPlotShowing)
+            {
+                _AddedPlots.Add(PlotFailureControlVM);
+            }
             if (Plot7ControlVM.IsPlotShowing)
             {
                 _AddedPlots.Add(Plot7ControlVM);
@@ -900,6 +922,10 @@ namespace FdaViewModel.Conditions
             if (Plot5ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot5ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
             {
                 _AddedPlots.Add(Plot5ControlVM);
+            }
+            if (PlotFailureControlVM.IndividualPlotWrapperVM.PlotVM != null && PlotFailureControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            {
+                _AddedPlots.Add(PlotFailureControlVM);
             }
             if (Plot7ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot7ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
             {

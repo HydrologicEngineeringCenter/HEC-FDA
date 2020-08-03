@@ -74,7 +74,7 @@ namespace FunctionsViewUITester
         {
             this.DataContext = this;
             IFdaFunction function = CreateFunction();
-            EditorVM = new CoordinatesFunctionEditorVM(function.Function);
+            //EditorVM = new CoordinatesFunctionEditorVM(function.Function);
 
             InitializeComponent();
 

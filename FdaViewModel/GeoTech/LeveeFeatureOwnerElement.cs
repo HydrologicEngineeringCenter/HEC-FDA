@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FdaViewModel.GeoTech
 {
-    class LeveeFeatureOwnerElement : Utilities.ParentElement
+    public class LeveeFeatureOwnerElement : Utilities.ParentElement
     {
         #region Notes
         #endregion

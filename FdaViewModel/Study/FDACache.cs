@@ -118,6 +118,7 @@ namespace FdaViewModel.Study
         public InflowOutflowOwnerElement InflowOutflowParent { get; set; }
         public RatingCurveOwnerElement RatingCurveParent { get; set; }
         public ExteriorInteriorOwnerElement ExteriorInteriorParent { get; set; }
+        public LeveeFeatureOwnerElement LeveeFeatureParent { get; set; }
         public AggregatedStageDamageOwnerElement StageDamageParent { get; set; }
 
         public OccupancyTypesOwnerElement OccTypeParent { get; set; }
@@ -753,12 +754,12 @@ namespace FdaViewModel.Study
             }
             if (parentType == typeof(LeveeFeatureOwnerElement))
             {
-
+                return LeveeFeatureParent as T;
             }
-            if (parentType == typeof(FailureFunctionOwnerElement))
-            {
-
-            }
+            //if (parentType == typeof(FailureFunctionOwnerElement))
+            //{
+                
+            //}
             if (parentType == typeof(OccupancyTypesOwnerElement))
             {
                 return OccTypeParent as T;

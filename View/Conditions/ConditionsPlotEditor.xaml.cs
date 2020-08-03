@@ -452,6 +452,7 @@ namespace View.Conditions
             Plot5PoppedOut = true;
             //collapse the row the modulator is in
             FourPlotGrid.RowDefinitions[2].Height = new GridLength(0);
+            FourPlotGrid.RowDefinitions[3].Height = new GridLength(0);
 
             //AddedPlots.Remove(DoubleLineHorizontal);
             //AddedPlots.Add(plot5);
@@ -527,6 +528,8 @@ namespace View.Conditions
             UpdateThePlotLinkages(sender, e);
             //collapse the row the modulator is in
             FourPlotGrid.RowDefinitions[2].Height = new GridLength(45);
+            FourPlotGrid.RowDefinitions[3].Height = new GridLength(45);
+
             mainGrid.ColumnDefinitions[0].Width = new GridLength(0);
             //move the toolbar over
             Grid.SetColumn(grid_TopRow, 1);
@@ -1114,6 +1117,28 @@ namespace View.Conditions
         //    }
 
         }
+
+        private void btn_AddFailureFunction_Click(object sender, RoutedEventArgs e)
+        {
+            Plot5PoppedOut = true;
+            //collapse the row the modulator is in
+            FourPlotGrid.RowDefinitions[2].Height = new GridLength(0);
+            FourPlotGrid.RowDefinitions[3].Height = new GridLength(0);
+
+            //AddedPlots.Remove(DoubleLineHorizontal);
+            //AddedPlots.Add(plot5);
+            //UpdateThePlotLinkages(sender, e);
+            //UpdateTheLinkages(TheAddedPlots.ToList());
+
+            mainGrid.ColumnDefinitions[0].Width = new GridLength(.45, GridUnitType.Star);
+
+            //move the toolbar over
+            Grid.SetColumn(grid_TopRow, 0);
+        }
+
+
+
+
 
         ////private void txt_XValue_LostFocus(object sender, RoutedEventArgs e)
         ////{

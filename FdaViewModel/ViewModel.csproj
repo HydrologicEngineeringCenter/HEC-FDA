@@ -136,6 +136,7 @@
     <Compile Include="BaseFdaElement.cs" />
     <Compile Include="BaseViewModel.cs" />
     <Compile Include="Conditions\AddExteriorInteriorStageToConditionVM.cs" />
+    <Compile Include="Conditions\AddFailureFunctionToConditionVM.cs" />
     <Compile Include="Conditions\AddFlowFrequencyToConditionVM.cs" />
     <Compile Include="Conditions\AddInflowOutflowToConditionVM.cs" />
     <Compile Include="Conditions\AddRatingCurveToConditionVM.cs" />

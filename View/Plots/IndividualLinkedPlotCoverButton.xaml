@@ -29,7 +29,7 @@
 
         <Style TargetType="{x:Type Button}" x:Key="AddButton">
 
-            <Setter Property="Background" Value="Blue" />
+            <Setter Property="Background" Value="LightGreen" />
             <Setter Property="Foreground" Value="Black" />
             <Setter Property="FontSize" Value="22" />
             <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -76,7 +76,7 @@
 
         <Style TargetType="{x:Type Button}" x:Key="AddButtonVerticalModulator">
 
-            <Setter Property="Background" Value="LightGreen" />
+            <Setter Property="Background" Value="Blue" />
             <Setter Property="Foreground" Value="Black" />
             <Setter Property="FontSize" Value="16" />
             <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -130,7 +130,7 @@
 
         <Style TargetType="{x:Type Button}" x:Key="AddButtonHorizontalModulator">
 
-            <Setter Property="Background" Value="LightGreen" />
+            <Setter Property="Background" Value="Blue" />
             <Setter Property="Foreground" Value="Black" />
             <Setter Property="FontSize" Value="16" />
             <Setter Property="SnapsToDevicePixels" Value="True" />

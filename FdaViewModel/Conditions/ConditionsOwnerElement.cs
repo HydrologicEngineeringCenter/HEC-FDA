@@ -1,6 +1,7 @@
 ﻿using FdaViewModel.AggregatedStageDamage;
 using FdaViewModel.FlowTransforms;
 using FdaViewModel.FrequencyRelationships;
+using FdaViewModel.GeoTech;
 using FdaViewModel.StageTransforms;
 using FdaViewModel.Utilities;
 using Functions;
@@ -132,6 +133,24 @@ namespace FdaViewModel.Conditions
                 new Plots.HorizontalDoubleLineModulatorWrapperVM());
         }
 
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultLeveeFeaturesControl(ParentElement ownerElement)
+        {
+            List<LeveeFeatureElement> listOfLeveeFeatureElements = StudyCache.GetChildElementsOfType<LeveeFeatureElement>();
+            AddFailureFunctionToConditionVM failureImporter = new AddFailureFunctionToConditionVM(listOfLeveeFeatureElements);
+            failureImporter.RequestNavigation += ownerElement.Navigate;
+
+            bool isYAxisLog = false;
+            bool isProbabilityXAxis = false;
+
+            Plots.IndividualLinkedPlotCoverButtonVM coverButton = new Plots.IndividualLinkedPlotCoverButtonVM("Lateral Structure");
+            coverButton.IsEnabled = true;
+
+            return new Plots.IndividualLinkedPlotControlVM(
+                new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Stage Failure", "Exterior Stage", "Chance of Failure"),
+                coverButton,
+                failureImporter, isYAxisLog, isProbabilityXAxis, true, true);
+        }
+
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultStageDamageControl(ParentElement ownerElement)
         {
             List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamage = StudyCache.GetChildElementsOfType<AggregatedStageDamageElement>();
@@ -173,6 +192,8 @@ namespace FdaViewModel.Conditions
 
             Plots.IndividualLinkedPlotControlVM extIntStageControl = BuildDefaultExtIntStageControl(this);
 
+            Plots.IndividualLinkedPlotControlVM failureControl = BuildDefaultLeveeFeaturesControl(this);
+
             Plots.IndividualLinkedPlotControlVM StageDamageControl = BuildDefaultStageDamageControl(this);
 
             Plots.IndividualLinkedPlotControlVM DamageFrequencyControl = BuildDefaultDamageFrequencyControl(this);
@@ -182,7 +203,7 @@ namespace FdaViewModel.Conditions
             // .WithParentGuid(this.GUID)
             // .WithCanOpenMultipleTimes(true);
 
-            ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl, StageDamageControl, DamageFrequencyControl, actionManager);
+            ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl, failureControl, StageDamageControl, DamageFrequencyControl, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);
             vm.RequestNavigation += Navigate;

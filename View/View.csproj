@@ -228,6 +228,9 @@
     <Compile Include="Conditions\AddExteriorInteriorStageToCondition.xaml.cs">
       <DependentUpon>AddExteriorInteriorStageToCondition.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Conditions\AddFailureFunctionToCondition.xaml.cs">
+      <DependentUpon>AddFailureFunctionToCondition.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Conditions\AddFlowFrequencyToCondition.xaml.cs">
       <DependentUpon>AddFlowFrequencyToCondition.xaml</DependentUpon>
     </Compile>
@@ -502,6 +505,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Conditions\AddExteriorInteriorStageToCondition.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Conditions\AddFailureFunctionToCondition.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

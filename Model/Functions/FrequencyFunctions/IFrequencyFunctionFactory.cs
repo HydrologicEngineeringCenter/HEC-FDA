@@ -40,6 +40,11 @@ namespace Model
                     return new Functions.InteriorStageFrequency(fx, label, xLabel, yLabel, yUnits);
                 case IParameterEnum.DamageFrequency:
                     return new Functions.DamageFrequency(fx, label, xLabel, yLabel, yUnits);
+                case IParameterEnum.LateralStructureFailure:
+                    yUnits = yUnits == UnitsEnum.NotSet ? UnitsEnum.Foot : yUnits;
+                    xLabel = xLabel == "" ? $"Chance of Failure" : xLabel;
+                    yLabel = yLabel == "" ? $"Exterior (In-channel) Water Surface Elevation ({yUnits.Print(true)})" : yLabel;
+                    return new Functions.ExteriorStageFrequency(fx, label, xLabel, yLabel, yUnits);
                 default:
                     throw new ArgumentException($"The specified parameter type: {fType} is not a frequency function.");
             }
