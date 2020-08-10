@@ -5,29 +5,21 @@ using Utilities;
 
 namespace Model.Parameters.Elevations
 {
-    internal abstract class ElevationBase : IParameter
+    internal abstract class ElevationBase : ParameterRangeBase<ElevationBase>
     {
-        public string Label { get; }
-        public UnitsEnum Units { get; }
-        public IParameterEnum ParameterType { get; }
-        public abstract IRange<double> Range { get; }
-        public abstract bool IsConstant { get; }
+        public override IMessageLevels State { get; }
+        public override IEnumerable<IMessage> Messages { get; }
+        internal IRange<double> _RangeDefaultUnits { get; }
 
-        public ElevationBase(IParameterEnum parameterType, string label = "", UnitsEnum units = UnitsEnum.Foot)
+        internal ElevationBase(IRange<double> range, bool isConstant, IParameterEnum parameterType, UnitsEnum units = UnitsEnum.Foot, string label = "", bool abbreviatedLabel = true): base(range, isConstant, parameterType, units, label, abbreviatedLabel)
         {
-            Units = units;
-            ParameterType = parameterType;
-            Label = label == "" ? $"{ parameterType.Print()} ({units.Print()})" : label;
+            _RangeDefaultUnits = range.ConvertLenghts(Units, ParameterType.DefaultUnits());
+            State = Validate(new Validation.ElevationValidator(), out IEnumerable<IMessage> msgs);
+            Messages = msgs;
         }
-
-        public string Print(bool round = false, bool abbreviate = false)
+        public override IMessageLevels Validate(IValidator<ElevationBase> validator, out IEnumerable<IMessage> msgs)
         {
-            throw new NotImplementedException();
-        }
-
-        public string PrintValue(bool round = false, bool abbreviate = false)
-        {
-            throw new NotImplementedException();
+            return validator.IsValid(this, out msgs);
         }
     }
 }

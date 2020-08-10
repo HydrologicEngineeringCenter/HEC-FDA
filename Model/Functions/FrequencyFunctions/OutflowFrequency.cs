@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Functions;
-using System.Xml.Linq;
+using Utilities;
 
 namespace Model.Functions
 {
@@ -10,11 +8,13 @@ namespace Model.Functions
     {
         #region Properties
         public override string Label { get; }
-        public override IParameter XSeries { get; }
-        public override IParameter YSeries { get; }
-        public override UnitsEnum Units { get; }
+        public override IParameterRange XSeries { get; }
+        public override IParameterRange YSeries { get; }
         public override IParameterEnum ParameterType => IParameterEnum.OutflowFrequency;
         public List<IParameterEnum> ComposeableTypes => new List<IParameterEnum>() { IParameterEnum.Rating, IParameterEnum.ExteriorInteriorStage };
+        
+        public override IMessageLevels State { get; }
+        public override IEnumerable<IMessage> Messages { get; }
         #endregion
 
         #region Constructor
@@ -23,7 +23,8 @@ namespace Model.Functions
             Label = label == "" ? ParameterType.Print() : label;
             XSeries = IParameterFactory.Factory(fx, IParameterEnum.NonExceedanceProbability, true, true, UnitsEnum.Probability, xLabel);
             YSeries = IParameterFactory.Factory(fx, IParameterEnum.RegulatedAnnualPeakFlow, IsConstant, false, yUnits, yLabel);
-            Units = YSeries.Units;
+            State = Validate(new Validation.Functions.FdaFunctionBaseValidator(), out IEnumerable<IMessage> msgs);
+            Messages = msgs;
         }
         #endregion
 

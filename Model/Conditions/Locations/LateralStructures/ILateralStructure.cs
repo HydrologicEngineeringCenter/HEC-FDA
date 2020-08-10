@@ -7,9 +7,9 @@ namespace Model
 {
     public interface ILateralStructure: IParameter
     {
-        IElevation TopElevation { get; }
-        IFdaFunction FailureFunction { get; }
+        IParameterOrdinate TopElevation { get; }
+        ITransformFunction FailureFunction { get; }
 
-        ILateralStructureRealization Compute(double failureFxProbability, IFrequencyFunction extFreqFx, double extFailElevProbability);
+        //ILateralStructureRealization Compute(double failureFxProbability, IFrequencyFunction extFreqFx, double extFailElevProbability);
     }
 }

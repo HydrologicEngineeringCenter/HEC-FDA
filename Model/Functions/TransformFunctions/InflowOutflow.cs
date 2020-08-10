@@ -1,8 +1,6 @@
 ﻿using Functions;
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml.Linq;
+using Utilities;
 
 namespace Model.Functions
 {
@@ -10,10 +8,12 @@ namespace Model.Functions
     {
         #region Properties
         public override string Label { get; }
-        public override IParameter XSeries { get;  }
-        public override IParameter YSeries { get; }
-        public override UnitsEnum Units { get; }
+        public override IParameterRange XSeries { get;  }
+        public override IParameterRange YSeries { get; }
         public override IParameterEnum ParameterType => IParameterEnum.InflowOutflow;
+        
+        public override IMessageLevels State { get; }
+        public override IEnumerable<IMessage> Messages { get; }
         #endregion
 
         #region Constructor
@@ -22,7 +22,8 @@ namespace Model.Functions
             Label = label == "" ? ParameterType.Print() : label;
             XSeries = IParameterFactory.Factory(fx, IParameterEnum.UnregulatedAnnualPeakFlow, true, true, xUnits, xlabel);
             YSeries = IParameterFactory.Factory(fx, IParameterEnum.RegulatedAnnualPeakFlow, IsConstant, false, yUnits, ylabel);
-            Units = YSeries.Units;
+            State = Validate(new Validation.Functions.FdaFunctionBaseValidator(), out IEnumerable<IMessage> msgs);
+            Messages = msgs;
         }
         #endregion
 

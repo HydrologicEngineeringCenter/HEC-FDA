@@ -5,143 +5,136 @@ using System.Text;
 using Utilities;
 using Functions;
 
-namespace Model.Locations
+namespace Model.Conditions.Locations
 {
-    internal sealed class ConditionLocation : IConditionLocation
+    internal sealed class ConditionLocation : ConditionLocationBase<string, string>
     {
-        private readonly bool _HasLateralStructure;
+        #region Properties
+        
+        public override IReadOnlyDictionary<IParameterEnum, bool> Parameters { get; }      
+        public override string LateralStructure => "No Lateral Structure";
+        #endregion
 
-        public ILocation Location { get; }
-        public IFrequencyFunction EntryPoint { get; }
-        public IOrderedEnumerable<ITransformFunction> TransformFunctions { get; }
-        public ILateralStructure LateralStructure { get; }
-        public IOrderedEnumerable<IMetric> Metrics { get; }
-        public IDictionary<IParameterEnum, bool> Parameters { get; }
-
-        internal ConditionLocation(ILocation location, IFrequencyFunction frequencyFx, IEnumerable<ITransformFunction> transformFxs, IEnumerable<IMetric> metrics, ILateralStructure lateralStructure = null)
+        #region Constructor
+        internal ConditionLocation(ILocation location, int yr, IFrequencyFunction frequencyFx, IEnumerable<ITransformFunction> transformFxs, IEnumerable<IMetric> metrics, string label = ""): base(location, yr, frequencyFx, transformFxs, metrics, label)
         {
-            //ToDo: Validation
-            Location = location;
-            EntryPoint = frequencyFx;
-            TransformFunctions = transformFxs.OrderBy(i => i.ParameterType);
-            LateralStructure = lateralStructure;
-            _HasLateralStructure = LateralStructure.IsNull() ? false : true;
-            Metrics = metrics.OrderBy(m => m.TargetFunction);
-            Parameters = ParameterIsVariablePairs();
+            //TODO: Validation            
+            Parameters = ParameterSamplePairs();
         }
-        internal IDictionary<IParameterEnum, bool> ParameterIsVariablePairs()
+        #endregion
+        #region Functions
+        public override IConditionLocationRealization<string> PreviewCompute()
         {
-            Dictionary<IParameterEnum, bool> parameters = new Dictionary<IParameterEnum, bool>();
-            parameters.Add(EntryPoint.ParameterType, !EntryPoint.IsConstant);
-            foreach (var fx in TransformFunctions) parameters.Add(fx.ParameterType, !fx.IsConstant);
-            if (_HasLateralStructure)
+            Dictionary<IParameterEnum, ISample> parameters = new Dictionary<IParameterEnum, ISample>();
+            foreach (var pair in Parameters) parameters.Add(pair.Key, new Samples.Sample());
+            return Compute(parameters); 
+        }
+        public override IConditionLocationRealization<string> Compute(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters = null)
+        {
+            int metricIndex = 0;
+            IList<IMetric> endPoints = Metrics.ToList();
+            var sampledFxs = SampleFunctions(FetchSamples(sampleParameters));
+            Dictionary<IMetric, double> metrics = new Dictionary<IMetric, double>();
+            IFrequencyFunction frequencyFx = (IFrequencyFunction)sampledFxs[EntryPoint.ParameterType].Parameter;
+            foreach (var fx in TransformFunctions)
             {
-                parameters.Add(LateralStructure.ParameterType, !LateralStructure.IsConstant);
-                parameters.Add(LateralStructure.FailureFunction.ParameterType, !LateralStructure.FailureFunction.IsConstant);
-            }
-            return parameters;
-        }
-        public IEnumerable<IParameterEnum> ConstantParameters()
-        {
-            List<IParameterEnum> constants = new List<IParameterEnum>();
-            foreach (var pair in Parameters) constants.Add(pair.Key);
-            return constants;
-        }
-        public IDictionary<IParameterEnum, ISampleRecord> SamplePacket(Random rng = null, IDictionary<IParameterEnum, bool> parameters = null)
-        {
-            /* This generates a dictionary of compute parameters sample value pairs:
-             *     KEY: IParameterEnum VALUE: ISample Record (bool DoSample, double probability) 
-             * 
-             * Notes:
-             * - If a random number is not provided one is generated using the time stamp as a seed value. In this case the compute will be untraceable.
-             * - If a set of parameters (to sample) are not provided the Parameters property is used (all non-constant parameters are sampled).
-             */
-            if (rng.IsNull()) rng = new Random();
-            if (parameters.IsNull()) parameters = Parameters;
-            IDictionary<IParameterEnum, ISampleRecord> sample = new Dictionary<IParameterEnum, ISampleRecord>();
-            foreach (var parameter in parameters) sample.Add(parameter.Key, parameter.Value ? new SampleRecord(rng.NextDouble()) : new SampleRecord());
-            return sample;
-        }
-        public IConditionLocationRealization Compute(IDictionary<IParameterEnum, ISampleRecord> parameters = null)
-        {
-            if (parameters.IsNull()) parameters = SamplePacket();
-            else
-            {
-                if (!IsValidParameterDictionary(parameters, out List<IParameterEnum> missingParameters)) throw new ArgumentException($"The following required parameters: {PrintList(missingParameters)} are missing from the specified compute parameters.");
-            }
-            if (_HasLateralStructure)
-                return ComputeWithLateralStructure(parameters);
-            else
-            {
-                int i = 0, I = Metrics.Count();
-                IList<IMetric> metrics = Metrics.ToList();
-                IFrequencyFunction frequencyFx = EntryPoint;
-                IDictionary<IMetric, double> metricRealizations = new Dictionary<IMetric, double>();
-                //if (parameters.ContainsKey(IParameterEnum.ExteriorInteriorStage)) //need to use this else don't need to.
-                foreach (ITransformFunction transformFx in TransformFunctions)
+                frequencyFx = frequencyFx.Compose((ITransformFunction)sampledFxs[fx.ParameterType].Parameter);
+                sampledFxs.Add(frequencyFx.ParameterType, new Samples.SampledFunction(new Samples.Sample(), frequencyFx));
+                while (frequencyFx.ParameterType == endPoints[metricIndex].TargetFunction)
                 {
-                    frequencyFx = frequencyFx.Compose(transformFx, parameters[frequencyFx.ParameterType].Probability, parameters[transformFx.ParameterType].Probability);
-                    while (frequencyFx.ParameterType == metrics[i].TargetFunction) metricRealizations.Add(metrics[i], metrics[i].Compute(frequencyFx));
+                    metrics.Add(endPoints[metricIndex], endPoints[metricIndex].Compute(frequencyFx));
+                    metricIndex++;
                 }
-                return new ConditionLocationRealization(metricRealizations, parameters);
             }
-
+            return new ConditionLocationRealization(sampledFxs, metrics);
         }
-        private IConditionLocationRealization ComputeWithLateralStructure(IDictionary<IParameterEnum, ISampleRecord> parameters)
-        {
-            int i = 0, I = Metrics.Count();
-            IList<IMetric> metrics = Metrics.ToList();
-            IFrequencyFunction frequencyFx = EntryPoint;
-            ILateralStructureRealization lateralStructure;
-            IDictionary<IMetric, double> metricRealizations = new Dictionary<IMetric, double>();
-            foreach (ITransformFunction transformFx in TransformFunctions)
-            {
-                if (frequencyFx.ParameterType == IParameterEnum.ExteriorStageFrequency)
-                {
-                    //In case it has not been sampled (if it has this will not matter).
-                    frequencyFx = IFrequencyFunctionFactory.Factory(frequencyFx.Sample(parameters[IParameterEnum.ExteriorStageFrequency].Probability), frequencyFx.ParameterType, frequencyFx.Label, frequencyFx.XSeries.Label, frequencyFx.YSeries.Label, frequencyFx.YSeries.Units);
-                    lateralStructure = LateralStructure.Compute(parameters[LateralStructure.FailureFunction.ParameterType].Probability, frequencyFx, parameters[IParameterEnum.LatralStructureFailureElevationFrequency].Probability);
-                    if (transformFx.ParameterType == IParameterEnum.ExteriorInteriorStage)
-                    {
-
-                        ITransformFunction intExtFx = lateralStructure.InteriorExteriorGenerator(ITransformFunctionFactory.Factory(transformFx.Sample(parameters[IParameterEnum.ExteriorInteriorStage].Probability), transformFx.ParameterType, transformFx.Label, transformFx.XSeries.Units, transformFx.XSeries.Label, transformFx.YSeries.Units, transformFx.YSeries.Label));
-                        frequencyFx = frequencyFx.Compose(intExtFx, parameters[frequencyFx.ParameterType].Probability, parameters[transformFx.ParameterType].Probability); // the transform probability is not really getting used since intExt is a constant.
-                        while (frequencyFx.ParameterType == metrics[i].TargetFunction) metricRealizations.Add(metrics[i], metrics[i].Compute(frequencyFx));
-                    }
-                    else
-                    {
-                        // this yields a interior stage frequency function.
-                        ITransformFunction intExtFx = lateralStructure.InteriorExteriorGenerator(frequencyFx);
-                        frequencyFx = frequencyFx.Compose(intExtFx, parameters[frequencyFx.ParameterType].Probability, parameters[transformFx.ParameterType].Probability); // the transform probability is not really getting used since intExt is a constant.
-                        while (frequencyFx.ParameterType == metrics[i].TargetFunction) metricRealizations.Add(metrics[i], metrics[i].Compute(frequencyFx));
-                        // this yields the next frequency function ... at the moment this must be a stage damage transform and therefore a damage frequency function.
-                        frequencyFx = frequencyFx.Compose(transformFx, parameters[frequencyFx.ParameterType].Probability, parameters[transformFx.ParameterType].Probability); // the transform probability is not really getting used since intExt is a constant.
-                        while (frequencyFx.ParameterType == metrics[i].TargetFunction) metricRealizations.Add(metrics[i], metrics[i].Compute(frequencyFx));
-                    }
-                }
-                frequencyFx = frequencyFx.Compose(transformFx, parameters[frequencyFx.ParameterType].Probability, parameters[transformFx.ParameterType].Probability); // the transform probability is not really getting used since intExt is a constant.
-                while (frequencyFx.ParameterType == metrics[i].TargetFunction) metricRealizations.Add(metrics[i], metrics[i].Compute(frequencyFx));
-            }
-            return new ConditionLocationRealization(metricRealizations, parameters);
-        }
+        #endregion
 
 
-        private bool IsValidParameterDictionary<T>(IDictionary<IParameterEnum, T> parameters, out List<IParameterEnum> missingParameters)
-        {
-            missingParameters = new List<IParameterEnum>();
-            foreach (var pair in Parameters) if (!(parameters.ContainsKey(pair.Key))) missingParameters.Add(pair.Key);
-            return missingParameters.Count == 0;
-        }
-        private string PrintList(List<IParameterEnum> parameters)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (var p in parameters)
-            {
-                if (sb.Length == 0) sb.Append($"[{p.Print(true)}");
-                else sb.Append($", {p.Print(true)}");
-            }
-            sb.Append("]");
-            return sb.ToString();
-        }
+
+        //public IConditionLocationRealization Compute(IReadOnlyDictionary<IParameterEnum, ISample> parameters = null)
+        //{
+        //    if (sampleParameters.IsNull()) sampleParameters = SamplePacket();
+        //    else if (!IsValidComputeParameters(sampleParameters, out List<IParameterEnum> missingParameters)) throw new ArgumentException($"The following required parameters: {PrintParameterList(missingParameters)} are not included in the {nameof(sampleParameters)} argument causing an error.");
+
+        //    int metricIndex = 0;
+        //    List<IMetric> metrics = Metrics.ToList();
+        //    IFrequencyFunction frequencyFx = EntryPoint;
+        //    Dictionary<IMetric, double> realizationMetrics = new Dictionary<IMetric, double>();
+        //    Dictionary<IParameterEnum, IFdaFunction> realizationFxs = new Dictionary<IParameterEnum, IFdaFunction>();
+        //    foreach (var transformFx in TransformFunctions)
+        //    {
+        //        //realizationFxs.Add(frequencyFx.ParameterType, IFdaFunctionFactory.Factory(frequencyFx.ParameterType, frequencyFx.Sample(parameters[frequencyFx.ParameterType].Probability), frequencyFx.Label, frequencyFx.XSeries.Units, frequencyFx.XSeries.Label, frequencyFx.YSeries.Units, frequencyFx.YSeries.Label));
+        //        //realizationFxs.Add(transformFx.ParameterType, IFdaFunctionFactory.Factory(transformFx.ParameterType, transformFx.Sample(parameters[transformFx.ParameterType].Probability), transformFx.Label, transformFx.XSeries.Units, transformFx.XSeries.Label, transformFx.YSeries.Units, transformFx.YSeries.Label));
+        //        transformFx.Sample(sampleParameters[transformFx.ParameterType].Probability);
+        //        frequencyFx.Compose(transformFx, sampleParameters[frequencyFx.ParameterType].Probability, sampleParameters[transformFx.ParameterType].Probability);
+        //        while (frequencyFx.ParameterType == metrics[metricIndex].TargetFunction)
+        //        {
+        //            realizationMetrics.Add(metrics[metricIndex], metrics[metricIndex].Compute(frequencyFx));
+        //            metricIndex++;
+        //        }
+        //    }
+
+
+        //    if (sampleParameters.IsNull()) sampleParameters = SamplePacket();
+        //    else
+        //    {
+        //        if (!IsValidParameterDictionary(sampleParameters, out List<IParameterEnum> missingParameters)) throw new ArgumentException($"The following required parameters: {PrintList(missingParameters)} are missing from the specified compute parameters.");
+        //    }
+        //    if (_HasLateralStructure)
+        //        return ComputeWithLateralStructure(sampleParameters);
+        //    else
+        //    {
+        //        int i = 0, I = Metrics.Count();
+        //        IList<IMetric> metrics = Metrics.ToList();
+        //        IFrequencyFunction frequencyFx = EntryPoint;
+        //        Dictionary<IMetric, double> metricRealizations = new Dictionary<IMetric, double>();
+        //        //if (parameters.ContainsKey(IParameterEnum.ExteriorInteriorStage)) //need to use this else don't need to.
+        //        foreach (ITransformFunction transformFx in TransformFunctions)
+        //        {
+        //            frequencyFx = frequencyFx.Compose(transformFx, sampleParameters[frequencyFx.ParameterType].Probability, sampleParameters[transformFx.ParameterType].Probability);
+        //            while (frequencyFx.ParameterType == metrics[i].TargetFunction) metricRealizations.Add(metrics[i], metrics[i].Compute(frequencyFx));
+        //        }
+        //        return new ConditionLocationRealization(metricRealizations, sampleParameters);
+        //    }
+
+        //}
+        //private IConditionLocationRealization ComputeWithLateralStructure(IDictionary<IParameterEnum, ISample> parameters)
+        //{
+        //    int i = 0, I = Metrics.Count();
+        //    IList<IMetric> metrics = Metrics.ToList();
+        //    IFrequencyFunction frequencyFx = EntryPoint;
+        //    ILateralStructureRealization lateralStructure;
+        //    IDictionary<IMetric, double> metricRealizations = new Dictionary<IMetric, double>();
+        //    foreach (ITransformFunction transformFx in TransformFunctions)
+        //    {
+        //        if (frequencyFx.ParameterType == IParameterEnum.ExteriorStageFrequency)
+        //        {
+        //            //In case it has not been sampled (if it has this will not matter).
+        //            frequencyFx = IFrequencyFunctionFactory.Factory(frequencyFx.Sample(parameters[IParameterEnum.ExteriorStageFrequency].Probability), frequencyFx.ParameterType, frequencyFx.Label, frequencyFx.XSeries.Label, frequencyFx.YSeries.Label, frequencyFx.YSeries.Units);
+        //            lateralStructure = LateralStructure.Compute(parameters[LateralStructure.FailureFunction.ParameterType].Probability, frequencyFx, parameters[IParameterEnum.LatralStructureFailureElevationFrequency].Probability);
+        //            if (transformFx.ParameterType == IParameterEnum.ExteriorInteriorStage)
+        //            {
+
+        //                ITransformFunction intExtFx = lateralStructure.InteriorExteriorGenerator(ITransformFunctionFactory.Factory(transformFx.Sample(parameters[IParameterEnum.ExteriorInteriorStage].Probability), transformFx.ParameterType, transformFx.Label, transformFx.XSeries.Units, transformFx.XSeries.Label, transformFx.YSeries.Units, transformFx.YSeries.Label));
+        //                frequencyFx = frequencyFx.Compose(intExtFx, parameters[frequencyFx.ParameterType].Probability, parameters[transformFx.ParameterType].Probability); // the transform probability is not really getting used since intExt is a constant.
+        //                while (frequencyFx.ParameterType == metrics[i].TargetFunction) metricRealizations.Add(metrics[i], metrics[i].Compute(frequencyFx));
+        //            }
+        //            else
+        //            {
+        //                // this yields a interior stage frequency function.
+        //                ITransformFunction intExtFx = lateralStructure.InteriorExteriorGenerator(frequencyFx);
+        //                frequencyFx = frequencyFx.Compose(intExtFx, parameters[frequencyFx.ParameterType].Probability, parameters[transformFx.ParameterType].Probability); // the transform probability is not really getting used since intExt is a constant.
+        //                while (frequencyFx.ParameterType == metrics[i].TargetFunction) metricRealizations.Add(metrics[i], metrics[i].Compute(frequencyFx));
+        //                // this yields the next frequency function ... at the moment this must be a stage damage transform and therefore a damage frequency function.
+        //                frequencyFx = frequencyFx.Compose(transformFx, parameters[frequencyFx.ParameterType].Probability, parameters[transformFx.ParameterType].Probability); // the transform probability is not really getting used since intExt is a constant.
+        //                while (frequencyFx.ParameterType == metrics[i].TargetFunction) metricRealizations.Add(metrics[i], metrics[i].Compute(frequencyFx));
+        //            }
+        //        }
+        //        frequencyFx = frequencyFx.Compose(transformFx, parameters[frequencyFx.ParameterType].Probability, parameters[transformFx.ParameterType].Probability); // the transform probability is not really getting used since intExt is a constant.
+        //        while (frequencyFx.ParameterType == metrics[i].TargetFunction) metricRealizations.Add(metrics[i], metrics[i].Compute(frequencyFx));
+        //    }
+        //    return new ConditionLocationRealization(metricRealizations, parameters);
+        //}
     }
 }

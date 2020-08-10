@@ -5,42 +5,23 @@ using Utilities;
 
 namespace Model.Parameters.Flows
 {
-    internal class Flow : IParameter, IValidate<Flow>
+    internal sealed class Flow : ParameterRangeBase<Flow>, IValidate<Flow>
     {
-        public UnitsEnum Units { get; }
-        public IParameterEnum ParameterType { get; }
-        public string Label { get; }
-        public IRange<double> Range { get; }
-        public bool IsConstant { get; }
+        public override IMessageLevels State { get; }
+        public override IEnumerable<IMessage> Messages { get; }
+        internal IRange<double> _RangeDefaultUnits { get; }
 
-        public IMessageLevels State { get; }
-        public IEnumerable<IMessage> Messages { get; }
-
-        internal Flow(IRange<double> range, bool isConstant, IParameterEnum type, UnitsEnum units = UnitsEnum.NotSet, string label = "")
+        internal Flow(IRange<double> range, bool isConstant, IParameterEnum type, UnitsEnum units = UnitsEnum.NotSet, string label = "", bool abbreviatedLabel = false) : base(range, isConstant, type, units, label, abbreviatedLabel)
         {
-            if (range.IsNull()) throw new ArgumentException(nameof(range));
-            else
-            {
-                Range = range;
-                IsConstant = isConstant;
-                ParameterType = type;
-                Units = units == UnitsEnum.NotSet ? type.DefaultUnits() : units;
-                Label = label == "" ? type.Print() : label;
-            }
+            _RangeDefaultUnits = Range.ConvertFlows(Units, ParameterType.DefaultUnits());
+            State = Validate(new Validation.Parameters.FlowValidator(), out IEnumerable<IMessage> msgs);
+            Messages = msgs;
         }
 
-        public IMessageLevels Validate(IValidator<Flow> validator, out IEnumerable<IMessage> msgs)
+        public override IMessageLevels Validate(IValidator<Flow> validator, out IEnumerable<IMessage> msgs)
         {
             return validator.IsValid(this, out msgs);
         }
-
-        public string Print(bool round = false, bool abbreviate = false)
-        {
-            return $"{ParameterType.Print(abbreviate)} in {Units.Print(abbreviate)}.";
-        }
-        public string PrintValue(bool round = false, bool abbreviate = false)
-        {
-            return $"{Print(round, abbreviate)} on the range: {Range.ConvertFlows(ParameterType.DefaultUnits(), Units).Print(round)}.";
-        }
     }
 }
+

@@ -12,5 +12,7 @@ namespace Model
     public static class IFdaFunctionUtilities
     {
         internal static IFunction Sample(this IFdaFunction fx, double nonexceedanceProbability) => ((FdaFunctionBase)fx)._Function.Sample(nonexceedanceProbability);
+        internal static IFrequencyFunction Sample(this IFrequencyFunction fx, double nonexceedanceProbability) => IFrequencyFunctionFactory.Factory(((FdaFunctionBase)fx)._Function.Sample(nonexceedanceProbability), fx.ParameterType, fx.Label, fx.XSeries.Label, fx.YSeries.Label, fx.YSeries.Units);
+        internal static ITransformFunction Sample(this ITransformFunction fx, double nonexceedanceProbability) => ITransformFunctionFactory.Factory(((FdaFunctionBase)fx)._Function.Sample(nonexceedanceProbability), fx.ParameterType, fx.Label, fx.XSeries.Units, fx.XSeries.Label, fx.YSeries.Units, fx.YSeries.Label);
     }
 }

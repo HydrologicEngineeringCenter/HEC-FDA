@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml.Linq;
 using Functions;
-using Functions.CoordinatesFunctions;
 using Utilities;
 
-namespace Model.Conditions.Locations.LateralStructures
+namespace Model.Functions
 {
-    internal class FailureFunction : Functions.FdaFunctionBase, IFdaFunction
+    internal sealed class FailureFunction : FdaFunctionBase, ITransformFunction
     {
         public override string Label { get; }
-        public override IParameter XSeries { get; }
-        public override IParameter YSeries { get; }
-        public override UnitsEnum Units { get; }
+        public override IParameterRange XSeries { get; }
+        public override IParameterRange YSeries { get; }
         public override IParameterEnum ParameterType => IParameterEnum.LateralStructureFailure;
+        
+        public override IMessageLevels State { get; }
+        public override IEnumerable<IMessage> Messages { get; }
 
         internal FailureFunction(IFunction fx, UnitsEnum xUnits = UnitsEnum.Foot, string xLabel = "", string yLabel = "", string label = ""): base(fx)
         {
             Label = label == "" ? ParameterType.Print() : label;
             XSeries = IParameterFactory.Factory(fx, IParameterEnum.ExteriorElevation, true, true, xUnits, xLabel);
             YSeries = IParameterFactory.Factory(fx, IParameterEnum.FailureProbability, IsConstant, false, UnitsEnum.Probability, yLabel);
-            Units = YSeries.Units;
+            State = Validate(new Validation.Functions.FdaFunctionBaseValidator(), out IEnumerable<IMessage> msgs);
+            Messages = msgs;
         }
 
         public double F(double p)

@@ -24,35 +24,56 @@ namespace Model
         public static ITransformFunction Factory(IFunction fx, IParameterEnum fType, string label = "", UnitsEnum xUnits = UnitsEnum.NotSet, string xLabel = "", UnitsEnum yUnits = UnitsEnum.NotSet, string yLabel = "")
         {
             label = label == "" ? fType.Print() : label;
+            xUnits = xUnits == UnitsEnum.NotSet ? fType.DefaultUnits() : xUnits;
+            yUnits = yUnits == UnitsEnum.NotSet ? fType.DefaultUnits() : yUnits; 
             switch (fType)
             {
-                case IParameterEnum.InflowOutflow:
-                    xUnits = xUnits == UnitsEnum.NotSet ? UnitsEnum.CubicFootPerSecond : xUnits;
-                    yUnits = yUnits == UnitsEnum.NotSet ? UnitsEnum.CubicFootPerSecond : yUnits;
-                    xLabel = xLabel == "" ? $"Unregulated Flow ({xUnits.Print(true)})" : xLabel;
-                    yLabel = yLabel == "" ? $"Regulated Flow ({yUnits.Print(true)})" : yLabel;
+                case IParameterEnum.InflowOutflow:                   
+                    xLabel = xLabel == "" ? $"{IParameterEnum.UnregulatedAnnualPeakFlow.Print(true)} ({xUnits.Print(true)})" : xLabel;
+                    yLabel = yLabel == "" ? $"{IParameterEnum.RegulatedAnnualPeakFlow.Print(true)} ({yUnits.Print(true)})" : yLabel;
                     return new Functions.InflowOutflow(fx, label, xUnits, xLabel, yUnits, yLabel);
                 case IParameterEnum.Rating:
-                    xUnits = xUnits == UnitsEnum.NotSet ? UnitsEnum.CubicFootPerSecond : xUnits;
-                    yUnits = yUnits == UnitsEnum.NotSet ? UnitsEnum.Foot : yUnits;
-                    xLabel = xLabel == "" ? $"Flow ({xUnits.Print(true)})" : xLabel;
-                    yLabel = yLabel == "" ? $"Water Surface Elevation ({yUnits.Print(true)})" : yLabel;
+                    xLabel = xLabel == "" ? $"{IParameterEnum.RegulatedAnnualPeakFlow.Print(true)} ({xUnits.Print(true)})" : xLabel;
+                    yLabel = yLabel == "" ? $"{IParameterEnum.ExteriorElevation.Print(true)} ({yUnits.Print(true)})" : yLabel;
                     return new Functions.Rating(fx, label, xUnits, xLabel, yUnits, yLabel);
                 case IParameterEnum.ExteriorInteriorStage:
-                    xUnits = xUnits == UnitsEnum.NotSet ? UnitsEnum.Foot : xUnits;
-                    yUnits = yUnits == UnitsEnum.NotSet ? UnitsEnum.Foot : yUnits;
                     xLabel = xLabel == "" ? $"Exterior (In-Channel) Water Surface Elevation ({xUnits.Print(true)})" : xLabel;
                     yLabel = yLabel == "" ? $"Interior (Floodplain) Water Surface Elevation ({yUnits.Print(true)})" : yLabel;
                     return new Functions.ExteriorInteriorStage(fx, label, xUnits, xLabel, yUnits, yLabel);
                 case IParameterEnum.InteriorStageDamage:
-                    xUnits = xUnits == UnitsEnum.NotSet ? UnitsEnum.Foot : xUnits;
-                    yUnits = yUnits == UnitsEnum.NotSet ? UnitsEnum.Dollars : yUnits;
                     xLabel = xLabel == "" ? $"Interior (Floodplain) Water Surface Elevation ({xUnits.Print(true)})" : xLabel;
                     yLabel = yLabel == "" ? $"Flood Damage ({xUnits.Print(true)})" : yLabel;
                     return new Functions.StageDamage(fx, label, xUnits, xLabel, yUnits, yLabel);
+                case IParameterEnum.LateralStructureFailure:
+                    xLabel = xLabel == "" ? $"Exterior (In-Channel) Water Surface Elevation ({xUnits.Print(true)})" : xLabel;
+                    yLabel = yLabel == "" ? $"Probability of Failure of Lateral Structure" : yLabel;
+                    return new Functions.FailureFunction(fx, xUnits, xLabel, yLabel, label);
                 default:
                     throw new ArgumentException($"The specified parameter type: {fType} is not a transform function.");
             }
+        }
+        /// <summary>
+        /// Provides a method for creation of automatically failure functions implementing the <see cref="IFdaFunction"/> interface.
+        /// </summary>
+        /// <param name="top"> The top of lateral structure elevation, in exterior elevation units. The exterior water surface elevation at which failure is assumed (e.g. the probability of failure is 100 percent). </param>
+        /// <param name="bottom"> The bottom of lateral structure elevation, in exterior elevation units. The exterior water surface elevation at the bottom or toe of the structure. </param>
+        /// <param name="xUnits"> Optional parameter describing the elevation axis units. Defaults to: <see cref="UnitsEnum.Foot"/> if no value is provided." </param>
+        /// <param name="xLabel"> Optional parameter describing the <see cref="IFdaFunction"/> elevation ordinates. If not set a default value is inferred based on the specified <see cref="IParameterEnum"/> value and its default units. </param>
+        /// <param name="yLabel"> Optional parameter describing the <see cref="IFdaFunction"/> failure probability ordinates. In this case <see cref="UnitsEnum.Probability"/>. </param>
+        /// <param name="label"> Optional parameter describing the <see cref="IFdaFunction"/>. </param>
+        /// <returns> An object implementing the <see cref="IFdaFunction"/> interface. </returns>
+        /// <remarks> If a more specific implementation is required consider requesting an <see cref="IFrequencyFunction"/> using the <see cref="IFrequencyFunctionFactory"/> or an <see cref="ITransformFunction"/> using the <see cref="ITransformFunctionFactory"/>. </remarks>
+        public static ITransformFunction Factory(double top, double bottom = double.NaN, UnitsEnum xUnits = UnitsEnum.Foot, string xLabel = "", string yLabel = "", string label = "")
+        {
+            IFunction fx = IFunctionFactory.Factory(new List<ICoordinate>() {
+                ICoordinateFactory.Factory(bottom == double.NaN ? IParameterUtilities.LateralStructureElevationRange.Min : bottom, 0.0),
+                ICoordinateFactory.Factory(top, 1.0) }, InterpolationEnum.Piecewise);
+            return new Functions.FailureFunction(fx, xUnits, xLabel, yLabel, label);
+        }
+        internal static ITransformFunction Factory(IFunction failurefx, IParameterEnum fType = IParameterEnum.LateralStructureFailure, string label = "", UnitsEnum xUnits = UnitsEnum.Foot, string xLabel = "", string yLabel = "")
+        {
+            if (fType != IParameterEnum.LateralStructureFailure) Factory(failurefx, fType, label, xUnits, xLabel, yUnits: UnitsEnum.NotSet, yLabel);
+            return new Functions.FailureFunction(failurefx, xUnits, xLabel, yLabel, label);
         }
     }
 }

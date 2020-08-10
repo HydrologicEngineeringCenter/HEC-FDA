@@ -20,7 +20,7 @@ namespace Functions.Validation
         public IEnumerable<IMessage> ReportErrors(ICoordinatesFunction obj)
         {
             List<IMessage> msgs = new List<IMessage>();
-            if (obj.State > IMessageLevels.Message) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The provided distribution is invalid and contains the following messages:{obj.Messages.PrintTabbedListOfMessages()}"));
+            if (obj.State > IMessageLevels.Message) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The provided distribution is invalid. Check the details for more information.", $"Distribution error messages:{obj.Messages.PrintTabbedListOfMessages()}"));
             return msgs;
         }
         internal static bool IsConstructable(IDistributedOrdinate distribution, out string msg)

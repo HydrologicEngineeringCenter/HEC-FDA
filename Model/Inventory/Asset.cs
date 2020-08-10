@@ -9,9 +9,9 @@ namespace Model.Inventory
     {
         #region Properties
         public IAssetEnum Type { get; }
-        public IElevation GroundElevation { get; }
-        public IElevation AssetHeight { get; }
-        public IElevation AssetElevation { get; }
+        public IParameterOrdinate GroundElevation { get; }
+        public IParameterOrdinate AssetHeight { get; }
+        public IParameterOrdinate AssetElevation { get; }
 
         #endregion
     }

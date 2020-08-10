@@ -101,7 +101,7 @@ namespace Model
                 case IParameterEnum.InflowFrequency:
                     return abbreviate ? "Flow Frequency Function" : "Unregulated Flow Frequency Function";
                 case IParameterEnum.InflowOutflow:
-                    return abbreviate ? "Regulation Function" : "Unregulated to Regulated Flow Function";
+                    return abbreviate ? "Regulation Function" : "Unregulated to Regulated Flow Transform Function";
                 case IParameterEnum.OutflowFrequency:
                     return abbreviate ? "Flow Frequency Function" : "Regulated Flow Frequency Function";
                 case IParameterEnum.Rating:
@@ -109,11 +109,11 @@ namespace Model
                 case IParameterEnum.ExteriorStageFrequency:
                     return abbreviate ? "Stage Frequency Function" : "Exterior (In-channel) Water Surface Elevation Frequency Function";
                 case IParameterEnum.ExteriorInteriorStage:
-                    return abbreviate ? "Stage Transform Function" : "Exterior (In-channel) to Interior (Floodplain) Water Elevation Transform Function";
+                    return abbreviate ? "Exterior to Interior Stage Transform Function" : "Exterior (In-channel) to Interior (Floodplain) Water Elevation Transform Function";
                 case IParameterEnum.InteriorStageFrequency:
                     return abbreviate ? "Stage Frequency Function" : "Interior (Floodplain) Water Surface Elevation Frequency Function";
                 case IParameterEnum.InteriorStageDamage:
-                    return abbreviate ? "Stage Damage Function" : "Interior (Floodplain) Water Surface Elevation Flood Damage Transform Function";
+                    return abbreviate ? "Stage Damage Function" : "Interior (Floodplain) Water Surface Elevation to Flood Damage Transform Function";
                 case IParameterEnum.DamageFrequency:
                     return abbreviate ? "Damage Frequency Function" : "Flood Damage Frequency Function";
 
@@ -121,7 +121,7 @@ namespace Model
                 case IParameterEnum.LateralStructure:
                     return "Lateral Structure";
                 case IParameterEnum.LateralStructureFailure:
-                    return abbreviate ? "Failure Function" : "Lateral Structure Elevation to Failure Probability Transform Function";
+                    return abbreviate ? "Lateral Structure Failure Function" : "Lateral Structure Elevation to Failure Probability Transform Function";
                 case IParameterEnum.LatralStructureFailureElevationFrequency:
                     return abbreviate ? "Frequency of Failure Stage" : "Frequency of Exterior Stage Associated with Lateral Structure Failure";
                 default:

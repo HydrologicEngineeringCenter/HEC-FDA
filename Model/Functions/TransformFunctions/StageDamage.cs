@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Functions;
+using Utilities;
 
 namespace Model.Functions
 {
@@ -12,21 +13,22 @@ namespace Model.Functions
     {
         #region Properties
         public override string Label { get; }
-        public override IParameter XSeries { get; }
-        public override IParameter YSeries { get; }
-        public override UnitsEnum Units { get; }
+        public override IParameterRange XSeries { get; }
+        public override IParameterRange YSeries { get; }
         public override IParameterEnum ParameterType => IParameterEnum.InteriorStageDamage;
+
+        public override IMessageLevels State { get; }
+        public override IEnumerable<IMessage> Messages { get; }
         #endregion
 
         #region Constructor
         internal StageDamage(IFunction fx, string label, UnitsEnum xUnits = UnitsEnum.Foot, string xlabel = "", UnitsEnum yUnits = UnitsEnum.Dollars, string ylabel = "") : base(fx)
         {
             Label = label == "" ? ParameterType.Print() : label;
-            xlabel = xlabel == "" ? $"Interior Stage ({xUnits.Print(true)})" : xlabel;
-            ylabel = ylabel == "" ? $"Damages ({yUnits.Print(true)})" : ylabel;
             XSeries = IParameterFactory.Factory(fx, IParameterEnum.InteriorElevation, true, true, xUnits, xlabel);
             YSeries = IParameterFactory.Factory(fx, IParameterEnum.FloodDamages, IsConstant, false, yUnits, ylabel);
-            Units = YSeries.Units;
+            State = Validate(new Validation.Functions.FdaFunctionBaseValidator(), out IEnumerable<IMessage> msgs);
+            Messages = msgs;
         }
         #endregion
 

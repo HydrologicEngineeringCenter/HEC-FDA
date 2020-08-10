@@ -27,6 +27,14 @@ namespace Model.Validation
         public IEnumerable<IMessage> ReportErrors(ElevationBase obj)
         {
             List<IMessage> msgs = new List<IMessage>();
+            if (obj.IsNull()) throw new ArgumentNullException(nameof(obj));
+            if (!obj.ParameterType.IsElevation())
+                msgs.Add(IMessageFactory.Factory(IMessageLevels.Error,
+                        $"A elevation parameter was expected but a {obj.ParameterType.Print()} parameter was found causing an error."));
+            if (!obj.Units.IsLength())
+                msgs.Add(IMessageFactory.Factory(IMessageLevels.Error,
+                        $"The specified units: {obj.Units.Print()} are not a valid measurement of elevation/length. " +
+                        $"The default unit of measurement for this {obj.ParameterType.Print()} parameter are: {obj.ParameterType.DefaultUnits().Print()}."));
             switch (obj.ParameterType)
             {
                 case IParameterEnum.GroundElevation:
@@ -74,37 +82,25 @@ namespace Model.Validation
         private string NoticeMessage(ElevationBase obj) => $"The specified {obj.Print(true, true)} is outside the allowable range.";
         private string ExtendedMessage(ElevationBase obj, double min, double max, UnitsEnum units)
         {
-            return $"The specified {obj.ParameterType} range: {obj.Range.Print(true)} exceeds the allowable approximate range of {AllowableRangeMessage(obj.ParameterType)}: " +
-                $"[{UnitsUtilities.Print(UnitsUtilities.ConvertLengths(_LowestGroundElevation, UnitsEnum.Foot, units), units, true, false)}," +
-                $" {UnitsUtilities.Print(UnitsUtilities.ConvertLengths(_HighestGroundElevation, UnitsEnum.Foot, units), units, true, false)}].";
+            return $"The specified {obj.ParameterType} range: {obj.Range.Print(true)} exceeds the allowable approximate range of {AllowableRangeMessage(obj)}.";
         }
-        private string AllowableRangeMessage(IParameterEnum type)
+        private string AllowableRangeMessage(ElevationBase obj)
         {
-            switch (type)
+            switch (obj.ParameterType)
             {
                 case IParameterEnum.GroundElevation:
                 case IParameterEnum.ExteriorElevation:
                 case IParameterEnum.InteriorElevation:
-                    return "ground elevations on Earth";
+                    return $"ground elevations on Earth: {IRangeFactory.Factory(_LowestGroundElevation, _HighestGroundElevation).ConvertLenghts(obj.ParameterType.DefaultUnits(), obj.Units).Print(true)} {obj.Units.Print(true)}.";
                 case IParameterEnum.AssetHeight:
-                    return "reasonable height of assets above the ground";
+                    return $"reasonable height of assets (such as buildings) above the ground elevation: {IRangeFactory.Factory(_LowestAssetHeight, _HighestAssetHeight).ConvertLenghts(obj.ParameterType.DefaultUnits(), obj.Units).Print(true)} {obj.Units.Print(true)}.";
                 case IParameterEnum.AssetElevation:
-                    return "reasonable elevation of assets (including ground elevations) on earth";
+                    return $"reasonable elevation of assets (such as buildings) on earth. This is based on the maximum and minimum elevation on earth: {IRangeFactory.Factory(_LowestGroundElevation, _HighestGroundElevation).ConvertLenghts(obj.ParameterType.DefaultUnits(), obj.Units).Print(true)} {obj.Units.Print(true)} plus a range of reasonable asset heights (above the ground elevation): {IRangeFactory.Factory(_LowestAssetHeight, _HighestAssetHeight).ConvertLenghts(obj.ParameterType.DefaultUnits(), obj.Units).Print(true)} {obj.Units.Print(true)}.";
                 case IParameterEnum.LateralStructureElevation:
-                    return "ground elevations on earth plus a reasonable lateral structure height";
+                    return $"ground elevations on earth plus a reasonable lateral structure height. This is based on the maximum and minimum elevation on earth: {IRangeFactory.Factory(_LowestGroundElevation, _HighestGroundElevation).ConvertLenghts(obj.ParameterType.DefaultUnits(), obj.Units).Print(true)} {obj.Units.Print(true)} plus a range of lateral structure heights (above the ground elevation): {IRangeFactory.Factory(0, _TallestDamOrLevee).ConvertLenghts(obj.ParameterType.DefaultUnits(), obj.Units).Print(true)} {obj.Units.Print(true)} with the maximum lateral structure elevation based on the Jinping-I arch dam located in China.";
                 default:
                     throw new NotSupportedException();
             }
-        }
-
-        public static bool IsConstructable(IParameterEnum type, IOrdinate value, UnitsEnum units, out string msg)
-        {
-            msg = "";
-            if (!IParameterUtilities.IsElevation(type)) msg += $"The {nameof(ElevationOrdinate)} parameter cannot be constructed because it is marked as a {type} parameter, not a elevation parameter.";
-            if (!UnitsUtilities.IsLength(units)) msg += $"The specified unit of measurement {units.ToString()} is invalid because it is not a supported measurement of length.";
-            if (value.IsNull()) msg += $"The {nameof(ElevationOrdinate)} parameter cannot be constructed because the elevation {nameof(value)} input parameter is null.";
-            if (value.Value().IsFinite()) msg += $"The {nameof(ElevationOrdinate)} parameter cannot be constructed because the elevation value is not a finite numerical value.";
-            return msg.Length == 0;
         }
     }
 }

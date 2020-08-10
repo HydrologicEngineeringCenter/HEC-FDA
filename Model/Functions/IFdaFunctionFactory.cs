@@ -62,12 +62,12 @@ namespace Model
             IFunction fx = IFunctionFactory.Factory(new List<ICoordinate>() { 
                 ICoordinateFactory.Factory(bottom == double.NaN ? IParameterUtilities.LateralStructureElevationRange.Min : bottom, 0.0), 
                 ICoordinateFactory.Factory(top, 1.0) }, InterpolationEnum.Piecewise);
-            return new Conditions.Locations.LateralStructures.FailureFunction(fx, xUnits, xLabel, yLabel, label);
+            return new Functions.FailureFunction(fx, xUnits, xLabel, yLabel, label);
         }
         internal static IFdaFunction Factory(IFunction failurefx, IParameterEnum fType = IParameterEnum.LateralStructureFailure, string label = "", UnitsEnum xUnits = UnitsEnum.Foot, string xLabel = "", string yLabel = "")
         {
             if (fType != IParameterEnum.LateralStructureFailure) Factory( fType, failurefx, label, xUnits, xLabel, yUnits: UnitsEnum.NotSet, yLabel);
-            return new Conditions.Locations.LateralStructures.FailureFunction(failurefx, xUnits, xLabel, yLabel, label);
+            return new Functions.FailureFunction(failurefx, xUnits, xLabel, yLabel, label);
         }
 
 

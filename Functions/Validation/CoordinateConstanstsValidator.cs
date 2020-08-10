@@ -22,8 +22,8 @@ namespace Functions.Validation
         public IEnumerable<IMessage> ReportErrors(CoordinateConstants obj)
         {
             List<IMessage> msgs = new List<IMessage>();
-            if (obj.X.Value().IsFinite()) msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The provided x {nameof(IOrdinate)} value: {obj.X.Print(true)} is not a finite numerical value. This is likely to cause errors during computation."));
-            if (obj.Y.Value().IsFinite()) msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The provided x {nameof(IOrdinate)} value: {obj.Y.Print(true)} is not a finite numerical value. This is likely to cause errors during computation."));
+            if (obj.X.Value().IsFinite() || obj.Y.Value().IsFinite()) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, 
+                $"The {obj.Print()} contains non-finite or non-numerical values. This is likely to cause errors during computation."));
             return msgs;
         }
         public static bool IsConstructable(Constant x, Constant y, out string msg)

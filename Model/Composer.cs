@@ -8,7 +8,7 @@ namespace Model
 {
     public static class Composer
     {
-        public static IFrequencyFunction Compose(this IFrequencyFunction frequencyFx, ITransformFunction transformFx, double pForFreqFx, double pForTransformFx)
+        public static IFrequencyFunction Compose(this IFrequencyFunction frequencyFx, ITransformFunction transformFx, double pForFreqFx = 0.50, double pForTransformFx = 0.50)
         {
             //acceptable transform could be an inflow outflow or a rating curve
             if (frequencyFx.ComposeableTypes.Contains(transformFx.ParameterType))
@@ -24,7 +24,5 @@ namespace Model
                 $"The {frequencyFx.ParameterType.ToString()} function Y parameters represent {frequencyFx.YSeries.ParameterType.ToString()}s while " +
                 $"the {transformFx.ParameterType.ToString()} function X parameters represent {transformFx.XSeries.ParameterType.ToString()}s, functional composition would produce an illogical Y axis.");
         }
-
-       
     }
 }

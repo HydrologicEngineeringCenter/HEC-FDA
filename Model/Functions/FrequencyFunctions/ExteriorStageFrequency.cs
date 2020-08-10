@@ -1,10 +1,6 @@
 ﻿using Functions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+using Utilities;
 
 namespace Model.Functions
 {
@@ -12,11 +8,13 @@ namespace Model.Functions
     {
         #region Properties
         public override string Label { get; }
-        public override IParameter XSeries { get; }
-        public override IParameter YSeries { get; }
-        public override UnitsEnum Units { get; }
+        public override IParameterRange XSeries { get; }
+        public override IParameterRange YSeries { get; }
         public override IParameterEnum ParameterType => IParameterEnum.DamageFrequency;
-        public List<IParameterEnum> ComposeableTypes => new List<IParameterEnum>() { IParameterEnum.InteriorStageDamage, IParameterEnum.ExteriorInteriorStage };       
+        public List<IParameterEnum> ComposeableTypes => new List<IParameterEnum>() { IParameterEnum.InteriorStageDamage, IParameterEnum.ExteriorInteriorStage };
+
+        public override IMessageLevels State { get;  }
+        public override IEnumerable<IMessage> Messages { get; }
         #endregion
 
         #region Constructor
@@ -25,7 +23,8 @@ namespace Model.Functions
             Label = label == "" ? ParameterType.Print() : label;
             XSeries = IParameterFactory.Factory(fx, IParameterEnum.NonExceedanceProbability, true, true, UnitsEnum.Probability, xLabel);
             YSeries = IParameterFactory.Factory(fx, IParameterEnum.ExteriorElevation, IsConstant, false, yUnits, yLabel);
-            Units = YSeries.Units;
+            State = Validate(new Validation.Functions.FdaFunctionBaseValidator(), out IEnumerable<IMessage> msgs);
+            Messages = msgs;
         }
         #endregion
 

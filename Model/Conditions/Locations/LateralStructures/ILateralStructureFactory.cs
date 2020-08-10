@@ -18,7 +18,7 @@ namespace Model
             IFdaFunction fx = IFdaFunctionFactory.Factory(top, bottom, units);
             return new Conditions.Locations.LateralStructures.LateralStructure(IElevationFactory.Factory(top, units, IParameterEnum.ExteriorElevation), fx, units, label);
         }
-        internal static ILateralStructure Factory(IElevation top, IFdaFunction failureFx, UnitsEnum units, string label)
+        internal static ILateralStructure Factory(IParameterOrdinate top, IFdaFunction failureFx, UnitsEnum units, string label)
         {
             return new Conditions.Locations.LateralStructures.LateralStructure(top, failureFx, units, label);
         }

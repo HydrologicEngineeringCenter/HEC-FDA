@@ -14,14 +14,15 @@ namespace Model
     /// </summary>
     public interface IFdaFunction : IParameter, ISerializeToXML<IFdaFunction>
     {
+        #region Properties
         /// <summary>
         /// Describes the order of Y value relative to increasing X values.
         /// </summary>
         OrderedSetEnum Order { get; }
-        ///// <summary>
-        ///// The range of Y values.
-        ///// </summary>
-        //new IRange<double> Range { get; }
+        /// <summary>
+        /// The range of Y values.
+        /// </summary>
+        IRange<double> Range { get; }
         /// <summary>
         /// The range of X values.
         /// </summary>
@@ -34,24 +35,26 @@ namespace Model
         /// <summary>
         /// Describes the X axis of the function <see cref="UnitsEnum"/>, <see cref="ParameterType"/>, etc.
         /// </summary>
-        IParameter XSeries { get; }
+        IParameterRange XSeries { get; }
         /// <summary>
         /// Describes the Y axis of the function <see cref="UnitsEnum"/>, <see cref="ParameterType"/>, etc.
         /// </summary>
-        IParameter YSeries { get; }
-        ///// <summary>
-        ///// The type of the function.
-        ///// </summary>
-        //IParameterEnum ParameterType { get; }    
-        ///// <summary>
-        ///// True if the function ordinates are static values, false otherwise.
-        ///// </summary>
-        //bool IsConstant { get; }
+        IParameterRange YSeries { get; }
         /// <summary>
         /// A set of coordinates describing the function.
         /// </summary>
-        List<ICoordinate> Coordinates { get; } 
+        List<ICoordinate> Coordinates { get; }
 
+        /// <summary>
+        /// <see langword="true"/> if the <see cref="IFdaFunction"/> is comprised of other linked <see cref="IFunction"/>s, <see langword="false"/> otherwise.
+        /// </summary>
+        bool IsLinkedFunction { get; }
+        /// <summary>
+        /// Describes the <see cref="IOrdinate.Type"/> of the <see cref="ICoordinate.Y"/> values in the set of <see cref="Coordinates"/>. 
+        /// </summary>
+        IOrdinateEnum DistributionType { get; }
+        #endregion
+        #region Functions
         /// <summary>
         /// Computes <see cref="ICoordinatesFunction.F(IOrdinate)"/> returning a y value for the provided x value.
         /// </summary>
@@ -71,12 +74,8 @@ namespace Model
         /// <param name="function"> The specified <see cref="IFdaFunction"/> to compared to the instance object. </param>
         /// <returns> <see langword="true"/> if the two objects are equal in value, <see langword="false"/> otherwise. </returns>
         bool Equals(IFdaFunction function);
+        #endregion
 
-        bool IsLinkedFunction { get; }
-        /// <summary>
-        /// Describes the <see cref="IOrdinate.Type"/> of the <see cref="ICoordinate.Y"/> values in the set of <see cref="Coordinates"/>. 
-        /// </summary>
-        IOrdinateEnum DistributionType { get; }
 
         #region Replacement
         ///// <summary>

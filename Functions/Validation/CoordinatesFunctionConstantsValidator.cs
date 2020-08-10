@@ -19,9 +19,17 @@ namespace Functions.Validation
         {
             List<IMessage> errors = new List<IMessage>();
             if (obj.IsNull()) throw new ArgumentNullException($"The {nameof(CoordinatesFunctionConstants)} cannot be validated because it is null.");
-            if (!IsFunction(obj.Coordinates, out IEnumerable<IMessage> msgs)) errors.Add(IMessageFactory.Factory(msgs.Max(), $"The {nameof(ICoordinatesFunction)} is invalid because it is not a true function: \r\n {msgs.PrintTabbedListOfMessages()}"));
-            if (IsCoordinateMessages(obj.Coordinates, out IEnumerable<IMessage> coordinatemsgs)) errors.Add(IMessageFactory.Factory(coordinatemsgs.Max(), $"The function coordinates contain the following messages: \r\n {coordinatemsgs.PrintTabbedListOfMessages()}"));
-            if (obj.Interpolator != InterpolationEnum.None && obj.Coordinates.Count == 0) errors.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The coordinates function specified an interpolation scheme but interpolation cannot occur because only one coordinate was provided."));
+            if (!IsFunction(obj.Coordinates, out IEnumerable<IMessage> msgs)) 
+                errors.Add(IMessageFactory.Factory(msgs.Max(), 
+                    $"The {nameof(ICoordinatesFunction)} is invalid. It is not function. Check the details for more information.", 
+                    $"The following are {nameof(ICoordinatesFunction)} validation messages: \r\n {msgs.PrintTabbedListOfMessages()}"));
+            if (IsCoordinateMessages(obj.Coordinates, out IEnumerable<IMessage> coordinatemsgs)) 
+                errors.Add(IMessageFactory.Factory(coordinatemsgs.Max(), 
+                    $"The {nameof(ICoordinatesFunction)} contains messages regarding its coordinates. Check the details for more information.",  
+                    $"The following are messages about the {nameof(ICoordinatesFunction.Coordinates)}: \r\n {coordinatemsgs.PrintTabbedListOfMessages()}"));
+            if (obj.Interpolator != InterpolationEnum.None && obj.Coordinates.Count == 0) 
+                errors.Add(IMessageFactory.Factory(IMessageLevels.Error, 
+                    $"The {nameof(ICoordinatesFunction)} specified an {obj.Interpolator.ToString()} scheme but interpolation cannot occur because only one {nameof(ICoordinate)} was provided."));
             return errors;
         }
         public static bool IsConstructable(List<ICoordinate> coordinates, InterpolationEnum interpolator, out string msg)

@@ -9,13 +9,14 @@ using Utilities;
 namespace Model
 {
     /// <summary>
-    /// A container for elevation parameters.
+    /// A container for parameters with a single ordinate.
     /// </summary>
-    public interface IElevation: IParameter, IMessagePublisher
+    public interface IParameterOrdinate: IParameter
     {
+        UnitsEnum Units { get; }
         /// <summary>
         /// The elevation parameter value.
         /// </summary>
-        IOrdinate Parameter { get; }
+        IOrdinate Ordinate { get; }
     }
 }

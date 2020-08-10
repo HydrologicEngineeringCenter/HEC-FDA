@@ -14,7 +14,7 @@ namespace Model
         /// <summary>
         /// The <see cref="IParameterEnum.ExteriorElevation"/> at which the <see cref="ILateralStructure"/> is assumed to fail in the realization.
         /// </summary>
-        IElevation FailureElevation { get; }
+        IParameterOrdinate FailureElevation { get; }
 
         /// <summary>
         /// Creates an new <see cref="IParameterEnum.ExteriorInteriorStage"/> <see cref="ITransformFunction"/> taking into account the <see cref="FailureElevation"/> and specified constant <see cref="IParameterEnum.ExteriorInteriorStage"/> <see cref="ITransformFunction"/>.

@@ -13,16 +13,20 @@
     <Compile Remove="Condition-delete\**" />
     <Compile Remove="Elevations\**" />
     <Compile Remove="Inputs\**" />
+    <Compile Remove="Parameters\Series\**" />
     <EmbeddedResource Remove="Condition-delete\**" />
     <EmbeddedResource Remove="Elevations\**" />
     <EmbeddedResource Remove="Inputs\**" />
+    <EmbeddedResource Remove="Parameters\Series\**" />
     <None Remove="Condition-delete\**" />
     <None Remove="Elevations\**" />
     <None Remove="Inputs\**" />
+    <None Remove="Parameters\Series\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="ComputePoint.cs" />
+    <Compile Remove="Conditions\ComputeTypeEnum.cs" />
     <Compile Remove="FdaOrdinate.cs" />
     <Compile Remove="Functions\TransformFunctions\LeveeFailure.cs" />
     <Compile Remove="IComputePoint.cs" />
@@ -33,6 +37,7 @@
     <Compile Remove="Outputs\IRealization.cs" />
     <Compile Remove="Outputs\Realization.cs" />
     <Compile Remove="Validation\DamageFrequencyValidator.cs" />
+    <Compile Remove="Validation\FrequencySeriesValidator.cs" />
   </ItemGroup>
 
   <ItemGroup>

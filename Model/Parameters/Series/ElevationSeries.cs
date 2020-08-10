@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Utilities;
-using Functions;
-using Model.Validation;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Text;
+//using Utilities;
+//using Functions;
+//using Model.Validation;
 
-namespace Model.Parameters.Series
-{
+//namespace Model.Parameters.Series
+//{
     //internal class ElevationSeries : ParameterSeriesBase, IValidate<IElevation>, IElevation
     //{
     //    public override UnitsEnum Units { get; }
@@ -30,4 +30,4 @@ namespace Model.Parameters.Series
     //        return validator.IsValid(this, out msgs);
     //    }
     //}
-}
+//}
