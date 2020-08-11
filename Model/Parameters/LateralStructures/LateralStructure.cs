@@ -5,7 +5,7 @@ using System.Text;
 using Functions;
 using Utilities;
 
-namespace Model.Conditions.Locations.LateralStructures
+namespace Model.Parameters.LateralStructures
 {
     internal class LateralStructure: ILateralStructure
     {

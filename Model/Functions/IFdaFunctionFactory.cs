@@ -25,7 +25,7 @@ namespace Model
         /// <param name="yLabel"> Optional parameter describing the <see cref="IFdaFunction"/> y ordinates. If not set a default value is inferred based on the specified <see cref="IParameterEnum"/> value and the <paramref name="yUnits"/>. </param>
         /// <returns> An object implementing the <see cref="IFdaFunction"/> interface. </returns>
         /// <remarks> If a more specific implementation is required consider requesting an <see cref="IFrequencyFunction"/> using the <see cref="IFrequencyFunctionFactory"/> or an <see cref="ITransformFunction"/> using the <see cref="ITransformFunctionFactory"/>. </remarks>
-        public static IFdaFunction Factory( IParameterEnum fType, IFunction fx, string label = "", UnitsEnum xUnits = UnitsEnum.NotSet, string xLabel = "", UnitsEnum yUnits = UnitsEnum.NotSet, string yLabel = "")
+        public static IFdaFunction Factory(IParameterEnum fType, IFunction fx, string label = "", UnitsEnum xUnits = UnitsEnum.NotSet, string xLabel = "", UnitsEnum yUnits = UnitsEnum.NotSet, string yLabel = "")
         {
             switch (fType) 
             {
@@ -45,34 +45,7 @@ namespace Model
                 default:
                     throw new NotImplementedException($"The specified parameter type: {fType.ToString()} is not supported.");
             }
-        }
-        /// <summary>
-        /// Provides a method for creation of automatically failure functions implementing the <see cref="IFdaFunction"/> interface.
-        /// </summary>
-        /// <param name="top"> The top of lateral structure elevation, in exterior elevation units. The exterior water surface elevation at which failure is assumed (e.g. the probability of failure is 100 percent). </param>
-        /// <param name="bottom"> The bottom of lateral structure elevation, in exterior elevation units. The exterior water surface elevation at the bottom or toe of the structure. </param>
-        /// <param name="xUnits"> Optional parameter describing the elevation axis units. Defaults to: <see cref="UnitsEnum.Foot"/> if no value is provided." </param>
-        /// <param name="xLabel"> Optional parameter describing the <see cref="IFdaFunction"/> elevation ordinates. If not set a default value is inferred based on the specified <see cref="IParameterEnum"/> value and its default units. </param>
-        /// <param name="yLabel"> Optional parameter describing the <see cref="IFdaFunction"/> failure probability ordinates. In this case <see cref="UnitsEnum.Probability"/>. </param>
-        /// <param name="label"> Optional parameter describing the <see cref="IFdaFunction"/>. </param>
-        /// <returns> An object implementing the <see cref="IFdaFunction"/> interface. </returns>
-        /// <remarks> If a more specific implementation is required consider requesting an <see cref="IFrequencyFunction"/> using the <see cref="IFrequencyFunctionFactory"/> or an <see cref="ITransformFunction"/> using the <see cref="ITransformFunctionFactory"/>. </remarks>
-        public static IFdaFunction Factory(double top, double bottom = double.NaN, UnitsEnum xUnits = UnitsEnum.Foot, string xLabel = "", string yLabel = "", string label = "")
-        {
-            IFunction fx = IFunctionFactory.Factory(new List<ICoordinate>() { 
-                ICoordinateFactory.Factory(bottom == double.NaN ? IParameterUtilities.LateralStructureElevationRange.Min : bottom, 0.0), 
-                ICoordinateFactory.Factory(top, 1.0) }, InterpolationEnum.Piecewise);
-            return new Functions.FailureFunction(fx, xUnits, xLabel, yLabel, label);
-        }
-        internal static IFdaFunction Factory(IFunction failurefx, IParameterEnum fType = IParameterEnum.LateralStructureFailure, string label = "", UnitsEnum xUnits = UnitsEnum.Foot, string xLabel = "", string yLabel = "")
-        {
-            if (fType != IParameterEnum.LateralStructureFailure) Factory( fType, failurefx, label, xUnits, xLabel, yUnits: UnitsEnum.NotSet, yLabel);
-            return new Functions.FailureFunction(failurefx, xUnits, xLabel, yLabel, label);
-        }
-
-
-
-        
+        }        
     } 
     
 }

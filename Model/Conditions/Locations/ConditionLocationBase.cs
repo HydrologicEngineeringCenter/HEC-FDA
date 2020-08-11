@@ -48,7 +48,7 @@ namespace Model.Conditions.Locations
             foreach (var parameter in sampleParameters) sample.Add(parameter.Key, parameter.Value ? new Sample(rng.NextDouble()) : new Sample());
             return sample;
         }
-        public abstract IConditionLocationRealization<Out> PreviewCompute();
+        public abstract IConditionLocationRealization<string> ComputePreview();
         public abstract IConditionLocationRealization<Out> Compute(IReadOnlyDictionary<IParameterEnum, ISample> parameterSamplePs);
         protected Dictionary<IParameterEnum, ISampledParameter<IFdaFunction>> SampleFunctions(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters)
         {

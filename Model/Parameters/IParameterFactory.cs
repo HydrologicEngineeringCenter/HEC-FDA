@@ -93,16 +93,19 @@ namespace Model
                 }
             }
         }
-        public static IParameterOrdinate Factory(double val, IParameterEnum type, UnitsEnum units = UnitsEnum.NotSet, string label = "", bool abbreviatedLabel = true)
+        internal static IParameterOrdinate Factory(double ordinate, IParameterEnum type, UnitsEnum units = UnitsEnum.NotSet, string label = "", bool abbreviatedLabel = true)
         {
             switch (type) 
             {
-                case IParameterEnum.ExteriorElevation:
-                    return new Parameters.Elevations.ElevationOrdinate(IOrdinateFactory.Factory(val), type, units, label, abbreviatedLabel);
+                case IParameterEnum.LateralStructureElevation:
+                    units = units == UnitsEnum.NotSet ? UnitsEnum.Foot : units;
+                    return new Model.Parameters.Elevations.ElevationOrdinate(IOrdinateFactory.Factory(ordinate), type, units, label, abbreviatedLabel);
                 default:
                     throw new NotImplementedException();
             }
+
         }
+
         //internal static IParameter Factory(IFunction fx, IParameterEnum fType, bool x = true, UnitsEnum units = UnitsEnum.NotSet, string label = "")
         //{
         //    if (x)

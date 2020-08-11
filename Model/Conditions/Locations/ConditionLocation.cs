@@ -23,7 +23,7 @@ namespace Model.Conditions.Locations
         }
         #endregion
         #region Functions
-        public override IConditionLocationRealization<string> PreviewCompute()
+        public override IConditionLocationRealization<string> ComputePreview()
         {
             Dictionary<IParameterEnum, ISample> parameters = new Dictionary<IParameterEnum, ISample>();
             foreach (var pair in Parameters) parameters.Add(pair.Key, new Samples.Sample());

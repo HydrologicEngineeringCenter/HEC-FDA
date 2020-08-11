@@ -25,13 +25,41 @@ namespace Model.Conditions.Locations
             return parameters;
         }
 
-        public override IConditionLocationRealization<ISampledParameter<IParameterOrdinate>> PreviewCompute()
+        public override IConditionLocationRealization<string> ComputePreview()
         {
-            throw new NotImplementedException();
+            /* Differs from Compute() below by:
+             *  1. No failure stage is sampled (although the failure function median curve is sampled).
+             *  2. Damages from damage frequency curve are multiplied by failure probabilities.
+             */
+            Dictionary<IParameterEnum, ISample> parameters = new Dictionary<IParameterEnum, ISample>();
+            foreach (var pair in Parameters) parameters.Add(pair.Key, new Samples.Sample());
+            /* Nearly identical to LateralStructure.Compute(...) below this point except:
+             *  3. Failure functions applied damage frequency function (as described above).
+             */
+            int metricIndex = 0;
+            IList<IMetric> endPoints = Metrics.ToList();
+            var sampledFxs = SampleFunctionsWithLateralStructure(parameters);
+            Dictionary<IMetric, double> metrics = new Dictionary<IMetric, double>();
+            IFrequencyFunction frequencyFx = (IFrequencyFunction)sampledFxs[EntryPoint.ParameterType].Parameter;
+            foreach (var fx in TransformFunctions)
+            {
+                if (fx.ParameterType == IParameterEnum.InteriorStageDamage)
+                {
+                    sampledFxs[IParameterEnum.InteriorStageDamage] = new Samples.SampledFunction(sampledFxs[IParameterEnum.InteriorStageDamage], FailureAdjustedStageDamageFunctionGenerator(frequencyFx, (ITransformFunction)sampledFxs[IParameterEnum.InteriorStageDamage].Parameter, (ITransformFunction)sampledFxs[IParameterEnum.LateralStructureFailure].Parameter));
+                }
+                frequencyFx = frequencyFx.Compose((ITransformFunction)sampledFxs[fx.ParameterType].Parameter);
+                sampledFxs.Add(frequencyFx.ParameterType, new Samples.SampledFunction(new Samples.Sample(), frequencyFx));
+                while (frequencyFx.ParameterType == endPoints[metricIndex].TargetFunction)
+                {
+                    metrics.Add(endPoints[metricIndex], endPoints[metricIndex].Compute(frequencyFx));
+                    metricIndex++;
+                }
+            }
+            return new ConditionLocationRealization(sampledFxs, metrics);
         }
         public override IConditionLocationRealization<ISampledParameter<IParameterOrdinate>> Compute(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters = null)
         {
-            /* Differs from Compute(...) without lateral structure in a couple key ways.
+            /* Differs from LateralStructure.Compute(...) without lateral structure in a couple key ways.
              * 1. Lateral structure parameters are sampled...
              *          - failure function, and 
              *          - failure stage) must be sampled.\
@@ -52,7 +80,7 @@ namespace Model.Conditions.Locations
             var sampledFxs = SampleFunctionsWithLateralStructure(sampleParameters);
             Dictionary<IMetric, double> metrics = new Dictionary<IMetric, double>();
             IFrequencyFunction frequencyFx = (IFrequencyFunction)sampledFxs[EntryPoint.ParameterType].Parameter;
-            foreach (var fx in TransformFunctions)
+            foreach (var fx in TransformFunctions) // should NOT include failure function (so this ends in the right spot).
             {
                 if (frequencyFx.ParameterType == IParameterEnum.ExteriorStageFrequency)
                 {
@@ -67,7 +95,7 @@ namespace Model.Conditions.Locations
                     else // an exterior interior relationship already exists.
                     {
                         ITransformFunction eiFx = ExteriorInteriorFunctionGenerator((ITransformFunction)sampledFxs[IParameterEnum.ExteriorInteriorStage].Parameter, failElevation.Parameter.Ordinate.Value());
-                        sampledFxs[IParameterEnum.ExteriorInteriorStage] = new Samples.SampledFunction(new Samples.Sample(sampledFxs[IParameterEnum.ExteriorInteriorStage].Probability), eiFx);
+                        sampledFxs[IParameterEnum.ExteriorInteriorStage] = new Samples.SampledFunction(sampledFxs[IParameterEnum.ExteriorInteriorStage], eiFx);
                     }
                 }
                 frequencyFx = frequencyFx.Compose((ITransformFunction)sampledFxs[fx.ParameterType].Parameter);
@@ -106,6 +134,15 @@ namespace Model.Conditions.Locations
                 coordinates.Add(ICoordinateFactory.Factory(pair.X.Value(), pair.X.Value() < failureElevation ? 0.0 : pair.Y.Value()));
             }
             return ITransformFunctionFactory.Factory(IFunctionFactory.Factory(coordinates, eiFx.Interpolator), eiFx.ParameterType, eiFx.Label, eiFx.XSeries.Units, eiFx.XSeries.Label, eiFx.YSeries.Units, eiFx.YSeries.Label);
+        }
+        private ITransformFunction FailureAdjustedStageDamageFunctionGenerator(IFrequencyFunction frequencyFx, ITransformFunction stageDamageFx, ITransformFunction failureFx)
+        {
+            List<ICoordinate> coordinates = new List<ICoordinate>();
+            foreach(var pair in frequencyFx.Coordinates)
+            {
+                coordinates.Add(ICoordinateFactory.Factory(pair.Y.Value(), stageDamageFx.F(pair.Y).Value() * failureFx.F(pair.Y).Value()));
+            }
+            return ITransformFunctionFactory.Factory(IFunctionFactory.Factory(coordinates, frequencyFx.Interpolator), IParameterEnum.InteriorStageDamage, stageDamageFx.Label, stageDamageFx.XSeries.Units, stageDamageFx.XSeries.Label, stageDamageFx.YSeries.Units, stageDamageFx.YSeries.Label);
         }
     }
 }
