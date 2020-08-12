@@ -39,11 +39,11 @@ namespace FdaViewModel.Conditions
 
         private bool _usesThreshold = false;
 
-        private MetricEnum _metricType;
+        private IMetricEnum _metricType;
         private double _thresholdValue;
 
         public ConditionBuilder(string name, string desc, int analysisYear, ImpactArea.ImpactAreaElement impactAreaElem, 
-            ImpactArea.ImpactAreaRowItem indexLocation, MetricEnum metricType, double thresholdValue)
+            ImpactArea.ImpactAreaRowItem indexLocation, IMetricEnum metricType, double thresholdValue)
         {
             _name = name;
             _description = desc;

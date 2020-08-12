@@ -73,8 +73,8 @@ namespace FdaViewModel.Conditions
         private int _Year;
         private ImpactArea.ImpactAreaElement _SelectedImpactArea;
 
-        private ObservableCollection<MetricEnum> _ThresholdTypes = new ObservableCollection<MetricEnum>();
-        private MetricEnum _SelectedThresholdType;
+        private ObservableCollection<IMetricEnum> _ThresholdTypes = new ObservableCollection<IMetricEnum>();
+        private IMetricEnum _SelectedThresholdType;
         private bool _ThresholdLinesAllowedToShow = true;
 
         #endregion
@@ -112,11 +112,11 @@ namespace FdaViewModel.Conditions
         //}
         public double ThresholdValue { get;
             set; }
-        public ObservableCollection<MetricEnum> ThresholdTypes
+        public ObservableCollection<IMetricEnum> ThresholdTypes
         {
             get { return _ThresholdTypes; }
         }
-        public MetricEnum SelectedThresholdType
+        public IMetricEnum SelectedThresholdType
         {
             get { return _SelectedThresholdType; }
             set { _SelectedThresholdType = value; PlotThresholdLine(ThresholdValue); }
@@ -466,12 +466,12 @@ namespace FdaViewModel.Conditions
             //because it hasn't changed yet, it is an ordering issue, so i just pass it in.
             IMetric metric = new Metric(SelectedThresholdType, thresholdValue);
             //PerformanceThreshold pt = new PerformanceThreshold(SelectedThresholdType, thresholdValue);
-            if(SelectedThresholdType == MetricEnum.InteriorStage)
+            if(SelectedThresholdType == IMetricEnum.InteriorStage)
             {
                 Plot7ControlVM.IndividualPlotWrapperVM.Metric = metric;//this will trigger the callback in the view side
 
             }
-            else if (SelectedThresholdType == MetricEnum.Damages)
+            else if (SelectedThresholdType == IMetricEnum.Damages)
             {
                 Plot7ControlVM.IndividualPlotWrapperVM.Metric = metric;
             }
@@ -495,7 +495,7 @@ namespace FdaViewModel.Conditions
 
         private void LoadThresholdTypes()
         {
-            foreach (MetricEnum metEnum in Enum.GetValues(typeof(MetricEnum)))
+            foreach (IMetricEnum metEnum in Enum.GetValues(typeof(IMetricEnum)))
             {
                 _ThresholdTypes.Add(metEnum);
             }
@@ -952,7 +952,7 @@ namespace FdaViewModel.Conditions
             //validate metric
             //is there enough functions
             //there has to be a plot0 curve
-            if (_SelectedThresholdType == MetricEnum.NotSet)
+            if (_SelectedThresholdType == IMetricEnum.NotSet)
             {
                 //message that the metric type is not set
                 return false;

@@ -4,14 +4,15 @@ using System.Text;
 
 namespace Model.Conditions.Locations
 {
-    class ConditionLocationRealizationWithLateralStructure : IConditionLocationRealization<ISampledParameter<IParameterOrdinate>>
+    class ConditionLocationTimeRealizationWithLateralStructure : IConditionLocationTimeRealization
     {
 
         public IReadOnlyDictionary<IMetric, double> Metrics { get; }
         public ISampledParameter<IParameterOrdinate> LateralStructureFailureElevation { get; }
         public IReadOnlyDictionary<IParameterEnum, ISampledParameter<IFdaFunction>> Functions { get; }
+        public bool HadLateralStructure => true;
 
-        internal ConditionLocationRealizationWithLateralStructure(IReadOnlyDictionary<IParameterEnum, ISampledParameter<IFdaFunction>> fxs, ISampledParameter<IParameterOrdinate> failureElevation, IReadOnlyDictionary<IMetric, double> metrics)
+        internal ConditionLocationTimeRealizationWithLateralStructure(IReadOnlyDictionary<IParameterEnum, ISampledParameter<IFdaFunction>> fxs, ISampledParameter<IParameterOrdinate> failureElevation, IReadOnlyDictionary<IMetric, double> metrics)
         {
             //ToDo: Validation
             Functions = fxs;

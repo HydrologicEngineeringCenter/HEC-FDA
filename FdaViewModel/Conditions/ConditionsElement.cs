@@ -49,7 +49,7 @@ namespace FdaViewModel.Conditions
         private bool _UseAggregatedStageDamage;
         private AggregatedStageDamage.AggregatedStageDamageElement _StageDamage;
         private bool _UseThreshold;
-        private Model.MetricEnum _MetricType;//dollars or stage. need enum.
+        private Model.IMetricEnum _MetricType;//dollars or stage. need enum.
         private double _ThresholdValue;
         //private ParentElement _ConditionsOwnerElement;
         private List<BaseFdaElement> _ConditionsTreeNodes;
@@ -174,7 +174,7 @@ namespace FdaViewModel.Conditions
             get { return _UseThreshold; }
             set { _UseThreshold = value; NotifyPropertyChanged(); }
         }
-        public Model.MetricEnum MetricType {
+        public Model.IMetricEnum MetricType {
             get { return _MetricType; }
             set { _MetricType = value; NotifyPropertyChanged(); }
         }
@@ -311,7 +311,7 @@ namespace FdaViewModel.Conditions
             bool usesAnalyiticalFlowFrequency, FrequencyRelationships.AnalyticalFrequencyElement aFlowFreq, bool usesInflowOutflow, FlowTransforms.InflowOutflowElement inflowOutflowElement,
             bool useRating, StageTransforms.RatingCurveElement rc, bool useIntExtStage, StageTransforms.ExteriorInteriorElement extInt, bool useLevee, GeoTech.LeveeFeatureElement leveeElement,
             bool useFailureFunction, GeoTech.FailureFunctionElement failureFunctionElement, bool useAggStageDamage, AggregatedStageDamage.AggregatedStageDamageElement stageDamage,
-            bool useThreshold, Model.MetricEnum thresholdType, double thresholdValue ) : base()
+            bool useThreshold, Model.IMetricEnum thresholdType, double thresholdValue ) : base()
         {
             Name = name;
            // _ConditionsOwnerElement = owner;

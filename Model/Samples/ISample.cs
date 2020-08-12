@@ -7,7 +7,7 @@ using Utilities;
 namespace Model
 {
     /// <summary>
-    /// Provides a data interface for keeping track of sampled and constant parameters in complex functions, for instance <see cref="IConditionLocation.Compute()"/>
+    /// Provides a data interface for keeping track of sampled and constant parameters in complex functions, for instance <see cref="IConditionLocationTime.Compute()"/>
     /// </summary>
     public interface ISample
     {

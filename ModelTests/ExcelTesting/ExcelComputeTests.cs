@@ -44,7 +44,7 @@ namespace ModelTests.ExcelTesting
 
                 List<ITransformFunction> transformFunctions = GetTransformFunctions(xs2, ys2, interpolation2, xs3, ys3, interpolation3, xs4, ys4, interpolation4, xs5, ys5, interpolation5);
 
-                List<MetricEnum> metricThresholdTypes = new List<MetricEnum>();// { ConvertStringToMetricEnum(thresholdType) };
+                List<IMetricEnum> metricThresholdTypes = new List<IMetricEnum>();// { ConvertStringToMetricEnum(thresholdType) };
                 foreach (string thresholdType in thresholdTypes)
                 {
                     metricThresholdTypes.Add(ConvertStringToMetricEnum(thresholdType));
@@ -82,23 +82,23 @@ namespace ModelTests.ExcelTesting
             return randomNumbers;
         }
 
-        private MetricEnum ConvertStringToMetricEnum(string metric)
+        private IMetricEnum ConvertStringToMetricEnum(string metric)
         {
             if(metric.ToUpper().Equals("EXTERIORSTAGE") || metric.ToUpper().Equals("EXTERIOR STAGE"))
             {
-                return MetricEnum.ExteriorStage;
+                return IMetricEnum.ExteriorStage;
             }
             else if (metric.ToUpper().Equals("INTERIORSTAGE") || metric.ToUpper().Equals("INTERIOR STAGE"))
             {
-                return MetricEnum.InteriorStage;
+                return IMetricEnum.InteriorStage;
             }
             else if (metric.ToUpper().Equals("DAMAGES"))
             {
-                return MetricEnum.Damages;
+                return IMetricEnum.Damages;
             }
             else if (metric.ToUpper().Equals("EXPECTEDANNUALDAMAGE") || metric.ToUpper().Equals("EXPECTED ANNUAL DAMAGE"))
             {
-                return MetricEnum.ExpectedAnnualDamage;
+                return IMetricEnum.ExpectedAnnualDamage;
             }
             else
             {
@@ -107,7 +107,7 @@ namespace ModelTests.ExcelTesting
 
         }
 
-        //public enum MetricEnum
+        //public enum IMetricEnum
         //{
         //    NotSet = 0,
         //    ExteriorStage = 1,
@@ -174,7 +174,7 @@ namespace ModelTests.ExcelTesting
         }
 
 
-        internal List<IMetric> CreateMetrics(List<MetricEnum> types, List<double> values)
+        internal List<IMetric> CreateMetrics(List<IMetricEnum> types, List<double> values)
         {
             if (types.Count != values.Count)
             {

@@ -7,7 +7,7 @@ using Functions;
 
 namespace Model.Conditions.Locations
 {
-    internal sealed class ConditionLocation : ConditionLocationBase<string, string>
+    internal sealed class ConditionLocationTimeNoLateralStructure : ConditionLocationTimeBase<string>
     {
         #region Properties
         
@@ -16,20 +16,20 @@ namespace Model.Conditions.Locations
         #endregion
 
         #region Constructor
-        internal ConditionLocation(ILocation location, int yr, IFrequencyFunction frequencyFx, IEnumerable<ITransformFunction> transformFxs, IEnumerable<IMetric> metrics, string label = ""): base(location, yr, frequencyFx, transformFxs, metrics, label)
+        internal ConditionLocationTimeNoLateralStructure(ILocation location, int yr, IFrequencyFunction frequencyFx, IEnumerable<ITransformFunction> transformFxs, IEnumerable<IMetric> metrics, string label = ""): base(location, yr, frequencyFx, transformFxs, metrics, label)
         {
             //TODO: Validation            
             Parameters = ParameterSamplePairs();
         }
         #endregion
         #region Functions
-        public override IConditionLocationRealization<string> ComputePreview()
+        public override IConditionLocationTimeRealization ComputePreview()
         {
             Dictionary<IParameterEnum, ISample> parameters = new Dictionary<IParameterEnum, ISample>();
             foreach (var pair in Parameters) parameters.Add(pair.Key, new Samples.Sample());
             return Compute(parameters); 
         }
-        public override IConditionLocationRealization<string> Compute(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters = null)
+        public override IConditionLocationTimeRealization Compute(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters = null)
         {
             int metricIndex = 0;
             IList<IMetric> endPoints = Metrics.ToList();
@@ -46,7 +46,7 @@ namespace Model.Conditions.Locations
                     metricIndex++;
                 }
             }
-            return new ConditionLocationRealization(sampledFxs, metrics);
+            return new ConditionLocationTimeRealizationNoLateralStructure(sampledFxs, metrics);
         }
         #endregion
 

@@ -23,7 +23,7 @@ namespace ModelTests.InputsTests.ConditionsTests
             Sampler.RegisterSampler(new LinkedFunctionsSampler());
         }
 
-        internal List<IMetric> CreateMetrics(List<MetricEnum> types, List<double> values)
+        internal List<IMetric> CreateMetrics(List<IMetricEnum> types, List<double> values)
         {
             if(types.Count != values.Count)
             {

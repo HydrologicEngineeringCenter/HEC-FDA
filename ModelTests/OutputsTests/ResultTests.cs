@@ -45,7 +45,7 @@ namespace ModelTests.OutputsTests
             transformFunctions.Add(CreateTransformFunction(intStages, damage, InterpolationEnum.Linear, IFdaFunctionEnum.InteriorStageDamage));
 
             //create the metrics
-            List<IMetric> metrics = CreateMetrics(new List<MetricEnum>() { MetricEnum.Damages }, new List<double>() { thresholdValue });
+            List<IMetric> metrics = CreateMetrics(new List<IMetricEnum>() { IMetricEnum.Damages }, new List<double>() { thresholdValue });
 
             ICondition condition = ConditionFactory.Factory(name, analysisYear, inflowFreq, transformFunctions, metrics);
 

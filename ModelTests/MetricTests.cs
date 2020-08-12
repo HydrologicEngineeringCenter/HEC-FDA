@@ -27,7 +27,7 @@ namespace ModelTests
             double dummyProb = .5;//this isn't actually being used for anything
             Sampler.RegisterSampler(new ConstantSampler());
 
-            Metric metric = new Metric(MetricEnum.Damages, thresholdValue);
+            Metric metric = new Metric(IMetricEnum.Damages, thresholdValue);
             ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xs.ToList(), ys.ToList(), InterpolationEnum.Linear);
             IFrequencyFunction freqFunc = ImpactAreaFunctionFactory.FactoryFrequency(func, IFdaFunctionEnum.DamageFrequency);
             double value = metric.Compute(freqFunc, dummyProb);
@@ -42,7 +42,7 @@ namespace ModelTests
             double dummyProb = .5;//this isn't actually being used for anything
             Sampler.RegisterSampler(new ConstantSampler());
 
-            Metric metric = new Metric(MetricEnum.Damages, 5000);
+            Metric metric = new Metric(IMetricEnum.Damages, 5000);
             ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(new List<double>() { 1, 2 },new List<double>() { 1, 2 }, InterpolationEnum.Linear);
             IFrequencyFunction freqFunc = ImpactAreaFunctionFactory.FactoryFrequency(func, IFdaFunctionEnum.InflowFrequency);
             Assert.Throws<ArgumentException>(() => metric.Compute(freqFunc, dummyProb));
@@ -54,11 +54,11 @@ namespace ModelTests
         #region TargetFunction
 
         [Theory]
-        [InlineData(MetricEnum.Damages, IFdaFunctionEnum.DamageFrequency)]
-        [InlineData(MetricEnum.ExteriorStage, IFdaFunctionEnum.ExteriorStageFrequency)]
-        [InlineData(MetricEnum.InteriorStage, IFdaFunctionEnum.InteriorStageFrequency)]
-        [InlineData(MetricEnum.ExpectedAnnualDamage, IFdaFunctionEnum.DamageFrequency)]
-        public void Metric_TargetFunction_Returns_(MetricEnum type, IFdaFunctionEnum expectedType)
+        [InlineData(IMetricEnum.Damages, IFdaFunctionEnum.DamageFrequency)]
+        [InlineData(IMetricEnum.ExteriorStage, IFdaFunctionEnum.ExteriorStageFrequency)]
+        [InlineData(IMetricEnum.InteriorStage, IFdaFunctionEnum.InteriorStageFrequency)]
+        [InlineData(IMetricEnum.ExpectedAnnualDamage, IFdaFunctionEnum.DamageFrequency)]
+        public void Metric_TargetFunction_Returns_(IMetricEnum type, IFdaFunctionEnum expectedType)
         {
             Metric metric = new Metric(type, 5000);
             Assert.True(metric.TargetFunction == expectedType);

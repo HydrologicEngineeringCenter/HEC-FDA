@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Model.Inputs.Conditions;
-using Model.Functions;
-
-namespace Model
+﻿namespace Model
 {
     /// <summary>
     /// Provides a public interface for computable metrics.
@@ -17,11 +9,11 @@ namespace Model
         /// <summary>
         /// The enumerable metric type.
         /// </summary>
-        MetricEnum Type { get; }
+        IMetricEnum Type { get; }
         /// <summary>
         /// The exceedance probability value for the metric. 
         /// </summary>
-        /// <remarks> Note: this parameter is not used for <see cref="MetricEnum.ExpectedAnnualDamage"/>. </remarks>
+        /// <remarks> Note: this parameter is not used for <see cref="IMetricEnum.ExpectedAnnualDamage"/>. </remarks>
         double ExceedanceTarget { get; }
         /// <summary>
         /// The target function for the metric.

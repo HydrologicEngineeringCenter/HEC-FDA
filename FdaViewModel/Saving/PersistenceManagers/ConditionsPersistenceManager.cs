@@ -142,7 +142,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
                 //threshold stuff
                 bool useThreshold = Convert.ToBoolean( rowData[USE_THRESHOLD_COL]);
-                Model.MetricEnum thresholdType = Model.MetricEnum.InteriorStage;
+                Model.IMetricEnum thresholdType = Model.IMetricEnum.InteriorStage;
                 Enum.TryParse((string)rowData[THRESHOLD_TYPE_COL], out thresholdType);
                 double thresholdValue = Convert.ToDouble( rowData[THRESHOLD_VALUE_COL]);
 

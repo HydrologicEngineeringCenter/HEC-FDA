@@ -7,7 +7,7 @@ using Utilities;
 
 namespace Model.Conditions.Locations
 {
-    internal abstract class ConditionLocationBase<In, Out> : IConditionLocation<In, Out>
+    internal abstract class ConditionLocationTimeBase<T> : IConditionLocationTime<T>
     {
         #region Properties
         public int Year { get; }
@@ -17,11 +17,11 @@ namespace Model.Conditions.Locations
         public IOrderedEnumerable<IMetric> Metrics { get; }
         public IOrderedEnumerable<ITransformFunction> TransformFunctions { get; }
         public abstract IReadOnlyDictionary<IParameterEnum, bool> Parameters { get; }
-        public abstract In LateralStructure { get; }
+        public abstract T LateralStructure { get; }
         
         #endregion
         #region Constructor
-        internal ConditionLocationBase(ILocation location, int yr, IFrequencyFunction entryPoint, IEnumerable<ITransformFunction> transformFxs, IEnumerable<IMetric> metrics, string label = "")
+        internal ConditionLocationTimeBase(ILocation location, int yr, IFrequencyFunction entryPoint, IEnumerable<ITransformFunction> transformFxs, IEnumerable<IMetric> metrics, string label = "")
         {
             //TODO: Validation
             Year = yr;
@@ -48,8 +48,8 @@ namespace Model.Conditions.Locations
             foreach (var parameter in sampleParameters) sample.Add(parameter.Key, parameter.Value ? new Sample(rng.NextDouble()) : new Sample());
             return sample;
         }
-        public abstract IConditionLocationRealization<string> ComputePreview();
-        public abstract IConditionLocationRealization<Out> Compute(IReadOnlyDictionary<IParameterEnum, ISample> parameterSamplePs);
+        public abstract IConditionLocationTimeRealization ComputePreview();
+        public abstract IConditionLocationTimeRealization Compute(IReadOnlyDictionary<IParameterEnum, ISample> parameterSamplePs);
         protected Dictionary<IParameterEnum, ISampledParameter<IFdaFunction>> SampleFunctions(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters)
         {
             Dictionary<IParameterEnum, ISampledParameter<IFdaFunction>> sampledFxs = new Dictionary<IParameterEnum, ISampledParameter<IFdaFunction>>()

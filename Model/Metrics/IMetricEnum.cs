@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Model
+﻿namespace Model
 {
     /// <summary>
     /// Performance metrics.
     /// </summary>
-    public enum MetricEnum
+    public enum IMetricEnum
     {
         /// <summary>
         /// Default value representing an error.

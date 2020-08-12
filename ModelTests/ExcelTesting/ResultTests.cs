@@ -28,7 +28,7 @@ namespace ModelTests.ExcelTesting
             int worksheetNumber, int rowToWriteTo, int columnToWriteTo)
         {
             //get the metrics
-            List<MetricEnum> metricThresholdTypes = new List<MetricEnum>();
+            List<IMetricEnum> metricThresholdTypes = new List<IMetricEnum>();
             foreach (string thresholdType in thresholdTypes)
             {
                 metricThresholdTypes.Add(ConvertStringToMetricEnum(thresholdType));
@@ -177,7 +177,7 @@ namespace ModelTests.ExcelTesting
             return probabilities;
         }
 
-        internal List<IMetric> CreateMetrics(List<MetricEnum> types, List<double> values)
+        internal List<IMetric> CreateMetrics(List<IMetricEnum> types, List<double> values)
         {
             if (types.Count != values.Count)
             {
@@ -191,23 +191,23 @@ namespace ModelTests.ExcelTesting
             return metrics;
         }
 
-        private MetricEnum ConvertStringToMetricEnum(string metric)
+        private IMetricEnum ConvertStringToMetricEnum(string metric)
         {
             if (metric.ToUpper().Equals("EXTERIORSTAGE") || metric.ToUpper().Equals("EXTERIOR STAGE"))
             {
-                return MetricEnum.ExteriorStage;
+                return IMetricEnum.ExteriorStage;
             }
             else if (metric.ToUpper().Equals("INTERIORSTAGE") || metric.ToUpper().Equals("INTERIOR STAGE"))
             {
-                return MetricEnum.InteriorStage;
+                return IMetricEnum.InteriorStage;
             }
             else if (metric.ToUpper().Equals("DAMAGES"))
             {
-                return MetricEnum.Damages;
+                return IMetricEnum.Damages;
             }
             else if (metric.ToUpper().Equals("EXPECTEDANNUALDAMAGE") || metric.ToUpper().Equals("EXPECTED ANNUAL DAMAGE"))
             {
-                return MetricEnum.ExpectedAnnualDamage;
+                return IMetricEnum.ExpectedAnnualDamage;
             }
             else
             {
@@ -252,24 +252,24 @@ namespace ModelTests.ExcelTesting
             for (int j = 0; j < metrics.Count; j++)
             {
                 IMetric met = metrics[j];
-                MetricEnum metType = met.Type;
+                IMetricEnum metType = met.Type;
                 if (singleRowResult.ContainsKey(met))
                 {
-                    switch (met.Type)// == MetricEnum.Damages)
+                    switch (met.Type)// == IMetricEnum.Damages)
                     {
-                        case MetricEnum.Damages:
+                        case IMetricEnum.Damages:
                             {
                                  damageVal = singleRowResult[met];
                                 hasDamages = true;
                                 break;
                             }
-                        case MetricEnum.InteriorStage:
+                        case IMetricEnum.InteriorStage:
                             {
                                  intVal = singleRowResult[met];
                                 hasInterior = true;
                                 break;
                             }
-                        case MetricEnum.ExteriorStage:
+                        case IMetricEnum.ExteriorStage:
                             {
                                  extVal = singleRowResult[met];
                                 hasExterior = true;

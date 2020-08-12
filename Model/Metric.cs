@@ -6,26 +6,26 @@ using Model.Functions;
 
 namespace Model
 {
-    public class Metric: IMetric
+    internal sealed class Metric: IMetric
     {
         #region Properties
         public double ExceedanceTarget { get; } = 0;
-        public MetricEnum Type { get; } = MetricEnum.NotSet;
+        public IMetricEnum Type { get; } = IMetricEnum.NotSet;
         public IParameterEnum TargetFunction { get; }
         #endregion
 
         #region Constructors
-        public Metric (MetricEnum type, double exceedanceTarget = 0)
+        internal Metric (IMetricEnum type, double exceedanceTarget = 0)
         {
-            if (type == MetricEnum.NotSet) throw new ArgumentException("The desired type of metric must be set.");
-            if (type != MetricEnum.ExpectedAnnualDamage && double.IsNaN(exceedanceTarget) || double.IsInfinity(exceedanceTarget)) throw new ArgumentException("A computable target value must be provided.");
+            if (type == IMetricEnum.NotSet) throw new ArgumentException("The desired type of metric must be set.");
+            if (type != IMetricEnum.ExpectedAnnualDamage && double.IsNaN(exceedanceTarget) || double.IsInfinity(exceedanceTarget)) throw new ArgumentException("A computable target value must be provided.");
             Type = type;
             ExceedanceTarget = exceedanceTarget;
             TargetFunction = GetTargetFunction();
         }
-        public Metric ()
+        internal Metric ()
         {
-            Type = MetricEnum.Damages;
+            Type = IMetricEnum.ExpectedAnnualDamage;
             TargetFunction = GetTargetFunction();
         }
         #endregion
@@ -35,13 +35,13 @@ namespace Model
         {
             switch (Type)
             {
-                case MetricEnum.ExteriorStage:
+                case IMetricEnum.ExteriorStage:
                     return IParameterEnum.ExteriorStageFrequency;
-                case MetricEnum.InteriorStage:
+                case IMetricEnum.InteriorStage:
                     return IParameterEnum.InteriorStageFrequency;
-                case MetricEnum.Damages:
+                case IMetricEnum.Damages:
                     return IParameterEnum.DamageFrequency;
-                case MetricEnum.ExpectedAnnualDamage:
+                case IMetricEnum.ExpectedAnnualDamage:
                     return IParameterEnum.DamageFrequency;
                 default:
                     throw new InvalidOperationException("The application could not set a valid target function when calling Metric.TargetFunction()");
@@ -56,7 +56,7 @@ namespace Model
             }
 
             IFunction sampledFreqFunc = Sampler.Sample(((FdaFunctionBase)frequencyFunction)._Function, probability);
-            if (Type == MetricEnum.ExpectedAnnualDamage)
+            if (Type == IMetricEnum.ExpectedAnnualDamage)
             {
                 return sampledFreqFunc.TrapizoidalRiemannSum();
                 //return frequencyFunction.Integrate();

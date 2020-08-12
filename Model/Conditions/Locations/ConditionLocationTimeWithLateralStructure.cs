@@ -6,12 +6,12 @@ using Functions;
 
 namespace Model.Conditions.Locations
 {
-    internal sealed class ConditionLocationWithLateralStructure: ConditionLocationBase<ILateralStructure, ISampledParameter<IParameterOrdinate>>
+    internal sealed class ConditionLocationTimeWithLateralStructure: ConditionLocationTimeBase<ILateralStructure>
     {
         public override IReadOnlyDictionary<IParameterEnum, bool> Parameters { get; }
         public override ILateralStructure LateralStructure { get; }
 
-        internal ConditionLocationWithLateralStructure(ILocation location, int yr, IFrequencyFunction frequencyFx, IEnumerable<ITransformFunction> transformFxs, ILateralStructure lateralStructure, IEnumerable<IMetric> metrics, string label = ""): base(location, yr, frequencyFx, transformFxs, metrics, label)
+        internal ConditionLocationTimeWithLateralStructure(ILocation location, int yr, IFrequencyFunction frequencyFx, IEnumerable<ITransformFunction> transformFxs, ILateralStructure lateralStructure, IEnumerable<IMetric> metrics, string label = ""): base(location, yr, frequencyFx, transformFxs, metrics, label)
         {
             //TODO: Validation
             LateralStructure = lateralStructure;
@@ -25,7 +25,7 @@ namespace Model.Conditions.Locations
             return parameters;
         }
 
-        public override IConditionLocationRealization<string> ComputePreview()
+        public override IConditionLocationTimeRealization ComputePreview()
         {
             /* Differs from Compute() below by:
              *  1. No failure stage is sampled (although the failure function median curve is sampled).
@@ -55,9 +55,10 @@ namespace Model.Conditions.Locations
                     metricIndex++;
                 }
             }
-            return new ConditionLocationRealization(sampledFxs, metrics);
+            var lateralStructure = new Samples.SampledOrdinate(IParameterFactory.Factory(double.NaN, IParameterEnum.ExteriorElevation), new Samples.Sample());
+            return new ConditionLocationTimeRealizationWithLateralStructure(sampledFxs, lateralStructure, metrics);
         }
-        public override IConditionLocationRealization<ISampledParameter<IParameterOrdinate>> Compute(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters = null)
+        public override IConditionLocationTimeRealization Compute(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters = null)
         {
             /* Differs from LateralStructure.Compute(...) without lateral structure in a couple key ways.
              * 1. Lateral structure parameters are sampled...
@@ -106,7 +107,7 @@ namespace Model.Conditions.Locations
                     metricIndex++;
                 } 
             }
-            return new ConditionLocationRealizationWithLateralStructure(sampledFxs, failElevation, metrics);
+            return new ConditionLocationTimeRealizationWithLateralStructure(sampledFxs, failElevation, metrics);
         }
         private Dictionary<IParameterEnum, ISampledParameter<IFdaFunction>> SampleFunctionsWithLateralStructure(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters)
         {

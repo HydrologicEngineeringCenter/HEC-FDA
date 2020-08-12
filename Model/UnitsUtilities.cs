@@ -198,7 +198,8 @@ namespace Model
         /// <param name="round"> <see langword="true"/> if some values should be rounded or displayed in scientific notation to produce a more human readable result. </param>
         /// <param name="abbreviate"> <see langword="true"/> if the unit name should be printed using the <a href="http://www.ieee.org/">IEEE</a> recommended abbreviation, <see langword="false"/> otherwise. </param>
         /// <returns> A string in the form... <see cref="IParameter"/> <see cref="IParameter"/>, where <see cref="IParameter"/> is formated as a string by the <see cref="IOrdinate.Print(bool)"/> function. </returns>
-        public static string Print(IParameter parameter, bool round = false, bool abbreviate = false) => parameter.Print(round) + " " + Print(parameter.Units, abbreviate);
+        public static string Print(IParameter parameter, bool round = false, bool abbreviate = false) => parameter.Print(round);
+        public static string Print(IParameterOrdinate parameter, bool round = false, bool abbreviate = false) => parameter.Print(round) + " " + Print(parameter.Units, abbreviate);
         /// <summary>
         /// Prints a string representation of the <see cref="IParameter"/> value and its units.
         /// </summary>

@@ -20,7 +20,7 @@ namespace Model.Outputs
         //public IList<int> IterationSeedContainer { get; private set; } = new List<int>();
         //public Statistics.Histogram Aep { get; private set; } = new Statistics.Histogram(50, 0.5, 0.001, false);
         //public Statistics.Histogram Ead { get; private set; } = new Statistics.Histogram(50, 0, 1000000, false);
-        public IDictionary<MetricEnum, Statistics.IHistogram> Metrics = new Dictionary<MetricEnum, Statistics.IHistogram>();
+        public IDictionary<IMetricEnum, Statistics.IHistogram> Metrics = new Dictionary<IMetricEnum, Statistics.IHistogram>();
         public System.Collections.Concurrent.ConcurrentDictionary<int, IDictionary<IMetric, double>> Realizations { get; }
         public int Seed { get; }
         //public List<IRealization> RealizationIds { get; }
@@ -36,7 +36,7 @@ namespace Model.Outputs
         public Result(ICondition condition, int seed)
         {
             Condition = condition;
-            Metrics = new Dictionary<MetricEnum, Statistics.IHistogram>();
+            Metrics = new Dictionary<IMetricEnum, Statistics.IHistogram>();
             Realizations = new System.Collections.Concurrent.ConcurrentDictionary<int, IDictionary<IMetric, double>>();
             Seed = seed;
         }
