@@ -6,7 +6,7 @@ namespace Model
     /// <summary>
     /// Provides a interface for computed <see cref="IConditionLocationTime{T}"/> realizations.
     /// </summary>   
-    public interface IConditionLocationTimeRealization
+    public interface IConditionLocationTimeRealization: IConditionLocationTimeRealizationSummary
     {
         /// <summary>
         /// A <see cref="string"/> parameter describing the sampled failure elevation (or noting its absence if not lateral structure was present in the underlying <see cref="IConditionLocationTime{T}"/>.

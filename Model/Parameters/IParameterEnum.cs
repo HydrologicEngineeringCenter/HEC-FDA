@@ -111,15 +111,15 @@ namespace Model
         /// Peak annual inflow or stage event damage frequency function (only produced through composition - assumes existence of an undamaged inventory at the time of the annual peak inflow or exterior stage event).
         /// </summary>
         DamageFrequency = 109,            //AnnualExceedanceChance-> AggregatedDamage 
+        /// <summary>
+        /// Lateral structure exterior stage failure probability function.
+        /// </summary>
+        LateralStructureFailure = 110,   //ExteriorPeakStage     -> ChanceOfFailure
 
         /// <summary>
         /// A lateral structure.
         /// </summary>
         LateralStructure = 111,
-        /// <summary>
-        /// Lateral structure exterior stage failure probability function.
-        /// </summary>
-        LateralStructureFailure = 112,   //ExteriorPeakStage     -> ChanceOfFailure
         /// <summary>
         /// The frequency of the exterior stage associated with the failure of the lateral structure in a realization. 
         /// </summary>

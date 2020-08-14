@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Model
 {
+    /// <summary>
+    /// Enumerates supports <see cref="Model"/> units of measurement.
+    /// </summary>
     public enum UnitsEnum
     {
         /*
@@ -15,6 +18,7 @@ namespace Model
          *  - Volume (+21 to +29)
          *  - Time (+31 to +39)
          *  - Flow (+41 to + 49)
+         *  - Dollars (+51 to +59)
          */
         /// <summary>
         /// No units.
@@ -87,6 +91,26 @@ namespace Model
         /// <summary>
         /// US Dollars.
         /// </summary>
-        Dollars = 51
+        Dollars = 51,
+        /// <summary>
+        /// 10s of US Dollars
+        /// </summary>
+        TenDollars = 52,
+        /// <summary>
+        /// 100s of US Dollars
+        /// </summary>
+        HundredDollars = 53,
+        /// <summary>
+        /// 1,000 of US Dollars
+        /// </summary>
+        ThousandDollars = 54,
+        /// <summary>
+        /// 1,000,000 of US Dollars
+        /// </summary>
+        MillionDollars = 54,
+        /// <summary>
+        /// 1,000,000,000 of US Dollars
+        /// </summary>
+        BillionDollars = 55,
     }
 }

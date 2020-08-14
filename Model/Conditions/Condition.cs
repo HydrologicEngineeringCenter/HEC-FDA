@@ -8,10 +8,14 @@ using Model.Functions;
 
 namespace Model.Inputs.Conditions
 {
+    internal sealed class Conditon 
+    {
+        
+    }
+
     //internal sealed class Condition : ICondition
     //{
-        #region Properties
-        
+        //#region Properties      
         //public string Id
         //{
         //    get

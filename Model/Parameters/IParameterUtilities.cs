@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Utilities;
 
 namespace Model
 {
-    internal static class IParameterUtilities
+    /// <summary>
+    /// Utility and extension methods for objects implementing the <see cref="IParameter"/>, <see cref="IParameterRange"/> and <see cref="IParameterOrdinate"/> interfaces.
+    /// </summary>
+    public static class IParameterUtilities
     {
         /// <summary>
         /// The acceptable range ground elevations. 
@@ -29,35 +30,87 @@ namespace Model
         private static IRange<int> _FlowRange => IRangeFactory.Factory(11, 19);
         private static IRange<int> _ElevationRange => IRangeFactory.Factory(21, 29);
         private static IRange<int> _DamageRange => IRangeFactory.Factory(31, 39);
+        private static IRange<int> _FunctionRange => IRangeFactory.Factory(101, 110);
 
-        internal static bool IsProbability(this IParameterEnum parameter, bool xUnits = false) => 
-            _ProbabilityRange.IsOnRange((int)parameter) ||
+        /// <summary>
+        /// Tests if the <see cref="IParameterEnum"/> is measured as a probability.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameterEnum"/> being evaluated. </param>
+        /// <returns> <see langword="true"/> if the <see cref="IParameterEnum"/> is measured as a probability, <see langword="false"/> otherwise. </returns>
+        public static bool IsProbability(this IParameterEnum parameter) => 
+            _ProbabilityRange.IsOnRange((int)parameter) ||  
             parameter == IParameterEnum.LateralStructureFailure ||
-            !xUnits &&
             parameter == IParameterEnum.InflowFrequency ||
             parameter == IParameterEnum.OutflowFrequency ||
             parameter == IParameterEnum.ExteriorStageFrequency ||
             parameter == IParameterEnum.InteriorStageFrequency ||
             parameter == IParameterEnum.DamageFrequency;
-        internal static bool IsFlow(this IParameterEnum parameter, bool xUnits = false) =>
+        /// <summary>
+        /// Tests if the <see cref="IParameter"/> is measured as a probability.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameter"/> object to test. </param>
+        /// <returns><see langword="true"/> if the <see cref="IParameter"/> is measured as a probability, <see langword="false"/> otherwise. </returns>
+        public static bool IsProbability(this IParameter parameter) => parameter.ParameterType.IsProbability();
+        
+        /// <summary>
+        /// Tests if the <see cref="IParameterEnum"/> is measured as a flow.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameterEnum"/> object to test. </param>
+        /// <returns><see langword="true"/> if the <see cref="IParameterEnum"/> is measured as a flow, <see langword="false"/> otherwise. </returns>
+        public static bool IsFlow(this IParameterEnum parameter) =>
             _FlowRange.IsOnRange((int)parameter) ||
+            parameter == IParameterEnum.InflowFrequency ||
             parameter == IParameterEnum.InflowOutflow ||
-            (xUnits && parameter == IParameterEnum.Rating) ||
-            (!xUnits && (parameter == IParameterEnum.InflowFrequency || 
-                        parameter == IParameterEnum.OutflowFrequency || 
-                        parameter == IParameterEnum.Rating));
-        internal static bool IsElevation(this IParameterEnum parameter, bool xUnits = false) =>
-            _ElevationRange.IsOnRange((int)parameter) ||
-            parameter == IParameterEnum.ExteriorInteriorStage ||
-            (xUnits &&  parameter == IParameterEnum.InteriorStageDamage) ||
-            (!xUnits && (parameter == IParameterEnum.ExteriorStageFrequency ||
-                        parameter == IParameterEnum.InteriorStageFrequency));
-        internal static bool IsDamage(this IParameterEnum parameter, bool xUnits = false) => 
-            _DamageRange.IsOnRange((int)parameter) ||
-            (!xUnits && (parameter == IParameterEnum.InteriorStageDamage ||
-                        parameter == IParameterEnum.DamageFrequency));
+            parameter == IParameterEnum.OutflowFrequency ||
+            parameter == IParameterEnum.Rating;
+        /// <summary>
+        /// Tests if the <see cref="IParameter"/> is measured as a flow.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameter"/> object to test. </param>
+        /// <returns><see langword="true"/> if the <see cref="IParameter"/> is measured as a flow, <see langword="false"/> otherwise. </returns>
+        public static bool IsFlow(this IParameter parameter) => parameter.ParameterType.IsFlow();
 
-        internal static UnitsEnum DefaultUnits(this IParameterEnum parameter)
+        /// <summary>
+        /// Tests if the <see cref="IParameterEnum"/> is measured as an elevation.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameterEnum"/> object to test. </param>
+        /// <returns><see langword="true"/> if the <see cref="IParameterEnum"/> is measured as an elevation, <see langword="false"/> otherwise. </returns>
+        public static bool IsElevation(this IParameterEnum parameter) =>
+            _ElevationRange.IsOnRange((int)parameter) ||
+            parameter == IParameterEnum.Rating ||
+            parameter == IParameterEnum.ExteriorStageFrequency ||
+            parameter == IParameterEnum.ExteriorInteriorStage  ||
+            parameter == IParameterEnum.InteriorStageFrequency ||
+            parameter == IParameterEnum.InteriorStageDamage;
+        /// <summary>
+        /// Tests if the <see cref="IParameter"/> is measured as an elevation.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameter"/> object to test. </param>
+        /// <returns><see langword="true"/> if the <see cref="IParameter"/> is measured as an elevation, <see langword="false"/> otherwise. </returns>
+        public static bool IsElevation(this IParameter parameter) => parameter.ParameterType.IsElevation();
+        
+        /// <summary>
+        /// Tests if the <see cref="IParameterEnum"/> is measured in units of dollars.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameterEnum"/> object to test. </param>
+        /// <returns><see langword="true"/> if the <see cref="IParameterEnum"/> is measured in units of dollars, <see langword="false"/> otherwise. </returns>
+        public static bool IsDamage(this IParameterEnum parameter) =>
+            _DamageRange.IsOnRange((int)parameter) ||
+            parameter == IParameterEnum.InteriorStageDamage ||
+            parameter == IParameterEnum.DamageFrequency;
+        /// <summary>
+        /// Tests if the <see cref="IParameter"/> is measured in units of dollars.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameter"/> object to test. </param>
+        /// <returns><see langword="true"/> if the <see cref="IParameter"/> is measured in units of dollars, <see langword="false"/> otherwise. </returns>
+        public static bool IsDamage(this IParameter parameter) => parameter.ParameterType.IsDamage();
+
+        /// <summary>
+        /// Provides the default unit of measurement (<seealso cref="UnitsEnum"/> for the <see cref="IParameterEnum"/>.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameterEnum"/> to describe. </param>
+        /// <returns> The <see cref="UnitsEnum"/> for the default unit of measurement. </returns>
+        public static UnitsEnum DefaultUnits(this IParameterEnum parameter)
         {
             if (parameter.IsProbability()) return UnitsEnum.Probability;
             else if (parameter.IsFlow()) return UnitsEnum.CubicFootPerSecond;
@@ -65,8 +118,13 @@ namespace Model
             else if (parameter.IsDamage()) return UnitsEnum.Dollars;
             else return UnitsEnum.NotSet;
         }
-
-        internal static string Print(this IParameterEnum parameter, bool abbreviate = false)
+        /// <summary>
+        /// Prints a text description of the <see cref="IParameterEnum"/> value.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameterEnum"/> to be printed as text. </param>
+        /// <param name="abbreviate"> <see langword="true"/> if an abbreviated description should be printed, <see langword="false"/> otherwise. </param>
+        /// <returns></returns>
+        public static string Print(this IParameterEnum parameter, bool abbreviate = false)
         {
             switch (parameter)
             {
@@ -126,6 +184,113 @@ namespace Model
                     return abbreviate ? "Frequency of Failure Stage" : "Frequency of Exterior Stage Associated with Lateral Structure Failure";
                 default:
                     throw new NotImplementedException();
+            }
+        }
+        
+        /// <summary>
+        /// Prints a text label for the <see cref="IParameterEnum"/> containing a description (<seealso cref="Print(IParameterEnum, bool)"/> of the <see cref="IParameterEnum"/> and the <see cref="UnitsEnum"/> (<seealso cref="UnitsUtilities.Print(UnitsEnum, bool)"/>.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameterEnum"/> to be evaluated. </param>
+        /// <param name="units"> The <see cref="UnitsEnum"/> for the <see cref="IParameterEnum"/>. The default units for the <see cref="IParameterEnum"/> are used if none are provided. </param>
+        /// <param name="abbreviate"><see langword="true"/> if the label should be abbreviated in form, <see langword="false"/> otherwise. </param>
+        /// <returns> A <see cref="string"/> label. </returns>        
+        public static string PrintLabel(this IParameterEnum parameter, UnitsEnum units = UnitsEnum.NotSet, bool abbreviate = true)
+        {
+            string unitsLabel = units == UnitsEnum.NotSet ? parameter.DefaultUnits().Print(abbreviate) : units.Print(abbreviate);
+            return $"{parameter.Print(abbreviate)} {unitsLabel}";
+        }
+        /// <summary>
+        /// Prints a text label for the <see cref="IParameter"/> containing a description of its <see cref="IParameter.ParameterType"/> property and <see cref="UnitsEnum"/> (<seealso cref="UnitsUtilities.Print(UnitsEnum, bool)"/>.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameter"/> to be evaluated. </param>
+        /// <param name="units"> The <see cref="UnitsEnum"/> for the <see cref="IParameter"/>. The <see cref="IParameter.ParameterType"/> default units are used if none are provided. </param>
+        /// <param name="abbreviate"><see langword="true"/> if the label should be abbreviated in form, <see langword="false"/> otherwise. </param>
+        /// <returns> A <see cref="string"/> label. </returns>
+        public static string PrintLabel(this IParameter parameter, UnitsEnum units = UnitsEnum.NotSet, bool abbreviate = true)
+        {
+            return PrintLabel(parameter.ParameterType, units, abbreviate);
+        }
+        /// <summary>
+        /// Prints a text label for the <see cref="IParameterRange"/> containing a description of its <see cref="IParameter.ParameterType"/> and <see cref="IParameterRange.Units"/> properties (<seealso cref="UnitsUtilities.Print(UnitsEnum, bool)"/>.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameterRange"/> to be evaluated. </param>      
+        /// <param name="abbreviate"><see langword="true"/> if the label should be abbreviated in form, <see langword="false"/> otherwise. </param>
+        /// <returns> A <see cref="string"/> label. </returns>
+        public static string PrintLabel(this IParameterRange parameter, bool abbreviate = true)
+        {
+            return PrintLabel(parameter.ParameterType, parameter.Units, abbreviate);
+        }
+        /// <summary>
+        /// Prints a text label for the <see cref="IParameterOrdinate"/> containing a description of its <see cref="IParameter.ParameterType"/> and <see cref="IParameterOrdinate.Units"/> properties (<seealso cref="UnitsUtilities.Print(UnitsEnum, bool)"/>.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameterOrdinate"/> to be evaluated. </param>      
+        /// <param name="abbreviate"><see langword="true"/> if the label should be abbreviated in form, <see langword="false"/> otherwise. </param>
+        /// <returns> A <see cref="string"/> label. </returns>
+        public static string PrintLabel(this IParameterOrdinate parameter, bool abbreviate = true)
+        {
+            return PrintLabel(parameter.ParameterType, parameter.Units, abbreviate);
+        }
+        /// <summary>
+        /// Prints a label for the <see cref="IParameterEnum"/> x axis, if one exists.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameterEnum"/> to be evaluated. </param>
+        /// <param name="units"> The unit of measure (<seealso cref="UnitsEnum"/>) for the <see cref="IParameterEnum"/>. The <see cref="IParameterEnum"/> default units are used if none are provided (<seealso cref="IParameterUtilities.DefaultUnits(IParameterEnum)"/>). </param>
+        /// <param name="abbreviate"> <see langword="true"/> if an abbreviated label should be printed, <see langword="false"/> otherwise. </param>
+        /// <returns> A <see cref="string"/> label. </returns>
+        public static string PrintXLabel (IParameterEnum parameter, UnitsEnum units = UnitsEnum.NotSet, bool abbreviate = true)
+        {
+            switch (parameter) 
+            {
+                case IParameterEnum.InflowFrequency:
+                case IParameterEnum.OutflowFrequency:
+                case IParameterEnum.ExteriorStageFrequency:
+                case IParameterEnum.InteriorStageFrequency:
+                case IParameterEnum.DamageFrequency:
+                    return PrintLabel(IParameterEnum.ExceedanceProbability, units, abbreviate);
+                case IParameterEnum.InflowOutflow:
+                    return PrintLabel(IParameterEnum.UnregulatedAnnualPeakFlow, units, abbreviate);
+                case IParameterEnum.Rating:
+                    return PrintLabel(IParameterEnum.RegulatedAnnualPeakFlow, units, abbreviate);
+                case IParameterEnum.ExteriorInteriorStage:
+                    return PrintLabel(IParameterEnum.ExteriorElevation, units, abbreviate);
+                case IParameterEnum.InteriorStageDamage:
+                    return PrintLabel(IParameterEnum.InteriorElevation, units, abbreviate);
+                case IParameterEnum.LateralStructureFailure:
+                    return PrintLabel(IParameterEnum.ExteriorElevation, units, abbreviate);
+                default:
+                    return "No x axis.";
+            }
+
+        }
+        /// <summary>
+        /// Prints a label for the <see cref="IParameterEnum"/> y axis, if one exists.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameterEnum"/> to be evaluated. </param>
+        /// <param name="units"> The unit of measure (<seealso cref="UnitsEnum"/>) for the <see cref="IParameterEnum"/>. The <see cref="IParameterEnum"/> default units are used if none are provided (<seealso cref="IParameterUtilities.DefaultUnits(IParameterEnum)"/>). </param>
+        /// <param name="abbreviate"> <see langword="true"/> if an abbreviated label should be printed, <see langword="false"/> otherwise. </param>
+        /// <returns> A <see cref="string"/> label. </returns>
+        public static string PrintYLabel(IParameterEnum parameter, UnitsEnum units = UnitsEnum.NotSet, bool abbreviate = true)
+        {
+            switch (parameter)
+            {
+                case IParameterEnum.InflowFrequency:
+                    return PrintLabel(IParameterEnum.UnregulatedAnnualPeakFlow, units, abbreviate);
+                case IParameterEnum.InflowOutflow:
+                case IParameterEnum.OutflowFrequency:
+                    return PrintLabel(IParameterEnum.RegulatedAnnualPeakFlow, units, abbreviate);
+                case IParameterEnum.Rating:
+                case IParameterEnum.ExteriorStageFrequency:
+                    return PrintLabel(IParameterEnum.ExteriorElevation, units, abbreviate);
+                case IParameterEnum.ExteriorInteriorStage:
+                case IParameterEnum.InteriorStageFrequency:
+                    return PrintLabel(IParameterEnum.InteriorElevation, units, abbreviate);
+                case IParameterEnum.InteriorStageDamage:
+                case IParameterEnum.DamageFrequency:
+                    return PrintLabel(IParameterEnum.FloodDamages, units, abbreviate);
+                case IParameterEnum.LateralStructureFailure:
+                    return PrintLabel(IParameterEnum.FailureProbability, units, abbreviate);
+                default:
+                    return "No x axis.";
             }
         }
     }

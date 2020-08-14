@@ -19,6 +19,43 @@ namespace Model
         internal static IRange<int> VolumeEnumRange => IRangeFactory.Factory(21, 29);
         internal static IRange<int> TimeEnumRange => IRangeFactory.Factory(31, 39);
         internal static IRange<int> FlowEnumRange => IRangeFactory.Factory(41, 49);
+        internal static IRange<int> DollarsEnumRange => IRangeFactory.Factory(51, 59);
+
+        /// <summary>
+        /// Checks if a <see cref="UnitsEnum"/> represents an accepted imperial unit of measurement.
+        /// </summary>
+        /// <param name="unit"> The <see cref="UnitsEnum"/> to be evaluated. </param>
+        /// <returns> <see langword="true"/> if the unit of measure is an imperial unit of measurement, <see langword="false"/> otherwise. </returns>
+        /// <remarks> The seconds, hours, days, months and years are accepted units of measurement but only seconds are part of the imperial system. All time units return <see langword="true"/>. </remarks>
+        public static bool IsImperialUnit(this UnitsEnum unit)
+        {
+            /* Imperial Units:
+             *  1. Length, Area, Volume and Flow imperial units have 1 to 5 in ones place.
+             *  2. Time all units are imperial (and SI)
+             *  3. Currency no units are imperial (or SI) 
+             */
+            if (unit.IsLength() || unit.IsArea() || unit.IsVolume() || unit.IsFlow()
+                && (int)unit % 10 < 5
+                || unit.IsTime()) return true;
+            else return false;
+        }
+        /// <summary>
+        /// Checks if the <see cref="UnitsEnum"/> represents an International System (aka SI) unit of measurement.
+        /// </summary>
+        /// <param name="unit"> The <see cref="UnitsEnum"/> to be evaluated. </param>
+        /// <returns> <see langword="true"/> if the unit of measurement is an SI unit, <see langword="false"/> otherwise. </returns>
+        /// <remarks> The seconds, hours, days, months and years are accepted units of measurement but only seconds are part of the SI. All time units return <see langword="true"/>. </remarks>
+        public static bool IsInternationalStandardUnit(this UnitsEnum unit)
+        {
+            /* SI Units:
+             *  1. Length, Area, Volume and Flow SI units have 5 to 9 in ones place.
+             *  2. Time all units are SI (and imperial)
+             *  3. Currency no units are SI (or imperial) 
+             */
+            if (unit.IsLength() || unit.IsArea() || unit.IsVolume() || unit.IsFlow()
+                && (int)unit % 10 >= 5) return true;
+            else return false;
+        }
 
         /// <summary>
         /// Tests if the <paramref name="units"/> represent unit of probability. 
@@ -56,6 +93,12 @@ namespace Model
         /// <param name="units"> The unit type to be tested. </param>
         /// <returns> <see langword="true"/> if the <paramref name="units"/> is a unit of measurement for flow, <see langword="false"/> otherwise. </returns>
         public static bool IsFlow(this UnitsEnum units) => FlowEnumRange.IsOnRange((int)units);
+        /// <summary>
+        /// Tests if the <paramref name="units"/> represent unit of dollars. 
+        /// </summary>
+        /// <param name="units"> The unit type to be tested. </param>
+        /// <returns> <see langword="true"/> if the <paramref name="units"/> is a unit of measurement of dollars, <see langword="false"/> otherwise. </returns>
+        public static bool IsDollars(this UnitsEnum units) => DollarsEnumRange.IsOnRange((int)units);
         
         /// <summary>
         /// Converts between supported length units.
@@ -63,7 +106,7 @@ namespace Model
         /// <param name="value"> The value to convert. </param>
         /// <param name="fromUnits"> The units of the <paramref name="value"/> parameter. </param>
         /// <param name="toUnits"> The desired units for the <paramref name="value"/> parameter after conversion. </param>
-        /// <returns> The provided <paramref name="value"/> as a <see cref="double"/> precision in the requested <paramref name="toUnits"/>. </returns>
+        /// <returns> The provided <paramref name="value"/> as a <see cref="double"/> precision value in the requested <paramref name="toUnits"/>. </returns>
         public static double ConvertLengths(this double value, UnitsEnum fromUnits, UnitsEnum toUnits)
         {
             if (IsSameUnitsType(fromUnits, toUnits)) return UnitsNet.UnitConverter.Convert(value, ConvertLengthUnitEnum(fromUnits), ConvertLengthUnitEnum(toUnits));
@@ -75,7 +118,7 @@ namespace Model
         /// <param name="value"> The value to convert. </param>
         /// <param name="fromUnits"> The units of the <paramref name="value"/> parameter. </param>
         /// <param name="toUnits"> The desired units for the <paramref name="value"/> parameter after conversion. </param>
-        /// <returns> The provided <paramref name="value"/> as a <see cref="double"/> precision in the requested <paramref name="toUnits"/>. </returns>
+        /// <returns> The provided <paramref name="value"/> as a <see cref="double"/> precision value in the requested <paramref name="toUnits"/>. </returns>
         public static double ConvertAreas(this double value, UnitsEnum fromUnits, UnitsEnum toUnits)
         {
             if (IsSameUnitsType(fromUnits, toUnits)) return UnitsNet.UnitConverter.Convert(value, ConvertAreaUnitEnum(fromUnits), ConvertAreaUnitEnum(toUnits));
@@ -87,7 +130,7 @@ namespace Model
         /// <param name="value"> The value to convert. </param>
         /// <param name="fromUnits"> The units of the <paramref name="value"/> parameter. </param>
         /// <param name="toUnits"> The desired units for the <paramref name="value"/> parameter after conversion. </param>
-        /// <returns> The provided <paramref name="value"/> as a <see cref="double"/> precision in the requested <paramref name="toUnits"/>. </returns>
+        /// <returns> The provided <paramref name="value"/> as a <see cref="double"/> precision value in the requested <paramref name="toUnits"/>. </returns>
         public static double ConvertVolumes(this double value, UnitsEnum fromUnits, UnitsEnum toUnits)
         {
             if (IsSameUnitsType(fromUnits, toUnits)) return UnitsNet.UnitConverter.Convert(value, ConvertVolumeUnitEnum(fromUnits), ConvertVolumeUnitEnum(toUnits));
@@ -99,12 +142,47 @@ namespace Model
         /// <param name="value"> The value to convert. </param>
         /// <param name="fromUnits"> The units of the <paramref name="value"/> parameter. </param>
         /// <param name="toUnits"> The desired units for the <paramref name="value"/> parameter after conversion. </param>
-        /// <returns> The provided <paramref name="value"/> as a <see cref="double"/> precision in the requested <paramref name="toUnits"/>. </returns>
+        /// <returns> The provided <paramref name="value"/> as a <see cref="double"/> precision value in the requested <paramref name="toUnits"/>. </returns>
         public static double ConvertFlows(this double value, UnitsEnum fromUnits, UnitsEnum toUnits)
         {
             if (IsSameUnitsType(fromUnits, toUnits)) return UnitsNet.UnitConverter.Convert(value, ConvertFlowUnitEnum(fromUnits), ConvertFlowUnitEnum(toUnits));
             else throw new ArgumentException($"One or more the unit types in the requested flow unit conversion from {fromUnits.ToString()} to {toUnits.ToString()} are not supported flow unit types.");
         }
+        /// <summary>
+        /// Converts between supported measurements of dollars (orders of magnitude measurements)
+        /// </summary>
+        /// <param name="value"> The value to be converted. </param>
+        /// <param name="fromUnits"> The units of the <paramref name="value"/> parameter. </param>
+        /// <param name="toUnits"> The desired units for the <paramref name="value"/> parameter after conversion. </param>
+        /// <returns> The provided <paramref name="value"/> as a <see cref="double"/> precision value in the requested <paramref name="toUnits"/>. </returns>
+        public static double ConvertDollars(this double value, UnitsEnum fromUnits, UnitsEnum toUnits)
+        {
+            if (IsSameUnitsType(fromUnits, toUnits))
+            {
+                /* Shifts between order of magnitude dollar units
+                 *  Examples...
+                 *      1. Convert $1,000 (ones) to $1 thousand
+                 *          - fromUnits: 51, toUnits: 54 
+                 *          - therefore nOrder: (51 - 54) = -3 
+                 *          - return: 1,000 * 10^-3 = 1
+                 *      2. Convert $1 thousand to $1,000
+                 *          - fromUnits: 54, toUnits: 51
+                 *          - therefore nOrder: (54 - 51) = +3
+                 *          - return: 1 * 10^3 = 1,000
+                 */
+                int nOrders = (int)fromUnits - (int)fromUnits;
+                return value * Math.Pow(10, nOrders);
+            }
+            else throw new ArgumentException($"One or more the unit types in the requested dollar unit conversion from {fromUnits.ToString()} to {toUnits.ToString()} are not supported dollar unit types.");
+        }
+        
+        /// <summary>
+        /// Converts between supported length units.
+        /// </summary>
+        /// <param name="range"> The <see cref="IRange{T}"/> to convert. </param>
+        /// <param name="fromUnits"> The units of the <paramref name="range"/> parameter. </param>
+        /// <param name="toUnits"> The desired units for the <paramref name="range"/> parameter after conversion. </param>
+        /// <returns> The provided <paramref name="range"/> as a new <see cref="IRange{T}"/> in the requested <paramref name="toUnits"/>. </returns>
         public static IRange<double> ConvertLenghts(this IRange<double> range, UnitsEnum fromUnits, UnitsEnum toUnits)
         {
             if (IsSameUnitsType(fromUnits, toUnits))
@@ -115,6 +193,13 @@ namespace Model
             }
             else throw new ArgumentException($"One or more the unit types in the requested length unit conversion from {fromUnits.ToString()} to {toUnits.ToString()} are not supported length unit types.");
         }
+        /// <summary>
+        /// Converts between supported area units.
+        /// </summary>
+        /// <param name="range"> The <see cref="IRange{T}"/> to convert. </param>
+        /// <param name="fromUnits"> The units of the <paramref name="range"/> parameter. </param>
+        /// <param name="toUnits"> The desired units for the <paramref name="range"/> parameter after conversion. </param>
+        /// <returns> The provided <paramref name="range"/> as a new <see cref="IRange{T}"/> in the requested <paramref name="toUnits"/>. </returns>
         public static IRange<double> ConvertAreas(this IRange<double> range, UnitsEnum fromUnits, UnitsEnum toUnits)
         {
             if (IsSameUnitsType(fromUnits, toUnits))
@@ -125,6 +210,13 @@ namespace Model
             }
             else throw new ArgumentException($"One or more the unit types in the requested area unit conversion from {fromUnits.ToString()} to {toUnits.ToString()} are not supported area unit types.");
         }
+        /// <summary>
+        /// Converts between supported length units.
+        /// </summary>
+        /// <param name="range"> The <see cref="IRange{T}"/> to convert. </param>
+        /// <param name="fromUnits"> The units of the <paramref name="range"/> parameter. </param>
+        /// <param name="toUnits"> The desired units for the <paramref name="range"/> parameter after conversion. </param>
+        /// <returns> The provided <paramref name="range"/> as a new <see cref="IRange{T}"/> in the requested <paramref name="toUnits"/>. </returns>
         public static IRange<double> ConvertFlows(this IRange<double> range, UnitsEnum fromUnits, UnitsEnum toUnits)
         {
             if (IsSameUnitsType(fromUnits, toUnits))
@@ -134,6 +226,23 @@ namespace Model
                     UnitsNet.UnitConverter.Convert(range.Max, ConvertFlowUnitEnum(fromUnits), ConvertFlowUnitEnum(toUnits)));
             }
             else throw new ArgumentException($"One or more the unit types in the requested flow unit conversion from {fromUnits.ToString()} to {toUnits.ToString()} are not supported flow unit types.");
+        }
+        /// <summary>
+        /// Convert between supported dollar units.
+        /// </summary>
+        /// <param name="range"> The <see cref="IRange{T}"/> to convert. </param>
+        /// <param name="fromUnits"> The units of the <paramref name="range"/> parameter. </param>
+        /// <param name="toUnits"> The desired units for the <paramref name="range"/> parameter after conversion. </param>
+        /// <returns> The provided <paramref name="range"/> as a new <see cref="IRange{T}"/> in the requested <paramref name="toUnits"/>. </returns>
+        public static IRange<double> ConvertDollars(this IRange<double> range, UnitsEnum fromUnits, UnitsEnum toUnits)
+        {
+            if (IsSameUnitsType(fromUnits, toUnits))
+            {
+                return IRangeFactory.Factory(
+                    ConvertDollars(range.Min, fromUnits, toUnits),
+                    ConvertDollars(range.Max, fromUnits, toUnits));
+            }
+            else throw new ArgumentException($"One or more the unit types in the requested dollar unit conversion from {fromUnits.ToString()} to {toUnits.ToString()} are not supported dollar unit types.");
         }
 
         private static bool IsSameUnitsType(this UnitsEnum fromUnits, UnitsEnum toUnits)
@@ -190,25 +299,7 @@ namespace Model
                     throw new NotImplementedException($"The {units.ToString()} is not a supported flow unit.");
             }
         }
-
-        /// <summary>
-        /// Prints a string representation of the <see cref="IParameter"/> value and its units.
-        /// </summary>
-        /// <param name="parameter"> The <see cref="IParameter"/> to be printed. </param>
-        /// <param name="round"> <see langword="true"/> if some values should be rounded or displayed in scientific notation to produce a more human readable result. </param>
-        /// <param name="abbreviate"> <see langword="true"/> if the unit name should be printed using the <a href="http://www.ieee.org/">IEEE</a> recommended abbreviation, <see langword="false"/> otherwise. </param>
-        /// <returns> A string in the form... <see cref="IParameter"/> <see cref="IParameter"/>, where <see cref="IParameter"/> is formated as a string by the <see cref="IOrdinate.Print(bool)"/> function. </returns>
-        public static string Print(IParameter parameter, bool round = false, bool abbreviate = false) => parameter.Print(round);
-        public static string Print(IParameterOrdinate parameter, bool round = false, bool abbreviate = false) => parameter.Print(round) + " " + Print(parameter.Units, abbreviate);
-        /// <summary>
-        /// Prints a string representation of the <see cref="IParameter"/> value and its units.
-        /// </summary>
-        /// <param name="parameter"> The <see cref="IParameter"/> value to be printed. </param>
-        /// <param name="units"> The <paramref name="parameter"/> units. </param>
-        /// <param name="round"> <see langword="true"/> if some values should be rounded or displayed in scientific notation to produce a more human readable result. </param>
-        /// <param name="abbreviate"> <see langword="true"/> if the unit name should be printed using the <a href="http://www.ieee.org/">IEEE</a> recommended abbreviation, <see langword="false"/> otherwise. </param>
-        /// <returns> A string in the form... <see cref="IParameter"/> <see cref="IParameter.Units"/>, where <see cref="IParameter"/> is formated as a string by the <see cref="IOrdinate.Print(bool)"/> function. </returns>
-        public static string Print(double parameter, UnitsEnum units, bool round = false, bool abbreviate = false) => round ? parameter.Print() + " " + Print(units, abbreviate) : parameter.ToString() + " " + Print(units, abbreviate);
+       
         /// <summary>
         /// Prints a string representation of the unit of measurement.
         /// </summary>

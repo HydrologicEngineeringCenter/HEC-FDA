@@ -9,20 +9,12 @@ namespace Model
     /// <summary>
     /// Represents the <see cref="ICondition"/> at a specific location.
     /// </summary>
-    public interface IConditionLocationTime<T>
+    public interface IConditionLocationTime<T>: IConditionLocationTimeSummary
     {        
         /// <summary>
         /// A label describing the condition. Concatenates the year and location by default.
         /// </summary>
         string Label { get; }
-        /// <summary>
-        /// The year associated with the condition.
-        /// </summary>
-        int Year { get; }
-        /// <summary>
-        /// Location of the computation.
-        /// </summary>
-        ILocation Location { get; }
         
         /// <summary>
         /// The function used to initialize a compute.
@@ -60,13 +52,7 @@ namespace Model
         /// Produces a compute with the parameters held at their mean values.
         /// </summary>
         /// <returns> A realization of the compute with the parameters held to their mean values. </returns>
-        IConditionLocationTimeRealization ComputePreview();
-        /// <summary>
-        /// Computes a single realization of the condition at the specified location <see cref="IConditionLocationTime{T}"/>.
-        /// </summary>
-        /// <param name="parameterSamplePs"> A dictionary of parameter <see cref="IParameterEnum"/> key and sample probability <see cref="ISample"/> value pairs. <seealso cref="IConditionLocationTime{T}.SamplePacket(Random, IReadOnlyDictionary{IParameterEnum, bool})"/> </param>
-        /// <returns> An <see cref="IConditionLocationTimeRealization"/> representing a single realization of the <see cref="IConditionLocationTime{T}"/> in the compute. </returns>
-        IConditionLocationTimeRealization Compute(IReadOnlyDictionary<IParameterEnum, ISample> parameterSamplePs);
+        IConditionLocationTimeRealization ComputePreview();     
     }
 }
 
