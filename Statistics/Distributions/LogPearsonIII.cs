@@ -105,14 +105,22 @@ namespace Statistics.Distributions
         internal static string Parameterization() => $"log PearsonIII(mean: (0, {Math.Log10(double.MaxValue).Print()}], sd: (0, {Math.Log10(double.MaxValue).Print()}], skew: [{(Math.Log10(double.MaxValue) * -1).Print()}, {Math.Log10(double.MaxValue).Print()}], sample size: > 0)";
         internal static string RequirementNotes() => $"The distribution parameters are computed from log base 10 random numbers (e.g. the log Pearson III distribution is a distribution of log base 10 Pearson III distributed random values). Therefore the mean and standard deviation parameters must be positive finite numbers and while a large range of numbers are acceptable a relative small rate will produce meaningful results.";
 
-        public static LogPearsonIII Fit(IEnumerable<double> sample, bool islogSample = false)
+        public static LogPearsonIII Fit(IEnumerable<double> sample, bool isLogSample = false)
+        {
+            return Fit(sample, isLogSample);
+        }
+        public static LogPearsonIII Fit(IEnumerable<double> sample, int sampleSize, bool isLogSample = false)
+        {
+            return Fit(sample, isLogSample, sampleSize);
+        }
+        private static LogPearsonIII Fit(IEnumerable<double> sample, bool isLogSample = false, int sampleSize = -404)
         {
             List<double> logSample = new List<double>();
-            if (!islogSample) foreach (double x in sample) logSample.Add(Math.Log10(x));
-            IData data = sample.IsNullOrEmpty() ? throw new ArgumentNullException(nameof(sample)) : islogSample ? IDataFactory.Factory(sample) : IDataFactory.Factory(logSample);
+            if (!isLogSample) foreach (double x in sample) logSample.Add(Math.Log10(x));
+            IData data = sample.IsNullOrEmpty() ? throw new ArgumentNullException(nameof(sample)) : isLogSample ? IDataFactory.Factory(sample) : IDataFactory.Factory(logSample);
             if (!(data.State < IMessageLevels.Error) || data.Elements.Count() < 3) throw new ArgumentException($"The {nameof(sample)} is invalid because it contains an insufficient number of finite, numeric values (3 are required but only {data.Elements.Count()} were provided).");
             ISampleStatistics stats = ISampleStatisticsFactory.Factory(data);
-            return new LogPearsonIII(stats.Mean, stats.StandardDeviation, stats.Skewness, stats.SampleSize);
+            return new LogPearsonIII(stats.Mean, stats.StandardDeviation, stats.Skewness, sampleSize == -404 ? stats.SampleSize : sampleSize);
         }
 
         public string WriteToXML()

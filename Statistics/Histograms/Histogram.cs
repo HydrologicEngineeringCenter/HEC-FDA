@@ -9,40 +9,6 @@ using System.Xml.Linq;
 
 namespace Statistics.Histograms
 {
-    
-    
-
-
-    //internal class HistogramBuilder : IHistogramBuilder
-    //{
-    //    private IHistogram _Histogram;
-
-    //    private IRange<double> Range { get; set; }
-    //    private IMessageBoard Messages { get; set; }
-
-    //    void AddRange(double min, double max)
-    //    {
-    //        IRange<double> range = IRangeFactory.Factory(min, max);
-    //        if (range.State < IMessageLevels.Error)
-    //        {
-    //            Messages.PostMessage(IMessageFactory.Factory(range.Messages.Max(), $"The specified range: {range.Print(true)} contains the following messages: {range.Messages.PrintTabbedListOfMessages()}"));
-    //        }
-    //        else throw new InvalidConstructorArgumentsException($"The specified range: {range.Print(true)} generates an exception and cannot be used. It contains the following messages: {range.Messages.PrintTabbedListOfMessages()}");
-    //        Range = range;
-    //    }
-
-    //}
-
-    //internal class TheHistogram 
-    //{
-    //    public IBin[] Bins { get; }
-    //    public double Width { get; }
-    //    public IRange<double> Range { get; }
-
-
-    //}
-
-
     internal abstract class Histogram : IHistogram
     {
         private readonly IBin[] _Bins;
@@ -51,8 +17,6 @@ namespace Statistics.Histograms
         #region IDistribution Properties
         public double Mean { get; }
         public double Median { get; }
-        //public double Minimum { get; }
-        //public double Maximum { get; }
         public double Variance { get; }
         public double Skewness { get; }
         public double StandardDeviation { get; }
@@ -60,10 +24,7 @@ namespace Statistics.Histograms
         public int SampleSize { get; }
         public double Mode { get; }
         public IDistributionEnum Type => IDistributionEnum.Histogram;
-        #endregion
-        #region IConverge Properties
-        public bool IsConverged { get; }
-        #endregion 
+        #endregion      
         #region IMessagePublisher Properties
         public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
@@ -84,7 +45,7 @@ namespace Statistics.Histograms
             SampleSize = stats.SampleSize;
             State = Validate(new Validation.HistogramValidator(), out IEnumerable<IMessage> msgs);
             Messages = stats.Messages.Concat(msgs);
-            IsConverged = false;
+            //IsConverged = false;
         }
         protected Histogram(IHistogram histogram, List<IConvergenceResult> convergenceResults)
         {
@@ -104,35 +65,34 @@ namespace Statistics.Histograms
                 if (!result.Passed) isConverged = false;
                 msgs.Add(result.TestMessage);
             }
-            IsConverged = isConverged;
             Messages = msgs;
         }
         #endregion
 
         #region Functions
         public static IHistogram Fit(IData data, int nBins = 100) => IHistogramFactory.Factory(data, nBins);
-        public static IHistogram Fit(IHistogram histogram, IData sample, IList<IConvergenceCriteria> criterias)
+        public static IHistogram Fit(IHistogram histogram, IData sample)
         {
             // 1. Expand histogram bins to accommodate new sample data, place new data in the expended bins.
-            IHistogram newHistogram = new HistogramBinnedData(FillHistogramBins(ExpandHistogramRange(histogram, sample.Range), sample).ToArray());
-            // 2. Get convergence results
-            List<IConvergenceResult> results = CriteriaResults(criterias, histogram, newHistogram, sample.SampleSize);
-            return new HistogramBinnedData(newHistogram, results);
+            return new HistogramBinnedData(FillHistogramBins(ExpandHistogramRange(histogram, sample.Range), sample).ToArray());
+            //// 2. Get convergence results
+            //List<IConvergenceResult> results = CriteriaResults(criterias, histogram, newHistogram, sample.SampleSize);
+            //return new HistogramBinnedData(newHistogram);
         }
-        private static List<IConvergenceResult> CriteriaResults(IList<IConvergenceCriteria> criterias, IHistogram histogramBefore, IHistogram histogramAfter, int sampleSize)
-        {
-            List<IConvergenceResult> results = new List<IConvergenceResult>();
-            foreach (var criteria in criterias)
-            {
-                results.Add(criteria.Test(histogramBefore.InverseCDF(criteria.Quantile), histogramAfter.InverseCDF(criteria.Quantile), sampleSize, histogramAfter.SampleSize));
-            }
-            return results;
-        }
+        //private static List<IConvergenceResult> CriteriaResults(IList<IConvergenceCriteria> criterias, IHistogram histogramBefore, IHistogram histogramAfter, int sampleSize)
+        //{
+        //    List<IConvergenceResult> results = new List<IConvergenceResult>();
+        //    foreach (var criteria in criterias)
+        //    {
+        //        results.Add(criteria.Test(histogramBefore.InverseCDF(criteria.Quantile), histogramAfter.InverseCDF(criteria.Quantile), sampleSize, histogramAfter.SampleSize));
+        //    }
+        //    return results;
+        //}
         /// <summary>
         /// Generates a list of quantile values for convergence testing (<seealso cref="IDistribution.InverseCDF(double)"/>). 
         /// </summary>
         /// <param name="criteria"> Convergence criteria containing the quantile values to be tested. </param>
-        /// <returns> A <see cref="List{double}"/> containing the quantile values. </returns>
+        /// <returns> A <see cref="List{T}"/> containing the quantile values. </returns>
         private static List<double> QuantileValues(IHistogram histogram, IEnumerable<IConvergenceCriteria> criteria)
         {
             List<double> qValues = new List<double>();
@@ -200,7 +160,7 @@ namespace Statistics.Histograms
         /// <param name="data"> Data to be binned. </param>
         /// <param name="min"> The requested histogram minimum value. </param>
         /// <param name="max"> The requested histogram maximum value. </param>
-        /// <param name="msgs"> If the histogram range is expanded to accommidate data elements a message detailing this change is provided </param>
+        /// <param name="msgs"> If the histogram range is expanded to accommodate data elements a message detailing this change is provided </param>
         /// <returns> A tuple with the histogram minimum and maximum values, respectively. </returns>
         protected static Tuple<double, double> GetHistogramRange(double min, double max, IData data, ref List<IMessage> msgs)
         {

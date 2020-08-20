@@ -56,9 +56,9 @@ namespace Model.Conditions.Locations
                 }
             }
             var lateralStructure = new Samples.SampledOrdinate(IParameterFactory.Factory(double.NaN, IParameterEnum.ExteriorElevation), new Samples.Sample());
-            return new ConditionLocationTimeRealizationWithLateralStructure(sampledFxs, lateralStructure, metrics);
+            return new ConditionLocationTimeRealizationWithLateralStructure(sampledFxs, lateralStructure, metrics, -1);
         }
-        public override IConditionLocationTimeRealization Compute(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters = null)
+        public override IConditionLocationTimeRealization Compute(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters = null, int id = -1)
         {
             /* Differs from LateralStructure.Compute(...) without lateral structure in a couple key ways.
              * 1. Lateral structure parameters are sampled...
@@ -107,7 +107,7 @@ namespace Model.Conditions.Locations
                     metricIndex++;
                 } 
             }
-            return new ConditionLocationTimeRealizationWithLateralStructure(sampledFxs, failElevation, metrics);
+            return new ConditionLocationTimeRealizationWithLateralStructure(sampledFxs, failElevation, metrics, id);
         }
         private Dictionary<IParameterEnum, ISampledParameter<IFdaFunction>> SampleFunctionsWithLateralStructure(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters)
         {

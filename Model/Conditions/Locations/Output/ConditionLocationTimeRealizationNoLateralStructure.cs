@@ -7,14 +7,16 @@ namespace Model.Conditions.Locations
 {
     internal sealed class ConditionLocationTimeRealizationNoLateralStructure: IConditionLocationTimeRealization
     {
+        public int ID { get; }
         public ISampledParameter<IParameterOrdinate> LateralStructureFailureElevation { get; }
         public IReadOnlyDictionary<IMetric, double> Metrics { get; }
         public IReadOnlyDictionary<IParameterEnum, ISampledParameter<IFdaFunction>> Functions { get; }
         public bool HadLateralStructure => false;
 
-        internal ConditionLocationTimeRealizationNoLateralStructure(IReadOnlyDictionary<IParameterEnum, ISampledParameter<IFdaFunction>> fxs, IReadOnlyDictionary<IMetric, double> metrics)
+        internal ConditionLocationTimeRealizationNoLateralStructure(IReadOnlyDictionary<IParameterEnum, ISampledParameter<IFdaFunction>> fxs, IReadOnlyDictionary<IMetric, double> metrics, int id)
         {
             //ToDo: Validation
+            ID = id;
             Functions = fxs;
             Metrics = metrics;
             LateralStructureFailureElevation = new Samples.SampledOrdinate(IParameterFactory.Factory(double.NaN, IParameterEnum.ExteriorElevation), new Samples.Sample());

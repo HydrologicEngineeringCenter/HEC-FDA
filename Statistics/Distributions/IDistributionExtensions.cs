@@ -5,6 +5,9 @@ using Utilities;
 
 namespace Statistics
 {
+    /// <summary>
+    /// Extension methods for objects implementing the <see cref="IDistribution"/> interface.
+    /// </summary>
     public static class IDistributionExtensions
     {
         /// <summary>
@@ -38,6 +41,20 @@ namespace Statistics
                 foreach (var p in input) if (!range.IsOnRange(p)) return false;
                 return true;
             }
+        }
+        /// <summary>
+        /// Checks if two <see cref="IDistribution"/>s converge before and after the addition of extra observations, based on the <paramref name="criteria"/> specified <see cref="IConvergenceCriteria"/>.
+        /// </summary>
+        /// <param name="criteria"> The criteria for convergence, <see cref="IConvergenceCriteria"/>. </param>
+        /// <param name="before"> The <see cref="IDistribution"/> before the additional sample observations were added. </param>
+        /// <param name="after"> The <see cref="IDistribution"/> after the additional sample observation were added. </param>
+        /// <returns> An assessment of the <see cref="IConvergenceCriteria.Test(double, double, int, int)"/> stored as a <see cref="IConvergenceResult"/>. </returns>
+        public static IConvergenceResult Test(this IConvergenceCriteria criteria, IDistribution before, IDistribution after)
+        {
+            if (after.IsNull()) throw new ArgumentNullException(nameof(after));
+            if (before.IsNull()) throw new ArgumentNullException(nameof(before));
+            if (criteria.IsNull()) throw new ArgumentNullException(nameof(criteria));
+            return criteria.Test(before.InverseCDF(criteria.Quantile), after.InverseCDF(criteria.Quantile), after.SampleSize - before.SampleSize, after.SampleSize);
         }
     }
 }

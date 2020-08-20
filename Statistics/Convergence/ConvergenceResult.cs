@@ -14,5 +14,10 @@ namespace Statistics.Convergence
             Passed = passed;
             TestMessage = msg;
         }
+        public ConvergenceResult()
+        {
+            Passed = false;
+            TestMessage = Utilities.IMessageFactory.Factory(Utilities.IMessageLevels.Message, "Not tested.");
+        }
     }
 }

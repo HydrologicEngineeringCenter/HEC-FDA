@@ -33,7 +33,7 @@ namespace Model.Conditions.Locations
         }
         #endregion
         #region Functions
-        public IReadOnlyDictionary<IParameterEnum, ISample> SamplePacket(Random rng = null, IReadOnlyDictionary<IParameterEnum, bool> sampleParameters = null)
+        public IReadOnlyDictionary<IParameterEnum, ISample> SampleParametersPacket(Random rng = null, IReadOnlyDictionary<IParameterEnum, bool> sampleParameters = null)
         {
             /* This generates a dictionary of compute parameters sample value pairs:
              *     KEY: IParameterEnum VALUE: ISample Record (bool DoSample, double probability) 
@@ -49,7 +49,7 @@ namespace Model.Conditions.Locations
             return sample;
         }
         public abstract IConditionLocationTimeRealization ComputePreview();
-        public abstract IConditionLocationTimeRealization Compute(IReadOnlyDictionary<IParameterEnum, ISample> parameterSamplePs);
+        public abstract IConditionLocationTimeRealization Compute(IReadOnlyDictionary<IParameterEnum, ISample> parameterSamplePs, int id = -1);
         protected Dictionary<IParameterEnum, ISampledParameter<IFdaFunction>> SampleFunctions(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters)
         {
             Dictionary<IParameterEnum, ISampledParameter<IFdaFunction>> sampledFxs = new Dictionary<IParameterEnum, ISampledParameter<IFdaFunction>>()
@@ -80,14 +80,14 @@ namespace Model.Conditions.Locations
         }
         protected IReadOnlyDictionary<IParameterEnum, ISample> FetchSamples(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters = null)
         {
-            if (sampleParameters.IsNull()) return SamplePacket();
+            if (sampleParameters.IsNull()) return SampleParametersPacket();
             else
             {
                 if (!IsValidComputeParameters(sampleParameters, out List<IParameterEnum> missingParameters)) throw new ArgumentException($"The following required parameters: {PrintParameterList(missingParameters)} are not included in the {nameof(sampleParameters)} argument causing an error.");
                 else return sampleParameters;
             }  
         }
-        protected bool IsValidComputeParameters<T>(IReadOnlyDictionary<IParameterEnum, T> parameters, out List<IParameterEnum> missingParameters)
+        protected bool IsValidComputeParameters<U>(IReadOnlyDictionary<IParameterEnum, U> parameters, out List<IParameterEnum> missingParameters)
         {
             missingParameters = new List<IParameterEnum>();
             foreach (var pair in Parameters) if (!parameters.ContainsKey(pair.Key)) missingParameters.Add(pair.Key);

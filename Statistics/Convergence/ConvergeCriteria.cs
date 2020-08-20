@@ -7,59 +7,46 @@ namespace Statistics
 {
     internal class ConvergeCriteria : IConvergenceCriteria
     {
-        private readonly Utilities.IRange<int> _TestRange;
-
+        public IRange<int> TestRange { get; }
         public double Quantile { get; }
         public double Tolerance { get; }
-        public string TestRange => PrintTestRange();
-        public int MinimumSampleSize { get; }
+        //public string TestRange => PrintTestRange();
+        public int MinSampleSize { get; }
 
         internal ConvergeCriteria(double quantile, double tolerance, int minNewObservations, IRange<int> testRange)
         {
+            if (testRange.IsNull()) throw new ArgumentNullException(nameof(testRange));
             Quantile = quantile;
             Tolerance = tolerance;
-            _TestRange = testRange;
-            MinimumSampleSize = minNewObservations;
-        }
-            
-        public IConvergenceResult Test(double qValueBefore, double qValueAfter, int nSampleObservations, int nTotalObservations)
+            TestRange = testRange;
+            MinSampleSize = minNewObservations;
+        }   
+        public IConvergenceResult Test(double qValueBefore, double qValueAfter, int nSample, int nTotal)
         {
             double deviation = (qValueAfter - qValueBefore) / qValueBefore;
-            bool isEnoughSampleObs = !(nSampleObservations < MinimumSampleSize),
-                 isBelowRange = IsBelowRange(nTotalObservations), 
-                 isAboveRange = IsAboveRange(nTotalObservations),  
-                 isInTolerance = deviation < Tolerance,
-                 passed = isAboveRange || (isEnoughSampleObs && !isBelowRange && !isAboveRange && isInTolerance) ? true : false;
-            return IConvergenceResultFactory.Factory(passed, IMessageFactory.Factory(IMessageLevels.Message, PrintTestResult(passed, nSampleObservations, isBelowRange, isAboveRange, nTotalObservations, isInTolerance, deviation)));
-        }
-        private bool IsBelowRange(int observations) => _TestRange == null || (_TestRange != null && _TestRange.Min <= observations) ? false : true;
-        private bool IsAboveRange(int observations) => _TestRange == null || (_TestRange != null && _TestRange.Max >= observations) ? false : true;
-        private bool IsOnRange(int observations) => _TestRange == null || Utilities.ValidationExtensions.IsOnRange(_TestRange.Min, _TestRange.Max, observations) ? true : false;
-        private string PrintTestResult(bool passed, int sampleObs, bool isBelowRange, bool isAboveRange, int totalObs, bool isInTolerance, double deviation)
+            bool isBigEnoughSample = nSample >= MinSampleSize;
+            bool isEnoughObservations = nTotal >= TestRange.Min;
+            bool isConvergedBySampleSize = nTotal > TestRange.Max;
+            bool isConvergedByCalculation = deviation < Tolerance;
+            bool isConverged =
+                isConvergedBySampleSize ||
+                isEnoughObservations && isBigEnoughSample && isConvergedByCalculation;
+            return IConvergenceResultFactory.Factory(isConverged, IMessageFactory.Factory(IMessageLevels.Message, PrintIsConverged(isConverged, nTotal) + ".", PrintTestResult(isConverged, nSample, isBigEnoughSample, nTotal, isEnoughObservations, isConvergedBySampleSize, deviation, isConvergedByCalculation)));
+        }        
+        private string PrintTestResult(bool isConverged, int nSample, bool isBigEnoughSample, int nTotal, bool isEnoughObservations, bool isConvergedBySampleSize, double deviation, bool isConvergedByCalculation)
         {
-            string result = passed ? "CONVERGED: " : "FAILED to converge: ";
-            StringBuilder explaination = new StringBuilder();
-            if (sampleObs < MinimumSampleSize) explaination.Append($"{sampleObs} new observations were fit to the distribution, less than the {MinimumSampleSize} required for convergence to be evaluated. ");
-            if (isBelowRange) explaination.Append($"{_TestRange.Min - totalObs} fewer than the required minimum {_TestRange.Min} observations for convergence have been amassed. ");
-            if (isAboveRange) explaination.Append($"{totalObs} observations, more than the maximum {_TestRange.Max} number of observations before conveyance is assumed have been amassed. ");
-            if (isInTolerance)
-            {
-                if (explaination.Length > 0)
-                    explaination.Append($"The distribution fit with the new sample deviated from the original distribution by {deviation * 100} percent at the {Quantile} value, within the tolerance for convergence of less than {Tolerance * 100} percent.");
-                else
-                    explaination.Append($"the distribution fit with the new sample deviated from the original distribution by {deviation * 100} percent at the {Quantile} value, within the tolerance for convergence of less than {Tolerance * 100} percent.");
-            }                
-            else
-            {
-                if (explaination.Length > 0)
-                    explaination.Append($"The distribution fit with the new sample deviated from the original distribution by {deviation * 100} percent at the {Quantile} value, outside the tolerance for convergence of less than {Tolerance * 100} percent.");
-                else
-                    explaination.Append($"the distribution fit with the new sample deviated from the original distribution by {deviation * 100} percent at the {Quantile} value, outside the tolerance for convergence of less than {Tolerance * 100} percent.");
-            }
-            return result + explaination.ToString();
+            return $"{PrintIsConverged(isConverged, nTotal)} with {nSample} new sample observations. {PrintTestResultReason(nSample, isBigEnoughSample, nTotal, isEnoughObservations, isConvergedBySampleSize, deviation, isConvergedByCalculation)}";
+        }
+        private string PrintIsConverged(bool isConverged, int nTotal) => isConverged ? $"Converged at {nTotal} observations" : $"Convergence not reached at {nTotal} observations";
+        private string PrintTestResultReason(int nSample, bool isBigEnoughSample, int nTotal, bool isEnoughObservations, bool isConvergedBySampleSize, double deviation, bool isConvergedByCalculation)
+        {
+            if (!isBigEnoughSample) return $"The number of new observations being tested: {nSample} is below the minimum required number new observations: {MinSampleSize} needed to retest convergence.";
+            if (!isEnoughObservations) return $"The total number of observations: {nTotal} is below the minimum required: {TestRange.Max} observations needed to test for convergence.";
+            if (isConvergedBySampleSize) return $"The total number of observations: {nTotal} surpassed the minimum at which convergence is assumed: {TestRange.Max}.";
+            if (isConvergedByCalculation) return $"The new observations caused the {Quantile.Print()} value to deviate by: {(deviation * 100).Print()} percent, within the specified tolerance of: {(Tolerance * 100).Print()} percent.";
+            else return $"The new observations caused the {Quantile.Print()} value to deviate by: {(deviation * 100).Print()} percent, outside the specified tolerance of: {(Tolerance * 100).Print()} percent.";
         }
         
-        private string PrintTestRange() => _TestRange == null ? "No test range criteria." : "Test range: " + _TestRange.Print() + ".";
         public string Print() => $"Convergence Criteria(quantile: {Quantile}, tolerance: {Tolerance}, test range: {TestRange})";    
     }
 }

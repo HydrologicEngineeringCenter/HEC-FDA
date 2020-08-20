@@ -29,7 +29,7 @@ namespace Model.Conditions.Locations
             foreach (var pair in Parameters) parameters.Add(pair.Key, new Samples.Sample());
             return Compute(parameters); 
         }
-        public override IConditionLocationTimeRealization Compute(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters = null)
+        public override IConditionLocationTimeRealization Compute(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters = null, int id = -1)
         {
             int metricIndex = 0;
             IList<IMetric> endPoints = Metrics.ToList();
@@ -46,7 +46,7 @@ namespace Model.Conditions.Locations
                     metricIndex++;
                 }
             }
-            return new ConditionLocationTimeRealizationNoLateralStructure(sampledFxs, metrics);
+            return new ConditionLocationTimeRealizationNoLateralStructure(sampledFxs, metrics, id);
         }
         #endregion
 
