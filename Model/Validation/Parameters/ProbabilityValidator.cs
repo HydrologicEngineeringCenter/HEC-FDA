@@ -21,7 +21,7 @@ namespace Model.Validation
             else
             {
                 if (!obj.IsProbability()) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"A probability parameter was expected but a {obj.ParameterType.Print()} parameter was found causing an error."));
-                if (!obj.Units.IsProbability()) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The specified units: {obj.Units.Print()} are not a valid measurement of probability. The default unit of measurement for this {obj.ParameterType.Print()} parameter are: {obj.ParameterType.DefaultUnits().Print()}."));
+                if (!obj.Units.IsProbability()) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The specified units: {obj.Units.Print()} are not a valid measurement of probability. The default unit of measurement for this {obj.ParameterType.Print()} parameter are: {obj.ParameterType.UnitsDefault().Print()}."));
                 if (obj.Range.Min < 0 || obj.Range.Max > 1) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The {obj.ParameterType.Print()} parameter contains probability values on the range: {obj.Range.Print(true)}, this is outside the allowable range of: [0, 1]."));
             }
             return msgs;

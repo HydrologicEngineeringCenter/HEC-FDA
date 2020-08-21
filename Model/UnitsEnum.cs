@@ -105,12 +105,24 @@ namespace Model
         /// </summary>
         ThousandDollars = 54,
         /// <summary>
+        /// 10,000 of US Dollars
+        /// </summary>
+        TenThousandDollars = 55,
+        /// <summary>
+        /// 100,000 of US Dollars
+        /// </summary>
+        HundredThousandDollars = 56,
+        /// <summary>
         /// 1,000,000 of US Dollars
         /// </summary>
-        MillionDollars = 54,
+        MillionDollars = 57,
         /// <summary>
-        /// 1,000,000,000 of US Dollars
+        /// 10,000,000 of US Dollars
         /// </summary>
-        BillionDollars = 55,
+        TenMillionDollars = 58,
+        /// <summary>
+        /// 100,000,000 of US Dollars
+        /// </summary>
+        HundredMillionDollars = 59
     }
 }

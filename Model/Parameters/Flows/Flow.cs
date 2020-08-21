@@ -13,7 +13,7 @@ namespace Model.Parameters.Flows
 
         internal Flow(IRange<double> range, bool isConstant, IParameterEnum type, UnitsEnum units = UnitsEnum.NotSet, string label = "", bool abbreviatedLabel = false) : base(range, isConstant, type, units, label, abbreviatedLabel)
         {
-            _RangeDefaultUnits = Range.ConvertFlows(Units, ParameterType.DefaultUnits());
+            _RangeDefaultUnits = Range.ConvertFlows(Units, ParameterType.UnitsDefault());
             State = Validate(new Validation.Parameters.FlowValidator(), out IEnumerable<IMessage> msgs);
             Messages = msgs;
         }

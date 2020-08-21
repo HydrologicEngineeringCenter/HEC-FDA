@@ -312,24 +312,28 @@ namespace Model
             {
                 case UnitsEnum.Probability:
                     return "probability";
+                
                 case UnitsEnum.Foot:
                     if (abbreviate) return "ft";
                     else return "feet";
                 case UnitsEnum.Meters:
                     if (abbreviate) return "m";
                     else return units.ToString().ToLower();
+                
                 case UnitsEnum.SquareFoot:
                     if (abbreviate) return "sq ft";
                     else return "square feet";
                 case UnitsEnum.SquareMeter:
                     if (abbreviate) return "sq m";
                     else return "square meters";
+                
                 case UnitsEnum.CubicFoot:
                     if (abbreviate) return "cubic ft";
                     else return "cubic feet";
                 case UnitsEnum.CubicMeter:
                     if (abbreviate) return "cubic m";
                     else return "cubic meters";
+                
                 case UnitsEnum.Second:
                     if (abbreviate) return "s";
                     else return units.ToString().ToLower();
@@ -348,15 +352,42 @@ namespace Model
                 case UnitsEnum.Year:
                     if (abbreviate) return "yr";
                     else return units.ToString().ToLower();
+                
                 case UnitsEnum.CubicFootPerSecond:
                     if (abbreviate) return "cfs";
                     else return "cubic feet per second";
                 case UnitsEnum.CubicMeterPerSecond:
                     if (abbreviate) return "cms";
                     else return "cubic meters per second";
+                
                 case UnitsEnum.Dollars:
                     if (abbreviate) return "USD";
                     else return "US dollars";
+                case UnitsEnum.TenDollars:
+                    if (abbreviate) return "USD ('0)";
+                    else return "tens of US dollars";
+                case UnitsEnum.HundredDollars:
+                    if (abbreviate) return "USD ('00)";
+                    else return "hundreds of US dollars";
+                case UnitsEnum.ThousandDollars:
+                    if (abbreviate) return "USD ('000)";
+                    else return "thousands of US dollars";
+                case UnitsEnum.TenThousandDollars:
+                    if (abbreviate) return "USD ('0,000)";
+                    else return "tens of thousands of US dollars";
+                case UnitsEnum.HundredThousandDollars:
+                    if (abbreviate) return "USD ('00,000)";
+                    else return "hundreds of thousands of US dollars";
+                case UnitsEnum.MillionDollars:
+                    if (abbreviate) return "USD ('000,000)";
+                    else return "millions of US dollars";
+                case UnitsEnum.TenMillionDollars:
+                    if (abbreviate) return "USD (0,000,000)";
+                    else return "tens of millions of US dollars";
+                case UnitsEnum.HundredMillionDollars:
+                    if (abbreviate) return "USD (00,000,000)";
+                    else return "hundreds of millions of US dollars";
+                
                 case UnitsEnum.Unitless:
                     return "unit less";
                 default:

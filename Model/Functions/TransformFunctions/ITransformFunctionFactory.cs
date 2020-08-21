@@ -20,40 +20,39 @@ namespace Model
         /// <param name="xLabel"> Optional parameter describing the <see cref="IFdaFunction"/> x ordinates. If not set a default value is inferred based on the specified <see cref="IParameterEnum"/> value and the <paramref name="xUnits"/>. </param>
         /// <param name="yUnits"> Optional parameter describing the <see cref="IFdaFunction"/> y units. If set to the default: <see cref="UnitsEnum.NotSet"/> value, then the default <see cref="UnitsEnum"/> for the specified <see cref="IParameterEnum"/> is inferred."</param>
         /// <param name="yLabel"> Optional parameter describing the <see cref="IFdaFunction"/> y ordinates. If not set a default value is inferred based on the specified <see cref="IParameterEnum"/> value and the <paramref name="yUnits"/>. </param>
+        /// <param name="abbreviate"> Optional parameter describing if labels and units should be abbreviated. Set to <see langword="true"/> default. </param>
         /// <returns> An <see cref="ITransformFunction"/> implementing the <see cref="IFdaFunction"/> interface. </returns>
-        public static ITransformFunction Factory(IFunction fx, IParameterEnum fType, string label = "", UnitsEnum xUnits = UnitsEnum.NotSet, string xLabel = "", UnitsEnum yUnits = UnitsEnum.NotSet, string yLabel = "")
+        public static ITransformFunction Factory(IFunction fx, IParameterEnum fType, string label = "", UnitsEnum xUnits = UnitsEnum.NotSet, string xLabel = "", UnitsEnum yUnits = UnitsEnum.NotSet, string yLabel = "", bool abbreviate = true)
         {
-            label = label == "" ? fType.Print() : label;
-            xUnits = xUnits == UnitsEnum.NotSet ? fType.DefaultUnits() : xUnits;
-            yUnits = yUnits == UnitsEnum.NotSet ? fType.DefaultUnits() : yUnits; 
+            label = label == "" ? fType.PrintLabel(abbreviate: abbreviate) : label;
+            xUnits = xUnits == UnitsEnum.NotSet ? fType.XUnitsDefault() : xUnits;
+            yUnits = yUnits == UnitsEnum.NotSet ? fType.YUnitsDefault() : yUnits;
+            xLabel = xLabel == "" ? fType.PrintXLabel(xUnits, abbreviate) : xLabel;
+            yLabel = yLabel == "" ? fType.PrintYLabel(yUnits, abbreviate) : yLabel;
             switch (fType)
             {
                 case IParameterEnum.InflowOutflow:                   
-                    xLabel = xLabel == "" ? $"{IParameterEnum.UnregulatedAnnualPeakFlow.Print(true)} ({xUnits.Print(true)})" : xLabel;
-                    yLabel = yLabel == "" ? $"{IParameterEnum.RegulatedAnnualPeakFlow.Print(true)} ({yUnits.Print(true)})" : yLabel;
                     return new Functions.InflowOutflow(fx, label, xUnits, xLabel, yUnits, yLabel);
                 case IParameterEnum.Rating:
-                    xLabel = xLabel == "" ? $"{IParameterEnum.RegulatedAnnualPeakFlow.Print(true)} ({xUnits.Print(true)})" : xLabel;
-                    yLabel = yLabel == "" ? $"{IParameterEnum.ExteriorElevation.Print(true)} ({yUnits.Print(true)})" : yLabel;
                     return new Functions.Rating(fx, label, xUnits, xLabel, yUnits, yLabel);
                 case IParameterEnum.ExteriorInteriorStage:
-                    xLabel = xLabel == "" ? $"Exterior (In-Channel) Water Surface Elevation ({xUnits.Print(true)})" : xLabel;
-                    yLabel = yLabel == "" ? $"Interior (Floodplain) Water Surface Elevation ({yUnits.Print(true)})" : yLabel;
                     return new Functions.ExteriorInteriorStage(fx, label, xUnits, xLabel, yUnits, yLabel);
                 case IParameterEnum.InteriorStageDamage:
-                    xLabel = xLabel == "" ? $"Interior (Floodplain) Water Surface Elevation ({xUnits.Print(true)})" : xLabel;
-                    yLabel = yLabel == "" ? $"Flood Damage ({xUnits.Print(true)})" : yLabel;
                     return new Functions.StageDamage(fx, label, xUnits, xLabel, yUnits, yLabel);
                 case IParameterEnum.LateralStructureFailure:
-                    xLabel = xLabel == "" ? $"Exterior (In-Channel) Water Surface Elevation ({xUnits.Print(true)})" : xLabel;
-                    yLabel = yLabel == "" ? $"Probability of Failure of Lateral Structure" : yLabel;
                     return new Functions.FailureFunction(fx, xUnits, xLabel, yLabel, label);
                 default:
                     throw new ArgumentException($"The specified parameter type: {fType} is not a transform function.");
             }
         }       
-        internal static ITransformFunction Factory(double top, UnitsEnum xUnits = UnitsEnum.Foot, string label = "", string xLabel = "", string yLabel = "")
+        internal static ITransformFunction Factory(double top, UnitsEnum xUnits = UnitsEnum.NotSet, string label = "", string xLabel = "", string yLabel = "", bool abbreviate = true)
         {
+            var type = IParameterEnum.LateralStructureFailure;
+            label = label == "" ? type.PrintLabel(abbreviate: abbreviate) : label;
+            xUnits = xUnits == UnitsEnum.NotSet ? type.XUnitsDefault() : xUnits;
+            xLabel = xLabel == "" ? type.PrintXLabel(xUnits, abbreviate) : xLabel;
+            yLabel = yLabel == "" ? type.PrintYLabel(type.YUnitsDefault(), abbreviate) : yLabel;
+            
             IFunction fx = IFunctionFactory.Factory(new List<ICoordinate>() {
                 ICoordinateFactory.Factory(IParameterUtilities.LateralStructureElevationRange.Min, 0.0),
                 ICoordinateFactory.Factory(top, 1.0) }, InterpolationEnum.Piecewise);

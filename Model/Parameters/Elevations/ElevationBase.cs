@@ -13,7 +13,7 @@ namespace Model.Parameters.Elevations
 
         internal ElevationBase(IRange<double> range, bool isConstant, IParameterEnum parameterType, UnitsEnum units = UnitsEnum.Foot, string label = "", bool abbreviatedLabel = true): base(range, isConstant, parameterType, units, label, abbreviatedLabel)
         {
-            _RangeDefaultUnits = range.ConvertLenghts(Units, ParameterType.DefaultUnits());
+            _RangeDefaultUnits = range.ConvertLenghts(Units, ParameterType.UnitsDefault());
             State = Validate(new Validation.ElevationValidator(), out IEnumerable<IMessage> msgs);
             Messages = msgs;
         }

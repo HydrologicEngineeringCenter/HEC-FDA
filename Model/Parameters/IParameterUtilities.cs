@@ -106,18 +106,90 @@ namespace Model
         public static bool IsDamage(this IParameter parameter) => parameter.ParameterType.IsDamage();
 
         /// <summary>
+        /// Tests if the <see cref="IParameterEnum"/> describes a predefined type of <see cref="IFdaFunction"/> with x and y axes.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameterEnum"/> to be tested. </param>
+        /// <returns> <see langword="true"/> if the <see cref="IParameterEnum"/> describes an predefined type of <see cref="IFdaFunction"/>, <see langword="false"/> otherwise. </returns>
+        public static bool IsFunction(this IParameterEnum parameter) => _FunctionRange.IsOnRange((int)parameter);
+        /// <summary>
+        /// Tests if the <see cref="IParameter.ParameterType"/> property to determine if it describes a predefined type of <see cref="IFdaFunction"/> with x and y axes.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameter"/> to be tested. </param>
+        /// <returns> <see langword="true"/> if the <see cref="IParameter.ParameterType"/> describes an predefined type of <see cref="IFdaFunction"/>, <see langword="false"/> otherwise. </returns>
+        public static bool IsFunction(this IParameter parameter) => parameter.ParameterType.IsFunction();
+
+        /// <summary>
         /// Provides the default unit of measurement (<seealso cref="UnitsEnum"/> for the <see cref="IParameterEnum"/>.
         /// </summary>
         /// <param name="parameter"> The <see cref="IParameterEnum"/> to describe. </param>
         /// <returns> The <see cref="UnitsEnum"/> for the default unit of measurement. </returns>
-        public static UnitsEnum DefaultUnits(this IParameterEnum parameter)
+        public static UnitsEnum UnitsDefault(this IParameterEnum parameter)
         {
             if (parameter.IsProbability()) return UnitsEnum.Probability;
             else if (parameter.IsFlow()) return UnitsEnum.CubicFootPerSecond;
             else if (parameter.IsElevation()) return UnitsEnum.Foot;
-            else if (parameter.IsDamage()) return UnitsEnum.Dollars;
+            else if (parameter.IsDamage()) return UnitsEnum.ThousandDollars;
             else return UnitsEnum.NotSet;
         }
+        /// <summary>
+        /// Default units of x axis for specified function.
+        /// </summary>
+        /// <param name="fxType"> The function type to be evaluated. </param>
+        /// <returns> A <see cref="UnitsEnum"/> describing the default unit type. </returns>
+        public static UnitsEnum XUnitsDefault(this IParameterEnum fxType)
+        {
+            if (!fxType.IsFunction()) 
+                return UnitsEnum.NotSet;
+            else
+            {
+                switch (fxType)
+                {
+                    case IParameterEnum.InflowFrequency:
+                    case IParameterEnum.OutflowFrequency:
+                    case IParameterEnum.ExteriorStageFrequency:
+                    case IParameterEnum.InteriorStageFrequency:
+                    case IParameterEnum.DamageFrequency:
+                        return UnitsEnum.Probability;
+                    case IParameterEnum.InflowOutflow:
+                    case IParameterEnum.Rating:
+                        return UnitsEnum.CubicFootPerSecond;
+                    case IParameterEnum.ExteriorInteriorStage:
+                    case IParameterEnum.InteriorStageDamage:
+                    case IParameterEnum.LateralStructureFailure:
+                        return UnitsEnum.Foot;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+        }
+        public static UnitsEnum YUnitsDefault(this IParameterEnum fxType)
+        {
+            if (!fxType.IsFunction())
+                return UnitsEnum.NotSet;
+            else
+            {
+                switch (fxType)
+                {
+                    case IParameterEnum.InflowFrequency:
+                    case IParameterEnum.InflowOutflow:
+                    case IParameterEnum.OutflowFrequency:
+                        return UnitsEnum.CubicFootPerSecond;
+                    case IParameterEnum.Rating:
+                    case IParameterEnum.ExteriorStageFrequency:
+                    case IParameterEnum.ExteriorInteriorStage:
+                    case IParameterEnum.InteriorStageFrequency:
+                        return UnitsEnum.Foot;
+                    case IParameterEnum.InteriorStageDamage:
+                    case IParameterEnum.DamageFrequency:
+                        return UnitsEnum.ThousandDollars;
+                    case IParameterEnum.LateralStructureFailure:
+                        return UnitsEnum.Probability;
+                    default:
+                        throw new NotImplementedException();              
+                }
+            }
+        }
+
         /// <summary>
         /// Prints a text description of the <see cref="IParameterEnum"/> value.
         /// </summary>
@@ -196,7 +268,7 @@ namespace Model
         /// <returns> A <see cref="string"/> label. </returns>        
         public static string PrintLabel(this IParameterEnum parameter, UnitsEnum units = UnitsEnum.NotSet, bool abbreviate = true)
         {
-            string unitsLabel = units == UnitsEnum.NotSet ? parameter.DefaultUnits().Print(abbreviate) : units.Print(abbreviate);
+            string unitsLabel = units == UnitsEnum.NotSet ? parameter.UnitsDefault().Print(abbreviate) : units.Print(abbreviate);
             return $"{parameter.Print(abbreviate)} {unitsLabel}";
         }
         /// <summary>
@@ -237,7 +309,7 @@ namespace Model
         /// <param name="units"> The unit of measure (<seealso cref="UnitsEnum"/>) for the <see cref="IParameterEnum"/>. The <see cref="IParameterEnum"/> default units are used if none are provided (<seealso cref="IParameterUtilities.DefaultUnits(IParameterEnum)"/>). </param>
         /// <param name="abbreviate"> <see langword="true"/> if an abbreviated label should be printed, <see langword="false"/> otherwise. </param>
         /// <returns> A <see cref="string"/> label. </returns>
-        public static string PrintXLabel (IParameterEnum parameter, UnitsEnum units = UnitsEnum.NotSet, bool abbreviate = true)
+        public static string PrintXLabel (this IParameterEnum parameter, UnitsEnum units = UnitsEnum.NotSet, bool abbreviate = true)
         {
             switch (parameter) 
             {
@@ -269,7 +341,7 @@ namespace Model
         /// <param name="units"> The unit of measure (<seealso cref="UnitsEnum"/>) for the <see cref="IParameterEnum"/>. The <see cref="IParameterEnum"/> default units are used if none are provided (<seealso cref="IParameterUtilities.DefaultUnits(IParameterEnum)"/>). </param>
         /// <param name="abbreviate"> <see langword="true"/> if an abbreviated label should be printed, <see langword="false"/> otherwise. </param>
         /// <returns> A <see cref="string"/> label. </returns>
-        public static string PrintYLabel(IParameterEnum parameter, UnitsEnum units = UnitsEnum.NotSet, bool abbreviate = true)
+        public static string PrintYLabel(this IParameterEnum parameter, UnitsEnum units = UnitsEnum.NotSet, bool abbreviate = true)
         {
             switch (parameter)
             {

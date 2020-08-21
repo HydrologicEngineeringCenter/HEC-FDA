@@ -24,7 +24,7 @@ namespace Model.Parameters
                 Range = range;
                 ParameterType = type;
                 IsConstant = isConstant;
-                Units = units == UnitsEnum.NotSet ? type.DefaultUnits() : units;
+                Units = units == UnitsEnum.NotSet ? type.UnitsDefault() : units;
                 Label = label == "" ? $"{PrintLabel(abbreviatedLabel)}" : label;
             }
         }

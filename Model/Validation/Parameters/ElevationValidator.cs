@@ -34,7 +34,7 @@ namespace Model.Validation
             if (!obj.Units.IsLength())
                 msgs.Add(IMessageFactory.Factory(IMessageLevels.Error,
                         $"The specified units: {obj.Units.Print()} are not a valid measurement of elevation/length. " +
-                        $"The default unit of measurement for this {obj.ParameterType.Print()} parameter are: {obj.ParameterType.DefaultUnits().Print()}."));
+                        $"The default unit of measurement for this {obj.ParameterType.Print()} parameter are: {obj.ParameterType.UnitsDefault().Print()}."));
             switch (obj.ParameterType)
             {
                 case IParameterEnum.GroundElevation:
@@ -91,13 +91,13 @@ namespace Model.Validation
                 case IParameterEnum.GroundElevation:
                 case IParameterEnum.ExteriorElevation:
                 case IParameterEnum.InteriorElevation:
-                    return $"ground elevations on Earth: {IRangeFactory.Factory(_LowestGroundElevation, _HighestGroundElevation).ConvertLenghts(obj.ParameterType.DefaultUnits(), obj.Units).Print(true)} {obj.Units.Print(true)}.";
+                    return $"ground elevations on Earth: {IRangeFactory.Factory(_LowestGroundElevation, _HighestGroundElevation).ConvertLenghts(obj.ParameterType.UnitsDefault(), obj.Units).Print(true)} {obj.Units.Print(true)}.";
                 case IParameterEnum.AssetHeight:
-                    return $"reasonable height of assets (such as buildings) above the ground elevation: {IRangeFactory.Factory(_LowestAssetHeight, _HighestAssetHeight).ConvertLenghts(obj.ParameterType.DefaultUnits(), obj.Units).Print(true)} {obj.Units.Print(true)}.";
+                    return $"reasonable height of assets (such as buildings) above the ground elevation: {IRangeFactory.Factory(_LowestAssetHeight, _HighestAssetHeight).ConvertLenghts(obj.ParameterType.UnitsDefault(), obj.Units).Print(true)} {obj.Units.Print(true)}.";
                 case IParameterEnum.AssetElevation:
-                    return $"reasonable elevation of assets (such as buildings) on earth. This is based on the maximum and minimum elevation on earth: {IRangeFactory.Factory(_LowestGroundElevation, _HighestGroundElevation).ConvertLenghts(obj.ParameterType.DefaultUnits(), obj.Units).Print(true)} {obj.Units.Print(true)} plus a range of reasonable asset heights (above the ground elevation): {IRangeFactory.Factory(_LowestAssetHeight, _HighestAssetHeight).ConvertLenghts(obj.ParameterType.DefaultUnits(), obj.Units).Print(true)} {obj.Units.Print(true)}.";
+                    return $"reasonable elevation of assets (such as buildings) on earth. This is based on the maximum and minimum elevation on earth: {IRangeFactory.Factory(_LowestGroundElevation, _HighestGroundElevation).ConvertLenghts(obj.ParameterType.UnitsDefault(), obj.Units).Print(true)} {obj.Units.Print(true)} plus a range of reasonable asset heights (above the ground elevation): {IRangeFactory.Factory(_LowestAssetHeight, _HighestAssetHeight).ConvertLenghts(obj.ParameterType.UnitsDefault(), obj.Units).Print(true)} {obj.Units.Print(true)}.";
                 case IParameterEnum.LateralStructureElevation:
-                    return $"ground elevations on earth plus a reasonable lateral structure height. This is based on the maximum and minimum elevation on earth: {IRangeFactory.Factory(_LowestGroundElevation, _HighestGroundElevation).ConvertLenghts(obj.ParameterType.DefaultUnits(), obj.Units).Print(true)} {obj.Units.Print(true)} plus a range of lateral structure heights (above the ground elevation): {IRangeFactory.Factory(0, _TallestDamOrLevee).ConvertLenghts(obj.ParameterType.DefaultUnits(), obj.Units).Print(true)} {obj.Units.Print(true)} with the maximum lateral structure elevation based on the Jinping-I arch dam located in China.";
+                    return $"ground elevations on earth plus a reasonable lateral structure height. This is based on the maximum and minimum elevation on earth: {IRangeFactory.Factory(_LowestGroundElevation, _HighestGroundElevation).ConvertLenghts(obj.ParameterType.UnitsDefault(), obj.Units).Print(true)} {obj.Units.Print(true)} plus a range of lateral structure heights (above the ground elevation): {IRangeFactory.Factory(0, _TallestDamOrLevee).ConvertLenghts(obj.ParameterType.UnitsDefault(), obj.Units).Print(true)} {obj.Units.Print(true)} with the maximum lateral structure elevation based on the Jinping-I arch dam located in China.";
                 default:
                     throw new NotSupportedException();
             }

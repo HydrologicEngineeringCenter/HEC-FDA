@@ -1,17 +1,17 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using System.Collections.Generic;
+﻿//using System;
+//using System.Linq;
+//using System.Text;
+//using System.Collections.Generic;
 
-using Model.Outputs;
-using Model.Functions;
+//using Model.Outputs;
+//using Model.Functions;
 
-namespace Model.Inputs.Conditions
-{
-    internal sealed class Conditon 
-    {
+//namespace Model.Inputs.Conditions
+//{
+//    internal sealed class Conditon 
+//    {
         
-    }
+//    }
 
     //internal sealed class Condition : ICondition
     //{
@@ -344,4 +344,4 @@ namespace Model.Inputs.Conditions
     //    }
     //    #endregion
     //}
-}
+//}
