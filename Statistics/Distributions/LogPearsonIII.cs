@@ -26,11 +26,17 @@ namespace Statistics.Distributions
         #endregion
 
         #region Constructor
-        public LogPearsonIII(double mean, double standardDeviation, double skew, int sampleSize = int.MaxValue)
+        public LogPearsonIII(double mean, double standardDeviation, double skew, bool isLogParameters = false, int sampleSize = int.MaxValue)
         {
             if (!Validation.LogPearsonIIIValidator.IsConstructable(mean, standardDeviation, skew, sampleSize, out string error)) throw new Utilities.InvalidConstructorArgumentsException(error);
             else
             {
+                if (!isLogParameters)
+                {
+                    mean = Math.Log10(mean);
+                    standardDeviation = Math.Log10(standardDeviation);
+                    skew = Math.Log10(skew);
+                }
                 Mean = mean;
                 Skewness = skew;
                 SampleSize = sampleSize;
@@ -120,7 +126,7 @@ namespace Statistics.Distributions
             IData data = sample.IsNullOrEmpty() ? throw new ArgumentNullException(nameof(sample)) : isLogSample ? IDataFactory.Factory(sample) : IDataFactory.Factory(logSample);
             if (!(data.State < IMessageLevels.Error) || data.Elements.Count() < 3) throw new ArgumentException($"The {nameof(sample)} is invalid because it contains an insufficient number of finite, numeric values (3 are required but only {data.Elements.Count()} were provided).");
             ISampleStatistics stats = ISampleStatisticsFactory.Factory(data);
-            return new LogPearsonIII(stats.Mean, stats.StandardDeviation, stats.Skewness, sampleSize == -404 ? stats.SampleSize : sampleSize);
+            return new LogPearsonIII(stats.Mean, stats.StandardDeviation, stats.Skewness, isLogParameters: true, sampleSize == -404 ? stats.SampleSize : sampleSize);
         }
 
         public string WriteToXML()
