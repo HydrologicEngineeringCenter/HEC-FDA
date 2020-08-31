@@ -109,6 +109,7 @@ namespace FdaViewModel.Editors
             
            // _Curve = defaultCurve;
             PlotTitle = "Curve";
+            SetDimensions(800, 600, 400, 400);
             //TransactionRows = new ObservableCollection<TransactionRowItem>();
         }
 
@@ -119,6 +120,7 @@ namespace FdaViewModel.Editors
             
             //TransactionHelper.LoadTransactionsAndMessages(this, elem);
             PlotTitle = Name;
+            SetDimensions(800, 600, 400, 400);
 
             //add the temp errors from the curve
 
@@ -134,7 +136,7 @@ namespace FdaViewModel.Editors
 
 
         #region voids
-        
+
         //public override void AddErrorMessage(string error)
         //{
 
@@ -168,12 +170,12 @@ namespace FdaViewModel.Editors
         //    MessageRows = tempList;
         //}
 
-            /// <summary>
-            /// I wanted this here so that the text could live in one place.
-            /// That way if we want to change it, it should change all the places that use it.
-            /// </summary>
-            /// <param name="elem"></param>
-            /// <returns></returns>
+        /// <summary>
+        /// I wanted this here so that the text could live in one place.
+        /// That way if we want to change it, it should change all the places that use it.
+        /// </summary>
+        /// <param name="elem"></param>
+        /// <returns></returns>
         private string CreateLastSavedText(ChildElement elem)
         {
             return "Last Saved: " + elem.LastEditDate;
@@ -208,7 +210,7 @@ namespace FdaViewModel.Editors
             return EditorVM.CreateFunctionFromTables(); 
         }
 
-        public  void SaveWhileEditing()
+        public void SaveWhileEditing()
         {
             if(!HasChanges)
             {

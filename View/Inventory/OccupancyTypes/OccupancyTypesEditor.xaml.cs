@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using FdaViewModel.Inventory.OccupancyTypes;
 using View.Inventory.OccupancyTypes.Controls;
+using FdaViewModel.Tabs;
 
 namespace View.Inventory.OccupancyTypes
 {
@@ -40,6 +41,7 @@ namespace View.Inventory.OccupancyTypes
         {
             // I wanted the editor to open up with a group and occtype selected. This gets the first group and the first occtype.
             OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
+            vm.CloseEditor += Vm_CloseEditor;
             UpdateTheListView(sender, e);
            // if (vm.OccTypeGroups.Count > 0)
            // {
@@ -58,6 +60,16 @@ namespace View.Inventory.OccupancyTypes
                 //}
                 
             //}
+        }
+
+        /// <summary>
+        /// This gets called if there are no occtype groups left and the user says that they want to close the editor.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Vm_CloseEditor(object sender, EventArgs e)
+        {
+            TabController.Instance.CloseTabOrWindow(this);
         }
 
         public void UpdateTheListView(object sender, EventArgs e)
@@ -88,29 +100,29 @@ namespace View.Inventory.OccupancyTypes
             OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
             
             //i don't want to message that the occtype group is switching if this is we are setting it for the first time.
-            if (!_isFirstSettingOfOcctypeGroup && handleSelection)
-            {
-                if (e.RemovedItems.Count > 0)
-                {
-                    IOccupancyTypeGroupEditable prevGroup = (IOccupancyTypeGroupEditable)e.RemovedItems[0];
-                    //if the prev group has occtype changes then message before switching
-                    if (prevGroup.ModifiedOcctypes.Count>0)
-                    {
-                        //todo: maybe list the occtypes with changes?
-                        MessageBoxResult d;
-                        d = MessageBox.Show("Occupancy type group has unsaved changes. By switching, you will not lose these changes. Do you wish to continue?", "Unsaved Changes", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                        if (d == MessageBoxResult.No)
-                        {
-                            //when i reset the combobox back to what it originally does, it was infanitely coming back into here because it is another selection changed event.
-                            //I had to add this handleSelection boolean to handle it.
-                            handleSelection = false;
-                            cmb_Group.SelectedItem = e.RemovedItems[0];
+            //if (!_isFirstSettingOfOcctypeGroup && handleSelection)
+            //{
+            //    if (e.RemovedItems.Count > 0)
+            //    {
+            //        IOccupancyTypeGroupEditable prevGroup = (IOccupancyTypeGroupEditable)e.RemovedItems[0];
+            //        //if the prev group has occtype changes then message before switching
+            //        if (prevGroup.ModifiedOcctypes.Count>0)
+            //        {
+            //            //todo: maybe list the occtypes with changes?
+            //            MessageBoxResult d;
+            //            d = MessageBox.Show("Occupancy type group has unsaved changes. By switching, you will not lose these changes. Do you wish to continue?", "Unsaved Changes", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            //            if (d == MessageBoxResult.No)
+            //            {
+            //                //when i reset the combobox back to what it originally does, it was infanitely coming back into here because it is another selection changed event.
+            //                //I had to add this handleSelection boolean to handle it.
+            //                handleSelection = false;
+            //                cmb_Group.SelectedItem = e.RemovedItems[0];
 
-                            return;
-                        }
-                    }
-                }
-            }
+            //                return;
+            //            }
+            //        }
+            //    }
+            //}
             handleSelection = true;
             //load the list view
             if (vm.SelectedOccTypeGroup == null) { return; }
@@ -149,7 +161,7 @@ namespace View.Inventory.OccupancyTypes
             OccTypeEditorControl.DamageCategoryComboBox.SelectedIndex = -1;
             OccTypeEditorControl.DamageCategoryComboBox.IsEnabled = false;
 
-            OccTypeEditorControl.FoundationHeightUncertainty.IsEnabled = false;
+            //OccTypeEditorControl.FoundationHeightUncertainty.IsEnabled = false;
 
             //todo: cody commented out on 2/20/2020
             //OccTypeEditorControl.tableWithPlot_Structures.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None) ;
@@ -172,7 +184,7 @@ namespace View.Inventory.OccupancyTypes
             //OccTypeEditorControl.DamageCategoryComboBox.SelectedIndex = -1;
             OccTypeEditorControl.DamageCategoryComboBox.IsEnabled = true;
 
-            OccTypeEditorControl.FoundationHeightUncertainty.IsEnabled = true;
+            //OccTypeEditorControl.FoundationHeightUncertainty.IsEnabled = true;
 
             //OccTypeEditorControl.tableWithPlot_Structures.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
             //OccTypeEditorControl.tableWithPlot_Content.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);

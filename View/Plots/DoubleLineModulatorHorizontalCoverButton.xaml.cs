@@ -43,7 +43,19 @@ namespace View.Plots
 
                 //this.BaseFunction = vm.IndividualPlotWrapperVM.PlotVM.BaseFunction;
                 //((Plots.IndividualLinkedPlotControl)parentControl).SelectedCurve = this;
-                ((IndividualLinkedPlotControl)parentControl).PopTheImporterIntoPlot5();
+
+                //this is terrible but i needed some way of knowing which horizontal button was clicked and 
+                //i really didn't want to make another custom control for the lateral structure.
+                if(btn_AddButton.Content == "Ext Int Stage Curve")
+                {
+                    ((IndividualLinkedPlotControl)parentControl).PopTheImporterIntoPlot5();
+                }
+                else
+                {
+                    ((IndividualLinkedPlotControl)parentControl).PopTheLateralStructureLeft();
+
+                }
+
             }
 
         }

@@ -466,6 +466,12 @@ namespace FdaViewModel.Saving
             {
                 Storage.Connection.Instance.Open();
             }
+            //if the table doesn't exist, then there is nothing to delete
+            if(Storage.Connection.Instance.GetTable(tableName) == null)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder("delete from ").Append(tableName).Append(" where ").Append(keyColName).Append(" = ").Append(key);
             SQLiteCommand command = Storage.Connection.Instance.Reader.DbConnection.CreateCommand();
             command.CommandText = sb.ToString();

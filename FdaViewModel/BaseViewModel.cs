@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace FdaViewModel
@@ -61,7 +62,32 @@ namespace FdaViewModel
 
         #endregion
         #region Properties
-      
+        //default values
+        private double _Width = 50;
+        private double _Height = 50;
+        private double _MinWidth = 50;
+        private double _MinHeight = 50;
+        public double Width
+        {
+            get { return _Width; }
+            set { _Width = value; NotifyPropertyChanged(); }
+        }
+        public double Height
+        {
+            get { return _Height; }
+            set { _Height = value; NotifyPropertyChanged(); }
+        }
+        public double MinWidth
+        {
+            get { return _MinWidth; }
+            set { _MinWidth = value; NotifyPropertyChanged(); }
+        }
+        public double MinHeight
+        {
+            get { return _MinHeight; }
+            set { _MinHeight = value; NotifyPropertyChanged(); }
+        }
+
         /// <summary>
         /// The StudyCache holds all the elements used in FDA. You can use this to get any of them 
         /// as well as listen for events where elements are added, removed, or updated
@@ -471,7 +497,7 @@ namespace FdaViewModel
 
         public virtual void OnClosing(object sender, EventArgs e)
         {
-            Dispose();
+            //Dispose();
         }
         public virtual void Dispose()
         {
@@ -480,6 +506,21 @@ namespace FdaViewModel
 
         }
 
+        /// <summary>
+        /// Used to set the dimensions of the window when a view model is displayed in a window.
+        /// It actually gets set to the VM that the view window is pointing to in WindowVM ctor.
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="minWidth"></param>
+        /// <param name="minHeight"></param>
+        public void SetDimensions(double width, double height, double minWidth, double minHeight)
+        {
+            Width = width;
+            Height = height;
+            MinWidth = minWidth;
+            MinHeight = minHeight;
+        }
 
 
         #endregion
@@ -566,5 +607,16 @@ namespace FdaViewModel
             }
         }
         #endregion
+
+        /// <summary>
+        /// When a tab or a window is closing it will first check to see if it is ok to close
+        /// by calling this method. This is a chance to warn the user that they have unsaved data
+        /// or anything like that before actually closing the form.
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool IsOkToClose()
+        {
+            return true;
+        }
     }
 }

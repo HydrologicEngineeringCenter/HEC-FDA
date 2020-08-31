@@ -24,12 +24,16 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public CreateNewDamCatVM(List<string> bannedNames):base(null)
         {
             AddValidationRules(bannedNames);
+            SetDimensions(360, 120, 200, 70);
         }
         public CreateNewDamCatVM(string exampleName, List<string> bannedNames) : base(null)
         {
             Name = exampleName;
             AddValidationRules(bannedNames);
+            SetDimensions(360, 120, 200, 70);
         }
+
+
 
         #endregion
         #region Voids

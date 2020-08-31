@@ -357,6 +357,8 @@ namespace Importer
            // FailureFunctionElement elem = new FailureFunctionElement(Name, editDate, Description, func, leveeFeatureElement);
             //FdaViewModel.Saving.PersistenceFactory.GetFailureFunctionManager().SaveNewElement(elem);
             LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(Name,editDate, Description, ElevationTopOfLevee, false,  func);
+            FdaViewModel.Saving.PersistenceFactory.GetLeveeManager().SaveNewElement(leveeFeatureElement);
+
         }
 
         #endregion

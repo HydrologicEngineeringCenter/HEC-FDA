@@ -32,7 +32,7 @@ namespace Statistics.Distributions
         #region Constructor
         public Triangular(double min, double mode, double max, int sampleSize = int.MaxValue)
         {
-            IRange<double> range = IRangeFactory.Factory(min, max);
+            IRange<double> range = IRangeFactory.Factory(min, max,true, true, true, false);
             if (!Validation.TriangularValidator.IsConstructable(mode, range, out string error)) throw new InvalidConstructorArgumentsException(error);
             else
             {

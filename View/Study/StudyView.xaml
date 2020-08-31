@@ -10,8 +10,9 @@
              xmlns:VMUtils="clr-namespace:FdaViewModel.Utilities;assembly=FdaViewModel"
              xmlns:study="clr-namespace:FdaViewModel.Study;assembly=FdaViewModel"
 
-           
-
+             
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch"
              Loaded="UserControl_Loaded"             
              mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1200">
 
@@ -54,7 +55,7 @@
         </Style>
 
     </UserControl.Resources>
-    <Grid>
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <!--<RowDefinition Height="32" />-->
             <RowDefinition Height="32" />

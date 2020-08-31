@@ -11,6 +11,7 @@ using Functions;
 using FdaViewModel.Saving;
 using System.Collections.ObjectModel;
 using System.Windows;
+using FdaViewModel.Saving.PersistenceManagers;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -73,7 +74,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         #endregion
         #region Voids
 
-        private void OccTypeElementWasAdded(object sender, Saving.ElementAddedEventArgs e)
+        private void OccTypeElementWasAdded(object sender, ElementAddedEventArgs e)
         {
             OccupancyTypesElement elem = (OccupancyTypesElement)e.Element;
             ListOfOccupancyTypesGroups.Add(elem);
@@ -115,9 +116,13 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 //DynamicTabVM tabb = new DynamicTabVM(title, messageBox, "ErrorMessage");
                 //Navigate(tabb);
                 MessageBox.Show("There are no occupancy types to edit. You must first import a group of occupancy types.", "No Occupancy Types", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return;
+               // CreateDefaultOccTypeGroup();
+                
+                
+                //return;
             }
 
+            _IsEditorOpen = true;
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager();
             //.WithSaveUndoRedo(saveHelper)
             //.WithSiblingRules(this)
@@ -127,16 +132,38 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
 
 
-            _OccTypeEditor = new OccupancyTypesEditorVM(ListOfOccupancyTypesGroups, actionManager);
+            _OccTypeEditor = new OccupancyTypesEditorVM( actionManager);
+            _OccTypeEditor.FillEditor(ListOfOccupancyTypesGroups);
+
             _OccTypeEditor.RequestNavigation += Navigate;
             string header = "Edit Occupancy Types";
             DynamicTabVM tab = new DynamicTabVM(header, _OccTypeEditor, "EditOccupancyTypes");
             tab.RemoveTabEvent += Tab_RemoveTabEvent;
             tab.RemoveWindowEvent += Tab_RemoveTabEvent;
-            _IsEditorOpen = true;
             Navigate(tab, false, false);
 
         }
+        //private void CreateDefaultOccTypeGroup()
+        //{
+        //    OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
+        //    int groupID = manager.GetUnusedId();
+        //    string groupName = "Occupancy Type Group";
+        //    IOccupancyType ot = new OccupancyType()
+
+        //    OccupancyTypesElement elem = new OccupancyTypesElement(groupName, groupID, new List<IOccupancyType>() { CreateDefaultOcctype(groupID) });
+        //    //calling the save here should add it to the cache, which tells the occtype owner to add it to this editor
+        //    //if it is open. see AddGroup() in this class.
+        //    manager.SaveNewElement(elem);
+        //}
+
+        //private IOccupancyTypeEditable CreateDefaultOcctype(int groupID)
+        //{
+        //    IOccupancyType newOT = OccupancyTypeFactory.Factory("New Occupancy Type", "", groupID);
+        //    ObservableCollection<string> damCatOptions = new ObservableCollection<string>();
+        //    OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT, ref damCatOptions, false);
+        //    otEditable.RequestNavigation += this.Navigate;
+        //    return otEditable;
+        //}
 
         private void Tab_RemoveTabEvent(object sender, EventArgs e)
         {

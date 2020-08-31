@@ -741,21 +741,53 @@ namespace Importer
             {
                 SingleDamageFunction func = _SingleDamageFunction[i];
                 StructureValueType type = (StructureValueType)i;
-                ICoordinatesFunction function = CreateCoordinatesFunction(func, type, errorMessages);
-                //the coordinates function will be null if it was not able to be created
-                if (function != null)
+                ICoordinatesFunction function = null;
+
+                if(IsEmptyFunction(func))
                 {
-                    coordinatesFunctions.Add(function);
+                    //create a function with just (0,0)
+                    function = CreateEmptyFunction();
                 }
                 else
                 {
-                    //create an empty coord function?
-                    List<double> xs = new List<double>() { 0 };
-                    List<double> ys = new List<double>() { 0 };
-                    coordinatesFunctions.Add(ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear));
+                    function = CreateCoordinatesFunction(func, type, errorMessages);
+
                 }
+
+                //the coordinates function will be null if it was not able to be created
+                if (function == null)
+                {
+                    //create an empty coord function?
+                    function = CreateEmptyFunction();
+                }
+              
+                coordinatesFunctions.Add(function);
             }
             return coordinatesFunctions;
+        }
+
+        private ICoordinatesFunction CreateEmptyFunction()
+        {
+            List<double> xs = new List<double>() { 1 ,2,3};
+            List<double> ys = new List<double>() { 1,2,3 };
+            return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+        }
+
+        private bool IsEmptyFunction(SingleDamageFunction function)
+        {
+            List<double> depths = function.Depth.ToList<double>();
+            List<double> damages = function.Damage.ToList<double>();
+
+            for(int i = 0; i<depths.Count;i++)
+            {
+                double depth = depths[i];
+                double damage = damages[i];
+                if(depth != 0 || damage != 0)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private ICoordinatesFunction CreateCoordinatesFunction(SingleDamageFunction function, StructureValueType structureValueType, List<string> errors)

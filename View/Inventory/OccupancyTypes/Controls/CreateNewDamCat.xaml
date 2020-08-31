@@ -7,18 +7,18 @@
                           xmlns:Utilities="clr-namespace:View.Utilities"
                Loaded="UserControl_Loaded"
              mc:Ignorable="d" 
-        Width="300"
-        MinWidth="300"
-        MinHeight="140"
-        Height="140"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch"
              d:DesignHeight="123" d:DesignWidth="500">
+        <!--Height="100"-->
+        <!--Width="250"-->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="28"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <!--<StackPanel Name="NameStackPanel" Margin="5,10,5,5" VerticalAlignment="Top" HorizontalAlignment="Center" Orientation="Vertical">-->
-        <DockPanel LastChildFill="True" Margin="5,10,5,0">
+        <DockPanel LastChildFill="True" Margin="5,10,5,0" >
             <TextBlock Grid.Row="0" Margin="5,0,0,0" Name="NameLabel" Text="Name:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
             <TextBox Grid.Row="1" Name="txt_NameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True}" HorizontalAlignment="Stretch" Margin="5,0,5,0" VerticalAlignment="Center" />
         </DockPanel >

@@ -104,8 +104,15 @@ namespace FdaViewModel.Editors
 
         public BaseLoggingEditorVM(Utilities.ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager):base(elem, actionManager)
         {
-            ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(elem.Curve.Coordinates, elem.Curve.Interpolator);
-            EditorVM = new CoordinatesFunctionEditorVM(coordFunc, xLabel, yLabel, chartTitle);
+            if (elem.Curve != null)
+            {
+                ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(elem.Curve.Coordinates, elem.Curve.Interpolator);
+                EditorVM = new CoordinatesFunctionEditorVM(coordFunc, xLabel, yLabel, chartTitle);
+            }
+            else
+            {
+                EditorVM = new CoordinatesFunctionEditorVM();
+            }
             EditorVM.TableChanged += EditorVM_TableChanged;
             ReloadMessages();
         }

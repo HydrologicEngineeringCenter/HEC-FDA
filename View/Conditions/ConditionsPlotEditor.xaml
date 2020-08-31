@@ -17,6 +17,64 @@
         <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <utils:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
 
+        <Style TargetType="{x:Type Image}" x:Key="PlusImage">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Source" Value="pack://application:,,,/View;component/Resources/AddDisabled.png" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="True">
+                    <Setter Property="Source" Value="pack://application:,,,/View;component/Resources/Add.png" />
+                </Trigger>
+
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="{x:Type Button}" x:Key="AddButtonHorizontalModulator">
+
+            <Setter Property="Background" Value="LightGreen" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+
+                        <Border CornerRadius="2"  BorderBrush="Black" BorderThickness="3">
+                            <Grid Background="{TemplateBinding Background}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Image Style="{StaticResource PlusImage}" Grid.Row="1" Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                    <ContentPresenter x:Name="MyContentPresenter" Grid.Row="0" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="10,0,0,0" />
+
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                                <Setter Property="Foreground" Value="White" />
+                                <!--<Setter TargetName="PathIcon" Property="Fill" Value="Black" />-->
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="LightGray" />
+
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </UserControl.Resources>
 
 
@@ -197,11 +255,11 @@
 
             </Grid.ColumnDefinitions>
 
-            <plot:IndividualLinkedPlotControl x:Name="Plot5Control" DataContext="{Binding Plot5ControlVM}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2"  Content="{Binding CurrentVM}"/>
-            <plot:IndividualLinkedPlotControl x:Name="PlotFailureFunction" DataContext="{Binding PlotFailureControlVM}" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" Content="{Binding CurrentVM}" 
-                                               />
+            <plot:IndividualLinkedPlotControl x:Name="PlotFailureFunctionControl" DataContext="{Binding PlotFailureControlVM}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" Content="{Binding CurrentVM}" />
+            <plot:IndividualLinkedPlotControl x:Name="Plot5Control" DataContext="{Binding Plot5ControlVM}" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2"  Content="{Binding CurrentVM}"/>
+                                              
 
-            <Button Name="btn_CollapsePlot5" Width="26" Height="26" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Background="White" BorderBrush="White" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="1,0,0,0" Click="btn_CollapsePlot5_Click" >
+            <Button Name="btn_CollapsePlot5" Width="26" Height="26" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Background="White" BorderBrush="White" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="1,0,0,0" Click="btn_CollapseLeftPlots_Click" >
                 <Image Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopRight.png"/>
 
             </Button>
@@ -268,10 +326,10 @@
 
             <!--<local:FailureFunctionPlot x:Name="plot5" Grid.Row="4" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot5Curve}" Title="{Binding Path=Plot5Title}"  />-->
             <!--<plot:DoubleLineModulatorHorizontal x:Name="DoubleLineHorizontal" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Curve="{Binding Path=Plot5VM.Curve}" BaseFunction="{Binding Path=Plot5VM.BaseFunction}"/>-->
-            <plot:IndividualLinkedPlotControl x:Name="DLMHorizontalControl" DataContext="{Binding Plot5ControlVM}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="{Binding CurrentVM}"/>
+            <plot:IndividualLinkedPlotControl x:Name="HorizontalPlotFailureControl" DataContext="{Binding PlotFailureControlVM}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="{Binding CurrentVM}"/>
 
+            <plot:IndividualLinkedPlotControl x:Name="DLMHorizontalControl" DataContext="{Binding Plot5ControlVM}" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="{Binding CurrentVM}"/>
             <!--<Button Style="{StaticResource AddButtonHorizontalModulator}" Name="btn_AddPlot5" IsEnabled="{Binding IsPlot3Visible}" Visibility="{Binding IsPlot5Visible,Converter={StaticResource BoolToInverseVisibilityConverter}}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Exterior Interior Stage" Click="btn_AddPlot5_Click"/>-->
-            <Button x:Name="btn_AddFailureFunction" IsEnabled="{Binding Plot5ControlVM.ImportButtonVM.IsEnabled}" Content="Add Failure Function" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Click="btn_AddFailureFunction_Click"/>
 
             <!--<plot:IndividualLinkedPlot x:Name="plot7" Visibility="{Binding IsPlot7Visible,Converter={StaticResource BoolToVisibilityConverter}}" Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Curve="{Binding Path=Plot7VM.Curve}" BaseFunction="{Binding Path=Plot7VM.BaseFunction}" Title="{Binding Path=Plot7VM.Title}"  XAxisLabel="{Binding Plot7VM.XAxisLabel}" YAxisLabel="{Binding Plot7VM.YAxisLabel}"  SetYAxisToLogarithmic="True"/>-->
             <!--<Button Name="btn_AddPlot7" Style="{StaticResource AddButton}" IsEnabled="{Binding IsPlot3Visible}" Visibility="{Binding IsPlot7Visible,Converter={StaticResource BoolToInverseVisibilityConverter}}" Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="150" MinHeight="150" Content="Depth Damage Curve" Click="btn_AddPlot7_Click"/>-->

@@ -37,6 +37,8 @@ namespace View.Plots
         public event EventHandler PopImporterIntoPlot5;
         public event EventHandler PopPlotIntoPlot5;
 
+        public event EventHandler PopLateralStructImporterLeft;
+
         public bool UpdatePlotsFromVM
         {
             get { return (bool)GetValue(UpdatePlotsFromVMProperty); }
@@ -81,7 +83,13 @@ namespace View.Plots
 
         public void PopTheImporterIntoPlot5()
         {
+            //why don't i just tell the vm to pop out?
             PopImporterIntoPlot5?.Invoke(this, new EventArgs());
+        }
+
+        public void PopTheLateralStructureLeft()
+        {
+            PopLateralStructImporterLeft?.Invoke(this, new EventArgs());
         }
 
         public void PopThePlotIntoPlot5()
@@ -142,10 +150,12 @@ namespace View.Plots
                         //if i am inflow frequency, then i can only link to inflow outflow or to rating
                         if (nextType == IParameterEnum.InflowOutflow)
                         {
-                            controller.BindChart(ShareableAxis.Y, Chart, ShareableAxis.X, nextControl.Chart);
-                            Chart.SetVerticalMouseEventGroup(guid.ToString());
-                            nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
-                            SetMinMaxAxisValues(Chart, nextControl, Axis.Y);
+                            //controller.BindChart(ShareableAxis.Y, Chart, ShareableAxis.X, nextControl.Chart);
+                            controller.BindChart(ShareableAxis.Y, Chart, nextControl.Chart);
+
+                            //Chart.SetVerticalMouseEventGroup(guid.ToString());
+                            //nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
+                            //SetMinMaxAxisValues(Chart, nextControl, Axis.Y);
                         }
                         else if (nextType == IParameterEnum.Rating)
                         {
@@ -161,7 +171,7 @@ namespace View.Plots
                         
                         if (nextType == IParameterEnum.Rating)
                         {
-                            controller.BindChart(ShareableAxis.Y, Chart, nextControl.Chart);
+                            controller.BindChart(ShareableAxis.Y, Chart,ShareableAxis.X, nextControl.Chart);
                             Chart.SetVerticalMouseEventGroup(guid.ToString());
                             nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
                             SetMinMaxAxisValues(Chart, nextControl, Axis.Y);
@@ -170,7 +180,14 @@ namespace View.Plots
                     }
                 case IParameterEnum.Rating:
                     {
-                        if (nextType == IParameterEnum.ExteriorInteriorStage)
+                        if(nextType == IParameterEnum.LateralStructureFailure)
+                        {
+                            controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
+                            Chart.SetVerticalMouseEventGroup(guid.ToString());
+                            nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
+                            SetMinMaxAxisValues(Chart, nextControl, Axis.X);
+                        }
+                        else if (nextType == IParameterEnum.ExteriorInteriorStage)
                         {
                             controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
                             Chart.SetVerticalMouseEventGroup(guid.ToString());
@@ -189,11 +206,29 @@ namespace View.Plots
                         }
                         break;
                     }
+                case IParameterEnum.LateralStructureFailure:
+                    {
+                        if (nextType == IParameterEnum.InteriorStageDamage)
+                        {
+                            controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
+                            Chart.SetVerticalMouseEventGroup(guid.ToString());
+                            nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
+                            SetMinMaxAxisValues(Chart, nextControl, Axis.X);
+                        }
+                        else if (nextType == IParameterEnum.DamageFrequency)
+                        {
+                            controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
+                            Chart.SetVerticalMouseEventGroup(guid.ToString());
+                            nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
+                            SetMinMaxAxisValues(Chart, nextControl, Axis.X);
+                        }
+                        break;
+                    }
                 case IParameterEnum.ExteriorInteriorStage:
                     {
                         if (nextType == IParameterEnum.InteriorStageDamage)
                         {
-                            controller.BindChart(ShareableAxis.Y, Chart, nextControl.Chart);
+                            controller.BindChart(ShareableAxis.Y, Chart, ShareableAxis.X, nextControl.Chart);
                             Chart.SetVerticalMouseEventGroup(guid.ToString());
                             nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
                             SetMinMaxAxisValues(Chart, nextControl, Axis.Y);
@@ -223,28 +258,28 @@ namespace View.Plots
         /// <param name="axis"></param>
         private void SetMinMaxAxisValues(Chart2D chart1, ILinkedPlotControl nextControl, Axis axis)
         {
-            Chart2D chart2 = nextControl.Chart;
-            double[] minMax = GetMinMaxValueOnAxes(chart1, chart2, axis);
-            var chart1Axis = chart1.GetAxes(axis);
-            var chart2Axis = chart2.GetAxes(axis);
+            //Chart2D chart2 = nextControl.Chart;
+            //double[] minMax = GetMinMaxValueOnAxes(chart1, chart2, axis);
+            //var chart1Axis = chart1.GetAxes(axis);
+            //var chart2Axis = chart2.GetAxes(axis);
 
-            //i need to get the line data. I need to cast to a numericlinedata and then call useXlogAxis.
-            //ILineData data = chart1.ChartViewModel2DChart.LineData[0];
-            //i think all y axes are log. so lets just double the max y value to create the buffer.
+            ////i need to get the line data. I need to cast to a numericlinedata and then call useXlogAxis.
+            ////ILineData data = chart1.ChartViewModel2DChart.LineData[0];
+            ////i think all y axes are log. so lets just double the max y value to create the buffer.
 
-            //maybe add 5% on either side of the min/max for a margin around the plot
-            double marginPercent = .05;
-            double min = minMax[0];
-            double max = minMax[1];
-            double margin = (max - min) * marginPercent;
+            ////maybe add 5% on either side of the min/max for a margin around the plot
+            //double marginPercent = .05;
+            //double min = minMax[0];
+            //double max = minMax[1];
+            //double margin = (max - min) * marginPercent;
 
-            if(axis == Axis.Y)
-            {
-                max = 300000;    
-            }
+            ////if(axis == Axis.Y)
+            ////{
+            ////    max = 300000;    
+            ////}
 
-            chart1Axis[0].VisibleRange.SetMinMax(min-margin, max+margin);
-            chart2Axis[0].VisibleRange.SetMinMax(min - margin, max + margin);
+            //chart1Axis[0].VisibleRange.SetMinMax(min-margin, max+margin);
+            //chart2Axis[0].VisibleRange.SetMinMax(min - margin, max + margin);
 
         }
       

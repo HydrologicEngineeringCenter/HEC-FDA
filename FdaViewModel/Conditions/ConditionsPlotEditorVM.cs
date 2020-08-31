@@ -531,7 +531,7 @@ namespace FdaViewModel.Conditions
             Plot7ControlVM.PlotIsNotShowing += Plot7IsNotShowing;
             Plot7ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
 
-            Plot8ControlVM.PreviewCompute += RunPreviewCompute;
+            Plot8ControlVM.PreviewCompute += PreviewCompute;
             Plot8ControlVM.PlotIsShowing += Plot8IsShowing;
             Plot8ControlVM.PlotIsNotShowing += Plot8IsNotShowing;
 
@@ -612,9 +612,16 @@ namespace FdaViewModel.Conditions
 
             Plot7ControlVM.ImportButtonVM.IsEnabled = true;
             Plot5ControlVM.ImportButtonVM.IsEnabled = true;
+            PlotFailureControlVM.ImportButtonVM.IsEnabled = true;
+
             if (Plot5ControlVM.ModulatorCoverButtonVM != null)
             {
                 Plot5ControlVM.ModulatorCoverButtonVM.IsEnabled = true;
+            }
+
+            if(PlotFailureControlVM.ModulatorCoverButtonVM != null)
+            {
+                PlotFailureControlVM.ModulatorCoverButtonVM.IsEnabled = true;
             }
         }
         private void Plot3IsNotShowing(object sender, EventArgs e)
@@ -981,6 +988,7 @@ namespace FdaViewModel.Conditions
             if (_SelectedThresholdType == IMetricEnum.NotSet)
             {
                 //message that the metric type is not set
+                MessageBox.Show("Threshold type is not set.");
                 return false;
             }
             return true;
@@ -1010,7 +1018,7 @@ namespace FdaViewModel.Conditions
 
         }
 
-        public void RunPreviewCompute(Object sender, EventArgs e)
+        public void PreviewCompute(Object sender, EventArgs e)
         {
             Sampler.RegisterSampler(new ConstantSampler());
 
@@ -1018,6 +1026,8 @@ namespace FdaViewModel.Conditions
             //get the threshold values
             //PerformanceThreshold threshold = new PerformanceThreshold(PerformanceThresholdTypes.InteriorStage, 8);
 
+            //need to create conditionlocation
+            
 
             ICondition condition = CreateCondition();
             if(condition == null)

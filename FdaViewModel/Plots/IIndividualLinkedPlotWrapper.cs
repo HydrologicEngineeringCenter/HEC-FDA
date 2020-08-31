@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FdaViewModel.Conditions;
+using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,10 +22,11 @@ namespace FdaViewModel.Plots
 
         Model.IMetric Metric { get; set; }
 
-        bool DisplayImportButton { get; set; }
+        void AddCurveToPlot(IFdaFunction function, string elementName, FdaCrosshairChartModifier chartModifier);
+        //bool DisplayImportButton { get; set; }
 
-        string Title { get; }
-        string XAxisLabel { get; }
-        string YAxisLabel { get; }
+        //string Title { get; }
+        //string XAxisLabel { get; }
+        //string YAxisLabel { get; }
     }
 }

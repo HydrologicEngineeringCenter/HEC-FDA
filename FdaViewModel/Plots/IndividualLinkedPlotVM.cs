@@ -61,6 +61,11 @@ namespace FdaViewModel.Plots
 
         public IFdaFunction BaseFunction { get; set; }
         public bool IsYAxisLog { get; set; }
+        public bool IsXAxisLog { get; set; }
+
+        public string XAxisLabel { get; set; }
+        public string YAxisLabel { get; set; }
+
         public bool IsProbabilityXAxis { get; set; }
         #endregion
         #region Constructors
@@ -68,9 +73,9 @@ namespace FdaViewModel.Plots
         {
         }
 
-        public IndividualLinkedPlotVM(IFdaFunction baseFunction, string selectedElementName, FdaCrosshairChartModifier chartModifier, bool isYAxisLog, bool isProbabilityXAxis, 
+        public IndividualLinkedPlotVM(IFdaFunction baseFunction, string selectedElementName, FdaCrosshairChartModifier chartModifier,bool isXAxisLog, bool isYAxisLog, bool isProbabilityXAxis, 
             bool xAxisOnBottom, bool yAxisOnLeft) 
-            : this(baseFunction, isYAxisLog, isProbabilityXAxis, selectedElementName)
+            : this(baseFunction,isXAxisLog, isYAxisLog, isProbabilityXAxis, selectedElementName)
         {
             CoordinatesChartViewModel = new ConditionChartViewModel(selectedElementName);
             CoordinatesChartViewModel.ModifierGroup.ChildModifiers.Add(chartModifier);
@@ -93,13 +98,15 @@ namespace FdaViewModel.Plots
         }
        
 
-        public IndividualLinkedPlotVM(IFdaFunction baseFunction, bool isYAxisLog, bool isProbabilityXAxis, string selectedElementName = "")
+        public IndividualLinkedPlotVM(IFdaFunction baseFunction,bool isXAxisLog, bool isYAxisLog, bool isProbabilityXAxis, string selectedElementName = "")
         {
-
+            XAxisLabel = baseFunction.XSeries.Label;
+            YAxisLabel = baseFunction.YSeries.Label;
             // ChartVM = new CurveEditorVM(baseFunction, xAxisLabel, yAxisLabel, title, asdf);
 
             //XAxisIsStandardDeviation = isXAxisStandardDeviations;
             IsYAxisLog = isYAxisLog;
+            IsXAxisLog = isXAxisLog;
             IsProbabilityXAxis = isProbabilityXAxis;
             BaseFunction = baseFunction;
             SelectedElementName = selectedElementName;
@@ -161,7 +168,7 @@ namespace FdaViewModel.Plots
         {
             ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(function.Coordinates, function.Interpolator);
             CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(func);
-            List<SciLineData> lineData = chartHelper.CreateLineData(IsYAxisLog, IsProbabilityXAxis);
+            List<SciLineData> lineData = chartHelper.CreateLineData(IsXAxisLog, IsYAxisLog, IsProbabilityXAxis);
             foreach(SciLineData ld in lineData)
             {
                 if (!xAxisBottom)

@@ -37,6 +37,8 @@ namespace Model
                     case IParameterEnum.InteriorStageFrequency:
                     case IParameterEnum.DamageFrequency:
                     case IParameterEnum.NonExceedanceProbability:
+                    case IParameterEnum.FailureProbability:
+                       
                         // probability / frequency.
                         return new Parameters.Probabilities.Probability(fx.Domain, isConstant, IParameterEnum.NonExceedanceProbability, units, label);
                     case IParameterEnum.InflowOutflow:
@@ -48,7 +50,7 @@ namespace Model
                         // flow
                         return new Parameters.Flows.Flow(fx.Domain, isConstant, IParameterEnum.RegulatedAnnualPeakFlow, units, label);
                     case IParameterEnum.ExteriorInteriorStage:
-                    case IParameterEnum.LateralStructureFailure:
+                    //case IParameterEnum.LateralStructureFailure:
                     case IParameterEnum.ExteriorElevation:
                         return new Parameters.Elevations.ElevationRange(fx.Domain, isConstant, IParameterEnum.ExteriorElevation, units == UnitsEnum.NotSet ? IParameterEnum.ExteriorElevation.UnitsDefault() : units, label);
                     case IParameterEnum.InteriorStageDamage:

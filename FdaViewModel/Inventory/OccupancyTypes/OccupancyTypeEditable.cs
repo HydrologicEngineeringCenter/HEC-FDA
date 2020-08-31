@@ -83,7 +83,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         public string Description
         {
             get { return _Description; }
-            set { _Description = value; IsModified = true; IsModified = true; }
+            set { _Description = value; IsModified = true; }
         }
 
         public IDamageCategory DamageCategory
@@ -120,17 +120,82 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             get { return _CalculateOtherDamage; }
             set { _CalculateOtherDamage = value; IsModified = true; }
         }
-        public ValueUncertaintyVM StructureValueUncertainty 
-        { 
-            get; set; }
-        public ValueUncertaintyVM ContentValueUncertainty { get; set; }
-        public ValueUncertaintyVM VehicleValueUncertainty { get; set; }
-        public ValueUncertaintyVM OtherValueUncertainty { get; set; }
-        public ValueUncertaintyVM FoundationHeightUncertainty { get; set; }
 
-        public CoordinatesFunctionEditorVM StructureEditorVM { get; set; }
-        public CoordinatesFunctionEditorVM ContentEditorVM { get; set; }
-        public CoordinatesFunctionEditorVM VehicleEditorVM { get; set; }
+        private ValueUncertaintyVM _StructureValueUncertainty;
+        public ValueUncertaintyVM StructureValueUncertainty 
+        {
+            get { return _StructureValueUncertainty; }
+            set 
+            { 
+                _StructureValueUncertainty = value;
+                _StructureValueUncertainty.WasModified += SomethingChanged;
+                IsModified = true; 
+            }
+        }
+
+        private ValueUncertaintyVM _ContentValueUncertainty;
+        public ValueUncertaintyVM ContentValueUncertainty 
+        {
+            get { return _ContentValueUncertainty; }
+            set 
+            { 
+                _ContentValueUncertainty = value;
+                _ContentValueUncertainty.WasModified += SomethingChanged;
+                IsModified = true; 
+            }
+        }
+
+        private ValueUncertaintyVM _VehicleValueUncertainty;
+        public ValueUncertaintyVM VehicleValueUncertainty 
+        {
+            get { return _VehicleValueUncertainty; }
+            set 
+            { 
+                _VehicleValueUncertainty = value;
+                _VehicleValueUncertainty.WasModified += SomethingChanged;
+                IsModified = true; 
+            }
+        }
+
+        private ValueUncertaintyVM _OtherValueUncertainty;
+        public ValueUncertaintyVM OtherValueUncertainty 
+        {
+            get { return _OtherValueUncertainty; }
+            set 
+            { 
+                _OtherValueUncertainty = value;
+                _OtherValueUncertainty.WasModified += SomethingChanged;
+                IsModified = true; 
+            }
+        }
+
+        private ValueUncertaintyVM _FoundationHeightUncertainty;
+        public ValueUncertaintyVM FoundationHeightUncertainty 
+        {
+            get { return _FoundationHeightUncertainty; }
+            set 
+            { 
+                _FoundationHeightUncertainty = value;
+                _FoundationHeightUncertainty.WasModified += SomethingChanged;
+                IsModified = true; 
+            }
+        }
+
+        public CoordinatesFunctionEditorVM StructureEditorVM 
+        { 
+            get; 
+            set; 
+        }
+        public CoordinatesFunctionEditorVM ContentEditorVM 
+        { 
+            get; 
+            set; 
+        }
+        public CoordinatesFunctionEditorVM VehicleEditorVM 
+        { 
+            get; 
+            set; 
+        }
         public CoordinatesFunctionEditorVM OtherEditorVM { get; set; }
 
         public LoggingLevel SaveStatusLevel
@@ -250,19 +315,21 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             OtherEditorVM = new CoordinatesFunctionEditorVM(clonedOcctype.OtherDepthDamageFunction, xLabel, yLabel, chartTitle);
 
             //capture the table changed event from each of the editors so that we can set the occtype modified.
-            StructureEditorVM.TableChanged += StructureEditorVM_TableChanged;
-            ContentEditorVM.TableChanged += StructureEditorVM_TableChanged;
-            VehicleEditorVM.TableChanged += StructureEditorVM_TableChanged;
-            OtherEditorVM.TableChanged += StructureEditorVM_TableChanged;
+            StructureEditorVM.TableChanged += SomethingChanged;
+            ContentEditorVM.TableChanged += SomethingChanged;
+            VehicleEditorVM.TableChanged += SomethingChanged;
+            OtherEditorVM.TableChanged += SomethingChanged;
 
             //create the value uncertainty vm's
-            StructureValueUncertainty = new ValueUncertaintyVM(clonedOcctype.StructureValueUncertainty, clonedOcctype.StructureUncertaintyType);
-            ContentValueUncertainty = new ValueUncertaintyVM(clonedOcctype.ContentValueUncertainty, clonedOcctype.ContentUncertaintyType);
-            VehicleValueUncertainty = new ValueUncertaintyVM(clonedOcctype.VehicleValueUncertainty, clonedOcctype.VehicleUncertaintyType);
-            OtherValueUncertainty = new ValueUncertaintyVM(clonedOcctype.OtherValueUncertainty, clonedOcctype.OtherUncertaintyType);
+            string valueUncertaintyLabel = "% of Mean";
+            StructureValueUncertainty = new ValueUncertaintyVM(clonedOcctype.StructureValueUncertainty, clonedOcctype.StructureUncertaintyType, valueUncertaintyLabel);
+            ContentValueUncertainty = new ValueUncertaintyVM(clonedOcctype.ContentValueUncertainty, clonedOcctype.ContentUncertaintyType, valueUncertaintyLabel);
+            VehicleValueUncertainty = new ValueUncertaintyVM(clonedOcctype.VehicleValueUncertainty, clonedOcctype.VehicleUncertaintyType, valueUncertaintyLabel);
+            OtherValueUncertainty = new ValueUncertaintyVM(clonedOcctype.OtherValueUncertainty, clonedOcctype.OtherUncertaintyType, valueUncertaintyLabel);
 
-            FoundationHeightUncertainty = new ValueUncertaintyVM(clonedOcctype.FoundationHeightUncertainty, clonedOcctype.FoundationHtUncertaintyType); 
-            //todo: foundation height uncertainty?
+            string foundationHtLabel = "Feet";
+            FoundationHeightUncertainty = new ValueUncertaintyVM(clonedOcctype.FoundationHeightUncertainty, clonedOcctype.FoundationHtUncertaintyType, foundationHtLabel);
+            HasChanges = false;
         }
 
         #endregion
@@ -288,7 +355,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             }
         }
 
-        private void StructureEditorVM_TableChanged(object sender, EventArgs e)
+        private void SomethingChanged(object sender, EventArgs e)
         {
             IsModified = true;
         }
@@ -559,6 +626,9 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         }
         public bool SaveWithReturnValue()
         {
+            //This "IsModified" stuff was mostly working, but was not working for the value uncertainty stuff changing
+            //Ideally the save button would be disabled/enabled. I am just going to allow the save to happen every time
+            //the save is clicked.
             if (!IsModified)
             {
                 //nothing new to save
@@ -569,7 +639,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 SaveStatusLevel = LoggingLevel.Debug;
                 //TempErrors = new List<LogItem>() { li };
                 UpdateMessages();
-                //i am returning true here because i really only want the ones that failed to save.
+                
                 return true;
 
             }
@@ -601,6 +671,8 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 ot.ID = Saving.PersistenceFactory.GetOccTypeManager().GetIdForNewOccType(ot.GroupID);
                 manager.SaveNewOccType(ot);
             }
+
+            
 
             this.IsModified = false;
             string lastEditDate = DateTime.Now.ToString("G");
@@ -686,12 +758,70 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
             }
 
-            ot.StructureValueUncertainty = StructureValueUncertainty.CreateOrdinate();
-            ot.ContentValueUncertainty = ContentValueUncertainty.CreateOrdinate();
-            ot.VehicleValueUncertainty = VehicleValueUncertainty.CreateOrdinate();
-            ot.OtherValueUncertainty = OtherValueUncertainty.CreateOrdinate();
+            try
+            {
+                ot.StructureValueUncertainty = StructureValueUncertainty.CreateOrdinate();
+            }
+            catch(Exception e)
+            {
+                success = false;
+                errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
+                                        .Append("Structure Value Uncertainty: ").Append(e.Message);
+                string logMessage = "Error constructing structure value uncertainty: " + e.Message;
+                constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
+            }
 
-            ot.FoundationHeightUncertainty = FoundationHeightUncertainty.CreateOrdinate();
+            try
+            {
+                ot.ContentValueUncertainty = ContentValueUncertainty.CreateOrdinate();
+            }
+            catch (Exception e)
+            {
+                success = false;
+                errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
+                                        .Append("Content Value Uncertainty: ").Append(e.Message);
+                string logMessage = "Error constructing content value uncertainty: " + e.Message;
+                constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
+            }
+
+            try
+            {
+                ot.VehicleValueUncertainty = VehicleValueUncertainty.CreateOrdinate();
+            }
+            catch (Exception e)
+            {
+                success = false;
+                errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
+                                        .Append("Vehicle Value Uncertainty: ").Append(e.Message);
+                string logMessage = "Error constructing vehicle value uncertainty: " + e.Message;
+                constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
+            }
+
+            try
+            {
+                ot.OtherValueUncertainty = OtherValueUncertainty.CreateOrdinate();
+            }
+            catch (Exception e)
+            {
+                success = false;
+                errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
+                                        .Append("Other Value Uncertainty: ").Append(e.Message);
+                string logMessage = "Error constructing other value uncertainty: " + e.Message;
+                constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
+            }
+
+            try
+            {
+                ot.FoundationHeightUncertainty = FoundationHeightUncertainty.CreateOrdinate();
+            }
+            catch (Exception e)
+            {
+                success = false;
+                errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
+                                        .Append("Foundation Height Uncertainty: ").Append(e.Message);
+                string logMessage = "Error constructing foundation height uncertainty: " + e.Message;
+                constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
+            }
 
             //ot.StructureUncertaintyType = occtypeEditable.asdf;
             //ot.ContentUncertaintyType = occtypeEditable.adsf;

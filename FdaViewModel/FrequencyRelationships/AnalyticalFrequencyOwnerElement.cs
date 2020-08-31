@@ -132,7 +132,27 @@ namespace FdaViewModel.FrequencyRelationships
         public  ChildElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
         {
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            return new AnalyticalFrequencyElement(editorVM.Name, editDate, editorVM.Description, ((AnalyticalFrequencyEditorVM)editorVM).Curve);
+            AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)editorVM;
+            double mean = vm.Mean;
+            double stDev = vm.StandardDeviation;
+            double skew = vm.Skew;
+            int por = vm.PeriorOfRecord;
+            bool isAnalytical = vm.IsAnalytical;
+            bool isStandard = vm.IsStandard;
+            bool isLogFlow = vm.IsLogFlow;
+            List<double> analyticalFlows = new List<double>();
+            foreach(FlowDoubleWrapper d in vm.AnalyticalFlows)
+            {
+                analyticalFlows.Add(d.Flow);
+            }
+            List<double> graphicalFlows = new List<double>();
+            foreach(FlowDoubleWrapper d in vm.GraphicalFlows)
+            {
+                graphicalFlows.Add(d.Flow);
+            }
+
+            return new AnalyticalFrequencyElement(editorVM.Name, editDate, editorVM.Description,por, isAnalytical, isStandard,mean,stDev,skew,
+                isLogFlow,analyticalFlows, graphicalFlows);
             //return null;
         }
        

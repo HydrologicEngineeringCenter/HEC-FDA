@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using FdaLogging;
 using FdaViewModel.Inventory.DamageCategory;
 using FdaViewModel.Inventory.OccupancyTypes;
 using FdaViewModel.Utilities;
@@ -63,7 +64,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         //of the element. But since they get stored as strings if a developer changes the name of the class
         //you would no longer get any of the old logs. So i use this constant.
         private const string ELEMENT_TYPE = "OccType";
-        private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("OccTypePersistenceManager");
+        private static readonly FdaLogger LOGGER = new FdaLogger("OccTypePersistenceManager");
 
 
         private const string GroupTablePrefix = "OccTypeGroup-";
@@ -498,25 +499,62 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
             if (indexToRemove != -1)
             {
-                StudyCacheForSaving.OccTypeElements.RemoveAt(indexToRemove);
+                StudyCacheForSaving.RemoveElement(elems[indexToRemove]);
+                //StudyCacheForSaving.OccTypeElements.RemoveAt(indexToRemove);
             }
         }
 
-        public void DeleteOcctypes(List<IOccupancyTypeEditable> occtypesToDelete)
+        public void DeleteOcctype(IOccupancyTypeEditable occtypeToDelete)
         {
-            foreach (IOccupancyTypeEditable ot in occtypesToDelete)
+            //only update the db if this occtype is actually in there.
+            //if the occtype has never been saved then there is nothing to remove.
+            if (occtypeToDelete.HasBeenSaved)
             {
-                //only update the db if this occtype is actually in there.
-                //if the occtype has never been saved then there is nothing to remove.
-                if (ot.HasBeenSaved)
-                {
-                    int[] keys = new int[] { ot.GroupID, ot.ID };
-                    string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
+                int[] keys = new int[] { occtypeToDelete.GroupID, occtypeToDelete.ID };
+                string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
 
-                    DeleteRowWithCompoundKey(OCCTYPES_TABLE_NAME, keys, keyColNames);
-                }
+                DeleteRowWithCompoundKey(OCCTYPES_TABLE_NAME, keys, keyColNames);
+                DeleteOccTypeFromGroupInCache(occtypeToDelete);
+                  
             }
         }
+
+        private void DeleteOccTypeFromGroupInCache(IOccupancyTypeEditable ot)
+        {
+            OccupancyTypesElement group = GetElementFromGroupID(ot.GroupID);
+            if (group == null)
+            {
+                return;
+            }
+            else
+            {
+                foreach (IOccupancyType occtype in group.ListOfOccupancyTypes)
+                { 
+                    if(occtype.ID == ot.ID)
+                    {
+                        group.ListOfOccupancyTypes.Remove(occtype);
+                        return;
+                    }
+                }
+                //call the update in the study cache so that the occtype element in 
+                //the occtype owner element gets updated.
+            }
+        }
+        //public void DeleteOcctypes(List<IOccupancyTypeEditable> occtypesToDelete)
+        //{
+        //    foreach (IOccupancyTypeEditable ot in occtypesToDelete)
+        //    {
+        //        //only update the db if this occtype is actually in there.
+        //        //if the occtype has never been saved then there is nothing to remove.
+        //        if (ot.HasBeenSaved)
+        //        {
+        //            int[] keys = new int[] { ot.GroupID, ot.ID };
+        //            string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
+
+        //            DeleteRowWithCompoundKey(OCCTYPES_TABLE_NAME, keys, keyColNames);
+        //        }
+        //    }
+        //}
 
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex)
         {
@@ -642,6 +680,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
             else
             {
                 group.ListOfOccupancyTypes.Add(ot);
+                //call the update in the study cache so that the occtype element in 
+                //the occtype owner element gets updated.
             }
         }
         private void UpdateOccTypeInCache(IOccupancyType ot)
@@ -699,7 +739,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
 
         /// <summary>
-        /// Used when creating new occtypeElements. Gets the first unused ID so that the in memory version 
+        /// Used when creating new occtypeElements. Gets the first unused ID for occtypeGroups so that the in memory version 
         /// knows what it's id is.
         /// </summary>
         /// <returns></returns>
@@ -737,6 +777,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public void SaveNewOccType(IOccupancyType ot)
         {
+            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+            if (tbl == null)
+            {
+                Storage.Connection.Instance.CreateTable(OCCTYPES_TABLE_NAME, OcctypeColumns, OcctypeTypes);
+                tbl = Storage.Connection.Instance.GetTable(OCCTYPES_TABLE_NAME);
+            }
+
             int[] keys = new int[] { ot.GroupID, ot.ID };
             string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
 
@@ -760,7 +807,14 @@ namespace FdaViewModel.Saving.PersistenceManagers
             {
                 occtypeIds.Add(ot.ID);
             }
-            return occtypeIds.Max() + 1;
+            if(occtypeIds.Count>0)
+            {
+                return occtypeIds.Max() + 1;
+            }
+            else
+            {
+                return 1;
+            }
         }
 
         //private void RemoveAllOccTypeElementsFromTheStudyCache()
@@ -868,6 +922,28 @@ namespace FdaViewModel.Saving.PersistenceManagers
            //// owner.Actions = actions;
         }
 
+        /// <summary>
+        /// Saves a newly created occtype group from the occtype editor.
+        /// </summary>
+        /// <param name="newGroupFromOccTypeEditor"></param>
+        public List<LogItem> SaveNew(IOccupancyTypeGroupEditable newGroupFromOccTypeEditor)
+        {
+            int newGroupID = GetUnusedId();
+            List<IOccupancyType> occtypes = new List<IOccupancyType>();
+            List<LogItem> errors = new List<LogItem>();
+            foreach(IOccupancyTypeEditable otEdit in newGroupFromOccTypeEditor.Occtypes)
+            {
+                IOccupancyType occType = otEdit.CreateOccupancyType(out errors);
+                if(occType != null)
+                {
+                    occtypes.Add(occType);
+                }
+            }
+            OccupancyTypesElement elem = new OccupancyTypesElement(Name, newGroupID, occtypes);
+            SaveNew(elem);
+            return errors;
+        }
+
         public void SaveNewElements(List<ChildElement> elements)
         {
             OccupancyTypesOwnerElement owner = StudyCacheForSaving.GetParentElementOfType<OccupancyTypesOwnerElement>();
@@ -881,9 +957,10 @@ namespace FdaViewModel.Saving.PersistenceManagers
         private void SavingAction(ChildElement element)
         {
             //this will save to the parent table
+            //and add the element to the study cache
             SaveNewElement(element);
 
-            //save the child table
+            //save to the child table
             SaveNewToOcctypesTable(element);
 
             //SaveGroupToParentTable(element.Name, ((OccupancyTypesElement)element).IsSelected);

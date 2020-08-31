@@ -18,16 +18,20 @@ using System.Windows;
 using FdaViewModel.Editors;
 using FdaViewModel.Utilities.Transactions;
 using FdaLogging;
+using FdaViewModel.Tabs;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 14 / 2017 1:55:50 PM)]
     public class OccupancyTypesEditorVM : BaseEditorVM
     {
+        public event EventHandler CloseEditor;
         //private List<IOccupancyTypeEditable> _NewlyCreatedOcctypes = new List<IOccupancyTypeEditable>();
-        private List<IOccupancyTypeEditable> _OcctypesToDelete = new List<IOccupancyTypeEditable>();
+        //private List<IOccupancyTypeEditable> _OcctypesToDelete = new List<IOccupancyTypeEditable>();
         private List<IOccupancyTypeGroupEditable> _GroupsToUpdateInParentTable = new List<IOccupancyTypeGroupEditable>();
-        private List<IOccupancyTypeGroupEditable> _GroupsToDelete = new List<IOccupancyTypeGroupEditable>();
+        private List<IOccupancyTypeGroupEditable> _NewGroupsAdded = new List<IOccupancyTypeGroupEditable>();
+
+        //private List<IOccupancyTypeGroupEditable> _GroupsToDelete = new List<IOccupancyTypeGroupEditable>();
 
         private IOccupancyTypeEditable _SelectedOccType;
         private ObservableCollection<IOccupancyTypeGroupEditable> _OccTypeGroups;
@@ -128,25 +132,37 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         #endregion
         #region Constructors
-        public OccupancyTypesEditorVM(List<OccupancyTypesElement> occtypeElements, Editors.EditorActionManager manager) : base(manager)
+        public OccupancyTypesEditorVM(EditorActionManager manager) : base(manager)
         {
-            ObservableCollection<IOccupancyTypeGroupEditable> editableGroups = CreateEditableOcctypeGroups(occtypeElements);
-            OccTypeGroups = editableGroups;
-
-            Chart = new Chart2D();
-
             Name = "OccTypeEditor";//I just needed some name so that it doesn't fail the empty name test that is now universal.
-         //todo: do i need this call?
-            AddEmptyCurvesToEmptyDepthDamages();
+            Chart = new Chart2D();
+            OccTypeGroups = new ObservableCollection<IOccupancyTypeGroupEditable>();
+            SetDimensions(950, 600, 400, 400);
 
-            //set the selected occtype group
-            SelectedOccTypeGroup = OccTypeGroups.First();
-            SelectedOccType = SelectedOccTypeGroup.Occtypes.FirstOrDefault();
+            //todo: do i need this call?
+            //AddEmptyCurvesToEmptyDepthDamages();
 
-            //set all the "isModified" flags to false.
-            ClearAllModifiedLists();
+
             //StudyCache.OccTypeElementAdded += UpdateGroupList;
-            LoadDamageCategoriesList();
+        }
+
+        public void FillEditor(List<OccupancyTypesElement> occtypeElements)
+        {
+            if (occtypeElements.Count == 0)
+            {
+                CreateDefaultOccTypeGroup();
+            }
+            else
+            {
+                ObservableCollection<IOccupancyTypeGroupEditable> editableGroups = CreateEditableOcctypeGroups(occtypeElements);
+                OccTypeGroups = editableGroups;
+                //set the selected occtype group
+                SelectedOccTypeGroup = OccTypeGroups.First();
+                //set all the "isModified" flags to false.
+                LoadDamageCategoriesList();
+            }
+            SelectedOccType = SelectedOccTypeGroup.Occtypes.FirstOrDefault();
+            ClearAllModifiedLists();
         }
 
         #endregion
@@ -171,15 +187,22 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             ObservableCollection<string> uniqueDamCatsForGroup = GetDamageCategoriesList(group);
             _GroupsToDamcats.Add(group.ID, uniqueDamCatsForGroup);
             List<IOccupancyTypeEditable> editableOcctypes = new List<IOccupancyTypeEditable>();
+
             foreach (IOccupancyType ot in group.ListOfOccupancyTypes)
             {
-                OccupancyTypeEditable otEdit = new OccupancyTypeEditable(ot,ref uniqueDamCatsForGroup);
+                OccupancyTypeEditable otEdit = new OccupancyTypeEditable(ot, ref uniqueDamCatsForGroup);
                 otEdit.RequestNavigation += this.Navigate;
                 editableOcctypes.Add(otEdit);
             }
+
             //now we have a list of all the occtypes. They get cloned in the OccupancyTypeEditable ctor.
             int groupID = PersistenceFactory.GetOccTypeManager().GetGroupId(group.Name);
-            return new OccupancyTypeGroupEditable(groupID, group.Name, editableOcctypes);
+            IOccupancyTypeGroupEditable occTypeGroup = new OccupancyTypeGroupEditable(groupID, group.Name, editableOcctypes);
+            if (occTypeGroup.Occtypes.Count == 0)
+            {
+                occTypeGroup.Occtypes.Add(CreateDefaultOcctype(group.ID));
+            }
+            return occTypeGroup;
         }
         private ObservableCollection<string> GetDamageCategoriesList(OccupancyTypesElement group)
         {
@@ -365,38 +388,38 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             //    }
             //}
         }
-        private void AddEmptyCurvesToEmptyDepthDamages()
-        {
-            List<double> xs = new List<double>() { 0 };
-            List<double> ys = new List<double>() { 0};
-            ICoordinatesFunction newCurve = ICoordinatesFunctionsFactory.Factory(xs,ys);
-            //newCurve.Add(0, new Statistics.None(0));
+        //private void AddEmptyCurvesToEmptyDepthDamages()
+        //{
+        //    List<double> xs = new List<double>() { 0 };
+        //    List<double> ys = new List<double>() { 0};
+        //    ICoordinatesFunction newCurve = ICoordinatesFunctionsFactory.Factory(xs,ys);
+        //    //newCurve.Add(0, new Statistics.None(0));
 
-            //foreach (IOccupancyTypeGroupEditable element in OccTypeGroups)
-            //{
-            //    foreach( IOccupancyTypeEditable ot in element.Occtypes)
-            //    {
-            //        if (ot.OccType.StructureDepthDamageFunction.Coordinates.Count == 0)
-            //        {
-            //            ot.OccType.StructureDepthDamageFunction = newCurve;
-            //        }
-            //        if (ot.OccType.ContentDepthDamageFunction.Coordinates.Count == 0)
-            //        {
-            //            ot.OccType.ContentDepthDamageFunction = newCurve;
-            //        }
-            //        if (ot.OccType.VehicleDepthDamageFunction.Coordinates.Count == 0)
-            //        {
-            //            ot.OccType.VehicleDepthDamageFunction = newCurve;
-            //        }
-            //        if (ot.OccType.OtherDepthDamageFunction.Coordinates.Count == 0)
-            //        {
-            //            ot.OccType.OtherDepthDamageFunction = newCurve;
-            //        }
-            //    }
-            //}
+        //    //foreach (IOccupancyTypeGroupEditable element in OccTypeGroups)
+        //    //{
+        //    //    foreach( IOccupancyTypeEditable ot in element.Occtypes)
+        //    //    {
+        //    //        if (ot.OccType.StructureDepthDamageFunction.Coordinates.Count == 0)
+        //    //        {
+        //    //            ot.OccType.StructureDepthDamageFunction = newCurve;
+        //    //        }
+        //    //        if (ot.OccType.ContentDepthDamageFunction.Coordinates.Count == 0)
+        //    //        {
+        //    //            ot.OccType.ContentDepthDamageFunction = newCurve;
+        //    //        }
+        //    //        if (ot.OccType.VehicleDepthDamageFunction.Coordinates.Count == 0)
+        //    //        {
+        //    //            ot.OccType.VehicleDepthDamageFunction = newCurve;
+        //    //        }
+        //    //        if (ot.OccType.OtherDepthDamageFunction.Coordinates.Count == 0)
+        //    //        {
+        //    //            ot.OccType.OtherDepthDamageFunction = newCurve;
+        //    //        }
+        //    //    }
+        //    //}
 
-            //todo: i just commented this out 4/9/20. is it necessary?
-        }
+        //    //todo: i just commented this out 4/9/20. is it necessary?
+        //}
         private DataTable CreateDataTable(OccupancyTypesElement ote)
         {
             //define all the columns
@@ -508,7 +531,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             CreateNewDamCatVM vm = new CreateNewDamCatVM(GetAllOccTypeNames());
             string header = "New Occupancy Type";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "NewOccupancyType");
-            Navigate(tab, false, true);
+            Navigate(tab, true, true);
             if (vm.WasCanceled == false)
             {
                 if (vm.HasError == false)
@@ -590,27 +613,66 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 return;
             }
 
-            int selectedIndex = SelectedOccTypeGroup.Occtypes.IndexOf(SelectedOccType);
-            SelectedOccTypeGroup.Occtypes.Remove(SelectedOccType);
-            _OcctypesToDelete.Add(SelectedOccType);
-            //set the selected occtype to be the one before, unless at 0
-            if (selectedIndex > 0)
+            //pop up a message box that asks the user if they want to permanently delete the occtype
+            if (MessageBox.Show("Do you want to permanently delete this occupancy type?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                SelectedOccType = SelectedOccTypeGroup.Occtypes[selectedIndex - 1];
+                //then permanently delete it.
+
+                OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
+                manager.DeleteOcctype(SelectedOccType);
+
+                int selectedIndex = SelectedOccTypeGroup.Occtypes.IndexOf(SelectedOccType);
+                SelectedOccTypeGroup.Occtypes.Remove(SelectedOccType);
+               // _OcctypesToDelete.Add(SelectedOccType);
+                //set the selected occtype to be the one before, unless at 0
+                if (selectedIndex > 0)
+                {
+                    SelectedOccType = SelectedOccTypeGroup.Occtypes[selectedIndex - 1];
+                }
+                else //we just deleted the zeroth item
+                {
+                    if (SelectedOccTypeGroup.Occtypes.Count > 0)
+                    {
+                        SelectedOccType = SelectedOccTypeGroup.Occtypes[0];
+                    }
+                    else //there are no more occtypes
+                    {
+                        if (MessageBox.Show("This is the last occupancy type in this group. Do you want to permanently delete the group?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        {
+                            //delete the group
+                            DeleteOccTypeGroup();
+                        }
+                        else
+                        {
+                            //create a new default occtype and add it to the group
+                            IOccupancyTypeEditable otEditable = CreateDefaultOcctype(SelectedOccTypeGroup.ID);
+
+                            //add the occtype to the list and select it
+                            SelectedOccTypeGroup.Occtypes.Add(otEditable);
+                            SelectedOccType = otEditable;
+                            otEditable.IsModified = true;
+                        }
+                        //todo: this seems dangerous. Should we instead do something else. Create a new default occtype?
+                        //SelectedOccType = null;
+                    }
+                }
+
             }
-            else //we just deleted the zeroth item
+            else
             {
-                if (SelectedOccTypeGroup.Occtypes.Count > 0)
-                {
-                    SelectedOccType = SelectedOccTypeGroup.Occtypes[0];
-                }
-                else //there are no more occtypes
-                {
-                    //todo: this seems dangerous. Should we instead do something else. Create a new default occtype?
-                    SelectedOccType = null;
-                }
+                return;
             }
 
+
+        }
+
+        private IOccupancyTypeEditable CreateDefaultOcctype(int groupID)
+        {
+            IOccupancyType newOT = OccupancyTypeFactory.Factory("New Occupancy Type", "", groupID);
+            ObservableCollection<string> damCatOptions = new ObservableCollection<string>();
+            OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT, ref damCatOptions, false);
+            otEditable.RequestNavigation += this.Navigate;
+            return otEditable;
         }
 
         public void DeleteOccTypeGroup()
@@ -621,9 +683,15 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             }
 
             int selectedIndex = OccTypeGroups.IndexOf(SelectedOccTypeGroup);
+            if(_GroupsToDamcats.ContainsKey(SelectedOccTypeGroup.ID))
+            {
+                _GroupsToDamcats.Remove(SelectedOccTypeGroup.ID);
+            }
             OccTypeGroups.Remove(SelectedOccTypeGroup);
-            _GroupsToDelete.Add(SelectedOccTypeGroup);
+            //_GroupsToDelete.Add(SelectedOccTypeGroup);
 
+            OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
+            manager.DeleteOcctypeGroup(SelectedOccTypeGroup.ID);
             //set the selected occtype to be the one before, unless at 0
             if (selectedIndex > 0)
             {
@@ -635,13 +703,59 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 {
                     SelectedOccTypeGroup = OccTypeGroups[0];
                 }
-                else //there are no more occtypes
+                else //there are no more occtype groups
                 {
+                    //if no, then create a new default group? If yes, then exit?
+                    if (MessageBox.Show("There are no more occtype groups. Do you want to exit the editor.", "Confirm",
+                        MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    {
+                        CloseEditor?.Invoke(this, new EventArgs());
+                    }
+                    else
+                    {
+                        //create a default occtype group?
+                        CreateDefaultOccTypeGroup();
+                        //IOccupancyTypeGroupEditable group = CreateEditableGroup(element);
+                        //OccTypeGroups.Add(newGroup);
+                        //SelectedOccTypeGroup = newGroup;
+                    }
                     //todo: this seems dangerous. Should we instead do something else. Create a new default occtype?
-                    SelectedOccTypeGroup = null;
+                    //SelectedOccTypeGroup = null;
                 }
             }
         }
+
+        /// <summary>
+        /// This creates and then saves a new occtype element. When this element gets saved,
+        /// the study cache gets updated which then tells the owner element a new element has been added.
+        /// The owner element will see if this editor is open and will add it in "AddGroup()".
+        /// </summary>
+        public void CreateDefaultOccTypeGroup()
+        {
+            OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
+            int groupID = manager.GetUnusedId();
+            string groupName = "Occupancy Type Group";
+            OccupancyTypesElement elem = new OccupancyTypesElement(groupName, groupID, new List<IOccupancyType>());
+            //calling the save here should add it to the cache, which tells the occtype owner to add it to this editor
+            //if it is open. see AddGroup() in this class.
+            manager.SaveNewElement(elem);
+        }
+
+        //private IOccupancyTypeGroupEditable CreateDefaultEditableGroup()
+        //{
+        //    //i think it is just safer to save the occtype group right away. If i try to wait until the user saves
+        //    //it gets complicated. The occtype needs an occtype group number and so if the user tries to save the 
+        //    //occtype, then the occtype won't belong to any group yet. 
+        //    OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
+        //    int groupID = manager.GetUnusedId();
+        //    List<IOccupancyTypeEditable> occtypes = new List<IOccupancyTypeEditable>() { CreateDefaultOcctype(groupID) };
+        //    string groupName = "Occupancy Type Group";
+        //    IOccupancyTypeGroupEditable newGroup = new OccupancyTypeGroupEditable(groupID, groupName , occtypes, false);
+        //    //todo: i think this will save the default occtype which we don't want to do. Maybe just pass in an empty list.
+        //    OccupancyTypesElement elem = new OccupancyTypesElement(groupName, groupID, new List<IOccupancyType>());
+        //    manager.SaveNewElement(elem);
+        //    return newGroup;
+        //}
 
         /// <summary>
         /// Updates the list of groups from the study cache after new occtypes have been imported
@@ -661,6 +775,10 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             //OccTypeGroups.Add(newGroup);
 
             IOccupancyTypeGroupEditable group = CreateEditableGroup(element);
+            if(group.Occtypes.Count == 0)
+            {
+                group.Occtypes.Add(CreateDefaultOcctype(group.ID));
+            }
             OccTypeGroups.Add(group);
             SelectedOccTypeGroup = group;
         }
@@ -817,35 +935,69 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         /// </summary>
         public void SaveAll()
         {
+            List<string> originalGroupNames = new List<string>();
+            List<string> newGroupNames = new List<string>();
+
+            foreach (IOccupancyTypeGroupEditable group in _GroupsToUpdateInParentTable)
+            {
+                originalGroupNames.Add(group.OriginalName);
+                newGroupNames.Add(group.Name);
+            }
+            OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
+            manager.SaveModifiedGroups(_GroupsToUpdateInParentTable);
+
             //just make a master list of all the occtypes that have been modified
             //then call the save on each one of them.
-            List<IOccupancyTypeEditable> modifiedOcctypes = new List<IOccupancyTypeEditable>();
+            //List<IOccupancyTypeEditable> modifiedOcctypes = new List<IOccupancyTypeEditable>();
+            List<SaveAllReportGroupVM> groupReports = new List<SaveAllReportGroupVM>();
             foreach(IOccupancyTypeGroupEditable group in OccTypeGroups)
             {
-                group.SaveAll();
+                groupReports.Add( group.SaveAll());
                 //modifiedOcctypes.AddRange(group.ModifiedOcctypes);
             }
-            StringBuilder sb = new StringBuilder().AppendLine("Saved Successfully:");
-            foreach (IOccupancyTypeGroupEditable group in OccTypeGroups)
-            {
-                sb.Append(group.PrintSuccessfullySavedOcctypes());
-            }
-            sb.AppendLine().AppendLine("Saved Unsuccessfully:");
-            foreach (IOccupancyTypeGroupEditable group in OccTypeGroups)
-            {
-                sb.Append(group.PrintUnsuccessfullySavedOcctypes());
-            }
 
-            OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
-
-            manager.DeleteOcctypes(_OcctypesToDelete);
-
-            foreach (IOccupancyTypeGroupEditable group in _GroupsToDelete)
+            //we have all the group messages lumped into one list,
+            //now sort them out
+            List<SaveAllReportGroupVM> goodGroups = new List<SaveAllReportGroupVM>();
+            List<SaveAllReportGroupVM> badGroups = new List<SaveAllReportGroupVM>();
+            foreach(SaveAllReportGroupVM group in groupReports)
             {
-                manager.DeleteOcctypeGroup(group.ID);
+                if(group.SuccessfulList.Count>0)
+                {
+                    goodGroups.Add(group);
+                }
+                if(group.UnsuccessfulList.Count>0)
+                {
+                    badGroups.Add(group);
+                }
             }
 
-            MessageBox.Show(sb.ToString());
+
+            SaveAllReportVM report = new SaveAllReportVM(originalGroupNames, newGroupNames, goodGroups, badGroups);
+            string header = "Save All Report";
+            DynamicTabVM tab = new DynamicTabVM(header, report, "SaveAllReport");
+            Navigate(tab, true,true);
+
+            //StringBuilder sb = new StringBuilder().AppendLine("Saved Successfully:");
+            //foreach (IOccupancyTypeGroupEditable group in OccTypeGroups)
+            //{
+            //    sb.Append(group.PrintSuccessfullySavedOcctypes());
+            //}
+            //sb.AppendLine().AppendLine("Saved Unsuccessfully:");
+            //foreach (IOccupancyTypeGroupEditable group in OccTypeGroups)
+            //{
+            //    sb.Append(group.PrintUnsuccessfullySavedOcctypes());
+            //}
+
+
+            //manager.DeleteOcctypes(_OcctypesToDelete);
+
+            //foreach (IOccupancyTypeGroupEditable group in _GroupsToDelete)
+            //{
+            //    manager.DeleteOcctypeGroup(group.ID);
+            //}
+
+           // MessageBox.Show(sb.ToString(), "Saving Results", MessageBoxButton.OK, MessageBoxImage.Information);
 
             ////i guess i should have a list of saved successful and a list of unsuccessful
             //foreach(IOccupancyTypeEditable otEditable in modifiedOcctypes)
@@ -1037,107 +1189,107 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         }
 
-        private IOccupancyType CreateOccupancyType(IOccupancyTypeEditable occtypeEditable, out List<LogItem> errors)
-        {
-            bool success = true;
-            StringBuilder errorMsg = new StringBuilder("Occupancy Type: ").Append(occtypeEditable.Name);
-            List<LogItem> constructionErrors = new List<LogItem>();
+        //private IOccupancyType CreateOccupancyType(IOccupancyTypeEditable occtypeEditable, out List<LogItem> errors)
+        //{
+        //    bool success = true;
+        //    StringBuilder errorMsg = new StringBuilder("Occupancy Type: ").Append(occtypeEditable.Name);
+        //    List<LogItem> constructionErrors = new List<LogItem>();
 
-            OccupancyType ot = new OccupancyType();
-            ot.Name = occtypeEditable.Name;
-            ot.GroupID = occtypeEditable.GroupID;
-            ot.ID = occtypeEditable.ID;
-            ot.Description = occtypeEditable.Description;
-            ot.DamageCategory = occtypeEditable.DamageCategory;
+        //    OccupancyType ot = new OccupancyType();
+        //    ot.Name = occtypeEditable.Name;
+        //    ot.GroupID = occtypeEditable.GroupID;
+        //    ot.ID = occtypeEditable.ID;
+        //    ot.Description = occtypeEditable.Description;
+        //    ot.DamageCategory = occtypeEditable.DamageCategory;
             
-            ot.CalculateStructureDamage = occtypeEditable.CalculateStructureDamage;
-            ot.CalculateContentDamage = occtypeEditable.CalculateContentDamage;
-            ot.CalculateVehicleDamage = occtypeEditable.CalculateVehicleDamage;
-            ot.CalculateOtherDamage = occtypeEditable.CalculateOtherDamage;
+        //    ot.CalculateStructureDamage = occtypeEditable.CalculateStructureDamage;
+        //    ot.CalculateContentDamage = occtypeEditable.CalculateContentDamage;
+        //    ot.CalculateVehicleDamage = occtypeEditable.CalculateVehicleDamage;
+        //    ot.CalculateOtherDamage = occtypeEditable.CalculateOtherDamage;
 
-            try
-            {
-                ot.StructureDepthDamageFunction = occtypeEditable.StructureEditorVM.CreateFunctionFromTables();
-            }
-            catch (Exception e)
-            {
-                success = false;
-                errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
-                    .Append("Structure Depth Damage Function: ").Append(e.Message);
+        //    try
+        //    {
+        //        ot.StructureDepthDamageFunction = occtypeEditable.StructureEditorVM.CreateFunctionFromTables();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        success = false;
+        //        errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
+        //            .Append("Structure Depth Damage Function: ").Append(e.Message);
 
-                string logMessage = "Error constructing structure depth damage function: " + e.Message;
-                constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
+        //        string logMessage = "Error constructing structure depth damage function: " + e.Message;
+        //        constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
 
-            }
+        //    }
 
-            try
-            {
-                ot.ContentDepthDamageFunction = occtypeEditable.ContentEditorVM.CreateFunctionFromTables();
-            }
-            catch (Exception e)
-            {
-                success = false;
-                errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
-                        .Append("Content Depth Damage Function: ").Append(e.Message);
+        //    try
+        //    {
+        //        ot.ContentDepthDamageFunction = occtypeEditable.ContentEditorVM.CreateFunctionFromTables();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        success = false;
+        //        errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
+        //                .Append("Content Depth Damage Function: ").Append(e.Message);
 
-                string logMessage = "Error constructing content depth damage function: " + e.Message;
-                constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
-            }
+        //        string logMessage = "Error constructing content depth damage function: " + e.Message;
+        //        constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
+        //    }
 
-            try
-            {
-                ot.VehicleDepthDamageFunction = occtypeEditable.VehicleEditorVM.CreateFunctionFromTables();
-            }
-            catch (Exception e)
-            {
-                success = false;
-                errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
-                        .Append("Vehicle Depth Damage Function: ").Append(e.Message);
+        //    try
+        //    {
+        //        ot.VehicleDepthDamageFunction = occtypeEditable.VehicleEditorVM.CreateFunctionFromTables();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        success = false;
+        //        errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
+        //                .Append("Vehicle Depth Damage Function: ").Append(e.Message);
 
-                string logMessage = "Error constructing vehicle depth damage function: " + e.Message;
-                constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
-            }
+        //        string logMessage = "Error constructing vehicle depth damage function: " + e.Message;
+        //        constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
+        //    }
 
-            try
-            {
-                ot.OtherDepthDamageFunction = occtypeEditable.OtherEditorVM.CreateFunctionFromTables();
-            }
-            catch (Exception e)
-            {
-                success = false;
-                errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
-                        .Append("Vehicle Depth Damage Function: ").Append(e.Message);
+        //    try
+        //    {
+        //        ot.OtherDepthDamageFunction = occtypeEditable.OtherEditorVM.CreateFunctionFromTables();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        success = false;
+        //        errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
+        //                .Append("Vehicle Depth Damage Function: ").Append(e.Message);
 
-                string logMessage = "Error constructing other depth damage function: " + e.Message;
-                constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
-            }
+        //        string logMessage = "Error constructing other depth damage function: " + e.Message;
+        //        constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
+        //    }
 
-            ot.StructureValueUncertainty = occtypeEditable.StructureValueUncertainty.CreateOrdinate();
-            ot.ContentValueUncertainty = occtypeEditable.ContentValueUncertainty.CreateOrdinate();
-            ot.VehicleValueUncertainty = occtypeEditable.VehicleValueUncertainty.CreateOrdinate();
-            ot.OtherValueUncertainty = occtypeEditable.OtherValueUncertainty.CreateOrdinate();
+        //    ot.StructureValueUncertainty = occtypeEditable.StructureValueUncertainty.CreateOrdinate();
+        //    ot.ContentValueUncertainty = occtypeEditable.ContentValueUncertainty.CreateOrdinate();
+        //    ot.VehicleValueUncertainty = occtypeEditable.VehicleValueUncertainty.CreateOrdinate();
+        //    ot.OtherValueUncertainty = occtypeEditable.OtherValueUncertainty.CreateOrdinate();
 
-            ot.FoundationHeightUncertainty = occtypeEditable.FoundationHeightUncertainty.CreateOrdinate();
+        //    ot.FoundationHeightUncertainty = occtypeEditable.FoundationHeightUncertainty.CreateOrdinate();
 
-            //ot.StructureUncertaintyType = occtypeEditable.asdf;
-            //ot.ContentUncertaintyType = occtypeEditable.adsf;
-            //ot.VehicleValueUncertainty = occtypeEditable.asdf;
-            //ot.OtherValueUncertainty = occtypeEditable.asdf;
+        //    //ot.StructureUncertaintyType = occtypeEditable.asdf;
+        //    //ot.ContentUncertaintyType = occtypeEditable.adsf;
+        //    //ot.VehicleValueUncertainty = occtypeEditable.asdf;
+        //    //ot.OtherValueUncertainty = occtypeEditable.asdf;
 
-            //ot.FoundationHtUncertaintyType = occtypeEditable.asdf;
-            if (success)
-            {
-                errors = null;
-                return ot;
-            }
-            else
-            {
-                //errors = errorMsg.ToString();
-                errors = constructionErrors;
-                return null;
-            }
+        //    //ot.FoundationHtUncertaintyType = occtypeEditable.asdf;
+        //    if (success)
+        //    {
+        //        errors = null;
+        //        return ot;
+        //    }
+        //    else
+        //    {
+        //        //errors = errorMsg.ToString();
+        //        errors = constructionErrors;
+        //        return null;
+        //    }
 
-        }
+        //}
 
         //private String AssignCoordinateFunction(IOccupancyTypeEditable ot)
         //{
@@ -1283,13 +1435,16 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         private void ClearAllModifiedLists()
         {
             //_NewlyCreatedOcctypes.Clear();
-            _OcctypesToDelete.Clear();
+            //_OcctypesToDelete.Clear();
             foreach (IOccupancyTypeGroupEditable group in OccTypeGroups)
             {
                 group.IsModified = false;
                 foreach (IOccupancyTypeEditable ot in group.Occtypes)
                 {
-                    ot.IsModified = false;
+                    if (ot.HasBeenSaved)
+                    {
+                        ot.IsModified = false;
+                    }
                 }
             }
         }
@@ -1311,8 +1466,44 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         #endregion
         #region Functions
 
+        public override bool IsOkToClose()
+        {
+            bool areUnsavedChanges = false;
+            //also need to check that the group names have been saved
+            if(_GroupsToUpdateInParentTable.Count>0)
+            {
+                areUnsavedChanges = true;
+            }
+            foreach (IOccupancyTypeGroupEditable group in OccTypeGroups)
+            {
+                if(group.ModifiedOcctypes.Count>0)
+                {
+                    //there are occtypes that have not been saved
+                    areUnsavedChanges = true;
+                    break;
+                }
+               
+            }
+
+            if (areUnsavedChanges)
+            {
+                if (MessageBox.Show("You have unsaved changes. Are you sure you want to close?", "Are You Sure", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         #endregion
 
-       
+
     }
 }

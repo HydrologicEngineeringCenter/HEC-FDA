@@ -39,7 +39,7 @@ namespace View.Inventory.OccupancyTypes.Controls
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+           
             ValueUncertaintyVM vm = (ValueUncertaintyVM)this.DataContext;
             if (e.AddedItems.Count > 0)
             {

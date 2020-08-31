@@ -39,6 +39,13 @@ namespace FdaViewModel.Inventory.OccupancyTypes
 
         public int ID { get; }
 
+        /// <summary>
+        /// This indicates if the occtype group has ever been saved before. If false, then
+        /// this is a brand new occtype group. It needs to be saved new and not just an update on 
+        /// an existing one in the database.
+        /// </summary>
+       // public bool HasBeenSaved { get; set; }
+
         //we don't actually care if the list of occtypes has changed. We only care if the name has changed
         //because then we need to update the parent table
         public bool IsModified { get; set; }
@@ -49,6 +56,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             Occtypes = occtypes;
             OriginalName = name;
         }
+
 
          private List<IOccupancyTypeEditable> _savedSuccessful = new List<IOccupancyTypeEditable>();
          private List<IOccupancyTypeEditable> _savedUnsuccessful = new List<IOccupancyTypeEditable>();
@@ -88,8 +96,17 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             }
             return sb.ToString();
         }
-        public void SaveAll()
+        public SaveAllReportGroupVM  SaveAll()
         {
+            //if this group has not saved, then we need to do that first
+            //if(!HasBeenSaved)
+            //{
+            //    //in order to get here, no occtype has been saved with in the group
+            //    //a group id needs to be gotten, and then set on each occtype in the occtype list.
+            //    List<FdaLogging.LogItem> errors = Saving.PersistenceFactory.GetOccTypeManager().SaveNew(this);
+
+            //}
+            SaveAllReportGroupVM saveAllGroup = new SaveAllReportGroupVM(Name);
             _savedSuccessful.Clear();
             _savedUnsuccessful.Clear();
             foreach(IOccupancyTypeEditable otEditable in ModifiedOcctypes)
@@ -98,12 +115,16 @@ namespace FdaViewModel.Inventory.OccupancyTypes
                 if(!success)
                 {
                     _savedUnsuccessful.Add(otEditable);
+                    saveAllGroup.UnsuccessfulList.Add(otEditable.Name);
                 }
                 else
                 {
                     _savedSuccessful.Add(otEditable);
+                    saveAllGroup.SuccessfulList.Add(otEditable.Name);
                 }
             }
+
+            return saveAllGroup;
         }
 
         //private void AddOcctypeToSuccessfullSaveDictionary(IOccupancyTypeEditable ot)

@@ -24,14 +24,14 @@
             
         <!--</Grid>-->
 
-        <StackPanel Orientation="Vertical" Grid.Column="0" VerticalAlignment="Top" Margin="5">
+        <!--<StackPanel Orientation="Vertical" Grid.Column="0" VerticalAlignment="Top" Margin="5">
             <RadioButton x:Name="rad_PercentOfMean" Content="Percent of Mean:" IsChecked="{Binding Path=ValueUncertaintyType, Mode=TwoWay, Converter={StaticResource enumBooleanConverter}, ConverterParameter=PercentOfMean}"/>
             <RadioButton x:Name="rad_DeviationFromMean" Content="Deviation from Mean:" IsChecked="{Binding Path=ValueUncertaintyType, Mode=TwoWay, Converter={StaticResource enumBooleanConverter}, ConverterParameter=DeviationFromMean}" />
             <RadioButton x:Name="rad_ActualDistribution" Content="Actual Distribution:" IsChecked="{Binding Path=ValueUncertaintyType, Mode=TwoWay, Converter={StaticResource enumBooleanConverter}, ConverterParameter=Actual}"/>
-        </StackPanel>
+        </StackPanel>-->
 
-        <StackPanel Orientation="Vertical" Grid.Column="1" VerticalAlignment="Top" Margin="5,0,5,0">
-            <Label Content="Uncertainty Type"/>
+        <StackPanel Orientation="Horizontal" Grid.Column="1" VerticalAlignment="Top" Margin="5,0,5,0">
+            <Label Content="Distribution Type"/>
             <ComboBox Name="cmb_UncertaintyType" ItemsSource="{Binding UncertaintyTypes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="22" SelectedItem="{Binding ValueUncertainty.Type, Mode=OneWay}" SelectionChanged="ComboBox_SelectionChanged" />
         </StackPanel>
 

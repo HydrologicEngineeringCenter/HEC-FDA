@@ -25,11 +25,15 @@ namespace FdaViewModel.Plots
             set { _IsEnabled = value; NotifyPropertyChanged(); }
         }
         //public IndividualLinkedPlotControlVM Parent { get; set; }
+        public string Text
+        {
+            get;set;
+        }
         #endregion
         #region Constructors
-        public DoubleLineModulatorHorizontalCoverButtonVM():base()
+        public DoubleLineModulatorHorizontalCoverButtonVM(string text):base()
         {
-
+            Text = text;
         }
         #endregion
         #region Voids
