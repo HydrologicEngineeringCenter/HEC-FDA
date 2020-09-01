@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Collections.ObjectModel;
 using System.Windows;
 using FdaViewModel.ImpactArea;
 using Model;
-using FunctionsView.ViewModel;
 using Functions;
-using HEC.Plotting.SciChart2D.Charts;
 using HEC.Plotting.SciChart2D.Controller;
 using FdaViewModel.Plots;
 
@@ -454,7 +450,7 @@ namespace FdaViewModel.Conditions
             {
                 _ThresholdLinesAllowedToShow = false;
                 Plot7ControlVM.IndividualPlotWrapperVM.Metric = null;//this is basically a flag that the callback uses to turn them off
-                Plot8ControlVM.IndividualPlotWrapperVM.Metric = new Metric(); //new PerformanceThreshold(new LateralStructure(0));//this is just to change it from null to a value so that i can turn it back to null
+                //Plot8ControlVM.IndividualPlotWrapperVM.Metric = new Metric(); //new PerformanceThreshold(new LateralStructure(0));//this is just to change it from null to a value so that i can turn it back to null
                 Plot8ControlVM.IndividualPlotWrapperVM.Metric = null;
             }
             else
@@ -995,26 +991,27 @@ namespace FdaViewModel.Conditions
         }
         private ICondition CreateCondition()
         {
-            if(!Validate())
-            {
-                //todo: show errors in popup?
-                return null;
-            }
-            IMetric metric = new Metric(_SelectedThresholdType, ThresholdValue);
+            //if(!Validate())
+            //{
+            //    //todo: show errors in popup?
+            //    return null;
+            //}
+            //IMetric metric = new Metric(_SelectedThresholdType, ThresholdValue);
 
-            IFrequencyFunction inflowFreqFunc = (IFrequencyFunction)Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;
-            //IFrequencyFunction freqFunc = ImpactAreaFunctionFactory.FactoryFrequency(inflowFreqFunc.Function, ImpactAreaFunctionEnum.InflowFrequency);
-            //i need the list of transform functions
-            UpdateSelectedCurves2();
-            List<ITransformFunction> transforms = new List<ITransformFunction>();
-            //exclude the first one because that will always be the flow freq curve
-            for (int i = 1; i < _AddedPlots.Count; i++)
-            {
-                IndividualLinkedPlotControlVM control = _AddedPlots[i];
-                IFdaFunction func = control.IndividualPlotWrapperVM.PlotVM.BaseFunction;
-                transforms.Add((ITransformFunction)func);
-            }
-            return ConditionFactory.Factory(Name, Year, inflowFreqFunc, transforms, new List<IMetric>() { metric });
+            //IFrequencyFunction inflowFreqFunc = (IFrequencyFunction)Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;
+            ////IFrequencyFunction freqFunc = ImpactAreaFunctionFactory.FactoryFrequency(inflowFreqFunc.Function, ImpactAreaFunctionEnum.InflowFrequency);
+            ////i need the list of transform functions
+            //UpdateSelectedCurves2();
+            //List<ITransformFunction> transforms = new List<ITransformFunction>();
+            ////exclude the first one because that will always be the flow freq curve
+            //for (int i = 1; i < _AddedPlots.Count; i++)
+            //{
+            //    IndividualLinkedPlotControlVM control = _AddedPlots[i];
+            //    IFdaFunction func = control.IndividualPlotWrapperVM.PlotVM.BaseFunction;
+            //    transforms.Add((ITransformFunction)func);
+            //}
+            //return ConditionFactory.Factory(Name, Year, inflowFreqFunc, transforms, new List<IMetric>() { metric });
+            return null;
 
         }
 

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 
 using Model.Functions;
-using Model.Outputs;
 
 namespace Model
 {

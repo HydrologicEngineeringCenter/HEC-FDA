@@ -11,6 +11,8 @@ namespace ImpactArea
         public bool IsValid { get; }
         public IEnumerable<IMessage> Messages { get; }
 
+        public IMessageLevels State => throw new NotImplementedException();
+
         internal Elevation(IOrdinate height, ElevationEnum type)
         {
             if (!Validation.ElevationValidator.IsConstructable(height, out string msg)) throw new Utilities.InvalidConstructorArgumentsException(msg);
@@ -25,7 +27,13 @@ namespace ImpactArea
 
         public bool Validate(IValidator<Elevation> validator, out IEnumerable<IMessage> msgs)
         {
-            return validator.IsValid(this, out msgs);
+             validator.IsValid(this, out msgs);
+            return !msgs.IsNullOrEmpty();
+        }
+
+        IMessageLevels IValidate<Elevation>.Validate(IValidator<Elevation> validator, out IEnumerable<IMessage> errors)
+        {
+            throw new NotImplementedException();
         }
     }
 }

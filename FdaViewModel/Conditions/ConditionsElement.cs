@@ -1,7 +1,6 @@
 ﻿using FdaViewModel.StageTransforms;
 using FdaViewModel.Utilities;
 using Model;
-using Model.Inputs.Conditions;
 using Statistics;
 using System;
 using System.Collections.Generic;
@@ -721,12 +720,12 @@ namespace FdaViewModel.Conditions
         }
 
 
-        public ICondition CreateCondition()
-        {
-            return ConditionFactory.Factory(Name, AnalysisYear, GetEntryFrequencyFunction(), GetTransformFunctions(),
-                GetMetrics());
+        //public ICondition CreateCondition()
+       // {
+           // return ConditionFactory.Factory(Name, AnalysisYear, GetEntryFrequencyFunction(), GetTransformFunctions(),
+               // GetMetrics());
 
-        }
+        //}
 
         private IFrequencyFunction GetEntryFrequencyFunction()
         {

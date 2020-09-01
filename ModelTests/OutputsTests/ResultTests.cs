@@ -1,8 +1,6 @@
 ﻿using Functions;
 using Functions.CoordinatesFunctions;
 using Model;
-using Model.Inputs.Functions.ImpactAreaFunctions;
-using Model.Outputs;
 using ModelTests.InputsTests.ConditionsTests;
 using System;
 using System.Collections.Generic;

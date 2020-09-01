@@ -126,7 +126,7 @@ namespace ModelTests.ExcelTesting
             {
                 InterpolationEnum interp2 = ConvertToInterpolationEnum(interpolation2);
                 IFunction func2 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs2, ys2, interp2);
-                inflowOutflow = (ITransformFunction)IFdaFunctionFactory.Factory(func2, IParameterEnum.InflowOutflow);
+                inflowOutflow = (ITransformFunction)IFdaFunctionFactory.Factory( IParameterEnum.InflowOutflow, func2);
             }
 
             ITransformFunction rating = null;
@@ -134,7 +134,7 @@ namespace ModelTests.ExcelTesting
             {
                 InterpolationEnum interp3 = ConvertToInterpolationEnum(interpolation3);
                 IFunction func3 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs3, ys3, interp3);
-                rating = (ITransformFunction)IFdaFunctionFactory.Factory(func3, IParameterEnum.Rating);
+                rating = (ITransformFunction)IFdaFunctionFactory.Factory( IParameterEnum.Rating, func3);
             }
 
             ITransformFunction exteriorInterior = null;
@@ -142,7 +142,7 @@ namespace ModelTests.ExcelTesting
             {
                 InterpolationEnum interp4 = ConvertToInterpolationEnum(interpolation4);
                 IFunction func4 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs4, ys4, interp4);
-                exteriorInterior = (ITransformFunction)IFdaFunctionFactory.Factory(func4, IParameterEnum.ExteriorInteriorStage);
+                exteriorInterior = (ITransformFunction)IFdaFunctionFactory.Factory( IParameterEnum.ExteriorInteriorStage, func4);
 
             }
 
@@ -151,7 +151,7 @@ namespace ModelTests.ExcelTesting
             {
                 InterpolationEnum interp5 = ConvertToInterpolationEnum(interpolation5);
                 IFunction func5 = (IFunction)ICoordinatesFunctionsFactory.Factory(xs5, ys5, interp5);
-                stageDamage = (ITransformFunction)IFdaFunctionFactory.Factory(func5, IParameterEnum.InteriorStageDamage);
+                stageDamage = (ITransformFunction)IFdaFunctionFactory.Factory( IParameterEnum.InteriorStageDamage, func5);
             }
             List<ITransformFunction> transformFunctions = new List<ITransformFunction>();
             if (inflowOutflow != null)

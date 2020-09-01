@@ -12,6 +12,8 @@ namespace ImpactArea
         public bool IsValid { get; }
         public IEnumerable<IMessage> Messages { get; }
 
+        public IMessageLevels State => throw new NotImplementedException();
+
         internal Constant(double x, bool mustBeFinite = true)
         {
             if (mustBeFinite && !IsConstructable(x, out string msg)) throw new InvalidConstructorArgumentsException(msg);
@@ -43,5 +45,10 @@ namespace ImpactArea
         } 
         
         public double Value(double p = 0.50) => _Constant;
+
+        IMessageLevels IValidate<IOrdinate>.Validate(IValidator<IOrdinate> validator, out IEnumerable<IMessage> errors)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
