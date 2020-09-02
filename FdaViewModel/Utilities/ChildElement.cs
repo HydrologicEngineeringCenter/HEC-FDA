@@ -21,7 +21,7 @@ namespace FdaViewModel.Utilities
 
 
         //private object _CustomTreeViewHeader;
-        private string _Description;
+        private string _Description = "";
         private IFdaFunction _Curve;
         private bool _IsExpanded = true;
         private int _FontSize = 14;

@@ -92,19 +92,35 @@ namespace FdaViewModel.Utilities
         public WindowVM()
         {
             //this is dumb, but for some reason anytime a window is opened in all of FDA it falls into here
-            //and recreates the studyVM. This static prop in a static class fixes it
-            if (ExtentionMethods.IsStudyOpen) { return; }
+            //and recreates the studyVM. This static prop in a static class allows me to not enter if the 
+            //study is already open
+            if (ExtentionMethods.IsStudyOpen) 
+            { 
+                return; 
+            }
             else { ExtentionMethods.IsStudyOpen = true; }
 
             StudyVM = new Study.FdaStudyVM();
             CurrentView = StudyVM;
             Title = "FDA 2.0";
+
+            MinWidth = 800;
+            MinHeight = 500;
+            Width = 1200;
+            Height = 800;
         }
         public WindowVM(IDynamicTab tab)
         {
             Tab = tab;
             CurrentView = tab.BaseVM;
             Title = tab.Header; //vm.GetType().Name;
+
+            //the view windows size is bound to these properties. Set the 
+            //dimensions to be what the CurrentView VM wants to be.
+            Width = CurrentView.Width;
+            Height = CurrentView.Height;
+            MinWidth = CurrentView.MinWidth;
+            MinHeight = CurrentView.MinHeight;
         }
         #endregion
         #region Voids

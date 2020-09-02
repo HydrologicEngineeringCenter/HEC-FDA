@@ -4,31 +4,125 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FdaLogging;
+using FdaViewModel.Editors;
 using FdaViewModel.Utilities;
 using FdaViewModel.Utilities.Transactions;
+using Functions;
+using FunctionsView.ViewModel;
+using HEC.Plotting.SciChart2D.DataModel;
+using HEC.Plotting.SciChart2D.ViewModel;
 using Model;
 using Statistics;
 
 namespace FdaViewModel.FrequencyRelationships
 {
-    public class AnalyticalFrequencyEditorVM :Editors.BaseLoggingEditorVM, ISaveUndoRedo
+    public class AnalyticalFrequencyEditorVM :CurveEditorVM
     {
         #region Notes
         #endregion
         #region Fields
         
         private IFdaFunction _Curve;
-        private System.Collections.ObjectModel.ObservableCollection<object> _Items;
+       // private System.Collections.ObjectModel.ObservableCollection<object> _Items;
         private System.Collections.ObjectModel.ObservableCollection<double> _Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>();
-        private double _TestKnowledge = .9;
-        private double _TestNatural = .01;
-        private string _SavingText;
+       // private double _TestKnowledge = .9;
+       // private double _TestNatural = .01;
+       // private string _SavingText;
+        private ObservableCollection<FlowDoubleWrapper> _AnalyticalFlows = new ObservableCollection<FlowDoubleWrapper>()
+        {
+        new FlowDoubleWrapper(0),
+        new FlowDoubleWrapper(1),
+        new FlowDoubleWrapper(2),
+        new FlowDoubleWrapper(3),
+        new FlowDoubleWrapper(4),
+        new FlowDoubleWrapper(5),
+        new FlowDoubleWrapper(6),
+        new FlowDoubleWrapper(7),
+        new FlowDoubleWrapper(8),
+        new FlowDoubleWrapper(9),
+        new FlowDoubleWrapper(10),
+        new FlowDoubleWrapper(11),
+        new FlowDoubleWrapper(12)
+        
+        };
 
+        private ObservableCollection<FlowDoubleWrapper> _GraphicalFlows = new ObservableCollection<FlowDoubleWrapper>()
+        {
+        new FlowDoubleWrapper(0),
+        new FlowDoubleWrapper(1),
+        new FlowDoubleWrapper(2),
+        new FlowDoubleWrapper(3),
+        new FlowDoubleWrapper(4),
+        new FlowDoubleWrapper(5),
+        new FlowDoubleWrapper(6),
+        new FlowDoubleWrapper(7),
+        new FlowDoubleWrapper(8),
+        new FlowDoubleWrapper(9),
+        new FlowDoubleWrapper(10),
+        new FlowDoubleWrapper(11),
+        new FlowDoubleWrapper(12)
+
+        };
+
+        private bool _IsAnalytical = true;
+        private bool _IsStandard = true;
 
         #endregion
         #region Properties
-        public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
+        public bool IsAnalytical
+        {
+            get { return _IsStandard; }
+            set { _IsStandard = value; NotifyPropertyChanged(); }
+        }
+        public bool IsStandard
+        {
+            get { return _IsAnalytical; }
+            set { _IsAnalytical = value; NotifyPropertyChanged(); }
+        }
+        public double Mean
+        {
+            get;set;
+        }
+        public double StandardDeviation
+        {
+            get;set;
+        }
+        public double Skew
+        {
+            get;set;
+        }
+        public int PeriorOfRecord
+        {
+            get;set;
+        }
+        public bool IsLogFlow { get; set; }
 
+        public SciChart2DChartViewModel CoordinatesChartViewModel { get; } = new SciChart2DChartViewModel("chart title");
+
+        //public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
+        public ObservableCollection<FlowDoubleWrapper> AnalyticalFlows
+        {
+            get
+            {
+                return _AnalyticalFlows;
+            }
+            set
+            {
+                _AnalyticalFlows = value; NotifyPropertyChanged();
+            }
+        }
+        public ObservableCollection<FlowDoubleWrapper> GraphicalFlows
+        {
+            get
+            {
+                return _GraphicalFlows;
+            }
+            set
+            {
+                _GraphicalFlows = value; NotifyPropertyChanged();
+            }
+        }
 
         //public int SelectedIndexInUndoList
         //{
@@ -41,7 +135,7 @@ namespace FdaViewModel.FrequencyRelationships
         //    get { return _Description; }
         //    set { _Description = value; NotifyPropertyChanged(); }
         //}
-        public FunctionsView.ViewModel.CoordinatesFunctionEditorVM EditorVM
+        public CoordinatesFunctionEditorVM EditorVM
         {
             get;
             set;
@@ -51,21 +145,21 @@ namespace FdaViewModel.FrequencyRelationships
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); UpdateItems(); }
         }
-        public System.Collections.ObjectModel.ObservableCollection<object> Items
-        {
-            get { return _Items; }
-            set { _Items = value; NotifyPropertyChanged(); }
-        }
-        public System.Collections.ObjectModel.ObservableCollection<double> Probabilities
+        //public ObservableCollection<object> Items
+        //{
+        //    get { return _Items; }
+        //    set { _Items = value; NotifyPropertyChanged(); }
+        //}
+        public ObservableCollection<double> Probabilities
         {
             get { return _Probabilities; }
             set { _Probabilities = value; NotifyPropertyChanged(); UpdateItems(); }
         }
-        public string SavingText
-        {
-            get { return _SavingText; }
-            set { _SavingText = value; NotifyPropertyChanged(); }
-        }
+        //public string SavingText
+        //{
+        //    get { return _SavingText; }
+        //    set { _SavingText = value; NotifyPropertyChanged(); }
+        //}
 
         //todo: Refactor: commented out the props below
         //public double Mean 
@@ -113,45 +207,45 @@ namespace FdaViewModel.FrequencyRelationships
         //        _Curve = new Statistics.LogPearsonIII(_Curve.GetMean, _Curve.GetStDev, _Curve.GetG, value); NotifyPropertyChanged(); 
         //    } 
         //}
-        public double TestKnowledge 
-        { 
-            get 
-            { 
-                return _TestKnowledge; 
-            } 
-            set 
-            { 
-                _TestKnowledge = value; NotifyPropertyChanged(); NotifyPropertyChanged(nameof(Result)); 
-            } 
-        }
-        public double TestNatural { get { return _TestNatural; } set { _TestNatural = value; NotifyPropertyChanged(); NotifyPropertyChanged(nameof(Result)); } }
-        public double Result 
-        { 
-            get 
-            {
-                return -1;//todo: Refactor: CO _Curve.GetG; 
-            } 
-        }
+        //public double TestKnowledge 
+        //{ 
+        //    get 
+        //    { 
+        //        return _TestKnowledge; 
+        //    } 
+        //    set 
+        //    { 
+        //        _TestKnowledge = value; NotifyPropertyChanged(); NotifyPropertyChanged(nameof(Result)); 
+        //    } 
+        //}
+        //public double TestNatural { get { return _TestNatural; } set { _TestNatural = value; NotifyPropertyChanged(); NotifyPropertyChanged(nameof(Result)); } }
+        //public double Result 
+        //{ 
+        //    get 
+        //    {
+        //        return -1;//todo: Refactor: CO _Curve.GetG; 
+        //    } 
+        //}
 
-        public ObservableCollection<TransactionRowItem> TransactionRows
-        {
-            get;
-            set;
-        }
-        public ObservableCollection<FdaLogging.LogItem> MessageRows
-        {
-            get;
-            set;
-        }
-        public int MessageCount
-        {
-            get { return MessageRows.Count; }
-        }
-        public bool TransactionsMessagesVisible
-        {
-            get;
-            set;
-        }
+        //public ObservableCollection<TransactionRowItem> TransactionRows
+        //{
+        //    get;
+        //    set;
+        //}
+        //public ObservableCollection<FdaLogging.LogItem> MessageRows
+        //{
+        //    get;
+        //    set;
+        //}
+        //public int MessageCount
+        //{
+        //    get { return MessageRows.Count; }
+        //}
+        //public bool TransactionsMessagesVisible
+        //{
+        //    get;
+        //    set;
+        //}
 
         //public ChildElement CurrentElement { get; set; }
 
@@ -164,9 +258,11 @@ namespace FdaViewModel.FrequencyRelationships
 
             _Curve = null;//todo: Refactor: CO new Statistics.LogPearsonIII(4, .4, .5, 50);
             Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };
-            ActionManager = actionManager;
-            TransactionRows = new ObservableCollection<TransactionRowItem>();
-            MessageRows = new ObservableCollection<FdaLogging.LogItem>();
+            //ActionManager = actionManager;
+            //TransactionRows = new ObservableCollection<TransactionRowItem>();
+            //MessageRows = new ObservableCollection<FdaLogging.LogItem>();
+            LoadTheLineData();
+
         }
         public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem,string xLabel,string yLabel,string chartTitle, Editors.EditorActionManager actionManager) :base(elem, xLabel, yLabel, chartTitle, actionManager)// string name, Statistics.LogPearsonIII lpiii, string description, Utilities.OwnerElement owner) : base()
         {
@@ -174,17 +270,42 @@ namespace FdaViewModel.FrequencyRelationships
             CurrentElement = elem;
             //CurrentElement.ChangeIndex = 0;
             Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };
-            AssignValuesFromElementToEditor(elem);
-            ActionManager = actionManager;
+            //AssignValuesFromElementToEditor(elem);
+            //ActionManager = actionManager;
             //TransactionHelper.LoadTransactionsAndMessages(this, elem);
-            SavingText = elem.Name + " last saved: " + elem.LastEditDate;
-
+            //SavingText = elem.Name + " last saved: " + elem.LastEditDate;
+            LoadTheLineData();
             //DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
             //UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
 
         }
         #endregion
         #region Voids
+        private void LoadTheLineData()
+        {
+            CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(CreateFunctionFromTable());
+            List<SciLineData> lineData = chartHelper.CreateLineData();
+            CoordinatesChartViewModel.LineData.Set(lineData);
+        }
+
+        private ICoordinatesFunction CreateFunctionFromTable()
+        {
+            //list xs will be the probabilties
+            List<double> xs = new List<double>();
+            foreach(double d in  Probabilities)
+            {
+                xs.Add(d);
+            }
+
+            List<double> ys = new List<double>();
+            foreach(FlowDoubleWrapper d in AnalyticalFlows)
+            {
+                ys.Add(d.Flow);
+            }
+
+            //list of ys will be the flow data with the mean, st dev, skew on it.
+            return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+        }
 
         private void UpdateItems()
         {
@@ -241,125 +362,237 @@ namespace FdaViewModel.FrequencyRelationships
         }
 
 
-        public void Undo()
-        {
-            ChildElement prevElement = ActionManager.SaveUndoRedoHelper.UndoElement(CurrentElement);
-            if (prevElement != null)
-            {
-                AssignValuesFromElementToEditor(prevElement);
-                SavingText = prevElement.Name + " last saved: " + prevElement.LastEditDate;
-                TransactionRows.Insert(0, new TransactionRowItem(DateTime.Now.ToString("G"), "Previously saved values", "me"));
-            }
-        }
-
-        public void Redo()
-        {
-            ChildElement nextElement = ActionManager.SaveUndoRedoHelper.RedoElement(CurrentElement);
-            if (nextElement != null)
-            {
-                AssignValuesFromElementToEditor(nextElement);
-                SavingText = nextElement.Name + " last saved: " + nextElement.LastEditDate;
-
-            }
-        }
-
-        public void SaveWhileEditing()
-        {
-            SavingText = " Saving...";
-            ChildElement elementToSave = ActionManager.SaveUndoRedoHelper.CreateElementFromEditorAction(this);
-            if (CurrentElement == null)
-            {
-                CurrentElement = elementToSave;
-            }
-            LastEditDate = DateTime.Now.ToString("G");
-            elementToSave.LastEditDate = LastEditDate;
-            CurrentElement.LastEditDate = LastEditDate;
-            ActionManager.SaveUndoRedoHelper.Save(CurrentElement.Name, CurrentElement, elementToSave);
-            //saving puts all the right values in the db but does not update the owned element in the tree. (in memory values)
-            // i need to update those properties here
-            AssignValuesFromEditorToCurrentElement();
-
-            //update the rules to exclude the new name from the banned list
-            //OwnerValidationRules.Invoke(this, _CurrentElement.Name);  
-            SavingText = " Saved at " + DateTime.Now.ToShortTimeString();
-        }
-
-        public override void Save()
-        {
-            SaveWhileEditing();
-        }
-
-        //public void UpdateTheUndoRedoRowItems()
+        //public void Undo()
         //{
-        //    //int currentIndex = CurrentElement.ChangeIndex;
-        //    //RedoRows.Clear();
-        //    //for (int i = currentIndex + 1; i < UndoRedoRows.Count; i++)
-        //    //{
-        //    //    RedoRows.Add(UndoRedoRows[i]);
-        //    //}
-
+        //    ChildElement prevElement = ActionManager.SaveUndoRedoHelper.UndoElement(CurrentElement);
+        //    if (prevElement != null)
+        //    {
+        //        AssignValuesFromElementToEditor(prevElement);
+        //        SavingText = prevElement.Name + " last saved: " + prevElement.LastEditDate;
+        //        TransactionRows.Insert(0, new TransactionRowItem(DateTime.Now.ToString("G"), "Previously saved values", "me"));
+        //    }
         //}
 
-        public void AssignValuesFromElementToEditor(ChildElement element)
-        {
-            //todo: Refactor: CO
-            //AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)element;
-            //Name = elem.Name;
-            //LastEditDate = elem.LastEditDate;
-            //Description = elem.Description;
-            //_Curve = elem.Distribution;
-            //Mean = elem.Distribution.GetMean;
-            //StandardDeviation = elem.Distribution.GetStDev;
-            //Skew = elem.Distribution.GetG;
-            //SampleSize = elem.Distribution.GetSampleSize;
+        //public void Redo()
+        //{
+        //    ChildElement nextElement = ActionManager.SaveUndoRedoHelper.RedoElement(CurrentElement);
+        //    if (nextElement != null)
+        //    {
+        //        AssignValuesFromElementToEditor(nextElement);
+        //        SavingText = nextElement.Name + " last saved: " + nextElement.LastEditDate;
 
-        }
-        public void AssignValuesFromEditorToCurrentElement()
-        {
-            CurrentElement.LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            CurrentElement.Name = Name;
-            ((AnalyticalFrequencyElement)CurrentElement).Description = Description;
-            ((AnalyticalFrequencyElement)CurrentElement).Curve = _Curve;
-        }
+        //    }
+        //}
 
-        public void FilterRowsByLevel(FdaLogging.LoggingLevel level)
+        public override ICoordinatesFunction GetCoordinatesFunction()
         {
-
-            ObservableCollection<FdaLogging.LogItem> tempList = new ObservableCollection<FdaLogging.LogItem>();
-            foreach (FdaLogging.LogItem mri in MessageRows)
+            if(IsAnalytical)
             {
-                if (mri.LogLevel.Equals(level.ToString()))
+                if(IsStandard)
                 {
-                    tempList.Add(mri);
+                    //todo use mean, st dev, and skew to create the curve
+                    List<double> xs = new List<double>() { 0, 1 };
+                    List<double> ys = new List<double>() { 0, 2 };
+                    return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
                 }
             }
-
-            MessageRows = tempList;
-
+            List<double> xs2 = new List<double>() { 0, 1 };
+            List<double> ys2 = new List<double>() { 0, 2 };
+            return ICoordinatesFunctionsFactory.Factory(xs2, ys2, InterpolationEnum.Linear);
         }
-        public void DisplayAllMessages()
+        //public override void SaveWhileEditing()
+        //{
+        //    if (!HasChanges)
+        //    {
+        //        //todo: it looks like this never gets hit. It always has changes.
+        //        String time = DateTime.Now.ToString();
+        //        LogItem li = LogItemFactory.FactoryTemp(LoggingLevel.Info, "No new changes to save." + time);
+        //        MessageRows.Insert(0, li);
+        //        SaveStatusLevel = LoggingLevel.Debug;
+        //        return;
+        //    }
+
+        //    try
+        //    {
+                
+        //        //try to construct the new coordinates function
+        //        ICoordinatesFunction coordFunc = GetCoordinatesFunction();
+        //        EditorVM.Function = coordFunc;
+        //        //todo: what is this, i can't just assume its a rating curve? This line needs to be here to save the curve out properly.
+        //        //I think i just needed some enum to be there so i chose rating.
+        //        Curve = IFdaFunctionFactory.Factory(IParameterEnum.Rating, (IFunction)coordFunc);
+
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //we were unsuccessful in creating the coordinates function                
+        //        TempErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, ex.Message));
+        //        UpdateMessages(true);
+        //        return;
+        //    }
+           
+
+        //    InTheProcessOfSaving = true;
+        //    ChildElement elementToSave = ActionManager.SaveUndoRedoHelper.CreateElementFromEditorAction(this);
+        //    if (CurrentElement == null)
+        //    {
+        //        CurrentElement = elementToSave;
+        //    }
+           
+        //    LastEditDate = DateTime.Now.ToString("G");
+        //    elementToSave.LastEditDate = LastEditDate;
+        //    CurrentElement.LastEditDate = LastEditDate;
+        //    elementToSave.Curve = Curve;
+        //    ActionManager.SaveUndoRedoHelper.Save(CurrentElement.Name, CurrentElement, elementToSave);
+        //    //saving puts all the right values in the db but does not update the owned element in the tree. (in memory values)
+        //    // i need to update those properties here
+        //    AssignValuesFromEditorToCurrentElement();
+
+        //    //update the rules to exclude the new name from the banned list
+        //    //OwnerValidationRules.Invoke(this, _CurrentElement.Name);  
+        //    SavingText = CreateLastSavedText(elementToSave);
+
+        //    ReloadMessages(true);
+        //    HasChanges = false;
+        //}
+
+            //public void SaveWhileEditing()
+            //{
+            //    SavingText = " Saving...";
+            //    ChildElement elementToSave = ActionManager.SaveUndoRedoHelper.CreateElementFromEditorAction(this);
+            //    if (CurrentElement == null)
+            //    {
+            //        CurrentElement = elementToSave;
+            //    }
+            //    LastEditDate = DateTime.Now.ToString("G");
+            //    elementToSave.LastEditDate = LastEditDate;
+            //    CurrentElement.LastEditDate = LastEditDate;
+            //    ActionManager.SaveUndoRedoHelper.Save(CurrentElement.Name, CurrentElement, elementToSave);
+            //    //saving puts all the right values in the db but does not update the owned element in the tree. (in memory values)
+            //    // i need to update those properties here
+            //    AssignValuesFromEditorToCurrentElement();
+
+            //    //update the rules to exclude the new name from the banned list
+            //    //OwnerValidationRules.Invoke(this, _CurrentElement.Name);  
+            //    SavingText = " Saved at " + DateTime.Now.ToShortTimeString();
+            //}
+
+            //public override void Save()
+            //{
+            //    SaveWhileEditing();
+            //}
+
+            //public void UpdateTheUndoRedoRowItems()
+            //{
+            //    //int currentIndex = CurrentElement.ChangeIndex;
+            //    //RedoRows.Clear();
+            //    //for (int i = currentIndex + 1; i < UndoRedoRows.Count; i++)
+            //    //{
+            //    //    RedoRows.Add(UndoRedoRows[i]);
+            //    //}
+
+            //}
+
+            //public void AssignValuesFromElementToEditor(ChildElement element)
+            //{
+            //    //todo: Refactor: CO
+            //    //AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)element;
+            //    //Name = elem.Name;
+            //    //LastEditDate = elem.LastEditDate;
+            //    //Description = elem.Description;
+            //    //_Curve = elem.Distribution;
+            //    //Mean = elem.Distribution.GetMean;
+            //    //StandardDeviation = elem.Distribution.GetStDev;
+            //    //Skew = elem.Distribution.GetG;
+            //    //SampleSize = elem.Distribution.GetSampleSize;
+
+            //}
+            //public void AssignValuesFromEditorToCurrentElement()
+            //{
+            //    CurrentElement.LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            //    CurrentElement.Name = Name;
+            //    ((AnalyticalFrequencyElement)CurrentElement).Description = Description;
+            //    ((AnalyticalFrequencyElement)CurrentElement).Curve = _Curve;
+            //}
+
+            //public void FilterRowsByLevel(FdaLogging.LoggingLevel level)
+            //{
+
+            //    ObservableCollection<FdaLogging.LogItem> tempList = new ObservableCollection<FdaLogging.LogItem>();
+            //    foreach (FdaLogging.LogItem mri in MessageRows)
+            //    {
+            //        if (mri.LogLevel.Equals(level.ToString()))
+            //        {
+            //            tempList.Add(mri);
+            //        }
+            //    }
+
+            //    MessageRows = tempList;
+
+            //}
+            //public void DisplayAllMessages()
+            //{
+            //    //MessageRows = NLogDataBaseHelper.GetMessageRowsForType(GetType());
+            //}
+            //public UncertainCurveDataCollection GetTheElementsCurve()
+            //{
+            //    FdaModel.Functions.FrequencyFunctions.LogPearsonIII lp3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
+            //    Statistics.CurveIncreasing curve = lp3.GetOrdinatesFunction().Function;
+            //    //return (UncertainCurveDataCollection)curve;
+            //    throw new NotImplementedException();
+
+            //}
+
+            //public UncertainCurveDataCollection GetTheEditorsCurve()
+            //{
+            //    //return Distribution;
+            //    throw new NotImplementedException();
+
+            //}
+            //public void UpdateNameWithNewValue(string name)
+            //{
+            //    Name = name;
+            //}
+
+
+            public void AddRows(int startRow, int numRows)
         {
-            //MessageRows = NLogDataBaseHelper.GetMessageRowsForType(GetType());
+            for(int i = 0;i<numRows;i++)
+            {
+                FlowDoubleWrapper emptyFlow = new FlowDoubleWrapper(0);
+                AnalyticalFlows.Insert(startRow, emptyFlow);
+            }
         }
-        //public UncertainCurveDataCollection GetTheElementsCurve()
-        //{
-        //    FdaModel.Functions.FrequencyFunctions.LogPearsonIII lp3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
-        //    Statistics.CurveIncreasing curve = lp3.GetOrdinatesFunction().Function;
-        //    //return (UncertainCurveDataCollection)curve;
-        //    throw new NotImplementedException();
 
-        //}
+        /// <summary>
+        /// Adds a row to the end of the table. This happens when Enter is pressed while in
+        /// the last row.
+        /// </summary>
+        /// <param name="startRow"></param>
+        /// <param name="numRows"></param>
+        public void AddRow()
+        {
+           
+            FlowDoubleWrapper emptyFlow = new FlowDoubleWrapper(0);
+            AnalyticalFlows.Add(emptyFlow);
+            
+        }
 
-        //public UncertainCurveDataCollection GetTheEditorsCurve()
-        //{
-        //    //return Distribution;
-        //    throw new NotImplementedException();
-
-        //}
-        //public void UpdateNameWithNewValue(string name)
-        //{
-        //    Name = name;
-        //}
+        public void DeleteRows(List<int> indexes)
+        {
+            for (int i = 0; i < indexes.Count; i++)
+            {
+                AnalyticalFlows.RemoveAt(indexes[i] - i);
+            }
+            //if all rows are gone then tell the parent so that it can delete this table
+            if (AnalyticalFlows.Count == 0)
+            {
+                AnalyticalFlows.Add(new FlowDoubleWrapper(0));
+                //NoMoreRows?.Invoke(this, new EventArgs());
+            }
+            //TableWasModified?.Invoke(this, new EventArgs());
+        }
 
     }
 }

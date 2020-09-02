@@ -27,13 +27,16 @@ namespace FdaViewModel.Plots
 
         public event EventHandler UpdateDLMLines;
         public event EventHandler UpdateHorizontalDLMLines;
+        public event EventHandler UpdateHorizontalFailureFunction;
 
         private BaseViewModel _CurrentVM;
         private bool _UpdatePlots;
         private bool _IsModulator = false;
 
-        private bool _IsYAxisLog;
-        private  bool _IsProbabilityXAxis;
+        //private bool _IsYAxisLog;
+        //private bool _IsXAxisLog;
+
+        //private bool _IsProbabilityXAxis;
 
         private double _MinX;
         private double _MaxX;
@@ -43,8 +46,8 @@ namespace FdaViewModel.Plots
         private double _CurrentX;
         private double _CurrentY;
 
-        private bool _XAxisOnBottom = true;
-        private bool _YAxisOnLeft = true;
+        //private bool _XAxisOnBottom = true;
+        //private bool _YAxisOnLeft = true;
 
         #endregion
         #region Properties
@@ -132,14 +135,15 @@ namespace FdaViewModel.Plots
            
         }
         public IndividualLinkedPlotControlVM(IIndividualLinkedPlotWrapper indLinkedPlotWrapperVM, ICoverButton coverButton, iConditionsImporter importerVM, 
-            bool isYAxisLog, bool isProbabilityXAxis, bool isXAxisOnBottom, bool isYAxisOnLeft,
              ICoverButton modulatorCoverButton = null, IIndividualLinkedPlotWrapper modulatorPlotWrapper = null)
         {
             
-            _XAxisOnBottom = isXAxisOnBottom;
-            _YAxisOnLeft = isYAxisOnLeft;
-            _IsYAxisLog = isYAxisLog;
-            _IsProbabilityXAxis = isProbabilityXAxis;
+            //_XAxisOnBottom = isXAxisOnBottom;
+            //_YAxisOnLeft = isYAxisOnLeft;
+            //_IsYAxisLog = isYAxisLog;
+            //_IsXAxisLog = isXAxisLog;
+
+            //_IsProbabilityXAxis = isProbabilityXAxis;
 
             IndividualPlotWrapperVM = indLinkedPlotWrapperVM;
             IndividualPlotWrapperVM.ShowImportButton += new EventHandler(ShowTheImportButton);
@@ -190,7 +194,7 @@ namespace FdaViewModel.Plots
         private void PopTheImporterOut(object sender, EventArgs e)
         {
             CurveImporterVM.IsPoppedOut = true;
-            IndividualPlotWrapperVM.DisplayImportButton = false;
+            //IndividualPlotWrapperVM.DisplayImportButton = false;
 
             ShowPreviousVM(sender, e);
             //CurveImporterVM.CancelClickedEvent += ImporterWasCanceled
@@ -218,7 +222,7 @@ namespace FdaViewModel.Plots
             }
 
             CurveImporterVM.IsPoppedOut = false;
-            IndividualPlotWrapperVM.DisplayImportButton = true;
+            //IndividualPlotWrapperVM.DisplayImportButton = true;
 
             //if (CurveImporterVM.IsPoppedOut == true)
             //{
@@ -335,6 +339,12 @@ namespace FdaViewModel.Plots
                         ChartModifier = new FdaCrosshairChartModifier(false, true, CrosshairData);
                         break;
                     }
+                case IParameterEnum.LateralStructureFailure:
+                    {
+                        ChartModifier = new FdaCrosshairChartModifier(false, true, CrosshairData);
+                        CrosshairData.UpdateHorizontalFailureFunction += UpdateHorizontalLateralStructure;
+                        break;
+                    }
                 case IParameterEnum.ExteriorInteriorStage:
                     {
                         ChartModifier = new FdaCrosshairChartModifier(true, true, CrosshairData);
@@ -350,7 +360,7 @@ namespace FdaViewModel.Plots
                     {
                         ChartModifier = new FdaCrosshairChartModifier(true, false, CrosshairData);
                         break;
-                    }
+                    }               
                 default:
                     {
                         int i = 0;
@@ -380,6 +390,16 @@ namespace FdaViewModel.Plots
 
         }
 
+        public void PopFailureFunctionIntoHorizontalModulator()
+        {
+            CurrentVM = (BaseViewModel)ModulatorPlotWrapperVM;
+            CrosshairData.IsPlotFailureFunction = true;
+            SetMinMaxModulatorValues();
+            UpdateHorizontalFailureFunction?.Invoke(this, new EventArgs());
+            PlotIsShowing?.Invoke(this, new EventArgs());
+
+        }
+
         private void SetMinMaxModulatorValues()
         {
             IFdaFunction func = IndividualPlotWrapperVM.PlotVM.BaseFunction;
@@ -401,6 +421,9 @@ namespace FdaViewModel.Plots
         {
             SetChartModifier(function);
 
+            //store the previouse curve
+            PreviousPlot = IndividualPlotWrapperVM.PlotVM;// new IndividualLinkedPlotVM(function, elementName, null,_IsXAxisLog, _IsYAxisLog, _IsProbabilityXAxis, _XAxisOnBottom, _YAxisOnLeft);
+
             //if(_IsModulator)
             //{
             //    ModulatorPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(function, elementName, ChartModifier, _IsYAxisLog, _IsProbabilityXAxis);
@@ -408,16 +431,16 @@ namespace FdaViewModel.Plots
             //}
             //else
             {
-                IndividualPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(function, elementName, ChartModifier, _IsYAxisLog, _IsProbabilityXAxis, _XAxisOnBottom,
-                    _YAxisOnLeft);
+                //IndividualPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(function, elementName, ChartModifier,_IsXAxisLog, _IsYAxisLog, _IsProbabilityXAxis, _XAxisOnBottom,
+                 //   _YAxisOnLeft);
+
+                IndividualPlotWrapperVM.AddCurveToPlot(function, elementName, ChartModifier);
                 CurrentVM = (BaseViewModel)IndividualPlotWrapperVM;
 
             }
 
 
 
-            //store the previouse curve
-            PreviousPlot = new IndividualLinkedPlotVM(function, elementName, null, _IsYAxisLog, _IsProbabilityXAxis, _XAxisOnBottom, _YAxisOnLeft);
 
             //if (ModulatorPlotWrapperVM != null)
             //{
@@ -447,7 +470,7 @@ namespace FdaViewModel.Plots
         {
 
             CurveImporterVM.IsPoppedOut = false;
-            IndividualPlotWrapperVM.DisplayImportButton = true;
+            //IndividualPlotWrapperVM.DisplayImportButton = true;
 
             IndividualPlotWrapperVM.SubTitle = CurveImporterVM.SelectedElement.Name;
 
@@ -655,6 +678,10 @@ namespace FdaViewModel.Plots
             return max;
         }
 
+        /// <summary>
+        /// This code should mirror the bindings that are happening in IndividualLinkedPlotControl.xaml.cs - BindToNextPlot()
+        /// </summary>
+        /// <param name="nextControl"></param>
         public void LinkToNextControl(IndividualLinkedPlotControlVM nextControl)
         {
             IParameterEnum thisType = GetFunctionType(this);
@@ -702,9 +729,9 @@ namespace FdaViewModel.Plots
                         SetSharedAxisValues(nextControl, false);
                         if (nextType == IParameterEnum.ExteriorInteriorStage)
                         {
-                            currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData, Axis.Y, Axis.X);
-                            nextCrosshairData.Previous = new SharedAxisCrosshairData(currentCrosshairData, Axis.X, Axis.Y);
-                            SetSharedAxisValues(nextControl, false);
+                            currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData, Axis.X, Axis.X);
+                            nextCrosshairData.Previous = new SharedAxisCrosshairData(currentCrosshairData, Axis.X, Axis.X);
+                            //SetSharedAxisValues(nextControl, false);
 
                         }
                         else if (nextType == IParameterEnum.InteriorStageDamage)
@@ -716,6 +743,29 @@ namespace FdaViewModel.Plots
                             nextCrosshairData.Previous = new SharedAxisCrosshairData(currentCrosshairData, Axis.X, Axis.X);
                             //nextChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(true, true, nextCrosshairData));
 
+                        }
+                        else if (nextType == IParameterEnum.LateralStructureFailure)
+                        {
+                            currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData, Axis.X, Axis.X);
+                            nextCrosshairData.Previous = new SharedAxisCrosshairData(currentCrosshairData, Axis.X, Axis.X);
+                        }
+                        break;
+                    }
+                case IParameterEnum.LateralStructureFailure:
+                    {
+                        SetSharedAxisValues(nextControl, false);
+                        if (nextType == IParameterEnum.ExteriorInteriorStage)
+                        {
+                            //todo: this might need to change once we get the mix and match axis binding worked out.
+                            currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData, Axis.X, Axis.X);
+                            nextCrosshairData.Previous = new SharedAxisCrosshairData(currentCrosshairData, Axis.X, Axis.X);
+                        }
+                        if (nextType == IParameterEnum.InteriorStageDamage)
+                        {
+                            //SetSharedAxisValues(nextControl, false);
+                            //todo: this might need to change once we get the mix and match axis binding worked out.
+                            currentCrosshairData.Next = new SharedAxisCrosshairData(nextCrosshairData, Axis.X, Axis.X);
+                            nextCrosshairData.Previous = new SharedAxisCrosshairData(currentCrosshairData, Axis.X, Axis.X);
                         }
                         break;
                     }
@@ -747,6 +797,26 @@ namespace FdaViewModel.Plots
                     }
             }
 
+        }
+
+        public void UpdateHorizontalLateralStructure(object sender, ModulatorEventArgs args)
+        {
+            //x is exterior stage
+            //y is failure probability
+            CurrentX = args.X;
+            try
+            {
+                CurrentY = IndividualPlotWrapperVM.PlotVM.BaseFunction.F(IOrdinateFactory.Factory(args.X)).Value();
+            }
+            catch (Exception e)
+            {
+                //we are out of range. Just return?
+                return;
+            }
+
+            //this will tell the view side to draw the modulator lines
+            //based on the current x and y values.
+            UpdateHorizontalFailureFunction?.Invoke(this, new EventArgs());
         }
 
         public void UpdateHorizontalDoubleLineModulator(object sender, ModulatorEventArgs args)

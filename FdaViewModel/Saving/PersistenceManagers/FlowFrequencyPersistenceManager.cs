@@ -15,10 +15,18 @@ namespace FdaViewModel.Saving.PersistenceManagers
         private const int NAME_COL = 1;
         private const int LAST_EDIT_DATE_COL = 2;
         private const int DESC_COL = 3;
-        private const int MEAN_COL = 4;
-        private const int ST_DEV_COL = 5;
-        private const int SKEW_COL = 6;
-        private const int YEARS_OF_RECORD_COL = 7;
+        private const int YEARS_OF_RECORD_COL = 4;
+
+        private const int IS_ANALYTICAL_COL = 5;
+        private const int IS_STANDARD_COL = 6;
+
+        private const int MEAN_COL = 7;
+        private const int ST_DEV_COL = 8;
+        private const int SKEW_COL = 9;
+
+        private const int IS_LOG_FLOW_COL = 10;
+        private const int ANALYTICAL_FLOWS_COL = 11;
+        private const int GRAPHICAL_FLOWS_COL = 12;
 
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("FlowFrequencyPersistenceManager");
         //ELEMENT_TYPE is used to store the type of element in the log tables.
@@ -32,13 +40,21 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override string[] TableColumnNames
         {
-            get { return new string[] { NAME, LAST_EDIT_DATE, DESCRIPTION, "mean", "standard_deviation", "skew", "equivalent_years_of_record" }; }
+            get { return new string[] { NAME, LAST_EDIT_DATE, DESCRIPTION, "por", "is_analytical", 
+                "is_standard", "mean", "standard_deviation", "skew", "is_log_flow", "analytical_flows", "graphical_flows" }; }
         }
 
         public override Type[] TableColumnTypes
         {
-            get { return new Type[] { typeof(string), typeof(string), typeof(string),
-                typeof(double), typeof(double), typeof(double), typeof(int) }; }
+            get 
+            { 
+                return new Type[] 
+                { 
+                typeof(string), typeof(string), typeof(string),
+                typeof(int), typeof(bool), typeof(bool), typeof(double), typeof(double),
+                typeof(double),typeof(bool), typeof(string), typeof(string) 
+                }; 
+            }
         }
 
 
@@ -47,7 +63,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
             get
             {
                 return new string[] { ELEMENT_ID_COL_NAME, NAME, LAST_EDIT_DATE, DESCRIPTION,
-            "mean_(of_log)", "standard_deviation_(of_log)", "skew_(of_log)", "equivalent_years_of_record", STATE_INDEX_COL_NAME};
+                "por", "is_analytical", "is_standard", "mean", "standard_deviation", "skew", 
+                    "is_log_flow", "analytical_flows", "graphical_flows", STATE_INDEX_COL_NAME};
             }
 
         }
@@ -56,8 +73,12 @@ public override Type[] ChangeTableColumnTypes
         {
             get
             {
-                return new Type[] {typeof(int), typeof(string), typeof(string), typeof(string),
-                typeof(double), typeof(double), typeof(double), typeof(int), typeof(int) };
+                return new Type[] 
+                {
+                    typeof(int), typeof(string), typeof(string), typeof(string),
+                    typeof(int), typeof(bool), typeof(bool), typeof(double), typeof(double),
+                    typeof(double),typeof(bool), typeof(string), typeof(string) , typeof(int) 
+                };
             }
         }
 
@@ -70,23 +91,71 @@ public override Type[] ChangeTableColumnTypes
         #region utilities
         private object[] GetRowDataFromElement(AnalyticalFrequencyElement element)
         {
-            return new object[] { element.Name, element.LastEditDate, element.Description};
-            //todo: Refactor: CO
-                //element.Distribution.GetMean, element.Distribution.GetStDev, element.Distribution.GetG,
-                //element.Distribution.GetSampleSize };
+
+            string analyticalFlows = ConvertFlowsToString(element.AnalyticalFlows);
+            string graphicalFlows = ConvertFlowsToString(element.GraphicalFlows);
+            return new object[]
+            {
+                element.Name, element.LastEditDate, element.Description, element.POR, element.IsAnalytical, element.IsStandard,
+                element.Mean, element.StDev, element.Skew, element.IsLogFlow, analyticalFlows, graphicalFlows
+            };
+
+        }
+
+        private string ConvertFlowsToString(List<double> flows)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach(double d in flows)
+            {
+                sb.Append(d + ",");
+            }
+            //remove the last comma
+            sb.Remove(sb.Length - 1, 1);
+            return sb.ToString();
+        }
+
+        private List<double> ConvertStringToFlows(string flows)
+        {
+            List<double> flowDoubles = new List<double>();
+            try
+            {
+                string[] flowStrings = flows.Split(',');
+
+                foreach (string flow in flowStrings)
+                {
+                    double d = Convert.ToDouble(flow);
+                    flowDoubles.Add(d);
+                }
+            }
+            catch (Exception e)
+            {
+                //couldn't convert to doubles
+            }
+            return flowDoubles;
         }
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
+            string name = (string)rowData[NAME_COL];
+            string desc = (string)rowData[DESC_COL];
+            string lastEditDate = (string)rowData[LAST_EDIT_DATE_COL];
+            int por = Convert.ToInt32( rowData[YEARS_OF_RECORD_COL]);
+
+            bool isAnalytical = Convert.ToBoolean(rowData[IS_ANALYTICAL_COL]);
+            bool isStandard = Convert.ToBoolean(rowData[IS_STANDARD_COL]);
+
             double mean = Convert.ToDouble( rowData[MEAN_COL]);
             double stdev = Convert.ToDouble(rowData[ST_DEV_COL]);
             double skew = Convert.ToDouble(rowData[SKEW_COL]);
-            Int64 n = Convert.ToInt64( rowData[YEARS_OF_RECORD_COL]);
+
+            bool isLogFlow = Convert.ToBoolean(rowData[IS_LOG_FLOW_COL]);
+            List<double> analyticalFlows = ConvertStringToFlows((string)rowData[ANALYTICAL_FLOWS_COL]);
+            List<double> graphicalFlows = ConvertStringToFlows((string)rowData[GRAPHICAL_FLOWS_COL]);
 
             //todo: Refactor: I should be  able to pass the xml string into the factory and it create it.
             //Model.ImpactAreaFunctionFactory.Factory()
-            return new AnalyticalFrequencyElement((string)rowData[NAME_COL],
-                (string)rowData[LAST_EDIT_DATE_COL], (string)rowData[DESC_COL],null);
+            return new AnalyticalFrequencyElement(name, lastEditDate, desc, por, isAnalytical, isStandard, mean, stdev, skew,
+                isLogFlow, analyticalFlows, graphicalFlows);
                 //todo: Refactor: CO and added the null in the line above
                 //new Statistics.LogPearsonIII(mean, stdev, skew, (int)n));
 
@@ -200,7 +269,9 @@ public override Type[] ChangeTableColumnTypes
             AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)element;
             //the new statId will be one higher than the max that is in the table already.
             int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
-            return new object[] { elemId, element.Name, element.LastEditDate, element.Description };
+            return new object[] { elemId, element.Name, element.LastEditDate, element.Description,
+            elem.POR, elem.IsAnalytical, elem.IsStandard, elem.Mean, elem.StDev, elem.Skew, elem.IsLogFlow,
+                ConvertFlowsToString(elem.AnalyticalFlows), ConvertFlowsToString(elem.GraphicalFlows), stateId};
                 //todo: Refactor: CO
                 //elem.Distribution.GetMean, elem.Distribution.GetStDev, elem.Distribution.GetG, elem.Distribution.GetSampleSize, stateId};
         }

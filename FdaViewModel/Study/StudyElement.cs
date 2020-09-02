@@ -567,8 +567,7 @@ namespace FdaViewModel.Study
                 //this.AddElement(h);
 
                 GeoTech.LateralStructuresOwnerElement ls = new GeoTech.LateralStructuresOwnerElement();
-                //todo: why doesn't this pass in the cache? is this just a mistake?
-                ls.AddBaseElements();
+                ls.AddBaseElements(cache);
                 AddElement(ls);
 
 

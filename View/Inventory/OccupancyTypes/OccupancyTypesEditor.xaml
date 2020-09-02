@@ -14,7 +14,7 @@
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="200" MinWidth="150"/>
             <ColumnDefinition Width="*" MinWidth="500"/>
 
         </Grid.ColumnDefinitions>
@@ -23,8 +23,8 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
-        <Grid Grid.Row="0" Grid.Column="0" >
+            
+        <Grid Grid.Row="0" Grid.Column="0" Margin="0,0,5,0">
             <!--<Grid.ColumnDefinitions>
                 <ColumnDefinition Width="33*"/>
                 <ColumnDefinition Width="67*"/>
@@ -35,7 +35,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <GroupBox Header="Occupancy Types Group" Grid.Row="0">
+            <GroupBox Header="Occupancy Types Group" Grid.Row="0" Margin="0,0,5,0">
 
                 <StackPanel>
                     <ToolBarPanel Grid.Row="0" Grid.Column="0" Margin="5,5,0,0" Orientation="Horizontal">
@@ -110,7 +110,7 @@
             <Button Name="DeleteButton" Margin="5,0,0,0" Click="DeleteButton_Click">Delete</Button>
         </StackPanel>-->
 
-        <GridSplitter Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" Width="3" Background="Black" VerticalAlignment="Stretch"></GridSplitter>
+        <GridSplitter Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" Width="2" Background="Gray" VerticalAlignment="Stretch" Margin="0" ></GridSplitter>
 
         <!--<ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="1" Grid.Row="0" Grid.RowSpan="3">-->
 
@@ -126,7 +126,7 @@
             <Button Content="Cancel" Height="23" Name="CancelButton" Width="45" Margin="5,0,0,0" />
         </StackPanel>-->
 
-        <Button Name="btn_SaveAll" Grid.Row="1" Grid.Column="0" Width="50" Height="22" Margin="5" HorizontalAlignment="Right" Content="Save All" VerticalAlignment="Bottom" Click="btn_SaveAll_Click"/>
+        <Button Name="btn_SaveAll" Grid.Row="1" Grid.Column="0" Width="50" Height="22" Margin="5,5,10,5" HorizontalAlignment="Right" Content="Save All" VerticalAlignment="Bottom" Click="btn_SaveAll_Click"/>
 
         
         <!--<Utils:OKCloseControl Grid.Row="2" HorizontalAlignment="Right" Grid.ColumnSpan="2"/>-->

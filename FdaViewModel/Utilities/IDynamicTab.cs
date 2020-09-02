@@ -46,6 +46,7 @@ namespace FdaViewModel.Utilities
 
         void PopWindowIntoTab();
         void RemoveTab();
-        void RemoveWindow();
+        bool RemoveWindow();
+
     }
 }

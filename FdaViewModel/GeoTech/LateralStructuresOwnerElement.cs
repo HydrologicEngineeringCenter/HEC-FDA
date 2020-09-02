@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace FdaViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 9:36:00 AM)]
-    class LateralStructuresOwnerElement : Utilities.ParentElement
+    public class LateralStructuresOwnerElement : Utilities.ParentElement
     {
         #region Notes
         // Created By: q0heccdm
@@ -37,11 +37,11 @@ namespace FdaViewModel.GeoTech
         //    }
         //}
 
-        public  void AddBaseElements()
+        public  void AddBaseElements(Study.FDACache cache)
         {
             LeveeFeatureOwnerElement lf = new LeveeFeatureOwnerElement();
             AddElement(lf);
-
+            cache.LeveeFeatureParent = lf;
             //FailureFunctionOwnerElement ff = new FailureFunctionOwnerElement();
             //AddElement(ff);
         }

@@ -36,7 +36,15 @@ namespace Statistics.Validation
         {
             string msg = "";
             if (range.IsNull()) msg += "The triangular distribution cannot be constructed because it range is null.";
-            if (!mode.IsFinite() || range.Messages.Max() > IMessageLevels.Message || !ValidationExtensions.IsOnRange(mode, range.Min, range.Max)) msg += $"{Resources.FatalParameterizationNotice(Triangular.Print(mode, range))} {Triangular.RequiredParameterization(true)} {Resources.SampleSizeSuggestion()}";
+
+            bool isModeInfinite = !mode.IsFinite();
+            bool doesRangeHaveErrorMessages = range.Messages.Max() > IMessageLevels.Message;
+            bool isNotOnRange = !ValidationExtensions.IsOnRange(mode, range.Min, range.Max);
+
+            if (isModeInfinite || doesRangeHaveErrorMessages || isNotOnRange)
+            {
+                msg += $"{Resources.FatalParameterizationNotice(Triangular.Print(mode, range))} {Triangular.RequiredParameterization(true)} {Resources.SampleSizeSuggestion()}";
+            }
             return msg;
         }
     }

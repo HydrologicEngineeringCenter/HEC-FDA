@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FdaViewModel.Conditions;
+using Model;
 
 namespace FdaViewModel.Plots
 {
@@ -83,7 +85,12 @@ namespace FdaViewModel.Plots
             //throw new NotImplementedException();
         }
 
-      
+        public void AddCurveToPlot(IFdaFunction function, string elementName, FdaCrosshairChartModifier chartModifier)
+        {
+            throw new NotImplementedException();
+        }
+
+
 
         #endregion
         #region Functions

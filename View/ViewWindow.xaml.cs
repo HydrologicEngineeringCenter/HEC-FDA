@@ -37,8 +37,11 @@ namespace View
             }
 
 
+   
+
             FdaViewModel.Utilities.WindowVM vm = (FdaViewModel.Utilities.WindowVM)this.DataContext;
             Title = vm.Title;
+
             FdaViewModel.Study.FdaStudyVM test = (FdaViewModel.Study.FdaStudyVM)vm.CurrentView;
 
             test.RequestShapefilePaths += RequestShapefilePaths;
@@ -63,6 +66,7 @@ namespace View
             if (args.GetType().Name == nameof(FdaViewModel.Utilities.AddGriddedDataEventArgs))
             {
                 FdaViewModel.Utilities.AddGriddedDataEventArgs gargs = args as FdaViewModel.Utilities.AddGriddedDataEventArgs;
+                
                 OpenGLMapping.RasterFeatureNode rfn = new RasterFeatureNode(new MapRaster(gargs.Features, gargs.Ramp, args.FeatureName, mtv.MapWindow), args.FeatureName);
                 mtv.AddGisData(rfn, 0, true);
                 if (sender.GetType().Name == nameof(FdaViewModel.Watershed.TerrainElement))
@@ -275,6 +279,7 @@ namespace View
 
             if (asDialogue)
             {
+                
                 newwindow.ShowDialog();
             }
             else
@@ -306,14 +311,19 @@ namespace View
             }
             else
             {
+                //this remove window call will call the IsOkToClose() method on the base vm.
                 vm.Tab.RemoveWindow();
+                
+                
             }
             vm.Dispose();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            
+            //BaseViewModel vm = (BaseViewModel) this.DataContext;
+            //Width = vm.Width;
+            //Height = vm.Height;
             //if(masterControl.Content is UserControl)
             //{
             //    UserControl uc = (UserControl)masterControl.Content;
@@ -476,7 +486,7 @@ namespace View
         private void EXIT(object sender, MouseButtonEventArgs e)
         {
             Close();
-            //Not sure why this was necessary but without it FDA wasn't actually closing down. (Cody 1/28/2020)
+            //Not sure why this was necessary but without it FDA wasull &&n't actually closing down. (Cody 1/28/2020)
             if (this == _MainWindow)
             {
                 Environment.Exit(0);

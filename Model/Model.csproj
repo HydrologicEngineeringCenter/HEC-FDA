@@ -28,6 +28,7 @@
     <Compile Remove="ComputePoint.cs" />
     <Compile Remove="Conditions\ComputeTypeEnum.cs" />
     <Compile Remove="FdaOrdinate.cs" />
+    <Compile Remove="Functions\FrequencyFunctions\LeveeFailure.cs" />
     <Compile Remove="Functions\TransformFunctions\LeveeFailure.cs" />
     <Compile Remove="IComputePoint.cs" />
     <Compile Remove="IFdaOrdinate.cs" />

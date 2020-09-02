@@ -118,6 +118,7 @@ namespace FdaViewModel.Study
         public InflowOutflowOwnerElement InflowOutflowParent { get; set; }
         public RatingCurveOwnerElement RatingCurveParent { get; set; }
         public ExteriorInteriorOwnerElement ExteriorInteriorParent { get; set; }
+        public LeveeFeatureOwnerElement LeveeFeatureParent { get; set; }
         public AggregatedStageDamageOwnerElement StageDamageParent { get; set; }
 
         public OccupancyTypesOwnerElement OccTypeParent { get; set; }
@@ -305,7 +306,8 @@ namespace FdaViewModel.Study
 
         public void UpdateElement(ChildElement oldElement, ChildElement newElement)
         {
-            if(oldElement.GetType().Equals(typeof(TerrainElement)))
+         
+            if (oldElement.GetType().Equals(typeof(TerrainElement)))
             {
                 UpdateTerrain((TerrainElement) oldElement, (TerrainElement)newElement);
             }
@@ -353,6 +355,27 @@ namespace FdaViewModel.Study
             {
                 UpdateStructureInventoryElement((InventoryElement)oldElement, (InventoryElement)newElement);
             }
+        }
+
+        /// <summary>
+        /// If an occtype group's list of occtypes changes then we need to update the owner element
+        /// so that it has the current 
+        /// </summary>
+        /// <param name="ID"></param>
+        public void UpdateOccTypeGroup(int ID)
+        {
+            //find the element
+            foreach(OccupancyTypesElement ot in _OccTypes )
+            {
+                if(ot.ID == ID)
+                {
+                    //call the update event
+                    //RatingCurveElements.RemoveAt(index);
+                    //RatingCurveElements.Insert(index, newElement);
+                    //RatingUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+                }
+            }
+
         }
 
         public void UpdateTerrain(TerrainElement oldElement, TerrainElement newElement)
@@ -753,12 +776,12 @@ namespace FdaViewModel.Study
             }
             if (parentType == typeof(LeveeFeatureOwnerElement))
             {
-
+                return LeveeFeatureParent as T;
             }
-            if (parentType == typeof(FailureFunctionOwnerElement))
-            {
-
-            }
+            //if (parentType == typeof(FailureFunctionOwnerElement))
+            //{
+                
+            //}
             if (parentType == typeof(OccupancyTypesOwnerElement))
             {
                 return OccTypeParent as T;

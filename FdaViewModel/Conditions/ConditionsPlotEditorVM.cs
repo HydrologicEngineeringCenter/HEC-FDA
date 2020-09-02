@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Collections.ObjectModel;
 using System.Windows;
 using FdaViewModel.ImpactArea;
 using Model;
-using FunctionsView.ViewModel;
 using Functions;
-using HEC.Plotting.SciChart2D.Charts;
 using HEC.Plotting.SciChart2D.Controller;
 using FdaViewModel.Plots;
 
@@ -62,6 +58,7 @@ namespace FdaViewModel.Conditions
         private Plots.IndividualLinkedPlotControlVM _Plot1ControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot3ControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot5ControlVM;
+        private Plots.IndividualLinkedPlotControlVM _PlotFailureControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot7ControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot8ControlVM;
 
@@ -193,6 +190,11 @@ namespace FdaViewModel.Conditions
         {
             get { return _Plot5ControlVM; }
             set { _Plot5ControlVM = value; NotifyPropertyChanged(); }
+        }
+        public Plots.IndividualLinkedPlotControlVM PlotFailureControlVM
+        {
+            get { return _PlotFailureControlVM; }
+            set { _PlotFailureControlVM = value; NotifyPropertyChanged(); }
         }
         public Plots.IndividualLinkedPlotControlVM Plot7ControlVM
         {
@@ -366,9 +368,9 @@ namespace FdaViewModel.Conditions
         /// <param name="defaultControl5VM"></param>
         /// <param name="DefaultControl7VM"></param>
         /// <param name="DefaultControl8VM"></param>
-        public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas, Plots.IndividualLinkedPlotControlVM defaultControl0VM, IndividualLinkedPlotControlVM defaultControl1VM, 
-            Plots.IndividualLinkedPlotControlVM defaultControl3VM, Plots.IndividualLinkedPlotControlVM defaultControl5VM, Plots.IndividualLinkedPlotControlVM DefaultControl7VM, 
-            Plots.IndividualLinkedPlotControlVM DefaultControl8VM, Editors.EditorActionManager actionManager) :base(actionManager)
+        public ConditionsPlotEditorVM(List<ImpactAreaElement> impAreas, IndividualLinkedPlotControlVM defaultControl0VM, IndividualLinkedPlotControlVM defaultControl1VM, 
+            IndividualLinkedPlotControlVM defaultControl3VM, IndividualLinkedPlotControlVM defaultControl5VM, IndividualLinkedPlotControlVM defaultControlFailureVM, IndividualLinkedPlotControlVM DefaultControl7VM, 
+            IndividualLinkedPlotControlVM DefaultControl8VM, Editors.EditorActionManager actionManager) :base(actionManager)
         {
            // _CrosshairData = new CrosshairData[6];
             //_CrosshairData[0] = defaultControl0VM.CrosshairData;
@@ -410,6 +412,7 @@ namespace FdaViewModel.Conditions
             Plot1ControlVM = defaultControl1VM;       
             Plot3ControlVM = defaultControl3VM;
             Plot5ControlVM = defaultControl5VM;
+            PlotFailureControlVM = defaultControlFailureVM;
             Plot7ControlVM = DefaultControl7VM;
             Plot8ControlVM = DefaultControl8VM;
 
@@ -447,7 +450,7 @@ namespace FdaViewModel.Conditions
             {
                 _ThresholdLinesAllowedToShow = false;
                 Plot7ControlVM.IndividualPlotWrapperVM.Metric = null;//this is basically a flag that the callback uses to turn them off
-                Plot8ControlVM.IndividualPlotWrapperVM.Metric = new Metric(); //new PerformanceThreshold(new LateralStructure(0));//this is just to change it from null to a value so that i can turn it back to null
+                //Plot8ControlVM.IndividualPlotWrapperVM.Metric = new Metric(); //new PerformanceThreshold(new LateralStructure(0));//this is just to change it from null to a value so that i can turn it back to null
                 Plot8ControlVM.IndividualPlotWrapperVM.Metric = null;
             }
             else
@@ -517,11 +520,14 @@ namespace FdaViewModel.Conditions
             Plot5ControlVM.PlotIsShowing += Plot5IsShowing;
             Plot5ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
 
+            PlotFailureControlVM.PlotIsShowing += PlotFailureIsShowing;
+            PlotFailureControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
+
             Plot7ControlVM.PlotIsShowing += Plot7IsShowing;
             Plot7ControlVM.PlotIsNotShowing += Plot7IsNotShowing;
             Plot7ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
 
-            Plot8ControlVM.PreviewCompute += RunPreviewCompute;
+            Plot8ControlVM.PreviewCompute += PreviewCompute;
             Plot8ControlVM.PlotIsShowing += Plot8IsShowing;
             Plot8ControlVM.PlotIsNotShowing += Plot8IsNotShowing;
 
@@ -530,6 +536,7 @@ namespace FdaViewModel.Conditions
             _Plot1ControlVM.RequestNavigation += Navigate;
             _Plot3ControlVM.RequestNavigation += Navigate;
             _Plot5ControlVM.RequestNavigation += Navigate;
+            _PlotFailureControlVM.RequestNavigation += Navigate;
             _Plot7ControlVM.RequestNavigation += Navigate;
             _Plot8ControlVM.RequestNavigation += Navigate;
 
@@ -553,6 +560,10 @@ namespace FdaViewModel.Conditions
             Plot5ControlVM.PlotIsNotShowing += UpdatePreviewComputePlot;
             Plot5ControlVM.PlotIsShowing += UpdatePreviewComputePlot;
             Plot5ControlVM.SelectedCurveUpdated += UpdatePreviewComputePlot;
+
+            PlotFailureControlVM.PlotIsNotShowing += UpdatePreviewComputePlot;
+            PlotFailureControlVM.PlotIsShowing += UpdatePreviewComputePlot;
+            PlotFailureControlVM.SelectedCurveUpdated += UpdatePreviewComputePlot;
 
             Plot7ControlVM.PlotIsNotShowing += UpdatePreviewComputePlot;
             Plot7ControlVM.PlotIsShowing += UpdatePreviewComputePlot;
@@ -585,7 +596,10 @@ namespace FdaViewModel.Conditions
         //private void Plot5IsNotShowing(object sender, EventArgs e)
         //{
         //}
-
+        private void PlotFailureIsShowing(object sender, EventArgs e)
+        {
+            UpdateChartLinkages();
+        }
         private void Plot3IsShowing(object sender, EventArgs e)
         {
             
@@ -594,9 +608,16 @@ namespace FdaViewModel.Conditions
 
             Plot7ControlVM.ImportButtonVM.IsEnabled = true;
             Plot5ControlVM.ImportButtonVM.IsEnabled = true;
+            PlotFailureControlVM.ImportButtonVM.IsEnabled = true;
+
             if (Plot5ControlVM.ModulatorCoverButtonVM != null)
             {
                 Plot5ControlVM.ModulatorCoverButtonVM.IsEnabled = true;
+            }
+
+            if(PlotFailureControlVM.ModulatorCoverButtonVM != null)
+            {
+                PlotFailureControlVM.ModulatorCoverButtonVM.IsEnabled = true;
             }
         }
         private void Plot3IsNotShowing(object sender, EventArgs e)
@@ -871,6 +892,10 @@ namespace FdaViewModel.Conditions
             {
                 _AddedPlots.Add(Plot5ControlVM);
             }
+            if(PlotFailureControlVM.IsPlotShowing)
+            {
+                _AddedPlots.Add(PlotFailureControlVM);
+            }
             if (Plot7ControlVM.IsPlotShowing)
             {
                 _AddedPlots.Add(Plot7ControlVM);
@@ -900,6 +925,10 @@ namespace FdaViewModel.Conditions
             if (Plot5ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot5ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
             {
                 _AddedPlots.Add(Plot5ControlVM);
+            }
+            if (PlotFailureControlVM.IndividualPlotWrapperVM.PlotVM != null && PlotFailureControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            {
+                _AddedPlots.Add(PlotFailureControlVM);
             }
             if (Plot7ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot7ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
             {
@@ -955,36 +984,38 @@ namespace FdaViewModel.Conditions
             if (_SelectedThresholdType == IMetricEnum.NotSet)
             {
                 //message that the metric type is not set
+                MessageBox.Show("Threshold type is not set.");
                 return false;
             }
             return true;
         }
         private ICondition CreateCondition()
         {
-            if(!Validate())
-            {
-                //todo: show errors in popup?
-                return null;
-            }
-            IMetric metric = new Metric(_SelectedThresholdType, ThresholdValue);
+            //if(!Validate())
+            //{
+            //    //todo: show errors in popup?
+            //    return null;
+            //}
+            //IMetric metric = new Metric(_SelectedThresholdType, ThresholdValue);
 
-            IFrequencyFunction inflowFreqFunc = (IFrequencyFunction)Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;
-            //IFrequencyFunction freqFunc = ImpactAreaFunctionFactory.FactoryFrequency(inflowFreqFunc.Function, ImpactAreaFunctionEnum.InflowFrequency);
-            //i need the list of transform functions
-            UpdateSelectedCurves2();
-            List<ITransformFunction> transforms = new List<ITransformFunction>();
-            //exclude the first one because that will always be the flow freq curve
-            for (int i = 1; i < _AddedPlots.Count; i++)
-            {
-                IndividualLinkedPlotControlVM control = _AddedPlots[i];
-                IFdaFunction func = control.IndividualPlotWrapperVM.PlotVM.BaseFunction;
-                transforms.Add((ITransformFunction)func);
-            }
-            return ConditionFactory.Factory(Name, Year, inflowFreqFunc, transforms, new List<IMetric>() { metric });
+            //IFrequencyFunction inflowFreqFunc = (IFrequencyFunction)Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;
+            ////IFrequencyFunction freqFunc = ImpactAreaFunctionFactory.FactoryFrequency(inflowFreqFunc.Function, ImpactAreaFunctionEnum.InflowFrequency);
+            ////i need the list of transform functions
+            //UpdateSelectedCurves2();
+            //List<ITransformFunction> transforms = new List<ITransformFunction>();
+            ////exclude the first one because that will always be the flow freq curve
+            //for (int i = 1; i < _AddedPlots.Count; i++)
+            //{
+            //    IndividualLinkedPlotControlVM control = _AddedPlots[i];
+            //    IFdaFunction func = control.IndividualPlotWrapperVM.PlotVM.BaseFunction;
+            //    transforms.Add((ITransformFunction)func);
+            //}
+            //return ConditionFactory.Factory(Name, Year, inflowFreqFunc, transforms, new List<IMetric>() { metric });
+            return null;
 
         }
 
-        public void RunPreviewCompute(Object sender, EventArgs e)
+        public void PreviewCompute(Object sender, EventArgs e)
         {
             Sampler.RegisterSampler(new ConstantSampler());
 
@@ -992,6 +1023,8 @@ namespace FdaViewModel.Conditions
             //get the threshold values
             //PerformanceThreshold threshold = new PerformanceThreshold(PerformanceThresholdTypes.InteriorStage, 8);
 
+            //need to create conditionlocation
+            
 
             ICondition condition = CreateCondition();
             if(condition == null)

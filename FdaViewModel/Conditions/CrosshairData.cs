@@ -13,9 +13,11 @@ namespace FdaViewModel.Conditions
     {
         public event EventHandler<ModulatorEventArgs> UpdateModulator;
         public event EventHandler<ModulatorEventArgs> UpdateHorizontalModulator;
+        public event EventHandler<ModulatorEventArgs> UpdateHorizontalFailureFunction;
 
         public bool IsPlot1Modulator { get; set; }
         public bool IsPlot5Modulator { get; set; }
+        public bool IsPlotFailureFunction { get; set; }
 
         //the next control's crosshairdata, 
         public SharedAxisCrosshairData Next { get; set; }
@@ -110,7 +112,10 @@ namespace FdaViewModel.Conditions
             {
                 UpdateHorizontalModulator?.Invoke(this, new ModulatorEventArgs((double)_x, (double)_y));
             }
-
+            if(IsPlotFailureFunction)
+            {
+                UpdateHorizontalFailureFunction?.Invoke(this, new ModulatorEventArgs((double)_x, (double)_y));
+            }
             Next?.OtherCrosshairData.UpdateFromPrevious(x, y);
         }
 
@@ -127,6 +132,10 @@ namespace FdaViewModel.Conditions
             if (IsPlot5Modulator)
             {
                 UpdateHorizontalModulator?.Invoke(this, new ModulatorEventArgs((double)_x, (double)_y));
+            }
+            if (IsPlotFailureFunction)
+            {
+                UpdateHorizontalFailureFunction?.Invoke(this, new ModulatorEventArgs((double)_x, (double)_y));
             }
 
             Previous?.OtherCrosshairData.UpdateFromNext(x, y);

@@ -866,6 +866,11 @@ namespace Importer
                     double mean = MomentsLp3[0];
                     double stdDev = MomentsLp3[1];
                     double skew = MomentsLp3[2];
+                    //call factory to create LP3
+                    //Statistics.IDistributionFactory.fa
+                    //Functions.IFunctionFactory.Factory()
+
+                    //grab manager and save it.
                 
                 }
                 else if (SourceOfStatisticsId == SourceOfStatistics.CALCULATED)
@@ -874,7 +879,11 @@ namespace Importer
                     double flowPoint5 = PointsSynthetic[0];
                     double flowPoint1 = PointsSynthetic[1];
                     double flowPoint01 = PointsSynthetic[2];
+                    //call factory to create LP3
+                    //Statistics.IDistributionFactory.fa
+                    //Functions.IFunctionFactory.Factory()
 
+                    //grab manager and save it.
                 }
             }
             else if(ProbabilityFunctionTypeId == FrequencyFunctionType.GRAPHICAL)

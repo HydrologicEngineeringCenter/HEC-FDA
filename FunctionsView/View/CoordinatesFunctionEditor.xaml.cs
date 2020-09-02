@@ -43,7 +43,15 @@ namespace FunctionsView.View
         {
             CoordinatesFunctionEditor owner = d as CoordinatesFunctionEditor;
             CoordinatesFunctionEditorVM editorVM = e.NewValue as CoordinatesFunctionEditorVM;
-            editorVM.UpdateView += owner.UpdateView;
+            if(editorVM == null)
+            {
+
+            }
+            else
+            {
+                editorVM.UpdateView += owner.UpdateView;
+
+            }
             owner.EditorVM = editorVM;
             owner.UpdateView(owner, new EventArgs());
         }
@@ -64,7 +72,7 @@ namespace FunctionsView.View
         /// <param name="rowItems"></param>
         private void CreateTables()
         {
-            if(EditorVM.Tables.Count == 0)
+            if(EditorVM == null || EditorVM.Tables.Count == 0)
             {
                 return;
             }

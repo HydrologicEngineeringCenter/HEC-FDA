@@ -54,8 +54,8 @@ namespace FdaViewModel.AggregatedStageDamage
         }
         public void AddNewDamageCurve(object arg1, EventArgs arg2)
         {
-            List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
-            List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            List<double> xValues = new List<double>() { 1,2,3,4,5,6 };
+            List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000 };
             Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
             IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)func);
 

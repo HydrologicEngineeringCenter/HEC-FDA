@@ -17,7 +17,8 @@
             <RowDefinition Height="38" />
             <RowDefinition Height="38" />
             <RowDefinition Height="38" />
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="121*"/>
+            <RowDefinition Height="162*"/>
             <RowDefinition Height="38" />
         </Grid.RowDefinitions>
 
@@ -57,7 +58,7 @@
             </DataGrid.Columns>
         </CA:CopyPasteDataGrid>-->
 
-        <OkClose:OKCloseControl Grid.Row="5" />
+        <OkClose:OKCloseControl Grid.Row="6" />
 
     </Grid>
 </UserControl>

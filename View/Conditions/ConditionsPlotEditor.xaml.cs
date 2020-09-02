@@ -23,6 +23,7 @@ using FdaViewModel.Conditions;
 using HEC.Plotting.SciChart2D.Controller;
 using HEC.Plotting.Core;
 using View.Plots;
+using FdaViewModel;
 
 namespace View.Conditions
 {
@@ -41,6 +42,8 @@ namespace View.Conditions
         public bool Plot1PoppedOut { get; set; }
         //public bool Plot1DoesntExist { get; set; }
         public bool Plot5PoppedOut { get; set; }
+        public bool PlotFailureControlPoppedOut { get; set; }
+
         //public bool Plot5DoesntExist { get; set; }
         //public bool AreaPlotsHaveBeenRemoved { get; set; }
         //public bool ThresholdLinesShowing { get; set; } = true;
@@ -67,16 +70,18 @@ namespace View.Conditions
             //Plot1Control.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
             Plot3Control.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
             DLMHorizontalControl.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
+            HorizontalPlotFailureControl.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
             //Plot5Control.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
             Plot7Control.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
             Plot8Control.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
 
+            DLMControl.PopImporterIntoPlot1 += new EventHandler(PopPlot1ImporterOut);
+            DLMControl.PopPlotIntoPlot1 += new EventHandler(PopPlot1Out);
 
-                DLMControl.PopImporterIntoPlot1 += new EventHandler(PopPlot1ImporterOut);
-                DLMControl.PopPlotIntoPlot1 += new EventHandler(PopPlot1Out);
+            DLMHorizontalControl.PopImporterIntoPlot5 += new EventHandler(PopPlot5ImporterOut);
+            DLMHorizontalControl.PopPlotIntoPlot5 += new EventHandler(PopPlot5Out);
 
-                DLMHorizontalControl.PopImporterIntoPlot5 += new EventHandler(PopPlot5ImporterOut);
-                DLMHorizontalControl.PopPlotIntoPlot5 += new EventHandler(PopPlot5Out);
+            HorizontalPlotFailureControl.PopLateralStructImporterLeft += new EventHandler(PopLateralStructureImporterOut);
 
             //    FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
 
@@ -107,6 +112,10 @@ namespace View.Conditions
             if (Plot3Control.Chart != null)
             {
                 charts.Add(Plot3Control.Chart);
+            }
+            if(PlotFailureFunctionControl.Chart!=null)
+            {
+                charts.Add(PlotFailureFunctionControl.Chart);
             }
             if (Plot5Control.Chart != null)
             {
@@ -238,6 +247,15 @@ namespace View.Conditions
             if (Plot3Control.Chart != null)
             {
                 TheAddedPlots.Add(Plot3Control);
+            }
+
+            if (PlotFailureFunctionControl.Chart != null && PlotFailureControlPoppedOut == true)
+            {
+                TheAddedPlots.Add(PlotFailureFunctionControl);
+            }
+            else if (HorizontalPlotFailureControl.LinkedPlot != null && PlotFailureControlPoppedOut == false)
+            {
+                TheAddedPlots.Add(HorizontalPlotFailureControl);
             }
 
             if (Plot5Control.Chart != null && Plot5PoppedOut == true)
@@ -428,12 +446,49 @@ namespace View.Conditions
             vm.ImportButtonClicked(sender, e);//this should cause it to display the import form instead of the add button
 
             FourPlotGrid.RowDefinitions[2].Height = new GridLength(0);
+            FourPlotGrid.RowDefinitions[3].Height = new GridLength(0);
+
             mainGrid.ColumnDefinitions[0].Width = new GridLength(.45, GridUnitType.Star);
 
             //move the toolbar over
             Grid.SetColumn(grid_TopRow, 0);
 
+            //if the other horizontal chart is on its cover button then change it from the DLM cover button
+            //to the normal control cover button
+            IndividualLinkedPlotControlVM plotFailurevm = (IndividualLinkedPlotControlVM)PlotFailureFunctionControl.DataContext;
+            if (plotFailurevm.CurrentVM == plotFailurevm.ModulatorCoverButtonVM)
+            {
+                plotFailurevm.SetCurrentViewToCoverButton();
+            }
+
         }
+
+        private void PopLateralStructureImporterOut(object sender, EventArgs e)
+        {
+            PlotFailureControlPoppedOut = true;
+            //make sure it is showing the importer for the inflow outflow curve
+            IndividualLinkedPlotControlVM vm = (IndividualLinkedPlotControlVM)PlotFailureFunctionControl.DataContext;
+            vm.ImportButtonClicked(sender, e);//this should cause it to display the import form instead of the add button
+
+            FourPlotGrid.RowDefinitions[2].Height = new GridLength(0);
+            FourPlotGrid.RowDefinitions[3].Height = new GridLength(0);
+
+            mainGrid.ColumnDefinitions[0].Width = new GridLength(.45, GridUnitType.Star);
+
+            //move the toolbar over
+            Grid.SetColumn(grid_TopRow, 0);
+
+            //if the other horizontal chart is on its cover button then change it from the DLM cover button
+            //to the normal control cover button
+            IndividualLinkedPlotControlVM plot5vm = (IndividualLinkedPlotControlVM)Plot5Control.DataContext;
+            if(plot5vm.CurrentVM == plot5vm.ModulatorCoverButtonVM)
+            {
+                plot5vm.SetCurrentViewToCoverButton();
+            }
+
+
+        }
+
 
         private void PopPlot1Out(object sender, EventArgs e)
         {
@@ -452,6 +507,7 @@ namespace View.Conditions
             Plot5PoppedOut = true;
             //collapse the row the modulator is in
             FourPlotGrid.RowDefinitions[2].Height = new GridLength(0);
+            FourPlotGrid.RowDefinitions[3].Height = new GridLength(0);
 
             //AddedPlots.Remove(DoubleLineHorizontal);
             //AddedPlots.Add(plot5);
@@ -463,10 +519,38 @@ namespace View.Conditions
             //move the toolbar over
             Grid.SetColumn(grid_TopRow, 0);
             //plot5.OxyPlot1.Model.InvalidatePlot(true);
-
-
-
         }
+
+        private void btn_AddFailureFunction_Click(object sender, RoutedEventArgs e)
+        {
+            //if the plot 5 is the "add" button then i need to switch it from the DLM horizontal cover button
+            //to the other cover button. 
+            //i guess this would be a good reason to have this stuff in the vm side.
+
+            //switch the current vm to be the importer
+            IndividualLinkedPlotControlVM vm = (IndividualLinkedPlotControlVM)PlotFailureFunctionControl.DataContext;
+            vm.CurrentVM = (BaseViewModel)vm.CurveImporterVM;
+
+            //update plot5's current vm to be the controllers cover button not the DLM cover button
+            IndividualLinkedPlotControlVM plot5ControlVM = (IndividualLinkedPlotControlVM)Plot5Control.DataContext;
+            plot5ControlVM.SetCurrentViewToCoverButton();
+
+            Plot5PoppedOut = true;
+            //collapse the row the modulator is in
+            FourPlotGrid.RowDefinitions[2].Height = new GridLength(0);
+            FourPlotGrid.RowDefinitions[3].Height = new GridLength(0);
+
+            //AddedPlots.Remove(DoubleLineHorizontal);
+            //AddedPlots.Add(plot5);
+            //UpdateThePlotLinkages(sender, e);
+            //UpdateTheLinkages(TheAddedPlots.ToList());
+
+            mainGrid.ColumnDefinitions[0].Width = new GridLength(.45, GridUnitType.Star);
+
+            //move the toolbar over
+            Grid.SetColumn(grid_TopRow, 0);
+        }
+
 
         private void btn_CollapsePlot1_Click(object sender, RoutedEventArgs e)
         {
@@ -500,16 +584,17 @@ namespace View.Conditions
 
         }
 
-        private void btn_CollapsePlot5_Click(object sender, RoutedEventArgs e)
+        private bool PopPlot5IntoMainGrid()
         {
             FdaViewModel.Plots.IndividualLinkedPlotControlVM vm = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)Plot5Control.DataContext;
             //vm.IndividualPlotWrapperVM.PlotVM = ((FdaViewModel.Plots.IndividualLinkedPlotControlVM)Plot1Control.DataContext).IndividualPlotWrapperVM.PlotVM;
-            if (vm.CurrentVM == vm.CurveImporterVM)
-            {
-                btn_CollapsePlot5.ToolTip = "Cannot pop in the curve importer form.";
-                return;//this makes it so that the user can't pop in the import form because there isn't enough room for it.
-            }
-            else if (vm.CurrentVM == vm.IndividualPlotWrapperVM)
+            //if (vm.CurrentVM == vm.CurveImporterVM)
+            //{
+            //    MessageBox.Show("Cannot pop the importer form into the main chart area.");
+            //    btn_CollapsePlot5.ToolTip = "Cannot pop in the curve importer form.";
+            //    return false;//this makes it so that the user can't pop in the import form because there isn't enough room for it.
+            //}
+             if (vm.CurrentVM == vm.IndividualPlotWrapperVM)
             {
                 //vm.CurrentVM = (FdaViewModel.BaseViewModel)vm.ModulatorPlotWrapperVM;
                 vm.PopPlot5IntoHorizontalModulator();
@@ -518,15 +603,94 @@ namespace View.Conditions
             {
                 //if plot1 is on the import button then there is no plot in plot1. we need to make sure that the modulator also has no plot now.
                 DLMControl.LinkedPlot = null;
-                vm.CurrentVM = (FdaViewModel.BaseViewModel)vm.ModulatorCoverButtonVM;
+                vm.CurrentVM = (BaseViewModel)vm.ModulatorCoverButtonVM;
             }
 
             Plot5PoppedOut = false;
+            return true;
+        }
 
+        private bool PopPlotFailureIntoMainGrid()
+        {
+            IndividualLinkedPlotControlVM vm = (IndividualLinkedPlotControlVM)PlotFailureFunctionControl.DataContext;
+            //vm.IndividualPlotWrapperVM.PlotVM = ((FdaViewModel.Plots.IndividualLinkedPlotControlVM)Plot1Control.DataContext).IndividualPlotWrapperVM.PlotVM;
+            //if (vm.CurrentVM == vm.CurveImporterVM)
+            //{
+            //    MessageBox.Show("Cannot pop the importer form into the main chart area.");
+            //    btn_CollapsePlot5.ToolTip = "Cannot pop in the curve importer form.";
+            //    return false;//this makes it so that the user can't pop in the import form because there isn't enough room for it.
+            //}
+             if (vm.CurrentVM == vm.IndividualPlotWrapperVM)
+            {
+                //todo: this is where we switch to the labels vm
+                vm.PopFailureFunctionIntoHorizontalModulator();
+            }
+            else if (vm.CurrentVM == vm.ImportButtonVM)
+            {
+                vm.CurrentVM = (BaseViewModel)vm.ModulatorCoverButtonVM;
+            }
+            PlotFailureControlPoppedOut = false;
+            return true;
+        }
+
+        private bool CanPlot5AndFailurePlotPopIntoMainGrid()
+        {
+            IndividualLinkedPlotControlVM vm = (IndividualLinkedPlotControlVM)Plot5Control.DataContext;
+            if (vm.CurrentVM == vm.CurveImporterVM)
+            {
+                return false;
+            }
+            
+            IndividualLinkedPlotControlVM failureVM = (IndividualLinkedPlotControlVM)PlotFailureFunctionControl.DataContext;
+            if (failureVM.CurrentVM == failureVM.CurveImporterVM)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        ///// <summary>
+        ///// We are popping the left plots into the main grid. If the cover button is showing
+        ///// then switch to the DLM cover button which behaves a little differently.
+        ///// </summary>
+        //private void ConvertCoverButtonsIfNeeded()
+        //{
+        //    IndividualLinkedPlotControlVM vm = (IndividualLinkedPlotControlVM)Plot5Control.DataContext;
+        //    if (vm.CurrentVM == vm.ImportButtonVM)
+        //    {
+        //        vm.SetCurrentToModulatorCoverButton();
+        //    }
+
+        //    IndividualLinkedPlotControlVM failureVM = (IndividualLinkedPlotControlVM)PlotFailureControl.DataContext;
+        //    if (failureVM.CurrentVM == failureVM.ImportButtonVM)
+        //    {
+        //        failureVM.SetCurrentToModulatorCoverButton();
+        //    }
+        //}
+
+        private void btn_CollapseLeftPlots_Click(object sender, RoutedEventArgs e)
+        {
+            //todo: i don't think this works. I need to check that it is possible befor
+            //switching any of the currentVM's.
+            bool canPopIn = CanPlot5AndFailurePlotPopIntoMainGrid();
+            if(!canPopIn)
+            {
+                MessageBox.Show("Cannot pop the importer form into the main chart area.", "Illegal Action", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+
+            //swtich the cover buttons to be the DLM cover buttons if the cover buttons are showing
+            //ConvertCoverButtonsIfNeeded();
+
+            PopPlot5IntoMainGrid();
+            PopPlotFailureIntoMainGrid();
 
             UpdateThePlotLinkages(sender, e);
             //collapse the row the modulator is in
             FourPlotGrid.RowDefinitions[2].Height = new GridLength(45);
+            FourPlotGrid.RowDefinitions[3].Height = new GridLength(45);
+
             mainGrid.ColumnDefinitions[0].Width = new GridLength(0);
             //move the toolbar over
             Grid.SetColumn(grid_TopRow, 1);
@@ -1114,6 +1278,12 @@ namespace View.Conditions
         //    }
 
         }
+
+       
+
+
+
+
 
         ////private void txt_XValue_LostFocus(object sender, RoutedEventArgs e)
         ////{

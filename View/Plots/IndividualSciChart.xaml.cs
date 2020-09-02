@@ -34,11 +34,11 @@ namespace View.Plots
             IndividualLinkedPlotVM editorVM = vm.PlotVM;
             Chart2D chart = new Chart2D(editorVM.CoordinatesChartViewModel);
             //the two lines below this will allow me to override the visual range from the IndividualLinkedPlotControl.xaml.cs when linking charts together.
-            chart.GetAxes(HEC.Plotting.Core.Axis.Y)[0].AutoRange = SciChart.Charting.Visuals.Axes.AutoRange.Once;
-            chart.GetAxes(HEC.Plotting.Core.Axis.X)[0].AutoRange = SciChart.Charting.Visuals.Axes.AutoRange.Once;
+            //chart.GetAxes(HEC.Plotting.Core.Axis.Y)[0].AutoRange = SciChart.Charting.Visuals.Axes.AutoRange.Once;
+            //chart.GetAxes(HEC.Plotting.Core.Axis.X)[0].AutoRange = SciChart.Charting.Visuals.Axes.AutoRange.Once;
 
-            chart.GetAxes(HEC.Plotting.Core.Axis.Y)[0].AxisTitle = vm.YAxisLabel;
-            chart.GetAxes(HEC.Plotting.Core.Axis.X)[0].AxisTitle = vm.XAxisLabel;
+            chart.GetAxes(HEC.Plotting.Core.Axis.Y)[0].AxisTitle = editorVM.YAxisLabel;
+            chart.GetAxes(HEC.Plotting.Core.Axis.X)[0].AxisTitle = editorVM.XAxisLabel;
             //chart.ti editorVM.Title;
 
             //Binding myBinding = new Binding("EditorVM.CoordinatesChartViewModel");

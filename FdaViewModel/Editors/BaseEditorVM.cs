@@ -144,6 +144,11 @@ namespace FdaViewModel.Editors
         /// This will get called when the OK button is clicked on the editor
         /// </summary>
         public abstract void Save();
+        /// <summary>
+        /// This gets used when the "OK" or the "Save" button gets pressed on a form.
+        /// It runs validation to see if the form is in state that can be closed or saved.
+        /// </summary>
+        /// <returns></returns>
         public virtual bool RunSpecialValidation() { return true; }
 
         public override void AddValidationRules()

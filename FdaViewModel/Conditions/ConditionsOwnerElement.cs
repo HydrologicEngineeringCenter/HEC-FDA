@@ -1,6 +1,7 @@
 ﻿using FdaViewModel.AggregatedStageDamage;
 using FdaViewModel.FlowTransforms;
 using FdaViewModel.FrequencyRelationships;
+using FdaViewModel.GeoTech;
 using FdaViewModel.StageTransforms;
 using FdaViewModel.Utilities;
 using Functions;
@@ -66,22 +67,26 @@ namespace FdaViewModel.Conditions
             List<AnalyticalFrequencyElement> listOfLp3 = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
             //todo: just for testing, delete this dummy lp3
             List<double> xs = new List<double>() { .1,.3,.5,.7,.9 };
-            List<double> ys = new List<double>() { 1, 1000, 3000, 5000, 7000 };
+            List<double> ys = new List<double>() { 1, 10000, 30000, 50000, 70000 };
             ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
             IFdaFunction func = IFdaFunctionFactory.Factory( IParameterEnum.InflowFrequency, (IFunction)coordFunc, "Inflow Freq", UnitsEnum.Probability);
-            AnalyticalFrequencyElement dummyElem = new AnalyticalFrequencyElement("dummyElem", "now", "desc", func);
-            listOfLp3.Add(dummyElem);
+            //AnalyticalFrequencyElement dummyElem = new AnalyticalFrequencyElement("dummyElem", "now", "desc", func);
+            //listOfLp3.Add(dummyElem);
 
             AddFlowFrequencyToConditionVM lp3Importer = new AddFlowFrequencyToConditionVM(listOfLp3);
             lp3Importer.RequestNavigation += ownerElement.Navigate;
 
+            bool isXAxisLog = false;
             bool isYAxisLog = true;
             bool isProbabilityXAxis = true;
+            bool isProbabilityYAxis = false;
+            bool isXAxisOnBottom = false;
+            bool isYAxisOnLeft = false;
 
             return new Plots.IndividualLinkedPlotControlVM(
-                new Plots.ConditionsIndividualPlotWrapperVM(true, true, "LP3", "Probability", "Inflow"), 
+                new Plots.ConditionsIndividualPlotWrapperVM(isXAxisLog, isYAxisLog, isProbabilityXAxis, isProbabilityYAxis, isXAxisOnBottom, isYAxisOnLeft),
                 new Plots.IndividualLinkedPlotCoverButtonVM("Flow Frequency Curve"),
-                lp3Importer, isYAxisLog, isProbabilityXAxis, false, false);
+                lp3Importer);
         }
 
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultInflowOutflowControl(ParentElement ownerElement)
@@ -90,13 +95,17 @@ namespace FdaViewModel.Conditions
             AddInflowOutflowToConditionVM inOutImporter = new AddInflowOutflowToConditionVM(listOfInfOut);
             inOutImporter.RequestNavigation += ownerElement.Navigate;
 
-            bool isYAxisLog = false;
+            bool isXAxisLog = true;
+            bool isYAxisLog = true;
             bool isProbabilityXAxis = false;
+            bool isProbabilityYAxis = false;
+            bool isXAxisOnBottom = true;
+            bool isYAxisOnLeft = true;
 
             return new Plots.IndividualLinkedPlotControlVM(
-                new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Inflow Outflow", "Inflow", "OutFlow"),
+                new Plots.ConditionsIndividualPlotWrapperVM(isXAxisLog, isYAxisLog, isProbabilityXAxis, isProbabilityYAxis, isXAxisOnBottom, isYAxisOnLeft),
                 new Plots.IndividualLinkedPlotCoverButtonVM("Inflow Outflow"),
-                inOutImporter, isYAxisLog, isProbabilityXAxis,true, true, 
+                inOutImporter, 
                 new Plots.DoubleLineModulatorCoverButtonVM(),
                 new Plots.DoubleLineModulatorWrapperVM());
         }
@@ -106,13 +115,17 @@ namespace FdaViewModel.Conditions
             List<RatingCurveElement> listOfRatingCurves = StudyCache.GetChildElementsOfType<RatingCurveElement>();
             AddRatingCurveToConditionVM ratImporter = new AddRatingCurveToConditionVM(listOfRatingCurves);
 
+            bool isXAxisLog = false;
             bool isYAxisLog = true;
             bool isProbabilityXAxis = false;
+            bool isProbabilityYAxis = false;
+            bool isXAxisOnBottom = false;
+            bool isYAxisOnLeft = true;
 
             return new Plots.IndividualLinkedPlotControlVM(
-                new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Rating", "Exterior Stage", "OutFlow"),
+                new Plots.ConditionsIndividualPlotWrapperVM(isXAxisLog, isYAxisLog, isProbabilityXAxis, isProbabilityYAxis, isXAxisOnBottom, isYAxisOnLeft),
                 new Plots.IndividualLinkedPlotCoverButtonVM("Rating Curve"),
-                ratImporter, isYAxisLog, isProbabilityXAxis, false, true);
+                ratImporter);
         }
 
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultExtIntStageControl(ParentElement ownerElement)
@@ -121,15 +134,42 @@ namespace FdaViewModel.Conditions
             AddExteriorInteriorStageToConditionVM extIntImporter = new AddExteriorInteriorStageToConditionVM(listOfExtIntElements);
             extIntImporter.RequestNavigation += ownerElement.Navigate;
 
+            bool isXAxisLog = false;
             bool isYAxisLog = false;
             bool isProbabilityXAxis = false;
+            bool isProbabilityYAxis = false;
+            bool isXAxisOnBottom = true;
+            bool isYAxisOnLeft = true;
 
             return new Plots.IndividualLinkedPlotControlVM(
-                new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Exterior Interior Stage", "Exterior Stage", "Interior Stage"),
+                new Plots.ConditionsIndividualPlotWrapperVM(isXAxisLog, isYAxisLog, isProbabilityXAxis, isProbabilityYAxis, isXAxisOnBottom, isYAxisOnLeft),
                 new Plots.IndividualLinkedPlotCoverButtonVM("Ext Int Stage Curve"),
-                extIntImporter, isYAxisLog, isProbabilityXAxis, true, true,
-                new Plots.DoubleLineModulatorHorizontalCoverButtonVM(),
+                extIntImporter,
+                new Plots.DoubleLineModulatorHorizontalCoverButtonVM("Ext Int Stage Curve"),
                 new Plots.HorizontalDoubleLineModulatorWrapperVM());
+        }
+
+        public static Plots.IndividualLinkedPlotControlVM BuildDefaultLateralFeaturesControl(ParentElement ownerElement)
+        {
+            List<LeveeFeatureElement> listOfLeveeFeatureElements = StudyCache.GetChildElementsOfType<LeveeFeatureElement>();
+            AddFailureFunctionToConditionVM failureImporter = new AddFailureFunctionToConditionVM(listOfLeveeFeatureElements);
+            failureImporter.RequestNavigation += ownerElement.Navigate;
+
+            bool isXAxisLog = false;
+            bool isYAxisLog = false;
+            bool isProbabilityXAxis = false;
+            bool isProbabilityYAxis = false;
+            bool isXAxisOnBottom = false;
+            bool isYAxisOnLeft = true;
+
+            Plots.IndividualLinkedPlotCoverButtonVM coverButton = new Plots.IndividualLinkedPlotCoverButtonVM("Lateral Structure");
+
+            return new Plots.IndividualLinkedPlotControlVM(
+                new Plots.ConditionsIndividualPlotWrapperVM(isXAxisLog, isYAxisLog, isProbabilityXAxis, isProbabilityYAxis, isXAxisOnBottom, isYAxisOnLeft),
+                coverButton,
+                failureImporter,
+                new Plots.DoubleLineModulatorHorizontalCoverButtonVM("Lateral Structure"),
+                new Plots.ConditionsHorizontalFailureFunctionVM());
         }
 
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultStageDamageControl(ParentElement ownerElement)
@@ -138,24 +178,33 @@ namespace FdaViewModel.Conditions
             AddStageDamageToConditionVM stageDamageImporter = new AddStageDamageToConditionVM(listOfStageDamage);
             stageDamageImporter.RequestNavigation += ownerElement.Navigate;
 
+            bool isXAxisLog = false;
             bool isYAxisLog = true;
             bool isProbabilityXAxis = false;
+            bool isProbabilityYAxis = false;
+            bool isXAxisOnBottom = true;
+            bool isYAxisOnLeft = true;
 
             return new Plots.IndividualLinkedPlotControlVM(
-                new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Stage Damage", "Interior Stage", "Damage"),
+                new Plots.ConditionsIndividualPlotWrapperVM(isXAxisLog, isYAxisLog, isProbabilityXAxis, isProbabilityYAxis, isXAxisOnBottom, isYAxisOnLeft),
                 new Plots.IndividualLinkedPlotCoverButtonVM("Int Stage Damage Curve"),
-                stageDamageImporter, isYAxisLog, isProbabilityXAxis, true, true);
+                stageDamageImporter);
         }
 
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultDamageFrequencyControl(ParentElement ownerElement)
         {
+
+            bool isXAxisLog = false;
             bool isYAxisLog = true;
             bool isProbabilityXAxis = true;
+            bool isProbabilityYAxis = false;
+            bool isXAxisOnBottom = true;
+            bool isYAxisOnLeft = false;
 
             return new Plots.IndividualLinkedPlotControlVM(
-                new Plots.ConditionsIndividualPlotWrapperVM(true, true, "Damage Frequency", "Probability", "Damage", false),
+                new Plots.ConditionsIndividualPlotWrapperVM(isXAxisLog, isYAxisLog, isProbabilityXAxis, isProbabilityYAxis, isXAxisOnBottom, isYAxisOnLeft),
                 new Plots.IndividualLinkedPlotCoverButtonVM("Preview Compute"),
-                null, isYAxisLog, isProbabilityXAxis, true,false);
+                null);
         }
 
         #endregion
@@ -173,6 +222,8 @@ namespace FdaViewModel.Conditions
 
             Plots.IndividualLinkedPlotControlVM extIntStageControl = BuildDefaultExtIntStageControl(this);
 
+            Plots.IndividualLinkedPlotControlVM failureControl = BuildDefaultLateralFeaturesControl(this);
+
             Plots.IndividualLinkedPlotControlVM StageDamageControl = BuildDefaultStageDamageControl(this);
 
             Plots.IndividualLinkedPlotControlVM DamageFrequencyControl = BuildDefaultDamageFrequencyControl(this);
@@ -182,7 +233,7 @@ namespace FdaViewModel.Conditions
             // .WithParentGuid(this.GUID)
             // .WithCanOpenMultipleTimes(true);
 
-            ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl, StageDamageControl, DamageFrequencyControl, actionManager);
+            ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl, failureControl, StageDamageControl, DamageFrequencyControl, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);
             vm.RequestNavigation += Navigate;

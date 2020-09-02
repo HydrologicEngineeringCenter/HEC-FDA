@@ -25,6 +25,7 @@ namespace FdaViewModel.ImpactArea
         //private ImpactAreaUniqueNameSet _SelectedImpactAreaUniqueNameSet;
         private ObservableCollection<ImpactAreaRowItem> _ListOfRows;
         private bool _IsInEditMode = false;
+        private string _SelectedUniqueName;
         #endregion
         #region Properties
             public bool IsInEditMode
@@ -64,7 +65,11 @@ namespace FdaViewModel.ImpactArea
         //    get { return _SelectedImpactAreaUniqueNameSet; }
         //    set { _SelectedImpactAreaUniqueNameSet = value; NotifyPropertyChanged(); }
         //}
-        public string SelectedUniqueName { get; set; }
+        public string SelectedUniqueName
+        {
+            get { return _SelectedUniqueName; }
+            set { _SelectedUniqueName = value; NotifyPropertyChanged(); }
+        }
         #endregion
         #region Constructors
         public ImpactAreaImporterVM(ObservableCollection<string> PolygonPaths, EditorActionManager actionManager):base(actionManager)
@@ -149,16 +154,26 @@ namespace FdaViewModel.ImpactArea
         {
             AddRule(nameof(Name), () => Name != null, "Name cannot be null.");
             AddRule(nameof(Name), () => Name != "", "Name cannot be null.");
+            AddRule(nameof(SelectedUniqueName), () => Name != null, "A unique name has not been selected.");
+            AddRule(nameof(ListOfRows), () => ListOfRows != null, "There are no impact area rows.");
+
             //AddRule(nameof(Name), () => { if (Name == null) { return false; } else { return !Name.Equals(""); } }, "Name cannot be blank.");
             //if (IsNameReadOnly == false)
-           // {
-              //  AddRule(nameof(SelectedPath), () => SelectedPath != null, "You must select a shapefile");
-           // }
+            // {
+            //  AddRule(nameof(SelectedPath), () => SelectedPath != null, "You must select a shapefile");
+            // }
             //AddRule(nameof(SelectedImpactAreaUniqueNameSet), () => SelectedImpactAreaUniqueNameSet != null, "You must select a unique name.");
 
 
             //AddRule(nameof(Mean), () => Mean > 1, "Mean must be greater than 1");
 
+        }
+
+        public bool IsValid()
+        {
+            //do some basic validation.
+            //if()
+            return true;
         }
 
         public override void Save()

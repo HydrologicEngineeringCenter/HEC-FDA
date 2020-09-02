@@ -136,6 +136,7 @@
     <Compile Include="BaseFdaElement.cs" />
     <Compile Include="BaseViewModel.cs" />
     <Compile Include="Conditions\AddExteriorInteriorStageToConditionVM.cs" />
+    <Compile Include="Conditions\AddFailureFunctionToConditionVM.cs" />
     <Compile Include="Conditions\AddFlowFrequencyToConditionVM.cs" />
     <Compile Include="Conditions\AddInflowOutflowToConditionVM.cs" />
     <Compile Include="Conditions\AddRatingCurveToConditionVM.cs" />
@@ -167,6 +168,7 @@
     <Compile Include="FrequencyRelationships\AnalyticalFrequencyEditorVM.cs" />
     <Compile Include="FrequencyRelationships\AnalyticalFrequencyElement.cs" />
     <Compile Include="FrequencyRelationships\AnalyticalFrequencyOwnerElement.cs" />
+    <Compile Include="FrequencyRelationships\FlowDoubleWrapper.cs" />
     <Compile Include="FrequencyRelationships\FrequencyRelationshipsOwnerElement.cs" />
     <Compile Include="FrequencyRelationships\GraphicalFrequencyOwnerElement.cs" />
     <Compile Include="FrequencyRelationships\StageFrequencyOwnerElement.cs" />
@@ -233,6 +235,8 @@
     <Compile Include="Inventory\OccupancyTypes\OccupancyTypesElement.cs" />
     <Compile Include="Inventory\OccupancyTypes\OccupancyTypesGroupRowItemVM.cs" />
     <Compile Include="Inventory\OccupancyTypes\OccupancyTypesOwnerElement.cs" />
+    <Compile Include="Inventory\OccupancyTypes\SaveAllReportGroupVM.cs" />
+    <Compile Include="Inventory\OccupancyTypes\SaveAllReportVM.cs" />
     <Compile Include="Inventory\OccupancyTypes\TriangularControlVM.cs" />
     <Compile Include="Inventory\OccupancyTypes\UniformControlVM.cs" />
     <Compile Include="Inventory\OccupancyTypes\ValueUncertaintyType.cs" />
@@ -247,6 +251,7 @@
     <Compile Include="Alternatives\AlternativeOwnerElement.cs" />
     <Compile Include="Plans\CreateNewPlanVM.cs" />
     <Compile Include="Plans\PlansOwnerElement.cs" />
+    <Compile Include="Plots\ConditionsHorizontalFailureFunctionVM.cs" />
     <Compile Include="Plots\ConditionsIndividualPlotWrapperVM.cs" />
     <Compile Include="Plots\DoubleLineModulatorCoverButtonVM.cs" />
     <Compile Include="Plots\DoubleLineModulatorHorizontalCoverButtonVM.cs" />

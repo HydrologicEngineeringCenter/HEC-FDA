@@ -129,19 +129,34 @@ namespace FdaViewModel.Conditions
         {
             var crosshairData = data.OtherCrosshairData;
             //the other axis will be this chart's axis
-            var axis = data.OtherAxis;
+            Axis otherAxis = data.OtherAxis;
+            Axis thisAxis = data.CurrentAxis;
             double x = double.NaN;
             double y = double.NaN;
-            switch (axis)
+            switch (otherAxis)
             {
                 case Axis.X:
-                    x = (double)crosshairData.XValue;
-                    y = ComputeYFromX(x);
-                    if(y == double.NaN)
                     {
-                        return;
+                        if (thisAxis == Axis.Y)
+                        {
+                            y = (double)crosshairData.XValue;
+                            x = ComputeXFromY(y);
+                            if (x == double.NaN)
+                            {
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            x = (double)crosshairData.XValue;
+                            y = ComputeYFromX(x);
+                            if (y == double.NaN)
+                            {
+                                return;
+                            }
+                        }
+                        break;
                     }
-                    break;
                 case Axis.Y:
                     y = (double)crosshairData.YValue;
                     x = ComputeXFromY(y);
@@ -200,7 +215,7 @@ namespace FdaViewModel.Conditions
             }
 
 
-            if (!ModifierSurface.Children.Contains(_xLine) || !ModifierSurface.Children.Contains(_yLine))
+            if (!ModifierSurface.Children.Contains(_xLine) && !ModifierSurface.Children.Contains(_yLine))
             {
                 ModifierSurface.Children.Add(_xLine);
                 ModifierSurface.Children.Add(_yLine);

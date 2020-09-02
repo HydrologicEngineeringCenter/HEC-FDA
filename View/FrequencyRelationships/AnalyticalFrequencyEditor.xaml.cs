@@ -1,4 +1,6 @@
 ﻿
+using FdaViewModel.FrequencyRelationships;
+using HEC.Plotting.SciChart2D.Charts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -25,6 +28,76 @@ namespace View.FrequencyRelationships
         public AnalyticalFrequencyEditor()
         {
             InitializeComponent();
+
+            dg_table.RowsAdded += Dg_table_RowsAdded;
+            dg_table.RowsDeleted += Dg_table_RowsDeleted;
+            dg_table.PreviewLastRowEnter += Dg_table_PreviewLastRowEnter;
+            dg_table.PreviewLastRowTab += Dg_table_PreviewLastRowTab;
+            dg_table.ArrowDownInLastRow += Dg_table_ArrowDownInLastRow;
+            dg_table.ArrowUpInFirstRow += Dg_table_ArrowUpInFirstRow;
+            dg_table.PostPasteData += Dg_table_PostPasteData;
+        }
+
+        private void Dg_table_PostPasteData()
+        {
+            //this just calls the update event so that the chart will redraw
+            //TableVM.CellEditEnding();
+        }
+
+        private void Dg_table_ArrowUpInFirstRow()
+        {
+            //FirstRowUpArrowPressed?.Invoke(this, new EventArgs());
+        }
+
+        private void Dg_table_ArrowDownInLastRow()
+        {
+            //LastRowDownArrowPressed?.Invoke(this, new EventArgs());
+        }
+        private void Dg_table_PreviewLastRowTab(int cellIndex)
+        {
+            //the user hit the tab key while in the last row
+            //but we dont know if this table is the last table in the list
+            //pass the event on up to the editor and let it decide what to do
+            //we didn't want the datagrid itself to determine if the tabbed cell was 
+            //the last cell in the row because that isn't actually what we want. We
+            //want to add the new row if the tabbed cell is the last dynamic column. (count - 3)
+            //if (cellIndex == dg_table.Columns.Count - 3)
+            //{
+            //LastRowAndCellTabPressed?.Invoke(this, new EventArgs());
+            //}
+            AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)this.DataContext;
+            vm.AddRow();
+            int lastRowIndex = dg_table.Items.Count - 1;
+            SelectCellByIndex(lastRowIndex, 0);
+        }
+
+        private void Dg_table_PreviewLastRowEnter()
+        {
+            //the user hit the enter key while in the last row of this table
+            //but we dont know if this table is the last table in the list
+            //pass the event on up to the editor and let it decide what to do
+            //LastRowEnterPressed?.Invoke(this, new EventArgs());
+            AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)this.DataContext;
+            vm.AddRow();
+            int lastRowIndex = dg_table.Items.Count - 1;
+            SelectCellByIndex(lastRowIndex, 0);
+        }
+
+        private void Dg_table_RowsDeleted(List<int> rowindices)
+        {
+            AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)this.DataContext;
+            vm.DeleteRows(rowindices);
+            //if(TableVM.Rows.Count == 0)
+            {
+                //TableVM.DeleteRows(rowindices);
+                //TableVM.RowDeleted();
+            }
+        }
+
+        private void Dg_table_RowsAdded(int startrow, int numrows)
+        {
+            AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)this.DataContext;
+            vm.AddRows(startrow, numrows);
         }
 
         private void ValidationDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
@@ -41,6 +114,132 @@ namespace View.FrequencyRelationships
         {
             _ClearChart = true;
             //Plot.InvalidatePlot();
+        }
+
+        private void rad_analytical_Checked(object sender, RoutedEventArgs e)
+        {
+            if (group_analytical != null && group_graphical != null)
+            {
+                group_analytical.Visibility = Visibility.Visible;
+                group_graphical.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void rad_graphical_Checked(object sender, RoutedEventArgs e)
+        {
+            if (group_analytical != null && group_graphical != null)
+            {
+                group_analytical.Visibility = Visibility.Hidden;
+                group_graphical.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)this.DataContext;
+            Chart2D chart = new Chart2D(vm.CoordinatesChartViewModel);
+
+            grid_analytical.Children.Add(chart);
+            Grid.SetColumn(chart, 2);
+            Grid.SetRow(chart, 4);
+        }
+
+        private void rad_standard_Checked(object sender, RoutedEventArgs e)
+        {
+            if (grid_analyticalLeft_standard != null && grid_analyticalLeft_fitToFlows != null)
+            {
+                grid_analyticalLeft_standard.Visibility = Visibility.Visible;
+                grid_analyticalLeft_fitToFlows.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void rad_fitToFlows_Checked(object sender, RoutedEventArgs e)
+        {
+            if (grid_analyticalLeft_standard != null && grid_analyticalLeft_fitToFlows != null)
+            {
+                grid_analyticalLeft_standard.Visibility = Visibility.Hidden;
+                grid_analyticalLeft_fitToFlows.Visibility = Visibility.Visible;
+            }
+        }
+
+
+        public void SelectCellByIndex(int rowIndex, int columnIndex)
+        {
+            if (!dg_table.SelectionUnit.Equals(DataGridSelectionUnit.Cell))
+                throw new ArgumentException("The SelectionUnit of the DataGrid must be set to Cell.");
+
+            if (rowIndex < 0 || rowIndex > (dg_table.Items.Count - 1))
+                throw new ArgumentException(string.Format("{0} is an invalid row index.", rowIndex));
+
+            if (columnIndex < 0 || columnIndex > (dg_table.Columns.Count - 1))
+                throw new ArgumentException(string.Format("{0} is an invalid column index.", columnIndex));
+
+            dg_table.SelectedCells.Clear();
+
+            object item = dg_table.Items[rowIndex];
+            DataGridRow row = dg_table.ItemContainerGenerator.ContainerFromIndex(rowIndex) as DataGridRow;
+            if (row == null)
+            {
+                dg_table.ScrollIntoView(item);
+                row = dg_table.ItemContainerGenerator.ContainerFromIndex(rowIndex) as DataGridRow;
+            }
+            if (row != null)
+            {
+                DataGridCell cell = GetCell(row, columnIndex);
+                if (cell != null)
+                {
+                    DataGridCellInfo dataGridCellInfo = new DataGridCellInfo(cell);
+                    dg_table.SelectedCells.Add(dataGridCellInfo);
+                    cell.Focus();
+                }
+            }
+        }
+
+        public DataGridCell GetCell(DataGridRow rowContainer, int column)
+        {
+            if (rowContainer != null)
+            {
+                DataGridCellsPresenter presenter = FindVisualChild<DataGridCellsPresenter>(rowContainer);
+                if (presenter == null)
+                {
+                    /* if the row has been virtualized away, call its ApplyTemplate() method
+                     * to build its visual tree in order for the DataGridCellsPresenter
+                     * and the DataGridCells to be created */
+                    rowContainer.ApplyTemplate();
+                    presenter = FindVisualChild<DataGridCellsPresenter>(rowContainer);
+                }
+                if (presenter != null)
+                {
+                    DataGridCell cell = presenter.ItemContainerGenerator.ContainerFromIndex(column) as DataGridCell;
+                    if (cell == null)
+                    {
+                        /* bring the column into view
+                         * in case it has been virtualized away */
+                        dg_table.ScrollIntoView(rowContainer, dg_table.Columns[column]);
+                        cell = presenter.ItemContainerGenerator.ContainerFromIndex(column) as DataGridCell;
+                    }
+                    return cell;
+                }
+            }
+            return null;
+        }
+
+        public T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(obj, i);
+                if (child != null && child is T)
+                    return (T)child;
+                else
+                {
+                    T childOfChild = FindVisualChild<T>(child);
+                    if (childOfChild != null)
+                        return childOfChild;
+                }
+            }
+            return null;
         }
     }
 }

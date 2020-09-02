@@ -137,19 +137,31 @@ namespace FdaViewModel.Inventory
         #region Voids
         public void OpenAttributeTable(object sender, EventArgs e)
         {
-
             LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(Storage.Connection.Instance.Reader);
-            LifeSimGIS.PointFeatures pointFeatures = (LifeSimGIS.PointFeatures)gpr.ConvertToGisFeatures(_TableConstant + this.Name);
+
+            LifeSimGIS.PointFeatures pointFeatures = new LifeSimGIS.PointFeatures();
+            if (!IsImportedFromOldFDA)
+            {
+                pointFeatures = (LifeSimGIS.PointFeatures)gpr.ConvertToGisFeatures(_TableConstant + this.Name);
+            }
             LifeSimGIS.VectorFeatures features = pointFeatures;
             //read from table.
             DatabaseManager.DataTableView dtv = Storage.Connection.Instance.Reader.GetTableManager(_TableConstant + this.Name);
-            int[] geometryColumns = { 0, 1 };
-            dtv.DeleteColumns(geometryColumns);
+            
+            //int[] geometryColumns = { 0, 1 };
+            //dtv.DeleteColumns(geometryColumns);
+            //dtv.GetColumn(0).IsReadOnly = true;
+            //dtv.GetColumn(1).IsReadOnly = true;
+
+            
 
             OpenGLDrawInfo ogldi = new OpenGLDrawInfo(15, OpenGLDrawInfo.GlyphType.House1, true, new OpenTK.Graphics.Color4((byte)0, 0, 0, 255), true, new OpenTK.Graphics.Color4((byte)0, 0, 255, 200), true);
 
             OpenStructureAttributeTableEventArgs args = new OpenStructureAttributeTableEventArgs(Name, features, dtv, ogldi);
             args.MapFeatureHash = _featureHashCode;
+            //this add to map window call, gets hijacked because i didn't want to reinvent the wheel for this.
+            //The add to map window on the view side checks what type the args are and if it is this type, then
+            //it opens the attribute table. See ViewWindow.OpenStructureAttributeTable()
             AddToMapWindow(this, args);
         }
         public void RemoveElement(object sender, EventArgs e)

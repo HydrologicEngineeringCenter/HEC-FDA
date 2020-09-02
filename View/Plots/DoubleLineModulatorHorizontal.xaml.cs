@@ -262,7 +262,6 @@ namespace View.Plots
                     return;
                 }
                 DisplayLines(xAxisMin, xAxisMax, vm.MinX, vm.MaxX, vm.MinY, vm.MaxY, vm.CurrentX, vm.CurrentY);
-                int i = 0;
             }
         }
 

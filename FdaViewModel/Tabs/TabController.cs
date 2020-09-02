@@ -127,13 +127,20 @@ namespace FdaViewModel.Tabs
                 if (winVM.Tab == null)
                 {
                     //remove the selected tab
-                    Tabs.Remove(Tabs[SelectedDynamicTabIndex]);
+                    IDynamicTab selectedTab = Tabs[SelectedDynamicTabIndex];
+                    if (selectedTab.BaseVM.IsOkToClose())
+                    {
+                        Tabs.Remove(Tabs[SelectedDynamicTabIndex]);
+                    }
                 }
                 else
                 {
-                    //I do not need to remove the window from the _Windows list because when the window closes
-                    //the ViewWindow.Window_Closing() will remove the window from the list.
-                    window.Close();
+                    if (winVM.Tab.BaseVM.IsOkToClose())
+                    {
+                        //I do not need to remove the window from the _Windows list because when the window closes
+                        //the ViewWindow.Window_Closing() will remove the window from the list.
+                        window.Close();
+                    }
                 }
             }
         }
@@ -246,7 +253,6 @@ namespace FdaViewModel.Tabs
         private void RemoveWindow(object sender, EventArgs e)
         {
             DynamicTabVM tab = (DynamicTabVM)sender;
-            
             _Windows.Remove(tab);
         }
 

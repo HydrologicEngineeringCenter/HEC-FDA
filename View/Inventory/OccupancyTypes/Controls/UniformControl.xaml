@@ -12,14 +12,17 @@
             <ColumnDefinition Width="Auto"/>
 
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center">
-            <Label Content="Minimum"/>
+        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+            <Label Content="Min:"/>
             <TextBox Width="60" Height="22" Text="{Binding Min, Mode=TwoWay}" TextAlignment="Center"/>
+            <Label Content="{Binding LabelString}"/>
         </StackPanel>
 
-        <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center">
-            <Label Content="Maximum" />
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+            <Label Content="Max:" />
             <TextBox x:Name="txt_StandDeviation" Text="{Binding Max, Mode=TwoWay}" Width="60" Height="22" TextAlignment="Center"/>
+            <Label Content="{Binding LabelString}"/>
+
         </StackPanel>
 
     </Grid>

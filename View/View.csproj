@@ -228,6 +228,9 @@
     <Compile Include="Conditions\AddExteriorInteriorStageToCondition.xaml.cs">
       <DependentUpon>AddExteriorInteriorStageToCondition.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Conditions\AddFailureFunctionToCondition.xaml.cs">
+      <DependentUpon>AddFailureFunctionToCondition.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Conditions\AddFlowFrequencyToCondition.xaml.cs">
       <DependentUpon>AddFlowFrequencyToCondition.xaml</DependentUpon>
     </Compile>
@@ -348,6 +351,15 @@
     <Compile Include="Inventory\OccupancyTypes\OccupancyTypesEditor.xaml.cs">
       <DependentUpon>OccupancyTypesEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Inventory\OccupancyTypes\SaveAllGroupControlSuccessful.xaml.cs">
+      <DependentUpon>SaveAllGroupControlSuccessful.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Inventory\OccupancyTypes\SaveAllGroupControlUnsuccessful.xaml.cs">
+      <DependentUpon>SaveAllGroupControlUnsuccessful.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Inventory\OccupancyTypes\SaveAllReport.xaml.cs">
+      <DependentUpon>SaveAllReport.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Output\IndexLocations.xaml.cs">
       <DependentUpon>IndexLocations.xaml</DependentUpon>
     </Compile>
@@ -356,6 +368,9 @@
     </Compile>
     <Compile Include="Plots\ArrowPolygon.xaml.cs">
       <DependentUpon>ArrowPolygon.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Plots\ConditionsHorizontalFailureFunction.xaml.cs">
+      <DependentUpon>ConditionsHorizontalFailureFunction.xaml</DependentUpon>
     </Compile>
     <Compile Include="Plots\ConditionsIndividualPlotWrapper.xaml.cs">
       <DependentUpon>ConditionsIndividualPlotWrapper.xaml</DependentUpon>
@@ -502,6 +517,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Conditions\AddExteriorInteriorStageToCondition.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Conditions\AddFailureFunctionToCondition.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -657,6 +676,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Inventory\OccupancyTypes\SaveAllGroupControlSuccessful.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Inventory\OccupancyTypes\SaveAllGroupControlUnsuccessful.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Inventory\OccupancyTypes\SaveAllReport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -680,6 +711,10 @@
     <Page Include="Plots\ArrowPolygon.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Plots\ConditionsHorizontalFailureFunction.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Plots\ConditionsIndividualPlotWrapper.xaml">
       <SubType>Designer</SubType>
