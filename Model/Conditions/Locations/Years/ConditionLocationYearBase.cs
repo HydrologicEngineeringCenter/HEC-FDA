@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using Utilities;
 
-namespace Model.Conditions.Locations
+namespace Model.Conditions.Locations.Years
 {
-    internal abstract class ConditionLocationTimeBase<T> : IConditionLocationTime<T>
+    internal abstract class ConditionLocationYearBase<T> : IConditionLocationYear<T>
     {
         #region Properties
         public int Year { get; }
@@ -21,7 +21,7 @@ namespace Model.Conditions.Locations
         
         #endregion
         #region Constructor
-        internal ConditionLocationTimeBase(ILocation location, int yr, IFrequencyFunction entryPoint, IEnumerable<ITransformFunction> transformFxs, IEnumerable<IMetric> metrics, string label = "")
+        internal ConditionLocationYearBase(ILocation location, int yr, IFrequencyFunction entryPoint, IEnumerable<ITransformFunction> transformFxs, IEnumerable<IMetric> metrics, string label = "")
         {
             //TODO: Validation
             Year = yr;
@@ -48,8 +48,8 @@ namespace Model.Conditions.Locations
             foreach (var parameter in sampleParameters) sample.Add(parameter.Key, parameter.Value ? new Sample(rng.NextDouble()) : new Sample());
             return sample;
         }
-        public abstract IConditionLocationTimeRealization ComputePreview();
-        public abstract IConditionLocationTimeRealization Compute(IReadOnlyDictionary<IParameterEnum, ISample> parameterSamplePs, int id = -1);
+        public abstract IConditionLocationYearRealization ComputePreview();
+        public abstract IConditionLocationYearRealization Compute(IReadOnlyDictionary<IParameterEnum, ISample> parameterSamplePs, int id = -1);
         protected Dictionary<IParameterEnum, ISampledParameter<IFdaFunction>> SampleFunctions(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters)
         {
             Dictionary<IParameterEnum, ISampledParameter<IFdaFunction>> sampledFxs = new Dictionary<IParameterEnum, ISampledParameter<IFdaFunction>>()

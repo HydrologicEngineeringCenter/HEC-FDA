@@ -252,10 +252,10 @@ namespace ModelTests.ExcelTesting
             for (int j = 0; j < metrics.Count; j++)
             {
                 IMetric met = metrics[j];
-                IMetricEnum metType = met.Type;
+                IMetricEnum metType = met.ParameterType;
                 if (singleRowResult.ContainsKey(met))
                 {
-                    switch (met.Type)// == IMetricEnum.Damages)
+                    switch (met.ParameterType)// == IMetricEnum.Damages)
                     {
                         case IMetricEnum.Damages:
                             {
@@ -320,11 +320,11 @@ namespace ModelTests.ExcelTesting
                 if (results.ContainsKey(metric))
                 {
                     double actual = results[metric];
-                    dt.Rows.Add(metrics[i].Type.ToString() + " = " + actual.ToString());
+                    dt.Rows.Add(metrics[i].ParameterType.ToString() + " = " + actual.ToString());
                 }
                 else
                 {
-                    dt.Rows.Add("Metric: " + metric.Type.ToString() + " was not in the condition's results");
+                    dt.Rows.Add("Metric: " + metric.ParameterType.ToString() + " was not in the condition's results");
                 }
             }
             return dt;

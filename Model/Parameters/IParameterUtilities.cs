@@ -30,7 +30,11 @@ namespace Model
         private static IRange<int> _FlowRange => IRangeFactory.Factory(11, 19);
         private static IRange<int> _ElevationRange => IRangeFactory.Factory(21, 29);
         private static IRange<int> _DamageRange => IRangeFactory.Factory(31, 39);
+        private static IRange<int> _TimeRange => IRangeFactory.Factory(41, 49);
         private static IRange<int> _FunctionRange => IRangeFactory.Factory(101, 110);
+        private static IRange<int> _LateralStructureRange => IRangeFactory.Factory(110, 119);
+        private static IRange<int> _MetricsRange => IRangeFactory.Factory(121, 129);
+        private static IRange<int> _MetricFunctionRange => IRangeFactory.Factory(131, 139);
 
         /// <summary>
         /// Tests if the <see cref="IParameterEnum"/> is measured as a probability.
@@ -106,6 +110,21 @@ namespace Model
         public static bool IsDamage(this IParameter parameter) => parameter.ParameterType.IsDamage();
 
         /// <summary>
+        /// Tests if the <see cref="IParameterEnum"/> is measured in units of time.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameterEnum"/> object to test. </param>
+        /// <returns><see langword="true"/> if the <see cref="IParameterEnum"/> is measured in units of time, <see langword="false"/> otherwise. </returns>
+        public static bool IsTime(this IParameterEnum parameter) =>
+            _TimeRange.IsOnRange((int)parameter) ||
+            _MetricFunctionRange.IsOnRange((int)parameter);
+        /// <summary>
+        /// Tests if the <see cref="IParameter"/> is measured in units of time.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameter"/> object to test. </param>
+        /// <returns><see langword="true"/> if the <see cref="IParameter"/> is measured in units of time, <see langword="false"/> otherwise. </returns>
+        public static bool IsTime(this IParameter parameter) => parameter.ParameterType.IsTime();
+
+        /// <summary>
         /// Tests if the <see cref="IParameterEnum"/> describes a predefined type of <see cref="IFdaFunction"/> with x and y axes.
         /// </summary>
         /// <param name="parameter"> The <see cref="IParameterEnum"/> to be tested. </param>
@@ -119,6 +138,32 @@ namespace Model
         public static bool IsFunction(this IParameter parameter) => parameter.ParameterType.IsFunction();
 
         /// <summary>
+        /// Tests if the <see cref="IParameterEnum"/> describes a predefined type of <see cref="IMetric"/>.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameterEnum"/> to be tested. </param>
+        /// <returns> <see langword="true"/> if the <see cref="IParameterEnum"/> describes an predefined type of <see cref="IMetric"/>, <see langword="false"/> otherwise. </returns>
+        public static bool IsMetric(this IParameterEnum parameter) => _MetricsRange.IsOnRange((int)parameter);
+        /// <summary>
+        /// Tests if the <see cref="IParameter.ParameterType"/> property to determine if it describes a predefined type of <see cref="IMetric"/>.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameter"/> to be tested. </param>
+        /// <returns> <see langword="true"/> if the <see cref="IParameter.ParameterType"/> describes an predefined type of <see cref="IMetric"/>, <see langword="false"/> otherwise. </returns>
+        public static bool IsMetric(this IParameter parameter) => parameter.ParameterType.IsFunction();
+
+        /// <summary>
+        /// Tests if the <see cref="IParameterEnum"/> describes a predefined type of <see cref="IFdaFunction"/> with year x axis and metric value y axis.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameterEnum"/> to be tested. </param>
+        /// <returns> <see langword="true"/> if the <see cref="IParameterEnum"/> describes an predefined type of <see cref="IFdaFunction"/> with year x axis and metric value y axis, <see langword="false"/> otherwise. </returns>
+        public static bool IsMetricFunction(this IParameterEnum parameter) => _MetricFunctionRange.IsOnRange((int)parameter);
+        /// <summary>
+        /// Tests if the <see cref="IParameter.ParameterType"/> property to determine if it describes a predefined type of <see cref="IFdaFunction"/> with year x axis and metric value y axis.
+        /// </summary>
+        /// <param name="parameter"> The <see cref="IParameter"/> to be tested. </param>
+        /// <returns> <see langword="true"/> if the <see cref="IParameter.ParameterType"/> describes an predefined type of <see cref="IFdaFunction"/> with year x axis and metric value y axis, <see langword="false"/> otherwise. </returns>
+        public static bool IsMetricFunction(this IParameter parameter) => parameter.ParameterType.IsMetricFunction();
+
+        /// <summary>
         /// Provides the default unit of measurement (<seealso cref="UnitsEnum"/> for the <see cref="IParameterEnum"/>.
         /// </summary>
         /// <param name="parameter"> The <see cref="IParameterEnum"/> to describe. </param>
@@ -129,6 +174,12 @@ namespace Model
             else if (parameter.IsFlow()) return UnitsEnum.CubicFootPerSecond;
             else if (parameter.IsElevation()) return UnitsEnum.Foot;
             else if (parameter.IsDamage()) return UnitsEnum.ThousandDollars;
+            else if (parameter.IsTime()) return UnitsEnum.Year;
+            else if (parameter.IsMetric())
+            {
+                if (parameter == IParameterEnum.EAD) return UnitsEnum.ThousandDollars;
+                else return UnitsEnum.Probability;
+            }
             else return UnitsEnum.NotSet;
         }
         /// <summary>
@@ -138,7 +189,7 @@ namespace Model
         /// <returns> A <see cref="UnitsEnum"/> describing the default unit type. </returns>
         public static UnitsEnum XUnitsDefault(this IParameterEnum fxType)
         {
-            if (!fxType.IsFunction()) 
+            if (!fxType.IsFunction() && !fxType.IsMetricFunction()) 
                 return UnitsEnum.NotSet;
             else
             {
@@ -157,14 +208,26 @@ namespace Model
                     case IParameterEnum.InteriorStageDamage:
                     case IParameterEnum.LateralStructureFailure:
                         return UnitsEnum.Foot;
+                    case IParameterEnum.YearExteriorStageAEP:
+                    case IParameterEnum.YearInteriorStageAEP:
+                    case IParameterEnum.YearDamageAEP:
+                    case IParameterEnum.YearEAD:
+                    case IParameterEnum.YearEquavalentAnnualDamages:
+                        return UnitsEnum.Year;
                     default:
                         throw new NotImplementedException();
                 }
             }
+            
         }
+        /// <summary>
+        /// Default units of y axis for specified function.
+        /// </summary>
+        /// <param name="fxType"> The function type to be evaluated. </param>
+        /// <returns> A <see cref="UnitsEnum"/> describing the default unit type. </returns>
         public static UnitsEnum YUnitsDefault(this IParameterEnum fxType)
         {
-            if (!fxType.IsFunction())
+            if (!fxType.IsFunction() && !fxType.IsMetricFunction())
                 return UnitsEnum.NotSet;
             else
             {
@@ -181,8 +244,13 @@ namespace Model
                         return UnitsEnum.Foot;
                     case IParameterEnum.InteriorStageDamage:
                     case IParameterEnum.DamageFrequency:
+                    case IParameterEnum.YearEAD:
+                    case IParameterEnum.YearEquavalentAnnualDamages:
                         return UnitsEnum.ThousandDollars;
                     case IParameterEnum.LateralStructureFailure:
+                    case IParameterEnum.YearExteriorStageAEP:
+                    case IParameterEnum.YearInteriorStageAEP:
+                    case IParameterEnum.YearDamageAEP:
                         return UnitsEnum.Probability;
                     default:
                         throw new NotImplementedException();              
@@ -227,7 +295,10 @@ namespace Model
 
                 case IParameterEnum.FloodDamages:
                     return abbreviate ? "Damages" : "Annual Peak Event Flood Damages";
-                
+
+                case IParameterEnum.Year:
+                    return "Year";
+
                 case IParameterEnum.InflowFrequency:
                     return abbreviate ? "Flow Frequency Function" : "Unregulated Flow Frequency Function";
                 case IParameterEnum.InflowOutflow:
@@ -254,6 +325,28 @@ namespace Model
                     return abbreviate ? "Lateral Structure Failure Function" : "Lateral Structure Elevation to Failure Probability Transform Function";
                 case IParameterEnum.LatralStructureFailureElevationFrequency:
                     return abbreviate ? "Frequency of Failure Stage" : "Frequency of Exterior Stage Associated with Lateral Structure Failure";
+
+                case IParameterEnum.ExteriorStageAEP:
+                    return abbreviate ? "Annual Stage Exceedance Probability" : "Annual Exterior (In-channel) Water Surface Elevation Exceedance Probability";
+                case IParameterEnum.InteriorStageAEP:
+                    return abbreviate ? "Annual Stage Exceedance Probability" : "Annual Interior (Floodplain) Water Surface Elevation Exceedance Probability";
+                case IParameterEnum.DamageAEP:
+                    return abbreviate ? "Annual Damage Exceedance Probability" : "Annual Flood Damage Exceedance Probability";
+                case IParameterEnum.EAD:
+                    return "Expected Annual Damages";
+                case IParameterEnum.EquivalentAnnualDamages:
+                    return abbreviate ? "Equivalent Annual Damages" : "Discounted Expected Annual Damages";
+
+                case IParameterEnum.YearExteriorStageAEP:
+                    return abbreviate ? "Annual Stage Exceedance Probability by Year" : "Annual Exterior (In-channel) Water Surface Elevation Exceedance Probability by Analysis Year";
+                case IParameterEnum.YearInteriorStageAEP:
+                    return abbreviate ? "Annual Stage Exceedance Probability by Year" : "Annual Interior (Floodplain) Water Surface Elevation Exceedance Probability by Analysis Year";
+                case IParameterEnum.YearDamageAEP:
+                    return abbreviate ? "Annual Damage Exceedance Probability by Year" : "Annual Flood Damage Exceedance Probability by Analysis Year";
+                case IParameterEnum.YearEAD:
+                    return "Expected Annual Damages by Analysis Year";
+                case IParameterEnum.YearEquavalentAnnualDamages:
+                    return abbreviate ? "Equivalent Annual Damages by Year" : "Discounted Expected Annual Damages by Analysis Year";
                 default:
                     throw new NotImplementedException();
             }
@@ -268,8 +361,13 @@ namespace Model
         /// <returns> A <see cref="string"/> label. </returns>        
         public static string PrintLabel(this IParameterEnum parameter, UnitsEnum units = UnitsEnum.NotSet, bool abbreviate = true)
         {
-            string unitsLabel = units == UnitsEnum.NotSet ? parameter.UnitsDefault().Print(abbreviate) : units.Print(abbreviate);
-            return $"{parameter.Print(abbreviate)} {unitsLabel}";
+            if (parameter.IsFunction() || parameter.IsMetricFunction() || parameter == IParameterEnum.Year) 
+                return Print(parameter, abbreviate);
+            else
+            {
+                string unitsLabel = units == UnitsEnum.NotSet ? parameter.UnitsDefault().Print(abbreviate) : units.Print(abbreviate);
+                return $"{parameter.Print(abbreviate)} {unitsLabel}";
+            }
         }
         /// <summary>
         /// Prints a text label for the <see cref="IParameter"/> containing a description of its <see cref="IParameter.ParameterType"/> property and <see cref="UnitsEnum"/> (<seealso cref="UnitsUtilities.Print(UnitsEnum, bool)"/>.
@@ -306,7 +404,7 @@ namespace Model
         /// Prints a label for the <see cref="IParameterEnum"/> x axis, if one exists.
         /// </summary>
         /// <param name="parameter"> The <see cref="IParameterEnum"/> to be evaluated. </param>
-        /// <param name="units"> The unit of measure (<seealso cref="UnitsEnum"/>) for the <see cref="IParameterEnum"/>. The <see cref="IParameterEnum"/> default units are used if none are provided (<seealso cref="IParameterUtilities.DefaultUnits(IParameterEnum)"/>). </param>
+        /// <param name="units"> The unit of measure (<seealso cref="UnitsEnum"/>) for the <see cref="IParameterEnum"/>. The <see cref="IParameterEnum"/> default units are used if none are provided (<seealso cref="IParameterUtilities.UnitsDefault(IParameterEnum)"/>). </param>
         /// <param name="abbreviate"> <see langword="true"/> if an abbreviated label should be printed, <see langword="false"/> otherwise. </param>
         /// <returns> A <see cref="string"/> label. </returns>
         public static string PrintXLabel (this IParameterEnum parameter, UnitsEnum units = UnitsEnum.NotSet, bool abbreviate = true)
@@ -329,6 +427,12 @@ namespace Model
                     return PrintLabel(IParameterEnum.InteriorElevation, units, abbreviate);
                 case IParameterEnum.LateralStructureFailure:
                     return PrintLabel(IParameterEnum.ExteriorElevation, units, abbreviate);
+                case IParameterEnum.YearExteriorStageAEP:
+                case IParameterEnum.YearInteriorStageAEP:
+                case IParameterEnum.YearDamageAEP:
+                case IParameterEnum.YearEAD:
+                case IParameterEnum.YearEquavalentAnnualDamages:
+                    return PrintLabel(IParameterEnum.Year, units, abbreviate); // just prints "Year"
                 default:
                     return "No x axis.";
             }
@@ -338,7 +442,7 @@ namespace Model
         /// Prints a label for the <see cref="IParameterEnum"/> y axis, if one exists.
         /// </summary>
         /// <param name="parameter"> The <see cref="IParameterEnum"/> to be evaluated. </param>
-        /// <param name="units"> The unit of measure (<seealso cref="UnitsEnum"/>) for the <see cref="IParameterEnum"/>. The <see cref="IParameterEnum"/> default units are used if none are provided (<seealso cref="IParameterUtilities.DefaultUnits(IParameterEnum)"/>). </param>
+        /// <param name="units"> The unit of measure (<seealso cref="UnitsEnum"/>) for the <see cref="IParameterEnum"/>. The <see cref="IParameterEnum"/> default units are used if none are provided (<seealso cref="IParameterUtilities.UnitsDefault(IParameterEnum)"/>). </param>
         /// <param name="abbreviate"> <see langword="true"/> if an abbreviated label should be printed, <see langword="false"/> otherwise. </param>
         /// <returns> A <see cref="string"/> label. </returns>
         public static string PrintYLabel(this IParameterEnum parameter, UnitsEnum units = UnitsEnum.NotSet, bool abbreviate = true)
@@ -358,11 +462,17 @@ namespace Model
                     return PrintLabel(IParameterEnum.InteriorElevation, units, abbreviate);
                 case IParameterEnum.InteriorStageDamage:
                 case IParameterEnum.DamageFrequency:
+                case IParameterEnum.YearEAD:
+                case IParameterEnum.YearEquavalentAnnualDamages:
                     return PrintLabel(IParameterEnum.FloodDamages, units, abbreviate);
                 case IParameterEnum.LateralStructureFailure:
                     return PrintLabel(IParameterEnum.FailureProbability, units, abbreviate);
+                case IParameterEnum.YearExteriorStageAEP:
+                case IParameterEnum.YearInteriorStageAEP:
+                case IParameterEnum.YearDamageAEP:
+                    return PrintLabel(IParameterEnum.ExceedanceProbability, units, abbreviate);
                 default:
-                    return "No x axis.";
+                    return "No y axis.";
             }
         }
     }

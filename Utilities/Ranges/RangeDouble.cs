@@ -22,16 +22,16 @@ namespace Utilities.Ranges
         #endregion
 
         /// <summary>
-        /// Constructs a new <see cref="IRange{double}"/> object.
+        /// Constructs a new <see cref="IRange{T}"/> object.
         /// </summary>
         /// <param name="min"> The intended <see cref="IRange{T}.Min"/>. </param>
         /// <param name="max"></param>
         /// <param name="inclusiveMin"> <see langword="true"/> by default. 
         /// <see langword="true"/> if the <paramref name="min"/> is meant to be included in the range. 
-        /// <see langword="false"/> if the first value on the range is intended to be greater than this value, in which case the first value on the range is set to <see cref="IRange{double}.Min"/> + <see cref="double.Epsilon"/>. </param>
+        /// <see langword="false"/> if the first value on the range is intended to be greater than this value, in which case the first value on the range is set to <see cref="IRange{T}.Min"/> + <see cref="double.Epsilon"/>. </param>
         /// <param name="inclusiveMax"> <see langword="true"/> by default. 
         /// <see langword="true"/> if the <paramref name="max"/> is meant to be included in the range. 
-        /// <see langword="false"/> if the last value on the range is intended to be less than this value, in which case the last value on the range is set to <see cref="IRange{double}.Max"/> - <see cref="double.Epsilon"/>. </param>
+        /// <see langword="false"/> if the last value on the range is intended to be less than this value, in which case the last value on the range is set to <see cref="IRange{T}.Max"/> - <see cref="double.Epsilon"/>. </param>
         /// <param name="finiteRequirement"> <see langword="true"/> by default.
         /// <see langword="true"/> if the bounds of the range must be represented by finite numerical values, <see langword="false"/> otherwise. </param>
         /// <param name="maxNotEqualToMinRequirement"> <see langword="true"/> by default.
@@ -62,7 +62,7 @@ namespace Utilities.Ranges
             sb.Append(_InclusiveMax ? "]" : ")");
             return sb.ToString();
         }
-        public static string Requirements() => $"range: [{double.MinValue.Print()}, {double.MaxValue.Print()}] with range min < range max";
+        public static string Requirements() => $"range: [{double.MinValue.Print()}, {double.MaxValue.Print()}] with range min less than or equal to range max";
         public bool Equals<T>(IRange<T> range) => range.GetType() == typeof(RangeDouble) && String.Compare(Print(), range.Print()) == 0 ? true : false;
         public bool IsOnRange(double x)
         {

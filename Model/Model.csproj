@@ -41,7 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="UnitsNet" Version="4.59.0" />
+    <PackageReference Include="UnitsNet" Version="4.69.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,6 +54,10 @@
     <Reference Include="GDALAssist">
       <HintPath>..\..\..\..\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\GDALAssist.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Validation\Conditions\" />
   </ItemGroup>
 
 </Project>

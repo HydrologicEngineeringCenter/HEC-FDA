@@ -1,20 +1,22 @@
-﻿namespace Model
+﻿using Functions;
+
+namespace Model
 {
     /// <summary>
     /// Provides a public interface for computable metrics.
     /// </summary>
-    public interface IMetric
+    public interface IMetric: IParameterOrdinate
     {
         #region Properties
-        /// <summary>
-        /// The enumerable metric type.
-        /// </summary>
-        IMetricEnum Type { get; }
-        /// <summary>
-        /// The exceedance probability value for the metric. 
-        /// </summary>
-        /// <remarks> Note: this parameter is not used for <see cref="IMetricEnum.ExpectedAnnualDamage"/>. </remarks>
-        double ExceedanceTarget { get; }
+        ///// <summary>
+        ///// The enumerable metric type.
+        ///// </summary>
+        //IParameterEnum ParameterType { get; }
+        ///// <summary>
+        ///// The exceedance probability value for the metric. 
+        ///// </summary>
+        ///// <remarks> Note: this parameter is not used for <see cref="IMetricEnum.ExpectedAnnualDamage"/>. </remarks>
+        //IOrdinate Ordinate { get; }
         /// <summary>
         /// The target function for the metric.
         /// </summary>

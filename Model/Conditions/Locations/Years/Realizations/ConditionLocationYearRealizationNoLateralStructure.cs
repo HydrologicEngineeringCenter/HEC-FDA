@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using Utilities;
 
-namespace Model.Conditions.Locations
+namespace Model.Conditions.Locations.Years.Realizations
 {
-    internal sealed class ConditionLocationTimeRealizationNoLateralStructure: IConditionLocationTimeRealization
+    internal sealed class ConditionLocationYearRealizationNoLateralStructure: IConditionLocationYearRealization
     {
         public int ID { get; }
         public ISampledParameter<IParameterOrdinate> LateralStructureFailureElevation { get; }
@@ -13,7 +13,7 @@ namespace Model.Conditions.Locations
         public IReadOnlyDictionary<IParameterEnum, ISampledParameter<IFdaFunction>> Functions { get; }
         public bool HadLateralStructure => false;
 
-        internal ConditionLocationTimeRealizationNoLateralStructure(IReadOnlyDictionary<IParameterEnum, ISampledParameter<IFdaFunction>> fxs, IReadOnlyDictionary<IMetric, double> metrics, int id)
+        internal ConditionLocationYearRealizationNoLateralStructure(IReadOnlyDictionary<IParameterEnum, ISampledParameter<IFdaFunction>> fxs, IReadOnlyDictionary<IMetric, double> metrics, int id)
         {
             //ToDo: Validation
             ID = id;

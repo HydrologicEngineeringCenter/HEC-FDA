@@ -6,17 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Statistics;
 
-namespace Model.Conditions.Locations.Output
+namespace Model.Conditions.Locations.Years.Results
 {
-    internal sealed class ConditionLocationTimeResult : IConditionLocationTimeResult
+    internal sealed class ConditionLocationYearResult : IConditionLocationYearResult
     {
         public int Seed { get; }
-        public IConditionLocationTimeSummary ConditionLocationTime { get; }
-        public IReadOnlyList<IConditionLocationTimeRealizationSummary> Realizations { get; private set; }
+        public IConditionLocationYearSummary ConditionLocationTime { get; }
+        public IReadOnlyList<IConditionLocationYearRealizationSummary> Realizations { get; private set; }
         public IReadOnlyDictionary<IMetric, Statistics.IHistogram> Metrics { get; private set; }
         public IReadOnlyDictionary<IMetric, Statistics.IConvergenceResult> Convergence { get; private set; }
 
-        internal ConditionLocationTimeResult(IConditionLocationTimeSummary condition, IReadOnlyDictionary<IMetric, Statistics.IConvergenceCriteria> criteria, int seed)
+        internal ConditionLocationYearResult(IConditionLocationYearSummary condition, IReadOnlyDictionary<IMetric, Statistics.IConvergenceCriteria> criteria, int seed)
         {
             //TODO: Validate
             Seed = seed;
@@ -41,14 +41,14 @@ namespace Model.Conditions.Locations.Output
              */
             var converged = new Dictionary<IMetric, IConvergenceResult>();
             var histograms = new Dictionary<IMetric, Statistics.IHistogram>();
-            var realizations = new List<IConditionLocationTimeRealizationSummary>();
+            var realizations = new List<IConditionLocationYearRealizationSummary>();
             foreach (var i in criteria) converged[i.Key] = Statistics.IConvergenceResultFactory.Factory();
             int s = 0, n = 0, I = 10000, N = 500000;
             while (!IsConverged(converged) && n < N)
             {
                 s++;
                 var setOfSamples = SetSamplePacket(rng, I);
-                var setOfRealizations = new ConcurrentBag<IConditionLocationTimeRealizationSummary>();
+                var setOfRealizations = new ConcurrentBag<IConditionLocationYearRealizationSummary>();
                 Parallel.For(n, n + I, i =>
                 {
                     setOfRealizations.Add(ConditionLocationTime.Compute(setOfSamples[i], i));
@@ -80,7 +80,7 @@ namespace Model.Conditions.Locations.Output
             }
             return set;
         }
-        private Dictionary<IMetric, Statistics.IHistogram> UpdateHistograms(ConcurrentBag<IConditionLocationTimeRealizationSummary> realizations, Dictionary<IMetric, Statistics.IHistogram> histograms)
+        private Dictionary<IMetric, Statistics.IHistogram> UpdateHistograms(ConcurrentBag<IConditionLocationYearRealizationSummary> realizations, Dictionary<IMetric, Statistics.IHistogram> histograms)
         {
             //TODO: Parallelize adding lists to histograms
             
@@ -91,9 +91,9 @@ namespace Model.Conditions.Locations.Output
              *      a. generate new histograms if none have been generated before.
              *      b. otherwise just add to the existing ones.
              */
-            realizations.TryPeek(out IConditionLocationTimeRealizationSummary last);
+            realizations.TryPeek(out IConditionLocationYearRealizationSummary last);
             IEnumerable<IMetric> realizationMetrics = last.Metrics.Keys, histogramMetrics = histograms.Keys;
-            if (!Enumerable.SequenceEqual(realizationMetrics.OrderBy(i => i.Type), histogramMetrics.OrderBy(j => j.Type))) throw new ArgumentException($"The realization produced the following list of metrics: {PrintMetricList(realizationMetrics)} but the following list was expected: {PrintMetricList(histogramMetrics)}.");
+            if (!Enumerable.SequenceEqual(realizationMetrics.OrderBy(i => i.ParameterType), histogramMetrics.OrderBy(j => j.ParameterType))) throw new ArgumentException($"The realization produced the following list of metrics: {PrintMetricList(realizationMetrics)} but the following list was expected: {PrintMetricList(histogramMetrics)}.");
 
             // step 2: gathering list of realization metrics...
             var metrics = new Dictionary<IMetric, List<double>>();
@@ -131,10 +131,10 @@ namespace Model.Conditions.Locations.Output
             {
                 if (first)
                 {
-                    toPrint.Append(metric.Type.ToString());
+                    toPrint.Append(metric.ParameterType.ToString());
                     first = false;
                 }
-                else toPrint.Append($", {metric.Type.ToString()}");
+                else toPrint.Append($", {metric.ParameterType.ToString()}");
             }
             return toPrint.Append("]").ToString();
         }

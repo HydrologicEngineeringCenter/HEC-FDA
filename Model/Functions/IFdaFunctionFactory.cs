@@ -42,6 +42,12 @@ namespace Model
                 case IParameterEnum.ExteriorInteriorStage:
                 case IParameterEnum.InteriorStageDamage:
                     return ITransformFunctionFactory.Factory(fx, fType, label, xUnits, xLabel, yUnits, yLabel);
+                case IParameterEnum.YearExteriorStageAEP:
+                case IParameterEnum.YearInteriorStageAEP:
+                case IParameterEnum.YearDamageAEP:
+                case IParameterEnum.YearEAD:
+                case IParameterEnum.YearEquavalentAnnualDamages:
+                    return new Functions.MetricYear(fx, fType, label, xLabel, yLabel, yUnits);
                 default:
                     throw new NotImplementedException($"The specified parameter type: {fType.ToString()} is not supported.");
             }
