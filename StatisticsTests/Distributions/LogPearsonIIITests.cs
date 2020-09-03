@@ -38,12 +38,12 @@ namespace StatisticsTests.Distributions
         [InlineData(1d, 1d, double.PositiveInfinity, 1)]
         public void InvalidParameterValues_Throw_InvalidConstructorArgumentsException(double mean, double sd, double skew, int n)
         {
-            Assert.Throws<Utilities.InvalidConstructorArgumentsException>(() => new Statistics.Distributions.LogPearsonIII(mean, sd, skew, n));
+            Assert.Throws<Utilities.InvalidConstructorArgumentsException>(() => new Statistics.Distributions.LogPearsonIII(mean: mean, standardDeviation: sd, skew: skew, sampleSize: n));
         }
         [Fact]
         public void GoodData_Returns_ValidFiniteMin()
         {
-            var testObj = new Statistics.Distributions.LogPearsonIII(1, 0.01, -2);
+            var testObj = new Statistics.Distributions.LogPearsonIII(mean: 1, standardDeviation: 0.01, skew: -2);
             var min = testObj.Range.Min;
             Assert.True(min.IsFinite());
         }
