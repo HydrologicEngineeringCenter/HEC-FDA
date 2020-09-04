@@ -148,6 +148,9 @@ namespace View.Utilities
             FeatureEditorToolbar.MapTree = vm.MWMTVConn.MapTreeView;
 
             vm.MWMTVConn.MapTreeView.UpdateMapWindow();
+
+            MapWindow.MapWindow.PlotFeatures();
+
         }
 
     }

@@ -149,7 +149,8 @@ namespace View.Conditions
             Chart2D[] charts = GetChartsThatAreShowing();
             var provider = new Chart2DProvider(GetChartsThatAreShowing);
             _controller = new Chart2DController(provider);
-            foreach(Chart2D chart in charts)
+            _controller.StateController.ContextMenuEnabled = false;
+            foreach (Chart2D chart in charts)
             {
                 _controller.RegisterChart(chart);
             }
@@ -165,7 +166,11 @@ namespace View.Conditions
             {
                 IndividualLinkedPlotControl currentControl = controls[i];
                 IndividualLinkedPlotControl nextControl = controls[i + 1];
-                currentControl.BindToNextPlot(nextControl, _controller, guid);
+                currentControl.BindToNextPlot(nextControl, _controller);
+                
+                //Set up the mouse event group - this keeps the mouse events all in sync with the others.
+                currentControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
+                nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
             }
 
             //List<Chart2D> charts = GetChartsThatAreShowing();

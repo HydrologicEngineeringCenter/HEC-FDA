@@ -70,8 +70,10 @@ namespace FdaViewModel.Conditions
             List<double> ys = new List<double>() { 1, 10000, 30000, 50000, 70000 };
             ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
             IFdaFunction func = IFdaFunctionFactory.Factory( IParameterEnum.InflowFrequency, (IFunction)coordFunc, "Inflow Freq", UnitsEnum.Probability);
-            //AnalyticalFrequencyElement dummyElem = new AnalyticalFrequencyElement("dummyElem", "now", "desc", func);
-            //listOfLp3.Add(dummyElem);
+            List<double> analyticalFlows = new List<double>() { 1, 2, 3 };
+
+            AnalyticalFrequencyElement dummyElem = new AnalyticalFrequencyElement("dummy elem","", "",2000,true,true, 2000,300,300,false,analyticalFlows,analyticalFlows, func);
+            listOfLp3.Add(dummyElem);
 
             AddFlowFrequencyToConditionVM lp3Importer = new AddFlowFrequencyToConditionVM(listOfLp3);
             lp3Importer.RequestNavigation += ownerElement.Navigate;
@@ -99,8 +101,8 @@ namespace FdaViewModel.Conditions
             bool isYAxisLog = true;
             bool isProbabilityXAxis = false;
             bool isProbabilityYAxis = false;
-            bool isXAxisOnBottom = true;
-            bool isYAxisOnLeft = true;
+            bool isXAxisOnBottom = false;
+            bool isYAxisOnLeft = false;
 
             return new Plots.IndividualLinkedPlotControlVM(
                 new Plots.ConditionsIndividualPlotWrapperVM(isXAxisLog, isYAxisLog, isProbabilityXAxis, isProbabilityYAxis, isXAxisOnBottom, isYAxisOnLeft),

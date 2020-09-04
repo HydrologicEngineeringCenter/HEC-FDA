@@ -14,6 +14,7 @@ using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
 using Model;
 using Statistics;
+using Utilities;
 
 namespace FdaViewModel.FrequencyRelationships
 {
@@ -26,44 +27,16 @@ namespace FdaViewModel.FrequencyRelationships
         private IFdaFunction _Curve;
        // private System.Collections.ObjectModel.ObservableCollection<object> _Items;
         private System.Collections.ObjectModel.ObservableCollection<double> _Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>();
-       // private double _TestKnowledge = .9;
-       // private double _TestNatural = .01;
-       // private string _SavingText;
-        private ObservableCollection<FlowDoubleWrapper> _AnalyticalFlows = new ObservableCollection<FlowDoubleWrapper>()
-        {
-        new FlowDoubleWrapper(0),
-        new FlowDoubleWrapper(1),
-        new FlowDoubleWrapper(2),
-        new FlowDoubleWrapper(3),
-        new FlowDoubleWrapper(4),
-        new FlowDoubleWrapper(5),
-        new FlowDoubleWrapper(6),
-        new FlowDoubleWrapper(7),
-        new FlowDoubleWrapper(8),
-        new FlowDoubleWrapper(9),
-        new FlowDoubleWrapper(10),
-        new FlowDoubleWrapper(11),
-        new FlowDoubleWrapper(12)
-        
-        };
+        // private double _TestKnowledge = .9;
+        // private double _TestNatural = .01;
+        // private string _SavingText;
+        private ObservableCollection<FlowDoubleWrapper> _AnalyticalFlows = new ObservableCollection<FlowDoubleWrapper>();
 
-        private ObservableCollection<FlowDoubleWrapper> _GraphicalFlows = new ObservableCollection<FlowDoubleWrapper>()
-        {
-        new FlowDoubleWrapper(0),
-        new FlowDoubleWrapper(1),
-        new FlowDoubleWrapper(2),
-        new FlowDoubleWrapper(3),
-        new FlowDoubleWrapper(4),
-        new FlowDoubleWrapper(5),
-        new FlowDoubleWrapper(6),
-        new FlowDoubleWrapper(7),
-        new FlowDoubleWrapper(8),
-        new FlowDoubleWrapper(9),
-        new FlowDoubleWrapper(10),
-        new FlowDoubleWrapper(11),
-        new FlowDoubleWrapper(12)
+        private ObservableCollection<FlowDoubleWrapper> _GraphicalFlows = new ObservableCollection<FlowDoubleWrapper>();
 
-        };
+        private double _Mean;
+        private double _StDev;
+        private double _Skew;
 
         private bool _IsAnalytical = true;
         private bool _IsStandard = true;
@@ -82,46 +55,39 @@ namespace FdaViewModel.FrequencyRelationships
         }
         public double Mean
         {
-            get;set;
+            get { return _Mean; }
+            set { _Mean = value; UpdateChartLineData(); }
         }
         public double StandardDeviation
         {
-            get;set;
+            get { return _StDev; }
+            set { _StDev = value; UpdateChartLineData(); }
         }
         public double Skew
         {
-            get;set;
+            get { return _Skew; }
+            set { _Skew = value; UpdateChartLineData(); }
         }
-        public int PeriorOfRecord
+        public int PeriodOfRecord
         {
             get;set;
         }
         public bool IsLogFlow { get; set; }
 
-        public SciChart2DChartViewModel CoordinatesChartViewModel { get; } = new SciChart2DChartViewModel("chart title");
+        public SciChart2DChartViewModel StandardChartViewModel { get; } = new SciChart2DChartViewModel("chart title");
+        public SciChart2DChartViewModel FitToFLowChartViewModel { get; } = new SciChart2DChartViewModel("chart title");
+
 
         //public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
         public ObservableCollection<FlowDoubleWrapper> AnalyticalFlows
         {
-            get
-            {
-                return _AnalyticalFlows;
-            }
-            set
-            {
-                _AnalyticalFlows = value; NotifyPropertyChanged();
-            }
+            get  {return _AnalyticalFlows; }
+            set { _AnalyticalFlows = value; NotifyPropertyChanged();}
         }
         public ObservableCollection<FlowDoubleWrapper> GraphicalFlows
         {
-            get
-            {
-                return _GraphicalFlows;
-            }
-            set
-            {
-                _GraphicalFlows = value; NotifyPropertyChanged();
-            }
+            get { return _GraphicalFlows; }
+            set { _GraphicalFlows = value; NotifyPropertyChanged(); }
         }
 
         //public int SelectedIndexInUndoList
@@ -261,8 +227,8 @@ namespace FdaViewModel.FrequencyRelationships
             //ActionManager = actionManager;
             //TransactionRows = new ObservableCollection<TransactionRowItem>();
             //MessageRows = new ObservableCollection<FdaLogging.LogItem>();
-            LoadTheLineData();
-
+            UpdateChartLineData();
+            LoadDefaultFlows();
         }
         public AnalyticalFrequencyEditorVM(AnalyticalFrequencyElement elem,string xLabel,string yLabel,string chartTitle, Editors.EditorActionManager actionManager) :base(elem, xLabel, yLabel, chartTitle, actionManager)// string name, Statistics.LogPearsonIII lpiii, string description, Utilities.OwnerElement owner) : base()
         {
@@ -274,19 +240,48 @@ namespace FdaViewModel.FrequencyRelationships
             //ActionManager = actionManager;
             //TransactionHelper.LoadTransactionsAndMessages(this, elem);
             //SavingText = elem.Name + " last saved: " + elem.LastEditDate;
-            LoadTheLineData();
+            UpdateChartLineData();
+            if(elem.AnalyticalFlows.Count == 0)
+            {
+                LoadDefaultFlows();
+            }
             //DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(CurrentElement.ChangeTableName());
             //UpdateUndoRedoVisibility(changeTableView, CurrentElement.ChangeIndex);
 
         }
         #endregion
         #region Voids
-        private void LoadTheLineData()
+        
+        private void LoadDefaultFlows()
         {
-            CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(CreateFunctionFromTable());
-            List<SciLineData> lineData = chartHelper.CreateLineData();
-            CoordinatesChartViewModel.LineData.Set(lineData);
+            for(int i = 0;i<10;i++)
+            {
+                FlowDoubleWrapper fdw = new FlowDoubleWrapper(i);
+                fdw.FlowChanged += FlowValue_FlowChanged;
+                AnalyticalFlows.Add(fdw);
+            }
         }
+
+        private void FlowValue_FlowChanged(object sender, EventArgs e)
+        {
+            UpdateChartLineData();
+        }
+
+        public void UpdateChartLineData()
+        {
+            try
+            {
+                ICoordinatesFunction function = GetCoordinatesFunction();
+                CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(function);
+                List<SciLineData> lineData = chartHelper.CreateLineData(false, true, true);
+                StandardChartViewModel.LineData.Set(lineData);
+            }
+            catch(Exception e)
+            {
+                int test = 0;
+            }
+        }
+
 
         private ICoordinatesFunction CreateFunctionFromTable()
         {
@@ -386,20 +381,137 @@ namespace FdaViewModel.FrequencyRelationships
 
         public override ICoordinatesFunction GetCoordinatesFunction()
         {
-            if(IsAnalytical)
+            List<double> xs = new List<double>();
+            List<double> ys = new List<double>();
+            try
             {
-                if(IsStandard)
+                if (IsAnalytical)
                 {
-                    //todo use mean, st dev, and skew to create the curve
-                    List<double> xs = new List<double>() { 0, 1 };
-                    List<double> ys = new List<double>() { 0, 2 };
-                    return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                    if (IsStandard)
+                    {
+                        //todo use mean, st dev, and skew to create the curve
+                        
+                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                        IDistribution dist = IDistributionFactory.FactoryLogPearsonIII(Mean, StandardDeviation, Skew, IsLogFlow, PeriodOfRecord);
+                        if(dist.State < IMessageLevels.Error)
+                        {
+                            return IFunctionFactory.Factory(dist);
+                        }
+
+                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                    }
+                    else
+                    {
+                        List<double> flows = new List<double>();
+                        foreach(FlowDoubleWrapper d in AnalyticalFlows)
+                        {
+                            flows.Add(d.Flow);
+                        }
+
+                        IDistribution dist = IDistributionFactory.FactoryFitLogPearsonIII(flows, IsLogFlow, PeriodOfRecord);
+                        if (dist.State < IMessageLevels.Error)
+                        {
+                            return IFunctionFactory.Factory(dist);
+                        }
+                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                    }
                 }
             }
-            List<double> xs2 = new List<double>() { 0, 1 };
-            List<double> ys2 = new List<double>() { 0, 2 };
-            return ICoordinatesFunctionsFactory.Factory(xs2, ys2, InterpolationEnum.Linear);
+            catch (Exception e)
+            {
+                xs = new List<double>() { 0 };
+                ys = new List<double>() { 0 };
+                return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+            }
+                xs = new List<double>() { 0 };
+                ys = new List<double>() { 0};
+                return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+            
         }
+
+        public bool CanCreateValidFunction()
+        {
+            List<double> xs = new List<double>();
+            List<double> ys = new List<double>();
+            try
+            {
+                if (IsAnalytical)
+                {
+                    if (IsStandard)
+                    {
+                        //todo use mean, st dev, and skew to create the curve
+
+                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                        IDistribution dist = IDistributionFactory.FactoryLogPearsonIII(Mean, StandardDeviation, Skew, IsLogFlow, PeriodOfRecord);
+                        if (dist.State < IMessageLevels.Error)
+                        {
+                            IFunction func = IFunctionFactory.Factory(dist);
+                            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.InflowFrequency, func);
+                            //todo: currently the flows are way to high to be real which is causing an error message
+                            //i am commenting this out so that i can move on
+                            //if(func.State < IMessageLevels.Error && fdaFunction.State < IMessageLevels.Error)
+                            {
+                                return true;
+                            }
+                        }
+
+                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                    }
+                    else
+                    {
+                        List<double> flows = new List<double>();
+                        foreach (FlowDoubleWrapper d in AnalyticalFlows)
+                        {
+                            flows.Add(d.Flow);
+                        }
+
+                        IDistribution dist = IDistributionFactory.FactoryFitLogPearsonIII(flows, IsLogFlow, PeriodOfRecord);
+                        if (dist.State < IMessageLevels.Error)
+                        {
+                            IFunction func = IFunctionFactory.Factory(dist);
+                            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.InflowFrequency, func);
+                            if (func.State < IMessageLevels.Error && fdaFunction.State < IMessageLevels.Error)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            return false;
+
+        }
+
+        public IFdaFunction CreateFdaFunction()
+        {
+            if(CanCreateValidFunction())
+            {
+                ICoordinatesFunction func =  GetCoordinatesFunction();
+                return IFdaFunctionFactory.Factory(IParameterEnum.InflowFrequency, (IFunction) func);
+            }
+            return null;
+        }
+
+
+        public override void SaveWhileEditing()
+        {
+            UpdateChartLineData();
+            if (CanCreateValidFunction())
+            {
+                base.SaveWhileEditing();
+            }
+            else
+            {
+                //update error saving message
+                TempErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, "Could not construct a valid function"));
+                UpdateMessages(true);
+            }
+        }
+
         //public override void SaveWhileEditing()
         //{
         //    if (!HasChanges)
@@ -414,13 +526,14 @@ namespace FdaViewModel.FrequencyRelationships
 
         //    try
         //    {
-                
+
         //        //try to construct the new coordinates function
         //        ICoordinatesFunction coordFunc = GetCoordinatesFunction();
-        //        EditorVM.Function = coordFunc;
+        //        UpdateLineData(coordFunc);
+        //        //EditorVM.Function = coordFunc;
         //        //todo: what is this, i can't just assume its a rating curve? This line needs to be here to save the curve out properly.
         //        //I think i just needed some enum to be there so i chose rating.
-        //        Curve = IFdaFunctionFactory.Factory(IParameterEnum.Rating, (IFunction)coordFunc);
+        //        //Curve = IFdaFunctionFactory.Factory(IParameterEnum.Rating, (IFunction)coordFunc);
 
 
         //    }
@@ -431,7 +544,7 @@ namespace FdaViewModel.FrequencyRelationships
         //        UpdateMessages(true);
         //        return;
         //    }
-           
+
 
         //    InTheProcessOfSaving = true;
         //    ChildElement elementToSave = ActionManager.SaveUndoRedoHelper.CreateElementFromEditorAction(this);
@@ -439,7 +552,7 @@ namespace FdaViewModel.FrequencyRelationships
         //    {
         //        CurrentElement = elementToSave;
         //    }
-           
+
         //    LastEditDate = DateTime.Now.ToString("G");
         //    elementToSave.LastEditDate = LastEditDate;
         //    CurrentElement.LastEditDate = LastEditDate;
@@ -457,106 +570,106 @@ namespace FdaViewModel.FrequencyRelationships
         //    HasChanges = false;
         //}
 
-            //public void SaveWhileEditing()
-            //{
-            //    SavingText = " Saving...";
-            //    ChildElement elementToSave = ActionManager.SaveUndoRedoHelper.CreateElementFromEditorAction(this);
-            //    if (CurrentElement == null)
-            //    {
-            //        CurrentElement = elementToSave;
-            //    }
-            //    LastEditDate = DateTime.Now.ToString("G");
-            //    elementToSave.LastEditDate = LastEditDate;
-            //    CurrentElement.LastEditDate = LastEditDate;
-            //    ActionManager.SaveUndoRedoHelper.Save(CurrentElement.Name, CurrentElement, elementToSave);
-            //    //saving puts all the right values in the db but does not update the owned element in the tree. (in memory values)
-            //    // i need to update those properties here
-            //    AssignValuesFromEditorToCurrentElement();
+        //public void SaveWhileEditing()
+        //{
+        //    SavingText = " Saving...";
+        //    ChildElement elementToSave = ActionManager.SaveUndoRedoHelper.CreateElementFromEditorAction(this);
+        //    if (CurrentElement == null)
+        //    {
+        //        CurrentElement = elementToSave;
+        //    }
+        //    LastEditDate = DateTime.Now.ToString("G");
+        //    elementToSave.LastEditDate = LastEditDate;
+        //    CurrentElement.LastEditDate = LastEditDate;
+        //    ActionManager.SaveUndoRedoHelper.Save(CurrentElement.Name, CurrentElement, elementToSave);
+        //    //saving puts all the right values in the db but does not update the owned element in the tree. (in memory values)
+        //    // i need to update those properties here
+        //    AssignValuesFromEditorToCurrentElement();
 
-            //    //update the rules to exclude the new name from the banned list
-            //    //OwnerValidationRules.Invoke(this, _CurrentElement.Name);  
-            //    SavingText = " Saved at " + DateTime.Now.ToShortTimeString();
-            //}
+        //    //update the rules to exclude the new name from the banned list
+        //    //OwnerValidationRules.Invoke(this, _CurrentElement.Name);  
+        //    SavingText = " Saved at " + DateTime.Now.ToShortTimeString();
+        //}
 
-            //public override void Save()
-            //{
-            //    SaveWhileEditing();
-            //}
+        //public override void Save()
+        //{
+        //    SaveWhileEditing();
+        //}
 
-            //public void UpdateTheUndoRedoRowItems()
-            //{
-            //    //int currentIndex = CurrentElement.ChangeIndex;
-            //    //RedoRows.Clear();
-            //    //for (int i = currentIndex + 1; i < UndoRedoRows.Count; i++)
-            //    //{
-            //    //    RedoRows.Add(UndoRedoRows[i]);
-            //    //}
+        //public void UpdateTheUndoRedoRowItems()
+        //{
+        //    //int currentIndex = CurrentElement.ChangeIndex;
+        //    //RedoRows.Clear();
+        //    //for (int i = currentIndex + 1; i < UndoRedoRows.Count; i++)
+        //    //{
+        //    //    RedoRows.Add(UndoRedoRows[i]);
+        //    //}
 
-            //}
+        //}
 
-            //public void AssignValuesFromElementToEditor(ChildElement element)
-            //{
-            //    //todo: Refactor: CO
-            //    //AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)element;
-            //    //Name = elem.Name;
-            //    //LastEditDate = elem.LastEditDate;
-            //    //Description = elem.Description;
-            //    //_Curve = elem.Distribution;
-            //    //Mean = elem.Distribution.GetMean;
-            //    //StandardDeviation = elem.Distribution.GetStDev;
-            //    //Skew = elem.Distribution.GetG;
-            //    //SampleSize = elem.Distribution.GetSampleSize;
+        //public void AssignValuesFromElementToEditor(ChildElement element)
+        //{
+        //    //todo: Refactor: CO
+        //    //AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)element;
+        //    //Name = elem.Name;
+        //    //LastEditDate = elem.LastEditDate;
+        //    //Description = elem.Description;
+        //    //_Curve = elem.Distribution;
+        //    //Mean = elem.Distribution.GetMean;
+        //    //StandardDeviation = elem.Distribution.GetStDev;
+        //    //Skew = elem.Distribution.GetG;
+        //    //SampleSize = elem.Distribution.GetSampleSize;
 
-            //}
-            //public void AssignValuesFromEditorToCurrentElement()
-            //{
-            //    CurrentElement.LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            //    CurrentElement.Name = Name;
-            //    ((AnalyticalFrequencyElement)CurrentElement).Description = Description;
-            //    ((AnalyticalFrequencyElement)CurrentElement).Curve = _Curve;
-            //}
+        //}
+        //public void AssignValuesFromEditorToCurrentElement()
+        //{
+        //    CurrentElement.LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+        //    CurrentElement.Name = Name;
+        //    ((AnalyticalFrequencyElement)CurrentElement).Description = Description;
+        //    ((AnalyticalFrequencyElement)CurrentElement).Curve = _Curve;
+        //}
 
-            //public void FilterRowsByLevel(FdaLogging.LoggingLevel level)
-            //{
+        //public void FilterRowsByLevel(FdaLogging.LoggingLevel level)
+        //{
 
-            //    ObservableCollection<FdaLogging.LogItem> tempList = new ObservableCollection<FdaLogging.LogItem>();
-            //    foreach (FdaLogging.LogItem mri in MessageRows)
-            //    {
-            //        if (mri.LogLevel.Equals(level.ToString()))
-            //        {
-            //            tempList.Add(mri);
-            //        }
-            //    }
+        //    ObservableCollection<FdaLogging.LogItem> tempList = new ObservableCollection<FdaLogging.LogItem>();
+        //    foreach (FdaLogging.LogItem mri in MessageRows)
+        //    {
+        //        if (mri.LogLevel.Equals(level.ToString()))
+        //        {
+        //            tempList.Add(mri);
+        //        }
+        //    }
 
-            //    MessageRows = tempList;
+        //    MessageRows = tempList;
 
-            //}
-            //public void DisplayAllMessages()
-            //{
-            //    //MessageRows = NLogDataBaseHelper.GetMessageRowsForType(GetType());
-            //}
-            //public UncertainCurveDataCollection GetTheElementsCurve()
-            //{
-            //    FdaModel.Functions.FrequencyFunctions.LogPearsonIII lp3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
-            //    Statistics.CurveIncreasing curve = lp3.GetOrdinatesFunction().Function;
-            //    //return (UncertainCurveDataCollection)curve;
-            //    throw new NotImplementedException();
+        //}
+        //public void DisplayAllMessages()
+        //{
+        //    //MessageRows = NLogDataBaseHelper.GetMessageRowsForType(GetType());
+        //}
+        //public UncertainCurveDataCollection GetTheElementsCurve()
+        //{
+        //    FdaModel.Functions.FrequencyFunctions.LogPearsonIII lp3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
+        //    Statistics.CurveIncreasing curve = lp3.GetOrdinatesFunction().Function;
+        //    //return (UncertainCurveDataCollection)curve;
+        //    throw new NotImplementedException();
 
-            //}
+        //}
 
-            //public UncertainCurveDataCollection GetTheEditorsCurve()
-            //{
-            //    //return Distribution;
-            //    throw new NotImplementedException();
+        //public UncertainCurveDataCollection GetTheEditorsCurve()
+        //{
+        //    //return Distribution;
+        //    throw new NotImplementedException();
 
-            //}
-            //public void UpdateNameWithNewValue(string name)
-            //{
-            //    Name = name;
-            //}
+        //}
+        //public void UpdateNameWithNewValue(string name)
+        //{
+        //    Name = name;
+        //}
 
 
-            public void AddRows(int startRow, int numRows)
+        public void AddRows(int startRow, int numRows)
         {
             for(int i = 0;i<numRows;i++)
             {

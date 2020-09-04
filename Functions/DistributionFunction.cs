@@ -49,6 +49,7 @@ namespace Functions
             double pEpsilon = 0.01, pMax = 0.99, p = 0.001;
             double y = _Distribution.InverseCDF(0.001), yMax = _Distribution.InverseCDF(0.999), yEpsilon = (yMax - y) / 100;
             List<ICoordinate> expandedCoordinates = new List<ICoordinate>();
+            double tempVal = 0;
             while (p < pMax)
             {
                 if (p < pEpsilon)
@@ -57,15 +58,20 @@ namespace Functions
                     p = 0;
                 }
                 p = UpdateP(p + pEpsilon, y + yEpsilon, pMax);
+                if(p<= tempVal)
+                {
+                    p = tempVal + .01;
+                }
+                tempVal = p;
                 expandedCoordinates.Add(ICoordinateFactory.Factory(p, F(p)));
             }
             pMax = 0.999;
             pEpsilon = 0.001;
-            while (p < pMax)
-            {
-                p = UpdateP(p + pEpsilon, y + yEpsilon, pMax);
-                expandedCoordinates.Add(ICoordinateFactory.Factory(p, F(p)));
-            }    
+            //while (p < pMax)
+            //{
+            //    p = UpdateP(p + pEpsilon, y + yEpsilon, pMax);
+            //    expandedCoordinates.Add(ICoordinateFactory.Factory(p, F(p)));
+            //}    
             return expandedCoordinates;
         }
         private double UpdateP(double nextP, double nextY, double pMax)

@@ -141,8 +141,8 @@ namespace View.Study
         {
             FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
             //vm.MWMTVConn. MapTreeView = MapTreeView;
-            vm.AddMapsTab(MapTreeView);
             vm.AddCreateNewStudyTab();
+            vm.AddMapsTab(MapTreeView);
 
             //MapWindowControl.MapToolBar.MapWindow = MapWindowControl.MapWindow.MapWindow;
 

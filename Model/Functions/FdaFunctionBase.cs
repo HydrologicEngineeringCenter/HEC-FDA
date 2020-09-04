@@ -50,7 +50,10 @@ namespace Model.Functions
         public IMessageLevels Validate(IValidator<IFdaFunction> validator, out IEnumerable<IMessage> msgs)
         {
             List<IMessage> messages = new List<IMessage>(validator.ReportErrors(this));
-            messages.AddRange(_Function.Messages);
+            if (_Function.Messages != null)
+            {
+                messages.AddRange(_Function.Messages);
+            }
             msgs = messages;
             return msgs.Max();
         }

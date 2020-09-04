@@ -38,11 +38,37 @@ namespace FdaViewModel.Conditions
         public double SharedYAxisMin { get; set; }
         public double SharedYAxisMax { get; set; }
 
-        public ConditionChartViewModel(string chartId) : base(chartId)
+        private readonly FdaCrosshairChartModifier _chartModifier;
+
+        public ConditionChartViewModel(string chartId, FdaCrosshairChartModifier chartModifier) : base(chartId)
         {
             //This is the SciChart modifier group on the view model.
             //Set up your crosshair modifier here as needed.
+            _chartModifier = chartModifier;
             ModifierGroup.ChildModifiers.Add(new BorderModifier());
+            ModifierGroup.ChildModifiers.Add(chartModifier);
+        }
+
+        public ConditionChartViewModel(ConditionChartViewModel original) 
+            : base(original)
+        {
+            _chartModifier = new FdaCrosshairChartModifier(original._chartModifier);
+            ModifierGroup.ChildModifiers.Add(new BorderModifier());
+            ModifierGroup.ChildModifiers.Add(_chartModifier);
+            
+            SharedXAxisMax = original.SharedXAxisMax;
+            SharedXAxisMin = original.SharedXAxisMin;
+            SharedYAxisMax = original.SharedYAxisMax;
+            SharedYAxisMin = original.SharedYAxisMin;
+            XMax = original.XMax;
+            XMin = original.XMin;
+            YMax = original.YMax;
+            YMin = original.YMin;
+            _rangesSet = original._rangesSet;
+            _xUpperLimit = original._xUpperLimit;
+            _xLowerLimit = original._xLowerLimit;
+            _yUpperLimit = original._yUpperLimit;
+            _yLowerLimit = original._yLowerLimit;
         }
 
         protected override void LineDataRemoved(IEnumerable<ILineData> lineDataToRemove)

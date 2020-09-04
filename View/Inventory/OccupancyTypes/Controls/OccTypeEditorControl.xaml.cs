@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using HEC.Plotting.SciChart2D.ViewModel;
 
 namespace View.Inventory.OccupancyTypes.Controls
 {
@@ -216,10 +217,10 @@ namespace View.Inventory.OccupancyTypes.Controls
 
 
             //set the chart view models
-            _StructureChart = new Chart2D(vm.StructureEditorVM.CoordinatesChartViewModel);
-            _ContentChart = new Chart2D(vm.ContentEditorVM.CoordinatesChartViewModel);
-            _VehicleChart = new Chart2D(vm.VehicleEditorVM.CoordinatesChartViewModel);
-            _OtherChart = new Chart2D(vm.OtherEditorVM.CoordinatesChartViewModel);
+            _StructureChart = new Chart2D(new SciChart2DChartViewModel(vm.StructureEditorVM.CoordinatesChartViewModel));
+            _ContentChart = new Chart2D(new SciChart2DChartViewModel(vm.ContentEditorVM.CoordinatesChartViewModel));
+            _VehicleChart = new Chart2D(new SciChart2DChartViewModel(vm.VehicleEditorVM.CoordinatesChartViewModel));
+            _OtherChart = new Chart2D(new SciChart2DChartViewModel(vm.OtherEditorVM.CoordinatesChartViewModel));
 
             //add the new charts to the UI
             StructureTabGrid.Children.Add(_StructureChart);

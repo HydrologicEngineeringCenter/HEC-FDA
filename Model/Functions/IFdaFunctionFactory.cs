@@ -34,9 +34,9 @@ namespace Model
                 case IParameterEnum.ExteriorStageFrequency:
                 case IParameterEnum.InteriorStageFrequency:
                 case IParameterEnum.DamageFrequency:
-                case IParameterEnum.LateralStructureFailure:
                     if (xUnits != UnitsEnum.NotSet && xUnits != UnitsEnum.Probability) throw new ArgumentException($"The {typeof(IFdaFunction)} cannot be constructed because the x ordinate units are set to: {xUnits.Print(false)}. The only valid selection for a {fType.ToString()} function is {UnitsEnum.Probability.ToString()}.");
                     return IFrequencyFunctionFactory.Factory(fx, fType, label, xLabel, yLabel, yUnits);
+                case IParameterEnum.LateralStructureFailure:
                 case IParameterEnum.InflowOutflow:
                 case IParameterEnum.Rating:
                 case IParameterEnum.ExteriorInteriorStage:

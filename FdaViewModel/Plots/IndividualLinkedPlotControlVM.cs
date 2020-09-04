@@ -330,7 +330,7 @@ namespace FdaViewModel.Plots
                     }
                 case IParameterEnum.InflowOutflow:
                     {
-                        ChartModifier = new FdaCrosshairChartModifier(true, true, CrosshairData);
+                        ChartModifier = new FdaCrosshairChartModifier(false, false, CrosshairData);
                         CrosshairData.UpdateModulator += UpdateDoubleLineModulator;
                         break;
                     }
@@ -434,7 +434,10 @@ namespace FdaViewModel.Plots
                 //IndividualPlotWrapperVM.PlotVM = new IndividualLinkedPlotVM(function, elementName, ChartModifier,_IsXAxisLog, _IsYAxisLog, _IsProbabilityXAxis, _XAxisOnBottom,
                  //   _YAxisOnLeft);
 
-                IndividualPlotWrapperVM.AddCurveToPlot(function, elementName, ChartModifier);
+                 var modifier = new FdaCrosshairChartModifier(ChartModifier);
+                 ChartModifier = modifier;
+
+                IndividualPlotWrapperVM.AddCurveToPlot(function, elementName, modifier);
                 CurrentVM = (BaseViewModel)IndividualPlotWrapperVM;
 
             }
@@ -534,14 +537,10 @@ namespace FdaViewModel.Plots
             //it might be the case that we actually want to clobber the links?
             //maybe clobber the chartModifier? 7/1/20
             IsPlotShowing = false;
-            if(PlotIsNotShowing != null)
-            {
-                PlotIsNotShowing(sender, e);
-            }
-            if (SelectedCurveUpdated != null)
-            {
-                SelectedCurveUpdated(sender, e);
-            }
+
+            PlotIsNotShowing?.Invoke(sender, e);
+            SelectedCurveUpdated?.Invoke(sender, e);
+
         }
 
         public void PopThePlotOut(object sender, EventArgs e)

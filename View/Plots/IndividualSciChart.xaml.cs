@@ -15,6 +15,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using FdaViewModel.Conditions;
+using HEC.Plotting.SciChart2D.ViewModel;
 
 namespace View.Plots
 {
@@ -32,13 +34,19 @@ namespace View.Plots
         {
             IIndividualLinkedPlotWrapper vm = (IIndividualLinkedPlotWrapper)this.DataContext;
             IndividualLinkedPlotVM editorVM = vm.PlotVM;
-            Chart2D chart = new Chart2D(editorVM.CoordinatesChartViewModel);
+            ConditionChartViewModel viewModel = new ConditionChartViewModel(editorVM.CoordinatesChartViewModel);
+            Chart2D chart = new Chart2D(viewModel);
+
+            editorVM.CoordinatesChartViewModel = viewModel;
             //the two lines below this will allow me to override the visual range from the IndividualLinkedPlotControl.xaml.cs when linking charts together.
             //chart.GetAxes(HEC.Plotting.Core.Axis.Y)[0].AutoRange = SciChart.Charting.Visuals.Axes.AutoRange.Once;
             //chart.GetAxes(HEC.Plotting.Core.Axis.X)[0].AutoRange = SciChart.Charting.Visuals.Axes.AutoRange.Once;
 
-            chart.GetAxes(HEC.Plotting.Core.Axis.Y)[0].AxisTitle = editorVM.YAxisLabel;
-            chart.GetAxes(HEC.Plotting.Core.Axis.X)[0].AxisTitle = editorVM.XAxisLabel;
+            if (viewModel.AxisViewModel is SciChartAxisViewModel axisVm)
+            {
+                axisVm.YAxisViewModels[0].AxisTitle = editorVM.YAxisLabel;
+                axisVm.XAxisViewModels[0].AxisTitle = editorVM.XAxisLabel;
+            }
             //chart.ti editorVM.Title;
 
             //Binding myBinding = new Binding("EditorVM.CoordinatesChartViewModel");

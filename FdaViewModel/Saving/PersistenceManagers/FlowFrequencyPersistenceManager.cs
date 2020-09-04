@@ -1,11 +1,15 @@
 ﻿using FdaViewModel.FrequencyRelationships;
 using FdaViewModel.Utilities;
+using Functions;
+using Model;
+using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utilities;
 
 namespace FdaViewModel.Saving.PersistenceManagers
 {
@@ -104,6 +108,10 @@ public override Type[] ChangeTableColumnTypes
 
         private string ConvertFlowsToString(List<double> flows)
         {
+            if(flows.Count == 0)
+            {
+                return "";
+            }
             StringBuilder sb = new StringBuilder();
             foreach(double d in flows)
             {
@@ -152,14 +160,69 @@ public override Type[] ChangeTableColumnTypes
             List<double> analyticalFlows = ConvertStringToFlows((string)rowData[ANALYTICAL_FLOWS_COL]);
             List<double> graphicalFlows = ConvertStringToFlows((string)rowData[GRAPHICAL_FLOWS_COL]);
 
-            //todo: Refactor: I should be  able to pass the xml string into the factory and it create it.
-            //Model.ImpactAreaFunctionFactory.Factory()
+            IFdaFunction func = CreateFdaFunction(mean, stdev, skew, isLogFlow, por, isAnalytical, isStandard, analyticalFlows);
             return new AnalyticalFrequencyElement(name, lastEditDate, desc, por, isAnalytical, isStandard, mean, stdev, skew,
-                isLogFlow, analyticalFlows, graphicalFlows);
-                //todo: Refactor: CO and added the null in the line above
-                //new Statistics.LogPearsonIII(mean, stdev, skew, (int)n));
+                isLogFlow, analyticalFlows, graphicalFlows, func);
 
         }
+
+        public IFdaFunction CreateFdaFunction(double Mean, double StandardDeviation, double Skew, bool IsLogFlow, int PeriodOfRecord,
+            bool IsAnalytical, bool IsStandard, List<double> analyticalFlows)
+        {
+            List<FlowDoubleWrapper> AnalyticalFlows = new List<FlowDoubleWrapper>();
+            foreach(double d in analyticalFlows)
+            {
+                FlowDoubleWrapper fdw = new FlowDoubleWrapper(d);
+                AnalyticalFlows.Add(fdw);
+            }
+
+            List<double> xs = new List<double>();
+            List<double> ys = new List<double>();
+            try
+            {
+                if (IsAnalytical)
+                {
+                    if (IsStandard)
+                    {
+                        //todo use mean, st dev, and skew to create the curve
+
+                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                        IDistribution dist = IDistributionFactory.FactoryLogPearsonIII(Mean, StandardDeviation, Skew, IsLogFlow, PeriodOfRecord);
+                        if (dist.State < IMessageLevels.Error)
+                        {
+                            IFunction func = IFunctionFactory.Factory(dist);
+                            return IFdaFunctionFactory.Factory(IParameterEnum.InflowFrequency, func);
+
+                        }
+
+                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                    }
+                    else
+                    {
+                        List<double> flows = new List<double>();
+                        foreach (FlowDoubleWrapper d in AnalyticalFlows)
+                        {
+                            flows.Add(d.Flow);
+                        }
+
+                        IDistribution dist = IDistributionFactory.FactoryFitLogPearsonIII(flows, IsLogFlow, PeriodOfRecord);
+                        if (dist.State < IMessageLevels.Error)
+                        {
+                            IFunction func = IFunctionFactory.Factory(dist);
+                            return IFdaFunctionFactory.Factory(IParameterEnum.InflowFrequency, func);
+                        }
+                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+
+        }
+
         #endregion
         /// <summary>
         /// Flow frequency doesn not save to its own table. All is contained in the parent row

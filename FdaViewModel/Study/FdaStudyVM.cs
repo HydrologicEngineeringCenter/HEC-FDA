@@ -309,8 +309,10 @@ namespace FdaViewModel.Study
             //vm.SetMapWindowProperty += SetMapWindowProperty;
             vm.Name = "map window vm";
             DynamicTabVM mapTabVM = new DynamicTabVM("Map", vm, "Map", false, false);
-            TabController.Instance.AddTab(mapTabVM);
+            Navigate(mapTabVM, false, false);
+            //TabController.Instance.AddTab(mapTabVM);
             TabController.Instance.MWMTVConnector = _MWMTVConn;
+            //TabController.Instance.SelectedDynamicTabIndex = 0;
 
             //for testing, delete me
             //LoadMapLayers(null, null);
@@ -327,12 +329,10 @@ namespace FdaViewModel.Study
             DynamicTabVM newStudyTab = new DynamicTabVM("Create New Study", vm, "CreateNewStudy", false, true);
             newStudyTab.Name = "CreateStudyTab";
             TabController.Instance.AddTab(newStudyTab);
-            //todo: delete me. This is just for testing
-            //DynamicTabVM sciChartTab = new DynamicTabVM("test", new SciChartTestingVM(), "tester345");
-            //TabController.Instance.AddTab(sciChartTab);
+
         }
 
-       
+
 
         #endregion
         public void WriteMapLayersXMLFile()
@@ -378,9 +378,6 @@ namespace FdaViewModel.Study
 
         public void LoadMapLayers(object sender, EventArgs e)
         {
-            
-            
-
             //bool isMainThread = CheckForMainThread();
             //Storage.Connection.Instance.ProjectFile = @"C:\Users\cody\Documents\HEC\HEC-FDA\Studies\sep 18\sep 18.sqlite";
             string path = Storage.Connection.Instance.ProjectDirectory + "\\MapLayers.xml";
@@ -450,12 +447,12 @@ namespace FdaViewModel.Study
         //}
         public override void Dispose()
         {
-            FdaLogging.Disposer.DeleteOldLogs();
-            FdaLogging.Disposer.DeleteLogsOverMaxNumber();
+            Disposer.DeleteOldLogs();
+            Disposer.DeleteLogsOverMaxNumber();
             //FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
             //FdaModel.Utilities.Initialize.DisposeGDAL();
             WriteMapLayersXMLFile();
-            FdaLogging.Disposer.Dispose();
+            Disposer.Dispose();
         }
 
         /// <summary>

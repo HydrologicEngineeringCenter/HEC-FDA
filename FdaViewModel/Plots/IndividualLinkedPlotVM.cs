@@ -77,8 +77,7 @@ namespace FdaViewModel.Plots
             bool xAxisOnBottom, bool yAxisOnLeft) 
             : this(baseFunction,isXAxisLog, isYAxisLog, isProbabilityXAxis, selectedElementName)
         {
-            CoordinatesChartViewModel = new ConditionChartViewModel(selectedElementName);
-            CoordinatesChartViewModel.ModifierGroup.ChildModifiers.Add(chartModifier);
+            CoordinatesChartViewModel = new ConditionChartViewModel(selectedElementName, chartModifier);
             //BaseFunction = baseFunction;
             //if(baseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency)
             //{
