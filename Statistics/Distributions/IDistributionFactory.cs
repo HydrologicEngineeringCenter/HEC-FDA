@@ -185,15 +185,14 @@ namespace Statistics
         /// <summary>
         /// Constructs a <see cref="IDistributionEnum.LogPearsonIII"/> <see cref="IDistribution"/>
         /// </summary>
-        /// <param name="mean"> The mean of the distribution. </param>
-        /// <param name="stDev"> The standard deviation of the distribution. </param>
-        /// <param name="skew"> The skewness of the distribution. </param>
-        /// <param name="isLogParameters"> <see langword="true"/> if the <paramref name="mean"/>, <paramref name="stDev"/>, and <paramref name="skew"/> values are log based 10 values, <see langword="false"/> by default. If false, the <see cref="IDistribution"/> is generated after first computing the log based 10 values.
+        /// <param name="mean"> The mean of the logged distribution (or sample data). NOTE: this is the mean of the logged data, NOT the log of the mean. </param>
+        /// <param name="stDev"> The standard deviation of the logged distribution (or sample data). NOTE: this is the standard deviation of the logged data, NOT the log of the standard deviation. </param>
+        /// <param name="skew"> The skew of the logged distribution (or sample data). NOTE: this is the skew of the logged data, NOT the log of the skew.  </param>
         /// <param name="sampleSize"> An optional parameter describing the sample size used to calculated the sample <paramref name="mean"/>, <paramref name="stDev"/> and <paramref name="skew"/>. Leave blank if a population distribution is intended. </param>
         /// <returns> A <see cref="Statistics.Distributions.LogPearsonIII"/> object returned as an implementation of the  <see cref="IDistribution"/> interface. </returns>
-        public static IDistribution FactoryLogPearsonIII(double mean, double stDev, double skew, bool isLogParameters = false, int sampleSize = int.MaxValue)
+        public static IDistribution FactoryLogPearsonIII(double mean, double stDev, double skew, int sampleSize = int.MaxValue)
         {
-            return new Distributions.LogPearsonIII(mean, stDev, skew, isLogParameters, sampleSize);
+            return new Distributions.LogPearsonIII(mean, stDev, skew, sampleSize);
         }
         /// <summary>
         /// Constructs a <see cref="IDistributionEnum.LogPearsonIII"/> <see cref="IDistribution"/>, by fitting as set of sample data to the distribution.

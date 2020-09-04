@@ -15,6 +15,8 @@ namespace Model.Validation.Functions
         public IEnumerable<IMessage> ReportErrors(IFdaFunction obj)
         {
             List<IMessage> msgs = new List<IMessage>();
+            if (!obj.ParameterType.IsFunction() && !obj.IsMetricFunction()) msgs.Add(IMessageFactory.Factory(
+                IMessageLevels.Error, $"The specified parameter: {obj.ParameterType.Print(true)} is not function."));
             if (obj.XSeries.State > IMessageLevels.NoErrors) msgs.Add(IMessageFactory.Factory(obj.XSeries.State,
                 $"The function domain contains {obj.XSeries.State.ToString()}s. Check details for more information.",
                 $"The {obj.XSeries.Label} contains the following validation messages: \r\n{obj.XSeries.Messages.PrintTabbedListOfMessages()}"));

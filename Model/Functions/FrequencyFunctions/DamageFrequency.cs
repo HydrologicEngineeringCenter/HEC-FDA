@@ -22,7 +22,7 @@ namespace Model.Functions
         #endregion
 
         #region Constructor
-        internal DamageFrequency(IFunction fx, string label, string xLabel = "", string yLabel = "", UnitsEnum yUnits = UnitsEnum.Dollars) : base(fx)
+        internal DamageFrequency(IFunction fx, string label, string xLabel = "", string yLabel = "", UnitsEnum yUnits = UnitsEnum.ThousandDollars) : base(fx)
         {
             Label = label == "" ? ParameterType.Print() : label;
             XSeries = IParameterFactory.Factory(fx, IParameterEnum.NonExceedanceProbability, true, true, UnitsEnum.Probability, xLabel);

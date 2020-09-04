@@ -24,6 +24,7 @@ namespace Statistics.Validation
             if (obj.IsNull()) throw new ArgumentNullException(nameof(obj), "The log Pearson III distribution could not be validated because it is null.");
             if (!(obj.SampleSize > 0)) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"{Resources.InvalidParameterizationNotice(obj.Print(true))} {obj.Requirements(false)} {Resources.SampleSizeSuggestion()}."));
             if (!obj.Range.IsFinite()) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"{Resources.NonFiniteRangeNotice(obj)}"));
+            msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The log Pearson III distribution has been restricted to the finite range: {obj.Range.Print(false)} which spans the probability range: {obj._ProbabilityRange.Print(false)}."));
             return msgs;
         }
         internal static bool IsConstructable(double mean, double sd, double skew, int n, out string error)

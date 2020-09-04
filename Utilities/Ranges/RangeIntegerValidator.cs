@@ -19,7 +19,11 @@ namespace Utilities.Ranges
         {
             List<IMessage> msgs = new List<IMessage>();
             if (!ValidationExtensions.IsRange(obj.Min, obj.Max, true, true)) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The specified range: {obj.Print()} is invalid because it does not represent a logical range."));
-            if (obj.Min == obj.Max) msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The specified minimum and maximum values: {obj.Min} are identical. This is allowed but makes results in a range that contains a single point."));
+            if (obj.Min == obj.Max)
+            {
+                if (obj._NotSingleValueRequirement) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"The specified minimum and maximum values: {obj.Min} are identical."));
+                else msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The specified minimum and maximum values: {obj.Min} are identical. This is allowed but makes results in a range that contains a single point."));
+            }
             return msgs;
         }
     }

@@ -12,9 +12,13 @@ namespace Model
     /// <item> 001 - 009: probabilities. </item> 
     /// <item> 011 - 019: flows. </item>
     /// <item> 021 - 029: elevation/lengths (odd values include ground elevation, even values do not). </item>
+    /// <item> 031 - 039: flood damages. </item>
+    /// <item> 041 - 049: time. </item>
     /// <item> 101 - 109: compute point functions (i.e. index location) frequency functions (odd values) and transform functions (even values). </item>
     /// <item> 111 - 113: lateral structure, failure function, frequency of stage of failure. </item>
-    /// </list>C:\Users\q0hecjrk\Documents\_Source\Git\FloodDamageAssessment\Model\Parameters\IParameterEnum.cs
+    /// <item> 121 - 129: metrics. </item>
+    /// <itme> 131 - 139: metric year functions. </itme>
+    /// </list>
     /// </summary>
     public enum IParameterEnum
     {
@@ -76,6 +80,11 @@ namespace Model
         FloodDamages = 31,
 
         /// <summary>
+        /// Analysis year.
+        /// </summary>
+        Year = 41,
+
+        /// <summary>
         /// Annual peak inflow frequency function.
         /// </summary>
         InflowFrequency = 101,            //AnnualExceedanceChance-> InflowPeakDischarge
@@ -123,6 +132,48 @@ namespace Model
         /// <summary>
         /// The frequency of the exterior stage associated with the failure of the lateral structure in a realization. 
         /// </summary>
-        LatralStructureFailureElevationFrequency = 113
+        LatralStructureFailureElevationFrequency = 113,
+
+        /// <summary>
+        /// Annual chance that an exterior (in-channel) water surface elevation is exceeded.
+        /// </summary>
+        ExteriorStageAEP = 121,
+        /// <summary>
+        /// Annual chance that an interior (floodplain) water surface elevation is exceeded.
+        /// </summary>
+        InteriorStageAEP = 122,
+        /// <summary>
+        /// Annual chance that an amount of flood damages exceeded.
+        /// </summary>
+        DamageAEP = 123,
+        /// <summary>
+        /// Expected annual damages.
+        /// </summary>
+        EAD = 124,
+        /// <summary>
+        /// Equivalent annual damages (EAD discounted over project analysis period),
+        /// </summary>
+        EquivalentAnnualDamages,
+
+        /// <summary>
+        /// Condition year to exterior stage annual exceedance probability (AEP) function. 
+        /// </summary>
+        YearExteriorStageAEP = 131,
+        /// <summary>
+        /// Condition year to interior stage annual exceedance probability (AEP) function.
+        /// </summary>
+        YearInteriorStageAEP = 132,
+        /// <summary>
+        /// Condition year to flood damage annual exceedance probability (AEP) function.
+        /// </summary>
+        YearDamageAEP = 133,
+        /// <summary>
+        /// Condition year to expected annual damage (EAD) function.
+        /// </summary>
+        YearEAD = 134,
+        /// <summary>
+        /// Condition year to equivalent annual damage function.
+        /// </summary>
+        YearEquavalentAnnualDamages = 135
     }
 }

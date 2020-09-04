@@ -199,11 +199,11 @@ namespace ModelTests.ExcelTesting
                 if (results.ContainsKey(metric))
                 {
                     double actual = results[metric];
-                    dt.Rows.Add(metrics[i].Type.ToString() + " = " + actual.ToString());
+                    dt.Rows.Add(metrics[i].ParameterType.ToString() + " = " + actual.ToString());
                 }
                 else
                 {
-                    dt.Rows.Add("Metric: " + metric.Type.ToString() + " was not in the condition's results");
+                    dt.Rows.Add("Metric: " + metric.ParameterType.ToString() + " was not in the condition's results");
                 }
             }
             return dt;

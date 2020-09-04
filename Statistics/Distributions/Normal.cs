@@ -59,7 +59,7 @@ namespace Statistics.Distributions
                 if (!min.IsFinite()) min = _Distribution.InverseCumulativeDistribution(p);
                 if (!max.IsFinite()) max = _Distribution.InverseCumulativeDistribution(1 - p);
             }
-            return IRangeFactory.Factory(epsilon, 1 - epsilon);
+            return IRangeFactory.Factory(p, 1 - p);
         }
         
         #region IDistribution Functions

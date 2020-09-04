@@ -5,9 +5,9 @@ using System.Text;
 using Utilities;
 using Functions;
 
-namespace Model.Conditions.Locations
+namespace Model.Conditions.Locations.Years
 {
-    internal sealed class ConditionLocationTimeNoLateralStructure : ConditionLocationTimeBase<string>
+    internal sealed class ConditionLocationYearNoLateralStructure : ConditionLocationYearBase<string>
     {
         #region Properties
         
@@ -16,20 +16,20 @@ namespace Model.Conditions.Locations
         #endregion
 
         #region Constructor
-        internal ConditionLocationTimeNoLateralStructure(ILocation location, int yr, IFrequencyFunction frequencyFx, IEnumerable<ITransformFunction> transformFxs, IEnumerable<IMetric> metrics, string label = ""): base(location, yr, frequencyFx, transformFxs, metrics, label)
+        internal ConditionLocationYearNoLateralStructure(ILocation location, int yr, IFrequencyFunction frequencyFx, IEnumerable<ITransformFunction> transformFxs, IEnumerable<IMetric> metrics, string label = ""): base(location, yr, frequencyFx, transformFxs, metrics, label)
         {
             //TODO: Validation            
             Parameters = ParameterSamplePairs();
         }
         #endregion
         #region Functions
-        public override IConditionLocationTimeRealization ComputePreview()
+        public override IConditionLocationYearRealization ComputePreview()
         {
             Dictionary<IParameterEnum, ISample> parameters = new Dictionary<IParameterEnum, ISample>();
             foreach (var pair in Parameters) parameters.Add(pair.Key, new Samples.Sample());
             return Compute(parameters); 
         }
-        public override IConditionLocationTimeRealization Compute(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters = null, int id = -1)
+        public override IConditionLocationYearRealization Compute(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters = null, int id = -1)
         {
             int metricIndex = 0;
             IList<IMetric> endPoints = Metrics.ToList();
@@ -46,7 +46,7 @@ namespace Model.Conditions.Locations
                     metricIndex++;
                 }
             }
-            return new ConditionLocationTimeRealizationNoLateralStructure(sampledFxs, metrics, id);
+            return new ConditionLocationYearRealizationNoLateralStructure(sampledFxs, metrics, id);
         }
         #endregion
 

@@ -10,6 +10,8 @@ namespace Statistics.Distributions
 {
     internal class LogPearsonIII: IDistribution, IValidate<LogPearsonIII> 
     {
+        internal readonly IRange<double> _ProbabilityRange; 
+        
         #region Properties
         public IDistributionEnum Type => IDistributionEnum.LogPearsonIII;
         public double Mean { get; }
@@ -26,24 +28,19 @@ namespace Statistics.Distributions
         #endregion
 
         #region Constructor
-        public LogPearsonIII(double mean, double standardDeviation, double skew, bool isLogParameters = false, int sampleSize = int.MaxValue)
+        public LogPearsonIII(double mean, double standardDeviation, double skew, int sampleSize = int.MaxValue)
         {
             if (!Validation.LogPearsonIIIValidator.IsConstructable(mean, standardDeviation, skew, sampleSize, out string error)) throw new Utilities.InvalidConstructorArgumentsException(error);
             else
             {
-                if (!isLogParameters)
-                {
-                    mean = Math.Log10(mean);
-                    standardDeviation = Math.Log10(standardDeviation);
-                    skew = Math.Log10(skew);
-                }
                 Mean = mean;
                 Skewness = skew;
                 SampleSize = sampleSize;
                 StandardDeviation = standardDeviation;
                 Variance = Math.Pow(standardDeviation, 2);
                 Median = InverseCDF(0.50);
-                Range = IRangeFactory.Factory(InverseCDF(0), InverseCDF(1));
+                _ProbabilityRange = FiniteRange(); 
+                Range = IRangeFactory.Factory(InverseCDF(_ProbabilityRange.Min), InverseCDF(_ProbabilityRange.Max)); 
                 State = Validate(new Validation.LogPearsonIIIValidator(), out IEnumerable<Utilities.IMessage> msgs);
                 Messages = msgs;
             }
@@ -55,17 +52,37 @@ namespace Statistics.Distributions
         {
             return validator.IsValid(this, out msgs);
         }
-               
+
+        private IRange<double> FiniteRange()
+        {
+            double min = double.NegativeInfinity, max = double.PositiveInfinity, p = 0, epsilon = 1 / 1000000000d;
+            while (!(min.IsFinite() && max.IsFinite()))
+            {
+                p += epsilon;
+                if (!min.IsFinite()) min = InverseCDF(p);
+                if (!max.IsFinite()) max = InverseCDF(1 - p);
+            } 
+            return IRangeFactory.Factory(p, 1 - p);
+        }
+
+
         #region IDistribution Functions
         public double PDF(double x)
         {
-            PearsonIII p3 = new PearsonIII(Mean, StandardDeviation, Skewness);
-            // the last part of this is odd to me. Again, it is based on Will Lehman's Statistics assembly.
-            return p3.PDF(Math.Log10(x)) / x / Math.Log(10); 
+            if (x < Range.Min || x > Range.Max) return double.Epsilon;
+            else
+            {
+                PearsonIII p3 = new PearsonIII(Mean, StandardDeviation, Skewness);
+                // the last part of this is odd to me. Again, it is based on Will Lehman's Statistics assembly.
+                return p3.PDF(Math.Log10(x)) / x / Math.Log(10);
+            }          
         }
         public double CDF(double x)
         {
-            // if x <= 0 then p = 0.
+            if (x < Range.Min) return 0;
+            if (x == Range.Min) return _ProbabilityRange.Min;
+            if (x == Range.Max) return _ProbabilityRange.Max;
+            if (x > Range.Max) return 1;
             double p = 0;
             if (x > 0)
             {               
@@ -77,6 +94,24 @@ namespace Statistics.Distributions
         }
         public double InverseCDF(double p)
         {
+            
+            if (!p.IsFinite()) 
+            {
+                throw new ArgumentException($"The value of specified probability parameter: {p} is invalid because it is not on the valid probability range: [0, 1].");
+            }
+            else // Range has been set check p against [_ProbabilityRange.Min, _ProbabilityRange.Max]
+            {
+                if (Range.IsNull()) // object is being constructued
+                { 
+                    if (p < 0 || p > 1) throw new ArgumentException($"The value of specified probability parameter: {p} is invalid because it is not on the valid probability range: [0, 1].");
+                }
+                else
+                {
+                    if (p <= _ProbabilityRange.Min) return Range.Min;
+                    if (p >= _ProbabilityRange.Max) return Range.Max;
+                }
+            }
+            
             // this is totally based on Will's code in the statistics library
             Normal norm = new Normal(0, 1);
             double zScore = norm.InverseCDF(p);
@@ -98,7 +133,7 @@ namespace Statistics.Distributions
         //public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(SampleSize, numberGenerator));
         public string Print(bool round = false) => round ? Print(Mean, StandardDeviation, Skewness, SampleSize) : $"log PearsonIII(mean: {Mean}, sd: {StandardDeviation}, skew: {Skewness}, sample size: {SampleSize})";
         public string Requirements(bool printNotes) => RequiredParameterization(printNotes);
-        public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
+        public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print(), StringComparison.InvariantCultureIgnoreCase) == 0 ? true : false;
         #endregion
 
         internal static string Print(double mean, double sd, double skew, int n) => $"log PearsonIII(mean: {mean.Print()}, sd: {sd.Print()}, skew: {skew.Print()}, sample size: {n.Print()})";
@@ -126,7 +161,7 @@ namespace Statistics.Distributions
             IData data = sample.IsNullOrEmpty() ? throw new ArgumentNullException(nameof(sample)) : isLogSample ? IDataFactory.Factory(sample) : IDataFactory.Factory(logSample);
             if (!(data.State < IMessageLevels.Error) || data.Elements.Count() < 3) throw new ArgumentException($"The {nameof(sample)} is invalid because it contains an insufficient number of finite, numeric values (3 are required but only {data.Elements.Count()} were provided).");
             ISampleStatistics stats = ISampleStatisticsFactory.Factory(data);
-            return new LogPearsonIII(stats.Mean, stats.StandardDeviation, stats.Skewness, isLogParameters: true, sampleSize == -404 ? stats.SampleSize : sampleSize);
+            return new LogPearsonIII(stats.Mean, stats.StandardDeviation, stats.Skewness, sampleSize == -404 ? stats.SampleSize : sampleSize);
         }
 
         public string WriteToXML()

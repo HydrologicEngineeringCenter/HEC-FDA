@@ -9,13 +9,9 @@ namespace Model
     /// <summary>
     /// Represents the <see cref="ICondition"/> at a specific location.
     /// </summary>
-    public interface IConditionLocationTime<T>: IConditionLocationTimeSummary
+    public interface IConditionLocationYear<T>: IConditionLocationYearSummary
     {        
-        /// <summary>
-        /// A label describing the condition. Concatenates the year and location by default.
-        /// </summary>
-        string Label { get; }
-        
+       
         /// <summary>
         /// The function used to initialize a compute.
         /// </summary>
@@ -37,12 +33,7 @@ namespace Model
         /// Provides an list of constant compute parameters.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<IParameterEnum> ConstantParameters();       
-        /// <summary>
-        /// Produces a compute with the parameters held at their mean values.
-        /// </summary>
-        /// <returns> A realization of the compute with the parameters held to their mean values. </returns>
-        IConditionLocationTimeRealization ComputePreview();     
+        IEnumerable<IParameterEnum> ConstantParameters();           
     }
 }
 

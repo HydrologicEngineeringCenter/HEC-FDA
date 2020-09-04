@@ -9,7 +9,7 @@ namespace Model
     public class Metric: IMetric
     {
         #region Properties
-        public double ExceedanceTarget { get; } = 0;
+        public double Ordinate { get; } = 0;
         public IMetricEnum Type { get; } = IMetricEnum.NotSet;
         public IParameterEnum TargetFunction { get; }
         #endregion
@@ -20,7 +20,7 @@ namespace Model
             if (type == IMetricEnum.NotSet) throw new ArgumentException("The desired type of metric must be set.");
             if (type != IMetricEnum.ExpectedAnnualDamage && double.IsNaN(exceedanceTarget) || double.IsInfinity(exceedanceTarget)) throw new ArgumentException("A computable target value must be provided.");
             Type = type;
-            ExceedanceTarget = exceedanceTarget;
+            Ordinate = exceedanceTarget;
             TargetFunction = GetTargetFunction();
         }
         internal Metric ()
@@ -63,7 +63,7 @@ namespace Model
             }
             else
             {
-                return sampledFreqFunc.InverseF(new Constant(ExceedanceTarget)).Value();
+                return sampledFreqFunc.InverseF(new Constant(Ordinate)).Value();
                 //return frequencyFunction.GetXFromY(ExceedanceTarget);
             }
         }
