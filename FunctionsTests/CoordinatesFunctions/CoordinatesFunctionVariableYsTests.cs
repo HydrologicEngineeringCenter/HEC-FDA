@@ -120,7 +120,7 @@ namespace FunctionsTests.CoordinatesFunctions
         public void CoordinatesFunctionVariableYs_IsDistributedYs_Returns_True(List<ICoordinate> value)
         {
             ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(value);
-            Assert.True(((CoordinatesFunctionVariableYs)testObj).IsDistributedYs);
+            Assert.True(((CoordinatesFunctionVariableYs)testObj).IsDistributed);
         }
         #endregion
         #region Order Property Tests // No setters here yet

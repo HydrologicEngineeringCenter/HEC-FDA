@@ -46,37 +46,55 @@ namespace Functions
              *  (2) 10 probability steps between p = 0.99 and .999 (big values)
              *  (3) x steps to 1% of the x range between p = 0.001 and 0.999 (up to 1000 year for flood analysis)
              */
-            double pEpsilon = 0.01, pMax = 0.99, p = 0.001;
-            double y = _Distribution.InverseCDF(0.001), yMax = _Distribution.InverseCDF(0.999), yEpsilon = (yMax - y) / 100;
+            double pEpsilon = 0.01, p = _Distribution.CDF(Range.Min), pMax = _Distribution.CDF(Range.Max);
+            double y = _Distribution.InverseCDF(p), yMax = _Distribution.InverseCDF(pMax), yEpsilon = (yMax - y) / 100;
             List<ICoordinate> expandedCoordinates = new List<ICoordinate>();
             while (p < pMax)
             {
-                if (p < pEpsilon)
+                expandedCoordinates.Add(ICoordinateFactory.Factory(p, y));
+                //if (p < pEpsilon)
+                //{
+                //    //move up?
+                //    expandedCoordinates.Add(ICoordinateFactory.Factory(p, y));
+                //    p = 0;
+                //}
+                p = UpdateP(p, pEpsilon, y, yEpsilon, pMax);
+                y = F(p);
+                if (expandedCoordinates.Count == 100)
                 {
-                    expandedCoordinates.Add(ICoordinateFactory.Factory(p, y));
-                    p = 0;
                 }
-                p = UpdateP(p + pEpsilon, y + yEpsilon, pMax);
-                expandedCoordinates.Add(ICoordinateFactory.Factory(p, F(p)));
+                //expandedCoordinates.Add(ICoordinateFactory.Factory(p, F(p)));
             }
-            pMax = 0.999;
-            pEpsilon = 0.001;
-            while (p < pMax)
-            {
-                p = UpdateP(p + pEpsilon, y + yEpsilon, pMax);
-                expandedCoordinates.Add(ICoordinateFactory.Factory(p, F(p)));
-            }    
+            expandedCoordinates.Add(ICoordinateFactory.Factory(pMax, F(pMax)));
+            //pMax = 0.999;
+            //pEpsilon = 0.001;
+            //while (p < pMax)
+            //{
+            //    p = UpdateP(p + pEpsilon, y + yEpsilon, pMax);
+            //    expandedCoordinates.Add(ICoordinateFactory.Factory(p, F(p)));
+            //}    
             return expandedCoordinates;
         }
-        private double UpdateP(double nextP, double nextY, double pMax)
+        private double UpdateP(double lastP, double pEpsilon, double lastY, double yEpsilon, double pMax)
         {
             /*
              * Finds minimum of:
              *  (1) p + pEpsilon
              *  (2) p associated with y + yEpsilon
              *  (3) pMax
-             */
+             */          
+            double nextP = lastP + pEpsilon, nextY = lastY + yEpsilon;
             double p = nextP < InverseF(nextY) ? nextP : InverseF(nextY);
+            if (!(p > lastP))
+            {
+                int yIncrements = 1;
+                while (!(p > lastP))
+                {
+                    yIncrements++;
+                    double candidateP = InverseF(lastY + (yEpsilon * yIncrements));
+                    if (candidateP > lastP) p = candidateP;
+                }
+            }
             return p < pMax ? p : pMax;
         }
         public List<ICoordinate> GetExpandedCoordinates() => Coordinates;
