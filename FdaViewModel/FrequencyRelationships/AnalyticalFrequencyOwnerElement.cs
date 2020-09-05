@@ -136,7 +136,7 @@ namespace FdaViewModel.FrequencyRelationships
             double mean = vm.Mean;
             double stDev = vm.StandardDeviation;
             double skew = vm.Skew;
-            int por = vm.PeriorOfRecord;
+            int por = vm.PeriodOfRecord;
             bool isAnalytical = vm.IsAnalytical;
             bool isStandard = vm.IsStandard;
             bool isLogFlow = vm.IsLogFlow;
@@ -152,7 +152,7 @@ namespace FdaViewModel.FrequencyRelationships
             }
 
             return new AnalyticalFrequencyElement(editorVM.Name, editDate, editorVM.Description,por, isAnalytical, isStandard,mean,stDev,skew,
-                isLogFlow,analyticalFlows, graphicalFlows);
+                isLogFlow,analyticalFlows, graphicalFlows, vm.CreateFdaFunction());
             //return null;
         }
        

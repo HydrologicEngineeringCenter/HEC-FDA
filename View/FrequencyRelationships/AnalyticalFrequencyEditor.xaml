@@ -85,7 +85,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
-                <RadioButton x:Name="rad_standard" Content="Standard" IsChecked="{Binding IsStandard}" Checked="rad_standard_Checked" Margin="5"/>
+                <RadioButton x:Name="rad_standard" Content="Fit to Parameters" IsChecked="{Binding IsStandard}" Checked="rad_standard_Checked" Margin="5"/>
                 <RadioButton x:Name="rad_fitToFlows" Content="Fit to Flows" Checked="rad_fitToFlows_Checked" Margin="5"/>
             </StackPanel>
 
@@ -99,18 +99,21 @@
                     <RowDefinition Height="35"/>
                     <RowDefinition Height="35"/>
                     <RowDefinition Height="35"/>
+                    <RowDefinition Height="35"/>
 
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                
-                <Label Content="Mean:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                <TextBox Grid.Column="1" Text="{Binding Mean, ValidatesOnDataErrors=True}" Margin="5"/>
 
-                <Label Grid.Row="1"  Content="Standard Deviation:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                <TextBox Grid.Row="1"  Grid.Column="1" Text="{Binding StandardDeviation, ValidatesOnDataErrors=True}" Margin="5"/>
+                <CheckBox Grid.Row="0" Grid.Column="0" Content="Is Logged Value" Margin="10,5,5,5" />
 
-                <Label Grid.Row="2"  Content="Skew:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Skew, ValidatesOnDataErrors=True}" Margin="5"/>
+                <Label Grid.Row="1" Content="Mean:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Mean, ValidatesOnDataErrors=True}" Margin="5"/>
+
+                <Label Grid.Row="2"  Content="Standard Deviation:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="2"  Grid.Column="1" Text="{Binding StandardDeviation, ValidatesOnDataErrors=True}" Margin="5"/>
+
+                <Label Grid.Row="3"  Content="Skew:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Skew, ValidatesOnDataErrors=True}" Margin="5"/>
 
                 
                 
@@ -127,7 +130,7 @@
                   CanUserAddRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False"
                   SelectionMode="Extended" SelectionUnit="Cell" >
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Flows test" Binding="{Binding Flow}" Width="*" />
+                            <DataGridTextColumn Header="Flows" Binding="{Binding Flow}" Width="*" />
                         </DataGrid.Columns>
                     </controls:CopyPasteDataGrid>
                 

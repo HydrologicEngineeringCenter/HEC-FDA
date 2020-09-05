@@ -40,7 +40,7 @@ namespace FdaViewModel.FrequencyRelationships
         #endregion
         #region Constructors
         public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, int por, bool isAnalytical, bool isStandard,
-            double mean, double stDev, double skew, bool isLogFlow, List<double> analyticalFlows, List<double> graphicalFlows) : base()
+            double mean, double stDev, double skew, bool isLogFlow, List<double> analyticalFlows, List<double> graphicalFlows, IFdaFunction function) : base()
         {
             POR = por;
             IsAnalytical = isAnalytical;
@@ -58,7 +58,7 @@ namespace FdaViewModel.FrequencyRelationships
 
             Description = desc;
             if (Description == null) Description = "";
-            //Curve = dist;
+            Curve = function;
             NamedAction editflowfreq = new NamedAction();
             editflowfreq.Header = "Edit Analytical Flow Frequency Relationship";
             editflowfreq.Action = EditFlowFreq;
@@ -121,7 +121,7 @@ namespace FdaViewModel.FrequencyRelationships
         {
             AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)elementToClone;
             return new AnalyticalFrequencyElement(elem.Name, elem.LastEditDate, elem.Description,elem.POR, elem.IsAnalytical, elem.IsStandard,
-                elem.Mean, elem.StDev, elem.Skew, elem.IsLogFlow, elem.AnalyticalFlows, elem.GraphicalFlows);
+                elem.Mean, elem.StDev, elem.Skew, elem.IsLogFlow, elem.AnalyticalFlows, elem.GraphicalFlows, elem.Curve);
         }
 
         public void AssignValuesFromEditorToElement(BaseEditorVM editorVM, ChildElement elem)
@@ -143,7 +143,7 @@ namespace FdaViewModel.FrequencyRelationships
             vm.Description = element.Description;
             //vm.Curve = element.Curve;
             vm.LastEditDate = element.LastEditDate;
-            vm.PeriorOfRecord = element.POR;
+            vm.PeriodOfRecord = element.POR;
             vm.IsAnalytical = element.IsAnalytical;
             vm.IsStandard = element.IsStandard;
             vm.Mean = element.Mean;
@@ -172,7 +172,7 @@ namespace FdaViewModel.FrequencyRelationships
             double mean = vm.Mean;
             double stDev = vm.StandardDeviation;
             double skew = vm.Skew;
-            int por = vm.PeriorOfRecord;
+            int por = vm.PeriodOfRecord;
             bool isAnalytical = vm.IsAnalytical;
             bool isStandard = vm.IsStandard;
             bool isLogFlow = vm.IsLogFlow;
@@ -187,7 +187,7 @@ namespace FdaViewModel.FrequencyRelationships
                 graphicalFlows.Add(d.Flow);
             }
             return new AnalyticalFrequencyElement(editorVM.Name, editDate, editorVM.Description, por, isAnalytical, isStandard, mean, stDev, skew,
-                isLogFlow, analyticalFlows, graphicalFlows);
+                isLogFlow, analyticalFlows, graphicalFlows, vm.CreateFdaFunction());
         }
         //public override void Save()
         //{

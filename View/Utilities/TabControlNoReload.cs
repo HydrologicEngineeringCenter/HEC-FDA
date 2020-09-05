@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -96,6 +97,8 @@ namespace View.Utilities
         {
             base.OnSelectionChanged(e);
             UpdateSelectedItem();
+          
+
         }
 
         private void UpdateSelectedItem()
@@ -110,7 +113,27 @@ namespace View.Utilities
 
             // show the right child
             foreach (ContentPresenter child in ItemsHolderPanel.Children)
+            {
+                child.IsVisibleChanged += Child_IsVisibleChanged;
                 child.Visibility = ((child.Tag as TabItem).IsSelected) ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            
+   
+       }
+
+        private void Child_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            TabItem item = GetSelectedTabItem();
+
+            if (item is TabItem)
+            {
+                DynamicTabVM tab = (DynamicTabVM)((TabItem)item).Header;
+                if (tab.BaseVM is MapWindowControlVM)
+                {
+                    ((MapWindowControlVM)tab.BaseVM).SetFocusToTheMapWindow();
+                }
+            }
         }
 
         private ContentPresenter CreateChildContentPresenter(object item)

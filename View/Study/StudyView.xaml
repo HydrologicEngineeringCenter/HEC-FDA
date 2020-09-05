@@ -145,7 +145,9 @@
 
 
 
-                        <utils:TabControlNoReload  x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1" ItemsSource="{Binding TabFactoryInstance.Tabs}" SelectedIndex="{Binding TabFactoryInstance.SelectedDynamicTabIndex, Mode=TwoWay}" SelectionChanged="DynamicTabControl_SelectionChanged"  Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  
+                        <utils:TabControlNoReload  x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1" ItemsSource="{Binding TabFactoryInstance.Tabs}" 
+                                                   SelectedIndex="{Binding TabFactoryInstance.SelectedDynamicTabIndex, Mode=TwoWay}" SelectionChanged="DynamicTabControl_SelectionChanged"  
+                                                   Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  
                                                      IsSynchronizedWithCurrentItem="True"  Style="{StaticResource TabControlNoReloadStyle}">
 
 
@@ -166,8 +168,33 @@
 
                         </utils:TabControlNoReload>
 
-                       
-                        <GridSplitter Grid.Row="1" Grid.Column="0" Margin="0,22,0,0" Background="Gray" BorderBrush="DarkGray" BorderThickness="1" HorizontalAlignment="Right" Width="3"/>
+
+        <!--<TabControl  x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1" ItemsSource="{Binding TabFactoryInstance.Tabs}" 
+                                                   SelectedIndex="{Binding TabFactoryInstance.SelectedDynamicTabIndex, Mode=TwoWay}" SelectionChanged="DynamicTabControl_SelectionChanged"  
+                                                   Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  
+                                                     IsSynchronizedWithCurrentItem="True"  >
+
+
+            <TabControl.ItemTemplate>
+                <DataTemplate DataType="VMUtils:DynamicTabVM">
+                    <utils:TabHeaderControl/>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+
+
+
+            <TabControl.ContentTemplate>
+                <DataTemplate DataType="VMUtils:DynamicTabVM">
+                    <ContentControl Name="masterControl" Content="{Binding BaseVM}" />
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+
+        </TabControl>-->
+
+
+
+
+        <GridSplitter Grid.Row="1" Grid.Column="0" Margin="0,22,0,0" Background="Gray" BorderBrush="DarkGray" BorderThickness="1" HorizontalAlignment="Right" Width="3"/>
 
                         <GridSplitter Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" />
                         <!--<utils:TransactionMessageControl Grid.Row="3" Grid.ColumnSpan="2" />-->

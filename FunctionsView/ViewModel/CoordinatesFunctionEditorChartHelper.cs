@@ -102,7 +102,7 @@ namespace FunctionsView.ViewModel
 
                     }
                     //with linked functions i need to add a point that is the same as the next point
-                    lineData.AddRange(CreateDistributedLineData(func.Coordinates, func.Interpolator, lineColor, logYAxis, probabilityXAxis));
+                    lineData.AddRange(CreateDistributedLineData(func.Coordinates, func.Interpolator, lineColor, logXAxis, logYAxis, probabilityXAxis));
                 }
                 return lineData;
             }
@@ -114,7 +114,7 @@ namespace FunctionsView.ViewModel
                 IOrdinateEnum type = _function.DistributionType;
                 if (type != IOrdinateEnum.Constant)
                 {
-                    return CreateDistributedLineData(_function.Coordinates, _function.Interpolator, _lineColors[0], logYAxis, probabilityXAxis);
+                    return CreateDistributedLineData(_function.Coordinates, _function.Interpolator, _lineColors[0], logXAxis, logYAxis, probabilityXAxis);
                 }
                 else
                 {
@@ -129,7 +129,8 @@ namespace FunctionsView.ViewModel
                         xValues[i] = coord.X.Value();
                         yValues[i] = coord.Y.Value();
                     }
-                    SciLineData data = CreateLineData(xValues, yValues, _function.Interpolator, "Constant", .5, _lineColors[0], logYAxis, probabilityXAxis);
+
+                    SciLineData data = CreateLineData(xValues, yValues, _function.Interpolator, "Constant", .5, _lineColors[0], logXAxis, logYAxis, probabilityXAxis);
                     return new List<SciLineData>() { data };
 
                 }
@@ -195,7 +196,7 @@ namespace FunctionsView.ViewModel
             for(int i = 0;i< yArrays.Count;i++)
             {
                 string seriesName = CreateSeriesName(PROBABILITIES[i]);
-                lineDatas.Add(CreateLineData(xValues, yArrays[i], interpolator, seriesName, PROBABILITIES[i], lineColor, logYAxis, probabilityXAxis));
+                lineDatas.Add(CreateLineData(xValues, yArrays[i], interpolator, seriesName, PROBABILITIES[i], lineColor, logXAxis, logYAxis, probabilityXAxis));
             }
             return lineDatas;
         }
@@ -276,6 +277,7 @@ namespace FunctionsView.ViewModel
 
             switch (interpolator)
             {
+                case InterpolationEnum.Statistical:
                 case InterpolationEnum.Linear:
                     {
 

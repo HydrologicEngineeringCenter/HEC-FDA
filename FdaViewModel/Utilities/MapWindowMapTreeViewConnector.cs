@@ -62,7 +62,9 @@ namespace FdaViewModel.Utilities
 
                 _MapWindow.PlotFeatures();
                 _MapWindow.PlotFeatures();
-
+                _MapWindow.CaptureScreenToGpu();
+                //_MapWindow. MapWindow_Mouse(this, new )
+                
                 //_MapWindow.ZoomFromCenter(1);
                 // _MapWindow.OpenGLMapWindow_Resize(null, null);
                 // _MapWindow.SetupViewPort(extent); definitely not this one

@@ -37,6 +37,13 @@ namespace FdaViewModel.Conditions
             _crosshairData.NextUpdated += NextDataUpdated;
         }
 
+        public FdaCrosshairChartModifier(FdaCrosshairChartModifier original)
+            :this(original._xLinePositive, original._yLinePositive, original._crosshairData)
+        {
+            //Remove strong references to the listeners
+            original._crosshairData.PreviousUpdated -= original.PreviousDataUpdated;
+            original._crosshairData.NextUpdated -= original.NextDataUpdated;
+        }
         private double ComputeYFromX(double x)
         {
             IOrdinate ord = IOrdinateFactory.Factory(x);

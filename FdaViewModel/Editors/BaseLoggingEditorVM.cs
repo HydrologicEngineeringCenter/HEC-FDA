@@ -289,7 +289,7 @@ namespace FdaViewModel.Editors
         {
             List<LogItem> logs = new List<LogItem>();
             List<IMessage> messagesFromEditor = new List<IMessage>();
-            if(EditorVM == null)
+            if(EditorVM == null || EditorVM.Function == null)
             {
                 return logs;
             }

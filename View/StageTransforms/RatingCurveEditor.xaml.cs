@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using HEC.Plotting.SciChart2D.ViewModel;
 
 namespace View.StageTransforms
 {
@@ -32,7 +33,7 @@ namespace View.StageTransforms
         {
             CurveEditorVM vm = (CurveEditorVM)this.DataContext;
             CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
-            Chart2D chart = new Chart2D(editorVM.CoordinatesChartViewModel);
+            Chart2D chart = new Chart2D(new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel));
             //Binding myBinding = new Binding("EditorVM.CoordinatesChartViewModel");
             //myBinding.Source = this.DataContext;
             //chart.SetBinding(Chart2D.DataContextProperty, myBinding);

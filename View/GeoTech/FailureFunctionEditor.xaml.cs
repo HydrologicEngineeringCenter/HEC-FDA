@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using HEC.Plotting.SciChart2D.ViewModel;
 
 namespace View.GeoTech
 {
@@ -32,7 +33,9 @@ namespace View.GeoTech
         {
             CurveEditorVM vm = (CurveEditorVM)this.DataContext;
             CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
-            Chart2D chart = new Chart2D(editorVM.CoordinatesChartViewModel);
+            var model = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
+            // editorVM.CoordinatesChartViewModel = model;
+            Chart2D chart = new Chart2D(model);
             PlotGrid.Children.Add(chart);
             Grid.SetColumn(chart, 2);
         }

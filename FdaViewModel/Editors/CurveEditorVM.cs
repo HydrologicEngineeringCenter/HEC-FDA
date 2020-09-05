@@ -210,7 +210,7 @@ namespace FdaViewModel.Editors
             return EditorVM.CreateFunctionFromTables(); 
         }
 
-        public void SaveWhileEditing()
+        public virtual void SaveWhileEditing()
         {
             if(!HasChanges)
             {

@@ -138,7 +138,7 @@ namespace View.Plots
 
         //}
 
-        public void BindToNextPlot(ILinkedPlotControl nextControl, Chart2DController controller, Guid guid )
+        public void BindToNextPlot(ILinkedPlotControl nextControl, Chart2DController controller)
         {
             IParameterEnum thisType = FunctionType;
             IParameterEnum nextType = nextControl.FunctionType;
@@ -150,9 +150,7 @@ namespace View.Plots
                         //if i am inflow frequency, then i can only link to inflow outflow or to rating
                         if (nextType == IParameterEnum.InflowOutflow)
                         {
-                            //controller.BindChart(ShareableAxis.Y, Chart, ShareableAxis.X, nextControl.Chart);
-                            controller.BindChart(ShareableAxis.Y, Chart, nextControl.Chart);
-
+                            controller.BindChart(ShareableAxis.Y, Chart, ShareableAxis.X, nextControl.Chart);
                             //Chart.SetVerticalMouseEventGroup(guid.ToString());
                             //nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
                             //SetMinMaxAxisValues(Chart, nextControl, Axis.Y);
@@ -160,8 +158,6 @@ namespace View.Plots
                         else if (nextType == IParameterEnum.Rating)
                         {
                             controller.BindChart(ShareableAxis.Y, Chart, nextControl.Chart);
-                            Chart.SetVerticalMouseEventGroup(guid.ToString());
-                            nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
                             SetMinMaxAxisValues(Chart, nextControl, Axis.Y);
                         }
                         break;
@@ -172,8 +168,6 @@ namespace View.Plots
                         if (nextType == IParameterEnum.Rating)
                         {
                             controller.BindChart(ShareableAxis.Y, Chart,ShareableAxis.X, nextControl.Chart);
-                            Chart.SetVerticalMouseEventGroup(guid.ToString());
-                            nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
                             SetMinMaxAxisValues(Chart, nextControl, Axis.Y);
                         }
                         break;
@@ -183,26 +177,17 @@ namespace View.Plots
                         if(nextType == IParameterEnum.LateralStructureFailure)
                         {
                             controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
-                            Chart.SetVerticalMouseEventGroup(guid.ToString());
-                            nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
                             SetMinMaxAxisValues(Chart, nextControl, Axis.X);
                         }
                         else if (nextType == IParameterEnum.ExteriorInteriorStage)
                         {
                             controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
-                            Chart.SetVerticalMouseEventGroup(guid.ToString());
-                            nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
                             SetMinMaxAxisValues(Chart, nextControl, Axis.X);
                         }
                         else if (nextType == IParameterEnum.InteriorStageDamage)
                         {
                             controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
-                            Chart.SetVerticalMouseEventGroup(guid.ToString());
-                            nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
                             SetMinMaxAxisValues(Chart, nextControl, Axis.X);
-
-
-
                         }
                         break;
                     }
@@ -211,15 +196,11 @@ namespace View.Plots
                         if (nextType == IParameterEnum.InteriorStageDamage)
                         {
                             controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
-                            Chart.SetVerticalMouseEventGroup(guid.ToString());
-                            nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
                             SetMinMaxAxisValues(Chart, nextControl, Axis.X);
                         }
                         else if (nextType == IParameterEnum.DamageFrequency)
                         {
                             controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
-                            Chart.SetVerticalMouseEventGroup(guid.ToString());
-                            nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
                             SetMinMaxAxisValues(Chart, nextControl, Axis.X);
                         }
                         break;
@@ -229,8 +210,6 @@ namespace View.Plots
                         if (nextType == IParameterEnum.InteriorStageDamage)
                         {
                             controller.BindChart(ShareableAxis.Y, Chart, ShareableAxis.X, nextControl.Chart);
-                            Chart.SetVerticalMouseEventGroup(guid.ToString());
-                            nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
                             SetMinMaxAxisValues(Chart, nextControl, Axis.Y);
                         }
                         break;
@@ -240,8 +219,6 @@ namespace View.Plots
                         if (nextType == IParameterEnum.DamageFrequency)
                         {
                             controller.BindChart(ShareableAxis.Y, Chart, nextControl.Chart);
-                            Chart.SetVerticalMouseEventGroup(guid.ToString());
-                            nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
                             SetMinMaxAxisValues(Chart, nextControl, Axis.Y);
                         }
                         break;

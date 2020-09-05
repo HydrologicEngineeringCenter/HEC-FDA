@@ -92,6 +92,7 @@ namespace Model
                         // damage.
                         return new Parameters.Damages.Damage(fx.Range, true, IParameterEnum.FloodDamages, units, label, abbreviate);
                     case IParameterEnum.LateralStructureFailure:
+                    case IParameterEnum.FailureProbability:
                         // probability / frequency.
                         return new Parameters.Probabilities.Probability(fx.Range, isConstant, fType, units, label, abbreviate);
                     case IParameterEnum.FloodDamages:
