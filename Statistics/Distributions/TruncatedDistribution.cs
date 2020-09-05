@@ -38,7 +38,7 @@ namespace Statistics.Distributions
             if (distribution.IsNull()) throw new ArgumentNullException(nameof(distribution), "The specified distribution parameter is invalid because it is null.");
             _Distribution = distribution;
             IMessageBoard msgBoard = IMessageBoardFactory.Factory(_Distribution);
-            Utilities.IRangeFactory.Factory(lowerBound == double.NegativeInfinity ? _Distribution.Range.Min : lowerBound, upperBound == double.PositiveInfinity ? _Distribution.Range.Max : upperBound);
+            Range = Utilities.IRangeFactory.Factory(lowerBound == double.NegativeInfinity ? _Distribution.Range.Min : lowerBound, upperBound == double.PositiveInfinity ? _Distribution.Range.Max : upperBound);
             State = Validate(new Validation.TruncatedDistributionValidator(), out IEnumerable<IMessage> msgs);
             msgBoard.PostMessages(msgs);
             Messages = msgBoard.ReadMessages();

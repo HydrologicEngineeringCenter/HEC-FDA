@@ -16,6 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="ExcelTesting\ExcelComputeTests.cs" />
+    <Compile Remove="ExcelTesting\ResultDataAttribute.cs" />
+    <Compile Remove="ExcelTesting\ResultTests.cs" />
+    <Compile Remove="InputsTests\ConditionsTests\ComputeTestData.cs" />
+    <Compile Remove="InputsTests\ConditionsTests\ComputeTests.cs" />
     <Compile Remove="InputsTests\ConditionTests.cs" />
     <Compile Remove="InputsTests\FunctionsTests\DecoratorTests.cs" />
     <Compile Remove="InputsTests\FunctionsTests\FrequencyFunctionTests.cs" />
@@ -24,6 +29,8 @@
     <Compile Remove="InputsTests\FunctionsTests\UncertainOrdinatesFunctionTests.cs" />
     <Compile Remove="InputsTests\ThresholdTests.cs" />
     <Compile Remove="InputsTests\WaterSurfaceProfileTests.cs" />
+    <Compile Remove="MetricTests.cs" />
+    <Compile Remove="OutputsTests\ResultTests.cs" />
     <Compile Remove="Utilities\DataGenerators\FunctionGeneratorsTests.cs" />
     <Compile Remove="Utilities\DataGenerators\TestCaseGeneratorsTests.cs" />
     <Compile Remove="Utilities\TestCases\ExampleOrdinatesFunctions.cs" />
@@ -40,6 +47,7 @@
   <ItemGroup>
     <Folder Include="InputsTests\FunctionsTests\" />
     <Folder Include="InputsTests\InventoriesTests\" />
+    <Folder Include="OutputsTests\" />
     <Folder Include="Properties\" />
     <Folder Include="Utilities\DataGenerators\" />
     <Folder Include="Utilities\TestCases\" />

@@ -12,7 +12,7 @@ namespace Functions.Ordinates
     internal class Distribution : IDistributedOrdinate, Utilities.IValidate<IDistributedOrdinate>, IOrdinate
     {
         #region Fields
-        private Statistics.IDistribution _Distribution;
+        internal Statistics.IDistribution _Distribution;
         #endregion
 
         #region Properties

@@ -1,7 +1,7 @@
 ﻿using Functions;
 using Functions.CoordinatesFunctions;
 using Model;
-using Model.Inputs.Functions.ImpactAreaFunctions;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -35,7 +35,7 @@ namespace Statistics.Validation
         internal static string ReportFatalError(double mean, double sd, double skew, int n)
         {
             string msg = "";
-            if (!mean.IsFinite() || !sd.IsFinite() || !skew.IsFinite() || !(mean > 0) || !(sd > 0) || !(n > 0)) msg += $"{Resources.FatalParameterizationNotice(LogPearsonIII.Print(mean, sd, skew, n))} {LogPearsonIII.RequiredParameterization(true)} {Resources.SampleSizeSuggestion()}";
+            if (!mean.IsOnRange(0, 10) || !sd.IsOnRange(0, 10) || !skew.IsOnRange(-10, 10) || !n.IsOnRange(0, int.MaxValue, false, true)) msg += $"{Resources.FatalParameterizationNotice(LogPearsonIII.Print(mean, sd, skew, n))} {LogPearsonIII.RequiredParameterization(true)} {Resources.SampleSizeSuggestion()}";
             return msg;
         }
     }

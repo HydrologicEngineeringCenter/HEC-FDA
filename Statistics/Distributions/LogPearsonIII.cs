@@ -55,14 +55,16 @@ namespace Statistics.Distributions
 
         private IRange<double> FiniteRange()
         {
-            double min = double.NegativeInfinity, max = double.PositiveInfinity, p = 0, epsilon = 1 / 1000000000d;
-            while (!(min.IsFinite() && max.IsFinite()))
+            double min = InverseCDF(0.0000001), max = InverseCDF(0.9999999), p = 0.0000001, epsilon = 1 / 1000000d;
+            while (!min.IsFinite() || !max.IsFinite())
             {
                 p += epsilon;
                 if (!min.IsFinite()) min = InverseCDF(p);
                 if (!max.IsFinite()) max = InverseCDF(1 - p);
+                if (p > 0.25) 
+                    throw new InvalidConstructorArgumentsException($"The log Pearson III object is not constructable because 50% or more of its distribution returns {double.NegativeInfinity} and {double.PositiveInfinity}.");
             } 
-            return IRangeFactory.Factory(p, 1 - p);
+            return IRangeFactory.Factory(p, 1d - p);
         }
 
 
