@@ -106,7 +106,7 @@ namespace Model
         {
             switch (type) 
             {
-                case IParameterEnum.LateralStructureElevation:
+                case IParameterEnum.ExteriorElevation:  
                     units = units == UnitsEnum.NotSet ? UnitsEnum.Foot : units;
                     return new Model.Parameters.Elevations.ElevationOrdinate(IOrdinateFactory.Factory(ordinate), type, units, label, abbreviatedLabel);
                 default:

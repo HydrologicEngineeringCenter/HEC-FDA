@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:View.Plots"
              mc:Ignorable="d" 
+             Loaded="UserControl_Loaded"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
             <!--<local:IndividualLinkedPlot Curve="{Binding TestCurve}" />-->

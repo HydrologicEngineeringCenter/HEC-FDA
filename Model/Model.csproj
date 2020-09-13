@@ -35,6 +35,7 @@
     <Compile Remove="IFdaOrdinateEnum.cs" />
     <Compile Remove="IFdaOrdinateFactory.cs" />
     <Compile Remove="Conditions\ConditionPerformanceCompute.cs" />
+    <Compile Remove="Metric.cs" />
     <Compile Remove="Outputs\IRealization.cs" />
     <Compile Remove="Outputs\Realization.cs" />
     <Compile Remove="Validation\DamageFrequencyValidator.cs" />

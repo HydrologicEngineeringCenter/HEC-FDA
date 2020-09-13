@@ -19,7 +19,8 @@ namespace Model.Conditions.Locations.Years.Realizations
             ID = id;
             Functions = fxs;
             Metrics = metrics;
-            LateralStructureFailureElevation = new Samples.SampledOrdinate(IParameterFactory.Factory(double.NaN, IParameterEnum.ExteriorElevation), new Samples.Sample());
+            double defaultElevationValue = 0;
+            LateralStructureFailureElevation = new Samples.SampledOrdinate(IParameterFactory.Factory(defaultElevationValue, IParameterEnum.ExteriorElevation), new Samples.Sample());
         }
     }
 }

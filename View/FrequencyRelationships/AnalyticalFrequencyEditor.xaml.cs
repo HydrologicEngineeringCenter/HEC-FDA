@@ -162,7 +162,6 @@ namespace View.FrequencyRelationships
                 _ChartStandard.Visibility = Visibility.Visible;
                 AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)this.DataContext;
                 vm.UpdateChartLineData();
-
             }
         }
 
@@ -258,6 +257,18 @@ namespace View.FrequencyRelationships
                 }
             }
             return null;
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)this.DataContext;
+            vm.UpdateChartLineData();
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)this.DataContext;
+            vm.UpdateChartLineData();
         }
     }
 }

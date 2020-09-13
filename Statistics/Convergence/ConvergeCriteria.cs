@@ -15,7 +15,10 @@ namespace Statistics
 
         internal ConvergeCriteria(double quantile, double tolerance, int minNewObservations, IRange<int> testRange)
         {
-            if (testRange.IsNull()) throw new ArgumentNullException(nameof(testRange));
+            if (testRange.IsNull())
+            {
+                testRange = IRangeFactory.Factory(1000, 100000);
+            }
             Quantile = quantile;
             Tolerance = tolerance;
             TestRange = testRange;

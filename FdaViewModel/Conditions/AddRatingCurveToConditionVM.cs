@@ -46,8 +46,19 @@ namespace FdaViewModel.Conditions
         
         public List<StageTransforms.RatingCurveElement> ListOfRatingCurves
         {
-            get { return _ListOfRatingCurves; }
+            get { return GetCurrentListOfRatingCurves(); }
             set { _ListOfRatingCurves = value; NotifyPropertyChanged(); }
+        }
+
+        private List<RatingCurveElement> GetCurrentListOfRatingCurves()
+        {
+            return StudyCache.GetChildElementsOfType<RatingCurveElement>();
+
+        }
+
+        public void UpdateListOfRatingCurves()
+        {
+            ListOfRatingCurves = GetCurrentListOfRatingCurves();
         }
 
         public IFdaFunction SelectedCurve

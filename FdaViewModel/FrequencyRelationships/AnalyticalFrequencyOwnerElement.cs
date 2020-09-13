@@ -4,6 +4,7 @@ using Functions;
 using Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace FdaViewModel.FrequencyRelationships
 {
@@ -126,6 +127,27 @@ namespace FdaViewModel.FrequencyRelationships
             vm.Name = element.Name;
             vm.Description = element.Description;
             vm.Curve = element.Curve;
+            vm.PeriodOfRecord = element.POR;
+            vm.IsAnalytical = element.IsAnalytical;
+            vm.IsStandard = element.IsStandard;
+            vm.Mean = element.Mean;
+            vm.StandardDeviation = element.StDev;
+            vm.Skew = element.Skew;
+            vm.IsLogFlow = element.IsLogFlow;
+
+            ObservableCollection<FlowDoubleWrapper> flows = new ObservableCollection<FlowDoubleWrapper>();
+            foreach(double d in element.AnalyticalFlows)
+            {
+                flows.Add(new FlowDoubleWrapper(d));
+            }
+            vm.AnalyticalFlows = flows;
+
+            ObservableCollection<FlowDoubleWrapper> graphicalFlows = new ObservableCollection<FlowDoubleWrapper>();
+            foreach (double d in element.GraphicalFlows)
+            {
+                graphicalFlows.Add(new FlowDoubleWrapper(d));
+            }
+            vm.GraphicalFlows = graphicalFlows;
            
         }
 

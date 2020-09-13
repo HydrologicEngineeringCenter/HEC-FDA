@@ -187,7 +187,7 @@ public override Type[] ChangeTableColumnTypes
                         //todo use mean, st dev, and skew to create the curve
 
                         //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-                        IDistribution dist = IDistributionFactory.FactoryLogPearsonIII(Mean, StandardDeviation, Skew, IsLogFlow, PeriodOfRecord);
+                        IDistribution dist = IDistributionFactory.FactoryLogPearsonIII(Mean, StandardDeviation, Skew, PeriodOfRecord);
                         if (dist.State < IMessageLevels.Error)
                         {
                             IFunction func = IFunctionFactory.Factory(dist);

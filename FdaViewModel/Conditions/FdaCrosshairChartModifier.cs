@@ -165,11 +165,25 @@ namespace FdaViewModel.Conditions
                         break;
                     }
                 case Axis.Y:
-                    y = (double)crosshairData.YValue;
-                    x = ComputeXFromY(y);
-                    if (x == double.NaN)
                     {
-                        return;
+                        if (thisAxis == Axis.Y)
+                        {
+                            y = (double)crosshairData.YValue;
+                            x = ComputeXFromY(y);
+                            if (x == double.NaN)
+                            {
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            x = (double)crosshairData.YValue;
+                            y = ComputeYFromX(x);
+                            if(y == double.NaN)
+                            {
+                                return;
+                            }
+                        }
                     }
                     break;
             }

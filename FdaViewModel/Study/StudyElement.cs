@@ -13,6 +13,7 @@ using FdaViewModel.FlowTransforms;
 using FdaViewModel.FrequencyRelationships;
 using FdaViewModel.WaterSurfaceElevation;
 using FdaViewModel.ImpactArea;
+using Functions;
 
 namespace FdaViewModel.Study
 {
@@ -431,7 +432,7 @@ namespace FdaViewModel.Study
         }
 
         public void OpenStudyFromFilePath(string name, string path)
-        {
+        {           
             OpeningADifferentStudy?.Invoke(this, new EventArgs());
             //if a study is opened and the create new study tab is still in the tabs, then remove it
             TabController.Instance.RemoveTab("CreateNewStudy");

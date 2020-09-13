@@ -34,7 +34,7 @@
                 </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Height="24" >
                     <Label Content="Rating Curve:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Right" />
-                    <ComboBox  Grid.Row="1" Grid.Column="1" Height="30" Width="170" VerticalAlignment="Top" ItemsSource="{Binding ListOfRatingCurves}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedElement}" />
+                    <ComboBox  Grid.Row="1" Grid.Column="1" Height="30" Width="170" VerticalAlignment="Top" ItemsSource="{Binding ListOfRatingCurves}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedElement}" PreviewMouseLeftButtonDown="ComboBox_PreviewMouseLeftButtonDown" />
 
                     <Button Grid.Row="1" Grid.Column="2" Name="btn_EditRatingCurve" VerticalAlignment="Center" Width="24" Height="24" Margin="0,0,10,0" ToolTip="Edit Existing Rating Curve" Click="btn_EditRatingCurve_Click">
                         <Image  Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/Edit.png"/>

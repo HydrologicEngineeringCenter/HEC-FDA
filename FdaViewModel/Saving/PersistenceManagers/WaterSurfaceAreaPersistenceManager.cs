@@ -207,7 +207,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             {
                 RemoveWaterSurfElevFiles((WaterSurfaceElevationElement)element);
             }
-            StudyCacheForSaving.RemoveElement((WaterSurfaceElevationElement)element);
+            StudyCacheForSaving.RemoveElement((WaterSurfaceElevationElement)element, -1);
 
         }
 

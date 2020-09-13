@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FdaViewModel.Conditions;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -117,7 +118,7 @@ namespace FdaViewModel.Utilities
                 }
             }
             if (index != -1)
-            {
+            {               
                 Elements.RemoveAt(index);
                 InsertElement(index, newElement);
             }

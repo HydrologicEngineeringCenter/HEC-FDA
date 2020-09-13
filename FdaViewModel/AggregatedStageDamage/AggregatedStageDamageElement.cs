@@ -59,6 +59,10 @@ namespace FdaViewModel.AggregatedStageDamage
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/StageDamage.png");
 
             Description = description;
+            if(Description == null)
+            {
+                Description = "";
+            }
             Curve = curve;
             _Method = method;
             //add named actions like edit.
@@ -172,11 +176,15 @@ namespace FdaViewModel.AggregatedStageDamage
                 {
                     retval = false;
                 }
-                if(!Description.Equals(elem.Description))
+                if (Description == null && elem.Description != null)
                 {
                     retval = false;
                 }
-                if(!LastEditDate.Equals(elem.LastEditDate))
+                else if (Description != null && !Description.Equals(elem.Description))
+                {
+                    retval = false;
+                }
+                if (!LastEditDate.Equals(elem.LastEditDate))
                 {
                     retval = false;
                 }

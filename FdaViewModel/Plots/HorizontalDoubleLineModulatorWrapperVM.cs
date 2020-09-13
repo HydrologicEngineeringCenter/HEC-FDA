@@ -63,6 +63,8 @@ namespace FdaViewModel.Plots
         public string XAxisLabel => throw new NotImplementedException();
 
         public string YAxisLabel => throw new NotImplementedException();
+
+        public int SelectedElementID { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
         #region Constructors
         public HorizontalDoubleLineModulatorWrapperVM()
@@ -79,7 +81,7 @@ namespace FdaViewModel.Plots
             //throw new NotImplementedException();
         }
 
-        public void AddCurveToPlot(IFdaFunction function, string elementName, FdaCrosshairChartModifier chartModifier)
+        public void AddCurveToPlot(IFdaFunction function, string elementName,int elementID, FdaCrosshairChartModifier chartModifier)
         {
             throw new NotImplementedException();
         }

@@ -67,11 +67,18 @@ namespace View.Conditions
 
             Plot0Control.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
             DLMControl.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
-            //Plot1Control.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
+
+            Plot1Control.PopPlot1IntoModulator += Plot1Control_PopPlot1IntoModulator; 
+
             Plot3Control.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
             DLMHorizontalControl.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
             HorizontalPlotFailureControl.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
-            //Plot5Control.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
+
+            PlotFailureFunctionControl.PopPlotFailureIntoModulator += PlotFailureFunctionControl_PopPlotFailureIntoModulator;
+            Plot5Control.PopPlot5IntoModulator += Plot5Control_PopPlot5IntoModulator;
+
+
+
             Plot7Control.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
             Plot8Control.UpdatePlots += new EventHandler(UpdateThePlotLinkages);
 
@@ -96,6 +103,21 @@ namespace View.Conditions
             //    //FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
 
         }
+
+        private void PlotFailureFunctionControl_PopPlotFailureIntoModulator(object sender, EventArgs e)
+        {
+            btn_CollapseLeftPlots_Click(sender, null);
+        }
+
+        private void Plot1Control_PopPlot1IntoModulator(object sender, EventArgs e)
+        {
+            btn_CollapsePlot1_Click(sender, null);
+        }
+        private void Plot5Control_PopPlot5IntoModulator(object sender, EventArgs e)
+        {
+            btn_CollapseLeftPlots_Click(sender, null);
+        }
+     
 
         private Chart2D[] GetChartsThatAreShowing()
         {
@@ -244,10 +266,10 @@ namespace View.Conditions
             {
                 TheAddedPlots.Add(Plot1Control);
             }
-            else if (DLMControl.LinkedPlot != null && Plot1PoppedOut == false)
-            {
-                TheAddedPlots.Add(DLMControl);
-            }
+            //else if ( Plot1Control.IsDLMShowing) //DLMControl.LinkedPlot != null && Plot1PoppedOut == false)
+            //{
+            //    TheAddedPlots.Add(DLMControl);
+            //}
 
             if (Plot3Control.Chart != null)
             {

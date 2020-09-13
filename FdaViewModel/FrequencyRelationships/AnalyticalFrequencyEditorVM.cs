@@ -34,15 +34,34 @@ namespace FdaViewModel.FrequencyRelationships
 
         private ObservableCollection<FlowDoubleWrapper> _GraphicalFlows = new ObservableCollection<FlowDoubleWrapper>();
 
-        private double _Mean;
-        private double _StDev;
-        private double _Skew;
+        private double _Mean = 2;
+        private double _StDev = 2;
+        private double _Skew = 2;
 
         private bool _IsAnalytical = true;
         private bool _IsStandard = true;
-
+        private string _FitToFlowMean = "Mean: N/A";
+        private string _FitToFlowStDev = "St. Dev.: N/A";
+        private string _FitToFlowSkew = "Skew: N/A";
+        private int _POR = 200;
         #endregion
         #region Properties
+
+        public string FitToFlowMean
+        {
+            get { return _FitToFlowMean; }
+            set { _FitToFlowMean = value; NotifyPropertyChanged(); }
+        }
+        public string FitToFlowStDev
+        {
+            get { return _FitToFlowStDev; }
+            set { _FitToFlowStDev = value; NotifyPropertyChanged(); }
+        }
+        public string FitToFlowSkew
+        {
+            get { return _FitToFlowSkew; }
+            set { _FitToFlowSkew = value; NotifyPropertyChanged(); }
+        }
         public bool IsAnalytical
         {
             get { return _IsStandard; }
@@ -70,7 +89,8 @@ namespace FdaViewModel.FrequencyRelationships
         }
         public int PeriodOfRecord
         {
-            get;set;
+            get { return _POR; }
+            set { _POR = value; UpdateChartLineData(); }
         }
         public bool IsLogFlow { get; set; }
 
@@ -106,11 +126,11 @@ namespace FdaViewModel.FrequencyRelationships
             get;
             set;
         }
-        public IFdaFunction Curve
-        {
-            get { return _Curve; }
-            set { _Curve = value; NotifyPropertyChanged(); UpdateItems(); }
-        }
+        //public IFdaFunction Curve
+        //{
+        //    get { return _Curve; }
+        //    set { _Curve = value; NotifyPropertyChanged(); UpdateItems(); }
+        //}
         //public ObservableCollection<object> Items
         //{
         //    get { return _Items; }
@@ -235,7 +255,7 @@ namespace FdaViewModel.FrequencyRelationships
             //OriginalName = elem.Name;
             CurrentElement = elem;
             //CurrentElement.ChangeIndex = 0;
-            Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };
+            Probabilities = new ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };
             //AssignValuesFromElementToEditor(elem);
             //ActionManager = actionManager;
             //TransactionHelper.LoadTransactionsAndMessages(this, elem);
@@ -392,7 +412,7 @@ namespace FdaViewModel.FrequencyRelationships
                         //todo use mean, st dev, and skew to create the curve
                         
                         //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-                        IDistribution dist = IDistributionFactory.FactoryLogPearsonIII(Mean, StandardDeviation, Skew, IsLogFlow, PeriodOfRecord);
+                        IDistribution dist = IDistributionFactory.FactoryLogPearsonIII(Mean, StandardDeviation, Skew, PeriodOfRecord);
                         if(dist.State < IMessageLevels.Error)
                         {
                             return IFunctionFactory.Factory(dist);
@@ -402,6 +422,7 @@ namespace FdaViewModel.FrequencyRelationships
                     }
                     else
                     {
+                        //this is fit to flow
                         List<double> flows = new List<double>();
                         foreach(FlowDoubleWrapper d in AnalyticalFlows)
                         {
@@ -411,6 +432,13 @@ namespace FdaViewModel.FrequencyRelationships
                         IDistribution dist = IDistributionFactory.FactoryFitLogPearsonIII(flows, IsLogFlow, PeriodOfRecord);
                         if (dist.State < IMessageLevels.Error)
                         {
+                            double mean = dist.Mean;
+                            double stDev = dist.StandardDeviation;
+                            double skew = dist.Skewness;
+                            FitToFlowMean = "Mean: " + mean.ToString(".##");
+                            FitToFlowStDev = "St. Dev.: " + stDev.ToString(".##");
+                            FitToFlowSkew = "Skew: " + skew.ToString(".##");
+
                             return IFunctionFactory.Factory(dist);
                         }
                         //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
@@ -419,13 +447,21 @@ namespace FdaViewModel.FrequencyRelationships
             }
             catch (Exception e)
             {
+                FitToFlowMean = "Mean: N/A";
+                FitToFlowStDev = "Mean: N/A";
+                FitToFlowSkew = "Mean: N/A";
+
                 xs = new List<double>() { 0 };
                 ys = new List<double>() { 0 };
                 return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
             }
-                xs = new List<double>() { 0 };
-                ys = new List<double>() { 0};
-                return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+            FitToFlowMean = "Mean: N/A";
+            FitToFlowStDev = "Mean: N/A";
+            FitToFlowSkew = "Mean: N/A";
+
+            xs = new List<double>() { 0 };
+            ys = new List<double>() { 0 };
+            return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
             
         }
 
@@ -442,7 +478,7 @@ namespace FdaViewModel.FrequencyRelationships
                         //todo use mean, st dev, and skew to create the curve
 
                         //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-                        IDistribution dist = IDistributionFactory.FactoryLogPearsonIII(Mean, StandardDeviation, Skew, IsLogFlow, PeriodOfRecord);
+                        IDistribution dist = IDistributionFactory.FactoryLogPearsonIII(Mean, StandardDeviation, Skew, PeriodOfRecord);
                         if (dist.State < IMessageLevels.Error)
                         {
                             IFunction func = IFunctionFactory.Factory(dist);

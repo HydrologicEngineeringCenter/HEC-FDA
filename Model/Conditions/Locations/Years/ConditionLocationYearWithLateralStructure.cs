@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Functions;
+using Model.Conditions.Locations.Years.Realizations;
 
 namespace Model.Conditions.Locations.Years
 {
-    internal sealed class ConditionLocationYearWithLateralStructure: ConditionLocationYearBase<ILateralStructure>
+    public class ConditionLocationYearWithLateralStructure: ConditionLocationYearBase<ILateralStructure>
     {
         public override IReadOnlyDictionary<IParameterEnum, bool> Parameters { get; }
         public override ILateralStructure LateralStructure { get; }
 
-        internal ConditionLocationYearWithLateralStructure(ILocation location, int yr, IFrequencyFunction frequencyFx, IEnumerable<ITransformFunction> transformFxs, ILateralStructure lateralStructure, IEnumerable<IMetric> metrics, string label = ""): base(location, yr, frequencyFx, transformFxs, metrics, label)
+        public ConditionLocationYearWithLateralStructure(ILocation location, int yr, IFrequencyFunction frequencyFx, IEnumerable<ITransformFunction> transformFxs, ILateralStructure lateralStructure, IEnumerable<IMetric> metrics, string label = ""): base(location, yr, frequencyFx, transformFxs, metrics, label)
         {
             //TODO: Validation
             LateralStructure = lateralStructure;

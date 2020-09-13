@@ -208,12 +208,13 @@ namespace FdaViewModel.Saving
             {
                 //UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((RatingCurveElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
                 //this updates the parent table
-                UpdateTableRow(TableName, GetElementId(TableName, oldElement.Name), ID_COL_NAME, TableColumnNames, GetRowDataFromElement(elementToSave));
+                int id = GetElementId(TableName, oldElement.Name);
+                UpdateTableRow(TableName, id, ID_COL_NAME, TableColumnNames, GetRowDataFromElement(elementToSave));
                 //SaveToChangeTable((RatingCurveElement)elementToSave);
                 //UpdateChangeTable(elementToSave, changeTableIndex);
 
                 //make this so that i can pass in "childElement" and have it updated
-                StudyCacheForSaving.UpdateElement(oldElement, elementToSave);
+                StudyCacheForSaving.UpdateElement(oldElement, elementToSave, id);
             }
 
             //Log(FdaLogging.LoggingLevel.Info, "Saved rating curve: " + elementToSave.Name, elementToSave.Name);

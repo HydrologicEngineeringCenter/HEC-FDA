@@ -29,6 +29,10 @@ namespace View.Plots
     {
         public static readonly DependencyProperty UpdatePlotsFromVMProperty = DependencyProperty.Register("UpdatePlotsFromVM", typeof(bool), typeof(IndividualLinkedPlotControl), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(UpdatePlotsFromVMCallBack)));
 
+        public event EventHandler PopPlot1IntoModulator;
+        public event EventHandler PopPlot5IntoModulator;
+        public event EventHandler PopPlotFailureIntoModulator;
+
 
         public event EventHandler UpdatePlots;
         public event EventHandler PopImporterIntoPlot1;
@@ -39,6 +43,7 @@ namespace View.Plots
 
         public event EventHandler PopLateralStructImporterLeft;
 
+        //public bool IsDLMShowing { get; set; }
         public bool UpdatePlotsFromVM
         {
             get { return (bool)GetValue(UpdatePlotsFromVMProperty); }
@@ -79,6 +84,22 @@ namespace View.Plots
         {
             InitializeComponent();
             
+        }
+
+        private void Vm_PopPlot1IntoModulator(object sender, EventArgs e)
+        {
+            //IsDLMShowing = true;
+            PopPlot1IntoModulator?.Invoke(sender, e);
+            //this call will set up the bindings between the plots.
+            UpdateThePlots();
+        }
+
+        private void Vm_PopPlot5IntoModulator(object sender, EventArgs e)
+        {
+            //IsDLMShowing = true;
+            PopPlot5IntoModulator?.Invoke(sender, e);
+            //this call will set up the bindings between the plots.
+            UpdateThePlots();
         }
 
         public void PopTheImporterIntoPlot5()
@@ -150,10 +171,8 @@ namespace View.Plots
                         //if i am inflow frequency, then i can only link to inflow outflow or to rating
                         if (nextType == IParameterEnum.InflowOutflow)
                         {
-                            controller.BindChart(ShareableAxis.Y, Chart, ShareableAxis.X, nextControl.Chart);
-                            //Chart.SetVerticalMouseEventGroup(guid.ToString());
-                            //nextControl.Chart.SetVerticalMouseEventGroup(guid.ToString());
-                            //SetMinMaxAxisValues(Chart, nextControl, Axis.Y);
+                            //controller.BindChart(ShareableAxis.Y, Chart, ShareableAxis.X, nextControl.Chart);
+                            
                         }
                         else if (nextType == IParameterEnum.Rating)
                         {
@@ -167,8 +186,8 @@ namespace View.Plots
                         
                         if (nextType == IParameterEnum.Rating)
                         {
-                            controller.BindChart(ShareableAxis.Y, Chart,ShareableAxis.X, nextControl.Chart);
-                            SetMinMaxAxisValues(Chart, nextControl, Axis.Y);
+                            //controller.BindChart(ShareableAxis.Y, Chart,ShareableAxis.X, nextControl.Chart);
+                            //SetMinMaxAxisValues(Chart, nextControl, Axis.Y);
                         }
                         break;
                     }
@@ -176,13 +195,13 @@ namespace View.Plots
                     {
                         if(nextType == IParameterEnum.LateralStructureFailure)
                         {
-                            controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
-                            SetMinMaxAxisValues(Chart, nextControl, Axis.X);
+                            //controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
+                            //SetMinMaxAxisValues(Chart, nextControl, Axis.X);
                         }
                         else if (nextType == IParameterEnum.ExteriorInteriorStage)
                         {
-                            controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
-                            SetMinMaxAxisValues(Chart, nextControl, Axis.X);
+                            //controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
+                            //SetMinMaxAxisValues(Chart, nextControl, Axis.X);
                         }
                         else if (nextType == IParameterEnum.InteriorStageDamage)
                         {
@@ -193,24 +212,24 @@ namespace View.Plots
                     }
                 case IParameterEnum.LateralStructureFailure:
                     {
-                        if (nextType == IParameterEnum.InteriorStageDamage)
-                        {
-                            controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
-                            SetMinMaxAxisValues(Chart, nextControl, Axis.X);
-                        }
-                        else if (nextType == IParameterEnum.DamageFrequency)
-                        {
-                            controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
-                            SetMinMaxAxisValues(Chart, nextControl, Axis.X);
-                        }
+                        //if (nextType == IParameterEnum.InteriorStageDamage)
+                        //{
+                        //    controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
+                        //    SetMinMaxAxisValues(Chart, nextControl, Axis.X);
+                        //}
+                        //else if (nextType == IParameterEnum.DamageFrequency)
+                        //{
+                        //    controller.BindChart(ShareableAxis.X, Chart, nextControl.Chart);
+                        //    SetMinMaxAxisValues(Chart, nextControl, Axis.X);
+                        //}
                         break;
                     }
                 case IParameterEnum.ExteriorInteriorStage:
                     {
                         if (nextType == IParameterEnum.InteriorStageDamage)
                         {
-                            controller.BindChart(ShareableAxis.Y, Chart, ShareableAxis.X, nextControl.Chart);
-                            SetMinMaxAxisValues(Chart, nextControl, Axis.Y);
+                            //controller.BindChart(ShareableAxis.Y, Chart, ShareableAxis.X, nextControl.Chart);
+                            //SetMinMaxAxisValues(Chart, nextControl, Axis.Y);
                         }
                         break;
                     }
@@ -325,6 +344,20 @@ namespace View.Plots
             //}
         }
 
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            IndividualLinkedPlotControlVM vm = (IndividualLinkedPlotControlVM)this.DataContext;
+            vm.PopPlot1IntoModulator += Vm_PopPlot1IntoModulator;
+            vm.PopPlot5IntoModulator += Vm_PopPlot5IntoModulator;
+            vm.PopPlotFailureIntoModulator += Vm_PopPlotFailureIntoModulator;
+        }
 
+        private void Vm_PopPlotFailureIntoModulator(object sender, EventArgs e)
+        {
+            //IsDLMShowing = true;
+            PopPlotFailureIntoModulator?.Invoke(sender, e);
+            //this call will set up the bindings between the plots.
+            UpdateThePlots();
+        }
     }
 }

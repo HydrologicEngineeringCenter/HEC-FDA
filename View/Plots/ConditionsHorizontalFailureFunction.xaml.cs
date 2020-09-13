@@ -64,9 +64,9 @@ namespace View.Plots
                 //    return;
                 //}
 
-                string yUnits = vm.IndividualPlotWrapperVM.PlotVM.BaseFunction.YSeries.Units.ToString();
+                string xUnits = vm.IndividualPlotWrapperVM.PlotVM.BaseFunction.XSeries.Units.ToString();
 
-                lbl_FailureText.Content = "Chance of Failure: " + xval.ToString("0.0") + "% at " + yval.ToString("0.0") + " " + yUnits;
+                lbl_FailureText.Content = "Chance of Failure: " + yval.ToString("0.0") + "% at " + xval.ToString("0.0") + " " + xUnits;
 
                 //lbl_percentFailure.Content = yval.ToString("0.0");
                 //lbl_stage.Content = xval.ToString("0.0") + xUnits;

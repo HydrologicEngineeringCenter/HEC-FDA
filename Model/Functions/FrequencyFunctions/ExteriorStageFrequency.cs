@@ -10,7 +10,7 @@ namespace Model.Functions
         public override string Label { get; }
         public override IParameterRange XSeries { get; }
         public override IParameterRange YSeries { get; }
-        public override IParameterEnum ParameterType => IParameterEnum.DamageFrequency;
+        public override IParameterEnum ParameterType => IParameterEnum.ExteriorStageFrequency;
         public List<IParameterEnum> ComposeableTypes => new List<IParameterEnum>() { IParameterEnum.InteriorStageDamage, IParameterEnum.ExteriorInteriorStage };
 
         public override IMessageLevels State { get;  }

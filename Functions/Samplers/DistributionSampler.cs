@@ -11,7 +11,13 @@ namespace Functions
     {
         public bool CanSample(ICoordinatesFunction coordinatesFunction)
         {
-            return (typeof(CoordinatesFunctionVariableYs).IsAssignableFrom(coordinatesFunction.GetType()));
+            bool canSample = false;
+            if(typeof(CoordinatesFunctionVariableYs).IsAssignableFrom(coordinatesFunction.GetType()) ||
+                typeof(DistributionFunction).IsAssignableFrom(coordinatesFunction.GetType()))
+            {
+                canSample = true;
+            }
+            return (canSample);
         }
 
         public IFunction Sample(ICoordinatesFunction coordinatesFunction, double probability)
@@ -19,6 +25,10 @@ namespace Functions
             if (typeof(CoordinatesFunctionVariableYs).IsAssignableFrom(coordinatesFunction.GetType()))
             {
                 return new CoordinatesFunctionConstants(ConvertCoordinatesToConstants(coordinatesFunction.Coordinates, probability), coordinatesFunction.Interpolator);
+            }
+            else if(typeof(DistributionFunction).IsAssignableFrom(coordinatesFunction.GetType()))
+            {
+                return new CoordinatesFunctionConstants(coordinatesFunction.Coordinates,  InterpolationEnum.Linear);
             }
             throw new ArgumentException("Could not sample the coordinates function.");
         }

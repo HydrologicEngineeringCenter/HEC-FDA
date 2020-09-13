@@ -49,40 +49,40 @@ namespace FdaViewModel.Conditions
         //    ConditionBuilder builder = new ConditionBuilder(condition)
         //}
 
-        public static void CopyConditionsElement(ConditionsElement fromElem, ConditionsElement toElem)
-        {
+        //public static void CopyConditionsElement(ConditionsElement fromElem, ConditionsElement toElem)
+        //{
 
-            toElem.Name = fromElem.Name;
-            toElem.Description = fromElem.Description;
-            toElem.AnalysisYear = fromElem.AnalysisYear;
-            toElem.ImpactArea = fromElem.ImpactArea;
-            toElem.ImpactAreaElement = fromElem.ImpactAreaElement;
+        //    toElem.Name = fromElem.Name;
+        //    toElem.Description = fromElem.Description;
+        //    toElem.AnalysisYear = fromElem.AnalysisYear;
+        //    toElem.ImpactArea = fromElem.ImpactArea;
+        //    toElem.ImpactAreaElement = fromElem.ImpactAreaElement;
 
-            toElem.UseAnalyiticalFlowFrequency = fromElem.UseAnalyiticalFlowFrequency;
-            toElem.AnalyticalFlowFrequency = fromElem.AnalyticalFlowFrequency;
+        //    toElem.UseAnalyiticalFlowFrequency = fromElem.UseAnalyiticalFlowFrequency;
+        //    toElem.AnalyticalFlowFrequency = fromElem.AnalyticalFlowFrequency;
 
-            toElem.UseInflowOutflow = fromElem.UseInflowOutflow;
-            toElem.InflowOutflowElement = fromElem.InflowOutflowElement;
+        //    toElem.UseInflowOutflow = fromElem.UseInflowOutflow;
+        //    toElem.InflowOutflowElement = fromElem.InflowOutflowElement;
 
-            toElem.UseRatingCurve = fromElem.UseRatingCurve;
-            toElem.RatingCurveElement = fromElem.RatingCurveElement;
+        //    toElem.UseRatingCurve = fromElem.UseRatingCurve;
+        //    toElem.RatingCurveElement = fromElem.RatingCurveElement;
 
-            toElem.UseExteriorInteriorStage = fromElem.UseExteriorInteriorStage;
-            toElem.ExteriorInteriorElement = fromElem.ExteriorInteriorElement;
+        //    toElem.UseExteriorInteriorStage = fromElem.UseExteriorInteriorStage;
+        //    toElem.ExteriorInteriorElement = fromElem.ExteriorInteriorElement;
 
-            toElem.UseLevee = fromElem.UseLevee;
-            toElem.LeveeElement = fromElem.LeveeElement;
+        //    toElem.UseLevee = fromElem.UseLevee;
+        //    toElem.LeveeElement = fromElem.LeveeElement;
 
-            toElem.UseFailureFunction = fromElem.UseFailureFunction;
-            toElem.FailureFunctionElement = fromElem.FailureFunctionElement;
+        //    toElem.UseFailureFunction = fromElem.UseFailureFunction;
+        //    toElem.FailureFunctionElement = fromElem.FailureFunctionElement;
 
-            toElem.UseAggregatedStageDamage = fromElem.UseAggregatedStageDamage;
-            toElem.StageDamageElement = fromElem.StageDamageElement;
+        //    toElem.UseAggregatedStageDamage = fromElem.UseAggregatedStageDamage;
+        //    toElem.StageDamageElement = fromElem.StageDamageElement;
 
-            toElem.UseThreshold = fromElem.UseThreshold;
-            toElem.MetricType = fromElem.MetricType;
-            toElem.ThresholdValue = fromElem.ThresholdValue;
+        //    toElem.UseThreshold = fromElem.UseThreshold;
+        //    toElem.ThresholdType = fromElem.ThresholdType;
+        //    toElem.ThresholdValue = fromElem.ThresholdValue;
 
-        }
+        //}
     }
 }

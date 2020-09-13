@@ -75,5 +75,11 @@ namespace View.Conditions
             FdaViewModel.Conditions.AddRatingCurveToConditionVM vm = (FdaViewModel.Conditions.AddRatingCurveToConditionVM)this.DataContext;
             vm.EditRatingCurve(sender, e);
         }
+
+        private void ComboBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            FdaViewModel.Conditions.AddRatingCurveToConditionVM vm = (FdaViewModel.Conditions.AddRatingCurveToConditionVM)this.DataContext;
+            vm.UpdateListOfRatingCurves();
+        }
     }
 }

@@ -98,22 +98,19 @@
                     <RowDefinition Height="35"/>
                     <RowDefinition Height="35"/>
                     <RowDefinition Height="35"/>
-                    <RowDefinition Height="35"/>
-                    <RowDefinition Height="35"/>
-
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <CheckBox Grid.Row="0" Grid.Column="0" Content="Is Logged Value" Margin="10,5,5,5" />
+                <!--<CheckBox Grid.Row="0" Grid.Column="0" Content="Is Logged Value" Margin="10,5,5,5" />-->
 
-                <Label Grid.Row="1" Content="Mean:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Mean, ValidatesOnDataErrors=True}" Margin="5"/>
+                <Label Grid.Row="0" Content="Mean:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Mean, ValidatesOnDataErrors=True}" Margin="5"/>
 
-                <Label Grid.Row="2"  Content="Standard Deviation:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                <TextBox Grid.Row="2"  Grid.Column="1" Text="{Binding StandardDeviation, ValidatesOnDataErrors=True}" Margin="5"/>
+                <Label Grid.Row="1"  Content="Standard Deviation:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="1"  Grid.Column="1" Text="{Binding StandardDeviation, ValidatesOnDataErrors=True}" Margin="5"/>
 
-                <Label Grid.Row="3"  Content="Skew:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Skew, ValidatesOnDataErrors=True}" Margin="5"/>
+                <Label Grid.Row="2"  Content="Skew:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Skew, ValidatesOnDataErrors=True}" Margin="5"/>
 
                 
                 
@@ -121,10 +118,16 @@
             <Grid x:Name="grid_analyticalLeft_fitToFlows" Grid.Row="1" Grid.Column="0" Visibility="Hidden">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="120" />
                 </Grid.ColumnDefinitions>
-
-                    <controls:CopyPasteDataGrid x:Name="dg_table" Grid.Column="0" AutoGenerateColumns="False" ItemsSource="{Binding AnalyticalFlows}" 
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                
+                <CheckBox Grid.Row="0" Content="Is Logged Flow" IsChecked="{Binding IsLogFlow}" Unchecked="CheckBox_Unchecked" Checked="CheckBox_Checked" Margin="10,0,0,0" />
+                
+                    <controls:CopyPasteDataGrid x:Name="dg_table" Grid.Row="1" Grid.Column="0" AutoGenerateColumns="False" ItemsSource="{Binding AnalyticalFlows}" 
                    HorizontalAlignment="Left" Margin="5" BorderThickness="1" 
                   HorizontalGridLinesBrush="#808080" VerticalGridLinesBrush="#808080"
                   CanUserAddRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False"
@@ -133,6 +136,23 @@
                             <DataGridTextColumn Header="Flows" Binding="{Binding Flow}" Width="*" />
                         </DataGrid.Columns>
                     </controls:CopyPasteDataGrid>
+
+                    <Grid Grid.Row="2" Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                        </Grid.RowDefinitions>
+
+                        <Label Name="lbl_fitToFlow_mean" Content="{Binding FitToFlowMean}" Grid.Row="0" Margin="0"/>
+                        <Label Name="lbl_fitToFlow_stDev" Content="{Binding FitToFlowStDev}" Grid.Row="1" Margin="0"/>
+                        <Label Name="lbl_fitToFlow_skew" Content="{Binding FitToFlowSkew}" Grid.Row="2" Margin="0"/>
+
+                    </Grid>
                 
                     <!--<DataGrid Grid.Column="0" ItemsSource="{Binding GraphicalFlows}"  AutoGenerateColumns="False" ColumnWidth="*" HorizontalAlignment="Left" EnableRowVirtualization="false" EnableColumnVirtualization="false" 
                     Margin="5" VerticalScrollBarVisibility="Auto" 
@@ -142,7 +162,6 @@
                     </DataGrid.Columns>
                 </DataGrid>-->
                     
-                <CheckBox Grid.Column="1" Content="Is Logged Flow" IsChecked="{Binding IsLogFlow}" Margin="5" />
                 
             </Grid>
             <!--<Grid Grid.Row="0" Grid.Column="1">

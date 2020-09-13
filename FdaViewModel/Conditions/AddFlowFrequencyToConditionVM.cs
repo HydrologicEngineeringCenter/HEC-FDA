@@ -5,6 +5,7 @@ using System.Text;
 
 using System.Threading.Tasks;
 using FdaViewModel.Utilities;
+using Functions;
 using Model;
 
 namespace FdaViewModel.Conditions
@@ -43,8 +44,26 @@ namespace FdaViewModel.Conditions
         }
         public IFdaFunction SelectedCurve
         {
-            //todo: Refactor: commenting out
-            get { return SelectedElement.Curve; } //new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(((FrequencyRelationships.AnalyticalFrequencyElement)SelectedElement).Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency).GetOrdinatesFunction().Function; }
+            
+            get 
+            {
+                //this is weird, but this curve has a constant Y value but the interpolation
+                //methid is statistical. Having a stats interp throws exceptions later. I am going
+                //to return a clone of this curve with a linear interp since this curve is only used
+                //for plotting in the conditions editor.
+                ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(SelectedElement.Curve.Coordinates, InterpolationEnum.Linear);
+                IFunction function = null;
+                if (func is IFunction)
+                {
+                    function = (IFunction)func;
+                }
+                else 
+                { 
+                    function = func.Sample(.5);
+                }
+                return IFdaFunctionFactory.Factory(IParameterEnum.InflowFrequency, function);
+                //return SelectedElement.Curve; 
+            } 
             
         }
 

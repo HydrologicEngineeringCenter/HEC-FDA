@@ -39,7 +39,13 @@ namespace Functions
         
         public static ICoordinatesFunction Factory(List<ICoordinate> coordinates, InterpolationEnum interpolator)
         {
-            if (IsConstantYValues(coordinates))
+            //todo: This is bad, but i am not sure how to handle an interpolation type of statistical which is what 
+            //the analytical flow freq's are. I am not actually using this for anything anyway i think.
+            if (interpolator == InterpolationEnum.Statistical)
+            {
+                return IFunctionFactory.Factory(coordinates, InterpolationEnum.Linear);
+            }
+            if (IsConstantYValues(coordinates) )
             {
                 return new CoordinatesFunctionConstants(coordinates, interpolator);
             }

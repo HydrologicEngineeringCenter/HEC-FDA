@@ -65,13 +65,32 @@ namespace FdaViewModel.Utilities
         //    get { return _CustomTreeViewHeader; }
         //    set { _CustomTreeViewHeader = value; NotifyPropertyChanged(nameof(CustomTreeViewHeader)); }
         //}
+        
         #endregion
         #region Constructors
         public ChildElement()
         {
+            
         }
         #endregion
         #region Voids
+        /// <summary>
+        /// Gets the elements ID by finding this elements persistence manager and using
+        /// it's table name and element name to grab the ID from the database. -1 means
+        /// it did not find it for some reason.
+        /// </summary>
+        /// <returns></returns>
+        public int GetElementID()
+        {
+            IElementManager elementManager = PersistenceFactory.GetElementManager(this);
+            if(elementManager is SavingBase)
+            {
+                SavingBase baseManager = ((SavingBase)elementManager);
+                int id = baseManager.GetElementId(baseManager.TableName, Name);
+                return id;
+            }
+            return -1;
+        }
         public virtual void Rename(object sender, EventArgs e)
         {
             //ChildElement oldElement = ((NamedAction)sender).Element;

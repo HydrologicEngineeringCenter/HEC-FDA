@@ -113,7 +113,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png");
                 return;
             }
-            StudyCacheForSaving.RemoveElement((TerrainElement)element);
+            StudyCacheForSaving.RemoveElement((TerrainElement)element,-1);
 
         }
 

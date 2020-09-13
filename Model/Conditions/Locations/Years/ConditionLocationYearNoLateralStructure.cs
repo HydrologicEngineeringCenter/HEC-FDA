@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using Utilities;
 using Functions;
+using Model.Conditions.Locations.Years.Realizations;
 
 namespace Model.Conditions.Locations.Years
 {
-    internal sealed class ConditionLocationYearNoLateralStructure : ConditionLocationYearBase<string>
+    public class ConditionLocationYearNoLateralStructure : ConditionLocationYearBase<string>
     {
         #region Properties
         
@@ -16,7 +17,7 @@ namespace Model.Conditions.Locations.Years
         #endregion
 
         #region Constructor
-        internal ConditionLocationYearNoLateralStructure(ILocation location, int yr, IFrequencyFunction frequencyFx, IEnumerable<ITransformFunction> transformFxs, IEnumerable<IMetric> metrics, string label = ""): base(location, yr, frequencyFx, transformFxs, metrics, label)
+        public ConditionLocationYearNoLateralStructure(ILocation location, int yr, IFrequencyFunction frequencyFx, IEnumerable<ITransformFunction> transformFxs, IEnumerable<IMetric> metrics, string label = ""): base(location, yr, frequencyFx, transformFxs, metrics, label)
         {
             //TODO: Validation            
             Parameters = ParameterSamplePairs();
@@ -40,7 +41,7 @@ namespace Model.Conditions.Locations.Years
             {
                 frequencyFx = frequencyFx.Compose((ITransformFunction)sampledFxs[fx.ParameterType].Parameter);
                 sampledFxs.Add(frequencyFx.ParameterType, new Samples.SampledFunction(new Samples.Sample(), frequencyFx));
-                while (frequencyFx.ParameterType == endPoints[metricIndex].TargetFunction)
+                while (metricIndex < endPoints.Count && frequencyFx.ParameterType == endPoints[metricIndex].TargetFunction)
                 {
                     metrics.Add(endPoints[metricIndex], endPoints[metricIndex].Compute(frequencyFx));
                     metricIndex++;

@@ -132,8 +132,9 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
         public void Remove(ChildElement element)
         {
+            int id = element.GetElementID();
             RemoveFromParentTable(element, TableName);
-            StudyCacheForSaving.RemoveElement((LeveeFeatureElement)element);
+            StudyCacheForSaving.RemoveElement((LeveeFeatureElement)element, id);
 
         }
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )

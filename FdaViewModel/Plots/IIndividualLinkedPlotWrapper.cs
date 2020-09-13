@@ -21,8 +21,8 @@ namespace FdaViewModel.Plots
         bool AreaPlotVisible { get; set; }
 
         Model.IMetric Metric { get; set; }
-
-        void AddCurveToPlot(IFdaFunction function, string elementName, FdaCrosshairChartModifier chartModifier);
+        int SelectedElementID { get; set; }
+        void AddCurveToPlot(IFdaFunction function, string elementName,int elementID, FdaCrosshairChartModifier chartModifier);
         //bool DisplayImportButton { get; set; }
 
         //string Title { get; }

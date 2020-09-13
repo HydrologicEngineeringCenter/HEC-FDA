@@ -194,6 +194,7 @@ namespace FdaViewModel.Study
         {
             Sampler.RegisterSampler(new ConstantSampler());
             Sampler.RegisterSampler(new DistributionSampler());
+            Sampler.RegisterSampler(new LinkedFunctionsSampler());
 
             TabController tabFactory = TabController.Instance;
             TabFactoryInstance = tabFactory;

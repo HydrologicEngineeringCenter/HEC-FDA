@@ -91,7 +91,17 @@ namespace FdaViewModel.Editors
         #region Constructors
         public BaseLoggingEditorVM(IFdaFunction defaultCurve, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(actionManager)
         {
-            ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(defaultCurve.Coordinates, defaultCurve.Interpolator);
+            ICoordinatesFunction coordFunc = null;
+            if (defaultCurve == null)
+            {
+                List<double> xs = new List<double>() { 0 };
+                List<double> ys = new List<double>() { 0 };
+                coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+            }
+            else
+            {
+                coordFunc = ICoordinatesFunctionsFactory.Factory(defaultCurve.Coordinates, defaultCurve.Interpolator);
+            }
 
             EditorVM = new CoordinatesFunctionEditorVM(coordFunc, xLabel, yLabel, chartTitle);
             EditorVM.TableChanged += EditorVM_TableChanged;
@@ -106,6 +116,10 @@ namespace FdaViewModel.Editors
         {
             if (elem.Curve != null)
             {
+                //if(elem.Curve.DistributionType == IOrdinateEnum.LogPearsonIII)
+                //{
+                //    ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory()
+                //}
                 ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(elem.Curve.Coordinates, elem.Curve.Interpolator);
                 EditorVM = new CoordinatesFunctionEditorVM(coordFunc, xLabel, yLabel, chartTitle);
             }

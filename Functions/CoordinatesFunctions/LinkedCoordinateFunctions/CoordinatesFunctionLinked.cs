@@ -418,11 +418,11 @@ namespace Functions.CoordinatesFunctions
             double minRange = double.NaN, maxRange = double.NaN;
             foreach (ICoordinatesFunction fx in Functions)
             {
-                if (minRange == double.NaN || fx.Range.Min < minRange)
+                if (double.IsNaN(minRange) || fx.Range.Min < minRange)
                 {
                     minRange = fx.Range.Min;
                 }
-                if (maxRange == double.NaN || fx.Range.Max > maxRange)
+                if (double.IsNaN(maxRange) || fx.Range.Max > maxRange)
                 {
                     maxRange = fx.Range.Max;
                 }

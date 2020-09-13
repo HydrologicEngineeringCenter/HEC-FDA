@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using Functions;
 using Functions.Ordinates;
 using Model.Functions;
-
+using Utilities;
 
 namespace Model
 {
@@ -12,6 +13,20 @@ namespace Model
         public double Ordinate { get; } = 0;
         public IMetricEnum Type { get; } = IMetricEnum.NotSet;
         public IParameterEnum TargetFunction { get; }
+
+        public UnitsEnum Units => throw new NotImplementedException();
+
+        IOrdinate IParameterOrdinate.Ordinate => throw new NotImplementedException();
+
+        public IParameterEnum ParameterType => throw new NotImplementedException();
+
+        public string Label => throw new NotImplementedException();
+
+        public bool IsConstant => throw new NotImplementedException();
+
+        public IMessageLevels State => throw new NotImplementedException();
+
+        public IEnumerable<IMessage> Messages => throw new NotImplementedException();
         #endregion
 
         #region Constructors
@@ -66,6 +81,11 @@ namespace Model
                 return sampledFreqFunc.InverseF(new Constant(Ordinate)).Value();
                 //return frequencyFunction.GetXFromY(ExceedanceTarget);
             }
+        }
+
+        public string Print(bool round = false, bool abbreviate = false)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

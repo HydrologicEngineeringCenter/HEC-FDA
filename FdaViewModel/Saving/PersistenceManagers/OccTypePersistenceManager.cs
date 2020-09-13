@@ -499,7 +499,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
             if (indexToRemove != -1)
             {
-                StudyCacheForSaving.RemoveElement(elems[indexToRemove]);
+                StudyCacheForSaving.RemoveElement(elems[indexToRemove], groupID);
                 //StudyCacheForSaving.OccTypeElements.RemoveAt(indexToRemove);
             }
         }

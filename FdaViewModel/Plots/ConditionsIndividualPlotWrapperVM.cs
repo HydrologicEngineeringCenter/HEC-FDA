@@ -113,6 +113,8 @@ namespace FdaViewModel.Plots
             set { _PlotVM = value; }// _PlotVM.CurveUpdated += CurveHasBeenUpdated; }
         }
 
+        public int SelectedElementID { get; set; }
+
         private bool _isXAxisLog;
         private bool _isYAxisLog;
         private bool _isProbabilityXAxis;
@@ -146,8 +148,9 @@ namespace FdaViewModel.Plots
 
         #endregion
         #region Voids
-        public void AddCurveToPlot(IFdaFunction function, string elementName, FdaCrosshairChartModifier ChartModifier)
+        public void AddCurveToPlot(IFdaFunction function, string elementName,int selectedElemID, FdaCrosshairChartModifier ChartModifier)
         {
+            SelectedElementID = selectedElemID;
             //from function: title, x axis label, y axis label
             PlotVM = new IndividualLinkedPlotVM(function, elementName, ChartModifier, _isXAxisLog, _isYAxisLog, _isProbabilityXAxis, _xAxisOnBottom, _yAxisOnLeft);
         }

@@ -7,7 +7,7 @@ using Utilities;
 
 namespace Model.Conditions.Locations.Years
 {
-    internal abstract class ConditionLocationYearBase<T> : IConditionLocationYear<T>
+    public abstract class ConditionLocationYearBase<T> : IConditionLocationYear<T>
     {
         #region Properties
         public int Year { get; }

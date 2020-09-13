@@ -150,6 +150,7 @@ namespace FdaViewModel.StageTransforms
 
         #endregion
 
+
         public override bool Equals(object obj)
         {
             bool retval = true;
@@ -162,7 +163,7 @@ namespace FdaViewModel.StageTransforms
                 }
                 if(Description == null && elem.Description != null)
                 {
-                    return false;
+                    retval = false;
                 }
                 else if (Description != null && !Description.Equals(elem.Description))
                 {

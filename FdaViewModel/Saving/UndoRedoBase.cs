@@ -54,6 +54,11 @@ namespace FdaViewModel.Saving
 
         public void UpdateChangeTable(ChildElement element, int stateIndex)
         {
+            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(ChangeTableName);
+            if (tbl == null)
+            {
+                Storage.Connection.Instance.CreateTable(ChangeTableName, ChangeTableColumnNames, ChangeTableColumnTypes);
+            }
             int elemId = GetElementId(TableName, element.Name);
             int highestStateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME);
 
@@ -89,10 +94,11 @@ namespace FdaViewModel.Saving
         public void Remove(ChildElement element)
         {
             //important to get the element id before removing it from the parent table or else you wont get it.
-            RemoveElementFromChangeTable(ChangeTableName, GetElementId(TableName, element.Name), ELEMENT_ID_COL_NAME);
+            int id = GetElementId(TableName, element.Name);
+            RemoveElementFromChangeTable(ChangeTableName, id, ELEMENT_ID_COL_NAME);
             RemoveFromParentTable(element, TableName);
             //DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCacheForSaving.RemoveElement(element);
+            StudyCacheForSaving.RemoveElement(element, id);
 
         }
 
