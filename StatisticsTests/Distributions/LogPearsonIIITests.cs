@@ -21,8 +21,6 @@ namespace StatisticsTests.Distributions
         /// <param name="skew"> <see cref="Statistics.Distributions.LogPearsonIII.Skewness"/> parameter for the <see cref="Statistics.Distributions.LogPearsonIII"/> distribution, which is a log base 10 representation of a random number. Only non-finite or non-numerical values are expected to cause an <see cref="Utilities.InvalidConstructorArgumentsException"/> to be thrown. </param>
         /// <param name="n"> <see cref="Statistics.Distributions.LogPearsonIII.SampleSize"/> parameter. Any non-positive value is expected to cause an <see cref="Utilities.InvalidConstructorArgumentsException"/> to be thrown. </param>
         [Theory]
-        [InlineData(0d, 1d, 1d, 1)]
-        [InlineData(1d, 0d, 1d, 1)]
         [InlineData(1d, 1d, 1d, 0)]
         [InlineData(-1d, 1d, 1d, 1)]
         [InlineData(1d, -1d, 1d, 1)]
@@ -40,6 +38,15 @@ namespace StatisticsTests.Distributions
         {
             Assert.Throws<Utilities.InvalidConstructorArgumentsException>(() => new Statistics.Distributions.LogPearsonIII(mean: mean, standardDeviation: sd, skew: skew, sampleSize: n));
         }
+        [Theory]
+        [InlineData(11d, 1d, 1d)]
+        [InlineData(1d, 11d, 1d)]
+        [InlineData(1d, 1d, 11d)]
+        public void TooBigParameterValues_Throw_InvalidConstructorArguementsException(double mean, double sd, double skew)
+        {
+            Assert.Throws<InvalidConstructorArgumentsException>(() => new Statistics.Distributions.LogPearsonIII(mean, sd, skew));
+        }
+
         /// <summary>
         /// Tests that valid parameters return a finite <see cref="IRange{T}"/> through the <see cref="Statistics.Distributions.LogPearsonIII._ProbabilityRange"/> field which is generated to restrit the unbounded distribution to a finite range.
         /// </summary>

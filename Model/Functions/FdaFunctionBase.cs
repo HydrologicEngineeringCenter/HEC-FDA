@@ -15,8 +15,6 @@ namespace Model.Functions
         #endregion
         #region Properties
         public OrderedSetEnum Order => _Function.Order;
-        public IRange<double> Range => _Function.Range;
-        public IRange<double> Domain => _Function.Domain;
         public InterpolationEnum Interpolator => _Function.Interpolator;
         public bool IsConstant { get; }
 
@@ -25,7 +23,9 @@ namespace Model.Functions
         public abstract IParameterRange YSeries { get; }
         public abstract IParameterEnum ParameterType { get; }
 
-        public List<ICoordinate> Coordinates => _Function.Coordinates;
+        public virtual IRange<double> Range => _Function.Range;
+        public virtual IRange<double> Domain => _Function.Domain;
+        public virtual List<ICoordinate> Coordinates => _Function.Coordinates;
 
         public bool IsLinkedFunction { get; }
         public IOrdinateEnum DistributionType { get; }

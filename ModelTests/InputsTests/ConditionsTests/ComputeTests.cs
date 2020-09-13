@@ -8,7 +8,6 @@ using Functions;
 using Functions.CoordinatesFunctions;
 using Functions.Ordinates;
 using Model;
-using Model.Outputs;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -133,7 +132,7 @@ namespace ModelTests.InputsTests.ConditionsTests
             //create the metrics
             List<IMetric> metrics = CreateMetrics(new List<IMetricEnum>() { IMetricEnum.Damages }, new List<double>() { thresholdValue });
 
-            ICondition condition = ConditionFactory.Factory(name, analysisYear, inflowFreq, transformFunctions,metrics);
+            //ICondition condition = ConditionFactory.Factory(name, analysisYear, inflowFreq, transformFunctions,metrics);
 
             int randomPacketSize = transformFunctions.Count + 1;
             //TimeStampSeed = (int)new DateTime().Ticks;

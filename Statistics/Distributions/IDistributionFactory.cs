@@ -205,5 +205,55 @@ namespace Statistics
         {
             return Distributions.LogPearsonIII.Fit(sample, sampleSize, isLogSample);
         }
+        /// <summary>
+        /// Constructs a <see cref="IDistributionEnum.LogPearsonIII"/> <see cref="IDistribution"/> bound on the range specified by the <paramref name="min"/> and <paramref name="max"/> values."/>
+        /// </summary>
+        /// <param name="mean"> The mean of the logged distribution (or sample data). NOTE: this is the mean of the logged data, NOT the log of the mean. </param>
+        /// <param name="stDev"> The standard deviation of the logged distribution (or sample data). NOTE: this is the standard deviation of the logged data, NOT the log of the standard deviation. </param>
+        /// <param name="skew"> The skew of the logged distribution (or sample data). NOTE: this is the skew of the logged data, NOT the log of the skew.  </param>
+        /// <param name="sampleSize"> An optional parameter describing the sample size used to calculated the sample <paramref name="mean"/>, <paramref name="stDev"/> and <paramref name="skew"/>. Leave blank if a population distribution is intended. </param>
+        /// <param name="min"> The lower (minimum) truncation value. </param>
+        /// <param name="max"> The upper (maximum) truncation value. </param>
+        /// <returns> A <see cref="Statistics.Distributions.LogPearsonIII"/> object bound on the range: [<paramref name="min"/>, <paramref name="max"/>] returned as an implementation of the  <see cref="IDistribution"/> interface. </returns>
+        /// <returns></returns>
+        public static IDistribution FactoryTruncatedLogPearsonIII(double mean, double stDev, double skew, double min = 0, double max = double.PositiveInfinity, int sampleSize = int.MaxValue)
+        {
+            IDistribution lpIII = new Distributions.LogPearsonIII(mean, stDev, skew, sampleSize);
+            return FactoryTruncatedLogPearsonIII(lpIII, min, max);
+        }
+        /// <summary>
+        /// Constructs a <see cref="IDistributionEnum.LogPearsonIII"/> <see cref="IDistribution"/> bound on the range specified by the <paramref name="min"/> and <paramref name="max"/> values."/>
+        /// </summary>
+        /// <param name="lpIII"> The <see cref="Statistics.Distributions.LogPearsonIII"/> distribution to be bound. </param>
+        /// <param name="min"> The lower (minimum) truncation value. </param>
+        /// <param name="max"> The upper (maximum) truncation value. </param>
+        /// <returns> A <see cref="Statistics.Distributions.LogPearsonIII"/> object bound on the range: [<paramref name="min"/>, <paramref name="max"/>] returned as an implementation of the  <see cref="IDistribution"/> interface. </returns>
+        public static IDistribution FactoryTruncatedLogPearsonIII(IDistribution lpIII, double min = 0, double max = double.PositiveInfinity)
+        {
+            if (lpIII.IsNull()) throw new ArgumentNullException(nameof(lpIII));
+            if (lpIII.Type != IDistributionEnum.LogPearsonIII) throw new ArgumentException($"The {nameof(FactoryTruncatedLogPearsonIII)} factory requires a {nameof(IDistributionEnum.LogPearsonIII)} {nameof(lpIII)} parameter, instead a {nameof(lpIII.Type)} was provided.");
+            return new Statistics.Distributions.TruncatedDistribution(lpIII, min, max);
+        }
+        /// <summary>
+        /// Constructs a <see cref="IDistribution"/> bound on the range specified by the <paramref name="min"/> and <paramref name="max"/> values."/>
+        /// </summary>
+        /// <param name="distribution"> The <see cref="IDistribution"/> to be bound. </param>
+        /// <param name="min"> The lower (minimum) truncation value. </param>
+        /// <param name="max"> The upper (maximum) truncation value. </param>
+        /// <returns> A <see cref="IDistribution"/> bound on the range: [<paramref name="min"/>, <paramref name="max"/>] returned as an implementation of the  <see cref="IDistribution"/> interface. </returns>
+        public static IDistribution FactoryTruncatedDistribution(IDistribution distribution, double min = double.NegativeInfinity, double max = double.PositiveInfinity)
+        {
+            if (distribution.IsNull()) throw new ArgumentNullException(nameof(distribution));
+            switch (distribution.Type) 
+            {
+                case IDistributionEnum.Normal:
+                    return FactoryTruncatedNormal(distribution.Mean, distribution.StandardDeviation, min, max, distribution.SampleSize);
+                case IDistributionEnum.LogPearsonIII:
+                    return FactoryTruncatedLogPearsonIII(distribution, min, max);
+                default:
+                    throw new NotSupportedException($"The specified {distribution.Type} distribution is not a supported truncated distribution type.");
+            }
+
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace Functions
     internal class DistributionFunction : IFunction, IValidate<ICoordinatesFunction>
     {
         #region Fields
-        private readonly IDistributedOrdinate _Distribution;
+        internal readonly IDistributedOrdinate _Distribution;
         private readonly CoordinatesFunctionConstants _CoordinatesFunction;
         #endregion
         #region Properties
@@ -55,8 +55,7 @@ namespace Functions
                 p = UpdateP(p, pEpsilon, y, yEpsilon, pMax);
                 y = F(p);
             }
-            expandedCoordinates.Add(ICoordinateFactory.Factory(pMax, F(pMax)));
- 
+            expandedCoordinates.Add(ICoordinateFactory.Factory(pMax, F(pMax)));  
             return expandedCoordinates;
         }
         private double UpdateP(double lastP, double pEpsilon, double lastY, double yEpsilon, double pMax)
