@@ -480,7 +480,7 @@ namespace FdaViewModel.Plots
 
         }
 
-        private void SetMinMaxModulatorValues()
+        public void SetMinMaxModulatorValues()
         {
             IFdaFunction func = IndividualPlotWrapperVM.PlotVM.BaseFunction;
             MinX = func.Coordinates[0].X.Value();

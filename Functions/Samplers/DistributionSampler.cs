@@ -1,6 +1,7 @@
 ﻿using Functions.Coordinates;
 using Functions.CoordinatesFunctions;
 using Functions.Ordinates;
+using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -28,7 +29,25 @@ namespace Functions
             }
             else if(typeof(DistributionFunction).IsAssignableFrom(coordinatesFunction.GetType()))
             {
-                return new CoordinatesFunctionConstants(coordinatesFunction.Coordinates,  InterpolationEnum.Linear);
+                if (coordinatesFunction.DistributionType == IOrdinateEnum.LogPearsonIII)
+                {
+                    IDistributedOrdinate distOrdinate = ((DistributionFunction)coordinatesFunction)._Distribution;
+                    int sampleSize = distOrdinate.SampleSize;
+                    int seed = (int)Math.Round(probability * 1000.0);
+                    Random rng = new Random(seed);
+                    List<double> flowValues = new List<double>();
+                    for(int i = 0;i<sampleSize;i++)
+                    {
+                        flowValues.Add(distOrdinate.InverseCDF(rng.NextDouble()));
+                    }
+                    IDistribution lp3 = IDistributionFactory.FactoryFitLogPearsonIII(flowValues);
+                    return IFunctionFactory.Factory(lp3);
+                }
+                else
+                {
+                    //todo: need to deal with any non LP3 distributions
+                    return new CoordinatesFunctionConstants(coordinatesFunction.Coordinates, InterpolationEnum.Linear);
+                }
             }
             throw new ArgumentException("Could not sample the coordinates function.");
         }

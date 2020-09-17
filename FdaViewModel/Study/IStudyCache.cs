@@ -13,6 +13,7 @@ namespace FdaViewModel.Study
         List<ChildElement> GetChildrenOfParent(ParentElement element);
         List<T> GetChildElementsOfType<T>() where T : ChildElement ;
         T GetParentElementOfType<T>() where T : ParentElement;
+        ChildElement GetChildElementOfType(Type type, int ID);
 
         event FDACache.AddElementEventHandler PlanAdded;
 

@@ -46,7 +46,7 @@ namespace View.Plots
 
                 //this is terrible but i needed some way of knowing which horizontal button was clicked and 
                 //i really didn't want to make another custom control for the lateral structure.
-                if(btn_AddButton.Content == "Ext Int Stage Curve")
+                if(btn_AddButton.Content == "Ext Int Stage")
                 {
                     ((IndividualLinkedPlotControl)parentControl).PopTheImporterIntoPlot5();
                 }

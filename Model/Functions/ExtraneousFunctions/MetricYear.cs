@@ -17,7 +17,7 @@ namespace Model.Functions
         public override IMessageLevels State { get; }
         public override IEnumerable<IMessage> Messages { get; }
 
-        internal MetricYear(IFunction fx, IParameterEnum type, string label, string xLabel = "", string yLabel = "", UnitsEnum yUnits = UnitsEnum.Probability) : base(fx)
+        internal MetricYear(ICoordinatesFunction fx, IParameterEnum type, string label, string xLabel = "", string yLabel = "", UnitsEnum yUnits = UnitsEnum.Probability) : base(fx)
         {
             ParameterType = type;
             Label = label == "" ? ParameterType.Print() : label;

@@ -220,6 +220,9 @@
     <Compile Include="Conditions\ConditionsPlotEditor.xaml.cs">
       <DependentUpon>ConditionsPlotEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Conditions\EnterSeed.xaml.cs">
+      <DependentUpon>EnterSeed.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DeleteMeClass.cs" />
     <Compile Include="FlowTransforms\InflowOutflowEditor.xaml.cs">
       <DependentUpon>InflowOutflowEditor.xaml</DependentUpon>
@@ -330,6 +333,9 @@
     </Compile>
     <Compile Include="Output\IndexLocations.xaml.cs">
       <DependentUpon>IndexLocations.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Output\LinkedPlots.xaml.cs">
+      <DependentUpon>LinkedPlots.xaml</DependentUpon>
     </Compile>
     <Compile Include="Plans\CreateNewPlan.xaml.cs">
       <DependentUpon>CreateNewPlan.xaml</DependentUpon>
@@ -520,6 +526,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Conditions\EnterSeed.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="FlowTransforms\InflowOutflowEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -671,6 +681,10 @@
     <Page Include="Output\IndexLocations.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Output\LinkedPlots.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Plans\CreateNewPlan.xaml">
       <SubType>Designer</SubType>

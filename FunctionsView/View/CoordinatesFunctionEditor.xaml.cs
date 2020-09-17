@@ -76,16 +76,17 @@ namespace FunctionsView.View
             {
                 return;
             }
+            string xLabel = EditorVM.XLabel;
 
             List<CoordinatesFunctionRowItem> rowItems = GetAllRowsFromAllTables();
             int[] colWidths = ColumnWidths.GetComputedColumnWidths(rowItems);
 
             lst_tables.Items.Clear();
 
-            lst_tables.Items.Add(new TableTopControl(colWidths));
+            lst_tables.Items.Add(new TableTopControl(colWidths, EditorVM.YLabel));
             for(int i = 0;i<EditorVM.Tables.Count;i++)
             {
-                CoordinatesFunctionTable newTable = new CoordinatesFunctionTable(EditorVM.Tables[i], colWidths);
+                CoordinatesFunctionTable newTable = new CoordinatesFunctionTable( EditorVM.Tables[i], colWidths, xLabel);
                 if (i == 0)
                 {
                     newTable.DisplayXAndInterpolatorHeaders();

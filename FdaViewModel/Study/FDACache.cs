@@ -952,7 +952,93 @@ namespace FdaViewModel.Study
             return retVal;
         }
 
+        /// <summary>
+        /// This is used for the conditions element to get the children that it
+        /// needs in order to do a compute.
+        /// </summary>
+        /// <param name="childElementType"></param>
+        /// <param name="ID">The id associated with that element in the database.</param>
+        /// <returns></returns>
+        public ChildElement GetChildElementOfType(Type childElementType, int ID)
+        {
+            if (childElementType == typeof(ImpactAreaElement))
+            {
+                foreach (ChildElement elem in ImpactAreaElements)
+                {
+                    if(elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+            
+            if (childElementType == typeof(AnalyticalFrequencyElement))
+            {
+                foreach (ChildElement elem in FlowFrequencyElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+            if (childElementType == typeof(InflowOutflowElement))
+            {
+                foreach (ChildElement elem in InflowOutflowElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+            if (childElementType.IsAssignableFrom(typeof(RatingCurveElement)))
+            {
+                foreach (ChildElement elem in RatingCurveElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+            if (childElementType == typeof(ExteriorInteriorElement))
+            {
+                foreach (ChildElement elem in ExteriorInteriorElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+            if (childElementType == typeof(LeveeFeatureElement))
+            {
+                foreach (ChildElement elem in LeveeElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+            
+           
+            
+            if (childElementType == typeof(AggregatedStageDamageElement))
+            {
+                foreach (ChildElement elem in StageDamageElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
         
+            return null;
+        }
+
         #endregion
 
     }

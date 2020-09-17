@@ -11,9 +11,11 @@ namespace Model.Functions
     internal abstract class FdaFunctionBase: IFdaFunction, IValidate<IFdaFunction>
     {
         #region Field
-        internal readonly IFunction _Function;
+        public readonly ICoordinatesFunction _Function;
         #endregion
         #region Properties
+        //todo: delete this after the friday release
+        public ICoordinatesFunction Function =>  _Function;
         public OrderedSetEnum Order => _Function.Order;
         public InterpolationEnum Interpolator => _Function.Interpolator;
         public bool IsConstant { get; }
@@ -34,7 +36,7 @@ namespace Model.Functions
         public abstract IEnumerable<IMessage> Messages { get; }
         #endregion
         #region Constructors
-        internal FdaFunctionBase(IFunction fx)
+        internal FdaFunctionBase(ICoordinatesFunction fx)
         {
             if (fx.IsNull()) throw new ArgumentNullException(nameof(fx));
             else
@@ -58,8 +60,36 @@ namespace Model.Functions
             return msgs.Max();
         }
 
-        public virtual IOrdinate F(IOrdinate x) => _Function.F(x); 
-        public virtual IOrdinate InverseF(IOrdinate y) => _Function.InverseF(y);
+        public virtual IOrdinate F(IOrdinate x)
+        {
+            if (x.Value() < _Function.Domain.Min)
+            {
+                return IOrdinateFactory.Factory(_Function.Range.Min);
+            }
+            else if (x.Value() > _Function.Domain.Max)
+            {
+                return IOrdinateFactory.Factory(_Function.Range.Max);
+            }
+            else
+            {
+               return _Function.F(x);
+            }
+        }
+        public virtual IOrdinate InverseF(IOrdinate y)
+        {
+            if (y.Value() < _Function.Range.Min)
+            {
+                return IOrdinateFactory.Factory(_Function.Domain.Min);
+            }
+            else if (y.Value() > _Function.Range.Max)
+            {
+                return IOrdinateFactory.Factory(_Function.Domain.Max);
+            }
+            else
+            {
+                return _Function.InverseF(y);
+            }
+        }
         public bool Equals(IFdaFunction fx)
         {
             if (ParameterType == fx.ParameterType && _Function.Equals(fx)) return true;

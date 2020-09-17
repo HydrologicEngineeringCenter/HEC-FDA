@@ -8,7 +8,7 @@ using Statistics;
 
 namespace Model.Conditions.Locations.Years.Results
 {
-    internal sealed class ConditionLocationYearResult : IConditionLocationYearResult
+    public class ConditionLocationYearResult : IConditionLocationYearResult
     {
         public int Seed { get; }
         public IConditionLocationYearSummary ConditionLocationTime { get; }
@@ -16,7 +16,7 @@ namespace Model.Conditions.Locations.Years.Results
         public IReadOnlyDictionary<IMetric, Statistics.IHistogram> Metrics { get; private set; }
         public IReadOnlyDictionary<IMetric, Statistics.IConvergenceResult> Convergence { get; private set; }
 
-        internal ConditionLocationYearResult(IConditionLocationYearSummary condition, IReadOnlyDictionary<IMetric, Statistics.IConvergenceCriteria> criteria, int seed)
+        public ConditionLocationYearResult(IConditionLocationYearSummary condition, IReadOnlyDictionary<IMetric, Statistics.IConvergenceCriteria> criteria, int seed)
         {
             //TODO: Validate
             Seed = seed;

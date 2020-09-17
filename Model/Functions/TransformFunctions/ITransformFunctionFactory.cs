@@ -22,7 +22,7 @@ namespace Model
         /// <param name="yLabel"> Optional parameter describing the <see cref="IFdaFunction"/> y ordinates. If not set a default value is inferred based on the specified <see cref="IParameterEnum"/> value and the <paramref name="yUnits"/>. </param>
         /// <param name="abbreviate"> Optional parameter describing if labels and units should be abbreviated. Set to <see langword="true"/> default. </param>
         /// <returns> An <see cref="ITransformFunction"/> implementing the <see cref="IFdaFunction"/> interface. </returns>
-        public static ITransformFunction Factory(IFunction fx, IParameterEnum fType, string label = "", UnitsEnum xUnits = UnitsEnum.NotSet, string xLabel = "", UnitsEnum yUnits = UnitsEnum.NotSet, string yLabel = "", bool abbreviate = true)
+        public static ITransformFunction Factory(ICoordinatesFunction fx, IParameterEnum fType, string label = "", UnitsEnum xUnits = UnitsEnum.NotSet, string xLabel = "", UnitsEnum yUnits = UnitsEnum.NotSet, string yLabel = "", bool abbreviate = true)
         {
             label = label == "" ? fType.PrintLabel(abbreviate: abbreviate) : label;
             xUnits = xUnits == UnitsEnum.NotSet ? fType.XUnitsDefault() : xUnits;

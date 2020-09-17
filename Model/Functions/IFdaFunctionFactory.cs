@@ -25,7 +25,7 @@ namespace Model
         /// <param name="yLabel"> Optional parameter describing the <see cref="IFdaFunction"/> y ordinates. If not set a default value is inferred based on the specified <see cref="IParameterEnum"/> value and the <paramref name="yUnits"/>. </param>
         /// <returns> An object implementing the <see cref="IFdaFunction"/> interface. </returns>
         /// <remarks> If a more specific implementation is required consider requesting an <see cref="IFrequencyFunction"/> using the <see cref="IFrequencyFunctionFactory"/> or an <see cref="ITransformFunction"/> using the <see cref="ITransformFunctionFactory"/>. </remarks>
-        public static IFdaFunction Factory(IParameterEnum fType, IFunction fx, string label = "", UnitsEnum xUnits = UnitsEnum.NotSet, string xLabel = "", UnitsEnum yUnits = UnitsEnum.NotSet, string yLabel = "")
+        public static IFdaFunction Factory(IParameterEnum fType, ICoordinatesFunction fx, string label = "", UnitsEnum xUnits = UnitsEnum.NotSet, string xLabel = "", UnitsEnum yUnits = UnitsEnum.NotSet, string yLabel = "")
         {
             switch (fType) 
             {
@@ -35,7 +35,14 @@ namespace Model
                 case IParameterEnum.InteriorStageFrequency:
                 case IParameterEnum.DamageFrequency:
                     if (xUnits != UnitsEnum.NotSet && xUnits != UnitsEnum.Probability) throw new ArgumentException($"The {typeof(IFdaFunction)} cannot be constructed because the x ordinate units are set to: {xUnits.Print(false)}. The only valid selection for a {fType.ToString()} function is {UnitsEnum.Probability.ToString()}.");
-                    return IFrequencyFunctionFactory.Factory(fx, fType, label, xLabel, yLabel, yUnits);
+                    if(typeof(IFunction).IsAssignableFrom(fx.GetType()))
+                    {
+                        return IFrequencyFunctionFactory.Factory((IFunction)fx, fType, label, xLabel, yLabel, yUnits);
+                    }
+                    else
+                    {
+                        throw new ArgumentException($"A {fType} was requested which requires an {typeof(IFunction)} {nameof(fx)} parameter but a {fx.GetType()} was found.");
+                    }
                 case IParameterEnum.LateralStructureFailure:
                 case IParameterEnum.InflowOutflow:
                 case IParameterEnum.Rating:

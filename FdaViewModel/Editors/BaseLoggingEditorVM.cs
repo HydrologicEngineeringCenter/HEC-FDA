@@ -116,12 +116,13 @@ namespace FdaViewModel.Editors
         {
             if (elem.Curve != null)
             {
+                
                 //if(elem.Curve.DistributionType == IOrdinateEnum.LogPearsonIII)
                 //{
                 //    ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory()
                 //}
-                ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(elem.Curve.Coordinates, elem.Curve.Interpolator);
-                EditorVM = new CoordinatesFunctionEditorVM(coordFunc, xLabel, yLabel, chartTitle);
+                //ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(elem.Curve.Coordinates, elem.Curve.Interpolator);
+                EditorVM = new CoordinatesFunctionEditorVM(elem.Curve.Function, xLabel, yLabel, chartTitle);
             }
             else
             {

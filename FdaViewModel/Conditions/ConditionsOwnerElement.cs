@@ -148,14 +148,14 @@ namespace FdaViewModel.Conditions
         {
             List<AnalyticalFrequencyElement> listOfLp3 = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
             //todo: just for testing, delete this dummy lp3
-            List<double> xs = new List<double>() { .1,.3,.5,.7,.9 };
-            List<double> ys = new List<double>() { 1, 10000, 30000, 50000, 70000 };
-            ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-            IFdaFunction func = IFdaFunctionFactory.Factory( IParameterEnum.InflowFrequency, (IFunction)coordFunc, "Inflow Freq", UnitsEnum.Probability);
-            List<double> analyticalFlows = new List<double>() { 1, 2, 3 };
+            //List<double> xs = new List<double>() { .1,.3,.5,.7,.9 };
+            //List<double> ys = new List<double>() { 1, 10000, 30000, 50000, 70000 };
+            //ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+            //IFdaFunction func = IFdaFunctionFactory.Factory( IParameterEnum.InflowFrequency, (IFunction)coordFunc, "Inflow Freq", UnitsEnum.Probability);
+            //List<double> analyticalFlows = new List<double>() { 1, 2, 3 };
 
-            AnalyticalFrequencyElement dummyElem = new AnalyticalFrequencyElement("dummy elem","", "",2000,true,true, 2000,300,300,false,analyticalFlows,analyticalFlows, func);
-            listOfLp3.Add(dummyElem);
+            //AnalyticalFrequencyElement dummyElem = new AnalyticalFrequencyElement("dummy elem","", "",2000,true,true, 2000,300,300,false,analyticalFlows,analyticalFlows, func);
+            //listOfLp3.Add(dummyElem);
 
             AddFlowFrequencyToConditionVM lp3Importer = new AddFlowFrequencyToConditionVM(listOfLp3);
             lp3Importer.RequestNavigation += ownerElement.Navigate;

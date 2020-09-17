@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using Functions;
+using Model.Functions.FrequencyFunctions;
 using Utilities;
 
 namespace Model.Functions
 {
 
-    internal sealed class DamageFrequency : FdaFunctionBase, IFrequencyFunction
+    internal sealed class DamageFrequency : FrequencyFunctionBase
     {
         #region Properties
         public override string Label { get; }
@@ -15,7 +16,7 @@ namespace Model.Functions
         /// <summary>
         /// The damage frequency doesn't get composed with anything. It is the last step.
         /// </summary>
-        public List<IParameterEnum> ComposeableTypes => new List<IParameterEnum>(); 
+        public override List<IParameterEnum> ComposeableTypes => new List<IParameterEnum>(); 
         
         public override IEnumerable<IMessage> Messages { get; }
         public override IMessageLevels State { get; }
@@ -32,7 +33,7 @@ namespace Model.Functions
         }
         #endregion
 
-        public double Integrate() => _Function.TrapizoidalRiemannSum();
+        
         
         #region IFunctionCompose Methods
         //public IFrequencyFunction Compose(ITransformFunction transform, double frequencyFunctionProbability, double transformFunctionProbability)

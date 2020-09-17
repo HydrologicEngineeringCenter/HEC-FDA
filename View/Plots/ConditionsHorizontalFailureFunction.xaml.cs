@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using View.Conditions;
 
 namespace View.Plots
 {
@@ -75,7 +76,21 @@ namespace View.Plots
             }
         }
 
-
-
+        private void btn_cancel_Click(object sender, RoutedEventArgs e)
+        {
+            ContentControl parentControl = Plots.IndividualLinkedPlotControl.FindParent<ContentControl>(this);
+ 
+            //if (parentControl != null && parentControl.GetType() == typeof(ConditionsHorizontalFailureFunction)) //this occurs in the conditions editor
+            {
+                parentControl = IndividualLinkedPlotControl.FindParent<ContentControl>(parentControl);
+                if (parentControl != null && parentControl.GetType() == typeof(ConditionsPlotEditor))
+                {
+                    ((ConditionsPlotEditor)parentControl).CancelLateralStructure(this, new EventArgs());
+                    //FdaViewModel.Plots.IndividualLinkedPlotControlVM vm = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
+                    //vm.CurrentVM = (FdaViewModel.BaseViewModel)vm.IndividualPlotWrapperVM;
+                    //((IndividualLinkedPlotControl)parentControl).CancelTheLateralStructure();
+                }
+            }
+        }
     }
 }

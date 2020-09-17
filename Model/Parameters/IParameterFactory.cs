@@ -26,7 +26,7 @@ namespace Model
         //            throw new NotImplementedException();
         //    };
         //}
-        internal static IParameterRange Factory(IFunction fx, IParameterEnum fType, bool isConstant, bool x = true, UnitsEnum units = UnitsEnum.NotSet, string label = "", bool abbreviate = true)
+        internal static IParameterRange Factory(ICoordinatesFunction fx, IParameterEnum fType, bool isConstant, bool x = true, UnitsEnum units = UnitsEnum.NotSet, string label = "", bool abbreviate = true)
         {
             if (x)
             {
@@ -107,6 +107,9 @@ namespace Model
             switch (type) 
             {
                 case IParameterEnum.ExteriorElevation:  
+                    units = units == UnitsEnum.NotSet ? UnitsEnum.Foot : units;
+                    return new Model.Parameters.Elevations.ElevationOrdinate(IOrdinateFactory.Factory(ordinate), type, units, label, abbreviatedLabel);
+                case IParameterEnum.LateralStructureElevation:
                     units = units == UnitsEnum.NotSet ? UnitsEnum.Foot : units;
                     return new Model.Parameters.Elevations.ElevationOrdinate(IOrdinateFactory.Factory(ordinate), type, units, label, abbreviatedLabel);
                 default:

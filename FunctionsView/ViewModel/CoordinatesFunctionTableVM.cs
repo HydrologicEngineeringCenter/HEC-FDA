@@ -53,7 +53,8 @@ namespace FunctionsView.ViewModel
             {
                 coordinates.Add(row.CreateCoordinateFromRow());
             }
-            return ICoordinatesFunctionsFactory.Factory(coordinates, interpType);
+            return IFunctionFactory.Factory(coordinates, interpType);
+            //return ICoordinatesFunctionsFactory.Factory(coordinates, interpType);
         }
 
         //public void RowDeleted()

@@ -18,7 +18,7 @@ namespace Model.Functions
         #endregion
 
         #region Constructor
-        internal ExteriorInteriorStage(IFunction fx, string label, UnitsEnum xUnits = UnitsEnum.Foot, string xLabel = "", UnitsEnum yUnits = UnitsEnum.Foot, string ylabel = ""): base(fx)
+        internal ExteriorInteriorStage(ICoordinatesFunction fx, string label, UnitsEnum xUnits = UnitsEnum.Foot, string xLabel = "", UnitsEnum yUnits = UnitsEnum.Foot, string ylabel = ""): base(fx)
         {
             Label = label == "" ? ParameterType.Print() : label;
             XSeries = IParameterFactory.Factory(fx, IParameterEnum.ExteriorElevation, true, true, xUnits, xLabel);

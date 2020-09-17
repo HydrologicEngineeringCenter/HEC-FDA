@@ -5,6 +5,7 @@ using FdaViewModel.Utilities;
 using System.Windows;
 using FdaViewModel.StageTransforms;
 using Model;
+using Functions;
 
 namespace FdaViewModel.Conditions
 {
@@ -65,22 +66,19 @@ namespace FdaViewModel.Conditions
         {
             get
             {
-                return ((StageTransforms.RatingCurveElement)SelectedElement).Curve;
-                //UncertainCurveDataCollection curve = ((StageTransforms.RatingCurveElement)SelectedElement).Curve;
-                //FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = 
-                //    new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.Rating);
+                //this is a rating curve and we need to switch the x and y values.
 
-                //List<double> ys = new List<double>();
-                //List<double> xs = new List<double>();
-                //foreach (double y in (rating.GetOrdinatesFunction().Function.YValues))
-                //{
-                //    ys.Add(y);
-                //}
-                //foreach (double x in (rating.GetOrdinatesFunction().Function.XValues))
-                //{
-                //    xs.Add(x);
-                //}
-                //return new Statistics.CurveIncreasing(ys.ToArray(), xs.ToArray(), true, false);
+                //return ((StageTransforms.RatingCurveElement)SelectedElement).Curve;
+
+                List<double> ys = new List<double>();
+                List<double> xs = new List<double>();
+                foreach(ICoordinate coord in SelectedElement.Curve.Coordinates)
+                {
+                    xs.Add( coord.Y.Value());
+                    ys.Add(coord.X.Value());
+                }
+                ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, SelectedElement.Curve.Interpolator);
+                return IFdaFunctionFactory.Factory(IParameterEnum.Rating, (IFunction)coordFunc);
             }
         }
 

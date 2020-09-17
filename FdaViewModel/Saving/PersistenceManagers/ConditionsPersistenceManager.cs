@@ -87,8 +87,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
             //string StageDamageName = (element.StageDamageElement == null) ? "" : element.StageDamageElement.Name;
 
             object[] retval = new object[] { element.Name, element.Description, element.AnalysisYear, element.ImpactAreaID,
-                element.FlowFreqID, element.InflowOutflowID, element.RatingID, element.ExtIntStageID,
-                element.LeveeFailureID, element.StageDamageID, element.ThresholdType, element.ThresholdValue            
+                element.FlowFreqID, element.InflowOutflowID, element.RatingID,
+                element.LeveeFailureID, element.ExtIntStageID, element.StageDamageID, element.ThresholdType, element.ThresholdValue            
                 };
             //db won't allow anything to be null, so if it is I make it an empty string
             //for(int i = 0;i<retval.Length;i++)

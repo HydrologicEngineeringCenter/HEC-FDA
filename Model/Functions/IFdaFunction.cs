@@ -15,6 +15,8 @@ namespace Model
     public interface IFdaFunction : IParameter, ISerializeToXML<IFdaFunction>
     {
         #region Properties
+        //todo: Get rid of this. Turn the _Function in the base back to a private. Use IFdaFunction in the curve editors instead of ICoordFunction
+        ICoordinatesFunction Function { get; }
         /// <summary>
         /// Describes the order of Y value relative to increasing X values.
         /// </summary>

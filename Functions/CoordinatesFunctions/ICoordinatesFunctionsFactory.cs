@@ -45,33 +45,83 @@ namespace Functions
             {
                 return IFunctionFactory.Factory(coordinates, InterpolationEnum.Linear);
             }
-            if (IsConstantYValues(coordinates) )
+            if (IsConstantValues(coordinates) )
             {
                 return new CoordinatesFunctionConstants(coordinates, interpolator);
             }
-            else if(IsDistributedYValues(coordinates))
+            else if(IsDistributedValues(coordinates))
             {
                 return new CoordinatesFunctionVariableYs(coordinates, interpolator);
             }
+            //else if(IsLinkedFunction(coordinates))
+            //{
+                //return new CoordinatesFunctionLinked()
+            //}
             //todo add the linked plots option. not sure i need to do this anymore
-            else throw new ArgumentException("Could not turn the coordinates provided into a function.");
+            else  throw new ArgumentException("Could not turn the coordinates provided into a function.");
         }
-        private static bool IsDistributedYValues(List<ICoordinate> coordinates)
+
+        
+
+        private static bool IsLinkedFunction(List<ICoordinate> coordinates)
+        {
+            if(coordinates.Count<2)
+            {
+                return false;
+            }
+
+            //loop over the y types
+            List<IOrdinateEnum> ordinateYTypes = new List<IOrdinateEnum>();
+            ordinateYTypes.Add(coordinates[0].Y.Type);
+            foreach(ICoordinate coord in coordinates)
+            {
+                IOrdinateEnum ordYType = coord.Y.Type;
+                if(!ordinateYTypes.Contains(ordYType))
+                {
+                    //we have an ordinate with a different type than what 
+                    //is already in the list. This must be a linked function.
+                    return true;
+                }
+            }
+
+            //loop over the x types
+            List<IOrdinateEnum> ordinateXTypes = new List<IOrdinateEnum>();
+            ordinateXTypes.Add(coordinates[0].X.Type);
+            foreach (ICoordinate coord in coordinates)
+            {
+                IOrdinateEnum ordXType = coord.X.Type;
+                if (!ordinateXTypes.Contains(ordXType))
+                {
+                    //we have an ordinate with a different type than what 
+                    //is already in the list. This must be a linked function.
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static bool IsDistributedValues(List<ICoordinate> coordinates)
         {
             foreach (ICoordinate coord in coordinates)
             {
-                if (!coord.Y.GetType().Equals(typeof(Distribution)))
+                if (coord.Y.GetType().Equals(typeof(Distribution)) || coord.X.GetType().Equals(typeof(Distribution)))
                 {
+                }
+                else 
+                { 
                     return false;
                 }
             }
             return true;
         }
-        private static bool IsConstantYValues(List<ICoordinate> coordinates)
+        private static bool IsConstantValues(List<ICoordinate> coordinates)
         {
             foreach(ICoordinate coord in coordinates)
             {
-                if(!coord.Y.GetType().Equals(typeof(Constant)))
+                if(coord.Y.GetType().Equals(typeof(Constant)) && coord.X.GetType().Equals(typeof(Constant)))
+                {
+                }
+                else
                 {
                     return false;
                 }

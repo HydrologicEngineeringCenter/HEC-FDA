@@ -125,6 +125,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public void Remove(ChildElement element)
         {
+            base.Remove(element);
             //RemoveFromParentTable(element, TableName);
             //DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
             //StudyCacheForSaving.RemoveElement((InflowOutflowElement)element);

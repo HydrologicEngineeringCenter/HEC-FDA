@@ -1,15 +1,15 @@
-﻿<Window x:Class="Fda.Output.LinkedPlots"
+﻿<UserControl x:Class="View.Output.LinkedPlots"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Fda.Output"
+        xmlns:local="clr-namespace:View.Output"
         xmlns:oxy="http://oxyplot.org/wpf"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
          Height="600" Width="1060">
 
-    <Window.Resources>
+    <UserControl.Resources>
         <oxy:OxyColorConverter x:Key="OxyColorConverter" />
         <ControlTemplate x:Key="CustomTracker">
 
@@ -40,7 +40,7 @@
 
         </ControlTemplate>
 
-    </Window.Resources>
+    </UserControl.Resources>
 
 
 
@@ -189,4 +189,4 @@
 
 
     </Grid>
-</Window>
+</UserControl>

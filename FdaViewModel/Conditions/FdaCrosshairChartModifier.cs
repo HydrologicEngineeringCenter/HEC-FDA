@@ -52,7 +52,18 @@ namespace FdaViewModel.Conditions
             {
                 ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(_crosshairData.Function.Coordinates, _crosshairData.Function.Interpolator);
                 IFunction sampledFunc = Sampler.Sample(func, .5);
-                retval = sampledFunc.F(ord).Value();
+                if (ord.Value() < func.Domain.Min)
+                {
+                    retval = func.Range.Min;
+                }
+                else if (ord.Value() > func.Domain.Max)
+                {
+                    retval = func.Range.Max;
+                }
+                else
+                {
+                    retval = sampledFunc.F(ord).Value();
+                }
             }
             catch(Exception e)
             {

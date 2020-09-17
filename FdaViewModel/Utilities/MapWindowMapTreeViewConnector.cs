@@ -61,8 +61,8 @@ namespace FdaViewModel.Utilities
                 //_MapWindow.TreeView = _MapTreeView;
 
                 _MapWindow.PlotFeatures();
-                _MapWindow.PlotFeatures();
-                _MapWindow.CaptureScreenToGpu();
+                //_MapWindow.PlotFeatures();
+                //_MapWindow.CaptureScreenToGpu();
                 //_MapWindow. MapWindow_Mouse(this, new )
                 
                 //_MapWindow.ZoomFromCenter(1);

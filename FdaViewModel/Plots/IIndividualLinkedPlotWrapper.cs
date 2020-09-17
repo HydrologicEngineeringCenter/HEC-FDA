@@ -22,7 +22,9 @@ namespace FdaViewModel.Plots
 
         Model.IMetric Metric { get; set; }
         int SelectedElementID { get; set; }
-        void AddCurveToPlot(IFdaFunction function, string elementName,int elementID, FdaCrosshairChartModifier chartModifier);
+        void AddCurveToPlot( IFdaFunction function, string elementName,int elementID, FdaCrosshairChartModifier chartModifier);
+        string EAD { get; set; }
+        string AEP { get; set; }
         //bool DisplayImportButton { get; set; }
 
         //string Title { get; }

@@ -38,7 +38,7 @@ namespace Model.Functions.FrequencyFunctions
             Range  = IRangeFactory.Factory(
                 _Function.F(IOrdinateFactory.Factory(Domain.Min)).Value(), 
                 _Function.F(IOrdinateFactory.Factory(Domain.Max)).Value());
-            _TruncatedFunction = IFunctionFactory.Factory(_Function, Range.Min, Range.Max);
+            _TruncatedFunction = IFunctionFactory.Factory((IFunction)_Function, Range.Min, Range.Max);
             Coordinates = TruncateCoordinates();
 
             Label = label == "" ? ParameterType.Print() : label;

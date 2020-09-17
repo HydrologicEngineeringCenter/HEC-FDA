@@ -15,27 +15,27 @@ namespace FdaViewModel.Output
         // Created Date: 2/2/2017 11:42:33 AM
         #endregion
         #region Fields
-        private FdaModel.ComputationPoint.Outputs.Result _Result;
-        private List<FdaModel.Functions.BaseFunction> _FunctionsList;
-        private FdaModel.ComputationPoint.Outputs.Realization _Realization;
+        //private FdaModel.ComputationPoint.Outputs.Result _Result;
+        //private List<FdaModel.Functions.BaseFunction> _FunctionsList;
+        //private FdaModel.ComputationPoint.Outputs.Realization _Realization;
         #endregion
         #region Properties
-        public FdaModel.ComputationPoint.Outputs.Result Result
-        {
-            get { return _Result; }
-            set { _Result = value; }
-        }
-        public List<FdaModel.Functions.BaseFunction> FunctionsList
-        {
-            get { return _FunctionsList; }
-            set { _FunctionsList = value; }
-        }
+        //public FdaModel.ComputationPoint.Outputs.Result Result
+        //{
+        //    get { return _Result; }
+        //    set { _Result = value; }
+        //}
+        //public List<FdaModel.Functions.BaseFunction> FunctionsList
+        //{
+        //    get { return _FunctionsList; }
+        //    set { _FunctionsList = value; }
+        //}
        
-        public FdaModel.ComputationPoint.Outputs.Realization Realization
-        {
-            get { return _Realization; }
-            set { _Realization = value; }
-        }
+        //public FdaModel.ComputationPoint.Outputs.Realization Realization
+        //{
+        //    get { return _Realization; }
+        //    set { _Realization = value; }
+        //}
         #endregion
         #region Constructors
         public LinkedPlotsVM() : base()
@@ -43,16 +43,16 @@ namespace FdaViewModel.Output
 
         }
 
-        public LinkedPlotsVM(FdaModel.ComputationPoint.Outputs.Realization realization)// List<FdaModel.Functions.BaseFunction> realizationFunctions)
-        {
+        //public LinkedPlotsVM(FdaModel.ComputationPoint.Outputs.Realization realization)// List<FdaModel.Functions.BaseFunction> realizationFunctions)
+        //{
 
-            FunctionsList = realization.Functions;//realizationFunctions;
-        }
-        public LinkedPlotsVM(FdaModel.ComputationPoint.Outputs.Result result)
-        {
+        //    FunctionsList = realization.Functions;//realizationFunctions;
+        //}
+        //public LinkedPlotsVM(FdaModel.ComputationPoint.Outputs.Result result)
+        //{
 
-            Result = result;
-        }
+        //    Result = result;
+        //}
         #endregion
         #region Voids
         public override void AddValidationRules()

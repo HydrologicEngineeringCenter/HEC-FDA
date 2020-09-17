@@ -39,9 +39,10 @@ namespace FunctionsView.View
             set;
         }
 
-        public CoordinatesFunctionTable()
+        public CoordinatesFunctionTable(string xLabel)
         {
             InitializeComponent();
+            X = xLabel;
             col_x.Width = ColumnWidths.COL_X_WIDTH;
             col_dist.Width = ColumnWidths.COL_DIST_WIDTH;
             dg_table.RowsAdded += Dg_table_RowsAdded;
@@ -75,7 +76,7 @@ namespace FunctionsView.View
         /// </summary>
         /// <param name="vm"></param>
         /// <param name="largestEditorTableType"></param>
-        public CoordinatesFunctionTable(CoordinatesFunctionTableVM vm, int[] columnWidths) : this()
+        public CoordinatesFunctionTable(CoordinatesFunctionTableVM vm, int[] columnWidths, string xLabel) : this(xLabel)
         {
             this.DataContext = this;
             TableVM = vm;

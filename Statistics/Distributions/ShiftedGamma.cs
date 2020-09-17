@@ -21,7 +21,12 @@ namespace Statistics.Distributions
 
         internal double CDF(double x)
         {
-            return _Gamma.CumulativeDistribution(x - Shift);
+            double val = x - Shift;
+            if(Math.Abs(val) < .001)
+            {
+                val = 0;
+            }
+            return _Gamma.CumulativeDistribution(val);
         }
         internal double PDF(double x)
         {

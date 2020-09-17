@@ -16,6 +16,9 @@ using FdaLogging;
 using FdaViewModel.FlowTransforms;
 using FdaViewModel.GeoTech;
 using FdaViewModel.AggregatedStageDamage;
+using System.Text;
+using Utilities;
+using System.Linq;
 
 namespace FdaViewModel.Conditions
 {
@@ -359,9 +362,17 @@ namespace FdaViewModel.Conditions
             {
                 Plot3ControlVM.AddCurveToPlot(this, new EventArgs());
             }
+            if (PlotFailureControlVM.CurveImporterVM != null && PlotFailureControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
+            {
+                PlotFailureControlVM.AddCurveToPlot(this, new EventArgs());
+                PlotFailureControlVM.CrosshairData.IsPlotFailureFunction = true;
+                PlotFailureControlVM.CurrentVM = (BaseViewModel)PlotFailureControlVM.ModulatorPlotWrapperVM;
+            }
             if (Plot5ControlVM.CurveImporterVM != null && Plot5ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
             {
                 Plot5ControlVM.AddCurveToPlot(this, new EventArgs());
+                Plot5ControlVM.CrosshairData.IsPlot5Modulator = true;
+                Plot5ControlVM.SetMinMaxModulatorValues();
                 Plot5ControlVM.CurrentVM = (BaseViewModel)Plot5ControlVM.ModulatorPlotWrapperVM;
             }
             if (Plot7ControlVM.CurveImporterVM != null && Plot7ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
@@ -371,7 +382,7 @@ namespace FdaViewModel.Conditions
 
 
             AddEvents();
-
+            UpdateChartLinkages();
 
         }
         /// <summary>
@@ -516,7 +527,13 @@ namespace FdaViewModel.Conditions
         {
             foreach (IMetricEnum metEnum in Enum.GetValues(typeof(IMetricEnum)))
             {
-                _ThresholdTypes.Add(metEnum);
+                //don't include the ead for now. 
+                //we run it automatically everytime
+                if (metEnum == IMetricEnum.ExpectedAnnualDamage)
+                {
+                    continue;
+                }
+                 _ThresholdTypes.Add(metEnum);
             }
         }
         private void AttachEventsToControls()
@@ -991,67 +1008,200 @@ namespace FdaViewModel.Conditions
 
         }
    
-        private bool Validate()
+        private bool ValidatePreviewCompute()
         {
-            //is there a name
-            //validate metric
-            //is there enough functions
-            //there has to be a plot0 curve
-            if (_SelectedThresholdType == IMetricEnum.NotSet)
+            //testing error handling
+            //IFunction test = null;
+            //IRange<double> domain = test.Domain;
+            ////////////////////////////
+            UpdateSelectedCurves2();
+
+            if (_AddedPlots.Count > 0)
+            {
+                IParameterEnum firstPlotType = _AddedPlots[0].IndividualPlotWrapperVM.PlotVM.BaseFunction.ParameterType;
+                if (!(firstPlotType == IParameterEnum.InflowFrequency || firstPlotType == IParameterEnum.OutflowFrequency))
+                {
+                    MessageBox.Show("A flow-frequency is required to preview a compute.");
+                    return false;
+                }
+            }
+            else
+            {
+                MessageBox.Show("A flow-frequency is required to preview a compute.");
+                return false;
+            }
+           //if the metric is "not set" then we will just run EAD
+           //we need the flow freq function to be set
+           //we need the rating curve to be set
+           //we need the stage damage to be set
+            if (!Plot0ControlVM.IsPlotShowing)
             {
                 //message that the metric type is not set
-                MessageBox.Show("Threshold type is not set.");
+                MessageBox.Show("A flow-frequency is required to preview a compute.");
+                return false;
+            }
+            if (!Plot3ControlVM.IsPlotShowing)
+            {
+                //message that the metric type is not set
+                MessageBox.Show("A rating curve is required to preview a compute.");
+                return false;
+            }
+            if (!Plot7ControlVM.IsPlotShowing)
+            {
+                //message that the metric type is not set
+                MessageBox.Show("A stage-damage is required to preview a compute.");
                 return false;
             }
             return true;
         }
-        private ConditionLocationYearNoLateralStructure CreateConditionNoLateralStructure()
-        {
-            if (!Validate())
-            {
-                //todo: show errors in popup?
-                return null;
-            }
-            ILocation location = new Location(SelectedImpactArea.Name, SelectedImpactArea.Description);
-            IMetric metric = IMetricFactory.Factory(_SelectedThresholdType, ThresholdValue);
+       
 
-            IFrequencyFunction inflowFreqFunc = (IFrequencyFunction)Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;
-            //IFrequencyFunction freqFunc = ImpactAreaFunctionFactory.FactoryFrequency(inflowFreqFunc.Function, ImpactAreaFunctionEnum.InflowFrequency);
-            //i need the list of transform functions
-            UpdateSelectedCurves2();
+        private ILocation CreateLocation()
+        {
+            return new Location(SelectedImpactArea.Name, SelectedImpactArea.Description);
+        }
+
+        private List<IMetric> CreateMetrics()
+        {
+            List<IMetric> metrics = new List<IMetric>();
+            //if "not set" then we will just do EAD.
+            metrics.Add(IMetricFactory.Factory());
+            if (_SelectedThresholdType != IMetricEnum.NotSet)
+            {
+                metrics.Add(IMetricFactory.Factory(_SelectedThresholdType, ThresholdValue));
+            }
+            return metrics;
+        }
+
+        private IFrequencyFunction GetFrequencyFunction()
+        {
+            return (IFrequencyFunction)Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;
+        }
+
+        private List<ITransformFunction> GetTransformFunctions()
+        {
             List<ITransformFunction> transforms = new List<ITransformFunction>();
             //exclude the first one because that will always be the flow freq curve
             for (int i = 1; i < _AddedPlots.Count; i++)
             {
                 IndividualLinkedPlotControlVM control = _AddedPlots[i];
-                IFdaFunction func = control.IndividualPlotWrapperVM.PlotVM.BaseFunction;
+                if(control.IndividualPlotWrapperVM.PlotVM.BaseFunction.ParameterType == IParameterEnum.LateralStructureFailure)
+                {
+                    //don't add the lateral failure. That will happen later.
+                    continue;
+                }
+                IFdaFunction func = control.CurveImporterVM.SelectedElement.Curve;
+
                 transforms.Add((ITransformFunction)func);
             }
+            return transforms;
+        }
 
-            return new ConditionLocationYearNoLateralStructure(location, Year, inflowFreqFunc, transforms, new List<IMetric>() { metric });
+        private ILateralStructure CreateLateralStructure()
+        {
+            LeveeFeatureElement elem = (LeveeFeatureElement)PlotFailureControlVM.CurveImporterVM.SelectedElement;
+            return ILateralStructureFactory.Factory(elem.Elevation, (ITransformFunction)elem.Curve);
+        }
 
+        private ConditionLocationYearWithLateralStructure CreateConditionWithLateralStructure()
+        {
+            ILocation location = CreateLocation();
+            IFrequencyFunction inflowFreqFunc = GetFrequencyFunction();
+            List<ITransformFunction> transforms = GetTransformFunctions();
+            List<IMetric> metrics = CreateMetrics();
+            ILateralStructure lateralStructure = CreateLateralStructure();
+            return new ConditionLocationYearWithLateralStructure(location,Year, inflowFreqFunc, transforms, lateralStructure, metrics);
+        }
+
+        private ConditionLocationYearNoLateralStructure CreateConditionNoLateralStructure()
+        {
+            ILocation location = CreateLocation();
+            IFrequencyFunction inflowFreqFunc = GetFrequencyFunction();
+            List<ITransformFunction> transforms = GetTransformFunctions();
+            List<IMetric> metrics = CreateMetrics();
+           
+            return new ConditionLocationYearNoLateralStructure(location, Year, inflowFreqFunc, transforms, metrics);
+
+        }
+
+
+        private void PlotPreviewComputeResults(IConditionLocationYearRealization conditionRealization, IOrderedEnumerable<IMetric> metrics)
+        {
+            IReadOnlyDictionary<IParameterEnum, ISampledParameter<IFdaFunction>> realizationFunctions = conditionRealization.Functions;
+            if (realizationFunctions.ContainsKey(IParameterEnum.DamageFrequency))
+            {
+                ISampledParameter<IFdaFunction> param = realizationFunctions[IParameterEnum.DamageFrequency];
+                IFdaFunction damageFrequencyFunction = param.Parameter;
+                
+                Plot8ControlVM.AddCurveToPlot(damageFrequencyFunction, "Damage Frequency", -1);
+
+                //get the EAD and AEP info
+                string EAD = "";
+                StringBuilder aepStringBuilder = new StringBuilder();
+                foreach (IMetric metric in metrics)
+                {
+                    if (metric.ParameterType == IParameterEnum.EAD)
+                    {
+                        if (conditionRealization.Metrics.ContainsKey(metric))
+                        {
+                            double ead = conditionRealization.Metrics[metric];
+                            EAD = "EAD: " + ead.ToString("#.###");
+                        }
+                    }
+                    else //this will be some AEP value
+                    {
+                        if (conditionRealization.Metrics.ContainsKey(metric))
+                        {
+                            double AEP = conditionRealization.Metrics[metric];
+                            aepStringBuilder.Append(metric.Label + ": " + AEP.ToString("#.###") + ". ");
+                        }
+                    }
+                }
+                Plot8ControlVM.IndividualPlotWrapperVM.EAD = EAD;
+                Plot8ControlVM.IndividualPlotWrapperVM.AEP = aepStringBuilder.ToString();
+            }
         }
 
         public void PreviewCompute(Object sender, EventArgs e)
         {
-            //Sampler.RegisterSampler(new ConstantSampler());
-
-            //todo: Refactor: I commented out this method.
-            //get the threshold values
-            //PerformanceThreshold threshold = new PerformanceThreshold(PerformanceThresholdTypes.InteriorStage, 8);
-
-            //need to create conditionlocation
-            ConditionLocationYearNoLateralStructure condition = CreateConditionNoLateralStructure();
-            IConditionLocationYearRealization conditionRealization = condition.ComputePreview();
-            //get the damage frequency and plot it
-            IReadOnlyDictionary<IParameterEnum, ISampledParameter<IFdaFunction>> realizationFunctions = conditionRealization.Functions;
-            //if(realizationFunctions.ContainsKey())
-
-            //ICondition condition = CreateCondition();
-            if(condition == null)
+            if (!ValidatePreviewCompute())
             {
                 return;
             }
+
+            try
+            {
+                IConditionLocationYearRealization conditionRealization = null;
+                IOrderedEnumerable<IMetric> metrics = null;
+                if (PlotFailureControlVM.IsPlotShowing)
+                {
+                    ConditionLocationYearWithLateralStructure condition = CreateConditionWithLateralStructure();
+                    conditionRealization = condition.ComputePreview();
+                    metrics = condition.Metrics;
+                }
+                else
+                {
+                    ConditionLocationYearNoLateralStructure condition = CreateConditionNoLateralStructure();
+                    conditionRealization = condition.ComputePreview();
+                    metrics = condition.Metrics;
+                }
+
+                //get the damage frequency and plot it
+                PlotPreviewComputeResults(conditionRealization, metrics);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show( ex.Message, "Compute Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            //ICondition condition = CreateCondition();
+            //if(condition == null)
+            //{
+            //    return;
+            //}
+            //else
+            //{
+            //}
             //int randomPacketSize = condition.TransformFunctions.Count + 1;
             //IDictionary<IMetric, double> results = condition.Compute(GetRandomNumbers(randomPacketSize));
 

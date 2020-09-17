@@ -99,14 +99,14 @@ namespace FdaViewModel.Editors
 
         public string PlotTitle { get; set; }
 
-    
 
+        private IParameterEnum _ParameterType;
         #endregion
 
         #region constructors
         public CurveEditorVM(IFdaFunction defaultCurve,string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) :base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
         {
-            
+            _ParameterType = defaultCurve.ParameterType;
            // _Curve = defaultCurve;
             PlotTitle = "Curve";
             SetDimensions(800, 600, 400, 400);
@@ -117,7 +117,11 @@ namespace FdaViewModel.Editors
 
         public CurveEditorVM(Utilities.ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) :base(elem, xLabel, yLabel, chartTitle, actionManager)
         {
-            
+            if (elem.Curve != null)
+            {
+                //the curve is null for the conditions editor
+                _ParameterType = elem.Curve.ParameterType;
+            }
             //TransactionHelper.LoadTransactionsAndMessages(this, elem);
             PlotTitle = Name;
             SetDimensions(800, 600, 400, 400);
@@ -227,11 +231,11 @@ namespace FdaViewModel.Editors
                 //try to construct the new coordinates function
                 ICoordinatesFunction coordFunc = GetCoordinatesFunction();
                 EditorVM.Function = coordFunc;
-                IFunction function = coordFunc.Sample(.5);
+                //IFunction function = coordFunc.Sample(.5);
                
                 //todo: what is this, i can't just assume its a rating curve? This line needs to be here to save the curve out properly.
                 //I think i just needed some enum to be there so i chose rating.
-                Curve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, function);
+                Curve = IFdaFunctionFactory.Factory( _ParameterType, coordFunc);
 
 
             }

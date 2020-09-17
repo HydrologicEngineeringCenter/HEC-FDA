@@ -97,9 +97,9 @@ namespace FdaViewModel.GeoTech
             if(IsUsingDefault)
             {
                 //in this case then we create a special default coordinates function
-                List<double> xs = new List<double>() { 0, 1 };
-                List<double> ys = new List<double>() { 0, Elevation };
-                return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Piecewise);
+                List<double> xs = new List<double>() { Elevation, Elevation + .000000000000001 };
+                List<double> ys = new List<double>() { 0, 1 }; 
+                return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
             }
             else
             {

@@ -42,6 +42,7 @@ namespace View.Plots
         public event EventHandler PopPlotIntoPlot5;
 
         public event EventHandler PopLateralStructImporterLeft;
+        public event EventHandler CancelLateralStructure;
 
         //public bool IsDLMShowing { get; set; }
         public bool UpdatePlotsFromVM
@@ -113,10 +114,15 @@ namespace View.Plots
             PopLateralStructImporterLeft?.Invoke(this, new EventArgs());
         }
 
+        public void CancelTheLateralStructure()
+        {
+            CancelLateralStructure?.Invoke(this, new EventArgs());
+        }
         public void PopThePlotIntoPlot5()
         {
             PopPlotIntoPlot5?.Invoke(this, new EventArgs());
         }
+
         public void PopTheImporterIntoPlot1()
         {
             PopImporterIntoPlot1?.Invoke(this, new EventArgs());

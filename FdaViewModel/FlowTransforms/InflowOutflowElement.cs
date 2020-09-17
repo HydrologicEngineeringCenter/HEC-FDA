@@ -142,7 +142,11 @@ namespace FdaViewModel.FlowTransforms
                 {
                     retval = false;
                 }
-                if (!Description.Equals(elem.Description))
+                if (Description == null && elem.Description != null)
+                {
+                    retval = false;
+                }
+                else if (Description != null && !Description.Equals(elem.Description))
                 {
                     retval = false;
                 }

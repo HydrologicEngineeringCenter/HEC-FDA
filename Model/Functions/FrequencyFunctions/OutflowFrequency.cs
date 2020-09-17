@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
 using Functions;
+using Model.Functions.FrequencyFunctions;
 using Utilities;
 
 namespace Model.Functions
 {
-    internal sealed class OutflowFrequency : FdaFunctionBase, IFrequencyFunction
+    internal sealed class OutflowFrequency : FrequencyFunctionBase
     {
         #region Properties
         public override string Label { get; }
         public override IParameterRange XSeries { get; }
         public override IParameterRange YSeries { get; }
         public override IParameterEnum ParameterType => IParameterEnum.OutflowFrequency;
-        public List<IParameterEnum> ComposeableTypes => new List<IParameterEnum>() { IParameterEnum.Rating, IParameterEnum.ExteriorInteriorStage };
+        public override List<IParameterEnum> ComposeableTypes => new List<IParameterEnum>() { IParameterEnum.Rating, IParameterEnum.ExteriorInteriorStage };
         
         public override IMessageLevels State { get; }
         public override IEnumerable<IMessage> Messages { get; }
@@ -29,7 +30,6 @@ namespace Model.Functions
         #endregion
 
         #region Functions
-        public double Integrate() => _Function.TrapizoidalRiemannSum();
         #endregion
 
         #region Throw Away

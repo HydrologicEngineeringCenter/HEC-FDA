@@ -16,6 +16,8 @@ namespace FdaViewModel.Plots
         // Created Date: 12/20/2017 1:24:49 PM
         #endregion
         #region Fields
+        private string _EAD;
+        private string _AEP;
         //private bool _FlipXAxis;
         private bool _TrackerVisible = true;
         private bool _AreaPlotVisible = true;
@@ -115,6 +117,17 @@ namespace FdaViewModel.Plots
 
         public int SelectedElementID { get; set; }
 
+        public string EAD
+        {
+            get { return _EAD; }
+            set { _EAD = value;NotifyPropertyChanged(); }
+        }
+        public string AEP
+        {
+            get { return _AEP; }
+            set { _AEP = value; NotifyPropertyChanged(); }
+        }
+
         private bool _isXAxisLog;
         private bool _isYAxisLog;
         private bool _isProbabilityXAxis;
@@ -148,7 +161,7 @@ namespace FdaViewModel.Plots
 
         #endregion
         #region Voids
-        public void AddCurveToPlot(IFdaFunction function, string elementName,int selectedElemID, FdaCrosshairChartModifier ChartModifier)
+        public void AddCurveToPlot( IFdaFunction function, string elementName,int selectedElemID, FdaCrosshairChartModifier ChartModifier)
         {
             SelectedElementID = selectedElemID;
             //from function: title, x axis label, y axis label

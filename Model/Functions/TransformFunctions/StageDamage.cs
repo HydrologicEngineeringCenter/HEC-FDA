@@ -22,7 +22,7 @@ namespace Model.Functions
         #endregion
 
         #region Constructor
-        internal StageDamage(IFunction fx, string label, UnitsEnum xUnits = UnitsEnum.Foot, string xlabel = "", UnitsEnum yUnits = UnitsEnum.ThousandDollars, string ylabel = "") : base(fx)
+        internal StageDamage(ICoordinatesFunction fx, string label, UnitsEnum xUnits = UnitsEnum.Foot, string xlabel = "", UnitsEnum yUnits = UnitsEnum.ThousandDollars, string ylabel = "") : base(fx)
         {
             Label = label == "" ? ParameterType.Print() : label;
             XSeries = IParameterFactory.Factory(fx, IParameterEnum.InteriorElevation, true, true, xUnits, xlabel);

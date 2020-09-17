@@ -9,14 +9,16 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
 
+                <Button Name="btn_cancel" HorizontalAlignment="Left"  Width="26" Height="26" Background="White" BorderBrush="White"   Click="btn_cancel_Click"  Margin="2,0,0,0">
+                    <Image Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/Delete.png"/>
+                </Button>
         <Border BorderBrush="Black" BorderThickness="2">
-            
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
-                <Label Name="lbl_FailureText" Content="Chance of Failure: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <!--<Label Name="lbl_percentFailure" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                    <Label Name="lbl_FailureText" Content="Chance of Failure: " VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <!--<Label Name="lbl_percentFailure" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0"/>
                 <Label Content="% at " VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 <Label Name="lbl_stage" VerticalAlignment="Center" HorizontalAlignment="Left"/>-->
-            </StackPanel>
+                </StackPanel>
         </Border>
             
     </Grid>

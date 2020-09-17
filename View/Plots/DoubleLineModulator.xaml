@@ -73,7 +73,8 @@
             </Label.LayoutTransform>
         </Label>
         <Button Name="btn_PopPlotOut" HorizontalAlignment="Center" VerticalAlignment="Top" Width="26" Height="26" Background="White" BorderBrush="White" ToolTip="Display Inflow Outflow Plot" Margin="0,10,0,0" Click="btn_PopPlotOut_Click">
-            <Image Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopUp.png"/>
+            <Image Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/Delete.png"/>
+            <!--<Image Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopUp.png"/>-->
 
         </Button>
 

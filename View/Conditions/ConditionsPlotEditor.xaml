@@ -96,11 +96,11 @@
 
         <Grid Name="grid_TopRow" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="22"/>
-                <RowDefinition Height="32"/>
+                <RowDefinition Height="0"/>
+                <RowDefinition Height="0"/>
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Menu Grid.Row="0">
+            <!--<Menu Grid.Row="0">
                 <MenuItem Name="mi_Edit" Header="Edit">
                     <MenuItem Name="mi_ChangeFlowFreq" Header="Change Flow Frequency" Click="btn_AddPlot0_Click"/>
                     <MenuItem Name="mi_ChangeInflowOutflow" Header="Change Inflow Outflow" Click="btn_AddPlot1_Click"/>
@@ -110,17 +110,14 @@
                     <MenuItem Name="mi_ChangePlot8" Header="Preview Compute" Click="btn_AddPlot8_Click" />
 
                 </MenuItem>
-            </Menu>
-            <ToolBarTray Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Name="tool_toolbar"  Margin="0" Height="32" >
+            </Menu>-->
+            <!--<ToolBarTray Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Name="tool_toolbar"  Margin="0" Height="32" >
                 <ToolBar  Margin="2" >
                     <Button Name="btn_HideTrackers" ToolTip="Hide Trackers" Width="40" Click="btn_HideTrackers_Click"  >
                         <Image Name="img_HideTrackers" Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/HideTrackers.png"/>
 
                     </Button>
-                    <!--<Button Name="btn_PopPlotsOut" Width="40" ToolTip="Pop Plots Out" Click="btn_PopPlotsOut_Click">
-                    <Image Name="img_PopPlotsOut" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/PopUp.png"/>
-
-                </Button>-->
+          
                     <Button Name="btn_ToggleAreaPlots" Width="40" ToolTip="Hide Area Plots" Click="btn_ToggleAreaPlots_Click" >
                         <Image Name="img_HideAreaPlots" Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/HideAreaPlots.png"/>
 
@@ -129,42 +126,18 @@
                         <Image Name="img_HideThresholdLines"  Width="18" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/HideThresholdLines.png"/>
 
                     </Button>
-                    <!--<Separator Margin="10,0,10,0"/>-->
 
 
                 </ToolBar>
-                <!--<ToolBar>
-                <Label Content="Plot:" />
-                    <ComboBox Name="cmb_PlotNames" Width="150" ItemsSource="{Binding AddedPlots}" DisplayMemberPath="CurveImporterVM.SelectedElementName"  />
-
-                    <Label Content="X:"/>
-                    <utils:NumericTextBoxWithClickHighlighting x:Name="txt_XValue" Width="60" Height="20" LostFocus="txt_XValue_LostFocus"    />
-                <Label Content="Y:"/>
-                    <utils:NumericTextBoxWithClickHighlighting x:Name="txt_YValue" Width="60" Height="20" LostFocus="txt_YValue_LostFocus" />
-                  
-            </ToolBar>-->
-                <ToolBar>
-                    <!--<plot:LinkedPlotSpecificPointTool x:Name="PlotSpecificPointTool" AvailablePlotsFromVM="{Binding AvailablePlots}" />-->
-                </ToolBar>
-
-
-                <!--<ToolBar>
-                <Label Content="AEP:" VerticalAlignment="Center"/>
-                <Label Content="{Binding AEP}" VerticalAlignment="Center" />
-                <Label Content="EAD:" VerticalAlignment="Center"/>
-                <Label Content="{Binding EAD}" VerticalAlignment="Center"/>
-            </ToolBar>-->
-            </ToolBarTray>
-            <!--<StackPanel Grid.Row="2" Orientation="Horizontal">
-                <Label Content="LP3: "/>
-                <Label Name="lbl_LP3"  Visibility="{Binding IsPlot0Visible,Converter={StaticResource BoolToVisibilityConverter}}" Content="{Binding Plot0VM.SelectedElementName}"/>
-            </StackPanel>-->
-            <Expander Grid.Row="2" Header="Condition Properties" IsExpanded="True" BorderBrush="Black" BorderThickness="2" Margin="10,5,10,5">
+         
+            </ToolBarTray>-->
+            
+            <Expander Grid.Row="2" Header="Condition Properties" IsExpanded="True" BorderBrush="Black" BorderThickness="2" Margin="5,5,10,5">
                 <!--<WrapPanel  Orientation="Horizontal" Margin="5">-->
                 <Grid Name="ExpanderItemsGrid">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="32"/>
-                        <RowDefinition Height="32"/>
+                        <RowDefinition Height="32" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="80"/>
@@ -261,9 +234,13 @@
             <plot:IndividualLinkedPlotControl x:Name="Plot5Control" DataContext="{Binding Plot5ControlVM}" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2"  Content="{Binding CurrentVM}"/>
                                               
 
-            <Button Name="btn_CollapsePlot5" Width="26" Height="26" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Background="White" BorderBrush="White" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="1,0,0,0" Click="btn_CollapseLeftPlots_Click" >
+            <Button Name="btn_CollapsePlot5" Width="26" Height="26" Grid.Row="1"  Grid.Column="2" Background="White" BorderBrush="White" 
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="1,0,0,10" Click="btn_PopLateralStructureIntoMainGrid_Click" >
                 <Image Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopRight.png"/>
-
+            </Button>
+            <Button Name="btn_CollapsePlot" Width="26" Height="26" Grid.Row="2"  Grid.Column="2" Background="White" BorderBrush="White" 
+                    HorizontalAlignment="Right" VerticalAlignment="Top" Margin="1,10,0,0" Click="btn_PopPlot5IntoMainGrid_Click" >
+                <Image Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopRight.png"/>
             </Button>
 
 

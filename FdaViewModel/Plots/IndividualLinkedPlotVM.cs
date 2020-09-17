@@ -165,7 +165,25 @@ namespace FdaViewModel.Plots
         #region Voids
         private void UpdateChart(IFdaFunction function, bool xAxisBottom, bool yAxisLeft)
         {
-            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(function.Coordinates, function.Interpolator);
+            //the rating curve needs it's x and y values switched
+            //the "Curve" property should always have it in the correct format (x: flows, y: stage)
+            //but the created line data should have it switched.
+            ICoordinatesFunction func = null;
+            //if (BaseFunction.ParameterType == IParameterEnum.Rating)
+            //{
+            //    List<double> xs = new List<double>();
+            //    List<double> ys = new List<double>();
+            //    foreach(ICoordinate coord in function.Coordinates)
+            //    {
+            //        xs.Add(coord.Y.Value());
+            //        ys.Add(coord.X.Value());
+            //    }
+            //    func = ICoordinatesFunctionsFactory.Factory(xs, ys, function.Interpolator);
+            //}
+            //else
+            {
+                func = ICoordinatesFunctionsFactory.Factory(function.Coordinates, function.Interpolator);
+            }
             CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(func);
             List<SciLineData> lineData = chartHelper.CreateLineData(IsXAxisLog, IsYAxisLog, IsProbabilityXAxis);
             foreach(SciLineData ld in lineData)

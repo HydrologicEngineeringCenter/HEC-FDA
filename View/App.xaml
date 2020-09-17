@@ -4,6 +4,8 @@
              
              xmlns:EditorsVM ="clr-namespace:FdaViewModel.Editors;assembly=FdaViewModel"
              
+             xmlns:PlotsOutputVM="clr-namespace:FdaViewModel.Output;assembly=FdaViewModel"
+             xmlns:PlotsOutputView="clr-namespace:View.Output"
              
              xmlns:PlotsVM="clr-namespace:FdaViewModel.Plots;assembly=FdaViewModel"
              xmlns:PlotsView="clr-namespace:View.Plots"
@@ -240,6 +242,9 @@
         <DataTemplate DataType="{x:Type ConditionVM:ConditionsEditorVM }" >
             <ConditionsView:ConditionsEditor/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type ConditionVM:EnterSeedVM }" >
+            <ConditionsView:EnterSeed/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type ConditionVM:AddInflowOutflowToConditionVM }" >
             <ConditionsView:AddInflowOutflowToCondition/>
         </DataTemplate>
@@ -306,9 +311,9 @@
         </DataTemplate>
 
         <!--todo: Refactor: CO-->
-        <!--<DataTemplate DataType="{x:Type PlotsVM:LinkedPlotsVM }" >
-            <PlotsView:LinkedPlots/>
-        </DataTemplate>-->
+        <DataTemplate DataType="{x:Type PlotsOutputVM:LinkedPlotsVM }" >
+            <PlotsOutputView:LinkedPlots/>
+        </DataTemplate>
         
         <!--Study Region-->
         <DataTemplate DataType="{x:Type StudyVM:AnalysisYearsVM }" >

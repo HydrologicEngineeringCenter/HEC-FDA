@@ -50,14 +50,17 @@ namespace Model.Conditions.Locations.Years
                 }
                 frequencyFx = frequencyFx.Compose((ITransformFunction)sampledFxs[fx.ParameterType].Parameter);
                 sampledFxs.Add(frequencyFx.ParameterType, new Samples.SampledFunction(new Samples.Sample(), frequencyFx));
-                while (frequencyFx.ParameterType == endPoints[metricIndex].TargetFunction)
+                while (metricIndex < endPoints.Count && frequencyFx.ParameterType == endPoints[metricIndex].TargetFunction)
                 {
                     metrics.Add(endPoints[metricIndex], endPoints[metricIndex].Compute(frequencyFx));
                     metricIndex++;
                 }
             }
-            var lateralStructure = new Samples.SampledOrdinate(IParameterFactory.Factory(double.NaN, IParameterEnum.ExteriorElevation), new Samples.Sample());
-            return new ConditionLocationYearRealizationWithLateralStructure(sampledFxs, lateralStructure, metrics, -1);
+            //IParameterOrdinate paramOrd = IParameterFactory.Factory(double.NaN, IParameterEnum.ExteriorElevation);
+            //ISample sample = new Samples.Sample();
+            //var lateralStructure = new Samples.SampledOrdinate(paramOrd, sample);
+            return new ConditionLocationYearRealizationNoLateralStructure(sampledFxs, metrics, -1);
+            //return new ConditionLocationYearRealizationWithLateralStructure(sampledFxs, lateralStructure, metrics, -1);
         }
         public override IConditionLocationYearRealization Compute(IReadOnlyDictionary<IParameterEnum, ISample> sampleParameters = null, int id = -1)
         {
@@ -102,7 +105,7 @@ namespace Model.Conditions.Locations.Years
                 }
                 frequencyFx = frequencyFx.Compose((ITransformFunction)sampledFxs[fx.ParameterType].Parameter);
                 sampledFxs.Add(frequencyFx.ParameterType, new Samples.SampledFunction(new Samples.Sample(), frequencyFx));
-                while (frequencyFx.ParameterType == endPoints[metricIndex].TargetFunction)
+                while (metricIndex<endPoints.Count && frequencyFx.ParameterType == endPoints[metricIndex].TargetFunction)
                 {
                     metrics.Add(endPoints[metricIndex], endPoints[metricIndex].Compute(frequencyFx));
                     metricIndex++;
@@ -142,7 +145,10 @@ namespace Model.Conditions.Locations.Years
             List<ICoordinate> coordinates = new List<ICoordinate>();
             foreach(var pair in frequencyFx.Coordinates)
             {
-                coordinates.Add(ICoordinateFactory.Factory(pair.Y.Value(), stageDamageFx.F(pair.Y).Value() * failureFx.F(pair.Y).Value()));
+                double stage = pair.Y.Value();
+                double prob = pair.X.Value();
+                //failure: x -> stage, y -> prob
+                coordinates.Add(ICoordinateFactory.Factory(stage, stageDamageFx.F(pair.Y).Value() * failureFx.InverseF(pair.Y).Value()));
             }
             return ITransformFunctionFactory.Factory(IFunctionFactory.Factory(coordinates, frequencyFx.Interpolator), IParameterEnum.InteriorStageDamage, stageDamageFx.Label, stageDamageFx.XSeries.Units, stageDamageFx.XSeries.Label, stageDamageFx.YSeries.Units, stageDamageFx.YSeries.Label);
         }

@@ -47,22 +47,23 @@ namespace FdaViewModel.Conditions
             
             get 
             {
+                return _SelectedElement.Curve;
+
                 //this is weird, but this curve has a constant Y value but the interpolation
                 //methid is statistical. Having a stats interp throws exceptions later. I am going
                 //to return a clone of this curve with a linear interp since this curve is only used
                 //for plotting in the conditions editor.
-                ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(SelectedElement.Curve.Coordinates, InterpolationEnum.Linear);
-                IFunction function = null;
-                if (func is IFunction)
-                {
-                    function = (IFunction)func;
-                }
-                else 
-                { 
-                    function = func.Sample(.5);
-                }
-                return IFdaFunctionFactory.Factory(IParameterEnum.InflowFrequency, function);
-                //return SelectedElement.Curve; 
+                //ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(SelectedElement.Curve.Coordinates, InterpolationEnum.Linear);
+                //IFunction function = null;
+                //if (func is IFunction)
+                //{
+                //    function = (IFunction)func;
+                //}
+                //else 
+                //{ 
+                //    function = func.Sample(.5);
+                //}
+                //return IFdaFunctionFactory.Factory(IParameterEnum.InflowFrequency, function);
             } 
             
         }

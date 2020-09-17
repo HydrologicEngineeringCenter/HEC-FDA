@@ -292,7 +292,10 @@ namespace FdaViewModel.FrequencyRelationships
             try
             {
                 ICoordinatesFunction function = GetCoordinatesFunction();
-                CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(function);
+                IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.InflowFrequency, function);
+                ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(fdaFunction.Coordinates, fdaFunction.Interpolator);
+
+                CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(func);
                 List<SciLineData> lineData = chartHelper.CreateLineData(false, true, true);
                 StandardChartViewModel.LineData.Set(lineData);
             }

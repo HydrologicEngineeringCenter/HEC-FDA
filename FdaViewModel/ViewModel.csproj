@@ -150,6 +150,7 @@
     <Compile Include="Conditions\ConditionsPlotEditorVM.cs" />
     <Compile Include="Conditions\ConditionsTreeOwnerElement.cs" />
     <Compile Include="Conditions\CrosshairData.cs" />
+    <Compile Include="Conditions\EnterSeedVM.cs" />
     <Compile Include="Conditions\FdaCrosshairChartModifier.cs" />
     <Compile Include="Conditions\SharedAxisCrosshairData.cs" />
     <Compile Include="Editors\AnalyticalFrequencyCurveEditor.cs" />
@@ -247,8 +248,8 @@
     <Compile Include="NamespaceDoc.cs" />
     <Compile Include="Output\CreateEconImportFileVM.cs" />
     <Compile Include="Output\IndexLocationsVM.cs" />
-    <Compile Include="Output\LinkedPlotsUpdatedVM.cs" />
     <Compile Include="Alternatives\AlternativeOwnerElement.cs" />
+    <Compile Include="Output\LinkedPlotsVM.cs" />
     <Compile Include="Plans\CreateNewPlanVM.cs" />
     <Compile Include="Plans\PlansOwnerElement.cs" />
     <Compile Include="Plots\ConditionsHorizontalFailureFunctionVM.cs" />

@@ -27,6 +27,12 @@ namespace FdaViewModel.Plots
 
         #endregion
         #region Properties
+        //Maybe not ideal, but i need these on IConditionsPlotWrapper so 
+        //that i can set them on plot 8. But that means they get put on
+        //all these plot classes even though they will never get set.
+        public string EAD { get; set; }
+
+        public string AEP { get; set; }
         public bool DisplayImportButton
         {
             get; set;
@@ -81,7 +87,7 @@ namespace FdaViewModel.Plots
             //throw new NotImplementedException();
         }
 
-        public void AddCurveToPlot(IFdaFunction function, string elementName,int elementID, FdaCrosshairChartModifier chartModifier)
+        public void AddCurveToPlot( IFdaFunction function, string elementName,int elementID, FdaCrosshairChartModifier chartModifier)
         {
             throw new NotImplementedException();
         }
