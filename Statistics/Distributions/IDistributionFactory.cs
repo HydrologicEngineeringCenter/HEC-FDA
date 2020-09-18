@@ -31,7 +31,7 @@ namespace Statistics
                 case IDistributionEnum.Beta4Parameters:
                     return Distributions.Beta4Parameters.RequiredParameterization(true);
                 case IDistributionEnum.LogPearsonIII:
-                    return Distributions.LogPearsonIII.RequiredParameterization(true);
+                    return Distributions.LogPearson3.RequiredParameterization(true);
                 case IDistributionEnum.Normal:
                     return Distributions.Normal.RequiredParameterization(true);
                 case IDistributionEnum.Triangular:
@@ -98,7 +98,7 @@ namespace Statistics
                     case IDistributionEnum.Histogram:
                         return (IDistribution)IHistogramFactory.Factory(IDataFactory.Factory(sample), nBins: 100);
                     case IDistributionEnum.LogPearsonIII:
-                        return Distributions.LogPearsonIII.Fit(sample);
+                        return Distributions.LogPearson3.Fit(sample);
                     default:
                         throw new NotImplementedException($"An unexpected error occurred. The requested return type: {returnType} is unsupported");
                 }
@@ -189,10 +189,10 @@ namespace Statistics
         /// <param name="stDev"> The standard deviation of the logged distribution (or sample data). NOTE: this is the standard deviation of the logged data, NOT the log of the standard deviation. </param>
         /// <param name="skew"> The skew of the logged distribution (or sample data). NOTE: this is the skew of the logged data, NOT the log of the skew.  </param>
         /// <param name="sampleSize"> An optional parameter describing the sample size used to calculated the sample <paramref name="mean"/>, <paramref name="stDev"/> and <paramref name="skew"/>. Leave blank if a population distribution is intended. </param>
-        /// <returns> A <see cref="Statistics.Distributions.LogPearsonIII"/> object returned as an implementation of the  <see cref="IDistribution"/> interface. </returns>
+        /// <returns> A <see cref="Statistics.Distributions.LogPearson3"/> object returned as an implementation of the  <see cref="IDistribution"/> interface. </returns>
         public static IDistribution FactoryLogPearsonIII(double mean, double stDev, double skew, int sampleSize = int.MaxValue)
         {
-            return new Distributions.LogPearsonIII(mean, stDev, skew, sampleSize);
+            return new Distributions.LogPearson3(mean, stDev, skew, sampleSize);
         }
         /// <summary>
         /// Constructs a <see cref="IDistributionEnum.LogPearsonIII"/> <see cref="IDistribution"/>, by fitting as set of sample data to the distribution.
@@ -200,10 +200,10 @@ namespace Statistics
         /// <param name="sample"> The data to be fit to the Log Pearson Type III distribution. </param>
         /// <param name="isLogSample"> An optional parameter. <see langword="true"/> if the <paramref name="sample"/> data values are logged, set to <see langword="false"/> by default. </param>
         /// <param name="sampleSize"> An optional parameter describing the effective sample size, this value is inferred from the size of the <paramref name="sample"/> data if it is not provided. </param>
-        /// <returns> A <see cref="Statistics.Distributions.LogPearsonIII"/> object returned as an implementation of the  <see cref="IDistribution"/> interface. </returns>
+        /// <returns> A <see cref="Statistics.Distributions.LogPearson3"/> object returned as an implementation of the  <see cref="IDistribution"/> interface. </returns>
         public static IDistribution FactoryFitLogPearsonIII(IEnumerable<double> sample, bool isLogSample = false, int sampleSize = -404)
         {
-            return Distributions.LogPearsonIII.Fit(sample, sampleSize, isLogSample);
+            return Distributions.LogPearson3.Fit(sample, sampleSize, isLogSample);
         }
         /// <summary>
         /// Constructs a <see cref="IDistributionEnum.LogPearsonIII"/> <see cref="IDistribution"/> bound on the range specified by the <paramref name="min"/> and <paramref name="max"/> values."/>
@@ -214,20 +214,20 @@ namespace Statistics
         /// <param name="sampleSize"> An optional parameter describing the sample size used to calculated the sample <paramref name="mean"/>, <paramref name="stDev"/> and <paramref name="skew"/>. Leave blank if a population distribution is intended. </param>
         /// <param name="min"> The lower (minimum) truncation value. </param>
         /// <param name="max"> The upper (maximum) truncation value. </param>
-        /// <returns> A <see cref="Statistics.Distributions.LogPearsonIII"/> object bound on the range: [<paramref name="min"/>, <paramref name="max"/>] returned as an implementation of the  <see cref="IDistribution"/> interface. </returns>
+        /// <returns> A <see cref="Statistics.Distributions.LogPearson3"/> object bound on the range: [<paramref name="min"/>, <paramref name="max"/>] returned as an implementation of the  <see cref="IDistribution"/> interface. </returns>
         /// <returns></returns>
         public static IDistribution FactoryTruncatedLogPearsonIII(double mean, double stDev, double skew, double min = 0, double max = double.PositiveInfinity, int sampleSize = int.MaxValue)
         {
-            IDistribution lpIII = new Distributions.LogPearsonIII(mean, stDev, skew, sampleSize);
+            IDistribution lpIII = new Distributions.LogPearson3(mean, stDev, skew, sampleSize);
             return FactoryTruncatedLogPearsonIII(lpIII, min, max);
         }
         /// <summary>
         /// Constructs a <see cref="IDistributionEnum.LogPearsonIII"/> <see cref="IDistribution"/> bound on the range specified by the <paramref name="min"/> and <paramref name="max"/> values."/>
         /// </summary>
-        /// <param name="lpIII"> The <see cref="Statistics.Distributions.LogPearsonIII"/> distribution to be bound. </param>
+        /// <param name="lpIII"> The <see cref="Statistics.Distributions.LogPearson3"/> distribution to be bound. </param>
         /// <param name="min"> The lower (minimum) truncation value. </param>
         /// <param name="max"> The upper (maximum) truncation value. </param>
-        /// <returns> A <see cref="Statistics.Distributions.LogPearsonIII"/> object bound on the range: [<paramref name="min"/>, <paramref name="max"/>] returned as an implementation of the  <see cref="IDistribution"/> interface. </returns>
+        /// <returns> A <see cref="Statistics.Distributions.LogPearson3"/> object bound on the range: [<paramref name="min"/>, <paramref name="max"/>] returned as an implementation of the  <see cref="IDistribution"/> interface. </returns>
         public static IDistribution FactoryTruncatedLogPearsonIII(IDistribution lpIII, double min = 0, double max = double.PositiveInfinity)
         {
             if (lpIII.IsNull()) throw new ArgumentNullException(nameof(lpIII));

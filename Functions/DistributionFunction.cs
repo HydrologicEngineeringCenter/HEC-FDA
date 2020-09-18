@@ -46,7 +46,9 @@ namespace Functions
              *  (2) 10 probability steps between p = 0.99 and .999 (big values)
              *  (3) x steps to 1% of the x range between p = 0.001 and 0.999 (up to 1000 year for flood analysis)
              */
-            double pEpsilon = 0.01, p = _Distribution.CDF(Range.Min), pMax = _Distribution.CDF(Range.Max);
+            double pEpsilon = 0.01;
+            double p = _Distribution.CDF(Range.Min);
+            double pMax = _Distribution.CDF(Range.Max);
             double y = _Distribution.InverseCDF(p), yMax = _Distribution.InverseCDF(pMax), yEpsilon = (yMax - y) / 100;
             List<ICoordinate> expandedCoordinates = new List<ICoordinate>();
             while (p < pMax)
@@ -65,9 +67,11 @@ namespace Functions
              *  (1) p + pEpsilon
              *  (2) p associated with y + yEpsilon
              *  (3) pMax
-             */          
-            double nextP = lastP + pEpsilon, nextY = lastY + yEpsilon;
-            double p = nextP < InverseF(nextY) ? nextP : InverseF(nextY);
+             */
+            double nextP = lastP + pEpsilon;
+            double nextY = lastY + yEpsilon;
+            double nextPofY = InverseF(nextY);
+            double p = nextP < nextPofY ? nextP : nextPofY;
             if (!(p > lastP))
             {
                 int yIncrements = 1;

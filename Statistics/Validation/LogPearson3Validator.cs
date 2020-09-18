@@ -7,18 +7,18 @@ using Statistics.Distributions;
 
 namespace Statistics.Validation
 {
-    internal class LogPearsonIIIValidator: IValidator<LogPearsonIII>
+    internal class LogPearson3Validator: IValidator<LogPearson3>
     {
-        internal LogPearsonIIIValidator()
+        internal LogPearson3Validator()
         {
         }
 
-        public IMessageLevels IsValid(LogPearsonIII obj, out IEnumerable<Utilities.IMessage> msgs)
+        public IMessageLevels IsValid(LogPearson3 obj, out IEnumerable<Utilities.IMessage> msgs)
         {
             msgs = ReportErrors(obj);
             return msgs.Max();
         }
-        public IEnumerable<IMessage> ReportErrors(LogPearsonIII obj)
+        public IEnumerable<IMessage> ReportErrors(LogPearson3 obj)
         {
             List<IMessage> msgs = new List<IMessage>();
             if (obj.IsNull()) throw new ArgumentNullException(nameof(obj), "The log Pearson III distribution could not be validated because it is null.");
@@ -35,7 +35,7 @@ namespace Statistics.Validation
         internal static string ReportFatalError(double mean, double sd, double skew, int n)
         {
             string msg = "";
-            if (!mean.IsOnRange(0, 10) || !sd.IsOnRange(0, 10) || !skew.IsOnRange(-10, 10) || !n.IsOnRange(0, int.MaxValue, false, true)) msg += $"{Resources.FatalParameterizationNotice(LogPearsonIII.Print(mean, sd, skew, n))} {LogPearsonIII.RequiredParameterization(true)} {Resources.SampleSizeSuggestion()}";
+            if (!mean.IsOnRange(0, 10) || !sd.IsOnRange(0, 10) || !skew.IsOnRange(-10, 10) || !n.IsOnRange(0, int.MaxValue, false, true)) msg += $"{Resources.FatalParameterizationNotice(LogPearson3.Print(mean, sd, skew, n))} {LogPearson3.RequiredParameterization(true)} {Resources.SampleSizeSuggestion()}";
             return msg;
         }
     }

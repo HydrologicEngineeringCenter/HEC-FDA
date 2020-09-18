@@ -45,7 +45,7 @@ namespace StatisticsTests.ExcelTesting
         [IDistributionExcelData(TestDataRelativePath + "LogPearsonIII.xlsx", IDistributionTestEnum.Min, Statistics.IDistributionEnum.LogPearsonIII)]
         public void LogPearsonIII_MinimumTests(double mean, double sd, double skew, int n, double expected, int testRowIndex, int resultsColumnIndex)
         {
-            Statistics.Distributions.LogPearsonIII testObj = new Statistics.Distributions.LogPearsonIII(mean, sd, skew);
+            Statistics.Distributions.LogPearson3 testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
             double actual = testObj.Range.Min;
             bool passed = actual == expected;
             DataTable results = CreateTestResultTable(actual, passed);
@@ -112,7 +112,7 @@ namespace StatisticsTests.ExcelTesting
         [IDistributionExcelData(TestDataRelativePath + "LogPearsonIII.xlsx", IDistributionTestEnum.Max, Statistics.IDistributionEnum.LogPearsonIII)]
         public void LogPearsonIII_MaximumTests(double mean, double sd, double skew, int n, double expected, int testRowIndex, int resultsColumnIndex)
         {
-            Statistics.Distributions.LogPearsonIII testObj = new Statistics.Distributions.LogPearsonIII(mean, sd, skew);
+            Statistics.Distributions.LogPearson3 testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
             double actual = testObj.Range.Max;
             bool passed = actual == expected;
             DataTable results = CreateTestResultTable(actual, passed);
