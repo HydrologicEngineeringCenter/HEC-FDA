@@ -1,4 +1,7 @@
-﻿using System;
+﻿using FdaViewModel.Utilities;
+using Model;
+using Statistics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,32 +18,63 @@ namespace FdaViewModel.Output
         // Created Date: 2/2/2017 11:42:33 AM
         #endregion
         #region Fields
-        //private FdaModel.ComputationPoint.Outputs.Result _Result;
-        //private List<FdaModel.Functions.BaseFunction> _FunctionsList;
-        //private FdaModel.ComputationPoint.Outputs.Realization _Realization;
+        private IConditionLocationYearResult _Results;
+            //private FdaModel.ComputationPoint.Outputs.Result _Result;
+            //private List<FdaModel.Functions.BaseFunction> _FunctionsList;
+            //private FdaModel.ComputationPoint.Outputs.Realization _Realization;
         #endregion
         #region Properties
-        //public FdaModel.ComputationPoint.Outputs.Result Result
-        //{
-        //    get { return _Result; }
-        //    set { _Result = value; }
-        //}
-        //public List<FdaModel.Functions.BaseFunction> FunctionsList
-        //{
-        //    get { return _FunctionsList; }
-        //    set { _FunctionsList = value; }
-        //}
-       
-        //public FdaModel.ComputationPoint.Outputs.Realization Realization
-        //{
-        //    get { return _Realization; }
-        //    set { _Realization = value; }
-        //}
+            //public FdaModel.ComputationPoint.Outputs.Result Result
+            //{
+            //    get { return _Result; }
+            //    set { _Result = value; }
+            //}
+            //public List<FdaModel.Functions.BaseFunction> FunctionsList
+            //{
+            //    get { return _FunctionsList; }
+            //    set { _FunctionsList = value; }
+            //}
+
+            //public FdaModel.ComputationPoint.Outputs.Realization Realization
+            //{
+            //    get { return _Realization; }
+            //    set { _Realization = value; }
+            //}
+
+            public double EADMean { get; set; }
+        public double AEPMean { get; set; }
+        public string MeanAEPLabel { get; set; }
         #endregion
         #region Constructors
         public LinkedPlotsVM() : base()
         {
 
+        }
+
+        public LinkedPlotsVM(IConditionLocationYearResult result) : base()
+        {
+            _Results = result;
+            IReadOnlyList<IConditionLocationYearRealizationSummary> realizations = result.Realizations;
+            foreach (KeyValuePair<IMetric, IHistogram> entry in result.Metrics)
+            {
+                if(entry.Key.ParameterType == IParameterEnum.EAD)
+                {
+                    EADMean = Math.Round(entry.Value.Mean, 2);
+                }
+                if (entry.Key.ParameterType == IParameterEnum.DamageAEP || entry.Key.ParameterType == IParameterEnum.ExteriorStageAEP ||
+                    entry.Key.ParameterType == IParameterEnum.InteriorStageAEP)
+                {
+                    AEPMean = Math.Round(entry.Value.Mean, 3);
+                    MeanAEPLabel = entry.Key.ParameterType.PrintLabel();
+                }
+
+            }
+            
+            foreach(IConditionLocationYearRealizationSummary realization in realizations)
+            {
+                
+                //realization.Metrics.
+            }
         }
 
         //public LinkedPlotsVM(FdaModel.ComputationPoint.Outputs.Realization realization)// List<FdaModel.Functions.BaseFunction> realizationFunctions)
@@ -61,6 +95,23 @@ namespace FdaViewModel.Output
         }
 
        
+        public void DisplayEADHistogram()
+        {
+            foreach (KeyValuePair<IMetric, IHistogram> entry in _Results.Metrics)
+            {
+                if (entry.Key.ParameterType == IParameterEnum.EAD)
+                {
+                    HistogramViewerVM histVM = new HistogramViewerVM(entry.Key, entry.Value);
+                    string header = "EAD Histogram";
+                    DynamicTabVM tab = new DynamicTabVM(header, histVM, "eadHistogram");
+
+                    Navigate(tab, false,false);
+                }
+            }
+
+
+        }
+
         #endregion
         #region Functions
         #endregion

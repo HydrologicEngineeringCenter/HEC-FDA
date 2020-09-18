@@ -55,10 +55,19 @@ namespace Statistics.Validation
         public static bool IsConstructable(double min, double max, int nBins, out IList<string> errors)
         {
             errors = new List<string>();
-            if (nBins < 1) errors.Add($"The requested number of bins: {nBins.Print()} is invalid, because it is not a positive integer.");           
-            bool returnvalue2 = nBins < 1 ? IsConstructable(min, max, double.MinValue, out IList<string> errors2) : IsConstructable(min, max, (max - min) / nBins, out errors2);
-            errors.Concat(errors2);
-            return errors.Any() || !returnvalue2;
+            IList<string> errors2;
+            if (nBins < 1) errors.Add($"The requested number of bins: {nBins.Print()} is invalid, because it is not a positive integer.");
+            bool returnvalue2 = false ;
+            if (nBins < 1)
+            {
+                returnvalue2 = IsConstructable(min, max, double.MinValue, out errors2 );
+            }
+            else
+            {
+                returnvalue2 = IsConstructable(min, max, (max - min) / nBins, out  errors2);
+            }
+            errors.Concat( errors2);
+            return !errors.Any() || returnvalue2;
         }
         /// <summary>
         /// Ensures that the requested empty histogram is valid. 

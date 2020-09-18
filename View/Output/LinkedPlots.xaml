@@ -6,7 +6,6 @@
         xmlns:local="clr-namespace:View.Output"
         xmlns:oxy="http://oxyplot.org/wpf"
         mc:Ignorable="d"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}"
          Height="600" Width="1060">
 
     <UserControl.Resources>
@@ -84,11 +83,11 @@
                     <ColumnDefinition Width=".5*" />
 
                 </Grid.ColumnDefinitions>
-                <Label Content="Mean Annual Exceedance Probability:" FontWeight="Normal" FontSize="16" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" />
-                <Label Name="lbl_AEP" FontWeight="Bold" FontSize="16" Content="Something" Grid.Row="0" Grid.Column="1"  VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Label Content="{Binding MeanAEPLabel}" FontWeight="Normal" FontSize="16" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                <Label Name="lbl_AEP" FontWeight="Bold" FontSize="16" Content="{Binding AEPMean}" Grid.Row="0" Grid.Column="1"  VerticalAlignment="Center" HorizontalAlignment="Left"/>
 
                 <Label FontSize="16" Content="Mean Expected Annual Damages:" FontWeight="Normal" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" />
-                <Label Name="lbl_EAD" FontSize="16" Content="Something" FontWeight="Bold" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                <Label Name="lbl_EAD" FontSize="16" Content="{Binding EADMean}" FontWeight="Bold" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" />
                 <Button Name="btn_EadHistogram" Width="120" FontWeight="Normal" VerticalAlignment="Center" Content="View Distribution" Grid.Row="1" Grid.Column="2"  Click="btn_EadHistogram_Click" />
                 <Button Name="btn_AepHistogram" Width="120" FontWeight="Normal" VerticalAlignment="Center" Content="View Distribution" Grid.Row="0" Grid.Column="2"  Click="btn_AepHistogram_Click" />
 

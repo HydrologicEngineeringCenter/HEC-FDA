@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using FdaViewModel.Output;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
@@ -2115,9 +2116,11 @@ namespace View.Output
 
         private void btn_EadHistogram_Click(object sender, RoutedEventArgs e)
         {
-    //        HistogramViewer hv = new HistogramViewer(Result,true);
-    //        hv.Owner = this;
-    //        hv.Show();
+            LinkedPlotsVM vm = (LinkedPlotsVM)this.DataContext;
+            vm.DisplayEADHistogram();
+            //HistogramViewer hv = new HistogramViewer(Result, true);
+            //hv.Owner = this;
+            //hv.Show();
         }
 
         private void btn_AepHistogram_Click(object sender, RoutedEventArgs e)

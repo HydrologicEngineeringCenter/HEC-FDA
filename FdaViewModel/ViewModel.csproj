@@ -247,6 +247,8 @@
     <Compile Include="Inventory\StructureInventoryOwnerElement.cs" />
     <Compile Include="NamespaceDoc.cs" />
     <Compile Include="Output\CreateEconImportFileVM.cs" />
+    <Compile Include="Output\HistogramBinVM.cs" />
+    <Compile Include="Output\HistogramViewerVM.cs" />
     <Compile Include="Output\IndexLocationsVM.cs" />
     <Compile Include="Alternatives\AlternativeOwnerElement.cs" />
     <Compile Include="Output\LinkedPlotsVM.cs" />

@@ -310,9 +310,12 @@
             <PlotsView:DoubleLineModulatorCoverButton/>
         </DataTemplate>
 
-        <!--todo: Refactor: CO-->
         <DataTemplate DataType="{x:Type PlotsOutputVM:LinkedPlotsVM }" >
             <PlotsOutputView:LinkedPlots/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type PlotsOutputVM:HistogramViewerVM }" >
+            <PlotsOutputView:HistogramViewer/>
         </DataTemplate>
         
         <!--Study Region-->

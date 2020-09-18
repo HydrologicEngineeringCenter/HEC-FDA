@@ -331,6 +331,9 @@
     <Compile Include="Inventory\OccupancyTypes\SaveAllReport.xaml.cs">
       <DependentUpon>SaveAllReport.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Output\HistogramViewer.xaml.cs">
+      <DependentUpon>HistogramViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Output\IndexLocations.xaml.cs">
       <DependentUpon>IndexLocations.xaml</DependentUpon>
     </Compile>
@@ -678,6 +681,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Output\HistogramViewer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Output\IndexLocations.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

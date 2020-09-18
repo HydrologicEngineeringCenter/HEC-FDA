@@ -24,7 +24,7 @@ namespace Statistics.Histograms
         #region Constructor
         internal HistogramStatistics(IEnumerable<IBin> bins)
         {
-            if (Validation.SummaryStatisticsValidator.IsConstructable(bins, out string msg)) throw new Utilities.InvalidConstructorArgumentsException(msg);
+            if (!Validation.SummaryStatisticsValidator.IsConstructable(bins, out string msg)) throw new Utilities.InvalidConstructorArgumentsException(msg);
             /* This is a 2 pass function:
              *      (1) First, calculate the:
              *          - sample size

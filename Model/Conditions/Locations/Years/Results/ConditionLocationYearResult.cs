@@ -43,11 +43,11 @@ namespace Model.Conditions.Locations.Years.Results
             var histograms = new Dictionary<IMetric, Statistics.IHistogram>();
             var realizations = new List<IConditionLocationYearRealizationSummary>();
             foreach (var i in criteria) converged[i.Key] = Statistics.IConvergenceResultFactory.Factory();
-            int s = 0, n = 0, I = 10000, N = 500000;
+            int s = 0, n = 0, I = 10000, N = 10000;
             while (!IsConverged(converged) && n < N)
             {
                 s++;
-                var setOfSamples = SetSamplePacket(rng, I);
+                IReadOnlyDictionary<int, IReadOnlyDictionary<IParameterEnum, ISample>> setOfSamples = SetSamplePacket(rng,n, I);
                 var setOfRealizations = new ConcurrentBag<IConditionLocationYearRealizationSummary>();
                 Parallel.For(n, n + I, i =>
                 {
@@ -71,10 +71,10 @@ namespace Model.Conditions.Locations.Years.Results
             Convergence = converged;
             Realizations = realizations;
         }
-        private IReadOnlyDictionary<int, IReadOnlyDictionary<IParameterEnum, ISample>> SetSamplePacket(Random rng, int setCount = 1000)
+        private IReadOnlyDictionary<int, IReadOnlyDictionary<IParameterEnum, ISample>> SetSamplePacket(Random rng, int startIndex, int setCount = 1000)
         {
             Dictionary<int, IReadOnlyDictionary<IParameterEnum, ISample>> set = new Dictionary<int, IReadOnlyDictionary<IParameterEnum, ISample>>();
-            for (int i = 0; i < setCount; i++)
+            for (int i = startIndex; i < startIndex + setCount; i++)
             {
                 set.Add(i, ConditionLocationTime.SampleParametersPacket(rng, ConditionLocationTime.Parameters));
             }
@@ -93,7 +93,7 @@ namespace Model.Conditions.Locations.Years.Results
              */
             realizations.TryPeek(out IConditionLocationYearRealizationSummary last);
             IEnumerable<IMetric> realizationMetrics = last.Metrics.Keys, histogramMetrics = histograms.Keys;
-            if (!Enumerable.SequenceEqual(realizationMetrics.OrderBy(i => i.ParameterType), histogramMetrics.OrderBy(j => j.ParameterType))) throw new ArgumentException($"The realization produced the following list of metrics: {PrintMetricList(realizationMetrics)} but the following list was expected: {PrintMetricList(histogramMetrics)}.");
+            //if (!Enumerable.SequenceEqual(realizationMetrics.OrderBy(i => i.ParameterType), histogramMetrics.OrderBy(j => j.ParameterType))) throw new ArgumentException($"The realization produced the following list of metrics: {PrintMetricList(realizationMetrics)} but the following list was expected: {PrintMetricList(histogramMetrics)}.");
 
             // step 2: gathering list of realization metrics...
             var metrics = new Dictionary<IMetric, List<double>>();
@@ -105,7 +105,14 @@ namespace Model.Conditions.Locations.Years.Results
             {
                 foreach (var metric in metrics)
                 {
-                    histograms[metric.Key] = Statistics.IHistogramFactory.Factory(Statistics.IDataFactory.Factory(metric.Value, true), 100);
+                    if (metric.Key.ParameterType != IParameterEnum.EAD)
+                    {
+                        histograms[metric.Key] = Statistics.IHistogramFactory.Factory(Statistics.IDataFactory.Factory(metric.Value, true), 0, 1, 100);
+                    }
+                    else
+                    {
+                        histograms[metric.Key] = Statistics.IHistogramFactory.Factory(Statistics.IDataFactory.Factory(metric.Value, true), 100);
+                    }
                 }
             }
             else

@@ -13,72 +13,60 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using OxyPlot.Axes;
 using OxyPlot;
+using FdaViewModel.Output;
+using OxyPlot.Series;
 
-
-namespace Fda.Output
+namespace View.Output
 {
     /// <summary>
     /// Interaction logic for HistogramViewer.xaml
     /// </summary>
-    public partial class HistogramViewer : Window
+    public partial class HistogramViewer : UserControl
     {
 
         private OxyPlot.PlotModel _HistogramPlotModel;
-        private Statistics.Histogram _Histogram;
-        private FdaModel.ComputationPoint.Outputs.Result _Result;
+        //private Statistics.Histogram _Histogram;
+        //private FdaModel.ComputationPoint.Outputs.Result _Result;
         private bool _isEAD;
 
-        public Statistics.Histogram Histogram
-        {
-            get { return _Histogram; }
-            set { _Histogram = value; }
-        }
+        //public Statistics.Histogram Histogram
+        //{
+        //    get { return _Histogram; }
+        //    set { _Histogram = value; }
+        //}
         public OxyPlot.PlotModel HistogramPlotModel
         {
             get { return _HistogramPlotModel; }
             set { _HistogramPlotModel = value; }
         }
 
-        public HistogramViewer(FdaModel.ComputationPoint.Outputs.Result result, bool isEAD)
+        public HistogramViewer()
         {
-            _isEAD = isEAD;
-            if(isEAD == true)
-            {
-                Histogram = result.EAD;
+            //_isEAD = isEAD;
+            //if(isEAD == true)
+            //{
+            //    Histogram = result.EAD;
                
-            }
-            else
-            {
-                Histogram = result.AEP;
+            //}
+            //else
+            //{
+            //    Histogram = result.AEP;
                 
 
-            }
+            //}
 
 
-            setUpHistogramPlotModel();
 
             InitializeComponent();
 
-            if (isEAD == true)
-            {
-                lbl_MeanValueText.Content = "Mean Expected Annual Damages:";
-                lbl_MeanValueText.Width = 255;
-                lbl_MeanValue.Content = String.Format("{0:0,0}",    result.EAD.GetMean);
-                
-                   
-            }
-            else
-            {
-                //lbl_MeanValueText.Content = "Mean AEP:";
-                lbl_MeanValue.Content = String.Format("{0:.###}", 1- result.AEP.GetMean);
-
-            }
+            
 
 
         }
 
-        private void setUpHistogramPlotModel()
+        private void setUpHistogramPlotModel( int sampleSize, List<HistogramBinVM> bins)
         {
+
             HistogramPlotModel = new OxyPlot.PlotModel();
 
             if(_isEAD == true)
@@ -124,23 +112,28 @@ namespace Fda.Output
             if (_isEAD == true)
             {
                 int i = 0;
-                foreach (int histValue in Histogram.Histogram)
+                
+                //foreach (int histValue in Histogram.Histogram)
+                foreach(HistogramBinVM bin in bins)
                 {
-                    if (histValue == 0)
-                    {
-                        i++;
-                        continue;
-                    }
+                    double min = bin.Min;
+                    double max = bin.Max;
+                    double binWidth = bin.BinWidth;
+                    double midPoint = bin.MidPoint;
+                    //if (histValue == 0)
+                    //{
+                    //    i++;
+                    //    continue;
+                    //}
 
 
-                    double sampleSize = Histogram.GetSampleSize;
-                    double myValue = (double)histValue;
-                    double percValue = myValue / sampleSize;
+                    int binCount = bin.Count;
+                    double percValue = binCount / sampleSize;
 
-                    double lowerBinBoundary = (Histogram.BinWidth * i) +Histogram.GetMin;
-                    double upperBinBoundary = (Histogram.BinWidth * (i + 1)) + Histogram.GetMin;
+                    double lowerBinBoundary = (binWidth * i) +min;
+                    double upperBinBoundary = (binWidth * (i + 1)) + min;
 
-                    if(Histogram.GetMean < upperBinBoundary && Histogram.GetMean >= lowerBinBoundary)
+                    if(midPoint < upperBinBoundary && midPoint >= lowerBinBoundary)
                     {
                         OxyPlot.Series.ColumnItem nextColumn = new OxyPlot.Series.ColumnItem(percValue);
                         nextColumn.Color = OxyPlot.OxyColor.FromRgb(76,0,153); //purple
@@ -168,53 +161,82 @@ namespace Fda.Output
             }
             else
             {
-                int i = 0;
-                double sampleSize = Histogram.GetSampleSize;
-                foreach (int histValue in Histogram.Histogram)
-                {
-                    if (histValue == 0)
-                    {
-                        i++;
-                        continue;
-                    }
+                //int i = 0;
+                //double sampleSize = Histogram.GetSampleSize;
+                //foreach (int histValue in Histogram.Histogram)
+                //{
+                //    if (histValue == 0)
+                //    {
+                //        i++;
+                //        continue;
+                //    }
 
                     
-                    double myValue = (double)histValue;
-                    double percValue = myValue / sampleSize;
+                //    double myValue = (double)histValue;
+                //    double percValue = myValue / sampleSize;
 
-                    double lowerBinBoundary = (Histogram.BinWidth * i) + Histogram.GetMin;
-                    double upperBinBoundary = (Histogram.BinWidth * (i + 1)) + Histogram.GetMin;
+                //    double lowerBinBoundary = (Histogram.BinWidth * i) + Histogram.GetMin;
+                //    double upperBinBoundary = (Histogram.BinWidth * (i + 1)) + Histogram.GetMin;
 
-                    if (Histogram.GetMean < upperBinBoundary && Histogram.GetMean >= lowerBinBoundary)
-                    {
-                        OxyPlot.Series.ColumnItem nextColumn = new OxyPlot.Series.ColumnItem(percValue);
-                        nextColumn.Color = OxyPlot.OxyColor.FromRgb(76, 0, 153); //purple
-                        myColumnSeries.Items.Add(nextColumn); ///Histogram.GetSampleSize
+                //    if (Histogram.GetMean < upperBinBoundary && Histogram.GetMean >= lowerBinBoundary)
+                //    {
+                //        OxyPlot.Series.ColumnItem nextColumn = new OxyPlot.Series.ColumnItem(percValue);
+                //        nextColumn.Color = OxyPlot.OxyColor.FromRgb(76, 0, 153); //purple
+                //        myColumnSeries.Items.Add(nextColumn); ///Histogram.GetSampleSize
 
-                    }
-                    else
-                    {
-                        OxyPlot.Series.ColumnItem nextColumn = new OxyPlot.Series.ColumnItem(percValue);
-                        nextColumn.Color = OxyPlot.OxyColor.FromRgb(141, 182, 195); //blue grey
-                        myColumnSeries.Items.Add(nextColumn); ///Histogram.GetSampleSize
+                //    }
+                //    else
+                //    {
+                //        OxyPlot.Series.ColumnItem nextColumn = new OxyPlot.Series.ColumnItem(percValue);
+                //        nextColumn.Color = OxyPlot.OxyColor.FromRgb(141, 182, 195); //blue grey
+                //        myColumnSeries.Items.Add(nextColumn); ///Histogram.GetSampleSize
 
-                    }
+                //    }
 
-                    categoryAxis.Labels.Add(String.Format("{0:.####} - {1:.####}", 1 - lowerBinBoundary,1-upperBinBoundary)); //'bPMSH.Histogram(bPMSH.Histogram.Count - 1 - i).ToString("0.00"))
-                    i++;
-                }
+                //    categoryAxis.Labels.Add(String.Format("{0:.####} - {1:.####}", 1 - lowerBinBoundary,1-upperBinBoundary)); //'bPMSH.Histogram(bPMSH.Histogram.Count - 1 - i).ToString("0.00"))
+                //    i++;
+                //}
 
             }
 
-           
 
-            //HistogramPlotModel.Axes.Clear();
             HistogramPlotModel.Axes.Add(categoryAxis);
-            HistogramPlotModel.Series.Add(myColumnSeries);
+            //testing
+            var testSeries = new ColumnSeries();
+            for(int i = 0;i<10;i++)
+            {
+             testSeries.Items.Add( new ColumnItem(i));
+
+            }
+            HistogramPlotModel.Series.Add(testSeries);
+            ///////////////////////////////
+            //HistogramPlotModel.Series.Add(myColumnSeries);
 
             HistogramPlotModel.InvalidatePlot(true);
 
 
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            HistogramViewerVM vm = (HistogramViewerVM)this.DataContext;
+            _isEAD = vm.IsEAD;
+            setUpHistogramPlotModel(vm.SampleSize, vm.Bins);
+
+            if (_isEAD == true)
+            {
+                lbl_MeanValueText.Content = "Mean Expected Annual Damages:";
+                lbl_MeanValueText.Width = 255;
+                lbl_MeanValue.Content = String.Format("{0:0,0}", vm.EADMean);
+
+
+            }
+            else
+            {
+                //lbl_MeanValueText.Content = "Mean AEP:";
+                lbl_MeanValue.Content = String.Format("{0:.###}", 1 - vm.AEPMean);
+
+            }
         }
     }
 }

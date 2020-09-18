@@ -801,59 +801,62 @@ namespace FdaViewModel.Conditions
             }
         }
 
-        private void ComputeCondition(object arg1, EventArgs arg2)
+        private void DisplayResults(IConditionLocationYearResult result)
         {
-
-            //testing result viewer
-            LinkedPlotsVM vm = new LinkedPlotsVM();
-            //ConditionsEditor.RequestNavigation += Navigate;
+            LinkedPlotsVM vm = new LinkedPlotsVM(result);
+            vm.RequestNavigation += Navigate;
             string header = "Results";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "resultViewer");
             Navigate(tab, false, false);
-            
-            //////////////////////////
+        }
+        private void ComputeCondition(object arg1, EventArgs arg2)
+        {
+            //IConditionLocationYearResult dummyResult = null;
+            //DisplayResults(dummyResult);
+            //return;
 
-            //EnterSeedVM enterSeedVM = new EnterSeedVM();
-            //string header = "Enter Seed Value";
-            //DynamicTabVM tab = new DynamicTabVM(header, enterSeedVM, "EnterSeed" );
-            //Navigate(tab,true,true);
+            EnterSeedVM enterSeedVM = new EnterSeedVM();
+            string header = "Enter Seed Value";
+            DynamicTabVM tab = new DynamicTabVM(header, enterSeedVM, "EnterSeed");
+            Navigate(tab, true, true);
 
-            //int seedValue = enterSeedVM.Seed;
+            int seedValue = enterSeedVM.Seed;
 
-            //bool hasLeveeFailure = LeveeFailureID != -1;
-            //if (hasLeveeFailure)
-            //{
+            bool hasLeveeFailure = LeveeFailureID != -1;
+            if (hasLeveeFailure)
+            {
 
-            //}
-            //else
-            //{
-            //    ConditionLocationYearNoLateralStructure condition = CreateConditionNoLateralStructure();
+            }
+            else
+            {
+                ConditionLocationYearNoLateralStructure condition = CreateConditionNoLateralStructure();
 
-            //    if (condition == null)
-            //    {
-            //        return;
-            //    }
-            //    IConditionLocationYearRealization conditionRealization = condition.ComputePreview();
-            //    //get the damage frequency and plot it
-            //    IReadOnlyDictionary<IParameterEnum, ISampledParameter<IFdaFunction>> realizationFunctions = conditionRealization.Functions;
+                if (condition == null)
+                {
+                    return;
+                }
+                IConditionLocationYearRealization conditionRealization = condition.ComputePreview();
+                //get the damage frequency and plot it
+                IReadOnlyDictionary<IParameterEnum, ISampledParameter<IFdaFunction>> realizationFunctions = conditionRealization.Functions;
 
-            //    IConvergenceCriteria convergenceCriteria = IConvergenceCriteriaFactory.Factory();
-            //    Dictionary<IMetric, IConvergenceCriteria> metricsDictionary = new Dictionary<IMetric, IConvergenceCriteria>();
-            //    foreach (IMetric metric in condition.Metrics)
-            //    {
-            //        metricsDictionary.Add(metric, IConvergenceCriteriaFactory.Factory());
-            //    }
+                IConvergenceCriteria convergenceCriteria = IConvergenceCriteriaFactory.Factory();
+                Dictionary<IMetric, IConvergenceCriteria> metricsDictionary = new Dictionary<IMetric, IConvergenceCriteria>();
+                foreach (IMetric metric in condition.Metrics)
+                {
+                    metricsDictionary.Add(metric, IConvergenceCriteriaFactory.Factory());
+                }
 
-            //    IReadOnlyDictionary<IMetric, IConvergenceCriteria> metrics = new ReadOnlyDictionary<IMetric, IConvergenceCriteria>(metricsDictionary);
+                IReadOnlyDictionary<IMetric, IConvergenceCriteria> metrics = new ReadOnlyDictionary<IMetric, IConvergenceCriteria>(metricsDictionary);
 
-            //    int seed = 5;
-            //    //todo pop up and have user enter seed. Put the random clock time as int into it as default.
-            //    //This constructor will automatically run the compute
-            //    IConditionLocationYearResult result = new ConditionLocationYearResult(condition, metrics, 99);
-            //}
-            ////store the seed with the other results.
+                int seed = 5;
+                //todo pop up and have user enter seed. Put the random clock time as int into it as default.
+                //This constructor will automatically run the compute
+                IConditionLocationYearResult result = new ConditionLocationYearResult(condition, metrics, 99);
+                DisplayResults(result);
+            }
+            //store the seed with the other results.
 
-            ////get the result:
+            //get the result:
 
 
 
