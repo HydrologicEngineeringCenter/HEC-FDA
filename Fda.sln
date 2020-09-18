@@ -56,6 +56,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OccupancyTypesTests", "Occu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OccupancyTypeReader", "OccupancyTypeReader\OccupancyTypeReader.csproj", "{04C1BC1C-9295-43D3-A52A-A69A8912F916}"
 EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "LogPearsonIII", "LogPearsonIII\LogPearsonIII.vbproj", "{82462314-BF0F-4B20-A1D6-7076D43D2D66}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -364,6 +366,18 @@ Global
 		{04C1BC1C-9295-43D3-A52A-A69A8912F916}.Release|x64.Build.0 = Release|Any CPU
 		{04C1BC1C-9295-43D3-A52A-A69A8912F916}.Release|x86.ActiveCfg = Release|Any CPU
 		{04C1BC1C-9295-43D3-A52A-A69A8912F916}.Release|x86.Build.0 = Release|Any CPU
+		{82462314-BF0F-4B20-A1D6-7076D43D2D66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82462314-BF0F-4B20-A1D6-7076D43D2D66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82462314-BF0F-4B20-A1D6-7076D43D2D66}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{82462314-BF0F-4B20-A1D6-7076D43D2D66}.Debug|x64.Build.0 = Debug|Any CPU
+		{82462314-BF0F-4B20-A1D6-7076D43D2D66}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{82462314-BF0F-4B20-A1D6-7076D43D2D66}.Debug|x86.Build.0 = Debug|Any CPU
+		{82462314-BF0F-4B20-A1D6-7076D43D2D66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82462314-BF0F-4B20-A1D6-7076D43D2D66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82462314-BF0F-4B20-A1D6-7076D43D2D66}.Release|x64.ActiveCfg = Release|Any CPU
+		{82462314-BF0F-4B20-A1D6-7076D43D2D66}.Release|x64.Build.0 = Release|Any CPU
+		{82462314-BF0F-4B20-A1D6-7076D43D2D66}.Release|x86.ActiveCfg = Release|Any CPU
+		{82462314-BF0F-4B20-A1D6-7076D43D2D66}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

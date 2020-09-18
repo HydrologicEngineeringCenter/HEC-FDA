@@ -40,7 +40,9 @@ namespace Statistics.Distributions
             else
             {
                 // a skewed PearsonIII distribution is a shifted gamma distribution
-                double shift, alpha = 4d / (Skewness * Skewness), beta = 0.5 * StandardDeviation * Skewness;
+                double shift;
+                double alpha = 4d / (Skewness * Skewness); 
+                double beta = 0.5 * StandardDeviation * Skewness;
                 // positively skewed distribution 
                 if (Skewness > 0)
                 {
@@ -56,7 +58,7 @@ namespace Statistics.Distributions
                     shift = -Mean + 2d * StandardDeviation / Skewness;
                     if (!alpha.IsOnRange(0, double.PositiveInfinity, false, false) || !beta.IsOnRange(0, double.PositiveInfinity)) throw new InvalidOperationException(PrintExceptionMessage(alpha, beta));
                     ShiftedGamma gamma = new ShiftedGamma(alpha, beta, shift);
-                    return -gamma.CDF(x);
+                    return 1 - gamma.CDF(-x);
                 }               
             }
         }
