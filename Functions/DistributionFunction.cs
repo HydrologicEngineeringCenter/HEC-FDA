@@ -68,10 +68,6 @@ namespace Functions
              *  (2) p associated with y + yEpsilon
              *  (3) pMax
              */
-            if (lastP > .96)
-            {
-
-            }
             double nextP = lastP + pEpsilon;
             double nextY = lastY + yEpsilon;
             double nextPofY = InverseF(nextY);
