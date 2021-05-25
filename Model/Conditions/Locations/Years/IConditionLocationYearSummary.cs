@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Model
@@ -9,6 +10,8 @@ namespace Model
     /// </summary>
     public interface IConditionLocationYearSummary
     {
+         IOrderedEnumerable<IMetric> Metrics { get; }
+
         /// <summary>
         /// A label describing the condition. Concatenates the year and location by default.
         /// </summary>
@@ -24,7 +27,7 @@ namespace Model
         ILocation Location { get; }
               
         /// <summary>
-        /// Provides a <see cref="IDictionary{TKey, TValue}"/> of the compute parameters as <see cref="IParameter"/> keys with <see cref="bool"/> values set to <see langword="true"/> if the parameter is distributed, and <see langword="false"/> if it is constant.
+        /// Provides a <see cref="IDictionary{TKey, TValue}"/> of the compute parameters as <see cref="IParameter"/> keys with <see cref="bool"/> values set to <see langword="false"/> if the parameter is distributed, and <see langword="true"/> if it is constant.
         /// </summary>
         IReadOnlyDictionary<IParameterEnum, bool> Parameters { get; }
 

@@ -33,7 +33,10 @@ namespace View.StageTransforms
         {
             CurveEditorVM vm = (CurveEditorVM)this.DataContext;
             CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
-            Chart2D chart = new Chart2D(new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel));
+            // Chart2D chart = new Chart2D(new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel));
+            editorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
+            Chart2D chart = new Chart2D(editorVM.CoordinatesChartViewModel);
+
             //Binding myBinding = new Binding("EditorVM.CoordinatesChartViewModel");
             //myBinding.Source = this.DataContext;
             //chart.SetBinding(Chart2D.DataContextProperty, myBinding);

@@ -1,6 +1,8 @@
 ﻿using Functions;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using Utilities;
+using Utilities.Serialization;
 
 namespace Model.Functions.FrequencyFunctions
 {
@@ -10,6 +12,8 @@ namespace Model.Functions.FrequencyFunctions
         internal IFunction _TruncatedFunction;
         #endregion
         #region Properties
+        public override ICoordinatesFunction Function => _TruncatedFunction;
+
         public override IRange<double> Range { get; }
         public override IRange<double> Domain { get; }
         public override List<ICoordinate> Coordinates { get; }
@@ -66,7 +70,35 @@ namespace Model.Functions.FrequencyFunctions
                 coordinates.Add(xy);
             }
             coordinates.Add(ICoordinateFactory.Factory(Domain.Max, _TruncatedFunction.Range.Max));
+            if(!IsMonotonic(coordinates))
+            {
+                //todo: what is this?
+                int test = 0;
+            }
             return coordinates;
+        }
+
+        /// <summary>
+        /// for testing
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        private bool IsMonotonic(List<ICoordinate> coordinates)
+        {
+            double prevX = coordinates[0].X.Value();
+            double prevY = coordinates[0].Y.Value();
+            for(int i = 1;i<coordinates.Count;i++)
+            {
+                double currentX = coordinates[i].X.Value();
+                double currentY = coordinates[i].Y.Value();
+                if(currentX <= prevX || currentY <= prevY)
+                {
+                    return false;
+                }
+                prevX = currentX;
+                prevY = currentY;
+            }
+            return true;
         }
 
         public override IOrdinate F(IOrdinate x)
@@ -79,5 +111,30 @@ namespace Model.Functions.FrequencyFunctions
         }
         public double Integrate() => _TruncatedFunction.TrapizoidalRiemannSum();
         #endregion
+
+        public override XElement WriteToXML()
+        {
+            XElement functionsElem = new XElement(SerializationConstants.FUNCTIONS);
+            functionsElem.SetAttributeValue(SerializationConstants.TYPE, SerializationConstants.NOT_LINKED);
+            XElement funcElem = new XElement(SerializationConstants.FUNCTION);
+
+            funcElem.SetAttributeValue("Interpolator", Interpolator);
+            funcElem.SetAttributeValue(SerializationConstants.LOG_PEARSON_III, "True");
+
+            //mean
+            //funcElem.SetAttributeValue("Interpolator", stand);
+
+            //st dev
+            //skew
+            //islogflow
+            //por
+            //isAnalytical
+            //isStandard
+            //analyticalFlows
+
+
+            functionsElem.Add(funcElem);
+            return functionsElem;
+        }
     }
 }

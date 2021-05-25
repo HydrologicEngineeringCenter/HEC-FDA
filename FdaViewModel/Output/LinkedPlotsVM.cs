@@ -53,6 +53,7 @@ namespace FdaViewModel.Output
 
         public LinkedPlotsVM(IConditionLocationYearResult result) : base()
         {
+            SetDimensions(800, 500, 500,400);
             _Results = result;
             IReadOnlyList<IConditionLocationYearRealizationSummary> realizations = result.Realizations;
             foreach (KeyValuePair<IMetric, IHistogram> entry in result.Metrics)
@@ -70,11 +71,11 @@ namespace FdaViewModel.Output
 
             }
             
-            foreach(IConditionLocationYearRealizationSummary realization in realizations)
-            {
+            //foreach(IConditionLocationYearRealizationSummary realization in realizations)
+            //{
                 
-                //realization.Metrics.
-            }
+            //    //realization.Metrics.
+            //}
         }
 
         //public LinkedPlotsVM(FdaModel.ComputationPoint.Outputs.Realization realization)// List<FdaModel.Functions.BaseFunction> realizationFunctions)
@@ -101,15 +102,28 @@ namespace FdaViewModel.Output
             {
                 if (entry.Key.ParameterType == IParameterEnum.EAD)
                 {
-                    HistogramViewerVM histVM = new HistogramViewerVM(entry.Key, entry.Value);
+                    HistogramViewerVM histVM = new HistogramViewerVM(entry.Key, entry.Value, EADMean);
                     string header = "EAD Histogram";
                     DynamicTabVM tab = new DynamicTabVM(header, histVM, "eadHistogram");
 
                     Navigate(tab, false,false);
                 }
             }
+        }
 
+        public void DisplayAEPHistogram()
+        {
+            foreach (KeyValuePair<IMetric, IHistogram> entry in _Results.Metrics)
+            {
+                if (entry.Key.ParameterType != IParameterEnum.EAD)
+                {
+                    HistogramViewerVM histVM = new HistogramViewerVM(entry.Key, entry.Value, AEPMean);
+                    string header = "AEP Histogram";
+                    DynamicTabVM tab = new DynamicTabVM(header, histVM, "aepHistogram");
 
+                    Navigate(tab, false, false);
+                }
+            }
         }
 
         #endregion

@@ -13,9 +13,13 @@ namespace Model
             //acceptable transform could be an inflow outflow or a rating curve
             if (frequencyFx.ComposeableTypes.Contains(transformFx.ParameterType))
             {
-                IFunction sampledFreqFx = Sampler.Sample(((FdaFunctionBase)frequencyFx)._Function, pForFreqFx);
-                IFunction sampledTranFx = Sampler.Sample(((FdaFunctionBase)transformFx)._Function, pForTransformFx);
-                IFunction composedFreqFx = sampledFreqFx.Compose(sampledTranFx);
+                //IFunction sampledFreqFx = Sampler.Sample(((FdaFunctionBase)frequencyFx)._Function, pForFreqFx);
+                //IFunction sampledTranFx = Sampler.Sample(((FdaFunctionBase)transformFx)._Function, pForTransformFx);
+                //IFunction composedFreqFx = sampledFreqFx.Compose(sampledTranFx);
+                //todo: get rid of this?
+                IFunction freqConstant = IFunctionFactory.Factory(frequencyFx.Function.Coordinates, InterpolationEnum.Linear);
+                IFunction composedFreqFx = (freqConstant).Compose((IFunction)transformFx.Function);
+
                 return IFrequencyFunctionFactory.Factory(composedFreqFx, transformFx.ParameterType + 1,
                     (transformFx.ParameterType + 1).Print(), frequencyFx.XSeries.Label, transformFx.YSeries.Label, transformFx.YSeries.Units);
             }

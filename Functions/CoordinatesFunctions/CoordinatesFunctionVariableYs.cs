@@ -186,6 +186,11 @@ namespace Functions.CoordinatesFunctions
             //todo: add a message here that this might be expanded when sampled?
             return Coordinates;
         }
+
+        public void WriteToTextFile(string path)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
         #endregion
     }

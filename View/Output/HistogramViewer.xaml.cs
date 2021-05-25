@@ -234,7 +234,7 @@ namespace View.Output
             else
             {
                 //lbl_MeanValueText.Content = "Mean AEP:";
-                lbl_MeanValue.Content = String.Format("{0:.###}", 1 - vm.AEPMean);
+                lbl_MeanValue.Content = String.Format("{0:.###}", vm.AEPMean);
 
             }
         }

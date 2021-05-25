@@ -2125,9 +2125,11 @@ namespace View.Output
 
         private void btn_AepHistogram_Click(object sender, RoutedEventArgs e)
         {
-    //        HistogramViewer hv = new HistogramViewer(Result, false);
-    //        hv.Owner = this;
-    //        hv.Show();
+            LinkedPlotsVM vm = (LinkedPlotsVM)this.DataContext;
+            vm.DisplayAEPHistogram();
+            //        HistogramViewer hv = new HistogramViewer(Result, false);
+            //        hv.Owner = this;
+            //        hv.Show();
 
         }
 

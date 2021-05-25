@@ -141,8 +141,8 @@ namespace View.Study
         {
             FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
             //vm.MWMTVConn. MapTreeView = MapTreeView;
-            vm.AddCreateNewStudyTab();
             vm.AddMapsTab(MapTreeView);
+            vm.AddCreateNewStudyTab();
 
             //MapWindowControl.MapToolBar.MapWindow = MapWindowControl.MapWindow.MapWindow;
 
@@ -216,10 +216,10 @@ namespace View.Study
             FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
         
 
-            Timer updateMapWindowTimer = new Timer(500);
-            updateMapWindowTimer.Elapsed += OnTimedEvent;
-            updateMapWindowTimer.AutoReset = false;
-            updateMapWindowTimer.Enabled = true;
+            //Timer updateMapWindowTimer = new Timer(500);
+            //updateMapWindowTimer.Elapsed += OnTimedEvent;
+            //updateMapWindowTimer.AutoReset = false;
+            //updateMapWindowTimer.Enabled = true;
         }
 
         private void OnTimedEvent(Object source, ElapsedEventArgs e)

@@ -34,7 +34,9 @@ namespace View.GeoTech
         {
             CurveEditorVM vm = (CurveEditorVM)this.DataContext;
             CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
-            Chart2D chart = new Chart2D(new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel));
+            //Chart2D chart = new Chart2D(new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel));
+            editorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
+            Chart2D chart = new Chart2D(editorVM.CoordinatesChartViewModel);
             PlotGrid.Children.Add(chart);
             Grid.SetColumn(chart, 2);
             //Grid.SetColumnSpan(chart, 2);

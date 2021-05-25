@@ -8,6 +8,7 @@ namespace Utilities.Serialization
     {
         public const string LINKED = "Linked";
         public const string NOT_LINKED = "NotLinked";
+        public const string LOG_PEARSON_III = "LogPearsonIII";
 
         public const string FUNCTIONS = "Functions";
         public const string FUNCTION = "Function";

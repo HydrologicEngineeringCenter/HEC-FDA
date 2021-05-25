@@ -63,6 +63,12 @@ namespace Functions
         /// <returns> <see langword="true"/> if the functions are equal in value, <see langword="false"/> otherwise. </returns>
         bool Equals(ICoordinatesFunction coordinateFunction);
         List<ICoordinate> GetExpandedCoordinates();
+
+        /// <summary>
+        /// This is used during testing to quickly verify the coordinates numbers
+        /// </summary>
+        /// <param name="path"></param>
+        void WriteToTextFile(string path);
         //IFunction Sample(double p);
         //IFunction Sample(double p, InterpolationEnum interpolator);
 
