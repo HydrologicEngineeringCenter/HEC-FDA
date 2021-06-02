@@ -13,6 +13,7 @@ namespace Model
     /// </summary>
     public interface IConditionLocationYearResult
     {
+        void Compute();
         /// <summary>
         /// A random seed used to generate <see cref="IConditionLocationYearRealization"/>s during the <see cref="Conditions.Locations.Years.Results.ConditionLocationYearResult.Compute(IReadOnlyDictionary{IMetric, IConvergenceCriteria})"/> that is called upon construction of the <see cref="IConditionLocationYearResult"/> object.
         /// </summary>
@@ -28,7 +29,7 @@ namespace Model
         /// <summary>
         /// A <see cref="IReadOnlyDictionary{TKey, TValue}"/> of <see cref="IMetric"/> keys and <see cref="Statistics.IHistogram"/> values describing the distribution of <see cref="IMetric.Compute(IFrequencyFunction, double)"/> values. These values are generated the <see cref="IConditionLocationYearRealizationSummary.Metrics"/> created during the <see cref="Conditions.Locations.Years.Results.ConditionLocationYearResult.Compute(IReadOnlyDictionary{IMetric, IConvergenceCriteria})"/> method called during construction of the object implementing the <see cref="IConditionLocationYearResult"/> interface.
         /// </summary>
-        IReadOnlyDictionary<IMetric, Statistics.IHistogram> Metrics { get; }
+        IReadOnlyDictionary<IMetric, Statistics.IHistogram> Metrics { get; set; }
         /// <summary>
         /// A <see cref="IReadOnlyDictionary{TKey, TValue}"/> of <see cref="IMetric"/> keys and <see cref="Statistics.IConvergenceResult"/> values describing convergence of the <see cref="Metrics"/> values.
         /// </summary>

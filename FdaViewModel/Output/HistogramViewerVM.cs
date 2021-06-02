@@ -28,7 +28,7 @@ namespace FdaViewModel.Output
             set { _HistogramPlotModel = value; }
         }
 
-        public HistogramViewerVM(IMetric metric, IHistogram histogram)
+        public HistogramViewerVM(IMetric metric, IHistogram histogram, double meanValue)
         {
             Bins = new List<HistogramBinVM>();
             //create a list of the binvm's for the UI to pull from
@@ -43,12 +43,13 @@ namespace FdaViewModel.Output
             if (metric.ParameterType == IParameterEnum.EAD)
             {
                 IsEAD = true;
+                EADMean = meanValue;
             }
             else
             {
                 IsEAD = false;
+                AEPMean = meanValue;
             }
-
             setUpHistogramPlotModel(SampleSize, Bins);
 
         }
@@ -99,108 +100,112 @@ namespace FdaViewModel.Output
             categoryAxis.FontSize = 14;
             categoryAxis.Angle = 60;
 
-            //if (IsEAD == true)
-            //{
-             //   int i = 0;
+            if (IsEAD == true)
+            {
+                int i = 0;
 
                 //foreach (int histValue in Histogram.Histogram)
-            //    foreach (HistogramBinVM bin in bins)
-            //    {
-            //        double min = bin.Min;
-            //        double max = bin.Max;
-            //        double binWidth = bin.BinWidth;
-            //        double midPoint = bin.MidPoint;
-            //        //if (histValue == 0)
-            //        //{
-            //        //    i++;
-            //        //    continue;
-            //        //}
+                    foreach (HistogramBinVM bin in bins)
+                    {
+                        double min = bin.Min;
+                        double max = bin.Max;
+                        double binWidth = bin.BinWidth;
+                        double midPoint = bin.MidPoint;
+                    //if (bin.Count == 0)
+                    //{
+                    //    i++;
+                    //    continue;
+                    //}
 
 
-            //        int binCount = bin.Count;
-            //        double percValue = binCount / sampleSize;
+                        double binCount = bin.Count;
+                        double percValue = binCount / sampleSize;
 
-            //        double lowerBinBoundary = (binWidth * i) + min;
-            //        double upperBinBoundary = (binWidth * (i + 1)) + min;
+                    double lowerBinBoundary = min; //(binWidth * i) + min;
+                    double upperBinBoundary = max; //(binWidth * (i + 1)) + min;
 
-            //        if (midPoint < upperBinBoundary && midPoint >= lowerBinBoundary)
-            //        {
-            //            OxyPlot.Series.ColumnItem nextColumn = new OxyPlot.Series.ColumnItem(percValue);
-            //            nextColumn.Color = OxyPlot.OxyColor.FromRgb(76, 0, 153); //purple
-            //            myColumnSeries.Items.Add(nextColumn); ///Histogram.GetSampleSize
+                        //i think the point of this was to color the column that has the mean value in it purple?
+                        //that seems weird to me know so i am commenting out.
+                        //if (midPoint < upperBinBoundary && midPoint >= lowerBinBoundary)
+                        //{
+                        //    OxyPlot.Series.ColumnItem nextColumn = new OxyPlot.Series.ColumnItem(percValue);
+                        //    nextColumn.Color = OxyPlot.OxyColor.FromRgb(76, 0, 153); //purple
+                        //    myColumnSeries.Items.Add(nextColumn); ///Histogram.GetSampleSize
 
-            //        }
-            //        else
-            //        {
-            //            OxyPlot.Series.ColumnItem nextColumn = new OxyPlot.Series.ColumnItem(percValue);
-            //            nextColumn.Color = OxyPlot.OxyColor.FromRgb(141, 182, 195); //blue grey
+                        //}
+                        //else
+                        //{
+                            OxyPlot.Series.ColumnItem nextColumn = new OxyPlot.Series.ColumnItem(percValue);
+                            nextColumn.Color = OxyPlot.OxyColor.FromRgb(141, 182, 195); //blue grey
+                            myColumnSeries.Items.Add(nextColumn); ///Histogram.GetSampleSize
 
+                       // }
 
-            //            myColumnSeries.Items.Add(nextColumn); ///Histogram.GetSampleSize
-
-            //        }
-
-
-            //        categoryAxis.Labels.Add(String.Format("{0:0,0} - {1:0,0}", lowerBinBoundary, upperBinBoundary)); //'bPMSH.Histogram(bPMSH.Histogram.Count - 1 - i).ToString("0.00"))
-
-
+                    
+                        categoryAxis.Labels.Add(String.Format("{0:0,0} - {1:0,0}", lowerBinBoundary, upperBinBoundary)); //'bPMSH.Histogram(bPMSH.Histogram.Count - 1 - i).ToString("0.00"))
 
 
-            //        i++;
-            //    }
-            //}
-            //else
-            //{
-            //    //int i = 0;
-            //    //double sampleSize = Histogram.GetSampleSize;
-            //    //foreach (int histValue in Histogram.Histogram)
-            //    //{
-            //    //    if (histValue == 0)
-            //    //    {
-            //    //        i++;
-            //    //        continue;
-            //    //    }
 
 
-            //    //    double myValue = (double)histValue;
-            //    //    double percValue = myValue / sampleSize;
+                        i++;
+                    }
+            }
+            else
+            {
+                int i = 0;
+                //double sampleSize = Histogram.GetSampleSize;
+                foreach (HistogramBinVM bin in bins)
+                {
+                    double min = bin.Min;
+                    double max = bin.Max;
+                    double binWidth = bin.BinWidth;
+                    double midPoint = bin.MidPoint;
+                    //if (bin.Count == 0)
+                    //{
+                    //    i++;
+                    //    continue;
+                    //}
 
-            //    //    double lowerBinBoundary = (Histogram.BinWidth * i) + Histogram.GetMin;
-            //    //    double upperBinBoundary = (Histogram.BinWidth * (i + 1)) + Histogram.GetMin;
 
-            //    //    if (Histogram.GetMean < upperBinBoundary && Histogram.GetMean >= lowerBinBoundary)
-            //    //    {
-            //    //        OxyPlot.Series.ColumnItem nextColumn = new OxyPlot.Series.ColumnItem(percValue);
-            //    //        nextColumn.Color = OxyPlot.OxyColor.FromRgb(76, 0, 153); //purple
-            //    //        myColumnSeries.Items.Add(nextColumn); ///Histogram.GetSampleSize
+                    double binCount = bin.Count;
+                    double percValue = binCount / sampleSize;
 
-            //    //    }
-            //    //    else
-            //    //    {
-            //    //        OxyPlot.Series.ColumnItem nextColumn = new OxyPlot.Series.ColumnItem(percValue);
-            //    //        nextColumn.Color = OxyPlot.OxyColor.FromRgb(141, 182, 195); //blue grey
-            //    //        myColumnSeries.Items.Add(nextColumn); ///Histogram.GetSampleSize
+                    double lowerBinBoundary = min;
+                    double upperBinBoundary = max;
 
-            //    //    }
+                    //if (Histogram.GetMean < upperBinBoundary && Histogram.GetMean >= lowerBinBoundary)
+                    //{
+                    //    OxyPlot.Series.ColumnItem nextColumn = new OxyPlot.Series.ColumnItem(percValue);
+                    //    nextColumn.Color = OxyPlot.OxyColor.FromRgb(76, 0, 153); //purple
+                    //    myColumnSeries.Items.Add(nextColumn); ///Histogram.GetSampleSize
 
-            //    //    categoryAxis.Labels.Add(String.Format("{0:.####} - {1:.####}", 1 - lowerBinBoundary,1-upperBinBoundary)); //'bPMSH.Histogram(bPMSH.Histogram.Count - 1 - i).ToString("0.00"))
-            //    //    i++;
-            //    //}
+                    //}
+                    //else
+                    {
+                        OxyPlot.Series.ColumnItem nextColumn = new OxyPlot.Series.ColumnItem(percValue);
+                        nextColumn.Color = OxyPlot.OxyColor.FromRgb(141, 182, 195); //blue grey
+                        myColumnSeries.Items.Add(nextColumn); ///Histogram.GetSampleSize
 
-            //}
+                    }
+
+                    categoryAxis.Labels.Add(String.Format("{0:.####} - {1:.####}",  lowerBinBoundary,upperBinBoundary)); //'bPMSH.Histogram(bPMSH.Histogram.Count - 1 - i).ToString("0.00"))
+                    i++;
+                }
+
+            }
 
 
             HistogramPlotModel.Axes.Add(categoryAxis);
             //testing
-            var testSeries = new ColumnSeries();
-            for (int i = 0; i < 10; i++)
-            {
-                testSeries.Items.Add(new ColumnItem(i));
+            //var testSeries = new ColumnSeries();
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    testSeries.Items.Add(new ColumnItem(i));
 
-            }
-            HistogramPlotModel.Series.Add(testSeries);
+            //}
+            //HistogramPlotModel.Series.Add(testSeries);
             ///////////////////////////////
-            //HistogramPlotModel.Series.Add(myColumnSeries);
+            HistogramPlotModel.Series.Add(myColumnSeries);
 
             HistogramPlotModel.InvalidatePlot(true);
 

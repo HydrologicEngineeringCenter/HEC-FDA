@@ -39,14 +39,15 @@
         ElseIf _Skew > 0 Then
             Return getPosEquivalentDist.GetCDF(value)
         Else
+            Return 1 - getNegEquivalentDist.GetCDF(-value)
             'TODO: Check my super sketch fix for when Regular Gamma returns Double.NAN because x is negative.
             'I return 1 only because this seems to happen where p is approaching 1.
-            Dim val = getNegEquivalentDist.GetCDF(-value)
-            If Double.IsNaN(val) Then
-                Return 1
-            Else
-                Return 1 - val
-            End If
+            'Dim val = getNegEquivalentDist.GetCDF(-value)
+            'If Double.IsNaN(val) Then
+            '    Return 1
+            'Else
+            '    Return 1 - val
+            'End If
         End If
     End Function
     Public Overrides ReadOnly Property GetCentralTendency As Double

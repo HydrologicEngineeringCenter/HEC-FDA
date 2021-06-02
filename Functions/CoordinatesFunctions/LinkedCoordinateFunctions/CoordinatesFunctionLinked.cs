@@ -519,6 +519,11 @@ namespace Functions.CoordinatesFunctions
 
             return functionsElem;
         }
+
+        public void WriteToTextFile(string path)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

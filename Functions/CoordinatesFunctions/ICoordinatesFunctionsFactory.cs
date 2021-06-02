@@ -499,9 +499,18 @@ namespace Functions
         private static ICoordinatesFunction CreateFunctionFromFunctionElement(XElement functionElement)
         {
             InterpolationEnum interpolator = GetInterpolator(functionElement);
-            List<ICoordinate> coordinates = GetCoordinates(functionElement);
-            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(coordinates, interpolator);
-            return func;
+
+            //handle the LP3 differently
+            if (functionElement.Attribute(SerializationConstants.LOG_PEARSON_III) != null)
+            {
+                return null;
+            }
+            else
+            {
+                List<ICoordinate> coordinates = GetCoordinates(functionElement);
+                ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(coordinates, interpolator);
+                return func;
+            }
         }
 
         private static InterpolationEnum GetInterpolator(XElement functionElement)

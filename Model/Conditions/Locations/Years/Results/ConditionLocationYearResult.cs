@@ -10,10 +10,11 @@ namespace Model.Conditions.Locations.Years.Results
 {
     public class ConditionLocationYearResult : IConditionLocationYearResult
     {
+        private IReadOnlyDictionary<IMetric, Statistics.IConvergenceCriteria> _criteria;
         public int Seed { get; }
         public IConditionLocationYearSummary ConditionLocationTime { get; }
         public IReadOnlyList<IConditionLocationYearRealizationSummary> Realizations { get; private set; }
-        public IReadOnlyDictionary<IMetric, Statistics.IHistogram> Metrics { get; private set; }
+        public IReadOnlyDictionary<IMetric, Statistics.IHistogram> Metrics { get;  set; }
         public IReadOnlyDictionary<IMetric, Statistics.IConvergenceResult> Convergence { get; private set; }
 
         public ConditionLocationYearResult(IConditionLocationYearSummary condition, IReadOnlyDictionary<IMetric, Statistics.IConvergenceCriteria> criteria, int seed)
@@ -21,13 +22,32 @@ namespace Model.Conditions.Locations.Years.Results
             //TODO: Validate
             Seed = seed;
             ConditionLocationTime = condition;
-            Compute(criteria);
+            _criteria = criteria;
+            //Compute(criteria);
             // realizations from compute.
             // metrics from compute.
             // convergence from compute.
         }
 
-        public void Compute(IReadOnlyDictionary<IMetric, Statistics.IConvergenceCriteria> criteria)
+        /// <summary>
+        /// This constructor is for loading a result from the database that has already been computed.
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <param name="criteria"></param>
+        /// <param name="seed"></param>
+        /// <param name="metricsDictionary"></param>
+        public ConditionLocationYearResult(IConditionLocationYearSummary condition, IReadOnlyDictionary<IMetric, Statistics.IConvergenceCriteria> criteria,
+            int seed, IReadOnlyDictionary<IMetric, IHistogram> metricsDictionary,
+            IReadOnlyList<IConditionLocationYearRealizationSummary> realizations)
+        {
+            Seed = seed;
+            ConditionLocationTime = condition;
+            _criteria = criteria;
+            Metrics = metricsDictionary;
+            Realizations = realizations;
+        }
+
+        public void Compute()
         {
             Random rng = new Random(Seed);
             /* Counts:
@@ -42,8 +62,8 @@ namespace Model.Conditions.Locations.Years.Results
             var converged = new Dictionary<IMetric, IConvergenceResult>();
             var histograms = new Dictionary<IMetric, Statistics.IHistogram>();
             var realizations = new List<IConditionLocationYearRealizationSummary>();
-            foreach (var i in criteria) converged[i.Key] = Statistics.IConvergenceResultFactory.Factory();
-            int s = 0, n = 0, I = 10000, N = 10000;
+            foreach (var i in _criteria) converged[i.Key] = Statistics.IConvergenceResultFactory.Factory();
+            int s = 0, n = 0, I = 100, N = 100;
             while (!IsConverged(converged) && n < N)
             {
                 s++;
@@ -62,8 +82,8 @@ namespace Model.Conditions.Locations.Years.Results
                     var updatedHistograms = UpdateHistograms(setOfRealizations, histograms);
                     foreach (var histogram in histograms)
                     {
-                        if (criteria.ContainsKey(histogram.Key) && !converged[histogram.Key].Passed)
-                            converged[histogram.Key] = criteria[histogram.Key].Test(histogram.Value, updatedHistograms[histogram.Key]);
+                        if (_criteria.ContainsKey(histogram.Key) && !converged[histogram.Key].Passed)
+                            converged[histogram.Key] = _criteria[histogram.Key].Test(histogram.Value, updatedHistograms[histogram.Key]);
                     }
                 }
             }
@@ -111,7 +131,7 @@ namespace Model.Conditions.Locations.Years.Results
                     }
                     else
                     {
-                        histograms[metric.Key] = Statistics.IHistogramFactory.Factory(Statistics.IDataFactory.Factory(metric.Value, true), 100);
+                        histograms[metric.Key] = Statistics.IHistogramFactory.Factory(Statistics.IDataFactory.Factory(metric.Value, true), 10);
                     }
                 }
             }

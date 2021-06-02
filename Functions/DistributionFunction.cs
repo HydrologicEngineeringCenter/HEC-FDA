@@ -31,7 +31,19 @@ namespace Functions
         {
             _Distribution = distribution;
             Domain = IRangeFactory.Factory(0d, 1d);
-            Coordinates = FillInCoordinates();
+            //todo: delete me and uncomment the "Coordinates = FillInCoordinates();". This is just to get past the issue with the FillInCoordinates() producing NaN's
+            Coordinates = new List<ICoordinate>();
+            List<double> xs = new List<double>() { .1,.2,.3,.4,.5,.6,.7,.8,.9 };
+            List<double> ys = new List<double>() { 100,1000,2000,5000,10000,30000,50000,90000,300000};
+            for(int i = 0;i<xs.Count;i++)
+            {
+                ICoordinate coord = ICoordinateFactory.Factory(xs[i], ys[i]);
+                Coordinates.Add(coord);
+            }
+            //////// delete to here
+
+            //Coordinates = FillInCoordinates();
+
             _CoordinatesFunction = new CoordinatesFunctionConstants(Coordinates, InterpolationEnum.Linear);
             State = Validate(new Validation.DistributionFunctionValidator(), out IEnumerable<IMessage> msgs);
             Messages = msgs;
@@ -51,7 +63,7 @@ namespace Functions
             double pMax = _Distribution.CDF(Range.Max);
             double y = _Distribution.InverseCDF(p), yMax = _Distribution.InverseCDF(pMax), yEpsilon = (yMax - y) / 100;
             List<ICoordinate> expandedCoordinates = new List<ICoordinate>();
-            while (p < pMax)
+            while (p < pMax && y < yMax)
             {
                 expandedCoordinates.Add(ICoordinateFactory.Factory(p, y));
                 p = UpdateP(p, pEpsilon, y, yEpsilon, pMax);
@@ -71,7 +83,15 @@ namespace Functions
             double nextP = lastP + pEpsilon;
             double nextY = lastY + yEpsilon;
             double nextPofY = InverseF(nextY);
+            if( double.IsNaN(nextPofY) )
+            {
+                nextPofY = nextP;
+            }
             double p = nextP < nextPofY ? nextP : nextPofY;
+            if(p > .98)
+            {
+                int test = 0;
+            }
             if (!(p > lastP))
             {
                 int yIncrements = 1;
@@ -137,6 +157,11 @@ namespace Functions
             return _CoordinatesFunction.TrapizoidalRiemannSum();
         }
         public XElement WriteToXML()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteToTextFile(string path)
         {
             throw new NotImplementedException();
         }

@@ -3,6 +3,7 @@ using MathNet.Numerics.Interpolation;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
@@ -407,6 +408,7 @@ namespace Functions.CoordinatesFunctions
             else
             {
                 //if it is none of the others then it would have to be non monotonic
+                WriteToTextFile(@"C:\Users\cody\Documents\HEC\HEC-FDA\Testing\CoordinateFunction.txt");
                 return OrderedSetEnum.NonMonotonic;
             }
         }
@@ -1023,7 +1025,23 @@ namespace Functions.CoordinatesFunctions
 
             functionsElem.Add(funcElem);
             return functionsElem;
-        }     
+        }
+
+        public void WriteToTextFile(string path)
+        {
+            using (StreamWriter writer = new StreamWriter(path))
+            {
+                writer.WriteLine(this.GetType());
+                writer.WriteLine("Interpolation: " + Interpolator);
+                //writer.WriteLine("Range: Max: " + Range.Max + ", Min: " + Range.Min);
+                //writer.WriteLine("Domain: Max: " + Domain.Max + ", Min: " + Domain.Min);
+                writer.WriteLine("Coordinates:");
+                foreach (ICoordinate coord in Coordinates)
+                {
+                    writer.WriteLine(coord.X.Value() + "," + coord.Y.Value());
+                }
+            }
+        }
         #endregion
 
 

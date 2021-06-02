@@ -217,10 +217,23 @@ namespace View.Inventory.OccupancyTypes.Controls
 
 
             //set the chart view models
-            _StructureChart = new Chart2D(new SciChart2DChartViewModel(vm.StructureEditorVM.CoordinatesChartViewModel));
-            _ContentChart = new Chart2D(new SciChart2DChartViewModel(vm.ContentEditorVM.CoordinatesChartViewModel));
-            _VehicleChart = new Chart2D(new SciChart2DChartViewModel(vm.VehicleEditorVM.CoordinatesChartViewModel));
-            _OtherChart = new Chart2D(new SciChart2DChartViewModel(vm.OtherEditorVM.CoordinatesChartViewModel));
+            
+            vm.StructureEditorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(vm.StructureEditorVM.CoordinatesChartViewModel);
+            Chart2D structChart = new Chart2D(vm.StructureEditorVM.CoordinatesChartViewModel);
+            
+            vm.ContentEditorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(vm.ContentEditorVM.CoordinatesChartViewModel);
+            Chart2D contentChart = new Chart2D(vm.ContentEditorVM.CoordinatesChartViewModel);
+            
+            vm.VehicleEditorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(vm.VehicleEditorVM.CoordinatesChartViewModel);
+            Chart2D vehicleChart = new Chart2D(vm.VehicleEditorVM.CoordinatesChartViewModel);
+            
+            vm.OtherEditorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(vm.OtherEditorVM.CoordinatesChartViewModel);
+            Chart2D otherChart = new Chart2D(vm.OtherEditorVM.CoordinatesChartViewModel);
+
+            _StructureChart = structChart;
+            _ContentChart = contentChart;
+            _VehicleChart = vehicleChart;
+            _OtherChart = otherChart;
 
             //add the new charts to the UI
             StructureTabGrid.Children.Add(_StructureChart);

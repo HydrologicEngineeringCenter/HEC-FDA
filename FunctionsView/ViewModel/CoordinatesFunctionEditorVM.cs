@@ -45,7 +45,12 @@ namespace FunctionsView.ViewModel
             { _IsChartInError = value;  }
         }
 
-        public SciChart2DChartViewModel CoordinatesChartViewModel { get; } = new SciChart2DChartViewModel("chart title"); 
+        private SciChart2DChartViewModel _chartViewModel = new SciChart2DChartViewModel("chartId");
+        public SciChart2DChartViewModel CoordinatesChartViewModel
+        {
+            get { return _chartViewModel; }
+            set { _chartViewModel = value; }
+        }
         public ICoordinatesFunction Function
         {
             get { return _Function; }
@@ -97,6 +102,7 @@ namespace FunctionsView.ViewModel
                 CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(CreateFunctionFromTables());
                 List<SciLineData> lineData = chartHelper.CreateLineData();
                 CoordinatesChartViewModel.LineData.Set(lineData);
+
                 //UpdateView?.Invoke(this, new EventArgs());
                 
                 

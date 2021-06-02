@@ -63,10 +63,10 @@ namespace FdaViewModel
         #endregion
         #region Properties
         //default values
-        private double _Width = 50;
-        private double _Height = 50;
-        private double _MinWidth = 50;
-        private double _MinHeight = 50;
+        private double _Width = 300;
+        private double _Height = 300;
+        private double _MinWidth = 300;
+        private double _MinHeight = 300;
         public double Width
         {
             get { return _Width; }

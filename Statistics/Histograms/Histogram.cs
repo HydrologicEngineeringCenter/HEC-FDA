@@ -202,6 +202,7 @@ namespace Statistics.Histograms
                     while (!x.IsOnRange(nextBin.Range.Min, nextBin.Range.Max, inclusiveMin: true, inclusiveMax: false))
                     { //or x > nextBin.Maximum
                         bins.Add(new Bin(nextBin, n));
+                        n = 0;
                         nextBin = new Bin(nextBin.Range.Max, nextBin.Range.Max + width, 0);
                     }
                     n++;
@@ -237,9 +238,27 @@ namespace Statistics.Histograms
         public string Requirements(bool printNotes) => RequiremedParameterization(printNotes);
         public bool Equals(IDistribution distribution) => distribution.Type == IDistributionEnum.Histogram ? Equals((IHistogram)distribution) : false;
 
+        public static readonly string XML_BINS = "Bins";
+        public static readonly string XML_BIN = "Bin";
+        public static readonly string XML_MIN = "Min";
+        public static readonly string XML_MAX = "Max";
+        public static readonly string XML_MIDPOINT = "MidPoint";
+        public static readonly string XML_COUNT = "Count";
+
         public XElement WriteToXML()
         {
-            throw new NotImplementedException();
+            XElement masterElem = new XElement(XML_BINS);
+            foreach(IBin bin in Bins)
+            {
+                XElement binElem = new XElement(XML_BIN);
+                binElem.SetAttributeValue(XML_MIN, bin.Range.Min);
+                binElem.SetAttributeValue(XML_MAX, bin.Range.Max);
+                binElem.SetAttributeValue(XML_MIDPOINT, bin.MidPoint);
+                binElem.SetAttributeValue(XML_COUNT, bin.Count);
+
+                masterElem.Add(binElem);
+            }
+            return masterElem;
         }
         #endregion
         #endregion

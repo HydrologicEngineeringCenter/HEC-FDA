@@ -5,6 +5,7 @@ using System.Text;
 using Utilities;
 using Functions;
 using Model.Conditions.Locations.Years.Realizations;
+using Functions.CoordinatesFunctions;
 
 namespace Model.Conditions.Locations.Years
 {
