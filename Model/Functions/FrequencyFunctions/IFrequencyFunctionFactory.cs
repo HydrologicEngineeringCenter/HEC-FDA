@@ -31,10 +31,11 @@ namespace Model
             xLabel = xLabel == "" ? fType.PrintXLabel(fType.XUnitsDefault(), abbreviate) : xLabel;
             switch (fType)
             {                
-                case IParameterEnum.InflowFrequency:
-                    if (fx.DistributionType == IOrdinateEnum.LogPearsonIII) return new LogPearsonIII(fx, label, xLabel, yLabel, yUnits);
+/*                case IParameterEnum.InflowFrequency:
+                    if (fx.DistributionType == IOrdinateEnum.LogPearsonIII)
+                        return new LogPearsonIII(fx, label, xLabel, yLabel, yUnits);
                     //TODO: add graphical functions.
-                    else throw new NotImplementedException("Graphical Frequency Functions have not been implemented yet.");
+                    else throw new NotImplementedException("Graphical Frequency Functions have not been implemented yet.");*/
                 case IParameterEnum.OutflowFrequency:
                     return new Functions.OutflowFrequency(fx, label, xLabel, yLabel, yUnits);
                 case IParameterEnum.ExteriorStageFrequency:

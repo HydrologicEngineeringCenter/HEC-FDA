@@ -354,3 +354,5 @@ MigrationBackup/
 
 # Hiding untracked OpenGLMapper files
 OpenGLMapper/
+/statistics_vb
+/genericcontrols

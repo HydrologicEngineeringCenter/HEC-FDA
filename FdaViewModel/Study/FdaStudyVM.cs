@@ -248,7 +248,7 @@ namespace FdaViewModel.Study
             {
                 //Messager.Logger.Instance.ReportMessage(new Messager.ErrorMessage(ex.InnerException.ToString() + "\n Failed to initialize GDAL, check if the GDAL directory is next to the FdaModel.dll", 
                 //    Messager.ErrorMessageEnum.Fatal | Messager.ErrorMessageEnum.Model));
-                throw new Exception("Could not initialize gdal");
+                throw;
             }
         }
         public static void DisposeGDAL()

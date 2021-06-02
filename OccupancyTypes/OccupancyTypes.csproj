@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <Reference Include="Consequences_Assist">
-      <HintPath>..\..\..\..\Documents\HEC\HEC-FDA\Final Day Download Of Everything\DotNet\Consequences_Assist\Consequences_Assist\bin\Debug\Consequences_Assist.dll</HintPath>
+      <HintPath>..\..\..\..\FDAResources\Dependencies\OldHECCode\Consequences_Assist.dll</HintPath>
     </Reference>
   </ItemGroup>
 
