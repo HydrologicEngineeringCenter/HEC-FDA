@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
+<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+<OutputPath>C:\Temp\FDA2.0</OutputPath>
   </PropertyGroup>
+	
+	
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\Model.xml</DocumentationFile>
-    <OutputPath>bin\Debug</OutputPath>
-  </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Condition-delete\**" />

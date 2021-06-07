@@ -357,3 +357,5 @@ MigrationBackup/
 OpenGLMapper/
 /statistics_vb
 /genericcontrols
+/UserControls/upgrade.backup
+/log.txt

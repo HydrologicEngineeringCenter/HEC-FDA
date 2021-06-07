@@ -1,172 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2DB60C23-9754-4548-BCF3-4D1BBA79570C}</ProjectGuid>
+    <TargetFramework>net48</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Importer</RootNamespace>
-    <AssemblyName>Importer</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	  <OutputPath>C:\Temp\FDA2.0</OutputPath>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <ProjectReference Include="..\FdaViewModel\ViewModel.csproj" />
+    <ProjectReference Include="..\Functions\Functions.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj" />
+    <ProjectReference Include="..\Statistics\Statistics.csproj" />
+    <ProjectReference Include="..\Utilities\Utilities.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AggregatedDamage\AggDamgLookup.cs" />
-    <Compile Include="AggregatedDamage\AggDamgLookupDataTable.cs" />
-    <Compile Include="AggregatedDamage\AggDamgLookupList.cs" />
-    <Compile Include="AggregatedDamage\AggregateDamageFunction.cs" />
-    <Compile Include="AggregatedDamage\AggregateDamageFunctionList.cs" />
-    <Compile Include="AsciiImportExport\AsciiExport.cs" />
-    <Compile Include="AsciiImportExport\AsciiImport.cs" />
-    <Compile Include="AsciiImportExport\AsciiImportExport.cs" />
-    <Compile Include="CategoryDataTable.cs" />
-    <Compile Include="DamageCategory\DamageCategory.cs" />
-    <Compile Include="DamageCategory\DamageCategoryList.cs" />
-    <Compile Include="DamageReach\DamageReach.cs" />
-    <Compile Include="DamageReach\DamageReachList.cs" />
-    <Compile Include="DbfFile\DbfFieldInfo.cs" />
-    <Compile Include="DbfFile\DbfFileFdAssignedManager.cs" />
-    <Compile Include="DbfFile\DbfFileFdDataLookManager.cs" />
-    <Compile Include="DbfFile\DbfFileFdDataManager.cs" />
-    <Compile Include="DbfFile\DbfFileFdLookupManager.cs" />
-    <Compile Include="DbfFile\DbfFileManager.cs" />
-    <Compile Include="DbfFile\DbfTagInfo.cs" />
-    <Compile Include="Ead\EadResult.cs" />
-    <Compile Include="Ead\EadResultList.cs" />
-    <Compile Include="Ead\EadResultsDataTable.cs" />
-    <Compile Include="Ead\EadResultsLookup.cs" />
-    <Compile Include="Ead\EadResultsLookupDataTable.cs" />
-    <Compile Include="Ead\EadResultsLookupList.cs" />
-    <Compile Include="Econ\EconGlobalParameters.cs" />
-    <Compile Include="Econ\EconGlobalParametersDataTable.cs" />
-    <Compile Include="Econ\EconPY.cs" />
-    <Compile Include="Econ\EconPyList.cs" />
-    <Compile Include="Econ\EconPYTable.cs" />
-    <Compile Include="EquivBenefits\EquivBenefitDataTable.cs" />
-    <Compile Include="EquivBenefits\EquivBenefits.cs" />
-    <Compile Include="EquivBenefits\EquivBenefitsList.cs" />
-    <Compile Include="ErrorDistribution.cs" />
-    <Compile Include="FdaObject\FdaObjectDataLook.cs" />
-    <Compile Include="FdaObject\FdObjectData.cs" />
-    <Compile Include="FdaObject\FdObjectLookup.cs" />
-    <Compile Include="FileNameManager.cs" />
-    <Compile Include="GlobalVariables.cs" />
-    <Compile Include="ISaveToSqlite.cs" />
-    <Compile Include="Levee\Levee.cs" />
-    <Compile Include="Levee\LeveeDataTable.cs" />
-    <Compile Include="Levee\LeveeList.cs" />
-    <Compile Include="Levee\LeveeLookup.cs" />
-    <Compile Include="Levee\LeveeLookupDataTable.cs" />
-    <Compile Include="Levee\LeveeLookupList.cs" />
-    <Compile Include="MemoDataField.cs" />
-    <Compile Include="NameManager.cs" />
-    <Compile Include="NextIdMgr.cs" />
-    <Compile Include="NextObjIdDataTable.cs" />
-    <Compile Include="ObjectCopier.cs" />
-    <Compile Include="OccType\OccupancyType.cs" />
-    <Compile Include="OccType\OccupancyTypeDataTable.cs" />
-    <Compile Include="OccType\OccupancyTypeList.cs" />
-    <Compile Include="Pair_xy.cs" />
-    <Compile Include="Plan\Plan.cs" />
-    <Compile Include="Plan\PlanDataTable.cs" />
-    <Compile Include="Plan\PlanList.cs" />
-    <Compile Include="Probability\ProbabilityFunction.cs" />
-    <Compile Include="Probability\ProbabilityFunctionList.cs" />
-    <Compile Include="Probability\ProbabitityDataTable.cs" />
-    <Compile Include="Probability\ProbLookup.cs" />
-    <Compile Include="Probability\ProbLookupDataTable.cs" />
-    <Compile Include="Probability\ProbLookupList.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rating\RateLookup.cs" />
-    <Compile Include="Rating\RateLookupList.cs" />
-    <Compile Include="Rating\RatingCurveLookup.cs" />
-    <Compile Include="Rating\RatingDataTable.cs" />
-    <Compile Include="Rating\RatingFunction.cs" />
-    <Compile Include="Rating\RatingFunctionList.cs" />
-    <Compile Include="Rating\RatingLookupDataTable.cs" />
-    <Compile Include="ReachDataTable.cs" />
-    <Compile Include="SingleDamageFunction.cs" />
-    <Compile Include="StageDamageDataTable.cs" />
-    <Compile Include="Stream\StreamDataTable.cs" />
-    <Compile Include="Stream\StreamList.cs" />
-    <Compile Include="Stream\StreamObj.cs" />
-    <Compile Include="Structures\StrucGroupLookup.cs" />
-    <Compile Include="Structures\StrucGroupLookupList.cs" />
-    <Compile Include="Structures\StructGroupLookupDataTable.cs" />
-    <Compile Include="Structures\Structure.cs" />
-    <Compile Include="Structures\StructureDataTable.cs" />
-    <Compile Include="Structures\StructureList.cs" />
-    <Compile Include="Structures\StructureModule.cs" />
-    <Compile Include="Structures\StructureModuleDataTable.cs" />
-    <Compile Include="Structures\StructureModuleList.cs" />
-    <Compile Include="Study\Study.cs" />
-    <Compile Include="Study\StudyData.cs" />
-    <Compile Include="Study\StudyDataTable.cs" />
-    <Compile Include="WaterSurfaceProfile\WaterSurfaceProfile.cs" />
-    <Compile Include="WaterSurfaceProfile\WaterSurfaceProfileList.cs" />
-    <Compile Include="WaterSurfaceProfile\WspDataTable.cs" />
-    <Compile Include="WaterSurfaceProfile\WspLookUp.cs" />
-    <Compile Include="WaterSurfaceProfile\WspLookupDataTable.cs" />
-    <Compile Include="WaterSurfaceProfile\WspLookupList.cs" />
-    <Compile Include="WaterSurfaceProfile\WspSectionData.cs" />
-    <Compile Include="Year\Year.cs" />
-    <Compile Include="Year\YearDataTable.cs" />
-    <Compile Include="Year\YearList.cs" />
+    <Compile Remove="FunctionXY.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FdaViewModel\ViewModel.csproj">
-      <Project>{6a8fd3e7-b4ec-46b4-b91b-2b63034f9776}</Project>
-      <Name>ViewModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Functions\Functions.csproj">
-      <Project>{c33a0f59-fe11-4e06-b85e-bd84e6c1106d}</Project>
-      <Name>Functions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Model\Model.csproj">
-      <Project>{b4909c07-fc85-49d6-867a-0e00d311a991}</Project>
-      <Name>Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Statistics\Statistics.csproj">
-      <Project>{C793991B-B5F7-4667-8478-713E97340D34}</Project>
-      <Name>Statistics</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Utilities\Utilities.csproj">
-      <Project>{9038ADD9-59CA-4E3A-B665-6B086FDE5F18}</Project>
-      <Name>Utilities</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
