@@ -10,9 +10,6 @@
 		<Reference Include="Consequences_Assist">
 			<HintPath>..\lib\Consequences_Assist.dll</HintPath>
 		</Reference>
-		<Reference Include="FdaModel">
-			<HintPath>..\OldModel\bin\Debug\FdaModel.dll</HintPath>
-		</Reference>
 		<Reference Include="OxyPlot">
 			<HintPath>..\lib\OxyPlot.dll</HintPath>
 		</Reference>
@@ -32,6 +29,7 @@
 	</ItemGroup>-->
 	<ItemGroup>
 		<ProjectReference Include="..\FdaViewModel\ViewModel.csproj" />
+		<ProjectReference Include="..\Model\Model.csproj" />
 	</ItemGroup>
 	<ItemGroup>
     <Compile Remove="ModelTester\UnitTests\Compute_Testing\SimpleTestCase.cs" />

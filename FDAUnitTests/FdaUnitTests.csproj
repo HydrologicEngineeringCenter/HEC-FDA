@@ -15,31 +15,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\FdaViewModel\bin\Debug\DataBase_Reader.dll</HintPath>
     </Reference>
-    <Reference Include="DataTable_Viewer, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\FdaViewModel\bin\Debug\DataTable_Viewer.dll</HintPath>
-    </Reference>
-    <Reference Include="FdaModel">
-      <HintPath>..\OldModel\bin\Debug\FdaModel.dll</HintPath>
-    </Reference>
-    <Reference Include="GDALAssist, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\GDALAssist.dll</HintPath>
-    </Reference>
-    <Reference Include="gdalconst_csharp">
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\gdalconst_csharp.dll</HintPath>
-    </Reference>
-    <Reference Include="gdal_csharp, Version=1.0.4916.28018, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\gdal_csharp.dll</HintPath>
+    <Reference Include="DataTable_Viewer">
+      <HintPath>..\lib\DataTable_Viewer.dll</HintPath>
     </Reference>
     <Reference Include="LifeSimGIS, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\FdaViewModel\bin\Debug\LifeSimGIS.dll</HintPath>
-    </Reference>
-    <Reference Include="ogr_csharp, Version=1.0.4916.28017, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\ogr_csharp.dll</HintPath>
     </Reference>
     <Reference Include="OpenGLMapping, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -53,10 +34,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\FdaViewModel\bin\Debug\OpenTK.GLControl.dll</HintPath>
     </Reference>
-    <Reference Include="osr_csharp, Version=1.0.4916.28017, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\osr_csharp.dll</HintPath>
-    </Reference>
     <Reference Include="Statistics">
       <HintPath>..\lib\Statistics.dll</HintPath>
     </Reference>
@@ -67,10 +44,6 @@
     <Reference Include="System.Data.SQLite.Linq">
       <HintPath>..\FdaViewModel\bin\Debug\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\x86\Debug\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -78,13 +51,7 @@
         <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
       </ItemGroup>
     </When>
-    <Otherwise>
-      <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
-          <Private>False</Private>
-        </Reference>
-      </ItemGroup>
-    </Otherwise>
+    <Otherwise />
   </Choose>
   <ItemGroup>
     <None Update="CSV Files\AnalyzeCompositionTest.csv">
@@ -136,6 +103,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FdaTester\FdaTester.csproj" />
     <ProjectReference Include="..\FdaViewModel\ViewModel.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AggregatedStageDamage\" />
