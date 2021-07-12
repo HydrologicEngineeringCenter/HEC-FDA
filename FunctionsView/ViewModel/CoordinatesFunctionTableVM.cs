@@ -26,7 +26,11 @@ namespace FunctionsView.ViewModel
         {
             get { return Rows[0].SelectedInterpolationType; }
         }
-        public ObservableCollection<CoordinatesFunctionRowItem> Rows { get; set; }
+        public ObservableCollection<CoordinatesFunctionRowItem> Rows 
+        { 
+            get; 
+            set; 
+        }
 
         public CoordinatesFunctionTableVM(ObservableCollection<CoordinatesFunctionRowItem> rows)
         {

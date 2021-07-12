@@ -37,9 +37,20 @@ namespace Model.Conditions.Locations.Years
             var sampledFxs = SampleFunctions(FetchSamples(sampleParameters));
             Dictionary<IMetric, double> metrics = new Dictionary<IMetric, double>();
             IFrequencyFunction frequencyFx = (IFrequencyFunction)sampledFxs[EntryPoint.ParameterType].Parameter;
+            //todo: delete me, just for testing
+            Utilities.WriteToConsole.WriteCoordinatesToConsole(frequencyFx, "Freq func from CondLocYearNoLatStruct ln 41");
+            /////////////////////
+
             foreach (var fx in TransformFunctions)
             {
-                frequencyFx = frequencyFx.Compose((ITransformFunction)sampledFxs[fx.ParameterType].Parameter);
+                ITransformFunction transformFunction = (ITransformFunction)sampledFxs[fx.ParameterType].Parameter;
+                frequencyFx = frequencyFx.Compose(transformFunction);
+
+                //todo: delete me, just for testing
+                Utilities.WriteToConsole.WriteCoordinatesToConsole(frequencyFx, "Freq func from CondLocYearNoLatStruct ln 50");
+                Utilities.WriteToConsole.WriteCoordinatesToConsole(transformFunction, "transform func from CondLocYearNoLatStruct ln 51");
+                /////////////////////
+
                 sampledFxs.Add(frequencyFx.ParameterType, new Samples.SampledFunction(new Samples.Sample(), frequencyFx));
                 while (metricIndex < endPoints.Count && frequencyFx.ParameterType == endPoints[metricIndex].TargetFunction)
                 {

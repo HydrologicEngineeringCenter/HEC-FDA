@@ -75,6 +75,10 @@ namespace FdaViewModel.WaterSurfaceElevation
             IsDepthGrids = isDepthGrids;
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/WaterSurfaceElevation.png");
 
+            NamedAction editElement = new NamedAction(this);
+            editElement.Header = "Edit...";
+            editElement.Action = EditElement;
+
             NamedAction remove = new NamedAction();
             remove.Header = "Remove";
             remove.Action = RemoveElement;
@@ -105,6 +109,7 @@ namespace FdaViewModel.WaterSurfaceElevation
             }
 
             List<NamedAction> localactions = new List<Utilities.NamedAction>();
+            localactions.Add(editElement);
             localactions.Add(remove);
             localactions.Add(renameElement);
             localactions.Add(mapWindow);
@@ -117,6 +122,17 @@ namespace FdaViewModel.WaterSurfaceElevation
 
         #endregion
         #region Voids
+        public void EditElement(object sender, EventArgs e)
+        {
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+               .WithSiblingRules(this);
+
+            WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(this, actionManager);
+
+            string header = "Edit Water Surface Elevation -" + Name;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditWatSurfElev" + Name);
+            Navigate(tab, false, false);
+        }
         public void RemoveElement(object sender, EventArgs e)
         {
             Saving.PersistenceFactory.GetWaterSurfaceManager().Remove(this);

@@ -43,7 +43,7 @@ namespace Model.Conditions.Locations.Years.Results
             var histograms = new Dictionary<IMetric, Statistics.IHistogram>();
             var realizations = new List<IConditionLocationYearRealizationSummary>();
             foreach (var i in criteria) converged[i.Key] = Statistics.IConvergenceResultFactory.Factory();
-            int s = 0, n = 0, I = 10000, N = 10000;
+            int s = 0, n = 0, I = 1, N = 1; //I = 10000, N = 10000;
             while (!IsConverged(converged) && n < N)
             {
                 s++;
@@ -55,7 +55,10 @@ namespace Model.Conditions.Locations.Years.Results
                 });
                 n += I;
                 realizations.AddRange(setOfRealizations);
-                if (histograms.Count == 0) histograms = UpdateHistograms(setOfRealizations, histograms);
+                if (histograms.Count == 0)
+                {
+                    histograms = UpdateHistograms(setOfRealizations, histograms);
+                }
                 else // test for convergence
                 {
                     //TODO: Parallelize checks for convergence.

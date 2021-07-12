@@ -17,9 +17,10 @@ namespace FdaViewModel
         #region Notes
         #endregion
         #region Fields
-        private List<Utilities.NamedAction> _Actions;
-        private Utilities.CustomHeaderVM _CustomTreeViewHeader;
+        private List<NamedAction> _Actions;
+        private CustomHeaderVM _CustomTreeViewHeader;
         private bool _TableContainsGeoData = false;
+        private string _Tooltip = null;
 
         #endregion
         #region Events
@@ -37,8 +38,11 @@ namespace FdaViewModel
         #endregion
         #region Properties
 
-
-        //public BaseFdaElement Parent { get; set; }
+        public String ToolTip
+        {
+            get { return _Tooltip; }
+            set { _Tooltip = value; }
+        }
         public bool TableContainsGeoData
         {
             get { return _TableContainsGeoData; }
@@ -47,33 +51,21 @@ namespace FdaViewModel
         /// <summary>
         /// This governs the image and text that is displayed in the main trees.
         /// </summary>
-        public Utilities.CustomHeaderVM CustomTreeViewHeader
+        public CustomHeaderVM CustomTreeViewHeader
         {
             get { return _CustomTreeViewHeader; }
             set { _CustomTreeViewHeader = value; NotifyPropertyChanged(nameof(CustomTreeViewHeader)); }
         }
-        //public string Name
-        //{
-        //    get { return _Name; }
-        //    set { _Name = value; UpdateTheTreeViewHeader(value); NotifyPropertyChanged(); }
-        //}
-
-        //public string LastEditDate
-        //{
-        //    get;set;
-        //}
-        //public abstract string TableName { get; }
 
         /// <summary>
         /// These become the right click menu options for each element in the tree.
         /// </summary>
-        public List<Utilities.NamedAction> Actions
+        public List<NamedAction> Actions
         {
             get { return _Actions; }
             set { _Actions = value; NotifyPropertyChanged(nameof(Actions)); }
         }
 
-        //public abstract bool SavesToTable();
         #endregion
         #region Constructors
             /// <summary>
@@ -81,52 +73,10 @@ namespace FdaViewModel
             /// </summary>
         public BaseFdaElement()
         {
-            PropertyChanged += BaseFdaElement_PropertyChanged;
         }
-        //public BaseFdaElement(BaseFdaElement parent):base()
-        //{
-        //    Parent = parent;
-        //}
 
-        private void BaseFdaElement_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (CustomTreeViewHeader == null) { return; }
-            if (e.PropertyName == nameof(HasError))
-            {
-                    if (HasError)
-                    {
-                        //CustomTreeViewHeader.Decoration = " (!)";
-                    }
-                    else
-                    {
-                        //CustomTreeViewHeader.Decoration = "";
-                    }
-
-            }
-            //else if(e.PropertyName == nameof(HasChanges))
-            //{
-            //    if(HasChanges == true)
-            //    {
-            //        CustomTreeViewHeader.Decoration = "*";
-            //    }
-            //    else
-            //    {
-            //        CustomTreeViewHeader.Decoration = "";
-            //    }
-            //}
-        }
         #endregion
         #region Voids
-
-        //public void ExtendEventsToImporter(BaseViewModel vm)
-        //{
-        //    vm.RequestNavigation += Navigate;
-        //    vm.RequestShapefilePaths += ShapefilePaths;
-        //    vm.RequestShapefilePathsOfType += ShapefilePathsOfType;
-        //    vm.RequestAddToMapWindow += AddToMapWindow;
-        //    vm.RequestRemoveFromMapWindow += RemoveFromMapWindow;
-        //    vm.TransactionEvent += AddTransaction;
-        //}
       
         public void UpdateTreeViewHeader(string newName)
         {
@@ -134,7 +84,7 @@ namespace FdaViewModel
             string image = _CustomTreeViewHeader.ImageSource;
             string decoration = _CustomTreeViewHeader.Decoration;
             bool gifVisible = _CustomTreeViewHeader.GifVisible;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(newName, image, decoration,gifVisible);
+            CustomTreeViewHeader = new CustomHeaderVM(newName, image, decoration,gifVisible);
         }
 
 
@@ -154,21 +104,15 @@ namespace FdaViewModel
             vm.Name = element.Name;
             vm.Description = element.Description;
             vm.Curve = element.Curve;
-            //vm.EditorVM = new FunctionsView.ViewModel.CoordinatesFunctionEditorVM(element.Curve.Function);
             if (vm.EditorVM != null)
             {
                 ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(element.Curve.Coordinates, element.Curve.Interpolator);
                 vm.EditorVM.Function = coordFunc;
             }
-            //todo: Refactor: can i get rid of "Curve" alltogether?
         }
 
         #endregion
         #region Functions
-        //public abstract string GetTableConstant();
-        //public abstract BaseFdaElement GetElementOfTypeAndName(Type t, string name);
-        //public abstract List<T> GetElementsOfType<T>() where T : Utilities.ChildElement;
-        //public abstract List<string> GetShapefiles
         #endregion
 
     }

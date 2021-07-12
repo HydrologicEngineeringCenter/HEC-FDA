@@ -33,6 +33,7 @@ namespace FunctionsView.ViewModel
         private ICoordinatesFunction _Function;
         private IEnumerable<IMessage> _Messages = new List<IMessage>();
         private bool _IsChartInError;
+        private string _XLabel;
         public string XLabel { get; }
         public string YLabel { get; }
         public string ChartTitle { get; }
@@ -45,7 +46,7 @@ namespace FunctionsView.ViewModel
             { _IsChartInError = value;  }
         }
 
-        public SciChart2DChartViewModel CoordinatesChartViewModel { get; } = new SciChart2DChartViewModel("chart title"); 
+        public SciChart2DChartViewModel CoordinatesChartViewModel { get; set; } = new SciChart2DChartViewModel("chart title"); 
         public ICoordinatesFunction Function
         {
             get { return _Function; }
@@ -94,7 +95,7 @@ namespace FunctionsView.ViewModel
 
             try
             {
-                CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(CreateFunctionFromTables());
+                CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(CreateFunctionFromTables(), XLabel, YLabel);
                 List<SciLineData> lineData = chartHelper.CreateLineData();
                 CoordinatesChartViewModel.LineData.Set(lineData);
                 //UpdateView?.Invoke(this, new EventArgs());

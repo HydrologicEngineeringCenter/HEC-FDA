@@ -1,4 +1,4 @@
-﻿using FdaViewModel.Alternatives;
+﻿using FdaViewModel.AlternativeComparisonReport;
 using System;
 using System.Collections.Generic;
 using System.Linq;

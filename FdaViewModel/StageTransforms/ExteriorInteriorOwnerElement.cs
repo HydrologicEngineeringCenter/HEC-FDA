@@ -88,7 +88,7 @@ namespace FdaViewModel.StageTransforms
                //.WithParentGuid(this.GUID)
                //.WithCanOpenMultipleTimes(true);
 
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, "Exterior - Interior Stage", "Exterior Stage", "Interior Stage", actionManager);
+            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, "Exterior Stage", "Interior Stage", "Exterior - Interior Stage", actionManager);
             //StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);
             string header = "Create Exterior Interior";

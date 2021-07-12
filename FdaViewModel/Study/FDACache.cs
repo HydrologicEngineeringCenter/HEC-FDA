@@ -16,7 +16,8 @@ using FdaViewModel.Inventory;
 using FdaViewModel.Conditions;
 using System.Collections.ObjectModel;
 using FdaViewModel.Inventory.OccupancyTypes;
-using FdaViewModel.Plans;
+using FdaViewModel.Saving;
+using FdaViewModel.AlternativeComparisonReport;
 using FdaViewModel.Alternatives;
 //using FdaViewModel.Inventory.OccupancyTypes;
 
@@ -125,8 +126,8 @@ namespace FdaViewModel.Study
         public StructureInventoryOwnerElement StructureInventoryParent { get; set; }
         public ConditionsOwnerElement ConditionsParent { get; set; }
         public ConditionsTreeOwnerElement ConditionsTreeParent { get; set; }
-        public PlansOwnerElement PlansParent { get; set; }
-        public AlternativeOwnerElement AlternativeParent { get; set; }
+        public AltervativeOwnerElement PlansParent { get; set; }
+        public AlternativeComparisonReportOwnerElement AlternativeComparisonReportParent { get; set; }
         #endregion
         #endregion
         private FDACache()
@@ -1040,6 +1041,7 @@ namespace FdaViewModel.Study
         }
 
         #endregion
+
 
     }
 }

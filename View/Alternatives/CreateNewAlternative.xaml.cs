@@ -1,4 +1,4 @@
-﻿using FdaViewModel.Alternatives;
+﻿using FdaViewModel.AlternativeComparisonReport;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +30,7 @@ namespace View.Alternatives
         }
         private void AddFirstIncrement()
         {
-            CreateNewAlternativeVM vm = (CreateNewAlternativeVM)this.DataContext;
+            CreateNewAlternativeComparisonReportVM vm = (CreateNewAlternativeComparisonReportVM)this.DataContext;
             //add increment
             vm.AddIncrement();
             //create row item without delete button
@@ -46,7 +46,7 @@ namespace View.Alternatives
 
         private void btn_addIncrement_Click(object sender, RoutedEventArgs e)
         {
-            CreateNewAlternativeVM vm = (CreateNewAlternativeVM)this.DataContext;
+            CreateNewAlternativeComparisonReportVM vm = (CreateNewAlternativeComparisonReportVM)this.DataContext;
             //add increment
             vm.AddIncrement();
             // grab the latest increment from vm
@@ -71,7 +71,7 @@ namespace View.Alternatives
             IncrementRowItem ri = (IncrementRowItem)sender;
             int riIndex = lst_Increments.Items.IndexOf(ri);
             //remove this item from the vm and the ui
-            CreateNewAlternativeVM vm = (CreateNewAlternativeVM)this.DataContext;
+            CreateNewAlternativeComparisonReportVM vm = (CreateNewAlternativeComparisonReportVM)this.DataContext;
             vm.Increments.RemoveAt(riIndex);
             lst_Increments.Items.RemoveAt(riIndex);
 

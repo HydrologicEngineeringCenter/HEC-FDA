@@ -13,6 +13,7 @@ namespace Functions
         Linear = 1,
         /// <summary> Y values are piecewise interpolated (also known as nearest-neighbor or proximal interpolation) on the function domain resulting in a discontinuous representation of the function on the range mapped to its domain https://en.wikipedia.org/wiki/Interpolation.
         Piecewise = 2,
+        
         /// <summary> The function is the CDF of a statistical distribution. </summary>
         Statistical = 3,
         /// <summary> The specified function coordinates are  </summary>

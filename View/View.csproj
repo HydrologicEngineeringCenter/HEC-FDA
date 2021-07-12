@@ -179,6 +179,18 @@
     <Compile Include="AggregatedStageDamage\AggregatedStageDamage.xaml.cs">
       <DependentUpon>AggregatedStageDamage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AggregatedStageDamage\CalculatedStageDamageControl.xaml.cs">
+      <DependentUpon>CalculatedStageDamageControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AggregatedStageDamage\DepthGridsMockUp.xaml.cs">
+      <DependentUpon>DepthGridsMockUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AggregatedStageDamage\ManualStageDamageControl.xaml.cs">
+      <DependentUpon>ManualStageDamageControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AggregatedStageDamage\UserControl1.xaml.cs">
+      <DependentUpon>UserControl1.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Alternatives\CreateNewAlternative.xaml.cs">
       <DependentUpon>CreateNewAlternative.xaml</DependentUpon>
     </Compile>
@@ -211,6 +223,9 @@
     <Compile Include="Conditions\AddStageDamageToCondition.xaml.cs">
       <DependentUpon>AddStageDamageToCondition.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Conditions\ConditionResults_mockup.xaml.cs">
+      <DependentUpon>ConditionResults_mockup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Conditions\ConditionsDoubleLineModulatorWrapper.xaml.cs">
       <DependentUpon>ConditionsDoubleLineModulatorWrapper.xaml</DependentUpon>
     </Compile>
@@ -219,6 +234,9 @@
     </Compile>
     <Compile Include="Conditions\ConditionsPlotEditor.xaml.cs">
       <DependentUpon>ConditionsPlotEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conditions\ConvergenceCriteriaEditor_mockup.xaml.cs">
+      <DependentUpon>ConvergenceCriteriaEditor_mockup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Conditions\EnterSeed.xaml.cs">
       <DependentUpon>EnterSeed.xaml</DependentUpon>
@@ -265,6 +283,9 @@
     </Compile>
     <Compile Include="Inventory\DefineSIAttributes.xaml.cs">
       <DependentUpon>DefineSIAttributes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Inventory\DefineSIAttributes_mockup.xaml.cs">
+      <DependentUpon>DefineSIAttributes_mockup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Inventory\DepthDamageCurves\DepthDamageCurveEditor.xaml.cs">
       <DependentUpon>DepthDamageCurveEditor.xaml</DependentUpon>
@@ -331,6 +352,9 @@
     <Compile Include="Inventory\OccupancyTypes\SaveAllReport.xaml.cs">
       <DependentUpon>SaveAllReport.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Inventory\StructureGroundElevationValidation_mockup.xaml.cs">
+      <DependentUpon>StructureGroundElevationValidation_mockup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Output\HistogramViewer.xaml.cs">
       <DependentUpon>HistogramViewer.xaml</DependentUpon>
     </Compile>
@@ -390,6 +414,9 @@
     </Compile>
     <Compile Include="Study\AnalysisYears.xaml.cs">
       <DependentUpon>AnalysisYears.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Study\ConvergenceCriteriaEditor.xaml.cs">
+      <DependentUpon>ConvergenceCriteriaEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Study\CreateNew.xaml.cs">
       <DependentUpon>CreateNew.xaml</DependentUpon>
@@ -463,6 +490,7 @@
       <DependentUpon>TabHeaderControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\TableWithPlotCurveConverter.cs" />
+    <Compile Include="Utilities\ToolTipConverter.cs" />
     <Compile Include="Utilities\TransactionView.xaml.cs">
       <DependentUpon>TransactionView.xaml</DependentUpon>
     </Compile>
@@ -484,6 +512,22 @@
     <Page Include="AggregatedStageDamage\AggregatedStageDamage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="AggregatedStageDamage\CalculatedStageDamageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AggregatedStageDamage\DepthGridsMockUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AggregatedStageDamage\ManualStageDamageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AggregatedStageDamage\UserControl1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Alternatives\CreateNewAlternative.xaml">
       <SubType>Designer</SubType>
@@ -517,6 +561,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Conditions\ConditionResults_mockup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Conditions\ConditionsDoubleLineModulatorWrapper.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -528,6 +576,10 @@
     <Page Include="Conditions\ConditionsPlotEditor.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Conditions\ConvergenceCriteriaEditor_mockup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Conditions\EnterSeed.xaml">
       <SubType>Designer</SubType>
@@ -582,6 +634,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Inventory\DefineSIAttributes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Inventory\DefineSIAttributes_mockup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -666,6 +722,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Inventory\OccupancyTypes\SaveAllReport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Inventory\StructureGroundElevationValidation_mockup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -754,6 +814,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Study\AnalysisYears.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Study\ConvergenceCriteriaEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -105,7 +105,7 @@ namespace FdaViewModel.StageTransforms
 
             //int ratingId = Storage.Connection.Instance.GetElementId()
             //_Logger.LogInfo("Opening " + Name + " for edit.", this.GetType(), Name);
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, "Outflow - Exterior Stage", "Outflow", "Exterior Stage", actionManager);
+            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, "Exterior Stage", "Outflow", "Outflow - Exterior Stage", actionManager);
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditRatingCurve" + vm.Name);
             Navigate(tab,false, false);   

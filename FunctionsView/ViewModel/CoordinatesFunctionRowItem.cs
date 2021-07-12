@@ -52,7 +52,10 @@ namespace FunctionsView.ViewModel
         {
             get
             {
-                return Enum.GetValues(typeof(InterpolationEnum)).Cast<InterpolationEnum>();
+                var query= Enum.GetValues(typeof(InterpolationEnum)).Cast<InterpolationEnum>()
+                .Except(new InterpolationEnum[] { InterpolationEnum.NaturalCubicSpline, InterpolationEnum.Statistical });
+                //InterpolationEnum[] interpTypes = (InterpolationEnum[])Enum.GetValues(typeof(InterpolationEnum));
+                return query;
             }
         }
         public InterpolationEnum SelectedInterpolationType

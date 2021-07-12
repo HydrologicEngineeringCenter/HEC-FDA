@@ -835,11 +835,11 @@ namespace FdaViewModel.Conditions
                 {
                     return;
                 }
-                IConditionLocationYearRealization conditionRealization = condition.ComputePreview();
+                //IConditionLocationYearRealization conditionRealization = condition.ComputePreview();
                 //get the damage frequency and plot it
-                IReadOnlyDictionary<IParameterEnum, ISampledParameter<IFdaFunction>> realizationFunctions = conditionRealization.Functions;
+                //IReadOnlyDictionary<IParameterEnum, ISampledParameter<IFdaFunction>> realizationFunctions = conditionRealization.Functions;
 
-                IConvergenceCriteria convergenceCriteria = IConvergenceCriteriaFactory.Factory();
+                //IConvergenceCriteria convergenceCriteria = IConvergenceCriteriaFactory.Factory();
                 Dictionary<IMetric, IConvergenceCriteria> metricsDictionary = new Dictionary<IMetric, IConvergenceCriteria>();
                 foreach (IMetric metric in condition.Metrics)
                 {
@@ -848,10 +848,10 @@ namespace FdaViewModel.Conditions
 
                 IReadOnlyDictionary<IMetric, IConvergenceCriteria> metrics = new ReadOnlyDictionary<IMetric, IConvergenceCriteria>(metricsDictionary);
 
-                int seed = 5;
+                //int seed = 5;
                 //todo pop up and have user enter seed. Put the random clock time as int into it as default.
                 //This constructor will automatically run the compute
-                IConditionLocationYearResult result = new ConditionLocationYearResult(condition, metrics, 99);
+                IConditionLocationYearResult result = new ConditionLocationYearResult(condition, metrics, seedValue);
                 DisplayResults(result);
             }
             //store the seed with the other results.

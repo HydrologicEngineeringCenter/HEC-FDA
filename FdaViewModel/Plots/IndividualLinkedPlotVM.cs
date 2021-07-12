@@ -184,7 +184,7 @@ namespace FdaViewModel.Plots
             {
                 func = ICoordinatesFunctionsFactory.Factory(function.Coordinates, function.Interpolator);
             }
-            CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(func);
+            CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(func, "text x axis", "test y axis");
             List<SciLineData> lineData = chartHelper.CreateLineData(IsXAxisLog, IsYAxisLog, IsProbabilityXAxis);
             foreach(SciLineData ld in lineData)
             {

@@ -31,12 +31,14 @@ namespace FunctionsView.ViewModel
 
 
         private readonly string _ChartTitle = "ChartTitle";
-        private readonly string _XLabel = "XLabel";
-        private readonly string _YLabel = "YLabel";
+        private readonly string _XLabel = "XLabel - cody";
+        private readonly string _YLabel = "YLabel - cody";
         private readonly ICoordinatesFunction _function;
 
-        public CoordinatesFunctionEditorChartHelper(ICoordinatesFunction function)
+        public CoordinatesFunctionEditorChartHelper(ICoordinatesFunction function, string xlabel, string ylabel)
         {
+            _XLabel = xlabel;
+            _YLabel = ylabel;
             LoadStylesDictionary();
             _function = function;
         }
@@ -273,7 +275,7 @@ namespace FunctionsView.ViewModel
             {
                 assignPredefinedColor = true;
             }
-            NumericLineData lineData = new NumericLineData();
+            NumericLineData lineData = null;
 
             switch (interpolator)
             {

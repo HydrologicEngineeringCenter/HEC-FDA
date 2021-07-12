@@ -32,7 +32,7 @@ namespace Model
             switch (fType)
             {                
                 case IParameterEnum.InflowFrequency:
-                    if (fx.DistributionType == IOrdinateEnum.LogPearsonIII) return new LogPearsonIII(fx, label, xLabel, yLabel, yUnits);
+                    if (fx.DistributionType == IOrdinateEnum.LogPearsonIII) return new Model.Functions.FrequencyFunctions.LogPearsonIII(fx, label, xLabel, yLabel, yUnits);
                     //TODO: add graphical functions.
                     else throw new NotImplementedException("Graphical Frequency Functions have not been implemented yet.");
                 case IParameterEnum.OutflowFrequency:

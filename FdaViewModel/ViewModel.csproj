@@ -131,8 +131,8 @@
     <Compile Include="AggregatedStageDamage\AggregatedStageDamageOwnerElement.cs" />
     <Compile Include="AggregatedStageDamage\CreationMethodEnum.cs" />
     <Compile Include="AggregatedStageDamage\StageDamageAssetType.cs" />
-    <Compile Include="Alternatives\CreateNewAlternativeVM.cs" />
-    <Compile Include="Alternatives\Increment.cs" />
+    <Compile Include="AlternativeComparisonReport\CreateNewAlternativeComparisonReportVM.cs" />
+    <Compile Include="AlternativeComparisonReport\Increment.cs" />
     <Compile Include="BaseFdaElement.cs" />
     <Compile Include="BaseViewModel.cs" />
     <Compile Include="Conditions\AddExteriorInteriorStageToConditionVM.cs" />
@@ -204,6 +204,7 @@
     <Compile Include="Inventory\DamageCategories\DamageCategoryRowItem.cs" />
     <Compile Include="Inventory\DamageCategories\IDamageCategory.cs" />
     <Compile Include="Inventory\DefineSIAttributesVM.cs" />
+    <Compile Include="Inventory\DefineSIAttributesVM_mockup.cs" />
     <Compile Include="Inventory\DepthDamage\DepthDamageCurve.cs" />
     <Compile Include="Inventory\DepthDamage\DepthDamageCurveData.cs" />
     <Compile Include="Inventory\DepthDamage\DepthDamageCurveEditorControlVM.cs" />
@@ -250,10 +251,10 @@
     <Compile Include="Output\HistogramBinVM.cs" />
     <Compile Include="Output\HistogramViewerVM.cs" />
     <Compile Include="Output\IndexLocationsVM.cs" />
-    <Compile Include="Alternatives\AlternativeOwnerElement.cs" />
+    <Compile Include="AlternativeComparisonReport\AlternativeComparisonReportOwnerElement.cs" />
     <Compile Include="Output\LinkedPlotsVM.cs" />
-    <Compile Include="Plans\CreateNewPlanVM.cs" />
-    <Compile Include="Plans\PlansOwnerElement.cs" />
+    <Compile Include="Alternatives\CreateNewAlternativeVM.cs" />
+    <Compile Include="Alternatives\AltervativeOwnerElement.cs" />
     <Compile Include="Plots\ConditionsHorizontalFailureFunctionVM.cs" />
     <Compile Include="Plots\ConditionsIndividualPlotWrapperVM.cs" />
     <Compile Include="Plots\DoubleLineModulatorCoverButtonVM.cs" />
@@ -354,6 +355,7 @@
     <Compile Include="Utilities\UndoRedoRowItem.cs" />
     <Compile Include="Utilities\VectorFeatureType.cs" />
     <Compile Include="Utilities\WindowVM.cs" />
+    <Compile Include="Utilities\WriteToConsole.cs" />
     <Compile Include="Watershed\TerrainBrowserVM.cs" />
     <Compile Include="Watershed\TerrainElement.cs" />
     <Compile Include="Watershed\TerrainOwnerElement.cs" />
