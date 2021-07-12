@@ -90,7 +90,7 @@ namespace Model.Metrics
             {
                 IFrequencyFunction fx = frequencyFx.IsConstant ? frequencyFx : frequencyFx.Sample(p);
                 if (ParameterType == IParameterEnum.EAD) return fx.Integrate();
-                else return fx.InverseF(IOrdinateFactory.Factory(Ordinate.Value())).Value();
+                else return 1 - fx.InverseF(IOrdinateFactory.Factory(Ordinate.Value())).Value();
             }
             else throw new ArgumentException($"The {ParameterType} metric cannot be computed with the provided {frequencyFx.ParameterType} function, a {TargetFunction} function is required.");
         }

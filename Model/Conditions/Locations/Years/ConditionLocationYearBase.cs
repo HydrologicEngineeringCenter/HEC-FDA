@@ -45,7 +45,7 @@ namespace Model.Conditions.Locations.Years
             if (rng.IsNull()) rng = new Random();
             if (sampleParameters.IsNull()) sampleParameters = Parameters;
             Dictionary<IParameterEnum, ISample> sample = new Dictionary<IParameterEnum, ISample>();
-            foreach (var parameter in sampleParameters) sample.Add(parameter.Key, parameter.Value ? new Sample(rng.NextDouble()) : new Sample());
+            foreach (var parameter in sampleParameters) sample.Add(parameter.Key, parameter.Value ? new Sample() : new Sample(rng.NextDouble()));
             return sample;
         }
         public abstract IConditionLocationYearRealization ComputePreview();

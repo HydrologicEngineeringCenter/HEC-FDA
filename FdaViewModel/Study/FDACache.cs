@@ -1036,7 +1036,18 @@ namespace FdaViewModel.Study
                     }
                 }
             }
-        
+
+            if (childElementType == typeof(ConditionsElement))
+            {
+                foreach (ChildElement elem in ConditionsElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+
             return null;
         }
 

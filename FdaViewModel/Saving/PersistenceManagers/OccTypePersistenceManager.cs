@@ -64,7 +64,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         //of the element. But since they get stored as strings if a developer changes the name of the class
         //you would no longer get any of the old logs. So i use this constant.
         private const string ELEMENT_TYPE = "OccType";
-        private static readonly FdaLogger LOGGER = new FdaLogger("OccTypePersistenceManager");
+        private static readonly FdaLogger.FdaLogger LOGGER = new FdaLogger.FdaLogger("OccTypePersistenceManager");
 
 
         private const string GroupTablePrefix = "OccTypeGroup-";

@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -38,7 +39,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\Output\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -56,54 +57,50 @@
     <StartupObject>View.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FdaLogging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Consequences_Assist, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Perforce\HEC_FDA\FDA_dev\FdaLogger\FdaLogger\bin\Debug\netstandard2.0\FdaLogging.dll</HintPath>
+      <HintPath>..\lib\Consequences_Assist.dll</HintPath>
+    </Reference>
+    <Reference Include="DatabaseManager">
+      <HintPath>..\lib\DatabaseManager.dll</HintPath>
+    </Reference>
+    <Reference Include="DataBase_Reader">
+      <HintPath>..\lib\DataBase_Reader.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.3.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.3.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="FdaLogger">
+      <HintPath>..\lib\FdaLogger.dll</HintPath>
+    </Reference>
+    <Reference Include="FdaLogging">
+      <HintPath>..\lib\FdaLogging.dll</HintPath>
+    </Reference>
+    <Reference Include="GDALAssist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\GDALAssist.dll</HintPath>
     </Reference>
     <Reference Include="HecCs, Version=1.2.7326.22211, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\HecCs.dll</HintPath>
     </Reference>
+    <Reference Include="LifeSimGIS, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\LifeSimGIS.dll</HintPath>
+    </Reference>
     <Reference Include="netstandard" />
-    <Reference Include="Consequences_Assist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+    <Reference Include="OpenGLMapping, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\Consequences_Assist.dll</HintPath>
-    </Reference>
-    <Reference Include="DatabaseManager">
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\DatabaseManager.dll</HintPath>
-    </Reference>
-    <Reference Include="GDALAssist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OpenGLMapper\geospatial\Output\x64\Debug\GDALAssist.dll</HintPath>
-    </Reference>
-    <Reference Include="gdalconst_csharp, Version=1.0.4916.28018, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OpenGLMapper\geospatial\Output\x64\Debug\gdalconst_csharp.dll</HintPath>
-    </Reference>
-    <Reference Include="gdal_csharp, Version=1.0.6981.27857, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OpenGLMapper\geospatial\Output\x64\Debug\gdal_csharp.dll</HintPath>
-    </Reference>
-    <Reference Include="GenericControlsWPF">
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\GenericControlsWPF.dll</HintPath>
-    </Reference>
-    <Reference Include="LifeSimGIS, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\LifeSimGIS.dll</HintPath>
-    </Reference>
-    <Reference Include="ogr_csharp, Version=1.0.6981.27857, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OpenGLMapper\geospatial\Output\x64\Debug\ogr_csharp.dll</HintPath>
+      <HintPath>..\lib\OpenGLMapping.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK">
       <HintPath>..\lib\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK.GLControl">
       <HintPath>..\lib\OpenTK.GLControl.dll</HintPath>
-    </Reference>
-    <Reference Include="osr_csharp, Version=1.0.6981.27857, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OpenGLMapper\geospatial\Output\x64\Debug\osr_csharp.dll</HintPath>
     </Reference>
     <Reference Include="OxyPlot">
       <HintPath>..\lib\OxyPlot.dll</HintPath>
@@ -118,6 +115,9 @@
     <Reference Include="PlottingLibraryCore, Version=1.1.7328.27159, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\PlottingLibraryCore.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\PresentationFramework.4.6.0\lib\PresentationFramework.dll</HintPath>
     </Reference>
     <Reference Include="QuickHelp">
       <HintPath>..\lib\QuickHelp.dll</HintPath>
@@ -145,8 +145,14 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite">
-      <HintPath>..\OpenGLMapper\geospatial\OpenGLMappingTester\bin\x64\Debug\System.Data.SQLite.dll</HintPath>
+    <Reference Include="System.Data.SQLite, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\lib\net46\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.113.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.113.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
@@ -165,7 +171,6 @@
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="WpfAnimatedGif, Version=1.4.17.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WpfAnimatedGif.1.4.17\lib\net\WpfAnimatedGif.dll</HintPath>
       <Private>True</Private>
@@ -1003,10 +1008,6 @@
       <Project>{4AD0B5FE-D2D7-403F-B740-5F2377A14117}</Project>
       <Name>OccupancyTypes</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OpenGLMapper\geospatial\OpenGLMapping\OpenGLMapping.vbproj">
-      <Project>{e6dd31c5-1388-4b1d-8291-c317dde22388}</Project>
-      <Name>OpenGLMapping</Name>
-    </ProjectReference>
     <ProjectReference Include="..\UserControls\UserControls.vbproj">
       <Project>{80eb938b-bc8f-44f7-b4dd-6127010f2d96}</Project>
       <Name>UserControls</Name>
@@ -1193,13 +1194,23 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.3.0\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.3.0\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets'))" />
   </Target>
+  <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" />
+  <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>echo "Copying the GDAL Folder to your output directory"
+Xcopy $(SolutionDir)\lib\GDAL $(TargetDir)\GDAL  /E /H /C /I /Q /Y
+
+echo "unpacking the .dlls from GDAL into your output directory"
+Xcopy $(SolutionDir)\lib\GDAL\csharp\*  $(TargetDir) /Y</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

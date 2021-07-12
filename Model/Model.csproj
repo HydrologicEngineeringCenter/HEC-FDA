@@ -53,13 +53,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="GDALAssist">
-      <HintPath>..\..\..\..\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\GDALAssist.dll</HintPath>
-    </Reference>
+    <Folder Include="Validation\Conditions\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Validation\Conditions\" />
+    <Reference Include="GDALAssist">
+      <HintPath>..\lib\GDALAssist.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

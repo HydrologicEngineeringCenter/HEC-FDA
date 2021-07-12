@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Utilities;
 
 using Statistics.Validation;
+using Statistics.Histograms;
+using System.Xml.Linq;
 
 namespace Statistics
 {
@@ -105,5 +107,24 @@ namespace Statistics
         /// <param name="data"> The <see cref="IData.Elements"/> to be added to the existing <paramref name="histogram"/> object. </param>
         /// <returns> A new <see cref="IHistogram"/> containing the <paramref name="histogram"/> and <paramref name="data"/> elements. </returns>
         public static IHistogram Factory(IHistogram histogram, IData data) => data.IsNull() ? throw new ArgumentNullException(nameof(data)) : Histograms.Histogram.Fit(histogram, data);
+
+        public static IHistogram Factory(string xmlString)
+        {
+            XDocument doc = XDocument.Parse(xmlString);
+            XElement binsElement = doc.Element(Histogram.XML_BINS);
+
+            List<IBin> bins = new List<IBin>();
+            foreach(XElement binElem in binsElement.Elements(Histogram.XML_BIN))
+            {
+                double min = Convert.ToDouble( binElem.Attribute(Histogram.XML_MIN).Value);
+                double max = Convert.ToDouble(binElem.Attribute(Histogram.XML_MAX).Value);
+                int count = Convert.ToInt32(binElem.Attribute(Histogram.XML_COUNT).Value);
+
+                bins.Add( IBinFactory.Factory(min, max, count));
+            }
+
+            return new HistogramBinnedData(bins.ToArray());
+        }
+
     }
 }

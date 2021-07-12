@@ -15,7 +15,7 @@ namespace Model.Functions
         #endregion
         #region Properties
         //todo: delete this after the friday release
-        public ICoordinatesFunction Function =>  _Function;
+        public virtual ICoordinatesFunction Function =>  _Function;
         public OrderedSetEnum Order => _Function.Order;
         public InterpolationEnum Interpolator => _Function.Interpolator;
         public bool IsConstant { get; }

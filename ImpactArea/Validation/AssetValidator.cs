@@ -17,6 +17,10 @@ namespace ImpactArea.Validation
             List<IMessage> msgs = new List<IMessage>();
             return msgs;
         }
-        
+
+        IMessageLevels IValidator<IAsset>.IsValid(IAsset entity, out IEnumerable<IMessage> errors)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

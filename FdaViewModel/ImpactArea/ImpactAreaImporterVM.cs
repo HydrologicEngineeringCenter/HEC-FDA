@@ -74,12 +74,14 @@ namespace FdaViewModel.ImpactArea
         #region Constructors
         public ImpactAreaImporterVM(ObservableCollection<string> PolygonPaths, EditorActionManager actionManager):base(actionManager)
         {
+            SetDimensions(800, 500, 400, 400);
             AvailablePaths = PolygonPaths;
             IsInEditMode = false;
         }
 
         public ImpactAreaImporterVM(ImpactAreaElement element, ObservableCollection<ImpactAreaRowItem> impactAreaRows, EditorActionManager actionManager) :base(element, actionManager)
         {
+            SetDimensions(800, 500, 400, 400);
             Name = element.Name;
             ListOfRows = impactAreaRows;
             Description = element.Description;

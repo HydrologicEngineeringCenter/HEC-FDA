@@ -27,6 +27,7 @@ x86/
 [Aa][Rr][Mm]64/
 bld/
 [Bb]in/
+!lib/GDAL/bin
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
@@ -354,3 +355,5 @@ MigrationBackup/
 
 # Hiding untracked OpenGLMapper files
 OpenGLMapper/
+/statistics_vb
+/genericcontrols

@@ -1010,6 +1010,11 @@ namespace FdaViewModel.Conditions
    
         private bool ValidatePreviewCompute()
         {
+            if(SelectedImpactArea == null)
+            {
+                MessageBox.Show("An impact area is required to preview a compute.");
+                return false;
+            }
             //testing error handling
             //IFunction test = null;
             //IRange<double> domain = test.Domain;
@@ -1058,7 +1063,14 @@ namespace FdaViewModel.Conditions
 
         private ILocation CreateLocation()
         {
-            return new Location(SelectedImpactArea.Name, SelectedImpactArea.Description);
+            if (SelectedImpactArea != null)
+            {
+                return new Location(SelectedImpactArea.Name, SelectedImpactArea.Description);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private List<IMetric> CreateMetrics()
@@ -1425,7 +1437,7 @@ namespace FdaViewModel.Conditions
             //.WithAnalyticalFreqElem()
             ConditionsElement elementToSave = new ConditionsElement(Name, Description, Year, SelectedImpactArea.GetElementID(),
                 flowFreqID, inflowOutflowID, ratingID, extIntID, leveeFailureID, stageDamageID, SelectedThresholdType, ThresholdValue);
-
+            CurrentElement = elementToSave;
             //because this is a new element i need to pass the reference along so that
             //i can update this editor when curves get edited or removed while this is open.
             elementToSave.ConditionsEditor = this;
