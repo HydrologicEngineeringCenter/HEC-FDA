@@ -11,7 +11,7 @@ namespace FdaViewModel.Editors
     public class CurveEditorVM : BaseLoggingEditorVM, ISaveUndoRedo
     {
 
-        private static readonly FdaLogger LOGGER = new FdaLogger("CurveEditorVM");
+        private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("CurveEditorVM");
 
         public ChartViewModel MixedViewModel { get; } = new SciChart2DChartViewModel("Test Title");
 

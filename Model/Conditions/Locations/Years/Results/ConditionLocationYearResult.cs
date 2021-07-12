@@ -62,7 +62,7 @@ namespace Model.Conditions.Locations.Years.Results
             var converged = new Dictionary<IMetric, IConvergenceResult>();
             var histograms = new Dictionary<IMetric, Statistics.IHistogram>();
             var realizations = new List<IConditionLocationYearRealizationSummary>();
-            foreach (var i in criteria) converged[i.Key] = Statistics.IConvergenceResultFactory.Factory();
+            foreach (var i in _criteria) converged[i.Key] = Statistics.IConvergenceResultFactory.Factory();
             int s = 0, n = 0, I = 1, N = 1; //I = 10000, N = 10000;
             while (!IsConverged(converged) && n < N)
             {
