@@ -1,39 +1,20 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6A8FD3E7-B4EC-46B4-B91B-2B63034F9776}</ProjectGuid>
+    <TargetFramework>net48</TargetFramework>
+	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	  <OutputPath>C:\Temp\FDA2.0</OutputPath>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FdaViewModel</RootNamespace>
     <AssemblyName>FdaViewModel</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <PlatformTarget>x64</PlatformTarget>
     <DocumentationFile>bin\Debug\FdaViewModel.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Consequences_Assist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
@@ -46,12 +27,6 @@
     </Reference>
     <Reference Include="DataBase_Reader">
       <HintPath>..\lib\DataBase_Reader.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.3.0\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.3.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="FdaLogger, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -75,7 +50,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\LifeSimGIS.dll</HintPath>
     </Reference>
-    <Reference Include="netstandard" />
     <Reference Include="OpenGLMapping, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\OpenGLMapping.dll</HintPath>
@@ -100,8 +74,6 @@
     <Reference Include="PlottingLibraryCore">
       <HintPath>..\lib\PlottingLibraryCore.dll</HintPath>
     </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="SciChart.Charting, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\SciChart.Charting.dll</HintPath>
@@ -125,308 +97,14 @@
     <Reference Include="StructureInventoryLibrary">
       <HintPath>..\lib\StructureInventoryLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\lib\net46\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.EF6, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.113.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.Linq, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.113.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AggregatedStageDamage\AggregatedStageDamageEditorVM.cs" />
-    <Compile Include="AggregatedStageDamage\AggregatedStageDamageElement.cs" />
-    <Compile Include="AggregatedStageDamage\AggregatedStageDamageOwnerElement.cs" />
-    <Compile Include="AggregatedStageDamage\CreationMethodEnum.cs" />
-    <Compile Include="AggregatedStageDamage\StageDamageAssetType.cs" />
-    <Compile Include="AlternativeComparisonReport\CreateNewAlternativeComparisonReportVM.cs" />
-    <Compile Include="AlternativeComparisonReport\Increment.cs" />
-    <Compile Include="BaseFdaElement.cs" />
-    <Compile Include="BaseViewModel.cs" />
-    <Compile Include="Conditions\AddExteriorInteriorStageToConditionVM.cs" />
-    <Compile Include="Conditions\AddFailureFunctionToConditionVM.cs" />
-    <Compile Include="Conditions\AddFlowFrequencyToConditionVM.cs" />
-    <Compile Include="Conditions\AddInflowOutflowToConditionVM.cs" />
-    <Compile Include="Conditions\AddRatingCurveToConditionVM.cs" />
-    <Compile Include="Conditions\AddStageDamageToConditionVM.cs" />
-    <Compile Include="Conditions\ConditionBuilder.cs" />
-    <Compile Include="Conditions\ConditionChartViewModel.cs" />
-    <Compile Include="Conditions\ConditionsElementFactory.cs" />
-    <Compile Include="Conditions\ConditionsEditorVM.cs" />
-    <Compile Include="Conditions\ConditionsElement.cs" />
-    <Compile Include="Conditions\ConditionsOwnerElement.cs" />
-    <Compile Include="Conditions\ConditionsPlotEditorVM.cs" />
-    <Compile Include="Conditions\ConditionsTreeOwnerElement.cs" />
-    <Compile Include="Conditions\CrosshairData.cs" />
-    <Compile Include="Conditions\EnterSeedVM.cs" />
-    <Compile Include="Conditions\FdaCrosshairChartModifier.cs" />
-    <Compile Include="Conditions\SharedAxisCrosshairData.cs" />
-    <Compile Include="Editors\AnalyticalFrequencyCurveEditor.cs" />
-    <Compile Include="Editors\BaseEditorVM.cs" />
-    <Compile Include="Editors\BaseLoggingEditorVM.cs" />
-    <Compile Include="Editors\CurveEditorFactory.cs" />
-    <Compile Include="Editors\CurveEditorVM.cs" />
-    <Compile Include="Editors\EditorActionManager.cs" />
-    <Compile Include="Editors\FailureFunctionCurveEditorVM.cs" />
-    <Compile Include="Editors\SaveUndoRedoHelper.cs" />
-    <Compile Include="Editors\UndoRedoManager.cs" />
-    <Compile Include="ExtentionMethods.cs" />
-    <Compile Include="FlowTransforms\FlowTransformsOwnerElement.cs" />
-    <Compile Include="FlowTransforms\InflowOutflowEditorVM.cs" />
-    <Compile Include="FlowTransforms\InflowOutflowElement.cs" />
-    <Compile Include="FrequencyRelationships\AnalyticalFrequencyEditorVM.cs" />
-    <Compile Include="FrequencyRelationships\AnalyticalFrequencyElement.cs" />
-    <Compile Include="FrequencyRelationships\AnalyticalFrequencyOwnerElement.cs" />
-    <Compile Include="FrequencyRelationships\FlowDoubleWrapper.cs" />
-    <Compile Include="FrequencyRelationships\FrequencyRelationshipsOwnerElement.cs" />
-    <Compile Include="FrequencyRelationships\GraphicalFrequencyOwnerElement.cs" />
-    <Compile Include="FrequencyRelationships\StageFrequencyOwnerElement.cs" />
-    <Compile Include="GeoTech\FailureFunctionEditorVM.cs" />
-    <Compile Include="GeoTech\FailureFunctionElement.cs" />
-    <Compile Include="GeoTech\FailureFunctionOwnerElement.cs" />
-    <Compile Include="GeoTech\LateralStructuresOwnerElement.cs" />
-    <Compile Include="GeoTech\LeveeFeatureEditorVM.cs" />
-    <Compile Include="GeoTech\LeveeFeatureElement.cs" />
-    <Compile Include="GeoTech\LeveeFeatureOwnerElement.cs" />
-    <Compile Include="Hydraulics\FloodPlainDataOwnerElement.cs" />
-    <Compile Include="Hydraulics\GriddedHydraulicsElement.cs" />
-    <Compile Include="Hydraulics\GriddedHydraulicsOwnerElement.cs" />
-    <Compile Include="Hydraulics\GridImporterVM.cs" />
-    <Compile Include="Hydraulics\WaterSurfaceProfileOwnerElement.cs" />
-    <Compile Include="Hydraulics\WSPRowItem.cs" />
-    <Compile Include="ImpactArea\ImpactAreaEditorVM.cs" />
-    <Compile Include="ImpactArea\ImpactAreaElement.cs" />
-    <Compile Include="ImpactArea\ImpactAreaImporterVM.cs" />
-    <Compile Include="ImpactArea\ImpactAreaOwnerElement.cs" />
-    <Compile Include="ImpactArea\ImpactAreaUniqueNameSet.cs" />
-    <Compile Include="ImpactArea\ImpactAreaVM.cs" />
-    <Compile Include="ImpactArea\RadioButtonConverterBoth.cs" />
-    <Compile Include="ImpactArea\RadioButtonConverterLeft.cs" />
-    <Compile Include="ImpactArea\RadioButtonConverterRight.cs" />
-    <Compile Include="FlowTransforms\InflowOutflowOwnerElement.cs" />
-    <Compile Include="Inventory\AttributeLinkingListVM.cs" />
-    <Compile Include="Inventory\DamageCategories\DamageCategoriesVM.cs" />
-    <Compile Include="Inventory\DamageCategories\DamageCategory.cs" />
-    <Compile Include="Inventory\DamageCategories\DamageCategoryFactory.cs" />
-    <Compile Include="Inventory\DamageCategories\DamageCategoryOwnedElement.cs" />
-    <Compile Include="Inventory\DamageCategories\DamageCategoryRowItem.cs" />
-    <Compile Include="Inventory\DamageCategories\IDamageCategory.cs" />
-    <Compile Include="Inventory\DefineSIAttributesVM.cs" />
-    <Compile Include="Inventory\DefineSIAttributesVM_mockup.cs" />
-    <Compile Include="Inventory\DepthDamage\DepthDamageCurve.cs" />
-    <Compile Include="Inventory\DepthDamage\DepthDamageCurveData.cs" />
-    <Compile Include="Inventory\DepthDamage\DepthDamageCurveEditorControlVM.cs" />
-    <Compile Include="Inventory\DepthDamage\DepthDamageCurveEditorVM.cs" />
-    <Compile Include="Inventory\EconomicsOwnerElement.cs" />
-    <Compile Include="Inventory\EditStructuresFromShapefileVM.cs" />
-    <Compile Include="Inventory\ImportFromHAZUSVM.cs" />
-    <Compile Include="Inventory\ImportFromNSIVM.cs" />
-    <Compile Include="Inventory\ImportFromShapefileVM.cs" />
-    <Compile Include="Inventory\ImportStructuresFromFDA1VM.cs" />
-    <Compile Include="Inventory\ImportStructuresFromShapefileVM.cs" />
-    <Compile Include="Inventory\InventoryElement.cs" />
-    <Compile Include="Inventory\OccupancyTypes\BaseOcctypeLoggingEditor.cs" />
-    <Compile Include="Inventory\OccupancyTypes\CreateNewDamCatVM.cs" />
-    <Compile Include="Inventory\OccupancyTypes\deleteMeTestClass.cs" />
-    <Compile Include="Inventory\OccupancyTypes\ImportOccupancyTypesVM.cs" />
-    <Compile Include="Inventory\OccupancyTypes\IOccupancyType.cs" />
-    <Compile Include="Inventory\OccupancyTypes\IOccupancyTypeEditable.cs" />
-    <Compile Include="Inventory\OccupancyTypes\IOccupancyTypeGroup.cs" />
-    <Compile Include="Inventory\OccupancyTypes\IOccupancyTypeGroupEditable.cs" />
-    <Compile Include="Inventory\OccupancyTypes\IValueUncertainty.cs" />
-    <Compile Include="Inventory\OccupancyTypes\NormalControlVM.cs" />
-    <Compile Include="Inventory\OccupancyTypes\OccTypeReader\OccTypeReader.cs" />
-    <Compile Include="Inventory\OccupancyTypes\OccupancyType.cs" />
-    <Compile Include="Inventory\OccupancyTypes\OccupancyTypeEditable.cs" />
-    <Compile Include="Inventory\OccupancyTypes\OccupancyTypeFactory.cs" />
-    <Compile Include="Inventory\OccupancyTypes\OccupancyTypeGroup.cs" />
-    <Compile Include="Inventory\OccupancyTypes\OccupancyTypeGroupEditable.cs" />
-    <Compile Include="Inventory\OccupancyTypes\OccupancyTypesEditorVM.cs" />
-    <Compile Include="Inventory\OccupancyTypes\OccupancyTypesElement.cs" />
-    <Compile Include="Inventory\OccupancyTypes\OccupancyTypesGroupRowItemVM.cs" />
-    <Compile Include="Inventory\OccupancyTypes\OccupancyTypesOwnerElement.cs" />
-    <Compile Include="Inventory\OccupancyTypes\SaveAllReportGroupVM.cs" />
-    <Compile Include="Inventory\OccupancyTypes\SaveAllReportVM.cs" />
-    <Compile Include="Inventory\OccupancyTypes\TriangularControlVM.cs" />
-    <Compile Include="Inventory\OccupancyTypes\UniformControlVM.cs" />
-    <Compile Include="Inventory\OccupancyTypes\ValueUncertaintyType.cs" />
-    <Compile Include="Inventory\OccupancyTypes\ValueUncertaintyVM.cs" />
-    <Compile Include="Inventory\StructureCompute.cs" />
-    <Compile Include="Inventory\StructureInventoryBaseElement.cs" />
-    <Compile Include="Inventory\StructureInventoryOwnerElement.cs" />
-    <Compile Include="NamespaceDoc.cs" />
-    <Compile Include="Output\CreateEconImportFileVM.cs" />
-    <Compile Include="Output\HistogramBinVM.cs" />
-    <Compile Include="Output\HistogramViewerVM.cs" />
-    <Compile Include="Output\IndexLocationsVM.cs" />
-    <Compile Include="AlternativeComparisonReport\AlternativeComparisonReportOwnerElement.cs" />
-    <Compile Include="Output\LinkedPlotsVM.cs" />
-    <Compile Include="Alternatives\CreateNewAlternativeVM.cs" />
-    <Compile Include="Alternatives\AltervativeOwnerElement.cs" />
-    <Compile Include="Plots\ConditionsHorizontalFailureFunctionVM.cs" />
-    <Compile Include="Plots\ConditionsIndividualPlotWrapperVM.cs" />
-    <Compile Include="Plots\DoubleLineModulatorCoverButtonVM.cs" />
-    <Compile Include="Plots\DoubleLineModulatorHorizontalCoverButtonVM.cs" />
-    <Compile Include="Plots\DoubleLineModulatorWrapperVM.cs" />
-    <Compile Include="Plots\HorizontalDoubleLineModulatorWrapperVM.cs" />
-    <Compile Include="Plots\iConditionsControl.cs" />
-    <Compile Include="Plots\iConditionsImporter.cs" />
-    <Compile Include="Plots\ICoverButton.cs" />
-    <Compile Include="Plots\IIndividualLinkedPlotWrapper.cs" />
-    <Compile Include="Plots\ILinkedPlot.cs" />
-    <Compile Include="Plots\IndividualLinkedPlotControlVM.cs" />
-    <Compile Include="Plots\IndividualLinkedPlotCoverButtonVM.cs" />
-    <Compile Include="Plots\IndividualLinkedPlotVM.cs" />
-    <Compile Include="Plots\ModulatorLinkedPlotControlVM.cs" />
-    <Compile Include="Plots\ParentUserControlVM.cs" />
-    <Compile Include="Plots\SharedAxisEnum.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Saving\ElementAddedEventArgs.cs" />
-    <Compile Include="Saving\IPersistable.cs" />
-    <Compile Include="Saving\IPersistableWithUndoRedo.cs" />
-    <Compile Include="Saving\LoadingManager.cs" />
-    <Compile Include="Saving\PersistenceManagers\ConditionsPersistenceManager.cs" />
-    <Compile Include="Saving\PersistenceManagers\ExteriorInteriorPersistenceManager.cs" />
-    <Compile Include="Saving\PersistenceManagers\FailureFunctionPersistenceManager.cs" />
-    <Compile Include="Saving\PersistenceManagers\FlowFrequencyPersistenceManager.cs" />
-    <Compile Include="Saving\PersistenceManagers\ImpactAreaPersistenceManager.cs" />
-    <Compile Include="Saving\PersistenceManagers\InflowOutflowPersistenceManager.cs" />
-    <Compile Include="Saving\PersistenceManagers\LeveePersistenceManager.cs" />
-    <Compile Include="Saving\PersistenceManagers\OccTypePersistenceManager.cs" />
-    <Compile Include="Saving\PersistenceManagers\RatingElementPersistenceManager.cs" />
-    <Compile Include="Saving\PersistenceManagers\StageDamagePersistenceManager.cs" />
-    <Compile Include="Saving\PersistenceManagers\StructureInventoryPersistenceManager.cs" />
-    <Compile Include="Saving\PersistenceManagers\StudyPropertiesPersistenceManager.cs" />
-    <Compile Include="Saving\PersistenceManagers\WaterSurfaceAreaPersistenceManager.cs" />
-    <Compile Include="Saving\SavingBase.cs" />
-    <Compile Include="Saving\PersistenceFactory.cs" />
-    <Compile Include="Saving\PersistenceManagers\TerrainElementPersistenceManager.cs" />
-    <Compile Include="Saving\UndoRedoBase.cs" />
-    <Compile Include="StageTransforms\ExteriorInteriorEditorVM.cs" />
-    <Compile Include="StageTransforms\ExteriorInteriorElement.cs" />
-    <Compile Include="StageTransforms\ExteriorInteriorOwnerElement.cs" />
-    <Compile Include="StageTransforms\RatingCurveEditorVM.cs" />
-    <Compile Include="StageTransforms\RatingCurveElement.cs" />
-    <Compile Include="StageTransforms\RatingCurveOwnerElement.cs" />
-    <Compile Include="StageTransforms\StageTransformsOwnerElement.cs" />
-    <Compile Include="Storage\Connection.cs" />
-    <Compile Include="Study\AnalysisYearsVM.cs" />
-    <Compile Include="Study\FDACache.cs" />
-    <Compile Include="Study\ExistingStudyVM.cs" />
-    <Compile Include="Study\FdaStudyVM.cs" />
-    <Compile Include="Study\ImportFromOldFdaVM.cs" />
-    <Compile Include="Study\IStudyCache.cs" />
-    <Compile Include="Study\MonetaryUnitsEnum.cs" />
-    <Compile Include="Study\NewStudyVM.cs" />
-    <Compile Include="Study\PropertiesVM.cs" />
-    <Compile Include="Study\SciChartTestingVM.cs" />
-    <Compile Include="Study\StudyElement.cs" />
-    <Compile Include="Study\StudyStatusBar.cs" />
-    <Compile Include="Study\UnitsSystemEnum.cs" />
-    <Compile Include="Tabs\TabController.cs" />
-    <Compile Include="Utilities\AddGriddedDataEventArgs.cs" />
-    <Compile Include="Utilities\AddMapFeatureEventArgs.cs" />
-    <Compile Include="Utilities\AddShapefileEventArgs.cs" />
-    <Compile Include="Utilities\CommandHandler.cs" />
-    <Compile Include="Utilities\CustomHeaderVM.cs" />
-    <Compile Include="Utilities\CustomMessageBoxVM.cs" />
-    <Compile Include="Utilities\DatabaseColumn.cs" />
-    <Compile Include="Utilities\DatabaseTable.cs" />
-    <Compile Include="ImpactArea\ImpactAreaRowItem.cs" />
-    <Compile Include="Utilities\DynamicTabVM.cs" />
-    <Compile Include="Utilities\IDynamicTab.cs" />
-    <Compile Include="Utilities\IImport.cs" />
-    <Compile Include="Utilities\IRowItem.cs" />
-    <Compile Include="Utilities\ISaveUndoRedo.cs" />
-    <Compile Include="Utilities\MapWindowControlVM.cs" />
-    <Compile Include="Utilities\MapWindowMapTreeViewConnector.cs" />
-    <Compile Include="Utilities\MessageItem.cs" />
-    <Compile Include="Utilities\MessageRowItem.cs" />
-    <Compile Include="Utilities\MessageVM.cs" />
-    <Compile Include="Utilities\NamedAction.cs" />
-    <Compile Include="Utilities\ChildElement.cs" />
-    <Compile Include="Utilities\NLogDataBaseHelper.cs" />
-    <Compile Include="Utilities\OpenStructureAttributeTableEventArgs.cs" />
-    <Compile Include="Utilities\ParentElement.cs" />
-    <Compile Include="Utilities\RecentFileNamedAction.cs" />
-    <Compile Include="Utilities\RemoveMapFeatureEventArgs.cs" />
-    <Compile Include="Utilities\RenameVM.cs" />
-    <Compile Include="Utilities\RowItem.cs" />
-    <Compile Include="Utilities\Transactions\IDisplayLogMessages.cs" />
-    <Compile Include="Utilities\Transactions\Transaction.cs" />
-    <Compile Include="Utilities\Transactions\TransactionAndMessageBase.cs" />
-    <Compile Include="Utilities\Transactions\TransactionEnum.cs" />
-    <Compile Include="Utilities\Transactions\TransactionEventArgs.cs" />
-    <Compile Include="Utilities\Transactions\TransactionHelper.cs" />
-    <Compile Include="Utilities\Transactions\TransactionRowItem.cs" />
-    <Compile Include="Utilities\Transactions\TransactionVM.cs" />
-    <Compile Include="Utilities\UndoRedoRowItem.cs" />
-    <Compile Include="Utilities\VectorFeatureType.cs" />
-    <Compile Include="Utilities\WindowVM.cs" />
-    <Compile Include="Utilities\WriteToConsole.cs" />
-    <Compile Include="Watershed\TerrainBrowserVM.cs" />
-    <Compile Include="Watershed\TerrainElement.cs" />
-    <Compile Include="Watershed\TerrainOwnerElement.cs" />
-    <Compile Include="WaterSurfaceElevation\PathAndProbability.cs" />
-    <Compile Include="WaterSurfaceElevation\WaterSurfaceElevationElement.cs" />
-    <Compile Include="WaterSurfaceElevation\WaterSurfaceElevationImporterFDA1VM.cs" />
-    <Compile Include="WaterSurfaceElevation\WaterSurfaceElevationImporterVM.cs" />
-    <Compile Include="WaterSurfaceElevation\WaterSurfaceElevationOwnerElement.cs" />
-    <Compile Include="WaterSurfaceElevation\WaterSurfaceElevationRowItemVM.cs" />
-    <Compile Include="WaterSurfaceElevation\WSERowItemVM.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="ClassDiagram1.cd" />
-    <None Include="ClassDiagram2.cd" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FunctionsView\FunctionsView.csproj">
-      <Project>{8e8c8388-f610-44cd-8746-bc2559e02424}</Project>
-      <Name>FunctionsView</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Functions\Functions.csproj">
-      <Project>{c33a0f59-fe11-4e06-b85e-bd84e6c1106d}</Project>
-      <Name>Functions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Model\Model.csproj">
-      <Project>{b4909c07-fc85-49d6-867a-0e00d311a991}</Project>
-      <Name>Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Model\Model.csproj">
-      <Project>{7fe104fd-b277-4dbe-b892-01f61262a82f}</Project>
-      <Name>Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Statistics\Statistics.csproj">
-      <Project>{C793991B-B5F7-4667-8478-713E97340D34}</Project>
-      <Name>Statistics</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Utilities\Utilities.csproj">
-      <Project>{9038add9-59ca-4e3a-b665-6b086fde5f18}</Project>
-      <Name>Utilities</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\FunctionsView\FunctionsView.csproj" />
+    <ProjectReference Include="..\Functions\Functions.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj" />
+    <ProjectReference Include="..\Statistics\Statistics.csproj" />
+    <ProjectReference Include="..\Utilities\Utilities.csproj" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
@@ -436,22 +114,24 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.3.0\build\EntityFramework.props'))" />
-    <Error Condition="!Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.3.0\build\EntityFramework.targets'))" />
-    <Error Condition="!Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets'))" />
-  </Target>
+  <ItemGroup>
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.1.0" />
+    <PackageReference Include="NLog" Version="4.6.6" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.113.7" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.8.1" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.8.1" />
+    <PackageReference Include="System.ServiceModel.Federation" Version="4.8.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="FrequencyRelationships\AnalyticalFrequencyRowItem.cs" />
+    <Compile Remove="InflowOutflow\InflowOutflowEditorVM.cs" />
+    <Compile Remove="InflowOutflow\InflowOutflowOwnedElement.cs" />
+    <Compile Remove="Output\LinkedPlotsUpdatedVM.cs" />
+    <Compile Remove="Plots\LinkedPlotsVM.cs" />
+    <Compile Remove="Tabs\TabableVM.cs" />
+    <Compile Remove="Utilities\MessagesVM.cs" />
+  </ItemGroup>
   <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" />
   <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

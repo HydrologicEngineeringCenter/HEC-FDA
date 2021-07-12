@@ -1,40 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8CEEFD86-62FE-4CCA-AA66-F1862E98DC5A}</ProjectGuid>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FDAUnitTests</RootNamespace>
-    <AssemblyName>FDAUnitTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
-    <IsCodedUITest>False</IsCodedUITest>
-    <TestProjectType>UnitTest</TestProjectType>
-    <TargetFrameworkProfile />
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Consequences_Assist">
@@ -44,31 +15,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\FdaViewModel\bin\Debug\DataBase_Reader.dll</HintPath>
     </Reference>
-    <Reference Include="DataTable_Viewer, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\FdaViewModel\bin\Debug\DataTable_Viewer.dll</HintPath>
-    </Reference>
-    <Reference Include="FdaModel">
-      <HintPath>..\OldModel\bin\Debug\FdaModel.dll</HintPath>
-    </Reference>
-    <Reference Include="GDALAssist, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\GDALAssist.dll</HintPath>
-    </Reference>
-    <Reference Include="gdalconst_csharp">
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\gdalconst_csharp.dll</HintPath>
-    </Reference>
-    <Reference Include="gdal_csharp, Version=1.0.4916.28018, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\gdal_csharp.dll</HintPath>
+    <Reference Include="DataTable_Viewer">
+      <HintPath>..\lib\DataTable_Viewer.dll</HintPath>
     </Reference>
     <Reference Include="LifeSimGIS, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\FdaViewModel\bin\Debug\LifeSimGIS.dll</HintPath>
-    </Reference>
-    <Reference Include="ogr_csharp, Version=1.0.4916.28017, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\ogr_csharp.dll</HintPath>
     </Reference>
     <Reference Include="OpenGLMapping, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -82,25 +34,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\FdaViewModel\bin\Debug\OpenTK.GLControl.dll</HintPath>
     </Reference>
-    <Reference Include="osr_csharp, Version=1.0.4916.28017, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\Debug\osr_csharp.dll</HintPath>
-    </Reference>
     <Reference Include="Statistics">
       <HintPath>..\lib\Statistics.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite, Version=1.0.105.2, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\FdaViewModel\bin\Debug\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.SQLite.Linq">
       <HintPath>..\FdaViewModel\bin\Debug\System.Data.SQLite.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC-FDA\Libraries from john k\ConsequenceToolLibraries-20180824T170716Z-001\ConsequenceToolLibraries\Output\x86\Debug\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Choose>
@@ -109,93 +51,66 @@
         <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
       </ItemGroup>
     </When>
-    <Otherwise>
-      <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
-          <Private>False</Private>
-        </Reference>
-      </ItemGroup>
-    </Otherwise>
+    <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="ComputeWriter.cs" />
-    <Compile Include="ConditionTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="OrdinatesFunctionTests.cs" />
-    <Compile Include="LateralStructureTests.cs" />
-    <Compile Include="RealizationTests.cs" />
-    <Compile Include="FrequencyFunctionTests.cs" />
-    <Compile Include="OccTypeEditorTests.cs" />
-    <Compile Include="Saving\PersistenceManagers\ExteriorInteriorPersistenceManagerTest.cs" />
-    <Compile Include="Saving\PersistenceManagers\FailureFunctionPersistenceManagerTests.cs" />
-    <Compile Include="Saving\PersistenceManagers\FlowFrequencyPersistenceManager.cs" />
-    <Compile Include="Saving\PersistenceManagers\ImpactAreaPersistenceManagerTests.cs" />
-    <Compile Include="Saving\PersistenceManagers\InflowOutflowPersistenceManagerTests.cs" />
-    <Compile Include="Saving\PersistenceManagers\PersistenceManagersBaseTest.cs" />
-    <Compile Include="Saving\PersistenceManagers\RatingElementPersistenceManagerTests.cs" />
-    <Compile Include="Saving\PersistenceManagers\StageDamagePersistenceManagerTests.cs" />
-    <Compile Include="Saving\PersistenceManagers\StructureInventoriesPersistenceManagerTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="CSV Files\AnalyzeCompositionTest.csv">
+    <None Update="CSV Files\AnalyzeCompositionTest.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="CSV Files\ComposeTest.csv">
+    <None Update="CSV Files\ComposeTest.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="CSV Files\ComputeNewMethodTest.csv">
+    <None Update="CSV Files\ComputeNewMethodTest.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="CSV Files\CreateInteriorExteriorFunctionTest.csv">
+    <None Update="CSV Files\CreateInteriorExteriorFunctionTest.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="CSV Files\FrequencyFunctionComposeOrdinatesFunctionAboveAndBelowTest.csv">
+    <None Update="CSV Files\FrequencyFunctionComposeOrdinatesFunctionAboveAndBelowTest.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="CSV Files\FrequencyFunctionComposeOrdinatesFunctionEntirelyAboveTest.csv">
+    <None Update="CSV Files\FrequencyFunctionComposeOrdinatesFunctionEntirelyAboveTest.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="CSV Files\FrequencyFunctionComposeOrdinatesFunctionEntirelyBelowTest.csv">
+    <None Update="CSV Files\FrequencyFunctionComposeOrdinatesFunctionEntirelyBelowTest.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="CSV Files\FrequencyFunctionComposeOrdinatesFunctionHigherRangeTest.csv">
+    <None Update="CSV Files\FrequencyFunctionComposeOrdinatesFunctionHigherRangeTest.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="CSV Files\FrequencyFunctionComposeOrdinatesFunctionLowerRangeTest.csv">
+    <None Update="CSV Files\FrequencyFunctionComposeOrdinatesFunctionLowerRangeTest.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="CSV Files\FrequencyFunctionComposeTest.csv">
+    <None Update="CSV Files\FrequencyFunctionComposeTest.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="CSV Files\ReportErrors.csv">
+    <None Update="CSV Files\ReportErrors.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="CSV Files\TrapizoidalRiemannSumTestingCSV.csv">
+    <None Update="CSV Files\TrapizoidalRiemannSumTestingCSV.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="CSV Files\ValidationTestInputs.csv">
+    <None Update="CSV Files\ValidationTestInputs.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="CSV Files\WeightedAEPCSV.csv">
+    <None Update="CSV Files\WeightedAEPCSV.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="CSV Files\WeightedTrapezoidalRiemannSumCSV.csv">
+    <None Update="CSV Files\WeightedTrapezoidalRiemannSumCSV.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FdaTester\FdaTester.csproj">
-      <Project>{0d9ccaaa-4117-47e3-9829-2ca53ff695f5}</Project>
-      <Name>FdaTester</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FdaViewModel\ViewModel.csproj">
-      <Project>{6a8fd3e7-b4ec-46b4-b91b-2b63034f9776}</Project>
-      <Name>ViewModel</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\FdaTester\FdaTester.csproj" />
+    <ProjectReference Include="..\FdaViewModel\ViewModel.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AggregatedStageDamage\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="AggregatedStageDamage\AggregatedStageDamageElementTest.cs" />
+    <Compile Remove="Saving\PersistenceManagers\OccupanceTypesPersistenceManagerTests.cs" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
@@ -215,13 +130,4 @@
       </ItemGroup>
     </When>
   </Choose>
-  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

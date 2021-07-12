@@ -7,8 +7,8 @@ namespace ImpactArea.Validation
 {
     internal class ElevationValidator: IValidator<Elevation>
     {
-        private static readonly IRange<double> _GroundRange = IRangeFactory.Factory(-999, 40000);
-        private static readonly IRange<double> _HeightRange = IRangeFactory.Factory(-10, 10);
+        private static readonly IRange<double> _GroundRange = IRangeFactory.Factory(-999.0, 40000.0);
+        private static readonly IRange<double> _HeightRange = IRangeFactory.Factory(-10.0, 10.0);
         private static readonly IRange<double> _AssetRange = IRangeFactory.Factory(_GroundRange.Min + _HeightRange.Min, _GroundRange.Max + _HeightRange.Max);
         
         public bool IsValid(Elevation obj, out IEnumerable<IMessage> msgs)
@@ -36,8 +36,13 @@ namespace ImpactArea.Validation
         {
             string msg = "";
             if (height.IsNull()) return "The IElevation object cannot be created because it is null.";
-            if (!height.IsValid) msg += $"The height ordinate is invalid it contains the following messages: {Utilities.ValidationExtensions.PrintTabbedListOfMessages(height.Messages)}";
+            //if (!height.IsValid) msg += $"The height ordinate is invalid it contains the following messages: {Utilities.ValidationExtensions.PrintTabbedListOfMessages(height.Messages)}";
             return msg;
+        }
+
+        IMessageLevels IValidator<Elevation>.IsValid(Elevation entity, out IEnumerable<IMessage> errors)
+        {
+            throw new NotImplementedException();
         }
     }
 }
