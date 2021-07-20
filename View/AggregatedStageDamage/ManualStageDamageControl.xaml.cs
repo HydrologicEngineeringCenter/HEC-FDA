@@ -88,11 +88,5 @@ namespace View.AggregatedStageDamage
         {
             linkChartViewModel();
         }
-
-        //private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-        //{
-        //    var context = DataContext as ManualStageDamageVM;
-        //    context.
-        //}
     }
 }
