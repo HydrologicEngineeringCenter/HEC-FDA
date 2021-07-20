@@ -4,7 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:View.AggregatedStageDamage"
+             xmlns:functions="clr-namespace:FunctionsView.View;assembly=FunctionsView"
              mc:Ignorable="d" 
+             Loaded="UserControl_Loaded"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
@@ -31,27 +33,36 @@
             </Grid.ColumnDefinitions>
 
             <Label Grid.Row="1" Grid.Column="0" Content="Water Surface Elevations:" HorizontalAlignment="Right"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5" ItemsSource="{Binding DepthGrids}" SelectedItem="{Binding SelectedDepthGrid}"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5" ItemsSource="{Binding WaterSurfaceElevations}" SelectedItem="{Binding SelectedWaterSurfaceElevation}" DisplayMemberPath="Name"/>
 
             <Label Grid.Row="2" Grid.Column="0" Content="Structures:" HorizontalAlignment="Right"/>
-            <ComboBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5" />
+            <ComboBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5" ItemsSource="{Binding Structures}" SelectedItem="{Binding SelectedStructures}" DisplayMemberPath="Name"/>
 
-            <Button Grid.Row="3" Content="Calculate Curves" Grid.ColumnSpan="2" Width="100" HorizontalAlignment="Left" Margin="5"/>
+            <Button x:Name="calculate_btn" Grid.Row="3" Content="Compute Curves" Grid.ColumnSpan="2" Width="100" HorizontalAlignment="Left" Margin="5" Click="calculate_btn_Click"/>
         </Grid>
 
-        <GroupBox Grid.Row="0" Grid.Column="1"  Header="Generated Curves" Margin="10,5,5,5">
-            <DataGrid x:Name="curve_dataGrid" Grid.Row="0" Grid.Column="1" Width="300" Height="200" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5">
-                <DataGrid.Columns >
-                    <DataGridTextColumn Header="Curve"  MinWidth="50" />
-                    <DataGridTextColumn Header="Impact Area"  MinWidth="50" />
-                    <DataGridTextColumn Header="Damage Category"  MinWidth="50" />
-
-                </DataGrid.Columns>
-            </DataGrid>
+        
+        <GroupBox Grid.Row="0" Grid.Column="1"  Header="Generated Curves" Margin="10,5,5,5" HorizontalAlignment="Left">
+            <ListView x:Name="lst" Height="150" Margin="5" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" SelectedIndex="{Binding SelectedRowIndex}" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="ID" Width="30" DisplayMemberBinding="{Binding ID}" />
+                        <GridViewColumn Header="Impact Area" Width="250"  DisplayMemberBinding="{Binding ImpactArea.Name}" />
+                        <GridViewColumn Header="Damage Category" Width="250" DisplayMemberBinding="{Binding DamageCategory}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+           
         </GroupBox>
 
-        <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="Put table and plot control here"/>
-
+        <Grid x:Name="editorGrid" Grid.Row="1" Grid.ColumnSpan="2" Visibility="Hidden">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition x:Name="plotColumn" Width="*" MinWidth="200"/>
+            </Grid.ColumnDefinitions>
+            <!--If you are looking for where the plot is, it is added in the code behind. -->
+            <functions:CoordinatesFunctionEditor  Grid.Column="0" Margin="5" EditorVM="{Binding SelectedRow.EditorVM,Mode=TwoWay}" />
+        </Grid>
 
     </Grid>
 </UserControl>

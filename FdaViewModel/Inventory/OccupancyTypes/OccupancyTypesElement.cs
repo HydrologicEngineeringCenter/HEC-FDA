@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Xml.Linq;
 using FdaViewModel.Utilities;
 using Functions;
+using FdaViewModel.Inventory.DamageCategory;
 
 namespace FdaViewModel.Inventory.OccupancyTypes
 {
@@ -56,6 +57,18 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         #region Voids
         #endregion
         #region Functions
+
+      
+        public List<String> getUniqueDamageCategories()
+        {
+            HashSet<String> dams = new HashSet<String>();
+            foreach (IOccupancyType ot in ListOfOccupancyTypes)
+            {
+                dams.Add(Name + " -> " + ot.DamageCategory);
+            }
+            return dams.ToList<String>();
+        }
+
         #endregion
         public override void AddValidationRules()
         {

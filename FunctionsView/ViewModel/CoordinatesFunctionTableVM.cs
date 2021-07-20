@@ -18,6 +18,7 @@ namespace FunctionsView.ViewModel
         public event EventHandler NoMoreRows;
         public event EventHandler TableWasModified;
 
+
         public IOrdinateEnum DistributionType
         {
             get { return Rows[0].SelectedDistributionType; }
@@ -31,9 +32,15 @@ namespace FunctionsView.ViewModel
             get; 
             set; 
         }
-
-        public CoordinatesFunctionTableVM(ObservableCollection<CoordinatesFunctionRowItem> rows)
+        public bool IsReadOnly
         {
+            get;
+            set;
+        }
+
+        public CoordinatesFunctionTableVM(ObservableCollection<CoordinatesFunctionRowItem> rows, bool isReadOnly)
+        {
+            IsReadOnly = isReadOnly;
             Rows = rows;
             foreach (CoordinatesFunctionRowItem row in rows)
             {
@@ -58,17 +65,8 @@ namespace FunctionsView.ViewModel
                 coordinates.Add(row.CreateCoordinateFromRow());
             }
             return IFunctionFactory.Factory(coordinates, interpType);
-            //return ICoordinatesFunctionsFactory.Factory(coordinates, interpType);
         }
 
-        //public void RowDeleted()
-        //{
-        //    if (Rows.Count == 0)
-        //    {
-        //        NoMoreRows?.Invoke(this, new EventArgs());
-        //    }
-        //    TableWasModified?.Invoke(this, new EventArgs());
-        //}
 
         public void DeleteRows(List<int> indexes)
         {
@@ -169,32 +167,32 @@ namespace FunctionsView.ViewModel
             {
                 case IOrdinateEnum.Constant:
                     {
-                        row = new CoordinatesFunctionRowItemBuilder(0).WithConstantDist(0, interpType).Build();
+                        row = new CoordinatesFunctionRowItemBuilder(0, IsReadOnly).WithConstantDist(0, interpType).Build();
                         break;
                     }
                 case IOrdinateEnum.Normal:
                     {
-                        row = new CoordinatesFunctionRowItemBuilder(0).WithNormalDist(0, 0, interpType).Build();
+                        row = new CoordinatesFunctionRowItemBuilder(0, IsReadOnly).WithNormalDist(0, 0, interpType).Build();
                         break;
                     }
                 case IOrdinateEnum.Triangular:
                     {
-                        row = new CoordinatesFunctionRowItemBuilder(0).WithTriangularDist(0, 0, 0, interpType).Build();
+                        row = new CoordinatesFunctionRowItemBuilder(0, IsReadOnly).WithTriangularDist(0, 0, 0, interpType).Build();
                         break;
                     }
                 case IOrdinateEnum.Uniform:
                     {
-                        row = new CoordinatesFunctionRowItemBuilder(0).WithUniformDist(0, 0, interpType).Build();
+                        row = new CoordinatesFunctionRowItemBuilder(0, IsReadOnly).WithUniformDist(0, 0, interpType).Build();
                         break;
                     }
                 case IOrdinateEnum.TruncatedNormal:
                     {
-                        row = new CoordinatesFunctionRowItemBuilder(0).WithTruncatedNormalDist(0, 0, 0, 0, interpType).Build();
+                        row = new CoordinatesFunctionRowItemBuilder(0, IsReadOnly).WithTruncatedNormalDist(0, 0, 0, 0, interpType).Build();
                         break;
                     }
                 case IOrdinateEnum.Beta4Parameters:
                     {
-                        row = new CoordinatesFunctionRowItemBuilder(0).WithBetaDist(0, 0, 0, 0, interpType).Build();
+                        row = new CoordinatesFunctionRowItemBuilder(0, IsReadOnly).WithBetaDist(0, 0, 0, 0, interpType).Build();
                         break;
                     }
             }

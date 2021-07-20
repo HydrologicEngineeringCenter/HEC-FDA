@@ -105,7 +105,7 @@ namespace StatisticsTests.Distributions
         public void GoodData_Returns_FiniteRange2(double mean, double sd, double skew)
         {
             var testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
-            testObj.CDF()
+            testObj.CDF();
             Assert.True(testObj.Range.IsFinite());
         }
 

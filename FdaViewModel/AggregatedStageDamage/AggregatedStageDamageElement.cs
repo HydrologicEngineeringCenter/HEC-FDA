@@ -1,4 +1,5 @@
-﻿using FdaViewModel.Utilities;
+﻿using FdaViewModel.Editors;
+using FdaViewModel.Utilities;
 using Model;
 using Statistics;
 using System;
@@ -15,43 +16,68 @@ namespace FdaViewModel.AggregatedStageDamage
         #endregion
         #region Fields
         private const string _TableConstant = "Aggregated Stage Damage Function - ";
-
-        //private string _Description = "";
-        //private Statistics.UncertainCurveDataCollection _Curve;
-        //private Inventory.DamageCategory.DamageCategoryRowItem _DamageCategory;
         private readonly CreationMethodEnum _Method;
         #endregion
         #region Properties
         public bool CanEdit { get; }
+        public int SelectedWSE { get; set; }
+        public int SelectedStructures { get; set; }
         public CreationMethodEnum Method
         {
             get { return _Method; }
         }
-        //public override string GetTableConstant()
-        //{
-        //    return _TableConstant;
-        //}
-        //public string Description 
-        //{
-        //    get { return _Description; }
-        //    set { _Description = value; NotifyPropertyChanged(); }
-        //}
-        //public Statistics.UncertainCurveDataCollection Curve
-        //{
-        //    get { return _Curve; }
-        //    set { _Curve = value; NotifyPropertyChanged(); }
-        //}
-  
+
+        public List<StageDamageCurve> Curves { get; }
+        public bool IsManual { get; }
+
         #endregion
         #region Constructors
-            /// <summary>
-            /// Stage damage element
-            /// </summary>
-            /// <param name="name">Name of element</param>
-            /// <param name="lastEditDate">Last edit date</param>
-            /// <param name="description">Element description</param>
-            /// <param name="curve">The curve that represents the stage vs damage for the element</param>
-            /// <param name="method">Creation method</param>
+
+        public AggregatedStageDamageElement(String name, string lastEditDate, string description,int selectedWSE, int selectedStructs, List<StageDamageCurve> curves, bool isManual) : base()
+        {
+            LastEditDate = lastEditDate;
+            CustomTreeViewHeader = new CustomHeaderVM(name, "pack://application:,,,/View;component/Resources/StageDamage.png");
+
+            Description = description;
+            if (Description == null)
+            {
+                Description = "";
+            }
+
+            Name = name;
+            Curves = curves;
+            IsManual = isManual;
+
+            NamedAction editDamageCurve = new NamedAction();
+            editDamageCurve.Header = "Edit Aggregated Stage Damage Relationship";
+            editDamageCurve.Action = EditDamageCurve;
+
+            NamedAction removeDamageCurve = new NamedAction();
+            removeDamageCurve.Header = "Remove";
+            removeDamageCurve.Action = RemoveElement;
+
+            NamedAction renameDamageCurve = new NamedAction(this);
+            renameDamageCurve.Header = "Rename";
+            renameDamageCurve.Action = Rename;
+
+            List<NamedAction> localActions = new List<NamedAction>();
+            localActions.Add(editDamageCurve);
+            localActions.Add(removeDamageCurve);
+            localActions.Add(renameDamageCurve);
+
+            Actions = localActions;
+        }
+
+       
+
+        /// <summary>
+        /// Stage damage element
+        /// </summary>
+        /// <param name="name">Name of element</param>
+        /// <param name="lastEditDate">Last edit date</param>
+        /// <param name="description">Element description</param>
+        /// <param name="curve">The curve that represents the stage vs damage for the element</param>
+        /// <param name="method">Creation method</param>
         public AggregatedStageDamageElement( string name , string lastEditDate, string description, IFdaFunction curve, CreationMethodEnum method) : base()
         {
             LastEditDate = lastEditDate;
@@ -114,48 +140,21 @@ namespace FdaViewModel.AggregatedStageDamage
                 .WithSaveUndoRedo(saveHelper)
                  .WithSiblingRules(this);
 
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, "Stage - Damage", "Stage", "Damage", actionManager);
+            AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(this, actionManager);
             vm.AddSiblingRules( this);
 
             string title = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(title, vm, "EditStageDamageElement" + Name);
             Navigate(tab, false, true);
-            //List<Inventory.DamageCategory.DamageCategoryOwnedElement> damcateleements = GetElementsOfType<Inventory.DamageCategory.DamageCategoryOwnedElement>();
-            //Inventory.DamageCategory.DamageCategoryOwnedElement damcatelement = damcateleements.FirstOrDefault();
-            //AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(this, (foo) => ((Utilities.OwnerElement)_Owner).SaveExistingElement(foo), (bar) => ((Utilities.OwnerElement)_Owner).AddOwnerRules(bar));
-            //Navigate(vm, true, true);
-            //if (!vm.WasCancled)
-            //{
-            //    if (!vm.HasError)
-            //    {
-            //        vm.SaveWhileEditing();
-            //    }
-            //}
         }
-        //public override void Save()
-        //{
-        //    Curve.toSqliteTable(TableName);
-        //}
 
-        //public override object[] RowData()
-        //{
-        //    return new object[] { Name,LastEditDate, Description, Curve.Distribution, _Method };
-        //}
+        public void AssignValuesFromElementToCurveEditor(BaseEditorVM editorVM, ChildElement element)
+        {
+            AggregatedStageDamageEditorVM vm = (AggregatedStageDamageEditorVM)editorVM;
+            AggregatedStageDamageElement elem = (AggregatedStageDamageElement)element;
 
-        //public override bool SavesToRow()
-        //{
-        //    return true;
-        //}
-        //public override bool SavesToTable()
-        //{
-        //    return true;
-        //}
-        //#endregion
-        //#region Functions
-        //public override string TableName
-        //{
-        //    get   {  return GetTableConstant() + LastEditDate; }
-        //}
+        }
+        
         public ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
         {
             Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
@@ -191,58 +190,12 @@ namespace FdaViewModel.AggregatedStageDamage
                 if (Method != elem.Method)
                 {
                     retval = false;
-                }
-                if (!areCurvesEqual(elem.Curve))
-                {
-                    retval = false;
-                }
+                }             
             }
             else
             {
                 retval = false;
             }
-            return retval;
-        }
-
-        private bool areCurvesEqual(IFdaFunction curve2)
-        {
-            //todo: Refactor: I just commented this out. I doubt i still need it.
-            bool retval = true;
-            //if(Curve.GetType() != curve2.GetType())
-            //{
-            //    return false;
-            //}
-            //if (Curve.Distribution != curve2.Distribution)
-            //{
-            //    return false;
-            //}
-            //if (Curve.XValues.Count != curve2.XValues.Count)
-            //{
-            //    return false;
-            //}
-            //if (Curve.YValues.Count != curve2.YValues.Count)
-            //{
-            //    return false;
-            //}
-            //double epsilon = .0001;
-            //for(int i = 0;i<Curve.XValues.Count;i++)
-            //{
-            //    if(Math.Abs( Curve.get_X(i)) - Math.Abs(curve2.get_X(i)) > epsilon)
-            //    {
-            //        return false;
-            //    }
-            //    ContinuousDistribution y = Curve.get_Y(i);
-            //    ContinuousDistribution y2 = curve2.get_Y(i);
-            //    if (Math.Abs(y.GetCentralTendency) - Math.Abs(y2.GetCentralTendency)> epsilon)
-            //    {
-            //        return false;
-            //    }
-            //    if (Math.Abs(y.GetSampleSize) - Math.Abs( y2.GetSampleSize) > epsilon)
-            //    {
-            //        return false;
-            //    }
-            //}
-
             return retval;
         }
 

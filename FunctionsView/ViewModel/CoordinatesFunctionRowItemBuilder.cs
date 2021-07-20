@@ -23,10 +23,13 @@ namespace FunctionsView.ViewModel
         private double _mostLikely;
         private double _mean;
 
-        public CoordinatesFunctionRowItemBuilder(double x)
+        private bool _isReadOnly;
+
+        public CoordinatesFunctionRowItemBuilder(double x, bool isReadOnly)
         {
             _X = x;
             _distType = IOrdinateEnum.NotSupported;
+            _isReadOnly = isReadOnly;
         }
         public CoordinatesFunctionRowItemBuilder WithTriangularDist(double mostLikely, double min, double max, InterpolationEnum interpolator)
         {
@@ -86,7 +89,7 @@ namespace FunctionsView.ViewModel
 
         public CoordinatesFunctionRowItem Build()
         {
-            return new CoordinatesFunctionRowItem(_X, _Y, _standDev, _mean, _min, _max, _mostLikely,_alpha, _beta, _distType, _interpType);
+            return new CoordinatesFunctionRowItem(_X, _Y, _standDev, _mean, _min, _max, _mostLikely,_alpha, _beta, _distType, _interpType, _isReadOnly);
         }
     }
 }

@@ -7,14 +7,18 @@ namespace OccupancyTypes
 {
     internal class DamageCategory : IDamageCategory
     {
-        public string Name { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Description { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int RebuildPeriod { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public double CostFactor { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Name 
+        { 
+            get; 
+            set; 
+        }
+        public string Description { get; set; }
+        public int RebuildPeriod { get; set; }
+        public double CostFactor { get; set; }
 
         public DamageCategory(string name)
         {
-
+            Name = name;
         }
 
         public double CalculateNewValue(double value, double percentDamage, DateTime lastDamageDate, DateTime currentDamageDate)

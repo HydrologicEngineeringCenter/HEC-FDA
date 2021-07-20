@@ -9,7 +9,11 @@ namespace FdaViewModel.Inventory.DamageCategory
 {
     internal class DamageCategory : IDamageCategory
     {
-        public string Name { get; set; }
+        public string Name 
+        { 
+            get;
+            set; 
+        }
         public string Description { get; set; }
         public int RebuildPeriod { get; set; }
         public double CostFactor { get; set; }
@@ -37,6 +41,16 @@ namespace FdaViewModel.Inventory.DamageCategory
         public XElement writeToXmlElement()
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// The display member path is not working in the ManualStageDamageControl.xaml 
+        /// This is needed to display the name in the UI.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return this.Name;
         }
     }
 }

@@ -127,7 +127,7 @@ namespace FdaViewModel.Editors
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void EditorVM_TableChanged(object sender, EventArgs e)
+        protected void EditorVM_TableChanged(object sender, EventArgs e)
         {            
             HasChanges = true;
             //something has changed. Turn off the save status header message
