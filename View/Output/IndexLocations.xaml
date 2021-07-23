@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View.Output"
         xmlns:OkClose="clr-namespace:View.Utilities"
-        xmlns:ViewModel="clr-namespace:FdaViewModel.Output;assembly=FdaViewModel"
+        xmlns:ViewModel="clr-namespace:ViewModel.Output;assembly=ViewModel"
         mc:Ignorable="d"
         Height="455" Width="250" Background="WhiteSmoke">
     <UserControl.Resources>

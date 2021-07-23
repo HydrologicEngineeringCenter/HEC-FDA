@@ -1,5 +1,5 @@
 ﻿
-using FdaViewModel.FrequencyRelationships;
+using ViewModel.FrequencyRelationships;
 using HEC.Plotting.SciChart2D.Charts;
 using System;
 using System.Collections.Generic;
@@ -102,8 +102,8 @@ namespace View.FrequencyRelationships
         private void ValidationDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
             //todo: Refactor: CO
-            //FdaViewModel.FrequencyRelationships.AnalyticalFrequencyEditorVM vm = (FdaViewModel.FrequencyRelationships.AnalyticalFrequencyEditorVM)DataContext;
-            //Type RowType = typeof(FdaViewModel.FrequencyRelationships.AnalyticalFrequencyRowItem);
+            //ViewModel.FrequencyRelationships.AnalyticalFrequencyEditorVM vm = (ViewModel.FrequencyRelationships.AnalyticalFrequencyEditorVM)DataContext;
+            //Type RowType = typeof(ViewModel.FrequencyRelationships.AnalyticalFrequencyRowItem);
             //System.Reflection.PropertyInfo propertyInfo = RowType.GetProperty(e.PropertyName);
             //object[] Attributes = propertyInfo.GetCustomAttributes(true);
             

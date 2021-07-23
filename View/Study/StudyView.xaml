@@ -5,10 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:View.Study"
              xmlns:utils="clr-namespace:View.Utilities"
-             xmlns:ViewModel="clr-namespace:FdaViewModel.Study;assembly=FdaViewModel"
+             xmlns:ViewModel="clr-namespace:ViewModel.Study;assembly=ViewModel"
              xmlns:OpenGL="clr-namespace:OpenGLMapping;assembly=OpenGLMapping"
-             xmlns:VMUtils="clr-namespace:FdaViewModel.Utilities;assembly=FdaViewModel"
-             xmlns:study="clr-namespace:FdaViewModel.Study;assembly=FdaViewModel"
+             xmlns:VMUtils="clr-namespace:ViewModel.Utilities;assembly=ViewModel"
+             xmlns:study="clr-namespace:ViewModel.Study;assembly=ViewModel"
 
              
              HorizontalAlignment="Stretch"

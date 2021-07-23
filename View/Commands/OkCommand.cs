@@ -1,6 +1,6 @@
-﻿using FdaViewModel;
-using FdaViewModel.Tabs;
-using FdaViewModel.Utilities;
+﻿using ViewModel;
+using ViewModel.Tabs;
+using ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,11 +74,11 @@ namespace View.Commands
                     
                 //}
                 //call save if its an editor?
-                if (vm.GetType().IsSubclassOf(typeof(FdaViewModel.Editors.BaseEditorVM)))
+                if (vm.GetType().IsSubclassOf(typeof(ViewModel.Editors.BaseEditorVM)))
                 {
-                    if (((FdaViewModel.Editors.BaseEditorVM)vm).RunSpecialValidation() == true)
+                    if (((ViewModel.Editors.BaseEditorVM)vm).RunSpecialValidation() == true)
                     {
-                        ((FdaViewModel.Editors.BaseEditorVM)vm).Save();
+                        ((ViewModel.Editors.BaseEditorVM)vm).Save();
                     }
                     else
                     {

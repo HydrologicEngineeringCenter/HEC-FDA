@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 
-namespace FdaViewModel.ImpactArea
+namespace ViewModel.ImpactArea
 {
     public class ImpactAreaUniqueNameSet: BaseViewModel
     {
@@ -26,7 +26,8 @@ namespace FdaViewModel.ImpactArea
             ObservableCollection<object> tmp = new ObservableCollection<object>();
             foreach(string name in polyNames)
             {
-                tmp.Add(new ImpactAreaRowItem(name, 0.0F, tmp));
+                //todo is -1 correct here?
+                tmp.Add(new ImpactAreaRowItem(-1,name, 0.0F, tmp));
             }
 
             RowItems = new ObservableCollection<ImpactAreaRowItem>();
@@ -34,13 +35,7 @@ namespace FdaViewModel.ImpactArea
             foreach(ImpactAreaRowItem row in tmp)
             {
                 RowItems.Add(row);
-            }
-            
-        }
-
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
+            }          
         }
 
         

@@ -1,13 +1,14 @@
-﻿using FdaViewModel.Utilities;
+﻿using ViewModel.Utilities;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Conditions
+namespace ViewModel.Conditions
 {
-    class ConditionBuilder
+    internal class ConditionBuilder
     {
         private string _name;
         private string _description;
@@ -38,18 +39,23 @@ namespace FdaViewModel.Conditions
 
         private bool _usesThreshold = false;
 
-        private FdaModel.ComputationPoint.PerformanceThresholdTypes _thresholdType;
+        private IMetricEnum _metricType;
         private double _thresholdValue;
 
-        public ConditionBuilder(string name, string desc, int analysisYear, ImpactArea.ImpactAreaElement impactAreaElem, 
-            ImpactArea.ImpactAreaRowItem indexLocation, FdaModel.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue)
+        private int _impactAreaID;
+        private int _flowFreqID;
+        private int _inflowOutflowID;
+        private int _ratingID;
+        private int _leveeFailureID;
+        private int _extIntStageID;
+        private int _stageDamageID;
+        public ConditionBuilder(string name, string desc, int analysisYear, int impactAreaID,  IMetricEnum metricType, double thresholdValue)
         {
             _name = name;
             _description = desc;
             _analysisYear = analysisYear;
-            _impactAreaElem = impactAreaElem;
-            _indexLocation = indexLocation;
-            _thresholdType = thresholdType;
+            _impactAreaID = impactAreaID;
+            _metricType = metricType;
             _thresholdValue = thresholdValue;
             _usesThreshold = true;
         }
@@ -57,49 +63,44 @@ namespace FdaViewModel.Conditions
         public ConditionBuilder WithAnalyticalFreqElem(FrequencyRelationships.AnalyticalFrequencyElement analyticalFreqElem)
         {
             _usesAnalyticalFlowFreq = true;
-            _analyticalFreqElem = analyticalFreqElem;
+            _flowFreqID = analyticalFreqElem.GetElementID();
             return this;
         }
 
         public ConditionBuilder WithInflowOutflowElem(FlowTransforms.InflowOutflowElement inflowOutflowElem)
         {
             _usesInflowOutflow = true;
-            _inflowOutflowElem = inflowOutflowElem;
+            _inflowOutflowID = inflowOutflowElem.GetElementID();
             return this;
         }
 
         public ConditionBuilder WithRatingCurveElem(StageTransforms.RatingCurveElement ratingElem)
         {
             _usesRating = true;
-            _ratingElem = ratingElem;
+            _ratingID = ratingElem.GetElementID();
             return this;
         }
 
         public ConditionBuilder WithExtIntStageElem(StageTransforms.ExteriorInteriorElement extIntElem)
         {
             _usesExtIntStage = true;
-            _extIntElem = extIntElem;
+            _extIntStageID = extIntElem.GetElementID();
             return this;
         }
 
         public ConditionBuilder WithLevee(GeoTech.LeveeFeatureElement leveeElem)
         {
             _usesLevee = true;
-            _leveeElem = leveeElem;
+            _leveeFailureID = leveeElem.GetElementID();
             return this;
         }
 
-        public ConditionBuilder WithFailureFunctionElem(GeoTech.FailureFunctionElement failureFunctionElem)
-        {
-            _usesFailureFunction = true;
-            _failureFunctionElem = failureFunctionElem;
-            return this;
-        }
+
 
         public ConditionBuilder WithAggStageDamageElem(AggregatedStageDamage.AggregatedStageDamageElement stageDamageElem)
         {
             _usesAggStageDamage = true;
-            _stageDamageElem = stageDamageElem;
+            _stageDamageID = stageDamageElem.GetElementID();
             return this;
         }
 
@@ -113,10 +114,8 @@ namespace FdaViewModel.Conditions
 
         public ConditionsElement build()
         {
-            return new ConditionsElement(_name, _description,_analysisYear,_impactAreaElem,_indexLocation,_usesAnalyticalFlowFreq,
-                _analyticalFreqElem,_usesInflowOutflow,_inflowOutflowElem,_usesRating,_ratingElem,_usesExtIntStage,_extIntElem,
-                _usesLevee,_leveeElem,_usesFailureFunction,_failureFunctionElem,_usesAggStageDamage,_stageDamageElem,
-                _usesThreshold,_thresholdType,_thresholdValue);
+            return new ConditionsElement(_name, _description,_analysisYear,_impactAreaID,_flowFreqID,
+                _inflowOutflowID,_ratingID,_extIntStageID ,_leveeFailureID, _stageDamageID ,_metricType,_thresholdValue);
         }
 
     }

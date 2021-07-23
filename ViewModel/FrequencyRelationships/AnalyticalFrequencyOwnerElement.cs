@@ -1,15 +1,14 @@
-﻿using FdaViewModel.Editors;
-using FdaViewModel.Utilities;
-using Statistics;
+﻿using ViewModel.Editors;
+using ViewModel.Utilities;
+using Functions;
+using Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
-namespace FdaViewModel.FrequencyRelationships
+namespace ViewModel.FrequencyRelationships
 {
-    public class AnalyticalFrequencyOwnerElement : Utilities.ParentElement
+    public class AnalyticalFrequencyOwnerElement : ParentElement
     {
         #region Notes
         #endregion
@@ -75,10 +74,13 @@ namespace FdaViewModel.FrequencyRelationships
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSaveUndoRedo(saveHelper)
                .WithSiblingRules(this);
-               //.WithParentGuid(this.GUID)
-               //.WithCanOpenMultipleTimes(true);
-
-             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(actionManager);
+            //.WithParentGuid(this.GUID)
+            //.WithCanOpenMultipleTimes(true);
+            List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)func);
+            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(defaultCurve, "Flow - Frequency", "Frequency", "Flow", actionManager);
             //LogPearsonIII curve = new Statistics.LogPearsonIII(4, .4, .5, 50);
             //Probabilities = 
 
@@ -113,7 +115,7 @@ namespace FdaViewModel.FrequencyRelationships
             AnalyticalFrequencyElement element = (AnalyticalFrequencyElement)elem;
             element.Name = vm.Name;
             element.Description = vm.Description;
-            element.Distribution = vm.Distribution;
+            element.Curve = vm.Curve;
             element.UpdateTreeViewHeader(vm.Name);
         }
 
@@ -124,14 +126,55 @@ namespace FdaViewModel.FrequencyRelationships
 
             vm.Name = element.Name;
             vm.Description = element.Description;
-            vm.Distribution = element.Distribution;
+            vm.Curve = element.Curve;
+            vm.PeriodOfRecord = element.POR;
+            vm.IsAnalytical = element.IsAnalytical;
+            vm.IsStandard = element.IsStandard;
+            vm.Mean = element.Mean;
+            vm.StandardDeviation = element.StDev;
+            vm.Skew = element.Skew;
+            vm.IsLogFlow = element.IsLogFlow;
+
+            ObservableCollection<FlowDoubleWrapper> flows = new ObservableCollection<FlowDoubleWrapper>();
+            foreach(double d in element.AnalyticalFlows)
+            {
+                flows.Add(new FlowDoubleWrapper(d));
+            }
+            vm.AnalyticalFlows = flows;
+
+            ObservableCollection<FlowDoubleWrapper> graphicalFlows = new ObservableCollection<FlowDoubleWrapper>();
+            foreach (double d in element.GraphicalFlows)
+            {
+                graphicalFlows.Add(new FlowDoubleWrapper(d));
+            }
+            vm.GraphicalFlows = graphicalFlows;
            
         }
 
         public  ChildElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
         {
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            return new AnalyticalFrequencyElement(editorVM.Name, editDate, editorVM.Description, ((AnalyticalFrequencyEditorVM)editorVM).Distribution);
+            AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)editorVM;
+            double mean = vm.Mean;
+            double stDev = vm.StandardDeviation;
+            double skew = vm.Skew;
+            int por = vm.PeriodOfRecord;
+            bool isAnalytical = vm.IsAnalytical;
+            bool isStandard = vm.IsStandard;
+            bool isLogFlow = vm.IsLogFlow;
+            List<double> analyticalFlows = new List<double>();
+            foreach(FlowDoubleWrapper d in vm.AnalyticalFlows)
+            {
+                analyticalFlows.Add(d.Flow);
+            }
+            List<double> graphicalFlows = new List<double>();
+            foreach(FlowDoubleWrapper d in vm.GraphicalFlows)
+            {
+                graphicalFlows.Add(d.Flow);
+            }
+
+            return new AnalyticalFrequencyElement(editorVM.Name, editDate, editorVM.Description,por, isAnalytical, isStandard,mean,stDev,skew,
+                isLogFlow,analyticalFlows, graphicalFlows, vm.CreateFdaFunction());
             //return null;
         }
        

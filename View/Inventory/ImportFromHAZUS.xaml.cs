@@ -32,7 +32,7 @@ namespace View.Inventory
 
             if (dr == System.Windows.Forms.DialogResult.OK) //and the filepath is good?
             {
-                FdaViewModel.Inventory.ImportFromHAZUSVM tempVM = (FdaViewModel.Inventory.ImportFromHAZUSVM)Resources["vm"];
+                ViewModel.Inventory.ImportFromHAZUSVM tempVM = (ViewModel.Inventory.ImportFromHAZUSVM)Resources["vm"];
                 tempVM.BndryGbsPath = ofd.FileName.ToString();
 
                 if (System.IO.File.Exists(System.IO.Path.GetDirectoryName(ofd.FileName.ToString()) + "\\flVeh.mdb"))
@@ -58,7 +58,7 @@ namespace View.Inventory
             if (dr == System.Windows.Forms.DialogResult.OK) //and the filepath is good?
             {
                 flVehTextBox.Text = ofd.FileName.ToString();
-                FdaViewModel.Inventory.ImportFromHAZUSVM tempVM = (FdaViewModel.Inventory.ImportFromHAZUSVM)Resources["vm"];
+                ViewModel.Inventory.ImportFromHAZUSVM tempVM = (ViewModel.Inventory.ImportFromHAZUSVM)Resources["vm"];
                 tempVM.FlVehPath = flVehTextBox.Text;
                 Resources["vm"] = tempVM;
             }
@@ -73,7 +73,7 @@ namespace View.Inventory
             if (dr == System.Windows.Forms.DialogResult.OK) //and the filepath is good?
             {
                 MSHTextBox.Text = ofd.FileName.ToString();
-                FdaViewModel.Inventory.ImportFromHAZUSVM tempVM = (FdaViewModel.Inventory.ImportFromHAZUSVM)Resources["vm"];
+                ViewModel.Inventory.ImportFromHAZUSVM tempVM = (ViewModel.Inventory.ImportFromHAZUSVM)Resources["vm"];
                 tempVM.MSHPath = MSHTextBox.Text;
                 Resources["vm"] = tempVM;
             }

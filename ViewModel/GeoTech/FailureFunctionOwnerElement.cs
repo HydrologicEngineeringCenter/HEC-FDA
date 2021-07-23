@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
-using FdaViewModel.Utilities;
-using FdaViewModel.Editors;
+using ViewModel.Utilities;
+using ViewModel.Editors;
 using System.Collections.ObjectModel;
+using Model;
+using Functions;
 
-namespace FdaViewModel.GeoTech
+namespace ViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 2:00:01 PM)]
     public class FailureFunctionOwnerElement : Utilities.ParentElement
@@ -71,10 +71,13 @@ namespace FdaViewModel.GeoTech
                 leveeCollection.Add(elem);
             }
 
-            double[] xValues = new double[] { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
-            Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(97), new Statistics.None(99), new Statistics.None(104), new Statistics.None(109), new Statistics.None(110), new Statistics.None(114), new Statistics.None(116), new Statistics.None(119), new Statistics.None(120), new Statistics.None(121) };
-            Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-
+            //double[] xValues = new double[] { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            //Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(97), new Statistics.None(99), new Statistics.None(104), new Statistics.None(109), new Statistics.None(110), new Statistics.None(114), new Statistics.None(116), new Statistics.None(119), new Statistics.None(120), new Statistics.None(121) };
+            //Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            List<double> xValues = new List<double>() { 0,.2,.4,.6,.8,1 };
+            List<double> yValues = new List<double>() { 1,2,3,4,5,6};
+            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)func);
 
             Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFailureFunctionManager()
                 , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
@@ -86,7 +89,7 @@ namespace FdaViewModel.GeoTech
                //.WithParentGuid(this.GUID)
                //.WithCanOpenMultipleTimes(true);
 
-            Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(defaultCurve, leveeCollection, actionManager);
+            Editors.CurveEditorVM vm = new Editors.FailureFunctionCurveEditorVM(defaultCurve, leveeCollection, "Frequency", "Stage", "Failure Function", actionManager);
             string header = "Create Failure Function";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "NewFailureFunction");
             Navigate(tab, false, false );
@@ -173,6 +176,11 @@ namespace FdaViewModel.GeoTech
             vm.Name = element.Name;
             vm.Description = element.Description;
             vm.Curve = element.Curve;
+            if(vm.EditorVM != null)
+            {
+                ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(element.Curve.Coordinates, element.Curve.Interpolator);
+                vm.EditorVM.Function =  coordFunc;
+            }
             vm.SelectedLateralStructure = element.SelectedLateralStructure;
         }
 

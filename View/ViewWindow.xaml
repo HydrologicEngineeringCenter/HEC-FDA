@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View"
         xmlns:utils="clr-namespace:View.Utilities"
-        xmlns:ViewModel="clr-namespace:FdaViewModel.Utilities;assembly=FdaViewModel"
+        xmlns:ViewModel="clr-namespace:ViewModel.Utilities;assembly=ViewModel"
         xmlns:qh="clr-namespace:QuickHelp;assembly=QuickHelp"
         mc:Ignorable="d"
         Icon="FDA.ico"

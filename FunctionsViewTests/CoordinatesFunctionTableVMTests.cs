@@ -20,7 +20,7 @@ namespace FunctionsViewTests
             ObservableCollection<CoordinatesFunctionRowItem> rows = new ObservableCollection<CoordinatesFunctionRowItem>();
             for(int i = 0;i<10;i++)
             {
-                CoordinatesFunctionRowItemBuilder builder = new CoordinatesFunctionRowItemBuilder(i)
+                CoordinatesFunctionRowItemBuilder builder = new CoordinatesFunctionRowItemBuilder(i, true)
                 .WithConstantDist(i*2, InterpolationEnum.None);
                 rows.Add(builder.Build());
             }
@@ -37,7 +37,7 @@ namespace FunctionsViewTests
         {
 
             ObservableCollection<CoordinatesFunctionRowItem> rows = CreateTestConstantRows();
-            CoordinatesFunctionTableVM tableVM = new CoordinatesFunctionTableVM(rows);
+            CoordinatesFunctionTableVM tableVM = new CoordinatesFunctionTableVM(rows, true);
             ICoordinatesFunction func = tableVM.CreateCoordinatesFunctionFromTable();
 
             Assert.True(func.Coordinates.Count == 10);

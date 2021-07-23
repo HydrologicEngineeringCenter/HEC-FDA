@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
-using System.Threading.Tasks;
-using FdaViewModel.Utilities;
 
-namespace FdaViewModel.Conditions
+using System.Threading.Tasks;
+using ViewModel.Utilities;
+using Functions;
+using Model;
+
+namespace ViewModel.Conditions
 {
     //[Author(q0heccdm, 12 / 1 / 2017 11:42:47 AM)]
     public class AddFlowFrequencyToConditionVM:BaseViewModel,Plots.iConditionsImporter
@@ -25,8 +26,9 @@ namespace FdaViewModel.Conditions
         //private FrequencyRelationships.AnalyticalFrequencyElement _SelectedFlowFrequencyElement;
        // private ParentElement _owner;
         private List<FrequencyRelationships.AnalyticalFrequencyElement> _InflowFrequencyCurves;
-        private Statistics.CurveIncreasing _SelectedCurve;
-        private FdaModel.Functions.BaseFunction _BaseFunction;
+        private IFdaFunction _SelectedCurve;
+        private ChildElement _SelectedElement;
+        //private FdaModel.Functions.BaseFunction _BaseFunction;
         #endregion
         #region Properties
         public bool IsPoppedOut { get; set; } 
@@ -35,20 +37,43 @@ namespace FdaViewModel.Conditions
         {
             get { if (SelectedElement != null) { return SelectedElement.Name; } else { return ""; } }
         }
-        public Utilities.ChildElement SelectedElement { get;
-            set; }
-        public Statistics.CurveIncreasing SelectedCurve
+        public ChildElement SelectedElement 
         {
-            get { return new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(((FrequencyRelationships.AnalyticalFrequencyElement)SelectedElement).Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency).GetOrdinatesFunction().Function; }
+            get { return _SelectedElement; }
+            set { _SelectedElement = value; }
+        }
+        public IFdaFunction SelectedCurve
+        {
+            
+            get 
+            {
+                return _SelectedElement.Curve;
+
+                //this is weird, but this curve has a constant Y value but the interpolation
+                //methid is statistical. Having a stats interp throws exceptions later. I am going
+                //to return a clone of this curve with a linear interp since this curve is only used
+                //for plotting in the conditions editor.
+                //ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(SelectedElement.Curve.Coordinates, InterpolationEnum.Linear);
+                //IFunction function = null;
+                //if (func is IFunction)
+                //{
+                //    function = (IFunction)func;
+                //}
+                //else 
+                //{ 
+                //    function = func.Sample(.5);
+                //}
+                //return IFdaFunctionFactory.Factory(IParameterEnum.InflowFrequency, function);
+            } 
             
         }
 
-        public FdaModel.Functions.BaseFunction BaseFunction
-        {
-            get { return new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(((FrequencyRelationships.AnalyticalFrequencyElement)SelectedElement).Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency); }
+        //public FdaModel.Functions.BaseFunction BaseFunction
+        //{
+        //    get { return new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(((FrequencyRelationships.AnalyticalFrequencyElement)SelectedElement).Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency); }
         
 
-        }
+        //}
         //public FrequencyRelationships.AnalyticalFrequencyElement SelectedFlowFrequencyElement
         //{
         //    get { return _SelectedFlowFrequencyElement; }
@@ -107,8 +132,14 @@ namespace FdaViewModel.Conditions
         //    InflowFrequencyCurves = tempList;//this is to hit the notify prop changed
         //}
 
+        //private void SetSelectedCurve()
+        //{
+        //    SelectedElement.
+        //}
+
         public void OKClicked()
         {
+            //SetSelectedCurve();
             Validate();
             if (!HasFatalError)
             {

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Plots
+namespace ViewModel.Plots
 {
     public interface iConditionsImporter
     {
@@ -14,8 +15,8 @@ namespace FdaViewModel.Plots
         event EventHandler PopImporterOut;
 
         //properties
-        Statistics.CurveIncreasing SelectedCurve { get;  }
-        FdaModel.Functions.BaseFunction BaseFunction { get; }
+        IFdaFunction SelectedCurve { get;  }
+        //IFdaFunction BaseFunction { get; }
         string SelectedElementName { get; }
         Utilities.ChildElement SelectedElement { get; }
         bool IsPoppedOut { get; set; }

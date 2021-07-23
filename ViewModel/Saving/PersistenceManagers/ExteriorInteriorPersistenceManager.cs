@@ -1,5 +1,7 @@
-﻿using FdaViewModel.StageTransforms;
-using FdaViewModel.Utilities;
+﻿using ViewModel.StageTransforms;
+using ViewModel.Utilities;
+using Functions;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,10 +10,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Saving.PersistenceManagers
+namespace ViewModel.Saving.PersistenceManagers
 {
     public class ExteriorInteriorPersistenceManager : UndoRedoBase, IPersistableWithUndoRedo
     {
+        private const int NAME_COL = 1;
+        private const int LAST_EDIT_DATE_COL = 2;
+        private const int DESC_COL = 3;
+        private const int CURVE_DIST_TYPE_COL = 4;
+        private const int CURVE_TYPE_COL = 5;
+        private const int CURVE_COL = 6;
+
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("ExteriorInteriorPersistenceManager");
         //ELEMENT_TYPE is used to store the type of element in the log tables.
         private const string ELEMENT_TYPE = "exterior_interior";
@@ -24,7 +33,10 @@ namespace FdaViewModel.Saving.PersistenceManagers
         /// The name of the change table that will hold the various states of elements.
         /// </summary>
         public override string ChangeTableName { get { return "exterior_interior_changes"; } }
+
         
+
+
         /// <summary>
         /// Names of the columns in the parent table
         /// </summary>
@@ -32,7 +44,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             get
             {
-                return new string[] {ELEMENT_ID_COL_NAME,NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE_DISTRIBUTION_TYPE, CURVE_TYPE, CURVE , STATE_INDEX_COL_NAME};
+               
+                return new string[] {NAME, LAST_EDIT_DATE, DESCRIPTION, CURVE_DISTRIBUTION_TYPE, CURVE_TYPE, CURVE};
             }
         }
         /// <summary>
@@ -76,7 +89,9 @@ namespace FdaViewModel.Saving.PersistenceManagers
         public override object[] GetRowDataFromElement(ChildElement element)
         {
             //todo: why are all these properties on child element. I was expecting to have to cast this element to an ext int.
-            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.Distribution, element.Curve.GetType(), ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues) };
+            return new object[] { element.Name, element.LastEditDate, element.Description,
+                element.Curve.DistributionType, element.Curve.GetType(),
+                element.Curve.WriteToXML().ToString() };
         }
 
         public override object[] GetRowDataForChangeTable(ChildElement element)
@@ -90,20 +105,24 @@ namespace FdaViewModel.Saving.PersistenceManagers
             //the new statId will be one higher than the max that is in the table already.
             int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, id, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
             return new object[] {id, element.Name, element.LastEditDate, element.Description,
-                element.Curve.Distribution, element.Curve.GetType(),
-                ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues),
-                stateId};
+                element.Curve.DistributionType, element.Curve.GetType(),
+                element.Curve.WriteToXML().ToString(), stateId};
 
         }
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
-                            (string)rowData[CURVE_DISTRIBUTION_TYPE_INDEX]));
-            ExteriorInteriorElement ele = new ExteriorInteriorElement((string)rowData[CHANGE_TABLE_NAME_INDEX], (string)rowData[LAST_EDIT_DATE_INDEX],
-                (string)rowData[DESCRIPTION_INDEX], emptyCurve);
-            ele.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_INDEX], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
-                            (string)rowData[CURVE_DISTRIBUTION_TYPE_INDEX])); return ele;
+            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
+            IFunction func = IFunctionFactory.Factory(coordinatesFunction.Coordinates, coordinatesFunction.Interpolator);
+            IFdaFunction function = IFdaFunctionFactory.Factory( IParameterEnum.ExteriorInteriorStage, func);
+
+            //Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
+            //(string)rowData[CURVE_DIST_TYPE_COL]));
+            ExteriorInteriorElement ele = new ExteriorInteriorElement((string)rowData[CHANGE_TABLE_NAME_INDEX], (string)rowData[LAST_EDIT_DATE_COL],
+                (string)rowData[DESC_COL], function);
+            //ele.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_COL], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
+              //              (string)rowData[CURVE_DIST_TYPE_COL])); 
+            return ele;
         }
         #endregion
 

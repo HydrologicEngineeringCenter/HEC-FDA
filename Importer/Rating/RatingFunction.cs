@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
 using System.IO;
-using FdaViewModel.StageTransforms;
+using ViewModel.StageTransforms;
 using Functions.CoordinatesFunctions;
 using Functions;
 using Model;
-using FdaViewModel.Saving.PersistenceManagers;
+using ViewModel.Saving.PersistenceManagers;
 
 namespace Importer
 {
@@ -417,7 +417,7 @@ namespace Importer
             ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(stagesList, flowsList, InterpolationEnum.Linear);
             IFdaFunction rating = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)func);
             RatingCurveElement elem = new RatingCurveElement(Name,CalculationDate,Description,rating);
-            RatingElementPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetRatingManager();
+            RatingElementPersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetRatingManager();
             manager.SaveNew(elem);
         }
 

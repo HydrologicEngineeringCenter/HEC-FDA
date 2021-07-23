@@ -28,9 +28,9 @@ namespace View.Utilities
 
     //    private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     //    {
-    //        if (this.DataContext is FdaViewModel.Utilities.Transactions.IDisplayLogMessages)
+    //        if (this.DataContext is ViewModel.Utilities.Transactions.IDisplayLogMessages)
     //        {
-    //            FdaViewModel.Utilities.Transactions.IDisplayLogMessages vm = (FdaViewModel.Utilities.Transactions.IDisplayLogMessages)this.DataContext;
+    //            ViewModel.Utilities.Transactions.IDisplayLogMessages vm = (ViewModel.Utilities.Transactions.IDisplayLogMessages)this.DataContext;
     //            if (vm != null)
     //            {
     //                if (vm.TransactionRows != null)

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace FdaViewModel.Study
+namespace ViewModel.Study
 {
     public class ExistingStudyVM : Editors.BaseEditorVM
     {
@@ -38,7 +38,7 @@ namespace FdaViewModel.Study
                         }
                     }else
                     {
-                        ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("You did not select a sqlite file", FdaModel.Utilities.Messager.ErrorMessageEnum.Fatal));
+                        //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("You did not select a sqlite file", FdaModel.Utilities.Messager.ErrorMessageEnum.Fatal));
                     }
                 }
             }

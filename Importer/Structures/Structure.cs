@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
 using System.IO;
-using FdaViewModel.Inventory;
-using FdaViewModel.Saving;
-using FdaViewModel.Saving.PersistenceManagers;
+using ViewModel.Inventory;
+using ViewModel.Saving;
+using ViewModel.Saving.PersistenceManagers;
 
 namespace Importer
 {

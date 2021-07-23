@@ -7,7 +7,7 @@
         xmlns:Utils="clr-namespace:View.Utilities"
         xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
         mc:Ignorable="d"
-        xmlns:ViewModel="clr-namespace:FdaViewModel.Study;assembly=FdaViewModel"
+        xmlns:ViewModel="clr-namespace:ViewModel.Study;assembly=ViewModel"
         >
     <UserControl.Resources>
         <!--<ViewModel:NewStudyVM x:Key="vm"/>-->

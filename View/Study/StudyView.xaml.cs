@@ -72,7 +72,7 @@ namespace View.Study
 
         //private void MapWindow_Mouse(object sender, EventArgs e)
         //{
-        //    FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+        //    ViewModel.Study.FdaStudyVM vm = (ViewModel.Study.FdaStudyVM)this.DataContext;
         //    vm.MapTreeView = MapTreeView;
         //    vm.MapWindow = MapWindow.MapWindow;
 
@@ -129,7 +129,7 @@ namespace View.Study
         //            currentControl = LogicalTreeHelper.GetParent(currentControl);
         //        }
         //    }
-        //    FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+        //    ViewModel.Study.FdaStudyVM vm = (ViewModel.Study.FdaStudyVM)this.DataContext;
         //    if (vm.Tabs[DynamicTabControl.SelectedIndex].CanDelete == true)
         //    {
         //        //vm.Tabs.RemoveAt(DynamicTabControl.SelectedIndex);
@@ -139,7 +139,7 @@ namespace View.Study
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+            ViewModel.Study.FdaStudyVM vm = (ViewModel.Study.FdaStudyVM)this.DataContext;
             //vm.MWMTVConn. MapTreeView = MapTreeView;
             vm.AddMapsTab(MapTreeView);
             vm.AddCreateNewStudyTab();
@@ -159,7 +159,7 @@ namespace View.Study
             //MapWindowControl.MapWindow.MapWindow.MouseLeave += MapWindowControl.MapWindow_Mouse;
             //MapWindowControl.MapWindow.MapWindow.MouseEnter += MapWindowControl.MapWindow_Mouse;
 
-            ////FdaViewModel.Utilities.MapWindowControlVM vm = (FdaViewModel.Utilities.MapWindowControlVM)this.DataContext;
+            ////ViewModel.Utilities.MapWindowControlVM vm = (ViewModel.Utilities.MapWindowControlVM)this.DataContext;
             //// vm.MWMTVConn.MapWindow = MapWindowControl.MapWindow;
 
             //// MapWindowControl.MapWindow.TreeView = vm.MWMTVConn.MapTreeView;
@@ -177,7 +177,7 @@ namespace View.Study
 
         private void lbl_Study_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+            ViewModel.Study.FdaStudyVM vm = (ViewModel.Study.FdaStudyVM)this.DataContext;
 
             //lbl_Study.ContextMenu = vm.StudyElement.Actions;
             lbl_Study.ContextMenu.IsOpen = true;
@@ -213,7 +213,7 @@ namespace View.Study
 
         private void DynamicTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+            ViewModel.Study.FdaStudyVM vm = (ViewModel.Study.FdaStudyVM)this.DataContext;
         
 
             //Timer updateMapWindowTimer = new Timer(500);
@@ -226,7 +226,7 @@ namespace View.Study
         {
             Dispatcher.Invoke(new Action(() =>
             {
-                FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+                ViewModel.Study.FdaStudyVM vm = (ViewModel.Study.FdaStudyVM)this.DataContext;
                 //todo: testing only
                 vm.UpdateMapTabTest();
             }));

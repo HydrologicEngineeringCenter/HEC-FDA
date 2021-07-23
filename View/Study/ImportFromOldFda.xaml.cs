@@ -1,4 +1,4 @@
-﻿using FdaViewModel.Study;
+﻿using ViewModel.Study;
 using Importer;
 using System;
 using System.Collections.Generic;

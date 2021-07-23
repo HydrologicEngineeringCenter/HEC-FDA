@@ -1,13 +1,15 @@
-﻿using FdaViewModel.Utilities;
+﻿using ViewModel.Utilities;
+using Functions;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.GeoTech
+namespace ViewModel.GeoTech
 {
-    class LeveeFeatureOwnerElement : Utilities.ParentElement
+    public class LeveeFeatureOwnerElement : Utilities.ParentElement
     {
         #region Notes
         #endregion
@@ -54,12 +56,22 @@ namespace FdaViewModel.GeoTech
         }
         public void AddNewLeveeFeature(object arg1, EventArgs arg2)
         {
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSiblingRules(this);
-               //.WithParentGuid(this.GUID)
-               //.WithCanOpenMultipleTimes(true);
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(
+                Saving.PersistenceFactory.GetLeveeManager(),
+                 (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
+                (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
 
-            LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(actionManager);
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                .WithSaveUndoRedo(saveHelper)
+                .WithSiblingRules(this);
+
+            //create default curve 
+            List<double> xValues = new List<double>() { 0};
+            List<double> yValues = new List<double>() { 0 };
+            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues);
+            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.LateralStructureFailure, (IFunction)func);
+
+            LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(defaultCurve, actionManager);
             //StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);
             string header = "Create Levee";
@@ -67,10 +79,17 @@ namespace FdaViewModel.GeoTech
             Navigate(tab, false, false);
           
         }
-       
+
         #endregion
         #region Functions
-       
+        public ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
+        {
+            LeveeFeatureEditorVM editorVM = (LeveeFeatureEditorVM)vm;
+            //Editors.CurveEditorVM vm = (Editors.CurveEditorVM)editorVM;
+            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            //return new RatingCurveElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
+            return new LeveeFeatureElement(editorVM.Name, editDate, editorVM.Description, editorVM.Elevation, editorVM.IsUsingDefault, editorVM.Curve);
+        }
         #endregion
     }
 }

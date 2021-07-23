@@ -16,7 +16,7 @@ using System.ComponentModel;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
-using FdaViewModel.Plots;
+using ViewModel.Plots;
 using Model;
 using Model.Inputs.Functions.ImpactAreaFunctions;
 
@@ -395,7 +395,7 @@ namespace View.Plots
 
      //           if (parentControl != null && parentControl.GetType() == typeof(IndividualLinkedPlotControl))
      //           {
-     //               FdaViewModel.Plots.IndividualLinkedPlotControlVM vm = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
+     //               ViewModel.Plots.IndividualLinkedPlotControlVM vm = (ViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
 
      //               owner.BaseFunction = vm.IndividualPlotWrapperVM.PlotVM.BaseFunction;
      //               ((Plots.IndividualLinkedPlotControl)parentControl).LinkedPlot = null;
@@ -605,7 +605,7 @@ namespace View.Plots
 
      //       if (parentControl != null && parentControl.GetType() == typeof(IndividualLinkedPlotControl))
      //       {
-     //           FdaViewModel.Plots.IndividualLinkedPlotControlVM vm = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
+     //           ViewModel.Plots.IndividualLinkedPlotControlVM vm = (ViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
 
      //           this.BaseFunction = vm.IndividualPlotWrapperVM.PlotVM.BaseFunction;
      //           ((IndividualLinkedPlotControl)parentControl).LinkedPlot = this;
@@ -1322,7 +1322,7 @@ namespace View.Plots
      //   //private void TrackerOutsideRangeFromDisplayNextTracker()
      //   //{
      //   //    this.TrackerIsOutsideTheCurveRange = true;
-     //   //    FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+     //   //    ViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (ViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
      //   //    vm.PlotIsOutsideRange(this, new EventArgs());
 
      //   //    TurnTrackerOff();
@@ -1332,7 +1332,7 @@ namespace View.Plots
      //   //private void TrackerOutsideRangeFromDisplayPreviousTracker()
      //   //{
      //   //    this.TrackerIsOutsideTheCurveRange = true;
-     //   //    FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+     //   //    ViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (ViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
      //   //    vm.PlotIsOutsideRange(this, new EventArgs());
 
      //   //    TurnTrackerOff();
@@ -1487,14 +1487,14 @@ namespace View.Plots
      //       }
      //          // this.TrackerIsOutsideTheCurveRange = false;
      //       //    //this is hacky but the cond editor uses a wrapper around the individual linked plot and the results viewer doesn't
-     //       //    if (this.DataContext.GetType() == typeof(FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM))
+     //       //    if (this.DataContext.GetType() == typeof(ViewModel.Plots.ConditionsIndividualPlotWrapperVM))
      //       //    {
-     //       //        FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+     //       //        ViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (ViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
      //       //        vm.PlotIsInsideRange(this, new EventArgs());
      //       //    }
-     //       //    else if (this.DataContext.GetType() == typeof(FdaViewModel.Plots.IndividualLinkedPlotVM))
+     //       //    else if (this.DataContext.GetType() == typeof(ViewModel.Plots.IndividualLinkedPlotVM))
      //       //    {
-     //       //        FdaViewModel.Plots.IndividualLinkedPlotVM vm = (FdaViewModel.Plots.IndividualLinkedPlotVM)this.DataContext;
+     //       //        ViewModel.Plots.IndividualLinkedPlotVM vm = (ViewModel.Plots.IndividualLinkedPlotVM)this.DataContext;
      //       //        //vm.DisplayOutOfRange = false;
      //       //    }
      //       //}

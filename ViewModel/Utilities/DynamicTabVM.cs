@@ -1,11 +1,11 @@
-﻿using FdaViewModel.Tabs;
+﻿using ViewModel.Tabs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Utilities
+namespace ViewModel.Utilities
 {
     /// <summary>
     /// Contains all the data needed to display a tab or window in FDA. When you pass this into the Navigate() method
@@ -112,7 +112,10 @@ namespace FdaViewModel.Utilities
         /// </summary>
         public void RemoveTab()
         {
-            RemoveTabEvent?.Invoke(this, new EventArgs());
+            if (_BaseVM.IsOkToClose())
+            {
+                RemoveTabEvent?.Invoke(this, new EventArgs());
+            }
         }
 
         /// <summary>
@@ -128,9 +131,20 @@ namespace FdaViewModel.Utilities
         /// Event used to close the window that this tab is in.
         /// Event that gets attached by the TabController.
         /// </summary>
-        public void RemoveWindow()
+        public bool RemoveWindow()
         {
-            RemoveWindowEvent?.Invoke(this, new EventArgs());
+            if (_BaseVM.IsOkToClose())
+            {
+                RemoveWindowEvent?.Invoke(this, new EventArgs());
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
+
+
+
     }
 }

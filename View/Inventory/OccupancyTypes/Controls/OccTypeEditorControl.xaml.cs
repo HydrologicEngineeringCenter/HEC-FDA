@@ -1,5 +1,5 @@
-﻿using FdaViewModel.Editors;
-using FdaViewModel.Inventory.OccupancyTypes;
+﻿using ViewModel.Editors;
+using ViewModel.Inventory.OccupancyTypes;
 using FunctionsView.ViewModel;
 using HEC.Plotting.SciChart2D.Charts;
 using System;
@@ -62,7 +62,7 @@ namespace View.Inventory.OccupancyTypes.Controls
         }
         private void OccTypeNameBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            //FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //if (vm == null) { return; }
             //if (vm.SelectedOccType == null) { return; }
             //vm.UpdateKeyInTabsDictionary(vm.SelectedOccType.Name, OccTypeNameBox.Text);
@@ -76,14 +76,14 @@ namespace View.Inventory.OccupancyTypes.Controls
 
         //private void EditStructureDamageButton_Click(object sender, RoutedEventArgs e)
         //{
-        //    FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+        //    ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
         //    if (vm == null) { return; }
         //    vm.LaunchDepthDamageEditor();
         //}
 
         private void StructureValueUncertainty_LostFocus(object sender, RoutedEventArgs e)
         {
-            //FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //if (vm == null) 
             //{ 
             //    return; 
@@ -95,28 +95,28 @@ namespace View.Inventory.OccupancyTypes.Controls
 
         private void ContentValueUncertainty_LostFocus(object sender, RoutedEventArgs e)
         {
-            //FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //if (vm == null) { return; }
             //vm.SelectedOccType.ContentValueUncertainty = ContentValueUncertainty.ReturnDistribution();
         }
 
         private void VehicleValueUncertainty_LostFocus(object sender, RoutedEventArgs e)
         {
-            //FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //if (vm == null) { return; }
             //vm.SelectedOccType.VehicleValueUncertainty = VehicleValueUncertainty.ReturnDistribution();
         }
 
         private void OtherValueUncertainty_LostFocus(object sender, RoutedEventArgs e)
         {
-            //FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //if (vm == null) { return; }
             //vm.SelectedOccType.OtherValueUncertainty = OtherValueUncertainty.ReturnDistribution();
         }
 
         private void OccTypeDescriptionBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            //FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //if (vm == null || vm.SelectedOccType == null) { return; }
             //string desc = OccTypeDescriptionBox.Text;
             //if(desc == null)
@@ -128,7 +128,7 @@ namespace View.Inventory.OccupancyTypes.Controls
 
         private void FoundationHeightUncertainty_LostFocus(object sender, RoutedEventArgs e)
         {
-            //FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //if(vm == null) { return; }
             //vm.SelectedOccType.FoundationHeightUncertainty = FoundationHeightUncertainty.ReturnDistribution();
         }

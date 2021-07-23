@@ -1,4 +1,4 @@
-﻿using FdaViewModel.Plots;
+﻿using ViewModel.Plots;
 using HEC.Plotting.Core;
 using HEC.Plotting.Core.DataModel;
 using HEC.Plotting.SciChart2D.Charts;

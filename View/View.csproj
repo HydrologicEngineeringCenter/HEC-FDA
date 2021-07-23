@@ -139,13 +139,13 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FdaViewModel\ViewModel.csproj" />
     <ProjectReference Include="..\FunctionsView\FunctionsView.csproj" />
     <ProjectReference Include="..\Importer\Importer.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
     <ProjectReference Include="..\OccupancyTypes\OccupancyTypes.csproj" />
     <ProjectReference Include="..\UserControls\UserControls.vbproj" />
     <ProjectReference Include="..\Utilities\Utilities.csproj" />
+    <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\FDA.ico" />

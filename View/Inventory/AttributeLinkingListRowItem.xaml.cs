@@ -68,7 +68,7 @@ namespace View.Inventory
                 NewOccType = cmb_NewOccType.SelectedItem.ToString();// ((Consequences_Assist.ComputableObjects.OccupancyType)cmb_NewOccType.SelectedItem).Name;
 
             }
-            FdaViewModel.Inventory.AttributeLinkingListVM vm = (FdaViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
+            ViewModel.Inventory.AttributeLinkingListVM vm = (ViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
             if (vm != null)
             {
                 vm.UpdateOcctypeDictionary(OldOccType, NewOccType);

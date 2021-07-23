@@ -6,13 +6,13 @@ using System.Windows.Media;
 using OpenGLMapping;
 using System.IO;
 using System.Xml;
-using FdaViewModel.Utilities;
+using ViewModel.Utilities;
 using System.Windows.Input;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using System.Timers;
 using System.Windows.Shapes;
-using FdaViewModel;
+using ViewModel;
 
 namespace View
 {
@@ -39,10 +39,10 @@ namespace View
 
    
 
-            FdaViewModel.Utilities.WindowVM vm = (FdaViewModel.Utilities.WindowVM)this.DataContext;
+            ViewModel.Utilities.WindowVM vm = (ViewModel.Utilities.WindowVM)this.DataContext;
             Title = vm.Title;
 
-            FdaViewModel.Study.FdaStudyVM test = (FdaViewModel.Study.FdaStudyVM)vm.CurrentView;
+            ViewModel.Study.FdaStudyVM test = (ViewModel.Study.FdaStudyVM)vm.CurrentView;
 
             test.RequestShapefilePaths += RequestShapefilePaths;
             test.RequestShapefilePathsOfType += RequestShapefilePathsOfType;
@@ -55,37 +55,37 @@ namespace View
         }
 
 
-        private void RequestAddToMapWindow(object sender, FdaViewModel.Utilities.AddMapFeatureEventArgs args)
+        private void RequestAddToMapWindow(object sender, ViewModel.Utilities.AddMapFeatureEventArgs args)
         {
             Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
             if (sv == null) { return; }
 
-            //FdaViewModel.Study.FdaStudyVM studyVM = (FdaViewModel.Study.FdaStudyVM)sv.DataContext;
+            //ViewModel.Study.FdaStudyVM studyVM = (ViewModel.Study.FdaStudyVM)sv.DataContext;
 
             OpenGLMapping.MapTreeView mtv = sv.MapTreeView;
-            if (args.GetType().Name == nameof(FdaViewModel.Utilities.AddGriddedDataEventArgs))
+            if (args.GetType().Name == nameof(ViewModel.Utilities.AddGriddedDataEventArgs))
             {
-                FdaViewModel.Utilities.AddGriddedDataEventArgs gargs = args as FdaViewModel.Utilities.AddGriddedDataEventArgs;
+                ViewModel.Utilities.AddGriddedDataEventArgs gargs = args as ViewModel.Utilities.AddGriddedDataEventArgs;
                 
                 OpenGLMapping.RasterFeatureNode rfn = new RasterFeatureNode(new MapRaster(gargs.Features, gargs.Ramp, args.FeatureName, mtv.MapWindow), args.FeatureName);
                 mtv.AddGisData(rfn, 0, true);
-                if (sender.GetType().Name == nameof(FdaViewModel.Watershed.TerrainElement))
+                if (sender.GetType().Name == nameof(ViewModel.Watershed.TerrainElement))
                 {
                     args.MapFeatureHash = rfn.GetHashCode();
-                    rfn.RemoveLayerCalled += ((FdaViewModel.Watershed.TerrainElement)sender).removedcallback;
+                    rfn.RemoveLayerCalled += ((ViewModel.Watershed.TerrainElement)sender).removedcallback;
                 }
-                if (sender.GetType().Name == nameof(FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationElement))
+                if (sender.GetType().Name == nameof(ViewModel.WaterSurfaceElevation.WaterSurfaceElevationElement))
                 {
                     args.MapFeatureHash = rfn.GetHashCode();
-                    rfn.RemoveLayerCalled += ((FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationElement)sender).removedcallback;
+                    rfn.RemoveLayerCalled += ((ViewModel.WaterSurfaceElevation.WaterSurfaceElevationElement)sender).removedcallback;
                 }
 
             }
-            else if (args.GetType().Name == nameof(FdaViewModel.Utilities.AddShapefileEventArgs))
+            else if (args.GetType().Name == nameof(ViewModel.Utilities.AddShapefileEventArgs))
             {
-                FdaViewModel.Utilities.AddShapefileEventArgs sargs = args as FdaViewModel.Utilities.AddShapefileEventArgs;
+                ViewModel.Utilities.AddShapefileEventArgs sargs = args as ViewModel.Utilities.AddShapefileEventArgs;
 
-                //if (sender.GetType().Name == nameof(FdaViewModel.ImpactArea.ImpactAreaElement))
+                //if (sender.GetType().Name == nameof(ViewModel.ImpactArea.ImpactAreaElement))
                 if (sargs.Features.GetType() == typeof(LifeSimGIS.PolygonFeatures))
                 {
                     LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)sargs.Features;
@@ -95,15 +95,15 @@ namespace View
 
                     mtv.AddGisData(vfn, 0, true);
                     args.MapFeatureHash = vfn.GetHashCode();
-                    vfn.RemoveLayerCalled += ((FdaViewModel.ImpactArea.ImpactAreaElement)sender).removedcallback;
+                    vfn.RemoveLayerCalled += ((ViewModel.ImpactArea.ImpactAreaElement)sender).removedcallback;
                 }
-                //else if (sender.GetType().Name == nameof(FdaViewModel.Inventory.InventoryElement))
+                //else if (sender.GetType().Name == nameof(ViewModel.Inventory.InventoryElement))
                 else if (sargs.Features.GetType() == typeof(LifeSimGIS.PointFeatures))
                 {
                     VectorFeatureNode vfn = new VectorFeatureNode(new MapPoints((LifeSimGIS.PointFeatures)sargs.Features, sargs.Attributes, sargs.FeatureName, new OpenGLMapping.OpenGLDrawSingle(sargs.DrawInfo), mtv.MapWindow), sargs.FeatureName);
                     mtv.AddGisData(vfn, 0, true);
                     args.MapFeatureHash = vfn.GetHashCode();
-                    vfn.RemoveLayerCalled += ((FdaViewModel.Inventory.InventoryElement)sender).removedcallback;
+                    vfn.RemoveLayerCalled += ((ViewModel.Inventory.InventoryElement)sender).removedcallback;
                 }
                 else if (sargs.Features.GetType() == typeof(LifeSimGIS.LineFeatures))
                 {
@@ -154,7 +154,7 @@ namespace View
 
             //OpenStructureAttributeTableEventArgs sargs = args as OpenStructureAttributeTableEventArgs;
 
-            ////if (sender.GetType().Name == nameof(FdaViewModel.ImpactArea.ImpactAreaElement))
+            ////if (sender.GetType().Name == nameof(ViewModel.ImpactArea.ImpactAreaElement))
             //if (sargs.Features.GetType() == typeof(LifeSimGIS.PolygonFeatures))
             //{
             //    LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)sargs.Features;
@@ -164,9 +164,9 @@ namespace View
 
             //    mtv.AddGisData(vfn, 0, true);
             //    args.MapFeatureHash = vfn.GetHashCode();
-            //    vfn.RemoveLayerCalled += ((FdaViewModel.ImpactArea.ImpactAreaElement)sender).removedcallback;
+            //    vfn.RemoveLayerCalled += ((ViewModel.ImpactArea.ImpactAreaElement)sender).removedcallback;
             //}
-            ////else if (sender.GetType().Name == nameof(FdaViewModel.Inventory.InventoryElement))
+            ////else if (sender.GetType().Name == nameof(ViewModel.Inventory.InventoryElement))
             //else if (sargs.Features.GetType() == typeof(LifeSimGIS.PointFeatures))
             //{
             //    MapPoints mapPoints = new MapPoints((LifeSimGIS.PointFeatures)sargs.Features, sargs.Attributes, sargs.FeatureName, new OpenGLMapping.OpenGLDrawSingle(sargs.DrawInfo), mtv.MapWindow);
@@ -184,7 +184,7 @@ namespace View
             throw new NotImplementedException();
         }
 
-        private void RequestRemoveFromMapWindow(object sender, FdaViewModel.Utilities.RemoveMapFeatureEventArgs args)
+        private void RequestRemoveFromMapWindow(object sender, ViewModel.Utilities.RemoveMapFeatureEventArgs args)
         {
             Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
             if (sv == null) { return; }
@@ -209,7 +209,7 @@ namespace View
                 files.Add(fn.GetBaseFeature.SourceFile);
             }
         }
-        private void RequestShapefilePathsOfType(ref System.Collections.Generic.List<string> files, FdaViewModel.Utilities.VectorFeatureType featureType)
+        private void RequestShapefilePathsOfType(ref System.Collections.Generic.List<string> files, ViewModel.Utilities.VectorFeatureType featureType)
         {
             Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
             if (sv == null) { return; }
@@ -219,19 +219,19 @@ namespace View
             {
                 switch (featureType)
                 {
-                    case FdaViewModel.Utilities.VectorFeatureType.Point:
+                    case ViewModel.Utilities.VectorFeatureType.Point:
                         if (fn.GetBaseFeature.GetType() == typeof(OpenGLMapping.MapPoints))
                         {
                             files.Add(fn.GetBaseFeature.SourceFile);
                         }
                         break;
-                    case FdaViewModel.Utilities.VectorFeatureType.Line:
+                    case ViewModel.Utilities.VectorFeatureType.Line:
                         if (fn.GetBaseFeature.GetType() == typeof(OpenGLMapping.MapLines))
                         {
                             files.Add(fn.GetBaseFeature.SourceFile);
                         }
                         break;
-                    case FdaViewModel.Utilities.VectorFeatureType.Polygon:
+                    case ViewModel.Utilities.VectorFeatureType.Polygon:
                         if (fn.GetBaseFeature.GetType() == typeof(OpenGLMapping.MapPolygons))
                         {
                             files.Add(fn.GetBaseFeature.SourceFile);
@@ -244,7 +244,7 @@ namespace View
 
             }
         }
-        public ViewWindow(FdaViewModel.Utilities.WindowVM newvm)
+        public ViewWindow(ViewModel.Utilities.WindowVM newvm)
         {
             InitializeComponent();
             DataContext = newvm;
@@ -304,9 +304,9 @@ namespace View
                 aTimer.Close();
             }
             WindowVM vm = (WindowVM)this.DataContext;
-            if (vm.CurrentView.GetType() == typeof(FdaViewModel.Study.FdaStudyVM))
+            if (vm.CurrentView.GetType() == typeof(ViewModel.Study.FdaStudyVM))
             {
-                FdaViewModel.Study.FdaStudyVM studyVM = (FdaViewModel.Study.FdaStudyVM)vm.CurrentView;
+                ViewModel.Study.FdaStudyVM studyVM = (ViewModel.Study.FdaStudyVM)vm.CurrentView;
                 studyVM.Dispose();
             }
             else
@@ -335,7 +335,7 @@ namespace View
             //    this.Width = ((Utilities.IPopOut)masterControl.Content).PopOutWidth;
             //}
 
-            // if (this.DataContext.GetType() != typeof(FdaViewModel.Study.FdaStudyVM))
+            // if (this.DataContext.GetType() != typeof(ViewModel.Study.FdaStudyVM))
             // {
             //this.SizeToContent = SizeToContent.WidthAndHeight;
             //then we want the window to size to the content better.
@@ -438,7 +438,7 @@ namespace View
 
         private void Window_StateChanged(object sender, EventArgs e)
         {
-            //FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+            //ViewModel.Study.FdaStudyVM vm = (ViewModel.Study.FdaStudyVM)this.DataContext;
             ////vm.MWMTVConn. MapTreeView = MapTreeView;
             //if (vm.MWMTVConn != null)
             //{

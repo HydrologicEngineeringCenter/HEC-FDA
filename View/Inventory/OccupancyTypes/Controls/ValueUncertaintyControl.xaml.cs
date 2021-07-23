@@ -1,4 +1,4 @@
-﻿using FdaViewModel.Inventory.OccupancyTypes;
+﻿using ViewModel.Inventory.OccupancyTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

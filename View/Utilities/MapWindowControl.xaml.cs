@@ -120,7 +120,7 @@ namespace View.Utilities
         //}
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Utilities.MapWindowControlVM vm = (FdaViewModel.Utilities.MapWindowControlVM)this.DataContext;
+            ViewModel.Utilities.MapWindowControlVM vm = (ViewModel.Utilities.MapWindowControlVM)this.DataContext;
 
             MapToolBar.MapWindow = MapWindow.MapWindow;
 

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:View.Study"
-        xmlns:ViewModel="clr-namespace:FdaViewModel.Study;assembly=FdaViewModel"
+        xmlns:ViewModel="clr-namespace:ViewModel.Study;assembly=ViewModel"
         xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
         xmlns:Utilities="clr-namespace:View.Utilities"
         mc:Ignorable="d"

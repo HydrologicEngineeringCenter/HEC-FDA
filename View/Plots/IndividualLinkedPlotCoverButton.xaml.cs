@@ -27,7 +27,7 @@ namespace View.Plots
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Plots.IndividualLinkedPlotCoverButtonVM vm = (FdaViewModel.Plots.IndividualLinkedPlotCoverButtonVM)this.DataContext;
+            ViewModel.Plots.IndividualLinkedPlotCoverButtonVM vm = (ViewModel.Plots.IndividualLinkedPlotCoverButtonVM)this.DataContext;
             vm.ButtonClicked();
         }
     }

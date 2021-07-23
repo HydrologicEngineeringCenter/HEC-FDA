@@ -1,6 +1,6 @@
 ﻿using FdaLogging;
-using FdaViewModel.Utilities;
-using FdaViewModel.Utilities.Transactions;
+using ViewModel.Utilities;
+using ViewModel.Utilities.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

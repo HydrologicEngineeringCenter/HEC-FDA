@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using OxyPlot.Axes;
 using OxyPlot;
-using FdaViewModel.Output;
+using ViewModel.Output;
 using OxyPlot.Series;
 
 namespace View.Output

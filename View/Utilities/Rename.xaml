@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View.Utilities"
         xmlns:OkClose="clr-namespace:View.Utilities"
-        xmlns:ViewModel="clr-namespace:FdaViewModel.Utilities;assembly=FdaViewModel"
+        xmlns:ViewModel="clr-namespace:ViewModel.Utilities;assembly=ViewModel"
         mc:Ignorable="d"
          >
     <Grid>

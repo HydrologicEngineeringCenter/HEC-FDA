@@ -27,7 +27,7 @@ namespace View.Study
 
         private void TextBoxFolderBrowser_SelectionMade(string fullpath)
         {
-            FdaViewModel.Study.NewStudyVM vm = (FdaViewModel.Study.NewStudyVM)this.DataContext;
+            ViewModel.Study.NewStudyVM vm = (ViewModel.Study.NewStudyVM)this.DataContext;
             vm.Path = fullpath;
         }
 

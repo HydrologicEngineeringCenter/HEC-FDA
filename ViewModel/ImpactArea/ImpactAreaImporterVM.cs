@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using FdaViewModel.Editors;
+using ViewModel.Editors;
 
-namespace FdaViewModel.ImpactArea
+namespace ViewModel.ImpactArea
 {
     //[Author("q0heccdm", "10 / 13 / 2016 11:38:36 AM")]
     public class ImpactAreaImporterVM : Editors.BaseEditorVM
@@ -27,6 +25,7 @@ namespace FdaViewModel.ImpactArea
         //private ImpactAreaUniqueNameSet _SelectedImpactAreaUniqueNameSet;
         private ObservableCollection<ImpactAreaRowItem> _ListOfRows;
         private bool _IsInEditMode = false;
+        private string _SelectedUniqueName;
         #endregion
         #region Properties
             public bool IsInEditMode
@@ -66,17 +65,23 @@ namespace FdaViewModel.ImpactArea
         //    get { return _SelectedImpactAreaUniqueNameSet; }
         //    set { _SelectedImpactAreaUniqueNameSet = value; NotifyPropertyChanged(); }
         //}
-        public string SelectedUniqueName { get; set; }
+        public string SelectedUniqueName
+        {
+            get { return _SelectedUniqueName; }
+            set { _SelectedUniqueName = value; NotifyPropertyChanged(); }
+        }
         #endregion
         #region Constructors
         public ImpactAreaImporterVM(ObservableCollection<string> PolygonPaths, EditorActionManager actionManager):base(actionManager)
         {
+            SetDimensions(800, 500, 400, 400);
             AvailablePaths = PolygonPaths;
             IsInEditMode = false;
         }
 
         public ImpactAreaImporterVM(ImpactAreaElement element, ObservableCollection<ImpactAreaRowItem> impactAreaRows, EditorActionManager actionManager) :base(element, actionManager)
         {
+            SetDimensions(800, 500, 400, 400);
             Name = element.Name;
             ListOfRows = impactAreaRows;
             Description = element.Description;
@@ -94,7 +99,7 @@ namespace FdaViewModel.ImpactArea
         {
             if (!System.IO.File.Exists(System.IO.Path.ChangeExtension(path, "dbf")))
             {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
+                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
                 return;
             }
             SelectedPath = path; //isnt this bound??
@@ -116,7 +121,7 @@ namespace FdaViewModel.ImpactArea
             }
             if (!(uniqueNameList.Count > 0))
             {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("The selected path: " + SelectedPath + "/ndoes not contain any string fields.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
+                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("The selected path: " + SelectedPath + "/ndoes not contain any string fields.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
                 return;
             }
             UniqueFields = uniqueNameList;
@@ -126,7 +131,7 @@ namespace FdaViewModel.ImpactArea
         {
             if (!System.IO.File.Exists(System.IO.Path.ChangeExtension(SelectedPath, "dbf")))
             {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
+                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
                 return;
             }
 
@@ -151,16 +156,26 @@ namespace FdaViewModel.ImpactArea
         {
             AddRule(nameof(Name), () => Name != null, "Name cannot be null.");
             AddRule(nameof(Name), () => Name != "", "Name cannot be null.");
+            AddRule(nameof(SelectedUniqueName), () => Name != null, "A unique name has not been selected.");
+            AddRule(nameof(ListOfRows), () => ListOfRows != null, "There are no impact area rows.");
+
             //AddRule(nameof(Name), () => { if (Name == null) { return false; } else { return !Name.Equals(""); } }, "Name cannot be blank.");
             //if (IsNameReadOnly == false)
-           // {
-              //  AddRule(nameof(SelectedPath), () => SelectedPath != null, "You must select a shapefile");
-           // }
+            // {
+            //  AddRule(nameof(SelectedPath), () => SelectedPath != null, "You must select a shapefile");
+            // }
             //AddRule(nameof(SelectedImpactAreaUniqueNameSet), () => SelectedImpactAreaUniqueNameSet != null, "You must select a unique name.");
 
 
             //AddRule(nameof(Mean), () => Mean > 1, "Mean must be greater than 1");
 
+        }
+
+        public bool IsValid()
+        {
+            //do some basic validation.
+            //if()
+            return true;
         }
 
         public override void Save()

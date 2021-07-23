@@ -23,7 +23,7 @@ namespace Fda.Output
         {
             InitializeComponent();
         }
-        public CreateEconImportFile(FdaViewModel.Output.CreateEconImportFileVM vm)
+        public CreateEconImportFile(ViewModel.Output.CreateEconImportFileVM vm)
         {
             InitializeComponent();
             Resources["vm"] = vm;

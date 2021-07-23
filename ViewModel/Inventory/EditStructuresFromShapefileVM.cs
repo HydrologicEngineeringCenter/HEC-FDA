@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Inventory
+namespace ViewModel.Inventory
 {
     //[Author(q0heccdm, 6 / 29 / 2017 11:34:13 AM)]
     public class EditStructuresFromShapefileVM : BaseViewModel

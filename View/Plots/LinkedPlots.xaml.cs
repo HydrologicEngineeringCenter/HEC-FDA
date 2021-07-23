@@ -41,7 +41,7 @@ namespace Fda.Plots
 
         private void SetTheLinkages()
         {
-            FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+            ViewModel.Plots.LinkedPlotsVM vm = (ViewModel.Plots.LinkedPlotsVM)this.DataContext;
 
             doubleLineModulator.BaseFunction = plot1.BaseFunction;
             DoubleLineHorizontal.BaseFunction = plot5.BaseFunction;
@@ -173,7 +173,7 @@ namespace Fda.Plots
             //this is all kinds of bad i think. The whole system of getting the names into the vm and into here
             //needs work i think. but for now...
             //some of the plots can be created when running the compute. At least plot 5 can (ext int stage)
-            FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+            ViewModel.Plots.LinkedPlotsVM vm = (ViewModel.Plots.LinkedPlotsVM)this.DataContext;
             List<string> selectedElementNames = vm.SelectedElementNames;
             if(availablePlots.Count == selectedElementNames.Count)
             {
@@ -526,7 +526,7 @@ namespace Fda.Plots
         //            xValue = ((IndividualLinkedPlot)theSelectedPlot).GetPairedValue(yValue, false, theSelectedPlot.OxyPlot1.Model, isAxisReversed);
         //            if (yValue > theSelectedPlot.OxyPlot1.Model.Axes[1].Maximum || yValue < theSelectedPlot.OxyPlot1.Model.Axes[1].Minimum)
         //            {
-        //                //FdaViewModel.Utilities.CustomMessageBoxVM vm = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "Y Value is out of range");
+        //                //ViewModel.Utilities.CustomMessageBoxVM vm = new ViewModel.Utilities.CustomMessageBoxVM(ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "Y Value is out of range");
         //                MessageBox.Show("Y Value is out of range", "Out of Range");
         //                return;
         //            }
@@ -540,7 +540,7 @@ namespace Fda.Plots
         //        yValue = ((IndividualLinkedPlot)theSelectedPlot).GetPairedValue(xValue, true, theSelectedPlot.OxyPlot1.Model, isAxisReversed);
         //        if (xValue > theSelectedPlot.OxyPlot1.Model.Axes[0].Maximum || xValue < theSelectedPlot.OxyPlot1.Model.Axes[0].Minimum)
         //        {
-        //            //FdaViewModel.Utilities.CustomMessageBoxVM vm = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "X Value is out of range");
+        //            //ViewModel.Utilities.CustomMessageBoxVM vm = new ViewModel.Utilities.CustomMessageBoxVM(ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "X Value is out of range");
         //            MessageBox.Show("X Value is out of range", "Out of Range");
         //            return;
         //        }
@@ -631,7 +631,7 @@ namespace Fda.Plots
 
         private void btn_Prev_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+            ViewModel.Plots.LinkedPlotsVM vm = (ViewModel.Plots.LinkedPlotsVM)this.DataContext;
             //the current iteration is actually 1 less than what the vm returns because the value is bound
             //to the vm and i want it to start with 1
             int currentIteration = vm.IterationNumber-1;
@@ -654,7 +654,7 @@ namespace Fda.Plots
 
         private void btn_Next_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+            ViewModel.Plots.LinkedPlotsVM vm = (ViewModel.Plots.LinkedPlotsVM)this.DataContext;
             //the current iteration is actually 1 less than what the vm returns because the value is bound
             //to the vm and i want it to start with 1
             int currentIteration = vm.IterationNumber - 1;
@@ -699,7 +699,7 @@ namespace Fda.Plots
             }
 
             //reasign the input functions
-            FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+            ViewModel.Plots.LinkedPlotsVM vm = (ViewModel.Plots.LinkedPlotsVM)this.DataContext;
             //InputFunctions = vm.Result.Realizations[iteration].Functions;
 
             
@@ -802,7 +802,7 @@ namespace Fda.Plots
 
         private void btn_ViewMeanAEP_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+            ViewModel.Plots.LinkedPlotsVM vm = (ViewModel.Plots.LinkedPlotsVM)this.DataContext;
             HistogramViewer hv = new HistogramViewer(vm.Result, false);
             //hv.Owner = this;
             hv.Show();
@@ -810,7 +810,7 @@ namespace Fda.Plots
 
         private void btn_ViewMeanEAD_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+            ViewModel.Plots.LinkedPlotsVM vm = (ViewModel.Plots.LinkedPlotsVM)this.DataContext;
             HistogramViewer hv = new HistogramViewer(vm.Result, true);
             //hv.Owner = this;
             hv.Show();
@@ -818,7 +818,7 @@ namespace Fda.Plots
 
         //private void btn_DisplayIteration_Click(object sender, RoutedEventArgs e)
         //{
-        //    FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+        //    ViewModel.Plots.LinkedPlotsVM vm = (ViewModel.Plots.LinkedPlotsVM)this.DataContext;
         //    int iteration;
         //    bool parseWorked = int.TryParse( txt_IterationNumber.Text, out iteration);
         //    if (parseWorked && iteration > 0 && iteration <= vm.TotalRealizations)
@@ -833,7 +833,7 @@ namespace Fda.Plots
 
         private void txt_IterationNumber_LostFocus(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Plots.LinkedPlotsVM vm = (FdaViewModel.Plots.LinkedPlotsVM)this.DataContext;
+            ViewModel.Plots.LinkedPlotsVM vm = (ViewModel.Plots.LinkedPlotsVM)this.DataContext;
             int iteration;
             bool parseWorked = int.TryParse(txt_IterationNumber.Text, out iteration);
             if (parseWorked && iteration > 0 && iteration <= vm.TotalRealizations)

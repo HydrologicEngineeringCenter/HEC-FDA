@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:View.Study"
         xmlns:OkClose="clr-namespace:View.Utilities"
         mc:Ignorable="d"
-        xmlns:ViewModel="clr-namespace:FdaViewModel.Study;assembly=FdaViewModel"
+        xmlns:ViewModel="clr-namespace:ViewModel.Study;assembly=ViewModel"
         Height="140" Width="300">
     <UserControl.Resources>
         <ViewModel:AnalysisYearsVM x:Key="vm"/>

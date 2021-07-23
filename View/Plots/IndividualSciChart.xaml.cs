@@ -1,5 +1,5 @@
-﻿using FdaViewModel.Editors;
-using FdaViewModel.Plots;
+﻿using ViewModel.Editors;
+using ViewModel.Plots;
 using HEC.Plotting.SciChart2D.Charts;
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using FdaViewModel.Conditions;
+using ViewModel.Conditions;
 using HEC.Plotting.SciChart2D.ViewModel;
 
 namespace View.Plots

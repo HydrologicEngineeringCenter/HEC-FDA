@@ -31,7 +31,7 @@ namespace View.WaterSurfaceElevation
 
         private void TxtDirectory_SelectionMade(string fullpath)
         {
-            FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
+            ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
             //clear out any already existing rows
             if (!System.IO.Directory.Exists(fullpath))
             {
@@ -95,7 +95,7 @@ namespace View.WaterSurfaceElevation
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
+            ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
             if(vm.IsEditor == true)
             {
                 //get rid of the folder selection because we no longer know where the user pulled the data from
@@ -105,7 +105,7 @@ namespace View.WaterSurfaceElevation
 
         //private void btn_OK_Click(object sender, RoutedEventArgs e)
         //{
-        //    FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
+        //    ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
         //    bool validationIsGood = vm.OKButtonClicked();
         //    if(validationIsGood) //this runs some validation and returns true if everything was good
         //    {

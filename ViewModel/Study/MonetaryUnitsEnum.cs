@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Study
+namespace ViewModel.Study
 {
     public enum MonetaryUnitsEnum : byte
     {

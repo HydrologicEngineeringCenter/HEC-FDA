@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Plots
+namespace ViewModel.Plots
 {
     public interface ICoverButton
     {

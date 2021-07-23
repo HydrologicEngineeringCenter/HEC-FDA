@@ -15,15 +15,15 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Fda.Plots;
 using System.Collections.ObjectModel;
-using FdaViewModel.Plots;
-using FdaViewModel.Editors;
+using ViewModel.Plots;
+using ViewModel.Editors;
 using FunctionsView.ViewModel;
 using HEC.Plotting.SciChart2D.Charts;
-using FdaViewModel.Conditions;
+using ViewModel.Conditions;
 using HEC.Plotting.SciChart2D.Controller;
 using HEC.Plotting.Core;
 using View.Plots;
-using FdaViewModel;
+using ViewModel;
 
 namespace View.Conditions
 {
@@ -90,7 +90,7 @@ namespace View.Conditions
 
             HorizontalPlotFailureControl.PopLateralStructImporterLeft += new EventHandler(PopLateralStructureImporterOut);
             HorizontalPlotFailureControl.CancelLateralStructure += new EventHandler(CancelLateralStructure);
-            //    FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+            //    ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
 
             //    TheAddedPlots = new ObservableCollection<ILinkedPlot>();
             //    AddedPlotControls = new ObservableCollection<IndividualLinkedPlotControl>();
@@ -100,7 +100,7 @@ namespace View.Conditions
 
             //    //plot0.ChangeThisCurve += new EventHandler(vm.LaunchAddInflowFrequencyCurve);
 
-            //    //FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+            //    //ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
 
         }
 
@@ -313,7 +313,7 @@ namespace View.Conditions
             //        ObservablePlots.Add((IndividualLinkedPlot)plot);
             //    }
             //}
-            ////FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+            ////ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
             ////vm.AvailablePlots = TheAddedPlots;
 
             return TheAddedPlots;
@@ -328,7 +328,7 @@ namespace View.Conditions
         private void btn_AddPlot0_Click(object sender, RoutedEventArgs e)
         {
         //    ////display the add flow frequency window
-        //    //FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+        //    //ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
         //    //vm.LaunchAddInflowFrequencyCurve(this, new EventArgs());
         //    //if (vm.Plot0VM.IsVisible == true)
         //    //{
@@ -344,7 +344,7 @@ namespace View.Conditions
 
         private void btn_AddPlot1_Click(object sender, RoutedEventArgs e)
         {
-        //    //FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+        //    //ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
         //    //vm.LaunchAddInflowOutflowCurve();
         //    //if (vm.IsPlot1Visible == true)
         //    //{
@@ -376,7 +376,7 @@ namespace View.Conditions
 
         private void btn_AddPlot3_Click(object sender, RoutedEventArgs e)
         {
-        //    //FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+        //    //ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
         //    //vm.LaunchAddRatingCurve();
         //    //if (vm.IsPlot3Visible == true)
         //    //{
@@ -395,7 +395,7 @@ namespace View.Conditions
 
         private void btn_AddPlot5_Click(object sender, RoutedEventArgs e)
         {
-        //    //FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+        //    //ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
         //    //vm.LaunchAddExteriorInteriorCurve();
 
         //    ////the following two lines are required to match the axes up properly between the two
@@ -428,7 +428,7 @@ namespace View.Conditions
 
         private void btn_AddPlot7_Click(object sender, RoutedEventArgs e)
         {
-        //    //FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+        //    //ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
         //    //vm.LaunchAddStageDamageCurve();
 
         //    //if (vm.IsPlot7Visible == true)
@@ -445,7 +445,7 @@ namespace View.Conditions
 
         private void btn_AddPlot8_Click(object sender, RoutedEventArgs e)
         {
-        //    FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+        //    ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
         //    vm.RunPreviewCompute(this, new EventArgs());
             
 
@@ -529,7 +529,7 @@ namespace View.Conditions
         private bool PopPlot5IntoMainGrid()
         {
             IndividualLinkedPlotControlVM vm = (IndividualLinkedPlotControlVM)Plot5Control.DataContext;
-            //vm.IndividualPlotWrapperVM.PlotVM = ((FdaViewModel.Plots.IndividualLinkedPlotControlVM)Plot1Control.DataContext).IndividualPlotWrapperVM.PlotVM;
+            //vm.IndividualPlotWrapperVM.PlotVM = ((ViewModel.Plots.IndividualLinkedPlotControlVM)Plot1Control.DataContext).IndividualPlotWrapperVM.PlotVM;
             //if (vm.CurrentVM == vm.CurveImporterVM)
             //{
             //    MessageBox.Show("Cannot pop the importer form into the main chart area.");
@@ -538,7 +538,7 @@ namespace View.Conditions
             //}
             if (vm.CurrentVM == vm.IndividualPlotWrapperVM)
             {
-                //vm.CurrentVM = (FdaViewModel.BaseViewModel)vm.ModulatorPlotWrapperVM;
+                //vm.CurrentVM = (ViewModel.BaseViewModel)vm.ModulatorPlotWrapperVM;
                 vm.PopPlot5IntoHorizontalModulator();
             }
             else if (vm.CurrentVM == vm.ImportButtonVM)
@@ -557,7 +557,7 @@ namespace View.Conditions
         private bool PopPlotFailureIntoMainGrid()
         {
             IndividualLinkedPlotControlVM vm = (IndividualLinkedPlotControlVM)PlotFailureFunctionControl.DataContext;
-            //vm.IndividualPlotWrapperVM.PlotVM = ((FdaViewModel.Plots.IndividualLinkedPlotControlVM)Plot1Control.DataContext).IndividualPlotWrapperVM.PlotVM;
+            //vm.IndividualPlotWrapperVM.PlotVM = ((ViewModel.Plots.IndividualLinkedPlotControlVM)Plot1Control.DataContext).IndividualPlotWrapperVM.PlotVM;
             //if (vm.CurrentVM == vm.CurveImporterVM)
             //{
             //    MessageBox.Show("Cannot pop the importer form into the main chart area.");
@@ -719,7 +719,7 @@ namespace View.Conditions
         {
 
             IndividualLinkedPlotControlVM vm = (IndividualLinkedPlotControlVM)Plot1Control.DataContext;
-            //vm.IndividualPlotWrapperVM.PlotVM = ((FdaViewModel.Plots.IndividualLinkedPlotControlVM)Plot1Control.DataContext).IndividualPlotWrapperVM.PlotVM;
+            //vm.IndividualPlotWrapperVM.PlotVM = ((ViewModel.Plots.IndividualLinkedPlotControlVM)Plot1Control.DataContext).IndividualPlotWrapperVM.PlotVM;
             if (vm.CurrentVM == vm.CurveImporterVM)
             {
                 btn_CollapsePlot1.ToolTip = "Cannot pop in the curve importer form.";
@@ -791,7 +791,7 @@ namespace View.Conditions
 
         private void btn_PopPlotsOut_Click(object sender, RoutedEventArgs e)
         {
-        //    //FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+        //    //ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
 
         //    //if (Plot1PoppedOut == false || Plot5PoppedOut == false)
         //    //{
@@ -831,7 +831,7 @@ namespace View.Conditions
         //    if (HideTrackers == false)
         //    {
 
-        //        FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+        //        ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
         //        vm.Plot0ControlVM.IndividualPlotWrapperVM.TrackerVisible = false;
         //        vm.Plot1ControlVM.IndividualPlotWrapperVM.TrackerVisible = false;
         //        vm.Plot1ControlVM.ModulatorPlotWrapperVM.TrackerVisible = false;
@@ -865,7 +865,7 @@ namespace View.Conditions
         //        //plot7.ShowTracker();
         //        //plot8.ShowTracker();
 
-        //        FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+        //        ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
         //        vm.Plot0ControlVM.IndividualPlotWrapperVM.TrackerVisible = true;
         //        vm.Plot1ControlVM.IndividualPlotWrapperVM.TrackerVisible = true;
         //        vm.Plot1ControlVM.ModulatorPlotWrapperVM.TrackerVisible = true;
@@ -1095,7 +1095,7 @@ namespace View.Conditions
 
         //private void RemoveAreaPlots()
         //{
-        //    FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+        //    ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
         //    vm.Plot0ControlVM.IndividualPlotWrapperVM.AreaPlotVisible = false;
         //    vm.Plot3ControlVM.IndividualPlotWrapperVM.AreaPlotVisible = false;
         //    vm.Plot7ControlVM.IndividualPlotWrapperVM.AreaPlotVisible = false;
@@ -1104,7 +1104,7 @@ namespace View.Conditions
 
         //private void AddAreaPlots()
         //{
-        //    FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+        //    ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
         //    vm.Plot0ControlVM.IndividualPlotWrapperVM.AreaPlotVisible = true;
         //    vm.Plot3ControlVM.IndividualPlotWrapperVM.AreaPlotVisible = true;
         //    vm.Plot7ControlVM.IndividualPlotWrapperVM.AreaPlotVisible = true;
@@ -1214,7 +1214,7 @@ namespace View.Conditions
         ////            _SpecifiedXValue = _SelectedPlot.GetPairedValue(_SpecifiedYValue, false, _SelectedPlot.OxyPlot1.Model, isAxisReversed);
         ////            if (_SpecifiedYValue > _SelectedPlot.OxyPlot1.Model.Axes[1].Maximum || _SpecifiedYValue < _SelectedPlot.OxyPlot1.Model.Axes[1].Minimum)
         ////            {
-        ////                //FdaViewModel.Utilities.CustomMessageBoxVM vm = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "Y Value is out of range");
+        ////                //ViewModel.Utilities.CustomMessageBoxVM vm = new ViewModel.Utilities.CustomMessageBoxVM(ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "Y Value is out of range");
         ////                MessageBox.Show("Y Value is out of range", "Out of Range");
         ////                txt_YValue.Text = "";
         ////                return;
@@ -1238,7 +1238,7 @@ namespace View.Conditions
         ////        _SpecifiedYValue = ((IndividualLinkedPlot)_SelectedPlot).GetPairedValue(_SpecifiedXValue, true, _SelectedPlot.OxyPlot1.Model, isAxisReversed);
         ////        if (_SpecifiedXValue > _SelectedPlot.OxyPlot1.Model.Axes[0].Maximum || _SpecifiedXValue < _SelectedPlot.OxyPlot1.Model.Axes[0].Minimum)
         ////        {
-        ////            //FdaViewModel.Utilities.CustomMessageBoxVM vm = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "X Value is out of range");
+        ////            //ViewModel.Utilities.CustomMessageBoxVM vm = new ViewModel.Utilities.CustomMessageBoxVM(ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "X Value is out of range");
         ////            MessageBox.Show("X Value is out of range", "Out of Range");
         ////            txt_XValue.Text = "";
         ////            return;
@@ -1308,16 +1308,16 @@ namespace View.Conditions
 
 
             //    ////anything that is popped out is getting popped back in when tabs change or when popping back in from being a popped out window
-            //    //FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
-            //    //if (vm.Plot1ControlVM.CurrentVM.GetType() == typeof(FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM))
+            //    //ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+            //    //if (vm.Plot1ControlVM.CurrentVM.GetType() == typeof(ViewModel.Plots.ConditionsIndividualPlotWrapperVM))
             //    //{
             //    //    PopPlot1Out(this, new EventArgs());
             //    //}
-            //    //else if (vm.Plot1ControlVM.CurrentVM.GetType() == typeof(FdaViewModel.Conditions.AddInflowOutflowToConditionVM))
+            //    //else if (vm.Plot1ControlVM.CurrentVM.GetType() == typeof(ViewModel.Conditions.AddInflowOutflowToConditionVM))
             //    //{
             //    //    PopPlot1ImporterOut(this, new EventArgs());
             //    //}
-            //    //else if (vm.Plot1ControlVM.CurrentVM.GetType() == typeof(FdaViewModel.Plots.IndividualLinkedPlotCoverButtonVM))
+            //    //else if (vm.Plot1ControlVM.CurrentVM.GetType() == typeof(ViewModel.Plots.IndividualLinkedPlotCoverButtonVM))
             //    //{
             //    //    FourPlotGrid.ColumnDefinitions[2].Width = new GridLength(0);
 
@@ -1332,7 +1332,7 @@ namespace View.Conditions
         //    double thresholdValue;
         //    if (Double.TryParse(txt_ThresholdValue.Text, out thresholdValue))
         //    {
-        //        FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+        //        ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
         //        vm.PlotThresholdLine(thresholdValue);
         //    }
            
@@ -1356,7 +1356,7 @@ namespace View.Conditions
         private void btn_ToggleThresholdLines_Click(object sender, RoutedEventArgs e)
         {
           
-        //        FdaViewModel.Conditions.ConditionsPlotEditorVM vm = (FdaViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
+        //        ViewModel.Conditions.ConditionsPlotEditorVM vm = (ViewModel.Conditions.ConditionsPlotEditorVM)this.DataContext;
             
         //    vm.ToggleThresholdLines();
         //    if(ThresholdLinesShowing)
@@ -1381,7 +1381,7 @@ namespace View.Conditions
         ////private void txt_XValue_LostFocus(object sender, RoutedEventArgs e)
         ////{
         ////    if(cmb_PlotNames.SelectedItem == null) { return; }
-        ////    FdaViewModel.Plots.IndividualLinkedPlotControlVM control = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)cmb_PlotNames.SelectedItem;
+        ////    ViewModel.Plots.IndividualLinkedPlotControlVM control = (ViewModel.Plots.IndividualLinkedPlotControlVM)cmb_PlotNames.SelectedItem;
         ////    //i need to find the corresponding individualLinkedPlot
         ////    foreach(ILinkedPlot plot in TheAddedPlots)
         ////    {
@@ -1397,7 +1397,7 @@ namespace View.Conditions
         ////    //_SelectedPlot = (IndividualLinkedPlot)cmb_PlotNames.SelectedItem;
         ////   // _SelectedPlot.TrackerIsOutsideTheCurveRange = false;
         ////    _SelectedPlot.TurnOutsideOfRangeOff();
-        ////    FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)_SelectedPlot.DataContext;
+        ////    ViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (ViewModel.Plots.ConditionsIndividualPlotWrapperVM)_SelectedPlot.DataContext;
         ////    vm.PlotIsInsideRange(this, new EventArgs());
 
         ////    if (_SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency ||
@@ -1438,7 +1438,7 @@ namespace View.Conditions
 
         ////    // if (cmb_PlotNames.SelectedIndex == -1) { return; }
         ////    //_SelectedPlot = (IndividualLinkedPlot)cmb_PlotNames.SelectedItem;
-        ////    FdaViewModel.Plots.IndividualLinkedPlotControlVM control = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)cmb_PlotNames.SelectedItem;
+        ////    ViewModel.Plots.IndividualLinkedPlotControlVM control = (ViewModel.Plots.IndividualLinkedPlotControlVM)cmb_PlotNames.SelectedItem;
         ////    //i need to find the corresponding individualLinkedPlot
         ////    foreach (ILinkedPlot plot in TheAddedPlots)
         ////    {
@@ -1451,7 +1451,7 @@ namespace View.Conditions
 
         ////    if (_SelectedPlot == null) { return; }
         ////    _SelectedPlot.TrackerIsOutsideTheCurveRange = false;
-        ////    FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)_SelectedPlot.DataContext;
+        ////    ViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (ViewModel.Plots.ConditionsIndividualPlotWrapperVM)_SelectedPlot.DataContext;
         ////    vm.PlotIsInsideRange(this, new EventArgs());
 
         ////    if (_SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency ||

@@ -24,7 +24,7 @@ namespace FunctionsViewTests
         [InlineData(200, 100)]
         public void CoordinatesFunctionRowItem_CreateCoordinateFromRow_ConstantValues_Returns_ICoordinate(double x, double y)
         {
-            CoordinatesFunctionRowItemBuilder builder = new CoordinatesFunctionRowItemBuilder(x)
+            CoordinatesFunctionRowItemBuilder builder = new CoordinatesFunctionRowItemBuilder(x, true)
                 .WithConstantDist(y, InterpolationEnum.None);
             CoordinatesFunctionRowItem row = builder.Build();
 
@@ -45,7 +45,7 @@ namespace FunctionsViewTests
         [InlineData(99, 200, 100)]
         public void CoordinatesFunctionRowItem_CreateCoordinateFromRow_NormalValues_Returns_ICoordinate(double x,double mean, double stDev)
         {
-            CoordinatesFunctionRowItemBuilder builder = new CoordinatesFunctionRowItemBuilder(x)
+            CoordinatesFunctionRowItemBuilder builder = new CoordinatesFunctionRowItemBuilder(x, true )
                 .WithNormalDist(mean,stDev, InterpolationEnum.None);
             CoordinatesFunctionRowItem row = builder.Build();
 
@@ -68,7 +68,7 @@ namespace FunctionsViewTests
         [InlineData(99, 100, 200)]
         public void CoordinatesFunctionRowItem_CreateCoordinateFromRow_UniformValues_Returns_ICoordinate(double x, double min, double max)
         {
-            CoordinatesFunctionRowItemBuilder builder = new CoordinatesFunctionRowItemBuilder(x)
+            CoordinatesFunctionRowItemBuilder builder = new CoordinatesFunctionRowItemBuilder(x,true)
                 .WithUniformDist(min,max, InterpolationEnum.None);
             CoordinatesFunctionRowItem row = builder.Build();
 

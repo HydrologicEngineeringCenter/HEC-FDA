@@ -1,25 +1,28 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FdaViewModel.Utilities.Transactions;
+using ViewModel.Utilities.Transactions;
 using System.Collections.ObjectModel;
-using FdaViewModel.Conditions;
-using FdaViewModel.Utilities;
+using ViewModel.Conditions;
+using ViewModel.Utilities;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 using System.Collections;
 using System.Windows;
-using FdaViewModel.Tabs;
+using ViewModel.Tabs;
 using System.Threading;
 using System.Reflection;
 using System.Diagnostics;
+using FdaLogging;
+using Functions;
 
-namespace FdaViewModel.Study
+namespace ViewModel.Study
 {
-    public class FdaStudyVM : BaseViewModel, IDisposable, ITransactionsAndMessages
+    public class FdaStudyVM : BaseViewModel, IDisposable, IDisplayLogMessages
     {
         #region Notes
         #endregion
@@ -33,7 +36,7 @@ namespace FdaViewModel.Study
 
 
         private ObservableCollection<TransactionRowItem> _TransactionRows;
-        private ObservableCollection<FdaLogging.LogItem> _MessageRows;
+        private ObservableCollection<FdaLogging.LogItem> _MessageRows = new ObservableCollection<LogItem>();
         private bool _TransactionsMessagesVisible;
 
         private MapWindowMapTreeViewConnector _MWMTVConn;
@@ -51,6 +54,7 @@ namespace FdaViewModel.Study
         //    get { return (string)GetValue(FilterStringProperty); }
         //    set { SetValue(FilterStringProperty, value); }
         //}
+
         public bool MapViewVisible
         {
             get { return _MapViewVisible; }
@@ -141,7 +145,17 @@ namespace FdaViewModel.Study
 
         public int MessageCount
         {
-            get { return _MessageRows.Count; }
+            get 
+            {
+                if (_MessageRows != null)
+                {
+                    return _MessageRows.Count;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
         }
 
         public bool TransactionsMessagesVisible
@@ -157,11 +171,31 @@ namespace FdaViewModel.Study
         {
             get; set;
         }
+        //todo: implement error level?
+        public LoggingLevel SaveStatusLevel
+        {
+            get { return LoggingLevel.Debug; }
+        }
+
+        public bool IsExpanded
+        {
+            get;
+            set;
+        }
+        public List<LogItem> TempErrors
+        {
+            get;
+            set;
+        }
 
         #endregion
         #region Constructors
         public FdaStudyVM() : base()
         {
+            Sampler.RegisterSampler(new ConstantSampler());
+            Sampler.RegisterSampler(new DistributionSampler());
+            Sampler.RegisterSampler(new LinkedFunctionsSampler());
+
             TabController tabFactory = TabController.Instance;
             TabFactoryInstance = tabFactory;
             tabFactory.RequestNavigation += Navigate;
@@ -189,14 +223,37 @@ namespace FdaViewModel.Study
             _StudyElement.AddBaseElements();
             _MainStudyTree.Add(_StudyElement);
 
-            FdaModel.Utilities.Messager.Logger.Instance.RequestFlushLogFile += Instance_RequestFlushLogFile;
-            FdaModel.Utilities.Initialize.InitializeGDAL();
-
+            //FdaModel.Utilities.Messager.Logger.Instance.RequestFlushLogFile += Instance_RequestFlushLogFile;
+            InitializeGDAL();
 
             StudyStatusBar.SaveStatusChanged += UpdateSaveStatus;
 
-          
+        }
 
+        private void InitializeGDAL()
+        {
+            try
+            {
+                Environment.SetEnvironmentVariable("GDAL_TIFF_OVR_BLOCKSIZE", "256");
+                string dir = AppDomain.CurrentDomain.BaseDirectory;
+                //dir = new Uri(dir).LocalPath;
+                //dir = System.IO.Path.GetDirectoryName(dir);
+                string ToolDir = dir + @"GDAL\bin";
+                string DataDir = dir + @"GDAL\data";
+                string PluginDir = dir + @"GDAL\bin\gdalplugins";
+                string WMSDir = dir + @"GDAL\Web Map Services";
+                GDALAssist.GDALSetup.Initialize(ToolDir, DataDir, PluginDir, WMSDir, true);
+            }
+            catch (Exception ex)
+            {
+                //Messager.Logger.Instance.ReportMessage(new Messager.ErrorMessage(ex.InnerException.ToString() + "\n Failed to initialize GDAL, check if the GDAL directory is next to the FdaModel.dll", 
+                //    Messager.ErrorMessageEnum.Fatal | Messager.ErrorMessageEnum.Model));
+                throw;
+            }
+        }
+        public static void DisposeGDAL()
+        {
+            GDALAssist.GDALSetup.Dispose();
         }
 
         #region Voids
@@ -278,11 +335,13 @@ namespace FdaViewModel.Study
             //vm.SetMapWindowProperty += SetMapWindowProperty;
             vm.Name = "map window vm";
             DynamicTabVM mapTabVM = new DynamicTabVM("Map", vm, "Map", false, false);
-            TabController.Instance.AddTab(mapTabVM);
+            Navigate(mapTabVM, false, false);
+            //TabController.Instance.AddTab(mapTabVM);
             TabController.Instance.MWMTVConnector = _MWMTVConn;
+            //TabController.Instance.SelectedDynamicTabIndex = 0;
 
             //for testing, delete me
-            LoadMapLayers(null, null);
+            //LoadMapLayers(null, null);
             //
         }
 
@@ -296,9 +355,10 @@ namespace FdaViewModel.Study
             DynamicTabVM newStudyTab = new DynamicTabVM("Create New Study", vm, "CreateNewStudy", false, true);
             newStudyTab.Name = "CreateStudyTab";
             TabController.Instance.AddTab(newStudyTab);
+
         }
 
-       
+
 
         #endregion
         public void WriteMapLayersXMLFile()
@@ -344,9 +404,6 @@ namespace FdaViewModel.Study
 
         public void LoadMapLayers(object sender, EventArgs e)
         {
-            
-            
-
             //bool isMainThread = CheckForMainThread();
             //Storage.Connection.Instance.ProjectFile = @"C:\Users\cody\Documents\HEC\HEC-FDA\Studies\sep 18\sep 18.sqlite";
             string path = Storage.Connection.Instance.ProjectDirectory + "\\MapLayers.xml";
@@ -371,22 +428,18 @@ namespace FdaViewModel.Study
             AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(_StudyElement.Name, TransactionEnum.EditExisting,
                 "Openning " + _StudyElement.Name + " for editing.", nameof(CurrentStudyElement)));
 
-            FdaModel.Utilities.Messager.ErrorMessage err = new FdaModel.Utilities.Messager.ErrorMessage("Test message when opening", FdaModel.Utilities.Messager.ErrorMessageEnum.Report, nameof(CurrentStudyElement));
+            //FdaModel.Utilities.Messager.ErrorMessage err = new FdaModel.Utilities.Messager.ErrorMessage("Test message when opening", FdaModel.Utilities.Messager.ErrorMessageEnum.Report, nameof(CurrentStudyElement));
 
-            TransactionHelper.LoadTransactionsAndMessages(this, CurrentStudyElement);
+            //TransactionHelper.LoadTransactionsAndMessages(this, CurrentStudyElement);
         }
-        //private void ClearCurrentStudy(object sender, EventArgs e)
+     
+        //private void Instance_RequestFlushLogFile(object sender, EventArgs e)
         //{
-        //    _MainStudyTree[0].Elements.Clear();
-        //    _StudyElement = new StudyElement(this);
+        //    if (!Storage.Connection.Instance.IsConnectionNull)
+        //    {
+        //        FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
+        //    }
         //}
-        private void Instance_RequestFlushLogFile(object sender, EventArgs e)
-        {
-            if (!Storage.Connection.Instance.IsConnectionNull)
-            {
-                FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
-            }
-        }
 
         private void WriteTransactions(object sender, TransactionEventArgs args)
         {
@@ -420,12 +473,12 @@ namespace FdaViewModel.Study
         //}
         public override void Dispose()
         {
-            FdaLogging.Disposer.DeleteOldLogs();
-            FdaLogging.Disposer.DeleteLogsOverMaxNumber();
-            FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
-            FdaModel.Utilities.Initialize.DisposeGDAL();
+            Disposer.DeleteOldLogs();
+            Disposer.DeleteLogsOverMaxNumber();
+            //FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
+            //FdaModel.Utilities.Initialize.DisposeGDAL();
             WriteMapLayersXMLFile();
-            FdaLogging.Disposer.Dispose();
+            Disposer.Dispose();
         }
 
         /// <summary>
@@ -458,6 +511,25 @@ namespace FdaViewModel.Study
         public void DisplayAllMessages()
         {
             MessageRows = FdaLogging.RetrieveFromDB.GetMessageRowsForType(GetType());
+        }
+
+        public void UpdateMessages(bool saving = false)
+        {
+            ObservableCollection<FdaLogging.LogItem> tempList = new ObservableCollection<FdaLogging.LogItem>();
+            foreach (LogItem li in MessageRows)
+            {
+                //exclude any temp logs
+                if (!li.IsTempLog())
+                {
+                    tempList.Add(li);
+                }
+            }
+
+            foreach (LogItem li in TempErrors)
+            {
+                tempList.Insert(0, li);
+            }
+            MessageRows = tempList;
         }
 
 

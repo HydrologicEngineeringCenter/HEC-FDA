@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.FrequencyRelationships
+namespace ViewModel.FrequencyRelationships
 {
     class FrequencyRelationshipsOwnerElement : Utilities.ParentElement
     {

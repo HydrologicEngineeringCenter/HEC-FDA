@@ -1,4 +1,4 @@
-﻿using FdaViewModel.Tabs;
+﻿using ViewModel.Tabs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,31 +28,31 @@ namespace View.Conditions
 
         private void btn_NewWaterSurfaceElevation_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddStageDamageToConditionVM vm = (FdaViewModel.Conditions.AddStageDamageToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddStageDamageToConditionVM vm = (ViewModel.Conditions.AddStageDamageToConditionVM)this.DataContext;
             vm.LaunchNewWaterSurfaceElevation();
         }
 
         private void btn_StructureInventory_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddStageDamageToConditionVM vm = (FdaViewModel.Conditions.AddStageDamageToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddStageDamageToConditionVM vm = (ViewModel.Conditions.AddStageDamageToConditionVM)this.DataContext;
             vm.LaunchNewStructureInventory();
         }
 
         private void btn_TerrainFile_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddStageDamageToConditionVM vm = (FdaViewModel.Conditions.AddStageDamageToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddStageDamageToConditionVM vm = (ViewModel.Conditions.AddStageDamageToConditionVM)this.DataContext;
             vm.LaunchNewTerrainFile();
         }
 
         private void btn_OccupancyType_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddStageDamageToConditionVM vm = (FdaViewModel.Conditions.AddStageDamageToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddStageDamageToConditionVM vm = (ViewModel.Conditions.AddStageDamageToConditionVM)this.DataContext;
             vm.LaunchNewOccupancyType();
         }
 
         private void btn_OK_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddStageDamageToConditionVM vm = (FdaViewModel.Conditions.AddStageDamageToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddStageDamageToConditionVM vm = (ViewModel.Conditions.AddStageDamageToConditionVM)this.DataContext;
             if (vm.IsPoppedOut == true)
             {
                 TabController.Instance.CloseTabOrWindow(this);
@@ -62,7 +62,7 @@ namespace View.Conditions
 
         private void btn_Cancel_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddStageDamageToConditionVM vm = (FdaViewModel.Conditions.AddStageDamageToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddStageDamageToConditionVM vm = (ViewModel.Conditions.AddStageDamageToConditionVM)this.DataContext;
             if (vm.IsPoppedOut == true)
             {
                 TabController.Instance.CloseTabOrWindow(this);
@@ -72,13 +72,13 @@ namespace View.Conditions
 
         private void btn_NewStageDamage_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddStageDamageToConditionVM vm = (FdaViewModel.Conditions.AddStageDamageToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddStageDamageToConditionVM vm = (ViewModel.Conditions.AddStageDamageToConditionVM)this.DataContext;
             vm.LaunchNewStageDamage(sender, e);
         }
 
         private void btn_PopOutCurve_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddStageDamageToConditionVM vm = (FdaViewModel.Conditions.AddStageDamageToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddStageDamageToConditionVM vm = (ViewModel.Conditions.AddStageDamageToConditionVM)this.DataContext;
             vm.PopTheImporterOut();
         }
     }

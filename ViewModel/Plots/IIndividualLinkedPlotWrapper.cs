@@ -1,10 +1,12 @@
-﻿using System;
+﻿using ViewModel.Conditions;
+using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Plots
+namespace ViewModel.Plots
 {
     public interface IIndividualLinkedPlotWrapper
     {
@@ -18,8 +20,15 @@ namespace FdaViewModel.Plots
         bool TrackerVisible { get; set; }
         bool AreaPlotVisible { get; set; }
 
-        FdaModel.ComputationPoint.PerformanceThreshold Threshold { get; set; }
+        Model.IMetric Metric { get; set; }
+        int SelectedElementID { get; set; }
+        void AddCurveToPlot( IFdaFunction function, string elementName,int elementID, FdaCrosshairChartModifier chartModifier);
+        string EAD { get; set; }
+        string AEP { get; set; }
+        //bool DisplayImportButton { get; set; }
 
-        bool DisplayImportButton { get; set; }
+        //string Title { get; }
+        //string XAxisLabel { get; }
+        //string YAxisLabel { get; }
     }
 }

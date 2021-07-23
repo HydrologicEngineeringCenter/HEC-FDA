@@ -1,4 +1,4 @@
-﻿using FdaViewModel.AggregatedStageDamage;
+﻿using ViewModel.AggregatedStageDamage;
 using System;
 using System.Collections.Generic;
 using System.Linq;

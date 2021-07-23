@@ -29,7 +29,7 @@ namespace View.Inventory.OccupancyTypes
         }
         private void cmb_Path_SelectionMade(string fullpath, string filename)
         {
-            FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
+            ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
             vm.SelectedPath = fullpath;
             lbl_PassFail.Content = "";
             if (txt_Name.Text == null || txt_Name.Text == "")
@@ -39,7 +39,7 @@ namespace View.Inventory.OccupancyTypes
         }
         //private void Cmb_Path_CmbSelectionMade(string path)
         //{
-        //    FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
+        //    ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
         //    vm.SelectedPath = path;
         //    if(txt_Name.Text == null || txt_Name.Text == "")
         //    {
@@ -49,7 +49,7 @@ namespace View.Inventory.OccupancyTypes
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             //todo: i don't think this class is being used anywhere. Delete?
-            //FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
+            //ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
 
  
 

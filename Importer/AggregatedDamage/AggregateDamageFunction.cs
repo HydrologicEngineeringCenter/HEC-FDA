@@ -8,9 +8,9 @@ using System.IO;
 using Functions.CoordinatesFunctions;
 using Functions;
 using Model;
-using FdaViewModel.StageTransforms;
-using FdaViewModel.AggregatedStageDamage;
-using FdaViewModel.Saving.PersistenceManagers;
+using ViewModel.StageTransforms;
+using ViewModel.AggregatedStageDamage;
+using ViewModel.Saving.PersistenceManagers;
 
 namespace Importer
 {
@@ -352,7 +352,7 @@ namespace Importer
 
             //right now we will only use the total in FDA 2.0 but will write the other curves
             //out so that the user can view them down the road.
-            StageDamagePersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetStageDamageManager();
+            StageDamagePersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetStageDamageManager();
             SaveTotalFunction(totalDamageFunc,manager);
             //todo: i am using Name here is that correct, or do i need to add the PYSR stuff to the front of the name?
             if (carDamageFunc.GetNumRows() > 0)

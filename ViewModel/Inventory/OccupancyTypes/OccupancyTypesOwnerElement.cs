@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.ComponentModel;
-using FdaViewModel.Utilities;
+using ViewModel.Utilities;
 using System.Xml.Linq;
 using System.Xml;
+using Functions;
+using ViewModel.Saving;
+using System.Collections.ObjectModel;
+using System.Windows;
+using ViewModel.Saving.PersistenceManagers;
 
-namespace FdaViewModel.Inventory.OccupancyTypes
+namespace ViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 6 / 2017 10:22:36 AM)]
     public class OccupancyTypesOwnerElement : Utilities.ParentElement
@@ -20,6 +23,8 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         // Created Date: 7/6/2017 10:22:36 AM
         #endregion
         #region Fields
+        private OccupancyTypesEditorVM _OccTypeEditor;
+        private bool _IsEditorOpen = false;
         //private static List<Consequences_Assist.ComputableObjects.OccupancyType> _ListOfOccupancyTypes;
         #endregion
         #region Properties
@@ -59,7 +64,7 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             StudyCache.OccTypeElementAdded += OccTypeElementWasAdded;
 
             StudyCache.OccTypeElementRemoved += RemoveOccTypeElement;
-            // StudyCache.OccTypeElementUpdated += UpdateRatingCurveElement;
+            StudyCache.OccTypeElementUpdated += UpdateOccTypeElement;
 
         }
 
@@ -69,18 +74,33 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         #endregion
         #region Voids
 
-        private void OccTypeElementWasAdded(object sender, Saving.ElementAddedEventArgs e)
+        private void OccTypeElementWasAdded(object sender, ElementAddedEventArgs e)
         {
-            ListOfOccupancyTypesGroups.Add((OccupancyTypesElement)e.Element);
+            OccupancyTypesElement elem = (OccupancyTypesElement)e.Element;
+            ListOfOccupancyTypesGroups.Add(elem);
+            if(_IsEditorOpen)
+            {
+                _OccTypeEditor.AddGroup(elem);
+            }          
         }
-        //private void UpdateRatingCurveElement(object sender, Saving.ElementUpdatedEventArgs e)
-        //{
-        //    UpdateElement(e.OldElement, e.NewElement);
-        //}
-        //private void AddRatingCurveElement(object sender, Saving.ElementAddedEventArgs e)
-        //{
-        //    AddElement(e.Element);
-        //}
+        private void UpdateOccTypeElement(object sender, Saving.ElementUpdatedEventArgs e)
+        {
+            OccupancyTypesElement newElement = (OccupancyTypesElement)e.NewElement;
+            int index = -1;
+            for (int i = 0; i < ListOfOccupancyTypesGroups.Count; i++)
+            {
+                if (ListOfOccupancyTypesGroups[i].ID == newElement.ID)
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                ListOfOccupancyTypesGroups.RemoveAt(index);
+                ListOfOccupancyTypesGroups.Insert(index, newElement);
+            }
+        }
         private void RemoveOccTypeElement(object sender, Saving.ElementAddedEventArgs e)
         {
             //RemoveElement(e.Element);
@@ -91,55 +111,69 @@ namespace FdaViewModel.Inventory.OccupancyTypes
             //dont open the editor if there are no occtype groups to edit
             if (ListOfOccupancyTypesGroups.Count < 1)
             {
-                Utilities.CustomMessageBoxVM messageBox = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "There are no occupancy types to edit. You must first import a group of occupancy types.");
-                string title = "No Occupancy Types";
-                DynamicTabVM tabb = new DynamicTabVM(title, messageBox, "ErrorMessage");
-                Navigate(tabb);
-                return;
+                //Utilities.CustomMessageBoxVM messageBox = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "There are no occupancy types to edit. You must first import a group of occupancy types.");
+                //string title = "No Occupancy Types";
+                //DynamicTabVM tabb = new DynamicTabVM(title, messageBox, "ErrorMessage");
+                //Navigate(tabb);
+                MessageBox.Show("There are no occupancy types to edit. You must first import a group of occupancy types.", "No Occupancy Types", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+               // CreateDefaultOccTypeGroup();
+                
+                
+                //return;
             }
 
+            _IsEditorOpen = true;
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager();
-               //.WithSaveUndoRedo(saveHelper)
-               //.WithSiblingRules(this)
-               //.WithParentGuid(this.GUID)
-               //.WithCanOpenMultipleTimes(false);
+            //.WithSaveUndoRedo(saveHelper)
+            //.WithSiblingRules(this)
+            //.WithParentGuid(this.GUID)
+            //.WithCanOpenMultipleTimes(false);
 
-            OccupancyTypesEditorVM vm = new OccupancyTypesEditorVM(GetSelectedOccTypeElement(), actionManager);
-            vm.RequestNavigation += Navigate;
+
+
+
+            _OccTypeEditor = new OccupancyTypesEditorVM( actionManager);
+            _OccTypeEditor.FillEditor(ListOfOccupancyTypesGroups);
+
+            _OccTypeEditor.RequestNavigation += Navigate;
             string header = "Edit Occupancy Types";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditOccupancyTypes");
+            DynamicTabVM tab = new DynamicTabVM(header, _OccTypeEditor, "EditOccupancyTypes");
+            tab.RemoveTabEvent += Tab_RemoveTabEvent;
+            tab.RemoveWindowEvent += Tab_RemoveTabEvent;
             Navigate(tab, false, false);
 
-
-            //Navigate(vm);
-            //if (!vm.WasCanceled)
-            //{
-            //    if (!vm.HasError)
-            //    {
-            //        //foreach (OccupancyTypesElement ote in ListOfOccupancyTypesGroups)
-            //        for(int i = 0;i<ListOfOccupancyTypesGroups.Count;i++)
-            //        {
-            //            //foreach (OccupancyTypesElement ote in vm.OccTypeGroups)
-            //            for(int j = 0;j<vm.OccTypeGroups.Count;j++)
-            //            {
-            //                if (ListOfOccupancyTypesGroups[i].Name == vm.OccTypeGroups[j].Name)
-            //                {
-            //                    ListOfOccupancyTypesGroups[i] = vm.OccTypeGroups[j];
-            //                }
-            //            }
-            //        }
-            //        //now save the changes
-            //        //CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "", "Loading...");
-
-            //        //SaveFilesOnBackgroundThread(this, new DoWorkEventArgs(ListOfOccupancyTypesGroups));
-            //        foreach (OccupancyTypesElement elem in ListOfOccupancyTypesGroups)
-            //        {
-            //            elem.Save();
-            //        }
-            //    }
-            //}
-
         }
+        //private void CreateDefaultOccTypeGroup()
+        //{
+        //    OccTypePersistenceManager manager = PersistenceFactory.GetOccTypeManager();
+        //    int groupID = manager.GetUnusedId();
+        //    string groupName = "Occupancy Type Group";
+        //    IOccupancyType ot = new OccupancyType()
+
+        //    OccupancyTypesElement elem = new OccupancyTypesElement(groupName, groupID, new List<IOccupancyType>() { CreateDefaultOcctype(groupID) });
+        //    //calling the save here should add it to the cache, which tells the occtype owner to add it to this editor
+        //    //if it is open. see AddGroup() in this class.
+        //    manager.SaveNewElement(elem);
+        //}
+
+        //private IOccupancyTypeEditable CreateDefaultOcctype(int groupID)
+        //{
+        //    IOccupancyType newOT = OccupancyTypeFactory.Factory("New Occupancy Type", "", groupID);
+        //    ObservableCollection<string> damCatOptions = new ObservableCollection<string>();
+        //    OccupancyTypeEditable otEditable = new OccupancyTypeEditable(newOT, ref damCatOptions, false);
+        //    otEditable.RequestNavigation += this.Navigate;
+        //    return otEditable;
+        //}
+
+        private void Tab_RemoveTabEvent(object sender, EventArgs e)
+        {
+            //i need to know if the editor is still open so that i can update the editor
+            _IsEditorOpen = false;
+        }
+
+       
+
+
         private OccupancyTypesElement GetSelectedOccTypeElement()
         {
             OccupancyTypesElement returnElement = null;
@@ -294,67 +328,67 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         //    return null;
         //}
 
-        private Statistics.UncertainCurveIncreasing GetNormalDistributionFromXML(string xmlString)
-        {
-            List<double> xValues = new List<double>();
-            List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
+        //private ICoordinatesFunction GetNormalDistributionFromXML(string xmlString)
+        //{
+        //    List<double> xValues = new List<double>();
+        //    List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
 
-            XDocument xDoc = XDocument.Parse(xmlString);
-            XElement normalElement = xDoc.Element("NormalDistribution");
-            foreach(XElement ele in normalElement.Elements("Ordinate"))
-            {
-                xValues.Add((double)ele.Attribute("x"));
-                yValues.Add(new Statistics.Normal(Convert.ToDouble(ele.Attribute("mean").Value), Convert.ToDouble(ele.Attribute("stDev").Value)));
+        //    XDocument xDoc = XDocument.Parse(xmlString);
+        //    XElement normalElement = xDoc.Element("NormalDistribution");
+        //    foreach(XElement ele in normalElement.Elements("Ordinate"))
+        //    {
+        //        xValues.Add((double)ele.Attribute("x"));
+        //        yValues.Add(new Statistics.Normal(Convert.ToDouble(ele.Attribute("mean").Value), Convert.ToDouble(ele.Attribute("stDev").Value)));
 
-            }
+        //    }
 
-            return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal); 
-        }
+        //    return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Normal); 
+        //}
 
-        private Statistics.UncertainCurveIncreasing GetTriangularDistributionFromXML(string xmlString)
-        {
-            List<double> xValues = new List<double>();
-            List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
+        //private Statistics.UncertainCurveIncreasing GetTriangularDistributionFromXML(string xmlString)
+        //{
+        //    List<double> xValues = new List<double>();
+        //    List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
 
-            XDocument xDoc = XDocument.Parse(xmlString);
-            XElement normalElement = xDoc.Element("TriangularDistribution");
-            foreach (XElement ele in normalElement.Elements("Ordinate"))
-            {
-                xValues.Add((double)ele.Attribute("x"));
-                yValues.Add(new Statistics.Triangular(Convert.ToDouble(ele.Attribute("min").Value), Convert.ToDouble(ele.Attribute("max").Value), Convert.ToDouble(ele.Attribute("mostLikely").Value)));
-            }
-            return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
-        }
+        //    XDocument xDoc = XDocument.Parse(xmlString);
+        //    XElement normalElement = xDoc.Element("TriangularDistribution");
+        //    foreach (XElement ele in normalElement.Elements("Ordinate"))
+        //    {
+        //        xValues.Add((double)ele.Attribute("x"));
+        //        yValues.Add(new Statistics.Triangular(Convert.ToDouble(ele.Attribute("min").Value), Convert.ToDouble(ele.Attribute("max").Value), Convert.ToDouble(ele.Attribute("mostLikely").Value)));
+        //    }
+        //    return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Triangular);
+        //}
 
-        private Statistics.UncertainCurveIncreasing GetUniformDistributionFromXML(string xmlString)
-        {
-            List<double> xValues = new List<double>();
-            List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
+        //private Statistics.UncertainCurveIncreasing GetUniformDistributionFromXML(string xmlString)
+        //{
+        //    List<double> xValues = new List<double>();
+        //    List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
 
-            XDocument xDoc = XDocument.Parse(xmlString);
-            XElement normalElement = xDoc.Element("UniformDistribution");
-            foreach (XElement ele in normalElement.Elements("Ordinate"))
-            {
-                xValues.Add((double)ele.Attribute("x"));
-                yValues.Add(new Statistics.Uniform(Convert.ToDouble(ele.Attribute("min").Value), Convert.ToDouble(ele.Attribute("max").Value)));
-            }
-            return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
-        }
+        //    XDocument xDoc = XDocument.Parse(xmlString);
+        //    XElement normalElement = xDoc.Element("UniformDistribution");
+        //    foreach (XElement ele in normalElement.Elements("Ordinate"))
+        //    {
+        //        xValues.Add((double)ele.Attribute("x"));
+        //        yValues.Add(new Statistics.Uniform(Convert.ToDouble(ele.Attribute("min").Value), Convert.ToDouble(ele.Attribute("max").Value)));
+        //    }
+        //    return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.Uniform);
+        //}
 
-        private Statistics.UncertainCurveIncreasing GetNoneDistributionFromXML(string xmlString)
-        {
-            List<double> xValues = new List<double>();
-            List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
+        //private Statistics.UncertainCurveIncreasing GetNoneDistributionFromXML(string xmlString)
+        //{
+        //    List<double> xValues = new List<double>();
+        //    List<Statistics.ContinuousDistribution> yValues = new List<Statistics.ContinuousDistribution>();
 
-            XDocument xDoc = XDocument.Parse(xmlString);
-            XElement normalElement = xDoc.Element("NoneDistribution");
-            foreach (XElement ele in normalElement.Elements("Ordinate"))
-            {
-                xValues.Add((double)ele.Attribute("x"));
-                yValues.Add(new Statistics.None(Convert.ToDouble(ele.Attribute("y").Value)));
-            }
-            return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
-        }
+        //    XDocument xDoc = XDocument.Parse(xmlString);
+        //    XElement normalElement = xDoc.Element("NoneDistribution");
+        //    foreach (XElement ele in normalElement.Elements("Ordinate"))
+        //    {
+        //        xValues.Add((double)ele.Attribute("x"));
+        //        yValues.Add(new Statistics.None(Convert.ToDouble(ele.Attribute("y").Value)));
+        //    }
+        //    return new Statistics.UncertainCurveIncreasing(xValues, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+        //}
 
         /// <summary>
         /// This gets called when loading the study.
@@ -637,33 +671,33 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         //}
 
        
-        private Statistics.ContinuousDistribution CreateContinuousDistributionFromRow(object[] row,int start, int end)
-        {
+        //private Statistics.ContinuousDistribution CreateContinuousDistributionFromRow(object[] row,int start, int end)
+        //{
 
-            if (row[start].ToString() == "Normal")
-            {
-                Statistics.Normal norm = new Statistics.Normal(0, Convert.ToDouble(row[end]));
-                return norm;
-            }
-            else if (row[start].ToString() == "Uniform")
-            {
-                Statistics.Uniform uni = new Statistics.Uniform(Convert.ToDouble(row[start]) , Convert.ToDouble(row[start+1]));
-                return uni;
-            }
-            else if (row[start].ToString() == "None")
-            {
-                Statistics.None non = new Statistics.None();
-                return non;
+        //    if (row[start].ToString() == "Normal")
+        //    {
+        //        Statistics.Normal norm = new Statistics.Normal(0, Convert.ToDouble(row[end]));
+        //        return norm;
+        //    }
+        //    else if (row[start].ToString() == "Uniform")
+        //    {
+        //        Statistics.Uniform uni = new Statistics.Uniform(Convert.ToDouble(row[start]) , Convert.ToDouble(row[start+1]));
+        //        return uni;
+        //    }
+        //    else if (row[start].ToString() == "None")
+        //    {
+        //        Statistics.None non = new Statistics.None();
+        //        return non;
 
-            }
-            else if (row[start].ToString() == "Triangular")
-            {
-                Statistics.Uniform tri = new Statistics.Uniform(Convert.ToDouble(row[start]), Convert.ToDouble(row[start + 1]));
-                return tri;
-            }
+        //    }
+        //    else if (row[start].ToString() == "Triangular")
+        //    {
+        //        Statistics.Uniform tri = new Statistics.Uniform(Convert.ToDouble(row[start]), Convert.ToDouble(row[start + 1]));
+        //        return tri;
+        //    }
 
-                return new Statistics.Normal(); // it should never get here.
-        }
+        //        return new Statistics.Normal(); // it should never get here.
+        //}
 
 
     }

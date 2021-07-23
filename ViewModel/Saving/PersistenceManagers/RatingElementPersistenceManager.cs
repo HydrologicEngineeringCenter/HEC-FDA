@@ -1,5 +1,8 @@
-﻿using FdaViewModel.StageTransforms;
-using FdaViewModel.Utilities;
+﻿using ViewModel.StageTransforms;
+using ViewModel.Utilities;
+using Functions;
+using Model;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,10 +11,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Saving.PersistenceManagers
+namespace ViewModel.Saving.PersistenceManagers
 {
     public class RatingElementPersistenceManager :UndoRedoBase, IPersistableWithUndoRedo
     {
+        private const int NAME_COL = 1;
+        private const int LAST_EDIT_DATE_COL = 2;
+        private const int DESC_COL = 3;
+        private const int CURVE_DIST_TYPE_COL = 4;
+        private const int CURVE_TYPE_COL = 5;
+        private const int CURVE_COL = 6;
+
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("RatingElementPersistenceManager");
         //ELEMENT_TYPE is used to store the type of element in the log tables.
         private const string ELEMENT_TYPE = "rating_curve";
@@ -23,6 +33,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
         /// The name of the change table that will hold the various states of elements.
         /// </summary>
         public override string ChangeTableName { get { return "rating_curve_changes"; } }
+
+     
 
         /// <summary>
         /// Names of the columns in the parent table
@@ -95,8 +107,9 @@ namespace FdaViewModel.Saving.PersistenceManagers
             {
                 element.Description = "";
             }
-
-            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.Distribution, element.Curve.GetType(), ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues) };
+            
+            return new object[] { element.Name, element.LastEditDate, element.Description, element.Curve.DistributionType, 
+                element.Curve.GetType(), element.Curve.WriteToXML().ToString()};
 
         }
         /// <summary>
@@ -112,12 +125,11 @@ namespace FdaViewModel.Saving.PersistenceManagers
             }
 
             int elemId = GetElementId(TableName, element.Name);
-            //the new statId will be one higher than the max that is in the table already.
+            //the new stateId will be one higher than the max that is in the table already.
             int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
             return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
-                element.Curve.Distribution, element.Curve.GetType(),
-                ExtentionMethods.CreateXMLCurveString(element.Curve.Distribution, element.Curve.XValues, element.Curve.YValues),
-                stateId};
+                element.Curve.DistributionType, element.Curve.GetType(),
+                element.Curve.WriteToXML().ToString(), stateId};
 
         }
        
@@ -128,12 +140,16 @@ namespace FdaViewModel.Saving.PersistenceManagers
         /// <returns></returns>
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), 
-                (string)rowData[CURVE_DISTRIBUTION_TYPE_INDEX]));
-            RatingCurveElement rc = new RatingCurveElement((string)rowData[CHANGE_TABLE_NAME_INDEX], (string)rowData[LAST_EDIT_DATE_INDEX], 
-                (string)rowData[DESCRIPTION_INDEX], emptyCurve);
-            rc.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_INDEX], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum), 
-                (string)rowData[CURVE_DISTRIBUTION_TYPE_INDEX]));
+            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory((String)rowData[CURVE_COL]);
+            //IFunction func = IFunctionFactory.Factory(coordinatesFunction.Coordinates, coordinatesFunction.Interpolator);
+            IFdaFunction function = IFdaFunctionFactory.Factory( IParameterEnum.Rating, coordinatesFunction);
+
+            //Statistics.UncertainCurveIncreasing emptyCurve = new Statistics.UncertainCurveIncreasing((Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
+                //(string)rowData[CURVE_DIST_TYPE_COL]));
+            RatingCurveElement rc = new RatingCurveElement((string)rowData[CHANGE_TABLE_NAME_INDEX], (string)rowData[LAST_EDIT_DATE_COL],
+                (string)rowData[DESC_COL], function);
+            //rc.Curve = ExtentionMethods.GetCurveFromXMLString((string)rowData[CURVE_COL], (Statistics.UncertainCurveDataCollection.DistributionsEnum)Enum.Parse(typeof(Statistics.UncertainCurveDataCollection.DistributionsEnum),
+            //    (string)rowData[CURVE_DIST_TYPE_COL]));
             return rc;
         }
 
@@ -175,15 +191,16 @@ namespace FdaViewModel.Saving.PersistenceManagers
             //this will save to the parent table and to the change table
             base.SaveExisting(oldElement, elementToSave, changeTableIndex);
             //log that we are saving
-            if (!oldElement.Name.Equals(elementToSave.Name))
-            {
-                Log(FdaLogging.LoggingLevel.Info, "Saved rating curve with name change from " + oldElement.Name +
-                    " to " + elementToSave.Name + ".", elementToSave.Name);
-            }
-            else
-            {
-                Log(FdaLogging.LoggingLevel.Info, "Saved rating curve: " + elementToSave.Name, elementToSave.Name);
-            }
+            //if (!oldElement.Name.Equals(elementToSave.Name))
+            //{
+            //    Log(FdaLogging.LoggingLevel.Info, "Saved rating curve with name change from " + oldElement.Name +
+            //        " to " + elementToSave.Name + ".", elementToSave.Name);
+            //}
+            //else
+            //{
+            //    Log(FdaLogging.LoggingLevel.Info, "Saved rating curve: " + elementToSave.Name, elementToSave.Name);
+            //}
+            //UpdateLastSaved(elementToSave.Name);
         }
 
         /// <summary>
@@ -197,6 +214,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 StudyCacheForSaving.AddElement(elem);
             }
         }
+
+        //private void UpdateLastSaved(string elementName)
+        //{
+        //    int elementId = GetElementId(TableName, elementName);
+        //    LOGGER.UpdateLastSaved( ELEMENT_TYPE, elementId);
+            
+        //}
 
         /// <summary>
         /// This will put a log into the log tables. Logs are only unique by element id and

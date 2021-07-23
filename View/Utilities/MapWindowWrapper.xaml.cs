@@ -1,4 +1,4 @@
-﻿using FdaViewModel.Utilities;
+﻿using ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

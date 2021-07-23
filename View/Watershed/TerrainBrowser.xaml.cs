@@ -26,7 +26,7 @@ namespace View.Watershed
 
         private void cmb_Path_CmbSelectionMade(string path)
         {
-            FdaViewModel.Watershed.TerrainBrowserVM vm = (FdaViewModel.Watershed.TerrainBrowserVM)this.DataContext;
+            ViewModel.Watershed.TerrainBrowserVM vm = (ViewModel.Watershed.TerrainBrowserVM)this.DataContext;
             vm.OriginalPath = cmb_Path.SelectedPath;
         }
     }

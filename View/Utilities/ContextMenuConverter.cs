@@ -29,11 +29,11 @@ namespace View.Utilities
                 c.Visibility = System.Windows.Visibility.Collapsed;
                 c.IsEnabled = false;
                 return c; }
-            if (value.GetType() == typeof(List<FdaViewModel.Utilities.NamedAction>))
+            if (value.GetType() == typeof(List<ViewModel.Utilities.NamedAction>))
             {
                 c = new System.Windows.Controls.ContextMenu();
-                List<FdaViewModel.Utilities.NamedAction> Actions = (List<FdaViewModel.Utilities.NamedAction>)value;
-                foreach (FdaViewModel.Utilities.NamedAction Action in Actions)
+                List<ViewModel.Utilities.NamedAction> Actions = (List<ViewModel.Utilities.NamedAction>)value;
+                foreach (ViewModel.Utilities.NamedAction Action in Actions)
                 {
                     System.Windows.Controls.MenuItem mi = new System.Windows.Controls.MenuItem();
                     if(Action.Header == "seperator") { System.Windows.Controls.Separator s = new System.Windows.Controls.Separator(); c.Items.Add(s);continue; }

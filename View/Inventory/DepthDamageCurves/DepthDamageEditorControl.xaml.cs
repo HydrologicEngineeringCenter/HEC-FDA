@@ -28,7 +28,7 @@ namespace View.Inventory.DepthDamageCurves
 
         private void DamageTypeBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            FdaViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM vm = (FdaViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM)this.DataContext;
+            ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM vm = (ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM)this.DataContext;
 
             vm.UpdateTheRow();
             //if (this.ListViewNeedsUpdating != null)
@@ -49,7 +49,7 @@ namespace View.Inventory.DepthDamageCurves
         {
 
 
-            FdaViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM vm = (FdaViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM)this.DataContext;
+            ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM vm = (ViewModel.Inventory.DepthDamage.DepthDamageCurveEditorControlVM)this.DataContext;
             // i need to check for name conflicts. We enforce unique names for depth damage curves
             vm.CheckWithParentForNameConflict(DepthDamageNameBox.Text);
             vm.Name = DepthDamageNameBox.Text;

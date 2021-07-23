@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View.ImpactArea"
-        xmlns:ViewModel="clr-namespace:FdaViewModel.ImpactArea;assembly=FdaViewModel"
+        xmlns:ViewModel="clr-namespace:ViewModel.ImpactArea;assembly=ViewModel"
         xmlns:OkClose="clr-namespace:View.Utilities"
         xmlns:converter="clr-namespace:View.ImpactArea"
         mc:Ignorable="d"

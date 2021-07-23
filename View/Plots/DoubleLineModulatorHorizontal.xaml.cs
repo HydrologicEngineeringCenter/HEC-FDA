@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using FdaViewModel.Plots;
+using ViewModel.Plots;
 using HEC.Plotting.SciChart2D.Charts;
 using Model;
 
@@ -186,7 +186,7 @@ namespace View.Plots
 
             if (parentControl != null && parentControl.GetType() == typeof(IndividualLinkedPlotControl))
             {
-                FdaViewModel.Plots.IndividualLinkedPlotControlVM vm = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
+                ViewModel.Plots.IndividualLinkedPlotControlVM vm = (ViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
                 vm.UpdateHorizontalDLMLines += UpdateLines;
                 //IFdaFunction func = vm.IndividualPlotWrapperVM.PlotVM.BaseFunction;
                 //func.
@@ -229,7 +229,7 @@ namespace View.Plots
 
             //if (parentControl != null && parentControl.GetType() == typeof(IndividualLinkedPlotControl))
             //{
-            //    FdaViewModel.Plots.IndividualLinkedPlotControlVM vm = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
+            //    ViewModel.Plots.IndividualLinkedPlotControlVM vm = (ViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
 
             //    this.BaseFunction = vm.IndividualPlotWrapperVM.PlotVM.BaseFunction;
             //    ((Plots.IndividualLinkedPlotControl)parentControl).LinkedPlot = this;
@@ -250,7 +250,7 @@ namespace View.Plots
             if (parentControl != null && parentControl.GetType() == typeof(IndividualLinkedPlotControl))
             {
                 IndividualLinkedPlotControl indLinkedPlotControl = (IndividualLinkedPlotControl)parentControl;
-                FdaViewModel.Plots.IndividualLinkedPlotControlVM vm = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
+                ViewModel.Plots.IndividualLinkedPlotControlVM vm = (ViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
                 double xval = vm.CurrentX;
                 double yval = vm.CurrentY;
 
@@ -689,8 +689,8 @@ namespace View.Plots
 
             //if (parentControl != null && parentControl.GetType() == typeof(IndividualLinkedPlotControl))
             //{
-            //    FdaViewModel.Plots.IndividualLinkedPlotControlVM vm = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
-            //    vm.CurrentVM = (FdaViewModel.BaseViewModel)vm.IndividualPlotWrapperVM;
+            //    ViewModel.Plots.IndividualLinkedPlotControlVM vm = (ViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
+            //    vm.CurrentVM = (ViewModel.BaseViewModel)vm.IndividualPlotWrapperVM;
             //    ((IndividualLinkedPlotControl)parentControl).PopThePlotIntoPlot5();
             //}
 
@@ -704,8 +704,8 @@ namespace View.Plots
                 parentControl = IndividualLinkedPlotControl.FindParent<ContentControl>(parentControl);
                 if (parentControl != null && parentControl.GetType() == typeof(IndividualLinkedPlotControl))
                 {
-                    FdaViewModel.Plots.IndividualLinkedPlotControlVM vm = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
-                    vm.CurrentVM = (FdaViewModel.BaseViewModel)vm.IndividualPlotWrapperVM;
+                    ViewModel.Plots.IndividualLinkedPlotControlVM vm = (ViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
+                    vm.CurrentVM = (ViewModel.BaseViewModel)vm.IndividualPlotWrapperVM;
                     ((IndividualLinkedPlotControl)parentControl).PopThePlotIntoPlot5();
                 }
             }

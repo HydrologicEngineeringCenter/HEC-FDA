@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ViewModel.Conditions;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -7,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace FdaViewModel.Utilities
+namespace ViewModel.Utilities
 {
     public abstract class ParentElement: BaseFdaElement
     {
@@ -117,7 +118,7 @@ namespace FdaViewModel.Utilities
                 }
             }
             if (index != -1)
-            {
+            {               
                 Elements.RemoveAt(index);
                 InsertElement(index, newElement);
             }

@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
 using System.IO;
-using FdaViewModel.WaterSurfaceElevation;
-using FdaViewModel.Saving.PersistenceManagers;
+using ViewModel.WaterSurfaceElevation;
+using ViewModel.Saving.PersistenceManagers;
 
 namespace Importer
 {
@@ -306,7 +306,7 @@ namespace Importer
             }
 
             WaterSurfaceElevationElement elem = new WaterSurfaceElevationElement(Name, Description, probs, true);
-            WaterSurfaceAreaPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetWaterSurfaceManager();
+            WaterSurfaceAreaPersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetWaterSurfaceManager();
             manager.SaveNew(elem);
         }
 

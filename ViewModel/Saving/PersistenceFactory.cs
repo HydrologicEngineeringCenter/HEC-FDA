@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FdaViewModel.Saving.PersistenceManagers;
-using FdaViewModel.Watershed;
-using FdaViewModel.StageTransforms;
-using FdaViewModel.ImpactArea;
-using FdaViewModel.WaterSurfaceElevation;
-using FdaViewModel.FrequencyRelationships;
+using ViewModel.Saving.PersistenceManagers;
+using ViewModel.Watershed;
+using ViewModel.StageTransforms;
+using ViewModel.ImpactArea;
+using ViewModel.WaterSurfaceElevation;
+using ViewModel.FrequencyRelationships;
 
-namespace FdaViewModel.Saving
+namespace ViewModel.Saving
 {
     /// <summary>
     /// Used to get persistence managers for each element. Holds the cache that contains all the elements in memory

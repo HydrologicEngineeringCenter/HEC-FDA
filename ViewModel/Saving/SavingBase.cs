@@ -1,4 +1,4 @@
-﻿using FdaViewModel.Utilities;
+﻿using ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Saving
+namespace ViewModel.Saving
 {
     public abstract class SavingBase : BaseViewModel
     {
@@ -20,24 +20,16 @@ namespace FdaViewModel.Saving
         public abstract string TableName { get; }
         public const string ID_COL_NAME = "id";
         public const string NAME = "name";
-        public const int ID_INDEX = 0;
+        //todo: move these out of here and put in the rating element persistence manager which is what is using it
         public const string ELEMENT_ID_COL_NAME = "elem_id";
 
         public const string LAST_EDIT_DATE = "last_edit_date";
-        public const int LAST_EDIT_DATE_INDEX = 2;
 
         public const string DESCRIPTION = "description";
-        public const int DESCRIPTION_INDEX = 3;
-
         public const string CURVE_DISTRIBUTION_TYPE = "curve_distribution_type";
-        public const int CURVE_DISTRIBUTION_TYPE_INDEX = 4;
-
+        //todo: some elems use the curve type in their tables and some don't. Am i using the curve type for something? investigate?
         public const string CURVE_TYPE = "curve_type";
-        public const int CURVE_TYPE_INDEX = 5;
-
-
         public const string CURVE = "curve";
-        public const int CURVE_INDEX = 6;
 
 
         public abstract string[] TableColumnNames { get; }
@@ -123,12 +115,12 @@ namespace FdaViewModel.Saving
                 Storage.Connection.Instance.Open();
             }
 
-            System.Data.DataTable table = Storage.Connection.Instance.GetDataTable(tableName);
+            DataTable table = Storage.Connection.Instance.GetDataTable(tableName);
            // if (dtv != null)
             {
                 //add an element based on a row element;
                 //for (int i = 1; i < table.Rows.Count; i++)
-                foreach(System.Data.DataRow row in table.Rows)
+                foreach(DataRow row in table.Rows)
                 {
                    // Storage.Connection.Instance.GetRowQueryText(tableName);
                     //object[] row = dtv.GetRow(i);
@@ -196,7 +188,6 @@ namespace FdaViewModel.Saving
         }
         public void SaveNewElementToParentTable(object[] rowData, string tableName, string[] TableColumnNames, Type[] TableColumnTypes)
         {
-
             DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(tableName);
             if (tbl == null)
             {
@@ -217,12 +208,13 @@ namespace FdaViewModel.Saving
             {
                 //UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((RatingCurveElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
                 //this updates the parent table
-                UpdateTableRow(TableName, GetElementId(TableName, oldElement.Name), ID_COL_NAME, TableColumnNames, GetRowDataFromElement(elementToSave));
+                int id = GetElementId(TableName, oldElement.Name);
+                UpdateTableRow(TableName, id, ID_COL_NAME, TableColumnNames, GetRowDataFromElement(elementToSave));
                 //SaveToChangeTable((RatingCurveElement)elementToSave);
                 //UpdateChangeTable(elementToSave, changeTableIndex);
 
                 //make this so that i can pass in "childElement" and have it updated
-                StudyCacheForSaving.UpdateElement(oldElement, elementToSave);
+                StudyCacheForSaving.UpdateElement(oldElement, elementToSave, id);
             }
 
             //Log(FdaLogging.LoggingLevel.Info, "Saved rating curve: " + elementToSave.Name, elementToSave.Name);
@@ -343,41 +335,41 @@ namespace FdaViewModel.Saving
 
         //}
 
-        public void UpdateParentTableRow(string elementName, int changeIndex, object[] rowData, string oldName, string tableName, bool hasChangeTable = false, string changeTableConstant = "")
-        {
-            if (!Storage.Connection.Instance.IsOpen) { Storage.Connection.Instance.Open(); }
-            DatabaseManager.DataTableView tableView = Storage.Connection.Instance.GetTable(tableName);
+        //public void UpdateParentTableRow(string elementName, int changeIndex, object[] rowData, string oldName, string tableName, bool hasChangeTable = false, string changeTableConstant = "")
+        //{
+        //    if (!Storage.Connection.Instance.IsOpen) { Storage.Connection.Instance.Open(); }
+        //    DatabaseManager.DataTableView tableView = Storage.Connection.Instance.GetTable(tableName);
 
             
 
-            bool nameHasChanged = false;
-            if (!oldName.Equals(elementName))
-            {
-                nameHasChanged = true;
-            }
+        //    bool nameHasChanged = false;
+        //    if (!oldName.Equals(elementName))
+        //    {
+        //        nameHasChanged = true;
+        //    }
 
-            //int rowIndex = GetElementIndexInTable(tableView, oldName, 0);
-            DataTable dt = Storage.Connection.Instance.GetDataTable(tableName);
-            int rowIndex = GetElementIndexInTable(dt, oldName, 1);
-            if (rowIndex != -1)
-            {
+        //    //int rowIndex = GetElementIndexInTable(tableView, oldName, 0);
+        //    DataTable dt = Storage.Connection.Instance.GetDataTable(tableName);
+        //    int rowIndex = GetElementIndexInTable(dt, oldName, 1);
+        //    if (rowIndex != -1)
+        //    {
 
-                //possibly need to change the name in associated table
-                if (nameHasChanged && hasChangeTable)
-                {
-                    Storage.Connection.Instance.RenameTable(changeTableConstant + oldName + "-ChangeTable", changeTableConstant + elementName + "-ChangeTable");
-                }
+        //        //possibly need to change the name in associated table
+        //        if (nameHasChanged && hasChangeTable)
+        //        {
+        //            Storage.Connection.Instance.RenameTable(changeTableConstant + oldName + "-ChangeTable", changeTableConstant + elementName + "-ChangeTable");
+        //        }
 
 
-                tableView.EditRow(rowIndex, rowData);
-                tableView.ApplyEdits();
+        //        tableView.EditRow(rowIndex, rowData);
+        //        tableView.ApplyEdits();
 
-                //if (hasChangeTable)
-                //{
-                //    UpdateElementChangeTable(changeIndex, rowData, elementName, changeTableConstant);
-                //}
-            }
-        }
+        //        //if (hasChangeTable)
+        //        //{
+        //        //    UpdateElementChangeTable(changeIndex, rowData, elementName, changeTableConstant);
+        //        //}
+        //    }
+        //}
 
         /// <summary>
         /// This sends a sql "update" command to the database.
@@ -388,6 +380,10 @@ namespace FdaViewModel.Saving
         /// <param name="values">The values that you want in the columns listed in "columns"</param>
         public void UpdateTableRow(string tableName, int primaryKey, string primaryKeyColName, string[] columns, object[] values)
         {
+            if (!Storage.Connection.Instance.IsOpen)
+            {
+                Storage.Connection.Instance.Open();
+            }
             //columns and values need to be corespond to each other, you don't have to update columns that don't need it
             StringBuilder sb = new StringBuilder("update ").Append(tableName).Append(" set ");
             for(int i = 0;i<columns.Length;i++)
@@ -404,11 +400,91 @@ namespace FdaViewModel.Saving
 
         }
 
+        /// <summary>
+        /// This sends a sql "update" command to the database.
+        /// </summary>
+        /// <param name="tableName">The name of the sqlite table</param>
+        /// <param name="primaryKey">The id of the element. The column that the id is in must be "ID"</param>
+        /// <param name="columns">The columns that you want to update</param>
+        /// <param name="values">The values that you want in the columns listed in "columns"</param>
+        public void UpdateTableRowWithCompoundKey(string tableName, int[] primaryKeys, string[] primaryKeyColNames, string[] columns, object[] values)
+        {
+            //this sql query looks like this:
+            //update occupancy_types set Name = 'codyistesting' where GroupID = 1 and OcctypeID = 1
+            if (!Storage.Connection.Instance.IsOpen)
+            {
+                Storage.Connection.Instance.Open();
+            }
+            //columns and values need to be corespond to each other, you don't have to update columns that don't need it
+            StringBuilder sb = new StringBuilder("update ").Append(tableName).Append(" set ");
+            for (int i = 0; i < columns.Length; i++)
+            {
+                sb.Append(columns[i]).Append(" = '").Append(values[i]).Append("' ").Append(",");
+            }
+            //get rid of last comma
+            sb.Remove(sb.Length - 1, 1);
+            sb.Append(" where ");
+            for (int i = 0; i < primaryKeys.Length; i++)
+            {
+                sb.Append(primaryKeyColNames[i]).Append(" = ").Append(primaryKeys[i]).Append(" and ");
+            }
+            //remove the last "and"
+            sb.Remove(sb.Length - 4, 4);
+
+            SQLiteCommand command = Storage.Connection.Instance.Reader.DbConnection.CreateCommand();
+            command.CommandText = sb.ToString();
+            command.ExecuteNonQuery();
+
+        }
+
+        public void DeleteRowWithCompoundKey(string tableName, int[] primaryKeys, string[] primaryKeyColNames)
+        {
+            //this sql query looks like this:
+            //delete from occupancy_types where GroupID = 1 and OcctypeID = 27
+            if (!Storage.Connection.Instance.IsOpen)
+            {
+                Storage.Connection.Instance.Open();
+            }
+            StringBuilder sb = new StringBuilder("delete from ").Append(tableName).Append(" where ");
+            for (int i = 0; i < primaryKeys.Length; i++)
+            {
+                sb.Append(primaryKeyColNames[i]).Append(" = ").Append(primaryKeys[i]).Append(" and ");
+            }
+            //remove the last "and"
+            sb.Remove(sb.Length - 4, 4);
+
+            SQLiteCommand command = Storage.Connection.Instance.Reader.DbConnection.CreateCommand();
+            command.CommandText = sb.ToString();
+            command.ExecuteNonQuery();
+
+        }
+
+        public void DeleteRowWithKey(string tableName, int key, string keyColName)
+        {
+            //this sql query looks like this:
+            //delete from occupancy_types where GroupID = 1
+            if (!Storage.Connection.Instance.IsOpen)
+            {
+                Storage.Connection.Instance.Open();
+            }
+            //if the table doesn't exist, then there is nothing to delete
+            if(Storage.Connection.Instance.GetTable(tableName) == null)
+            {
+                return;
+            }
+
+            StringBuilder sb = new StringBuilder("delete from ").Append(tableName).Append(" where ").Append(keyColName).Append(" = ").Append(key);
+            SQLiteCommand command = Storage.Connection.Instance.Reader.DbConnection.CreateCommand();
+            command.CommandText = sb.ToString();
+            command.ExecuteNonQuery();
+
+        }
+
         //public void UpdateChangeTableRow(string tableName, int elementId, string elementIdColName, int oldStateValue, int newStateValue, string stateValueColName)
         //{
         //    //columns and values need to be corespond to each other, you don't have to update columns that don't need it
         //    StringBuilder sb = new StringBuilder("update ").Append(tableName).Append(" set ");
-            
+
         //        sb.Append(stateValueColName).Append(" = '").Append(newStateValue).Append("' ")
         //        .Append(" where ").Append(elementIdColName).Append(" = ").Append(elementId).Append(" AND ")
         //        .Append(stateValueColName).Append(" = ").Append(oldStateValue);
@@ -451,31 +527,32 @@ namespace FdaViewModel.Saving
         //    }
         //}
 
-        public bool AreCurvesDifferent(Statistics.UncertainCurveDataCollection oldCurve, Statistics.UncertainCurveDataCollection newCurve)
-        {
-            bool isModified = false;
-            if (oldCurve.Distribution != newCurve.Distribution) { isModified = true; }
-            if (oldCurve.Count != newCurve.Count) { isModified = true; }
-            if (oldCurve.GetType() != newCurve.GetType()) { isModified = true; }
-            //are all x values the same
-            for (int i = 0; i < oldCurve.XValues.Count(); i++)
-            {
-                if (oldCurve.XValues[i] != newCurve.XValues[i])
-                {
-                    isModified = true;
-                    break;
-                }
-            }
-            for (int i = 0; i < oldCurve.YValues.Count(); i++)
-            {
-                if (oldCurve.YValues[i] != newCurve.YValues[i])
-                {
-                    isModified = true;
-                    break;
-                }
-            }
-            return isModified;
-        }
+            //todo: Refactor: CO
+        //public bool AreCurvesDifferent(Statistics.UncertainCurveDataCollection oldCurve, Statistics.UncertainCurveDataCollection newCurve)
+        //{
+        //    bool isModified = false;
+        //    if (oldCurve.Distribution != newCurve.Distribution) { isModified = true; }
+        //    if (oldCurve.Count != newCurve.Count) { isModified = true; }
+        //    if (oldCurve.GetType() != newCurve.GetType()) { isModified = true; }
+        //    //are all x values the same
+        //    for (int i = 0; i < oldCurve.XValues.Count(); i++)
+        //    {
+        //        if (oldCurve.XValues[i] != newCurve.XValues[i])
+        //        {
+        //            isModified = true;
+        //            break;
+        //        }
+        //    }
+        //    for (int i = 0; i < oldCurve.YValues.Count(); i++)
+        //    {
+        //        if (oldCurve.YValues[i] != newCurve.YValues[i])
+        //        {
+        //            isModified = true;
+        //            break;
+        //        }
+        //    }
+        //    return isModified;
+        //}
 
 
 
@@ -792,6 +869,13 @@ namespace FdaViewModel.Saving
         #endregion
 
             internal virtual string ChangeTableConstant { get { return ""; } }
+        /// <summary>
+        /// Gets the ID for the element with the name provided. Note that the table column name
+        /// must be "Name" for this to work.
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <param name="elementName"></param>
+        /// <returns></returns>
         public int GetElementId(string tableName, string elementName)
         {
             int retval = -1;

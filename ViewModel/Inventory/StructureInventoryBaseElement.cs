@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using StructureInventoryLibrary;
 
-namespace FdaViewModel.Inventory
+namespace ViewModel.Inventory
 {
     //[Author(q0heccdm, 6 / 14 / 2017 4:00:20 PM)]
     public class StructureInventoryBaseElement : StructureInventoryLibrary.StructureInventoryBase
@@ -26,13 +24,17 @@ namespace FdaViewModel.Inventory
         public static string FirstFloorElevationField = "FirstFloorElevation";
         public static string YearField = "Year";
         public static string ModuleField = "Module";
+        public static string fidField = "fid";
+        public static string geomField = "geom";
+        public static string damCatField = "damage_category";
 
         //public string Path { get; set; }
         public string Description { get; set; }
         public string Name { get; set; }
         #endregion
         #region Constructors
-        public StructureInventoryBaseElement(string name,string description):base("Structure Inventory - "+name)
+        public StructureInventoryBaseElement(string name,string description):
+            base(Saving.PersistenceManagers.StructureInventoryPersistenceManager.STRUCTURE_INVENTORY_TABLE_CONSTANT + name)
         {
             //Path = path;
             Name = name;
@@ -58,16 +60,16 @@ namespace FdaViewModel.Inventory
         public override string[] GetTableColumnNames()
         {
             //Woody uses this to get the column names of the lookup table. I have written it to get the column names of the SI
-            //return DataBaseView.ColumnNames;
-            return null;
+            return DataBaseView.ColumnNames;
+            //return null;
         }
 
         public override Type[] GetTableColumnTypes()
         {
             //Woody uses this to get the column types of the lookup table. I have written it to get the column types of the SI
 
-            //return DataBaseView.ColumnTypes;
-            return null;
+            return DataBaseView.ColumnTypes;
+            //return null;
         }
 
         public override bool IsDataValid(ref string MessageOut)
@@ -94,41 +96,41 @@ namespace FdaViewModel.Inventory
 
         protected override bool ContainsRequiredStructureAttributes(ref string errorMessage)
         {
-            //string[] columnNames = DataBaseView.ColumnNames;
-            //// below are all the required headers required from the base class
-            //if (!columnNames.Contains(OccupancyTypeField))
-            //{
-            //    return false;
-            //}
-            //if (!columnNames.Contains(FoundationHeightField))
-            //{
-            //    return false;
-            //}
-            //if (!columnNames.Contains(StructureValueField))
-            //{
-            //    return false;
-            //}
-            //if (!columnNames.Contains(ContentValueField))
-            //{
-            //    return false;
-            //}
-            //if (!columnNames.Contains(OtherValueField))
-            //{
-            //    return false;
-            //}
-            //if (!columnNames.Contains(VehicleValueField))
-            //{
-            //    return false;
-            //}
-            //// below are all the required headers required from this class
-            //if (!columnNames.Contains(GroundElevationField))
-            //{
-            //    return false;
-            //}
-            //if (!columnNames.Contains(FirstFloorElevationField))
-            //{
-            //    return false;
-            //}
+            string[] columnNames = DataBaseView.ColumnNames;
+            // below are all the required headers required from the base class
+            if (!columnNames.Contains(OccupancyTypeField))
+            {
+                return false;
+            }
+            if (!columnNames.Contains(FoundationHeightField))
+            {
+                return false;
+            }
+            if (!columnNames.Contains(StructureValueField))
+            {
+                return false;
+            }
+            if (!columnNames.Contains(ContentValueField))
+            {
+                return false;
+            }
+            if (!columnNames.Contains(OtherValueField))
+            {
+                return false;
+            }
+            if (!columnNames.Contains(VehicleValueField))
+            {
+                return false;
+            }
+            // below are all the required headers required from this class
+            if (!columnNames.Contains(GroundElevationField))
+            {
+                return false;
+            }
+            if (!columnNames.Contains(FirstFloorElevationField))
+            {
+                return false;
+            }
 
             return true;
         }

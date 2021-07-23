@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
-using System.Threading.Tasks;
-using FdaViewModel.Utilities;
+using ViewModel.Utilities;
 using Statistics;
+using Model;
 
-namespace FdaViewModel.StageTransforms
+namespace ViewModel.StageTransforms
 {
     //[Author(q0heccdm, 6 / 8 / 2017 11:31:34 AM)]
     public class ExteriorInteriorElement : Utilities.ChildElement
@@ -30,11 +28,11 @@ namespace FdaViewModel.StageTransforms
         
         #endregion
         #region Constructors
-        public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, Statistics.UncertainCurveDataCollection exteriorInteriorCurve):base()
+        public ExteriorInteriorElement(string userProvidedName,string lastEditDate, string desc, IFdaFunction exteriorInteriorCurve):base()
         {
             LastEditDate = lastEditDate;
             Name = userProvidedName;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/ExteriorInteriorStage.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ExteriorInteriorStage.png");
 
             Description = desc;
             if (Description == null) Description = "";
@@ -85,7 +83,7 @@ namespace FdaViewModel.StageTransforms
               // .WithParentGuid(this.GUID)
               // .WithCanOpenMultipleTimes(false);
 
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
+            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, "Exterior - Interior Stage", "Exterior Stage", "Interior Stage", actionManager);
             //StudyCache.AddSiblingRules(vm, this);
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditExtInt"+vm.Name);
@@ -118,6 +116,11 @@ namespace FdaViewModel.StageTransforms
 
         public override bool Equals(object obj)
         {
+            if(Description == null)
+            {
+                Description = "";
+            }
+
             bool retval = true;
             if(obj.GetType() == typeof(ExteriorInteriorElement))
             {
@@ -146,43 +149,44 @@ namespace FdaViewModel.StageTransforms
             return retval;
         }
 
-        private bool areCurvesEqual(UncertainCurveDataCollection curve2)
+        //todo: Refactor: commenting out
+        private bool areCurvesEqual(IFdaFunction curve2)
         {
             bool retval = true;
-            if (Curve.GetType() != curve2.GetType())
-            {
-                return false;
-            }
-            if (Curve.Distribution != curve2.Distribution)
-            {
-                return false;
-            }
-            if (Curve.XValues.Count != curve2.XValues.Count)
-            {
-                return false;
-            }
-            if (Curve.YValues.Count != curve2.YValues.Count)
-            {
-                return false;
-            }
-            double epsilon = .0001;
-            for (int i = 0; i < Curve.XValues.Count; i++)
-            {
-                if (Math.Abs(Curve.get_X(i)) - Math.Abs(curve2.get_X(i)) > epsilon)
-                {
-                    return false;
-                }
-                ContinuousDistribution y = Curve.get_Y(i);
-                ContinuousDistribution y2 = curve2.get_Y(i);
-                if (Math.Abs(y.GetCentralTendency) - Math.Abs(y2.GetCentralTendency) > epsilon)
-                {
-                    return false;
-                }
-                if (Math.Abs(y.GetSampleSize) - Math.Abs(y2.GetSampleSize) > epsilon)
-                {
-                    return false;
-                }
-            }
+            //if (Curve.GetType() != curve2.GetType())
+            //{
+            //    return false;
+            //}
+            //if (Curve.Distribution != curve2.Distribution)
+            //{
+            //    return false;
+            //}
+            //if (Curve.XValues.Count != curve2.XValues.Count)
+            //{
+            //    return false;
+            //}
+            //if (Curve.YValues.Count != curve2.YValues.Count)
+            //{
+            //    return false;
+            //}
+            //double epsilon = .0001;
+            //for (int i = 0; i < Curve.XValues.Count; i++)
+            //{
+            //    if (Math.Abs(Curve.get_X(i)) - Math.Abs(curve2.get_X(i)) > epsilon)
+            //    {
+            //        return false;
+            //    }
+            //    ContinuousDistribution y = Curve.get_Y(i);
+            //    ContinuousDistribution y2 = curve2.get_Y(i);
+            //    if (Math.Abs(y.GetCentralTendency) - Math.Abs(y2.GetCentralTendency) > epsilon)
+            //    {
+            //        return false;
+            //    }
+            //    if (Math.Abs(y.GetSampleSize) - Math.Abs(y2.GetSampleSize) > epsilon)
+            //    {
+            //        return false;
+            //    }
+            //}
 
             return retval;
         }

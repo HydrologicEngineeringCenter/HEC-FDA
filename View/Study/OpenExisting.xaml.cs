@@ -26,14 +26,14 @@ namespace View.Study
 
         private void TextBoxFileBrowser_SelectionMade(string fullpath, string filename)
         {
-            FdaViewModel.Study.ExistingStudyVM vm = (FdaViewModel.Study.ExistingStudyVM)this.DataContext;
+            ViewModel.Study.ExistingStudyVM vm = (ViewModel.Study.ExistingStudyVM)this.DataContext;
             vm.Path = fullpath;
             txtbox.Text = fullpath;
         }
 
         //private void TextBoxFileBrowser_LostFocus(object sender, RoutedEventArgs e)
         //{
-        //    FdaViewModel.Study.ExistingStudyVM vm = (FdaViewModel.Study.ExistingStudyVM)this.DataContext;
+        //    ViewModel.Study.ExistingStudyVM vm = (ViewModel.Study.ExistingStudyVM)this.DataContext;
         //    vm.Path = ((Consequences_Assist.Controls.TextBoxFileBrowser)sender).Path;
         //    txtbox.Text = vm.Path;
         //}

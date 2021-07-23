@@ -1,4 +1,4 @@
-﻿using FdaViewModel.Tabs;
+﻿using ViewModel.Tabs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,14 +30,14 @@ namespace View.Conditions
 
         private void btn_NewExteriorInteriorStage_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddExteriorInteriorStageToConditionVM vm = (FdaViewModel.Conditions.AddExteriorInteriorStageToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddExteriorInteriorStageToConditionVM vm = (ViewModel.Conditions.AddExteriorInteriorStageToConditionVM)this.DataContext;
             vm.LaunchNewExteriorInteriorStage(sender, e);
         }
 
         private void btn_OK_Click(object sender, RoutedEventArgs e)
         {
 
-            FdaViewModel.Conditions.AddExteriorInteriorStageToConditionVM vm = (FdaViewModel.Conditions.AddExteriorInteriorStageToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddExteriorInteriorStageToConditionVM vm = (ViewModel.Conditions.AddExteriorInteriorStageToConditionVM)this.DataContext;
 
             if (vm.IsPoppedOut == true)
             {
@@ -48,7 +48,7 @@ namespace View.Conditions
 
         private void btn_Cancel_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddExteriorInteriorStageToConditionVM vm = (FdaViewModel.Conditions.AddExteriorInteriorStageToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddExteriorInteriorStageToConditionVM vm = (ViewModel.Conditions.AddExteriorInteriorStageToConditionVM)this.DataContext;
 
             if (vm.IsPoppedOut == true)
             {
@@ -61,7 +61,7 @@ namespace View.Conditions
 
         private void btn_PopOutImporter_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddExteriorInteriorStageToConditionVM vm = (FdaViewModel.Conditions.AddExteriorInteriorStageToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddExteriorInteriorStageToConditionVM vm = (ViewModel.Conditions.AddExteriorInteriorStageToConditionVM)this.DataContext;
             vm.PopTheImporterOut();
         }
 

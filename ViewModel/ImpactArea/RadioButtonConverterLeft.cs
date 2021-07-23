@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Globalization;
 
-namespace FdaViewModel.ImpactArea
+namespace ViewModel.ImpactArea
 {
     //[Author("q0heccdm", "10 / 18 / 2016 11:47:33 AM")]
     public class RadioButtonConverterLeft : IValueConverter
@@ -29,7 +27,7 @@ namespace FdaViewModel.ImpactArea
      public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) { return false; }
-            else if ((int)value ==(int)(FdaViewModel.ImpactArea.ImpactAreaVM.Bank.left)) { return true; }
+            else if ((int)value ==(int)(ViewModel.ImpactArea.ImpactAreaVM.Bank.left)) { return true; }
             else { return false; }
         }
 

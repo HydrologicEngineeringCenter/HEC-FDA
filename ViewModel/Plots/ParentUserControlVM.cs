@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Plots
+namespace ViewModel.Plots
 {
     //[Author(q0heccdm, 3 / 28 / 2017 2:27:37 PM)]
     public class ParentUserControlVM:BaseViewModel
@@ -17,14 +16,14 @@ namespace FdaViewModel.Plots
         #endregion
         #region Fields
         //private FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction _FailureFunction;
-        private Statistics.CurveIncreasing _FailureFunction;
-        private List<FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction> _Curves;
+        private IFdaFunction _FailureFunction;
+        private List<IFdaFunction> _Curves;
         private string _Title;
 
 
         #endregion
         #region Properties
-        public Statistics.CurveIncreasing FailureFunction
+        public IFdaFunction FailureFunction
         {
             get { return _FailureFunction; }
             set { _FailureFunction = value; }
@@ -37,7 +36,7 @@ namespace FdaViewModel.Plots
         }
         public string XAxisLabel { get; set; }
         public string YAxisLabel { get; set; }
-        public List<FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction> Curves
+        public List<IFdaFunction> Curves
         {
             get { return _Curves; }
             set { _Curves = value; }
@@ -50,15 +49,17 @@ namespace FdaViewModel.Plots
         {
         }
 
-        public ParentUserControlVM(List<FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction> listOfOrdFuncs)
+        public ParentUserControlVM(List<IFdaFunction> listOfOrdFuncs)
         {
             _Curves = listOfOrdFuncs;
-            _FailureFunction = listOfOrdFuncs[0].Function ;
+            //todo: Refactor: commenting out
+            //_FailureFunction = listOfOrdFuncs[0].Function ;
         }
-        public ParentUserControlVM(List<FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction> listOfOrdFuncs, string failureFunctionTitle, string xAxisTitle = null, string yAxisTitle = null)
+        public ParentUserControlVM(List<IFdaFunction> listOfOrdFuncs, string failureFunctionTitle, string xAxisTitle = null, string yAxisTitle = null)
         {
             _Curves = listOfOrdFuncs;
-            _FailureFunction = listOfOrdFuncs[0].Function;
+            //todo: Refactor: commenting out
+            //_FailureFunction = listOfOrdFuncs[0].Function;
             Title = failureFunctionTitle;
             XAxisLabel = xAxisTitle;
             YAxisLabel = yAxisTitle;

@@ -1,5 +1,5 @@
-﻿using FdaViewModel.Utilities;
-using FdaViewModel.Watershed;
+﻿using ViewModel.Utilities;
+using ViewModel.Watershed;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,20 +9,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Saving.PersistenceManagers
+namespace ViewModel.Saving.PersistenceManagers
 {
     public class TerrainElementPersistenceManager : SavingBase, IElementManager
     {
+        private const int ID_COL = 0;
+        private const int NAME_COL = 1;
+        private const int DESC_COL = 2;
+
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
         //you would no longer get any of the old logs. So i use this constant.
-        private const string ELEMENT_TYPE = "Terrain";
+        private const string ELEMENT_TYPE = "terrain";
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("TerrainElementPersistenceManager");
 
 
-        private const string TABLE_NAME = "Terrains";
+        private const string TABLE_NAME = "terrains";
         internal override string ChangeTableConstant { get { return "?????"; } }
-        private static readonly string[] TableColNames = { "Terrain Name", "Path Name" };
+        private static readonly string[] TableColNames = { NAME, "path" };
         private static readonly Type[] TableColTypes = { typeof(string), typeof(string) };
 
         /// <summary>
@@ -53,7 +57,13 @@ namespace FdaViewModel.Saving.PersistenceManagers
             get { return TABLE_NAME; }
         }
 
-        public override string[] TableColumnNames => throw new NotImplementedException();
+        public override string[] TableColumnNames
+        {
+            get
+            {
+                return TableColNames;
+            }
+        }
 
         private object[] GetRowDataFromElement(TerrainElement element)
         {
@@ -62,7 +72,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            return new TerrainElement((string)rowData[0], (string)rowData[1]);
+            return new TerrainElement((string)rowData[NAME_COL], (string)rowData[DESC_COL]);
         }
 
         private async void CopyFileOnBackgroundThread(TerrainElement element) //object sender, DoWorkEventArgs e)
@@ -100,10 +110,10 @@ namespace FdaViewModel.Saving.PersistenceManagers
                 string header = "Error";
                 DynamicTabVM tab = new DynamicTabVM(header, messageBox, "MessageBoxError");
                 Navigate(tab);
-                element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
+                element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png");
                 return;
             }
-            StudyCacheForSaving.RemoveElement((TerrainElement)element);
+            StudyCacheForSaving.RemoveElement((TerrainElement)element,-1);
 
         }
 
@@ -121,14 +131,14 @@ namespace FdaViewModel.Saving.PersistenceManagers
                         actions.Add(act);
                     }
                     newElement.Actions.Clear();
-                    newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name, "pack://application:,,,/Fda;component/Resources/Terrain.png",  " -Renaming File", true);
+                    newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name, "pack://application:,,,/View;component/Resources/Terrain.png",  " -Renaming File", true);
                     try
                     {
                         await Task.Run(() =>
                         {
                             FileInfo currentFile = new FileInfo(oldFilePath);
                             currentFile.MoveTo(currentFile.Directory.FullName + "\\" + newElement.Name + currentFile.Extension);
-                            newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
+                            newElement.CustomTreeViewHeader = new CustomHeaderVM(newElement.Name, "pack://application:,,,/View;component/Resources/Terrain.png");
                             newElement.Actions = actions;
                            // newElement.AddToMapWindow
                         });
@@ -167,7 +177,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
-            element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png", element.Name + " -Deleting", true);
+            element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png", element.Name + " -Deleting", true);
             element.Actions.Clear();
             RemoveTerrainFileOnBackgroundThread((TerrainElement)element);
             //System.IO.File.Delete(((TerrainElement)element).FileName);
@@ -176,8 +186,15 @@ namespace FdaViewModel.Saving.PersistenceManagers
         public void SaveExisting(ChildElement oldElement, ChildElement element, int changeTableIndex)
         {
             RenameTheTerrainFileOnBackgroundThread(oldElement, element);
-            UpdateParentTableRow(element.Name, changeTableIndex, GetRowDataFromElement((TerrainElement)element), oldElement.Name, TableName, false, ChangeTableConstant);
-            StudyCacheForSaving.UpdateTerrain((TerrainElement)oldElement, (TerrainElement)element);
+            //UpdateParentTableRow(element.Name, changeTableIndex, GetRowDataFromElement((TerrainElement)element), oldElement.Name, TableName, false, ChangeTableConstant);
+            //StudyCacheForSaving.UpdateTerrain((TerrainElement)oldElement, (TerrainElement)element);
+
+            //the path needs to get updated with the new name and set on the new element.
+            TerrainElement elem = (TerrainElement)oldElement;
+            string originalExtension = System.IO.Path.GetExtension(elem.FileName);
+            string destinationFilePath = Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name + originalExtension;
+            ((TerrainElement)element).FileName = destinationFilePath;
+            base.SaveExisting(oldElement, element);
             oldElement.AddMapTreeViewItemBackIn(((TerrainElement)oldElement).NodeToAddBackToMapWindow, new EventArgs());
         }
         public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)
@@ -225,7 +242,7 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            throw new NotImplementedException();
+            return GetRowDataFromElement((TerrainElement)elem);
         }
     }
 }

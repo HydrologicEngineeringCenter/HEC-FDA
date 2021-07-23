@@ -35,7 +35,7 @@ namespace View.Inventory
  
             if (dr == System.Windows.Forms.DialogResult.OK) //and the filepath is good?
             {
-                FdaViewModel.Inventory.ImportFromNSIVM tempVM = (FdaViewModel.Inventory.ImportFromNSIVM)Resources["vm"];
+                ViewModel.Inventory.ImportFromNSIVM tempVM = (ViewModel.Inventory.ImportFromNSIVM)Resources["vm"];
 
                 if (((Button)sender).Name == "studyAreaButton")
                 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Study
+namespace ViewModel.Study
 {
     public class PropertiesVM : Editors.BaseEditorVM
     {
@@ -136,7 +136,7 @@ namespace FdaViewModel.Study
         {
             if(tbl.TableName != TableName)
             {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Table name does not match.", FdaModel.Utilities.Messager.ErrorMessageEnum.Fatal & FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel));
+                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Table name does not match.", FdaModel.Utilities.Messager.ErrorMessageEnum.Fatal & FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel));
             }else
             {
                 object[] col = tbl.GetColumn("Value");
@@ -149,7 +149,7 @@ namespace FdaViewModel.Study
                 _StudyNotes = (string)col[5];
                 if(!Enum.TryParse((string)col[6], out _MonetaryUnit))
                 {
-                    ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Monetary unit did not match, setting to dollars.", FdaModel.Utilities.Messager.ErrorMessageEnum.Report & FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel));
+                    //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Monetary unit did not match, setting to dollars.", FdaModel.Utilities.Messager.ErrorMessageEnum.Report & FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel));
                     _MonetaryUnit = MonetaryUnitsEnum.Dollars;
                 }
                 _SurveyedYear = Convert.ToInt32((string)col[7]);

@@ -1,4 +1,4 @@
-﻿using FdaViewModel.AggregatedStageDamage;
+﻿using ViewModel.AggregatedStageDamage;
 using FunctionsView.ViewModel;
 using HEC.Plotting.SciChart2D.Charts;
 using HEC.Plotting.SciChart2D.ViewModel;

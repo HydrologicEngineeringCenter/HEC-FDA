@@ -1,27 +1,27 @@
-﻿using FdaViewModel.Utilities;
+﻿using ViewModel.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FdaViewModel.Utilities.Transactions;
-using FdaViewModel.StageTransforms;
+using Model;
+using Functions;
+using FdaLogging;
+using HEC.Plotting.Core.ViewModel;
+using HEC.Plotting.SciChart2D.ViewModel;
 
-namespace FdaViewModel.Editors
+namespace ViewModel.Editors
 {
-    public class CurveEditorVM : BaseEditorVM, ISaveUndoRedo, ITransactionsAndMessages
+    public class CurveEditorVM : BaseLoggingEditorVM, ISaveUndoRedo
     {
 
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("CurveEditorVM");
 
-        private Statistics.UncertainCurveDataCollection _Curve;
-        private string _SavingText;
-        private ObservableCollection<FdaLogging.LogItem> _MessageRows = new ObservableCollection<FdaLogging.LogItem>();
+        public ChartViewModel MixedViewModel { get; } = new SciChart2DChartViewModel("Test Title");
 
+        private IFdaFunction _Curve;
+        private string _SavingText;
+        //private ObservableCollection<FdaLogging.LogItem> _MessageRows = new ObservableCollection<FdaLogging.LogItem>();
   
 
         #region properties
+        
         public int UndoRowsSelectedIndex
         {
             set
@@ -32,6 +32,7 @@ namespace FdaViewModel.Editors
                 }
                 ChildElement prevElement = ActionManager.SaveUndoRedoHelper.SelectedIndexInUndoList(value, CurrentElement);
                 AssignValuesFromElementToEditor(prevElement);
+                SavingText = CreateLastSavedText(prevElement);
                 UndoRowsSelectedIndex = -1;//this should clear the selection after the choice is made
 
             }
@@ -47,21 +48,21 @@ namespace FdaViewModel.Editors
                 }
                 ChildElement nextElement = ActionManager.SaveUndoRedoHelper.SelectedIndexInRedoList(value, CurrentElement);
                 AssignValuesFromElementToEditor(nextElement);
+                SavingText = CreateLastSavedText(nextElement);
+
                 RedoRowsSelectedIndex = -1;//this should clear the selection after the choice is made
 
             }
         }
 
 
-        public Statistics.UncertainCurveDataCollection Curve
+        public IFdaFunction Curve
         {
             get { return _Curve; }
             set
             {
                 _Curve = value;
-                NotifyPropertyChanged();
-                //Saving.PersistenceFactory.GetElementManager(CurrentElement).Log(FdaLogging.LoggingLevel.Info, "CurveChanged", CurrentElement.Name);
-                //MessageRows = Saving.PersistenceFactory.GetElementManager(CurrentElement).GetLogMessages(CurrentElement.Name);
+                NotifyPropertyChanged();                
             }
         }
 
@@ -69,95 +70,49 @@ namespace FdaViewModel.Editors
         {
             get { return _SavingText; }
             set { _SavingText = value; NotifyPropertyChanged(); }
-        }
-
-        public ObservableCollection<TransactionRowItem> TransactionRows
-        {
-            get;
-            set;
-        }
-
-        public ObservableCollection<FdaLogging.LogItem> MessageRows
-        {
-            get { return _MessageRows; }
-            set { _MessageRows = value; NotifyPropertyChanged("MessageRows"); NotifyPropertyChanged("MessageCount"); }
-        }
-
-        public int MessageCount
-        {
-            get { return _MessageRows.Count; }
-        }
-
-        public bool TransactionsMessagesVisible
-        {
-            get;
-            set;
-        }
+        }      
 
         public string PlotTitle { get; set; }
 
-    
 
+        private IParameterEnum _ParameterType;
         #endregion
 
         #region constructors
-        public CurveEditorVM(Statistics.UncertainCurveDataCollection defaultCurve, EditorActionManager actionManager) :base(actionManager)
+        public CurveEditorVM(IFdaFunction defaultCurve,string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) :base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
         {
-            _Curve = defaultCurve;
+            _ParameterType = defaultCurve.ParameterType;
             PlotTitle = "Curve";
-            TransactionRows = new ObservableCollection<TransactionRowItem>();
+            SetDimensions(800, 600, 400, 400);
         }
 
-        public CurveEditorVM(Utilities.ChildElement elem, EditorActionManager actionManager) :base(elem, actionManager)
+       
+
+        public CurveEditorVM(ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) :base(elem, xLabel, yLabel, chartTitle, actionManager)
         {
-
-            TransactionHelper.LoadTransactionsAndMessages(this, elem);
+            if (elem.Curve != null)
+            {
+                //the curve is null for the conditions editor
+                _ParameterType = elem.Curve.ParameterType;
+            }
             PlotTitle = Name;
-
-            //MessageRows = FdaLogging.RetrieveFromDB.GetMessageRowsForType(elem.GetType(), FdaLogging.LoggingLevel.Fatal);
-            //Saving.PersistenceFactory.GetElementManager(elem).;
-            //Storage.Connection.Instance.GetElementId()
-            MessageRows = Saving.PersistenceFactory.GetElementManager(elem).GetLogMessages(elem.Name);
-            //MessageRows = elem.Logs;
-            //EditorLogAdded += UpdateMessages;
+            SetDimensions(800, 600, 400, 400);         
         }
 
         #endregion
 
 
-        #region voids
+        #region voids       
 
-        public override void AddErrorMessage(string error)
+        /// <summary>
+        /// I wanted this here so that the text could live in one place.
+        /// That way if we want to change it, it should change all the places that use it.
+        /// </summary>
+        /// <param name="elem"></param>
+        /// <returns></returns>
+        private string CreateLastSavedText(ChildElement elem)
         {
-
-            FdaLogging.LogItem mri = new FdaLogging.LogItem(DateTime.Now, error, "", "Fatal", "", "");
-            InsertMessage(mri);
-        }
-        public override void UpdateMessages()
-        {
-            MessageRows = FdaLogging.RetrieveFromDB.GetMessageRows(FdaLogging.LoggingLevel.Fatal);
-        }
-
-        private void InsertMessage(FdaLogging.LogItem mri)
-        {
-            ObservableCollection<FdaLogging.LogItem> tempList = new ObservableCollection<FdaLogging.LogItem>();
-            tempList.Add(mri);
-            foreach (FdaLogging.LogItem row in MessageRows)
-            {
-                tempList.Add(row);
-            }
-            MessageRows = tempList;
-        }
-        private void UpdateMessages(object sender, EventArgs e)
-        {
-            FdaLogging.LogItem mri = (FdaLogging.LogItem)sender;
-            ObservableCollection<FdaLogging.LogItem> tempList = new ObservableCollection<FdaLogging.LogItem>();
-            foreach (FdaLogging.LogItem row in MessageRows)
-            {
-                tempList.Add(row);
-            }
-            tempList.Add(mri);
-            MessageRows = tempList;
+            return "Last Saved: " + elem.LastEditDate;
         }
 
         public  void Undo()
@@ -166,8 +121,9 @@ namespace FdaViewModel.Editors
             if (prevElement != null)
             {
                 AssignValuesFromElementToEditor(prevElement);
-                SavingText = prevElement.Name + " last saved: " + prevElement.LastEditDate;
-                TransactionRows.Insert(0, new TransactionRowItem(DateTime.Now.ToString("G"), "Previously saved values", "me"));
+                SavingText = CreateLastSavedText(prevElement);
+                ReloadMessages();
+                EditorVM.UpdateChartViewModel();
             }
         }
 
@@ -177,22 +133,62 @@ namespace FdaViewModel.Editors
             if(nextElement != null)
             {
                 AssignValuesFromElementToEditor(nextElement);
-                SavingText = nextElement.Name + " last saved: " + nextElement.LastEditDate;
-
+                SavingText = CreateLastSavedText(nextElement);
+                ReloadMessages();
+                EditorVM.UpdateChartViewModel();
             }
         }
 
-        public  void SaveWhileEditing()
+        public virtual ICoordinatesFunction GetCoordinatesFunction()
         {
-            //SavingText = " Saving...";
+            return EditorVM.CreateFunctionFromTables(); 
+        }
+
+        public virtual void SaveWhileEditing()
+        {
+            if(!HasChanges)
+            {
+                //todo: it looks like this never gets hit. It always has changes.
+                String time = DateTime.Now.ToString();
+                LogItem li =LogItemFactory.FactoryTemp(LoggingLevel.Info, "No new changes to save." + time );
+                MessageRows.Insert(0, li);
+                SaveStatusLevel = LoggingLevel.Debug;
+                return;
+            }
+
+            try
+            {
+                //try to construct the new coordinates function
+                ICoordinatesFunction coordFunc = GetCoordinatesFunction();
+                EditorVM.Function = coordFunc;
+                //IFunction function = coordFunc.Sample(.5);
+               
+                Curve = IFdaFunctionFactory.Factory( _ParameterType, coordFunc);
+            }
+            catch(Exception ex)
+            {
+                //we were unsuccessful in creating the coordinates function                
+                TempErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, ex.Message));
+                UpdateMessages(true);
+                return;
+            }
+
+            InTheProcessOfSaving = true;
             ChildElement elementToSave = ActionManager.SaveUndoRedoHelper.CreateElementFromEditorAction(this);
             if(CurrentElement == null)
             {
                 CurrentElement = elementToSave;
             }
+
             LastEditDate = DateTime.Now.ToString("G");
             elementToSave.LastEditDate = LastEditDate;
             CurrentElement.LastEditDate = LastEditDate;
+            elementToSave.Curve = Curve;
+
+            //todo: delete me just for testing
+            //////////////////////////////////
+            Utilities.WriteToConsole.WriteCoordinatesToConsole(elementToSave.Curve, "Flow Frequency Curve: " + elementToSave.Name);
+            //////////////////////////////////
             ActionManager.SaveUndoRedoHelper.Save(CurrentElement.Name,CurrentElement, elementToSave);
             //saving puts all the right values in the db but does not update the owned element in the tree. (in memory values)
             // i need to update those properties here
@@ -200,11 +196,12 @@ namespace FdaViewModel.Editors
 
             //update the rules to exclude the new name from the banned list
             //OwnerValidationRules.Invoke(this, _CurrentElement.Name);  
-            SavingText = elementToSave.Name + " last saved: " + elementToSave.LastEditDate;
-            MessageRows = Saving.PersistenceFactory.GetElementManager(CurrentElement).GetLogMessages(CurrentElement.Name);
+            SavingText = CreateLastSavedText(elementToSave);
 
+            ReloadMessages(true);
+            HasChanges = false;
         }
-
+    
         public override void Save()
         {
             SaveWhileEditing();
@@ -223,17 +220,6 @@ namespace FdaViewModel.Editors
         public void AssignValuesFromElementToEditor(ChildElement element)
         {
             ActionManager.SaveUndoRedoHelper.AssignValuesFromElementToEditorAction(this, element);
-        }
-
-        public void FilterRowsByLevel(FdaLogging.LoggingLevel level)
-        {   
-
-            MessageRows = Saving.PersistenceFactory.GetElementManager(CurrentElement).GetLogMessagesByLevel(level, CurrentElement.Name);
-        }
-
-        public void DisplayAllMessages()
-        {
-            MessageRows = Saving.PersistenceFactory.GetElementManager(CurrentElement).GetLogMessages(CurrentElement.Name);
         }
 
         #endregion

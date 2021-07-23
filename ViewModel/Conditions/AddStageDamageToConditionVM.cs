@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
-using System.Threading.Tasks;
-using FdaModel.Functions;
 using Statistics;
-using FdaViewModel.Utilities;
-using FdaViewModel.AggregatedStageDamage;
+using ViewModel.Utilities;
+using ViewModel.AggregatedStageDamage;
+using Model;
 
-namespace FdaViewModel.Conditions
+namespace ViewModel.Conditions
 {
     //[Author(q0heccdm, 12 / 6 / 2017 2:34:58 PM)]
     public class AddStageDamageToConditionVM:BaseViewModel,Plots.iConditionsImporter
@@ -47,25 +44,26 @@ namespace FdaViewModel.Conditions
             set { _ListOfStageDamageElements = value; NotifyPropertyChanged(); }
         }
 
-        public CurveIncreasing SelectedCurve
+        public IFdaFunction SelectedCurve
         {
             get
             {
-                UncertainCurveDataCollection curve = ((AggregatedStageDamage.AggregatedStageDamageElement)SelectedElement).Curve;
-                 FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamage = 
-                    new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InteriorStageDamage);
-                return stageDamage.GetOrdinatesFunction().Function;
+                return ((AggregatedStageDamage.AggregatedStageDamageElement)SelectedElement).Curve;
+                //UncertainCurveDataCollection curve = ((AggregatedStageDamage.AggregatedStageDamageElement)SelectedElement).Curve;
+                // FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamage = 
+                //    new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InteriorStageDamage);
+                //return stageDamage.GetOrdinatesFunction().Function;
             }
         }
 
-        public BaseFunction BaseFunction
-        {
-            get
-            {
-                return new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(SelectedCurve, FunctionTypes.InteriorStageDamage);
+        //public BaseFunction BaseFunction
+        //{
+        //    get
+        //    {
+        //        return new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(SelectedCurve, FunctionTypes.InteriorStageDamage);
 
-            }
-        }
+        //    }
+        //}
 
         public string SelectedElementName
         {

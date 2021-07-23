@@ -27,7 +27,7 @@ namespace View.Inventory.DamageCategory
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Inventory.DamageCategory.DamageCategoriesVM vm = (FdaViewModel.Inventory.DamageCategory.DamageCategoriesVM)DataContext;
+            ViewModel.Inventory.DamageCategory.DamageCategoriesVM vm = (ViewModel.Inventory.DamageCategory.DamageCategoriesVM)DataContext;
             if(Grid.SelectedIndex == -1)
             {
                 vm.AddDamageCategory(Grid.Items.Count);
@@ -40,7 +40,7 @@ namespace View.Inventory.DamageCategory
 
         private void Remove_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Inventory.DamageCategory.DamageCategoriesVM vm = (FdaViewModel.Inventory.DamageCategory.DamageCategoriesVM)DataContext;
+            ViewModel.Inventory.DamageCategory.DamageCategoriesVM vm = (ViewModel.Inventory.DamageCategory.DamageCategoriesVM)DataContext;
             if (Grid.SelectedIndex == -1)
             {
                 vm.RemoveDamageCategory(Grid.Items[Grid.Items.Count-1]);

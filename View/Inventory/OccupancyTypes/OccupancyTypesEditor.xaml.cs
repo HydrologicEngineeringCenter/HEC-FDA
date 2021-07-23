@@ -13,9 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
-using FdaViewModel.Inventory.OccupancyTypes;
+using ViewModel.Inventory.OccupancyTypes;
 using View.Inventory.OccupancyTypes.Controls;
-using FdaViewModel.Tabs;
+using ViewModel.Tabs;
 
 namespace View.Inventory.OccupancyTypes
 {
@@ -210,7 +210,7 @@ namespace View.Inventory.OccupancyTypes
             //if (e.RemovedItems.Count > 0)
             //{
             //    IOccupancyType prev = (IOccupancyType)e.RemovedItems[0];
-            //    FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
+            //    ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
             //    //structure
             //    prev.StructureValueUncertainty = OccTypeEditorControl.StructureValueUncertainty.ReturnDistribution();
             //    //content

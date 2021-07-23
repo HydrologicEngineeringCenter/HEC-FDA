@@ -27,19 +27,19 @@ namespace View.ImpactArea
         }
         private void Cmb_Path_CmbSelectionMade(string path)
         {
-            FdaViewModel.ImpactArea.ImpactAreaImporterVM vm = (FdaViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
+            ViewModel.ImpactArea.ImpactAreaImporterVM vm = (ViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
             vm.loadUniqueNames(path);
         }
 
         private void Cmb_UniqueName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            FdaViewModel.ImpactArea.ImpactAreaImporterVM vm = (FdaViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
+            ViewModel.ImpactArea.ImpactAreaImporterVM vm = (ViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
             vm.LoadTheRows();
         }
 
         //private void UserControl_Loaded(object sender, RoutedEventArgs e)
         //{
-        //    FdaViewModel.ImpactArea.ImpactAreaImporterVM vm = (FdaViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
+        //    ViewModel.ImpactArea.ImpactAreaImporterVM vm = (ViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
         //    if (vm == null) { return; }
         //    if (vm.IsNameReadOnly)
         //    {
@@ -50,7 +50,7 @@ namespace View.ImpactArea
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            FdaViewModel.ImpactArea.ImpactAreaImporterVM vm = (FdaViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
+            ViewModel.ImpactArea.ImpactAreaImporterVM vm = (ViewModel.ImpactArea.ImpactAreaImporterVM)this.DataContext;
             if (vm == null) { return; }
             if (vm.IsInEditMode)
             {

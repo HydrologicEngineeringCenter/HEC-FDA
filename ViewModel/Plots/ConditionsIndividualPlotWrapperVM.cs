@@ -1,12 +1,12 @@
-﻿using System;
+﻿using ViewModel.Conditions;
+using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Plots
+namespace ViewModel.Plots
 {
     //[Author(q0heccdm, 12 / 20 / 2017 1:24:49 PM)]
     public class ConditionsIndividualPlotWrapperVM : BaseViewModel, IIndividualLinkedPlotWrapper
@@ -16,11 +16,15 @@ namespace FdaViewModel.Plots
         // Created Date: 12/20/2017 1:24:49 PM
         #endregion
         #region Fields
-        private bool _FlipXAxis;
+        private string _EAD;
+        private string _AEP;
+        //private bool _FlipXAxis;
         private bool _TrackerVisible = true;
         private bool _AreaPlotVisible = true;
 
-        private bool _SetYAxisToLog;
+        //private bool _SetYAxisToLog;
+        //private bool _SetXAxisToLog;
+
         private string _Title;
         private string _XAxisLabel;
         private string _YAxisLabel;
@@ -35,14 +39,14 @@ namespace FdaViewModel.Plots
         private IndividualLinkedPlotVM _PlotVM;
 
         private bool _OutOfRange;
-        private FdaModel.ComputationPoint.PerformanceThreshold _Threshold;
+        private Model.IMetric  _Metric;
         #endregion
         #region Properties
      
-        public FdaModel.ComputationPoint.PerformanceThreshold Threshold
+        public Model.IMetric Metric
         {
-            get { return _Threshold; }
-            set { _Threshold = value; NotifyPropertyChanged(); }
+            get { return _Metric; }
+            set { _Metric = value; NotifyPropertyChanged(); }
         }
         public bool AreaPlotVisible
         {
@@ -60,11 +64,11 @@ namespace FdaViewModel.Plots
             set { _OutOfRange = value;NotifyPropertyChanged(); }
         }
 
-        public bool DisplayImportButton
-        {
-            get { return _DisplayImportButton; }
-            set { _DisplayImportButton = value; NotifyPropertyChanged(); }
-        }
+        //public bool DisplayImportButton
+        //{
+        //    get { return _DisplayImportButton; }
+        //    set { _DisplayImportButton = value; NotifyPropertyChanged(); }
+        //}
         public string Title
         {
             get { return _Title; }
@@ -87,41 +91,82 @@ namespace FdaViewModel.Plots
             set { _YAxisLabel = value; NotifyPropertyChanged(); }
         }
 
-        public bool FlipXAxis
-        {
-            get { return _FlipXAxis; }
-            set { _FlipXAxis = value; NotifyPropertyChanged(); }
-        }
+        //public bool FlipXAxis
+        //{
+        //    get { return _FlipXAxis; }
+        //    set { _FlipXAxis = value; NotifyPropertyChanged(); }
+        //}
 
-        public bool SetYAxisToLog
-        {
-            get { return _SetYAxisToLog; }
-            set { _SetYAxisToLog = value; NotifyPropertyChanged(); }
-        }
+        //public bool SetYAxisToLog
+        //{
+        //    get { return _SetYAxisToLog; }
+        //    set { _SetYAxisToLog = value; NotifyPropertyChanged(); }
+        //}
+
+        //public bool SetXAxisToLog
+        //{
+        //    get { return _SetXAxisToLog; }
+        //    set { _SetXAxisToLog = value; NotifyPropertyChanged(); }
+        //}
+
         public IndividualLinkedPlotVM PlotVM
         {
             get { return _PlotVM; }
             set { _PlotVM = value; }// _PlotVM.CurveUpdated += CurveHasBeenUpdated; }
         }
+
+        public int SelectedElementID { get; set; }
+
+        public string EAD
+        {
+            get { return _EAD; }
+            set { _EAD = value;NotifyPropertyChanged(); }
+        }
+        public string AEP
+        {
+            get { return _AEP; }
+            set { _AEP = value; NotifyPropertyChanged(); }
+        }
+
+        private bool _isXAxisLog;
+        private bool _isYAxisLog;
+        private bool _isProbabilityXAxis;
+        private bool _isProbabilityYAxis;
+        private bool _xAxisOnBottom;
+        private bool _yAxisOnLeft;
         #endregion
         #region Constructors
         public ConditionsIndividualPlotWrapperVM():base()
         {
 
         }
-        public ConditionsIndividualPlotWrapperVM(bool setYAxisToLog, bool flipFreqAxis, string title, string xAxisLabel, string yAxisLabel, bool displayImportButton = true)
+        
+        public ConditionsIndividualPlotWrapperVM(bool isXAxisLog, bool isYAxisLog, bool isProbabilityXAxis, bool isProbabilityYAxis, bool xAxisOnBottom, bool yAxisOnLeft)
         {
-            DisplayImportButton = displayImportButton;
-            FlipXAxis = flipFreqAxis;
-            SetYAxisToLog = setYAxisToLog;
-            Title = title;
-            XAxisLabel = xAxisLabel;
-            YAxisLabel = yAxisLabel;
-            
-        }        
+            _isXAxisLog = isXAxisLog;
+            _isYAxisLog = isYAxisLog;
+            _isProbabilityXAxis = isProbabilityXAxis;
+            _isProbabilityYAxis = isProbabilityYAxis;
+            _xAxisOnBottom = xAxisOnBottom;
+            _yAxisOnLeft = yAxisOnLeft;
+            //DisplayImportButton = displayImportButton;
+            //FlipXAxis = flipFreqAxis;
+            //SetYAxisToLog = setYAxisToLog;
+             //SetXAxisToLog = setXAxisToLog;
+            //Title = title;
+            //XAxisLabel = xAxisLabel;
+            //YAxisLabel = yAxisLabel;
+
+        }
 
         #endregion
         #region Voids
+        public void AddCurveToPlot( IFdaFunction function, string elementName,int selectedElemID, FdaCrosshairChartModifier ChartModifier)
+        {
+            SelectedElementID = selectedElemID;
+            //from function: title, x axis label, y axis label
+            PlotVM = new IndividualLinkedPlotVM(function, elementName, ChartModifier, _isXAxisLog, _isYAxisLog, _isProbabilityXAxis, _xAxisOnBottom, _yAxisOnLeft);
+        }
         //public void CurveHasBeenUpdated(object sender, EventArgs e)
         //{
         //    CurveUpdated?.Invoke(sender, e);

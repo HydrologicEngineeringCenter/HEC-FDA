@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using FdaViewModel.Utilities;
+using ViewModel.Utilities;
 
-namespace FdaViewModel.ImpactArea
+namespace ViewModel.ImpactArea
 {
     public class ImpactAreaElement : Utilities.ChildElement
     {
@@ -38,7 +38,7 @@ namespace FdaViewModel.ImpactArea
         public ImpactAreaElement(string userdefinedname,string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows, string selectedPath ) : base()
         {
             Name = userdefinedname;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/ImpactAreas.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ImpactAreas.png");
             Description = description;
             //_FilePath = shapeFilePath;
             //SelectedUniqueName = uniqueName;

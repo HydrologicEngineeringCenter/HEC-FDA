@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using static System.Console;
 using System.IO;
 using Functions;
-using FdaViewModel.GeoTech;
-using FdaViewModel.StageTransforms;
+using ViewModel.GeoTech;
+using ViewModel.StageTransforms;
 using Model;
 
 namespace Importer
@@ -337,7 +337,7 @@ namespace Importer
             Model.IFdaFunction func = IFdaFunctionFactory.Factory( IParameterEnum.ExteriorInteriorStage, function);
             string editDate = DateTime.Now.ToString("G");
             ExteriorInteriorElement elem = new ExteriorInteriorElement(Name, editDate, Description, func);
-            FdaViewModel.Saving.PersistenceFactory.GetExteriorInteriorManager().SaveNewElement(elem);
+            ViewModel.Saving.PersistenceFactory.GetExteriorInteriorManager().SaveNewElement(elem);
         }
 
         private void SaveFailureFunction()
@@ -357,7 +357,7 @@ namespace Importer
            // FailureFunctionElement elem = new FailureFunctionElement(Name, editDate, Description, func, leveeFeatureElement);
             //FdaViewModel.Saving.PersistenceFactory.GetFailureFunctionManager().SaveNewElement(elem);
             LeveeFeatureElement leveeFeatureElement = new LeveeFeatureElement(Name,editDate, Description, ElevationTopOfLevee, false,  func);
-            FdaViewModel.Saving.PersistenceFactory.GetLeveeManager().SaveNewElement(leveeFeatureElement);
+            ViewModel.Saving.PersistenceFactory.GetLeveeManager().SaveNewElement(leveeFeatureElement);
 
         }
 

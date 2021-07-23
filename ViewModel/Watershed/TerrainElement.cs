@@ -1,10 +1,10 @@
-﻿using FdaViewModel.Utilities;
+﻿using ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FdaViewModel.Watershed
+namespace ViewModel.Watershed
 {
     public class TerrainElement : Utilities.ChildElement
     {
@@ -15,7 +15,7 @@ namespace FdaViewModel.Watershed
         private const string _TableConstant = "Terrain - ";
         private string _FileName;
         private int _featureHashCode;
-        private const string TERRAIN_ICON = "pack://application:,,,/Fda;component/Resources/Terrain.png";
+        private const string TERRAIN_ICON = "pack://application:,,,/View;component/Resources/Terrain.png";
         #endregion
         #region Properties
         //public override string GetTableConstant()

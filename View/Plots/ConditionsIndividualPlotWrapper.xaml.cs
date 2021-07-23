@@ -27,7 +27,7 @@ namespace View.Plots
 
         private void btn_DeleteCurve_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+            ViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (ViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
             //clear the curve on the VM side
             //vm.PlotVM.Curve = null; // the curve change callback will update all the linkages
 
@@ -48,7 +48,7 @@ namespace View.Plots
         private void btn_ChangeCurve_Click(object sender, RoutedEventArgs e)
         {
             //the curve needs to not be touched in case they don't choose a new one.
-            FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+            ViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (ViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
            
             ////null the SelectedCurve on the control
             //ContentControl parentControl = Plots.IndividualLinkedPlotControl.FindParent<ContentControl>(this);

@@ -32,7 +32,7 @@ namespace View.Utilities
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            FdaViewModel.Inventory.DepthDamage.DepthDamageCurve.DamageTypeEnum newEnum;
+            ViewModel.Inventory.DepthDamage.DepthDamageCurve.DamageTypeEnum newEnum;
             if (Enum.TryParse(value.ToString(), out newEnum))
             {
                 return newEnum;

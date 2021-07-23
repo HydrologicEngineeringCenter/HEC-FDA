@@ -27,17 +27,17 @@ namespace View.Utilities
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null || parameter == null) { return false; }
-            else if (value.Equals(FdaViewModel.ImpactArea.ImpactAreaVM.Bank.left)) { return true; }
+            else if (value.Equals(ViewModel.ImpactArea.ImpactAreaVM.Bank.left)) { return true; }
             else { return false; }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null || parameter == null) { return FdaViewModel.ImpactArea.ImpactAreaVM.Bank.right; }
+            if (value == null || parameter == null) { return ViewModel.ImpactArea.ImpactAreaVM.Bank.right; }
             else
             {
-                if (bool.Parse(value.ToString()) == true) return FdaViewModel.ImpactArea.ImpactAreaVM.Bank.left;
-                else return FdaViewModel.ImpactArea.ImpactAreaVM.Bank.right;
+                if (bool.Parse(value.ToString()) == true) return ViewModel.ImpactArea.ImpactAreaVM.Bank.left;
+                else return ViewModel.ImpactArea.ImpactAreaVM.Bank.right;
             }
         }
 

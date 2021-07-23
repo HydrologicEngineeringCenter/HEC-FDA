@@ -27,7 +27,7 @@ namespace Fda.Output
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Output.LinkedPlotsUpdatedVM vm = (FdaViewModel.Output.LinkedPlotsUpdatedVM)DataContext;
+            ViewModel.Output.LinkedPlotsUpdatedVM vm = (ViewModel.Output.LinkedPlotsUpdatedVM)DataContext;
             //OxyPlot1
 
         }

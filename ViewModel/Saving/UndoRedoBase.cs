@@ -1,4 +1,4 @@
-﻿using FdaViewModel.Utilities;
+﻿using ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Saving
+namespace ViewModel.Saving
 {
     public abstract class UndoRedoBase:SavingBase
     {
@@ -33,7 +33,7 @@ namespace FdaViewModel.Saving
         //todo: not sure if i need this one
         public virtual int ChangeTableNameColIndex { get { return CHANGE_TABLE_NAME_INDEX; } }
         public virtual string ChangeTableStateIndexColName { get { return STATE_INDEX_COL_NAME; } }
-        public virtual int ChangeTableLastEditDateIndex { get { return LAST_EDIT_DATE_INDEX; } }
+        public virtual int ChangeTableLastEditDateIndex { get { return 2; } }
         public virtual string ChangeTableElementIdColName { get {return  ELEMENT_ID_COL_NAME; } }
 
 
@@ -54,6 +54,11 @@ namespace FdaViewModel.Saving
 
         public void UpdateChangeTable(ChildElement element, int stateIndex)
         {
+            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(ChangeTableName);
+            if (tbl == null)
+            {
+                Storage.Connection.Instance.CreateTable(ChangeTableName, ChangeTableColumnNames, ChangeTableColumnTypes);
+            }
             int elemId = GetElementId(TableName, element.Name);
             int highestStateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME);
 
@@ -89,10 +94,11 @@ namespace FdaViewModel.Saving
         public void Remove(ChildElement element)
         {
             //important to get the element id before removing it from the parent table or else you wont get it.
-            RemoveElementFromChangeTable(ChangeTableName, GetElementId(TableName, element.Name), ELEMENT_ID_COL_NAME);
+            int id = GetElementId(TableName, element.Name);
+            RemoveElementFromChangeTable(ChangeTableName, id, ELEMENT_ID_COL_NAME);
             RemoveFromParentTable(element, TableName);
             //DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCacheForSaving.RemoveElement(element);
+            StudyCacheForSaving.RemoveElement(element, id);
 
         }
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Threading;
 
-namespace FdaViewModel.Utilities
+namespace ViewModel.Utilities
 {
     public class MapWindowMapTreeViewConnector:BaseViewModel
     {
@@ -61,8 +61,10 @@ namespace FdaViewModel.Utilities
                 //_MapWindow.TreeView = _MapTreeView;
 
                 _MapWindow.PlotFeatures();
-                _MapWindow.PlotFeatures();
-
+                //_MapWindow.PlotFeatures();
+                //_MapWindow.CaptureScreenToGpu();
+                //_MapWindow. MapWindow_Mouse(this, new )
+                
                 //_MapWindow.ZoomFromCenter(1);
                 // _MapWindow.OpenGLMapWindow_Resize(null, null);
                 // _MapWindow.SetupViewPort(extent); definitely not this one

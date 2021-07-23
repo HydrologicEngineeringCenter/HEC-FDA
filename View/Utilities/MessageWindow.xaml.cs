@@ -23,12 +23,12 @@ namespace View.Utilities
         {
             InitializeComponent();
         }
-        //public MessageWindow(FdaViewModel.Utilities.MessageVM initializedVM)
+        //public MessageWindow(ViewModel.Utilities.MessageVM initializedVM)
         //{
             
         //    InitializeComponent();
-        //    //Resources["vm"] = new FdaViewModel.Utilities.MessageVM(message);
-        //    FdaViewModel.Utilities.MessageVM tempvm = (FdaViewModel.Utilities.MessageVM) Resources["vm"];
+        //    //Resources["vm"] = new ViewModel.Utilities.MessageVM(message);
+        //    ViewModel.Utilities.MessageVM tempvm = (ViewModel.Utilities.MessageVM) Resources["vm"];
 
         //    tempvm.Message = initializedVM.Message;
         //    tempvm.Title = initializedVM.Title;

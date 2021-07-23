@@ -1,4 +1,4 @@
-﻿using FdaViewModel.Inventory;
+﻿using ViewModel.Inventory;
 using Importer;
 using System;
 using System.Collections.Generic;

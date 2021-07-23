@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.ImpactArea
+namespace ViewModel.ImpactArea
 {
     //[Author("q0heccdm", "10 / 13 / 2016 10:05:26 AM")]
     public class ImpactAreaEditorVM : BaseViewModel

@@ -23,7 +23,7 @@ namespace View.Hydraulics
         {
             InitializeComponent();
         }
-        public GridImporter(FdaViewModel.Hydraulics.GridImporterVM myVM)
+        public GridImporter(ViewModel.Hydraulics.GridImporterVM myVM)
         {
             InitializeComponent();
             Resources["vm"] = myVM;
@@ -37,7 +37,7 @@ namespace View.Hydraulics
 
             if (dr == System.Windows.Forms.DialogResult.OK) //and the filepath is good?
             {
-                FdaViewModel.Hydraulics.GridImporterVM tempVM = (FdaViewModel.Hydraulics.GridImporterVM)Resources["vm"];
+                ViewModel.Hydraulics.GridImporterVM tempVM = (ViewModel.Hydraulics.GridImporterVM)Resources["vm"];
                 tempVM.Path = ofd.FileName;
                 Resources["vm"] = tempVM;
             }

@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
-using FdaViewModel.Utilities;
+using ViewModel.Utilities;
+using Model;
 
-namespace FdaViewModel.GeoTech
+namespace ViewModel.GeoTech
 {
     //[Author(q0heccdm, 6 / 8 / 2017 1:11:19 PM)]
     public class LeveeFeatureElement : Utilities.ChildElement
@@ -23,7 +22,10 @@ namespace FdaViewModel.GeoTech
         private double _Elevation;
         #endregion
         #region Properties
-       
+       public bool IsDefaultCurveUsed
+        {
+            get; set;
+        }
 
         public double Elevation
         {
@@ -34,10 +36,21 @@ namespace FdaViewModel.GeoTech
 
         #endregion
         #region Constructors
-        public LeveeFeatureElement(string userProvidedName, string description, double elevation) : base()
+        public LeveeFeatureElement(string userProvidedName, string creationDate, string description, double elevation, bool isDefault, IFdaFunction failureFunction) : base()
         {
             Name = userProvidedName;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/LeveeFeature.png");
+            LastEditDate = creationDate;
+            Curve = failureFunction;
+
+            IsDefaultCurveUsed = isDefault;
+            if (isDefault)
+            {
+                CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/LeveeFeature.png");
+            }
+            else
+            {
+                CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/FailureFunction.png");
+            }
 
             Description = description;
             if (Description == null) Description = "";
@@ -71,10 +84,14 @@ namespace FdaViewModel.GeoTech
         }
         public void EditLeveeFeature(object arg1, EventArgs arg2)
         {
+
+            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetLeveeManager(), this, (editorVM) => CreateElementFromEditor(editorVM),
+                (editorVM, element) => AssignValuesFromElementToCurveEditor(editorVM, element),
+                 (editorVM, elem) => AssignValuesFromCurveEditorToElement(editorVM, elem));
+
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                .WithSaveUndoRedo(saveHelper)
                 .WithSiblingRules(this);
-               //.WithParentGuid(this.GUID)
-               //.WithCanOpenMultipleTimes(false);
 
             LeveeFeatureEditorVM vm = new LeveeFeatureEditorVM(this, actionManager);
             string header = "Edit " + Name;
@@ -125,7 +142,7 @@ namespace FdaViewModel.GeoTech
         //    }
         //}
 
-       
+
 
         //public override void Save()
         //{
@@ -148,10 +165,19 @@ namespace FdaViewModel.GeoTech
 
         #endregion
         #region Functions
+        public ChildElement CreateElementFromEditor(Editors.BaseEditorVM vm)
+        {
+            LeveeFeatureEditorVM editorVM = (LeveeFeatureEditorVM)vm;
+            //Editors.CurveEditorVM vm = (Editors.CurveEditorVM)editorVM;
+            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+
+            return new LeveeFeatureElement(editorVM.Name, editDate, editorVM.Description,editorVM.Elevation, editorVM.IsUsingDefault, editorVM.Curve);
+        }
+
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             LeveeFeatureElement elem = (LeveeFeatureElement)elementToClone;
-            return new LeveeFeatureElement(elem.Name, elem.Description, elem.Elevation);
+            return new LeveeFeatureElement(elem.Name,elem.LastEditDate, elem.Description, elem.Elevation, elem.IsDefaultCurveUsed, elem.Curve);
         }
         #endregion
     }

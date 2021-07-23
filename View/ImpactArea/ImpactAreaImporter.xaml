@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View.ImpactArea"
         xmlns:OkClose="clr-namespace:View.Utilities"
-        xmlns:ViewModel="clr-namespace:FdaViewModel.ImpactArea;assembly=FdaViewModel"
+        xmlns:ViewModel="clr-namespace:ViewModel.ImpactArea;assembly=ViewModel"
         xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
         mc:Ignorable="d"
         DataContextChanged="UserControl_DataContextChanged"

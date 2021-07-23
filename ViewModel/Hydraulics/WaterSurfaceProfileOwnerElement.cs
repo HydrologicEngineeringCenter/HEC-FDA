@@ -1,11 +1,11 @@
-﻿using FdaViewModel.Utilities;
+﻿using ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Hydraulics
+namespace ViewModel.Hydraulics
 {
     class WaterSurfaceProfileOwnerElement : Utilities.ParentElement
     {

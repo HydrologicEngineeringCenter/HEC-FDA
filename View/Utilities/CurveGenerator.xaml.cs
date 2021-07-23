@@ -20,7 +20,7 @@ namespace View.Utilities
     /// </summary>
     public partial class CurveGenerator : UserControl
     {
-        //public static readonly DependencyProperty FunctionProperty = DependencyProperty.Register("Function", typeof(FdaViewModel.CurveGeneratorVM), typeof(CurveGenerator), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(FunctionChangedCallBack)));
+        //public static readonly DependencyProperty FunctionProperty = DependencyProperty.Register("Function", typeof(ViewModel.CurveGeneratorVM), typeof(CurveGenerator), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(FunctionChangedCallBack)));
 
         //private List<RowItem> _RowItems = new List<RowItem>();
         //private Model.IFdaFunction _Function;

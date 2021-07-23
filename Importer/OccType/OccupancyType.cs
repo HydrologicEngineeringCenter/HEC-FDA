@@ -7,11 +7,11 @@ using static System.Console;
 using System.IO;
 
 using Functions;
-using FdaViewModel.Inventory.OccupancyTypes;
-using FdaViewModel.Inventory.DamageCategory;
+using ViewModel.Inventory.OccupancyTypes;
+using ViewModel.Inventory.DamageCategory;
 using Functions.CoordinatesFunctions;
 using Functions.Ordinates;
-using FdaViewModel.Saving.PersistenceManagers;
+using ViewModel.Saving.PersistenceManagers;
 
 namespace Importer
 {

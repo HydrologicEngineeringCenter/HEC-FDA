@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using System.IO;
 using static System.Console;
 using Functions;
-using FdaViewModel.Inventory.OccupancyTypes;
-using FdaViewModel.Saving.PersistenceManagers;
+using ViewModel.Inventory.OccupancyTypes;
+using ViewModel.Saving.PersistenceManagers;
 using System.Data;
-using FdaViewModel.Inventory;
-using FdaViewModel.WaterSurfaceElevation;
+using ViewModel.Inventory;
+using ViewModel.WaterSurfaceElevation;
 
 namespace Importer
 {
@@ -281,7 +281,7 @@ namespace Importer
         private void ReadStructuresToNewFDA()
         {
             StructureList structureList = GlobalVariables.mp_fdaStudy.GetStructureList();
-            StructureInventoryPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetStructureInventoryManager();
+            StructureInventoryPersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetStructureInventoryManager();
             DataTable dt = manager.CreateEmptyStructuresTable();
             foreach (KeyValuePair<string, Structure> kvp in structureList.Structures)
             {
@@ -295,7 +295,7 @@ namespace Importer
         {
             StructureList structureList = GlobalVariables.mp_fdaStudy.GetStructureList();
             //move the create datatable into the pers manager and call it here
-            StructureInventoryPersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetStructureInventoryManager();
+            StructureInventoryPersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetStructureInventoryManager();
             DataTable dt = manager.CreateEmptyStructuresTable();
             foreach (KeyValuePair<string, Structure> kvp in structureList.Structures)
             {
@@ -338,7 +338,7 @@ namespace Importer
         private void SaveOccupancyTypes(string groupName)
         {
             ReadOccTypes();
-            OccTypePersistenceManager manager = FdaViewModel.Saving.PersistenceFactory.GetOccTypeManager();
+            OccTypePersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetOccTypeManager();
             manager.SaveNewOcctypes(OccupancyTypes, groupName);
         }
 
