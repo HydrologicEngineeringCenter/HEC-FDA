@@ -52,6 +52,11 @@ namespace FunctionsView.View
             dg_table.ArrowDownInLastRow += Dg_table_ArrowDownInLastRow;
             dg_table.ArrowUpInFirstRow += Dg_table_ArrowUpInFirstRow;
             dg_table.PostPasteData += Dg_table_PostPasteData;
+
+            foreach(DataGridColumn col in dg_table.Columns)
+            {
+                col.IsReadOnly = true;
+            }
         }
 
         private void Dg_table_PostPasteData()
@@ -145,11 +150,7 @@ namespace FunctionsView.View
 
         private void Dg_table_RowsDeleted(List<int> rowindices)
         {
-            //if(TableVM.Rows.Count == 0)
-            {
-                TableVM.DeleteRows(rowindices);
-                //TableVM.RowDeleted();
-            }
+            TableVM.DeleteRows(rowindices);
         }
 
         private void Dg_table_RowsAdded(int startrow, int numrows)
@@ -379,7 +380,7 @@ namespace FunctionsView.View
 
             DataGridTextColumn col = new DataGridTextColumn();
             col.Header = Y;
-            col.Width = colWidth; //260;
+            col.Width = colWidth;
             col.CanUserReorder = false;
             col.CanUserResize = false;
             col.CanUserSort = false;
@@ -491,7 +492,6 @@ namespace FunctionsView.View
             
         private void dg_table_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            //TableVM.CellEditEnding();  
             TableVM.Row_UpdateChart(sender, e);
         }
 

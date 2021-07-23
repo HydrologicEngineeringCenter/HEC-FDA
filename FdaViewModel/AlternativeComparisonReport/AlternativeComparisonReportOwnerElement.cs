@@ -5,17 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Alternatives
+namespace FdaViewModel.AlternativeComparisonReport
 {
-    public class AlternativeOwnerElement: ParentElement
+    public class AlternativeComparisonReportOwnerElement: ParentElement
     {
-        public AlternativeOwnerElement():base()
+        public AlternativeComparisonReportOwnerElement():base()
         {
-            Name = "Alternatives";
+            Name = "Alternative Comparison Report";
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
 
             Utilities.NamedAction addAlternativeAction = new Utilities.NamedAction();
-            addAlternativeAction.Header = "Create New Alternative";
+            addAlternativeAction.Header = "Create New Alternative Comparison Report";
             addAlternativeAction.Action = AddNewAlternative;
 
             //Utilities.NamedAction ImportRatingCurve = new Utilities.NamedAction();
@@ -45,7 +45,7 @@ namespace FdaViewModel.Alternatives
             }
            
 
-            CreateNewAlternativeVM vm = new CreateNewAlternativeVM(plans, actionManager);
+            CreateNewAlternativeComparisonReportVM vm = new CreateNewAlternativeComparisonReportVM(plans, actionManager);
             string header = "Create Alternative";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateNewAlternative");
             Navigate(tab, false, true);

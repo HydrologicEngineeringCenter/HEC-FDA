@@ -62,9 +62,7 @@ namespace FdaViewModel.Editors
             set
             {
                 _Curve = value;
-                NotifyPropertyChanged();
-                //Saving.PersistenceFactory.GetElementManager(CurrentElement).Log(FdaLogging.LoggingLevel.Info, "CurveChanged", CurrentElement.Name);
-                //MessageRows = Saving.PersistenceFactory.GetElementManager(CurrentElement).GetLogMessages(CurrentElement.Name);
+                NotifyPropertyChanged();                
             }
         }
 
@@ -72,30 +70,7 @@ namespace FdaViewModel.Editors
         {
             get { return _SavingText; }
             set { _SavingText = value; NotifyPropertyChanged(); }
-        }
-
-        //public ObservableCollection<TransactionRowItem> TransactionRows
-        //{
-        //    get;
-        //    set;
-        //}
-
-        //public ObservableCollection<FdaLogging.LogItem> MessageRows
-        //{
-        //    get { return _MessageRows; }
-        //    set { _MessageRows = value; NotifyPropertyChanged("MessageRows"); NotifyPropertyChanged("MessageCount"); }
-        //}
-
-        //public int MessageCount
-        //{
-        //    get { return _MessageRows.Count; }
-        //}
-
-        //public bool TransactionsMessagesVisible
-        //{
-        //    get;
-        //    set;
-        //}
+        }      
 
         public string PlotTitle { get; set; }
 
@@ -107,72 +82,27 @@ namespace FdaViewModel.Editors
         public CurveEditorVM(IFdaFunction defaultCurve,string xLabel,string yLabel,string chartTitle, EditorActionManager actionManager) :base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
         {
             _ParameterType = defaultCurve.ParameterType;
-           // _Curve = defaultCurve;
             PlotTitle = "Curve";
             SetDimensions(800, 600, 400, 400);
-            //TransactionRows = new ObservableCollection<TransactionRowItem>();
         }
 
-        
+       
 
-        public CurveEditorVM(Utilities.ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) :base(elem, xLabel, yLabel, chartTitle, actionManager)
+        public CurveEditorVM(ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) :base(elem, xLabel, yLabel, chartTitle, actionManager)
         {
             if (elem.Curve != null)
             {
                 //the curve is null for the conditions editor
                 _ParameterType = elem.Curve.ParameterType;
             }
-            //TransactionHelper.LoadTransactionsAndMessages(this, elem);
             PlotTitle = Name;
-            SetDimensions(800, 600, 400, 400);
-
-            //add the temp errors from the curve
-
-
-            //MessageRows = FdaLogging.RetrieveFromDB.GetMessageRowsForType(elem.GetType(), FdaLogging.LoggingLevel.Fatal);
-            //Saving.PersistenceFactory.GetElementManager(elem).;
-            //Storage.Connection.Instance.GetElementId()
-            //MessageRows = elem.Logs;
-            //EditorLogAdded += UpdateMessages;
+            SetDimensions(800, 600, 400, 400);         
         }
 
         #endregion
 
 
-        #region voids
-
-        //public override void AddErrorMessage(string error)
-        //{
-
-        //    FdaLogging.LogItem mri = new FdaLogging.LogItem(DateTime.Now, error, "", "Fatal", "", "");
-        //    InsertMessage(mri);
-        //}
-        //public override void UpdateMessages()
-        //{
-        //    MessageRows = FdaLogging.RetrieveFromDB.GetMessageRows(FdaLogging.LoggingLevel.Fatal);
-        //}
-
-        //private void InsertMessage(FdaLogging.LogItem mri)
-        //{
-        //    ObservableCollection<FdaLogging.LogItem> tempList = new ObservableCollection<FdaLogging.LogItem>();
-        //    tempList.Add(mri);
-        //    foreach (FdaLogging.LogItem row in MessageRows)
-        //    {
-        //        tempList.Add(row);
-        //    }
-        //    MessageRows = tempList;
-        //}
-        //private void UpdateMessages(object sender, EventArgs e)
-        //{
-        //    FdaLogging.LogItem mri = (FdaLogging.LogItem)sender;
-        //    ObservableCollection<FdaLogging.LogItem> tempList = new ObservableCollection<FdaLogging.LogItem>();
-        //    foreach (FdaLogging.LogItem row in MessageRows)
-        //    {
-        //        tempList.Add(row);
-        //    }
-        //    tempList.Add(mri);
-        //    MessageRows = tempList;
-        //}
+        #region voids       
 
         /// <summary>
         /// I wanted this here so that the text could live in one place.
@@ -234,8 +164,6 @@ namespace FdaViewModel.Editors
                 //IFunction function = coordFunc.Sample(.5);
                
                 Curve = IFdaFunctionFactory.Factory( _ParameterType, coordFunc);
-
-
             }
             catch(Exception ex)
             {
@@ -244,15 +172,6 @@ namespace FdaViewModel.Editors
                 UpdateMessages(true);
                 return;
             }
-            //update the messages that show up in the expander
-            //if (!EditorVM.IsValid)
-            //{
-                //since we aren't saving then there will be nothing new in the database.
-                //just need to do an update in case there are new messages from the coordinates function.
-                //SaveStatusVisible = true;
-                //UpdateMessages();
-                //return;
-            //}
 
             InTheProcessOfSaving = true;
             ChildElement elementToSave = ActionManager.SaveUndoRedoHelper.CreateElementFromEditorAction(this);
@@ -260,16 +179,16 @@ namespace FdaViewModel.Editors
             {
                 CurrentElement = elementToSave;
             }
-            //IElementManager manager = Saving.PersistenceFactory.GetElementManager(CurrentElement);
-            //ICoordinatesFunction coordFunc = EditorVM.CreateFunctionFromTables();
-           // IFdaFunction newFunction = ImpactAreaFunctionFactory.Factory(coordFunc, ImpactAreaFunctionEnum.Rating);
-            //Curve = newFunction;
-            //EditorVM.Function = newFunction.Function;
-            //SavingText = " Saving...";
+
             LastEditDate = DateTime.Now.ToString("G");
             elementToSave.LastEditDate = LastEditDate;
             CurrentElement.LastEditDate = LastEditDate;
             elementToSave.Curve = Curve;
+
+            //todo: delete me just for testing
+            //////////////////////////////////
+            Utilities.WriteToConsole.WriteCoordinatesToConsole(elementToSave.Curve, "Flow Frequency Curve: " + elementToSave.Name);
+            //////////////////////////////////
             ActionManager.SaveUndoRedoHelper.Save(CurrentElement.Name,CurrentElement, elementToSave);
             //saving puts all the right values in the db but does not update the owned element in the tree. (in memory values)
             // i need to update those properties here
@@ -278,18 +197,11 @@ namespace FdaViewModel.Editors
             //update the rules to exclude the new name from the banned list
             //OwnerValidationRules.Invoke(this, _CurrentElement.Name);  
             SavingText = CreateLastSavedText(elementToSave);
-            //refresh the log messages
-            //TempErrors = GetTempLogsFromCoordinatesFunctionEditor();
-            //MessageRows = manager.GetLogMessages(CurrentElement.Name);
-            //UpdateMessages();
 
             ReloadMessages(true);
             HasChanges = false;
         }
-
-       
-
-       
+    
         public override void Save()
         {
             SaveWhileEditing();
@@ -309,17 +221,6 @@ namespace FdaViewModel.Editors
         {
             ActionManager.SaveUndoRedoHelper.AssignValuesFromElementToEditorAction(this, element);
         }
-
-        //public void FilterRowsByLevel(FdaLogging.LoggingLevel level)
-        //{   
-
-        //    MessageRows = Saving.PersistenceFactory.GetElementManager(CurrentElement).GetLogMessagesByLevel(level, CurrentElement.Name);
-        //}
-
-        //public void DisplayAllMessages()
-        //{
-        //    MessageRows = Saving.PersistenceFactory.GetElementManager(CurrentElement).GetLogMessages(CurrentElement.Name);
-        //}
 
         #endregion
 

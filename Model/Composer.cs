@@ -10,6 +10,11 @@ namespace Model
     {
         public static IFrequencyFunction Compose(this IFrequencyFunction frequencyFx, ITransformFunction transformFx, double pForFreqFx = 0.50, double pForTransformFx = 0.50)
         {
+            //todo: Delete me. This is just for testing on 6/16/21
+            Utilities.WriteToConsole.WriteCoordinatesToConsole(frequencyFx, "freq Function from Composer.cs ln 14");
+            Utilities.WriteToConsole.WriteCoordinatesToConsole(transformFx, "transform Function from Composer.cs ln 15");
+            //////////////////////
+
             //acceptable transform could be an inflow outflow or a rating curve
             if (frequencyFx.ComposeableTypes.Contains(transformFx.ParameterType))
             {

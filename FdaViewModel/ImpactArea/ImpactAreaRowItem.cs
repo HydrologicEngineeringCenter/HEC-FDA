@@ -13,9 +13,9 @@ namespace FdaViewModel.ImpactArea
         #region Fields
         private string _Name;
         private double _IndexPoint;
-        //should this support bank?
         #endregion
         #region Properties
+        public int ID { get; set; }
         public string Name
         {
             get { return _Name; }
@@ -28,40 +28,28 @@ namespace FdaViewModel.ImpactArea
         }
         #endregion
         #region Constructors
-        public ImpactAreaRowItem():base(null)
+ 
+        public ImpactAreaRowItem(int id, string dispName, double indPoint, ObservableCollection<object> list) : base(list)
         {
-            Name = "";
-            IndexPoint = -1;
-        }
-        public ImpactAreaRowItem(ObservableCollection<object> list) : base(list)
-        {
-            Name = "";
-            IndexPoint = -1;
-        }
-        public ImpactAreaRowItem(string dispName, double indPoint, ObservableCollection<object> list) : base(list)
-        {
+            ID = id;
             Name = dispName;
             IndexPoint = indPoint;
         }
         #endregion
         #region Voids
-        public override void AddValidationRules()
-        {
-            //AddRule(nameof(Name), () => Name == null, "Impact Area Name cannot be null.");
-            //AddRule(nameof(Name), () => Name == "", "Impact Area Name cannot be null.");
-            //AddRule(nameof(IndexPoint), () => IndexPoint < 0, "Index Point must be greater than or equal to zero.");
-            //AddRule(nameof(IndexPoint), () => UniqueRule(nameof(IndexPoint), "Index Point must be unique."), "Index Point must be unique.");
-            //AddRule(nameof(Name), () => UniqueRule(nameof(Name), "Impact Area Name must be unique."), "Impact Area Name must be unique.");
-        }
 
         public override string PropertyDisplayName(string propertyName)
         {
-            return propertyName;//throw new NotImplementedException();
+            return propertyName;
         }
 
         public override bool IsGridDisplayable(string propertyName)
         {
             return true;
+        }
+
+        public override void AddValidationRules()
+        {
         }
         #endregion
         #region Functions

@@ -14,6 +14,7 @@ using FdaViewModel.FrequencyRelationships;
 using FdaViewModel.WaterSurfaceElevation;
 using FdaViewModel.ImpactArea;
 using Functions;
+using FdaViewModel.AlternativeComparisonReport;
 
 namespace FdaViewModel.Study
 {
@@ -580,11 +581,11 @@ namespace FdaViewModel.Study
                 Conditions.ConditionsOwnerElement c = new Conditions.ConditionsOwnerElement();
                 AddElement(c);
 
-                Plans.PlansOwnerElement plans = new Plans.PlansOwnerElement();
+                Alternatives.AltervativeOwnerElement plans = new Alternatives.AltervativeOwnerElement();
                 AddElement(plans);
 
-                Alternatives.AlternativeOwnerElement alt = new Alternatives.AlternativeOwnerElement();
-                AddElement(alt);
+                AlternativeComparisonReportOwnerElement altComparisonReportOwner = new AlternativeComparisonReportOwnerElement();
+                AddElement(altComparisonReportOwner);
 
                 if (loadStudyCache)
                 {

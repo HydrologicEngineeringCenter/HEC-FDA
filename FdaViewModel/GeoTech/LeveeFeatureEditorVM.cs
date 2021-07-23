@@ -44,11 +44,7 @@ namespace FdaViewModel.GeoTech
         }
         public LeveeFeatureEditorVM( ChildElement element, Editors.EditorActionManager actionManager) : base(element, "Probability", "Stage", "chartTitle",actionManager)
         {
-
-            //Name = element.Name;
-            //Description = element.Description;
             Elevation = ((LeveeFeatureElement)element).Elevation;
-            //IsInEditMode = isInEditMode;
             IsUsingDefault = ((LeveeFeatureElement)element).IsDefaultCurveUsed;
         }
         #endregion
@@ -59,7 +55,7 @@ namespace FdaViewModel.GeoTech
             {
                 //if this is the first time then there will only be one coordinate
                 CoordinatesFunctionTableVM firstTable =  EditorVM.Tables[0];
-                CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(1)
+                CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(1, false)
                                         .WithConstantDist(newElevationValue, Functions.InterpolationEnum.Piecewise)
                                         .Build();
                 if (firstTable.Rows.Count > 1)
@@ -84,14 +80,6 @@ namespace FdaViewModel.GeoTech
             AddRule(nameof(Name), () => Name != null, "Name cannot be null.");
         }
 
-        //public override void Save()
-        //{
-        //    //so the problem here is that if i call the save in the base class then it will ask the coordinates function editor to create the curve
-        //    //from the tables. But in this special case if the user has the default radio button selected then we create a special curve
-        //    //so i have copied the base save() except that i handle getting the curve differently.
-            
-        //}
-
         public override ICoordinatesFunction GetCoordinatesFunction()
         {
             if(IsUsingDefault)
@@ -106,23 +94,5 @@ namespace FdaViewModel.GeoTech
                 return base.GetCoordinatesFunction();
             }
         }
-
-        //public override void Save()
-        //{
-        //    if (Description == null) { Description = ""; }
-        //    LeveeFeatureElement elementToSave = new LeveeFeatureElement(Name,Description,Elevation);
-        //    Saving.PersistenceManagers.LeveePersistenceManager manager = Saving.PersistenceFactory.GetLeveeManager();
-        //    if (IsImporter && HasSaved == false)
-        //    {
-        //        manager.SaveNew(elementToSave);
-        //        HasSaved = true;
-        //        OriginalElement = elementToSave;
-        //    }
-        //    else
-        //    {
-        //        manager.SaveExisting((LeveeFeatureElement)OriginalElement, elementToSave, 0);
-        //    }
-        //}
-
     }
 }

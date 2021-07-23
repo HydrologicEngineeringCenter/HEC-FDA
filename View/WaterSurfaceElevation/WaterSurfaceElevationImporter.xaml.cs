@@ -93,6 +93,16 @@ namespace View.WaterSurfaceElevation
 
         }
 
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
+            if(vm.IsEditor == true)
+            {
+                //get rid of the folder selection because we no longer know where the user pulled the data from
+                main_grid.RowDefinitions[3].Height = new GridLength(0);
+            }
+        }
+
         //private void btn_OK_Click(object sender, RoutedEventArgs e)
         //{
         //    FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;

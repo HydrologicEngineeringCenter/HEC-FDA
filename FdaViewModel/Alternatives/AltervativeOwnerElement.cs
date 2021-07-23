@@ -8,13 +8,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Plans
+namespace FdaViewModel.Alternatives
 {
-    public class PlansOwnerElement: ParentElement
+    public class AltervativeOwnerElement: ParentElement
     {
-        public PlansOwnerElement():base()
+        public AltervativeOwnerElement():base()
         {
-            Name = "Plans";
+            Name = "Alternatives";
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
             NamedAction addPlan = new NamedAction();
@@ -49,7 +49,7 @@ namespace FdaViewModel.Plans
                 conditions.Add(elem);
             }
 
-            CreateNewPlanVM vm = new CreateNewPlanVM(conditions, actionManager);
+            CreateNewAlternativeVM vm = new CreateNewAlternativeVM(conditions, actionManager);
             string header = "Create Plan";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateNewPlan");
             Navigate(tab, false, true);

@@ -21,7 +21,6 @@ namespace FdaViewModel.Editors
 {
     public abstract class BaseEditorVM : BaseViewModel
     {
-        //public static event EventHandler EditorLogAdded;
         private string _Description;
         public string Description
         {
@@ -64,13 +63,6 @@ namespace FdaViewModel.Editors
             CurrentElement = elem;
 
             ActionManager = actionManager;
-            //if (actionManager.HasOwnerValidationRules)
-            //{
-            //    actionManager.OwnerValidationRules.Invoke(this, elem.Name);
-            //}
-            //StudyCache.AddSiblingRules(this, elem);
-            //AddSiblingRules(elem);
-
 
             if (actionManager != null)
             {
@@ -82,43 +74,8 @@ namespace FdaViewModel.Editors
             }
         }
 
-        //public static void UpdateErrorMessage(string level, string message)
-        //{
-        //    MessageRowItem mri = new MessageRowItem("", message, "", level, "BaseEditorVM");
-        //    //EditorLogAdded?.Invoke(mri, new EventArgs());
-        //}
-
-        /// <summary>
-        /// This needs to happen when the importer save button gets clicked. 
-        /// I need to switch it over to being a dictionary
-        /// </summary>
-        //private void RemoveFromTabsDictionaryAndAddElementEditor(object sender, EventArgs e)
-        //{
-        //    ChildElement element = (ChildElement)sender;
-
-        //    if(Study.FdaStudyVM._TabsDictionary.ContainsKey(ParentGUID))
-        //    {
-        //        for(int i = 0;i< Study.FdaStudyVM._TabsDictionary[ParentGUID].Count;i++)
-        //        {
-        //            if(Study.FdaStudyVM._TabsDictionary[ParentGUID][i].BaseVM == this)
-        //            {
-        //                Study.FdaStudyVM._TabsDictionary[ParentGUID].RemoveAt(i);
-        //                DynamicTabVM newTab = new DynamicTabVM("", this);
-        //                newTab.CanOpenMultipleTimes = false;
-        //                Study.FdaStudyVM._TabsDictionary.Add(element.GUID, new List<IDynamicTab>() { newTab });
-        //                this.ParentGUID = element.GUID;
-        //                break;
-        //            }
-        //        }
-        //    }
-        //}
-
         private void SetActionManagerValues()
         {
-            if (ActionManager.SaveUndoRedoHelper != null)
-            {
-                //ActionManager.SaveUndoRedoHelper.RemoveFromTabsDictionary += RemoveFromTabsDictionaryAndAddElementEditor;
-            }
             if (ActionManager.HasSiblingRules)
             {
                 if(ActionManager.SiblingElement.GetType().BaseType == typeof(ChildElement))
@@ -130,14 +87,6 @@ namespace FdaViewModel.Editors
                     AddSiblingRules((ParentElement)ActionManager.SiblingElement);
                 }
             }
-            //if(ActionManager.HasCanOpenMultipleTimes)
-            //{
-            //    this.CanOpenMultipleTimes = ActionManager.CanOpenMultipleTimes;
-            //}
-            //if(ActionManager.HasParentGuid)
-            //{
-            //    this.ParentGUID = ActionManager.ParentGuid;
-            //}
         }
 
         /// <summary>
@@ -153,8 +102,8 @@ namespace FdaViewModel.Editors
 
         public override void AddValidationRules()
         {
-            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
-            AddRule(nameof(Name), () => Name != null, "Name cannot be blank.");
+            AddRule(nameof(Name), () => Name != "", "00Name cannot be blank.");
+            AddRule(nameof(Name), () => Name != null, "00Name cannot be blank.");
         }
 
         /// <summary>
@@ -166,16 +115,7 @@ namespace FdaViewModel.Editors
         /// <param name="element"></param>
         public void AddSiblingRules( ChildElement element)
         {
-            //child elements need to exclude thier own name from the list of banned words
-            //bool isChild = false;
-            //if (element.GetType().IsSubclassOf(typeof(ChildElement)))
-            //{
-            //    isChild = true;
-            //}
-
             List<string> existingElements = new List<string>();
-            //List<ChildElement> siblings = StudyCache.GetSiblingsOfChild(element);
-           //Type elementType = ;
 
             //get all elements of this type. This will include itself
             List<ChildElement> siblings = StudyCache.GetChildElementsOfType(element.GetType());
@@ -253,10 +193,6 @@ namespace FdaViewModel.Editors
                 StudyCache.FailureFunctionAdded += SiblingWasAdded;
                 StudyCache.FailureFunctionUpdated += SiblingNameChanged;
             }
-            //if (element.GetType() == typeof(Inventory.OccupancyTypes.OccupancyTypesElement))
-            //{
-            
-            //}
             if (childElementType == typeof(InventoryElement))
             {
                 StudyCache.StructureInventoryAdded += SiblingWasAdded;
@@ -329,8 +265,6 @@ namespace FdaViewModel.Editors
             }
 
         }
-
-        //public abstract void AssignValuesFromElementToEditor(OwnedElement element);
 
     }
 }

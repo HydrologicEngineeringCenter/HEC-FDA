@@ -1,111 +1,65 @@
-﻿using FdaViewModel.Editors;
+﻿using FdaViewModel.Conditions;
+using FdaViewModel.Editors;
+using FdaViewModel.FlowTransforms;
+using Functions;
+using Model;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace FdaViewModel.Alternatives
 {
     public class CreateNewAlternativeVM : BaseEditorVM
     {
-        private string _SelectedWithProjectPlan;
-        private ObservableCollection<Increment> _Increments = new ObservableCollection<Increment>();
-        //private ObservableCollection<string> _SelectedPlan1 = new ObservableCollection<string>();
-        //private ObservableCollection<string> _SelectedPlan2 = new ObservableCollection<string>();
+        public List<ConditionWrapper> Conditions { get; set; }
 
-        //public ObservableCollection<string> SelectedPlan1
-        //{
-        //    get { return _SelectedPlan1; }
-        //    set { _SelectedPlan1 = value; NotifyPropertyChanged(); }
-        //}
-        //public ObservableCollection<string> SelectedPlan2
-        //{
-        //    get { return _SelectedPlan2; }
-        //    set { _SelectedPlan2 = value; NotifyPropertyChanged(); }
-        //}
-        public ObservableCollection<Increment> Increments
+        public CreateNewAlternativeVM(List<InflowOutflowElement> conditions, EditorActionManager actionManager) : base(actionManager)
         {
-            get { return _Increments; }
-            set { _Increments = value; NotifyPropertyChanged(); }
+            //It is actually kind of difficult to get the list of selected items. The way i am going to do this is to create a simple
+            //object that holds a condition and a boolean, isSelected.
+            //so add to the constructor the list of conditions, then use them to create the wrapper class and then add those to the
+            //Conditions property.
+            List<ConditionWrapper> condWrappers = new List<ConditionWrapper>();
+            foreach(InflowOutflowElement cond in conditions)
+            {
+                ConditionWrapper condWrapper = new ConditionWrapper(cond);
+                condWrappers.Add(condWrapper);
+            }
+            Conditions = condWrappers;
         }
-        public List<string> Plans { get; set; }
-        //change from string to "plan" once that object exists
-        //public string SelectedWithoutProjectPlan
-        //{
-        //    get;set;
-        //}
-        //public string SelectedWithProjectPlan
-        //{
-        //    get { return _SelectedWithProjectPlan; }
-        //    set { _SelectedWithProjectPlan = value; NotifyPropertyChanged(); }
-        //}
-        //public string SelectedWithProjectPlanSecondIncrement { get; set; }
-
-
-       // public bool IsUsingSecondIncrement { get; set; }
-
-        public CreateNewAlternativeVM(List<string> plans, EditorActionManager actionManager) : base(actionManager)
+        public override void AddValidationRules()
         {
-            Plans = plans;
+            AddRule(nameof(Name), () => Name != null, "Name cannot be empty.");
+            AddRule(nameof(Name), () => Name != "", "Name cannot be empty.");
         }
-
-        public void AddIncrement()
-        {
-            Increment inc = new Increment("Increment " + Increments.Count, Plans);
-            Increments.Add(inc);
-        }
-
         public override void Save()
         {
-            //the second increment onward will not have the second plan defined. You need to
-            //get it from the first plan of the previous increment.
-            int i = 0;
-        }
-
-        public override bool RunSpecialValidation()
-        {
-            bool isFirstValid = IsFirstIncrementValid();
-            if(!isFirstValid)
+            //Create a plan with the selected conditions
+            List<InflowOutflowElement> conditions = new List<InflowOutflowElement>();
+            foreach(ConditionWrapper cond in Conditions)
             {
-                MessageBox.Show("Not all increments have plans defined.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
-            }
-            foreach (Increment inc in Increments)
-            {
-                if(!IsFirstPlanDefined(inc))
+                if(cond.IsSelected)
                 {
-                    MessageBox.Show("Not all increments have plans defined.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return false;
+                    conditions.Add(cond.Condition);
                 }
             }
-            return true;
         }
 
-        private bool IsFirstPlanDefined(Increment inc)
+        public class ConditionWrapper
         {
-            if (inc.SelectedPlan1 != null)
+            public bool IsSelected { get; set; }
+            public string Name { get; set; }
+            public InflowOutflowElement Condition { get; set; }
+            public ConditionWrapper(InflowOutflowElement condition)
             {
-                return true;
-            }
-            else
-            {
-                return false;
+                Condition = condition;
+                Name = Condition.Name;
+                IsSelected = false;
             }
         }
-        private bool IsFirstIncrementValid()
-        {
-            Increment inc = Increments[0];
-            if(inc.SelectedPlan1 != null && inc.SelectedPlan2 != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+
+
     }
 }

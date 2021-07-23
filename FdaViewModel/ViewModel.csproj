@@ -130,6 +130,7 @@
     <Compile Remove="Output\LinkedPlotsUpdatedVM.cs" />
     <Compile Remove="Plots\LinkedPlotsVM.cs" />
     <Compile Remove="Tabs\TabableVM.cs" />
+    <Compile Remove="Utilities\DatabaseTable.cs" />
     <Compile Remove="Utilities\MessagesVM.cs" />
   </ItemGroup>
   <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" />

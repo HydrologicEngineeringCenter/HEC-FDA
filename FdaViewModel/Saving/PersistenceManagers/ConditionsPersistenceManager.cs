@@ -380,6 +380,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
                     {
                         ConditionsElement newElement = (ConditionsElement)condElem.CloneElement(condElem);
                         newElement.RatingID = newID;
+                        newElement.UpdateTreeViewHeader(newElement.Name + "*");
+                        newElement.ToolTip = "Rating curve " + elem.Name + " was deleted. Condition is out of sync.";
                         SaveExisting(condElem, newElement);
                     }
                 }

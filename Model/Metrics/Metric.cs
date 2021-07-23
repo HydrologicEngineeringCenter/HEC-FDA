@@ -83,6 +83,9 @@ namespace Model.Metrics
         }
         public double Compute(IFrequencyFunction frequencyFx, double p = 0.50)
         {
+            //todo: Delete me. This is just for testing on 6/16/21
+            Utilities.WriteToConsole.WriteCoordinatesToConsole(frequencyFx, "freq Function from Metric.cs ln 86");
+            ///////////////////
             if (frequencyFx.ParameterType == TargetFunction)
             {
                 IFrequencyFunction fx = frequencyFx.IsConstant ? frequencyFx : frequencyFx.Sample(p);

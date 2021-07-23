@@ -1,0 +1,174 @@
+﻿<UserControl x:Class="View.Inventory.DefineSIAttributes_mockup"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:View.Inventory"
+             xmlns:con="clr-namespace:View.Utilities"
+                     xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <con:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="160" />
+        </Grid.RowDefinitions>
+        <!--<GroupBox Header="Structure Inventory Shapefile" Grid.Row="0" >
+            <CA:ComboBoxWithBrowser ItemsSource="{Binding Path=AvailablePaths}" SelectedPath="{Binding SelectedPath}" Filter="Shapefiles (*.shp) |*.shp|All files (*.*) |*.*" ValidateToShapeTypes="True" ShapeTypeFilter="Point" Name="cmb_Path" />
+        </GroupBox>-->
+        <!--Attributes-->
+        <!--<GroupBox Header="Define Structure Attribute Information" Margin="5">-->
+        <GroupBox Header="Required Attributes" Grid.Row="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="Auto"/>
+
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <RadioButton Name="rad_FirstFloorElevation" IsChecked="{Binding FirstFloorElevationIsChecked}" Checked="rad_FirstFloorElevation_Click" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center" Content="First Floor Elevation" />
+                <RadioButton Name="rad_GroundElevationAndFoundationHeight" IsChecked="{Binding GroundElevationIsChecked}" Checked="rad_GroundElevationAndFoundationHeight_Click" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Content="Ground Elevation and Foundation Height" />
+                <GroupBox Grid.Row="1" Grid.ColumnSpan="2" Header="Ground Elevation Source" >
+                    <Grid  Grid.ColumnSpan="2" Grid.Row="1" >
+                        <StackPanel Orientation="Horizontal" >
+                            <RadioButton Content="From Terrain File" IsChecked="True" Margin="0,0,10,0"/>
+                            <RadioButton Content="From Structures File" Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+                
+                
+                <Grid Name="AttributeDefinitionGrid" IsEnabled="True" Grid.ColumnSpan="2" Grid.Row="2">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="145"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="110"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="28" />
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <!--<RowDefinition Height="28"/>-->
+                        <RowDefinition Height="28"/>
+                        <RowDefinition Height="28"/>
+                        <!--<RowDefinition Height="28"/>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="28"/>-->
+                    </Grid.RowDefinitions>
+
+                    <!--<TextBlock Grid.Row="0" Grid.Column="0" TextAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                        <Underline><Bold>Required Attributes</Bold></Underline>
+                </TextBlock>-->
+                    <TextBlock Grid.Row="0" Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                        <Underline><Bold>Import Attributes</Bold></Underline>
+                    </TextBlock>
+                    <TextBlock Grid.Row="0" Grid.Column="2" TextAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                        <Underline><Bold>Missing</Bold></Underline>
+                    </TextBlock>
+                    <TextBlock Grid.Row="0" Grid.Column="3" TextAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                        <Underline><Bold>Default Value</Bold></Underline>
+                    </TextBlock>
+
+                    <!--<TextBlock Grid.Row="1" Grid.Column="0" Text="Damage Category:" TextAlignment="Right" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" Name="DamageCategoryComboBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" ItemsSource="{Binding StringAttributeNames, ElementName=DefineSIInfo}"/>
+                <CheckBox Grid.Row="1" Grid.Column="2" Name="DamageCategoryCheckBox" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <TextBox Grid.Row="1" Grid.Column="3" Name="DamageCategoryTextBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="False"/>-->
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Occupancy Type:" TextAlignment="Right" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                    <ComboBox Grid.Row="1" Grid.Column="1" Name="OccupancyTypeComboBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=OccupancyTypeIsUsingDefault,Converter={StaticResource InverseBooleanConverter}}" ItemsSource="{Binding Path=StringColumnNames}" SelectedItem="{Binding Path=OccupancyTypeColumnName}"/>
+                    <CheckBox Grid.Row="1" Grid.Column="2" Name="OccupancyTypeCheckBox" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Path=OccupancyTypeIsUsingDefault}"  />
+                    <TextBox Grid.Row="1" Grid.Column="3" Name="OccupancyTypeTextBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=OccupancyTypeIsUsingDefault}" Text="{Binding Path=OccupancyTypeDefaultValue}"/>
+
+
+
+
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Foundation Height:" TextAlignment="Right" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                    <ComboBox Grid.Row="2" Grid.Column="1" Name="FoundationHeightComboBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=FoundationHeightIsUsingDefault,Converter={StaticResource InverseBooleanConverter}}" ItemsSource="{Binding NumericColumnNames}" SelectedItem="{Binding Path=FoundationHeightColumnName}"/>
+                    <CheckBox Grid.Row="2" Grid.Column="2" Name="FoundationHeightCheckBox" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Path=FoundationHeightIsUsingDefault}"/>
+                    <TextBox Grid.Row="2" Grid.Column="3" Name="FoundationHeightTextBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=FoundationHeightIsUsingDefault}" Text="{Binding Path=FoundationHeightDefaultValue}" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Ground Elevation Value:" TextAlignment="Right" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                    <ComboBox Grid.Row="3" Grid.Column="1" Name="GroundElevationComboBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=GroundElevationIsUsingDefault,Converter={StaticResource InverseBooleanConverter}}" ItemsSource="{Binding NumericColumnNames}" SelectedItem="{Binding Path=GroundElevationColumnName}"/>
+                    <CheckBox Grid.Row="3" Grid.Column="2" Name="GroundElevationCheckBox" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Path=GroundElevationIsUsingDefault}" />
+                    <TextBox Grid.Row="3" Grid.Column="3" Name="GroundElevationTextBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=GroundElevationIsUsingDefault}" Text="{Binding Path=GroundElevationDefaultValue}"/>
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="First Floor Elevation Value:" TextAlignment="Right" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                    <ComboBox Grid.Row="4" Grid.Column="1" Name="FirstFloorComboBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=FirstFloorElevationIsUsingDefault,Converter={StaticResource InverseBooleanConverter}}" ItemsSource="{Binding NumericColumnNames}" SelectedItem="{Binding Path=FirstFloorElevationColumnName}"/>
+                    <CheckBox Grid.Row="4" Grid.Column="2" Name="FirstFloorCheckBox" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Path=FirstFloorElevationIsUsingDefault}"/>
+                    <TextBox Grid.Row="4" Grid.Column="3" Name="FirstFloorTextBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=FirstFloorElevationIsUsingDefault}" Text="{Binding Path=FirstFloorElevationDefaultValue}"/>
+
+
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Structure Value:" TextAlignment="Right" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                    <ComboBox Grid.Row="5" Grid.Column="1" Name="StructureValueComboBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=StructureValueIsUsingDefault,Converter={StaticResource InverseBooleanConverter}}" ItemsSource="{Binding NumericColumnNames}" SelectedItem="{Binding Path=StructureValueColumnName}"/>
+                    <CheckBox Grid.Row="5" Grid.Column="2" Name="StructureValueCheckBox" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Path=StructureValueIsUsingDefault}" />
+                    <TextBox Grid.Row="5" Grid.Column="3" Name="StructureValueTextBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=StructureValueIsUsingDefault}" Text="{Binding Path=StructureValueDefaultValue}"/>
+
+                </Grid>
+
+            </Grid>
+
+        </GroupBox>
+        <GroupBox Header="Optional Attributes" Grid.Row="2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="145"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="110"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="28"/>
+
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Content Value:" TextAlignment="Right" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                <ComboBox Grid.Row="0" Grid.Column="1" Name="ContentValueComboBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=ContentValueIsUsingDefault,Converter={StaticResource InverseBooleanConverter}}" ItemsSource="{Binding NumericColumnNames}" SelectedItem="{Binding Path=ContentValueColumnName}"/>
+                <CheckBox Grid.Row="0" Grid.Column="2" Name="ContentValueCheckBox" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Path=ContentValueIsUsingDefault}"/>
+                <TextBox Grid.Row="0" Grid.Column="3" Name="ContentValueTextBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=ContentValueIsUsingDefault}" Text="{Binding Path=ContentValueDefaultValue}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Other Value:" TextAlignment="Right" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" Name="OtherValueComboBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=OtherValueIsUsingDefault,Converter={StaticResource InverseBooleanConverter}}" ItemsSource="{Binding NumericColumnNames}" SelectedItem="{Binding Path=OtherValueColumnName}"/>
+                <CheckBox Grid.Row="1" Grid.Column="2" Name="OtherValueCheckBox" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Path=OtherValueIsUsingDefault}" />
+                <TextBox Grid.Row="1" Grid.Column="3" Name="OtherValueTextBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=OtherValueIsUsingDefault}" Text="{Binding Path=OtherValueDefaultValue}" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Vehicle Value:" TextAlignment="Right" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" Name="VehicleValueComboBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=VehicleValueIsUsingDefault,Converter={StaticResource InverseBooleanConverter}}" ItemsSource="{Binding NumericColumnNames}" SelectedItem="{Binding Path=VehicleValueColumnName}"/>
+                <CheckBox Grid.Row="2" Grid.Column="2" Name="VehicleValueCheckBox" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Path=VehicleValueIsUsingDefault}" />
+                <TextBox Grid.Row="2" Grid.Column="3" Name="VehicleValueTextBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=VehicleValueIsUsingDefault}" Text="{Binding Path=VehicleValueDefaultValue}"/>
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Year:" TextAlignment="Right" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                <ComboBox Grid.Row="3" Grid.Column="1" Name="YearComboBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=YearIsUsingDefault,Converter={StaticResource InverseBooleanConverter}}" ItemsSource="{Binding NumericColumnNames}" SelectedItem="{Binding Path=YearColumnName}"/>
+                <CheckBox Grid.Row="3" Grid.Column="2" Name="YearCheckBox" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Path=YearIsUsingDefault}" />
+                <TextBox Grid.Row="3" Grid.Column="3" Name="YearTextBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=YearIsUsingDefault}" Text="{Binding Path=YearDefaultValue}"/>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Module:" TextAlignment="Right" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                <ComboBox Grid.Row="4" Grid.Column="1" Name="ModuleComboBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=ModuleIsUsingDefault,Converter={StaticResource InverseBooleanConverter}}" ItemsSource="{Binding NumericColumnNames}" SelectedItem="{Binding Path=ModuleColumnName}"/>
+                <CheckBox Grid.Row="4" Grid.Column="2" Name="ModuleCheckBox" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Path=ModuleIsUsingDefault}" />
+                <TextBox Grid.Row="4" Grid.Column="3" Name="ModuleTextBox" Margin="5,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=ModuleIsUsingDefault}" Text="{Binding Path=ModuleDefaultValue}"/>
+
+
+            </Grid>
+
+        </GroupBox>
+    </Grid>
+</UserControl>

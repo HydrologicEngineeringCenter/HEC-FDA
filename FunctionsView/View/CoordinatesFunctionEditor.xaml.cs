@@ -67,7 +67,7 @@ namespace FunctionsView.View
         }
 
         /// <summary>
-        /// This is called anytime an visual update needs to happen, such as changing distribution types.
+        /// This is called anytime a visual update needs to happen, such as changing distribution types.
         /// </summary>
         /// <param name="rowItems"></param>
         private void CreateTables()
@@ -121,7 +121,6 @@ namespace FunctionsView.View
         private void UpdateView(object sender, EventArgs e)
         {
             CreateTables();
-            //EditorVM.UpdateChartViewModel();
         }
        
         
@@ -241,15 +240,6 @@ namespace FunctionsView.View
                 int columnToSelect = DetermineWhichColumnToSelect(senderTable.dg_table.Columns.Count, nextTable.dg_table.Columns.Count, column);
                 nextTable.SelectCellByIndex(0, columnToSelect);
 
-                //int columnToSelect = column;
-                //int lastEditableColumn = nextTable.dg_table.Columns.Count - 3;
-                ////get the currently selected column. If the selected column in the current table is greater
-                ////than the columns in the next table then just select the largest editable column
-                //if (column > lastEditableColumn)
-                //{
-                //    columnToSelect = lastEditableColumn;
-                //}
-                //nextTable.SelectCellByIndex(0, columnToSelect);
             }
         }
     }

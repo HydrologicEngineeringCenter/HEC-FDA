@@ -8,9 +8,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" LostFocus="UserControl_LostFocus">
     <UserControl.Resources>
+        <local:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <Style x:Key="ColumnHeaderStyle1" TargetType="DataGridColumnHeader">
             <Setter Property="Foreground" Value="#808080"/>
-            <!--<Setter Property="Background" Value="White" />-->
         </Style>
         <Style TargetType="DataGridCell" x:Key="NoTabStopStyle">
             <Setter Property="IsTabStop" Value="False" />
@@ -21,25 +21,25 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <controls:CopyPasteDataGrid x:Name="dg_table" Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding TableVM.Rows}" 
+        <controls:CopyPasteDataGrid x:Name="dg_table" Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding TableVM.Rows}" IsReadOnly="{Binding TableVM.IsReadOnly}"
                   Width="520" HorizontalAlignment="Left" Margin="5,0,5,0" BorderThickness="1,0,1,0" 
                   HorizontalGridLinesBrush="#808080" VerticalGridLinesBrush="#808080"
                   CanUserAddRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False"
                   SelectionMode="Extended" SelectionUnit="Cell"  CellEditEnding="dg_table_CellEditEnding" CurrentCellChanged="dg_table_CurrentCellChanged" Unloaded="dg_table_Unloaded">
             
             <DataGrid.Columns>
-                <DataGridTextColumn x:Name="col_x"  Binding="{Binding Path=X, UpdateSourceTrigger=LostFocus}" />
+                <DataGridTextColumn x:Name="col_x"  Binding="{Binding Path=X, UpdateSourceTrigger=LostFocus}" IsReadOnly="{Binding IsReadOnly}"/>
                 <DataGridTemplateColumn x:Name="col_dist"  Header="Distribution" CellStyle="{StaticResource NoTabStopStyle}"   HeaderStyle="{StaticResource ColumnHeaderStyle1}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <local:DistributionComboboxControl Row="{Binding Row}" IsTabStop="False" />
+                            <local:DistributionComboboxControl Row="{Binding Row}" IsTabStop="False" IsEnabled="{Binding IsReadOnly, Converter={StaticResource InverseBooleanConverter}}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn x:Name="col_interp"  Width="*"  CellStyle="{StaticResource NoTabStopStyle}">
+                <DataGridTemplateColumn x:Name="col_interp"  Width="*"  CellStyle="{StaticResource NoTabStopStyle}" >
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <local:InterpolationComboboxControl Row="{Binding Row}" IsTabStop="False"/>
+                            <local:InterpolationComboboxControl Row="{Binding Row}" IsTabStop="False" IsEnabled="{Binding IsReadOnly, Converter={StaticResource InverseBooleanConverter}}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

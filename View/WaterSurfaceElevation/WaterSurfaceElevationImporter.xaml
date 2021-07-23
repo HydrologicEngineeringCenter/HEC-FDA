@@ -6,12 +6,16 @@
              xmlns:Utilities="clr-namespace:View.Utilities"
              xmlns:local="clr-namespace:View.WaterSurfaceElevation"
              mc:Ignorable="d" 
+             Loaded="UserControl_Loaded"
                           xmlns:Util="clr-namespace:View.Utilities"
 
                  xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
 
              d:DesignHeight="520" d:DesignWidth="550">
-    <Grid>
+    <UserControl.Resources>
+        <Util:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibility" />
+    </UserControl.Resources>
+    <Grid x:Name="main_grid">
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition Height="28"/>
@@ -92,7 +96,7 @@
                 <TextBlock Text="Probability" Margin="2,0,2,0" TextAlignment="Center" VerticalAlignment="Center"/>
             </Border>
         </Grid>-->
-        <ListView Grid.Row="5" Name="lst_ListOfRows"  HorizontalAlignment="Stretch" Margin="3">
+        <ListView Grid.Row="5" Name="lst_ListOfRows" ItemsSource="{Binding ListOfRows}"  HorizontalAlignment="Stretch" Margin="3">
             <!--<ListView.ItemTemplate>
                 <DataTemplate>
                     
@@ -120,7 +124,7 @@
                     <GridViewColumn  Header="Import" Width="50"  >
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsChecked}" />
+                                <CheckBox IsChecked="{Binding IsChecked}" IsEnabled="{Binding IsEditor, Converter={StaticResource BoolToInverseVisibility}}" />
                                 
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>

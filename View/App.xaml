@@ -10,10 +10,10 @@
              xmlns:PlotsVM="clr-namespace:FdaViewModel.Plots;assembly=FdaViewModel"
              xmlns:PlotsView="clr-namespace:View.Plots"
              
-             xmlns:AlternativeVM="clr-namespace:FdaViewModel.Alternatives;assembly=FdaViewModel"
+             xmlns:AlternativeComparisonReportVM="clr-namespace:FdaViewModel.AlternativeComparisonReport;assembly=FdaViewModel"
              xmlns:AlternativeView="clr-namespace:View.Alternatives"
              
-             xmlns:PlansVM="clr-namespace:FdaViewModel.Plans;assembly=FdaViewModel"
+             xmlns:PlansVM="clr-namespace:FdaViewModel.Alternatives;assembly=FdaViewModel"
              xmlns:PlansView="clr-namespace:View.Plans"
              
              xmlns:FrequencyRelationshipsVM ="clr-namespace:FdaViewModel.FrequencyRelationships;assembly=FdaViewModel"
@@ -100,12 +100,12 @@
         
         
         <!--alternatives region-->
-        <DataTemplate DataType="{x:Type AlternativeVM:CreateNewAlternativeVM }" >
+        <DataTemplate DataType="{x:Type AlternativeComparisonReportVM:CreateNewAlternativeComparisonReportVM }" >
             <AlternativeView:CreateNewAlternative/>
         </DataTemplate>
         
         <!--Plans Region-->
-        <DataTemplate DataType="{x:Type PlansVM:CreateNewPlanVM }" >
+        <DataTemplate DataType="{x:Type PlansVM:CreateNewAlternativeVM }" >
             <PlansView:CreateNewPlan/>
         </DataTemplate>
 
@@ -205,6 +205,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type InventoryVM:DefineSIAttributesVM }" >
             <InventoryView:DefineSIAttributes/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type InventoryVM:DefineSIAttributesVM_mockup }" >
+            <InventoryView:DefineSIAttributes_mockup/>
         </DataTemplate>
         
         <DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromShapefileVM }" >

@@ -16,7 +16,7 @@ namespace FdaViewModel.Editors
 {
     public abstract class BaseLoggingEditorVM : BaseEditorVM, IDisplayLogMessages
     {
-        private ObservableCollection<FdaLogging.LogItem> _MessageRows = new ObservableCollection<FdaLogging.LogItem>();
+        private ObservableCollection<LogItem> _MessageRows = new ObservableCollection<LogItem>();
         private LoggingLevel _SaveStatusLevel;
         private bool _IsExpanded;
         private CoordinatesFunctionEditorVM _EditorVM;
@@ -47,7 +47,7 @@ namespace FdaViewModel.Editors
                 }
             }
         }
-        public ObservableCollection<FdaLogging.LogItem> MessageRows
+        public ObservableCollection<LogItem> MessageRows
         {
             get { return _MessageRows; }
             set
@@ -105,23 +105,12 @@ namespace FdaViewModel.Editors
 
             EditorVM = new CoordinatesFunctionEditorVM(coordFunc, xLabel, yLabel, chartTitle);
             EditorVM.TableChanged += EditorVM_TableChanged;
-            //if(Error != null && Error != "")
-            //{
-            //    LogItem li = new LogItem(DateTime.Now, Error, "", LoggingLevel.Fatal.ToString(), "", "");
-            //    MessageRows.Add(li);
-            //}
         }
 
         public BaseLoggingEditorVM(Utilities.ChildElement elem, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager):base(elem, actionManager)
         {
             if (elem.Curve != null)
             {
-                
-                //if(elem.Curve.DistributionType == IOrdinateEnum.LogPearsonIII)
-                //{
-                //    ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory()
-                //}
-                //ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(elem.Curve.Coordinates, elem.Curve.Interpolator);
                 EditorVM = new CoordinatesFunctionEditorVM(elem.Curve.Function, xLabel, yLabel, chartTitle);
             }
             else
@@ -138,51 +127,13 @@ namespace FdaViewModel.Editors
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void EditorVM_TableChanged(object sender, EventArgs e)
+        protected void EditorVM_TableChanged(object sender, EventArgs e)
         {            
             HasChanges = true;
             //something has changed. Turn off the save status header message
             SaveStatusLevel = LoggingLevel.Debug;
         }
-        //protected override void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        //{
-
-        //}
-
-        /// <summary>
-        /// This is overriden from the BaseViewModel. The base view model will call this if one of 
-        /// the "rules" gets broken.
-        /// </summary>
-        /// <param name="error"></param>
-        //public override void AddMessage(string error, LoggingLevel level)
-        //{
-        //    //these come from the baseVM. We should clear out any other "temp" messages.
-        //    ObservableCollection<FdaLogging.LogItem> tempList = new ObservableCollection<FdaLogging.LogItem>();
-        //    foreach (LogItem li in MessageRows)
-        //    {
-        //        //exclude any temp logs
-        //        if(!li.Element.Equals("TempLogItem"))
-        //        {
-        //            tempList.Add(li);
-        //        }
-        //    }
-
-        //    FdaLogging.LogItem mri = new FdaLogging.LogItem(DateTime.Now, error, "",level.ToString(), "", "TempLogItem");
-        //    tempList.Insert(0, mri);
-        //    MessageRows = tempList;
-        //}
-
-
-        //private void InsertMessage(FdaLogging.LogItem mri)
-        //{
-        //    //ObservableCollection<FdaLogging.LogItem> tempList = new ObservableCollection<FdaLogging.LogItem>();
-        //    //tempList.Add(mri);
-        //    //foreach (FdaLogging.LogItem row in MessageRows)
-        //    //{
-        //    //    tempList.Add(row);
-        //    //}
-        //    MessageRows.Insert(0,mri);
-        //}
+       
         private void UpdateSaveStatusLevel()
         {
             //This method will also expand the 
@@ -227,15 +178,15 @@ namespace FdaViewModel.Editors
             }
             return retval;
         }
-        public void FilterRowsByLevel(FdaLogging.LoggingLevel level)
+        public void FilterRowsByLevel(LoggingLevel level)
         {
 
-            MessageRows = Saving.PersistenceFactory.GetElementManager(CurrentElement).GetLogMessagesByLevel(level, CurrentElement.Name);
+            MessageRows = PersistenceFactory.GetElementManager(CurrentElement).GetLogMessagesByLevel(level, CurrentElement.Name);
         }
 
         public void DisplayAllMessages()
         {
-            MessageRows = Saving.PersistenceFactory.GetElementManager(CurrentElement).GetLogMessages(CurrentElement.Name);
+            MessageRows = PersistenceFactory.GetElementManager(CurrentElement).GetLogMessages(CurrentElement.Name);
         }
 
         /// <summary>
@@ -256,13 +207,8 @@ namespace FdaViewModel.Editors
                 //exclude any temp logs
                 if (!li.IsTempLog())
                 {
-                    //if (li.Message.Equals("Last Saved"))
-                    //{
-                    //    li.Message = "Last Saved: " + li.Date;
-                    //}
                     tempList.Add(li);
-                }
-                
+                }              
             }
 
             //get IMessages from the coord func editor
@@ -294,10 +240,13 @@ namespace FdaViewModel.Editors
         /// </summary>
         public void ReloadMessages(bool saving = false)
         {
-            IElementManager manager = PersistenceFactory.GetElementManager(CurrentElement);
-            //get log messages from DB
-            MessageRows = manager.GetLogMessages(CurrentElement.Name);
-            UpdateMessages(saving);
+            if (CurrentElement != null)
+            {
+                IElementManager manager = PersistenceFactory.GetElementManager(CurrentElement);
+                //get log messages from DB
+                MessageRows = manager.GetLogMessages(CurrentElement.Name);
+                UpdateMessages(saving);
+            }
         }
 
         private List<LogItem> GetTempLogsFromCoordinatesFunctionEditor()
@@ -316,7 +265,6 @@ namespace FdaViewModel.Editors
             {
                 messagesFromEditor.AddRange(EditorVM.Function.Messages);
             }
-            //IEnumerable<IMessage> messages = EditorVM.Function.Messages;
             foreach (IMessage message in messagesFromEditor)
             {
                 LoggingLevel level = TranslateValidationLevelToLogLevel(message.Level);

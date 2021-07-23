@@ -74,7 +74,8 @@ namespace FdaViewModel.Saving.PersistenceManagers
             foreach (object[] row in indexTable.GetRows(0, indexTable.NumberOfRows-1))
             {
                 //each row here should be a name and an index point
-                ImpactAreaRowItem ri = new ImpactAreaRowItem(row[2].ToString(), Convert.ToDouble(row[3]), tempCollection);
+                int id = (int)row[0];
+                ImpactAreaRowItem ri = new ImpactAreaRowItem(id, row[2].ToString(), Convert.ToDouble(row[3]), tempCollection);
                 tempCollection.Add(ri);
             }
             ObservableCollection<ImpactAreaRowItem> items = new ObservableCollection<ImpactAreaRowItem>();

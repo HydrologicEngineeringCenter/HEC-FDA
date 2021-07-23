@@ -171,7 +171,8 @@ namespace FdaViewModel.Inventory.OccupancyTypes
         }
         public OccupancyType(string name, string damageCategoryName)
         {
-
+            Name = name;
+            DamageCategory = DamageCategoryFactory.Factory(damageCategoryName);
         }
 
 

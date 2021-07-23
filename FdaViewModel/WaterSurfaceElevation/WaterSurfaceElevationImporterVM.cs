@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using FdaViewModel.Editors;
 using FdaViewModel.Utilities;
+using System.IO;
 
 namespace FdaViewModel.WaterSurfaceElevation
 {
@@ -23,6 +24,7 @@ namespace FdaViewModel.WaterSurfaceElevation
 
         #endregion
         #region Properties
+        public bool IsEditor { get; set; }
         public bool IsUsingTifFiles { get; set; }// it will either be all tif's or all vrt's. if there are flt's then i will convert them to tif's
         public List<PathAndProbability> ListOfRelativePaths
         {
@@ -30,10 +32,7 @@ namespace FdaViewModel.WaterSurfaceElevation
             set { _ListOfRelativePaths = value; NotifyPropertyChanged(); }
         }
         public List<string> ListOfOriginalPaths { get; set; } //this is only for messaging out in the transaction log
-       // public Utilities.ParentElement ParentElement { get; set; }
    
-      
-
         public bool IsDepthGridChecked
         {
             get { return _IsDepthGridChecked; }
@@ -50,9 +49,31 @@ namespace FdaViewModel.WaterSurfaceElevation
         #region Constructors
         public WaterSurfaceElevationImporterVM(EditorActionManager actionManager):base(actionManager)
         {
+            IsEditor = false;
+
             _ListOfRows = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
         }
+        /// <summary>
+        /// Constructor used when editing an existing child node.
+        /// </summary>
+        /// <param name="elem"></param>
+        /// <param name="actionManager"></param>
+        public WaterSurfaceElevationImporterVM(WaterSurfaceElevationElement elem, EditorActionManager actionManager) : base(actionManager)
+        {
+            IsEditor = true;
+            _ListOfRows = new ObservableCollection<WaterSurfaceElevationRowItemVM>();
+            Name = elem.Name;
+            Description = elem.Description;
+            ListOfRelativePaths = elem.RelativePathAndProbability;
+            IsDepthGridChecked = elem.IsDepthGrids;
+            // looks like i have to rebuild this ListOfRows = elem.
+            foreach(PathAndProbability pp in ListOfRelativePaths)
+            {
+                string filename = Path.GetFileName(pp.Path);
+                AddRow(true, filename, pp.Path, pp.Probability);
+            }
 
+        }
 
         #endregion
         #region Voids
@@ -242,7 +263,8 @@ namespace FdaViewModel.WaterSurfaceElevation
             {
                 if (atLeastOneFileIsFlt == true || atLeastOneFileIsTif == true)
                 {
-                    Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "Cannot mix .vrt and other file types.\nAll files need to be .vrt or .tif.");
+                    Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, 
+                        "Cannot mix .vrt and other file types.\nAll files need to be .vrt or .tif.");
                     string header = "Incompatible File Types";
                     DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "IncompatibleFileTypes");
                     Navigate(tab, true, true);
@@ -250,7 +272,8 @@ namespace FdaViewModel.WaterSurfaceElevation
                 }
                 else if (numberOfSelectedRows < 8)
                 {
-                    Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.Yes_No, "You have only selected " + numberOfSelectedRows + " files. You will get better results with 8 or more files.\n\nDo you want to continue?");
+                    Utilities.CustomMessageBoxVM msgBoxVM = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.Yes_No, 
+                        "You have only selected " + numberOfSelectedRows + " files. You will get better results with 8 or more files.\n\nDo you want to continue?");
                     string header = "Small Number of Files Selected";
                     DynamicTabVM tab = new DynamicTabVM(header, msgBoxVM, "SmallNumberOfFilesSelected");
                     Navigate(tab, true, true);

@@ -33,6 +33,9 @@ namespace FunctionsView.ViewModel
         private ICoordinatesFunction _Function;
         private IEnumerable<IMessage> _Messages = new List<IMessage>();
         private bool _IsChartInError;
+        private string _XLabel;
+        private bool _IsReadOnly;
+
         public string XLabel { get; }
         public string YLabel { get; }
         public string ChartTitle { get; }
@@ -62,14 +65,16 @@ namespace FunctionsView.ViewModel
             set;
         }
 
+      
 
-        public CoordinatesFunctionEditorVM()
+        public CoordinatesFunctionEditorVM(bool isReadOnly = false)
         {
+            _IsReadOnly = isReadOnly;
             Tables = new List<CoordinatesFunctionTableVM>();
         }
-        public CoordinatesFunctionEditorVM(ICoordinatesFunction function, string xLabel, string yLabel, string chartTitle)
+        public CoordinatesFunctionEditorVM(ICoordinatesFunction function, string xLabel, string yLabel, string chartTitle, bool isReadOnly = false)
         {
-            
+            _IsReadOnly = isReadOnly;
             XLabel = xLabel;
             YLabel = yLabel;
             ChartTitle = chartTitle;
@@ -78,6 +83,23 @@ namespace FunctionsView.ViewModel
             CreateTables(function);
             UpdateChartViewModel();
             
+        }
+
+        /// <summary>
+        /// Copy ctor
+        /// </summary>
+        /// <param name="vm"></param>
+        public CoordinatesFunctionEditorVM(CoordinatesFunctionEditorVM vm)
+        {
+            _IsReadOnly = vm._IsReadOnly;
+            XLabel = vm.XLabel;
+            YLabel = vm.YLabel;
+            ChartTitle = vm.ChartTitle;
+            ICoordinatesFunction newFunction = ICoordinatesFunctionsFactory.Factory(vm.Function.Coordinates, vm.Function.Interpolator);
+            _Function = newFunction;
+            Tables = new List<CoordinatesFunctionTableVM>();
+            CreateTables(newFunction);
+            UpdateChartViewModel();
         }
 
         /// <summary>
@@ -94,123 +116,12 @@ namespace FunctionsView.ViewModel
 
         public void UpdateChartViewModel()
         {
-            //CoordinatesChartViewModel.AxisViewModel.ShowMajorGridLines = false;
-            //CoordinatesChartViewModel.AxisViewModel.ShowMinorGridLines = false;
 
             try
             {
-                CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(CreateFunctionFromTables());
+                CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(CreateFunctionFromTables(), XLabel, YLabel);
                 List<SciLineData> lineData = chartHelper.CreateLineData();
-                CoordinatesChartViewModel.LineData.Set(lineData);
-
-                //UpdateView?.Invoke(this, new EventArgs());
-                
-                
-                //ICoordinatesFunction func = CreateFunctionFromTables();
-                //if(func.IsLinkedFunction)
-                //{
-                //    List<ICoordinatesFunction> functions = ((CoordinatesFunctionLinked)func).Functions;
-                //}
-
-                //var x = new double[func.Coordinates.Count];
-                //var y_05 = new double[func.Coordinates.Count];
-                //var y_50 = new double[func.Coordinates.Count];
-                //var y_95 = new double[func.Coordinates.Count];
-                //for (int i = 0; i < func.Coordinates.Count; i++)
-                //{
-                //    ICoordinate coord = func.Coordinates[i];
-                //    x[i] = coord.X.Value();
-                //    y_05[i] = coord.Y.Value(.05);
-                //    y_50[i] = coord.Y.Value(.5);
-                //    y_95[i] = coord.Y.Value(.95);
-                //}
-                ////var lineData05To50 = InitXyyLineData(x, y_05, y_50,"5% to 50%");
-                ////var lineData50To95 = InitXyyLineData(x, y_50, y_95, "50% to 95%");
-
-                ////lineData50To95.StrokeColorY1 = lineData05To50.StrokeColor;
-                ////lineData50To95.StrokeColor = lineData05To50.StrokeColorY1;
-
-                //NumericLineData ninetyFivePercent = new NumericLineData();
-                //NumericLineData fiftyPercent = new NumericLineData();
-                //NumericLineData fivePercent = new NumericLineData();
-
-                //switch (func.Interpolator)
-                //{
-                //    case InterpolationEnum.Linear:
-                //        {
-
-                //            ninetyFivePercent = new NumericLineData(x, y_95, ChartTitle, "95%", XLabel, YLabel, PlotType.Line);
-                //            fiftyPercent = new NumericLineData(x, y_50, ChartTitle, "50%", XLabel, YLabel, PlotType.Line);
-                //            fivePercent = new NumericLineData(x, y_05, ChartTitle, "5%", XLabel, YLabel, PlotType.Line);
-                //            break;
-                //        }
-                //    case InterpolationEnum.Piecewise:
-                //        {
-                //            ninetyFivePercent = new NumericLineData(x, y_95, ChartTitle, "95%", XLabel, YLabel, PlotType.Line);
-                //            ninetyFivePercent.UseDigitalLine = true;
-                //            fiftyPercent = new NumericLineData(x, y_50, ChartTitle, "50%", XLabel, YLabel, PlotType.Line);
-                //            fiftyPercent.UseDigitalLine = true;
-                //            fivePercent = new NumericLineData(x, y_05, ChartTitle, "5%", XLabel, YLabel, PlotType.Line);
-                //            fivePercent.UseDigitalLine = true;
-                //            break;
-                //        }
-                //    case InterpolationEnum.None:
-                //        {
-                //            ninetyFivePercent = new NumericLineData(x, y_95, ChartTitle, "95%", XLabel, YLabel, PlotType.Scatter)
-                //            {
-                //                StrokeThickness = 5.0,
-                //                Sorted = false,
-                //                AntiAliasing = true,
-                //                //PaletteProvider = new NoneLinePaletteProvider(),
-                //                StrokeColor = Colors.Black,
-                //                SymbolSize = 8.0,
-                //                SymbolType = SymbolType.Triangle,
-                //                SymbolFillColor = Colors.Red,
-                //                SymbolStrokeColor = Colors.Purple,
-                //                SymbolStrokeThickness = 1,
-                //            };
-                //            fiftyPercent = new NumericLineData(x, y_50, ChartTitle, "50%", XLabel, YLabel, PlotType.Scatter)
-                //            {
-                //                StrokeThickness = 5.0,
-                //                Sorted = false,
-                //                AntiAliasing = true,
-                //                //PaletteProvider = new NoneLinePaletteProvider(),
-                //                StrokeColor = Colors.Black,
-                //                SymbolSize = 8.0,
-                //                SymbolType = SymbolType.Circle,
-                //                SymbolFillColor = Colors.Black,
-                //                SymbolStrokeColor = Colors.Black,
-                //                SymbolStrokeThickness = 1,
-                //            };
-                //            fivePercent = new NumericLineData(x, y_05, ChartTitle, "5%", XLabel, YLabel, PlotType.Scatter)
-                //            {
-                //                StrokeThickness = 5.0,
-                //                Sorted = false,
-                //                AntiAliasing = true,
-                //                //PaletteProvider = new NoneLinePaletteProvider(),
-                //                StrokeColor = Colors.Black,
-                //                SymbolSize = 8.0,
-                //                SymbolType = SymbolType.Square,
-                //                SymbolFillColor = Colors.Blue,
-                //                SymbolStrokeColor = Colors.Orange,
-                //                SymbolStrokeThickness = 1,
-                //            };
-
-                //            break;
-                //        }
-                //}
-
-                
-                ////ninetyFivePercent.XData[3] = 54.0;
-                ////ninetyFivePercent.Refresh();
-
-                //// List<XyySciLineData2D<double, double>> lineData = new List<XyySciLineData2D<double, double>>() { lineData1, lineData2 };
-
-                //List<SciLineData> lineData = new List<SciLineData>() { ninetyFivePercent, fiftyPercent,  fivePercent, };
-                ////lineData.Add(fivePercent);
-                //// lineData.Add(fiftyPercent);
-                //// lineData.Add(ninetyFivePercent);
-                //CoordinatesChartViewModel.LineData.Set(lineData);
+                CoordinatesChartViewModel.LineData.Set(lineData);           
             }
             catch (Exception ex)
             {
@@ -253,7 +164,6 @@ namespace FunctionsView.ViewModel
                 StrokeThickness = 5.0,
                 Sorted = false,
                 AntiAliasing = true,
-                //PaletteProvider = new NoneLinePaletteProvider(),
                 StrokeColor = Colors.GreenYellow,
                 SymbolSize = 5.0,
                 SymbolType = SymbolType.Circle,
@@ -262,24 +172,7 @@ namespace FunctionsView.ViewModel
                 SymbolStrokeThickness = 1,
             };
 
-        }
-
-        //private NumericLineData CreateNoneLineData(double[] x, double[] y)
-        //{
-        //    return new NumericLineData(x, y, chartName, seriesName, xLabel, yLabel, PlotType.Line)
-        //    {
-        //        StrokeThickness = 5.0,
-        //        Sorted = false,
-        //        AntiAliasing = true,
-        //        //PaletteProvider = new NoneLinePaletteProvider(),
-        //        StrokeColor = Colors.GreenYellow,
-        //        SymbolSize = 5.0,
-        //        SymbolType = SymbolType.Circle,
-        //        SymbolFillColor = Colors.Black,
-        //        SymbolStrokeColor = Colors.Black,
-        //        SymbolStrokeThickness = 1,
-        //    };
-        //}
+        }    
 
         private XyySciLineData2D<double, double> InitXyyLineData(double[] xArray, double[] yArray, double[] y1Array, string seriesName)
         {
@@ -297,46 +190,6 @@ namespace FunctionsView.ViewModel
             };
         }
 
-        //we can call this one or the one commented out above. They are probably about the same amount of 
-        //time to process.
-        //public void UpdateChartViewModel()
-        //{
-        //    try
-        //    {
-        //        List<SciLineData> lineData = new List<SciLineData>();
-
-        //        foreach (CoordinatesFunctionTableVM table in Tables)
-        //        {
-        //            lineData.Add(GetLineDataForTable(table,.05, "5%"));
-        //            lineData.Add(GetLineDataForTable(table, .5, "50%"));
-        //            lineData.Add(GetLineDataForTable(table, .95, "95%"));
-
-        //        }
-        //        CoordinatesChartViewModel.LineData.Set(lineData);
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        //don't do anything? we were unable to create valid coordinates
-        //        CoordinatesChartViewModel.LineData.Set(new List<SciLineData>());
-        //    }
-        //}
-
-        //private SciLineData GetLineDataForTable(CoordinatesFunctionTableVM table, double probability, string seriesName)
-        //{
-        //    List<SciLineData> lineData = new List<SciLineData>();
-        //    double[] xs = new double[table.Rows.Count];
-        //    double[] ys = new double[table.Rows.Count];
-        //    for(int i = 0;i<table.Rows.Count;i++)
-        //    //foreach (CoordinatesFunctionRowItem row in table.Rows)
-        //    {
-        //        CoordinatesFunctionRowItem row = table.Rows[i];
-        //        ICoordinate coord = row.CreateCoordinateFromRow();
-        //        xs[i] =coord.X.Value();
-        //        ys[i] = coord.Y.Value(probability);
-        //    }
-        //        return new NumericLineData(xs,ys,"chartName", seriesName,"xAxisName", "yAxisName",PlotType.Line) ;
-        //}
-
         public bool IsValid
         {
             get
@@ -351,14 +204,6 @@ namespace FunctionsView.ViewModel
 
         public IMessageLevels State => throw new NotImplementedException();
 
-        //public ICoordinatesFunction Function
-        //{
-        //get { return (ICoordinatesFunction)this.GetValue(FunctionProperty); }
-        //set { this.SetValue(FunctionProperty, value); }
-        // }
-
-
-
         /// <summary>
         /// This is used when the editor is opened to load the tables from a coordinates function.
         /// </summary>
@@ -366,16 +211,11 @@ namespace FunctionsView.ViewModel
         private void CreateTables(ICoordinatesFunction function)
         {
             List<CoordinatesFunctionRowItem> rows = CreateRows(function);
-            //foreach (CoordinatesFunctionRowItem row in rows)
-            //{
-            //    row.StructureChanged += Row_StructureChanged;
-            //}
             CreateTables(rows);
         }
 
         public void Save()
         {
-            //Function = CreateFunctionFromTables();
         }
 
         public ICoordinatesFunction CreateFunctionFromTables()
@@ -422,14 +262,12 @@ namespace FunctionsView.ViewModel
 
             if (rowItems.Count > 0)
             {
-                //lst_tables.Items.Add(new TableTopControl(tableType));
 
                 ObservableCollection<CoordinatesFunctionRowItem> rows = new ObservableCollection<CoordinatesFunctionRowItem>();
                 IOrdinateEnum distType = rowItems[0].SelectedDistributionType;
                 InterpolationEnum interpType = rowItems[0].SelectedInterpolationType;
                 rows.Add(rowItems[0]);
                 for (int i = 1; i < rowItems.Count; i++)
-                //while (i < _Rows.Count)
                 {
                     CoordinatesFunctionRowItem row = rowItems[i];
                     if (row.SelectedDistributionType.Equals(distType) && row.SelectedInterpolationType.Equals(interpType))
@@ -446,12 +284,9 @@ namespace FunctionsView.ViewModel
                         rows = new ObservableCollection<CoordinatesFunctionRowItem>();
                         rows.Add(row);
                     }
-
                 }
                 //need to create the final table
                 CreateTable(rows);
-                //UpdateView?.Invoke(this, new EventArgs());
-                //lst_tables.Items.Add(new TableBottomControl(tableType));
             }
         }
 
@@ -581,7 +416,6 @@ namespace FunctionsView.ViewModel
                         break;
                     }
             }
-            //UpdateView?.Invoke(this, new EventArgs());
             UpdateChartViewModel();
         }
 
@@ -657,7 +491,7 @@ namespace FunctionsView.ViewModel
                 case IOrdinateEnum.Constant:
                     {
                         double y = coord.Y.Value();
-                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
+                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x, _IsReadOnly)
                                 .WithConstantDist(y, interpolator)
                                 .Build();
                         return row;
@@ -665,7 +499,7 @@ namespace FunctionsView.ViewModel
                 case IOrdinateEnum.Normal:
                     {
                         IDistributedOrdinate dist = (IDistributedOrdinate)coord.Y;
-                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
+                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x, _IsReadOnly)
                             .WithNormalDist(dist.Mean, dist.StandardDeviation, interpolator)
                             .Build();
                         return row;
@@ -673,7 +507,7 @@ namespace FunctionsView.ViewModel
                 case IOrdinateEnum.Triangular:
                     {
                         IDistributedOrdinate dist = (IDistributedOrdinate)coord.Y;
-                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
+                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x, _IsReadOnly)
                             .WithTriangularDist(dist.Mode, dist.Range.Min, dist.Range.Max, interpolator)
                             .Build();
                         return row;
@@ -681,7 +515,7 @@ namespace FunctionsView.ViewModel
                 case IOrdinateEnum.Uniform:
                     {
                         IDistributedOrdinate dist = (IDistributedOrdinate)coord.Y;
-                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
+                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x, _IsReadOnly)
                             .WithUniformDist(dist.Range.Min, dist.Range.Max, interpolator)
                             .Build();
                         return row;
@@ -689,20 +523,11 @@ namespace FunctionsView.ViewModel
                 case IOrdinateEnum.TruncatedNormal:
                     {
                         IDistributedOrdinate dist = (IDistributedOrdinate)coord.Y;
-                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
+                        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x, _IsReadOnly)
                             .WithTruncatedNormalDist(dist.Mean, dist.StandardDeviation, dist.Range.Min, dist.Range.Max, interpolator)
                             .Build();
                         return row;
                     }
-                //case DistributionType.Beta4Parameters:
-                //    {
-                //        IDistributedValue dist = ((Distribution)coord.Y).GetDistribution;
-                //        CoordinatesFunctionRowItem row = new CoordinatesFunctionRowItemBuilder(x)
-                //            .WithBetaDist(dist.dist.Minimum, dist.Maximum, interpolator)
-                //            .Build();
-                //        return row;
-
-                //    }
                 default:
                     {
                         throw new ArgumentException("The coordinate has a distributed y value that is not supported.");
@@ -712,13 +537,12 @@ namespace FunctionsView.ViewModel
 
         private void InsertTable(int index, ObservableCollection<CoordinatesFunctionRowItem> rows)
         {
-            CoordinatesFunctionTableVM newTable = new CoordinatesFunctionTableVM(rows);
+            CoordinatesFunctionTableVM newTable = new CoordinatesFunctionTableVM(rows, _IsReadOnly);
             newTable.RowIsLeavingTable += Table_RowIsLeaving;
             newTable.NoMoreRows += NewTable_NoMoreRows;
             newTable.TableWasModified += CellWasEdited;
             Tables.Insert(index, newTable);
             UpdateView?.Invoke(this, new EventArgs());
-
         }
 
         private void CellWasEdited(object sender, EventArgs e)
@@ -735,7 +559,7 @@ namespace FunctionsView.ViewModel
         /// <param name="type"></param>
         private void CreateTable(ObservableCollection<CoordinatesFunctionRowItem> rows)
         {
-            CoordinatesFunctionTableVM newTable = new CoordinatesFunctionTableVM(rows);
+            CoordinatesFunctionTableVM newTable = new CoordinatesFunctionTableVM(rows, _IsReadOnly);
             newTable.RowIsLeavingTable += Table_RowIsLeaving;
             newTable.NoMoreRows += NewTable_NoMoreRows;
             newTable.TableWasModified += CellWasEdited;
@@ -756,13 +580,12 @@ namespace FunctionsView.ViewModel
                 CreateDefaultTable();
             }
             UpdateView?.Invoke(this, new EventArgs());
-            //UpdateTables();
         }
 
         private void CreateDefaultTable()
         {
             ObservableCollection<CoordinatesFunctionRowItem> rows = new ObservableCollection<CoordinatesFunctionRowItem>();
-            rows.Add(new CoordinatesFunctionRowItem());
+            rows.Add(new CoordinatesFunctionRowItem(_IsReadOnly));
             CreateTable(rows);
             
         }

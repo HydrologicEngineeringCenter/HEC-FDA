@@ -15,9 +15,9 @@ namespace FunctionsView.ViewModel
         private readonly List<IOrdinateEnum> SupportedDistributionTypes = new List<IOrdinateEnum>() { IOrdinateEnum.Constant, IOrdinateEnum.Normal, 
             IOrdinateEnum.Triangular, IOrdinateEnum.Uniform, IOrdinateEnum.TruncatedNormal, IOrdinateEnum.Beta4Parameters };
 
-        private IOrdinateEnum _selectedDistType = IOrdinateEnum.NotSupported;// = DistributionType.Constant;
-        private InterpolationEnum _selectedInterpolationType;// = InterpolationEnum.Linear;
-
+        private IOrdinateEnum _selectedDistType = IOrdinateEnum.NotSupported;
+        private InterpolationEnum _selectedInterpolationType;
+        private bool _IsReadOnly;
 
         #region Properties
         public double Alpha { get; set; }
@@ -52,7 +52,9 @@ namespace FunctionsView.ViewModel
         {
             get
             {
-                return Enum.GetValues(typeof(InterpolationEnum)).Cast<InterpolationEnum>();
+                var query= Enum.GetValues(typeof(InterpolationEnum)).Cast<InterpolationEnum>()
+                .Except(new InterpolationEnum[] { InterpolationEnum.NaturalCubicSpline, InterpolationEnum.Statistical });
+                return query;
             }
         }
         public InterpolationEnum SelectedInterpolationType
@@ -90,6 +92,12 @@ namespace FunctionsView.ViewModel
             }
         }
         
+        public bool IsReadOnly
+        {
+            get { return _IsReadOnly; }
+            set { _IsReadOnly = value; }
+        }
+
         /// <summary>
         /// When switching distribution types there are some values that we might want to use for the new type. For example
         /// if a type has min and max and you are switching to another type that has min and max then we want to keep those values.
@@ -315,12 +323,13 @@ namespace FunctionsView.ViewModel
         /// <summary>
         /// An empty constructor.
         /// </summary>
-        public CoordinatesFunctionRowItem()
+        public CoordinatesFunctionRowItem(bool isReadOnly)
         {
             X = 0;
             Y = 0;
             SelectedDistributionType = IOrdinateEnum.Constant;
-           SelectedInterpolationType = InterpolationEnum.Linear;
+            SelectedInterpolationType = InterpolationEnum.Linear;
+            IsReadOnly = isReadOnly;
         }
         /// <summary>
         /// You should never have to call this directly. Use the RowItemBuilder to build this object.
@@ -335,7 +344,7 @@ namespace FunctionsView.ViewModel
         /// <param name="distType"></param>
         /// <param name="interpType"></param>
         public CoordinatesFunctionRowItem(double x, double y, double standDev,double mean, double min, double max, double mostLikely, 
-            double alpha, double beta, IOrdinateEnum distType,InterpolationEnum interpType)
+            double alpha, double beta, IOrdinateEnum distType,InterpolationEnum interpType, bool isReadOnly)
         {
             X = x;
             Y = y;
@@ -348,12 +357,12 @@ namespace FunctionsView.ViewModel
             Beta = beta;
             SelectedDistributionType = distType;
             SelectedInterpolationType = interpType;
-            
+            IsReadOnly = isReadOnly;
         }
 
         public CoordinatesFunctionRowItem Clone()
         {
-            return new CoordinatesFunctionRowItem(X, Y, StandardDeviation, Mean, Min, Max, MostLikely,Alpha,Beta, SelectedDistributionType, SelectedInterpolationType);
+            return new CoordinatesFunctionRowItem(X, Y, StandardDeviation, Mean, Min, Max, MostLikely,Alpha,Beta, SelectedDistributionType, SelectedInterpolationType, IsReadOnly);
         }
        
         public ICoordinate CreateCoordinateFromRow()
