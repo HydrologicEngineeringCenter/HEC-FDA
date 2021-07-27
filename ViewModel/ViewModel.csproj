@@ -24,9 +24,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\DatabaseManager.dll</HintPath>
     </Reference>
-    <Reference Include="DataBase_Reader">
-      <HintPath>..\lib\DataBase_Reader.dll</HintPath>
-    </Reference>
     <Reference Include="FdaLogger, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\FdaLogger.dll</HintPath>
