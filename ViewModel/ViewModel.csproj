@@ -20,10 +20,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Consequences_Assist.dll</HintPath>
     </Reference>
-    <Reference Include="DatabaseManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\DatabaseManager.dll</HintPath>
-    </Reference>
     <Reference Include="FdaLogger, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\FdaLogger.dll</HintPath>
@@ -106,6 +102,7 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="DatabaseManager" Version="0.0.1" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.1.0" />
     <PackageReference Include="NLog" Version="4.6.6" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
