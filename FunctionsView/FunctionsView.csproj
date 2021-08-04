@@ -34,11 +34,11 @@
       <HintPath>..\lib\SciChart.Drawing.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
+  <!--<ItemGroup>
     <Content Include="sharpdx_direct3d11_1_effects_x64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
+  </ItemGroup>-->
   <ItemGroup>
     <ProjectReference Include="..\Functions\Functions.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />

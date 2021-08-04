@@ -106,9 +106,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="sharpdx_direct3d11_1_effects_x64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Resource Include="UI_RES\ClosedExpander.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

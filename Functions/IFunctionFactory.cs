@@ -1,11 +1,7 @@
 ﻿using Functions.CoordinatesFunctions;
 using Functions.Ordinates;
-using MathNet.Numerics.Distributions;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
 using Utilities;
 
 namespace Functions

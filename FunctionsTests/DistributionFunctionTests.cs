@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Functions;
+﻿using Functions;
 using Utilities;
-using MathNet.Numerics.Distributions;
 using Xunit;
-using System.Composition.Hosting;
 
 namespace FunctionsTests
 {
