@@ -348,11 +348,11 @@
   <PropertyGroup>
     <PostBuildEvent>
 		echo "Copying the GDAL Folder to your output directory"
-		Xcopy $(SolutionDir)\lib\GDAL $(TargetDir)GDAL /E /H /C /I /Q /Y
+		Xcopy C:\Users\q0hecbbb\.nuget\packages\gdal-hec\0.0.1\content\GDAL $(TargetDir)GDAL /E /H /C /I /Q /Y
 		echo "Copied to" $(TargetDir)\GDAL
 
 		echo "unpacking the .dlls from GDAL into your output directory"
-		Xcopy $(SolutionDir)\lib\GDAL\csharp\*  $(TargetDir) /Y
+		Xcopy C:\Users\q0hecbbb\.nuget\packages\gdal-hec\0.0.1\content\GDAL\csharp\*  $(TargetDir) /Y
 	</PostBuildEvent>
   </PropertyGroup>
 </Project>
