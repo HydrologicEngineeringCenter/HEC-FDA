@@ -240,7 +240,7 @@ namespace ViewModel.FrequencyRelationships
             //AddRule(nameof(SampleSize), () => SampleSize > 5, "Sample size cannot be less than 5");
             //AddRule(nameof(SampleSize), () => SampleSize < 300, "Sample size cannot be more than 300");
 
-            AddRule(nameof(Name), () => { if (Name == null) { return false; } else { return !Name.Equals(""); } } , "Name cannot be blank");
+           // AddRule(nameof(Name), () => { if (Name == null) { return false; } else { return !Name.Equals(""); } } , "Name cannot be blank");
 
         }
 
