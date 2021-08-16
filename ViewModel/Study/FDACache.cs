@@ -1,23 +1,27 @@
-﻿using FdaViewModel.StageTransforms;
+﻿using ViewModel.StageTransforms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FdaViewModel.Watershed;
-using FdaViewModel.ImpactArea;
-using FdaViewModel.WaterSurfaceElevation;
-using FdaViewModel.Utilities;
-using FdaViewModel.FrequencyRelationships;
-using FdaViewModel.FlowTransforms;
-using FdaViewModel.GeoTech;
-using FdaViewModel.AggregatedStageDamage;
-using FdaViewModel.Inventory;
-using FdaViewModel.Conditions;
+using ViewModel.Watershed;
+using ViewModel.ImpactArea;
+using ViewModel.WaterSurfaceElevation;
+using ViewModel.Utilities;
+using ViewModel.FrequencyRelationships;
+using ViewModel.FlowTransforms;
+using ViewModel.GeoTech;
+using ViewModel.AggregatedStageDamage;
+using ViewModel.Inventory;
+using ViewModel.Conditions;
 using System.Collections.ObjectModel;
-using FdaViewModel.Inventory.OccupancyTypes;
+using ViewModel.Inventory.OccupancyTypes;
+using ViewModel.Saving;
+using ViewModel.AlternativeComparisonReport;
+using ViewModel.Alternatives;
+//using FdaViewModel.Inventory.OccupancyTypes;
 
-namespace FdaViewModel.Study
+namespace ViewModel.Study
 {
     /// <summary>
     /// The cache is used to hold all the elements in fda in memory. It gets loaded with elements
@@ -75,7 +79,9 @@ namespace FdaViewModel.Study
         public event UpdateElementEventHandler StructureInventoryUpdated;
         public event UpdateElementEventHandler ConditionsElementUpdated;
         public event UpdateElementEventHandler OccTypeElementUpdated;
-
+        public event AddElementEventHandler PlanAdded;
+        public event AddElementEventHandler PlanRemoved;
+        public event UpdateElementEventHandler PlanUpdated;
 
         private List<RatingCurveElement> _Ratings = new List<RatingCurveElement>();
         private List<OccupancyTypesElement> _OccTypes = new List<OccupancyTypesElement>();
@@ -92,9 +98,8 @@ namespace FdaViewModel.Study
         private List<ConditionsElement> _Conditions = new List<ConditionsElement>();
 
         #region Properties
-        public List<RatingCurveElement> RatingCurveElements { get { return _Ratings; }  }
+        public List<RatingCurveElement> RatingCurveElements { get { return _Ratings; }  }      
         public List<OccupancyTypesElement> OccTypeElements { get { return _OccTypes; } }
-
         public List<TerrainElement> TerrainElements { get { return _Terrains; } }
         public List<ImpactAreaElement> ImpactAreaElements { get { return _ImpactAreas; } }
         public List<WaterSurfaceElevationElement> WaterSurfaceElements { get { return _WaterSurfaceElevations; } }
@@ -114,11 +119,15 @@ namespace FdaViewModel.Study
         public InflowOutflowOwnerElement InflowOutflowParent { get; set; }
         public RatingCurveOwnerElement RatingCurveParent { get; set; }
         public ExteriorInteriorOwnerElement ExteriorInteriorParent { get; set; }
+        public LeveeFeatureOwnerElement LeveeFeatureParent { get; set; }
         public AggregatedStageDamageOwnerElement StageDamageParent { get; set; }
-        public OccupancyTypesOwnerElement OccTypeParent { get; set; }
 
+        public OccupancyTypesOwnerElement OccTypeParent { get; set; }
+        public StructureInventoryOwnerElement StructureInventoryParent { get; set; }
         public ConditionsOwnerElement ConditionsParent { get; set; }
         public ConditionsTreeOwnerElement ConditionsTreeParent { get; set; }
+        public AltervativeOwnerElement PlansParent { get; set; }
+        public AlternativeComparisonReportOwnerElement AlternativeComparisonReportParent { get; set; }
         #endregion
         #endregion
         private FDACache()
@@ -140,75 +149,104 @@ namespace FdaViewModel.Study
         /// This will fire a removed event of the appropriate type.        
         /// /// </summary>
         /// <param name="elem">The element to remove</param>
-        public void RemoveElement(ChildElement elem)
+        public void RemoveElement(ChildElement elem, int id)
         {
+            Saving.ElementAddedEventArgs elementAddedEventArgs = new Saving.ElementAddedEventArgs(elem);
+            elementAddedEventArgs.ID = id;
+
             if (elem.GetType() == typeof(TerrainElement))
             {
-                TerrainElements.Remove((TerrainElement)elem);
-                TerrainRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                RemoveElementFromList(TerrainElements, elem);
+                //TerrainElements.Remove((TerrainElement)elem);
+                TerrainRemoved?.Invoke(this, elementAddedEventArgs);
             }
             if (elem.GetType() == typeof(ImpactAreaElement))
             {
-                ImpactAreaElements.Remove((ImpactAreaElement)elem);
-                ImpactAreaRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                RemoveElementFromList(ImpactAreaElements, elem);
+                //ImpactAreaElements.Remove((ImpactAreaElement)elem);
+                ImpactAreaRemoved?.Invoke(this, elementAddedEventArgs);
             }
             if (elem.GetType() == typeof(WaterSurfaceElevationElement))
             {
-                WaterSurfaceElements.Remove((WaterSurfaceElevationElement)elem);
-                WaterSurfaceElevationRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                RemoveElementFromList(WaterSurfaceElements, elem);
+                //WaterSurfaceElements.Remove((WaterSurfaceElevationElement)elem);
+                WaterSurfaceElevationRemoved?.Invoke(this, elementAddedEventArgs);
             }
             if (elem.GetType() == typeof(AnalyticalFrequencyElement))
             {
-                FlowFrequencyElements.Remove((AnalyticalFrequencyElement)elem);
-                FlowFrequencyRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                RemoveElementFromList(FlowFrequencyElements, elem);
+                //FlowFrequencyElements.Remove((AnalyticalFrequencyElement)elem);
+                FlowFrequencyRemoved?.Invoke(this, elementAddedEventArgs);
             }
             if (elem.GetType() == typeof(InflowOutflowElement))
             {
-                InflowOutflowElements.Remove((InflowOutflowElement)elem);
-                InflowOutflowRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                RemoveElementFromList(InflowOutflowElements, elem);
+                //InflowOutflowElements.Remove((InflowOutflowElement)elem);
+                InflowOutflowRemoved?.Invoke(this, elementAddedEventArgs);
             }
             if (elem.GetType() == typeof(RatingCurveElement))
             {
-                RatingCurveElements.Remove((RatingCurveElement)elem);
-                RatingRemoved?.Invoke(this, new Saving.ElementAddedEventArgs((RatingCurveElement)elem));
+                RemoveElementFromList(RatingCurveElements, elem);
+                //RatingCurveElements.Remove((RatingCurveElement)elem);
+                RatingRemoved?.Invoke(this, elementAddedEventArgs);
             }
             if (elem.GetType() == typeof(ExteriorInteriorElement))
             {
-                ExteriorInteriorElements.Remove((ExteriorInteriorElement)elem);
-                ExteriorInteriorRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                RemoveElementFromList(ExteriorInteriorElements, elem);
+                //ExteriorInteriorElements.Remove((ExteriorInteriorElement)elem);
+                ExteriorInteriorRemoved?.Invoke(this, elementAddedEventArgs);
             }
             if (elem.GetType() == typeof(LeveeFeatureElement))
             {
-                LeveeElements.Remove((LeveeFeatureElement)elem);
-                LeveeRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                RemoveElementFromList(LeveeElements, elem);
+                //LeveeElements.Remove((LeveeFeatureElement)elem);
+                LeveeRemoved?.Invoke(this, elementAddedEventArgs);
             }
             if (elem.GetType() == typeof(FailureFunctionElement))
             {
-                FailureFunctionElements.Remove((FailureFunctionElement)elem);
-                FailureFunctionRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                RemoveElementFromList(FailureFunctionElements, elem);
+                //FailureFunctionElements.Remove((FailureFunctionElement)elem);
+                FailureFunctionRemoved?.Invoke(this, elementAddedEventArgs);
             }
+           
             if (elem.GetType() == typeof(OccupancyTypesElement))
             {
-                OccTypeElements.Remove((OccupancyTypesElement)elem);
-                OccTypeElementRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                RemoveElementFromList(OccTypeElements, elem);
+                //OccTypeElements.Remove((OccupancyTypesElement)elem);
+                OccTypeElementRemoved?.Invoke(this, elementAddedEventArgs);
             }
             if (elem.GetType() == typeof(InventoryElement))
             {
-                StructureInventoryElements.Remove((InventoryElement)elem);
-                StructureInventoryRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                RemoveElementFromList(StructureInventoryElements, elem);
+                //StructureInventoryElements.Remove((InventoryElement)elem);
+                StructureInventoryRemoved?.Invoke(this, elementAddedEventArgs);
             }
             if (elem.GetType() == typeof(AggregatedStageDamageElement))
             {
-                StageDamageElements.Remove((AggregatedStageDamageElement)elem);
-                StageDamageRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                RemoveElementFromList(StageDamageElements, elem);
+                //StageDamageElements.Remove((AggregatedStageDamageElement)elem);
+                StageDamageRemoved?.Invoke(this, elementAddedEventArgs);
             }
             if (elem.GetType() == typeof(ConditionsElement))
             {
-                ConditionsElements.Remove((ConditionsElement)elem);
-                ConditionsElementRemoved?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                RemoveElementFromList(ConditionsElements, elem);
+                //ConditionsElements.Remove((ConditionsElement)elem);
+                ConditionsElementRemoved?.Invoke(this, elementAddedEventArgs);
             }
         }
 
+        private void RemoveElementFromList<T>(List<T> list, ChildElement elem) where T : ChildElement
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i].Name.Equals(elem.Name))
+                {
+                    list.RemoveAt(i);
+                    return;
+                }
+            }
+        }
+        
         #endregion
 
         #region add elements
@@ -295,9 +333,10 @@ namespace FdaViewModel.Study
 
         #region UpdateElements
 
-        public void UpdateElement(ChildElement oldElement, ChildElement newElement)
+        public void UpdateElement(ChildElement oldElement, ChildElement newElement, int id)
         {
-            if(oldElement.GetType().Equals(typeof(TerrainElement)))
+         
+            if (oldElement.GetType().Equals(typeof(TerrainElement)))
             {
                 UpdateTerrain((TerrainElement) oldElement, (TerrainElement)newElement);
             }
@@ -347,6 +386,27 @@ namespace FdaViewModel.Study
             }
         }
 
+        /// <summary>
+        /// If an occtype group's list of occtypes changes then we need to update the owner element
+        /// so that it has the current 
+        /// </summary>
+        /// <param name="ID"></param>
+        public void UpdateOccTypeGroup(int ID)
+        {
+            //find the element
+            foreach(OccupancyTypesElement ot in _OccTypes )
+            {
+                if(ot.ID == ID)
+                {
+                    //call the update event
+                    //RatingCurveElements.RemoveAt(index);
+                    //RatingCurveElements.Insert(index, newElement);
+                    //RatingUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+                }
+            }
+
+        }
+
         public void UpdateTerrain(TerrainElement oldElement, TerrainElement newElement)
         {
             int index = -1;
@@ -370,6 +430,7 @@ namespace FdaViewModel.Study
             int index = -1;
             for(int i = 0;i<RatingCurveElements.Count;i++)
             {
+
                 if(RatingCurveElements[i].Name.Equals(oldElement.Name))
                 {
                     index = i;
@@ -564,24 +625,25 @@ namespace FdaViewModel.Study
             }
         }
 
-        //public void UpdateOccTypeElement(InventoryElement oldElement, InventoryElement newElement)
-        //{
-        //    int index = -1;
-        //    for (int i = 0; i < StructureInventoryElements.Count; i++)
-        //    {
-        //        if (StructureInventoryElements[i].Name.Equals(oldElement.Name))
-        //        {
-        //            index = i;
-        //            break;
-        //        }
-        //    }
-        //    if (index != -1)
-        //    {
-        //        StructureInventoryElements.RemoveAt(index);
-        //        StructureInventoryElements.Insert(index, newElement);
-        //        StructureInventoryUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
-        //    }
-        //}
+        public void UpdateOccTypeElement(OccupancyTypesElement element)
+        {
+            int index = -1;
+            for (int i = 0; i < OccTypeElements.Count; i++)
+            {
+                if (OccTypeElements[i].ID == element.ID)
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                OccTypeElements.RemoveAt(index);
+                OccTypeElements.Insert(index, element);
+                //the old element parameter doesn't matter in this case. I only need the new one.
+                OccTypeElementUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(element, element));
+            }
+        }
         #endregion
 
         #region Rename
@@ -744,19 +806,19 @@ namespace FdaViewModel.Study
             }
             if (parentType == typeof(LeveeFeatureOwnerElement))
             {
-
+                return LeveeFeatureParent as T;
             }
-            if (parentType == typeof(FailureFunctionOwnerElement))
-            {
-
-            }
+            //if (parentType == typeof(FailureFunctionOwnerElement))
+            //{
+                
+            //}
             if (parentType == typeof(OccupancyTypesOwnerElement))
             {
                 return OccTypeParent as T;
             }
             if (parentType == typeof(StructureInventoryOwnerElement))
             {
-
+                return StructureInventoryParent as T;
             }
             if (parentType == typeof(AggregatedStageDamageOwnerElement))
             {
@@ -848,7 +910,7 @@ namespace FdaViewModel.Study
             {
                 foreach (ChildElement elem in OccTypeElements)
                 {
-                    retVal.Add(elem );
+                    retVal.Add(elem);
                 }
                 return retVal;
             }
@@ -891,8 +953,106 @@ namespace FdaViewModel.Study
             return retVal;
         }
 
-        
+        /// <summary>
+        /// This is used for the conditions element to get the children that it
+        /// needs in order to do a compute.
+        /// </summary>
+        /// <param name="childElementType"></param>
+        /// <param name="ID">The id associated with that element in the database.</param>
+        /// <returns></returns>
+        public ChildElement GetChildElementOfType(Type childElementType, int ID)
+        {
+            if (childElementType == typeof(ImpactAreaElement))
+            {
+                foreach (ChildElement elem in ImpactAreaElements)
+                {
+                    if(elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+            
+            if (childElementType == typeof(AnalyticalFrequencyElement))
+            {
+                foreach (ChildElement elem in FlowFrequencyElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+            if (childElementType == typeof(InflowOutflowElement))
+            {
+                foreach (ChildElement elem in InflowOutflowElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+            if (childElementType.IsAssignableFrom(typeof(RatingCurveElement)))
+            {
+                foreach (ChildElement elem in RatingCurveElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+            if (childElementType == typeof(ExteriorInteriorElement))
+            {
+                foreach (ChildElement elem in ExteriorInteriorElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+            if (childElementType == typeof(LeveeFeatureElement))
+            {
+                foreach (ChildElement elem in LeveeElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+            
+           
+            
+            if (childElementType == typeof(AggregatedStageDamageElement))
+            {
+                foreach (ChildElement elem in StageDamageElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+
+            if (childElementType == typeof(ConditionsElement))
+            {
+                foreach (ChildElement elem in ConditionsElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         #endregion
+
 
     }
 }

@@ -1,4 +1,4 @@
-﻿using FdaViewModel.Utilities;
+﻿using ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.StageTransforms
+namespace ViewModel.StageTransforms
 {
     class StageTransformsOwnerElement: Utilities.ParentElement
     {
@@ -44,10 +44,7 @@ namespace FdaViewModel.StageTransforms
             AddElement(i);
             cache.ExteriorInteriorParent = i;
         }
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
+      
         #endregion
         #region Functions
  

@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using FdaViewModel.Utilities;
+using ViewModel.Utilities;
 
-namespace FdaViewModel.Inventory
+namespace ViewModel.Inventory
 {
     //[Author(q0heccdm, 6 / 14 / 2017 3:38:41 PM)]
     public class StructureInventoryOwnerElement : Utilities.ParentElement
@@ -34,8 +32,8 @@ namespace FdaViewModel.Inventory
             addStructureInventory.Action = AddStructureInventory;
 
             Utilities.NamedAction addStructureInventoryFromNonGeo = new Utilities.NamedAction();
-            addStructureInventoryFromNonGeo.Header = "Import From Non Geo Referenced File...";
-            addStructureInventoryFromNonGeo.Action = AddStructureInventory;
+            addStructureInventoryFromNonGeo.Header = "Import From Fda Version 1...";
+            addStructureInventoryFromNonGeo.Action = ImportStructuresFromFDA1;
 
             //Utilities.NamedAction ImportFromAscii = new Utilities.NamedAction();
             //ImportFromAscii.Header = "Import Exterior Interior Relationship From ASCII";
@@ -68,6 +66,18 @@ namespace FdaViewModel.Inventory
         {
             AddElement(e.Element);
         }
+
+        public void ImportStructuresFromFDA1(object arg1, EventArgs arg2)
+        {
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                 .WithSiblingRules(this);
+
+
+            ImportStructuresFromFDA1VM vm = new ImportStructuresFromFDA1VM( actionManager);
+            string header = "Import Structure Inventory";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStructureInventoryFromFDA1");
+            Navigate(tab, false, false);
+        }
         public void AddStructureInventory(object arg1, EventArgs arg2)
         {
             //ImportFromShapefileVM vm = new ImportFromShapefileVM();
@@ -86,66 +96,13 @@ namespace FdaViewModel.Inventory
 
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                  .WithSiblingRules(this);
-               //.WithParentGuid(this.GUID)
-               //.WithCanOpenMultipleTimes(true);
 
+            
             ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(collectionOfPointFiles, actionManager, false);
-            // StudyCache.AddSiblingRules(vm, this);
-            //vm.AddSiblingRules(this);
-
             string header = "Import Structure Inventory";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStructureInventory");
             Navigate(tab, false, false);
-           // if (!vm.WasCanceled)
-            {
-               // if (!vm.HasError)
-                {
-                    ////the data has been written to a sql lite file in the "save" method of the vm.
 
-                    ////create a "master occtype group" for this structure inv
-                    //// 1.) create the string name
-                    //string groupName = vm.Name + " > Occupancy Types";
-                    ////2.) create the list of occtype 
-                    //List<Consequences_Assist.ComputableObjects.OccupancyType> newListOfOccType = new List<Consequences_Assist.ComputableObjects.OccupancyType>();
-                    //List<string> listOfKeys = vm.AttributeLinkingList.OccupancyTypesDictionary.Keys.ToList();
-                    //for (int i = 0; i < listOfKeys.Count; i++)
-                    //{
-                    //    Consequences_Assist.ComputableObjects.OccupancyType ot = new Consequences_Assist.ComputableObjects.OccupancyType();
-                    //    if (vm.AttributeLinkingList.OccupancyTypesDictionary[listOfKeys[i]] != "")
-                    //    {
-                    //        //find the chosen occtype and replace the name with the name from the file
-                    //        string[] occtypeAndGroupName = new string[2];
-                    //        occtypeAndGroupName = vm.AttributeLinkingList.ParseOccTypeNameAndGroupNameFromCombinedString(vm.AttributeLinkingList.OccupancyTypesDictionary[listOfKeys[i]]);
-                    //        ot = GetOcctypeFromGroup(occtypeAndGroupName[0], occtypeAndGroupName[1]);
-                    //        ot.Name = listOfKeys[i];
-
-                    //    }
-                    //    else
-                    //    {
-                    //        //they made no selection so create an empty occtype
-                    //        ot.Name = listOfKeys[i];
-                    //    }
-                    //    newListOfOccType.Add(ot);
-                    //}
-
-                    //Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
-
-                    //foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in newListOfOccType)
-                    //{
-                    //    bool[] tabsCheckedArray = new bool[] { true, true, true, false };
-                    //    _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
-
-                    //}
-
-                    //OccupancyTypes.OccupancyTypesElement newOccTypeGroup = new OccupancyTypes.OccupancyTypesElement(groupName, newListOfOccType, _OcctypeTabsSelectedDictionary);
-                    //OccupancyTypes.OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(newOccTypeGroup);
-
-                    ////i think this is the place i should create the SI base object;
-                    //StructureInventoryBaseElement SIBase = new StructureInventoryBaseElement( vm.Name, vm.Description);
-                    //InventoryElement ele = new InventoryElement(SIBase);
-                    //AddElement(ele);
-                }
-            }
         }
 
 

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Plots
+namespace View.Plots
 {
     /// <summary>
     /// Interaction logic for DoubleLineModulatorHorizontalCoverButton.xaml
@@ -26,7 +26,7 @@ namespace Fda.Plots
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Plots.DoubleLineModulatorHorizontalCoverButtonVM vm = (FdaViewModel.Plots.DoubleLineModulatorHorizontalCoverButtonVM)this.DataContext;
+            ViewModel.Plots.DoubleLineModulatorHorizontalCoverButtonVM vm = (ViewModel.Plots.DoubleLineModulatorHorizontalCoverButtonVM)this.DataContext;
             //vm.ButtonClicked();//this will change the current VM to be the importer
 
             //pop the plot out
@@ -39,11 +39,23 @@ namespace Fda.Plots
 
             if (parentControl != null && parentControl.GetType() == typeof(IndividualLinkedPlotControl))
             {
-                //FdaViewModel.Plots.IndividualLinkedPlotControlVM vm = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
+                //ViewModel.Plots.IndividualLinkedPlotControlVM vm = (ViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
 
                 //this.BaseFunction = vm.IndividualPlotWrapperVM.PlotVM.BaseFunction;
                 //((Plots.IndividualLinkedPlotControl)parentControl).SelectedCurve = this;
-                ((IndividualLinkedPlotControl)parentControl).PopTheImporterIntoPlot5();
+
+                //this is terrible but i needed some way of knowing which horizontal button was clicked and 
+                //i really didn't want to make another custom control for the lateral structure.
+                if(btn_AddButton.Content == "Ext Int Stage")
+                {
+                    ((IndividualLinkedPlotControl)parentControl).PopTheImporterIntoPlot5();
+                }
+                else
+                {
+                    ((IndividualLinkedPlotControl)parentControl).PopTheLateralStructureLeft();
+
+                }
+
             }
 
         }

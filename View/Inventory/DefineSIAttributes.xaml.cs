@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 
-namespace Fda.Inventory
+namespace View.Inventory
 {
     /// <summary>
     /// Interaction logic for DefineSIAttributes.xaml
@@ -27,7 +27,7 @@ namespace Fda.Inventory
         public DefineSIAttributes()
         {
             InitializeComponent();
-            //FdaViewModel.Inventory.DefineSIAttributesVM vm = (FdaViewModel.Inventory.DefineSIAttributesVM)this.DataContext;
+            //ViewModel.Inventory.DefineSIAttributesVM vm = (ViewModel.Inventory.DefineSIAttributesVM)this.DataContext;
             //cmb_Path.CmbSelectionMade += Cmb_Path_CmbSelectionMade;
 
         }
@@ -37,7 +37,7 @@ namespace Fda.Inventory
 
 
 
-        //    FdaViewModel.Inventory.DefineSIAttributesVM vm = (FdaViewModel.Inventory.DefineSIAttributesVM)this.DataContext;
+        //    ViewModel.Inventory.DefineSIAttributesVM vm = (ViewModel.Inventory.DefineSIAttributesVM)this.DataContext;
             
 
         //    if (!System.IO.File.Exists(System.IO.Path.ChangeExtension(path, "dbf")))
@@ -57,7 +57,7 @@ namespace Fda.Inventory
 
         private void rad_FirstFloorElevation_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Inventory.DefineSIAttributesVM vm = (FdaViewModel.Inventory.DefineSIAttributesVM)this.DataContext;
+            ViewModel.Inventory.DefineSIAttributesVM vm = (ViewModel.Inventory.DefineSIAttributesVM)this.DataContext;
             if(vm.FirstFloorElevationIsChecked == true)
             {
                 AttributeDefinitionGrid.RowDefinitions[2].Height = new GridLength(0);
@@ -71,7 +71,7 @@ namespace Fda.Inventory
 
         private void rad_GroundElevationAndFoundationHeight_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Inventory.DefineSIAttributesVM vm = (FdaViewModel.Inventory.DefineSIAttributesVM)this.DataContext;
+            ViewModel.Inventory.DefineSIAttributesVM vm = (ViewModel.Inventory.DefineSIAttributesVM)this.DataContext;
             if (vm.GroundElevationIsChecked == true)
             {
                 AttributeDefinitionGrid.RowDefinitions[4].Height = new GridLength(0);

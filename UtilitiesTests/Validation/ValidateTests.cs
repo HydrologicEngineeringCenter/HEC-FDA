@@ -1,19 +1,18 @@
 using System;
-using Xunit;
-
-using Utilities.Validation;
 using System.Collections.Generic;
+using Utilities;
+using Xunit;
 
 namespace UtilitiesTests
 {
     /// <summary>
     /// Tests the <see cref="Utilities.Validation.Validate"/> class in the <see cref="Utilities"/> project.
     /// </summary>
-    public class ValidatedTests
+    public class ValidationExtensionsTests
     {
         #region IsNull()
         /// <summary>
-        /// Tests that the <see cref="Validate.IsNull(object)"/> function returns <see langword="true"/> for a <see langword="null"/> input <see cref="object"/>.
+        /// Tests that the <see cref="ValidationExtensions.IsNull(object)"/> function returns <see langword="true"/> for a <see langword="null"/> input <see cref="object"/>.
         /// </summary>
         [Fact]
         public void IsNull_NullInput_Returns_True()
@@ -22,7 +21,7 @@ namespace UtilitiesTests
             Assert.True(obj.IsNull());
         }
         /// <summary>
-        /// Tests that the <see cref="Validate.IsNull(object)"/> function returns <see langword="false"/> for a input <see cref="object"/> set to 1 (which is implicitly converted to an <see cref="int"/>).
+        /// Tests that the <see cref="ValidationExtensions.IsNull(object)"/> function returns <see langword="false"/> for a input <see cref="object"/> set to 1 (which is implicitly converted to an <see cref="int"/>).
         /// </summary>
         [Fact]
         public void IsNull_ImplicitIntObjectInput_Returns_False()
@@ -33,29 +32,71 @@ namespace UtilitiesTests
         #endregion
         #region IsFinite()
         /// <summary>
-        /// Tests that the <see cref="Validate.IsFinite(double)"/> function returne <see langword="true"/> for a <see cref="double"/> input set to 1.0.
+        /// Tests that the <see cref="ValidationExtensions.IsFinite(double)"/> function return <see langword="true"/> for a <see cref="double"/> input set to 1.0.
         /// </summary>
         [Fact]
-        public void IsFinite_GoodInput_Returns_True()
+        public void IsFinite_FiniteInputDouble_Returns_True()
         {
             double x = 1.0;
             Assert.True(x.IsFinite());
         }
         /// <summary>
-        /// Tests that the <see cref="Validate.IsFinite(double)"/> function returns <see langword="false"/> for a <see cref="double.NaN"/>, <see cref="double.NegativeInfinity"/>, or <see cref="double.PositiveInfinity"/> input value.
+        /// Tests that the <see cref="ValidationExtensions.IsFinite(double)"/> function returns <see langword="false"/> for a <see cref="double.NaN"/>, <see cref="double.NegativeInfinity"/>, or <see cref="double.PositiveInfinity"/> input value.
         /// </summary>
         [Theory]
         [InlineData(double.NaN)]
         [InlineData(double.NegativeInfinity)]
         [InlineData(double.PositiveInfinity)]
-        public void IsFinite_NaNOrInfinityInput_Returns_False(double x)
+        public void IsFinite_NaNOrInfinityInputDouble_Returns_False(double x)
         {
             Assert.False(x.IsFinite());
+        }
+        /// <summary>
+        /// Tests that the <see cref="ValidationExtensions.IsFinite(IRange{double})"/> function returns <see langword="true"/> for a finite range: [0, 1].
+        /// </summary>
+        [Theory]
+        [InlineData(0d, 1d, true, true, true, true)]
+        [InlineData(0d, 1d, true, true, false, true)]
+        public void IsFinite_FiniteInputRangeDouble_Returns_True(double min, double max, bool inclusiveMin, bool inclusveMax, bool finiteReq, bool notSingleValueReq)
+        {
+            var testObj = IRangeFactory.Factory(min, max, inclusiveMin, inclusveMax, finiteReq, notSingleValueReq);
+            Assert.True(testObj.IsFinite());
+        }
+        /// <summary>
+        /// Tests that the <see cref="ValidationExtensions.IsFinite(IRange{double})"/> function returns <see langword="false"/> for an <see cref="IRange{double}"/> containing <see cref="double.NaN"/>, <see cref="double.NegativeInfinity"/>, or <see cref="double.PositiveInfinity"/> values.
+        /// </summary>
+        [Theory]
+        [InlineData(double.NaN, 1d, true, true, true, true)]
+        [InlineData(double.NaN, 1d, true, true, false, true)]
+        [InlineData(0d, double.NaN, true, true, true, true)]
+        [InlineData(0d, double.NaN, true, true, false, true)]
+        [InlineData(double.NaN, double.NaN, true, true, true, true)]
+        [InlineData(double.NaN, double.NaN, true, true, false, true)]
+        [InlineData(double.NegativeInfinity, 1d, true, true, true, true)]
+        [InlineData(double.NegativeInfinity, 1d, true, true, false, true)]
+        [InlineData(0d, double.NegativeInfinity, true, true, true, true)]
+        [InlineData(0d, double.NegativeInfinity, true, true, false, true)]
+        [InlineData(double.NegativeInfinity, double.NegativeInfinity, true, true, true, true)]
+        [InlineData(double.NegativeInfinity, double.NegativeInfinity, true, true, false, true)]
+        [InlineData(double.PositiveInfinity, 1d, true, true, true, true)]
+        [InlineData(double.PositiveInfinity, 1d, true, true, false, true)]
+        [InlineData(0d, double.PositiveInfinity, true, true, true, true)]
+        [InlineData(0d, double.PositiveInfinity, true, true, false, true)]
+        [InlineData(double.PositiveInfinity, double.PositiveInfinity, true, true, true, true)]
+        [InlineData(double.PositiveInfinity, double.PositiveInfinity, true, true, false, true)]
+        [InlineData(double.NegativeInfinity, double.PositiveInfinity, true, true, true, true)]
+        [InlineData(double.NegativeInfinity, double.PositiveInfinity, true, true, false, true)]
+        [InlineData(double.PositiveInfinity, double.NegativeInfinity, true, true, true, true)]
+        [InlineData(double.PositiveInfinity, double.NegativeInfinity, true, true, false, true)]
+        public void IsFinite_NaNorInfinityInputRangeDouble_Returns_False(double min, double max, bool inclusiveMin, bool inclusveMax, bool finiteReq, bool notSingleValueReq)
+        {
+            var testObj = IRangeFactory.Factory(min, max, inclusiveMin, inclusveMax, finiteReq, notSingleValueReq);
+            Assert.False(testObj.IsFinite());
         }
         #endregion
         #region IsNullOrEmpty()
         /// <summary>
-        /// Tests that the <see cref="Validate.IsNullOrEmpty{T}(System.Collections.Generic.IEnumerable{T})"/> function returns <see langword="true"/> for a <see langword="null"/> input.
+        /// Tests that the <see cref="ValidationExtensions.IsNullOrEmpty{T}(System.Collections.Generic.IEnumerable{T})"/> function returns <see langword="true"/> for a <see langword="null"/> input.
         /// </summary>
         [Fact]
         public void IsNullOrEmpty_NullInput_Returns_True()
@@ -64,7 +105,7 @@ namespace UtilitiesTests
             Assert.True(X.IsNullOrEmpty());
         }
         /// <summary>
-        /// Tests that the <see cref="Validate.IsNullOrEmpty{T}(System.Collections.Generic.IEnumerable{T})"/> function returns <see langword="true"/> for a <see cref="IEnumerable{Object}"/> input with 0 elements.
+        /// Tests that the <see cref="ValidationExtensions.IsNullOrEmpty{T}(System.Collections.Generic.IEnumerable{T})"/> function returns <see langword="true"/> for a <see cref="IEnumerable{Object}"/> input with 0 elements.
         /// </summary>
         [Fact]
         public void IsNullOrEmpty_EmptyListOfObject_ReturnsTrue()
@@ -73,7 +114,7 @@ namespace UtilitiesTests
             Assert.True(X.IsNullOrEmpty());
         }
         /// <summary>
-        /// Tests that the <see cref="Validate.IsNullOrEmpty{T}(System.Collections.Generic.IEnumerable{T})"/> function returns <see langword="false"/> for a <see cref="IEnumerable{Object}"/> input with single element: {1.0}.
+        /// Tests that the <see cref="ValidationExtensions.IsNullOrEmpty{T}(System.Collections.Generic.IEnumerable{T})"/> function returns <see langword="false"/> for a <see cref="IEnumerable{Object}"/> input with single element: {1.0}.
         /// </summary>
         [Fact]
         public void IsNullOrEmpty_1ElementSet_ReturnsTrue()
@@ -82,9 +123,85 @@ namespace UtilitiesTests
             Assert.False(X.IsNullOrEmpty());
         }
         #endregion
+        #region IsNullItem()
+        /// <summary>
+        /// Test that the <see cref="ValidationExtensions.IsNullItem{T}(IEnumerable{T})"/> function returns <see langword="true"/> for an empty <see cref="IEnumerable{double}"/> input.
+        /// </summary>
+        [Fact]
+        public void IsNullItem_NoItem_Returns_True()
+        {
+            var testObj = new double[] { };
+            Assert.True(testObj.IsNullItem());
+        }
+        /// <summary>
+        /// Test that the <see cref="ValidationExtensions.IsNullItem{T}(IEnumerable{T})"/> function returns <see langword="true"/> for a null <see cref="IEnumerable{object}"/> input.
+        /// </summary>
+        [Fact]
+        public void IsNullItem_NullInput_Returns_True()
+        {
+            IEnumerable<object> testObj = null;
+            Assert.True(testObj.IsNullItem());
+        }
+        /// <summary>
+        /// Test that the <see cref="ValidationExtensions.IsNullItem{T}(IEnumerable{T})"/> function returns <see langword="true"/> for an <see cref="IEnumerable{object}"/> input with a null element: { 1, null, 3 }.
+        /// </summary>
+        [Fact]
+        public void IsNullItem_NullItem_Returns_True()
+        {
+            IEnumerable<object> testObj = new object[3] { 1, null, 3 };
+            Assert.True(testObj.IsNullItem());
+        }
+        /// <summary>
+        /// Test that the <see cref="ValidationExtensions.IsNullItem{T}(IEnumerable{T})"/> function returns <see langword="false"/> for an <see cref="IEnumerable{object}"/> input with no null elements: { 1, 2, 3 }.
+        /// </summary>
+        [Fact]
+        public void IsNullItem_NoNullItem_Returns_False()
+        {
+            IEnumerable<object> testObj = new object[3] { 1, 2, 3 };
+            Assert.False(testObj.IsNullItem());
+        }
+        #endregion
+        #region IsNullorNonFiniteItem()
+        /// <summary>
+        /// Test that the <see cref="ValidationExtensions.IsNullOrNonFiniteItem(IEnumerable{double})"/> function returns <see langword="true"/> for an empty <see cref="IEnumerable{double}"/> input.
+        /// </summary>
+        [Fact]
+        public void IsNullOrNonFiniteItem_NoItem_Returns_True()
+        {
+            var testObj = new double[] { };
+            Assert.True(testObj.IsNullOrNonFiniteItem());
+        }
+        /// <summary>
+        /// Test that the <see cref="ValidationExtensions.IsNullOrNonFiniteItem(IEnumerable{double})"/> function returns <see langword="true"/> for a null <see cref="IEnumerable{double}"/> input.
+        /// </summary>
+        [Fact]
+        public void IsNullOrNonFiniteItem_NullInput_Returns_True()
+        {
+            IEnumerable<double> testObj = null;
+            Assert.True(testObj.IsNullOrNonFiniteItem());
+        }
+        /// <summary>
+        /// Test that the <see cref="ValidationExtensions.IsNullOrNonFiniteItem(IEnumerable{double})"/> function returns <see langword="true"/> for an <see cref="IEnumerable{double}"/> input with non-finite elements { 1d, double.NaN, 3d}.
+        /// </summary>
+        [Fact]
+        public void IsNullOrNonFiniteItem_NonFiniteItem_Returns_True()
+        {
+            IEnumerable<double> testObj = new double[] { 1d, double.NaN, 3d };
+            Assert.True(testObj.IsNullOrNonFiniteItem());
+        }
+        /// <summary>
+        /// Test that the <see cref="ValidationExtensions.IsNullOrNonFiniteItem(IEnumerable{double})"/> function returns <see langword="false"/> for an <see cref="IEnumerable{double}"/> input with all finite elements { 1d, 2d, 3d}.
+        /// </summary>
+        [Fact]
+        public void IsNullOrNonFiniteItem_FiniteItems_Returns_False()
+        {
+            IEnumerable<double> testObj = new double[] { 1d, 2d, 3d };
+            Assert.False(testObj.IsNullOrNonFiniteItem());
+        }
+        #endregion
         #region IsFiniteSample()
         /// <summary>
-        /// Tests that the <see cref="Validate.IsFiniteSample(IEnumerable{double}, int)"/> function <see langword="throws"/> an <see cref="ArgumentNullException"/> for a <see langword="null"/> <see cref="IEnumerable{double}"/> sample input. 
+        /// Tests that the <see cref="ValidationExtensions.IsFiniteSample(IEnumerable{double}, int)"/> function <see langword="throws"/> an <see cref="ArgumentNullException"/> for a <see langword="null"/> <see cref="IEnumerable{double}"/> sample input. 
         /// </summary>
         [Theory]
         [InlineData(null, 0)]
@@ -95,7 +212,7 @@ namespace UtilitiesTests
             Assert.Throws<ArgumentNullException>(() => X.IsFiniteSample(n));
         }
         /// <summary>
-        /// Tests that the <see cref="Validate.IsFiniteSample(IEnumerable{double}, int)"/> function returns <see langword="true"/> for a  <see cref="IEnumerable{double}"/> input with single element: {1.0} and 1 required element. 
+        /// Tests that the <see cref="ValidationExtensions.IsFiniteSample(IEnumerable{double}, int)"/> function returns <see langword="true"/> for a  <see cref="IEnumerable{double}"/> input with single element: {1.0} and 1 required element. 
         /// </summary>
         [Fact]
         public void IsFiniteSample_1ElementSet1RequiredElement_Returns_True()
@@ -104,7 +221,7 @@ namespace UtilitiesTests
             Assert.True(X.IsFiniteSample());
         }
         /// <summary>
-        /// Tests that the <see cref="Validate.IsFiniteSample(IEnumerable{double}, int)"/> function returns <see langword="false"/> for a  <see cref="IEnumerable{T}"/> input with 1 element: {1.0} and 2 required elements. 
+        /// Tests that the <see cref="ValidationExtensions.IsFiniteSample(IEnumerable{double}, int)"/> function returns <see langword="false"/> for a  <see cref="IEnumerable{T}"/> input with 1 element: {1.0} and 2 required elements. 
         /// </summary>
         [Fact]
         public void IsFiniteSample_1ElementSet2RequiredElements_Returns_False()
@@ -113,9 +230,9 @@ namespace UtilitiesTests
             Assert.False(X.IsFiniteSample(2));
         }
         /// <summary>
-        /// Tests that the <see cref="Validate.IsFiniteSample(IEnumerable{double}, int)"/> function returns <see langword="false"/> for a <see cref="IEnumerable{T}"/>
+        /// Tests that the <see cref="ValidationExtensions.IsFiniteSample(IEnumerable{double}, int)"/> function returns <see langword="false"/> for a <see cref="IEnumerable{T}"/>
         /// </summary>
-        /// <param name="element"> Provides a single element to the <see cref="Validate.IsFiniteSample"/> <see cref="IEnumerable{T}"/> parameter. </param>
+        /// <param name="element"> Provides a single element to the <see cref="ValidationExtensions.IsFiniteSample"/> <see cref="IEnumerable{T}"/> parameter. </param>
         [Theory]
         [InlineData(double.NaN)]
         [InlineData(double.PositiveInfinity)]
@@ -126,66 +243,104 @@ namespace UtilitiesTests
             Assert.False(X.IsFiniteSample());
         }
         #endregion
+        #region IsNullOrEmptyCollection()
+        /// <summary>
+        /// Test that the <see cref="ValidationExtensions.IsNullOrEmptyCollection{T}(ICollection{T}, bool)"/> function returns <see langword="true"/> for an empty <see cref="List{double}"/> input.
+        /// </summary>
+        [Fact]
+        public void IsNullOrEmptyCollection_NoItem_Returns_True()
+        {
+            var testObj = new List<double>();
+            Assert.True(ValidationExtensions.IsNullOrEmptyCollection(testObj, false));
+        }
+        /// <summary>
+        /// Test that the <see cref="ValidationExtensions.IsNullOrEmptyCollection{T}(ICollection{T}, bool)"/> function returns <see langword="true"/> for a null <see cref="List{object}"/> input.
+        /// </summary>
+        [Fact]
+        public void IsNullOrEmptyCollection_NullInput_Returns_True()
+        {
+            List<object> testObj = null;
+            Assert.True(ValidationExtensions.IsNullOrEmptyCollection(testObj, false));
+        }
+        /// <summary>
+        /// Test that the <see cref="ValidationExtensions.IsNullOrEmptyCollection{T}(ICollection{T}, bool)"/> function returns <see langword="true"/> for an <see cref="List{object}"/> input with a null element: { 1, null, 3 }.
+        /// </summary>
+        [Fact]
+        public void IsNullOrEmptyCollection_NullItem_Returns_True()
+        {
+            List<object> testObj = new List<object>() { 1, null, 3 };
+            Assert.True(ValidationExtensions.IsNullOrEmptyCollection(testObj, false));
+        }
+        /// <summary>
+        /// Test that the <see cref="ValidationExtensions.IsNullOrEmptyCollection{T}(ICollection{T}, bool)"/> function returns <see langword="false"/> for an <see cref="IEnumerable{Object}"/> input with no null elements: { 1, 2, 3 }.
+        /// </summary>
+        [Fact]
+        public void IsNullOrEmptyCollection_NoNullItem_Returns_False()
+        {
+            List<object> testObj = new List<object>() { 1, 2, 3 };
+            Assert.False(testObj.IsNullItem());
+        }
+        #endregion
         #region IsRange()
         /// <summary>
-        /// Tests that the <see cref="Validate.IsRange{T}(T, T)"/> function returns <see langword="false"/> for <see cref="int"/> inputs that are not strictly increasing (i.e. min = max, min > max).
+        /// Tests that the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function returns <see langword="false"/> for <see cref="int"/> inputs that are not strictly increasing (i.e. min = max, min > max).
         /// </summary>
-        /// <param name="a"> The minimum parameter for the <see cref="Validate.IsRange{T}(T, T)"/> function. </param>
-        /// <param name="b"> The maximum parameter for the <see cref="Validate.IsRange{T}(T, T)"/> function. </param>
+        /// <param name="a"> The minimum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
+        /// <param name="b"> The maximum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
         [Theory]
         [InlineData(1, 0)]
         [InlineData(1, 1)]
         [InlineData(int.MaxValue, int.MinValue)]
         public void IsRange_NonSequentialIntegerInputs_Return_False(int a, int b)
         {
-            Assert.False(Validate.IsRange<int>(a, b));
+            Assert.False(ValidationExtensions.IsRange<int>(a, b));
         }
         /// <summary>
-        /// Tests that the <see cref="Validate.IsRange{T}(T, T)"/> function returns <see langword="false"/> for <see cref="double"/> inputs that are not strictly increasing (i.e. min = max, min > max).
+        /// Tests that the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function returns <see langword="false"/> for <see cref="double"/> inputs that are not strictly increasing (i.e. min = max, min > max).
         /// </summary>
-        /// <param name="a"> The minimum parameter for the <see cref="Validate.IsRange{T}(T, T)"/> function. </param>
-        /// <param name="b"> The maximum parameter for the <see cref="Validate.IsRange{T}(T, T)"/> function. </param>
+        /// <param name="a"> The minimum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
+        /// <param name="b"> The maximum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
         [Theory]
         [InlineData(1.0, 0.0)]
         [InlineData(1.0, 1.0)]
         [InlineData(double.PositiveInfinity, double.NegativeInfinity)]
         public void IsRange_NonSequentialDoubleInputs_Return_False(double a, double b)
         {
-            Assert.False(Validate.IsRange<double>(a, b));
+            Assert.False(ValidationExtensions.IsRange<double>(a, b));
         }
         /// <summary>
-        /// Tests that the <see cref="Validate.IsRange{T}(T, T)"/> function returns <see langword="true"/> for <see cref="int"/> inputs that are strictly increasing (i.e. min < max).
+        /// Tests that the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function returns <see langword="true"/> for <see cref="int"/> inputs that are strictly increasing (i.e. min < max).
         /// </summary>
-        /// <param name="a"> The minimum parameter for the <see cref="Validate.IsRange{T}(T, T)"/> function. </param>
-        /// <param name="b"> The maximum parameter for the <see cref="Validate.IsRange{T}(T, T)"/> function. </param>
+        /// <param name="a"> The minimum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
+        /// <param name="b"> The maximum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
         [Theory]
         [InlineData(0, 1)]
         [InlineData(int.MinValue, int.MaxValue)]
         public void IsRange_SequentialIntInputs_Return_True(int a, int b)
         {
-            Assert.True(Validate.IsRange(a, b));
+            Assert.True(ValidationExtensions.IsRange(a, b));
         }
         /// <summary>
-        /// Tests that the <see cref="Validate.IsRange{T}(T, T)"/> function returns <see langword="true"/> for <see cref="double"/> inputs that are strictly increasing (i.e. min < max).
+        /// Tests that the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function returns <see langword="true"/> for <see cref="double"/> inputs that are strictly increasing (i.e. min < max).
         /// </summary>
-        /// <param name="a"> The minimum parameter for the <see cref="Validate.IsRange{T}(T, T)"/> function. </param>
-        /// <param name="b"> The maximum parameter for the <see cref="Validate.IsRange{T}(T, T)"/> function. </param>
+        /// <param name="a"> The minimum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
+        /// <param name="b"> The maximum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
         [Theory]
         [InlineData(0, 1)]
         [InlineData(double.NegativeInfinity, double.PositiveInfinity)]
         public void IsRange_SequentialDoubleInputs_Return_True(double a, double b)
         {
-            Assert.True(Validate.IsRange(a, b));
+            Assert.True(ValidationExtensions.IsRange(a, b));
         }
         /// <summary>
-        /// Illustrates the unusual behavior (<see cref="double.NaN"/> &lt <see cref="double.NegativeInfinity"/>) values in the <see cref="Validate.IsRange{T}(T, T)"/> function due to oddities in the way that C# handles the <see cref="IComparable"/> value of <see cref="double.NaN"/>.
+        /// Illustrates the unusual behavior (<see cref="double.NaN"/> &lt <see cref="double.NegativeInfinity"/>) values in the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function due to oddities in the way that C# handles the <see cref="IComparable"/> value of <see cref="double.NaN"/>.
         /// </summary>
-        /// <param name="a"> The minimum parameter for the <see cref="Validate.IsRange{T}(T, T)"/> function. </param>
-        /// <param name="b"> The maximum parameter for the <see cref="Validate.IsRange{T}(T, T)"/> function. </param>
+        /// <param name="a"> The minimum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
+        /// <param name="b"> The maximum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
         [Fact]
         public void IsRange_NaNInputs_Return_True()
         {
-            Assert.True(Validate.IsRange(double.NaN, double.NegativeInfinity));
+            Assert.True(ValidationExtensions.IsRange(double.NaN, double.NegativeInfinity));
         }
         #endregion
         #region IsOnRange

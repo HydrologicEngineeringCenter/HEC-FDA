@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Study
+namespace ViewModel.Study
 {
     //[Author("q0heccdm", "10 / 11 / 2016 4:08:19 PM")]
     

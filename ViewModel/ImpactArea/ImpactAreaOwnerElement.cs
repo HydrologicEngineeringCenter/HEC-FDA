@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using FdaViewModel.Utilities;
+using ViewModel.Utilities;
 
-namespace FdaViewModel.ImpactArea
+namespace ViewModel.ImpactArea
 {
     public class ImpactAreaOwnerElement : Utilities.ParentElement
     {

@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Plots
+namespace ViewModel.Plots
 {
     //[Author(q0heccdm, 1 / 19 / 2018 2:06:31 PM)]
     public class DoubleLineModulatorHorizontalCoverButtonVM: BaseViewModel, ICoverButton
@@ -26,12 +24,16 @@ namespace FdaViewModel.Plots
             get { return _IsEnabled; }
             set { _IsEnabled = value; NotifyPropertyChanged(); }
         }
-        public IndividualLinkedPlotControlVM Parent { get; set; }
+        //public IndividualLinkedPlotControlVM Parent { get; set; }
+        public string Text
+        {
+            get;set;
+        }
         #endregion
         #region Constructors
-        public DoubleLineModulatorHorizontalCoverButtonVM():base()
+        public DoubleLineModulatorHorizontalCoverButtonVM(string text):base()
         {
-
+            Text = text;
         }
         #endregion
         #region Voids

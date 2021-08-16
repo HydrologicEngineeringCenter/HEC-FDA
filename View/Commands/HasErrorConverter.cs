@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fda.Commands
+namespace View.Commands
 {
     class HasErrorConverter : System.Windows.Data.IValueConverter
     {

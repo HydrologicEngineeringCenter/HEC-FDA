@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ViewModel.Inventory.OccupancyTypes;
+using Importer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Inventory.OccupancyTypes
+namespace View.Inventory.OccupancyTypes
 {
     /// <summary>
     /// Interaction logic for ImportOccupancyTypeGroups.xaml
@@ -21,14 +23,14 @@ namespace Fda.Inventory.OccupancyTypes
     public partial class ImportOccupancyTypeGroups : UserControl
     {
 
-        //private List<FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesElement> _OccTypeGroupsList;
+        //private List<ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement> _OccTypeGroupsList;
         private List<OccTypeGroupRowItem> _ListOfRows;
         public List<OccTypeGroupRowItem> ListOfRows
         {
             get { return _ListOfRows; }
             set { _ListOfRows = value; }
         }
-        //public List<FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesElement> OccTypeGroupsList
+        //public List<ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement> OccTypeGroupsList
         //{
         //    get { return _OccTypeGroupsList; }
         //    set { _OccTypeGroupsList = value; }
@@ -37,7 +39,7 @@ namespace Fda.Inventory.OccupancyTypes
         public ImportOccupancyTypeGroups()
         {
             InitializeComponent();
-            //OccTypeGroupsList = new List<FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesElement>();
+            //OccTypeGroupsList = new List<ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement>();
             ListOfRows = new List<OccTypeGroupRowItem>();
         }
 
@@ -89,19 +91,22 @@ namespace Fda.Inventory.OccupancyTypes
         {
             if (cmb_Path.Text == null || cmb_Path.Text == "") { return; }
 
-            FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
+            ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
             vm.SelectedPath = cmb_Path.Text;
 
+            AsciiImport import = new AsciiImport();
+            //the importer will read the file and load the occtype property with any occtypes it found
+            import.ImportAsciiData(vm.SelectedPath, AsciiImport.ImportOptions.ImportOcctypesOnly);
+            //vm.Import(import.OccupancyTypes);
 
-
-            if (vm.Import() == true)//this lets you know if the import was successful. the row was now added to the vm's list of rows
+            if (vm.Import(import.OccupancyTypes) == true)//this lets you know if the import was successful. the row was now added to the vm's list of rows
             {
                 DrawAllTheRows();
                
 
                 //{
 
-                //    FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM row = vm.ListOfRowVMs.Last();
+                //    ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM row = vm.ListOfRowVMs.Last();
 
                     
 
@@ -128,20 +133,19 @@ namespace Fda.Inventory.OccupancyTypes
             cmb_Path.Text = "";
             vm.SelectedPath = "";
 
-
         }
 
         public void RemoveAndReDrawTheRows(object sender, EventArgs e)
         {
             //remove the sender row from the list
 
-            FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
+            ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
 
-            FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM sendingRow = sender as FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM;
+            ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM sendingRow = sender as ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM;
             if(sendingRow == null) { return; }
 
             vm.ListOfRowVMs.Remove(sendingRow);
-            //foreach (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM row in vm.ListOfRowVMs)
+            //foreach (ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM row in vm.ListOfRowVMs)
             //{
             //    if (sendingRow.Name == row.Name)
             //    {
@@ -160,9 +164,9 @@ namespace Fda.Inventory.OccupancyTypes
             grd_rows.ColumnDefinitions.Clear();
 
 
-            FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
+            ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
 
-            foreach(FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM row in vm.ListOfRowVMs)
+            foreach(ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM row in vm.ListOfRowVMs)
             {
                 row.UpdateTheListOfRows += new EventHandler(RemoveAndReDrawTheRows);
                 RowDefinition newRow = new RowDefinition();

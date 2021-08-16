@@ -3,23 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Statistics.Distributions;
-using Utilities.Validation;
+
+using Utilities;
 
 namespace Statistics.Validation
 {
     internal class Beta4ParameterValidator: IValidator<Beta4Parameters>
     {
-        public bool IsValid(Beta4Parameters entity, out IEnumerable<string> errors)
+        public IMessageLevels IsValid(Beta4Parameters entity, out IEnumerable<IMessage> errors)
         {
             errors = ReportErrors(entity);
-            return !errors.Any();
+            return errors.Max();
         } 
-
-        public IEnumerable<string> ReportErrors(Beta4Parameters entity)
+        public IEnumerable<IMessage> ReportErrors(Beta4Parameters obj)
         {
-            if (entity.IsNull()) throw new ArgumentNullException(nameof(entity), $"The Beta Distribution could not be validated because it is null.");
-            if (!(entity.A.IsFinite() && entity.B.IsFinite() && entity.Location.IsFinite() && entity.Scale.IsFinite())) yield return $"The Scaled 4 Parameter Beta Distribution is invalid because one or more of its parameters {entity.Print()} are not finite.";
-            if (entity.SampleSize < 2) yield return $"The Beta Distribution Sample Size {entity.SampleSize} is invalid because it is less than 2.";
+            List<IMessage> msgs = new List<IMessage>();
+            if (obj.IsNull()) throw new ArgumentNullException(nameof(obj), "The scaled beta distribution could not be validated because it is null.");
+            if (!(obj.SampleSize > 0)) msgs.Add(IMessageFactory.Factory(IMessageLevels.Error, $"{Resources.InvalidParameterizationNotice(obj.Print())} {obj.Requirements(false)} {Resources.SampleSizeSuggestion()}"));
+            return msgs;    
+        }
+
+        internal static bool IsConstructable(double alpha, double beta, double location, double scale, int n, out string error)
+        {
+            error = ReportFatalErrors(alpha, beta, location, scale, n);
+            return !(error.Length == 0);
+        }
+        private static string ReportFatalErrors(double alpha, double beta, double location, double scale, int n)
+        {
+            string error = "";
+            if (!alpha.IsOnRange(0, double.MaxValue) || !beta.IsOnRange(0, double.MaxValue) || !scale.IsOnRange(0, double.MaxValue, false))
+            {
+                error += $"{Resources.FatalParameterizationNotice(Beta4Parameters.Print(alpha, beta, location, scale, n))} {Beta4Parameters.RequiredParameterization(true)} {Resources.SampleSizeSuggestion()}";
+            }
+            return error;
         }
     }
 }

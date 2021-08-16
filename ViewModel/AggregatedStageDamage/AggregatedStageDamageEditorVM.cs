@@ -1,160 +1,251 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FdaViewModel.Utilities;
-using Statistics;
+using System.Windows;
+using FdaLogging;
+using ViewModel.Editors;
+using ViewModel.Utilities;
+using Functions;
+using FunctionsView.ViewModel;
+using HEC.Plotting.Core.ViewModel;
+using HEC.Plotting.SciChart2D.ViewModel;
+using Model;
 
-namespace FdaViewModel.AggregatedStageDamage
+
+namespace ViewModel.AggregatedStageDamage
 {
-    public class AggregatedStageDamageEditorVM:Utilities.Transactions.TransactionAndMessageBase, ISaveUndoRedo
+    public class AggregatedStageDamageEditorVM : BaseLoggingEditorVM, ISaveUndoRedo
     {
-        #region Notes
+        private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("CurveEditorVM");
+
+        private string _SavingText;
+        private bool _IsManualRadioSelected = true;
+        #region properties
+        public bool IsManualRadioSelected
+        {
+            get { return _IsManualRadioSelected; }
+            set { _IsManualRadioSelected = value; }
+        }
+
+        public int UndoRowsSelectedIndex
+        {
+            set
+            {
+                if (value == -1)
+                {
+                    return;
+                }
+                ChildElement prevElement = ActionManager.SaveUndoRedoHelper.SelectedIndexInUndoList(value, CurrentElement);
+                AssignValuesFromElementToEditor(prevElement);
+                SavingText = CreateLastSavedText(prevElement);
+                //this should clear the selection after the choice is made
+                UndoRowsSelectedIndex = -1;
+            }
+        }
+
+        public int RedoRowsSelectedIndex
+        {
+            set
+            {
+                if (value == -1)
+                {
+                    return;
+                }
+                ChildElement nextElement = ActionManager.SaveUndoRedoHelper.SelectedIndexInRedoList(value, CurrentElement);
+                AssignValuesFromElementToEditor(nextElement);
+                SavingText = CreateLastSavedText(nextElement);
+                //this should clear the selection after the choice is made
+                RedoRowsSelectedIndex = -1;
+            }
+        }
+
+        public string SavingText
+        {
+            get { return _SavingText; }
+            set { _SavingText = value; NotifyPropertyChanged(); }
+        }
+
+        public string PlotTitle { get; set; }
+
+
+        public ManualStageDamageVM ManualVM { get; set; }
+
+        public CalculatedStageDamageVM CalculatedVM { get; set; }
+
+        private IParameterEnum _ParameterType;
         #endregion
-        #region Fields
-        private string _Name = "";
-        private string _Description = "";
-        private bool _ReadOnly = false;
-        private readonly string _Title = "Aggregated Stage Damage";
-        private Statistics.UncertainCurveDataCollection _Curve;
+
+        #region constructors
+        public AggregatedStageDamageEditorVM(IFdaFunction defaultCurve, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
+        {
+            HasChanges = true;
+            _ParameterType = defaultCurve.ParameterType;
+            PlotTitle = "Curve";
+            SetDimensions(800, 600, 400, 400);
+
+            ManualVM = new ManualStageDamageVM();
+            CalculatedVM = new CalculatedStageDamageVM();
+        }
+
+        public AggregatedStageDamageEditorVM(ChildElement elem, EditorActionManager actionManager) : base(elem, "", "", "", actionManager)
+        {
+            AggregatedStageDamageElement element = (AggregatedStageDamageElement)elem;
+            Name = element.Name;
+            Description = element.Description;
+            IsManualRadioSelected = element.IsManual;
+            if (IsManualRadioSelected)
+            {
+                ManualVM = new ManualStageDamageVM(element.Curves);
+                CalculatedVM = new CalculatedStageDamageVM();
+            }
+        }
 
         #endregion
-        #region Properties
-        public Action<Utilities.ISaveUndoRedo> SaveAction { get; set; }
 
 
-        //public int SelectedIndexInUndoList
-        //{
-        //    set { CurrentElement.ChangeIndex += value + 1; Undo(); }
-        //}
+        #region voids       
 
-        public string Description
-        {
-            get { return _Description; }
-            set { _Description = value; NotifyPropertyChanged(); }
-        }
- 
-        public bool ReadOnly
-        {
-            get { return _ReadOnly; }
-            set { _ReadOnly = value;  NotifyPropertyChanged(); }
-        }
-        public string PlotTitle
-        {
-            get { return _Title; }
-        }
-        public Statistics.UncertainCurveDataCollection Curve
-        {
-            get { return _Curve; }
-            set { _Curve = value;  NotifyPropertyChanged(); }
-        }
-        public ChildElement CurrentElement { get; set; }
-
-
-
-        #endregion
-        #region Constructors
         /// <summary>
-        /// Editor View Model for Aggregated Stage Damage
+        /// This gets used when using the previous and next buttons.
         /// </summary>
-        /// <param name="saveAction"></param>
-        /// <param name="ownerValidationRules"></param>
-        public AggregatedStageDamageEditorVM(Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) : base()
+        /// <param name="element"></param>
+        public void Fill(AggregatedStageDamageElement element)
         {
-            double[] xValues = new double[16] { 95, 97, 99, 101, 103, 105, 107, 110, 112, 115, 117, 120, 122, 125, 127, 130 };
-            Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[16] { new Statistics.None(0), new Statistics.None(0), new Statistics.None(0), new Statistics.None(1), new Statistics.None(3), new Statistics.None(10), new Statistics.None(50), new Statistics.None(1000), new Statistics.None(2000), new Statistics.None(4000), new Statistics.None(8000), new Statistics.None(10000), new Statistics.None(11000), new Statistics.None(11500), new Statistics.None(11750), new Statistics.None(11875) };
-
-            SaveAction = saveAction;
-            ownerValidationRules(this);
-
-            Curve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            //todo are we doing the undo redo for this element? if not, then we don't need this.
         }
 
-        public AggregatedStageDamageEditorVM(AggregatedStageDamageElement elem, Action<Utilities.ISaveUndoRedo> saveAction, Action<BaseViewModel> ownerValidationRules) :base(elem)
+        /// <summary>
+        /// I wanted this here so that the text could live in one place.
+        /// That way if we want to change it, it should change all the places that use it.
+        /// </summary>
+        /// <param name="elem"></param>
+        /// <returns></returns>
+        private string CreateLastSavedText(ChildElement elem)
         {
-            ownerValidationRules(this);
-
-            SaveAction = saveAction;
-
-            CurrentElement = elem;
-            //CurrentElement.ChangeIndex = 0;
-
-            AssignValuesFromElementToEditor(elem);
-
-          
+            return "Last Saved: " + elem.LastEditDate;
         }
-        #endregion
-        #region Voids
+
+        public void Undo()
+        {
+            ChildElement prevElement = ActionManager.SaveUndoRedoHelper.UndoElement(CurrentElement);
+            if (prevElement != null)
+            {
+                AssignValuesFromElementToEditor(prevElement);
+                SavingText = CreateLastSavedText(prevElement);
+                ReloadMessages();
+                EditorVM.UpdateChartViewModel();
+            }
+        }
+
+        public void Redo()
+        {
+            ChildElement nextElement = ActionManager.SaveUndoRedoHelper.RedoElement(CurrentElement);
+            if (nextElement != null)
+            {
+                AssignValuesFromElementToEditor(nextElement);
+                SavingText = CreateLastSavedText(nextElement);
+                ReloadMessages();
+                EditorVM.UpdateChartViewModel();
+            }
+        }
+
+        public virtual ICoordinatesFunction GetCoordinatesFunction()
+        {
+            return EditorVM.CreateFunctionFromTables();
+        }
+
+        private bool ValidateManualRows()
+        {
+            bool areRowsUnique = AreManualRowsUniqueCombinations();
+            bool curvesValid = AreManualCurvesValid();
+            return areRowsUnique && curvesValid;
+        }
+
+        private bool AreManualCurvesValid()
+        {
+            ObservableCollection<ManualStageDamageRowItem> rows = ManualVM.Rows;
+            foreach (ManualStageDamageRowItem r in rows)
+            {
+                try
+                {
+                    r.EditorVM.CreateFunctionFromTables();
+                }
+                catch (Exception ex)
+                {
+                    //we have an invalid curve
+                    String msg = "An invalid curve was detected." + Environment.NewLine +
+                        "Invalid curve: " + r.ID + Environment.NewLine + ex.Message;
+                    MessageBox.Show(msg, "Unable to Save", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool AreManualRowsUniqueCombinations()
+        {
+            HashSet<String> rowPairs = new HashSet<string>();
+            ObservableCollection<ManualStageDamageRowItem> rows = ManualVM.Rows;
+            foreach (ManualStageDamageRowItem row in rows)
+            {
+                //todo do we enforce unique names on the impact area names? I hope so or this won't work
+                String uniqueCombo = row.SelectedImpArea.Name + " | " + row.SelectedDamCat;
+                bool added = rowPairs.Add(uniqueCombo);
+                if (!added)
+                {
+                    //then it was a duplicate
+                    String msg = "Stage-Damage curves must have unique impact area and damage category combinations." + Environment.NewLine +
+                        "Repeat curve: " + row.ID;
+                    MessageBox.Show(msg, "Unable to Save", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public virtual void SaveWhileEditing()
+        {
+            if (IsManualRadioSelected)
+            {
+                bool valid = ValidateManualRows();
+                if (valid)
+                {
+                    //continue saving
+                    int wseID = CalculatedVM.SelectedWaterSurfaceElevation.GetElementID();
+                    int structID = CalculatedVM.SelectedStructures.GetElementID();
+                    LastEditDate = DateTime.Now.ToString("G");
+                    AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, LastEditDate, Description, wseID, structID, ManualVM.GetStageDamageCurves(), true);
+                    CurrentElement.LastEditDate = LastEditDate;
+                    Saving.PersistenceManagers.StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
+                    manager.SaveNew(elem);
+
+                }
+            }  
+        }
+
         public override void Save()
         {
-            throw new NotImplementedException();
-        }
-        public  void Undo()
-        {
-            //UndoElement(this);
-        }
-        public void UpdateTheUndoRedoRowItems()
-        {
-            //int currentIndex = CurrentElement.ChangeIndex;
-            //RedoRows.Clear();
-            //for (int i = currentIndex + 1; i < UndoRedoRows.Count; i++)
-            //{
-            //    RedoRows.Add(UndoRedoRows[i]);
-            //}
-
-        }
-        public  void Redo()
-        {
-            //RedoElement(this);
+            SaveWhileEditing();
         }
 
-        public  void SaveWhileEditing()
+        private void AssignValuesFromEditorToCurrentElement()
         {
-            //SaveAction(this);
-            //_OwnerNode.SaveElementWhileEditing(this);
-        }
-        public override void AddValidationRules()
-        {
-            //AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
-            AddRule(nameof(Name), () => { if (Name == null) { return false; } else { return !Name.Equals(""); } }, "Name cannot be blank");
+            ActionManager.SaveUndoRedoHelper.AssignValuesFromEditorToElementAction(this, CurrentElement);
         }
 
-        
-
+        /// <summary>
+        /// This is used with the undo redo stuff. The undo/redo returns an element, and then this is able to load
+        /// the editor with its values
+        /// </summary>
+        /// <param name="element"></param>
         public void AssignValuesFromElementToEditor(ChildElement element)
         {
-            AggregatedStageDamageElement elem = (AggregatedStageDamageElement)element;
-            Name = elem.Name;
-            LastEditDate = elem.LastEditDate;
-            Description = elem.Description;
-            Curve = elem.Curve;
-        }
-        public void AssignValuesFromEditorToCurrentElement()
-        {
-            CurrentElement.LastEditDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            CurrentElement.Name = Name;
-            ((AggregatedStageDamageElement)CurrentElement).Description = Description;
-            ((AggregatedStageDamageElement)CurrentElement).Curve = Curve;
-        }
-       
-
-        public UncertainCurveDataCollection GetTheElementsCurve()
-        {
-            return ((AggregatedStageDamageElement)CurrentElement).Curve;
+            ActionManager.SaveUndoRedoHelper.AssignValuesFromElementToEditorAction(this, element);
         }
 
-        public UncertainCurveDataCollection GetTheEditorsCurve()
-        {
-            return Curve;
-        }
-        public void UpdateNameWithNewValue(string name)
-        {
-            Name = name;
-        }
-
-        #endregion
-        #region Functions
         #endregion
     }
 }

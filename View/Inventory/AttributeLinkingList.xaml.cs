@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Inventory
+namespace View.Inventory
 {
     /// <summary>
     /// Interaction logic for AttributeLinkingList.xaml
@@ -136,7 +136,7 @@ namespace Fda.Inventory
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Inventory.AttributeLinkingListVM vm = (FdaViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
+            ViewModel.Inventory.AttributeLinkingListVM vm = (ViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
             if (vm == null)
             {
             }
@@ -247,7 +247,7 @@ namespace Fda.Inventory
             }
         }
 
-        private void AddOccTypeGroupWithCheckBox(FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesElement eleA, FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesElement eleB = null, bool checkFirstElement = false, bool checkSecondElement = false)
+        private void AddOccTypeGroupWithCheckBox(ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement eleA, ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement eleB = null, bool checkFirstElement = false, bool checkSecondElement = false)
         {
 
             RowDefinition newRow = new RowDefinition();
@@ -312,7 +312,7 @@ namespace Fda.Inventory
         {
             //remove this groups occtypes from the list of selected occtypes in the vm
             
-            FdaViewModel.Inventory.AttributeLinkingListVM vm = (FdaViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
+            ViewModel.Inventory.AttributeLinkingListVM vm = (ViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
             string groupName = ((CheckBox)sender).Content.ToString();
             vm.RemoveSelectedGroupFromList(groupName);
 
@@ -322,7 +322,7 @@ namespace Fda.Inventory
             //{
             //    if (ri.cmb_NewOccType.SelectedIndex == -1)
             //    {
-            //        foreach (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesElement ele in FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesOwnedElement.ListOfOccupancyTypesGroups)
+            //        foreach (ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement ele in ViewModel.Inventory.OccupancyTypes.OccupancyTypesOwnedElement.ListOfOccupancyTypesGroups)
             //        {
             //            if (ele.OccTypesGroupName == groupName)
             //            {
@@ -342,7 +342,7 @@ namespace Fda.Inventory
 
         private void Cb_Checked(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Inventory.AttributeLinkingListVM vm = (FdaViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
+            ViewModel.Inventory.AttributeLinkingListVM vm = (ViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
             string groupName = ((CheckBox)sender).Content.ToString();
             vm.AddSelectedGroupToList(groupName);
 
@@ -353,7 +353,7 @@ namespace Fda.Inventory
 
         private void AutoSelectOccType()
         {
-            FdaViewModel.Inventory.AttributeLinkingListVM vm = (FdaViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
+            ViewModel.Inventory.AttributeLinkingListVM vm = (ViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
 
             string[] occtypeAndGroupName = new string[2];
             //automatically select the right choice if the strings match. this could probably be enhanced further
@@ -372,7 +372,7 @@ namespace Fda.Inventory
 
                     }
 
-                    //foreach (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesElement ele in FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesOwnedElement.ListOfOccupancyTypesGroups)
+                    //foreach (ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement ele in ViewModel.Inventory.OccupancyTypes.OccupancyTypesOwnedElement.ListOfOccupancyTypesGroups)
                     //{
                     //    if (ele.OccTypesGroupName == groupName)
                     //    {

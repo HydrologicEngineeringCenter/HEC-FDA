@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
-using System.Threading.Tasks;
-using FdaModel.Functions;
 using Statistics;
-using FdaViewModel.Utilities;
+using ViewModel.Utilities;
 using System.Windows;
-using FdaViewModel.StageTransforms;
+using ViewModel.StageTransforms;
+using Model;
+using Functions;
 
-namespace FdaViewModel.Conditions
+namespace ViewModel.Conditions
 {
     //[Author(q0heccdm, 12 / 1 / 2017 3:35:31 PM)]
     public class AddRatingCurveToConditionVM : Editors.BaseEditorVM,Plots.iConditionsImporter
@@ -51,39 +47,48 @@ namespace FdaViewModel.Conditions
         
         public List<StageTransforms.RatingCurveElement> ListOfRatingCurves
         {
-            get { return _ListOfRatingCurves; }
+            get { return GetCurrentListOfRatingCurves(); }
             set { _ListOfRatingCurves = value; NotifyPropertyChanged(); }
         }
 
-        public CurveIncreasing SelectedCurve
+        private List<RatingCurveElement> GetCurrentListOfRatingCurves()
+        {
+            return StudyCache.GetChildElementsOfType<RatingCurveElement>();
+
+        }
+
+        public void UpdateListOfRatingCurves()
+        {
+            ListOfRatingCurves = GetCurrentListOfRatingCurves();
+        }
+
+        public IFdaFunction SelectedCurve
         {
             get
             {
-                UncertainCurveDataCollection curve = ((StageTransforms.RatingCurveElement)SelectedElement).Curve;
-                FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = 
-                    new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.Rating);
+                //this is a rating curve and we need to switch the x and y values.
+
+                //return ((StageTransforms.RatingCurveElement)SelectedElement).Curve;
 
                 List<double> ys = new List<double>();
                 List<double> xs = new List<double>();
-                foreach (double y in (rating.GetOrdinatesFunction().Function.YValues))
+                foreach(ICoordinate coord in SelectedElement.Curve.Coordinates)
                 {
-                    ys.Add(y);
+                    xs.Add( coord.Y.Value());
+                    ys.Add(coord.X.Value());
                 }
-                foreach (double x in (rating.GetOrdinatesFunction().Function.XValues))
-                {
-                    xs.Add(x);
-                }
-                return new Statistics.CurveIncreasing(ys.ToArray(), xs.ToArray(), true, false);
+                ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, SelectedElement.Curve.Interpolator);
+                return IFdaFunctionFactory.Factory(IParameterEnum.Rating, (IFunction)coordFunc);
             }
         }
 
-        public BaseFunction BaseFunction
-        {
-            get
-            {
-                return new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(SelectedCurve, FunctionTypes.Rating);
-            }
-        }
+        //public BaseFunction BaseFunction
+        //{
+        //    get
+        //    {
+        //        return new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(SelectedCurve, FunctionTypes.Rating);
+        //    }
+        //}
 
         
         #endregion

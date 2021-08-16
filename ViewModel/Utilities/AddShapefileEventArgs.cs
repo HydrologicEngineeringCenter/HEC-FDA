@@ -1,6 +1,6 @@
 ﻿
 
-namespace FdaViewModel.Utilities
+namespace ViewModel.Utilities
 {
     public class AddShapefileEventArgs : AddMapFeatureEventArgs
     {

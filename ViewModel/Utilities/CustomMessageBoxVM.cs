@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Utilities
+namespace ViewModel.Utilities
 {
     //[Author(q0heccdm, 3 / 14 / 2017 9:02:27 AM)]
     public class CustomMessageBoxVM:BaseViewModel

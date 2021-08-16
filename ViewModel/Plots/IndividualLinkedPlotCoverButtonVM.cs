@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Plots
+namespace ViewModel.Plots
 {
     //[Author(q0heccdm, 12 / 19 / 2017 1:35:38 PM)]
     public class IndividualLinkedPlotCoverButtonVM : BaseViewModel,ICoverButton
@@ -27,17 +25,17 @@ namespace FdaViewModel.Plots
             get { return _IsEnabled; }
             set { _IsEnabled = value; NotifyPropertyChanged(); }
         }
-            public IndividualLinkedPlotControlVM Parent { get; set; }
+            //public IndividualLinkedPlotControlVM Parent { get; set; }
         #endregion
         #region Constructors
         public IndividualLinkedPlotCoverButtonVM(string buttonContent):base()
         {
             Content = buttonContent;
         }
-        public IndividualLinkedPlotCoverButtonVM(IndividualLinkedPlotControlVM parent)
-        {
-            Parent = parent;
-        }
+        //public IndividualLinkedPlotCoverButtonVM(IndividualLinkedPlotControlVM parent)
+        //{
+        //    Parent = parent;
+        //}
 
         #endregion
         #region Voids

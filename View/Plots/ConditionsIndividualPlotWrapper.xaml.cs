@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Plots
+namespace View.Plots
 {
     /// <summary>
     /// Interaction logic for ConditionsIndividualPlotWrapper.xaml
@@ -27,28 +27,28 @@ namespace Fda.Plots
 
         private void btn_DeleteCurve_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+            ViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (ViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
             //clear the curve on the VM side
-            vm.PlotVM.Curve = null; // the curve change callback will update all the linkages
+            //vm.PlotVM.Curve = null; // the curve change callback will update all the linkages
 
-            //null the SelectedCurve on the control
-            ContentControl parentControl = Plots.IndividualLinkedPlotControl.FindParent<ContentControl>(this);
-            if (parentControl != null && parentControl.GetType() == typeof(IndividualLinkedPlotControl))
-            {
-                ((IndividualLinkedPlotControl)parentControl).LinkedPlot = null;
-               // ((IndividualLinkedPlotControl)parentControl).UpdateThePlots();
-            }
+            ////null the SelectedCurve on the control
+            //ContentControl parentControl = Plots.IndividualLinkedPlotControl.FindParent<ContentControl>(this);
+            //if (parentControl != null && parentControl.GetType() == typeof(IndividualLinkedPlotControl))
+            //{
+            //    ((IndividualLinkedPlotControl)parentControl).LinkedPlot = null;
+            //    // ((IndividualLinkedPlotControl)parentControl).UpdateThePlots();
+            //}
             //make the button reappear
-            vm.ShowTheImportButton(this,new EventArgs());
+            vm.ShowTheImportButton(this, new EventArgs());
 
-            LinkedPlot.OxyPlot1.Model.Series.Clear();
-            LinkedPlot.OxyPlot1.Model.InvalidatePlot(true);
+            //LinkedPlot.OxyPlot1.Model.Series.Clear();
+            //LinkedPlot.OxyPlot1.Model.InvalidatePlot(true);
         }
 
         private void btn_ChangeCurve_Click(object sender, RoutedEventArgs e)
         {
             //the curve needs to not be touched in case they don't choose a new one.
-            FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
+            ViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (ViewModel.Plots.ConditionsIndividualPlotWrapperVM)this.DataContext;
            
             ////null the SelectedCurve on the control
             //ContentControl parentControl = Plots.IndividualLinkedPlotControl.FindParent<ContentControl>(this);

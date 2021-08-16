@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Inventory.OccupancyTypes
+namespace View.Inventory.OccupancyTypes
 {
     /// <summary>
     /// Interaction logic for OccTypeGroupRowItem.xaml
@@ -22,7 +22,7 @@ namespace Fda.Inventory.OccupancyTypes
     {
 
         private string _Name;
-        private FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesElement _OccupancyTypeGroup;
+        private ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement _OccupancyTypeGroup;
         //public string Path
         //{
         //    get { return _Path; }
@@ -34,7 +34,7 @@ namespace Fda.Inventory.OccupancyTypes
             set { _Name = value; }
         }
 
-        public FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesElement OccupancyTypeGroup
+        public ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement OccupancyTypeGroup
         {
             get { return _OccupancyTypeGroup; }
             set { _OccupancyTypeGroup = value; }
@@ -54,16 +54,16 @@ namespace Fda.Inventory.OccupancyTypes
             //_Name = name;
             ////create occtype group element
             //Consequences_Assist.ComputableObjects.OccupancyTypes ots = new Consequences_Assist.ComputableObjects.OccupancyTypes(path);
-            //_OccupancyTypeGroup = new FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesElement(name, ots.OccupancyTypes);
+            //_OccupancyTypeGroup = new ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement(name, ots.OccupancyTypes);
             //txt_NumOcctypes.Text =  ots.OccupancyTypes.Count.ToString();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM vm = (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM)this.DataContext;
+            ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM vm = (ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM)this.DataContext;
             vm.UpdateTheRows();
 
-            //foreach (FdaViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM row in vm.ListOfRowVMs)
+            //foreach (ViewModel.Inventory.OccupancyTypes.OccupancyTypesGroupRowItemVM row in vm.ListOfRowVMs)
             //{
             //    if (Name == row.Name)
             //    {

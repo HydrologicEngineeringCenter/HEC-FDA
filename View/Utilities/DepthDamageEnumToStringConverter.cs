@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Globalization;
 
-namespace Fda.Utilities
+namespace View.Utilities
 {
     //[Author(q0heccdm, 8 / 10 / 2017 11:04:53 AM)]
     class DepthDamageEnumToStringConverter : IValueConverter
@@ -34,7 +32,7 @@ namespace Fda.Utilities
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            FdaViewModel.Inventory.DepthDamage.DepthDamageCurve.DamageTypeEnum newEnum;
+            ViewModel.Inventory.DepthDamage.DepthDamageCurve.DamageTypeEnum newEnum;
             if (Enum.TryParse(value.ToString(), out newEnum))
             {
                 return newEnum;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Importer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Inventory.OccupancyTypes
+namespace View.Inventory.OccupancyTypes
 {
     /// <summary>
     /// Interaction logic for ImportOccupancyTypes.xaml
@@ -28,7 +29,7 @@ namespace Fda.Inventory.OccupancyTypes
         }
         private void cmb_Path_SelectionMade(string fullpath, string filename)
         {
-            FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
+            ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
             vm.SelectedPath = fullpath;
             lbl_PassFail.Content = "";
             if (txt_Name.Text == null || txt_Name.Text == "")
@@ -38,7 +39,7 @@ namespace Fda.Inventory.OccupancyTypes
         }
         //private void Cmb_Path_CmbSelectionMade(string path)
         //{
-        //    FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
+        //    ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
         //    vm.SelectedPath = path;
         //    if(txt_Name.Text == null || txt_Name.Text == "")
         //    {
@@ -47,19 +48,23 @@ namespace Fda.Inventory.OccupancyTypes
         //}
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (FdaViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
-            vm.OccupancyTypesGroupName = txt_Name.Text;
-            if (vm.Import() == true) //this lets you know if the import was successful
-            {
-                lbl_PassFail.Content = "Imported " + txt_Name.Text + " Successfully!";
-                cmb_Path.Path = "";
-                txt_Name.Text = "";
+            //todo: i don't think this class is being used anywhere. Delete?
+            //ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM vm = (ViewModel.Inventory.OccupancyTypes.ImportOccupancyTypesVM)this.DataContext;
 
-            }
-            else
-            {
-                lbl_PassFail.Content = "Import of " + txt_Name.Text + " Failed!";
-            }
+ 
+
+            //vm.OccupancyTypesGroupName = txt_Name.Text;
+            //if (vm.Import() == true) //this lets you know if the import was successful
+            //{
+            //    lbl_PassFail.Content = "Imported " + txt_Name.Text + " Successfully!";
+            //    cmb_Path.Path = "";
+            //    txt_Name.Text = "";
+
+            //}
+            //else
+            //{
+            //    lbl_PassFail.Content = "Import of " + txt_Name.Text + " Failed!";
+            //}
         }
 
        

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Utilities.Transactions
+namespace ViewModel.Utilities.Transactions
 {
     public class Transaction
     {

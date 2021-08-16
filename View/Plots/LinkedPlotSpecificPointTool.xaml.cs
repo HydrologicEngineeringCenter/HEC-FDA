@@ -28,13 +28,13 @@ namespace Fda.Plots
         private double _SpecifiedXValue;
         private double _SpecifiedYValue;
 
-        public static readonly DependencyProperty AvailablePlotsFromVMProperty = DependencyProperty.Register("AvailablePlotsFromVM", typeof(ObservableCollection<FdaViewModel.Plots.IndividualLinkedPlotVM>), typeof(LinkedPlotSpecificPointTool), new FrameworkPropertyMetadata(new ObservableCollection<FdaViewModel.Plots.IndividualLinkedPlotVM>(), new PropertyChangedCallback(AvailablePlotsFromVMCallBack)));
+        public static readonly DependencyProperty AvailablePlotsFromVMProperty = DependencyProperty.Register("AvailablePlotsFromVM", typeof(ObservableCollection<ViewModel.Plots.IndividualLinkedPlotVM>), typeof(LinkedPlotSpecificPointTool), new FrameworkPropertyMetadata(new ObservableCollection<ViewModel.Plots.IndividualLinkedPlotVM>(), new PropertyChangedCallback(AvailablePlotsFromVMCallBack)));
         //public static readonly DependencyProperty AvailablePlotsFromViewProperty = DependencyProperty.Register("AvailablePlotsFromView", typeof(ObservableCollection<ILinkedPlot>), typeof(LinkedPlotSpecificPointTool), new FrameworkPropertyMetadata(new ObservableCollection<ILinkedPlot>(), new PropertyChangedCallback(AvailablePlotsFromViewCallBack)));
 
 
-        public ObservableCollection<FdaViewModel.Plots.IndividualLinkedPlotVM> AvailablePlotsFromVM
+        public ObservableCollection<ViewModel.Plots.IndividualLinkedPlotVM> AvailablePlotsFromVM
         {
-            get { return (ObservableCollection<FdaViewModel.Plots.IndividualLinkedPlotVM>)GetValue(AvailablePlotsFromVMProperty); }
+            get { return (ObservableCollection<ViewModel.Plots.IndividualLinkedPlotVM>)GetValue(AvailablePlotsFromVMProperty); }
             set { SetValue(AvailablePlotsFromVMProperty, value); }
         }
         public ObservableCollection<ILinkedPlot> AvailablePlotsFromView
@@ -55,7 +55,7 @@ namespace Fda.Plots
         private static void AvailablePlotsFromVMCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             LinkedPlotSpecificPointTool owner = d as LinkedPlotSpecificPointTool;
-            owner.AvailablePlotsFromVM = (ObservableCollection<FdaViewModel.Plots.IndividualLinkedPlotVM>)e.NewValue;
+            owner.AvailablePlotsFromVM = (ObservableCollection<ViewModel.Plots.IndividualLinkedPlotVM>)e.NewValue;
           
         }
         //private static void AvailablePlotsFromViewCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -69,7 +69,7 @@ namespace Fda.Plots
         private void txt_XValue_LostFocus(object sender, RoutedEventArgs e)
         {
             if (cmb_PlotNames.SelectedItem == null) { return; }
-            FdaViewModel.Plots.IndividualLinkedPlotVM selectedPlot = (FdaViewModel.Plots.IndividualLinkedPlotVM)cmb_PlotNames.SelectedItem;
+            ViewModel.Plots.IndividualLinkedPlotVM selectedPlot = (ViewModel.Plots.IndividualLinkedPlotVM)cmb_PlotNames.SelectedItem;
             //i need to find the corresponding individualLinkedPlot
             foreach (ILinkedPlot plot in AvailablePlotsFromView)
             {
@@ -86,7 +86,7 @@ namespace Fda.Plots
             //_SelectedPlot = (IndividualLinkedPlot)cmb_PlotNames.SelectedItem;
             // _SelectedPlot.TrackerIsOutsideTheCurveRange = false;
             SelectedPlot.TurnOutsideOfRangeOff();
-           // FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)SelectedPlot.DataContext;
+           // ViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (ViewModel.Plots.ConditionsIndividualPlotWrapperVM)SelectedPlot.DataContext;
             //vm.PlotIsInsideRange(this, new EventArgs());
 
             if (SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency ||
@@ -122,7 +122,7 @@ namespace Fda.Plots
 
            // if (cmb_PlotNames.SelectedIndex == -1) { return; }
            // _SelectedPlot = (IndividualLinkedPlot)cmb_PlotNames.SelectedItem;
-            FdaViewModel.Plots.IndividualLinkedPlotVM control = (FdaViewModel.Plots.IndividualLinkedPlotVM)cmb_PlotNames.SelectedItem;
+            ViewModel.Plots.IndividualLinkedPlotVM control = (ViewModel.Plots.IndividualLinkedPlotVM)cmb_PlotNames.SelectedItem;
            // i need to find the corresponding individualLinkedPlot
             foreach (ILinkedPlot plot in AvailablePlotsFromView)
             {
@@ -135,7 +135,7 @@ namespace Fda.Plots
 
             if (SelectedPlot == null) { return; }
             SelectedPlot.TurnOutsideOfRangeOff();
-            //FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (FdaViewModel.Plots.ConditionsIndividualPlotWrapperVM)SelectedPlot.DataContext;
+            //ViewModel.Plots.ConditionsIndividualPlotWrapperVM vm = (ViewModel.Plots.ConditionsIndividualPlotWrapperVM)SelectedPlot.DataContext;
             //vm.PlotIsInsideRange(this, new EventArgs());
 
             if (SelectedPlot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency ||
@@ -192,7 +192,7 @@ namespace Fda.Plots
                     _SpecifiedXValue = SelectedPlot.GetPairedValue(_SpecifiedYValue, false, SelectedPlot.OxyPlot1.Model, isAxisReversed);
                     if (_SpecifiedYValue > SelectedPlot.OxyPlot1.Model.Axes[1].Maximum || _SpecifiedYValue < SelectedPlot.OxyPlot1.Model.Axes[1].Minimum)
                     {
-                        //FdaViewModel.Utilities.CustomMessageBoxVM vm = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "Y Value is out of range");
+                        //ViewModel.Utilities.CustomMessageBoxVM vm = new ViewModel.Utilities.CustomMessageBoxVM(ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "Y Value is out of range");
                         MessageBox.Show("Y Value is out of range", "Out of Range");
                         txt_YValue.Text = "";
                         return;
@@ -216,7 +216,7 @@ namespace Fda.Plots
                 _SpecifiedYValue = ((IndividualLinkedPlot)SelectedPlot).GetPairedValue(_SpecifiedXValue, true, SelectedPlot.OxyPlot1.Model, isAxisReversed);
                 if (_SpecifiedXValue > SelectedPlot.OxyPlot1.Model.Axes[0].Maximum || _SpecifiedXValue < SelectedPlot.OxyPlot1.Model.Axes[0].Minimum)
                 {
-                    //FdaViewModel.Utilities.CustomMessageBoxVM vm = new FdaViewModel.Utilities.CustomMessageBoxVM(FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "X Value is out of range");
+                    //ViewModel.Utilities.CustomMessageBoxVM vm = new ViewModel.Utilities.CustomMessageBoxVM(ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK, "X Value is out of range");
                     MessageBox.Show("X Value is out of range", "Out of Range");
                     txt_XValue.Text = "";
                     return;

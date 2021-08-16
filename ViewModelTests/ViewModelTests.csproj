@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ComputeTests\**" />
+    <Compile Remove="Condition\**" />
+    <EmbeddedResource Remove="ComputeTests\**" />
+    <EmbeddedResource Remove="Condition\**" />
+    <None Remove="ComputeTests\**" />
+    <None Remove="Condition\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="sharpdx_direct3d11_1_effects_x64.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="sharpdx_direct3d11_1_effects_x64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="coverlet.collector" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Model\Model.csproj" />
+  </ItemGroup>
+
+</Project>

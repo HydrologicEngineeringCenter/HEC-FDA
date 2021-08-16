@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using FdaViewModel.Utilities;
-using FdaModel.ComputationPoint;
-using FdaModel.Functions.OrdinatesFunctions;
+using ViewModel.Utilities;
 using System.Collections.ObjectModel;
-using FdaViewModel.Conditions;
-using FdaViewModel.Tabs;
-using FdaViewModel.StageTransforms;
-using FdaViewModel.Watershed;
-using FdaViewModel.Inventory;
-using FdaViewModel.AggregatedStageDamage;
-using FdaViewModel.GeoTech;
-using FdaViewModel.FlowTransforms;
-using FdaViewModel.FrequencyRelationships;
-using FdaViewModel.WaterSurfaceElevation;
-using FdaViewModel.ImpactArea;
+using ViewModel.Conditions;
+using ViewModel.Tabs;
+using ViewModel.StageTransforms;
+using ViewModel.Watershed;
+using ViewModel.Inventory;
+using ViewModel.AggregatedStageDamage;
+using ViewModel.GeoTech;
+using ViewModel.FlowTransforms;
+using ViewModel.FrequencyRelationships;
+using ViewModel.WaterSurfaceElevation;
+using ViewModel.ImpactArea;
+using Functions;
+using ViewModel.AlternativeComparisonReport;
 
-namespace FdaViewModel.Study
+namespace ViewModel.Study
 {
     public class StudyElement : ParentElement
     {
+        private const string IMPORT_FROM_OLD_FDA = "Import Study From Fda 1";
+
         public event EventHandler RenameTreeViewElement;
         public event EventHandler AddBackInTreeViewElement;
         public event EventHandler OpeningADifferentStudy;
@@ -53,12 +55,16 @@ namespace FdaViewModel.Study
 
             FontSize = 18;
             Name = "Study";
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Terrain.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png");
             _Elements = new System.Collections.ObjectModel.ObservableCollection<BaseFdaElement>();
 
             NamedAction open = new NamedAction();
             open.Header = "Open Study";
             open.Action = OpenStudy;
+
+            NamedAction importStudyFromOldFda = new NamedAction();
+            importStudyFromOldFda.Header = IMPORT_FROM_OLD_FDA;
+            importStudyFromOldFda.Action = ImportStudyFromOldFda;
 
             NamedAction create = new NamedAction();
             create.Header = "Create Study";
@@ -96,6 +102,7 @@ namespace FdaViewModel.Study
             List<NamedAction> localactions = new List<NamedAction>();
             localactions.Add(create);
             localactions.Add(open);
+            localactions.Add(importStudyFromOldFda);
            // localactions.Add(rename);
             localactions.Add(properties);
             localactions.Add(save);
@@ -120,6 +127,7 @@ namespace FdaViewModel.Study
 
 
             Actions = localactions;
+
 
             //Save();
         }
@@ -357,14 +365,18 @@ namespace FdaViewModel.Study
             //}
         }
 
+        public void CreateStudyFromOldFdaImportFile(ImportFromOldFdaVM vm)
+        {
+
+        }
       
 
-        public void CreateStudyFromViewModel(NewStudyVM vm)
+        public void CreateStudyFromViewModel(string studyName, string folderPathForNewStudy)
         {
-            Name = vm.StudyName;
+            Name = studyName;
             UpdateTreeViewHeader(Name);
             //check if file exists.
-            string newStudyPath = vm.Path + "\\" + vm.StudyName + "\\" + vm.StudyName + ".sqlite";
+            string newStudyPath = folderPathForNewStudy + "\\" + studyName + "\\" + studyName + ".sqlite";
             if (!System.IO.File.Exists(newStudyPath))
             {
                 Storage.Connection.Instance.ProjectFile = newStudyPath;
@@ -373,14 +385,11 @@ namespace FdaViewModel.Study
             }
             else
             {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("A study with that name already exists.",
-                    FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.View));
-
-                Storage.Connection.Instance.ProjectFile = vm.Path + "\\" + vm.StudyName + "\\" + vm.StudyName + ".sqlite";
+                Storage.Connection.Instance.ProjectFile = folderPathForNewStudy + "\\" + studyName + "\\" + studyName + ".sqlite";
             }
-            PropertiesVM properties = new PropertiesVM(vm.StudyName, vm.Path);
+            PropertiesVM properties = new PropertiesVM(studyName, folderPathForNewStudy);
             properties.Save();
-            AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(vm.StudyName, Utilities.Transactions.TransactionEnum.CreateNew, "Initialize study"));
+            AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(studyName, Utilities.Transactions.TransactionEnum.CreateNew, "Initialize study"));
             foreach (NamedAction action in Actions)
             {
                 if (action.Header == "Save Study")
@@ -419,12 +428,12 @@ namespace FdaViewModel.Study
             }
             else
             {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Study Properties was accessed without the study path or study name being defined.", FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel));
+                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Study Properties was accessed without the study path or study name being defined.", FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel));
             }
         }
 
         public void OpenStudyFromFilePath(string name, string path)
-        {
+        {           
             OpeningADifferentStudy?.Invoke(this, new EventArgs());
             //if a study is opened and the create new study tab is still in the tabs, then remove it
             TabController.Instance.RemoveTab("CreateNewStudy");
@@ -472,6 +481,15 @@ namespace FdaViewModel.Study
             StudyStatusBar.SaveStatus = "Study Loaded: " + DateTime.Now.ToString("G");
 
         }
+
+        private void ImportStudyFromOldFda(object sender, EventArgs e)
+        {
+            ImportFromOldFdaVM vm = new ImportFromOldFdaVM(this);
+            string header = "Import Study From Fda 1.0";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStudy");
+            Navigate(tab, false, false);
+        }
+
         private void OpenStudy(object sender, EventArgs e)
         {
             Study.ExistingStudyVM ESVM = new ExistingStudyVM(this);
@@ -518,18 +536,18 @@ namespace FdaViewModel.Study
                 Saving.PersistenceFactory.StudyCacheForSaving = cache;
 
 
-                Watershed.TerrainOwnerElement t = new Watershed.TerrainOwnerElement();
+                TerrainOwnerElement t = new TerrainOwnerElement();
                 AddElement(t);
                 t.RenameMapTreeViewElement += RenameTreeViewElement;
                 t.AddMapTreeViewElementBackIn += AddBackInTreeViewElement;
                 cache.TerrainParent = t;
 
-                ImpactArea.ImpactAreaOwnerElement i = new ImpactArea.ImpactAreaOwnerElement();
+                ImpactAreaOwnerElement i = new ImpactAreaOwnerElement();
                 AddElement(i);
                 cache.ImpactAreaParent = i;
 
 
-                WaterSurfaceElevation.WaterSurfaceElevationOwnerElement wse = new WaterSurfaceElevation.WaterSurfaceElevationOwnerElement();
+                WaterSurfaceElevationOwnerElement wse = new WaterSurfaceElevationOwnerElement();
 
                 AddElement(wse);
 
@@ -551,7 +569,7 @@ namespace FdaViewModel.Study
                 //this.AddElement(h);
 
                 GeoTech.LateralStructuresOwnerElement ls = new GeoTech.LateralStructuresOwnerElement();
-                ls.AddBaseElements();
+                ls.AddBaseElements(cache);
                 AddElement(ls);
 
 
@@ -562,6 +580,12 @@ namespace FdaViewModel.Study
 
                 Conditions.ConditionsOwnerElement c = new Conditions.ConditionsOwnerElement();
                 AddElement(c);
+
+                Alternatives.AltervativeOwnerElement plans = new Alternatives.AltervativeOwnerElement();
+                AddElement(plans);
+
+                AlternativeComparisonReportOwnerElement altComparisonReportOwner = new AlternativeComparisonReportOwnerElement();
+                AddElement(altComparisonReportOwner);
 
                 if (loadStudyCache)
                 {

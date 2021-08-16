@@ -1,26 +1,24 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
-using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
+using Statistics;
 using Xunit;
-
-using Statistics.Histograms;
 
 namespace StatisticsTests.Histograms
 {
+    [ExcludeFromCodeCoverage]
+    public class TestHistograms: TheoryData<IHistogram>
+    {
+        public static IHistogram Histogram1 => IHistogramFactory.Factory
+            (
+            IDataFactory.Factory(new double[] { 1, 2, 2, 3, 3, 3 }),
+            0.5, 3.5, 1
+            );
+
+    }
+
     public class HistogramTests
     {
-        [Theory]
-        [InlineData(2, 1.0, 1.0, 2.0)]
-        [InlineData(2, 2.0, 1.0, 3.0)]
-        [InlineData(2, 1.0, 1.0, 2.0, 2.0)]
-        [InlineData(3, 1.0, 1.0, 2.0, 3.0)]
-        public void Histogram_ProperBinning(int nBins, double expectedWidth, params double[] xs)
-        {
-            Histogram h = new Histogram(xs, nBins: nBins);
-            Assert.Equal(expectedWidth, h.Bins[0].Maximum - h.Bins[0].Minimum);
-        }
     }
 }

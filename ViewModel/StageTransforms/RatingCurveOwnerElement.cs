@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FdaViewModel.Editors;
-using FdaViewModel.Utilities;
+using ViewModel.Editors;
+using ViewModel.Utilities;
+using Functions;
+using Model;
 
-namespace FdaViewModel.StageTransforms
+namespace ViewModel.StageTransforms
 {
     public class RatingCurveOwnerElement : Utilities.ParentElement
     {
@@ -67,11 +69,15 @@ namespace FdaViewModel.StageTransforms
 
         public void AddNewRatingCurve(object arg1, EventArgs arg2)
         {
-
+            List<double> xValues = new List<double>() { 1000, 10000, 15000,20000,50000 };//, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            List<double> yValues = new List<double>() { 1,2,3,4,5};//, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            IFunction function = IFunctionFactory.Factory(func.Coordinates, func.Interpolator);
+            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, function);
             //create the default curve: 
-            double[] xValues = new double[] { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
-            Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(97), new Statistics.None(99), new Statistics.None(104), new Statistics.None(109), new Statistics.None(110), new Statistics.None(114), new Statistics.None(116), new Statistics.None(119), new Statistics.None(120), new Statistics.None(121) };
-            Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            //double[] xValues = new double[] { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            //Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(97), new Statistics.None(99), new Statistics.None(104), new Statistics.None(109), new Statistics.None(110), new Statistics.None(114), new Statistics.None(116), new Statistics.None(119), new Statistics.None(120), new Statistics.None(121) };
+            //Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
             //create save helper
             Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper( Saving.PersistenceFactory.GetRatingManager()
@@ -84,7 +90,7 @@ namespace FdaViewModel.StageTransforms
               // .WithParentGuid(this.GUID)
                //.WithCanOpenMultipleTimes(true);
 
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
+            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, "Outflow - Exterior Stage", "Outflow", "Exterior Stage", actionManager);
             //StudyCache.AddSiblingRules(vm,this);
             //vm.AddSiblingRules(this);
             string header = "Create Rating Curve " + vm.Name;

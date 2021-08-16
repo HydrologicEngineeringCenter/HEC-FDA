@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FdaViewModel.Utilities;
+using ViewModel.Utilities;
 
-namespace FdaViewModel.Saving.PersistenceManagers
+namespace ViewModel.Saving.PersistenceManagers
 {
     public class StudyPropertiesPersistenceManager 
     {

@@ -4,21 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Utilities
+namespace ViewModel.Utilities
 {
     public class MapWindowControlVM : BaseViewModel
     {
 
-        //public event EventHandler SetMapWindowProperty;
+        public event EventHandler SetFocusToMapWindow;
 
         //private MapWindowMapTreeViewConnector _MWMTVConn;
-
 
         public MapWindowMapTreeViewConnector MWMTVConn
         {
             get; set;
         }
 
+        public void SetFocusToTheMapWindow()
+        {
+            SetFocusToMapWindow?.Invoke(this, new EventArgs());
+        }
         //private OpenGLMapping.MapTreeView _MapTreeView;
         //private OpenGLMapping.OpenGLMapWindow _MapWindow;
         //public OpenGLMapping.MapTreeView MapTreeView

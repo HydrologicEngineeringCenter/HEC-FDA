@@ -1,22 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.props')" />
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CB13C644-E9D3-400F-B9ED-CFF9BEAF5E20}</ProjectGuid>
+    <TargetFramework>net48</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>View</RootNamespace>
-    <AssemblyName>View</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -32,66 +18,49 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo> 
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\Output\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	  <OutputPath>C:\Temp\FDA2.0</OutputPath>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Fda.App</StartupObject>
+    <StartupObject>View.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Consequences_Assist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+    <Reference Include="Consequences_Assist, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\Consequences_Assist.dll</HintPath>
+      <HintPath>..\lib\Consequences_Assist.dll</HintPath>
     </Reference>
     <Reference Include="DatabaseManager">
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\DatabaseManager.dll</HintPath>
+      <HintPath>..\lib\DatabaseManager.dll</HintPath>
+    </Reference>
+
+			       <Reference Include="FdaLogger">
+      <HintPath>..\lib\FdaLogger.dll</HintPath>
     </Reference>
     <Reference Include="FdaLogging">
-      <HintPath>..\..\..\FdaLogger\FdaLogger\bin\Debug\netstandard2.0\FdaLogging.dll</HintPath>
-    </Reference>
-    <Reference Include="FdaModel, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OldModel\bin\Debug\FdaModel.dll</HintPath>
+      <HintPath>..\lib\FdaLogging.dll</HintPath>
     </Reference>
     <Reference Include="GDALAssist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OpenGLMapper\geospatial\Output\x64\Debug\GDALAssist.dll</HintPath>
+      <HintPath>..\lib\GDALAssist.dll</HintPath>
     </Reference>
-    <Reference Include="gdalconst_csharp, Version=1.0.4916.28018, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="HecCs, Version=1.2.7326.22211, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OpenGLMapper\geospatial\Output\x64\Debug\gdalconst_csharp.dll</HintPath>
+      <HintPath>..\lib\HecCs.dll</HintPath>
     </Reference>
-    <Reference Include="gdal_csharp, Version=1.0.6981.27857, Culture=neutral, processorArchitecture=AMD64">
+    <Reference Include="LifeSimGIS, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OpenGLMapper\geospatial\Output\x64\Debug\gdal_csharp.dll</HintPath>
+      <HintPath>..\lib\LifeSimGIS.dll</HintPath>
     </Reference>
-    <Reference Include="GenericControlsWPF">
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\GenericControlsWPF.dll</HintPath>
-    </Reference>
-    <Reference Include="LifeSimGIS, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="OpenGLMapping, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\LifeSimGIS.dll</HintPath>
-    </Reference>
-    <Reference Include="ogr_csharp, Version=1.0.6981.27857, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OpenGLMapper\geospatial\Output\x64\Debug\ogr_csharp.dll</HintPath>
+      <HintPath>..\lib\OpenGLMapping.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK">
       <HintPath>..\lib\OpenTK.dll</HintPath>
@@ -99,663 +68,44 @@
     <Reference Include="OpenTK.GLControl">
       <HintPath>..\lib\OpenTK.GLControl.dll</HintPath>
     </Reference>
-    <Reference Include="osr_csharp, Version=1.0.6981.27857, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OpenGLMapper\geospatial\Output\x64\Debug\osr_csharp.dll</HintPath>
-    </Reference>
     <Reference Include="OxyPlot">
       <HintPath>..\lib\OxyPlot.dll</HintPath>
     </Reference>
     <Reference Include="OxyPlot.Wpf">
       <HintPath>..\lib\OxyPlot.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="PlottingLibrary2D, Version=1.1.7328.27161, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\PlottingLibrary2D.dll</HintPath>
+    </Reference>
+    <Reference Include="PlottingLibraryCore, Version=1.1.7328.27159, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\PlottingLibraryCore.dll</HintPath>
+    </Reference>
     <Reference Include="QuickHelp">
       <HintPath>..\lib\QuickHelp.dll</HintPath>
     </Reference>
-    <Reference Include="Statistics, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="SciChart.Charting, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Users\cody\Documents\HEC\HEC-FDA\OpenGLMapping\AdditionalDLLs_FromWoody\Debug\Statistics.dll</HintPath>
+      <HintPath>..\lib\SciChart.Charting.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite">
-      <HintPath>..\OpenGLMapper\geospatial\OpenGLMappingTester\bin\x64\Debug\System.Data.SQLite.dll</HintPath>
+    <Reference Include="SciChart.Charting3D">
+      <HintPath>..\lib\SciChart.Charting3D.dll</HintPath>
     </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    <Reference Include="SciChart.Core, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\SciChart.Core.dll</HintPath>
     </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="WpfAnimatedGif, Version=1.4.17.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WpfAnimatedGif.1.4.17\lib\net\WpfAnimatedGif.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="SciChart.Data, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\SciChart.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock">
-      <HintPath>..\FdaViewModel\bin\Debug\Xceed.Wpf.AvalonDock.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero">
-      <HintPath>..\FdaViewModel\bin\Debug\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro">
-      <HintPath>..\FdaViewModel\bin\Debug\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010">
-      <HintPath>..\FdaViewModel\bin\Debug\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.DataGrid">
-      <HintPath>..\FdaViewModel\bin\Debug\Xceed.Wpf.DataGrid.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.Toolkit">
-      <HintPath>..\FdaViewModel\bin\Debug\Xceed.Wpf.Toolkit.dll</HintPath>
+    <Reference Include="SciChart.Drawing, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\SciChart.Drawing.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="AggregatedStageDamage\AggregatedStageDamage.xaml.cs">
-      <DependentUpon>AggregatedStageDamage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Commands\CloseCommand.cs" />
-    <Compile Include="Commands\HasErrorConverter.cs" />
-    <Compile Include="Commands\OkCommand.cs" />
-    <Compile Include="Commands\OkCommandConverter.cs" />
-    <Compile Include="Conditions\AddExteriorInteriorStageToCondition.xaml.cs">
-      <DependentUpon>AddExteriorInteriorStageToCondition.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Conditions\AddFlowFrequencyToCondition.xaml.cs">
-      <DependentUpon>AddFlowFrequencyToCondition.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Conditions\AddInflowOutflowToCondition.xaml.cs">
-      <DependentUpon>AddInflowOutflowToCondition.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Conditions\AddRatingCurveToCondition.xaml.cs">
-      <DependentUpon>AddRatingCurveToCondition.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Conditions\AddStageDamageToCondition.xaml.cs">
-      <DependentUpon>AddStageDamageToCondition.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Conditions\ConditionsDoubleLineModulatorWrapper.xaml.cs">
-      <DependentUpon>ConditionsDoubleLineModulatorWrapper.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Conditions\ConditionsEditor.xaml.cs">
-      <DependentUpon>ConditionsEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Conditions\ConditionsPlotEditor.xaml.cs">
-      <DependentUpon>ConditionsPlotEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="FlowTransforms\InflowOutflowEditor.xaml.cs">
-      <DependentUpon>InflowOutflowEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="FrequencyRelationships\AnalyticalFrequencyEditor.xaml.cs">
-      <DependentUpon>AnalyticalFrequencyEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="GeoTech\FailureFunctionEditor.xaml.cs">
-      <DependentUpon>FailureFunctionEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="GeoTech\LeveeFeatureEditor.xaml.cs">
-      <DependentUpon>LeveeFeatureEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Hydraulics\GridImporter.xaml.cs">
-      <DependentUpon>GridImporter.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Hydraulics\Properties.xaml.cs">
-      <DependentUpon>Properties.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ImpactArea\ImpactAreaEditor.xaml.cs">
-      <DependentUpon>ImpactAreaEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ImpactArea\ImpactAreaImporter.xaml.cs">
-      <DependentUpon>ImpactAreaImporter.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ImpactArea\RadioButtonConverterLeft.cs" />
-    <Compile Include="ImpactArea\RadioButtonConverterBoth.cs" />
-    <Compile Include="ImpactArea\RadioButtonConverterRight.cs" />
-    <Compile Include="Inventory\AttributeLinkingList.xaml.cs">
-      <DependentUpon>AttributeLinkingList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\AttributeLinkingListRowItem.xaml.cs">
-      <DependentUpon>AttributeLinkingListRowItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\DamageCategory\DamageCategoryEditor.xaml.cs">
-      <DependentUpon>DamageCategoryEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\DefineSIAttributes.xaml.cs">
-      <DependentUpon>DefineSIAttributes.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\DepthDamageCurves\DepthDamageCurveEditor.xaml.cs">
-      <DependentUpon>DepthDamageCurveEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\DepthDamageCurves\DepthDamageEditorControl.xaml.cs">
-      <DependentUpon>DepthDamageEditorControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\ImportFromHAZUS.xaml.cs">
-      <DependentUpon>ImportFromHAZUS.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\ImportFromNSI.xaml.cs">
-      <DependentUpon>ImportFromNSI.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\ImportFromShapefile.xaml.cs">
-      <DependentUpon>ImportFromShapefile.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\ImportStructuresFromShapefile.xaml.cs">
-      <DependentUpon>ImportStructuresFromShapefile.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\OccupancyTypesFromFile.xaml.cs">
-      <DependentUpon>OccupancyTypesFromFile.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\OccupancyTypes\Controls\CreateNewDamCat.xaml.cs">
-      <DependentUpon>CreateNewDamCat.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\OccupancyTypes\Controls\OccTypeEditorControl.xaml.cs">
-      <DependentUpon>OccTypeEditorControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\OccupancyTypes\ImportOccupancyTypeGroups.xaml.cs">
-      <DependentUpon>ImportOccupancyTypeGroups.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\OccupancyTypes\ImportOccupancyTypes.xaml.cs">
-      <DependentUpon>ImportOccupancyTypes.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\OccupancyTypes\OccTypeGroupRowItem.xaml.cs">
-      <DependentUpon>OccTypeGroupRowItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Inventory\OccupancyTypes\OccupancyTypesEditor.xaml.cs">
-      <DependentUpon>OccupancyTypesEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Output\CreateEconImportFile.xaml.cs">
-      <DependentUpon>CreateEconImportFile.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Output\DamageWithUncertainty.xaml.cs">
-      <DependentUpon>DamageWithUncertainty.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Output\HistogramViewer.xaml.cs">
-      <DependentUpon>HistogramViewer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Output\LinkedPlots.xaml.cs">
-      <DependentUpon>LinkedPlots.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Output\IndexLocations.xaml.cs">
-      <DependentUpon>IndexLocations.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Output\LinkedPlotsUpdated.xaml.cs">
-      <DependentUpon>LinkedPlotsUpdated.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\ArrowPolygon.xaml.cs">
-      <DependentUpon>ArrowPolygon.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\ConditionsIndividualPlotWrapper.xaml.cs">
-      <DependentUpon>ConditionsIndividualPlotWrapper.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\DoubleLineModulator.xaml.cs">
-      <DependentUpon>DoubleLineModulator.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\DoubleLineModulatorCoverButton.xaml.cs">
-      <DependentUpon>DoubleLineModulatorCoverButton.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\DoubleLineModulatorHorizontal.xaml.cs">
-      <DependentUpon>DoubleLineModulatorHorizontal.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\DoubleLineModulatorHorizontalCoverButton.xaml.cs">
-      <DependentUpon>DoubleLineModulatorHorizontalCoverButton.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\HorizontalDoubleLineModulatorWrapper.xaml.cs">
-      <DependentUpon>HorizontalDoubleLineModulatorWrapper.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\IndividualLinkedPlot.xaml.cs">
-      <DependentUpon>IndividualLinkedPlot.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\ILinkedPlot.cs" />
-    <Compile Include="Plots\IndividualLinkedPlotControl.xaml.cs">
-      <DependentUpon>IndividualLinkedPlotControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\IndividualLinkedPlotCoverButton.xaml.cs">
-      <DependentUpon>IndividualLinkedPlotCoverButton.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\LinkedPlots.xaml.cs">
-      <DependentUpon>LinkedPlots.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\LinkedPlotSpecificPointTool.xaml.cs">
-      <DependentUpon>LinkedPlotSpecificPointTool.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Plots\PlotsUtil.cs" />
-    <Compile Include="Plots\SharedAxisEnum.cs" />
-    <Compile Include="Plots\SingleLinePlot.xaml.cs">
-      <DependentUpon>SingleLinePlot.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="StageTransforms\ExteriorInteriorEditor.xaml.cs">
-      <DependentUpon>ExteriorInteriorEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="StageTransforms\RatingCurveEditor.xaml.cs">
-      <DependentUpon>RatingCurveEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Study\AnalysisYears.xaml.cs">
-      <DependentUpon>AnalysisYears.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Study\CreateNew.xaml.cs">
-      <DependentUpon>CreateNew.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Study\OpenExisting.xaml.cs">
-      <DependentUpon>OpenExisting.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Study\Properties.xaml.cs">
-      <DependentUpon>Properties.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Study\StudyView.xaml.cs">
-      <DependentUpon>StudyView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Utilities\BindableButton.xaml.cs">
-      <DependentUpon>BindableButton.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Utilities\BoolToBoldConverter.cs" />
-    <Compile Include="Utilities\BoolToInverseVisibilityConverter.cs" />
-    <Compile Include="Utilities\BoolToVisibilityConverter.cs" />
-    <Compile Include="Utilities\ContextMenuConverter.cs" />
-    <Compile Include="Utilities\CustomHeader.xaml.cs">
-      <DependentUpon>CustomHeader.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Utilities\CustomMessageBox.xaml.cs">
-      <DependentUpon>CustomMessageBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Utilities\DepthDamageEnumToStringConverter.cs" />
-    <Compile Include="Utilities\DynamicTab.cs" />
-    <Compile Include="Utilities\InverseBooleanConverter.cs" />
-    <Compile Include="Utilities\MapWindowControl.xaml.cs">
-      <DependentUpon>MapWindowControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Utilities\MapWindowWrapper.xaml.cs">
-      <DependentUpon>MapWindowWrapper.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Utilities\MessageExpanderControl.xaml.cs">
-      <DependentUpon>MessageExpanderControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Utilities\MessagesView.xaml.cs">
-      <DependentUpon>MessagesView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Utilities\MessageWindow.xaml.cs">
-      <DependentUpon>MessageWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Utilities\NumericTextBoxWithClickHighlighting.cs" />
-    <Compile Include="Utilities\OKCloseControl.xaml.cs">
-      <DependentUpon>OKCloseControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Utilities\RadioButtonCheckedConverter.cs" />
-    <Compile Include="Utilities\Rename.xaml.cs">
-      <DependentUpon>Rename.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Utilities\SaveControl.xaml.cs">
-      <DependentUpon>SaveControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Utilities\TabControlNoReload.cs" />
-    <Compile Include="Utilities\TabHeaderControl.xaml.cs">
-      <DependentUpon>TabHeaderControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Utilities\TableWithPlotCurveConverter.cs" />
-    <Compile Include="Utilities\TransactionMessageControl.xaml.cs">
-      <DependentUpon>TransactionMessageControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Utilities\TransactionView.xaml.cs">
-      <DependentUpon>TransactionView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ViewWindow.xaml.cs">
-      <DependentUpon>ViewWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Watershed\TerrainBrowser.xaml.cs">
-      <DependentUpon>TerrainBrowser.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WaterSurfaceElevation\WaterSurfaceElevationImporter.xaml.cs">
-      <DependentUpon>WaterSurfaceElevationImporter.xaml</DependentUpon>
-    </Compile>
-    <Page Include="AggregatedStageDamage\AggregatedStageDamage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Conditions\AddExteriorInteriorStageToCondition.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Conditions\AddFlowFrequencyToCondition.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Conditions\AddInflowOutflowToCondition.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Conditions\AddRatingCurveToCondition.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Conditions\AddStageDamageToCondition.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Conditions\ConditionsDoubleLineModulatorWrapper.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Conditions\ConditionsEditor.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Conditions\ConditionsPlotEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="FlowTransforms\InflowOutflowEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="FrequencyRelationships\AnalyticalFrequencyEditor.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="GeoTech\FailureFunctionEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="GeoTech\LeveeFeatureEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Hydraulics\GridImporter.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Hydraulics\Properties.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ImpactArea\ImpactAreaEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ImpactArea\ImpactAreaImporter.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\AttributeLinkingList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\AttributeLinkingListRowItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\DamageCategory\DamageCategoryEditor.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Inventory\DefineSIAttributes.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\DepthDamageCurves\DepthDamageCurveEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\DepthDamageCurves\DepthDamageEditorControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\ImportFromHAZUS.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\ImportFromNSI.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\ImportFromShapefile.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\ImportStructuresFromShapefile.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\OccupancyTypesFromFile.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\OccupancyTypes\Controls\CreateNewDamCat.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\OccupancyTypes\Controls\OccTypeEditorControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\OccupancyTypes\ImportOccupancyTypeGroups.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\OccupancyTypes\ImportOccupancyTypes.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\OccupancyTypes\OccTypeGroupRowItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Inventory\OccupancyTypes\OccupancyTypesEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="Output\CreateEconImportFile.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Output\DamageWithUncertainty.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Output\HistogramViewer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Output\LinkedPlots.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Output\IndexLocations.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Output\LinkedPlotsUpdated.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\ArrowPolygon.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\ConditionsIndividualPlotWrapper.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\DoubleLineModulator.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\DoubleLineModulatorCoverButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\DoubleLineModulatorHorizontal.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\DoubleLineModulatorHorizontalCoverButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\HorizontalDoubleLineModulatorWrapper.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\IndividualLinkedPlot.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\IndividualLinkedPlotControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\IndividualLinkedPlotCoverButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\LinkedPlots.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\LinkedPlotSpecificPointTool.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Plots\SingleLinePlot.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="StageTransforms\ExteriorInteriorEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="StageTransforms\RatingCurveEditor.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Study\AnalysisYears.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Study\CreateNew.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Study\OpenExisting.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Study\Properties.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Study\StudyView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Utilities\BindableButton.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Utilities\CustomHeader.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Utilities\CustomMessageBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Utilities\MapWindowControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Utilities\MapWindowWrapper.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Utilities\MessageExpanderControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Utilities\MessagesView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Utilities\MessageWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Utilities\OKCloseControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Utilities\Rename.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Utilities\SaveControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Utilities\TabHeaderControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Utilities\TransactionMessageControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Utilities\TransactionView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ViewWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Watershed\TerrainBrowser.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="WaterSurfaceElevation\WaterSurfaceElevationImporter.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <Resource Include="UI_RES\ClosedExpander.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -774,36 +124,23 @@
     <Resource Include="UI_RES\Title_top_left.png" />
     <Resource Include="UI_RES\Title_top_middle.png" />
     <Resource Include="UI_RES\Title_top_right.png" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <Content Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <None Include="NLog.xsd">
+    <None Update="NLog.xsd">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FdaViewModel\ViewModel.csproj">
-      <Project>{6a8fd3e7-b4ec-46b4-b91b-2b63034f9776}</Project>
-      <Name>FdaViewModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OpenGLMapper\geospatial\OpenGLMapping\OpenGLMapping.vbproj">
-      <Project>{e6dd31c5-1388-4b1d-8291-c317dde22388}</Project>
-      <Name>OpenGLMapping</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\FunctionsView\FunctionsView.csproj" />
+    <ProjectReference Include="..\Importer\Importer.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj" />
+    <ProjectReference Include="..\OccupancyTypes\OccupancyTypes.csproj" />
+    <ProjectReference Include="..\UserControls\UserControls.vbproj" />
+    <ProjectReference Include="..\Utilities\Utilities.csproj" />
+    <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\FDA.ico" />
@@ -980,19 +317,42 @@
     <Resource Include="Resources\HideThresholdLines.png" />
     <Resource Include="Resources\ShowThresholdLines.png" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets'))" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
+    <PackageReference Include="NLog.Config" Version="4.6.6" />
+    <PackageReference Include="PresentationFramework" Version="4.6.0" />
+    <PackageReference Include="WpfAnimatedGif" Version="2.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Output\CreateEconImportFile.xaml.cs" />
+    <Compile Remove="Output\DamageWithUncertainty.xaml.cs" />
+    <Compile Remove="Output\LinkedPlotsUpdated.xaml.cs" />
+    <Compile Remove="Plots\ExceedanceProbabilityAreaPlot.xaml.cs" />
+    <Compile Remove="Plots\ILinkedPlot.cs" />
+    <Compile Remove="Plots\IndividualLinkedPlot.xaml.cs" />
+    <Compile Remove="Plots\LinkedPlots.xaml.cs" />
+    <Compile Remove="Plots\LinkedPlotSpecificPointTool.xaml.cs" />
+    <Compile Remove="Utilities\DataGrid.cs" />
+    <Compile Remove="Utilities\TransactionMessageControl.xaml.cs" />
+    <Page Remove="Output\CreateEconImportFile.xaml" />
+    <Page Remove="Output\DamageWithUncertainty.xaml" />
+    <Page Remove="Output\LinkedPlotsUpdated.xaml" />
+    <Page Remove="Plots\ExceedanceProbabilityAreaPlot.xaml" />
+    <Page Remove="Plots\IndividualLinkedPlot.xaml" />
+    <Page Remove="Plots\LinkedPlots.xaml" />
+    <Page Remove="Plots\LinkedPlotSpecificPointTool.xaml" />
+    <Page Remove="Utilities\TransactionMessageControl.xaml" />
+  </ItemGroup>
+  <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" />
+  <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>
+		echo "Copying the GDAL Folder to your output directory"
+		Xcopy %userprofile%\.nuget\packages\gdal-hec\0.0.1\content\GDAL $(TargetDir)GDAL /E /H /C /I /Q /Y
+		echo "Copied to" $(TargetDir)\GDAL
+
+		echo "unpacking the .dlls from GDAL into your output directory"
+		Xcopy  %userprofile%\.nuget\packages\gdal-hec\0.0.1\content\GDAL\csharp\*  $(TargetDir) /Y
+	</PostBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -1,72 +1,76 @@
-﻿<Application x:Class="Fda.App"
+﻿<Application x:Class="View.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              
-             xmlns:EditorsVM ="clr-namespace:FdaViewModel.Editors;assembly=FdaViewModel"
+             xmlns:EditorsVM ="clr-namespace:ViewModel.Editors;assembly=ViewModel"
              
-             xmlns:FrequencyRelationshipsVM ="clr-namespace:FdaViewModel.FrequencyRelationships;assembly=FdaViewModel"
-             xmlns:FrequencyRelationshipsView ="clr-namespace:Fda.FrequencyRelationships"
+             xmlns:PlotsOutputVM="clr-namespace:ViewModel.Output;assembly=ViewModel"
+             xmlns:PlotsOutputView="clr-namespace:View.Output"
              
-             xmlns:GeoTechVM="clr-namespace:FdaViewModel.GeoTech;assembly=FdaViewModel"
-             xmlns:GeoTechView="clr-namespace:Fda.GeoTech"
+             xmlns:PlotsVM="clr-namespace:ViewModel.Plots;assembly=ViewModel"
+             xmlns:PlotsView="clr-namespace:View.Plots"
              
-             xmlns:StageTransformsVM ="clr-namespace:FdaViewModel.StageTransforms;assembly=FdaViewModel"
-             xmlns:StageTransformsView ="clr-namespace:Fda.StageTransforms"
+             xmlns:AlternativeComparisonReportVM="clr-namespace:ViewModel.AlternativeComparisonReport;assembly=ViewModel"
+             xmlns:AlternativeView="clr-namespace:View.Alternatives"
              
-             xmlns:HydraulicsVM="clr-namespace:FdaViewModel.Hydraulics;assembly=FdaViewModel"
-             xmlns:HydraulicsView="clr-namespace:Fda.Hydraulics"
+             xmlns:PlansVM="clr-namespace:ViewModel.Alternatives;assembly=ViewModel"
+             xmlns:PlansView="clr-namespace:View.Plans"
              
-             xmlns:ImpactAreaView="clr-namespace:Fda.ImpactArea"
-             xmlns:ImpactAreaVM="clr-namespace:FdaViewModel.ImpactArea;assembly=FdaViewModel"
+             xmlns:FrequencyRelationshipsVM ="clr-namespace:ViewModel.FrequencyRelationships;assembly=ViewModel"
+             xmlns:FrequencyRelationshipsView ="clr-namespace:View.FrequencyRelationships"
              
-             xmlns:InventoryView="clr-namespace:Fda.Inventory"
-             xmlns:InventoryVM="clr-namespace:FdaViewModel.Inventory;assembly=FdaViewModel"
+             xmlns:GeoTechVM="clr-namespace:ViewModel.GeoTech;assembly=ViewModel"
+             xmlns:GeoTechView="clr-namespace:View.GeoTech"
              
-              xmlns:DepthDamageView="clr-namespace:Fda.Inventory.DepthDamageCurves"
-             xmlns:DepthDamageVM="clr-namespace:FdaViewModel.Inventory.DepthDamage;assembly=FdaViewModel"
+             xmlns:StageTransformsVM ="clr-namespace:ViewModel.StageTransforms;assembly=ViewModel"
+             xmlns:StageTransformsView ="clr-namespace:View.StageTransforms"
              
+             xmlns:HydraulicsVM="clr-namespace:ViewModel.Hydraulics;assembly=ViewModel"
+             xmlns:HydraulicsView="clr-namespace:View.Hydraulics"
              
-             xmlns:OccupancyTypesView="clr-namespace:Fda.Inventory.OccupancyTypes"
-             xmlns:OccupancyTypesVM="clr-namespace:FdaViewModel.Inventory.OccupancyTypes;assembly=FdaViewModel"
-              
-             xmlns:OccupancyTypesControlsView="clr-namespace:Fda.Inventory.OccupancyTypes.Controls"
-             xmlns:OccupancyTypesControlsVM="clr-namespace:FdaViewModel.Inventory.OccupancyTypes;assembly=FdaViewModel"
+             xmlns:ImpactAreaView="clr-namespace:View.ImpactArea"
+             xmlns:ImpactAreaVM="clr-namespace:ViewModel.ImpactArea;assembly=ViewModel"
              
-             xmlns:FlowTransformsView="clr-namespace:Fda.FlowTransforms"
-             xmlns:FlowTransformsVM="clr-namespace:FdaViewModel.FlowTransforms;assembly=FdaViewModel"
+             xmlns:InventoryView="clr-namespace:View.Inventory"
+             xmlns:InventoryVM="clr-namespace:ViewModel.Inventory;assembly=ViewModel"
              
-             xmlns:DamageCategoryView="clr-namespace:Fda.Inventory.DamageCategory"
-             xmlns:DamageCategoryVM="clr-namespace:FdaViewModel.Inventory.DamageCategory;assembly=FdaViewModel"
-             
-             xmlns:OutputView="clr-namespace:Fda.Output"
-             xmlns:OutputVM="clr-namespace:FdaViewModel.Output;assembly=FdaViewModel"
-             
-             xmlns:StudyVM="clr-namespace:FdaViewModel.Study;assembly=FdaViewModel"
-             xmlns:StudyView="clr-namespace:Fda.Study"
-             
-             xmlns:WatershedVM="clr-namespace:FdaViewModel.Watershed;assembly=FdaViewModel"
-             xmlns:WatershedView="clr-namespace:Fda.Watershed"
-             
-             xmlns:AggregatedVM="clr-namespace:FdaViewModel.AggregatedStageDamage;assembly=FdaViewModel"
-             xmlns:AggregatedView="clr-namespace:Fda.AggregatedStageDamage"
-             
-             xmlns:ConditionVM="clr-namespace:FdaViewModel.Conditions;assembly=FdaViewModel"
-             xmlns:ConditionsView="clr-namespace:Fda.Conditions"
+              xmlns:DepthDamageView="clr-namespace:View.Inventory.DepthDamageCurves"
+             xmlns:DepthDamageVM="clr-namespace:ViewModel.Inventory.DepthDamage;assembly=ViewModel"
              
              
+             xmlns:FlowTransformsView="clr-namespace:View.FlowTransforms"
+             xmlns:FlowTransformsVM="clr-namespace:ViewModel.FlowTransforms;assembly=ViewModel"
              
-             xmlns:LinkedPlotsVM="clr-namespace:FdaViewModel.Output;assembly=FdaViewModel"
-             xmlns:LinkedPlotsView="clr-namespace:Fda.Output"
+             xmlns:DamageCategoryView="clr-namespace:View.Inventory.DamageCategory"
+             xmlns:DamageCategoryVM="clr-namespace:ViewModel.Inventory.DamageCategory;assembly=ViewModel"
              
-             xmlns:PlotsVM="clr-namespace:FdaViewModel.Plots;assembly=FdaViewModel"
-             xmlns:PlotsView="clr-namespace:Fda.Plots"
+             xmlns:OutputView="clr-namespace:View.Output"
+             xmlns:OutputVM="clr-namespace:ViewModel.Output;assembly=ViewModel"
              
-             xmlns:UtilitiesView="clr-namespace:Fda.Utilities"
-             xmlns:UtilitiesVM="clr-namespace:FdaViewModel.Utilities;assembly=FdaViewModel"
-             xmlns:TransactionsVM="clr-namespace:FdaViewModel.Utilities.Transactions;assembly=FdaViewModel"
+             xmlns:StudyVM="clr-namespace:ViewModel.Study;assembly=ViewModel"
+             xmlns:StudyView="clr-namespace:View.Study"
              
-             xmlns:WaterSurfaceElevationsView="clr-namespace:Fda.WaterSurfaceElevation"
-             xmlns:WaterSurfaceElevationsVM="clr-namespace:FdaViewModel.WaterSurfaceElevation;assembly=FdaViewModel"
+             xmlns:WatershedVM="clr-namespace:ViewModel.Watershed;assembly=ViewModel"
+             xmlns:WatershedView="clr-namespace:View.Watershed"
+             
+             xmlns:AggregatedVM="clr-namespace:ViewModel.AggregatedStageDamage;assembly=ViewModel"
+             xmlns:AggregatedView="clr-namespace:View.AggregatedStageDamage"
+             
+             xmlns:ConditionVM="clr-namespace:ViewModel.Conditions;assembly=ViewModel"
+             xmlns:ConditionsView="clr-namespace:View.Conditions"
+             
+             xmlns:OccupancyTypesVM="clr-namespace:ViewModel.Inventory.OccupancyTypes;assembly=ViewModel"
+             xmlns:OccupancyTypesView="clr-namespace:View.Inventory.OccupancyTypes"
+
+             xmlns:OccupancyTypesControlsVM="clr-namespace:ViewModel.Inventory.OccupancyTypes;assembly=ViewModel"
+             xmlns:OccupancyTypesControlsView="clr-namespace:View.Inventory.OccupancyTypes.Controls"
+             
+             xmlns:UtilitiesView="clr-namespace:View.Utilities"
+             xmlns:UtilitiesVM="clr-namespace:ViewModel.Utilities;assembly=ViewModel"
+             xmlns:TransactionsVM="clr-namespace:ViewModel.Utilities.Transactions;assembly=ViewModel"
+             
+             xmlns:WaterSurfaceElevationsView="clr-namespace:View.WaterSurfaceElevation"
+             xmlns:WaterSurfaceElevationsVM="clr-namespace:ViewModel.WaterSurfaceElevation;assembly=ViewModel"
              
              xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              
@@ -76,8 +80,8 @@
         <Style TargetType="Control" x:Key="defaultErrorTemplate">
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="true">
-                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self},
-                            Path=(Validation.Errors).CurrentItem.ErrorContent}" />
+                    <!--<Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self},
+                            Path=(Validation.Errors).CurrentItem.ErrorContent}" />-->
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -95,6 +99,16 @@
         </Style>
         
         
+        <!--alternatives region-->
+        <DataTemplate DataType="{x:Type AlternativeComparisonReportVM:CreateNewAlternativeComparisonReportVM }" >
+            <AlternativeView:CreateNewAlternative/>
+        </DataTemplate>
+        
+        <!--Plans Region-->
+        <DataTemplate DataType="{x:Type PlansVM:CreateNewAlternativeVM }" >
+            <PlansView:CreateNewPlan/>
+        </DataTemplate>
+
         <!--Editors Region-->
         <DataTemplate DataType="{x:Type EditorsVM:CurveEditorVM }" >
             <StageTransformsView:RatingCurveEditor/>
@@ -154,12 +168,29 @@
             <OccupancyTypesView:OccTypeGroupRowItem/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type OccupancyTypesVM:SaveAllReportVM }" >
+            <OccupancyTypesView:SaveAllReport/>
+        </DataTemplate>
+        <!--<DataTemplate DataType="{x:Type OccupancyTypesVM:SaveAllReportGroupVM }" >
+            <OccupancyTypesView:SaveAllGroupControl/>
+        </DataTemplate>-->
         <!--Occupancy Types Controls Region-->
+        
         <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:CreateNewDamCatVM }" >
             <OccupancyTypesControlsView:CreateNewDamCat/>
         </DataTemplate>
-       
 
+        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:NormalControlVM}">
+            <OccupancyTypesControlsView:NormalControl/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:TriangularControlVM}">
+            <OccupancyTypesControlsView:TriangularControl/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:UniformControlVM}">
+            <OccupancyTypesControlsView:UniformControl/>
+        </DataTemplate>
         <!--Inventory Region-->
       
         <DataTemplate DataType="{x:Type DepthDamageVM:DepthDamageCurveEditorVM }" >
@@ -168,48 +199,63 @@
         <DataTemplate DataType="{x:Type DepthDamageVM:DepthDamageCurveEditorControlVM }" >
             <DepthDamageView:DepthDamageEditorControl/>
         </DataTemplate>
+        
         <DataTemplate DataType="{x:Type InventoryVM:AttributeLinkingListVM }" >
             <InventoryView:AttributeLinkingList/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type InventoryVM:DefineSIAttributesVM }" >
             <InventoryView:DefineSIAttributes/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type InventoryVM:DefineSIAttributesVM_mockup }" >
+            <InventoryView:DefineSIAttributes_mockup/>
+        </DataTemplate>
+        
         <DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromShapefileVM }" >
             <InventoryView:ImportStructuresFromShapefile/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type InventoryVM:ImportFromHAZUSVM }" >
             <InventoryView:ImportFromHAZUS/>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromFDA1VM }" >
+            <InventoryView:ImportStructuresFromFDA1/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type InventoryVM:ImportFromNSIVM }" >
             <InventoryView:ImportFromNSI/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type InventoryVM:ImportFromShapefileVM }" >
+        <!--<DataTemplate DataType="{x:Type InventoryVM:ImportFromShapefileVM }" >
             <InventoryView:ImportFromShapefile/>
-        </DataTemplate>
+        </DataTemplate>-->
         <DataTemplate DataType="{x:Type DamageCategoryVM:DamageCategoriesVM }" >
             <DamageCategoryView:DamageCategoryEditor/>
         </DataTemplate>
-
         <DataTemplate DataType="{x:Type OccupancyTypesVM:ImportOccupancyTypesVM }" >
             <OccupancyTypesView:ImportOccupancyTypeGroups/>
         </DataTemplate>
 
 
         <!--Output Region-->
-        <DataTemplate DataType="{x:Type OutputVM:CreateEconImportFileVM }" >
+        <!--<DataTemplate DataType="{x:Type OutputVM:CreateEconImportFileVM }" >
             <OutputView:CreateEconImportFile/>
-        </DataTemplate>
+        </DataTemplate>-->
         <DataTemplate DataType="{x:Type OutputVM:IndexLocationsVM }" >
             <OutputView:IndexLocations/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type ConditionVM:ConditionsEditorVM }" >
             <ConditionsView:ConditionsEditor/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type ConditionVM:EnterSeedVM }" >
+            <ConditionsView:EnterSeed/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type ConditionVM:AddInflowOutflowToConditionVM }" >
             <ConditionsView:AddInflowOutflowToCondition/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type ConditionVM:AddExteriorInteriorStageToConditionVM }" >
             <ConditionsView:AddExteriorInteriorStageToCondition/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type ConditionVM:AddFailureFunctionToConditionVM }" >
+            <ConditionsView:AddFailureFunctionToCondition/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type ConditionVM:AddStageDamageToConditionVM }" >
             <ConditionsView:AddStageDamageToCondition/>
@@ -223,17 +269,19 @@
         <DataTemplate DataType="{x:Type ConditionVM:AddRatingCurveToConditionVM }" >
             <ConditionsView:AddRatingCurveToCondition/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type LinkedPlotsVM:LinkedPlotsUpdatedVM }" >
+        <!--todo: Refactor: CO-->
+        <!--<DataTemplate DataType="{x:Type LinkedPlotsVM:LinkedPlotsUpdatedVM }" >
             <LinkedPlotsView:LinkedPlotsUpdated/>
-        </DataTemplate>
-
+        </DataTemplate>-->
+        
+        <!--todo: Refactor: CO-->
         <!--Plots Region -->
         <!--<DataTemplate DataType="{x:Type PlotsVM:ParentUserControlVM }" >
             <PlotsView:ParentUserControl/>
         </DataTemplate>-->
-        <DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotVM }" >
+        <!--<DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotVM }" >
             <PlotsView:IndividualLinkedPlot/>
-        </DataTemplate>
+        </DataTemplate>-->
 
         <DataTemplate DataType="{x:Type PlotsVM:ConditionsIndividualPlotWrapperVM }" >
             <PlotsView:ConditionsIndividualPlotWrapper/>
@@ -242,16 +290,20 @@
         <DataTemplate DataType="{x:Type PlotsVM:DoubleLineModulatorWrapperVM }" >
             <ConditionsView:ConditionsDoubleLineModulatorWrapper/>
         </DataTemplate>
-
-        <DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotControlVM }" >
+        <!--todo: Refactor: CO-->
+        <!--<DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotControlVM }" >
             <PlotsView:IndividualLinkedPlotControl/>
-        </DataTemplate>
+        </DataTemplate>-->
         <DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotCoverButtonVM }" >
             <PlotsView:IndividualLinkedPlotCoverButton/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type PlotsVM:HorizontalDoubleLineModulatorWrapperVM }" >
             <PlotsView:HorizontalDoubleLineModulatorWrapper/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type PlotsVM:ConditionsHorizontalFailureFunctionVM }" >
+            <PlotsView:ConditionsHorizontalFailureFunction/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type PlotsVM:DoubleLineModulatorHorizontalCoverButtonVM }" >
@@ -261,9 +313,12 @@
             <PlotsView:DoubleLineModulatorCoverButton/>
         </DataTemplate>
 
-
-        <DataTemplate DataType="{x:Type PlotsVM:LinkedPlotsVM }" >
-            <PlotsView:LinkedPlots/>
+        <DataTemplate DataType="{x:Type PlotsOutputVM:LinkedPlotsVM }" >
+            <PlotsOutputView:LinkedPlots/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type PlotsOutputVM:HistogramViewerVM }" >
+            <PlotsOutputView:HistogramViewer/>
         </DataTemplate>
         
         <!--Study Region-->
@@ -275,6 +330,12 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type StudyVM:NewStudyVM }" >
             <StudyView:CreateNew/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type StudyVM:ImportFromOldFdaVM }" >
+            <StudyView:ImportFromOldFda/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type StudyVM:SciChartTestingVM }" >
+            <StudyView:SciChartTest/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type StudyVM:ExistingStudyVM }" >
             <StudyView:OpenExisting/>
@@ -301,9 +362,10 @@
         <DataTemplate DataType="{x:Type UtilitiesVM:MessageVM }" >
             <UtilitiesView:MessageWindow/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type UtilitiesVM:MessagesVM }" >
+        <!--todo: Refactor: CO-->
+        <!--<DataTemplate DataType="{x:Type UtilitiesVM:MessagesVM }" >
             <UtilitiesView:MessagesView/>
-        </DataTemplate>
+        </DataTemplate>-->
         <DataTemplate DataType="{x:Type UtilitiesVM:CustomMessageBoxVM }" >
             <UtilitiesView:CustomMessageBox/>
         </DataTemplate>
@@ -317,10 +379,12 @@
         <DataTemplate DataType="{x:Type WaterSurfaceElevationsVM:WaterSurfaceElevationImporterVM }" >
             <WaterSurfaceElevationsView:WaterSurfaceElevationImporter/>
         </DataTemplate>
-
-        <!--<Image x:Key="ErrorImageKey" Source="pack://application:,,,/Fda;component/Resources/Error.png" IsHitTestVisible="false"/>
-        <Image x:Key="MessageImageKey" Source="pack://application:,,,/Fda;component/Resources/Message.png" IsHitTestVisible="false"/>
-        <Image x:Key="HelpImageKey" Source="pack://application:,,,/Fda;component/Resources/help.png" IsHitTestVisible="false"/>-->
+        <DataTemplate DataType="{x:Type WaterSurfaceElevationsVM:WaterSurfaceElevationImporterFDA1VM }" >
+            <WaterSurfaceElevationsView:WaterSurfaceElevationImporterFromFDA1/>
+        </DataTemplate>
+        <!--<Image x:Key="ErrorImageKey" Source="pack://application:,,,/View;component/Resources/Error.png" IsHitTestVisible="false"/>
+        <Image x:Key="MessageImageKey" Source="pack://application:,,,/View;component/Resources/Message.png" IsHitTestVisible="false"/>
+        <Image x:Key="HelpImageKey" Source="pack://application:,,,/View;component/Resources/help.png" IsHitTestVisible="false"/>-->
 
     </Application.Resources>
 </Application>

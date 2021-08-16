@@ -1,12 +1,11 @@
-﻿using System;
+﻿using ViewModel.Inventory.OccupancyTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Inventory
+namespace ViewModel.Inventory
 {
     //[Author(q0heccdm, 6 / 23 / 2017 10:19:38 AM)]
     public class AttributeLinkingListVM : BaseViewModel
@@ -20,7 +19,7 @@ namespace FdaViewModel.Inventory
         private List<string> _OccupancyTypesInStudy;
         private bool _UseDefaultsIsChecked = true;
         private bool _FromFileIsChecked;
-        private List<Consequences_Assist.ComputableObjects.OccupancyType> _ListOfSelectedOccupancyTypes = new List<Consequences_Assist.ComputableObjects.OccupancyType>();
+        private List<IOccupancyType> _ListOfSelectedOccupancyTypes = new List<IOccupancyType>();
         private List<OccupancyTypes.OccupancyTypesElement> _ListOfSelectedOccTypeGroups = new List<OccupancyTypes.OccupancyTypesElement>();
         private List<string> _SelectedListOfOccTypeStrings = new List<string>();
 
@@ -98,10 +97,10 @@ namespace FdaViewModel.Inventory
         {
             List<string> dummyList = new List<string>(); //this is used to trigger the setter
             
-            foreach (OccupancyTypes.OccupancyTypesElement e in ListOfSelectedOccTypeGroups)
+            foreach (OccupancyTypesElement e in ListOfSelectedOccTypeGroups)
             {
                 
-                    foreach (Consequences_Assist.ComputableObjects.OccupancyType ot in e.ListOfOccupancyTypes)
+                    foreach (OccupancyType ot in e.ListOfOccupancyTypes)
                     {
 
                         dummyList.Add(ot.Name + " from " + e.Name);

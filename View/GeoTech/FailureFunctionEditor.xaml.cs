@@ -1,4 +1,7 @@
-﻿using System;
+﻿using ViewModel.Editors;
+using FunctionsView.ViewModel;
+using HEC.Plotting.SciChart2D.Charts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,8 +15,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using HEC.Plotting.SciChart2D.ViewModel;
 
-namespace Fda.GeoTech
+namespace View.GeoTech
 {
     /// <summary>
     /// Interaction logic for FailureFunctionEditor.xaml
@@ -23,7 +27,17 @@ namespace Fda.GeoTech
         public FailureFunctionEditor()
         {
             InitializeComponent();
-           
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            CurveEditorVM vm = (CurveEditorVM)this.DataContext;
+            CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
+            var model = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
+            //editorVM.CoordinatesChartViewModel = model;
+            Chart2D chart = new Chart2D(model);
+            PlotGrid.Children.Add(chart);
+            Grid.SetColumn(chart, 2);
         }
     }
 }

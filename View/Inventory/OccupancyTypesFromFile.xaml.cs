@@ -27,7 +27,7 @@ namespace Fda.Inventory
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Inventory.AttributeLinkingListVM vm = (FdaViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
+            ViewModel.Inventory.AttributeLinkingListVM vm = (ViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
             if (vm == null)
             {
             }

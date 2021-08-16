@@ -1,26 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
-using System.Threading.Tasks;
-using FdaModel.ComputationPoint;
-using FdaModel.Functions.OrdinatesFunctions;
 using System.Collections.ObjectModel;
 using System.Windows;
-using FdaViewModel.ImpactArea;
+using ViewModel.ImpactArea;
+using Model;
+using Functions;
+using HEC.Plotting.SciChart2D.Controller;
+using ViewModel.Plots;
+using Model.Conditions.Locations.Years;
+using Model.Conditions.Locations;
+using ViewModel.Utilities;
+using ViewModel.StageTransforms;
+using ViewModel.Editors;
+using FdaLogging;
+using ViewModel.FlowTransforms;
+using ViewModel.GeoTech;
+using ViewModel.AggregatedStageDamage;
+using System.Text;
+using Utilities;
+using System.Linq;
 
-namespace FdaViewModel.Conditions
+namespace ViewModel.Conditions
 {
     //[Author(q0heccdm, 12 / 1 / 2017 11:23:15 AM)]
-    public class ConditionsPlotEditorVM : Editors.BaseEditorVM
+    public class ConditionsPlotEditorVM : CurveEditorVM
     {
         #region Notes
         // Created By: q0heccdm
         // Created Date: 12/1/2017 11:23:15 AM
         #endregion
         #region Fields
+
+        private Chart2DController _controller;
+        //CrosshairData[] _CrosshairData;
+        //FdaCrosshairChartModifier[] _ChartModifiers;
+
+        //private CoordinatesFunctionEditorVM _EditorVM_0;
+        //private CoordinatesFunctionEditorVM _EditorVM_1;
+        //private CoordinatesFunctionEditorVM _EditorVM_3;
+        //private CoordinatesFunctionEditorVM _EditorVM_5;
+        //private CoordinatesFunctionEditorVM _EditorVM_7;
+        //private CoordinatesFunctionEditorVM _EditorVM_8;
+
+
         //public delegate void MyEventHandler(object sender, bool stuff);
 
         //public event MyEventHandler OpenImporterInWindow;
@@ -48,6 +70,7 @@ namespace FdaViewModel.Conditions
         private Plots.IndividualLinkedPlotControlVM _Plot1ControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot3ControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot5ControlVM;
+        private Plots.IndividualLinkedPlotControlVM _PlotFailureControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot7ControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot8ControlVM;
 
@@ -59,21 +82,50 @@ namespace FdaViewModel.Conditions
         private int _Year;
         private ImpactArea.ImpactAreaElement _SelectedImpactArea;
 
-        private ObservableCollection<PerformanceThresholdTypes> _ThresholdTypes = new ObservableCollection<PerformanceThresholdTypes>();
-        private PerformanceThresholdTypes _SelectedThresholdType;
+        private ObservableCollection<IMetricEnum> _ThresholdTypes = new ObservableCollection<IMetricEnum>();
+        private IMetricEnum _SelectedThresholdType;
         private bool _ThresholdLinesAllowedToShow = true;
 
         #endregion
         #region Properties
         //public List<Plots.IndividualLinkedPlotControlVM> ListOfLinkedPlots { get; set; }
-
+        //public CoordinatesFunctionEditorVM EditorVM_0
+        //{
+        //    get { return _EditorVM_0; }
+        //    set { _EditorVM_0 = value; NotifyPropertyChanged(); }
+        //}
+        //public CoordinatesFunctionEditorVM EditorVM_1
+        //{
+        //    get { return _EditorVM_1; }
+        //    set { _EditorVM_1 = value; NotifyPropertyChanged(); }
+        //}
+        //public CoordinatesFunctionEditorVM EditorVM_3
+        //{
+        //    get { return _EditorVM_3; }
+        //    set { _EditorVM_3 = value; NotifyPropertyChanged(); }
+        //}
+        //public CoordinatesFunctionEditorVM EditorVM_5
+        //{
+        //    get { return _EditorVM_5; }
+        //    set { _EditorVM_5 = value; NotifyPropertyChanged(); }
+        //}
+        //public CoordinatesFunctionEditorVM EditorVM_7
+        //{
+        //    get { return _EditorVM_7; }
+        //    set { _EditorVM_7 = value; NotifyPropertyChanged(); }
+        //}
+        //public CoordinatesFunctionEditorVM EditorVM_8
+        //{
+        //    get { return _EditorVM_8; }
+        //    set { _EditorVM_8 = value; NotifyPropertyChanged(); }
+        //}
         public double ThresholdValue { get;
             set; }
-        public ObservableCollection<PerformanceThresholdTypes> ThresholdTypes
+        public ObservableCollection<IMetricEnum> ThresholdTypes
         {
             get { return _ThresholdTypes; }
         }
-        public PerformanceThresholdTypes SelectedThresholdType
+        public IMetricEnum SelectedThresholdType
         {
             get { return _SelectedThresholdType; }
             set { _SelectedThresholdType = value; PlotThresholdLine(ThresholdValue); }
@@ -150,6 +202,11 @@ namespace FdaViewModel.Conditions
         {
             get { return _Plot5ControlVM; }
             set { _Plot5ControlVM = value; NotifyPropertyChanged(); }
+        }
+        public Plots.IndividualLinkedPlotControlVM PlotFailureControlVM
+        {
+            get { return _PlotFailureControlVM; }
+            set { _PlotFailureControlVM = value; NotifyPropertyChanged(); }
         }
         public Plots.IndividualLinkedPlotControlVM Plot7ControlVM
         {
@@ -246,32 +303,40 @@ namespace FdaViewModel.Conditions
         //}
 
 
-            /// <summary>
-            /// This constructor is used when opening the editor up for editing a previously defined condition
-            /// </summary>
-            /// <param name="impAreas"></param>
-            /// <param name="indLinkedPlotControl0VM"></param>
-            /// <param name="control1VM"></param>
-            /// <param name="control3VM"></param>
-            /// <param name="control5VM"></param>
-            /// <param name="control7VM"></param>
-            /// <param name="control8VM"></param>
-            /// <param name="name"></param>
-            /// <param name="description"></param>
-            /// <param name="year"></param>
-            /// <param name="selectedImpArea"></param>
-        public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas, Plots.IndividualLinkedPlotControlVM indLinkedPlotControl0VM, Plots.IndividualLinkedPlotControlVM control1VM,
-            Plots.IndividualLinkedPlotControlVM control3VM, Plots.IndividualLinkedPlotControlVM control5VM, Plots.IndividualLinkedPlotControlVM control7VM, Plots.IndividualLinkedPlotControlVM control8VM,
-           ConditionsElement element, Editors.EditorActionManager actionManager) : base(element,actionManager)
+        /// <summary>
+        /// This constructor is used when opening the editor up for editing a previously defined condition
+        /// </summary>
+        /// <param name="impAreas"></param>
+        /// <param name="indLinkedPlotControl0VM"></param>
+        /// <param name="control1VM"></param>
+        /// <param name="control3VM"></param>
+        /// <param name="control5VM"></param>
+        /// <param name="control7VM"></param>
+        /// <param name="control8VM"></param>
+        /// <param name="name"></param>
+        /// <param name="description"></param>
+        /// <param name="year"></param>
+        /// <param name="selectedImpArea"></param>
+        public ConditionsPlotEditorVM(List<ImpactAreaElement> impAreas, IndividualLinkedPlotControlVM indLinkedPlotControl0VM, IndividualLinkedPlotControlVM control1VM,
+            IndividualLinkedPlotControlVM control3VM, IndividualLinkedPlotControlVM controlLeveeFailureVM, IndividualLinkedPlotControlVM control5VM, IndividualLinkedPlotControlVM control7VM, IndividualLinkedPlotControlVM control8VM,
+           ConditionsElement element, Editors.EditorActionManager actionManager) : base(element,"","","",actionManager)
         {
             ImpactAreas = impAreas;
-
+            //set the selected impact area
+            foreach(ImpactAreaElement elem in impAreas)
+            {
+                if(element.ImpactAreaID == elem.GetElementID())
+                {
+                    SelectedImpactArea = elem;
+                }
+            }
             Plot0ControlVM = indLinkedPlotControl0VM;
             //start with only plot0 button enabled
             Plot0ControlVM.ImportButtonVM.IsEnabled = true;
 
             Plot1ControlVM = control1VM;
             Plot3ControlVM = control3VM;
+            PlotFailureControlVM = controlLeveeFailureVM;
             Plot5ControlVM = control5VM;
             Plot7ControlVM = control7VM;
             Plot8ControlVM = control8VM;
@@ -281,7 +346,6 @@ namespace FdaViewModel.Conditions
             Name = element.Name;
             Description = element.Description;
             Year = element.AnalysisYear;
-            SelectedImpactArea = element.ImpactAreaElement;
             SelectedThresholdType = element.ThresholdType;
             ThresholdValue = element.ThresholdValue;
 
@@ -298,9 +362,17 @@ namespace FdaViewModel.Conditions
             {
                 Plot3ControlVM.AddCurveToPlot(this, new EventArgs());
             }
+            if (PlotFailureControlVM.CurveImporterVM != null && PlotFailureControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
+            {
+                PlotFailureControlVM.AddCurveToPlot(this, new EventArgs());
+                PlotFailureControlVM.CrosshairData.IsPlotFailureFunction = true;
+                PlotFailureControlVM.CurrentVM = (BaseViewModel)PlotFailureControlVM.ModulatorPlotWrapperVM;
+            }
             if (Plot5ControlVM.CurveImporterVM != null && Plot5ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
             {
                 Plot5ControlVM.AddCurveToPlot(this, new EventArgs());
+                Plot5ControlVM.CrosshairData.IsPlot5Modulator = true;
+                Plot5ControlVM.SetMinMaxModulatorValues();
                 Plot5ControlVM.CurrentVM = (BaseViewModel)Plot5ControlVM.ModulatorPlotWrapperVM;
             }
             if (Plot7ControlVM.CurveImporterVM != null && Plot7ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
@@ -310,7 +382,7 @@ namespace FdaViewModel.Conditions
 
 
             AddEvents();
-
+            UpdateChartLinkages();
 
         }
         /// <summary>
@@ -323,11 +395,41 @@ namespace FdaViewModel.Conditions
         /// <param name="defaultControl5VM"></param>
         /// <param name="DefaultControl7VM"></param>
         /// <param name="DefaultControl8VM"></param>
-        public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas, Plots.IndividualLinkedPlotControlVM defaultControl0VM, Plots.IndividualLinkedPlotControlVM defaultControl1VM, 
-            Plots.IndividualLinkedPlotControlVM defaultControl3VM, Plots.IndividualLinkedPlotControlVM defaultControl5VM, Plots.IndividualLinkedPlotControlVM DefaultControl7VM, Plots.IndividualLinkedPlotControlVM DefaultControl8VM, Editors.EditorActionManager actionManager) :base(actionManager)
+        public ConditionsPlotEditorVM(List<ImpactAreaElement> impAreas, IndividualLinkedPlotControlVM defaultControl0VM, IndividualLinkedPlotControlVM defaultControl1VM, 
+            IndividualLinkedPlotControlVM defaultControl3VM, IndividualLinkedPlotControlVM defaultControl5VM, IndividualLinkedPlotControlVM defaultControlFailureVM, IndividualLinkedPlotControlVM DefaultControl7VM, 
+            IndividualLinkedPlotControlVM DefaultControl8VM, Editors.EditorActionManager actionManager, IFdaFunction dummyDefaultFunction) :base(dummyDefaultFunction,"","","", actionManager)
         {
+           // _CrosshairData = new CrosshairData[6];
+            //_CrosshairData[0] = defaultControl0VM.CrosshairData;
+            //for(int i =0;i<6;i++)
+            //{
+            //    _CrosshairData[i] = new CrosshairData();
+            //}
+
+           // _ChartModifiers = new FdaCrosshairChartModifier[6];
+            //_ChartModifiers[0] = defaultControl0VM.ChartModifier;
+            //for (int i = 0; i < 6; i++)
+            //{
+            //    _ChartModifiers[i] = new FdaCrosshairChartModifier(false, false, _CrosshairData[i]);
+            //}
+
             //ownerValidationRules(this);
-            
+            //List<double> xs = new List<double>() { 0, 1, 2, 3, 4, 5 };
+            //List<double> ys = new List<double>() { 0, 1, 2, 3, 4, 5 };
+
+            //ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xs, ys);
+            //EditorVM_0 = new CoordinatesFunctionEditorVM(func, "xlabel", "yLabel", "chartTitle");
+
+            //ICoordinatesFunction func3 = ICoordinatesFunctionsFactory.Factory(xs, ys);
+            //EditorVM_3 = new CoordinatesFunctionEditorVM(func3, "xlabel", "yLabel", "chartTitle");
+
+            //ICoordinatesFunction func7 = ICoordinatesFunctionsFactory.Factory(xs, ys);
+            //EditorVM_7 = new CoordinatesFunctionEditorVM(func7, "xlabel", "yLabel", "chartTitle");
+
+            //ICoordinatesFunction func8 = ICoordinatesFunctionsFactory.Factory(xs, ys);
+            //EditorVM_8 = new CoordinatesFunctionEditorVM(func8, "xlabel", "yLabel", "chartTitle");
+
+
             ImpactAreas = impAreas;
 
             Plot0ControlVM = defaultControl0VM;
@@ -337,6 +439,7 @@ namespace FdaViewModel.Conditions
             Plot1ControlVM = defaultControl1VM;       
             Plot3ControlVM = defaultControl3VM;
             Plot5ControlVM = defaultControl5VM;
+            PlotFailureControlVM = defaultControlFailureVM;
             Plot7ControlVM = DefaultControl7VM;
             Plot8ControlVM = DefaultControl8VM;
 
@@ -366,43 +469,46 @@ namespace FdaViewModel.Conditions
         #endregion
         #region Voids
 
-        public void ToggleThresholdLines()
-        {
-            if (_ThresholdLinesAllowedToShow)
-            {
-                _ThresholdLinesAllowedToShow = false;
-                Plot7ControlVM.IndividualPlotWrapperVM.Threshold = null;//this is basically a flag that the callback uses to turn them off
-                Plot8ControlVM.IndividualPlotWrapperVM.Threshold = new PerformanceThreshold(new LateralStructure(0));//this is just do change it from null to a value so that i can turn it back to null
-                Plot8ControlVM.IndividualPlotWrapperVM.Threshold = null;
-            }
-            else
-            {
-                //turn them on
-                _ThresholdLinesAllowedToShow = true ;
-                PerformanceThreshold pt = new PerformanceThreshold(SelectedThresholdType, ThresholdValue);
-                Plot7ControlVM.IndividualPlotWrapperVM.Threshold = pt;//this is basically a flag that the callback uses to turn them off
-                //Plot8ControlVM.IndividualPlotWrapperVM.Threshold = pt;
-            }
-        }
+       
+
+        //public void ToggleThresholdLines()
+        //{
+        //    if (_ThresholdLinesAllowedToShow)
+        //    {
+        //        _ThresholdLinesAllowedToShow = false;
+        //        Plot7ControlVM.IndividualPlotWrapperVM.Metric = null;//this is basically a flag that the callback uses to turn them off
+        //        //Plot8ControlVM.IndividualPlotWrapperVM.Metric = new Metric(); //new PerformanceThreshold(new LateralStructure(0));//this is just to change it from null to a value so that i can turn it back to null
+        //        Plot8ControlVM.IndividualPlotWrapperVM.Metric = null;
+        //    }
+        //    else
+        //    {
+        //        //turn them on
+        //        _ThresholdLinesAllowedToShow = true ;
+        //        IMetric pt = new Metric(SelectedThresholdType, ThresholdValue);// PerformanceThreshold(SelectedThresholdType, ThresholdValue);
+        //        Plot7ControlVM.IndividualPlotWrapperVM.Metric = pt;//this is basically a flag that the callback uses to turn them off
+        //        //Plot8ControlVM.IndividualPlotWrapperVM.Threshold = pt;
+        //    }
+        //}
         public void PlotThresholdLine(double thresholdValue)
         {
-            if(_ThresholdLinesAllowedToShow == false) { return; }
-            //I can't use the Threshold property that exists in this class
-            //because it hasn't changed yet, it is an ordering issue, so i just pass it in.
-            PerformanceThreshold pt = new PerformanceThreshold(SelectedThresholdType, thresholdValue);
-            if(SelectedThresholdType == PerformanceThresholdTypes.InteriorStage)
-            {
-                Plot7ControlVM.IndividualPlotWrapperVM.Threshold = pt;//this will trigger the callback in the view side
-
-            }
-            else if (SelectedThresholdType == PerformanceThresholdTypes.Damage)
-            {
-                Plot7ControlVM.IndividualPlotWrapperVM.Threshold = pt;
-            }
-            //if(Plot8ControlVM.CurrentVM.GetType() == typeof(Plots.ConditionsIndividualPlotWrapperVM))
+            //if(_ThresholdLinesAllowedToShow == false) { return; }
+            ////I can't use the Threshold property that exists in this class
+            ////because it hasn't changed yet, it is an ordering issue, so i just pass it in.
+            //IMetric metric = new Metric(SelectedThresholdType, thresholdValue);
+            ////PerformanceThreshold pt = new PerformanceThreshold(SelectedThresholdType, thresholdValue);
+            //if(SelectedThresholdType == IMetricEnum.InteriorStage)
             //{
-            //    Plot8ControlVM.IndividualPlotWrapperVM.Threshold = pt;
+            //    Plot7ControlVM.IndividualPlotWrapperVM.Metric = metric;//this will trigger the callback in the view side
+
             //}
+            //else if (SelectedThresholdType == IMetricEnum.Damages)
+            //{
+            //    Plot7ControlVM.IndividualPlotWrapperVM.Metric = metric;
+            //}
+            ////if(Plot8ControlVM.CurrentVM.GetType() == typeof(Plots.ConditionsIndividualPlotWrapperVM))
+            ////{
+            ////    Plot8ControlVM.IndividualPlotWrapperVM.Threshold = pt;
+            ////}
         }
 
         /// <summary>
@@ -419,9 +525,15 @@ namespace FdaViewModel.Conditions
 
         private void LoadThresholdTypes()
         {
-            foreach (PerformanceThresholdTypes ptt in Enum.GetValues(typeof(PerformanceThresholdTypes)))
+            foreach (IMetricEnum metEnum in Enum.GetValues(typeof(IMetricEnum)))
             {
-                _ThresholdTypes.Add(ptt);
+                //don't include the ead for now. 
+                //we run it automatically everytime
+                if (metEnum == IMetricEnum.ExpectedAnnualDamage)
+                {
+                    continue;
+                }
+                 _ThresholdTypes.Add(metEnum);
             }
         }
         private void AttachEventsToControls()
@@ -432,25 +544,34 @@ namespace FdaViewModel.Conditions
             Plot0ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
 
             Plot1ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
+            Plot1ControlVM.PlotIsShowing += Plot1IsShowing;
 
             Plot3ControlVM.PlotIsShowing += Plot3IsShowing;
             Plot3ControlVM.PlotIsNotShowing += Plot3IsNotShowing;
             Plot3ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
 
+            Plot5ControlVM.PlotIsShowing += Plot5IsShowing;
             Plot5ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
+
+            PlotFailureControlVM.PlotIsShowing += PlotFailureIsShowing;
+            PlotFailureControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
 
             Plot7ControlVM.PlotIsShowing += Plot7IsShowing;
             Plot7ControlVM.PlotIsNotShowing += Plot7IsNotShowing;
             Plot7ControlVM.SelectedCurveUpdated += UpdateSelectedCurves;
 
-            Plot8ControlVM.PreviewCompute += RunPreviewCompute;
+            Plot8ControlVM.PreviewCompute += PreviewCompute;
+            Plot8ControlVM.PlotIsShowing += Plot8IsShowing;
+            Plot8ControlVM.PlotIsNotShowing += Plot8IsNotShowing;
 
-            //_Plot0ControlVM.RequestNavigation += Navigate;
-            //_Plot1ControlVM.RequestNavigation += Navigate;
-            //_Plot3ControlVM.RequestNavigation += Navigate;
-            //_Plot5ControlVM.RequestNavigation += Navigate;
-            //_Plot7ControlVM.RequestNavigation += Navigate;
-            //_Plot8ControlVM.RequestNavigation += Navigate;
+            //these are here so that you can pop the importers into their own tab.
+            _Plot0ControlVM.RequestNavigation += Navigate;
+            _Plot1ControlVM.RequestNavigation += Navigate;
+            _Plot3ControlVM.RequestNavigation += Navigate;
+            _Plot5ControlVM.RequestNavigation += Navigate;
+            _PlotFailureControlVM.RequestNavigation += Navigate;
+            _Plot7ControlVM.RequestNavigation += Navigate;
+            _Plot8ControlVM.RequestNavigation += Navigate;
 
             AttachUpdatePreviewPlotEvents();
         }
@@ -473,28 +594,64 @@ namespace FdaViewModel.Conditions
             Plot5ControlVM.PlotIsShowing += UpdatePreviewComputePlot;
             Plot5ControlVM.SelectedCurveUpdated += UpdatePreviewComputePlot;
 
+            PlotFailureControlVM.PlotIsNotShowing += UpdatePreviewComputePlot;
+            PlotFailureControlVM.PlotIsShowing += UpdatePreviewComputePlot;
+            PlotFailureControlVM.SelectedCurveUpdated += UpdatePreviewComputePlot;
+
             Plot7ControlVM.PlotIsNotShowing += UpdatePreviewComputePlot;
             Plot7ControlVM.PlotIsShowing += UpdatePreviewComputePlot;
             Plot7ControlVM.SelectedCurveUpdated += UpdatePreviewComputePlot;
+           
+        }
+
+        private void Plot8IsShowing(object sender, EventArgs e)
+        {
+            UpdateChartLinkages();
+        }
+        private void Plot8IsNotShowing(object sender, EventArgs e)
+        {
+
         }
         private void Plot7IsShowing(object sender, EventArgs e)
         {
+            UpdateChartLinkages();
             Plot8ControlVM.ImportButtonVM.IsEnabled = true;
         }
         private void Plot7IsNotShowing(object sender, EventArgs e)
         {
             Plot8ControlVM.ImportButtonVM.IsEnabled = false;
+        }
 
+        private void Plot5IsShowing(object sender, EventArgs e)
+        {
+            UpdateChartLinkages();
+        }
+        //private void Plot5IsNotShowing(object sender, EventArgs e)
+        //{
+        //}
+        private void PlotFailureIsShowing(object sender, EventArgs e)
+        {
+            UpdateChartLinkages();
         }
         private void Plot3IsShowing(object sender, EventArgs e)
         {
+            
+            UpdateChartLinkages();
+
+
             Plot7ControlVM.ImportButtonVM.IsEnabled = true;
             Plot5ControlVM.ImportButtonVM.IsEnabled = true;
+            PlotFailureControlVM.ImportButtonVM.IsEnabled = true;
+
             if (Plot5ControlVM.ModulatorCoverButtonVM != null)
             {
                 Plot5ControlVM.ModulatorCoverButtonVM.IsEnabled = true;
             }
 
+            if(PlotFailureControlVM.ModulatorCoverButtonVM != null)
+            {
+                PlotFailureControlVM.ModulatorCoverButtonVM.IsEnabled = true;
+            }
         }
         private void Plot3IsNotShowing(object sender, EventArgs e)
         {
@@ -502,18 +659,18 @@ namespace FdaViewModel.Conditions
 
         }
 
-        //private void Plot1IsShowing(object sender, EventArgs e)
-        //{
-        //    //Plot7ControlVM.ImportButtonVM.IsEnabled = true;
+        private void Plot1IsShowing(object sender, EventArgs e)
+        {
+            UpdateChartLinkages();
 
-        //}
+        }
         //private void Plot1IsNotShowing(object sender, EventArgs e)
         //{
-        //    //Plot7ControlVM.ImportButtonVM.IsEnabled = false;
+        //}    
 
-        //}
         private void Plot0IsShowing(object sender, EventArgs e)
         {
+            UpdateChartLinkages();
             //turn plot 1 and 3 on
             if (Plot1ControlVM.ModulatorCoverButtonVM != null)
             {
@@ -536,6 +693,178 @@ namespace FdaViewModel.Conditions
 
         }
 
+        private void UpdateChartLinkages()
+        {
+            //get the chart view models from the charts that are showing.
+            //bool plot0Showing = Plot0ControlVM.IsPlotShowing;
+            //bool plot1Showing = Plot1ControlVM.IsPlotShowing;
+            //bool plot3Showing = Plot3ControlVM.IsPlotShowing;
+            //bool plot5Showing = Plot5ControlVM.IsPlotShowing;
+            //bool plot7Showing = Plot7ControlVM.IsPlotShowing;
+
+
+            //ConditionChartViewModel plot0ChartVM = Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.CoordinatesChartViewModel;
+            //ConditionChartViewModel plot3ChartVM = Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.CoordinatesChartViewModel;
+
+            //var crosshairdata0 = new CrosshairData();
+            //var crosshairdata3 = new CrosshairData();
+
+            //crosshairdata0.Next = new Tuple<CrosshairData, HEC.Plotting.Core.Axis>(crosshairdata3, HEC.Plotting.Core.Axis.Y);
+            //crosshairdata3.Previous = new Tuple<CrosshairData, HEC.Plotting.Core.Axis>(crosshairdata0, HEC.Plotting.Core.Axis.Y);
+
+            //plot0ChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(true, true, crosshairdata0));
+            //plot3ChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(false, true, crosshairdata3));
+
+            //List<IndividualLinkedPlotControlVM> plotControls = new List<IndividualLinkedPlotControlVM>();
+
+            //this will load the _AddedPlots list
+            UpdateSelectedCurves2();
+
+            if (_AddedPlots.Count == 1)
+            {
+                //_AddedPlots[0].LinkToNothing();
+            }
+            else
+            {
+                for (int i = 0; i < _AddedPlots.Count - 1; i++)
+                {
+                    IndividualLinkedPlotControlVM currentControl = _AddedPlots[i];
+                    IndividualLinkedPlotControlVM nextControl = _AddedPlots[i + 1];
+                    
+                    currentControl.LinkToNextControl(nextControl);
+                }
+            }
+
+
+
+            //List<CrosshairData> crosshairData = new List<CrosshairData>();
+            //for(int i = 0;i<_AddedPlots.Count;i++)
+            //{
+            //    crosshairData.Add(new CrosshairData());
+            //}
+            
+            
+            ////handle the first control seperately
+            //if(_AddedPlots.Count>1)
+            //{
+            //    IndividualLinkedPlotControlVM currentControl = _AddedPlots[0];
+            //    ConditionChartViewModel currentChartVM = currentControl.IndividualPlotWrapperVM.PlotVM.CoordinatesChartViewModel;
+
+            //    ImpactAreaFunctionEnum currentType = currentControl.IndividualPlotWrapperVM.PlotVM.BaseFunction.Type;
+            //    CrosshairData currentCrosshairData = crosshairData[0];
+            //    CrosshairData nextCrosshairData = crosshairData[1];
+
+            //    currentCrosshairData.Next = new Tuple<CrosshairData, HEC.Plotting.Core.Axis>(nextCrosshairData, HEC.Plotting.Core.Axis.X);
+            //    currentChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(false, false, currentCrosshairData));
+
+
+            //}
+            //else if(_AddedPlots.Count == 1)
+            //{
+            //    IndividualLinkedPlotControlVM currentControl = _AddedPlots[0];
+            //    ConditionChartViewModel currentChartVM = currentControl.IndividualPlotWrapperVM.PlotVM.CoordinatesChartViewModel;
+
+            //    ImpactAreaFunctionEnum currentType = currentControl.IndividualPlotWrapperVM.PlotVM.BaseFunction.Type;
+            //    CrosshairData currentCrosshairData = crosshairData[0];
+            //    currentChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(false, false, currentCrosshairData));
+
+            //}
+
+            ////handle all the middle controls
+            //if (_AddedPlots.Count > 2)
+            //{
+            //    for(int i = 1;i<_AddedPlots.Count-1;i++)
+            //    {
+            //        IndividualLinkedPlotControlVM previousControl = _AddedPlots[i-1];
+            //        IndividualLinkedPlotControlVM currentControl = _AddedPlots[i];
+            //        IndividualLinkedPlotControlVM nextControl = _AddedPlots[i+1];
+
+            //        ImpactAreaFunctionEnum previousType = previousControl.IndividualPlotWrapperVM.PlotVM.BaseFunction.Type;
+            //        ImpactAreaFunctionEnum currentType = currentControl.IndividualPlotWrapperVM.PlotVM.BaseFunction.Type;
+            //        ImpactAreaFunctionEnum nextType = nextControl.IndividualPlotWrapperVM.PlotVM.BaseFunction.Type;
+
+            //        switch (currentType)
+            //        {
+            //            //this case should never happen because it should be first.
+            //            case ImpactAreaFunctionEnum.InflowFrequency:
+            //                {
+            //                    break;
+            //                }
+            //            case ImpactAreaFunctionEnum.Rating:
+            //                {
+            //                    if(nextType == ImpactAreaFunctionEnum.InteriorStageDamage)
+            //                    {
+            //                        ConditionChartViewModel currentChartVM = currentControl.IndividualPlotWrapperVM.PlotVM.CoordinatesChartViewModel;
+            //                        //ConditionChartViewModel nextChartVM = nextControl.IndividualPlotWrapperVM.PlotVM.CoordinatesChartViewModel;
+
+            //                        var previousCrosshairData = crosshairData[i-1];
+            //                        var currentCrosshairData = crosshairData[i];
+            //                        var nextCrosshairData = crosshairData[i+1];
+
+            //                        currentCrosshairData.Next = new Tuple<CrosshairData, HEC.Plotting.Core.Axis>(nextCrosshairData, HEC.Plotting.Core.Axis.X);
+            //                        currentCrosshairData.Previous = new Tuple<CrosshairData, HEC.Plotting.Core.Axis>(previousCrosshairData, HEC.Plotting.Core.Axis.Y);
+
+            //                        currentChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(false, true, currentCrosshairData));
+            //                        //plot3ChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(false, true, crosshairdata3));
+            //                    }
+            //                    break;
+            //                }
+            //            case ImpactAreaFunctionEnum.InteriorStageDamage:
+            //                {
+
+            //                    break;
+            //                }
+            //        }
+            //    }
+            //}
+
+            //if (_AddedPlots.Count > 1)
+            //{
+            //    //handle the last control
+            //    IndividualLinkedPlotControlVM lastControl = _AddedPlots.Last();
+            //    ConditionChartViewModel lastChartVM = lastControl.IndividualPlotWrapperVM.PlotVM.CoordinatesChartViewModel;
+
+            //    ImpactAreaFunctionEnum lastType = lastControl.IndividualPlotWrapperVM.PlotVM.BaseFunction.Type;
+            //    CrosshairData lastCrosshairData = crosshairData.Last();
+            //    CrosshairData previousToLastCrosshairData = crosshairData[crosshairData.Count - 2];
+
+            //    lastCrosshairData.Previous = new Tuple<CrosshairData, HEC.Plotting.Core.Axis>(previousToLastCrosshairData, HEC.Plotting.Core.Axis.X);
+            //    lastChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(true, true, lastCrosshairData));
+            //}
+        }
+
+        //private bool IsPlot0AndPlot3Showing()
+        //{
+        //    bool plot0Exists = false;
+        //    bool plot3Exists = false;
+        //    foreach(IndividualLinkedPlotControlVM control in _AddedPlots)
+        //    {
+        //        if(control.IndividualPlotWrapperVM.PlotVM.BaseFunction.Type == ImpactAreaFunctionEnum.InflowFrequency)
+        //        {
+        //            plot0Exists = true;
+        //        }
+        //        else if (control.IndividualPlotWrapperVM.PlotVM.BaseFunction.Type == ImpactAreaFunctionEnum.Rating)
+        //        {
+        //            plot3Exists = true;
+        //        }
+        //    }
+        //    return plot0Exists && plot3Exists;
+        //}
+
+        //private void Link0To3()
+        //{
+        //    IndividualLinkedPlotControlVM lastControl = _AddedPlots.Last();
+        //    ConditionChartViewModel lastChartVM = lastControl.IndividualPlotWrapperVM.PlotVM.CoordinatesChartViewModel;
+
+        //    ImpactAreaFunctionEnum lastType = lastControl.IndividualPlotWrapperVM.PlotVM.BaseFunction.Type;
+        //    CrosshairData lastCrosshairData = crosshairData.Last();
+        //    CrosshairData previousToLastCrosshairData = crosshairData[crosshairData.Count - 2];
+
+        //    lastCrosshairData.Previous = new Tuple<CrosshairData, HEC.Plotting.Core.Axis>(previousToLastCrosshairData, HEC.Plotting.Core.Axis.X);
+        //    lastChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(true, true, lastCrosshairData));
+        //}
+
+
         /// <summary>
         /// Any change to the other curves will make the preview plot go back to the
         /// import button. If the conditions doesn't have what it needs to run
@@ -546,6 +875,7 @@ namespace FdaViewModel.Conditions
         private void UpdatePreviewComputePlot(object sender, EventArgs e)
         {
             Plot8ControlVM.SetCurrentViewToCoverButton();
+            Plot8ControlVM.IsPlotShowing = false;
             //if plot 0,3,7 are showing then enable, else, disable the button
             bool hasPlot0 = false;
             bool hasPlot3 = false;
@@ -575,6 +905,40 @@ namespace FdaViewModel.Conditions
             //then... if(condition.isValid){enable the button} else disable the button
         }
 
+        private void UpdateSelectedCurves2()
+        {
+            _AddedPlots.Clear();
+
+            if (Plot0ControlVM.IsPlotShowing)
+            {
+                _AddedPlots.Add(Plot0ControlVM);
+            }
+            if (Plot1ControlVM.IsPlotShowing)
+            {
+                _AddedPlots.Add(Plot1ControlVM);
+            }
+            if (Plot3ControlVM.IsPlotShowing)
+            {
+                _AddedPlots.Add(Plot3ControlVM);
+            }
+            if(PlotFailureControlVM.IsPlotShowing)
+            {
+                _AddedPlots.Add(PlotFailureControlVM);
+            }
+            if (Plot5ControlVM.IsPlotShowing)
+            {
+                _AddedPlots.Add(Plot5ControlVM);
+            }
+            if (Plot7ControlVM.IsPlotShowing)
+            {
+                _AddedPlots.Add(Plot7ControlVM);
+            }
+            if (Plot8ControlVM.IsPlotShowing)
+            {
+                _AddedPlots.Add(Plot8ControlVM);
+            }
+
+        }
         private void UpdateSelectedCurves(object sender, EventArgs e)
         {
             _AddedPlots.Clear();
@@ -594,6 +958,10 @@ namespace FdaViewModel.Conditions
             if (Plot5ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot5ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
             {
                 _AddedPlots.Add(Plot5ControlVM);
+            }
+            if (PlotFailureControlVM.IndividualPlotWrapperVM.PlotVM != null && PlotFailureControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            {
+                _AddedPlots.Add(PlotFailureControlVM);
             }
             if (Plot7ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot7ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
             {
@@ -640,126 +1008,399 @@ namespace FdaViewModel.Conditions
 
         }
    
-
-        public void RunPreviewCompute(Object sender, EventArgs e)
+        private bool ValidatePreviewCompute()
         {
-
-            //get the threshold values
-            //PerformanceThreshold threshold = new PerformanceThreshold(PerformanceThresholdTypes.InteriorStage, 8);
-            PerformanceThreshold threshold = new PerformanceThreshold(SelectedThresholdType, ThresholdValue);
-
-            //get the selected impact area
-
-            //get the selected struct inv
-
-            //get all the selected curves
-
-            List<FdaModel.Functions.BaseFunction> myListOfBaseFunctions = new List<FdaModel.Functions.BaseFunction>();
-
-            if (Plot0ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            if(SelectedImpactArea == null)
             {
-                FdaModel.Functions.FrequencyFunctions.LogPearsonIII zero = (FdaModel.Functions.FrequencyFunctions.LogPearsonIII)Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;//new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(FlowFrequencyVM.SelectedFlowFrequencyElement.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
-                myListOfBaseFunctions.Add(zero);
+                MessageBox.Show("An impact area is required to preview a compute.");
+                return false;
             }
-            if (Plot1ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot1ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            //testing error handling
+            //IFunction test = null;
+            //IRange<double> domain = test.Domain;
+            ////////////////////////////
+            UpdateSelectedCurves2();
+
+            if (_AddedPlots.Count > 0)
             {
-                FdaModel.Functions.BaseFunction one = Plot1ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;// new OrdinatesFunction(Plot1VM.Curve, FdaModel.Functions.FunctionTypes.InflowOutflow);
-                myListOfBaseFunctions.Add(one);
-            }
-            if (Plot3ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
-            {
-                //i have to flip the x and y values back before computing
-                ReadOnlyCollection<double> xs = Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction.GetOrdinatesFunction().Function.YValues;// Plot3VM.Curve.YValues;
-                ReadOnlyCollection<double> ys = Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction.GetOrdinatesFunction().Function.XValues; //Plot3VM.Curve.XValues;
-                //FdaModel.Functions.BaseFunction temp = new OrdinatesFunction();
-                FdaModel.Functions.BaseFunction three = new OrdinatesFunction(xs, ys, FdaModel.Functions.FunctionTypes.Rating);
-                myListOfBaseFunctions.Add(three);
-            }
-            if (Plot5ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot5ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
-            {
-                FdaModel.Functions.BaseFunction five = Plot5ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction; //new OrdinatesFunction(Plot5VM.Curve, FdaModel.Functions.FunctionTypes.ExteriorInteriorStage);
-                myListOfBaseFunctions.Add(five);
-            }
-            if (Plot7ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot7ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
-            {
-                FdaModel.Functions.BaseFunction seven = Plot7ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction; //new OrdinatesFunction(Plot7VM.Curve, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
-                myListOfBaseFunctions.Add(seven);
-            }
-
-
-            //create lateral structure
-            LateralStructure myLateralStruct = new LateralStructure(10);
-
-            //create the condition
-            FdaModel.ComputationPoint.Condition simpleTest = new FdaModel.ComputationPoint.Condition(2008, Name, myListOfBaseFunctions, threshold, null); //bool call Validate
-
-            FdaModel.ComputationPoint.Outputs.Result result = new FdaModel.ComputationPoint.Outputs.Result(simpleTest,1);
-            //create random number gen
-            //Random randomNumberGenerator = new Random(0);
-
-            //create the realization
-            //FdaModel.ComputationPoint.Outputs.Realization simpleTestRealization = new FdaModel.ComputationPoint.Outputs.Realization(simpleTest, false, false); //bool oldCompute, bool performance only
-
-            //compute
-            //simpleTestRealization.Compute(randomNumberGenerator);
-
-            //if it was successful, plot number 8. if not then message why not
-            if(result.Realizations.Count == 0)
-            {
-                MessageBox.Show("A damage frequency curve could not be created", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            foreach (FdaModel.Functions.BaseFunction bf in result.Realizations.First().Functions)
-            {
-                if (bf.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+                IParameterEnum firstPlotType = _AddedPlots[0].IndividualPlotWrapperVM.PlotVM.BaseFunction.ParameterType;
+                if (!(firstPlotType == IParameterEnum.InflowFrequency || firstPlotType == IParameterEnum.OutflowFrequency))
                 {
-                   Plot8ControlVM.IndividualPlotWrapperVM.PlotVM = new Plots.IndividualLinkedPlotVM(bf, "Damage Frequency", "Frequency", "Damage ($)");
-                    //Plot8ControlVM.AddCurveToPlot(this, new EventArgs());
-                    TrimZeroesFromCurve(Plot8ControlVM.IndividualPlotWrapperVM.PlotVM.Curve);
-                    Plot8ControlVM.CurrentVM = (BaseViewModel)Plot8ControlVM.IndividualPlotWrapperVM;
-                    //IsPlot8Visible = true;
-
-
+                    MessageBox.Show("A flow-frequency is required to preview a compute.");
+                    return false;
                 }
             }
-            //if (IsPlot8Visible == false)
+            else
+            {
+                MessageBox.Show("A flow-frequency is required to preview a compute.");
+                return false;
+            }
+           //if the metric is "not set" then we will just run EAD
+           //we need the flow freq function to be set
+           //we need the rating curve to be set
+           //we need the stage damage to be set
+            if (!Plot0ControlVM.IsPlotShowing)
+            {
+                //message that the metric type is not set
+                MessageBox.Show("A flow-frequency is required to preview a compute.");
+                return false;
+            }
+            if (!Plot3ControlVM.IsPlotShowing)
+            {
+                //message that the metric type is not set
+                MessageBox.Show("A rating curve is required to preview a compute.");
+                return false;
+            }
+            if (!Plot7ControlVM.IsPlotShowing)
+            {
+                //message that the metric type is not set
+                MessageBox.Show("A stage-damage is required to preview a compute.");
+                return false;
+            }
+            return true;
+        }
+       
+
+        private ILocation CreateLocation()
+        {
+            if (SelectedImpactArea != null)
+            {
+                return new Location(SelectedImpactArea.Name, SelectedImpactArea.Description);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private List<IMetric> CreateMetrics()
+        {
+            List<IMetric> metrics = new List<IMetric>();
+            //if "not set" then we will just do EAD.
+            metrics.Add(IMetricFactory.Factory());
+            if (_SelectedThresholdType != IMetricEnum.NotSet)
+            {
+                metrics.Add(IMetricFactory.Factory(_SelectedThresholdType, ThresholdValue));
+            }
+            return metrics;
+        }
+
+        private IFrequencyFunction GetFrequencyFunction()
+        {
+            return (IFrequencyFunction)Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;
+        }
+
+        private List<ITransformFunction> GetTransformFunctions()
+        {
+            List<ITransformFunction> transforms = new List<ITransformFunction>();
+            //exclude the first one because that will always be the flow freq curve
+            for (int i = 1; i < _AddedPlots.Count; i++)
+            {
+                IndividualLinkedPlotControlVM control = _AddedPlots[i];
+                if(control.IndividualPlotWrapperVM.PlotVM.BaseFunction.ParameterType == IParameterEnum.LateralStructureFailure)
+                {
+                    //don't add the lateral failure. That will happen later.
+                    continue;
+                }
+                IFdaFunction func = control.CurveImporterVM.SelectedElement.Curve;
+
+                transforms.Add((ITransformFunction)func);
+            }
+            return transforms;
+        }
+
+        private ILateralStructure CreateLateralStructure()
+        {
+            LeveeFeatureElement elem = (LeveeFeatureElement)PlotFailureControlVM.CurveImporterVM.SelectedElement;
+            return ILateralStructureFactory.Factory(elem.Elevation, (ITransformFunction)elem.Curve);
+        }
+
+        private ConditionLocationYearWithLateralStructure CreateConditionWithLateralStructure()
+        {
+            ILocation location = CreateLocation();
+            IFrequencyFunction inflowFreqFunc = GetFrequencyFunction();
+            List<ITransformFunction> transforms = GetTransformFunctions();
+            List<IMetric> metrics = CreateMetrics();
+            ILateralStructure lateralStructure = CreateLateralStructure();
+            return new ConditionLocationYearWithLateralStructure(location,Year, inflowFreqFunc, transforms, lateralStructure, metrics);
+        }
+
+        private ConditionLocationYearNoLateralStructure CreateConditionNoLateralStructure()
+        {
+            ILocation location = CreateLocation();
+            IFrequencyFunction inflowFreqFunc = GetFrequencyFunction();
+            List<ITransformFunction> transforms = GetTransformFunctions();
+            List<IMetric> metrics = CreateMetrics();
+           
+            return new ConditionLocationYearNoLateralStructure(location, Year, inflowFreqFunc, transforms, metrics);
+
+        }
+
+
+        private void PlotPreviewComputeResults(IConditionLocationYearRealization conditionRealization, IOrderedEnumerable<IMetric> metrics)
+        {
+            IReadOnlyDictionary<IParameterEnum, ISampledParameter<IFdaFunction>> realizationFunctions = conditionRealization.Functions;
+            if (realizationFunctions.ContainsKey(IParameterEnum.DamageFrequency))
+            {
+                ISampledParameter<IFdaFunction> param = realizationFunctions[IParameterEnum.DamageFrequency];
+                IFdaFunction damageFrequencyFunction = param.Parameter;
+                
+                Plot8ControlVM.AddCurveToPlot(damageFrequencyFunction, "Damage Frequency", -1);
+
+                //get the EAD and AEP info
+                string EAD = "";
+                StringBuilder aepStringBuilder = new StringBuilder();
+                foreach (IMetric metric in metrics)
+                {
+                    if (metric.ParameterType == IParameterEnum.EAD)
+                    {
+                        if (conditionRealization.Metrics.ContainsKey(metric))
+                        {
+                            double ead = conditionRealization.Metrics[metric];
+                            EAD = "EAD: " + ead.ToString("#.###");
+                        }
+                    }
+                    else //this will be some AEP value
+                    {
+                        if (conditionRealization.Metrics.ContainsKey(metric))
+                        {
+                            double AEP = conditionRealization.Metrics[metric];
+                            aepStringBuilder.Append(metric.Label + ": " + AEP.ToString("#.###") + ". ");
+                        }
+                    }
+                }
+                Plot8ControlVM.IndividualPlotWrapperVM.EAD = EAD;
+                Plot8ControlVM.IndividualPlotWrapperVM.AEP = aepStringBuilder.ToString();
+            }
+        }
+
+        public void PreviewCompute(Object sender, EventArgs e)
+        {
+            if (!ValidatePreviewCompute())
+            {
+                return;
+            }
+
+            try
+            {
+                IConditionLocationYearRealization conditionRealization = null;
+                IOrderedEnumerable<IMetric> metrics = null;
+                if (PlotFailureControlVM.IsPlotShowing)
+                {
+                    ConditionLocationYearWithLateralStructure condition = CreateConditionWithLateralStructure();
+                    conditionRealization = condition.ComputePreview();
+                    metrics = condition.Metrics;
+                }
+                else
+                {
+                    ConditionLocationYearNoLateralStructure condition = CreateConditionNoLateralStructure();
+                    conditionRealization = condition.ComputePreview();
+                    metrics = condition.Metrics;
+                }
+
+                //get the damage frequency and plot it
+                PlotPreviewComputeResults(conditionRealization, metrics);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show( ex.Message, "Compute Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            //ICondition condition = CreateCondition();
+            //if(condition == null)
             //{
-            //    StringBuilder messages = new StringBuilder();
-            //    foreach (FdaModel.Utilities.Messager.ErrorMessage em in simpleTestRealization.Messages.Messages)
-            //    {
-            //        messages.AppendLine(em.Message);
-            //    }
-            //    Utilities.CustomMessageBoxVM custmb = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, messages.ToString());
-            //    Navigate(custmb);
+            //    return;
+            //}
+            //else
+            //{
+            //}
+            //int randomPacketSize = condition.TransformFunctions.Count + 1;
+            //IDictionary<IMetric, double> results = condition.Compute(GetRandomNumbers(randomPacketSize));
+
+            //IFrequencyFunction retvalFunc = CalculateStageFrequencyFunction(condition, GetRandomNumbers(randomPacketSize));
+            //if(retvalFunc != null)
+            //{
+            //    Plot8ControlVM.AddCurveToPlot(retvalFunc, "test");
             //}
 
 
-            //the compute isn't working right now so i am going to just throw a random 8 at it.
-            //double[] x5 = new double[] { .2f, .3f, .4f, .5f, .6f, .7f, .8f, .9f };
-            //double[] y5 = new double[] { 2, 200, 300, 600, 1100, 2000, 3000, 4000 };
-            //OrdinatesFunction eight = new OrdinatesFunction(x5, y5, FdaModel.Functions.FunctionTypes.DamageFrequency);
+            //UpdateChartLinkages();
 
-            //Plot8ControlVM.IndividualPlotWrapperVM.PlotVM = new Plots.IndividualLinkedPlotVM(eight,eight.GetOrdinatesFunction().Function,"Cody test");
-            //Plot8ControlVM.CurrentVM = (FdaViewModel.BaseViewModel)Plot8ControlVM.IndividualPlotWrapperVM;
+            //once you find the entry frequency function, then compose with the transform functions until you get to the damage frequency
+
+            ////PerformanceThreshold threshold = new PerformanceThreshold(SelectedThresholdType, ThresholdValue);
+
+            ////get the selected impact area
+
+            ////get the selected struct inv
+
+            ////get all the selected curves
+
+            //List<FdaModel.Functions.BaseFunction> myListOfBaseFunctions = new List<FdaModel.Functions.BaseFunction>();
+
+            //if (Plot0ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            //{
+            //    FdaModel.Functions.FrequencyFunctions.LogPearsonIII zero = (FdaModel.Functions.FrequencyFunctions.LogPearsonIII)Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;//new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(FlowFrequencyVM.SelectedFlowFrequencyElement.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
+            //    myListOfBaseFunctions.Add(zero);
+            //}
+            //if (Plot1ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot1ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            //{
+            //    FdaModel.Functions.BaseFunction one = Plot1ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction;// new OrdinatesFunction(Plot1VM.Curve, FdaModel.Functions.FunctionTypes.InflowOutflow);
+            //    myListOfBaseFunctions.Add(one);
+            //}
+            //if (Plot3ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            //{
+            //    //i have to flip the x and y values back before computing
+            //    ReadOnlyCollection<double> xs = Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction.GetOrdinatesFunction().Function.YValues;// Plot3VM.Curve.YValues;
+            //    ReadOnlyCollection<double> ys = Plot3ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction.GetOrdinatesFunction().Function.XValues; //Plot3VM.Curve.XValues;
+            //    //FdaModel.Functions.BaseFunction temp = new OrdinatesFunction();
+            //    FdaModel.Functions.BaseFunction three = new OrdinatesFunction(xs, ys, FdaModel.Functions.FunctionTypes.Rating);
+            //    myListOfBaseFunctions.Add(three);
+            //}
+            //if (Plot5ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot5ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            //{
+            //    FdaModel.Functions.BaseFunction five = Plot5ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction; //new OrdinatesFunction(Plot5VM.Curve, FdaModel.Functions.FunctionTypes.ExteriorInteriorStage);
+            //    myListOfBaseFunctions.Add(five);
+            //}
+            //if (Plot7ControlVM.IndividualPlotWrapperVM.PlotVM != null && Plot7ControlVM.IndividualPlotWrapperVM.PlotVM.Curve != null)
+            //{
+            //    FdaModel.Functions.BaseFunction seven = Plot7ControlVM.IndividualPlotWrapperVM.PlotVM.BaseFunction; //new OrdinatesFunction(Plot7VM.Curve, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
+            //    myListOfBaseFunctions.Add(seven);
+            //}
+
+
+            ////create lateral structure
+            //LateralStructure myLateralStruct = new LateralStructure(10);
+
+            ////create the condition
+            //FdaModel.ComputationPoint.Condition simpleTest = new FdaModel.ComputationPoint.Condition(2008, Name, myListOfBaseFunctions, threshold, null); //bool call Validate
+
+            //FdaModel.ComputationPoint.Outputs.Result result = new FdaModel.ComputationPoint.Outputs.Result(simpleTest, 1);
+            ////create random number gen
+            ////Random randomNumberGenerator = new Random(0);
+
+            ////create the realization
+            ////FdaModel.ComputationPoint.Outputs.Realization simpleTestRealization = new FdaModel.ComputationPoint.Outputs.Realization(simpleTest, false, false); //bool oldCompute, bool performance only
+
+            ////compute
+            ////simpleTestRealization.Compute(randomNumberGenerator);
+
+            ////if it was successful, plot number 8. if not then message why not
+            //if (result.Realizations.Count == 0)
+            //{
+            //    MessageBox.Show("A damage frequency curve could not be created", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            //    return;
+            //}
+            //foreach (FdaModel.Functions.BaseFunction bf in result.Realizations.First().Functions)
+            //{
+            //    if (bf.FunctionType == FdaModel.Functions.FunctionTypes.DamageFrequency)
+            //    {
+            //        Plot8ControlVM.IndividualPlotWrapperVM.PlotVM = new Plots.IndividualLinkedPlotVM(bf, "Damage Frequency", "Frequency", "Damage ($)");
+            //        //Plot8ControlVM.AddCurveToPlot(this, new EventArgs());
+            //        TrimZeroesFromCurve(Plot8ControlVM.IndividualPlotWrapperVM.PlotVM.Curve);
+            //        Plot8ControlVM.CurrentVM = (BaseViewModel)Plot8ControlVM.IndividualPlotWrapperVM;
+            //        //IsPlot8Visible = true;
+
+
+            //    }
+            //}
+            ////if (IsPlot8Visible == false)
+            ////{
+            ////    StringBuilder messages = new StringBuilder();
+            ////    foreach (FdaModel.Utilities.Messager.ErrorMessage em in simpleTestRealization.Messages.Messages)
+            ////    {
+            ////        messages.AppendLine(em.Message);
+            ////    }
+            ////    Utilities.CustomMessageBoxVM custmb = new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK, messages.ToString());
+            ////    Navigate(custmb);
+            ////}
+
+
+            ////the compute isn't working right now so i am going to just throw a random 8 at it.
+            ////double[] x5 = new double[] { .2f, .3f, .4f, .5f, .6f, .7f, .8f, .9f };
+            ////double[] y5 = new double[] { 2, 200, 300, 600, 1100, 2000, 3000, 4000 };
+            ////OrdinatesFunction eight = new OrdinatesFunction(x5, y5, FdaModel.Functions.FunctionTypes.DamageFrequency);
+
+            ////Plot8ControlVM.IndividualPlotWrapperVM.PlotVM = new Plots.IndividualLinkedPlotVM(eight,eight.GetOrdinatesFunction().Function,"Cody test");
+            ////Plot8ControlVM.CurrentVM = (FdaViewModel.BaseViewModel)Plot8ControlVM.IndividualPlotWrapperVM;
         }
 
-        private void TrimZeroesFromCurve(Statistics.CurveIncreasing curveIncreasing)
+        /// <summary>
+        /// This is just for getting the damage frequency curve for the conditions editor preview compute option.
+        /// It basically does all the compositions like the compute does, but once it has created a damage frequency 
+        /// function it returns it.
+        /// </summary>
+        /// <param name="randomNums"></param>
+        /// <returns></returns>
+        public IFrequencyFunction CalculateStageFrequencyFunction(ICondition condition, List<double> randomNums)
         {
-            int index = -1;
-            for(int i = 0;i<curveIncreasing.XValues.Count;i++)
-            //foreach(double y in curveIncreasing.YValues)
+            IDictionary<IMetric, double> metricsDictionary = new Dictionary<IMetric, double>();
+
+            //IRealization R = new Realization(condition, seed, test);
+            //the dummy probability gets used for functions that we know are already a constant.
+            double dummyProbability = .5;
+            //int j = 0;
+            //int J = Metrics.Count;
+
+            IFrequencyFunction frequencyFunction = condition.EntryPoint;
+
+            bool isFirstFreqFunc = true;
+            for (int i = 0; i < condition.TransformFunctions.Count; i++)
             {
-                if(curveIncreasing.YValues[i] > 0)
+                ITransformFunction transformFunc = condition.TransformFunctions[i];
+
+                //we only want to pull a random number for the first frequency function because we do not know if it is a constant or not
+                double freqFuncProb;
+                if (isFirstFreqFunc)
                 {
-                    index = i;
-                    break;
+                    freqFuncProb = randomNums[i];
+                    isFirstFreqFunc = false;
+                }
+                else
+                {
+                    freqFuncProb = dummyProbability;
+                }
+                frequencyFunction = frequencyFunction.Compose(transformFunc, freqFuncProb, randomNums[i + 1]);
+                while (frequencyFunction.ParameterType == IParameterEnum.DamageFrequency)
+                {
+                    return frequencyFunction;
+
                 }
             }
-            if(index>-1)
+            return null;
+        }
+
+        //todo: Refactor: I commented this method out
+        //private void TrimZeroesFromCurve(Statistics.CurveIncreasing curveIncreasing)
+        //{
+        //    int index = -1;
+        //    for(int i = 0;i<curveIncreasing.XValues.Count;i++)
+        //    //foreach(double y in curveIncreasing.YValues)
+        //    {
+        //        if(curveIncreasing.YValues[i] > 0)
+        //        {
+        //            index = i;
+        //            break;
+        //        }
+        //    }
+        //    if(index>-1)
+        //    {
+        //        curveIncreasing.RemoveRange(0, index);
+
+        //    }
+        //}
+
+        private List<double> GetRandomNumbers(int numberOfRandomNumbers)
+        {
+            int Seed = 1;
+            List<double> randomNumbers = new List<double>();
+
+            Random randomNumberGenerator = new Random(Seed);
+            for (int k = 0; k < numberOfRandomNumbers; k++)
             {
-                curveIncreasing.RemoveRange(0, index);
-                
+                randomNumbers.Add(randomNumberGenerator.NextDouble());
             }
+            return randomNumbers;
         }
 
         public override void AddValidationRules()
@@ -769,10 +1410,42 @@ namespace FdaViewModel.Conditions
             AddRule(nameof(SelectedImpactArea), () => { if (SelectedImpactArea == null) { return false; } else { return true; } }, "No impact area selected");
         }
 
+        private int GetSelectedElementIDForControl(IndividualLinkedPlotControlVM control)
+        {
+            Type currentVMType = control.CurrentVM.GetType();
+            if ( typeof(IIndividualLinkedPlotWrapper).IsAssignableFrom(currentVMType))
+            {
+                if(control.CurveImporterVM.SelectedElement != null)
+                {
+                    return control.CurveImporterVM.SelectedElement.GetElementID();
+                }
+            }
+            return -1;
+        }
         public override void Save()
         {
+            //todo: where is the validation?
             if (Description == null) { Description = ""; }
-            ConditionsElement elementToSave = ConditionFactory.BuildConditionsElement(this);
+            //ConditionLocationYearNoLateralStructure condition = CreateConditionNoLateralStructure();
+            int flowFreqID = GetSelectedElementIDForControl(Plot0ControlVM);
+            int inflowOutflowID = GetSelectedElementIDForControl(Plot1ControlVM);
+            int ratingID = GetSelectedElementIDForControl(Plot3ControlVM);
+            int leveeFailureID = GetSelectedElementIDForControl(PlotFailureControlVM);
+            int extIntID = GetSelectedElementIDForControl(Plot5ControlVM);
+            int stageDamageID = GetSelectedElementIDForControl(Plot7ControlVM);
+            //ConditionBuilder builder = new ConditionBuilder(Name, Description, Year, SelectedImpactArea.GetElementID(), SelectedThresholdType, ThresholdValue)
+            //.WithAnalyticalFreqElem()
+            ConditionsElement elementToSave = new ConditionsElement(Name, Description, Year, SelectedImpactArea.GetElementID(),
+                flowFreqID, inflowOutflowID, ratingID, extIntID, leveeFailureID, stageDamageID, SelectedThresholdType, ThresholdValue);
+            CurrentElement = elementToSave;
+            //because this is a new element i need to pass the reference along so that
+            //i can update this editor when curves get edited or removed while this is open.
+            elementToSave.ConditionsEditor = this;
+
+            LastEditDate = DateTime.Now.ToString("G");
+            elementToSave.LastEditDate = LastEditDate;
+            //ICondition modelCondition = CreateCondition();
+            //ConditionsElement elementToSave = new ConditionsElement()
             Saving.PersistenceManagers.ConditionsPersistenceManager manager = Saving.PersistenceFactory.GetConditionsManager();
             if (IsImporter && HasSaved == false)
             {
@@ -784,10 +1457,129 @@ namespace FdaViewModel.Conditions
             {
                 manager.SaveExisting((ConditionsElement)OriginalElement, elementToSave, 0);
             }
+            SavingText = "Last Saved: " + elementToSave.LastEditDate;
+            //UpdateMessages(true);
+            ReloadMessages(true);
+            HasChanges = false;
         }
 
 
+        private void UpdateBobbers()
+        {
+            if(Plot0ControlVM.IndividualPlotWrapperVM.PlotVM.CoordinatesChartViewModel != null)
+            {
 
+            }
+            //var flowStageCrosshairData = new CrosshairData(StageDoubleLineModulator.Modulate, FlowDoubleLineModulator.Modulate);
+
+        }
+
+        public void UpdateEditorWhileEditing_ChildModified(int elemID, ChildElement newElem)
+        {
+            //if i am using this id, then update it with the new element.
+            if(newElem is ImpactAreaElement)
+            {
+                UpdateImpactArea(elemID);
+            }
+            if (newElem is InflowOutflowElement)
+            {
+                UpdateControl(Plot0ControlVM, elemID);
+            }
+            if (newElem is RatingCurveElement)
+            {
+                UpdateControl(Plot3ControlVM, elemID);
+            }
+            if (newElem is LeveeFeatureElement)
+            {
+                UpdateControl(PlotFailureControlVM, elemID);
+            }
+            if (newElem is ExteriorInteriorElement)
+            {
+                UpdateControl(Plot5ControlVM, elemID);
+            }
+            if (newElem is AggregatedStageDamageElement)
+            {
+                UpdateControl(Plot7ControlVM, elemID);
+            }
+        }
+
+        private void UpdateImpactArea(int elemID)
+        {
+            SelectedImpactArea = null;
+        }
+
+        private void UpdateControl(IndividualLinkedPlotControlVM control, int elemID)
+        {
+            Type currentType = control.CurrentVM.GetType();
+            if (typeof(IIndividualLinkedPlotWrapper).IsAssignableFrom(currentType))
+            {
+                //the rating control is currently showing a plot
+                int currentID = control.IndividualPlotWrapperVM.SelectedElementID;
+                if (elemID == currentID)
+                {
+                    //the control is showing an old version of this element
+                    //todo: Just adding the cuve to plot is not working. It screws up the 
+                    //trackers. Might be a nice feature down the road.
+                    //Plot3ControlVM.AddCurveToPlot(newElem.Curve, newElem.Name, elemID);
+                    control.ShowTheImportButton(this, new EventArgs());
+                }
+            }
+        }
+
+        public void UpdateEditorWhileEditing_ChildRemoved(int elementID, ChildElement child)
+        {
+            if (child is ImpactAreaElement)
+            {
+
+            }
+            else if (child is RatingCurveElement)
+            {
+                UpdatePlotControl_ChildCurveRemoved(Plot3ControlVM, elementID);
+            }
+
+        }
+
+        private void UpdatePlotControl_ChildCurveRemoved(IndividualLinkedPlotControlVM control, int elementID)
+        {
+            Type currentType = control.CurrentVM.GetType();
+            if (typeof(IIndividualLinkedPlotWrapper).IsAssignableFrom(currentType))
+            {
+                int currentID = control.IndividualPlotWrapperVM.SelectedElementID;
+                if (currentID == elementID)
+                {
+                    //then the curve showing no longer exists.
+                    control.ShowTheImportButton(this, new EventArgs());
+                }
+            }
+        }
+
+        //public void UpdateEditorWhileEditing_ChildRemoved(ConditionsElement originalElem, ConditionsElement newElem)
+        //{
+
+        //    Type currentType = Plot3ControlVM.CurrentVM.GetType();
+
+        //    if (typeof(IIndividualLinkedPlotWrapper).IsAssignableFrom(currentType))
+        //    {
+        //        //a curve is showing the curve in the plot
+        //        //if the plot is showing the same curve as the one that was just modified, then
+        //        //kick the control back to the import button.
+        //        int originalRatingID = originalElem.RatingID;
+        //        int currentRatingID = Plot3ControlVM.IndividualPlotWrapperVM.SelectedElementID;
+        //        if (currentRatingID == originalElem.RatingID)
+        //        {
+        //            Plot3ControlVM.ShowTheImportButton(this, new EventArgs());
+        //        }
+
+        //        if(originalRatingID == -1)
+        //        {
+        //            //then it opened without a rating curve
+        //            //but there is one now.
+        //            //I think i just need to ask if the current id still exists in the db.
+        //        }
+
+
+        //    }
+        //}
 
         #endregion
         #region Functions

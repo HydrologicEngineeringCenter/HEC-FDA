@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Fda.Inventory
+namespace View.Inventory
 {
     /// <summary>
     /// Interaction logic for ImportFromNSI.xaml
@@ -35,7 +35,7 @@ namespace Fda.Inventory
  
             if (dr == System.Windows.Forms.DialogResult.OK) //and the filepath is good?
             {
-                FdaViewModel.Inventory.ImportFromNSIVM tempVM = (FdaViewModel.Inventory.ImportFromNSIVM)Resources["vm"];
+                ViewModel.Inventory.ImportFromNSIVM tempVM = (ViewModel.Inventory.ImportFromNSIVM)Resources["vm"];
 
                 if (((Button)sender).Name == "studyAreaButton")
                 {

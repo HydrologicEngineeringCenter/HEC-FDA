@@ -13,46 +13,47 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Utilities
+namespace View.Utilities
 {
+    //todo: I think we can delete this class. (Cody 12/30/19)
     /// <summary>
     /// Interaction logic for TransactionMessageControl.xaml
     /// </summary>
-    public partial class TransactionMessageControl : UserControl
-    {
-        public TransactionMessageControl()
-        {
-            InitializeComponent();
-        }
+    //public partial class TransactionMessageControl : UserControl
+    //{
+    //    public TransactionMessageControl()
+    //    {
+    //        InitializeComponent();
+    //    }
 
-        private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (this.DataContext is FdaViewModel.Utilities.Transactions.ITransactionsAndMessages)
-            {
-                FdaViewModel.Utilities.Transactions.ITransactionsAndMessages vm = (FdaViewModel.Utilities.Transactions.ITransactionsAndMessages)this.DataContext;
-                if (vm != null)
-                {
-                    if (vm.TransactionRows != null)
-                    {
-                        vm.TransactionRows.CollectionChanged += NotifyTransactionAdded;
-                    }
-                }
-            }
-        }
+    //    private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    //    {
+    //        if (this.DataContext is ViewModel.Utilities.Transactions.IDisplayLogMessages)
+    //        {
+    //            ViewModel.Utilities.Transactions.IDisplayLogMessages vm = (ViewModel.Utilities.Transactions.IDisplayLogMessages)this.DataContext;
+    //            if (vm != null)
+    //            {
+    //                if (vm.TransactionRows != null)
+    //                {
+    //                    vm.TransactionRows.CollectionChanged += NotifyTransactionAdded;
+    //                }
+    //            }
+    //        }
+    //    }
 
-        private void NotifyTransactionAdded(object sender, EventArgs e)
-        {
-            //TransactionsAndMessagesTabControl.items
-            //Tab_TransactionLog.Background = Brushes.Red;
-            //Tab_TransactionLog.Header += "!";
-            //Tab_TransactionLog.cont
-            //DataGrid_TransactionLog.rows
-            //double height = MainGrid.ActualHeight;
-            //if(height < 200)
-            //{
-            //    MainGrid.Height += 30;
-            //}
-        }
+    //    private void NotifyTransactionAdded(object sender, EventArgs e)
+    //    {
+    //        //TransactionsAndMessagesTabControl.items
+    //        //Tab_TransactionLog.Background = Brushes.Red;
+    //        //Tab_TransactionLog.Header += "!";
+    //        //Tab_TransactionLog.cont
+    //        //DataGrid_TransactionLog.rows
+    //        //double height = MainGrid.ActualHeight;
+    //        //if(height < 200)
+    //        //{
+    //        //    MainGrid.Height += 30;
+    //        //}
+    //    }
 
-    }
+    //}
 }

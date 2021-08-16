@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 
 
-namespace FdaViewModel.Inventory
+namespace ViewModel.Inventory
 {
     //[Author(q0heccdm, 6 / 23 / 2017 8:53:46 AM)]
     public class DefineSIAttributesVM : BaseViewModel
@@ -347,7 +345,7 @@ namespace FdaViewModel.Inventory
 
                 if (!System.IO.File.Exists(System.IO.Path.ChangeExtension(path, "dbf")))
                 {
-                    ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
+                    //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
                     return new List<string>();
                 }
                 DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(System.IO.Path.ChangeExtension(path, ".dbf"));

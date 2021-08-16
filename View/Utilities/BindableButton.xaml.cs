@@ -13,21 +13,21 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Utilities
+namespace View.Utilities
 {
     /// <summary>
     /// Interaction logic for BindableButton.xaml
     /// </summary>
     public partial class BindableButton : UserControl
     {
-        public static DependencyProperty NamedActionProperty = DependencyProperty.Register(nameof(NamedAction), typeof(FdaViewModel.Utilities.NamedAction), typeof(BindableButton), new PropertyMetadata(NamedActionChangedCallback));
+        public static DependencyProperty NamedActionProperty = DependencyProperty.Register(nameof(NamedAction), typeof(ViewModel.Utilities.NamedAction), typeof(BindableButton), new PropertyMetadata(NamedActionChangedCallback));
         public static DependencyProperty ButtonStyleProperty = DependencyProperty.Register(nameof(ButtonStyle), typeof(System.Windows.Style), typeof(BindableButton), new PropertyMetadata(StyleChangedCallback));
         public static DependencyProperty ButtonToolTipProperty = DependencyProperty.Register(nameof(ButtonToolTip), typeof(object), typeof(BindableButton), new PropertyMetadata(ToolTipChangedCallback));
         public static DependencyProperty ImageProperty = DependencyProperty.Register(nameof(Image), typeof(object), typeof(BindableButton), new PropertyMetadata(ImageChangedCallback));
         private RoutedEventHandler _ActionHandler;
-        public FdaViewModel.Utilities.NamedAction NamedAction
+        public ViewModel.Utilities.NamedAction NamedAction
         {
-            get { return (FdaViewModel.Utilities.NamedAction)GetValue(NamedActionProperty); }
+            get { return (ViewModel.Utilities.NamedAction)GetValue(NamedActionProperty); }
             set { SetValue(NamedActionProperty, value); }
         }
         public Image Image
@@ -64,7 +64,7 @@ namespace Fda.Utilities
             {
                 btn.Click -= owner._ActionHandler;
             }
-            FdaViewModel.Utilities.NamedAction na = (FdaViewModel.Utilities.NamedAction)args.NewValue;
+            ViewModel.Utilities.NamedAction na = (ViewModel.Utilities.NamedAction)args.NewValue;
             if (!owner.UseImage)
             {
                 Binding headerBinding = new Binding("Header");

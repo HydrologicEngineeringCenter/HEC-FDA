@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Plots
+namespace View.Plots
 {
     /// <summary>
     /// Interaction logic for DoubleLineModulatorCoverButton.xaml
@@ -27,7 +27,7 @@ namespace Fda.Plots
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Plots.DoubleLineModulatorCoverButtonVM vm = (FdaViewModel.Plots.DoubleLineModulatorCoverButtonVM)this.DataContext;
+            ViewModel.Plots.DoubleLineModulatorCoverButtonVM vm = (ViewModel.Plots.DoubleLineModulatorCoverButtonVM)this.DataContext;
             //vm.ButtonClicked();//this will change the current VM to be the importer
 
             //pop the plot out
@@ -40,7 +40,7 @@ namespace Fda.Plots
 
             if (parentControl != null && parentControl.GetType() == typeof(IndividualLinkedPlotControl))
             {
-                //FdaViewModel.Plots.IndividualLinkedPlotControlVM vm = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
+                //ViewModel.Plots.IndividualLinkedPlotControlVM vm = (ViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
 
                 //this.BaseFunction = vm.IndividualPlotWrapperVM.PlotVM.BaseFunction;
                 //((Plots.IndividualLinkedPlotControl)parentControl).SelectedCurve = this;

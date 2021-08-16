@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Utilities
+namespace View.Utilities
 {
     /// <summary>
     /// Interaction logic for MapWindowControl.xaml
@@ -120,7 +120,7 @@ namespace Fda.Utilities
         //}
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Utilities.MapWindowControlVM vm = (FdaViewModel.Utilities.MapWindowControlVM)this.DataContext;
+            ViewModel.Utilities.MapWindowControlVM vm = (ViewModel.Utilities.MapWindowControlVM)this.DataContext;
 
             MapToolBar.MapWindow = MapWindow.MapWindow;
 
@@ -148,6 +148,9 @@ namespace Fda.Utilities
             FeatureEditorToolbar.MapTree = vm.MWMTVConn.MapTreeView;
 
             vm.MWMTVConn.MapTreeView.UpdateMapWindow();
+
+            MapWindow.MapWindow.PlotFeatures();
+
         }
 
     }

@@ -1,5 +1,6 @@
-﻿using FdaViewModel.Editors;
-using FdaViewModel.Utilities;
+﻿using ViewModel.Editors;
+using ViewModel.Utilities;
+using Model;
 using Statistics;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.StageTransforms
+namespace ViewModel.StageTransforms
 {
     public class RatingCurveElement : ChildElement
     {
@@ -21,17 +22,16 @@ namespace FdaViewModel.StageTransforms
 
         #endregion
         #region Properties
-      
         #endregion
         #region Constructors
 
-        public RatingCurveElement(string userprovidedname, string creationDate, string desc, Statistics.UncertainCurveDataCollection ratingCurve) : base()
+        public RatingCurveElement(string userprovidedname, string creationDate, string desc, IFdaFunction ratingCurve) : base()
         {
            // _Logger.LogInfo("Creating new rating curve element: " + Name, GetType(), Name);
             //FdaLogging.RetrieveFromDB.GetMessageRowsForType(GetType(), Name);
             LastEditDate = creationDate;
             Name = userprovidedname;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/RatingCurve.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/RatingCurve.png");
 
             Curve = ratingCurve;
             Description = desc;
@@ -105,7 +105,7 @@ namespace FdaViewModel.StageTransforms
 
             //int ratingId = Storage.Connection.Instance.GetElementId()
             //_Logger.LogInfo("Opening " + Name + " for edit.", this.GetType(), Name);
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, actionManager);
+            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(this, "Exterior Stage", "Outflow", "Outflow - Exterior Stage", actionManager);
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditRatingCurve" + vm.Name);
             Navigate(tab,false, false);   
@@ -134,6 +134,7 @@ namespace FdaViewModel.StageTransforms
             Editors.CurveEditorVM editorVM = (Editors.CurveEditorVM)vm;
             //Editors.CurveEditorVM vm = (Editors.CurveEditorVM)editorVM;
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+
             return new RatingCurveElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve);
         }
 
@@ -149,6 +150,7 @@ namespace FdaViewModel.StageTransforms
 
         #endregion
 
+
         public override bool Equals(object obj)
         {
             bool retval = true;
@@ -161,7 +163,7 @@ namespace FdaViewModel.StageTransforms
                 }
                 if(Description == null && elem.Description != null)
                 {
-                    return false;
+                    retval = false;
                 }
                 else if (Description != null && !Description.Equals(elem.Description))
                 {
@@ -171,7 +173,7 @@ namespace FdaViewModel.StageTransforms
                 {
                     retval = false;
                 }
-                if (!areCurvesEqual(elem.Curve))
+                if (!Curve.Equals(elem.Curve))
                 {
                     retval = false;
                 }
@@ -183,46 +185,46 @@ namespace FdaViewModel.StageTransforms
             return retval;
         }
 
-        private bool areCurvesEqual(UncertainCurveDataCollection curve2)
-        {
-            bool retval = true;
-            if (Curve.GetType() != curve2.GetType())
-            {
-                return false;
-            }
-            if (Curve.Distribution != curve2.Distribution)
-            {
-                return false;
-            }
-            if (Curve.XValues.Count != curve2.XValues.Count)
-            {
-                return false;
-            }
-            if (Curve.YValues.Count != curve2.YValues.Count)
-            {
-                return false;
-            }
-            double epsilon = .0001;
-            for (int i = 0; i < Curve.XValues.Count; i++)
-            {
-                if (Math.Abs(Curve.get_X(i)) - Math.Abs(curve2.get_X(i)) > epsilon)
-                {
-                    return false;
-                }
-                ContinuousDistribution y = Curve.get_Y(i);
-                ContinuousDistribution y2 = curve2.get_Y(i);
-                if (Math.Abs(y.GetCentralTendency) - Math.Abs(y2.GetCentralTendency) > epsilon)
-                {
-                    return false;
-                }
-                if (Math.Abs(y.GetSampleSize) - Math.Abs(y2.GetSampleSize) > epsilon)
-                {
-                    return false;
-                }
-            }
+        //private bool areCurvesEqual(UncertainCurveDataCollection curve2)
+        //{
+        //    bool retval = true;
+        //    if (Curve.GetType() != curve2.GetType())
+        //    {
+        //        return false;
+        //    }
+        //    if (Curve.Distribution != curve2.Distribution)
+        //    {
+        //        return false;
+        //    }
+        //    if (Curve.XValues.Count != curve2.XValues.Count)
+        //    {
+        //        return false;
+        //    }
+        //    if (Curve.YValues.Count != curve2.YValues.Count)
+        //    {
+        //        return false;
+        //    }
+        //    double epsilon = .0001;
+        //    for (int i = 0; i < Curve.XValues.Count; i++)
+        //    {
+        //        if (Math.Abs(Curve.get_X(i)) - Math.Abs(curve2.get_X(i)) > epsilon)
+        //        {
+        //            return false;
+        //        }
+        //        ContinuousDistribution y = Curve.get_Y(i);
+        //        ContinuousDistribution y2 = curve2.get_Y(i);
+        //        if (Math.Abs(y.GetCentralTendency) - Math.Abs(y2.GetCentralTendency) > epsilon)
+        //        {
+        //            return false;
+        //        }
+        //        if (Math.Abs(y.GetSampleSize) - Math.Abs(y2.GetSampleSize) > epsilon)
+        //        {
+        //            return false;
+        //        }
+        //    }
 
-            return retval;
-        }
+        //    return retval;
+        //}
 
     }
 }

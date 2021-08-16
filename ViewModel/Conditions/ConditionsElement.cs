@@ -1,17 +1,37 @@
-﻿using FdaModel.Functions;
-using FdaViewModel.StageTransforms;
-using FdaViewModel.Utilities;
+﻿using ViewModel.AggregatedStageDamage;
+using ViewModel.FlowTransforms;
+using ViewModel.FrequencyRelationships;
+using ViewModel.GeoTech;
+using ViewModel.ImpactArea;
+using ViewModel.Output;
+using ViewModel.StageTransforms;
+using ViewModel.Utilities;
+using Model;
+using Model.Conditions.Locations;
+using Model.Conditions.Locations.Years;
+using Model.Conditions.Locations.Years.Results;
 using Statistics;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace FdaViewModel.Conditions
+namespace ViewModel.Conditions
 {
-    public class ConditionsElement : Utilities.ChildElement
+    //todo: is fontsize and bold properties being used?
+    //todo: i think i need to determine if this is an inflow freq or an outflow freq.
+    //right now i am just assuming this is an inflow freq.
+    //todo: do i want a "has computed" property so that we can distinguish if a condition has been computed or not? Like maybe different
+    //symbology in the tree? Maybe notify the user if recomputing that it will clobber the old results.
+    //todo: I will need to make some minor changes to store multiple thresholds.
+
+    /// <summary>
+    /// The Conditions element is the in-memory object that holds all the information about a condition.
+    /// </summary>
+    public class ConditionsElement : ChildElement
     {
         #region Notes
         #endregion
@@ -21,42 +41,61 @@ namespace FdaViewModel.Conditions
         public event EventHandler RenameConditionsTreeElement;
         public event EventHandler UpdateExpansionValueInTreeElement;
 
-        private const string _TableConstant = "Conditions - ";
-
-
         private string _Description;
         private int _AnalysisYear;
-        private ImpactArea.ImpactAreaElement _ImpactAreaSet;
-        private ImpactArea.ImpactAreaRowItem _ImpactArea;
-        private bool _UsesAnalyiticalFlowFrequency;
-        private FrequencyRelationships.AnalyticalFrequencyElement _AnalyticalFlowFrequency;
-
-        private bool _UseInflowOutflow;
-        private FlowTransforms.InflowOutflowElement _InflowOutflowElement;
-
-        private bool _UseRatingCurve;
-        private StageTransforms.RatingCurveElement _RatingCurve;
-
-        private bool _UseExteriorInteriorStage;
-        private StageTransforms.ExteriorInteriorElement _ExteriorInteriorElement;
-
-        private bool _UseLevee;
-        private GeoTech.LeveeFeatureElement _LeveeElement;
-
-        private bool _UseFailureFunction;
-        private GeoTech.FailureFunctionElement _FailureFunctionElement;
-
-        private bool _UseAggregatedStageDamage;
-        private AggregatedStageDamage.AggregatedStageDamageElement _StageDamage;
-        private bool _UseThreshold;
-        private FdaModel.ComputationPoint.PerformanceThresholdTypes _ThresholdType;//dollars or stage. need enum.
+        
+        private Model.IMetricEnum _MetricType;
         private double _ThresholdValue;
-        //private ParentElement _ConditionsOwnerElement;
         private List<BaseFdaElement> _ConditionsTreeNodes;
         private bool _IsExpanded;
+
+        private NamedAction _ViewResults = new NamedAction();
         #endregion
         #region Properties
 
+        /// <summary>
+        /// These are the results after doing a compute. If a compute has not been
+        /// done, then this will be null.
+        /// </summary>
+        public IConditionLocationYearResult ComputeResults { get; set; }
+
+        /// <summary>
+        /// This is the condition's editor. If it isn't null, then it is open. If it is
+        /// open and something in FDA changes that the editor uses, then the editor can be updated.
+        /// </summary>
+        public ConditionsPlotEditorVM ConditionsEditor { get; set; }
+
+        /// <summary>
+        /// The impact area ID for the selected impact area. It will be -1 if no selection was made.
+        /// </summary>
+        public int ImpactAreaID { get; set; }
+        /// <summary>
+        /// The flow freq ID for the selected flow freq. It will be -1 if no selection was made.
+        /// </summary>
+        public int FlowFreqID { get; set; }
+        /// <summary>
+        /// The inflow outflow ID for the selected inflow outflow. It will be -1 if no selection was made.
+        /// </summary>
+        public int InflowOutflowID { get; set; }
+        /// <summary>
+        /// The rating ID for the selected rating. It will be -1 if no selection was made.
+        /// </summary>
+        public int RatingID { get; set; }
+        /// <summary>
+        /// The levee failure ID for the selected levee failure. It will be -1 if no selection was made.
+        /// </summary>
+        public int LeveeFailureID { get; set; }
+        /// <summary>
+        /// The exterior interior stage ID for the selected ext int stage. It will be -1 if no selection was made.
+        /// </summary>
+        public int ExtIntStageID { get; set; }
+        /// <summary>
+        /// The stage damage ID for the selected stage damage. It will be -1 if no selection was made.
+        /// </summary>
+        public int StageDamageID { get; set; }
+
+
+        //public bool HasComputed { get; set; }
         public bool IsExpanded
         {
             get { return _IsExpanded; }
@@ -70,127 +109,49 @@ namespace FdaViewModel.Conditions
         {
             get { return 12; }
         }
+
+        /// <summary>
+        /// This is the list of sub elements that will display in the Conditions tree under this condition.
+        /// </summary>
         public List<BaseFdaElement> ConditionsTreeNodes
         {
             get { return _ConditionsTreeNodes; }
             set { _ConditionsTreeNodes = value; NotifyPropertyChanged(); }
         }
 
-       
-        public GeoTech.FailureFunctionElement FailureFunctionElement
-        {
-            get { return _FailureFunctionElement; }
-            set { _FailureFunctionElement = value; NotifyPropertyChanged(); }
-        }
-        public bool UseFailureFunction
-        {
-            get { return _UseFailureFunction; }
-            set { _UseFailureFunction = value; NotifyPropertyChanged(); }
-        }
-        public GeoTech.LeveeFeatureElement LeveeElement
-        {
-            get { return _LeveeElement; }
-            set { _LeveeElement = value; NotifyPropertyChanged(); }
-        }
-        public bool UseLevee
-        {
-            get { return _UseLevee; }
-            set { _UseLevee = value; NotifyPropertyChanged(); }
-        }
-        public StageTransforms.ExteriorInteriorElement ExteriorInteriorElement
-        {
-            get { return _ExteriorInteriorElement; }
-            set { _ExteriorInteriorElement = value; NotifyPropertyChanged(); }
-        }
-        public bool UseExteriorInteriorStage
-        {
-            get { return _UseExteriorInteriorStage; }
-            set { _UseExteriorInteriorStage = value; NotifyPropertyChanged(); }
-        }
-        public FlowTransforms.InflowOutflowElement InflowOutflowElement
-        {
-            get { return _InflowOutflowElement; }
-            set { _InflowOutflowElement = value; NotifyPropertyChanged(); }
-        }
-        public bool UseInflowOutflow
-        {
-            get { return _UseInflowOutflow; }
-            set { _UseInflowOutflow = value; NotifyPropertyChanged(); }
-        }
+        /// <summary>
+        /// The description of the condition
+        /// </summary>
         public string Description
         {
             get { return _Description; }
             set { _Description = value; NotifyPropertyChanged(); }
         }
+        /// <summary>
+        /// The analysis year of the condition
+        /// </summary>
         public int AnalysisYear
         {
             get { return _AnalysisYear; }
             set { _AnalysisYear = value; NotifyPropertyChanged(); }
         }
-        public ImpactArea.ImpactAreaElement ImpactAreaElement
-        {
-            get { return _ImpactAreaSet; }
-            set { _ImpactAreaSet = value; NotifyPropertyChanged(); }
+        
+        /// <summary>
+        /// The selected threshold type.
+        /// </summary>
+        public Model.IMetricEnum ThresholdType {
+            get { return _MetricType; }
+            set { _MetricType = value; NotifyPropertyChanged(); }
         }
-        public ImpactArea.ImpactAreaRowItem ImpactArea
-        {
-            get { return _ImpactArea; }
-            set { _ImpactArea = value; NotifyPropertyChanged(); }
-        }
-        public bool UseAnalyiticalFlowFrequency
-        {
-            get { return _UsesAnalyiticalFlowFrequency; }
-            set { _UsesAnalyiticalFlowFrequency = value; NotifyPropertyChanged(); }
-        }
-        public FrequencyRelationships.AnalyticalFrequencyElement AnalyticalFlowFrequency
-        {
-            get { return _AnalyticalFlowFrequency; }
-            set { _AnalyticalFlowFrequency = value; NotifyPropertyChanged(); }
-        }
-        public bool UseRatingCurve
-        {
-            get { return _UseRatingCurve; }
-            set { _UseRatingCurve = value; NotifyPropertyChanged(); }
-        }
-        public StageTransforms.RatingCurveElement RatingCurveElement
-        {
-            get { return _RatingCurve; }
-            set { _RatingCurve = value; NotifyPropertyChanged(); }
-        }
-        public bool UseAggregatedStageDamage
-        {
-            get { return _UseAggregatedStageDamage; }
-            set { _UseAggregatedStageDamage = value; NotifyPropertyChanged(); }
-        }
-        public AggregatedStageDamage.AggregatedStageDamageElement StageDamageElement
-        {
-            get { return _StageDamage; }
-            set { _StageDamage = value; NotifyPropertyChanged(); }
-        }
-        public bool UseThreshold
-        {
-            get { return _UseThreshold; }
-            set { _UseThreshold = value; NotifyPropertyChanged(); }
-        }
-        public FdaModel.ComputationPoint.PerformanceThresholdTypes ThresholdType {
-            get { return _ThresholdType; }
-            set { _ThresholdType = value; NotifyPropertyChanged(); }
-        }
+
+        /// <summary>
+        /// The value for the selected threshold.
+        /// </summary>
         public double ThresholdValue
         {
             get { return _ThresholdValue; }
             set { _ThresholdValue = value; NotifyPropertyChanged(); }
         }
-
-        
-        public string FlowFreqName { get; set; }
-        public string InfOutName { get; set; }
-        public string RatingName { get; set; }
-        public string ExtIntName { get; set; }
-        public string LeveeName { get; set; }
-        public string FailureFuncName { get; set; }
-        public string StageDamageName { get; set; }
-
 
         #endregion
         #region Constructors
@@ -203,44 +164,26 @@ namespace FdaViewModel.Conditions
         /// ConditionsTreeOwnerElement. These elements should never be saved. The identical version
         /// in the study tree gets saved.
         /// </summary>
-        /// <param name="elem"></param>
-        /// <param name="owner"></param>
+        /// <param name="elem">The condition element</param>
         public ConditionsElement(ConditionsElement elem) : base()
         {
             IsExpanded = elem.IsExpanded;
             Name = elem.Name;
-            //_ConditionsOwnerElement = owner;
             CustomTreeViewHeader = elem.CustomTreeViewHeader;
 
             Description = elem.Description;
             AnalysisYear = elem.AnalysisYear;
-            ImpactAreaElement = elem.ImpactAreaElement;
-            ImpactArea = elem.ImpactArea;
+            ImpactAreaID = elem.ImpactAreaID;
+            FlowFreqID = elem.FlowFreqID;
+            InflowOutflowID = elem.InflowOutflowID;
+            RatingID = elem.RatingID;
+            ExtIntStageID = elem.ExtIntStageID;
+            LeveeFailureID = elem.LeveeFailureID;
+            StageDamageID = elem.StageDamageID;
 
-            UseAnalyiticalFlowFrequency = elem.UseAnalyiticalFlowFrequency;
-            AnalyticalFlowFrequency = elem.AnalyticalFlowFrequency;
-
-            UseInflowOutflow = elem.UseInflowOutflow;
-            InflowOutflowElement = elem.InflowOutflowElement;
-
-            UseRatingCurve = elem.UseRatingCurve;
-            RatingCurveElement = elem.RatingCurveElement;
-
-            UseExteriorInteriorStage = elem.UseExteriorInteriorStage;
-            ExteriorInteriorElement = elem.ExteriorInteriorElement;
-
-            UseLevee = elem.UseLevee;
-            LeveeElement = elem.LeveeElement;
-
-            UseFailureFunction = elem.UseFailureFunction;
-            FailureFunctionElement = elem.FailureFunctionElement;
-
-            UseAggregatedStageDamage = elem.UseAggregatedStageDamage;
-            StageDamageElement = elem.StageDamageElement;
-
-            UseThreshold = elem.UseThreshold;
             ThresholdType = elem.ThresholdType;
             ThresholdValue = elem.ThresholdValue;
+            ComputeResults = elem.ComputeResults;           
 
             NamedAction edit = new NamedAction();
             edit.Header = "Edit Condition";
@@ -249,6 +192,9 @@ namespace FdaViewModel.Conditions
             NamedAction compute = new NamedAction();
             compute.Header = "Compute Condition";
             compute.Action = ComputeCondition;
+
+            _ViewResults.Header = "View Results";
+            _ViewResults.Action = ViewResults;
 
             NamedAction removeCondition = new NamedAction();
             removeCondition.Header = "Remove";
@@ -261,6 +207,7 @@ namespace FdaViewModel.Conditions
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(edit);
             localActions.Add(compute);
+            localActions.Add(_ViewResults);
             localActions.Add(removeCondition);
             localActions.Add(renameElement);
 
@@ -271,194 +218,254 @@ namespace FdaViewModel.Conditions
         }
 
         /// <summary>
-        /// Always use the ConditionsFactory to create a conditions Element
+        /// The constructor for a conditions element.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="description"></param>
         /// <param name="analysisYear"></param>
-        /// <param name="impactAreaElement"></param>
-        /// <param name="indexLocation"></param>
-        /// 
-        /// <param name="usesAnalyiticalFlowFrequency"></param>
-        /// <param name="aFlowFreq"></param>
-        /// 
-        /// <param name="usesInflowOutflow"></param>
-        /// <param name="inflowOutflowElement"></param>
-        /// 
-        /// <param name="useRating"></param>
-        /// <param name="rc"></param>
-        /// 
-        /// <param name="useIntExtStage"></param>
-        /// <param name="extInt"></param>
-        /// 
-        /// <param name="useLevee"></param>
-        /// <param name="leveeElement"></param>
-        /// 
-        /// <param name="useFailureFunction"></param>
-        /// <param name="failureFunctionElement"></param>
-        /// 
-        /// <param name="useAggStageDamage"></param>
-        /// <param name="stageDamage"></param>
-        /// 
-        /// <param name="useThreshold"></param>
+        /// <param name="impactAreaID"></param>
+        /// <param name="flowFreqID"></param>
+        /// <param name="inflowOutflowID"></param>
+        /// <param name="ratingID"></param>
+        /// <param name="extIntID"></param>
+        /// <param name="leveeFailureID"></param>
+        /// <param name="stageDamageID"></param>
         /// <param name="thresholdType"></param>
         /// <param name="thresholdValue"></param>
-        /// 
-        /// <param name="owner"></param>
-        public ConditionsElement(string name, string description, int analysisYear, ImpactArea.ImpactAreaElement impactAreaElement, ImpactArea.ImpactAreaRowItem indexLocation,
-            bool usesAnalyiticalFlowFrequency, FrequencyRelationships.AnalyticalFrequencyElement aFlowFreq, bool usesInflowOutflow, FlowTransforms.InflowOutflowElement inflowOutflowElement,
-            bool useRating, StageTransforms.RatingCurveElement rc, bool useIntExtStage, StageTransforms.ExteriorInteriorElement extInt, bool useLevee, GeoTech.LeveeFeatureElement leveeElement,
-            bool useFailureFunction, GeoTech.FailureFunctionElement failureFunctionElement, bool useAggStageDamage, AggregatedStageDamage.AggregatedStageDamageElement stageDamage,
-            bool useThreshold, FdaModel.ComputationPoint.PerformanceThresholdTypes thresholdType, double thresholdValue ) : base()
+        public ConditionsElement(string name, string description, int analysisYear, int impactAreaID,
+                     int flowFreqID, int inflowOutflowID, int ratingID, int extIntID, int leveeFailureID, int stageDamageID,
+                   IMetricEnum thresholdType, double thresholdValue) : base()
         {
             Name = name;
-           // _ConditionsOwnerElement = owner;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/Fda;component/Resources/Condition.png");
+            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
 
             Description = description;
             AnalysisYear = analysisYear;
-            ImpactAreaElement = impactAreaElement;
-            ImpactArea = indexLocation;
+            ImpactAreaID = impactAreaID;
 
-            UseAnalyiticalFlowFrequency = usesAnalyiticalFlowFrequency;
-            AnalyticalFlowFrequency = aFlowFreq;
+            FlowFreqID = flowFreqID;
 
-            UseInflowOutflow = usesInflowOutflow;
-            InflowOutflowElement = inflowOutflowElement;
+            InflowOutflowID = inflowOutflowID;
 
-            UseRatingCurve = useRating;
-            RatingCurveElement = rc;
+            RatingID = ratingID;
 
-            UseExteriorInteriorStage = useIntExtStage;
-            ExteriorInteriorElement = extInt;
+            ExtIntStageID = extIntID;
 
-            UseLevee = useLevee;
-            LeveeElement = leveeElement;
+            LeveeFailureID = leveeFailureID;
 
-            UseFailureFunction = useFailureFunction;
-            FailureFunctionElement = failureFunctionElement;
+            StageDamageID = stageDamageID;
 
-            UseAggregatedStageDamage = useAggStageDamage;
-            StageDamageElement = stageDamage;
-
-            UseThreshold = useThreshold;
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;
 
-            Utilities.NamedAction edit = new Utilities.NamedAction();
+            NamedAction edit = new Utilities.NamedAction();
             edit.Header = "Edit Condition";
             edit.Action = EditCondition;
 
-            Utilities.NamedAction compute = new Utilities.NamedAction();
+            NamedAction compute = new Utilities.NamedAction();
             compute.Header = "Compute Condition";
             compute.Action = ComputeCondition;
 
-            Utilities.NamedAction removeCondition = new Utilities.NamedAction();
+            _ViewResults.Header = "View Results";
+            _ViewResults.Action = ViewResults;
+
+            NamedAction removeCondition = new Utilities.NamedAction();
             removeCondition.Header = "Remove";
             removeCondition.Action = RemoveElement;
 
-            Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
+            NamedAction renameElement = new Utilities.NamedAction(this);
             renameElement.Header = "Rename";
             renameElement.Action = Rename;
 
-            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
+            List<NamedAction> localActions = new List<Utilities.NamedAction>();
             localActions.Add(edit);
             localActions.Add(compute);
+            localActions.Add(_ViewResults);
             localActions.Add(removeCondition);
             localActions.Add(renameElement);
 
             Actions = localActions;
-            _ConditionsTreeNodes = new List<BaseFdaElement>() { AnalyticalFlowFrequency,inflowOutflowElement};
-
         }
        
+        /// <summary>
+        /// Deletes a conditions element
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void RemoveElement(object sender, EventArgs e)
         {
             Saving.PersistenceFactory.GetConditionsManager().Remove(this);
         }
 
         #region BuildControlsFromElement
-        private Plots.IndividualLinkedPlotControlVM BuildLP3ControlFromElement()
+        private Plots.IndividualLinkedPlotControlVM BuildLP3ControlFromElement(int lp3ID)
         {
-            List<FrequencyRelationships.AnalyticalFrequencyElement> listOfLp3 = StudyCache.GetChildElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();// StudyCache.FlowFrequencyElements;// GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
-                FdaModel.Functions.FrequencyFunctions.LogPearsonIII lp3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(AnalyticalFlowFrequency.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
-                Statistics.CurveIncreasing curve = lp3.GetOrdinatesFunction().Function;
-                Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(lp3, AnalyticalFlowFrequency.Name);
-                Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, true, "LP3", "Probability", "Inflow");
-                plotWrapper.PlotVM = plotVM;
-                AddFlowFrequencyToConditionVM importer = new AddFlowFrequencyToConditionVM(listOfLp3, AnalyticalFlowFrequency);
-                //importer.RequestNavigation += Navigate;
-                return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Flow Frequency Curve"), importer);
+            AnalyticalFrequencyElement selectedElem = null;
+            List<AnalyticalFrequencyElement> listOfLp3 = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();// StudyCache.FlowFrequencyElements;// GetElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
+            foreach(AnalyticalFrequencyElement elem in listOfLp3)
+            {
+                if(elem.GetElementID() == lp3ID)
+                {
+                    selectedElem = elem;
+                }
+            }
+            //if we are here and we didn't find the element then something has gone terribly wrong
+            if(selectedElem == null)
+            {
+                throw new Exception("Could not find the LP3 element with an ID of " + lp3ID);
+            }
+            
+            
+            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(selectedElem.Curve, false,true,true,selectedElem.Name);
+            Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(false, true, true, false, false, false);
+            plotWrapper.PlotVM = plotVM;
+            AddFlowFrequencyToConditionVM importer = new AddFlowFrequencyToConditionVM(listOfLp3, selectedElem);
+            return new Plots.IndividualLinkedPlotControlVM(IFdaFunctionEnum.InflowFrequency, plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Flow Frequency Curve"), importer);
+
         }
 
-        private Plots.IndividualLinkedPlotControlVM BuildInflowOutflowControlFromElement()
+        private Plots.IndividualLinkedPlotControlVM BuildInflowOutflowControlFromElement(int inOutID)
         {
-            List<FlowTransforms.InflowOutflowElement> listOfInfOut = StudyCache.GetChildElementsOfType<FlowTransforms.InflowOutflowElement>();
-            UncertainCurveDataCollection curve = InflowOutflowElement.Curve;
-            FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction infOut =
-                new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InflowOutflow);
+            InflowOutflowElement selectedElem = null;
+            List<InflowOutflowElement> listOfInfOut = StudyCache.GetChildElementsOfType<InflowOutflowElement>();
 
-            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(infOut, InflowOutflowElement.Name);
+            foreach (InflowOutflowElement elem in listOfInfOut)
+            {
+                if (elem.GetElementID() == inOutID)
+                {
+                    selectedElem = elem;
+                }
+            }
+            //if we are here and we didn't find the element then something has gone terribly wrong
+            if (selectedElem == null)
+            {
+                throw new Exception("Could not find the inflow-outflow element with an ID of " + inOutID);
+            }
 
-            Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Inflow Outflow", "Inflow", "OutFlow");
+
+            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(selectedElem.Curve,true,true,false, selectedElem.Name);
+
+            Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true,true,false,false,true,true);
             plotWrapper.PlotVM = plotVM;
-            AddInflowOutflowToConditionVM importer = new AddInflowOutflowToConditionVM(listOfInfOut, InflowOutflowElement);
-            //importer.RequestNavigation += Navigate;
-            return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Inflow Outflow"), importer,
+            AddInflowOutflowToConditionVM importer = new AddInflowOutflowToConditionVM(listOfInfOut, selectedElem);
+            return new Plots.IndividualLinkedPlotControlVM(IFdaFunctionEnum.InflowOutflow, plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Inflow Outflow"), importer,
                 new Plots.DoubleLineModulatorCoverButtonVM(),
                 new Plots.DoubleLineModulatorWrapperVM(plotVM));
         }
 
-        private Plots.IndividualLinkedPlotControlVM BuildRatingControlFromElement()
+        private Plots.IndividualLinkedPlotControlVM BuildRatingControlFromElement(int ratingID)
         {
-            List<StageTransforms.RatingCurveElement> listOfRatingCurves = StudyCache.GetChildElementsOfType<StageTransforms.RatingCurveElement>();
-            UncertainCurveDataCollection curve = RatingCurveElement.Curve;
-            FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction ratFunc =
-                new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.Rating);
+            RatingCurveElement selectedElem = null;
+            List<RatingCurveElement> listOfRatingCurves = StudyCache.GetChildElementsOfType<RatingCurveElement>();
 
-            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(ratFunc, RatingCurveElement.Name);
+            foreach (RatingCurveElement elem in listOfRatingCurves)
+            {
+                if (elem.GetElementID() == ratingID)
+                {
+                    selectedElem = elem;
+                }
+            }
+            //if we are here and we didn't find the element then something has gone terribly wrong
+            if (selectedElem == null)
+            {
+                throw new Exception("Could not find the rating element with an ID of " + ratingID);
+            }
 
-            Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Rating", "Exterior Stage", "OutFlow");
+            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(selectedElem.Curve,false,true,false, selectedElem.Name);
+
+            Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(false,true,false,false,false,true);
             plotWrapper.PlotVM = plotVM;
-            AddRatingCurveToConditionVM importer = new AddRatingCurveToConditionVM(listOfRatingCurves, RatingCurveElement);
-            //importer.RequestNavigation += Navigate;
-           // Navigate(importer, false, false, "mytest");
-            return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Rating Curve"), importer);
+            AddRatingCurveToConditionVM importer = new AddRatingCurveToConditionVM(listOfRatingCurves, selectedElem);
+            return new Plots.IndividualLinkedPlotControlVM(IFdaFunctionEnum.Rating, plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Rating Curve"), importer);
         }
 
-        private Plots.IndividualLinkedPlotControlVM BuildExtIntControlFromElement()
+        private Plots.IndividualLinkedPlotControlVM BuildLeveeFailureFromElement(int leveeFailureID)
         {
-            List<StageTransforms.ExteriorInteriorElement> listOfExtIntElements = StudyCache.GetChildElementsOfType<StageTransforms.ExteriorInteriorElement>();
-            UncertainCurveDataCollection curve = ExteriorInteriorElement.Curve;
-            FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extIntCurve =
-                new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.ExteriorInteriorStage);
+            LeveeFeatureElement selectedElem = null;
+            List<LeveeFeatureElement> listOfLeveeFeatureElements = StudyCache.GetChildElementsOfType<LeveeFeatureElement>();
 
-            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(extIntCurve, ExteriorInteriorElement.Name);
+            foreach (LeveeFeatureElement elem in listOfLeveeFeatureElements)
+            {
+                if (elem.GetElementID() == leveeFailureID)
+                {
+                    selectedElem = elem;
+                }
+            }
+            //if we are here and we didn't find the element then something has gone terribly wrong
+            if (selectedElem == null)
+            {
+                throw new Exception("Could not find the levee feature element with an ID of " + leveeFailureID);
+            }
 
-            Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Exterior Interior Stage", "Exterior Stage", "Interior Stage");
+            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(selectedElem.Curve,false,false,false, selectedElem.Name);
+
+            Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(false,false,false,true,true,true);
             plotWrapper.PlotVM = plotVM;
-            AddExteriorInteriorStageToConditionVM importer = new AddExteriorInteriorStageToConditionVM(listOfExtIntElements, ExteriorInteriorElement);
-            //importer.RequestNavigation += Navigate;
-            return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Ext Int Stage Curve"),importer,
-                new Plots.DoubleLineModulatorHorizontalCoverButtonVM(),
+            AddFailureFunctionToConditionVM importer = new AddFailureFunctionToConditionVM(listOfLeveeFeatureElements, selectedElem);
+            return new Plots.IndividualLinkedPlotControlVM(IFdaFunctionEnum.LateralStructureFailure, plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Lateral Structure"), importer,
+                new Plots.DoubleLineModulatorHorizontalCoverButtonVM("Lateral Structure"),
+                new Plots.ConditionsHorizontalFailureFunctionVM(plotVM));
+        }
+
+        private Plots.IndividualLinkedPlotControlVM BuildExtIntControlFromElement(int extintID)
+        {
+            ExteriorInteriorElement selectedElem = null;
+            List<ExteriorInteriorElement> listOfExtIntElements = StudyCache.GetChildElementsOfType<ExteriorInteriorElement>();
+
+            foreach (ExteriorInteriorElement elem in listOfExtIntElements)
+            {
+                if (elem.GetElementID() == extintID)
+                {
+                    selectedElem = elem;
+                }
+            }
+            //if we are here and we didn't find the element then something has gone terribly wrong
+            if (selectedElem == null)
+            {
+                throw new Exception("Could not find the exterior-interior stage element with an ID of " + extintID);
+            }
+
+            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(selectedElem.Curve,false,false,false, selectedElem.Name);
+
+            Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(false,false,false,false,true,true);
+            plotWrapper.PlotVM = plotVM;
+            AddExteriorInteriorStageToConditionVM importer = new AddExteriorInteriorStageToConditionVM(listOfExtIntElements, selectedElem);
+            return new Plots.IndividualLinkedPlotControlVM(IFdaFunctionEnum.ExteriorInteriorStage, plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Ext Int Stage Curve"), importer,
+                new Plots.DoubleLineModulatorHorizontalCoverButtonVM("Ext Int Stage"),
                 new Plots.HorizontalDoubleLineModulatorWrapperVM(plotVM));
         }
-        private Plots.IndividualLinkedPlotControlVM BuildStageDamageControlFromElement()
+        private Plots.IndividualLinkedPlotControlVM BuildStageDamageControlFromElement(int stageDamageID)
         {
-            List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamage = StudyCache.GetChildElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
-            UncertainCurveDataCollection curve = StageDamageElement.Curve;
-            FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamageCurve =
-                new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((UncertainCurveIncreasing)curve, FunctionTypes.InteriorStageDamage);
+            AggregatedStageDamageElement selectedElem = null;
+            List<AggregatedStageDamageElement> listOfStageDamage = StudyCache.GetChildElementsOfType<AggregatedStageDamageElement>();
 
-            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(stageDamageCurve, StageDamageElement.Name);
+            foreach (AggregatedStageDamageElement elem in listOfStageDamage)
+            {
+                if (elem.GetElementID() == stageDamageID)
+                {
+                    selectedElem = elem;
+                }
+            }
+            //if we are here and we didn't find the element then something has gone terribly wrong
+            if (selectedElem == null)
+            {
+                throw new Exception("Could not find the stage damage element with an ID of " + stageDamageID);
+            }
 
-            Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Stage Damage", "Interior Stage", "Damage");
+            Plots.IndividualLinkedPlotVM plotVM = new Plots.IndividualLinkedPlotVM(selectedElem.Curve,false,true,false, selectedElem.Name);
+
+            Plots.ConditionsIndividualPlotWrapperVM plotWrapper = new Plots.ConditionsIndividualPlotWrapperVM(false,true,false,false,true,true);
             plotWrapper.PlotVM = plotVM;
-            AddStageDamageToConditionVM importer = new AddStageDamageToConditionVM(listOfStageDamage, StageDamageElement);
-            //importer.RequestNavigation += Navigate;
-            return new Plots.IndividualLinkedPlotControlVM(plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Int Stage Damage Curve"), importer);
+            AddStageDamageToConditionVM importer = new AddStageDamageToConditionVM(listOfStageDamage, selectedElem);
+            return new Plots.IndividualLinkedPlotControlVM(IFdaFunctionEnum.InteriorStageDamage, plotWrapper, new Plots.IndividualLinkedPlotCoverButtonVM("Int Stage Damage Curve"), importer);
         }
         #endregion
+
+        /// <summary>
+        /// Opens the conditions editor.
+        /// </summary>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
         public void EditCondition(object arg1, EventArgs arg2)
         {
             List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.GetChildElementsOfType<ImpactArea.ImpactAreaElement>();
@@ -470,64 +477,65 @@ namespace FdaViewModel.Conditions
             List<GeoTech.LeveeFeatureElement> leveeList = StudyCache.GetChildElementsOfType<GeoTech.LeveeFeatureElement>();
             List<GeoTech.FailureFunctionElement> failureFunctionList = StudyCache.GetChildElementsOfType<GeoTech.FailureFunctionElement>();
 
-
             List<AggregatedStageDamage.AggregatedStageDamageElement> damageles = StudyCache.GetChildElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
-            //if (impactAreas.Count == 0)
-            //{
-            //    ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("No Impact Area Sets have been defined.", FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel));
-            //    return;
-            //}
 
-            //////////////////////////////
 
             Plots.IndividualLinkedPlotControlVM lp3Control;
             Plots.IndividualLinkedPlotControlVM infOutControl;
             Plots.IndividualLinkedPlotControlVM ratingControl;
+            Plots.IndividualLinkedPlotControlVM leveeFailureControl;
             Plots.IndividualLinkedPlotControlVM extIntStageControl;
             Plots.IndividualLinkedPlotControlVM stageDamageControl;
             Plots.IndividualLinkedPlotControlVM damageFrequencyControl;
 
-            if (UseAnalyiticalFlowFrequency)
+            if (FlowFreqID != -1)
             {
-                lp3Control = BuildLP3ControlFromElement();
+                lp3Control = BuildLP3ControlFromElement(FlowFreqID);
             }
             else
             {
                 lp3Control = ConditionsOwnerElement.BuildDefaultLP3Control(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
             }
 
-            if (UseInflowOutflow)
+            if (InflowOutflowID != -1)
             {
-                infOutControl = BuildInflowOutflowControlFromElement();
+                infOutControl = BuildInflowOutflowControlFromElement(InflowOutflowID);
             }
             else
             {
                 infOutControl = ConditionsOwnerElement.BuildDefaultInflowOutflowControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
             }
 
-            if (UseRatingCurve)
+            if (RatingID != -1)
             {
-                ratingControl = BuildRatingControlFromElement();
+                ratingControl = BuildRatingControlFromElement(RatingID);
             }
             else
             {
                 ratingControl = ConditionsOwnerElement.BuildDefaultRatingControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
             }
 
-            if (UseExteriorInteriorStage)
+            if(LeveeFailureID != -1)
             {
-                extIntStageControl = BuildExtIntControlFromElement();
+                leveeFailureControl = BuildLeveeFailureFromElement(LeveeFailureID);
+            }
+            else
+            {
+                leveeFailureControl = ConditionsOwnerElement.BuildDefaultLateralFeaturesControl(StudyCache.GetParentElementOfType<ConditionsOwnerElement>());
+            }
 
+            if (ExtIntStageID != -1)
+            {
+                extIntStageControl = BuildExtIntControlFromElement(ExtIntStageID);
             }
             else
             {
                 extIntStageControl = ConditionsOwnerElement.BuildDefaultExtIntStageControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
             }
 
-            if (_UseAggregatedStageDamage)
+            if (StageDamageID != -1)
             {
-                stageDamageControl = BuildStageDamageControlFromElement();
-
+                stageDamageControl = BuildStageDamageControlFromElement(StageDamageID);
             }
             else
             {
@@ -536,164 +544,205 @@ namespace FdaViewModel.Conditions
 
             damageFrequencyControl = ConditionsOwnerElement.BuildDefaultDamageFrequencyControl(StudyCache.GetParentElementOfType<Conditions.ConditionsOwnerElement>());
 
-            lp3Control.RequestNavigation += Navigate;
-            infOutControl.RequestNavigation += Navigate;
-            ratingControl.RequestNavigation += Navigate;
-            extIntStageControl.RequestNavigation += Navigate;
-            stageDamageControl.RequestNavigation += Navigate;
-
-
-
-            //    Plots.IndividualLinkedPlotControlVM inflowOutflowControl = new Plots.IndividualLinkedPlotControlVM(new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Inflow Outflow", "Inflow", "OutFlow"), new Plots.IndividualLinkedPlotCoverButtonVM("Inflow Outflow"), new AddInflowOutflowToConditionVM(listOfInfOut, this), new Plots.DoubleLineModulatorCoverButtonVM(), new Plots.DoubleLineModulatorWrapperVM());
-            //Plots.IndividualLinkedPlotControlVM ratingControl = new Plots.IndividualLinkedPlotControlVM(new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Rating", "Exterior Stage", "OutFlow"), new Plots.IndividualLinkedPlotCoverButtonVM("Rating Curve"), new AddRatingCurveToConditionVM(ratingeles, this));
-            //Plots.IndividualLinkedPlotControlVM extIntStageControl = new Plots.IndividualLinkedPlotControlVM(new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Exterior Interior Stage", "Exterior Stage", "Interior Stage"), new Plots.IndividualLinkedPlotCoverButtonVM("Ext Int Stage Curve"), new AddExteriorInteriorStageToConditionVM(listOfExtIntElements, this), new Plots.DoubleLineModulatorHorizontalCoverButtonVM(), new Plots.HorizontalDoubleLineModulatorWrapperVM());
-            //Plots.IndividualLinkedPlotControlVM StageDamageControl = new Plots.IndividualLinkedPlotControlVM(new Plots.ConditionsIndividualPlotWrapperVM(true, false, "Stage Damage", "Interior Stage", "Damage"), new Plots.IndividualLinkedPlotCoverButtonVM("Int Stage Damage Curve"), new AddStageDamageToConditionVM(listOfStageDamage, this));
-            //Plots.IndividualLinkedPlotControlVM DamageFrequencyControl = new Plots.IndividualLinkedPlotControlVM(new Plots.ConditionsIndividualPlotWrapperVM(true, true, "Damage Frequency", "Probability", "Damage", false), new Plots.IndividualLinkedPlotCoverButtonVM("Preview Compute"), null);
-
-
-            // ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, infOutControl, ratingControl, extIntStageControl, stageDamageControl, damageFrequencyControl,
-            //   UseAnalyiticalFlowFrequency, UseInflowOutflow, UseRatingCurve,UseExteriorInteriorStage,UseAggregatedStageDamage);
-
-
-
-
-
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                  .WithSiblingRules(this);
-              // .WithParentGuid(this.GUID)
-               //.WithCanOpenMultipleTimes(false);
 
-            ConditionsPlotEditorVM vm = new ConditionsPlotEditorVM(impactAreas, lp3Control, infOutControl, ratingControl, extIntStageControl, stageDamageControl, damageFrequencyControl, this, actionManager);
-            ///////////////////////////////////////
+            ConditionsEditor = new ConditionsPlotEditorVM(impactAreas, lp3Control, infOutControl, ratingControl, leveeFailureControl, extIntStageControl,
+                stageDamageControl, damageFrequencyControl, this, actionManager);
+
+            ConditionsEditor.RequestNavigation += Navigate;
+            string header = "Create Condition";
+            DynamicTabVM tab = new DynamicTabVM(header, ConditionsEditor, "CreateCondition");
+            Navigate(tab, false, false);
+        }
 
 
-            //ConditionsEditorVM vm = new ConditionsEditorVM(Name,Description, AnalysisYear, impactAreas,ImpactAreaSet,ImpactArea, UseAnalyiticalFlowFrequency, freqeles, AnalyticalFlowFrequency, UseInflowOutflow, inflowOutflowList,InflowOutflowElement,UseRatingCurve, ratingeles,RatingCurve, UseExteriorInteriorStage, extIntList,ExteriorInteriorElement,UseLevee,leveeList,LeveeElement,UseFailureFunction,failureFunctionList,FailureFunctionElement,UseAggregatedStageDamage, damageles, StageDamage,UseThreshold,ThresholdType,ThresholdValue, (ConditionsOwnerElement)_Owner);
-            string title = "Edit " + vm.Name;
-            DynamicTabVM tab = new DynamicTabVM(title, vm, "EditCondition" + Name);
-            Navigate( tab, false,false);
-            //if (!vm.WasCanceled)
-            //{
-            //    if (!vm.HasError)
-            //    {
-            //        string oldName = Name;
-            //        //its just easier to create a new one and then copy the values from that one to this one
-            //        ConditionsElement newElem = ConditionFactory.BuildConditionsElement(vm, _ConditionsOwnerElement);
-            //        ConditionFactory.CopyConditionsElement(newElem, this);
+        private void DisplayResults(IConditionLocationYearResult result)
+        {
+            LinkedPlotsVM vm = new LinkedPlotsVM(result);
+            vm.RequestNavigation += Navigate;
+            string header = "Results";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "resultViewer");
+            Navigate(tab, false, false);
+        }
+        private void ViewResults(object arg1, EventArgs arg2)
+        {
+            if (ComputeResults == null)
+            {
+                MessageBox.Show("There are no results to view because a compute has not been run on this condition.", "No Compute Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+            else
+            {
+                DisplayResults(ComputeResults);
+            }
 
-            //        ((ConditionsOwnerElement)_Owner).UpdateTableRowIfModified((ParentElement)_Owner, oldName, this);
-                   
-            //    }
-            //}
+        }
+
+        /// <summary>
+        /// This will not grab the levee failure, only inflow-outflow and ext-int stage.
+        /// </summary>
+        /// <returns></returns>
+        private List<ITransformFunction> GetTransformFunctions()
+        {
+            List<ITransformFunction> transforms = new List<ITransformFunction>();
+            bool hasInflowOutflow = InflowOutflowID != -1;
+            bool hasLeveeFailure = LeveeFailureID != -1;
+            bool hasExtInt = ExtIntStageID != -1;
+            try
+            {
+                //required params
+                RatingCurveElement ratingElement = (RatingCurveElement)StudyCache.GetChildElementOfType(typeof(RatingCurveElement), RatingID);
+                AggregatedStageDamageElement stageDamageElement = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
+
+                //possible other functions
+                InflowOutflowElement inflowOutflowElement = null;
+                //LeveeFeatureElement leveeFailureElement = null;
+                ExteriorInteriorElement extIntElement = null;
+                if (hasInflowOutflow)
+                {
+                    inflowOutflowElement = (InflowOutflowElement)StudyCache.GetChildElementOfType(typeof(InflowOutflowElement), InflowOutflowID);
+                }
+                //if (hasLeveeFailure)
+                //{
+                //    leveeFailureElement = (LeveeFeatureElement)StudyCache.GetChildElementOfType(typeof(LeveeFeatureElement), LeveeFailureID);
+                //}
+                if (hasExtInt)
+                {
+                    extIntElement = (ExteriorInteriorElement)StudyCache.GetChildElementOfType(typeof(ExteriorInteriorElement), ExtIntStageID);
+                }
+
+                if (hasInflowOutflow)
+                {
+                    transforms.Add((ITransformFunction)inflowOutflowElement.Curve);
+                }
+                transforms.Add((ITransformFunction)ratingElement.Curve);
+
+                if (hasExtInt)
+                {
+                    transforms.Add((ITransformFunction)extIntElement.Curve);
+                }
+                transforms.Add((ITransformFunction)stageDamageElement.Curve);
+            }
+            catch(Exception e)
+            {
+                //todo: do something else here?
+                return transforms;
+            }
+            return transforms;
+        }
+
+        private IFrequencyFunction GetFrequencyFunction()
+        {
+            //todo: i think i need to determine if this is an inflow freq or an outflow freq.
+            //right now i am just assuming this is an inflow freq.
+            AnalyticalFrequencyElement flowFreqElement = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
+            return (IFrequencyFunction)flowFreqElement.Curve;
+
         }
 
         private void ComputeCondition(object arg1, EventArgs arg2)
         {
-            //convert to model types, run model compute, show results in window.
-            //ImpactArea.Name
-            //AnalyticalFlowFrequency.Distribution;
-            //RatingCurve.RatingCurve //isvalid //distribution //getx gety
-            //StageDamage.Curve same as above.
-            //convert to model objects
-            //compute model objects
-            //take result and pass to results viewmodel
-            List<FdaModel.Functions.BaseFunction> listOfBaseFunctions = new List<FdaModel.Functions.BaseFunction>();
-            FdaModel.Functions.FrequencyFunctions.LogPearsonIII LP3 = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(AnalyticalFlowFrequency.Distribution, FdaModel.Functions.FunctionTypes.InflowFrequency);
 
-            listOfBaseFunctions.Add(LP3);
+            EnterSeedVM enterSeedVM = new EnterSeedVM();
+            string header = "Enter Seed Value";
+            DynamicTabVM tab = new DynamicTabVM(header, enterSeedVM, "EnterSeed");
+            Navigate(tab, true, true);
 
-            //FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction inflowOutflow = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)InflowOutflowElement.InflowOutflowCurve, FdaModel.Functions.FunctionTypes.InflowOutflow);
+            int seedValue = enterSeedVM.Seed;
 
-           // listOfBaseFunctions.Add(inflowOutflow);
+            IConditionLocationYearSummary condition = null;
 
-            FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction rating = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)RatingCurveElement.Curve, FdaModel.Functions.FunctionTypes.Rating);
+            IFrequencyFunction frequencyFunction = GetFrequencyFunction();
+            List<ITransformFunction> transformFunctions = GetTransformFunctions();
 
-            listOfBaseFunctions.Add(rating);
-
-            //FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction extIntStage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)ExteriorInteriorElement.ExteriorInteriorCurve, FdaModel.Functions.FunctionTypes.ExteriorInteriorStage);
-
-            //listOfBaseFunctions.Add(extIntStage);
-
-            FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction stageDamage = new FdaModel.Functions.OrdinatesFunctions.UncertainOrdinatesFunction((Statistics.UncertainCurveIncreasing)StageDamageElement.Curve, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
-
-            listOfBaseFunctions.Add(stageDamage);
-
-            FdaModel.ComputationPoint.PerformanceThreshold threshold;
-
-                //ThresholdValue = 120;
-            //when i do the real compute I will need to handle every threshold type
-            if (ThresholdType == FdaModel.ComputationPoint.PerformanceThresholdTypes.InteriorStage)
+            bool hasLeveeFailure = LeveeFailureID != -1;
+            if (hasLeveeFailure)
             {
-                threshold = new FdaModel.ComputationPoint.PerformanceThreshold(FdaModel.ComputationPoint.PerformanceThresholdTypes.InteriorStage, ThresholdValue);
-
+                LeveeFeatureElement leveeFailureElement = (LeveeFeatureElement)StudyCache.GetChildElementOfType(typeof(LeveeFeatureElement), LeveeFailureID);
+                ILateralStructure latStruct = ILateralStructureFactory.Factory(leveeFailureElement.Elevation, (ITransformFunction)leveeFailureElement.Curve); ;
+                condition = Saving.PersistenceFactory.GetConditionsManager().CreateIConditionLocationYearSummary(ImpactAreaID,
+                    AnalysisYear, frequencyFunction, transformFunctions, leveeFailureElement, ThresholdType, ThresholdValue);
             }
-            else // ThresholdType == "Dollars"
-            {
-                threshold = new FdaModel.ComputationPoint.PerformanceThreshold(FdaModel.ComputationPoint.PerformanceThresholdTypes.Damage, ThresholdValue);
-
+            else 
+            { 
+                condition = Saving.PersistenceFactory.GetConditionsManager().CreateIConditionLocationYearSummary(ImpactAreaID,
+                    AnalysisYear, frequencyFunction, transformFunctions, ThresholdType, ThresholdValue);
             }
 
-
-            FdaModel.ComputationPoint.Condition condition = new FdaModel.ComputationPoint.Condition(AnalysisYear, ImpactAreaElement.Name, listOfBaseFunctions, threshold, null); //this constructor will call Validate
-
-            //FdaModel.ComputationPoint.Outputs.Realization realization = new FdaModel.ComputationPoint.Outputs.Realization(condition, false, false);
-            //Random randomNumGenerator = new Random(0);
-            //realization.Compute(randomNumGenerator);
-
-            FdaModel.ComputationPoint.Outputs.Result result = new FdaModel.ComputationPoint.Outputs.Result(condition, 10);
-
-            List<string> selectedElementNames = new List<string>();
-            selectedElementNames.Add(AnalyticalFlowFrequency.Name);
-            selectedElementNames.Add(RatingCurveElement.Name);
-            if (ExteriorInteriorElement != null)
+            if (condition == null)
             {
-                selectedElementNames.Add(ExteriorInteriorElement.Name);
+                return;
             }
-            selectedElementNames.Add(StageDamageElement.Name);
-            selectedElementNames.Add("Computed Stage Frequency");
-            // write out results for testing purposes.
-            if (result.Realizations.Count != 0)
+
+            IConvergenceCriteria convergenceCriteria = IConvergenceCriteriaFactory.Factory();
+            Dictionary<IMetric, IConvergenceCriteria> metricsDictionary = new Dictionary<IMetric, IConvergenceCriteria>();
+            foreach (IMetric metric in condition.Metrics)
             {
-                Plots.LinkedPlotsVM vem = new Plots.LinkedPlotsVM(result, ThresholdType, ThresholdValue, selectedElementNames);
-                string title = "Condition " + Name;
-                DynamicTabVM tab = new DynamicTabVM(title, vem, "ComputedCondition" + Name);
-                Navigate(tab, false, false);
+                metricsDictionary.Add(metric, IConvergenceCriteriaFactory.Factory());
             }
-            else
-            {
-                MessageBox.Show("The compute produced no realizations");
-            }
-            //Output.LinkedPlotsVM vm = new Output.LinkedPlotsVM(result);
-            //Navigate(vm);
+
+            IReadOnlyDictionary<IMetric, IConvergenceCriteria> metrics = new ReadOnlyDictionary<IMetric, IConvergenceCriteria>(metricsDictionary);
+
+            IConditionLocationYearResult result = new ConditionLocationYearResult(condition, metrics, seedValue);
+            result.Compute();
+            ComputeResults = result;
+            Saving.PersistenceFactory.GetConditionsManager().SaveConditionResults(result, this.GetElementID(), frequencyFunction, transformFunctions);
+
+            DisplayResults(result);
+
         }
         #endregion
         #region Voids
+        /// <summary>
+        /// Loads the treenodes under the condition in the conditions tree tab.
+        /// </summary>
         private void LoadTheTreeNodes()
         {
+            bool hasInflowOutflow = InflowOutflowID != -1;
+            bool hasLeveeFailure = LeveeFailureID != -1;
+            bool hasExtInt = ExtIntStageID != -1;
+
             _ConditionsTreeNodes = new List<BaseFdaElement>();
-            if(ImpactAreaElement != null)
+            //required elems
+            ImpactAreaElement impArea = (ImpactAreaElement)StudyCache.GetChildElementOfType(typeof(ImpactAreaElement), ImpactAreaID);
+            AnalyticalFrequencyElement flowFreqElement = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
+            RatingCurveElement ratingElement = (RatingCurveElement)StudyCache.GetChildElementOfType(typeof(RatingCurveElement), RatingID);
+            AggregatedStageDamageElement stageDamageElement = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
+
+            //possible other functions
+            InflowOutflowElement inflowOutflowElement = null;
+            LeveeFeatureElement leveeFailureElement = null;
+            ExteriorInteriorElement extIntElement = null;
+            if (hasInflowOutflow)
             {
-                _ConditionsTreeNodes.Add(ImpactAreaElement);
+                inflowOutflowElement = (InflowOutflowElement)StudyCache.GetChildElementOfType(typeof(InflowOutflowElement), InflowOutflowID);
             }
-            if (AnalyticalFlowFrequency != null)
+            if (hasLeveeFailure)
             {
-                _ConditionsTreeNodes.Add(AnalyticalFlowFrequency);
+                leveeFailureElement = (LeveeFeatureElement)StudyCache.GetChildElementOfType(typeof(LeveeFeatureElement), LeveeFailureID);
             }
-            if (InflowOutflowElement != null)
+            if (hasExtInt)
             {
-                _ConditionsTreeNodes.Add(InflowOutflowElement);
+                extIntElement = (ExteriorInteriorElement)StudyCache.GetChildElementOfType(typeof(ExteriorInteriorElement), ExtIntStageID);
             }
-            if (RatingCurveElement != null)
+
+            _ConditionsTreeNodes.Add(impArea);
+            _ConditionsTreeNodes.Add(flowFreqElement);
+            if(hasInflowOutflow)
             {
-                _ConditionsTreeNodes.Add(RatingCurveElement);
+                _ConditionsTreeNodes.Add(inflowOutflowElement);
             }
-            if (ExteriorInteriorElement != null)
+            _ConditionsTreeNodes.Add(ratingElement);
+            if(hasLeveeFailure)
             {
-                _ConditionsTreeNodes.Add(ExteriorInteriorElement);
+                _ConditionsTreeNodes.Add(leveeFailureElement);
             }
-            if (StageDamageElement != null)
+            if(hasExtInt)
             {
-                _ConditionsTreeNodes.Add(StageDamageElement);
+                _ConditionsTreeNodes.Add(extIntElement);
             }
+            _ConditionsTreeNodes.Add(stageDamageElement);
+           
         }
         private void UpdateIsElementExpanded(object sender, EventArgs e)
         {
@@ -724,36 +773,21 @@ namespace FdaViewModel.Conditions
                 EditConditionsTreeElement.Invoke(this, e);
             }
         }
-        public override void AddValidationRules()
+
+        /// <summary>
+        /// This will update an element that has been modified while the editor is open.
+        /// For example a rating curve that was modified.
+        /// </summary>
+        /// <param name="elemID">The ID of the element that was modified (ie: rating curve)</param>
+        /// <param name="newElement">The new element (ie: rating element)</param>
+        public void UpdateElementInEditor_ChildModified(int elemID, ChildElement newElement)
         {
-            //throw new NotImplementedException();
+            //todo: i think i need to set this to null when it closes? not sure.
+            if (ConditionsEditor != null)
+            {
+                ConditionsEditor.UpdateEditorWhileEditing_ChildModified(elemID, newElement);
+            }
         }
-
-
-
-        //public override object[] RowData()
-        //{
-        //    FlowFreqName = (AnalyticalFlowFrequency == null)? "" :AnalyticalFlowFrequency.Name;
-        //    InfOutName = (InflowOutflowElement == null)? "" : InflowOutflowElement.Name;
-        //    RatingName = (RatingCurveElement == null)? "" : RatingCurveElement.Name;
-        //    ExtIntName = (ExteriorInteriorElement == null) ? "" : ExteriorInteriorElement.Name;
-        //    LeveeName = (LeveeElement == null) ? "" : LeveeElement.Name;
-        //    FailureFuncName = (FailureFunctionElement == null) ? "" : FailureFunctionElement.Name;
-        //    StageDamageName = (StageDamageElement == null) ? "" : StageDamageElement.Name;
-
-        //    return new object[] { Name, Description, AnalysisYear, ImpactAreaElement.Name,
-        //        UseAnalyiticalFlowFrequency, FlowFreqName,
-        //        UseInflowOutflow, InfOutName,
-        //        UseRatingCurve,RatingName,
-        //        UseExteriorInteriorStage,ExtIntName,
-        //        UseLevee,LeveeName,
-        //        UseFailureFunction,FailureFuncName,
-        //        UseAggregatedStageDamage, StageDamageName,
-        //        UseThreshold, ThresholdType,ThresholdValue};
-        //}
-
-
-
 
         #endregion
         #region Functions
@@ -762,9 +796,8 @@ namespace FdaViewModel.Conditions
             ConditionsElement elem = (ConditionsElement)elementToClone;
             return new ConditionsElement(elem);
         }
+
         #endregion
-
-
 
     }
 }

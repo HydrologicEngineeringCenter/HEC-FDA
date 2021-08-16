@@ -1,11 +1,11 @@
-﻿using FdaViewModel.Tabs;
+﻿using ViewModel.Tabs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Utilities
+namespace ViewModel.Utilities
 {
     public interface IDynamicTab
     {
@@ -46,6 +46,7 @@ namespace FdaViewModel.Utilities
 
         void PopWindowIntoTab();
         void RemoveTab();
-        void RemoveWindow();
+        bool RemoveWindow();
+
     }
 }

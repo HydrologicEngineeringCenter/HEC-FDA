@@ -12,152 +12,177 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Statistics;
+using HEC.Plotting.SciChart2D.Charts;
+using Model;
 
-namespace Fda.Plots
+namespace View.Plots
 {
     /// <summary>
     /// Interaction logic for DoubleLineModulator.xaml
     /// </summary>
-    public partial class DoubleLineModulator : UserControl,ILinkedPlot
+    public partial class DoubleLineModulator : UserControl, ILinkedPlotControl
     {
         public event EventHandler PopOutThePlot;
 
-        public static readonly DependencyProperty BaseFunctionProperty = DependencyProperty.Register("BaseFunction", typeof(FdaModel.Functions.BaseFunction), typeof(DoubleLineModulator), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(BaseFunctionChangedCallBack)));
+        //public static readonly DependencyProperty BaseFunctionProperty = DependencyProperty.Register("BaseFunction", typeof(FdaModel.Functions.BaseFunction), typeof(DoubleLineModulator), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(BaseFunctionChangedCallBack)));
 
-        public static readonly DependencyProperty CurveProperty = DependencyProperty.Register("Curve", typeof(Statistics.CurveIncreasing), typeof(DoubleLineModulator), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(CurveChangedCallBack)));
-        public static readonly DependencyProperty TrackerVisibleProperty = DependencyProperty.Register("TrackerVisible", typeof(bool), typeof(DoubleLineModulator), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(TrackerVisibleCallBack)));
+        //public static readonly DependencyProperty CurveProperty = DependencyProperty.Register("Curve", typeof(Statistics.CurveIncreasing), typeof(DoubleLineModulator), new FrameworkPropertyMetadata(null, new PropertyChangedCallback(CurveChangedCallBack)));
+        //public static readonly DependencyProperty TrackerVisibleProperty = DependencyProperty.Register("TrackerVisible", typeof(bool), typeof(DoubleLineModulator), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(TrackerVisibleCallBack)));
+        //public static readonly DependencyProperty UpdateLinesProperty = DependencyProperty.Register("UpdateLines", typeof(bool), typeof(DoubleLineModulator), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(UpdateLinesCallBack)));
+
+        public double SharedXAxisMin { get; set; }
+        public double SharedXAxisMax { get; set; }
+        public double SharedYAxisMin { get; set; }
+        public double SharedYAxisMax { get; set; }
 
 
+        //private bool _FreezeTracker;
+        //private SharedAxisEnum _NextPlotSharedAxisEnum = SharedAxisEnum.unknown;
+        //private SharedAxisEnum _PreviousPlotSharedAxisEnum = SharedAxisEnum.unknown;
+        //private double _Height;
+        //private double _Width;
+        //private bool _FlipFreqAxis = false;
+        //private ILinkedPlot _NextPlot;
+        //private ILinkedPlot _PreviousPlot;
 
-        private bool _FreezeTracker;
-        private SharedAxisEnum _NextPlotSharedAxisEnum = SharedAxisEnum.unknown;
-        private SharedAxisEnum _PreviousPlotSharedAxisEnum = SharedAxisEnum.unknown;
-        private double _Height;
-        private double _Width;
-        private bool _FlipFreqAxis = false;
-        private ILinkedPlot _NextPlot;
-        private ILinkedPlot _PreviousPlot;
-
-        public bool TrackerIsOutsideTheCurveRange { get; set; }
+        //public bool TrackerIsOutsideTheCurveRange { get; set; }
 
         #region Properties
+
         public string SelectedElementName { get; set; } = "cody test";
 
-        public double MaxX { get; set; }
-        public double MaxY { get; set; }
-        public double MinX { get; set; }
-        public double MinY { get; set; }
-        public bool IsStartNode { get; set; }
-        public bool IsEndNode { get; set; }
-        public bool TrackerVisible
-        {
-            get { return (bool)GetValue(TrackerVisibleProperty); }
-            set { SetValue(TrackerVisibleProperty, value); }
-        }
-        public FdaModel.Functions.BaseFunction BaseFunction
-        {
-            get { return (FdaModel.Functions.BaseFunction)GetValue(BaseFunctionProperty); }
-            set { SetValue(BaseFunctionProperty, value); }
-            
-        }
+        public IParameterEnum FunctionType { get; set; }
 
-        private static void BaseFunctionChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            DoubleLineModulator owner = d as DoubleLineModulator;
-            owner.BaseFunction = e.NewValue as FdaModel.Functions.BaseFunction;
+        public Chart2D Chart { get; set; }
 
-        }
-        public bool FreezeNextTracker
-        {
-            get { return _FreezeTracker; }
-            set
-            {
-                
-                _FreezeTracker = value;
-                if (value == true)
-                {
-                    if (IsEndNode == false)
-                    {
-                        NextPlot.FreezeNextTracker = true;
+        //public double MaxX { get; set; }
+        //public double MaxY { get; set; }
+        //public double MinX { get; set; }
+        //public double MinY { get; set; }
+        //public bool IsStartNode { get; set; }
+        //public bool IsEndNode { get; set; }
+        //public bool TrackerVisible
+        //{
+        //    get { return (bool)GetValue(TrackerVisibleProperty); }
+        //    set { SetValue(TrackerVisibleProperty, value); }
+        //}
+        //public FdaModel.Functions.BaseFunction BaseFunction
+        //{
+        //    get { return (FdaModel.Functions.BaseFunction)GetValue(BaseFunctionProperty); }
+        //    set { SetValue(BaseFunctionProperty, value); }
 
-                    }
-                }
-                else
-                {
-                    if (IsEndNode == false)
-                    {
-                        NextPlot.FreezeNextTracker = false;
+        //}
 
-                    }
-                }
+        //private static void BaseFunctionChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    DoubleLineModulator owner = d as DoubleLineModulator;
+        //    owner.BaseFunction = e.NewValue as FdaModel.Functions.BaseFunction;
 
-            }
-        }
-        public bool FreezePreviousTracker
-        {
-            get { return _FreezeTracker; }
-            set
-            {
-                _FreezeTracker = value;
-                if (value == true)
-                {
-                    PreviousPlot.FreezePreviousTracker = true;
-                  
-                }
-                else
-                {
-                    PreviousPlot.FreezePreviousTracker = false;                
-                }
-
-            }
-        }
-        public SharedAxisEnum NextPlotSharedAxisEnum
-        {
-            get { return _NextPlotSharedAxisEnum; }
-            set { _NextPlotSharedAxisEnum = value; }
-        }
-        public ILinkedPlot NextPlot
-        {
-            get { return _NextPlot; }
-
-        }
-        public ILinkedPlot PreviousPlot
-        {
-            get { return _PreviousPlot; }
-
-        }
-        //public CurveIncreasing Curve { get; set; }
-        public Statistics.CurveIncreasing Curve
-        {
-            get { return (Statistics.CurveIncreasing)GetValue(CurveProperty); }
-            set { SetValue(CurveProperty, value); }
-        }
-        public double AbsoluteMaxFlow { get; set; }
-        public double AbsoluteMinFlow { get; set; }
-
-        public double TotalRange { get; set; }
-        public double MinInflow { get; set; }
-        public double MaxInflow { get; set; }
-        public double MinOutflow { get; set; }
-        public double MaxOutflow { get; set; }
-        public double Height
-        {
-            get { return _Height; }
-            set { _Height = value; }
-        }
-
-        public double Width
-        {
-            get { return _Width; }
-            set { _Width = value; }
-        }
+        //}
 
         
+        //private static void UpdateLinesCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    DoubleLineModulator owner = d as DoubleLineModulator;
+        //    //owner.BaseFunction = e.NewValue as FdaModel.Functions.BaseFunction;
 
-        public bool FlipFrequencyAxis { get { return false; } set { _FlipFreqAxis = false; } }
+        //}
 
-        
+        //private void UpdateLines(double x, double y)
+        //{
+
+        //}
+
+        //public bool FreezeNextTracker
+        //{
+        //    get { return _FreezeTracker; }
+        //    set
+        //    {
+
+        //        _FreezeTracker = value;
+        //        if (value == true)
+        //        {
+        //            if (IsEndNode == false)
+        //            {
+        //                NextPlot.FreezeNextTracker = true;
+
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (IsEndNode == false)
+        //            {
+        //                NextPlot.FreezeNextTracker = false;
+
+        //            }
+        //        }
+
+        //    }
+        //}
+        //public bool FreezePreviousTracker
+        //{
+        //    get { return _FreezeTracker; }
+        //    set
+        //    {
+        //        _FreezeTracker = value;
+        //        if (value == true)
+        //        {
+        //            PreviousPlot.FreezePreviousTracker = true;
+
+        //        }
+        //        else
+        //        {
+        //            PreviousPlot.FreezePreviousTracker = false;                
+        //        }
+
+        //    }
+        //}
+        //public SharedAxisEnum NextPlotSharedAxisEnum
+        //{
+        //    get { return _NextPlotSharedAxisEnum; }
+        //    set { _NextPlotSharedAxisEnum = value; }
+        //}
+        //public ILinkedPlot NextPlot
+        //{
+        //    get { return _NextPlot; }
+
+        //}
+        //public ILinkedPlot PreviousPlot
+        //{
+        //    get { return _PreviousPlot; }
+
+        //}
+        ////public CurveIncreasing Curve { get; set; }
+        //public Statistics.CurveIncreasing Curve
+        //{
+        //    get { return (Statistics.CurveIncreasing)GetValue(CurveProperty); }
+        //    set { SetValue(CurveProperty, value); }
+        //}
+        //public double AbsoluteMaxFlow { get; set; }
+        //public double AbsoluteMinFlow { get; set; }
+
+        //public double TotalRange { get; set; }
+        //public double MinInflow { get; set; }
+        //public double MaxInflow { get; set; }
+        //public double MinOutflow { get; set; }
+        //public double MaxOutflow { get; set; }
+        //public double Height
+        //{
+        //    get { return _Height; }
+        //    set { _Height = value; }
+        //}
+
+        //public double Width
+        //{
+        //    get { return _Width; }
+        //    set { _Width = value; }
+        //}
+
+
+
+        //public bool FlipFrequencyAxis { get { return false; } set { _FlipFreqAxis = false; } }
+
+
 
         #endregion
 
@@ -180,35 +205,6 @@ namespace Fda.Plots
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if(Curve == null) { return; }
-            if(Curve.Count == 0) { return; }
-            MinInflow = Curve.get_X(0);
-            MaxInflow = Curve.get_X(Curve.Count - 1);
-
-            MinOutflow = Curve.get_Y(0);
-            MaxOutflow = Curve.get_Y(Curve.Count - 1);
-
-            
-            if(MinInflow<MinOutflow)
-            {
-                AbsoluteMinFlow = Math.Log10( MinInflow);
-            }
-            else
-            {
-                AbsoluteMinFlow = Math.Log10( MinOutflow);
-            }
-            if(MaxInflow > MaxOutflow)
-            {
-                AbsoluteMaxFlow = Math.Log10(MaxInflow);
-            }
-            else
-            {
-                AbsoluteMaxFlow = Math.Log10(MaxOutflow);
-            }
-            TotalRange = AbsoluteMaxFlow - AbsoluteMinFlow;
-
-
-            //find parent and add this plot to its selectedPlot property.
             ContentControl parentControl = Plots.IndividualLinkedPlotControl.FindParent<ContentControl>(this);
             if (parentControl != null && parentControl.GetType() == typeof(Conditions.ConditionsDoubleLineModulatorWrapper))
             {
@@ -217,121 +213,168 @@ namespace Fda.Plots
 
             if (parentControl != null && parentControl.GetType() == typeof(IndividualLinkedPlotControl))
             {
-                FdaViewModel.Plots.IndividualLinkedPlotControlVM vm = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
-
-                this.BaseFunction = vm.IndividualPlotWrapperVM.PlotVM.BaseFunction;
-                ((Plots.IndividualLinkedPlotControl)parentControl).LinkedPlot = this;
-                ((IndividualLinkedPlotControl)parentControl).UpdateThePlots();
+                ViewModel.Plots.IndividualLinkedPlotControlVM vm = (ViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
+                vm.UpdateDLMLines += UpdateLines;
+                //IFdaFunction func = vm.IndividualPlotWrapperVM.PlotVM.BaseFunction;
+                //func.
+                //((Plots.IndividualLinkedPlotControl)parentControl).LinkedPlot = this;
+                //((IndividualLinkedPlotControl)parentControl).UpdateThePlots();
             }
+            //if (Curve == null) { return; }
+            //if (Curve.Count == 0) { return; }
+            //MinInflow = Curve.get_X(0);
+            //MaxInflow = Curve.get_X(Curve.Count - 1);
 
-        }
+            //MinOutflow = Curve.get_Y(0);
+            //MaxOutflow = Curve.get_Y(Curve.Count - 1);
 
-        private static void CurveChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            DoubleLineModulator owner = d as DoubleLineModulator;
-            owner.Curve = e.NewValue as Statistics.CurveIncreasing;
 
+            //if (MinInflow < MinOutflow)
+            //{
+            //    AbsoluteMinFlow = Math.Log10(MinInflow);
+            //}
+            //else
+            //{
+            //    AbsoluteMinFlow = Math.Log10(MinOutflow);
+            //}
+            //if (MaxInflow > MaxOutflow)
+            //{
+            //    AbsoluteMaxFlow = Math.Log10(MaxInflow);
+            //}
+            //else
+            //{
+            //    AbsoluteMaxFlow = Math.Log10(MaxOutflow);
+            //}
+            //TotalRange = AbsoluteMaxFlow - AbsoluteMinFlow;
+
+
+            //find parent and add this plot to its selectedPlot property.
             
 
-            //LineSeries series1 = new LineSeries();
-
-            //for (int i = 0; i < curve.Count; i++)
-            //{
-            //    series1.Points.Add(new DataPoint(curve.get_X(i), curve.get_Y(i)));
-
-            //}
-
-            //owner.OxyPlot1.Model.Series.Add(series1);
-
-            //SetMinMaxValues(owner);
-
         }
 
-        public void SetAsStartNode()
+        //private static void CurveChangedCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    DoubleLineModulator owner = d as DoubleLineModulator;
+        //    owner.Curve = e.NewValue as Statistics.CurveIncreasing;
+
+
+
+        //    //LineSeries series1 = new LineSeries();
+
+        //    //for (int i = 0; i < curve.Count; i++)
+        //    //{
+        //    //    series1.Points.Add(new DataPoint(curve.get_X(i), curve.get_Y(i)));
+
+        //    //}
+
+        //    //owner.OxyPlot1.Model.Series.Add(series1);
+
+        //    //SetMinMaxValues(owner);
+
+        //}
+
+        //public void SetAsStartNode()
+        //{
+        //    //i am just fulfilling the interface contract. This should never be a start node right?
+        //}
+        //public void SetNextPlotLinkage(ILinkedPlot plot)
+        //{
+        //    ////if (ThisIsEndNode == true) { return; }
+        //    //_NextPlot = plot;
+        //    //this.SetNextPlotSharedAxis(thisAxis, linkedAxis);
+
+
+        //    if (IsEndNode == true) { return; }
+        //    string thisAxis = "";
+        //    string linkedAxis = "";
+
+        //    if (plot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.Rating)
+        //    {
+        //        thisAxis = "y";
+        //        linkedAxis = "y";
+        //    }
+        //    //((IndividualLinkedPlot)plot).SetSharedYAxisWithPlot
+        //    this.SetNextPlotSharedAxis(thisAxis, linkedAxis);
+        //    _NextPlot = plot;
+
+
+        //}
+        //public void SetPreviousPlotLinkage(ILinkedPlot plot)
+        //{
+        //    //if (ThisIsStartNode == true) { return; }
+        //    _PreviousPlot = plot;
+        //    _PreviousPlotSharedAxisEnum = PreviousPlot.NextPlotSharedAxisEnum;
+        //}
+        //private void SetNextPlotSharedAxis(string thisAxis, string linkedAxis)
+        //{
+        //    string thisAxisUpper = thisAxis.ToUpper();
+        //    string linkedAxisUpper = linkedAxis.ToUpper();
+        //    if (thisAxisUpper == "X" && linkedAxisUpper == "X")  //enum 1
+        //    {
+        //        _NextPlotSharedAxisEnum = SharedAxisEnum.XX;
+        //    }
+        //    else if (thisAxisUpper == "X" && linkedAxisUpper == "Y") //enum 2
+        //    {
+        //        _NextPlotSharedAxisEnum = SharedAxisEnum.XY;
+        //    }
+        //    else if (thisAxisUpper == "Y" && linkedAxisUpper == "X")  // enum 3
+        //    {
+        //        _NextPlotSharedAxisEnum = SharedAxisEnum.YX;
+        //    }
+        //    else if (thisAxisUpper == "Y" && linkedAxisUpper == "Y") // enum 4
+        //    {
+        //        _NextPlotSharedAxisEnum = SharedAxisEnum.YY;
+        //    }
+        //}
+
+        private void UpdateLines(Object sender, EventArgs e)
         {
-            //i am just fulfilling the interface contract. This should never be a start node right?
-        }
-        public void SetNextPlotLinkage(ILinkedPlot plot)
-        {
-            ////if (ThisIsEndNode == true) { return; }
-            //_NextPlot = plot;
-            //this.SetNextPlotSharedAxis(thisAxis, linkedAxis);
-
-
-            if (IsEndNode == true) { return; }
-            string thisAxis = "";
-            string linkedAxis = "";
-
-            if (plot.BaseFunction.FunctionType == FdaModel.Functions.FunctionTypes.Rating)
+            //get all the values from the vm and draw the lines.
+            ContentControl parentControl = Plots.IndividualLinkedPlotControl.FindParent<ContentControl>(this);
+            if (parentControl != null && parentControl.GetType() == typeof(Conditions.ConditionsDoubleLineModulatorWrapper))
             {
-                thisAxis = "y";
-                linkedAxis = "y";
+                parentControl = IndividualLinkedPlotControl.FindParent<ContentControl>(parentControl);
             }
-            //((IndividualLinkedPlot)plot).SetSharedYAxisWithPlot
-            this.SetNextPlotSharedAxis(thisAxis, linkedAxis);
-            _NextPlot = plot;
 
+            if (parentControl != null && parentControl.GetType() == typeof(IndividualLinkedPlotControl))
+            {
+                IndividualLinkedPlotControl indLinkedPlotControl = (IndividualLinkedPlotControl)parentControl;
+                ViewModel.Plots.IndividualLinkedPlotControlVM vm = (ViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
+                double xval = vm.CurrentX;
+                double yval = vm.CurrentY;
 
-        }
-        public void SetPreviousPlotLinkage(ILinkedPlot plot)
-        {
-            //if (ThisIsStartNode == true) { return; }
-            _PreviousPlot = plot;
-            _PreviousPlotSharedAxisEnum = PreviousPlot.NextPlotSharedAxisEnum;
-        }
-        private void SetNextPlotSharedAxis(string thisAxis, string linkedAxis)
-        {
-            string thisAxisUpper = thisAxis.ToUpper();
-            string linkedAxisUpper = linkedAxis.ToUpper();
-            if (thisAxisUpper == "X" && linkedAxisUpper == "X")  //enum 1
-            {
-                _NextPlotSharedAxisEnum = SharedAxisEnum.XX;
-            }
-            else if (thisAxisUpper == "X" && linkedAxisUpper == "Y") //enum 2
-            {
-                _NextPlotSharedAxisEnum = SharedAxisEnum.XY;
-            }
-            else if (thisAxisUpper == "Y" && linkedAxisUpper == "X")  // enum 3
-            {
-                _NextPlotSharedAxisEnum = SharedAxisEnum.YX;
-            }
-            else if (thisAxisUpper == "Y" && linkedAxisUpper == "Y") // enum 4
-            {
-                _NextPlotSharedAxisEnum = SharedAxisEnum.YY;
+                double yAxisMin = vm.GetChartViewModel().SharedYAxisMin; //indLinkedPlotControl.SharedYAxisMin;
+                double yAxisMax = vm.GetChartViewModel().SharedYAxisMax; //indLinkedPlotControl.SharedYAxisMax;
+
+                if(yAxisMax == 0 && yAxisMin == 0)
+                {
+                    return;
+                }
+                DisplayLines(yAxisMin,yAxisMax, vm.MinX, vm.MaxX, vm.MinY, vm.MaxY, vm.CurrentX, vm.CurrentY);
+                int i = 0;
             }
         }
+
         /// <summary>
         /// This displays the horizontal lines on the vertical lines
         /// </summary>
         /// <param name="knownValue"></param>
-        public void DisplayLines(double inflow, double outflow)
+        public void DisplayLines(double sharedPlotsMinY, double sharedPlotsMaxY, double minX, double maxX, double minY, double maxY, double inflow, double outflow)
         {
-            //if(inflow >= ((IndividualLinkedPlot)PreviousPlot).OxyPlot1.Model.Axes[1].Minimum && inflow <= ((IndividualLinkedPlot)PreviousPlot).OxyPlot1.Model.Axes[1].Maximum)
-            ILinkedPlot sharedPlot ;
-            if (PreviousPlot == null && NextPlot == null)
-            {
-                return;
-            }
-            else if(PreviousPlot == null)
-            {
-                sharedPlot = NextPlot;
-            }
-            else
-            {
-                sharedPlot = PreviousPlot;
-            }
+
 
 
             //if (inflow >= ((IndividualLinkedPlot)sharedPlot).MinY && inflow <= ((IndividualLinkedPlot)sharedPlot).MaxY)
-            double myMinX = Curve.XValues.First();
-            double myMaxX = Curve.XValues.Last();
-            double myMinY = Curve.YValues.First();
-            double myMaxY = Curve.YValues.Last();
+            double myMinX = minX;
+            double myMaxX = maxX;
+            double myMinY = minY;
+            double myMaxY = maxY;
 
-                if (inflow >= myMinX && inflow <= myMaxX && outflow >= myMinY && outflow <= myMaxY)
+            if (inflow >= myMinX && inflow <= myMaxX && outflow >= myMinY && outflow <= myMaxY)
 
-                {
-                TurnOutsideOfRangeOff();
+            {
+                //TurnOutsideOfRangeOff();
                 myCanvas.Children.Clear();
 
                 double canvasHeight = myCanvas.ActualHeight;
@@ -346,8 +389,8 @@ namespace Fda.Plots
 
 
 
-                double logMax = Math.Log10(((IndividualLinkedPlot)sharedPlot).MaxY); //OxyPlot1.Model.Axes[1].Maximum);
-                double logMin = Math.Log10(((IndividualLinkedPlot)sharedPlot).MinY); //OxyPlot1.Model.Axes[1].Minimum);
+                double logMax = Math.Log10(sharedPlotsMaxY); //OxyPlot1.Model.Axes[1].Maximum);
+                double logMin = Math.Log10(sharedPlotsMinY); //OxyPlot1.Model.Axes[1].Minimum);
                 double logTotalRange = logMax - logMin;
 
 
@@ -355,7 +398,7 @@ namespace Fda.Plots
                 ////////////////  right point ////////////////
 
                 double distanceFromTop = Math.Log10(inflow) - logMin;
-                double percentFromTop =1-( distanceFromTop / logTotalRange);// (AbsoluteMaxFlow - AbsoluteMinFlow);
+                double percentFromTop = 1 - (distanceFromTop / logTotalRange);// (AbsoluteMaxFlow - AbsoluteMinFlow);
                 double rightScreenPointYValue = totalRectangleHeight * percentFromTop;
 
                 Ellipse rightCircle = new Ellipse();
@@ -368,7 +411,7 @@ namespace Fda.Plots
                 //rightCircle.HorizontalAlignment = HorizontalAlignment.Left;
 
                 Canvas.SetLeft(rightCircle, distanceFromLeftToRightLine - circleRadius); // 50 - half the width of the circle
-                Canvas.SetTop(rightCircle, rightScreenPointYValue+offsetFromTop-circleRadius);
+                Canvas.SetTop(rightCircle, rightScreenPointYValue + offsetFromTop - circleRadius);
 
 
 
@@ -377,15 +420,15 @@ namespace Fda.Plots
 
                 //distanceFromTop = AbsoluteMaxFlow - Math.Log10(outflow);
                 //percentFromTop = distanceFromTop / logTotalRange;// (AbsoluteMaxFlow - AbsoluteMinFlow);            
-                 distanceFromTop = Math.Log10(outflow) - logMin;
-                 percentFromTop =1 - ( distanceFromTop / logTotalRange);// (AbsoluteMaxFlow - AbsoluteMinFlow);
+                distanceFromTop = Math.Log10(outflow) - logMin;
+                percentFromTop = 1 - (distanceFromTop / logTotalRange);// (AbsoluteMaxFlow - AbsoluteMinFlow);
 
 
                 //get the screen point for this value
                 totalRectangleHeight = RectRight.ActualHeight;
-                 double leftScreenPointYValue = totalRectangleHeight * percentFromTop;
+                double leftScreenPointYValue = totalRectangleHeight * percentFromTop;
 
-               
+
                 Ellipse leftCircle = new Ellipse();
                 leftCircle.Stroke = System.Windows.Media.Brushes.Green;
                 leftCircle.Fill = Brushes.Green;
@@ -426,7 +469,7 @@ namespace Fda.Plots
                 ///////////////   right line ////////////////////
                 Line rightLine = new Line();
                 rightLine.X1 = distanceFromLeftToRightLine;
-                rightLine.X2 = distanceFromLeftToRightLine+15;
+                rightLine.X2 = distanceFromLeftToRightLine + 15;
                 rightLine.Y1 = rightScreenPointYValue + offsetFromTop;
                 rightLine.Y2 = rightScreenPointYValue + offsetFromTop;
                 rightLine.Stroke = System.Windows.Media.Brushes.Black;
@@ -456,212 +499,212 @@ namespace Fda.Plots
                 myCanvas.Children.Add(rightCircle);
                 myCanvas.Children.Add(leftCircle);
 
-                TrackerIsOutsideTheCurveRange = false;
+                //TrackerIsOutsideTheCurveRange = false;
             }
             else
             {
                 //we are out of range
-                TurnOutsideOfRangeOn();
+                //TurnOutsideOfRangeOn();
             }
 
 
         }
 
-        public void SetAsEndNode()
-        {
-            IsEndNode = true;
-        }
-        public void DisplayNextTracker(double x, double y)
-        {
-            //if prev plot is outside the range then there is nothing for me to track
-            if ( PreviousPlot.TrackerIsOutsideTheCurveRange)
-            {
-                TurnOutsideOfRangeOn();
-                NextPlot.DisplayNextTracker(0, 0);
-                return;
-            }
+        //public void SetAsEndNode()
+        //{
+        //    IsEndNode = true;
+        //}
+        //public void DisplayNextTracker(double x, double y)
+        //{
+        //    //if prev plot is outside the range then there is nothing for me to track
+        //    if ( PreviousPlot.TrackerIsOutsideTheCurveRange)
+        //    {
+        //        TurnOutsideOfRangeOn();
+        //        NextPlot.DisplayNextTracker(0, 0);
+        //        return;
+        //    }
 
-            //display my own stuff
+        //    //display my own stuff
 
-            DisplayLines(x, y);
+        //    DisplayLines(x, y);
 
-            if (IsEndNode == true) { return; }
+        //    if (IsEndNode == true) { return; }
 
-            //if my tracker would be out of range...
-            if(TrackerIsOutsideTheCurveRange)
-            {
-                NextPlot.DisplayNextTracker(0, 0);
-                return;
-            }
+        //    //if my tracker would be out of range...
+        //    if(TrackerIsOutsideTheCurveRange)
+        //    {
+        //        NextPlot.DisplayNextTracker(0, 0);
+        //        return;
+        //    }
 
-            if (NextPlot == null || NextPlot.Curve == null) { return; }
+        //    if (NextPlot == null || NextPlot.Curve == null) { return; }
 
-            //get the x and y values for the next plot
-            double otherValue;
+        //    //get the x and y values for the next plot
+        //    double otherValue;
 
 
 
-            switch (_NextPlotSharedAxisEnum)
-            {
-                case SharedAxisEnum.XX:
-                    {
-                        //otherValue = GetPairedValue(x, true, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
-                        if (NextPlot.FlipFrequencyAxis == true)
-                        {
-                            otherValue = NextPlot.Curve.GetYfromX(1 - x);
+        //    switch (_NextPlotSharedAxisEnum)
+        //    {
+        //        case SharedAxisEnum.XX:
+        //            {
+        //                //otherValue = GetPairedValue(x, true, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
+        //                if (NextPlot.FlipFrequencyAxis == true)
+        //                {
+        //                    otherValue = NextPlot.Curve.GetYfromX(1 - x);
 
-                        }
-                        else
-                        {
-                            otherValue = NextPlot.Curve.GetYfromX(x);
+        //                }
+        //                else
+        //                {
+        //                    otherValue = NextPlot.Curve.GetYfromX(x);
 
-                        }
-                        NextPlot.DisplayNextTracker(x, otherValue);
+        //                }
+        //                NextPlot.DisplayNextTracker(x, otherValue);
 
-                        break;
-                    }
-                case SharedAxisEnum.XY:
-                    {
-                        //otherValue = GetPairedValue(x, false, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
+        //                break;
+        //            }
+        //        case SharedAxisEnum.XY:
+        //            {
+        //                //otherValue = GetPairedValue(x, false, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
 
-                        otherValue = NextPlot.Curve.GetXfromY(x);
-                        if (NextPlot.FlipFrequencyAxis == true)
-                        {
-                            NextPlot.DisplayNextTracker(1 - x, otherValue);
+        //                otherValue = NextPlot.Curve.GetXfromY(x);
+        //                if (NextPlot.FlipFrequencyAxis == true)
+        //                {
+        //                    NextPlot.DisplayNextTracker(1 - x, otherValue);
 
-                        }
-                        else
-                        {
-                            NextPlot.DisplayNextTracker(x, otherValue);
-                        }
-                        break;
-                    }
-                case SharedAxisEnum.YX:
-                    {
-                        //otherValue = GetPairedValue(y, true, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
-                        if (NextPlot.FlipFrequencyAxis == true)
-                        {
-                            otherValue = NextPlot.Curve.GetYfromX(y);
+        //                }
+        //                else
+        //                {
+        //                    NextPlot.DisplayNextTracker(x, otherValue);
+        //                }
+        //                break;
+        //            }
+        //        case SharedAxisEnum.YX:
+        //            {
+        //                //otherValue = GetPairedValue(y, true, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
+        //                if (NextPlot.FlipFrequencyAxis == true)
+        //                {
+        //                    otherValue = NextPlot.Curve.GetYfromX(y);
 
-                        }
-                        else
-                        {
-                            otherValue = NextPlot.Curve.GetYfromX(y);
+        //                }
+        //                else
+        //                {
+        //                    otherValue = NextPlot.Curve.GetYfromX(y);
 
-                        }
-                        NextPlot.DisplayNextTracker(y, otherValue);
-                        break;
-                    }
-                case SharedAxisEnum.YY:
-                    {
-                        otherValue = NextPlot.Curve.GetXfromY(y);
-                        //otherValue = GetPairedValue(y, false, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
-                        if (NextPlot.FlipFrequencyAxis == true)
-                        {
-                            NextPlot.DisplayNextTracker(1 - otherValue, y);
+        //                }
+        //                NextPlot.DisplayNextTracker(y, otherValue);
+        //                break;
+        //            }
+        //        case SharedAxisEnum.YY:
+        //            {
+        //                otherValue = NextPlot.Curve.GetXfromY(y);
+        //                //otherValue = GetPairedValue(y, false, NextPlot.OxyPlot1.Model, NextPlot.FlipFrequencyAxis);
+        //                if (NextPlot.FlipFrequencyAxis == true)
+        //                {
+        //                    NextPlot.DisplayNextTracker(1 - otherValue, y);
 
-                        }
-                        else
-                        {
-                            NextPlot.DisplayNextTracker(otherValue, y);
-                        }
-                        break;
-                    }
-            }
-        }
+        //                }
+        //                else
+        //                {
+        //                    NextPlot.DisplayNextTracker(otherValue, y);
+        //                }
+        //                break;
+        //            }
+        //    }
+        //}
 
-        public void DisplayPreviousTracker(double x, double y)
-        {
+        //public void DisplayPreviousTracker(double x, double y)
+        //{
 
-            if (NextPlot.TrackerIsOutsideTheCurveRange)
-            {
-                TurnOutsideOfRangeOn();
-                PreviousPlot.DisplayPreviousTracker(0, 0);
-                return;
-            }
+        //    if (NextPlot.TrackerIsOutsideTheCurveRange)
+        //    {
+        //        TurnOutsideOfRangeOn();
+        //        PreviousPlot.DisplayPreviousTracker(0, 0);
+        //        return;
+        //    }
 
-            DisplayLines(x, y);
+        //    DisplayLines(x, y);
 
-            if (TrackerIsOutsideTheCurveRange)
-            {
-                PreviousPlot.DisplayPreviousTracker(0, 0);
-                return;
-            }
+        //    if (TrackerIsOutsideTheCurveRange)
+        //    {
+        //        PreviousPlot.DisplayPreviousTracker(0, 0);
+        //        return;
+        //    }
 
-            if (PreviousPlot == null || PreviousPlot.Curve == null) { return; }
-            //get the x and y values for the previous plot
-            double otherValue;
-            switch (_PreviousPlotSharedAxisEnum)
-            {
-                case SharedAxisEnum.XX:
-                    {
-                        //otherValue = GetPairedValue(x, true, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
-                        if (PreviousPlot.FlipFrequencyAxis == true)
-                        {
-                            otherValue = PreviousPlot.Curve.GetYfromX(1 - x);
+        //    if (PreviousPlot == null || PreviousPlot.Curve == null) { return; }
+        //    //get the x and y values for the previous plot
+        //    double otherValue;
+        //    switch (_PreviousPlotSharedAxisEnum)
+        //    {
+        //        case SharedAxisEnum.XX:
+        //            {
+        //                //otherValue = GetPairedValue(x, true, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
+        //                if (PreviousPlot.FlipFrequencyAxis == true)
+        //                {
+        //                    otherValue = PreviousPlot.Curve.GetYfromX(1 - x);
 
-                        }
-                        else
-                        {
-                            otherValue = PreviousPlot.Curve.GetYfromX(x);
+        //                }
+        //                else
+        //                {
+        //                    otherValue = PreviousPlot.Curve.GetYfromX(x);
 
-                        }
-                        PreviousPlot.DisplayPreviousTracker(x, otherValue);
+        //                }
+        //                PreviousPlot.DisplayPreviousTracker(x, otherValue);
 
-                        break;
-                    }
-                case SharedAxisEnum.XY:
-                    {
-                        //otherValue = GetPairedValue(dp.Y, true, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
-                        if (PreviousPlot.FlipFrequencyAxis == true)
-                        {
-                            otherValue = PreviousPlot.Curve.GetYfromX(1 - y);
+        //                break;
+        //            }
+        //        case SharedAxisEnum.XY:
+        //            {
+        //                //otherValue = GetPairedValue(dp.Y, true, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
+        //                if (PreviousPlot.FlipFrequencyAxis == true)
+        //                {
+        //                    otherValue = PreviousPlot.Curve.GetYfromX(1 - y);
 
-                        }
-                        else
-                        {
-                            otherValue = PreviousPlot.Curve.GetYfromX(y);
-                        }
-                        PreviousPlot.DisplayPreviousTracker(x, otherValue);
+        //                }
+        //                else
+        //                {
+        //                    otherValue = PreviousPlot.Curve.GetYfromX(y);
+        //                }
+        //                PreviousPlot.DisplayPreviousTracker(x, otherValue);
 
-                        break;
-                    }
-                case SharedAxisEnum.YX:
-                    {
-                        otherValue = PreviousPlot.Curve.GetXfromY(x);
-                        //otherValue = GetPairedValue(dp.X, false, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
-                        if (PreviousPlot.FlipFrequencyAxis == true)
-                        {
-                            PreviousPlot.DisplayPreviousTracker(1 - otherValue, x);
+        //                break;
+        //            }
+        //        case SharedAxisEnum.YX:
+        //            {
+        //                otherValue = PreviousPlot.Curve.GetXfromY(x);
+        //                //otherValue = GetPairedValue(dp.X, false, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
+        //                if (PreviousPlot.FlipFrequencyAxis == true)
+        //                {
+        //                    PreviousPlot.DisplayPreviousTracker(1 - otherValue, x);
 
-                        }
-                        else
-                        {
-                            PreviousPlot.DisplayPreviousTracker(otherValue, x);
+        //                }
+        //                else
+        //                {
+        //                    PreviousPlot.DisplayPreviousTracker(otherValue, x);
 
-                        }
+        //                }
 
-                        break;
-                    }
-                case SharedAxisEnum.YY:
-                    {
-                        otherValue = PreviousPlot.Curve.GetXfromY(y);
-                        //otherValue = GetPairedValue(y, false, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
-                        if (PreviousPlot.FlipFrequencyAxis == true)
-                        {
-                            PreviousPlot.DisplayPreviousTracker(1 - otherValue, y);
+        //                break;
+        //            }
+        //        case SharedAxisEnum.YY:
+        //            {
+        //                otherValue = PreviousPlot.Curve.GetXfromY(y);
+        //                //otherValue = GetPairedValue(y, false, PreviousPlot.OxyPlot1.Model, PreviousPlot.FlipFrequencyAxis);
+        //                if (PreviousPlot.FlipFrequencyAxis == true)
+        //                {
+        //                    PreviousPlot.DisplayPreviousTracker(1 - otherValue, y);
 
-                        }
-                        else
-                        {
-                            PreviousPlot.DisplayPreviousTracker(otherValue, y);
+        //                }
+        //                else
+        //                {
+        //                    PreviousPlot.DisplayPreviousTracker(otherValue, y);
 
-                        }
+        //                }
 
-                        break;
-                    }
-            }
-        }
+        //                break;
+        //            }
+        //    }
+        //}
 
         private void btn_PopPlotOut_Click(object sender, RoutedEventArgs e)
         {
@@ -681,8 +724,8 @@ namespace Fda.Plots
 
             if (parentControl != null && parentControl.GetType() == typeof(IndividualLinkedPlotControl))
             {
-                FdaViewModel.Plots.IndividualLinkedPlotControlVM vm = (FdaViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
-                vm.CurrentVM = (FdaViewModel.BaseViewModel)vm.IndividualPlotWrapperVM;
+                ViewModel.Plots.IndividualLinkedPlotControlVM vm = (ViewModel.Plots.IndividualLinkedPlotControlVM)parentControl.DataContext;
+                vm.CurrentVM = (ViewModel.BaseViewModel)vm.IndividualPlotWrapperVM;
                 ((IndividualLinkedPlotControl)parentControl).PopThePlotIntoPlot1();
             }
 
@@ -690,41 +733,41 @@ namespace Fda.Plots
         }
 
 
-        public void TurnOutsideOfRangeOn()
-        {
-            myCanvas.Children.Clear();
-            TrackerIsOutsideTheCurveRange = true;
+        //public void TurnOutsideOfRangeOn()
+        //{
+        //    myCanvas.Children.Clear();
+        //    TrackerIsOutsideTheCurveRange = true;
 
 
-        }
-        public void TurnOutsideOfRangeOff()
-        {
+        //}
+        //public void TurnOutsideOfRangeOff()
+        //{
             
-            //txt_OutsideOfRange.Visibility = Visibility.Hidden;
+        //    //txt_OutsideOfRange.Visibility = Visibility.Hidden;
 
-            this.TrackerIsOutsideTheCurveRange = false;
-            //ShowTracker();
+        //    this.TrackerIsOutsideTheCurveRange = false;
+        //    //ShowTracker();
 
-        }
+        //}
 
 
-        private static void TrackerVisibleCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            DoubleLineModulator owner = d as DoubleLineModulator;
-            bool trackerVisible = Convert.ToBoolean(e.NewValue);
-            if (trackerVisible == true)
-            {
-               // owner.ShowTracker();
-            }
-            else
-            {
-                owner.myCanvas.Children.Clear();
+        //private static void TrackerVisibleCallBack(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    DoubleLineModulator owner = d as DoubleLineModulator;
+        //    bool trackerVisible = Convert.ToBoolean(e.NewValue);
+        //    if (trackerVisible == true)
+        //    {
+        //       // owner.ShowTracker();
+        //    }
+        //    else
+        //    {
+        //        owner.myCanvas.Children.Clear();
 
-                //owner.HideTracker();
-                //if there is no tracker then turn the outside of range label off
-                // owner.TurnOutsideOfRangeOff();
-            }
-        }
+        //        //owner.HideTracker();
+        //        //if there is no tracker then turn the outside of range label off
+        //        // owner.TurnOutsideOfRangeOff();
+        //    }
+        //}
 
     }
 }

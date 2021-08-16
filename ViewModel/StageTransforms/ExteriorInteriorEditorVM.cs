@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
-using FdaViewModel.Utilities;
-using Statistics;
+using ViewModel.Utilities;
+using Functions;
+using Model;
 
-namespace FdaViewModel.StageTransforms
+namespace ViewModel.StageTransforms
 {
     //[Author(q0heccdm, 6 / 8 / 2017 10:57:35 AM)]
     public class ExteriorInteriorEditorVM:Utilities.Transactions.TransactionAndMessageBase
@@ -22,7 +21,7 @@ namespace FdaViewModel.StageTransforms
         private string _Description = "";
         private readonly string _Title = "Exterior-Interior Curve";
 
-        private Statistics.UncertainCurveDataCollection _Curve;
+        private IFdaFunction _Curve;
 
 
         #endregion
@@ -42,7 +41,7 @@ namespace FdaViewModel.StageTransforms
         {
             get { return _Title; }
         }
-        public Statistics.UncertainCurveDataCollection Curve
+        public IFdaFunction Curve
         {
             get { return _Curve; }
             set { _Curve = value; NotifyPropertyChanged(); }
@@ -56,9 +55,15 @@ namespace FdaViewModel.StageTransforms
         {
             ownerValidationRules(this);
 
-            double[] xs = new double[] { 90, 100, 105, 110, 112, 115, 116, 117, 118, 130 };
-            Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(100), new Statistics.None(105), new Statistics.None(106), new Statistics.None(107), new Statistics.None(113), new Statistics.None(119), new Statistics.None(120), new Statistics.None(130) };
-            Curve = new Statistics.UncertainCurveIncreasing(xs, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            //double[] xs = new double[] { 90, 100, 105, 110, 112, 115, 116, 117, 118, 130 };
+            //Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(100), new Statistics.None(105), new Statistics.None(106), new Statistics.None(107), new Statistics.None(113), new Statistics.None(119), new Statistics.None(120), new Statistics.None(130) };
+            //Curve = new Statistics.UncertainCurveIncreasing(xs, yValues, true, false, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            List<double> xValues = new List<double>() { 1,2,3,4,5,6 };
+            List<double> yValues = new List<double>() { 1,2,3,4,5,6 };
+            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            IFunction function = IFunctionFactory.Factory(func.Coordinates, func.Interpolator);
+            Curve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, function);// ImpactAreaFunctionFactory.Factory(func, IFdaFunctionEnum.Rating);
+
             SaveAction = saveAction;
 
          }
@@ -114,12 +119,12 @@ namespace FdaViewModel.StageTransforms
             Curve = elem.Curve;
         }
 
-        public UncertainCurveDataCollection GetTheElementsCurve()
+        public IFdaFunction GetTheElementsCurve()
         {
             return ((ExteriorInteriorElement)CurrentElement).Curve;
         }
 
-        public UncertainCurveDataCollection GetTheEditorsCurve()
+        public IFdaFunction GetTheEditorsCurve()
         {
             return Curve;
         }

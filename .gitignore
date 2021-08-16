@@ -27,6 +27,7 @@ x86/
 [Aa][Rr][Mm]64/
 bld/
 [Bb]in/
+!lib/GDAL/bin
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
@@ -351,3 +352,10 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# Hiding untracked OpenGLMapper files
+OpenGLMapper/
+/statistics_vb
+/genericcontrols
+/UserControls/upgrade.backup
+/log.txt

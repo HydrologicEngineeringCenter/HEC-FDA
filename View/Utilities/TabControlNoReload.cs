@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ViewModel.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
 
-namespace Fda.Utilities
+namespace View.Utilities
 {
     /// <summary>
     /// The tab control by default reloads each tab everytime they are selected. This was causing all kinds of problems
@@ -96,6 +97,8 @@ namespace Fda.Utilities
         {
             base.OnSelectionChanged(e);
             UpdateSelectedItem();
+          
+
         }
 
         private void UpdateSelectedItem()
@@ -110,7 +113,27 @@ namespace Fda.Utilities
 
             // show the right child
             foreach (ContentPresenter child in ItemsHolderPanel.Children)
+            {
+                child.IsVisibleChanged += Child_IsVisibleChanged;
                 child.Visibility = ((child.Tag as TabItem).IsSelected) ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            
+   
+       }
+
+        private void Child_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            TabItem item = GetSelectedTabItem();
+
+            if (item is TabItem)
+            {
+                DynamicTabVM tab = (DynamicTabVM)((TabItem)item).Header;
+                if (tab.BaseVM is MapWindowControlVM)
+                {
+                    ((MapWindowControlVM)tab.BaseVM).SetFocusToTheMapWindow();
+                }
+            }
         }
 
         private ContentPresenter CreateChildContentPresenter(object item)

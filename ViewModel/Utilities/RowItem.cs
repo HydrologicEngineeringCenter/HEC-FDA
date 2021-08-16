@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Utilities
+namespace ViewModel.Utilities
 {
     //[Author(q0heccdm, 11 / 3 / 2016 9:59:31 AM)]
     public class RowItem:BaseViewModel,IRowItem

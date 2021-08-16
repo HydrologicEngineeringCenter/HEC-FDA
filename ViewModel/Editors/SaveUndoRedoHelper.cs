@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FdaViewModel.Utilities;
+using ViewModel.Utilities;
 using System.Collections.ObjectModel;
+using Model;
 
-namespace FdaViewModel.Editors
+namespace ViewModel.Editors
 {
     public class SaveUndoRedoHelper  : BaseViewModel 
     {
@@ -72,7 +73,7 @@ namespace FdaViewModel.Editors
         }
 
         public string OldName { get; set; }
-        public Statistics.UncertainCurveDataCollection OldCurve { get; set; }
+        public IFdaFunction OldCurve { get; set; }
         //public OwnedElement SaveElement { get; set; } 
         //public Action<ChildElement> SaveAction { get; set; }
         public Saving.IPersistableWithUndoRedo SavingManager { get; set; }

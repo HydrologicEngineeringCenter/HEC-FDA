@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Fda.Output"
-        xmlns:ViewModel="clr-namespace:FdaViewModel.Output;assembly=FdaViewModel"
+        xmlns:ViewModel="clr-namespace:ViewModel.Output;assembly=ViewModel"
         xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
         xmlns:OkClose="clr-namespace:Fda.Utilities"
         mc:Ignorable="d"

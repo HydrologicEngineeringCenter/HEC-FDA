@@ -1,4 +1,7 @@
-﻿using System;
+﻿using ViewModel.Editors;
+using FunctionsView.ViewModel;
+using HEC.Plotting.SciChart2D.Charts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,8 +15,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using HEC.Plotting.SciChart2D.ViewModel;
 
-namespace Fda.StageTransforms
+namespace View.StageTransforms
 {
     /// <summary>
     /// Interaction logic for RatingCurveEditor.xaml
@@ -23,6 +27,21 @@ namespace Fda.StageTransforms
         public RatingCurveEditor()  
         {
             InitializeComponent();
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            CurveEditorVM vm = (CurveEditorVM)this.DataContext;
+            CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
+            SciChart2DChartViewModel sciChart2DChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
+            Chart2D chart = new Chart2D(sciChart2DChartViewModel);
+            editorVM.CoordinatesChartViewModel = sciChart2DChartViewModel;
+            //Binding myBinding = new Binding("EditorVM.CoordinatesChartViewModel");
+            //myBinding.Source = this.DataContext;
+            //chart.SetBinding(Chart2D.DataContextProperty, myBinding);
+
+            editorGrid.Children.Add(chart);
+            Grid.SetColumn(chart, 2);
         }
     }
 }

@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Hydraulics
+namespace ViewModel.Hydraulics
 {
     //[Author("q0heccdm", "10 / 21 / 2016 3:59:07 PM")]
     public class GridImporterVM:BaseViewModel

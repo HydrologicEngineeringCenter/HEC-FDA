@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
+using ViewModel.Conditions;
+using Model;
 
-namespace FdaViewModel.Plots
+namespace ViewModel.Plots
 {
     //[Author(q0heccdm, 1 / 19 / 2018 11:18:59 AM)]
     public class HorizontalDoubleLineModulatorWrapperVM:BaseViewModel,IIndividualLinkedPlotWrapper
@@ -23,18 +23,24 @@ namespace FdaViewModel.Plots
 
         private bool _TrackerVisible = true;
         private bool _AreaPlotVisible = true;
-        private FdaModel.ComputationPoint.PerformanceThreshold _Threshold;
+        private Model.IMetric _Metric;
 
         #endregion
         #region Properties
+        //Maybe not ideal, but i need these on IConditionsPlotWrapper so 
+        //that i can set them on plot 8. But that means they get put on
+        //all these plot classes even though they will never get set.
+        public string EAD { get; set; }
+
+        public string AEP { get; set; }
         public bool DisplayImportButton
         {
             get; set;
         }
-        public FdaModel.ComputationPoint.PerformanceThreshold Threshold
+        public Model.IMetric Metric
         {
-            get { return _Threshold; }
-            set { _Threshold = value; NotifyPropertyChanged(); }
+            get { return _Metric; }
+            set { _Metric = value; NotifyPropertyChanged(); }
         }
         public bool AreaPlotVisible
         {
@@ -57,6 +63,14 @@ namespace FdaViewModel.Plots
             get;
             set;
         }
+
+        public string Title => throw new NotImplementedException();
+
+        public string XAxisLabel => throw new NotImplementedException();
+
+        public string YAxisLabel => throw new NotImplementedException();
+
+        public int SelectedElementID { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
         #region Constructors
         public HorizontalDoubleLineModulatorWrapperVM()
@@ -73,7 +87,12 @@ namespace FdaViewModel.Plots
             //throw new NotImplementedException();
         }
 
-     
+        public void AddCurveToPlot( IFdaFunction function, string elementName,int elementID, FdaCrosshairChartModifier chartModifier)
+        {
+            throw new NotImplementedException();
+        }
+
+
         #endregion
         #region Functions
         #endregion

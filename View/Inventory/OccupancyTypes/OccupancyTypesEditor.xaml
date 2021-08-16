@@ -1,18 +1,20 @@
-﻿<UserControl x:Class="Fda.Inventory.OccupancyTypes.OccupancyTypesEditor"
+﻿<UserControl x:Class="View.Inventory.OccupancyTypes.OccupancyTypesEditor"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Fda.Inventory.OccupancyTypes"
-             xmlns:controls="clr-namespace:Fda.Inventory.OccupancyTypes.Controls"
+             xmlns:local="clr-namespace:View.Inventory.OccupancyTypes"
+             xmlns:controls="clr-namespace:View.Inventory.OccupancyTypes.Controls"
              mc:Ignorable="d" 
-                          xmlns:Utils="clr-namespace:Fda.Utilities"
-
+             xmlns:Utils="clr-namespace:View.Utilities"
              Loaded="UserControl_Loaded"
-             d:DesignHeight="1000" d:DesignWidth="1000" MinWidth="700" MinHeight="700">
+             d:DesignHeight="1000" d:DesignWidth="1000" >
+    <UserControl.Resources>
+        <Utils:BoolToModifiedConverter x:Key="boolToModifiedConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="200" MinWidth="150"/>
             <ColumnDefinition Width="*" MinWidth="500"/>
 
         </Grid.ColumnDefinitions>
@@ -21,8 +23,8 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
-        <Grid Grid.Row="0" Grid.Column="0" >
+            
+        <Grid Grid.Row="0" Grid.Column="0" Margin="0,0,5,0">
             <!--<Grid.ColumnDefinitions>
                 <ColumnDefinition Width="33*"/>
                 <ColumnDefinition Width="67*"/>
@@ -31,23 +33,23 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="605"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <GroupBox Header="Occupancy Types Group" Grid.Row="0">
+            <GroupBox Header="Occupancy Types Group" Grid.Row="0" Margin="0,0,5,0">
 
                 <StackPanel>
                     <ToolBarPanel Grid.Row="0" Grid.Column="0" Margin="5,5,0,0" Orientation="Horizontal">
                         <Button Name="CreateNewOccTypeGroupButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Import New Occupancy Type Group" ToolTipService.ShowOnDisabled="True" Click="CreateNewOccTypeGroupButton_Click" >
-                            <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
+                            <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Add.png"/>
                         </Button>
                         <Button Name="RenameOccTypeGroupButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Rename Selected Occupancy Type Group" ToolTipService.ShowOnDisabled="True" Margin="5,0,0,0" Click="RenameOccTypeGroupButton_Click" >
-                            <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Edit.png"/>
+                            <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Edit.png"/>
                         </Button>
                         <Button Name="DeleteOccTypeGroupButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Delete Selected Occupancy Type Group" ToolTipService.ShowOnDisabled="True" Margin="5,0,0,0" Click="DeleteOccTypeGroupButton_Click" >
-                            <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Delete.png"/>
+                            <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Delete.png"/>
                         </Button>
                     </ToolBarPanel>
-                    <ComboBox  Name="cmb_Group" ItemsSource="{Binding OccTypeGroups, Mode=TwoWay}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedOccTypeGroup}" Margin="5" SelectionChanged="cmb_Group_SelectionChanged" Grid.ColumnSpan="2" />
+                    <ComboBox  Name="cmb_Group" ItemsSource="{Binding OccTypeGroups, Mode=TwoWay}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedOccTypeGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" SelectionChanged="cmb_Group_SelectionChanged" Grid.ColumnSpan="2" />
                 </StackPanel>
             </GroupBox>
 
@@ -55,13 +57,13 @@
             <Label Content="Occupancy Types:" Grid.ColumnSpan="2" />
                 <ToolBarPanel Grid.Row="0" Grid.Column="0" Margin="5,5,0,0" Orientation="Horizontal">
                     <Button Name="CreateNewOccTypeButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Create New Occupancy Type" ToolTipService.ShowOnDisabled="True" Click="CreateNewOccTypeButton_Click" >
-                        <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
+                        <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Add.png"/>
                     </Button>
                     <Button Name="CopyExistingButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Copy Selected Occupancy Type" ToolTipService.ShowOnDisabled="True" Margin="5,0,0,0" Click="CopyExistingButton_Click" >
-                        <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Copy.png"/>
+                        <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Copy.png"/>
                     </Button>
                     <Button Name="DeleteButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTip="Delete Selected Occupancy Type" ToolTipService.ShowOnDisabled="True" Margin="5,0,0,0" Click="DeleteButton_Click" >
-                        <Image Width="16" Height="16" Source="pack://application:,,,/Fda;component/Resources/Delete.png"/>
+                        <Image Width="16" Height="16" Source="pack://application:,,,/View;component/Resources/Delete.png"/>
                     </Button>
                 </ToolBarPanel>
             </StackPanel>
@@ -78,7 +80,7 @@
                                                 <Expander IsExpanded="True">
                                                     <ItemsPresenter />
                                                 </Expander>
-                                                <TextBlock Name="ExpanderHeaderTextBlock" Text="{Binding Name, Mode=OneWay}" HorizontalAlignment="Stretch" Margin="21,0,0,0" Padding="4,3,0,0" VerticalAlignment="Top" FontWeight="Bold" TextDecorations="Underline"  IsHitTestVisible="True" Focusable="True"/>
+                                                <TextBlock Name="ExpanderHeaderTextBlock" Text="{Binding Name, Mode=OneWay}" HorizontalAlignment="Left" Margin="21,0,0,0" Padding="4,3,0,0" VerticalAlignment="Top" FontWeight="Bold" TextDecorations="Underline"  IsHitTestVisible="True" Focusable="True"/>
                                             </Grid>
                                         </ControlTemplate>
                                     </Setter.Value>
@@ -90,7 +92,11 @@
 
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Margin="30,0,0,0" Text="{Binding Name}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="30,0,0,0" Text="{Binding Name, Mode=TwoWay}"/>
+                            <TextBlock Margin="0,0,0,0" Text="{Binding IsModified, Converter={StaticResource boolToModifiedConverter},Mode=TwoWay}"/>
+                        </StackPanel>
+
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
@@ -104,11 +110,11 @@
             <Button Name="DeleteButton" Margin="5,0,0,0" Click="DeleteButton_Click">Delete</Button>
         </StackPanel>-->
 
-        <GridSplitter Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" Width="3" Background="Transparent" VerticalAlignment="Stretch"></GridSplitter>
+        <GridSplitter Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" Width="2" Background="Gray" VerticalAlignment="Stretch" Margin="0" ></GridSplitter>
 
         <!--<ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="1" Grid.Row="0" Grid.RowSpan="3">-->
 
-        <controls:OccTypeEditorControl x:Name="OccTypeEditorControl" Margin="5"  Grid.Row="0" Grid.RowSpan="1" Grid.Column="1"/>
+        <controls:OccTypeEditorControl x:Name="OccTypeEditorControl" DataContext="{Binding SelectedOccType}" Margin="5,5,5,0"  Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"/>
         <!--</ScrollViewer>-->
 
         <!--<local:OccTypeEditorControl x:Name="OccTypeEditorControl" Margin="5" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"></local:OccTypeEditorControl>-->
@@ -119,8 +125,11 @@
             <Button Content="OK" Height="23" Name="OKButton" Width="35" VerticalAlignment="Top" />
             <Button Content="Cancel" Height="23" Name="CancelButton" Width="45" Margin="5,0,0,0" />
         </StackPanel>-->
-        <Utils:OKCloseControl Grid.Row="2" HorizontalAlignment="Right" Grid.ColumnSpan="2"/>
 
+        <Button Name="btn_SaveAll" Grid.Row="1" Grid.Column="0" Width="50" Height="22" Margin="5,5,10,5" HorizontalAlignment="Right" Content="Save All" VerticalAlignment="Bottom" Click="btn_SaveAll_Click"/>
+
+        
+        <!--<Utils:OKCloseControl Grid.Row="2" HorizontalAlignment="Right" Grid.ColumnSpan="2"/>-->
 
     </Grid>
 </UserControl>

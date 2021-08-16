@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Study
+namespace ViewModel.Study
 {
     public class NewStudyVM : Editors.BaseEditorVM
     {
@@ -101,7 +102,7 @@ namespace FdaViewModel.Study
 
         public override void Save()
         {
-            _StudyElement.CreateStudyFromViewModel(this);
+            _StudyElement.CreateStudyFromViewModel(_StudyName, _Path);
         }
 
 

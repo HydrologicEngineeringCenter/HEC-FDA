@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
-using System.Threading.Tasks;
-using FdaModel.Functions;
-using FdaModel.ComputationPoint;
 using System.Collections.ObjectModel;
+using Model.ComputationPoint;
 
 namespace FdaViewModel.Plots
 {
@@ -82,7 +78,7 @@ namespace FdaViewModel.Plots
             set { _TotalNumberOfRealizations = value; NotifyPropertyChanged(); }
         }
         
-        public FdaModel.ComputationPoint.Outputs.Result Result { get; set; }
+        public Model.ComputationPoint.Outputs.Result Result { get; set; }
       
 
         public IndividualLinkedPlotVM Plot0VM { get; set; }

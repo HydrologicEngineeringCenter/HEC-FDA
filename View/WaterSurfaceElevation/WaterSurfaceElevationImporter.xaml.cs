@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 
-namespace Fda.WaterSurfaceElevation
+namespace View.WaterSurfaceElevation
 {
     /// <summary>
     /// Interaction logic for WaterSurfaceElevationImporter.xaml
@@ -31,7 +31,7 @@ namespace Fda.WaterSurfaceElevation
 
         private void TxtDirectory_SelectionMade(string fullpath)
         {
-            FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
+            ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
             //clear out any already existing rows
             if (!System.IO.Directory.Exists(fullpath))
             {
@@ -39,6 +39,8 @@ namespace Fda.WaterSurfaceElevation
                 //MessageBox.Show("File does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+            //is this an old fda study?
+
 
             List<string> tifFiles = new List<string>();
             List<string> fltFiles = new List<string>();
@@ -91,9 +93,19 @@ namespace Fda.WaterSurfaceElevation
 
         }
 
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
+            if(vm.IsEditor == true)
+            {
+                //get rid of the folder selection because we no longer know where the user pulled the data from
+                main_grid.RowDefinitions[3].Height = new GridLength(0);
+            }
+        }
+
         //private void btn_OK_Click(object sender, RoutedEventArgs e)
         //{
-        //    FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (FdaViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
+        //    ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
         //    bool validationIsGood = vm.OKButtonClicked();
         //    if(validationIsGood) //this runs some validation and returns true if everything was good
         //    {

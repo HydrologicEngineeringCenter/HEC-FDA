@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.StageTransforms
+namespace View.StageTransforms
 {
     /// <summary>
     /// Interaction logic for ExteriorInteriorEditor.xaml

@@ -12,7 +12,8 @@ namespace FdaViewModel.FrequencyRelationships
         #endregion
         #region Fields
         private double _Probability;
-        private Statistics.Histogram _histo;
+        //todo: Refactor: I Think histogram will have to be made public
+        private Histogram _histo;
         #endregion
         #region Properties
 

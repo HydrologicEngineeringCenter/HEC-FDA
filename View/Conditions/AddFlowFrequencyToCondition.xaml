@@ -1,12 +1,11 @@
-﻿<UserControl x:Class="Fda.Conditions.AddFlowFrequencyToCondition"
+﻿<UserControl x:Class="View.Conditions.AddFlowFrequencyToCondition"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Fda.Conditions"
-             xmlns:Utils="clr-namespace:Fda.Utilities"
+             xmlns:local="clr-namespace:View.Conditions"
+             xmlns:Utils="clr-namespace:View.Utilities"
              mc:Ignorable="d" 
-             
              d:DesignHeight="150" d:DesignWidth="500">
     <UserControl.Resources>
         <Utils:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibility" />
@@ -24,10 +23,10 @@
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right"  Visibility="{Binding IsPoppedOut,Converter={StaticResource BoolToInverseVisibility}}">
             <Button Width="18" Height="18" Name="btn_PopOutCurve" Click="btn_PopOutImporter_Click"  Margin="5" ToolTip="Pop Out" Visibility="{Binding IsPoppedOut,Converter={StaticResource BoolToInverseVisibility}}">
-                <Image Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/PopUp.png"/>
+                <Image Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopUp.png"/>
             </Button>
             <!--<Button Width="18" Height="18" Name="btn_DeleteCurve" Click="btn_Cancel_Click"  Margin="5" ToolTip="Cancel" Visibility="{Binding IsPoppedOut,Converter={StaticResource BoolToInverseVisibility}}">
-                <Image Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Delete.png"/>
+                <Image Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/Delete.png"/>
             </Button>-->
         </StackPanel>
         
@@ -53,13 +52,13 @@
             <RadioButton Grid.Row="0" Grid.Column="0" Name="rad_InflowFreq" VerticalAlignment="Center" Content="Inflow Frequency" IsEnabled="{Binding IsChecked,ElementName=rad_FlowFreq}" FontSize="12" GroupName="FlowFreqOptions" Checked="rad_InflowFreq_Checked" Margin="10,5,5,5"/>
             <ComboBox Grid.Row="0" Grid.Column="1" Height="20" Width="130" Margin="10,0,0,0" IsEnabled="{Binding IsChecked,ElementName=rad_InflowFreq}" ItemsSource="{Binding InflowFrequencyCurves}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedElement}" HorizontalAlignment="Left"/>
             <Button Grid.Row="0" Grid.Column="2" Name="btn_NewInflow" Width="24" Height="24" Margin="0,0,10,0" ToolTip="Create New Flow Frequency Curve" Click="btn_NewInflow_Click" IsEnabled="{Binding IsChecked,ElementName=rad_InflowFreq}">
-                <Image Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
+                <Image Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/Add.png"/>
             </Button>
 
             <RadioButton Grid.Row="1" Grid.Column="0" Name="rad_OutflowFreq" Content="Outflow Frequency" VerticalAlignment="Center" IsEnabled="{Binding IsChecked,ElementName=rad_FlowFreq}" FontSize="12" GroupName="FlowFreqOptions" Checked="rad_OutflowFreq_Checked" Margin="10,5,5,5"/>
                 <ComboBox Grid.Row="1" Grid.Column="1" Height="20" Width="130" Margin="10,0,0,0" IsEnabled="{Binding IsChecked,ElementName=rad_OutflowFreq}"  />
             <Button Grid.Row="1" Grid.Column="2" Name="btn_NewOutflowFreq" Width="24" Height="24" Margin="0,0,10,0" Click="btn_NewOutflowFreq_Click" IsEnabled="{Binding IsChecked,ElementName=rad_OutflowFreq}">
-                <Image  Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
+                <Image  Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/Add.png"/>
             </Button>
            
             </Grid>
@@ -70,7 +69,7 @@
         <StackPanel Name="stk_StageFreq" Grid.Row="2" Orientation="Horizontal" Margin="30,0,0,0" Visibility="Collapsed">
             <ComboBox Grid.Row="1" Grid.Column="1" Height="20" Width="140" Margin="10,0,0,0" IsEnabled="{Binding IsChecked,ElementName=rad_StageFreq}" />
             <Button Grid.Row="1" Grid.Column="2" Name="btn_NewStageFreq" Width="24" Height="24" Margin="10,0,0,0" Click="btn_NewStageFreq_Click" IsEnabled="{Binding IsChecked,ElementName=rad_StageFreq}">
-                <Image  Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/Fda;component/Resources/Add.png"/>
+                <Image  Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/Add.png"/>
             </Button>
         </StackPanel>
         

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Globalization;
 
-namespace Fda.ImpactArea
+namespace View.ImpactArea
 {
     //[Author("q0heccdm", "10 / 18 / 2016 11:49:56 AM")]
     public class RadioButtonConverterRight : IValueConverter
@@ -29,17 +29,17 @@ namespace Fda.ImpactArea
          public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) { return false; }
-            else if ((int)value == (int)FdaViewModel.ImpactArea.ImpactAreaVM.Bank.right) { return true; }
+            else if ((int)value == (int)ViewModel.ImpactArea.ImpactAreaVM.Bank.right) { return true; }
             else { return false; }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            //if (value == null) { return FdaViewModel.ImpactArea.ImpactAreaVM.Bank.right; }
+            //if (value == null) { return ViewModel.ImpactArea.ImpactAreaVM.Bank.right; }
             //else
             //{
-            //    if (bool.Parse(value.ToString()) == true) return FdaViewModel.ImpactArea.ImpactAreaVM.Bank.right; // FdaViewModel.ImpactArea.ImpactAreaVM.Bank.right;
-            //    //else return null;// FdaViewModel.ImpactArea.ImpactAreaVM.Bank.right;
+            //    if (bool.Parse(value.ToString()) == true) return ViewModel.ImpactArea.ImpactAreaVM.Bank.right; // ViewModel.ImpactArea.ImpactAreaVM.Bank.right;
+            //    //else return null;// ViewModel.ImpactArea.ImpactAreaVM.Bank.right;
             //}
             return parameter;
         }

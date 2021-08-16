@@ -1,14 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
+	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	  <OutputPath>C:\Temp\FDA2.0</OutputPath>
   </PropertyGroup>
 
+  <!--<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\Statistics.xml</DocumentationFile>
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>-->
+
   <ItemGroup>
-    <PackageReference Include="MathNet.Numerics" Version="4.8.1" />
+    <Compile Remove="Distributions\Gamma.cs" />
+    <Compile Remove="Histograms\HistogramBuilder.cs" />
+    <Compile Remove="Histograms\IHistogramBuilder.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MathNet.Numerics" Version="4.15.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LogPearsonIII\LogPearsonIII.vbproj" />
     <ProjectReference Include="..\Utilities\Utilities.csproj" />
   </ItemGroup>
 

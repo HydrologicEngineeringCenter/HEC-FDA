@@ -1,11 +1,11 @@
-﻿using FdaViewModel.Utilities;
+﻿using ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Study
+namespace ViewModel.Study
 {
     public interface IStudyCache
     {
@@ -13,7 +13,9 @@ namespace FdaViewModel.Study
         List<ChildElement> GetChildrenOfParent(ParentElement element);
         List<T> GetChildElementsOfType<T>() where T : ChildElement ;
         T GetParentElementOfType<T>() where T : ParentElement;
+        ChildElement GetChildElementOfType(Type type, int ID);
 
+        event FDACache.AddElementEventHandler PlanAdded;
 
         event FDACache.AddElementEventHandler RatingAdded;
         event FDACache.AddElementEventHandler TerrainAdded;
@@ -29,6 +31,7 @@ namespace FdaViewModel.Study
         event FDACache.AddElementEventHandler ConditionsElementAdded;
         event FDACache.AddElementEventHandler OccTypeElementAdded;
 
+        event FDACache.AddElementEventHandler PlanRemoved;
         event FDACache.AddElementEventHandler RatingRemoved;
         event FDACache.AddElementEventHandler TerrainRemoved;
         event FDACache.AddElementEventHandler ImpactAreaRemoved;
@@ -43,6 +46,7 @@ namespace FdaViewModel.Study
         event FDACache.AddElementEventHandler ConditionsElementRemoved;
         event FDACache.AddElementEventHandler OccTypeElementRemoved;
 
+        event FDACache.UpdateElementEventHandler PlanUpdated;
         event FDACache.UpdateElementEventHandler RatingUpdated;
         event FDACache.UpdateElementEventHandler TerrainUpdated;
         event FDACache.UpdateElementEventHandler ImpactAreaUpdated;

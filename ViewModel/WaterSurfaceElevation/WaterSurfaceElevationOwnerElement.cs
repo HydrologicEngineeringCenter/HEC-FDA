@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
 using System.Threading.Tasks;
-using FdaViewModel.Utilities;
+using ViewModel.Utilities;
 
-namespace FdaViewModel.WaterSurfaceElevation
+namespace ViewModel.WaterSurfaceElevation
 {
     //[Author(q0heccdm, 9 / 1 / 2017 8:46:34 AM)]
     public class WaterSurfaceElevationOwnerElement : Utilities.ParentElement
@@ -26,19 +24,23 @@ namespace FdaViewModel.WaterSurfaceElevation
         {
             Name = "Water Surface Elevations";
             IsBold = true;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+            CustomTreeViewHeader = new CustomHeaderVM(Name);
 
 
-            Utilities.NamedAction import = new Utilities.NamedAction();
+            NamedAction import = new NamedAction();
             import.Header = "Import Water Surface Elevations";
             import.Action = ImportWaterSurfaceElevations;
 
+            NamedAction importFromFDA1 = new NamedAction();
+            importFromFDA1.Header = "Import From FDA Version 1";
+            importFromFDA1.Action = ImportWaterSurfaceElevationsFDA1;
             //Utilities.NamedAction importFromAscii = new Utilities.NamedAction();
             //importFromAscii.Header = "Import Inflow Outflow Relationship From ASCII";
             //importFromAscii.Action = ImportFromASCII;
 
-            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
+            List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(import);
+            localActions.Add(importFromFDA1);
             //localActions.Add(importFromAscii);
 
             Actions = localActions;
@@ -61,41 +63,29 @@ namespace FdaViewModel.WaterSurfaceElevation
         {
             AddElement(e.Element);
         }
+
+        public void ImportWaterSurfaceElevationsFDA1(object arg1, EventArgs arg2)
+        {
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+               .WithSiblingRules(this);
+
+            WaterSurfaceElevationImporterFDA1VM vm = new WaterSurfaceElevationImporterFDA1VM(actionManager);
+
+            string header = "Import Water Surface Elevation";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportWatSurfElev");
+            Navigate(tab, false, false);
+           
+        }
         public void ImportWaterSurfaceElevations(object arg1, EventArgs arg2)
         {
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                .WithSiblingRules(this);
-               //.WithParentGuid(this.GUID)
-               //.WithCanOpenMultipleTimes(true);
 
             WaterSurfaceElevationImporterVM vm = new WaterSurfaceElevationImporterVM(actionManager);
-            //StudyCache.AddSiblingRules(vm, this);
-            //vm.AddSiblingRules(this);
+
             string header = "Import Water Surface Elevation";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportWatSurfElev");
             Navigate(tab, false,false);
-            //if (!vm.WasCanceled)
-            //{
-            //    if (!vm.HasFatalError)
-            //    {
-            //        //add the element
-            //        WaterSurfaceElevationElement ele = new WaterSurfaceElevationElement(vm.Name, vm.Description, vm.ListOfRelativePaths,vm.IsDepthGridChecked, this);
-
-            //        AddElement(ele);
-            //        //add a transaction for each file copied over?
-            //        //i need to make sure that there is the same number of original paths as new paths.
-            //        if(vm.ListOfOriginalPaths.Count == vm.ListOfRelativePaths.Count)
-            //        {
-            //            for(int i = 0;i<vm.ListOfRelativePaths.Count;i++)
-            //            {
-            //                //AddTransaction(new Utilities.Transactions.TransactionEventArgs(vm.Name, Utilities.Transactions.TransactionEnum.CreateNew, "File " + vm.ListOfOriginalPaths[i]+ " was saved to " + vm.ListOfRelativePaths[i], nameof(WaterSurfaceElevationElement)));
-
-            //            }
-            //        }
-
-            //    }
-            //}
-
         }
         #endregion
         #region Functions

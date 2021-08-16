@@ -1,42 +1,40 @@
-﻿using FdaViewModel.Editors;
-using FdaViewModel.Study;
-using FdaViewModel.Tabs;
-using FdaViewModel.Utilities;
+﻿using FdaLogging;
+using ViewModel.Study;
+using ViewModel.Utilities;
+using ViewModel.Utilities.Transactions;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
-namespace FdaViewModel
+namespace ViewModel
 {
     public delegate void RequestNavigationHandler( IDynamicTab tab, bool newWindow, bool asDialog);
     public delegate void RequestShapefilePathsHandler(ref List<string> files);
-    public delegate void RequestShapefilePathsOfTypeHandler(ref List<string> files, Utilities.VectorFeatureType type);
-    public delegate void RequestAddToMapWindowHandler(object sender, Utilities.AddMapFeatureEventArgs args);//needs to be capable of passing a geopackage connection??
-    public delegate void RequestRemoveFromMapWindowHandler(object sender, Utilities.RemoveMapFeatureEventArgs args);//needs to be capable of passing a geopackage connection??
+    public delegate void RequestShapefilePathsOfTypeHandler(ref List<string> files, VectorFeatureType type);
+    public delegate void RequestAddToMapWindowHandler(object sender, AddMapFeatureEventArgs args);//needs to be capable of passing a geopackage connection??
+    public delegate void RequestRemoveFromMapWindowHandler(object sender, RemoveMapFeatureEventArgs args);//needs to be capable of passing a geopackage connection??
 
     /// <summary>
     /// The base class for all view model classes. Contains methods that are common among all view model classes
     /// such as validation, navigation, adding rules.
     /// </summary>
-    public abstract class BaseViewModel : System.ComponentModel.INotifyPropertyChanged, System.ComponentModel.IDataErrorInfo
+    public abstract class BaseViewModel : System.ComponentModel.IDataErrorInfo
     {
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("BaseViewModel");
 
         #region Notes
         #endregion
         #region Events
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         public event RequestNavigationHandler RequestNavigation;
         public event RequestShapefilePathsHandler RequestShapefilePaths;
         public event RequestShapefilePathsOfTypeHandler RequestShapefilePathsOfType;
         public event RequestAddToMapWindowHandler RequestAddToMapWindow;
         public event RequestRemoveFromMapWindowHandler RequestRemoveFromMapWindow;
 
+        
+
         public TransactionEventHandler TransactionEvent;
+
 
 
         #endregion
@@ -45,18 +43,40 @@ namespace FdaViewModel
         /// This is a dictionary of property names, and any rules that go with that property.
         /// </summary>
         private Dictionary<string, PropertyRule> ruleMap = new Dictionary<string, PropertyRule>();
-        
-        //private Utilities.NamedAction _MessagesAction;
-        //private Utilities.NamedAction _ErrorsAction;
-        //private Utilities.NamedAction _HelpAction;
 
-
-
+        private bool _HasChanges;
 
         private string _Name;
+        private string _Error;
 
         #endregion
         #region Properties
+        //default values
+        private double _Width = 300;
+        private double _Height = 300;
+        private double _MinWidth = 300;
+        private double _MinHeight = 300;
+        public double Width
+        {
+            get { return _Width; }
+            set { _Width = value; NotifyPropertyChanged(); }
+        }
+        public double Height
+        {
+            get { return _Height; }
+            set { _Height = value; NotifyPropertyChanged(); }
+        }
+        public double MinWidth
+        {
+            get { return _MinWidth; }
+            set { _MinWidth = value; NotifyPropertyChanged(); }
+        }
+        public double MinHeight
+        {
+            get { return _MinHeight; }
+            set { _MinHeight = value; NotifyPropertyChanged(); }
+        }
+
         /// <summary>
         /// The StudyCache holds all the elements used in FDA. You can use this to get any of them 
         /// as well as listen for events where elements are added, removed, or updated
@@ -71,9 +91,6 @@ namespace FdaViewModel
             get { return _Name; }
             set { _Name = value; NotifyPropertyChanged(); }
         }
-
-    
-
 
         public string LastEditDate { get; set; }
 
@@ -97,36 +114,33 @@ namespace FdaViewModel
         /// <summary>
         /// WPF seems to not use the Error call, theoretically it is used to invalidate an object.
         /// This is required to implement IDataErrorInfo interface.
+        /// 
+        /// This is used to display a tooltip message on the "Save" button in the SaveCloseControl.
         /// </summary>
         public string Error
         {
-            get;
-            set;
+            get { return _Error; }
+            set { _Error = value; NotifyPropertyChanged(); }
         }
 
         public string ValidationErrorMessage { get; set; }
-        //public string ValidationErrorMessage {
-        //    get;
-        //    set; }
-        //public Utilities.NamedAction MessagesAction
-        //{
-        //    get { return _MessagesAction; }
-        //    set { _MessagesAction = value; NotifyPropertyChanged(); }
-        //}
-        //public Utilities.NamedAction ErrorsAction
-        //{
-        //    get { return _ErrorsAction; }
-        //    set { _ErrorsAction = value; NotifyPropertyChanged(); }
-        //}
-        //public Utilities.NamedAction HelpAction
-        //{
-        //    get { return _HelpAction; }
-        //    set { _HelpAction = value; NotifyPropertyChanged(); }
-        //}
-        public List<FdaModel.Utilities.Messager.ErrorMessage> Messages { get; private set; }
+
         public bool HasError { get; private set; }
-        public bool HasFatalError { get; private set; }
-        public bool HasChanges { get; private set; }
+        private bool _HasFatalError;
+        public bool HasFatalError
+        {
+            get { return _HasFatalError; }
+            set { _HasFatalError = value; NotifyPropertyChanged(); }
+        }
+        /// <summary>
+        /// Primarily used to determine if a class needs to save. Gets set when the notify property change fires.
+        /// It is up to the save method to turn this back to false. 
+        /// </summary>
+        public bool HasChanges 
+        {
+            get { return _HasChanges; }
+            set { _HasChanges = value; NotifyPropertyChanged(); } 
+        }
         public bool WasCanceled { get; set; }
        
 
@@ -143,11 +157,10 @@ namespace FdaViewModel
         #endregion
         #region Voids     
 
-        public void AddTransaction(object sender, Utilities.Transactions.TransactionEventArgs transaction)
+        public void AddTransaction(object sender, TransactionEventArgs transaction)
         {
             TransactionEvent?.Invoke(this, transaction);
         }
-
 
         /// <summary>
         /// Virtual method that can be overriden in any view model class to add its own validation rules. 
@@ -156,7 +169,7 @@ namespace FdaViewModel
         virtual public void AddValidationRules() { }
 
         /// <summary>
-        /// 
+        /// Loops over and evaluates the property rules.
         /// </summary>
         public void Validate()
         {
@@ -165,104 +178,63 @@ namespace FdaViewModel
             NotifyPropertyChanged("HasError");
             NotifyPropertyChanged("HasFatalError");
             StringBuilder errors = new StringBuilder();
+            List<LogItem> errorMessages = new List<LogItem>();
             Error = "";
             foreach (PropertyRule pr in ruleMap.Values)
             {
+                
                 pr.Update();
                 if (pr.HasError)
                 {
                     if (pr.HasFatalError == true)
                     {
-                        //test logging from validate
-                        //LogEventInfo theEvent = new LogEventInfo(LogLevel.Fatal, "", pr.Error);
-                        //theEvent.Properties["ID"] = this.GetType();
-                        //Logger.Log(theEvent);
-                        //UpdateMessages();
-                        AddErrorMessage(pr.Error);
-
-
-
-                        //if (GetType().IsSubclassOf(typeof(BaseEditorVM)))
-                        //{
-                        //    BaseEditorVM baseEditor = (BaseEditorVM)this;
-                        //    ChildElement elem = baseEditor.OriginalElement;
-                        //    if (elem != null)
-                        //    {
-                        //        Saving.PersistenceFactory.GetElementManager(elem).Log(FdaLogging.LoggingLevel.Fatal, pr.Error, Name);
-                        //    }
-                        //}
-                        ///////////////////////////
                         HasFatalError = true;
                         NotifyPropertyChanged("HasFatalError");
                     }
                     errors.AppendLine(pr.Error);
+                    errorMessages.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, pr.Error));
                     HasError = true;
                     NotifyPropertyChanged("HasError");
                 }
             }
             if (HasError)
             {
+                //this is used to display the tooltip on the OK and SAVE buttons
                 Error = errors.ToString().Remove(errors.ToString().Length - 2);
             }
-            else
+
+            if (this is IDisplayLogMessages)
             {
-                Error = null;
-                //todo: clear out fatal logs
+                ((IDisplayLogMessages)this).TempErrors = errorMessages;
+                ((IDisplayLogMessages)this).UpdateMessages(false);
             }
             NotifyPropertyChanged(nameof(Error));
-
         }
-        //virtual public void Save() { }
 
-            /// <summary>
-            /// Gets called anytime a property gets changed. The main purpose of this is to call validate() 
-            /// which will go over the rules and see if any are in error.
-            /// </summary>
-            /// <param name="propertyName"></param>
         protected void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
-            HasChanges = true;
 
-
+            //todo: I don't like excluding properties like this, but if the validate is going to update
+            //properties, then you will get an infinite loop if you don't exclude them.
             if (propertyName.Equals(nameof(HasError))
                 || propertyName.Equals(nameof(HasFatalError))
                 || propertyName.Equals(nameof(Error))
-                || propertyName.Equals(nameof(Messages))
+                || propertyName.Equals(nameof(HasChanges))
                 || propertyName.Equals("MessageRows")
-                || propertyName.Equals("MessageCount"))
+                || propertyName.Equals("MessageCount")
+                || propertyName.Equals("SaveStatusLevel")
+                || propertyName.Equals("IsExpanded")
+                || propertyName.Equals("SaveStatusVisible"))
+
+
             {
-                //do nothing
-                //if (propertyName.Equals(nameof(HasError)))
-                //{
-                //    if (HasError)
-                //    {
-                //       // _ErrorsAction.IsEnabled = true;
-                //       // _ErrorsAction.IsVisible = true;
-
-                //        //_MessagesAction.IsEnabled = true;
-                //       // _MessagesAction.IsVisible = true;
-
-                //    }else
-                //    {
-                //        //_ErrorsAction.IsEnabled = false;
-                //       // _ErrorsAction.IsVisible = false;
-                //    }
-                //}
+                //don't validate
             }
             else
             {
+                HasChanges = true;
                 Validate();
-                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("The property " + propertyName + " has changed", FdaModel.Utilities.Messager.ErrorMessageEnum.Fatal, GetType().Name));
             }
-            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-
-        public virtual void AddErrorMessage(string error)
-        {
-
-        }
-        public virtual void UpdateMessages()
-        {
         }
 
         /// <summary>
@@ -301,11 +273,7 @@ namespace FdaViewModel
             {
                 tab.BaseVM.WasCanceled = true;
                 RequestNavigation( tab, newWindow, asDialog);
-            }
-            else
-            {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Navigation requested from " + this.GetType().Name + " to " + tab.BaseVM.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
-            }
+            }     
         }
 
         /// <summary>
@@ -314,14 +282,7 @@ namespace FdaViewModel
         /// <param name="paths"></param>
         public void ShapefilePaths(ref List<string> paths)
         {
-            if (RequestShapefilePaths != null)
-            {
-                RequestShapefilePaths(ref paths);
-            }
-            else
-            {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Shapefiles requested from " + this.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
-            }
+            RequestShapefilePaths?.Invoke(ref paths);
         }
         /// <summary>
         /// Recursively goes up to the ViewWindow.xaml.cs and gets any files of the desired VectorFeatureType
@@ -330,14 +291,7 @@ namespace FdaViewModel
         /// <param name="type">Point, Line, Polygon</param>
         public void ShapefilePathsOfType(ref List<string> paths, Utilities.VectorFeatureType type)
         {
-            if (RequestShapefilePathsOfType != null)
-            {
-                RequestShapefilePathsOfType(ref paths, type);
-            }
-            else
-            {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Shapefiles requested from " + this.GetType().Name + " and no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
-            }
+            RequestShapefilePathsOfType?.Invoke(ref paths, type);      
         }
         /// <summary>
         /// Recursively goes up to the ViewWindow.xaml.cs and adds "this" to the map window.
@@ -346,14 +300,7 @@ namespace FdaViewModel
         /// <param name="args"></param>
         public void AddToMapWindow(object sender, Utilities.AddMapFeatureEventArgs args)
         {
-            if (RequestAddToMapWindow != null)
-            {
-                RequestAddToMapWindow(sender, args);
-            }
-            else
-            {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage(this.GetType().Name + " attemped to add a shapefile but no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
-            }
+            RequestAddToMapWindow?.Invoke(sender, args);
         }
         /// <summary>
         /// Recursively goes up to the ViewWindow.xaml.cs and removes "this" from the map window 
@@ -362,95 +309,33 @@ namespace FdaViewModel
         /// <param name="args"></param>
         public void RemoveFromMapWindow(object sender, Utilities.RemoveMapFeatureEventArgs args)
         {
-            if (RequestRemoveFromMapWindow != null)
-            {
-                RequestRemoveFromMapWindow(sender,args);
-            }
-            else
-            {
-                ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage(this.GetType().Name + " attemped to remove a shapefile but no handler had been assigned.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel & FdaModel.Utilities.Messager.ErrorMessageEnum.Major));
-            }
-        }
-        public void ReportMessage(FdaModel.Utilities.Messager.ErrorMessage error)
-        {
-            FdaModel.Utilities.Messager.Logger.Instance.ReportMessage(error);
-            if (error.ReportedFrom == GetType().Name)
-            {
-                if (Messages == null)
-                {
-                    Messages = new List<FdaModel.Utilities.Messager.ErrorMessage>();
-                    Messages.Add(error);
-                }
-                else
-                {
-                    Messages.Add(error);
-                }
-                NotifyPropertyChanged(nameof(Messages));
-                //_MessagesAction.IsEnabled = true;
-                //_MessagesAction.IsVisible = true;
-            }
-            //if ((error.ErrorLevel & FdaModel.Utilities.Messager.ErrorMessageEnum.Report) > 0)
-            {
-                //Utilities.WindowVM
-                //Navigate( new Utilities.MessageVM(error.Message), true, true, "Error Report");
-            }
-            //else
-            {
-
-            }
-        }
-
-        //public void UndoElement(ISaveUndoRedo editorVM)
-        //{
-        //    OwnedElement elem = editorVM.CurrentElement;
-        //    DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(elem.ChangeTableName());
-        //    if (elem.ChangeIndex < changeTableView.NumberOfRows - 1)
-        //    {
-        //        OwnedElement prevElement = (OwnedElement)elem.GetPreviousElementFromChangeTable(elem.ChangeIndex + 1);
-        //        if (prevElement != null)// null if out of range index
-        //        {
-        //            //cast to ISaveelement and tell it to assign its values
-        //            editorVM.AssignValuesFromElementToEditor(prevElement);
-        //            elem.ChangeIndex += 1;
-        //        }
-        //       // editorVM.UpdateUndoRedoButtons();
-        //       ((BaseViewModel)editorVM).UpdateUndoRedoVisibility(changeTableView, elem.ChangeIndex);
-        //        editorVM.UpdateTheUndoRedoRowItems();
-        //    }
-        //}
-
-        //public void RedoElement(ISaveUndoRedo editorVM)
-        //{
-        //    OwnedElement elem = editorVM.CurrentElement;
-        //    //get the previous state
-        //    if (elem.ChangeIndex > 0)
-        //    {
-        //        OwnedElement nextElement = (OwnedElement)elem.GetNextElementFromChangeTable(elem.ChangeIndex - 1);
-        //        if (nextElement != null)// null if out of range index
-        //        {
-        //            editorVM.AssignValuesFromElementToEditor(nextElement);
-        //            elem.ChangeIndex -= 1;
-        //        }
-        //        //editorVM.UpdateUndoRedoButtons();
-        //        DataBase_Reader.DataTableView changeTableView = Storage.Connection.Instance.GetTable(elem.ChangeTableName());
-        //        ((BaseViewModel)editorVM).UpdateUndoRedoVisibility(changeTableView, elem.ChangeIndex);
-        //        editorVM.UpdateTheUndoRedoRowItems();
-
-        //    }
-        //}
-
+            RequestRemoveFromMapWindow?.Invoke(sender, args);
+        }   
 
         public virtual void OnClosing(object sender, EventArgs e)
         {
-            Dispose();
+
         }
         public virtual void Dispose()
         {
-            //FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
-
 
         }
 
+        /// <summary>
+        /// Used to set the dimensions of the window when a view model is displayed in a window.
+        /// It actually gets set to the VM that the view window is pointing to in WindowVM ctor.
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="minWidth"></param>
+        /// <param name="minHeight"></param>
+        public void SetDimensions(double width, double height, double minWidth, double minHeight)
+        {
+            Width = width;
+            Height = height;
+            MinWidth = minWidth;
+            MinHeight = minHeight;
+        }
 
 
         #endregion
@@ -537,5 +422,16 @@ namespace FdaViewModel
             }
         }
         #endregion
+
+        /// <summary>
+        /// When a tab or a window is closing it will first check to see if it is ok to close
+        /// by calling this method. This is a chance to warn the user that they have unsaved data
+        /// or anything like that before actually closing the form.
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool IsOkToClose()
+        {
+            return true;
+        }
     }
 }

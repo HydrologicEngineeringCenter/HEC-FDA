@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Study
+namespace View.Study
 {
     /// <summary>
     /// Interaction logic for StudyView.xaml
@@ -72,7 +72,7 @@ namespace Fda.Study
 
         //private void MapWindow_Mouse(object sender, EventArgs e)
         //{
-        //    FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+        //    ViewModel.Study.FdaStudyVM vm = (ViewModel.Study.FdaStudyVM)this.DataContext;
         //    vm.MapTreeView = MapTreeView;
         //    vm.MapWindow = MapWindow.MapWindow;
 
@@ -129,7 +129,7 @@ namespace Fda.Study
         //            currentControl = LogicalTreeHelper.GetParent(currentControl);
         //        }
         //    }
-        //    FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+        //    ViewModel.Study.FdaStudyVM vm = (ViewModel.Study.FdaStudyVM)this.DataContext;
         //    if (vm.Tabs[DynamicTabControl.SelectedIndex].CanDelete == true)
         //    {
         //        //vm.Tabs.RemoveAt(DynamicTabControl.SelectedIndex);
@@ -139,7 +139,7 @@ namespace Fda.Study
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+            ViewModel.Study.FdaStudyVM vm = (ViewModel.Study.FdaStudyVM)this.DataContext;
             //vm.MWMTVConn. MapTreeView = MapTreeView;
             vm.AddMapsTab(MapTreeView);
             vm.AddCreateNewStudyTab();
@@ -159,7 +159,7 @@ namespace Fda.Study
             //MapWindowControl.MapWindow.MapWindow.MouseLeave += MapWindowControl.MapWindow_Mouse;
             //MapWindowControl.MapWindow.MapWindow.MouseEnter += MapWindowControl.MapWindow_Mouse;
 
-            ////FdaViewModel.Utilities.MapWindowControlVM vm = (FdaViewModel.Utilities.MapWindowControlVM)this.DataContext;
+            ////ViewModel.Utilities.MapWindowControlVM vm = (ViewModel.Utilities.MapWindowControlVM)this.DataContext;
             //// vm.MWMTVConn.MapWindow = MapWindowControl.MapWindow;
 
             //// MapWindowControl.MapWindow.TreeView = vm.MWMTVConn.MapTreeView;
@@ -177,7 +177,7 @@ namespace Fda.Study
 
         private void lbl_Study_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+            ViewModel.Study.FdaStudyVM vm = (ViewModel.Study.FdaStudyVM)this.DataContext;
 
             //lbl_Study.ContextMenu = vm.StudyElement.Actions;
             lbl_Study.ContextMenu.IsOpen = true;
@@ -213,22 +213,21 @@ namespace Fda.Study
 
         private void DynamicTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+            ViewModel.Study.FdaStudyVM vm = (ViewModel.Study.FdaStudyVM)this.DataContext;
         
 
-            System.Timers.Timer updateMapWindowTimer;
-            updateMapWindowTimer = new System.Timers.Timer(100);
-            updateMapWindowTimer.Elapsed += OnTimedEvent;
-            updateMapWindowTimer.AutoReset = false;
-            updateMapWindowTimer.Enabled = true;
+            //Timer updateMapWindowTimer = new Timer(500);
+            //updateMapWindowTimer.Elapsed += OnTimedEvent;
+            //updateMapWindowTimer.AutoReset = false;
+            //updateMapWindowTimer.Enabled = true;
         }
 
         private void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             Dispatcher.Invoke(new Action(() =>
             {
-                FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
-                //testing only
+                ViewModel.Study.FdaStudyVM vm = (ViewModel.Study.FdaStudyVM)this.DataContext;
+                //todo: testing only
                 vm.UpdateMapTabTest();
             }));
         }

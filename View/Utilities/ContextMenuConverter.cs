@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Data;
 using System.Globalization;
+using System.Windows.Controls;
 
-
-namespace Fda.Utilities
+namespace View.Utilities
 {
     class ContextMenuConverter : IValueConverter
     {
@@ -29,11 +29,11 @@ namespace Fda.Utilities
                 c.Visibility = System.Windows.Visibility.Collapsed;
                 c.IsEnabled = false;
                 return c; }
-            if (value.GetType() == typeof(List<FdaViewModel.Utilities.NamedAction>))
+            if (value.GetType() == typeof(List<ViewModel.Utilities.NamedAction>))
             {
                 c = new System.Windows.Controls.ContextMenu();
-                List<FdaViewModel.Utilities.NamedAction> Actions = (List<FdaViewModel.Utilities.NamedAction>)value;
-                foreach (FdaViewModel.Utilities.NamedAction Action in Actions)
+                List<ViewModel.Utilities.NamedAction> Actions = (List<ViewModel.Utilities.NamedAction>)value;
+                foreach (ViewModel.Utilities.NamedAction Action in Actions)
                 {
                     System.Windows.Controls.MenuItem mi = new System.Windows.Controls.MenuItem();
                     if(Action.Header == "seperator") { System.Windows.Controls.Separator s = new System.Windows.Controls.Separator(); c.Items.Add(s);continue; }
@@ -57,22 +57,32 @@ namespace Fda.Utilities
                         if (isNewMI) mi.Header = firstheader;
                         System.Windows.Controls.MenuItem basemi = new System.Windows.Controls.MenuItem();
                         //basemi.DataContext = Action;
+                        Binding tooltipBinding = new Binding("ToolTip");
+                        tooltipBinding.Source = Action;
+                        tooltipBinding.Mode = BindingMode.OneWay;
+                        tooltipBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                        BindingOperations.SetBinding(basemi, System.Windows.Controls.MenuItem.ToolTipProperty, tooltipBinding);
+                        ToolTipService.SetShowOnDisabled(basemi, true);
+
                         Binding mybinding = new Binding("IsEnabled");
                         mybinding.Source = Action;
                         mybinding.Mode = BindingMode.TwoWay;
                         mybinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                         BindingOperations.SetBinding(basemi, System.Windows.Controls.MenuItem.IsEnabledProperty, mybinding);
+
                         Binding visibilityBinding = new Binding("IsVisible");
                         visibilityBinding.Source = Action;
                         visibilityBinding.Mode = BindingMode.OneWay;
                         visibilityBinding.Converter = new System.Windows.Controls.BooleanToVisibilityConverter();
                         visibilityBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                         BindingOperations.SetBinding(basemi, System.Windows.Controls.MenuItem.VisibilityProperty, visibilityBinding);
+
                         Binding headerBinding = new Binding("Header");
                         headerBinding.Source = Action;
                         headerBinding.Mode = BindingMode.OneWay;
                         headerBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                         BindingOperations.SetBinding(basemi, System.Windows.Controls.MenuItem.HeaderProperty, headerBinding);
+
                         //basemi.Header = names.Last();
                         basemi.Click += (ob, ev) => Action.Action(Action,ev);
                         System.Windows.Controls.MenuItem tmpmi = new System.Windows.Controls.MenuItem();
@@ -107,22 +117,32 @@ namespace Fda.Utilities
                     }
                     else
                     {
+                        Binding tooltipBinding = new Binding("ToolTip");
+                        tooltipBinding.Source = Action;
+                        tooltipBinding.Mode = BindingMode.OneWay;
+                        tooltipBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                        BindingOperations.SetBinding(mi, System.Windows.Controls.MenuItem.ToolTipProperty, tooltipBinding);
+                        ToolTipService.SetShowOnDisabled(mi, true);
+
                         Binding headerBinding = new Binding("Header");
                         headerBinding.Source = Action;
                         headerBinding.Mode = BindingMode.OneWay;
                         headerBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                         BindingOperations.SetBinding(mi, System.Windows.Controls.MenuItem.HeaderProperty, headerBinding);
+
                         Binding enabledBinding = new Binding("IsEnabled");
                         enabledBinding.Source = Action;
                         enabledBinding.Mode = BindingMode.OneWay;
                         enabledBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                         BindingOperations.SetBinding(mi, System.Windows.Controls.MenuItem.IsEnabledProperty, enabledBinding);
+
                         Binding visibilityBinding = new Binding("IsVisible");
                         visibilityBinding.Source = Action;
                         visibilityBinding.Mode = BindingMode.OneWay;
                         visibilityBinding.Converter = new System.Windows.Controls.BooleanToVisibilityConverter();
                         visibilityBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                         BindingOperations.SetBinding(mi, System.Windows.Controls.MenuItem.VisibilityProperty, visibilityBinding);
+
                         mi.Click += (ob, ev) => Action.Action(Action, ev);
                         c.Items.Add(mi);
                     }

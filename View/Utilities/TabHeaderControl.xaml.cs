@@ -1,4 +1,4 @@
-﻿using FdaViewModel.Utilities;
+﻿using ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Utilities
+namespace View.Utilities
 {
     /// <summary>
     /// Interaction logic for TabHeaderControl.xaml
@@ -34,7 +34,7 @@ namespace Fda.Utilities
         private void btn_Close_Click(object sender, RoutedEventArgs e)
         {
 
-            FdaViewModel.Utilities.DynamicTabVM vm = (FdaViewModel.Utilities.DynamicTabVM)this.DataContext;
+            ViewModel.Utilities.DynamicTabVM vm = (ViewModel.Utilities.DynamicTabVM)this.DataContext;
             vm.RemoveTab();
 
             //DependencyObject currentControl = (DependencyObject)sender;
@@ -51,7 +51,7 @@ namespace Fda.Utilities
             //        currentControl = LogicalTreeHelper.GetParent(currentControl);
             //    }
             //}
-            //FdaViewModel.Study.FdaStudyVM vm = (FdaViewModel.Study.FdaStudyVM)this.DataContext;
+            //ViewModel.Study.FdaStudyVM vm = (ViewModel.Study.FdaStudyVM)this.DataContext;
             ////if (vm.Tabs[DynamicTabControl.SelectedIndex].CanDelete == true)
             //{
             //    //vm.Tabs.RemoveAt(DynamicTabControl.SelectedIndex);
@@ -69,10 +69,13 @@ namespace Fda.Utilities
             if (_MouseDown && HasDraggedMinimumDistance(e))
             {
                 Mouse.Capture(null);//releases the capture
-                DynamicTabVM vm = (DynamicTabVM)this.DataContext;
-                if (vm.CanPopOut)
+                if (this.DataContext is DynamicTabVM)
                 {
-                    vm.PopTabIntoWindowDragging();
+                    DynamicTabVM vm = (DynamicTabVM)this.DataContext;
+                    if (vm.CanPopOut)
+                    {
+                        vm.PopTabIntoWindowDragging();
+                    }
                 }
             }
 

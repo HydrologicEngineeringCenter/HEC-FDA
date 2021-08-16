@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
+
 using System.Threading.Tasks;
 
-namespace FdaViewModel.FlowTransforms
+namespace ViewModel.FlowTransforms
 {
     //[Author(q0heccdm, 6 / 8 / 2017 9:23:47 AM)]
     class FlowTransformsOwnerElement : Utilities.ParentElement

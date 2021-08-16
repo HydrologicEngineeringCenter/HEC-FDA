@@ -1,11 +1,13 @@
-﻿using FdaViewModel.Utilities;
+﻿using ViewModel.Utilities;
+using Functions;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.StageTransforms
+namespace ViewModel.StageTransforms
 {
     public class ExteriorInteriorOwnerElement : Utilities.ParentElement
     {
@@ -65,9 +67,15 @@ namespace FdaViewModel.StageTransforms
 
         public void AddNewExteriorInteriorCurve(object arg1, EventArgs arg2)
         {
-            double[] xValues = new double[] { 90, 100, 105, 110, 112, 115, 116, 117, 118, 130 };
-            Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(100), new Statistics.None(105), new Statistics.None(106), new Statistics.None(107), new Statistics.None(113), new Statistics.None(119), new Statistics.None(120), new Statistics.None(130) };
-            Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            List<double> xValues = new List<double>() { 1,2,3,4,5,6 };
+            List<double> yValues = new List<double>() { 1,2,3,4,5,6 };
+            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            IFunction function = IFunctionFactory.Factory(func.Coordinates, func.Interpolator);
+            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, function);
+
+            //double[] xValues = new double[] { 90, 100, 105, 110, 112, 115, 116, 117, 118, 130 };
+            //Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(95), new Statistics.None(96), new Statistics.None(100), new Statistics.None(105), new Statistics.None(106), new Statistics.None(107), new Statistics.None(113), new Statistics.None(119), new Statistics.None(120), new Statistics.None(130) };
+            //Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
             //create save helper
             Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetExteriorInteriorManager()
@@ -80,7 +88,7 @@ namespace FdaViewModel.StageTransforms
                //.WithParentGuid(this.GUID)
                //.WithCanOpenMultipleTimes(true);
 
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
+            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, "Exterior Stage", "Interior Stage", "Exterior - Interior Stage", actionManager);
             //StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);
             string header = "Create Exterior Interior";

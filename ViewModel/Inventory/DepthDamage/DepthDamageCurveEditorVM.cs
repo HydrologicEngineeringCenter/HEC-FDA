@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.ObjectModel;
 
 
-namespace FdaViewModel.Inventory.DepthDamage
+namespace ViewModel.Inventory.DepthDamage
 {
     //[Author(q0heccdm, 8 / 1 / 2017 3:52:10 PM)]
     public class DepthDamageCurveEditorVM : BaseViewModel
@@ -49,11 +49,12 @@ namespace FdaViewModel.Inventory.DepthDamage
             get { return _ListOfDepthDamageCurves; }
             set { _ListOfDepthDamageCurves = value;NotifyPropertyChanged(); }
         }
-        public Statistics.UncertainCurveDataCollection SelectedDepthDamageCurve_Curve
-        {
-            get { return _SelectedDepthDamageCurve.Curve; }
-            set { _SelectedDepthDamageCurve.Curve = value; NotifyPropertyChanged(); }
-        }
+        //todo: Refactor: CO
+        //public Statistics.UncertainCurveDataCollection SelectedDepthDamageCurve_Curve
+        //{
+        //    get { return _SelectedDepthDamageCurve.Curve; }
+        //    set { _SelectedDepthDamageCurve.Curve = value; NotifyPropertyChanged(); }
+        //}
 
         public DepthDamageCurve SelectedDepthDamageCurve
         {
@@ -96,13 +97,11 @@ namespace FdaViewModel.Inventory.DepthDamage
         #region Constructors
         public DepthDamageCurveEditorVM() : base()
         {
-            CurveDictionary = DepthDamageCurveData.CurveDictionary;
-            //SelectedDepthDamageCurve = CurveDictionary.FirstOrDefault().Value;
-            //string[] enumValues = Enum.GetNames(typeof(DepthDamageCurve.DamageTypeEnum));
-            //DamageTypeEnums = enumValues.ToList();
+            //todo: Refactor: CO
+            //CurveDictionary = DepthDamageCurveData.CurveDictionary;
+         
             _ListOfDepthDamageVMs = new ObservableCollection<DepthDamageCurveEditorControlVM>();
-            //_ListOfDepthDamageCurves = new ObservableCollection<DepthDamageCurve>();
-            //LoadTheListOfDepthDamageCurves();
+           
             LoadTheListOfDepthDamageVMs();
 
             if (ListOfDepthDamageVMs.Count > 0)

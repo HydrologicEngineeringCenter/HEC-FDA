@@ -1,4 +1,4 @@
-﻿using FdaViewModel.Tabs;
+﻿using ViewModel.Tabs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Conditions
+namespace View.Conditions
 {
     /// <summary>
     /// Interaction logic for AddRatingCurveToCondition.xaml
@@ -28,13 +28,13 @@ namespace Fda.Conditions
 
         private void btn_NewRatingCurve_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddRatingCurveToConditionVM vm = (FdaViewModel.Conditions.AddRatingCurveToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddRatingCurveToConditionVM vm = (ViewModel.Conditions.AddRatingCurveToConditionVM)this.DataContext;
             vm.LaunchNewRatingCurve(sender, e);
         }
 
         private void btn_OK_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddRatingCurveToConditionVM vm = (FdaViewModel.Conditions.AddRatingCurveToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddRatingCurveToConditionVM vm = (ViewModel.Conditions.AddRatingCurveToConditionVM)this.DataContext;
             if (vm.IsPoppedOut == true)
             {
                 TabController.Instance.CloseTabOrWindow(this);
@@ -53,7 +53,7 @@ namespace Fda.Conditions
 
         private void btn_Cancel_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddRatingCurveToConditionVM vm = (FdaViewModel.Conditions.AddRatingCurveToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddRatingCurveToConditionVM vm = (ViewModel.Conditions.AddRatingCurveToConditionVM)this.DataContext;
 
             if (vm.IsPoppedOut == true)
             {
@@ -66,14 +66,20 @@ namespace Fda.Conditions
 
         private void btn_PopOut_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddRatingCurveToConditionVM vm = (FdaViewModel.Conditions.AddRatingCurveToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddRatingCurveToConditionVM vm = (ViewModel.Conditions.AddRatingCurveToConditionVM)this.DataContext;
             vm.PopTheImporterOut();
         }
 
         private void btn_EditRatingCurve_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddRatingCurveToConditionVM vm = (FdaViewModel.Conditions.AddRatingCurveToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddRatingCurveToConditionVM vm = (ViewModel.Conditions.AddRatingCurveToConditionVM)this.DataContext;
             vm.EditRatingCurve(sender, e);
+        }
+
+        private void ComboBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ViewModel.Conditions.AddRatingCurveToConditionVM vm = (ViewModel.Conditions.AddRatingCurveToConditionVM)this.DataContext;
+            vm.UpdateListOfRatingCurves();
         }
     }
 }

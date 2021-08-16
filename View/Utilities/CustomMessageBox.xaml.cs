@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Fda.Utilities
+namespace View.Utilities
 {
     /// <summary>
     /// Interaction logic for CustomMessageBox.xaml
@@ -37,40 +37,40 @@ namespace Fda.Utilities
         {
             string name = ((Button)sender).Content.ToString();
 
-            FdaViewModel.Utilities.CustomMessageBoxVM vm = (FdaViewModel.Utilities.CustomMessageBoxVM)this.DataContext;
+            ViewModel.Utilities.CustomMessageBoxVM vm = (ViewModel.Utilities.CustomMessageBoxVM)this.DataContext;
             switch (name)
             {
 
                 case "Yes":
-                    vm.ClickedButton = FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Yes;
+                    vm.ClickedButton = ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Yes;
 
                     break;
                 case "No":
-                    vm.ClickedButton = FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.No;
+                    vm.ClickedButton = ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.No;
 
                     break;
                 case "OK":
-                    vm.ClickedButton = FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK;
+                    vm.ClickedButton = ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.OK;
                    
                     break;
                 case "Cancel":
-                    vm.ClickedButton = FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Cancel;
+                    vm.ClickedButton = ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Cancel;
 
                     break;
                 case "Close":
-                    vm.ClickedButton = FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Close;
+                    vm.ClickedButton = ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Close;
 
                     break;
                 case "Abort":
-                    vm.ClickedButton = FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Abort;
+                    vm.ClickedButton = ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Abort;
 
                     break;
                 case "Retry":
-                    vm.ClickedButton = FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Retry;
+                    vm.ClickedButton = ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Retry;
 
                     break;
                 case "Ignore":
-                    vm.ClickedButton = FdaViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Ignore;
+                    vm.ClickedButton = ViewModel.Utilities.CustomMessageBoxVM.ButtonsEnum.Ignore;
 
                     break;
             }

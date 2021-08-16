@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using MathNet.Numerics;
-using Utilities.Validation;
+using Utilities;
 
 namespace Statistics.Validation
 {
@@ -32,7 +32,7 @@ namespace Statistics.Validation
         /// <param name="obj"> The reference type object instance. </param>
         /// <param name="errors"> A list of errors associated with the <paramref name="obj"/> instance. </param>
         /// <returns></returns>
-        public static bool Validate<T>(this T obj, out IEnumerable<string> errors) where T : IValidate<T>
+        public static IMessageLevels Validate<T>(this T obj, out IEnumerable<IMessage> errors) where T : IValidate<T>
         {
             IValidator<T> validator = Retrieve(obj);
             return obj.Validate(validator, out errors);

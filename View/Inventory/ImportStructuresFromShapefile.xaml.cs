@@ -1,4 +1,4 @@
-﻿using FdaViewModel.Tabs;
+﻿using ViewModel.Tabs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Inventory
+namespace View.Inventory
 {
     /// <summary>
     /// Interaction logic for ImportStructuresFromShapefile.xaml
@@ -33,12 +33,12 @@ namespace Fda.Inventory
 
 
 
-            FdaViewModel.Inventory.ImportStructuresFromShapefileVM vm = (FdaViewModel.Inventory.ImportStructuresFromShapefileVM)this.DataContext;
+            ViewModel.Inventory.ImportStructuresFromShapefileVM vm = (ViewModel.Inventory.ImportStructuresFromShapefileVM)this.DataContext;
             vm.SelectedPath = path;
 
             if (!System.IO.File.Exists(System.IO.Path.ChangeExtension(path, "dbf")))
             {
-                vm.ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
+                //vm.ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
                 NextButton.IsEnabled = false;
                 return;
             }
@@ -54,7 +54,7 @@ namespace Fda.Inventory
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
 
-            FdaViewModel.Inventory.ImportStructuresFromShapefileVM vm = (FdaViewModel.Inventory.ImportStructuresFromShapefileVM)this.DataContext;
+            ViewModel.Inventory.ImportStructuresFromShapefileVM vm = (ViewModel.Inventory.ImportStructuresFromShapefileVM)this.DataContext;
             if (vm.NextButtonClicked() == true) //this does validation and returns true if it passes
             {
                 stack_ShapefilePath.Visibility = Visibility.Collapsed;
@@ -79,7 +79,7 @@ namespace Fda.Inventory
         {
             NextButton.Visibility = Visibility.Visible;
             NextButton.Content = "Next→";
-            FdaViewModel.Inventory.ImportStructuresFromShapefileVM vm = (FdaViewModel.Inventory.ImportStructuresFromShapefileVM)this.DataContext;
+            ViewModel.Inventory.ImportStructuresFromShapefileVM vm = (ViewModel.Inventory.ImportStructuresFromShapefileVM)this.DataContext;
             vm.PreviousButtonClicked();
             stack_ShapefilePath.Visibility = Visibility.Visible;
 
@@ -87,7 +87,7 @@ namespace Fda.Inventory
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            //FdaViewModel.Inventory.ImportStructuresFromShapefileVM vm = (FdaViewModel.Inventory.ImportStructuresFromShapefileVM)this.DataContext;
+            //ViewModel.Inventory.ImportStructuresFromShapefileVM vm = (ViewModel.Inventory.ImportStructuresFromShapefileVM)this.DataContext;
             //vm.RemoveTab();
 
             RunClosingLogic();

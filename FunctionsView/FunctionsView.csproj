@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>Library</OutputType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	  <OutputPath>C:\Temp\FDA2.0</OutputPath>
+    <UseWPF>true</UseWPF>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="HecCs">
+      <HintPath>..\lib\HecCs.dll</HintPath>
+    </Reference>
+    <Reference Include="PlottingLibrary2D">
+      <HintPath>..\lib\PlottingLibrary2D.dll</HintPath>
+    </Reference>
+    <Reference Include="PlottingLibraryCore">
+      <HintPath>..\lib\PlottingLibraryCore.dll</HintPath>
+    </Reference>
+    <Reference Include="SciChart.Charting">
+      <HintPath>..\lib\SciChart.Charting.dll</HintPath>
+    </Reference>
+    <Reference Include="SciChart.Charting3D">
+      <HintPath>..\lib\SciChart.Charting3D.dll</HintPath>
+    </Reference>
+    <Reference Include="SciChart.Core">
+      <HintPath>..\lib\SciChart.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SciChart.Data">
+      <HintPath>..\lib\SciChart.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="SciChart.Drawing">
+      <HintPath>..\lib\SciChart.Drawing.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <!--<ItemGroup>
+    <Content Include="sharpdx_direct3d11_1_effects_x64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>-->
+  <ItemGroup>
+    <ProjectReference Include="..\Functions\Functions.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj" />
+    <ProjectReference Include="..\Statistics\Statistics.csproj" />
+    <ProjectReference Include="..\UserControls\UserControls.vbproj" />
+    <ProjectReference Include="..\Utilities\Utilities.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+  </ItemGroup>
+</Project>

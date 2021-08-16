@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Fda.Watershed
+namespace View.Watershed
 {
     /// <summary>
     /// Interaction logic for TerrainBrowser.xaml
@@ -26,7 +26,7 @@ namespace Fda.Watershed
 
         private void cmb_Path_CmbSelectionMade(string path)
         {
-            FdaViewModel.Watershed.TerrainBrowserVM vm = (FdaViewModel.Watershed.TerrainBrowserVM)this.DataContext;
+            ViewModel.Watershed.TerrainBrowserVM vm = (ViewModel.Watershed.TerrainBrowserVM)this.DataContext;
             vm.OriginalPath = cmb_Path.SelectedPath;
         }
     }

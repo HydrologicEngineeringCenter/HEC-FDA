@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HEC.Plotting.SciChart2D.Charts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Fda.Study
+namespace View.Study
 {
     /// <summary>
     /// Interaction logic for CreateNew.xaml
@@ -26,8 +27,9 @@ namespace Fda.Study
 
         private void TextBoxFolderBrowser_SelectionMade(string fullpath)
         {
-            FdaViewModel.Study.NewStudyVM vm = (FdaViewModel.Study.NewStudyVM)this.DataContext;
+            ViewModel.Study.NewStudyVM vm = (ViewModel.Study.NewStudyVM)this.DataContext;
             vm.Path = fullpath;
         }
+
     }
 }

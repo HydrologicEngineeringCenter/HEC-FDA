@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Utilities
+namespace ViewModel.Utilities
 {
     public class NamedAction: System.ComponentModel.INotifyPropertyChanged
     {
@@ -17,10 +17,16 @@ namespace FdaViewModel.Utilities
         private bool _IsEnabled = true;
         private bool _IsVisible = true;
         private Action<object, EventArgs> _Click;
+        private string _ToolTip;
 
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
         #region Properties
+        public string ToolTip
+        {
+            get { return _ToolTip; }
+            set { _ToolTip = value; NotifyPropertyChanged(nameof(ToolTip)); }
+        }
         public string Header
         {
             get { return _Header; }

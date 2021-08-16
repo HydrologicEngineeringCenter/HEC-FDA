@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FdaModel;
-using FdaModel.Utilities.Attributes;
+
 using System.Threading.Tasks;
 
-namespace FdaViewModel.WaterSurfaceElevation
+namespace ViewModel.WaterSurfaceElevation
 {
     //[Author(q0heccdm, 9 / 11 / 2017 8:48:18 AM)]
     public class PathAndProbability

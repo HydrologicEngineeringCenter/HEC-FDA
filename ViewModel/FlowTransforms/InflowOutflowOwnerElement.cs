@@ -1,11 +1,13 @@
-﻿using FdaViewModel.Utilities;
+﻿using ViewModel.Utilities;
+using Functions;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.FlowTransforms
+namespace ViewModel.FlowTransforms
 {
     public class InflowOutflowOwnerElement : Utilities.ParentElement
     {
@@ -62,10 +64,14 @@ namespace FdaViewModel.FlowTransforms
 
         public void AddInflowOutflow(object arg1, EventArgs arg2)
         {
+            List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
+            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)func);
 
-            double[] xValues = new double[] { 0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000 };
-            Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(2000), new Statistics.None(3000), new Statistics.None(4000), new Statistics.None(5000), new Statistics.None(6000), new Statistics.None(7000), new Statistics.None(8000), new Statistics.None(9000), new Statistics.None(10000), new Statistics.None(11000) };
-            Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
+            //double[] xValues = new double[] { 0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000 };
+            //Statistics.ContinuousDistribution[] yValues = new Statistics.ContinuousDistribution[] { new Statistics.None(2000), new Statistics.None(3000), new Statistics.None(4000), new Statistics.None(5000), new Statistics.None(6000), new Statistics.None(7000), new Statistics.None(8000), new Statistics.None(9000), new Statistics.None(10000), new Statistics.None(11000) };
+            //Statistics.UncertainCurveIncreasing defaultCurve = new Statistics.UncertainCurveIncreasing(xValues, yValues, true, true, Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
             //create save helper
             Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetInflowOutflowManager()
@@ -79,7 +85,7 @@ namespace FdaViewModel.FlowTransforms
                //.WithParentGuid(this.GUID)
                //.WithCanOpenMultipleTimes(true);
 
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, actionManager);
+            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, "Inflow", "Outflow", "Inflow - Outflow", actionManager);
             //vm.ParentGUID = this.GUID;
             //StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);

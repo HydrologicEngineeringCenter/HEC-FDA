@@ -1,6 +1,6 @@
-﻿using FdaViewModel;
-using FdaViewModel.Tabs;
-using FdaViewModel.Utilities;
+﻿using ViewModel;
+using ViewModel.Tabs;
+using ViewModel.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Fda.Commands
+namespace View.Commands
 {
     class OkCommand : System.Windows.Input.ICommand
     {
@@ -60,22 +60,25 @@ namespace Fda.Commands
             //if (vm.HasChanges)//if the vm is loaded in an error state, the user will not be identified, we should consider not checking for changes.
             //{
                 vm.Validate();
-               
-                if (vm.HasError)
-                {
-                bool yesClicked = DisplayErrors(vm, window);
-                    if(!yesClicked)
-                    {
-                        return;
-                    }
+               if(vm.HasFatalError)
+            {
+                return;
+            }
+                //if (vm.HasError)
+                //{
+                //bool yesClicked = DisplayErrors(vm, window);
+                //    if(!yesClicked)
+                //    {
+                //        return;
+                //    }
                     
-                }
+                //}
                 //call save if its an editor?
-                if (vm.GetType().IsSubclassOf(typeof(FdaViewModel.Editors.BaseEditorVM)))
+                if (vm.GetType().IsSubclassOf(typeof(ViewModel.Editors.BaseEditorVM)))
                 {
-                    if (((FdaViewModel.Editors.BaseEditorVM)vm).RunSpecialValidation() == true)
+                    if (((ViewModel.Editors.BaseEditorVM)vm).RunSpecialValidation() == true)
                     {
-                        ((FdaViewModel.Editors.BaseEditorVM)vm).Save();
+                        ((ViewModel.Editors.BaseEditorVM)vm).Save();
                     }
                     else
                     {

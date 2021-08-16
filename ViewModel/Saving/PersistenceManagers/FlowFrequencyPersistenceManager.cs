@@ -1,16 +1,37 @@
-﻿using FdaViewModel.FrequencyRelationships;
-using FdaViewModel.Utilities;
+﻿using ViewModel.FrequencyRelationships;
+using ViewModel.Utilities;
+using Functions;
+using Model;
+using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utilities;
 
-namespace FdaViewModel.Saving.PersistenceManagers
+namespace ViewModel.Saving.PersistenceManagers
 {
     public class FlowFrequencyPersistenceManager :UndoRedoBase, IPersistableWithUndoRedo
     {
+        private const int ID_COL = 0;
+        private const int NAME_COL = 1;
+        private const int LAST_EDIT_DATE_COL = 2;
+        private const int DESC_COL = 3;
+        private const int YEARS_OF_RECORD_COL = 4;
+
+        private const int IS_ANALYTICAL_COL = 5;
+        private const int IS_STANDARD_COL = 6;
+
+        private const int MEAN_COL = 7;
+        private const int ST_DEV_COL = 8;
+        private const int SKEW_COL = 9;
+
+        private const int IS_LOG_FLOW_COL = 10;
+        private const int ANALYTICAL_FLOWS_COL = 11;
+        private const int GRAPHICAL_FLOWS_COL = 12;
+
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("FlowFrequencyPersistenceManager");
         //ELEMENT_TYPE is used to store the type of element in the log tables.
         private const string ELEMENT_TYPE = "Flow_Freq";
@@ -23,19 +44,47 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override string[] TableColumnNames
         {
-            get { return new string[] { "Name", "Last Edit Date", "Description", "Mean (of Log)", "Standard Deviation (of Log)", "Skew (of Log)", "Equivalent Years of Record" }; }
+            get { return new string[] { NAME, LAST_EDIT_DATE, DESCRIPTION, "por", "is_analytical", 
+                "is_standard", "mean", "standard_deviation", "skew", "is_log_flow", "analytical_flows", "graphical_flows" }; }
         }
 
         public override Type[] TableColumnTypes
         {
-            get { return new Type[] { typeof(string), typeof(string), typeof(string),
-                typeof(double), typeof(double), typeof(double), typeof(int) }; }
+            get 
+            { 
+                return new Type[] 
+                { 
+                typeof(string), typeof(string), typeof(string),
+                typeof(int), typeof(bool), typeof(bool), typeof(double), typeof(double),
+                typeof(double),typeof(bool), typeof(string), typeof(string) 
+                }; 
+            }
         }
 
 
-        public override string[] ChangeTableColumnNames => throw new NotImplementedException();
+        public override string[] ChangeTableColumnNames
+        {
+            get
+            {
+                return new string[] { ELEMENT_ID_COL_NAME, NAME, LAST_EDIT_DATE, DESCRIPTION,
+                "por", "is_analytical", "is_standard", "mean", "standard_deviation", "skew", 
+                    "is_log_flow", "analytical_flows", "graphical_flows", STATE_INDEX_COL_NAME};
+            }
 
-        public override Type[] ChangeTableColumnTypes => throw new NotImplementedException();
+        }
+
+public override Type[] ChangeTableColumnTypes
+        {
+            get
+            {
+                return new Type[] 
+                {
+                    typeof(int), typeof(string), typeof(string), typeof(string),
+                    typeof(int), typeof(bool), typeof(bool), typeof(double), typeof(double),
+                    typeof(double),typeof(bool), typeof(string), typeof(string) , typeof(int) 
+                };
+            }
+        }
 
 
         public FlowFrequencyPersistenceManager(Study.FDACache studyCache)
@@ -46,18 +95,134 @@ namespace FdaViewModel.Saving.PersistenceManagers
         #region utilities
         private object[] GetRowDataFromElement(AnalyticalFrequencyElement element)
         {
-            return new object[] { element.Name, element.LastEditDate, element.Description, element.Distribution.GetMean, element.Distribution.GetStDev, element.Distribution.GetG, element.Distribution.GetSampleSize };
+
+            string analyticalFlows = ConvertFlowsToString(element.AnalyticalFlows);
+            string graphicalFlows = ConvertFlowsToString(element.GraphicalFlows);
+            return new object[]
+            {
+                element.Name, element.LastEditDate, element.Description, element.POR, element.IsAnalytical, element.IsStandard,
+                element.Mean, element.StDev, element.Skew, element.IsLogFlow, analyticalFlows, graphicalFlows
+            };
+
+        }
+
+        private string ConvertFlowsToString(List<double> flows)
+        {
+            if(flows.Count == 0)
+            {
+                return "";
+            }
+            StringBuilder sb = new StringBuilder();
+            foreach(double d in flows)
+            {
+                sb.Append(d + ",");
+            }
+            //remove the last comma
+            sb.Remove(sb.Length - 1, 1);
+            return sb.ToString();
+        }
+
+        private List<double> ConvertStringToFlows(string flows)
+        {
+            List<double> flowDoubles = new List<double>();
+            try
+            {
+                string[] flowStrings = flows.Split(',');
+
+                foreach (string flow in flowStrings)
+                {
+                    double d = Convert.ToDouble(flow);
+                    flowDoubles.Add(d);
+                }
+            }
+            catch (Exception e)
+            {
+                //couldn't convert to doubles
+            }
+            return flowDoubles;
         }
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            double mean = (double)rowData[3];
-            double stdev = (double)rowData[4];
-            double skew = (double)rowData[5];
-            Int64 n = (Int64)rowData[6];
-            return new AnalyticalFrequencyElement((string)rowData[0], (string)rowData[1], (string)rowData[2], new Statistics.LogPearsonIII(mean, stdev, skew, (int)n));
+            string name = (string)rowData[NAME_COL];
+            string desc = (string)rowData[DESC_COL];
+            string lastEditDate = (string)rowData[LAST_EDIT_DATE_COL];
+            int por = Convert.ToInt32( rowData[YEARS_OF_RECORD_COL]);
+
+            bool isAnalytical = Convert.ToBoolean(rowData[IS_ANALYTICAL_COL]);
+            bool isStandard = Convert.ToBoolean(rowData[IS_STANDARD_COL]);
+
+            double mean = Convert.ToDouble( rowData[MEAN_COL]);
+            double stdev = Convert.ToDouble(rowData[ST_DEV_COL]);
+            double skew = Convert.ToDouble(rowData[SKEW_COL]);
+
+            bool isLogFlow = Convert.ToBoolean(rowData[IS_LOG_FLOW_COL]);
+            List<double> analyticalFlows = ConvertStringToFlows((string)rowData[ANALYTICAL_FLOWS_COL]);
+            List<double> graphicalFlows = ConvertStringToFlows((string)rowData[GRAPHICAL_FLOWS_COL]);
+
+            IFdaFunction func = CreateFdaFunction(mean, stdev, skew, isLogFlow, por, isAnalytical, isStandard, analyticalFlows);
+            return new AnalyticalFrequencyElement(name, lastEditDate, desc, por, isAnalytical, isStandard, mean, stdev, skew,
+                isLogFlow, analyticalFlows, graphicalFlows, func);
 
         }
+
+        public IFdaFunction CreateFdaFunction(double Mean, double StandardDeviation, double Skew, bool IsLogFlow, int PeriodOfRecord,
+            bool IsAnalytical, bool IsStandard, List<double> analyticalFlows)
+        {
+            List<FlowDoubleWrapper> AnalyticalFlows = new List<FlowDoubleWrapper>();
+            foreach(double d in analyticalFlows)
+            {
+                FlowDoubleWrapper fdw = new FlowDoubleWrapper(d);
+                AnalyticalFlows.Add(fdw);
+            }
+
+            List<double> xs = new List<double>();
+            List<double> ys = new List<double>();
+            try
+            {
+                if (IsAnalytical)
+                {
+                    if (IsStandard)
+                    {
+                        //todo use mean, st dev, and skew to create the curve
+
+                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                        IDistribution dist = IDistributionFactory.FactoryLogPearsonIII(Mean, StandardDeviation, Skew, PeriodOfRecord);
+                        if (dist.State < IMessageLevels.Error)
+                        {
+                            IFunction func = IFunctionFactory.Factory(dist);
+                            return IFdaFunctionFactory.Factory(IParameterEnum.InflowFrequency, func);
+
+                        }
+
+                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                    }
+                    else
+                    {
+                        List<double> flows = new List<double>();
+                        foreach (FlowDoubleWrapper d in AnalyticalFlows)
+                        {
+                            flows.Add(d.Flow);
+                        }
+
+                        IDistribution dist = IDistributionFactory.FactoryFitLogPearsonIII(flows, IsLogFlow, PeriodOfRecord);
+                        if (dist.State < IMessageLevels.Error)
+                        {
+                            IFunction func = IFunctionFactory.Factory(dist);
+                            return IFdaFunctionFactory.Factory(IParameterEnum.InflowFrequency, func);
+                        }
+                        //return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+
+        }
+
         #endregion
         /// <summary>
         /// Flow frequency doesn not save to its own table. All is contained in the parent row
@@ -67,19 +232,18 @@ namespace FdaViewModel.Saving.PersistenceManagers
         {
             if (element.GetType() == typeof(AnalyticalFrequencyElement))
             {
-                string editDate = DateTime.Now.ToString("G");
-                element.LastEditDate = editDate;
-
-                SaveNewElementToParentTable(GetRowDataFromElement((AnalyticalFrequencyElement)element), TableName, TableColumnNames, TableColumnTypes);
-                //SaveElementToChangeTable(element.Name, GetRowDataFromElement((AnalyticalFrequencyElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
-                //SaveCurveTable(element.Curve, ChangeTableConstant, editDate);
-                //add the rating element to the cache which then raises event that adds it to the owner element
-                StudyCacheForSaving.AddElement((AnalyticalFrequencyElement)element);
+                //save to parent table
+                SaveNewElement(element);
+                //save to change table
+                SaveToChangeTable(element);
+                //log message
+                Log(FdaLogging.LoggingLevel.Info, "Created new flow frequency curve: " + element.Name, element.Name);
             }
         }
 
         public void Remove(ChildElement element)
         {
+            //todo: do something here
             //RemoveFromParentTable(element, TableName);
             //DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
             //StudyCacheForSaving.RemoveElement((AnalyticalFrequencyElement)element);
@@ -88,15 +252,16 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex )
         {
-            string editDate = DateTime.Now.ToString("G");
-            elementToSave.LastEditDate = editDate;
+            base.SaveExisting(oldElement, elementToSave, changeTableIndex);
+            //string editDate = DateTime.Now.ToString("G");
+            //elementToSave.LastEditDate = editDate;
 
-            if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((AnalyticalFrequencyElement)elementToSave), oldElement.Name, TableName) )
-            {
-                UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((AnalyticalFrequencyElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
-                // SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
-                StudyCacheForSaving.UpdateFlowFrequencyElement((AnalyticalFrequencyElement)oldElement, (AnalyticalFrequencyElement)elementToSave);
-            }
+            //if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((AnalyticalFrequencyElement)elementToSave), oldElement.Name, TableName) )
+            //{
+            //    UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((AnalyticalFrequencyElement)elementToSave), oldElement.Name, TableName, true, ChangeTableConstant);
+            //    // SaveCurveTable(elementToSave.Curve, ChangeTableConstant, editDate);
+            //    StudyCacheForSaving.UpdateFlowFrequencyElement((AnalyticalFrequencyElement)oldElement, (AnalyticalFrequencyElement)elementToSave);
+            //}
         }
 
         public void Load()
@@ -158,12 +323,25 @@ namespace FdaViewModel.Saving.PersistenceManagers
 
         public override object[] GetRowDataForChangeTable(ChildElement element)
         {
-            throw new NotImplementedException();
+            if (element.Description == null)
+            {
+                element.Description = "";
+            }
+
+            int elemId = GetElementId(TableName, element.Name);
+            AnalyticalFrequencyElement elem = (AnalyticalFrequencyElement)element;
+            //the new statId will be one higher than the max that is in the table already.
+            int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
+            return new object[] { elemId, element.Name, element.LastEditDate, element.Description,
+            elem.POR, elem.IsAnalytical, elem.IsStandard, elem.Mean, elem.StDev, elem.Skew, elem.IsLogFlow,
+                ConvertFlowsToString(elem.AnalyticalFlows), ConvertFlowsToString(elem.GraphicalFlows), stateId};
+                //todo: Refactor: CO
+                //elem.Distribution.GetMean, elem.Distribution.GetStDev, elem.Distribution.GetG, elem.Distribution.GetSampleSize, stateId};
         }
 
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            throw new NotImplementedException();
+            return GetRowDataFromElement((AnalyticalFrequencyElement)elem);
         }
     }
 }

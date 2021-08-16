@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaViewModel.Inventory
+namespace ViewModel.Inventory
 {
     class InventoryOwnerElement : Utilities.ParentElement
     {
@@ -34,15 +34,14 @@ namespace FdaViewModel.Inventory
         }
         public void AddBaseElements(Study.FDACache cache)
         {
-            //DamageCategory.DamageCategoryOwnedElement d = new DamageCategory.DamageCategoryOwnedElement(this);
-            //this.AddElement(d);
-
+           
             OccupancyTypes.OccupancyTypesOwnerElement o = new OccupancyTypes.OccupancyTypesOwnerElement();
             this.AddElement(o);
             cache.OccTypeParent = o;
 
             StructureInventoryOwnerElement sioe = new StructureInventoryOwnerElement();
             this.AddElement(sioe);
+            cache.StructureInventoryParent = sioe;
 
             AggregatedStageDamage.AggregatedStageDamageOwnerElement a = new AggregatedStageDamage.AggregatedStageDamageOwnerElement();
             this.AddElement(a);

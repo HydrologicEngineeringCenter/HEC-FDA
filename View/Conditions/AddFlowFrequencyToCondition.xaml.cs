@@ -1,4 +1,4 @@
-﻿using FdaViewModel.Tabs;
+﻿using ViewModel.Tabs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Fda.Conditions
+namespace View.Conditions
 {
     /// <summary>
     /// Interaction logic for AddFlowFrequencyToCondition.xaml
@@ -59,7 +59,7 @@ namespace Fda.Conditions
 
         private void btn_NewInflow_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddFlowFrequencyToConditionVM vm = (FdaViewModel.Conditions.AddFlowFrequencyToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddFlowFrequencyToConditionVM vm = (ViewModel.Conditions.AddFlowFrequencyToConditionVM)this.DataContext;
             vm.LauchNewFlowFrequency(sender, e);
         }
 
@@ -76,7 +76,7 @@ namespace Fda.Conditions
         private void btn_OK_Click(object sender, RoutedEventArgs e)
         {
            
-            FdaViewModel.Conditions.AddFlowFrequencyToConditionVM vm = (FdaViewModel.Conditions.AddFlowFrequencyToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddFlowFrequencyToConditionVM vm = (ViewModel.Conditions.AddFlowFrequencyToConditionVM)this.DataContext;
             
             if (vm.IsPoppedOut == true)
             {
@@ -88,7 +88,7 @@ namespace Fda.Conditions
 
         private void btn_Cancel_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddFlowFrequencyToConditionVM vm = (FdaViewModel.Conditions.AddFlowFrequencyToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddFlowFrequencyToConditionVM vm = (ViewModel.Conditions.AddFlowFrequencyToConditionVM)this.DataContext;
 
             if (vm.IsPoppedOut == true)
             {
@@ -101,7 +101,7 @@ namespace Fda.Conditions
 
         private void btn_PopOutImporter_Click(object sender, RoutedEventArgs e)
         {
-            FdaViewModel.Conditions.AddFlowFrequencyToConditionVM vm = (FdaViewModel.Conditions.AddFlowFrequencyToConditionVM)this.DataContext;
+            ViewModel.Conditions.AddFlowFrequencyToConditionVM vm = (ViewModel.Conditions.AddFlowFrequencyToConditionVM)this.DataContext;
             vm.PopTheImporterOut();
         }
 
@@ -118,5 +118,7 @@ namespace Fda.Conditions
                 stk_StageFreq.Visibility = Visibility.Collapsed;
             }
         }
+
+   
     }
 }
