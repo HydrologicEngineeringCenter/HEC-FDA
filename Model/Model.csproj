@@ -5,42 +5,6 @@
 <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 <OutputPath>C:\Temp\FDA2.0</OutputPath>
   </PropertyGroup>
-	
-	
-
-
-  <ItemGroup>
-    <Compile Remove="Condition-delete\**" />
-    <Compile Remove="Elevations\**" />
-    <Compile Remove="Inputs\**" />
-    <Compile Remove="Parameters\Series\**" />
-    <EmbeddedResource Remove="Condition-delete\**" />
-    <EmbeddedResource Remove="Elevations\**" />
-    <EmbeddedResource Remove="Inputs\**" />
-    <EmbeddedResource Remove="Parameters\Series\**" />
-    <None Remove="Condition-delete\**" />
-    <None Remove="Elevations\**" />
-    <None Remove="Inputs\**" />
-    <None Remove="Parameters\Series\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="ComputePoint.cs" />
-    <Compile Remove="Conditions\ComputeTypeEnum.cs" />
-    <Compile Remove="FdaOrdinate.cs" />
-    <Compile Remove="Functions\FrequencyFunctions\LeveeFailure.cs" />
-    <Compile Remove="Functions\TransformFunctions\LeveeFailure.cs" />
-    <Compile Remove="IComputePoint.cs" />
-    <Compile Remove="IFdaOrdinate.cs" />
-    <Compile Remove="IFdaOrdinateEnum.cs" />
-    <Compile Remove="IFdaOrdinateFactory.cs" />
-    <Compile Remove="Conditions\ConditionPerformanceCompute.cs" />
-    <Compile Remove="Metric.cs" />
-    <Compile Remove="Outputs\IRealization.cs" />
-    <Compile Remove="Outputs\Realization.cs" />
-    <Compile Remove="Validation\DamageFrequencyValidator.cs" />
-    <Compile Remove="Validation\FrequencySeriesValidator.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="UnitsNet" Version="4.69.0" />
