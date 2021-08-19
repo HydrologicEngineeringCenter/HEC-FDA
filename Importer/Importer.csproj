@@ -13,7 +13,4 @@
     <ProjectReference Include="..\Utilities\Utilities.csproj" />
     <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="FunctionXY.cs" />
-  </ItemGroup>
 </Project>
