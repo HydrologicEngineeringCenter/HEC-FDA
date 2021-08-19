@@ -10,8 +10,4 @@
     <ProjectReference Include="..\Statistics\Statistics.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Floodplain\" />
-  </ItemGroup>
-
 </Project>
