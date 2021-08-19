@@ -16,27 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="ExcelTesting\ExcelComputeTests.cs" />
-    <Compile Remove="ExcelTesting\ResultDataAttribute.cs" />
-    <Compile Remove="ExcelTesting\ResultTests.cs" />
-    <Compile Remove="InputsTests\ConditionsTests\ComputeTestData.cs" />
-    <Compile Remove="InputsTests\ConditionsTests\ComputeTests.cs" />
-    <Compile Remove="InputsTests\ConditionTests.cs" />
-    <Compile Remove="InputsTests\FunctionsTests\DecoratorTests.cs" />
-    <Compile Remove="InputsTests\FunctionsTests\FrequencyFunctionTests.cs" />
-    <Compile Remove="InputsTests\FunctionsTests\FunctionRegistryTests.cs" />
-    <Compile Remove="InputsTests\FunctionsTests\OrdinatesFunctionTests.cs" />
-    <Compile Remove="InputsTests\FunctionsTests\UncertainOrdinatesFunctionTests.cs" />
-    <Compile Remove="InputsTests\ThresholdTests.cs" />
-    <Compile Remove="InputsTests\WaterSurfaceProfileTests.cs" />
-    <Compile Remove="MetricTests.cs" />
-    <Compile Remove="OutputsTests\ResultTests.cs" />
-    <Compile Remove="Utilities\DataGenerators\FunctionGeneratorsTests.cs" />
-    <Compile Remove="Utilities\DataGenerators\TestCaseGeneratorsTests.cs" />
-    <Compile Remove="Utilities\TestCases\ExampleOrdinatesFunctions.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.95.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
