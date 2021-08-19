@@ -1,0 +1,37 @@
+## How to contribute
+Please review this short guide to learn about the way we operate. Thank you!
+
+## Issues 
+Issue tracking takes place on Github, issues are displayed on the HEC-FDA 2.0 project Kanban. Issues should be defined by the smallest possible level (e.g. "write method DrawALine()" or "write unit test for method DrawALine()"). Issues will be organized by:
+- Milestone: the larger task for which the issue is being completed (e.g. "Aggregated Stage-Damage Functions").
+- Labels: Default GitHub labels and view, view model, and model. Select all that apply. 
+- Assignees: Select appropriate contributor or assign by default to @rnugent3.
+- Project: Select the HEC-FDA Version 2.0 project.
+- Link to pull request when pull request has been submitted.
+
+## Testing
+We are targeting a robust test coverage for the code, please write tests for new logic you create and for existing logic that does not have tests. 
+- Please prioritize testing abstractions to minimize change in test suite. 
+-  Ideally, please do not push code that has not been tested; at a minimum please do not submit a pull request on untested code. 
+
+## Submitting changes
+Please create a GitHub Pull Request with a clear list of what you've done. We can always use more test coverage. Please follow our coding conventions (below) and make sure all of your commits are atomic (one feature per commit). Please keep commits to a given branch small/few in number and maintain short branch life. For any given class you have touched:
+- Remove commented out code unless there is a special reason (and add reason to comments).
+- Fix all throw not implemented exceptions. 
+- Fix TODO statements, or explain why TODO remains.
+
+
+
+Always write a clear log message for your commits. Feel free to tag @rnugent3 for a review.
+
+## Coding conventions
+
+- Please consider the other people contributing to the code - make it readable, reusable, and human consumable (e.g. length/quantity of lines).
+- Please add comments in XML to explain assumptions and limitations of the code.
+- Please add comments in XML to describe appropriate use of public members.
+- Please mark work in progress with TODO or HACK.
+- Please keep the model, view model, and view separated. 
+- Please make access modifiers as limiting as possible.
+- Please avoid the term "test" except for unit tests and debugging aids. 
+- Please use camel casing generally, and, start private fields with an underscore then capital letter, and start properties and methods capitalized.
+- Please start interfaces with an upper-case "I" and start bases with "Base." 
