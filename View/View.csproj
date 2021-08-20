@@ -323,26 +323,7 @@
     <PackageReference Include="PresentationFramework" Version="4.6.0" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Output\CreateEconImportFile.xaml.cs" />
-    <Compile Remove="Output\DamageWithUncertainty.xaml.cs" />
-    <Compile Remove="Output\LinkedPlotsUpdated.xaml.cs" />
-    <Compile Remove="Plots\ExceedanceProbabilityAreaPlot.xaml.cs" />
-    <Compile Remove="Plots\ILinkedPlot.cs" />
-    <Compile Remove="Plots\IndividualLinkedPlot.xaml.cs" />
-    <Compile Remove="Plots\LinkedPlots.xaml.cs" />
-    <Compile Remove="Plots\LinkedPlotSpecificPointTool.xaml.cs" />
-    <Compile Remove="Utilities\DataGrid.cs" />
-    <Compile Remove="Utilities\TransactionMessageControl.xaml.cs" />
-    <Page Remove="Output\CreateEconImportFile.xaml" />
-    <Page Remove="Output\DamageWithUncertainty.xaml" />
-    <Page Remove="Output\LinkedPlotsUpdated.xaml" />
-    <Page Remove="Plots\ExceedanceProbabilityAreaPlot.xaml" />
-    <Page Remove="Plots\IndividualLinkedPlot.xaml" />
-    <Page Remove="Plots\LinkedPlots.xaml" />
-    <Page Remove="Plots\LinkedPlotSpecificPointTool.xaml" />
-    <Page Remove="Utilities\TransactionMessageControl.xaml" />
-  </ItemGroup>
+ 
   <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" />
   <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
   <PropertyGroup>
