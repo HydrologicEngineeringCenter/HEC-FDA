@@ -1,24 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.props')" />
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo> 
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
@@ -26,11 +10,12 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	  <OutputPath>C:\Temp\FDA2.0</OutputPath>
+	<OutputPath>C:\Temp\FDA2.0</OutputPath>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>View.App</StartupObject>
   </PropertyGroup>
+	
   <ItemGroup>
     <Reference Include="Consequences_Assist, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -38,9 +23,8 @@
     </Reference>
     <Reference Include="DatabaseManager">
       <HintPath>..\lib\DatabaseManager.dll</HintPath>
-    </Reference>
-
-			       <Reference Include="FdaLogger">
+    </Reference>  
+	  <Reference Include="FdaLogger">
       <HintPath>..\lib\FdaLogger.dll</HintPath>
     </Reference>
     <Reference Include="FdaLogging">
@@ -105,6 +89,8 @@
       <HintPath>..\lib\SciChart.Drawing.dll</HintPath>
     </Reference>
   </ItemGroup>
+	
+	
   <ItemGroup>
     <Resource Include="UI_RES\ClosedExpander.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -133,6 +119,8 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
+	
+	
   <ItemGroup>
     <ProjectReference Include="..\FunctionsView\FunctionsView.csproj" />
     <ProjectReference Include="..\Importer\Importer.csproj" />
@@ -142,151 +130,111 @@
     <ProjectReference Include="..\Utilities\Utilities.csproj" />
     <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\FDA.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Add.png" />
-  </ItemGroup>
+	
   <ItemGroup>
     <Resource Include="Resources\EditButtonIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+	  <Resource Include="Resources\InflowOutflow.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\InflowOutflowCircle.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\LeveeFeature.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\FrequencyCurve.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\ExteriorInteriorStage.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\StructureInventory.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\FailureFunction.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\ImpactAreas.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\StageDamage.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\RatingCurve.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\Condition.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\Delete.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\Copy.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\EditButtonIcon_Disabled.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\Edit.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\Terrain.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\WaterSurfaceElevation.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\Error.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\help.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\Maximize.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\Message.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\Restore.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
   </ItemGroup>
+	
   <ItemGroup>
-    <Resource Include="Resources\InflowOutflow.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+	  <Resource Include="Resources\left-arrow.png" />
+	  <Resource Include="Resources\right-arrow.png" />
+	  <Resource Include="Resources\Saving2.gif" />
+	  <Resource Include="Resources\Saving.gif" />
+	  <Resource Include="Resources\save_disabled.png" />
+	  <Resource Include="Resources\save_enabled.png" />
+	  <Resource Include="Resources\HideThresholdLines.png" />
+	  <Resource Include="Resources\ShowThresholdLines.png" />
+      <Resource Include="FDA.ico" />
+	  <Resource Include="Resources\PopIn.png" />
+	  <Resource Include="Resources\PopOut.png" />
+	  <Resource Include="Resources\tracker.png" />
+	  <Resource Include="Resources\PopDown.png" />
+	  <Resource Include="Resources\PopLeft.png" />
+	  <Resource Include="Resources\PopRight.png" />
+	  <Resource Include="Resources\PopUp.png" />
+	  <Resource Include="Resources\HideTrackers.png" />
+	  <Resource Include="Resources\ShowTrackers.png" />
+	  <Resource Include="Resources\HideAreaPlots.png" />
+	  <Resource Include="Resources\ShowAreaPlots.png" />
+	  <Resource Include="Resources\FDA.ico" />
+	  <Resource Include="Resources\Add.png" />
+	  <Resource Include="Resources\AddDisabled.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\InflowOutflowCircle.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\LeveeFeature.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\FrequencyCurve.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\ExteriorInteriorStage.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\StructureInventory.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\FailureFunction.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\ImpactAreas.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\StageDamage.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\RatingCurve.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Condition.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Delete.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Copy.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\EditButtonIcon_Disabled.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Edit.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Terrain.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\WaterSurfaceElevation.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Error.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\help.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\Maximize.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\Message.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\Restore.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="FDA.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\PopIn.png" />
-    <Resource Include="Resources\PopOut.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\tracker.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\PopDown.png" />
-    <Resource Include="Resources\PopLeft.png" />
-    <Resource Include="Resources\PopRight.png" />
-    <Resource Include="Resources\PopUp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\HideTrackers.png" />
-    <Resource Include="Resources\ShowTrackers.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\HideAreaPlots.png" />
-    <Resource Include="Resources\ShowAreaPlots.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\AddDisabled.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
+
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+	
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
       <Visible>False</Visible>
@@ -299,24 +247,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Saving.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Saving2.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\left-arrow.png" />
-    <Resource Include="Resources\right-arrow.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\save_disabled.png" />
-    <Resource Include="Resources\save_enabled.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\HideThresholdLines.png" />
-    <Resource Include="Resources\ShowThresholdLines.png" />
-  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="NLog.Config" Version="4.6.6" />
@@ -324,8 +255,6 @@
     <PackageReference Include="WpfAnimatedGif" Version="2.0.0" />
   </ItemGroup>
  
-  <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" />
-  <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
   <PropertyGroup>
     <PostBuildEvent>
 		echo "Copying the GDAL Folder to your output directory"
