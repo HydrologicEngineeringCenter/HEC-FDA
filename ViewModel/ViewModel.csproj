@@ -114,16 +114,6 @@
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.8.1" />
     <PackageReference Include="System.ServiceModel.Federation" Version="4.8.1" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="FrequencyRelationships\AnalyticalFrequencyRowItem.cs" />
-    <Compile Remove="InflowOutflow\InflowOutflowEditorVM.cs" />
-    <Compile Remove="InflowOutflow\InflowOutflowOwnedElement.cs" />
-    <Compile Remove="Output\LinkedPlotsUpdatedVM.cs" />
-    <Compile Remove="Plots\LinkedPlotsVM.cs" />
-    <Compile Remove="Tabs\TabableVM.cs" />
-    <Compile Remove="Utilities\DatabaseTable.cs" />
-    <Compile Remove="Utilities\MessagesVM.cs" />
-  </ItemGroup>
   <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" />
   <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
 </Project>
