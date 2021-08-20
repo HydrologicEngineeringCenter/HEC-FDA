@@ -3,8 +3,8 @@
     <TargetFramework>net48</TargetFramework>
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	  <OutputPath>C:\Temp\FDA2.0</OutputPath>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	<OutputPath>C:\Temp\FDA2.0</OutputPath>
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
@@ -34,11 +34,6 @@
       <HintPath>..\lib\SciChart.Drawing.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <!--<ItemGroup>
-    <Content Include="sharpdx_direct3d11_1_effects_x64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>-->
   <ItemGroup>
     <ProjectReference Include="..\Functions\Functions.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
