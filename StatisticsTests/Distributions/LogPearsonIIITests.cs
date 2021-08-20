@@ -108,6 +108,14 @@ namespace StatisticsTests.Distributions
            // testObj.CDF();
             Assert.True(testObj.Range.IsFinite());
         }
+        [Theory]
+        [InlineData(2d, 2d, 2d, .5d, 25.3900714594897d)]
+        public void InverseCDF_LPIII(double mean, double sd, double skew, double rv, double output)
+        {
+            var testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
+            double result = testObj.InverseCDF(rv);
+            Assert.Equal(output,result);
+        }
 
     }
 }
