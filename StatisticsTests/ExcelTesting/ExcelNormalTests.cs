@@ -112,17 +112,6 @@ namespace StatisticsTests.ExcelTesting
         }
 
         [Theory]
-        [ExcelNormalData(TestDataRelativePath + "Normal.xlsx", WS_SAMPLESIZE)]
-        public void Normal_SampleSize_Tests(double mean, double stDev, double sampleSize, double expected, int testRowIndex, int resultsColumnIndex)
-        {
-            Statistics.Distributions.Normal testObj = new Statistics.Distributions.Normal(mean, stDev, (int)sampleSize);
-            double actual = testObj.SampleSize;
-            bool passed = DidTestPass(actual, expected);
-            ExcelDataAttributeBase.SaveData(TestDataRelativePath + "Normal.xlsx", WS_SAMPLESIZE, testRowIndex, resultsColumnIndex, CreateDataTable(actual), passed);
-            Assert.True(passed);
-        }
-
-        [Theory]
         [ExcelNormalData(TestDataRelativePath + "Normal.xlsx", WS_PDF)]
         public void Normal_PDF_Tests(double mean, double stDev, double xVal, double expected, int testRowIndex, int resultsColumnIndex)
         {

@@ -83,49 +83,6 @@ namespace StatisticsTests.ExcelTesting
             Assert.True(testPassed);
         }
 
-        [Theory]
-        [ExcelData(TEST_DATA_RELATIVE_PATH, MEDIAN_WORKSHEET)]
-        public void MedianTests(double mode, double min, double max, double other, double expectedValue, int rowToWriteTo, int columnToWriteTo)
-        {
-            Triangular tri = (Triangular)IDistributionFactory.FactoryTriangular(min, mode, max);
-            double actualValue = tri.Median;
-            bool testPassed = (actualValue == expectedValue);
-            ExcelDataAttribute.SaveData(TEST_DATA_RELATIVE_PATH, MEDIAN_WORKSHEET, rowToWriteTo, columnToWriteTo, CreateDataTable(actualValue), testPassed);
-            Assert.True(testPassed);
-        }
-
-        [Theory]
-        [ExcelData(TEST_DATA_RELATIVE_PATH, VARIANCE_WORKSHEET)]
-        public void VarianceTests(double mode, double min, double max, double other, double expectedValue, int rowToWriteTo, int columnToWriteTo)
-        {
-            Triangular tri = (Triangular)IDistributionFactory.FactoryTriangular(min, mode, max);
-            double actualValue = tri.Variance;
-            bool testPassed = (actualValue == expectedValue);
-            ExcelDataAttribute.SaveData(TEST_DATA_RELATIVE_PATH, VARIANCE_WORKSHEET, rowToWriteTo, columnToWriteTo, CreateDataTable(actualValue), testPassed);
-            Assert.True(testPassed);
-        }
-
-        [Theory]
-        [ExcelData(TEST_DATA_RELATIVE_PATH, STDEV_WORKSHEET)]
-        public void StandardDeviationTests(double mode, double min, double max, double other, double expectedValue, int rowToWriteTo, int columnToWriteTo)
-        {
-            Triangular tri = (Triangular)IDistributionFactory.FactoryTriangular(min, mode, max);
-            double actualValue = tri.StandardDeviation;
-            bool testPassed = (actualValue == expectedValue);
-            ExcelDataAttribute.SaveData(TEST_DATA_RELATIVE_PATH, STDEV_WORKSHEET, rowToWriteTo, columnToWriteTo, CreateDataTable(actualValue), testPassed);
-            Assert.True(testPassed);
-        }
-
-        [Theory]
-        [ExcelData(TEST_DATA_RELATIVE_PATH, SKEWNESS_WORKSHEET)]
-        public void SkewnessTests(double mode, double min, double max, double other, double expectedValue, int rowToWriteTo, int columnToWriteTo)
-        {
-            Triangular tri = (Triangular)IDistributionFactory.FactoryTriangular(min, mode, max);
-            double actualValue = tri.Skewness;
-            bool testPassed = (actualValue == expectedValue);
-            ExcelDataAttribute.SaveData(TEST_DATA_RELATIVE_PATH, SKEWNESS_WORKSHEET, rowToWriteTo, columnToWriteTo, CreateDataTable(actualValue), testPassed);
-            Assert.True(testPassed);
-        }
 
         [Theory]
         [ExcelData(TEST_DATA_RELATIVE_PATH, SAMPLESIZE_WORKSHEET)]
@@ -147,27 +104,6 @@ namespace StatisticsTests.ExcelTesting
             Assert.True(testPassed);
         }
 
-        [Theory]
-        [ExcelData(TEST_DATA_RELATIVE_PATH, PDF_WORKSHEET)]
-        public void PDFTests(double mode, double min, double max, double x, double expectedValue, int rowToWriteTo, int columnToWriteTo)
-        {
-            Triangular tri = (Triangular)IDistributionFactory.FactoryTriangular(min, mode, max);
-            double actualValue = tri.PDF(x);
-            bool testPassed = (actualValue == expectedValue);
-            ExcelDataAttribute.SaveData(TEST_DATA_RELATIVE_PATH, PDF_WORKSHEET, rowToWriteTo, columnToWriteTo, CreateDataTable(actualValue), testPassed);
-            Assert.True(testPassed);
-        }
-
-        [Theory]
-        [ExcelData(TEST_DATA_RELATIVE_PATH, CDF_WORKSHEET)]
-        public void CDFTests(double mode, double min, double max, double x, double expectedValue, int rowToWriteTo, int columnToWriteTo)
-        {
-            Triangular tri = (Triangular)IDistributionFactory.FactoryTriangular(min, mode, max);
-            double actualValue = tri.CDF(x);
-            bool testPassed = (actualValue == expectedValue);
-            ExcelDataAttribute.SaveData(TEST_DATA_RELATIVE_PATH, CDF_WORKSHEET, rowToWriteTo, columnToWriteTo, CreateDataTable(actualValue), testPassed);
-            Assert.True(testPassed);
-        }
         [Theory]
         [ExcelData(TEST_DATA_RELATIVE_PATH, INVERSE_CDF_WORKSHEET)]
         public void InverseCDFTests(double mode, double min, double max, double p, double expectedValue, int rowToWriteTo, int columnToWriteTo)

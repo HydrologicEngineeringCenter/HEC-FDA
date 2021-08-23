@@ -113,24 +113,6 @@ namespace StatisticsTests.Histograms
 
         #region Properties Tests
         /// <summary>
-        /// Test that for a variety of good data examples the requested <paramref name="min"/> value is provided as the <see cref="Histogram.Range.Min"/> property.
-        /// </summary>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
-        /// <param name="widths"></param>
-        [Theory]
-        [InlineData(-100d, -1d, 1d)]
-        [InlineData(-1d, 1d, 1d)]
-        [InlineData(0d, 1d, 1d)]
-        [InlineData(0.001, 1d, .1)]
-        [InlineData(100d, 1000d, 1d)]
-        public void Min_GoodDataEmptyHistogram_Returns_SpecifiedMin(double min, double max, double widths)
-        {
-            var testobj = new HistogramNoData(min, max, widths);
-            Assert.Equal(min, testobj.Range.Min);
-        }
-        
-        /// <summary>
         /// Test that for a variety of good data examples the requested <paramref name="max"/> value is provided as the <see cref="Histogram.Range.Max"/> property.
         /// </summary>
         /// <param name="min"></param>
@@ -167,46 +149,7 @@ namespace StatisticsTests.Histograms
             var testobj = new HistogramNoData(0d, 1d, 1d);
             Assert.Equal(double.NaN, testobj.Mean);
         }
-
-        /// <summary>
-        /// Tests that the <see cref="HistogramNoData"/> <see cref="Histogram.Variance"/> property is set to <see cref="Double.NaN"/> for simple data test {min: 0, max: 1, width: 1}.
-        /// </summary>
-        [Fact]
-        public void Variance_SimpleGoodDataEmptyHistogramCase_Returns_NaN()
-        {
-            var testobj = new HistogramNoData(0d, 1d, 1d);
-            Assert.Equal(double.NaN, testobj.Variance);
-        }
-
-        /// <summary>
-        /// Tests that the <see cref="HistogramNoData"/> <see cref="Histogram.StandardDeviation"/> property is set to <see cref="Double.NaN"/> for simple data test {min: 0, max: 1, width: 1}.
-        /// </summary>
-        [Fact]
-        public void StandardDeviation_SimpleGoodDataEmptyHistogramCase_Returns_NaN()
-        {
-            var testobj = new HistogramNoData(0d, 1d, 1d);
-            Assert.Equal(double.NaN, testobj.Variance);
-        }
-
-        /// <summary>
-        /// Tests that the <see cref="HistogramNoData"/> <see cref="Histogram.Median"/> property is set to <see cref="Double.NaN"/> for simple data test {min: 0, max: 1, width: 1}.
-        /// </summary>
-        [Fact]
-        public void Median_SimpleGoodDataEmptyHistogramCase_Returns_NaN()
-        {
-            var testobj = new HistogramNoData(0d, 1d, 1d);
-            Assert.Equal(double.NaN, testobj.StandardDeviation);
-        }
-
-        /// <summary>
-        /// Tests that the <see cref="HistogramNoData"/> <see cref="Histogram.Skewness"/> property is set to <see cref="Double.NaN"/> for simple data test {min: 0, max: 1, width: 1}.
-        /// </summary>
-        [Fact]
-        public void Skewness_SimpleGoodDataEmptyHistogramCase_Returns_NaN()
-        {
-            var testobj = new HistogramNoData(0d, 1d, 1d);
-            Assert.Equal(double.NaN, testobj.Skewness);
-        }
+        
         #endregion
     }
 }
