@@ -32,5 +32,10 @@ namespace Statistics.Distributions
         {
             return _Gamma.Density(x - Shift);
         }
+
+        internal double InverseCDF(double p)
+        {
+            return _Gamma.InverseCumulativeDistribution(p) + Shift;
+        }
     }
 }
