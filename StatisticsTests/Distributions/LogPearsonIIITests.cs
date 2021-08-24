@@ -110,12 +110,39 @@ namespace StatisticsTests.Distributions
         }
         [Theory]
         [InlineData(2d, 2d, 2d, .5d, 25.3900714594897d)]
-        public void InverseCDF_LPIII(double mean, double sd, double skew, double rv, double output)
+        public void LPIII_InverseCDF(double mean, double sd, double skew, double rv, double output)
         {
             var testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
             double result = testObj.InverseCDF(rv);
-            Assert.Equal(output,result);
+            Assert.Equal(output, result, 9);
         }
-
+        [Theory]
+        [InlineData(.33d, 2d, 1d, 1.57287146151741E+21)]
+        [InlineData(1d, .1d, .2d, 40.79718422)]
+        [InlineData(5d, 3d, 8d, 1.1889E+179)]
+        [InlineData(9d, 5d, 5d, 3.568E+206)]
+        [InlineData(9d, 5d, .5d, 1.07859E+47)]
+        [InlineData(0d, 1d, 2d, 1.05735E+17)]
+        public void LPIII_Maximums(double mean, double sd, double skew, double output)
+        {
+            //https://github.com/xunit/xunit/issues/1293
+            var testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
+            double result = testObj.Range.Max;
+            double percent = Math.Abs((output - result) / output);
+            Assert.True(percent<.00001);
+        }
+        [Theory]
+        [InlineData(.33d, 2d, 1d, 0.000216135)]
+        [InlineData(1d, .1d, .2d, 3.653535566)]
+        [InlineData(5d, 3d, 8d, 0)]
+        [InlineData(9d, 5d, 5d, 2.4504E-124)]
+        [InlineData(9d, 5d, .5d, 3.22503E-08)]
+        [InlineData(0d, 1d, 2d, 0.025031829)]
+        public void LPIII_Minimums(double mean, double sd, double skew, double output)
+        {
+            var testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
+            double result = testObj.Range.Min;
+            Assert.Equal(output, result, 9);
+        }
     }
 }
