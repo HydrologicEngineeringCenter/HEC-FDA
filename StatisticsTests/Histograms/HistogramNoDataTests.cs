@@ -112,23 +112,6 @@ namespace StatisticsTests.Histograms
         #endregion
 
         #region Properties Tests
-        /// <summary>
-        /// Test that for a variety of good data examples the requested <paramref name="max"/> value is provided as the <see cref="Histogram.Range.Max"/> property.
-        /// </summary>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
-        /// <param name="width"></param>
-        [Theory]
-        [InlineData(-100d, -1d, 1d)]
-        [InlineData(-1d, 0d, 1d)]
-        [InlineData(-1d, 1d, 1d)]
-        [InlineData(0.001, .1, .01)]
-        [InlineData(100d, 1000d, 1d)]
-        public void Max_GoodDataEmptyHistogram_Returns_SpecifiedMax(double min, double max, double width)
-        {
-            var testobj = new HistogramNoData(min, max, width);
-            Assert.InRange<double>(testobj.Range.Max, max - double.Epsilon, max + width);
-        }
         
         /// <summary>
         /// Tests that the <see cref="HistogramNoData"/> <see cref="Histogram.SampleSize"/> property is set to 0 for simple data test {min: 0, max: 1, width: 1}.
