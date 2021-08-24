@@ -17,4 +17,10 @@
     <ProjectReference Include="..\FunctionsView\FunctionsView.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="HecCs">
+      <HintPath>..\lib\HecCs.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
