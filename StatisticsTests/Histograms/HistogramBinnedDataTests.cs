@@ -35,14 +35,6 @@ namespace StatisticsTests.Histograms
         #region Constructor Tests
 
         #region Histogram Range Tests
-        [Theory]
-        [InlineData(new object[2] {new double[] { 1d, 2d, 3d }, 1d })]
-        public void Min_SimpleTestData_Returns_ExpectedHistogramMinimum(double[] data, double width)
-        {
-            IData testData = IDataFactory.Factory(data);
-            var testObj = new HistogramBinnedData(testData, testData.Range.Min, testData.Range.Max, width);
-            Assert.Equal(1d, testObj.Range.Min);
-        }
         #endregion
 
         #region Binned Data

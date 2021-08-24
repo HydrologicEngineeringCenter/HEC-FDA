@@ -282,32 +282,7 @@ namespace UtilitiesTests
         }
         #endregion
         #region IsRange()
-        /// <summary>
-        /// Tests that the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function returns <see langword="false"/> for <see cref="int"/> inputs that are not strictly increasing (i.e. min = max, min > max).
-        /// </summary>
-        /// <param name="a"> The minimum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
-        /// <param name="b"> The maximum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
-        [Theory]
-        [InlineData(1, 0)]
-        [InlineData(1, 1)]
-        [InlineData(int.MaxValue, int.MinValue)]
-        public void IsRange_NonSequentialIntegerInputs_Return_False(int a, int b)
-        {
-            Assert.False(ValidationExtensions.IsRange<int>(a, b));
-        }
-        /// <summary>
-        /// Tests that the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function returns <see langword="false"/> for <see cref="double"/> inputs that are not strictly increasing (i.e. min = max, min > max).
-        /// </summary>
-        /// <param name="a"> The minimum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
-        /// <param name="b"> The maximum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
-        [Theory]
-        [InlineData(1.0, 0.0)]
-        [InlineData(1.0, 1.0)]
-        [InlineData(double.PositiveInfinity, double.NegativeInfinity)]
-        public void IsRange_NonSequentialDoubleInputs_Return_False(double a, double b)
-        {
-            Assert.False(ValidationExtensions.IsRange<double>(a, b));
-        }
+
         /// <summary>
         /// Tests that the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function returns <see langword="true"/> for <see cref="int"/> inputs that are strictly increasing (i.e. min < max).
         /// </summary>
@@ -319,28 +294,6 @@ namespace UtilitiesTests
         public void IsRange_SequentialIntInputs_Return_True(int a, int b)
         {
             Assert.True(ValidationExtensions.IsRange(a, b));
-        }
-        /// <summary>
-        /// Tests that the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function returns <see langword="true"/> for <see cref="double"/> inputs that are strictly increasing (i.e. min < max).
-        /// </summary>
-        /// <param name="a"> The minimum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
-        /// <param name="b"> The maximum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
-        [Theory]
-        [InlineData(0, 1)]
-        [InlineData(double.NegativeInfinity, double.PositiveInfinity)]
-        public void IsRange_SequentialDoubleInputs_Return_True(double a, double b)
-        {
-            Assert.True(ValidationExtensions.IsRange(a, b));
-        }
-        /// <summary>
-        /// Illustrates the unusual behavior (<see cref="double.NaN"/> &lt <see cref="double.NegativeInfinity"/>) values in the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function due to oddities in the way that C# handles the <see cref="IComparable"/> value of <see cref="double.NaN"/>.
-        /// </summary>
-        /// <param name="a"> The minimum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
-        /// <param name="b"> The maximum parameter for the <see cref="ValidationExtensions.IsRange{T}(T, T)"/> function. </param>
-        [Fact]
-        public void IsRange_NaNInputs_Return_True()
-        {
-            Assert.True(ValidationExtensions.IsRange(double.NaN, double.NegativeInfinity));
         }
         #endregion
         #region IsOnRange

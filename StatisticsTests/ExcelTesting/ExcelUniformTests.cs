@@ -50,16 +50,6 @@ namespace StatisticsTests.ExcelTesting
             Assert.True(passed);
         }
 
-        [Theory]
-        [ExcelUniformData(TestDataRelativePath + "Uniform.xlsx", WS_MODE)]
-        public void Uniform_Mode_Tests(double mode, double min, double max, double sampleSize, double expected, int testRowIndex, int resultsColumnIndex)
-        {
-            Statistics.Distributions.Uniform testObj = new Statistics.Distributions.Uniform(min, max);
-            double actual = testObj.Mode;
-            bool passed = DidTestPass(actual, expected);
-            ExcelDataAttributeBase.SaveData(TestDataRelativePath + "Uniform.xlsx", WS_MODE, testRowIndex, resultsColumnIndex, CreateDataTable(actual), passed);
-            Assert.True(passed);
-        }
 
         [Theory]
         [ExcelUniformData(TestDataRelativePath + "Uniform.xlsx", WS_MEAN)]
@@ -127,16 +117,6 @@ namespace StatisticsTests.ExcelTesting
             Assert.True(passed);
         }
 
-        [Theory]
-        [ExcelUniformData(TestDataRelativePath + "Uniform.xlsx", WS_PDF)]
-        public void Uniform_PDF_Tests(double mode, double min, double max, double xVal, double expected, int testRowIndex, int resultsColumnIndex)
-        {
-            Statistics.Distributions.Uniform testObj = new Statistics.Distributions.Uniform(min, max);
-            double actual = testObj.PDF(xVal);
-            bool passed = DidTestPass(actual, expected);
-            ExcelDataAttributeBase.SaveData(TestDataRelativePath + "Uniform.xlsx", WS_PDF, testRowIndex, resultsColumnIndex, CreateDataTable(actual), passed);
-            Assert.True(passed);
-        }
 
         [Theory]
         [ExcelUniformData(TestDataRelativePath + "Uniform.xlsx", WS_CDF)]
