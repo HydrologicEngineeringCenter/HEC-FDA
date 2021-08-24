@@ -16,14 +16,6 @@ namespace FunctionsTests.CoordinatesFunctions
     public class CoordinatesFunctionLinkedTests : CoordinateFunctionsTestData
     {
 
-        //public static TheoryData<List<ICoordinatesFunction<IOrdinate, IOrdinate>>> Data
-        //{
-        //    get
-        //    {
-        //        var data = new TheoryData<ICoordinatesFunction<IOrdinate, IOrdinate>>();
-        //        data.Add()
-        //    }
-        //}
         #region TestingConstructor
         /// <summary>
         /// Tests the construction of a LinkedCoordinatesFunction with 3 constant monotonic increasing functions
@@ -274,54 +266,9 @@ namespace FunctionsTests.CoordinatesFunctions
         #endregion
 
         #region IsValid Property
-        ////todo: add more tests to this once the validator is more fully developed.
-        ///// <summary>
-        ///// Tests the IsValid property. Should return false if interpolators are null.
-        ///// </summary>
-        //[Fact]
-        //public void LinkedCoordinatesFunction_IsValid_Returns_Bool_NullInterpolators()
-        //{
-        //    List<ICoordinatesFunction> functions = Create_3Constant_StrictlyIncreasing_OverlappingXs_OrdinateFunctions();
-
-        //    CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions);
-        //    Assert.False(func.IsValid);
-        //}
-
-        /// <summary>
-        /// Tests the IsValid property. Should throw an invalid constructor argument exception if the 
-        /// functions are null.
-        /// </summary>
-        [Fact]
-        public void LinkedCoordinatesFunction_IsValid_Returns_Bool_NullFunctions()
-        {
-
-            Assert.Throws<InvalidConstructorArgumentsException>(()=> new CoordinatesFunctionLinked(null));
-        }
 
 
-        ///// <summary>
-        ///// Tests the IsValid Property. Should return false if the domains of the functions are overlapping.
-        ///// </summary>
-        //[Fact]
-        //public void LinkedCoordinatesFunction_IsValid_Returns_Bool_OverlappingDomains()
-        //{
-        //    List<ICoordinatesFunction> functions = Create_3Constant_StrictlyIncreasing_OverlappingXs_OrdinateFunctions();
 
-        //    CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions);
-        //    Assert.False(func.IsValid);
-        //}
-
-        ///// <summary>
-        ///// Tests the IsValid Property. Should return true if functions are not overlapping.
-        ///// </summary>
-        //[Fact]
-        //public void LinkedCoordinatesFunction_IsValid_Returns_Bool_AllGood()
-        //{
-        //    List<ICoordinatesFunction> functions = Create_3Constant_StrictMonotonicIncreasing_OrdinateFunctions();
-
-        //    CoordinatesFunctionLinked func = new CoordinatesFunctionLinked(functions);
-        //    Assert.True(func.IsValid);
-        //}
         #endregion
 
         #region Errors Property
@@ -344,16 +291,6 @@ namespace FunctionsTests.CoordinatesFunctions
             Assert.True(count>0);
         }
 
-        //todo: update this once you get the new messaging code.
-        /// <summary>
-        /// Tests the Error property. Should throw an invalid constructor argument exception if the 
-        /// functions are null.
-        /// </summary>
-        [Fact]
-        public void LinkedCoordinatesFunction_Errors_Returns_Bool_NullFunctions()
-        {
-            Assert.Throws<InvalidConstructorArgumentsException>(() => new CoordinatesFunctionLinked(null));
-        }
 
 
         /// <summary>

@@ -64,33 +64,6 @@ namespace FunctionsTests.Coordinates
             Assert.True(coord.Y.Value() == value[0]);
         }
 
-        /// <summary>
-        /// Tests that the equals method returns true when checking two coordinates with the same values.
-        /// </summary>
-        [Fact]
-        public void Equals_GoodInput_Returns_Bool()
-        {
-            Distribution dist = new Distribution(new Normal(1, 1));
-            CoordinateVariableY coord1 = new CoordinateVariableY(new Constant(1), dist);
-
-            IDistributedOrdinate dist2 = new Distribution(new Normal(1, 1));
-            CoordinateVariableY coord2 = new CoordinateVariableY(new Constant(1), dist);
-            Assert.True(coord1.Equals(coord2));
-        }
-
-        /// <summary>
-        /// Tests that the write to xml method can be read back in and turned into the same coordinate.
-        /// </summary>
-        [Fact]
-        public void WriteToXML_GoodInput_Returns_Bool()
-        {
-            Distribution dist = new Distribution(new Normal(1, 1));
-            CoordinateVariableY coord1 = new CoordinateVariableY(new Constant(1), dist);
-            XElement xOrdXml = coord1.X.WriteToXML();
-            XElement yOrdXml = coord1.Y.WriteToXML();
-
-            ICoordinate returnedCoord = ICoordinateFactory.Factory(xOrdXml, yOrdXml);
-            Assert.True(coord1.Equals(returnedCoord));
-        }
+  
     }
 }

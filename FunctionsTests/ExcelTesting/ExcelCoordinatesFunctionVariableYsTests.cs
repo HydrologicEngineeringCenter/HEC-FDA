@@ -19,35 +19,6 @@ namespace FunctionsTests.ExcelTesting
 
 
 
-        [Theory]
-        [ExcelVariableYsData(_TestDataRelativePath, 1)]
-        public void ExcelOrderTests<T>(
-            List<double> xs1,
-            string distType,
-            List<double> min,
-            List<double> max,
-            List<double> mode,
-            List<double> mean,
-            List<double> stDev,
-            List<double> alpha,
-            List<double> beta,
-            List<double> location,
-            List<double> scale,
-            string interpolation,
-            int rowToWriteTo, int columnToWriteTo)
-        {
-            IDistributionEnum dist = ConvertToDistEnum(distType);
-            InterpolationEnum interp = ConvertToInterpolationEnum(interpolation);
-            ICoordinatesFunction func = CreateCoordinatesFunction(xs1, dist, min, max, mode, mean, stDev, alpha, beta, location, scale, interp);
-
-
-
-            Assert.True(false);
-
-        }
-
-
-
         private ICoordinatesFunction CreateCoordinatesFunction(
             List<double> xs1,
             IDistributionEnum distType,
