@@ -50,47 +50,9 @@ namespace FunctionsTests.CoordinatesFunctions
 
         #endregion
         #region Bad Constructor Data Tests
-        ///// <summary> Tests that with bad input it throws an <see cref="ArgumentException"/>. </summary>
-        [Theory]
-        [MemberData(nameof(BadData_Constant_Nan))]
-        public void CoordinatesFunctionConstants_BadInput_NAN_Throws_ArgumentException(List<ICoordinate> value)
-        {
-            Assert.Throws<ArgumentException>(() => new CoordinatesFunctionConstants(value));
-        }
-
-        ///// <summary> Tests that with bad input it throws an <see cref="ArgumentException"/>. </summary>
-        [Theory]
-        [MemberData(nameof(BadData_Constant_NegativeInfinity))]
-        public void CoordinatesFunctionConstants_BadInput_NegativeInfinity_Throws_ArgumentException(List<ICoordinate> value)
-        {
-            Assert.Throws<ArgumentException>(() => new CoordinatesFunctionConstants(value));
-        }
-
-        ///// <summary> Tests that with bad input it throws an <see cref="ArgumentException"/>. </summary>
-        [Theory]
-        [MemberData(nameof(BadData_Constant_PositiveInfinity))]
-        public void CoordinatesFunctionConstants_BadInput_PositiveInfinity_Throws_ArgumentException(List<ICoordinate> value)
-        {
-            Assert.Throws<ArgumentException>(() => new CoordinatesFunctionConstants(value));
-        }
-
-        ///// <summary> Tests that with bad input it throws an <see cref="ArgumentException"/>. </summary>
-        [Theory]
-        [MemberData(nameof(BadData_Constant_RepeatXs))]
-        public void CoordinatesFunctionConstants_BadInput_RepeatXs_Throws_ArgumentException(List<ICoordinate> value)
-        {
-            Assert.Throws<ArgumentException>(() => new CoordinatesFunctionConstants(value));
-        }
         #endregion
         #region Property Tests
         #region Range Property Tests 
-        [Theory]
-        [InlineData(new double[4] {1d, 2d, 3d, 4d}, new double[4] {1d, 2d, 3d, 4d}, Functions.InterpolationEnum.None)]
-        public void Range_StandardGoodData_Returns_ExpectedRange(double[] Xs, double[] Ys, InterpolationEnum interpolation)
-        {
-            var f = (Functions.CoordinatesFunctions.CoordinatesFunctionConstants)ICoordinatesFunctionsFactory.Factory(Xs, Ys, interpolation);
-            Assert.Equal(IRangeFactory.Factory(1d, 4d), f.Range);
-        }
         #endregion
         #region Domain Property Tests 
 
@@ -183,18 +145,6 @@ namespace FunctionsTests.CoordinatesFunctions
             Assert.True(func.Order == OrderedSetEnum.WeaklyIncreasing);
         }
 
-        /// <summary>
-        /// Tests that the Order type is computed correctly.
-        /// </summary>
-        [Fact]
-        public void CoordinatesFunctionConstants_OrderProperty_Returns_OrderEnum_NonMonotonic()
-        {
-            List<double> xs = new List<double>() { 1, 2, 3, 4 };
-            List<double> ys = new List<double>() { 7, 9, 8, 12 };
-
-            CoordinatesFunctionConstants func = CreateCoordinatesFunctionConstants(xs, ys);
-            Assert.True(func.Order == OrderedSetEnum.NonMonotonic);
-        }
         #endregion
 
         #endregion
@@ -262,17 +212,7 @@ namespace FunctionsTests.CoordinatesFunctions
             IOrdinate testObjYValue = testObj.F(new Constant(.5));
             Assert.True(10.5 == testObjYValue.Value());
         }
-        /// <summary> Tests that with piecewise interpolation F() will return an IOrdinate object with value rounded up to 1. </summary>
-        [Fact]
-        public void CoordinatesFunctionConstants_FPiecewiseInterpolation_HigherBound_Returns_IOrdinate()
-        {
-            List<double> xs = new List<double>() { 0, 1 };
-            List<double> ys = new List<double>() { 0, 1 };
 
-            IFunction testObj = CreateCoordinatesFunctionConstants(xs, ys, InterpolationEnum.Piecewise);
-            var testObjYValue = testObj.F(new Constant(.5));
-            Assert.True(1 == testObjYValue.Value());
-        }
         /// <summary> Tests that with linear interpolation F() will return an IOrdinate object with value rounded down to 0. </summary>
         [Fact]
         public void CoordinatesFunctionConstants_FPiecewiseInterpolation_LowerBound_Returns_IOrdinate()
@@ -320,17 +260,7 @@ namespace FunctionsTests.CoordinatesFunctions
 
             Assert.True(0.5 == testObjXValue.Value());
         }
-        /// <summary> Tests that with two coordinates, Piecewise Interpolation it returns an IOrdinate object. </summary>
-        [Fact]
-        public void CoordinatesFunctionConstants_InverseFPiecewiseInterpolation_TwoCoordinates_Returns_IOrdiante()
-        {
-            List<double> xs = new List<double>() { 0, 1, 2 };
-            List<double> ys = new List<double>() { 10, 11, 12 };
 
-            IFunction testObj = CreateCoordinatesFunctionConstants(xs, ys, InterpolationEnum.Piecewise);
-            var testObjXValue = testObj.InverseF(new Constant(10.3));
-            Assert.True(0 == testObjXValue.Value());
-        }
         #endregion
         #region Compose() Tests
 
@@ -493,42 +423,6 @@ namespace FunctionsTests.CoordinatesFunctions
         }
        
 
-        /// <summary> Tests that with basic input, Linear Interpolation it returns an IFunction. </summary>
-        [Fact]
-        public void CoordinatesFunctionConstants_Compose_LinearDifferentCoordinates_Returns_Function()
-        {
-            List<double> xs1 = new List<double>() { 0, 3, 5 };
-            List<double> ys1 = new List<double>() { 2, 4, 7 };
-
-            List<double> xs2 = new List<double>() { 1, 3, 6 };
-            List<double> ys2 = new List<double>() { 4, 2, 6 };
-
-            List<double> xs3 = new List<double>() { 0, 1.5, 3, 4.333333333333333 };
-            List<double> ys3 = new List<double>() { 3, 2, 3.333333333333333, 6 };
-
-
-            IFunction testObj = CreateCoordinatesFunctionConstants(xs1, ys1, InterpolationEnum.Linear);
-            IFunction testObj2 = CreateCoordinatesFunctionConstants(xs2, ys2, InterpolationEnum.Linear);
-            IFunction fog = testObj.Compose(testObj2);
-            IFunction testObj3 = CreateCoordinatesFunctionConstants(xs3, ys3, InterpolationEnum.Linear);
-            Assert.True(fog.Equals(testObj3));
-        }
-
-     
-        /// <summary> Tests that with basic input, No Interpolation it throws an <see cref="ArgumentException"/>. </summary>
-        [Fact]
-        public void CoordinatesFunctionConstants_Compose_DifferentCoordinates_Throw_ArgumentException()
-        {
-            List<double> xs1 = new List<double>() { 0, 3, 5 };
-            List<double> ys1 = new List<double>() { 2, 4, 7 };
-
-            List<double> xs2 = new List<double>() { 1, 3, 6 };
-            List<double> ys2 = new List<double>() { 4, 2, 6 };
-
-            IFunction testObj = CreateCoordinatesFunctionConstants(xs1, ys1);
-            IFunction testObj2 = CreateCoordinatesFunctionConstants(xs2, ys2);
-            Assert.Throws<ArgumentException>(() => testObj.Compose(testObj2));
-        }
         /// <summary> Tests that with non overlapping input, No Interpolation it throws an <see cref="InvalidOperationException"/>. </summary>
         [Fact]
         public void CoordinatesFunctionConstants_BadCompose_Throws_InvalidOperationException()
@@ -578,32 +472,7 @@ namespace FunctionsTests.CoordinatesFunctions
         #endregion
 
         #region
-        ///// <summary> Tests that sampling a CoordinatesFunctionConstants with no interpolator argument returns itself
-        //[Fact]
-        //public void CoordinatesFunctionConstants_Sample_Returns_ICoordinatesFunction()
-        //{
-        //    List<double> xs1 = new List<double>() { 0, 3, 5 };
-        //    List<double> ys1 = new List<double>() { 2, 4, 7 };
 
-        //    IFunction testObj = CreateCoordinatesFunctionConstants(xs1, ys1);
-
-        //    Assert.True(testObj == testObj.Sample(.1));
-        //}
-
-        ///// <summary> Tests that sampling a CoordinatesFunctionConstants with an interpolator returns 
-        ///// an identical function but with the new interpolator set.
-        //[Fact]
-        //public void CoordinatesFunctionConstants_Sample_Returns_ICoordinatesFunction2()
-        //{
-        //    List<double> xs1 = new List<double>() { 0, 3, 5 };
-        //    List<double> ys1 = new List<double>() { 2, 4, 7 };
-
-        //    IFunction testObj = CreateCoordinatesFunctionConstants(xs1, ys1);
-
-        //    ICoordinatesFunction sampledFunction = testObj.Sample(.1, InterpolationEnum.Piecewise);
-        //    Assert.True(sampledFunction.Interpolator == InterpolationEnum.Piecewise);
-        //    Assert.True(AreCoordinatesEqual(testObj.Coordinates, sampledFunction.Coordinates));
-        //}
         #endregion
 
     }
