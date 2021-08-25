@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        configuration: [Debug, Release]
+        configuration: [Release]
 
     runs-on: windows-latest
                          
@@ -50,7 +50,6 @@ jobs:
         name: HEC-FDA-2.0-Snapshot
       # A file, directory or wildcard pattern that describes what to upload
         path: C:\Temp\FDA2.0\
-      env: 
-        Configuration: Release
+
 
   
