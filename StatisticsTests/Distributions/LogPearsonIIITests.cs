@@ -109,12 +109,31 @@ namespace StatisticsTests.Distributions
             Assert.True(testObj.Range.IsFinite());
         }
         [Theory]
-        [InlineData(2d, 2d, 2d, .5d, 25.3900714594897d)]
+        [InlineData(.33d, 2d, 1d, 0.000000001, 0.000216134889500715)]
+        [InlineData(.33d, 2d, 1d, .01d, 0.00134414494171666)]
+        [InlineData(.33d, 2d, 1d, .05d, 0.0049022148945051)]
+        [InlineData(.33d, 2d, 1d, .25d, 0.0746377090617247)]
+        [InlineData(.33d, 2d, 1d, .5d, 1.01353836396177)]
+        [InlineData(.33d, 2d, 1d, .75d, 27.1222370320434)]
+        [InlineData(.33d, 2d, 1d, .95d, 11902.6602438014)]
+        [InlineData(.33d, 2d, 1d, .99d, 2467533.03270371)]
+        [InlineData(.33d, 2d, 1d, .999999999d, 1.57287146151741E+21)]
+        [InlineData(1d, .1d, .2d, 0.000000001, 3.6535355664783)]
+        [InlineData(1d, .1d, .2d, .01d, 6.05436271802718)]
+        [InlineData(1d, .1d, .2d, .05d, 6.9400415588869)]
+        [InlineData(1d, .1d, .2d, .25d, 8.52910108926983)]
+        [InlineData(1d, .1d, .2d, .5d, 9.92362555921716)]
+        [InlineData(1d, .1d, .2d, .75d, 11.6269101385278)]
+        [InlineData(1d, .1d, .2d, .95d, 14.7912004150301)]
+        [InlineData(1d, .1d, .2d, .99d, 17.6736017808928)]
+        [InlineData(1d, .1d, .2d, .999999999d, 40.7971842209507)]
         public void LPIII_InverseCDF(double mean, double sd, double skew, double rv, double output)
         {
             var testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
             double result = testObj.InverseCDF(rv);
-            Assert.Equal(output, result, 9);
+            double percent = Math.Abs((output - result) / output);
+            //Assert.Equal(output, result, 9);
+            Assert.True(percent < .00000000001);
         }
         [Theory]
         [InlineData(.33d, 2d, 1d, 1.57287146151741E+21)]
@@ -143,6 +162,45 @@ namespace StatisticsTests.Distributions
             var testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
             double result = testObj.Range.Min;
             Assert.Equal(output, result, 9);
+        }
+        [Theory]
+        [InlineData(.33d, 2d, 1d)]
+        [InlineData(1d, .1d, .2d)]
+        [InlineData(5d, 3d, 8d)]
+        [InlineData(9d, 5d, 5d)]
+        [InlineData(9d, 5d, .5d)]
+        [InlineData(0d, 1d, 2d)]
+        public void LPIII_Means(double mean, double sd, double skew)
+        {
+            var testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
+            double result = testObj.Mean;
+            Assert.Equal(mean, result, 9);
+        }
+        [Theory]
+        [InlineData(.33d, 2d, 1d)]
+        [InlineData(1d, .1d, .2d)]
+        [InlineData(5d, 3d, 8d)]
+        [InlineData(9d, 5d, 5d)]
+        [InlineData(9d, 5d, .5d)]
+        [InlineData(0d, 1d, 2d)]
+        public void LPIII_StandardDeviation(double mean, double sd, double skew)
+        {
+            var testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
+            double result = testObj.StandardDeviation;
+            Assert.Equal(sd, result, 9);
+        }
+        [Theory]
+        [InlineData(.33d, 2d, 1d)]
+        [InlineData(1d, .1d, .2d)]
+        [InlineData(5d, 3d, 8d)]
+        [InlineData(9d, 5d, 5d)]
+        [InlineData(9d, 5d, .5d)]
+        [InlineData(0d, 1d, 2d)]
+        public void LPIII_Skew(double mean, double sd, double skew)
+        {
+            var testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
+            double result = testObj.Skewness;
+            Assert.Equal(skew, result, 9);
         }
     }
 }
