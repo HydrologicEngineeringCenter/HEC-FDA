@@ -2,9 +2,9 @@ name: Simple Build
 
 on:
   push:
-    branches: [ Feature/publishArtifactInActions ]
+    branches: [ main ]
   pull_request:
-    branches: [ Feature/publishArtifactInActions ]
+    branches: [ main ]
 
 jobs:
 
