@@ -2,9 +2,9 @@ name: Simple Build
 
 on:
   push:
-    branches: [ main ]
+    branches: [ Feature/publishArtifactInActions ]
   pull_request:
-    branches: [ main ]
+    branches: [ Feature/publishArtifactInActions ]
 
 jobs:
 
@@ -42,5 +42,15 @@ jobs:
       run: msbuild $env:Solution_Name /p:Configuration=$env:Configuration
       env:
         Configuration: ${{ matrix.configuration }}
+
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.4
+      with:
+      # Artifact name
+        name: HEC-FDA-2.0-Snapshot
+      # A file, directory or wildcard pattern that describes what to upload
+        path: C:\Temp\FDA2.0\
+      env: 
+        Configuration: Release
 
   
