@@ -127,13 +127,49 @@ namespace StatisticsTests.Distributions
         [InlineData(1d, .1d, .2d, .95d, 14.7912004150301)]
         [InlineData(1d, .1d, .2d, .99d, 17.6736017808928)]
         [InlineData(1d, .1d, .2d, .999999999d, 40.7971842209507)]
+        [InlineData(3.368d, .246d, .668d, .998d, 18828.3)]//ssp
+        [InlineData(3.368d, .246d, .668d, .995d, 14215.1)]//ssp
+        [InlineData(3.368d, .246d, .668d, .99d, 11387.8)]//ssp
+        [InlineData(3.368d, .246d, .668d, .98d, 9030.6)]//ssp
+        [InlineData(3.368d, .246d, .668d, .95d, 6506.1)]//ssp
+        [InlineData(3.368d, .246d, .668d, .90d, 4958.9)]//ssp
+        [InlineData(3.368d, .246d, .668d, .8d, 3657.1)]//ssp
+        [InlineData(3.368d, .246d, .668d, .5d, 2193.8)]//ssp
+        [InlineData(3.368d, .246d, .668d, .2d, 1438.3)]//ssp
+        [InlineData(3.368d, .246d, .668d, .1d, 1192.2)]//ssp
+        [InlineData(3.368d, .246d, .668d, .05d, 1037.6)]//ssp
+        [InlineData(3.368d, .246d, .668d, .01d, 829.6)]//ssp
+        [InlineData(3.537d, .438d, .075d, .998d, 68690.4)]//ssp
+        [InlineData(3.537d, .438d, .075d, .995d, 49599.7)]//ssp
+        [InlineData(3.537d, .438d, .075d, .99d, 37980.6)]//ssp
+        [InlineData(3.537d, .438d, .075d, .98d, 28424.8)]//ssp
+        [InlineData(3.537d, .438d, .075d, .95d, 18469.9)]//ssp
+        [InlineData(3.537d, .438d, .075d, .90d, 12637.5)]//ssp
+        [InlineData(3.537d, .438d, .075d, .8d, 8017.9)]//ssp
+        [InlineData(3.537d, .438d, .075d, .5d, 3403.9)]//ssp
+        [InlineData(3.537d, .438d, .075d, .2d, 1470.9)]//ssp
+        [InlineData(3.537d, .438d, .075d, .1d, 955.3)]//ssp
+        [InlineData(3.537d, .438d, .075d, .05d, 671.4)]//ssp
+        [InlineData(3.537d, .438d, .075d, .01d, 349.4)]//ssp
+        [InlineData(2.966d, .668d, -.473d, .998d, 32544.6)]//ssp
+        [InlineData(2.966d, .668d, -.473d, .995d, 24623.2)]//ssp
+        [InlineData(2.966d, .668d, -.473d, .99d, 19296.3)]//ssp
+        [InlineData(2.966d, .668d, -.473d, .98d, 14572.4)]//ssp
+        [InlineData(2.966d, .668d, -.473d, .95d, 9289.3)]//ssp
+        [InlineData(2.966d, .668d, -.473d, .90d, 6041.4)]//ssp
+        [InlineData(2.966d, .668d, -.473d, .8d, 3450.1)]//ssp
+        [InlineData(2.966d, .668d, -.473d, .5d, 1042.8)]//ssp
+        [InlineData(2.966d, .668d, -.473d, .2d, 265.5)]//ssp
+        [InlineData(2.966d, .668d, -.473d, .1d, 121.0)]//ssp
+        [InlineData(2.966d, .668d, -.473d, .05d, 60.9)]//ssp
+        [InlineData(2.966d, .668d, -.473d, .01d, 15.3)]//ssp
         public void LPIII_InverseCDF(double mean, double sd, double skew, double rv, double output)
         {
             var testObj = new Statistics.Distributions.LogPearson3(mean, sd, skew);
             double result = testObj.InverseCDF(rv);
             double percent = Math.Abs((output - result) / output);
             //Assert.Equal(output, result, 9);
-            Assert.True(percent < .00000000001);
+            Assert.True(percent < .1);
         }
         [Theory]
         [InlineData(.33d, 2d, 1d, 1.57287146151741E+21)]
