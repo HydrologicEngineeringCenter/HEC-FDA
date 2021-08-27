@@ -14,8 +14,8 @@ namespace Statistics.Distributions
         {
             // The Gamma distribution is defined by 2 parameters: 
             //      (1) alpha is the shape parameter 
-            //      (2) beta is the rate parameter
-            _Gamma = new MathNet.Numerics.Distributions.Gamma(alpha, beta);
+            //      (2) beta is the rate or inverse scale parameter
+            _Gamma = new MathNet.Numerics.Distributions.Gamma(alpha, 1/beta);
             Shift = shift;
         }
 

@@ -15,7 +15,7 @@ namespace StatisticsTests.Distributions
     public class ShiftedGammaTests
     {
         [Theory]
-        [InlineData(3.370, 1/614.880, 0, 0.5, 1868.6)]
+        [InlineData(3.370, 614.880, 0, 0.5, 1868.6)]
         public void ShiftedGamma_InverseCDF(double alpha, double beta, double shift, double p, double output)
         {
             var testObj = new Statistics.Distributions.ShiftedGamma(alpha, beta, shift);
