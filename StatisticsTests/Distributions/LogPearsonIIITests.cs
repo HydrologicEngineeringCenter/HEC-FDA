@@ -109,15 +109,6 @@ namespace StatisticsTests.Distributions
             Assert.True(testObj.Range.IsFinite());
         }
         [Theory]
-        [InlineData(.33d, 2d, 1d, 0.000000001, 0.000216134889500715)]
-        [InlineData(.33d, 2d, 1d, .01d, 0.00134414494171666)]
-        [InlineData(.33d, 2d, 1d, .05d, 0.0049022148945051)]
-        [InlineData(.33d, 2d, 1d, .25d, 0.0746377090617247)]
-        [InlineData(.33d, 2d, 1d, .5d, 1.01353836396177)]
-        [InlineData(.33d, 2d, 1d, .75d, 27.1222370320434)]
-        [InlineData(.33d, 2d, 1d, .95d, 11902.6602438014)]
-        [InlineData(.33d, 2d, 1d, .99d, 2467533.03270371)]
-        [InlineData(.33d, 2d, 1d, .999999999d, 1.57287146151741E+21)]
         [InlineData(1d, .1d, .2d, 0.000000001, 3.6535355664783)]
         [InlineData(1d, .1d, .2d, .01d, 6.05436271802718)]
         [InlineData(1d, .1d, .2d, .05d, 6.9400415588869)]
