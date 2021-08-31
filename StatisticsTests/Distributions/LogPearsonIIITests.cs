@@ -109,15 +109,15 @@ namespace StatisticsTests.Distributions
             Assert.True(testObj.Range.IsFinite());
         }
         [Theory]
-        [InlineData(.33d, 2d, 1d, 0.000000001, 0.00022172317374621715)]//R: FADist v. 2.4 Gamma3
-        [InlineData(.33d, 2d, 1d, .01d, 0.00143410853233252693)]//R: FADist v. 2.4 Gamma3
-        [InlineData(.33d, 2d, 1d, .05d, 0.00500785482108174682)]//R: FADist v. 2.4 Gamma3
-        [InlineData(.33d, 2d, 1d, .25d, 0.07390154964536001236)]//R: FADist v. 2.4 Gamma3
-        [InlineData(.33d, 2d, 1d, .5d, 1.01249778589702299492)]//R: FADist v. 2.4 Gamma3
-        [InlineData(.33d, 2d, 1d, .75d, 27.71793158340421570074)]//R: FADist v. 2.4 Gamma3
-        [InlineData(.33d, 2d, 1d, .95d, 12217.71137221093704283703)]//R: FADist v. 2.4 Gamma3
-        [InlineData(.33d, 2d, 1d, .99d, 2390291.39574089040979743004)]//R: FADist v. 2.4 Gamma3
-        [InlineData(.33d, 2d, 1d, .999999999d, 30700109780611350244248484d)]//R: FADist v. 2.4 Gamma3
+        [InlineData(.33d, 2d, 1d, 0.000000001, 0.00013663290883414447)]//SSP
+        [InlineData(.33d, 2d, 1d, .01d, 0.0014231199165806174)]//SSP
+        [InlineData(.33d, 2d, 1d, .05d, 0.004969545174390078)]//SSP
+        [InlineData(.33d, 2d, 1d, .25d, 0.074607253074646)]//SSP
+        [InlineData(.33d, 2d, 1d, .5d, 1.0047545433044434)]//SSP
+        [InlineData(.33d, 2d, 1d, .75d, 28.080827713012695)]//SSP
+        [InlineData(.33d, 2d, 1d, .95d, 12124.7099609375)]//SSP
+        [InlineData(.33d, 2d, 1d, .99d, 2371988)]//SSP
+        [InlineData(.33d, 2d, 1d, .999999999d, 4097955153267654700)]//SSP
         [InlineData(1d, .1d, .2d, 0.000000001, 3.6535355664783)]
         [InlineData(1d, .1d, .2d, .01d, 6.05436271802718)]
         [InlineData(1d, .1d, .2d, .05d, 6.9400415588869)]
