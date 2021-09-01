@@ -5,7 +5,6 @@ using System.Text;
 using System.Xml.Linq;
 using Utilities;
 using Utilities.Serialization;
-using LogPearsonIII;
 
 namespace Statistics.Distributions
 {
