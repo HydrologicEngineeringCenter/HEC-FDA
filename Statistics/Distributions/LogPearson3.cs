@@ -11,7 +11,7 @@ namespace Statistics.Distributions
 {
     internal class LogPearson3: IDistribution, IValidate<LogPearson3> 
     {
-        internal readonly LogPearsonIII.LogPearsonIII _Distribution;
+        internal readonly PearsonIII _Distribution;
         internal readonly IRange<double> _ProbabilityRange; 
         
         #region Properties
@@ -35,11 +35,11 @@ namespace Statistics.Distributions
             if (!Validation.LogPearson3Validator.IsConstructable(mean, standardDeviation, skew, sampleSize, out string error)) throw new Utilities.InvalidConstructorArgumentsException(error);
             else
             {
-                _Distribution = new LogPearsonIII.LogPearsonIII(mean, standardDeviation, skew, sampleSize);
-                Mean = _Distribution.GetMean;
-                Skewness = _Distribution.GetG;
-                SampleSize = _Distribution.GetSampleSize;
-                StandardDeviation = _Distribution.GetStDev;
+                _Distribution = new PearsonIII(mean, standardDeviation, skew, sampleSize);
+                Mean = _Distribution.Mean;
+                Skewness = _Distribution.Skewness;
+                SampleSize = _Distribution.SampleSize;
+                StandardDeviation = _Distribution.StandardDeviation;
                 Variance = Math.Pow(standardDeviation, 2);
                 Median = InverseCDF(0.50);
                 _ProbabilityRange = FiniteRange(); 
@@ -75,10 +75,8 @@ namespace Statistics.Distributions
             if (x < Range.Min || x > Range.Max) return double.Epsilon;
             else
             {
-                return _Distribution.GetPDF(x);
-                //PearsonIII p3 = new PearsonIII(Mean, StandardDeviation, Skewness);
-                //// the last part of this is odd to me. Again, it is based on Will Lehman's Statistics assembly.
-                //return p3.PDF(Math.Log10(x)) / x / Math.Log(10);
+                return _Distribution.PDF(Math.Log10(x))/x/Math.Log(10);
+
             }          
         }
         public double CDF(double x)
@@ -89,10 +87,7 @@ namespace Statistics.Distributions
             if (x > Range.Max) return 1;
             if (x > 0)
             {
-                return _Distribution.GetCDF(x);
-                //PearsonIII p3 = new PearsonIII(mean: Mean, sd: StandardDeviation, skew: Skewness);
-                //// x is not the logged value (this seems strange to me).
-                //p = p3.CDF(Math.Log10(x));
+                return _Distribution.CDF(Math.Log10(x));
             }
             else return 0;
         }
@@ -115,26 +110,8 @@ namespace Statistics.Distributions
                     if (p >= _ProbabilityRange.Max) return Range.Max;
                 }
             }
-            return _Distribution.getDistributedVariable(p);
-            //// this is totally based on Will's code in the statistics library
-            //Normal norm = new Normal(0, 1);
-            //double zScore = norm.InverseCDF(p);
-            //// k is a value described in Bulletin 17b
-            //double k = (2 / Skewness) * (Math.Pow(((zScore - Skewness / 6) * Skewness / 6 + 1), 3) - 1);
-            //// log(base10)x  = Mean + k * StandardDeviation
-            //return Math.Pow(10, Mean + (k * StandardDeviation));
-            //// so 10 ^ log(base10)x undoes the logging and is the x value we are seeking.
+            return Math.Pow(10, _Distribution.InverseCDF(p));
         }
-        //public double Sample(Random r = null) => InverseCDF(r == null ? new Random().NextDouble() : r.NextDouble());
-        ////public double[] Sample(Random numberGenerator) => Sample(SampleSize, numberGenerator);
-        //public double[] Sample(int sampleSize, Random numberGenerator)
-        //{
-        //    if (numberGenerator == null) numberGenerator = new Random();
-        //    double[] sample = new double[sampleSize];
-        //    for (int i = 0; i < sample.Length; i++) sample[i] = InverseCDF(numberGenerator.NextDouble());
-        //    return sample;
-        //}
-        //public IDistribution SampleDistribution(Random numberGenerator = null) => Fit(Sample(SampleSize, numberGenerator));
         public string Print(bool round = false) => round ? Print(Mean, StandardDeviation, Skewness, SampleSize) : $"log PearsonIII(mean: {Mean}, sd: {StandardDeviation}, skew: {Skewness}, sample size: {SampleSize})";
         public string Requirements(bool printNotes) => RequiredParameterization(printNotes);
         public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print(), StringComparison.InvariantCultureIgnoreCase) == 0 ? true : false;

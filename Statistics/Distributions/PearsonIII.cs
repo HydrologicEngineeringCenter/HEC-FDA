@@ -93,6 +93,39 @@ namespace Statistics.Distributions
                 }
             }
         }
+
+        public double InverseCDF(double p)
+        {
+            if (Math.Abs(Skewness) < _NoSkewness)
+            {
+                // a PearsonIII distribution with no skew is normally distributed.
+                IDistribution norm = new Normal(Mean, StandardDeviation);
+                return norm.InverseCDF(p);
+            }
+            else
+            {
+                // a skewed PearsonIII distribution is a shifted gamma distribution
+                double shift, alpha = 4d / (Skewness * Skewness), beta = 0.5 * StandardDeviation * Skewness;
+                // positively skewed distribution 
+                if (Skewness > 0)
+                {
+                    shift = Mean - 2d * StandardDeviation / Skewness;
+                    if (!alpha.IsOnRange(0, double.PositiveInfinity, false, false) || !beta.IsOnRange(0, double.PositiveInfinity)) throw new InvalidOperationException(PrintExceptionMessage(alpha, beta));
+                    ShiftedGamma gamma = new ShiftedGamma(alpha, beta, shift);
+                    return gamma.InverseCDF(p);
+                }
+                // negatively skewed distribution
+                else
+                {
+                    beta = -beta;
+                    shift = -Mean + 2d * StandardDeviation / Skewness;
+                    if (!alpha.IsOnRange(0, double.PositiveInfinity, false, false) || !beta.IsOnRange(0, double.PositiveInfinity)) throw new InvalidOperationException(PrintExceptionMessage(alpha, beta));
+                    ShiftedGamma gamma = new ShiftedGamma(alpha, beta, shift);
+                    return -gamma.InverseCDF(1 - p);
+                }
+            }
+
+        }
         private string PrintExceptionMessage(double alpha, double beta)
         {
             return $"The CDF operation could not be performed." +
