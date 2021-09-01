@@ -110,12 +110,7 @@ namespace Statistics.Distributions
                     if (p >= _ProbabilityRange.Max) return Range.Max;
                 }
             }
-            IDistribution standardNormal = new Normal(0, 1);
-            double z = standardNormal.InverseCDF(p);
-            double k = (2 / Skewness) * (Math.Pow(((z - Skewness / 6) * Skewness / 6 + 1),3) - 1);
-            double logFlow = Mean + (k * StandardDeviation);
-            return Math.Pow(10, logFlow);
-            //// so 10 ^ log(base10)x undoes the logging and is the x value we are seeking.
+            return Math.Pow(10, _Distribution.InverseCDF(p));
         }
         public string Print(bool round = false) => round ? Print(Mean, StandardDeviation, Skewness, SampleSize) : $"log PearsonIII(mean: {Mean}, sd: {StandardDeviation}, skew: {Skewness}, sample size: {SampleSize})";
         public string Requirements(bool printNotes) => RequiredParameterization(printNotes);
