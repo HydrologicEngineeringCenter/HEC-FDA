@@ -45,7 +45,7 @@ jobs:
         
     # Execute all unit tests in the solution
     - name: Execute unit tests
-      run: dotnet test
+      run: dotnet test --no-build
 
     # Upload the output folder 
     - name: Upload a Build Artifact
