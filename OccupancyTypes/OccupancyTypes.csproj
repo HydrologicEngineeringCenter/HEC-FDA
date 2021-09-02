@@ -16,4 +16,10 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Resources\DamCatsAndOcctypes.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

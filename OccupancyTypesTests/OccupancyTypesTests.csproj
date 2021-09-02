@@ -17,10 +17,4 @@
     <ProjectReference Include="..\OccupancyTypes\OccupancyTypes.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="DamCatsAndOcctypes.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
