@@ -63,21 +63,8 @@ namespace FunctionsTests.CoordinatesFunctions
         #endregion
 
         #region Bad Constructor Data Tests
-        /// <summary> Tests that for null input it throws an ArgumentException. </summary>
-        [Fact]
-        public void CoordinatesFunctionVariableYs_NullInput_Throws_ArgumentException()
-        {
-            Assert.Throws<ArgumentException>(() => new CoordinatesFunctionVariableYs(null));
-        }
-        /// <summary> Tests that for bad distributed input it throws an ArgumentException. </summary>
-        [Theory]
-        [MemberData(nameof(BadDataDistributed_RepeatXs))]
-        public void CoordinatesFunctionVariableYs_BadDistributedInput_Throws_ArgumentException(List<ICoordinate> value)
-        {
-          
-                Assert.Throws<ArgumentException>(()=> new CoordinatesFunctionVariableYs(value));
-           
-        }
+
+
         #endregion
 
         #region Property Tests
@@ -134,56 +121,7 @@ namespace FunctionsTests.CoordinatesFunctions
 
         #region Function Tests
         #region F() Tests
-        /// <summary> Tests that the F Function returns True. </summary>
-        [Theory]
-        [MemberData(nameof(GoodDataDistributed))]
-        public void CoordinatesFunctionVariableYs_NotDistributedF_Returns_IScalar(List<ICoordinate> value)
-        {
-            ICoordinate firstCoord = value[0];
 
-            CoordinatesFunctionVariableYs func = new CoordinatesFunctionVariableYs(value);
-            IOrdinate fOfX = func.F(firstCoord.X);
-            Assert.True(fOfX.Equals(firstCoord.Y));
-
-        }
-        ///// <summary> Tests that the F Function throws an <see cref="ArgumentOutOfRangeException"/>. </summary>
-        //[Theory]
-        //[MemberData(nameof(GoodDataDistributed))]
-        //public void CoordinatesFunctionVariableYs_NotDistributedF_Throws_ArgumentOutOfRangeException(List<ICoordinate> value)
-        //{
-
-        //    CoordinatesFunctionVariableYs func = CreateDistributedCoordinatesFunctionBasic();
-        //    Assert.Throws<ArgumentOutOfRangeException>(() => func.F(new Constant(99)));
-
-        //}
-        ///// <summary> Tests that the F Function throws an <see cref="ArgumentNullException"/>. </summary>
-        //[Theory]
-        //[MemberData(nameof(GoodDataDistributed))]
-        //public void CoordinatesFunctionVariableYs_NullF_Throws_ArgumentNullException(List<ICoordinate> value)
-        //{
-        //    CoordinatesFunctionVariableYs func = CreateDistributedCoordinatesFunctionBasic();
-        //    Assert.Throws<ArgumentOutOfRangeException>(() => func.F(new Constant(double.NaN)));
-        //}
-
-
-
-
-        ///// <summary> Tests that the F Function for Histogram input throws an <see cref="ArgumentOutOfRangeException"/>. </summary>
-        //[Fact]
-        //public void CoordinatesFunctionVariableYs_FHistogram_Throws_ArgumentOutOfRangeException()
-        //{
-        //    try
-        //    {
-        //        // ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(new List<ICoordinate>(new UnivariateCoordinate(new ScalarHistogram(), new ScalarHistogram(), map)));
-        //        //IOrdinate result = testObj.F(IScalarFactory.Factory(0));
-        //        Assert.True(false);
-        //    }
-        //    catch (ArgumentOutOfRangeException e)
-        //    {
-        //        string m = e.Message;
-        //        Assert.Equal("Specified argument was out of the range of valid values.\r\nParameter name: The specified x value was not found in any of the coordinates. Interpolation is not supported for coordinates with distributed x or y values", m);
-        //    }
-        //}
 
         /// <summary> Tests that the F Function for Distributed input throws an <see cref="ArgumentOutOfRangeException"/>. </summary>
         [Theory]
@@ -195,16 +133,6 @@ namespace FunctionsTests.CoordinatesFunctions
         }
         #endregion
         #region InverseF() Tests
-        /// <summary> Tests that the Inverse F Function returns the correct IOrdinate. </summary>
-        [Theory]
-        [MemberData(nameof(GoodDataDistributed))]
-        public void CoordinatesFunctionVariableYs_InverseF_Returns_IScalar(List<ICoordinate> value)
-        {
-            ICoordinate firstCoord = value[0];
-            ICoordinatesFunction testObj = new CoordinatesFunctionVariableYs(value);
-            IOrdinate result = testObj.InverseF(firstCoord.Y);
-            Assert.True(firstCoord.X.Equals(result));
-        }
 
         /// <summary> Tests that the Inverse F Function throws ArgumentException if input is out of range. </summary>
         [Theory]
