@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 namespace paireddata
 {
-    public class paired_data: IPairedDataProducer
+    public class UncertainPairedData: IPairedDataProducer
     {
         private IList<double> _xvals;
         private IList<statistics.IDistributedVariable> _yvals;

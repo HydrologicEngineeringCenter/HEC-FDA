@@ -45,5 +45,26 @@ namespace paireddata
             }
             return new PairedData(x, y);
         }
+        public double integrate(){
+            double triangle;
+            double square;
+            //assume x vals are increasing from zero.
+            double x1=0.0;
+            double y1=0.0;
+            double ead=0.0;
+            for(int i=0; i<this._xvals.length; i ++){
+                double xdelta = this.xvals[i]-x1;
+                square = xdelta * y1;
+                triangle = ((xdelta)*(this.yvals[i] - y1))/2.0;
+                ead += square + triangle;
+                x1 = this.xvals[i];
+                y1 = this.yvals[i];
+            }
+            if (x1 != 0.0){
+                double xdelta = 1.0-x1;
+                ead += xdelta*y1;
+            }
+            return ead;
+        }
     }
 }

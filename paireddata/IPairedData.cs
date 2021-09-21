@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 namespace paireddata
 {
-    public interface IPairedData : ISample, IComposable
+    public interface IPairedData : ISample, IComposable, IIntegrate
     {
         IList<double> xs();
         IList<double> ys();

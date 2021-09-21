@@ -3,6 +3,6 @@ namespace paireddata
 {
     public interface IComposable
     {
-        paired_data compose(paired_data g);
+        PairedData compose(PairedData g);
     }
 }
