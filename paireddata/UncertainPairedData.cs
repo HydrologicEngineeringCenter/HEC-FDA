@@ -20,11 +20,15 @@ namespace paireddata
             _xvals.Add(x);
             _yvals.Add(y);
         }
-        public paired_data Sample(double probability){
-            //ToDo implement me.
+        public PairedData Sample(double probability){
             ArrayList<double> x = new System.Collections.ArrayList<double>();
             ArrayList<double> y = new System.Collections.ArrayList<double>();
-            return new paired_data(x,y);
+            for(i=0;i<this._xvals; i++){
+                x.Add(this._xvals[i]);
+                y.Add(this._yvals[i].inv_cdf(probability));
+
+            }
+            return new PairedData(x,y);
         }
     }
 }

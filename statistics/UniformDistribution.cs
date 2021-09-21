@@ -1,6 +1,7 @@
 using System;
 namespace statistics
 {
+    // this is not necessary, we should absolutely use the c# statistics library we already have. this is just to mock in something.
     public class UniformDistribution: IDistributedVariable
     {
         private double _min;
