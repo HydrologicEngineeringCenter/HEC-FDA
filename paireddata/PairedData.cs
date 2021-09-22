@@ -36,7 +36,7 @@ namespace paireddata
                 return _yvals[idx];
             }
         }
-        public PairedData compose(PairedData input){
+        public IPairedData compose(IPairedData input){
             ArrayList<double> x = new System.Collections.ArrayList<double>();
             ArrayList<double> y = new System.Collections.ArrayList<double>();
             for (int i = 0; i < input._xvals.Count; i++){
@@ -65,6 +65,9 @@ namespace paireddata
                 ead += xdelta*y1;
             }
             return ead;
+        }
+        public StepwisePairedData ToStepwisePairedData(){
+            return new StepwisePairedData(_xvals, _yvals);
         }
     }
 }

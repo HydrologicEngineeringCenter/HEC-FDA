@@ -1,0 +1,22 @@
+using System;
+using paireddata;
+namespace flowtransform
+{
+    public class FlowTransform :IPairedDataProducer
+    {
+        //if you want to control how a flow transform works,
+        //you can use a class to wrap the uncertainpairedata,
+        //with that class you can control access and modify behavior.
+        private UncertainPairedData _curve;
+        public FlowTransform(UncertainPairedData curve){
+            _curve = curve;
+        }
+        //here is an example where flow transform converts the paireddata
+        //into a stepwisepaired data as an example
+        public IPairedData Sample(double probability){
+            PairedData pd = _curve.Sample(probability);
+            StepwisePairedData spd = pd.ToStepwisePairedData();
+            return spd;
+        }
+    }
+}

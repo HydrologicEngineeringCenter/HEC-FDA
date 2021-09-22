@@ -12,7 +12,7 @@ namespace paireddata
         public IList<double> ys(){
             return _yvals;
         }
-        public paired_data(IList<double> xs, IList<double> ys){
+        public StepwisePairedData(IList<double> xs, IList<double> ys){
             _xvals = xs;
             _yvals = ys;
         }
