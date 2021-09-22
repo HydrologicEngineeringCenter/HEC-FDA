@@ -8,6 +8,9 @@ namespace scenarios
         private Int64 _year;
         private IList<ImpactArea> _impactAreas;
         //probably need getters and setters
+        public Int64 Year{
+            get{return _year;}
+        }
         public Scenario(Int64 year, IList<ImpactArea> impactAreas){
             _year = year;
             _impactAreas = impactAreas;
