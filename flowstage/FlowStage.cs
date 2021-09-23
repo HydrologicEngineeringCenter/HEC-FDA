@@ -18,12 +18,12 @@ namespace flowstage
             //would probably need to not use the same probability
             //so either pass in two probabilities or pass in a seed and create
             //a random number generator (which has a performance hit.)
-            return flowTransform.Sample(probability).Compose(fs);
+            return flowTransform.SamplePairedData(probability).compose(fs);
         }
         public IPairedData Compose(flowfrequency.FlowFrequency flowFrequency, double probability){
             IPairedData fs = _curve.SamplePairedData(probability);
             //same notes as above.
-            return flowFrequency.Sample(probability).Compose(fs);
+            return flowFrequency.SamplePairedData(probability).compose(fs);
         }
     }
 }

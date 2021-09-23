@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 namespace paireddata
 {
     public class StepwisePairedData: IPairedData
@@ -22,7 +23,8 @@ namespace paireddata
         }
         public double f(double x){
             //binary search.
-            Int32 idx = Array.BinarySerch(_xvals, x);
+            double[] xarr = _xvals.ToArray();
+            Int32 idx = System.Array.BinarySearch(xarr, x);
             if (idx < -1){
                 idx = -1*idx-1;
                 if (idx == _yvals.Count){

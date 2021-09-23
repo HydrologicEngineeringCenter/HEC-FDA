@@ -15,7 +15,7 @@ namespace flowtransform
         //into a stepwisepaired data as an example
         public IPairedData SamplePairedData(double probability){
             IPairedData pd = _curve.SamplePairedData(probability);
-            StepwisePairedData spd = pd.ToStepwisePairedData();
+            StepwisePairedData spd = ((PairedData)pd).ToStepwisePairedData();
             return spd;
         }
     }
