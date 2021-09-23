@@ -13,8 +13,8 @@ namespace flowtransform
         }
         //here is an example where flow transform converts the paireddata
         //into a stepwisepaired data as an example
-        public IPairedData Sample(double probability){
-            PairedData pd = _curve.Sample(probability);
+        public IPairedData SamplePairedData(double probability){
+            IPairedData pd = _curve.SamplePairedData(probability);
             StepwisePairedData spd = pd.ToStepwisePairedData();
             return spd;
         }

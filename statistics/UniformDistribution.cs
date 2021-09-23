@@ -11,7 +11,7 @@ namespace statistics
             _max = max;
         }
         public double inv_cdf(double probability){
-            return _min + (probability*(_max-min));
+            return _min + (probability*(_max-_min));
         }
     }
 }

@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 namespace paireddata
 {
     public class StepwisePairedData: IPairedData
@@ -16,7 +16,7 @@ namespace paireddata
             _xvals = xs;
             _yvals = ys;
         }
-        public add_pair(double x, double y){
+        public void add_pair(double x, double y){
             _xvals.Add(x);
             _yvals.Add(y);
         }
@@ -36,12 +36,12 @@ namespace paireddata
                 return _yvals[idx];
             }
         }
-        public PairedData compose(PairedData input){
-            ArrayList<double> x = new System.Collections.ArrayList<double>();
-            ArrayList<double> y = new System.Collections.ArrayList<double>();
-            for (int i = 0; i < input._xvals.Count; i++){
-                y.Add(this.f(input._yvals[i]));
-                x.Add(input._xvals[i]);
+        public IPairedData compose(IPairedData input){
+            List<double> x = new List<double>();
+            List<double> y = new List<double>();
+            for (int i = 0; i < input.xs().Count; i++){
+                y.Add(this.f(input.ys()[i]));
+                x.Add(input.xs()[i]);
             }
             return new PairedData(x, y);
         }
@@ -52,13 +52,13 @@ namespace paireddata
             double x1=0.0;
             double y1=0.0;
             double ead=0.0;
-            for(int i=0; i<this._xvals.length; i ++){
-                double xdelta = this.xvals[i]-x1;
+            for(int i=0; i<this._xvals.Count; i ++){
+                double xdelta = this.xs()[i]-x1;
                 square = xdelta * y1;
-                triangle = ((xdelta)*(this.yvals[i] - y1))/2.0;
+                triangle = ((xdelta)*(this.ys()[i] - y1))/2.0;
                 ead += square + triangle;
-                x1 = this.xvals[i];
-                y1 = this.yvals[i];
+                x1 = this.xs()[i];
+                y1 = this.ys()[i];
             }
             if (x1 != 0.0){
                 double xdelta = 1.0-x1;

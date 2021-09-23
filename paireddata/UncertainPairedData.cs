@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 namespace paireddata
 {
     public class UncertainPairedData: IPairedDataProducer
@@ -16,16 +16,16 @@ namespace paireddata
             _xvals = xs;
             _yvals = ys;
         }
-        public add_pair(double x, statistics.IDistributedVariable y){
+        public void add_pair(double x, statistics.IDistributedVariable y){
             _xvals.Add(x);
             _yvals.Add(y);
         }
-        public PairedData Sample(double probability){
-            ArrayList<double> x = new System.Collections.ArrayList<double>();
-            ArrayList<double> y = new System.Collections.ArrayList<double>();
-            for(i=0;i<this._xvals; i++){
-                x.Add(this._xvals[i]);
-                y.Add(this._yvals[i].inv_cdf(probability));
+        public IPairedData SamplePairedData(double probability){
+            List<double> x = new List<double>();
+            List<double> y = new List<double>();
+            for(int i=0;i<this._xvals.Count; i++){
+                x.Add(this.xs()[i]);
+                y.Add(this.ys()[i].inv_cdf(probability));
 
             }
             return new PairedData(x,y);

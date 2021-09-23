@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using impactarea;
 namespace scenarios
 {
@@ -17,9 +17,12 @@ namespace scenarios
         }
         public IList<double> Compute(Int64 seed, Int64 iterations){
             //probably instantiate a rng to seed each impact area differently
+            System.Collections.Generic.List<double> ret = new System.Collections.Generic.List<double>();
+
             foreach(ImpactArea ia in _impactAreas){
-                ia.Compute(seed, iterations);
+                ret.Add(ia.Compute(seed, iterations));
             }
+            return ret;
         }
     }
 }
