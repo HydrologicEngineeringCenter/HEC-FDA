@@ -71,5 +71,10 @@ namespace paireddata
         public StepwisePairedData ToStepwisePairedData(){
             return new StepwisePairedData(_xvals, _yvals);
         }
+
+        public IPairedData multiply(IPairedData g)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
