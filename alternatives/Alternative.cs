@@ -12,16 +12,16 @@ namespace alternatives
             _currentYear = currentYear;
             _futureYear = futureYear;
         }
-        public IList<double> ComputeEEAD(Int64 seed, Int64 iterations, double discountRate){
+        public IList<metrics.IContainResults> ComputeEEAD(Int64 seed, Int64 iterations, double discountRate){
             //probably instantiate a rng to seed each impact area differently
-            IList<double> currentEAD = _currentYear.Compute(seed,iterations);
-            IList<double> futureEAD = _futureYear.Compute(seed, iterations);
+            IList<metrics.IContainResults> currentEAD = _currentYear.Compute(seed,iterations);
+            IList<metrics.IContainResults> futureEAD = _futureYear.Compute(seed, iterations);
             //discoiunt future ead
-            IList<double> discountedEAD = discount(futureEAD,discountRate, _futureYear.Year - _currentYear.Year);
+            IList<metrics.IContainResults> discountedEAD = discount(futureEAD,discountRate, _futureYear.Year - _currentYear.Year);
             //combine the future and current ead
             return currentEAD;//not right, fix this.
         }
-        private IList<double> discount(IList<double> eads, double discountRate, Int64 years){
+        private IList<metrics.IContainResults> discount(IList<metrics.IContainResults> eads, double discountRate, Int64 years){
             //discount the eads
             return eads;
         }
