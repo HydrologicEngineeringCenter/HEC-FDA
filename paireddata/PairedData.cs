@@ -21,6 +21,7 @@ namespace paireddata
             _xvals.Add(x);
             _yvals.Add(y);
         }
+        ///f implements ISample on PairedData, for a given input double x f produces an output double that represents the linearly interoplated value for y given x.
         public double f(double x){
             //binary search.
             double[] xarr = _xvals.ToArray();
@@ -38,6 +39,7 @@ namespace paireddata
                 return _yvals[idx];
             }
         }
+        ///compose implements the IComposable interface on PairedData, which allows a PairedData object to take the input y values as the x value (to determine the commensurate y value) from the subject function. Ultimately it creates a composed function with the Y from the subject, and the commensurate x from the input.
         public IPairedData compose(IPairedData input){
             List<double> x = new List<double>();
             List<double> y = new List<double>();
@@ -47,6 +49,7 @@ namespace paireddata
             }
             return new PairedData(x, y);
         }
+        ///integrate implements IIntegrate on PairedData, it calcualtes the area under the paired data curve across the range of x values using trapizoidal integration.
         public double integrate(){
             double triangle;
             double square;
