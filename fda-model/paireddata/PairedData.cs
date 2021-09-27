@@ -5,47 +5,42 @@ namespace paireddata
 {
     public class PairedData: IPairedData
     {
-        private IList<double> _xvals;
-        private IList<double> _yvals;
-        public IList<double> xs(){
-            return _xvals;
-        }
-        public IList<double> ys(){
-            return _yvals;
-        }
+        public IList<double> Xvals { get; set; }
+        public IList<double> Yvals { get; set; }
+
         public PairedData(IList<double> xs, IList<double> ys){
-            _xvals = xs;
-            _yvals = ys;
+            Xvals = xs;
+            Yvals = ys;
         }
         public void add_pair(double x, double y){
-            _xvals.Add(x);
-            _yvals.Add(y);
+            Xvals.Add(x);
+            Yvals.Add(y);
         }
         ///f implements ISample on PairedData, for a given input double x f produces an output double that represents the linearly interoplated value for y given x.
         public double f(double x){
             //binary search.
-            double[] xarr = _xvals.ToArray();
-            Int32 idx = System.Array.BinarySearch(xarr, x);
+            double[] xarr = Xvals.ToArray();
+            Int32 idx = Array.BinarySearch(xarr, x);
             if (idx < -1){
                 idx = -1*idx-1;
-                if (idx == _yvals.Count){
-                    return _yvals[_yvals.Count-1];
+                if (idx == Yvals.Count){
+                    return Yvals[Yvals.Count-1];
                 }else{
-                    return _yvals[idx- 1] + (x - _xvals[idx - 1]) / (_xvals[idx] - _xvals[idx - 1]) * (_yvals[idx] - _yvals[idx - 1]);
+                    return Yvals[idx- 1] + (x - Xvals[idx - 1]) / (Xvals[idx] - Xvals[idx - 1]) * (Yvals[idx] - Yvals[idx - 1]);
                 }
             }else if (idx == -1){
-                return _yvals[0];
+                return Yvals[0];
             }else{
-                return _yvals[idx];
+                return Yvals[idx];
             }
         }
         ///compose implements the IComposable interface on PairedData, which allows a PairedData object to take the input y values as the x value (to determine the commensurate y value) from the subject function. Ultimately it creates a composed function with the Y from the subject, and the commensurate x from the input.
         public IPairedData compose(IPairedData input){
             List<double> x = new List<double>();
             List<double> y = new List<double>();
-            for (int i = 0; i < input.xs().Count; i++){
-                y.Add(this.f(input.ys()[i]));
-                x.Add(input.xs()[i]);
+            for (int i = 0; i < input.Xvals.Count; i++){
+                y.Add(this.f(input.Yvals[i]));
+                x.Add(input.Xvals[i]);
             }
             return new PairedData(x, y);
         }
@@ -57,13 +52,13 @@ namespace paireddata
             double x1=0.0;
             double y1=0.0;
             double ead=0.0;
-            for(int i=0; i<this._xvals.Count; i ++){
-                double xdelta = this._xvals[i]-x1;
+            for(int i=0; i<this.Xvals.Count; i ++){
+                double xdelta = this.Xvals[i]-x1;
                 square = xdelta * y1;
-                triangle = ((xdelta)*(this._yvals[i] - y1))/2.0;
+                triangle = ((xdelta)*(this.Yvals[i] - y1))/2.0;
                 ead += square + triangle;
-                x1 = this._xvals[i];
-                y1 = this._yvals[i];
+                x1 = this.Xvals[i];
+                y1 = this.Yvals[i];
             }
             if (x1 != 0.0){
                 double xdelta = 1.0-x1;
@@ -72,7 +67,7 @@ namespace paireddata
             return ead;
         }
         public StepwisePairedData ToStepwisePairedData(){
-            return new StepwisePairedData(_xvals, _yvals);
+            return new StepwisePairedData(Xvals, Yvals);
         }
 
         public IPairedData multiply(IPairedData g)
@@ -81,10 +76,10 @@ namespace paireddata
 	        double aboveFragilityCurveValue = 1.0;
 	        List<double> newXvals = new List<double>();
 	        List<double> newYvals = new List<double>();
-	        if (_xvals[0] < g.xs()[0]) {
+	        if (Xvals[0] < g.Xvals[0]) {
 		        //cacluate no damage until the bottom of the fragility curve
-		        double bottom = g.xs()[0];
-		        foreach( double dcx in _xvals) {
+		        double bottom = g.Xvals[0];
+		        foreach( double dcx in Xvals) {
 			        if (dcx < bottom) {
 				        //set to zero
 				        newXvals.Add(dcx);
@@ -95,35 +90,35 @@ namespace paireddata
 				        newYvals.Add(belowFragilityCurveValue);
 				        //create a point at the bottom of the fragility curve
 				        newXvals.Add(bottom);
-				        double damage = this.f(bottom) * g.ys()[0];
+				        double damage = this.f(bottom) * g.Yvals[0];
 				        newYvals.Add(damage);
 				        break;
 			        }
 		        }
 	        }
-	        for(int idx = 0; idx<g.xs().Count; idx++){
+	        for(int idx = 0; idx<g.Xvals.Count; idx++){
 		        //modify
-                double lcx = g.xs()[idx];
-		        double damage = this.f(lcx) * g.ys()[idx];
+                double lcx = g.Xvals[idx];
+		        double damage = this.f(lcx) * g.Yvals[idx];
 		        newXvals.Add(lcx);
 		        newYvals.Add(damage);
 	        }
-            if (g.xs()[g.xs().Count-1] < _xvals[(_xvals.Count-1)] ){
+            if (g.Xvals[g.Xvals.Count-1] < Xvals[(Xvals.Count-1)] ){
                 //add in the damage curve ordinates without modification.
-                double top = g.xs().Last();
+                double top = g.Xvals.Last();
                 newXvals.Add(top);
-                double damage = f(top) * g.ys().Last();
+                double damage = f(top) * g.Yvals.Last();
                 newYvals.Add(damage);
                 //create a point at the bottom of the fragility curve
                 newXvals.Add(top+.00000001);
                 double damageabove = f(top+.00000001) * aboveFragilityCurveValue;
                 newYvals.Add(damageabove);
-                for (int idx = 0; idx<_xvals.Count;idx++){
-                    double dcx = _xvals[idx];
+                for (int idx = 0; idx<Xvals.Count;idx++){
+                    double dcx = Xvals[idx];
                     if (dcx > top) {
                         //set to max val
                         newXvals.Add(dcx);
-                        double d = _yvals[idx] * aboveFragilityCurveValue;
+                        double d = Yvals[idx] * aboveFragilityCurveValue;
                         newYvals.Add(d);
                     }
                 }

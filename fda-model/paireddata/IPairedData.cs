@@ -4,8 +4,8 @@ namespace paireddata
 {
     public interface IPairedData : ISample, IComposable, IIntegrate, IMultiply
     {
-        IList<double> xs();
-        IList<double> ys();
+        IList<double> Xvals { get; set; }
+        IList<double> Yvals { get; set; }
         void add_pair(double x, double y);
     }
 }
