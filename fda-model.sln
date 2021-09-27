@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31515.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fda-model", "fda-model\fda-model.csproj", "{F9F9DA21-BF10-4F45-B988-88063002875C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C9D31C05-5D20-46A5-B761-B9AC6C188CD8}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+		.github\workflows\SimpleBuild.yml = .github\workflows\SimpleBuild.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F9F9DA21-BF10-4F45-B988-88063002875C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9F9DA21-BF10-4F45-B988-88063002875C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9F9DA21-BF10-4F45-B988-88063002875C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9F9DA21-BF10-4F45-B988-88063002875C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FDF03730-6B81-4EB2-8037-20D89A8DE339}
+	EndGlobalSection
+EndGlobal
