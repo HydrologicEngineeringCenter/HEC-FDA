@@ -18,7 +18,7 @@ jobs:
                          
 
     env:
-      Solution_Name: Fda.sln                                  
+      Solution_Name: fda-model.sln                                  
 
 
     steps:
