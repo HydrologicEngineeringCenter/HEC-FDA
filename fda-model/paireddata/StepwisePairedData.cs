@@ -68,5 +68,61 @@ namespace paireddata
             }
             return ead;
         }
+
+        public IPairedData multiply(IPairedData g)
+        {
+            double belowFragilityCurveValue = 0.0;
+	        double aboveFragilityCurveValue = 1.0;
+	        List<double> newXvals = new List<double>();
+	        List<double> newYvals = new List<double>();
+	        if (_xvals[0] < g.xs()[0]) {
+		        //cacluate no damage until the bottom of the fragility curve
+		        double bottom = g.xs()[0];
+		        foreach( double dcx in _xvals) {
+			        if (dcx < bottom) {
+				        //set to zero
+				        newXvals.Add(dcx);
+				        newYvals.Add(belowFragilityCurveValue);
+			        } else {
+				        //create a point on the curve just below the bottom of the levee at damage zero.
+				        newXvals.Add(bottom-.000000000001);
+				        newYvals.Add(belowFragilityCurveValue);
+				        //create a point at the bottom of the fragility curve
+				        newXvals.Add(bottom);
+				        double damage = this.f(bottom) * g.ys()[0];
+				        newYvals.Add(damage);
+				        break;
+			        }
+		        }
+	        }
+	        for(int idx = 0; idx<g.xs().Count; idx++){
+		        //modify
+                double lcx = g.xs()[idx];
+		        double damage = this.f(lcx) * g.ys()[idx];
+		        newXvals.Add(lcx);
+		        newYvals.Add(damage);
+	        }
+            if (g.xs()[g.xs().Count-1] < _xvals[(_xvals.Count-1)] ){
+                //add in the damage curve ordinates without modification.
+                double top = g.xs().Last();
+                newXvals.Add(top);
+                double damage = f(top) * g.ys().Last();
+                newYvals.Add(damage);
+                //create a point at the bottom of the fragility curve
+                newXvals.Add(top+.00000001);
+                double damageabove = f(top+.00000001) * aboveFragilityCurveValue;
+                newYvals.Add(damageabove);
+                for (int idx = 0; idx<_xvals.Count;idx++){
+                    double dcx = _xvals[idx];
+                    if (dcx > top) {
+                        //set to max val
+                        newXvals.Add(dcx);
+                        double d = _yvals[idx] * aboveFragilityCurveValue;
+                        newYvals.Add(d);
+                    }
+                }
+            }
+            return new PairedData(newXvals,newYvals);
+        }
     }
 }
