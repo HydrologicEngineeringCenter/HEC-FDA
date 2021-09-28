@@ -13,7 +13,9 @@ namespace paireddata
             Yvals = ys;
         }
 
-        ///f implements ISample on PairedData, for a given input double x f produces an output double that represents the linearly interoplated value for y given x.
+        /// <summary>
+        /// f implements ISample on PairedData, for a given input double x f produces an output double that represents the linearly interoplated value for y given x.
+        /// </summary>
         public double f(double x){
             //binary search.
             double[] xarr = Xvals.ToArray();
@@ -28,14 +30,9 @@ namespace paireddata
                 //This is the next LARGER value.
                 idx = ~idx;
 
-                if(idx == Xvals.Count())
-                {
-                    return Yvals[Xvals.Length-1];
-                }
-                if(idx == 0)
-                {
-                    return Yvals[0];
-                }
+                if(idx == Xvals.Count()) {return Yvals[Xvals.Length-1];}
+
+                if(idx == 0) {return Yvals[0];}
 
                 //Ok. Interpolate Y=mx+b
                 double m = (Yvals[idx] - Yvals[idx - 1]) / (Xvals[idx] - Xvals[idx - 1]);
@@ -56,7 +53,10 @@ namespace paireddata
             }
             return new PairedData(x.ToArray(), y.ToArray());
         }
-        ///integrate implements IIntegrate on PairedData, it calcualtes the area under the paired data curve across the range of x values using trapizoidal integration.
+
+        /// <summary>
+        /// integrate implements IIntegrate on PairedData, it calcualtes the area under the paired data curve across the range of x values using trapizoidal integration.
+        /// </summary>
         public double integrate(){
             double triangle;
             double square;
