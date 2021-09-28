@@ -20,7 +20,7 @@ namespace flowfrequency
                 y.Add(this._dist.inv_cdf(probability));
 
             }
-            return new PairedData(x,y);
+            return new PairedData(x.ToArray(), y.ToArray());
         }
     }
 }
