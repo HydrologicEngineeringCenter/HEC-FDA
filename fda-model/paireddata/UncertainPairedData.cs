@@ -28,7 +28,7 @@ namespace paireddata
                 y.Add(this.ys()[i].inv_cdf(probability));
 
             }
-            return new PairedData(x,y);
+            return new PairedData(x.ToArray(), y.ToArray());
         }
     }
 }

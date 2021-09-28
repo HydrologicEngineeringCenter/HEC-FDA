@@ -30,11 +30,11 @@ namespace paireddata
 
                 if(idx == Xvals.Count())
                 {
-                    throw new IndexOutOfRangeException();
+                    return Yvals[Xvals.Length-1];
                 }
                 if(idx == 0)
                 {
-                    throw new IndexOutOfRangeException();
+                    return Yvals[0];
                 }
 
                 //Ok. Interpolate Y=mx+b

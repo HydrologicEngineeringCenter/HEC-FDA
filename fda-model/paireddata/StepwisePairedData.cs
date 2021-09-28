@@ -6,16 +6,12 @@ namespace paireddata
     public class StepwisePairedData: IPairedData
     {
 
-        public IList<double> Xvals { get; set; }
-        public IList<double> Yvals { get; set; }
+        public double[] Xvals { get; set; }
+        public double[] Yvals { get; set; }
 
-        public StepwisePairedData(IList<double> xs, IList<double> ys){
+        public StepwisePairedData(double[] xs, double[] ys){
             Xvals = xs;
             Yvals = ys;
-        }
-        public void add_pair(double x, double y){
-            Xvals.Add(x);
-            Yvals.Add(y);
         }
         public double f(double x){
             //binary search.
@@ -23,8 +19,8 @@ namespace paireddata
             Int32 idx = Array.BinarySearch(xarr, x);
             if (idx < -1){
                 idx = -1*idx-1;
-                if (idx == Yvals.Count){
-                    return Yvals[Yvals.Count-1];
+                if (idx == Yvals.Length){
+                    return Yvals[Yvals.Length - 1];
                 }else{
                     return Yvals[idx];//stepwise interpolation (i think).
                 }
@@ -37,11 +33,11 @@ namespace paireddata
         public IPairedData compose(IPairedData input){
             List<double> x = new List<double>();
             List<double> y = new List<double>();
-            for (int i = 0; i < input.Xvals.Count; i++){
+            for (int i = 0; i < input.Xvals.Length; i++){
                 y.Add(this.f(input.Yvals[i]));
                 x.Add(input.Xvals[i]);
             }
-            return new PairedData(x, y);
+            return new PairedData(x.ToArray(), y.ToArray());
         }
         public double integrate(){
             double triangle;
@@ -50,7 +46,7 @@ namespace paireddata
             double x1=0.0;
             double y1=0.0;
             double ead=0.0;
-            for(int i=0; i<this.Xvals.Count; i ++){
+            for(int i=0; i<this.Xvals.Length; i ++){
                 double xdelta = this.Xvals[i]-x1;
                 square = xdelta * y1;
                 triangle = ((xdelta)*(this.Yvals[i] - y1))/2.0;
@@ -91,14 +87,14 @@ namespace paireddata
 			        }
 		        }
 	        }
-	        for(int idx = 0; idx<g.Xvals.Count; idx++){
+	        for(int idx = 0; idx<g.Xvals.Length; idx++){
 		        //modify
                 double lcx = g.Xvals[idx];
 		        double damage = this.f(lcx) * g.Yvals[idx];
 		        newXvals.Add(lcx);
 		        newYvals.Add(damage);
 	        }
-            if (g.Xvals[g.Xvals.Count-1] < Xvals[(Xvals.Count-1)] ){
+            if (g.Xvals[g.Xvals.Length-1] < Xvals[(Xvals.Length - 1)] ){
                 //add in the damage curve ordinates without modification.
                 double top = g.Xvals.Last();
                 newXvals.Add(top);
@@ -108,7 +104,7 @@ namespace paireddata
                 newXvals.Add(top+.00000001);
                 double damageabove = f(top+.00000001) * aboveFragilityCurveValue;
                 newYvals.Add(damageabove);
-                for (int idx = 0; idx<Xvals.Count;idx++){
+                for (int idx = 0; idx<Xvals.Length; idx++){
                     double dcx = Xvals[idx];
                     if (dcx > top) {
                         //set to max val
@@ -118,7 +114,7 @@ namespace paireddata
                     }
                 }
             }
-            return new PairedData(newXvals,newYvals);
+            return new PairedData(newXvals.ToArray(),newYvals.ToArray());
         }
     }
 }
