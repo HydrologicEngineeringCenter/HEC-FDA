@@ -21,25 +21,40 @@ namespace paireddata
             //binary search.
             double[] xarr = Xvals.ToArray();
             Int32 idx = Array.BinarySearch(xarr, x);
-            if (idx < -1){
-                idx = -1*idx-1;
-                if (idx == Yvals.Count){
-                    return Yvals[Yvals.Count-1];
-                }else{
-                    return Yvals[idx- 1] + (x - Xvals[idx - 1]) / (Xvals[idx] - Xvals[idx - 1]) * (Yvals[idx] - Yvals[idx - 1]);
-                }
-            }else if (idx == -1){
-                return Yvals[0];
-            }else{
+            if(idx >=0)
+            {
+                //Matches a value exactly
                 return Yvals[idx];
             }
+            else
+            {
+                //This is the next LARGER value.
+                idx = ~idx;
+
+                if(idx == Xvals.Count)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+                if(idx == 0)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+
+                //Ok. Interpolate Y=mx+b
+                double m = (Yvals[idx] - Yvals[idx - 1]) / (Xvals[idx] - Xvals[idx - 1]);
+                double b = Yvals[idx - 1];
+                double dx = x - Xvals[idx - 1];
+                return m * dx + b;
+            }
         }
-        ///compose implements the IComposable interface on PairedData, which allows a PairedData object to take the input y values as the x value (to determine the commensurate y value) from the subject function. Ultimately it creates a composed function with the Y from the subject, and the commensurate x from the input.
+        /// <summary>
+        /// compose implements the IComposable interface on PairedData, which allows a PairedData object to take the input y values as the x value (to determine the commensurate y value) from the subject function. Ultimately it creates a composed function with the Y from the subject, and the commensurate x from the input.
+        /// </summary>
         public IPairedData compose(IPairedData input){
             List<double> x = new List<double>();
             List<double> y = new List<double>();
             for (int i = 0; i < input.Xvals.Count; i++){
-                y.Add(this.f(input.Yvals[i]));
+                y.Add(f(input.Yvals[i]));
                 x.Add(input.Xvals[i]);
             }
             return new PairedData(x, y);
