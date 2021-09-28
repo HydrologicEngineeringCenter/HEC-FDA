@@ -6,8 +6,8 @@ namespace paireddata
     public class StepwisePairedData: IPairedData
     {
 
-        public double[] Xvals { get; set; }
-        public double[] Yvals { get; set; }
+        public double[] Xvals { get;}
+        public double[] Yvals { get;}
 
         public StepwisePairedData(double[] xs, double[] ys){
             Xvals = xs;
