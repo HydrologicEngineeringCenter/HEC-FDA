@@ -15,8 +15,7 @@ namespace paireddata
         }
         public double f(double x){
             //binary search.
-            double[] xarr = Xvals.ToArray();
-            Int32 idx = Array.BinarySearch(xarr, x);
+            Int32 idx = Array.BinarySearch(Xvals, x);
             if (idx < -1){
                 idx = -1*idx-1;
                 if (idx == Yvals.Length){
@@ -28,6 +27,23 @@ namespace paireddata
                 return Yvals[0];
             }else{
                 return Yvals[idx];
+            }
+        }
+        public double f_inverse(double y){
+            //binary search.
+            double[] yarr = Yvals;
+            Int32 idx = Array.BinarySearch(yarr, y);
+            if (idx < -1){
+                idx = -1*idx-1;
+                if (idx == Yvals.Length){
+                    return Xvals[Yvals.Length - 1];
+                }else{
+                    return Xvals[idx];//stepwise interpolation (i think).
+                }
+            }else if (idx == -1){
+                return Xvals[0];
+            }else{
+                return Xvals[idx];
             }
         }
         public IPairedData compose(IPairedData input){

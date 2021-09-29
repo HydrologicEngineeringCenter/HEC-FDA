@@ -18,7 +18,7 @@ namespace paireddata
         /// </summary>
         public double f(double x){
             //binary search.
-            double[] xarr = Xvals.ToArray();
+            double[] xarr = Xvals; //probably not necessary anymore.
             Int32 idx = Array.BinarySearch(xarr, x);
             if(idx >=0)
             {
@@ -42,17 +42,44 @@ namespace paireddata
             }
         }
         /// <summary>
-        /// compose implements the IComposable interface on PairedData, which allows a PairedData object to take the input y values as the x value (to determine the commensurate y value) from the subject function.
-        /// Ultimately it creates a composed function with the Y from the subject, and the commensurate x from the input.
+        /// f_inverse implements ISample on PairedData, for a given input double y f_inverse produces an output double that represents the linearly interoplated value for x given y.
+        /// </summary>
+        public double f_inverse(double y){
+            //binary search.
+            double[] yarr = Yvals;
+            Int32 idx = Array.BinarySearch(yarr, y);
+            if(idx >=0)
+            {
+                //Matches a value exactly
+                return Xvals[idx];
+            }
+            else
+            {
+                //This is the next LARGER value.
+                idx = ~idx;
+
+                if(idx == Yvals.Count()) {return Xvals[Xvals.Length-1];}
+
+                if(idx == 0) {return Xvals[0];}
+
+                //Ok. Interpolate Y=mx+b
+                double m = (Xvals[idx] - Xvals[idx - 1]) / (Yvals[idx] - Yvals[idx - 1]);
+                double b = Xvals[idx - 1];
+                double dy = y - Yvals[idx - 1];
+                return m * dy + b;//not sure this is right. Need to develop tests.
+            }
+        }
+        /// <summary>
+        /// compose implements the IComposable interface on PairedData, which allows a PairedData object to take the input y values as the x value (to determine the commensurate y value) from the subject function. Ultimately it creates a composed function with the Y from the subject, and the commensurate x from the input.
         /// </summary>
         public IPairedData compose(IPairedData input){
-            List<double> x = new List<double>();
-            List<double> y = new List<double>();
-            for (int i = 0; i < input.Xvals.Length; i++){
-                y.Add(f(input.Yvals[i]));
-                x.Add(input.Xvals[i]);
+            double[] x = new double[input.Xvals.Length];
+            double[] y = new double[input.Yvals.Length];
+            for (int i = 0; i < input.Xvals.Count(); i++){
+                y[i] = f(input.Yvals[i]);
+                x[i] = input.Xvals[i];
             }
-            return new PairedData(x.ToArray(), y.ToArray());
+            return new PairedData(x, y);
         }
 
         /// <summary>
