@@ -42,12 +42,13 @@ namespace paireddata
             }
         }
         /// <summary>
-        /// compose implements the IComposable interface on PairedData, which allows a PairedData object to take the input y values as the x value (to determine the commensurate y value) from the subject function. Ultimately it creates a composed function with the Y from the subject, and the commensurate x from the input.
+        /// compose implements the IComposable interface on PairedData, which allows a PairedData object to take the input y values as the x value (to determine the commensurate y value) from the subject function.
+        /// Ultimately it creates a composed function with the Y from the subject, and the commensurate x from the input.
         /// </summary>
         public IPairedData compose(IPairedData input){
             List<double> x = new List<double>();
             List<double> y = new List<double>();
-            for (int i = 0; i < input.Xvals.Count(); i++){
+            for (int i = 0; i < input.Xvals.Length; i++){
                 y.Add(f(input.Yvals[i]));
                 x.Add(input.Xvals[i]);
             }
@@ -55,25 +56,24 @@ namespace paireddata
         }
 
         /// <summary>
-        /// integrate implements IIntegrate on PairedData, it calcualtes the area under the paired data curve across the range of x values using trapizoidal integration.
+        /// integrate implements IIntegrate on PairedData, it calcualtes the area under the paired data curve across the range of x values using trapizoidal integration. Assumes X vals are probabilities decreasing from 1
         /// </summary>
         public double integrate(){
             double triangle;
             double square;
-            //assume x vals are increasing from zero.
-            double x1=0.0;
+            double x1=1.0;
             double y1=0.0;
             double ead=0.0;
-            for(int i=0; i<this.Xvals.Count(); i ++){
-                double xdelta = this.Xvals[i]-x1;
+            for(int i=0; i<Xvals.Length; i ++){
+                double xdelta = x1-Xvals[i];
                 square = xdelta * y1;
-                triangle = ((xdelta)*(this.Yvals[i] - y1))/2.0;
+                triangle = ((xdelta)*(Yvals[i] - y1))/2.0;
                 ead += square + triangle;
-                x1 = this.Xvals[i];
-                y1 = this.Yvals[i];
+                x1 = Xvals[i];
+                y1 = Yvals[i];
             }
             if (x1 != 0.0){
-                double xdelta = 1.0-x1;
+                double xdelta = x1-0;
                 ead += xdelta*y1;
             }
             return ead;
