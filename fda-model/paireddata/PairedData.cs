@@ -56,7 +56,8 @@ namespace paireddata
         }
 
         /// <summary>
-        /// integrate implements IIntegrate on PairedData, it calcualtes the area under the paired data curve across the range of x values using trapizoidal integration. Assumes X vals are probabilities decreasing from 1
+        ///Calcualtes the area under the paired data curve across the range of x values using trapizoidal integration. 
+        ///Assumes X vals are probabilities decreasing from 1. Assumes an additional x ord of 0, and y ordinate equal to the last one in the array.
         /// </summary>
         public double integrate(){
             double triangle;
@@ -82,6 +83,11 @@ namespace paireddata
             return new StepwisePairedData(Xvals, Yvals);
         }
 
+        /// <summary>
+        /// Appropriate when subject is a stage damage curve, and the input is a fragility curve. 
+        /// multiply multiplies a stage damage curve by a fragility curve. All damages below the curve are considered 0.
+        /// A point is added just above and just below the curve. 
+        /// </summary>
         public IPairedData multiply(IPairedData g)
         {
             double belowFragilityCurveValue = 0.0;
@@ -100,10 +106,6 @@ namespace paireddata
 				        //create a point on the curve just below the bottom of the levee at damage zero.
 				        newXvals.Add(bottom-.000000000001);
 				        newYvals.Add(belowFragilityCurveValue);
-				        //create a point at the bottom of the fragility curve
-				        newXvals.Add(bottom);
-				        double damage = this.f(bottom) * g.Yvals[0];
-				        newYvals.Add(damage);
 				        break;
 			        }
 		        }
@@ -111,17 +113,13 @@ namespace paireddata
 	        for(int idx = 0; idx<g.Xvals.Count(); idx++){
 		        //modify
                 double lcx = g.Xvals[idx];
-		        double damage = this.f(lcx) * g.Yvals[idx];
+		        double damage = f(lcx) * g.Yvals[idx];
 		        newXvals.Add(lcx);
 		        newYvals.Add(damage);
 	        }
-            if (g.Xvals[g.Xvals.Count()-1] < Xvals[(Xvals.Count()-1)] ){
-                //add in the damage curve ordinates without modification.
+            if (g.Xvals.Last() < Xvals.Last() ){
                 double top = g.Xvals.Last();
-                newXvals.Add(top);
-                double damage = f(top) * g.Yvals.Last();
-                newYvals.Add(damage);
-                //create a point at the bottom of the fragility curve
+                //create a point at the top of the fragility curve
                 newXvals.Add(top+.00000001);
                 double damageabove = f(top+.00000001) * aboveFragilityCurveValue;
                 newYvals.Add(damageabove);
