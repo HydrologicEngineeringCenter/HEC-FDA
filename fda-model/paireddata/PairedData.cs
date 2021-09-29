@@ -121,6 +121,7 @@ namespace paireddata
 	        double aboveFragilityCurveValue = 1.0;
 	        List<double> newXvals = new List<double>();
 	        List<double> newYvals = new List<double>();
+            double buffer = .001; //buffer to define point just above and just below the multiplying curve.
 	        if (Xvals[0] < g.Xvals[0]) {
 		        //cacluate no damage until the bottom of the fragility curve
 		        double bottom = g.Xvals[0];
@@ -131,7 +132,7 @@ namespace paireddata
 				        newYvals.Add(belowFragilityCurveValue);
 			        } else {
 				        //create a point on the curve just below the bottom of the levee at damage zero.
-				        newXvals.Add(bottom-.000000000001);
+				        newXvals.Add(bottom-buffer);
 				        newYvals.Add(belowFragilityCurveValue);
 				        break;
 			        }
@@ -149,8 +150,8 @@ namespace paireddata
             if (g.Xvals.Last() < Xvals.Last() ){
                 double top = g.Xvals.Last();
                 //create a point at the top of the fragility curve
-                newXvals.Add(top+.00000001);
-                double damageabove = f(top+.00000001) * aboveFragilityCurveValue;
+                newXvals.Add(top+buffer);
+                double damageabove = f(top+buffer) * aboveFragilityCurveValue;
                 newYvals.Add(damageabove);
                 for (int idx = 0; idx<Xvals.Count();idx++){
                     double dcx = Xvals[idx];
