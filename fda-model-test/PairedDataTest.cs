@@ -71,5 +71,33 @@ namespace fda_model_test
             Assert.AreEqual(expected.Xvals, actual.Xvals);
             Assert.AreEqual(expected.Yvals, actual.Yvals);
         }
+        [Test]
+        public void FInverseInterpolatesCorrectBetween()
+        {
+            double expected = 1500; //linear interp of ys when x=1500
+            double actual = myRatingCurve.f_inverse(565.5);
+            Assert.AreEqual(expected, actual);
+        }
+        [Test]
+        public void FInverseReturnsMaxIfaAboveBounds()
+        {
+            double expected = 175000;
+            double actual = myRatingCurve.f_inverse(850);
+            Assert.AreEqual(expected, actual);
+        }
+        [Test]
+        public void FInverseReturnsMinIfBelowBounds()
+        {
+            double expected = 10;
+            double actual = myRatingCurve.f_inverse(555);
+            Assert.AreEqual(expected, actual);
+        }
+        [Test]
+        public void FInverseReturnsExactIfExact()
+        {
+            double expected = 100;
+            double actual = myRatingCurve.f_inverse(562);
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

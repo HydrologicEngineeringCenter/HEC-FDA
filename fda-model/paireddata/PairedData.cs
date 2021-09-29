@@ -137,6 +137,7 @@ namespace paireddata
 			        }
 		        }
 	        }
+            // calculate damages for the range of the fragility curve
 	        for(int idx = 0; idx<g.Xvals.Count(); idx++){
 		        //modify
                 double lcx = g.Xvals[idx];
@@ -144,6 +145,7 @@ namespace paireddata
 		        newXvals.Add(lcx);
 		        newYvals.Add(damage);
 	        }
+            // calculate damages above the fragility curve
             if (g.Xvals.Last() < Xvals.Last() ){
                 double top = g.Xvals.Last();
                 //create a point at the top of the fragility curve
