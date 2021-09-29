@@ -18,7 +18,7 @@ namespace paireddata
         /// </summary>
         public double f(double x){
             //binary search.
-            double[] xarr = Xvals.ToArray();
+            double[] xarr = Xvals; //probably not necessary anymore.
             Int32 idx = Array.BinarySearch(xarr, x);
             if(idx >=0)
             {
@@ -45,13 +45,13 @@ namespace paireddata
         /// compose implements the IComposable interface on PairedData, which allows a PairedData object to take the input y values as the x value (to determine the commensurate y value) from the subject function. Ultimately it creates a composed function with the Y from the subject, and the commensurate x from the input.
         /// </summary>
         public IPairedData compose(IPairedData input){
-            List<double> x = new List<double>();
-            List<double> y = new List<double>();
+            double[] x = new double[input.Xvals.Length];
+            double[] y = new double[input.Yvals.Length];
             for (int i = 0; i < input.Xvals.Count(); i++){
-                y.Add(f(input.Yvals[i]));
-                x.Add(input.Xvals[i]);
+                y[i] = f(input.Yvals[i]);
+                x[i] = input.Xvals[i];
             }
-            return new PairedData(x.ToArray(), y.ToArray());
+            return new PairedData(x, y);
         }
 
         /// <summary>
