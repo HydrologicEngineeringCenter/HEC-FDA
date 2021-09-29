@@ -15,8 +15,7 @@ namespace paireddata
         }
         public double f(double x){
             //binary search.
-            double[] xarr = Xvals.ToArray();
-            Int32 idx = Array.BinarySearch(xarr, x);
+            Int32 idx = Array.BinarySearch(Xvals, x);
             if (idx < -1){
                 idx = -1*idx-1;
                 if (idx == Yvals.Length){
