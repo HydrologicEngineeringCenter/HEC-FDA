@@ -1,4 +1,4 @@
-﻿using ViewModel.Conditions;
+﻿using ViewModel.ImpactAreaScenario;
 using ViewModel.Editors;
 using Functions;
 using Functions.CoordinatesFunctions;
@@ -35,7 +35,7 @@ namespace ViewModel.Plots
         //    set { _ChartVM = value;NotifyPropertyChanged(); }
         //}
 
-        public ConditionChartViewModel CoordinatesChartViewModel { get; set; }
+        public IASChartViewModel CoordinatesChartViewModel { get; set; }
 
 
         public IFdaFunction Curve
@@ -77,7 +77,7 @@ namespace ViewModel.Plots
             bool xAxisOnBottom, bool yAxisOnLeft) 
             : this(baseFunction,isXAxisLog, isYAxisLog, isProbabilityXAxis, selectedElementName)
         {
-            CoordinatesChartViewModel = new ConditionChartViewModel(selectedElementName, chartModifier);
+            CoordinatesChartViewModel = new IASChartViewModel(selectedElementName, chartModifier);
             //BaseFunction = baseFunction;
             //if(baseFunction.FunctionType == FdaModel.Functions.FunctionTypes.InflowFrequency)
             //{

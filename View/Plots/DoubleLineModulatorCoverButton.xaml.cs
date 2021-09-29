@@ -33,7 +33,7 @@ namespace View.Plots
             //pop the plot out
             //find parent and pop this plot out.
             ContentControl parentControl = Plots.IndividualLinkedPlotControl.FindParent<ContentControl>(this);
-            if (parentControl != null && parentControl.GetType() == typeof(ConditionsIndividualPlotWrapper))
+            if (parentControl != null && parentControl.GetType() == typeof(IASIndividualPlotWrapper))
             {
                 parentControl = IndividualLinkedPlotControl.FindParent<ContentControl>(parentControl);
             }

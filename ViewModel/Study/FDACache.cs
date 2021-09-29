@@ -13,7 +13,7 @@ using ViewModel.FlowTransforms;
 using ViewModel.GeoTech;
 using ViewModel.AggregatedStageDamage;
 using ViewModel.Inventory;
-using ViewModel.Conditions;
+using ViewModel.ImpactAreaScenario;
 using System.Collections.ObjectModel;
 using ViewModel.Inventory.OccupancyTypes;
 using ViewModel.Saving;
@@ -95,7 +95,7 @@ namespace ViewModel.Study
         private List<FailureFunctionElement> _Failures = new List<FailureFunctionElement>();
         private List<AggregatedStageDamageElement> _StageDamages = new List<AggregatedStageDamageElement>();
         private List<InventoryElement> _Structures = new List<InventoryElement>();
-        private List<ConditionsElement> _Conditions = new List<ConditionsElement>();
+        private List<IASElement> _Conditions = new List<IASElement>();
 
         #region Properties
         public List<RatingCurveElement> RatingCurveElements { get { return _Ratings; }  }      
@@ -110,7 +110,7 @@ namespace ViewModel.Study
         public List<FailureFunctionElement> FailureFunctionElements { get { return _Failures; } }
         public List<AggregatedStageDamageElement> StageDamageElements { get { return _StageDamages; } }
         public List<InventoryElement> StructureInventoryElements { get { return _Structures; } }
-        public List<ConditionsElement> ConditionsElements { get { return _Conditions; } }
+        public List<IASElement> ConditionsElements { get { return _Conditions; } }
 
         #region ParentElements
         public TerrainOwnerElement TerrainParent { get; set; }
@@ -124,8 +124,8 @@ namespace ViewModel.Study
 
         public OccupancyTypesOwnerElement OccTypeParent { get; set; }
         public StructureInventoryOwnerElement StructureInventoryParent { get; set; }
-        public ConditionsOwnerElement ConditionsParent { get; set; }
-        public ConditionsTreeOwnerElement ConditionsTreeParent { get; set; }
+        public IASOwnerElement ConditionsParent { get; set; }
+        public IASTreeOwnerElement ConditionsTreeParent { get; set; }
         public AltervativeOwnerElement PlansParent { get; set; }
         public AlternativeComparisonReportOwnerElement AlternativeComparisonReportParent { get; set; }
         #endregion
@@ -227,7 +227,7 @@ namespace ViewModel.Study
                 //StageDamageElements.Remove((AggregatedStageDamageElement)elem);
                 StageDamageRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            if (elem.GetType() == typeof(ConditionsElement))
+            if (elem.GetType() == typeof(IASElement))
             {
                 RemoveElementFromList(ConditionsElements, elem);
                 //ConditionsElements.Remove((ConditionsElement)elem);
@@ -318,9 +318,9 @@ namespace ViewModel.Study
                 StageDamageElements.Add((AggregatedStageDamageElement)elem);
                 StageDamageAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
             }
-            else if (elem.GetType() == typeof(ConditionsElement))
+            else if (elem.GetType() == typeof(IASElement))
             {
-                ConditionsElements.Add((ConditionsElement)elem);
+                ConditionsElements.Add((IASElement)elem);
                 ConditionsElementAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
             }
 
@@ -376,9 +376,9 @@ namespace ViewModel.Study
             {
                 UpdateStageDamageElement((AggregatedStageDamageElement)oldElement, (AggregatedStageDamageElement)newElement);
             }
-            else if (oldElement.GetType().Equals(typeof(ConditionsElement)))
+            else if (oldElement.GetType().Equals(typeof(IASElement)))
             {
-                UpdateConditionsElement((ConditionsElement)oldElement, (ConditionsElement)newElement);
+                UpdateConditionsElement((IASElement)oldElement, (IASElement)newElement);
             }
             else if (oldElement.GetType().Equals(typeof(InventoryElement)))
             {
@@ -588,7 +588,7 @@ namespace ViewModel.Study
                 StageDamageUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
-        public void UpdateConditionsElement(ConditionsElement oldElement, ConditionsElement newElement)
+        public void UpdateConditionsElement(IASElement oldElement, IASElement newElement)
         {
             int index = -1;
             for (int i = 0; i < ConditionsElements.Count; i++)
@@ -760,7 +760,7 @@ namespace ViewModel.Study
                 }
                 return retVal;
             }
-            if (element.GetType() == typeof(ConditionsOwnerElement))
+            if (element.GetType() == typeof(IASOwnerElement))
             {
                 foreach (ChildElement elem in ConditionsElements)
                 {
@@ -824,7 +824,7 @@ namespace ViewModel.Study
             {
                 return StageDamageParent as T;
             }
-            if (parentType == typeof(ConditionsOwnerElement))
+            if (parentType == typeof(IASOwnerElement))
             {
                 return ConditionsParent as T;
             }
@@ -930,7 +930,7 @@ namespace ViewModel.Study
                 }
                 return retVal;
             }
-            if (childElementType == typeof(ConditionsElement))
+            if (childElementType == typeof(IASElement))
             {
                 foreach (ChildElement elem in ConditionsElements)
                 {
@@ -1037,7 +1037,7 @@ namespace ViewModel.Study
                 }
             }
 
-            if (childElementType == typeof(ConditionsElement))
+            if (childElementType == typeof(IASElement))
             {
                 foreach (ChildElement elem in ConditionsElements)
                 {

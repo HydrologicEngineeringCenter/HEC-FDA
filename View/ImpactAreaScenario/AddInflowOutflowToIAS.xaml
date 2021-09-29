@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="View.ImpactAreaScenario.AddInflowOutflowToIAS"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:View.ImpactAreaScenario"
+             xmlns:Utils="clr-namespace:View.Utilities"
+             mc:Ignorable="d" 
+             
+             
+             d:DesignHeight="150" d:DesignWidth="400">
+    <UserControl.Resources>
+        <Utils:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibility" />
+    </UserControl.Resources>
+    <Border BorderBrush="Black" BorderThickness="2">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!--<Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="60" />
+        </Grid.ColumnDefinitions>-->
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Right" >
+            <Button Width="18" Height="18" Name="btn_PopOutCurve" Click="btn_PopOutImporter_Click"  Margin="5" ToolTip="Pop Out" Visibility="{Binding IsPoppedOut,Converter={StaticResource BoolToInverseVisibility}}">
+                <Image Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/PopUp.png"/>
+            </Button>
+            <!--<Button Width="18" Height="18" Name="btn_DeleteCurve" Click="btn_Cancel_Click"  Margin="5" ToolTip="Cancel" Visibility="{Binding IsPoppedOut,Converter={StaticResource BoolToInverseVisibility}}">
+                <Image Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/Delete.png"/>
+            </Button>-->
+        </StackPanel>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Label Content="Inflow Outflow Curve:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" />
+                <ComboBox Grid.Row="1" Grid.Column="1" Height="22" Width="130" VerticalAlignment="Center" ItemsSource="{Binding ListOfInflowOutflowElements}" Margin="5,0,0,0" DisplayMemberPath="Name" SelectedItem="{Binding SelectedElement}" />
+            <Button Grid.Row="1" Grid.Column="2" Name="btn_NewInflowOutflow" VerticalAlignment="Center" Width="22" Height="22" Margin="5,0,0,0" ToolTip="Create New Inflow Outflow Curve" Click="btn_NewInflowOutflow_Click">
+                <Image  Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/View;component/Resources/Add.png"/>
+            </Button>
+        </StackPanel>
+            <!--<Button Name="btn_OK" Grid.Row="4" Height="20" HorizontalAlignment="Center" Content="cody" Click="btn_OK_Click" />-->
+        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.ColumnSpan="3" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Button Name="btn_OK" Grid.Row="4" Height="20" Width="50" HorizontalAlignment="Right" Margin="5" VerticalAlignment="Bottom" Content="OK" Click="btn_OK_Click" />
+            <Button Name="btn_Cancel" Grid.Row="4" Height="20" Width="50" HorizontalAlignment="Right" Margin="5" VerticalAlignment="Bottom"  Content="Cancel" Click="btn_Cancel_Click" />
+        </StackPanel>
+        <!--<Utils:OKCloseControl Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right"/>-->
+    </Grid>
+    </Border>
+</UserControl>

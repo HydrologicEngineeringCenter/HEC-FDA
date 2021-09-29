@@ -56,8 +56,8 @@
              xmlns:AggregatedVM="clr-namespace:ViewModel.AggregatedStageDamage;assembly=ViewModel"
              xmlns:AggregatedView="clr-namespace:View.AggregatedStageDamage"
              
-             xmlns:ConditionVM="clr-namespace:ViewModel.Conditions;assembly=ViewModel"
-             xmlns:ConditionsView="clr-namespace:View.Conditions"
+             xmlns:ImpactAreaScenarioVM="clr-namespace:ViewModel.ImpactAreaScenario;assembly=ViewModel"
+             xmlns:ImpactAreaScenarioView="clr-namespace:View.ImpactAreaScenario"
              
              xmlns:OccupancyTypesVM="clr-namespace:ViewModel.Inventory.OccupancyTypes;assembly=ViewModel"
              xmlns:OccupancyTypesView="clr-namespace:View.Inventory.OccupancyTypes"
@@ -242,32 +242,32 @@
         <DataTemplate DataType="{x:Type OutputVM:IndexLocationsVM }" >
             <OutputView:IndexLocations/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:ConditionsEditorVM }" >
-            <ConditionsView:ConditionsEditor/>
+        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:IASEditorVM }" >
+            <ImpactAreaScenarioView:IASEditor/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:EnterSeedVM }" >
-            <ConditionsView:EnterSeed/>
+        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:EnterSeedVM }" >
+            <ImpactAreaScenarioView:EnterSeed/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:AddInflowOutflowToConditionVM }" >
-            <ConditionsView:AddInflowOutflowToCondition/>
+        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:AddInflowOutflowToIASVM }" >
+            <ImpactAreaScenarioView:AddInflowOutflowToIAS/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:AddExteriorInteriorStageToConditionVM }" >
-            <ConditionsView:AddExteriorInteriorStageToCondition/>
+        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:AddExteriorInteriorStageToIASVM }" >
+            <ImpactAreaScenarioView:AddExteriorInteriorStageToIAS/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:AddFailureFunctionToConditionVM }" >
-            <ConditionsView:AddFailureFunctionToCondition/>
+        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:AddFailureFunctionToIASVM }" >
+            <ImpactAreaScenarioView:AddFailureFunctionToIAS/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:AddStageDamageToConditionVM }" >
-            <ConditionsView:AddStageDamageToCondition/>
+        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:AddStageDamageToIASVM }" >
+            <ImpactAreaScenarioView:AddStageDamageToIAS/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:ConditionsPlotEditorVM }" >
-            <ConditionsView:ConditionsPlotEditor/>
+        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:IASPlotEditorVM }" >
+            <ImpactAreaScenarioView:IASPlotEditor/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:AddFlowFrequencyToConditionVM }" >
-            <ConditionsView:AddFlowFrequencyToCondition/>
+        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:AddFlowFrequencyToIASVM }" >
+            <ImpactAreaScenarioView:AddFlowFrequencyToIAS/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:AddRatingCurveToConditionVM }" >
-            <ConditionsView:AddRatingCurveToCondition/>
+        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:AddRatingCurveToIASVM }" >
+            <ImpactAreaScenarioView:AddRatingCurveToIAS/>
         </DataTemplate>
         <!--todo: Refactor: CO-->
         <!--<DataTemplate DataType="{x:Type LinkedPlotsVM:LinkedPlotsUpdatedVM }" >
@@ -283,12 +283,12 @@
             <PlotsView:IndividualLinkedPlot/>
         </DataTemplate>-->
 
-        <DataTemplate DataType="{x:Type PlotsVM:ConditionsIndividualPlotWrapperVM }" >
-            <PlotsView:ConditionsIndividualPlotWrapper/>
+        <DataTemplate DataType="{x:Type PlotsVM:IASIndividualPlotWrapperVM }" >
+            <PlotsView:IASIndividualPlotWrapper/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type PlotsVM:DoubleLineModulatorWrapperVM }" >
-            <ConditionsView:ConditionsDoubleLineModulatorWrapper/>
+            <ImpactAreaScenarioView:IASDoubleLineModulatorWrapper/>
         </DataTemplate>
         <!--todo: Refactor: CO-->
         <!--<DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotControlVM }" >
@@ -302,8 +302,8 @@
             <PlotsView:HorizontalDoubleLineModulatorWrapper/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type PlotsVM:ConditionsHorizontalFailureFunctionVM }" >
-            <PlotsView:ConditionsHorizontalFailureFunction/>
+        <DataTemplate DataType="{x:Type PlotsVM:IASHorizontalFailureFunctionVM }" >
+            <PlotsView:IASHorizontalFailureFunction/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type PlotsVM:DoubleLineModulatorHorizontalCoverButtonVM }" >

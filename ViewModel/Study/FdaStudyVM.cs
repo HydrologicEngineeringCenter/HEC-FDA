@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ViewModel.Utilities.Transactions;
 using System.Collections.ObjectModel;
-using ViewModel.Conditions;
+using ViewModel.ImpactAreaScenario;
 using ViewModel.Utilities;
 using System.IO;
 using System.Xml;

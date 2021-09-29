@@ -206,7 +206,7 @@ namespace View.Plots
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             ContentControl parentControl = Plots.IndividualLinkedPlotControl.FindParent<ContentControl>(this);
-            if (parentControl != null && parentControl.GetType() == typeof(Conditions.ConditionsDoubleLineModulatorWrapper))
+            if (parentControl != null && parentControl.GetType() == typeof(ImpactAreaScenario.IASDoubleLineModulatorWrapper))
             {
                 parentControl = IndividualLinkedPlotControl.FindParent<ContentControl>(parentControl);
             }
@@ -332,7 +332,7 @@ namespace View.Plots
         {
             //get all the values from the vm and draw the lines.
             ContentControl parentControl = Plots.IndividualLinkedPlotControl.FindParent<ContentControl>(this);
-            if (parentControl != null && parentControl.GetType() == typeof(Conditions.ConditionsDoubleLineModulatorWrapper))
+            if (parentControl != null && parentControl.GetType() == typeof(ImpactAreaScenario.IASDoubleLineModulatorWrapper))
             {
                 parentControl = IndividualLinkedPlotControl.FindParent<ContentControl>(parentControl);
             }
@@ -717,7 +717,7 @@ namespace View.Plots
             //}
 
             ContentControl parentControl = Plots.IndividualLinkedPlotControl.FindParent<ContentControl>(this);
-            if (parentControl != null && parentControl.GetType() == typeof(Conditions.ConditionsDoubleLineModulatorWrapper))
+            if (parentControl != null && parentControl.GetType() == typeof(ImpactAreaScenario.IASDoubleLineModulatorWrapper))
             {
                 parentControl = IndividualLinkedPlotControl.FindParent<ContentControl>(parentControl);
             }

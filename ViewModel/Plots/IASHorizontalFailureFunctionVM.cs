@@ -8,13 +8,8 @@ using Model;
 
 namespace ViewModel.Plots
 {
-    //[Author(q0heccdm, 1 / 12 / 2018 2:08:57 PM)]
-    public class DoubleLineModulatorWrapperVM :BaseViewModel, IIndividualLinkedPlotWrapper
+    public class IASHorizontalFailureFunctionVM: BaseViewModel, IIndividualLinkedPlotWrapper
     {
-        #region Notes
-        // Created By: q0heccdm
-        // Created Date: 1/12/2018 2:08:57 PM
-        #endregion
         #region Fields
 
         public event EventHandler ShowImportButton;
@@ -31,11 +26,12 @@ namespace ViewModel.Plots
         //that i can set them on plot 8. But that means they get put on
         //all these plot classes even though they will never get set.
         public string EAD { get; set; }
-
+      
         public string AEP { get; set; }
+      
         public bool DisplayImportButton
         {
-            get;set;
+            get; set;
         }
         public Model.IMetric Metric
         {
@@ -73,37 +69,19 @@ namespace ViewModel.Plots
         public int SelectedElementID { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
         #region Constructors
-        public DoubleLineModulatorWrapperVM()
+        public IASHorizontalFailureFunctionVM()
         {
         }
-        /// <summary>
-        /// Call this when opening up a conditions node that already has values for this plot
-        /// </summary>
-        /// <param name="plotVM"></param>
-        public DoubleLineModulatorWrapperVM(IndividualLinkedPlotVM plotVM):this()
+        public IASHorizontalFailureFunctionVM(IndividualLinkedPlotVM plotVM) : this()
         {
             PlotVM = plotVM;
         }
 
-        #endregion
-        #region Voids
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
-
-        public void AddCurveToPlot(IFdaFunction function, string elementName,int elementId,  FdaCrosshairChartModifier chartModifier)
+        public void AddCurveToPlot(IFdaFunction function, string elementName, int elementID, FdaCrosshairChartModifier chartModifier)
         {
             throw new NotImplementedException();
         }
-
-
-
         #endregion
-        #region Functions
-        #endregion
-
-
 
     }
 }

@@ -1,4 +1,4 @@
-﻿using ViewModel.Conditions;
+﻿using ViewModel.ImpactAreaScenario;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

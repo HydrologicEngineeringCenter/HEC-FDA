@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ViewModel.AggregatedStageDamage;
-using ViewModel.Conditions;
+using ViewModel.ImpactAreaScenario;
 using ViewModel.FlowTransforms;
 using ViewModel.FrequencyRelationships;
 using ViewModel.GeoTech;
@@ -203,7 +203,7 @@ namespace ViewModel.Editors
                 StudyCache.StageDamageAdded += SiblingWasAdded;
                 StudyCache.StageDamageUpdated += SiblingNameChanged;
             }
-            if (childElementType == typeof(ConditionsElement))
+            if (childElementType == typeof(IASElement))
             {
                 StudyCache.ConditionsElementAdded += SiblingWasAdded;
                 StudyCache.ConditionsElementUpdated += SiblingNameChanged;

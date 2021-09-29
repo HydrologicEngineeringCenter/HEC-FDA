@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using ViewModel.Utilities;
 using System.Collections.ObjectModel;
-using ViewModel.Conditions;
+using ViewModel.ImpactAreaScenario;
 using ViewModel.Tabs;
 using ViewModel.StageTransforms;
 using ViewModel.Watershed;
@@ -578,7 +578,7 @@ namespace ViewModel.Study
                 inv.AddBaseElements(cache);
                 AddElement(inv);
 
-                Conditions.ConditionsOwnerElement c = new Conditions.ConditionsOwnerElement();
+                IASOwnerElement c = new IASOwnerElement();
                 AddElement(c);
 
                 Alternatives.AltervativeOwnerElement plans = new Alternatives.AltervativeOwnerElement();
@@ -593,7 +593,7 @@ namespace ViewModel.Study
                     LoadElementsFromDB();
                 }
 
-                ConditionsTreeOwnerElement ct = new ConditionsTreeOwnerElement(c);
+                IASTreeOwnerElement ct = new IASTreeOwnerElement(c);
                 cache.ConditionsElementUpdated += ConditionsElementWasUpdated; //ct.ConditionWasUpdated;
                 cache.ConditionsElementAdded += UpdateTheConditionsTree;
                 if (loadStudyCache)
@@ -642,13 +642,13 @@ namespace ViewModel.Study
             UpdateTheConditionsTree(sender, args);
             if(ConditionsTree.Count<= 0) { return; }
             //get the current 
-            ConditionsElement oldElem = (ConditionsElement)args.OldElement;
+            IASElement oldElem = (IASElement)args.OldElement;
             if(oldElem.IsExpanded == true)
             {
                 //i need to expand the new element that was added to the cond tree
                 string name = args.NewElement.Name;
 
-                foreach(ConditionsElement elem in ConditionsTree[0].Elements)
+                foreach(IASElement elem in ConditionsTree[0].Elements)
                 {
                     if(elem.Name.Equals(name))
                     {
@@ -687,18 +687,18 @@ namespace ViewModel.Study
             //    return;
             //}
             //List<ConditionsElement> conditions = StudyCache.GetChildElementsOfType<ConditionsElement>();
-            ConditionsOwnerElement studyCondOwner = StudyCache.GetParentElementOfType<ConditionsOwnerElement>();
-            ConditionsTreeOwnerElement condTreeCondOwnerElement = new ConditionsTreeOwnerElement(studyCondOwner);
+            IASOwnerElement studyCondOwner = StudyCache.GetParentElementOfType<IASOwnerElement>();
+            IASTreeOwnerElement condTreeCondOwnerElement = new IASTreeOwnerElement(studyCondOwner);
             condTreeCondOwnerElement.RequestNavigation += Navigate;
             condTreeCondOwnerElement.UpdateConditionsTree += UpdateTheConditionsTree;
 
             if (studyCondOwner.Elements.Count > 0)
             {
-                foreach (ConditionsElement elem in studyCondOwner.Elements)
+                foreach (IASElement elem in studyCondOwner.Elements)
                 {
                     //create a new conditions element and change the way it renames, removes, and edits. The parent node
                     //will then tell the study tree what to do
-                    ConditionsElement condElem = new ConditionsElement(elem);
+                    IASElement condElem = new IASElement(elem);
                     condElem.EditConditionsTreeElement += condTreeCondOwnerElement.EditCondition;
                     condElem.RemoveConditionsTreeElement += condTreeCondOwnerElement.RemoveElement;
                     condElem.RenameConditionsTreeElement += condTreeCondOwnerElement.RenameElement;

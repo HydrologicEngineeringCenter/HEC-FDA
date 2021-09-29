@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ViewModel.Conditions;
+using ViewModel.ImpactAreaScenario;
 using HEC.Plotting.SciChart2D.ViewModel;
 
 namespace View.Plots
@@ -34,7 +34,7 @@ namespace View.Plots
         {
             IIndividualLinkedPlotWrapper vm = (IIndividualLinkedPlotWrapper)this.DataContext;
             IndividualLinkedPlotVM editorVM = vm.PlotVM;
-            ConditionChartViewModel viewModel = new ConditionChartViewModel(editorVM.CoordinatesChartViewModel);
+            IASChartViewModel viewModel = new IASChartViewModel(editorVM.CoordinatesChartViewModel);
             Chart2D chart = new Chart2D(viewModel);
 
             editorVM.CoordinatesChartViewModel = viewModel;
@@ -59,7 +59,7 @@ namespace View.Plots
 
             //find parent and add this plot to its selectedPlot property.
             ContentControl parentControl = IndividualLinkedPlotControl.FindParent<ContentControl>(this);
-            if (parentControl != null && parentControl.GetType() == typeof(ConditionsIndividualPlotWrapper))
+            if (parentControl != null && parentControl.GetType() == typeof(IASIndividualPlotWrapper))
             {
                 parentControl = IndividualLinkedPlotControl.FindParent<ContentControl>(parentControl);
             }

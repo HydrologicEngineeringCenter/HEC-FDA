@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ViewModel.Conditions;
+using ViewModel.ImpactAreaScenario;
 using ViewModel.Utilities;
 using Functions;
 using HEC.Plotting.Core;
@@ -12,7 +12,7 @@ using Model;
 namespace ViewModel.Plots
 {
     //[Author(q0heccdm, 12 / 19 / 2017 1:26:57 PM)]
-    public class IndividualLinkedPlotControlVM : BaseViewModel, iConditionsControl
+    public class IndividualLinkedPlotControlVM : BaseViewModel, iIASControl
     {
         #region Notes
         // Created By: q0heccdm
@@ -125,7 +125,7 @@ namespace ViewModel.Plots
         public IIndividualLinkedPlotWrapper IndividualPlotWrapperVM { get; set; }
         //public IndividualLinkedPlotVM MyIndividualLinkedPlotVM { get; set; }
         public ICoverButton ImportButtonVM { get; set; }
-        public iConditionsImporter CurveImporterVM { get; set; }
+        public iIASImporter CurveImporterVM { get; set; }
 
         public ICoverButton ModulatorCoverButtonVM { get; set; }
         public IIndividualLinkedPlotWrapper ModulatorPlotWrapperVM { get; set; }
@@ -139,7 +139,7 @@ namespace ViewModel.Plots
         {
            
         }
-        public IndividualLinkedPlotControlVM(IFdaFunctionEnum type, IIndividualLinkedPlotWrapper indLinkedPlotWrapperVM, ICoverButton coverButton, iConditionsImporter importerVM, 
+        public IndividualLinkedPlotControlVM(IFdaFunctionEnum type, IIndividualLinkedPlotWrapper indLinkedPlotWrapperVM, ICoverButton coverButton, iIASImporter importerVM, 
              ICoverButton modulatorCoverButton = null, IIndividualLinkedPlotWrapper modulatorPlotWrapper = null)
         {
             PlotType = type;
@@ -665,9 +665,9 @@ namespace ViewModel.Plots
             return controlType;
         }
 
-        public ConditionChartViewModel GetChartViewModel()
+        public IASChartViewModel GetChartViewModel()
         {
-            ConditionChartViewModel vm = null;
+            IASChartViewModel vm = null;
             vm = IndividualPlotWrapperVM.PlotVM.CoordinatesChartViewModel;
             return vm;
         }
@@ -763,8 +763,8 @@ namespace ViewModel.Plots
             IParameterEnum thisType = GetFunctionType(this);
             IParameterEnum nextType = GetFunctionType(nextControl);
 
-            ConditionChartViewModel currentChartVM = GetChartViewModel();
-            ConditionChartViewModel nextChartVM = nextControl.GetChartViewModel();
+            IASChartViewModel currentChartVM = GetChartViewModel();
+            IASChartViewModel nextChartVM = nextControl.GetChartViewModel();
 
             bool nextControlIsModulator = nextControl.IsModulator;
 
