@@ -42,6 +42,34 @@ namespace paireddata
             }
         }
         /// <summary>
+        /// f_inverse implements ISample on PairedData, for a given input double y f_inverse produces an output double that represents the linearly interoplated value for x given y.
+        /// </summary>
+        public double f_inverse(double y){
+            //binary search.
+            double[] yarr = Yvals;
+            Int32 idx = Array.BinarySearch(yarr, y);
+            if(idx >=0)
+            {
+                //Matches a value exactly
+                return Xvals[idx];
+            }
+            else
+            {
+                //This is the next LARGER value.
+                idx = ~idx;
+
+                if(idx == Yvals.Count()) {return Xvals[Xvals.Length-1];}
+
+                if(idx == 0) {return Xvals[0];}
+
+                //Ok. Interpolate Y=mx+b
+                double m = (Xvals[idx] - Xvals[idx - 1]) / (Yvals[idx] - Yvals[idx - 1]);
+                double b = Xvals[idx - 1];
+                double dy = y - Yvals[idx - 1];
+                return m * dy + b;//not sure this is right. Need to develop tests.
+            }
+        }
+        /// <summary>
         /// compose implements the IComposable interface on PairedData, which allows a PairedData object to take the input y values as the x value (to determine the commensurate y value) from the subject function. Ultimately it creates a composed function with the Y from the subject, and the commensurate x from the input.
         /// </summary>
         public IPairedData compose(IPairedData input){
