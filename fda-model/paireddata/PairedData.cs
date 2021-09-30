@@ -63,7 +63,7 @@ namespace paireddata
                 if(idx == 0) {return Xvals[0];}
 
                 //Ok. Interpolate Y=mx+b
-                double m = (Xvals[idx] - Xvals[idx - 1]) / (Yvals[idx] - Yvals[idx - 1]);
+                double m = (Yvals[idx] - Yvals[idx - 1]) / (Xvals[idx] - Xvals[idx - 1]);
                 double b = Xvals[idx - 1];
                 double dy = y - Yvals[idx - 1];
                 return m * dy + b;//not sure this is right. Need to develop tests.
