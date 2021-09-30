@@ -65,11 +65,25 @@ namespace fda_model_test
             double actual = pairedCountbyOnes.f_inverse(2);
             Assert.AreEqual(expected, actual);
         }
-                [Test]
+        [Test]
+        public void FInterpolatesCorrectBetween_Twos_upper()
+        {
+            double expected = 3.5; 
+            double actual = pairedMultiplyByTwo.f(1.75);
+            Assert.AreEqual(expected, actual);
+        }
+        [Test]
         public void FInterpolatesCorrectBetween_Twos()
         {
             double expected = 3.0; 
             double actual = pairedMultiplyByTwo.f(1.5);
+            Assert.AreEqual(expected, actual);
+        }
+        [Test]
+        public void FInterpolatesCorrectBetween_Twos_lower()
+        {
+            double expected = 2.5; 
+            double actual = pairedMultiplyByTwo.f(1.25);
             Assert.AreEqual(expected, actual);
         }
         [Test]
@@ -94,10 +108,24 @@ namespace fda_model_test
             Assert.AreEqual(expected, actual);
         }
         [Test]
+        public void FInverseInterpolatesCorrectBetween_Twos_upper()
+        {
+            double expected = 1.75;
+            double actual = pairedMultiplyByTwo.f_inverse(3.5);
+            Assert.AreEqual(expected, actual);
+        }
+        [Test]
         public void FInverseInterpolatesCorrectBetween_Twos()
         {
             double expected = 1.5;
             double actual = pairedMultiplyByTwo.f_inverse(3.0);
+            Assert.AreEqual(expected, actual);
+        }
+                [Test]
+        public void FInverseInterpolatesCorrectBetween_Twos_lower()
+        {
+            double expected = 1.25;
+            double actual = pairedMultiplyByTwo.f_inverse(2.5);
             Assert.AreEqual(expected, actual);
         }
         [Test]
