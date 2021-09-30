@@ -66,7 +66,7 @@ namespace paireddata
                 double m = (Yvals[idx] - Yvals[idx - 1]) / (Xvals[idx] - Xvals[idx - 1]);
                 double b = Xvals[idx - 1];
                 double dy = y - Yvals[idx - 1];
-                return (dy + b)/m;//not sure this is right. Need to develop tests.
+                return (dy/m) + b;//not sure this is right. Need to develop tests.
             }
         }
         /// <summary>
