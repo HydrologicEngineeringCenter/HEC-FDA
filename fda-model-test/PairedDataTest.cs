@@ -1,12 +1,13 @@
 using NUnit.Framework;
 using paireddata;
-
 namespace fda_model_test
 {
     public class PairedDataTest
     {
         static double[] countByOnes = { 1, 2, 3, 4, 5 };
+        static double[] countByTwos = { 2, 4, 6, 8, 10 };
         PairedData pairedCountbyOnes = new PairedData(countByOnes, countByOnes);
+        PairedData pairedMultiplyByTwo = new PairedData(countByOnes, countByTwos);
 
         [Test]
         public void FInterpolatesCorrectBetween()
@@ -62,6 +63,62 @@ namespace fda_model_test
         {
             double expected = 2;
             double actual = pairedCountbyOnes.f_inverse(2);
+            Assert.AreEqual(expected, actual);
+        }
+                [Test]
+        public void FInterpolatesCorrectBetween_Twos()
+        {
+            double expected = 3.5; 
+            double actual = pairedMultiplyByTwo.f(1.5);
+            Assert.AreEqual(expected, actual);
+        }
+        [Test]
+        public void FReturnsMaxIfaAboveBounds_Twos()
+        {
+            double expected = 10;
+            double actual = pairedMultiplyByTwo.f(6);
+            Assert.AreEqual(expected, actual);
+        }
+        [Test]
+        public void FReturnsMinIfBelowBounds_Twos()
+        {
+            double expected = 2;
+            double actual = pairedMultiplyByTwo.f(0);
+            Assert.AreEqual(expected, actual);
+        }
+        [Test]
+        public void FReturnsExactIfExact_Twos()
+        {
+            double expected = 8;
+            double actual = pairedMultiplyByTwo.f(4);
+            Assert.AreEqual(expected, actual);
+        }
+        [Test]
+        public void FInverseInterpolatesCorrectBetween_Twos()
+        {
+            double expected = 1.5;
+            double actual = pairedMultiplyByTwo.f_inverse(3.5);
+            Assert.AreEqual(expected, actual);
+        }
+        [Test]
+        public void FInverseReturnsMaxIfaAboveBounds_Twos()
+        {
+            double expected = 5;
+            double actual = pairedMultiplyByTwo.f_inverse(11);
+            Assert.AreEqual(expected, actual);
+        }
+        [Test]
+        public void FInverseReturnsMinIfBelowBounds_Twos()
+        {
+            double expected = 1;
+            double actual = pairedMultiplyByTwo.f_inverse(0);
+            Assert.AreEqual(expected, actual);
+        }
+        [Test]
+        public void FInverseReturnsExactIfExact_Twos()
+        {
+            double expected = 2;
+            double actual = pairedMultiplyByTwo.f_inverse(4);
             Assert.AreEqual(expected, actual);
         }
         [Test]
