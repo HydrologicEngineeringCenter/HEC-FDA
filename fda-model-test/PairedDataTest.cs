@@ -68,7 +68,7 @@ namespace fda_model_test
                 [Test]
         public void FInterpolatesCorrectBetween_Twos()
         {
-            double expected = 3.5; 
+            double expected = 3.0; 
             double actual = pairedMultiplyByTwo.f(1.5);
             Assert.AreEqual(expected, actual);
         }
@@ -97,7 +97,7 @@ namespace fda_model_test
         public void FInverseInterpolatesCorrectBetween_Twos()
         {
             double expected = 1.5;
-            double actual = pairedMultiplyByTwo.f_inverse(3.5);
+            double actual = pairedMultiplyByTwo.f_inverse(3.0);
             Assert.AreEqual(expected, actual);
         }
         [Test]
