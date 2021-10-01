@@ -52,7 +52,7 @@ jobs:
       uses: actions/upload-artifact@v2.2.4
       with:
         name: HEC-FDA-2.0-model-Snapshot
-        path: C:\Temp\FDA2.0\
+        path: .\Build\FDA2.0\
 
 
   
