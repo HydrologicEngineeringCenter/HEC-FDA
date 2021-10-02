@@ -9,7 +9,7 @@
 	<PropertyGroup>
 		<PackageId>USACE.HEC.FDA.Utilities</PackageId>
 		<Version>1.0.0-Alpha</Version>
-		<Description>A library for computing statistics within HEC-FDA</Description>
+		<Description>A library for handling messaging, validation, and serialization in HEC-FDA</Description>
 		<Authors>Hydrologic Engineering Center</Authors>
 	</PropertyGroup>
 	
