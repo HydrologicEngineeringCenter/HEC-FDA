@@ -2,9 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	  <OutputPath>C:\Temp\FDA2.0</OutputPath>
+	 <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	 <OutputPath>C:\Temp\FDA2.0</OutputPath>
   </PropertyGroup>
+
+	<PropertyGroup>
+		<PackageId>USACE.HEC.FDA.Statistics</PackageId>
+		<Version>1.0.0-Alpha</Version>
+		<Description>A library for computing statistics within HEC-FDA</Description>
+		<Authors>Hydrologic Engineering Center</Authors>
+	</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="MathNet.Numerics" Version="4.15.0" />
