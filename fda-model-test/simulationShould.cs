@@ -1,10 +1,10 @@
-﻿using NUnit.Framework;
+﻿
 using ead;
 using paireddata;
 
 namespace fda_model_test
 {
-    class simulationTest
+    class simulationShould
     {
         //These were previously used in pairedDataTest but were moved here to be used for ead compute testing. 
         static double[] Probabilities = { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .01, .002, .001 };
