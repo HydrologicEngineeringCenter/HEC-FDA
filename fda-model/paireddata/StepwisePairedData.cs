@@ -93,11 +93,11 @@ namespace paireddata
 				        newYvals.Add(belowFragilityCurveValue);
 			        } else {
 				        //create a point on the curve just below the bottom of the levee at damage zero.
-				        newXvals.Add(bottom-.000000000001);
+				        newXvals.Add(bottom-.001);
 				        newYvals.Add(belowFragilityCurveValue);
 				        //create a point at the bottom of the fragility curve
 				        newXvals.Add(bottom);
-				        double damage = this.f(bottom) * g.Yvals[0];
+				        double damage = f(bottom) * g.Yvals[0];
 				        newYvals.Add(damage);
 				        break;
 			        }
@@ -117,8 +117,8 @@ namespace paireddata
                 double damage = f(top) * g.Yvals.Last();
                 newYvals.Add(damage);
                 //create a point at the bottom of the fragility curve
-                newXvals.Add(top+.00000001);
-                double damageabove = f(top+.00000001) * aboveFragilityCurveValue;
+                newXvals.Add(top+.001);
+                double damageabove = f(top+.001) * aboveFragilityCurveValue;
                 newYvals.Add(damageabove);
                 for (int idx = 0; idx<Xvals.Length; idx++){
                     double dcx = Xvals[idx];
