@@ -106,9 +106,6 @@ namespace paireddata
             }
             return ead;
         }
-        public StepwisePairedData ToStepwisePairedData(){
-            return new StepwisePairedData(Xvals, Yvals);
-        }
 
         /// <summary>
         /// Appropriate when subject is a stage damage curve, and the input is a fragility curve. 
