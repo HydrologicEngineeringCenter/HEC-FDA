@@ -5,6 +5,7 @@ using ViewModel.Utilities.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel;
 
 namespace ViewModel
 {
@@ -14,12 +15,15 @@ namespace ViewModel
     public delegate void RequestAddToMapWindowHandler(object sender, AddMapFeatureEventArgs args);//needs to be capable of passing a geopackage connection??
     public delegate void RequestRemoveFromMapWindowHandler(object sender, RemoveMapFeatureEventArgs args);//needs to be capable of passing a geopackage connection??
 
+
     /// <summary>
     /// The base class for all view model classes. Contains methods that are common among all view model classes
     /// such as validation, navigation, adding rules.
     /// </summary>
-    public abstract class BaseViewModel : System.ComponentModel.IDataErrorInfo
+    public abstract class BaseViewModel : System.ComponentModel.IDataErrorInfo, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("BaseViewModel");
 
         #region Notes
@@ -234,6 +238,10 @@ namespace ViewModel
             {
                 HasChanges = true;
                 Validate();
+            }
+            if(PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 

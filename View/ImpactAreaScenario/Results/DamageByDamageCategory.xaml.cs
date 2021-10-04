@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.ImpactAreaScenario
+namespace View.ImpactAreaScenario.Results
 {
     /// <summary>
-    /// Interaction logic for ConditionResults_mockup.xaml
+    /// Interaction logic for DamageByDamageCategory.xaml
     /// </summary>
-    public partial class IASResults_mockup : UserControl
+    public partial class DamageByDamageCategory : UserControl
     {
-        public IASResults_mockup()
+        public DamageByDamageCategory()
         {
             InitializeComponent();
         }

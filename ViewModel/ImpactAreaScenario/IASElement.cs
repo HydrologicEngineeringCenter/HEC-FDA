@@ -19,6 +19,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using ViewModel.ImpactAreaScenario;
+using ViewModel.ImpactAreaScenario.Results;
 
 namespace ViewModel.ImpactAreaScenario
 {
@@ -187,14 +188,18 @@ namespace ViewModel.ImpactAreaScenario
             ComputeResults = elem.ComputeResults;           
 
             NamedAction edit = new NamedAction();
-            edit.Header = "Edit Condition";
+            edit.Header = "Edit Impact Area Scenario...";
             edit.Action = EditConditionsTreeElem;
 
+            NamedAction additionalThresholds = new NamedAction();
+            additionalThresholds.Header = "Additional Thresholds...";
+            additionalThresholds.Action = AdditionalThresholds;
+
             NamedAction compute = new NamedAction();
-            compute.Header = "Compute Condition";
+            compute.Header = "Compute Impact Area Scenario";
             compute.Action = ComputeCondition;
 
-            _ViewResults.Header = "View Results";
+            _ViewResults.Header = "View Results...";
             _ViewResults.Action = ViewResults;
 
             NamedAction removeCondition = new NamedAction();
@@ -209,6 +214,7 @@ namespace ViewModel.ImpactAreaScenario
             localActions.Add(edit);
             localActions.Add(compute);
             localActions.Add(_ViewResults);
+            localActions.Add(additionalThresholds);
             localActions.Add(removeCondition);
             localActions.Add(renameElement);
 
@@ -216,6 +222,14 @@ namespace ViewModel.ImpactAreaScenario
 
             LoadTheTreeNodes();
 
+        }
+
+        private void AdditionalThresholds(object arg1, EventArgs arg2)
+        {
+            AdditionalThresholdsVM vm = new AdditionalThresholdsVM();
+            string header = "Annual Exceedance Probabilities Thresholds";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "additionalThresholds");
+            Navigate(tab, false, false);
         }
 
         /// <summary>
@@ -560,22 +574,25 @@ namespace ViewModel.ImpactAreaScenario
 
         private void DisplayResults(IConditionLocationYearResult result)
         {
-            LinkedPlotsVM vm = new LinkedPlotsVM(result);
-            vm.RequestNavigation += Navigate;
+
+            IASResultsVM resultViewer = new IASResultsVM();
+            
+            //LinkedPlotsVM vm = new LinkedPlotsVM(result);
+            //vm.RequestNavigation += Navigate;
             string header = "Results";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "resultViewer");
+            DynamicTabVM tab = new DynamicTabVM(header, resultViewer, "resultViewer");
             Navigate(tab, false, false);
         }
         private void ViewResults(object arg1, EventArgs arg2)
         {
-            if (ComputeResults == null)
-            {
-                MessageBox.Show("There are no results to view because a compute has not been run on this condition.", "No Compute Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            }
-            else
-            {
+            //if (ComputeResults == null)
+            //{
+            //    MessageBox.Show("There are no results to view because a compute has not been run on this condition.", "No Compute Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            //}
+            //else
+            //{
                 DisplayResults(ComputeResults);
-            }
+            //}
 
         }
 

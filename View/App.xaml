@@ -4,6 +4,9 @@
              
              xmlns:EditorsVM ="clr-namespace:ViewModel.Editors;assembly=ViewModel"
              
+             xmlns:IASResultsVM ="clr-namespace:ViewModel.ImpactAreaScenario.Results;assembly=ViewModel"
+             xmlns:IASResultsView ="clr-namespace:View.ImpactAreaScenario.Results"
+             
              xmlns:PlotsOutputVM="clr-namespace:ViewModel.Output;assembly=ViewModel"
              xmlns:PlotsOutputView="clr-namespace:View.Output"
              
@@ -234,6 +237,33 @@
             <OccupancyTypesView:ImportOccupancyTypeGroups/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type IASResultsVM:IASResultsVM }" >
+            <IASResultsView:IASResults/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type IASResultsVM:DamageByDamageCategoryVM }" >
+            <IASResultsView:DamageByDamageCategory/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type IASResultsVM:PerformanceAEPVM }" >
+            <IASResultsView:PerformanceAEP/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type IASResultsVM:PerformanceAssuranceOfThresholdVM }" >
+            <IASResultsView:PerformanceAssuranceOfThreshold/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type IASResultsVM:PerformanceLongTermRiskVM }" >
+            <IASResultsView:PerformanceLongTermRisk/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type IASResultsVM:DamageWithUncertaintyVM }" >
+            <IASResultsView:DamageWithUncertainty/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type IASResultsVM:AdditionalThresholdsVM }" >
+            <IASResultsView:AdditionalThresholds/>
+        </DataTemplate>
 
         <!--Output Region-->
         <!--<DataTemplate DataType="{x:Type OutputVM:CreateEconImportFileVM }" >

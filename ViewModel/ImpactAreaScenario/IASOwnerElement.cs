@@ -28,11 +28,11 @@ namespace ViewModel.ImpactAreaScenario
         #region Constructors
         public IASOwnerElement( ) : base()
         {
-            Name = "Conditions";
+            Name = "Impact Area Scenarios";
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
             NamedAction addCondition = new NamedAction();
-            addCondition.Header = "Create New Condition";
+            addCondition.Header = "Create New Impact Area Scenario";
             addCondition.Action = AddNewCondition;
 
             List<NamedAction> localActions = new List<NamedAction>();

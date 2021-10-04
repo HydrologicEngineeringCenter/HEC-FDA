@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="View.ImpactAreaScenario.IASResults_mockup"
+﻿<UserControl x:Class="View.ImpactAreaScenario.Results.IASResults"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -11,6 +11,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -18,13 +20,21 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-            <Label Content="Outcomes:" Margin="5" />
-            <ComboBox  Margin="5" Width="150"/>
-
-            <Label Content="Report:" Margin="5" />
-            <ComboBox  Margin="5" Width="150"/>
+            <Label Content="Impact Area Scenario: " Margin="5" />
+            <Label Content="{Binding IASName}"  Margin="5" />
         </StackPanel>
         
+        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <Label Content="Outcomes:" Margin="5" />
+            <ComboBox Name="outcomes_cmb" ItemsSource="{Binding Outcomes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedOutcome}"  Margin="5" Width="150"/>
+
+            <Label Content="Report:" Margin="5" />
+            <ComboBox ItemsSource="{Binding Reports, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  SelectedItem="{Binding SelectedReport}"  Margin="5" Width="200"/>
+        </StackPanel>
+
+
+        <ContentControl Grid.Row="3" Grid.ColumnSpan="2" Name="resultsControl" Content="{Binding CurrentResultVM, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"   HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
 
     </Grid>
 </UserControl>
