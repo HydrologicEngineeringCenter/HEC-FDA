@@ -29,30 +29,6 @@ namespace Statistics.Histograms
     }
     
 
-    //public static class HistogramFactory
-    //{
-    //    public static IHistogram Factory(double min, double max, double widths) => new HistogramNoData(min, max, widths);
-    //    public static IHistogram Factory(double min, double max, int nBins) => new HistogramNoData(min, max, nBins);
-    //    public static IHistogram Factory(IEnumerable<double> data, double min, double max, double widths)
-    //    {
-    //        IData sampleData = new Data(data);
-    //        return sampleData.IsValid ? (IHistogram)new HistogramBinnedData(sampleData, min, max, widths) : new HistogramNoData(min, max, widths);
-    //    }
-    //    public static IHistogram Factory(IEnumerable<double> data, double min, double max, int nBins)
-    //    {
-    //        if (!HistogramValidator.IsConstructable(min, max, nBins, out IList<string> errors)) throw new InvalidConstructorArgumentsException(errors);
-    //        else return Factory(data, (max - min) / nBins);
-    //    }
-    //    public static IHistogram Factory(IEnumerable<double> data, double widths)
-    //    {
-    //        IData sampleData = new Data(data);
-    //        return sampleData.IsValid ? new HistogramBinnedData(sampleData, widths) : throw new InvalidConstructorArgumentsException("$The histogram could not be sized because the input data contains no finite elements and not histogram minimum or maximum were provided.");
-    //    }
-    //    public static IHistogram Factory(IEnumerable<double> data, int nBins)
-    //    {
-    //        IData sampleData = new Data(data);
-    //        return sampleData.IsValid ? new HistogramBinnedData(sampleData, (sampleData.Maximum + double.Epsilon - sampleData.Minimum) / (double)nBins) : throw new InvalidConstructorArgumentsException("$The histogram could not be sized because the input data contains no finite elements and not histogram minimum or maximum were provided.");
-    //    }
-    //}
+
     
 }
