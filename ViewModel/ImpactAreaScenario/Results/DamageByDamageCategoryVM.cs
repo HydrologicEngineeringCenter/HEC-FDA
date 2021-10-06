@@ -14,9 +14,7 @@ namespace ViewModel.ImpactAreaScenario.Results
 
         public DamageByDamageCategoryVM()
         {
-
             loadDummyData();
-
         }
 
 

@@ -12,7 +12,7 @@ using ViewModel.ImpactAreaScenario;
 
 namespace ViewModel.ImpactAreaScenario
 {
-    public class IASOwnerElement : Utilities.ParentElement
+    public class IASOwnerElement : ParentElement
     {
         #region Notes
         #endregion
@@ -104,7 +104,7 @@ namespace ViewModel.ImpactAreaScenario
             {
                 ChildElement childElem = (ChildElement)args.Element;
                 UpdateEditorWhileEditing(childElem, removedElementID);
-                Saving.PersistenceFactory.GetConditionsManager().UpdateConditionsChildElementRemoved(childElem, removedElementID, -1);
+                Saving.PersistenceFactory.GetIASManager().UpdateConditionsChildElementRemoved(childElem, removedElementID, -1);
             }
         }
         private void UpdateEditorWhileEditing(ChildElement elem, int removedElementID)
@@ -148,15 +148,6 @@ namespace ViewModel.ImpactAreaScenario
         public static Plots.IndividualLinkedPlotControlVM BuildDefaultLP3Control(ParentElement ownerElement)
         {
             List<AnalyticalFrequencyElement> listOfLp3 = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
-            //todo: just for testing, delete this dummy lp3
-            //List<double> xs = new List<double>() { .1,.3,.5,.7,.9 };
-            //List<double> ys = new List<double>() { 1, 10000, 30000, 50000, 70000 };
-            //ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-            //IFdaFunction func = IFdaFunctionFactory.Factory( IParameterEnum.InflowFrequency, (IFunction)coordFunc, "Inflow Freq", UnitsEnum.Probability);
-            //List<double> analyticalFlows = new List<double>() { 1, 2, 3 };
-
-            //AnalyticalFrequencyElement dummyElem = new AnalyticalFrequencyElement("dummy elem","", "",2000,true,true, 2000,300,300,false,analyticalFlows,analyticalFlows, func);
-            //listOfLp3.Add(dummyElem);
 
             AddFlowFrequencyToIASVM lp3Importer = new AddFlowFrequencyToIASVM(listOfLp3);
             lp3Importer.RequestNavigation += ownerElement.Navigate;
@@ -309,173 +300,22 @@ namespace ViewModel.ImpactAreaScenario
 
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                  .WithSiblingRules(this);
-            // .WithParentGuid(this.GUID)
-            // .WithCanOpenMultipleTimes(true);
             List<double> xs = new List<double>() { 0 };
             List<double> ys = new List<double>() { 0 };
             ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
             IFdaFunction dummyDefault = IFdaFunctionFactory.Factory(IParameterEnum.Rating, (IFunction)coordFunc);
             IASPlotEditorVM vm = new IASPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl, 
                 failureControl, StageDamageControl, DamageFrequencyControl, actionManager,dummyDefault);
-            //StudyCache.AddSiblingRules(vm, this);
-            //vm.AddSiblingRules(this);
+  
             vm.RequestNavigation += Navigate;
             string header = "Create Condition";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateCondition");
             Navigate(tab, false, false);
-
-            //if (!vm2.WasCanceled)
-            //{
-            //    if (!vm2.HasError)
-            //    {
-            //        ConditionsElement ce = ConditionFactory.BuildConditionsElement(vm2, this);
-            //        AddElement(ce);
-            //    }
-            //}
+     
         }
         #endregion
         #region Functions
-        //public override string TableName
-        //{
-        //    get
-        //    {
-        //        return "Conditions";
-        //    }
-        //}
-        //public override string[] TableColumnNames()
-        //{
-        //    return new string[] { "Name", "Description", "AnalysisYear", "ImpactArea",
-        //        "UseFlowFreq","FlowFreq",
-        //        "UseInOutFlow","InOutFlow",
-        //        "UseRating","Rating",
-        //        "UseExtIntStage","ExtIntStage",
-        //        "UseLevee","Levee",
-        //        "UseFailureFunc","FailureFunc",
-        //        "UseStageDamage","StageDamage",
-        //        "UseThreshold","ThresholdType","ThresholdValue"};
-        //}
-
-        //public override Type[] TableColumnTypes()
-        //{
-        //    return new Type[] { typeof(string), typeof(string), typeof(int), typeof(string),
-
-        //        typeof(bool), typeof(string),
-        //        typeof(bool), typeof(string),
-        //        typeof(bool), typeof(string),
-        //        typeof(bool), typeof(string),
-        //        typeof(bool), typeof(string),
-        //        typeof(bool), typeof(string),
-        //        typeof(bool), typeof(string),
-        //        typeof(bool), typeof(string), typeof(double)};
-        //}
-
-        //public override void AddElementFromRowData(object[] rowData)
-        //{
-        //    //this is when it loads
-
-        //    if (rowData.Length >= 18)
-        //    {
-        //        //get the impact area
-        //        string selectedImpAreaName = (string)rowData[3];
-        //        ImpactArea.ImpactAreaElement selectedImpArea = null;
-        //        List<ImpactArea.ImpactAreaElement> impactAreas = GetElementsOfType<ImpactArea.ImpactAreaElement>();
-        //        foreach(ImpactArea.ImpactAreaElement impArea in impactAreas)
-        //        {
-        //            if(impArea.Name.Equals(selectedImpAreaName))
-        //            {
-        //                selectedImpArea = impArea;
-        //            }
-        //        }
-        //        if (selectedImpArea == null)
-        //        {
-        //            //what do we do?
-        //        }
-
-        //        //threshold stuff
-        //        bool useThreshold = (bool)rowData[18];
-        //        PerformanceThresholdTypes thresholdType = PerformanceThresholdTypes.InteriorStage;
-        //        Enum.TryParse((string)rowData[19], out thresholdType);
-        //        double thresholdValue = (double)rowData[20];
-
-        //        //get the impAreaRowItem. What is this? do we need it?
-        //        ImpactArea.ImpactAreaRowItem indexLocation = new ImpactArea.ImpactAreaRowItem();
-        //        int analysisYear = Convert.ToInt32(rowData[2]);
-        //        ConditionBuilder builder = new ConditionBuilder((string)rowData[0], (string)rowData[1], analysisYear, selectedImpArea, indexLocation,
-        //             thresholdType,thresholdValue, this);
-
-        //        bool useFlowFreq = (bool)rowData[4];
-        //        if(useFlowFreq)
-        //        {
-        //            string flowFreqName = (string)rowData[5];
-        //            AnalyticalFrequencyElement flowFreqElem = GetSelectedElementOfType<AnalyticalFrequencyElement>(flowFreqName);
-        //            builder.WithAnalyticalFreqElem(flowFreqElem);
-        //        }
-
-        //        bool useInflowOutflow = (bool)rowData[6];
-        //        if (useInflowOutflow)
-        //        {
-        //            string infOutName = (string)rowData[7];
-        //            InflowOutflowElement inOutElem = GetSelectedElementOfType<InflowOutflowElement>(infOutName);
-        //            builder.WithInflowOutflowElem(inOutElem);
-        //        }
-
-        //        bool useRating = (bool)rowData[8];
-        //        if (useRating)
-        //        {
-        //            string ratingName = (string)rowData[9];
-        //            RatingCurveElement ratingElem = GetSelectedElementOfType<RatingCurveElement>(ratingName);
-        //            builder.WithRatingCurveElem(ratingElem);
-        //        }
-
-        //        bool useIntExt = (bool)rowData[10];
-        //        if (useIntExt)
-        //        {
-        //            string extIntName = (string)rowData[11];
-        //            ExteriorInteriorElement extIntElem = GetSelectedElementOfType<ExteriorInteriorElement>(extIntName);
-        //            builder.WithExtIntStageElem(extIntElem);
-        //        }
-
-        //        bool useLevee = (bool)rowData[12];
-        //        if (useLevee)
-        //        {
-        //            string leveeName = (string)rowData[13];
-        //            LeveeFeatureElement leveeElem = GetSelectedElementOfType<LeveeFeatureElement>(leveeName);
-        //            builder.WithLevee(leveeElem);
-        //        }
-
-        //        bool useFailure = (bool)rowData[14];
-        //        if (useFailure)
-        //        {
-        //            string failureName = (string)rowData[15];
-        //            FailureFunctionElement failureElem = GetSelectedElementOfType<FailureFunctionElement>(failureName);
-        //            builder.WithFailureFunctionElem(failureElem);
-        //        }
-
-        //        bool useStageDam = (bool)rowData[16];
-        //        if (useStageDam)
-        //        {
-        //            string stageDamName = (string)rowData[17];
-        //            AggregatedStageDamageElement stageDamElem = GetSelectedElementOfType<AggregatedStageDamageElement>(stageDamName);
-        //            builder.WithAggStageDamageElem(stageDamElem);
-        //        }
-
-        //        AddElement(builder.build(), false);
-        //    }
-
-        //}
-
-        //private T GetSelectedElementOfType<T>(string name) where T:ChildElement
-        //{
-        //    List<T> elems = GetElementsOfType<T>();
-        //    foreach(T elem in elems)
-        //    {
-        //        if(elem.Name.Equals(name))
-        //        {
-        //            return elem;
-        //        }
-        //    }
-        //    return null;
-        //}
+        
         #endregion
     }
 }

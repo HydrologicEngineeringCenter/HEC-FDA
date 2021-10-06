@@ -10,7 +10,6 @@ namespace ViewModel.ImpactAreaScenario.Results
     public class AdditionalThresholdRowItem
     {
 
-
         public int ID { get; set; }
         public List<IMetricEnum> ThresholdTypes { get; set; }
         public IMetricEnum ThresholdType { get; set; }
@@ -22,12 +21,17 @@ namespace ViewModel.ImpactAreaScenario.Results
             ID = id;
             ThresholdType = thresholdType;
             ThresholdValue = value;
+            LoadThresholdTypes();
+
+        }
+
+        private void LoadThresholdTypes()
+        {
             ThresholdTypes = new List<IMetricEnum>();
             ThresholdTypes.Add(IMetricEnum.ExteriorStage);
             ThresholdTypes.Add(IMetricEnum.InteriorStage);
             ThresholdTypes.Add(IMetricEnum.ExpectedAnnualDamage);
             ThresholdTypes.Add(IMetricEnum.Damages);
-
         }
 
     }

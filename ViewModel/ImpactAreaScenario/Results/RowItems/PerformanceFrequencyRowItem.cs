@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ViewModel.ImpactAreaScenario.Results.RowItems
 {
-    public class PerformanceFrequencyRowItem
+    public class PerformanceFrequencyRowItem : IPerformanceRowItem
     {
 
         public double Frequency { get; set; }

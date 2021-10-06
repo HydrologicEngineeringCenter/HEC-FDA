@@ -11,16 +11,13 @@ namespace ViewModel.ImpactAreaScenario.Results
 {
     public class DamageWithUncertaintyVM : BaseViewModel
     {
-
-        public SciChart2DChartViewModel ChartViewModel { get; } = new SciChart2DChartViewModel("chart title");
+        public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("chart title");
 
         public List<EadRowItem> Rows { get; set; }
 
         public DamageWithUncertaintyVM()
         {
-
             loadDummyData();
-
         }
 
 
@@ -40,7 +37,6 @@ namespace ViewModel.ImpactAreaScenario.Results
 
         private List<string> loadXData()
         {
-            
             List<string>  xValues = new List<string>();
             xValues.Add("Mean");
             xValues.Add("First Quartile");

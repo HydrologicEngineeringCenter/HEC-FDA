@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using ViewModel.AggregatedStageDamage;
 using ViewModel.ImpactAreaScenario;
 using ViewModel.FlowTransforms;
@@ -11,11 +7,9 @@ using ViewModel.GeoTech;
 using ViewModel.ImpactArea;
 using ViewModel.Inventory;
 using ViewModel.StageTransforms;
-using ViewModel.Tabs;
 using ViewModel.Utilities;
 using ViewModel.Watershed;
 using ViewModel.WaterSurfaceElevation;
-using Statistics;
 
 namespace ViewModel.Editors
 {
@@ -56,7 +50,7 @@ namespace ViewModel.Editors
         /// </summary>
         /// <param name="elem"></param>
         /// <param name="actionManager"></param>
-        public BaseEditorVM(Utilities.ChildElement elem, EditorActionManager actionManager)
+        public BaseEditorVM(ChildElement elem, EditorActionManager actionManager)
         {
             IsImporter = false;
             OriginalElement = elem.CloneElement(elem);
@@ -102,8 +96,8 @@ namespace ViewModel.Editors
 
         public override void AddValidationRules()
         {
-            AddRule(nameof(Name), () => Name != "", "00Name cannot be blank.");
-            AddRule(nameof(Name), () => Name != null, "00Name cannot be blank.");
+            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
+            AddRule(nameof(Name), () => Name != null, "Name cannot be blank.");
         }
 
         /// <summary>

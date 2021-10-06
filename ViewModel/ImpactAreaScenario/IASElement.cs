@@ -3,22 +3,14 @@ using ViewModel.FlowTransforms;
 using ViewModel.FrequencyRelationships;
 using ViewModel.GeoTech;
 using ViewModel.ImpactArea;
-using ViewModel.Output;
 using ViewModel.StageTransforms;
 using ViewModel.Utilities;
 using Model;
-using Model.Conditions.Locations;
-using Model.Conditions.Locations.Years;
 using Model.Conditions.Locations.Years.Results;
 using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using ViewModel.ImpactAreaScenario;
 using ViewModel.ImpactAreaScenario.Results;
 
 namespace ViewModel.ImpactAreaScenario
@@ -46,7 +38,7 @@ namespace ViewModel.ImpactAreaScenario
         private string _Description;
         private int _AnalysisYear;
         
-        private Model.IMetricEnum _MetricType;
+        private IMetricEnum _MetricType;
         private double _ThresholdValue;
         private List<BaseFdaElement> _ConditionsTreeNodes;
         private bool _IsExpanded;
@@ -141,7 +133,7 @@ namespace ViewModel.ImpactAreaScenario
         /// <summary>
         /// The selected threshold type.
         /// </summary>
-        public Model.IMetricEnum ThresholdType {
+        public IMetricEnum ThresholdType {
             get { return _MetricType; }
             set { _MetricType = value; NotifyPropertyChanged(); }
         }
@@ -309,7 +301,7 @@ namespace ViewModel.ImpactAreaScenario
         /// <param name="e"></param>
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetConditionsManager().Remove(this);
+            Saving.PersistenceFactory.GetIASManager().Remove(this);
         }
 
         #region BuildControlsFromElement
@@ -574,26 +566,14 @@ namespace ViewModel.ImpactAreaScenario
 
         private void DisplayResults(IConditionLocationYearResult result)
         {
-
-            IASResultsVM resultViewer = new IASResultsVM();
-            
-            //LinkedPlotsVM vm = new LinkedPlotsVM(result);
-            //vm.RequestNavigation += Navigate;
+            IASResultsVM resultViewer = new IASResultsVM(Name);          
             string header = "Results";
             DynamicTabVM tab = new DynamicTabVM(header, resultViewer, "resultViewer");
             Navigate(tab, false, false);
         }
         private void ViewResults(object arg1, EventArgs arg2)
         {
-            //if (ComputeResults == null)
-            //{
-            //    MessageBox.Show("There are no results to view because a compute has not been run on this condition.", "No Compute Results", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            //}
-            //else
-            //{
-                DisplayResults(ComputeResults);
-            //}
-
+            DisplayResults(ComputeResults);
         }
 
         /// <summary>
@@ -614,16 +594,11 @@ namespace ViewModel.ImpactAreaScenario
 
                 //possible other functions
                 InflowOutflowElement inflowOutflowElement = null;
-                //LeveeFeatureElement leveeFailureElement = null;
                 ExteriorInteriorElement extIntElement = null;
                 if (hasInflowOutflow)
                 {
                     inflowOutflowElement = (InflowOutflowElement)StudyCache.GetChildElementOfType(typeof(InflowOutflowElement), InflowOutflowID);
                 }
-                //if (hasLeveeFailure)
-                //{
-                //    leveeFailureElement = (LeveeFeatureElement)StudyCache.GetChildElementOfType(typeof(LeveeFeatureElement), LeveeFailureID);
-                //}
                 if (hasExtInt)
                 {
                     extIntElement = (ExteriorInteriorElement)StudyCache.GetChildElementOfType(typeof(ExteriorInteriorElement), ExtIntStageID);
@@ -655,7 +630,6 @@ namespace ViewModel.ImpactAreaScenario
             //right now i am just assuming this is an inflow freq.
             AnalyticalFrequencyElement flowFreqElement = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
             return (IFrequencyFunction)flowFreqElement.Curve;
-
         }
 
         private void ComputeCondition(object arg1, EventArgs arg2)
@@ -678,12 +652,12 @@ namespace ViewModel.ImpactAreaScenario
             {
                 LeveeFeatureElement leveeFailureElement = (LeveeFeatureElement)StudyCache.GetChildElementOfType(typeof(LeveeFeatureElement), LeveeFailureID);
                 ILateralStructure latStruct = ILateralStructureFactory.Factory(leveeFailureElement.Elevation, (ITransformFunction)leveeFailureElement.Curve); ;
-                condition = Saving.PersistenceFactory.GetConditionsManager().CreateIConditionLocationYearSummary(ImpactAreaID,
+                condition = Saving.PersistenceFactory.GetIASManager().CreateIConditionLocationYearSummary(ImpactAreaID,
                     AnalysisYear, frequencyFunction, transformFunctions, leveeFailureElement, ThresholdType, ThresholdValue);
             }
             else 
             { 
-                condition = Saving.PersistenceFactory.GetConditionsManager().CreateIConditionLocationYearSummary(ImpactAreaID,
+                condition = Saving.PersistenceFactory.GetIASManager().CreateIConditionLocationYearSummary(ImpactAreaID,
                     AnalysisYear, frequencyFunction, transformFunctions, ThresholdType, ThresholdValue);
             }
 
@@ -704,7 +678,7 @@ namespace ViewModel.ImpactAreaScenario
             IConditionLocationYearResult result = new ConditionLocationYearResult(condition, metrics, seedValue);
             result.Compute();
             ComputeResults = result;
-            Saving.PersistenceFactory.GetConditionsManager().SaveConditionResults(result, this.GetElementID(), frequencyFunction, transformFunctions);
+            Saving.PersistenceFactory.GetIASManager().SaveConditionResults(result, this.GetElementID(), frequencyFunction, transformFunctions);
 
             DisplayResults(result);
 

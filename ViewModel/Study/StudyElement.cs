@@ -621,7 +621,7 @@ namespace ViewModel.Study
             Saving.PersistenceFactory.GetFailureFunctionManager().Load();
             Saving.PersistenceFactory.GetStageDamageManager().Load();
             Saving.PersistenceFactory.GetStructureInventoryManager().Load();
-            Saving.PersistenceFactory.GetConditionsManager().Load();
+            Saving.PersistenceFactory.GetIASManager().Load();
             Saving.PersistenceFactory.GetOccTypeManager().Load();
 
         }

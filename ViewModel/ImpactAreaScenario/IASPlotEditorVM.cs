@@ -32,39 +32,13 @@ namespace ViewModel.ImpactAreaScenario
         #region Fields
 
         private Chart2DController _controller;
-        //CrosshairData[] _CrosshairData;
-        //FdaCrosshairChartModifier[] _ChartModifiers;
-
-        //private CoordinatesFunctionEditorVM _EditorVM_0;
-        //private CoordinatesFunctionEditorVM _EditorVM_1;
-        //private CoordinatesFunctionEditorVM _EditorVM_3;
-        //private CoordinatesFunctionEditorVM _EditorVM_5;
-        //private CoordinatesFunctionEditorVM _EditorVM_7;
-        //private CoordinatesFunctionEditorVM _EditorVM_8;
-
-
-        //public delegate void MyEventHandler(object sender, bool stuff);
-
-        //public event MyEventHandler OpenImporterInWindow;
+        
 
 
 
         private ImpactArea.ImpactAreaOwnerElement _ImpactAreaOwner;
 
-        //private bool _IsPlot0Visible = false;
-        //private bool _IsPlot1Visible = false;
-        //private bool _IsPlot3Visible = false;
-        //private bool _IsPlot5Visible = false;
-        //private bool _IsPlot7Visible = false;
-        //private bool _IsPlot8Visible = false;
-
-
-        //private Plots.IndividualLinkedPlotVM _Plot0VM;
-        //private Plots.IndividualLinkedPlotVM _Plot1VM;
-        //private Plots.IndividualLinkedPlotVM _Plot3VM;
-        //private Plots.IndividualLinkedPlotVM _Plot5VM;
-        //private Plots.IndividualLinkedPlotVM _Plot7VM;
-        //private Plots.IndividualLinkedPlotVM _Plot8VM;
+        
 
         private Plots.IndividualLinkedPlotControlVM _Plot0ControlVM;
         private Plots.IndividualLinkedPlotControlVM _Plot1ControlVM;
@@ -88,37 +62,7 @@ namespace ViewModel.ImpactAreaScenario
 
         #endregion
         #region Properties
-        //public List<Plots.IndividualLinkedPlotControlVM> ListOfLinkedPlots { get; set; }
-        //public CoordinatesFunctionEditorVM EditorVM_0
-        //{
-        //    get { return _EditorVM_0; }
-        //    set { _EditorVM_0 = value; NotifyPropertyChanged(); }
-        //}
-        //public CoordinatesFunctionEditorVM EditorVM_1
-        //{
-        //    get { return _EditorVM_1; }
-        //    set { _EditorVM_1 = value; NotifyPropertyChanged(); }
-        //}
-        //public CoordinatesFunctionEditorVM EditorVM_3
-        //{
-        //    get { return _EditorVM_3; }
-        //    set { _EditorVM_3 = value; NotifyPropertyChanged(); }
-        //}
-        //public CoordinatesFunctionEditorVM EditorVM_5
-        //{
-        //    get { return _EditorVM_5; }
-        //    set { _EditorVM_5 = value; NotifyPropertyChanged(); }
-        //}
-        //public CoordinatesFunctionEditorVM EditorVM_7
-        //{
-        //    get { return _EditorVM_7; }
-        //    set { _EditorVM_7 = value; NotifyPropertyChanged(); }
-        //}
-        //public CoordinatesFunctionEditorVM EditorVM_8
-        //{
-        //    get { return _EditorVM_8; }
-        //    set { _EditorVM_8 = value; NotifyPropertyChanged(); }
-        //}
+        
         public double ThresholdValue { get;
             set; }
         public ObservableCollection<IMetricEnum> ThresholdTypes
@@ -130,9 +74,7 @@ namespace ViewModel.ImpactAreaScenario
             get { return _SelectedThresholdType; }
             set { _SelectedThresholdType = value; PlotThresholdLine(ThresholdValue); }
         }
-        /// <summary>
-        /// 
-        /// </summary>
+   
         public ObservableCollection<Plots.IndividualLinkedPlotControlVM> AddedPlots
         {
             get { return _AddedPlots; }
@@ -142,39 +84,6 @@ namespace ViewModel.ImpactAreaScenario
 
         public ImpactArea.ImpactAreaRowItem IndexLocation { get; set; }
 
-        #region ArePlotsVisible
-        //public bool IsPlot0Visible
-        //{
-        //    get { return _IsPlot0Visible; }
-        //    set { _IsPlot0Visible = value; NotifyPropertyChanged(); }
-        //}
-        //public bool IsPlot1Visible
-        //{
-        //    get { return _IsPlot1Visible; }
-        //    set { _IsPlot1Visible = value; NotifyPropertyChanged(); }
-        //}
-        //public bool IsPlot3Visible
-        //{
-        //    get { return _IsPlot3Visible; }
-        //    set { _IsPlot3Visible = value; NotifyPropertyChanged(); }
-        //}
-        //public bool IsPlot5Visible
-        //{
-        //    get { return _IsPlot5Visible; }
-        //    set { _IsPlot5Visible = value; NotifyPropertyChanged(); }
-        //}
-        //public bool IsPlot7Visible
-        //{
-        //    get { return _IsPlot7Visible; }
-        //    set { _IsPlot7Visible = value; NotifyPropertyChanged(); }
-        //}
-        //public bool IsPlot8Visible
-        //{
-        //    get { return _IsPlot8Visible; }
-        //    set { _IsPlot8Visible = value; NotifyPropertyChanged(); }
-        //}
-
-        #endregion
 
         #region IndividualPlotVM's
         public Plots.IndividualLinkedPlotControlVM Plot0ControlVM
@@ -183,11 +92,7 @@ namespace ViewModel.ImpactAreaScenario
             set { _Plot0ControlVM = value; NotifyPropertyChanged(); }
         }
 
-        //public Plots.IndividualLinkedPlotControlVM DLMControlVM
-        //{
-        //    get { return _DLMControlVM; }
-        //    set { _DLMControlVM = value; NotifyPropertyChanged(); }
-        //}
+       
         public Plots.IndividualLinkedPlotControlVM Plot1ControlVM
         {
             get { return _Plot1ControlVM; }
@@ -220,36 +125,7 @@ namespace ViewModel.ImpactAreaScenario
             set { _Plot8ControlVM = value; NotifyPropertyChanged(); }
         }
 
-        //public Plots.IndividualLinkedPlotVM Plot0VM
-        //{
-        //    get { return _Plot0VM; }
-        //    set { _Plot0VM = value; NotifyPropertyChanged(); }
-        //}
-        //public Plots.IndividualLinkedPlotVM Plot1VM
-        //{
-        //    get { return _Plot1VM; }
-        //    set { _Plot1VM = value; NotifyPropertyChanged(); }
-        //}
-        //public Plots.IndividualLinkedPlotVM Plot3VM
-        //{
-        //    get { return _Plot3VM; }
-        //    set { _Plot3VM = value; NotifyPropertyChanged(); }
-        //}
-        //public Plots.IndividualLinkedPlotVM Plot5VM
-        //{
-        //    get { return _Plot5VM; }
-        //    set { _Plot5VM = value; NotifyPropertyChanged(); }
-        //}
-        //public Plots.IndividualLinkedPlotVM Plot7VM
-        //{
-        //    get { return _Plot7VM; }
-        //    set { _Plot7VM = value; NotifyPropertyChanged(); }
-        //}
-        //public Plots.IndividualLinkedPlotVM Plot8VM
-        //{
-        //    get { return _Plot8VM; }
-        //    set { _Plot8VM = value; NotifyPropertyChanged(); }
-        //}
+        
         #endregion
 
             public ObservableCollection<Plots.IndividualLinkedPlotVM> AvailablePlots
@@ -267,11 +143,7 @@ namespace ViewModel.ImpactAreaScenario
             set { _Year = value; NotifyPropertyChanged(); }
         }
 
-        //public AddFlowFrequencyToConditionVM FlowFrequencyVM { get; set; }
-        //public AddInflowOutflowToConditionVM InflowOutflowVM { get; set; }
-        //public AddRatingCurveToConditionVM RatingCurveVM { get; set; }
-        //public AddExteriorInteriorStageToConditionVM ExteriorInteriorVM { get; set; }
-        //public AddStageDamageToConditionVM StageDamageVM { get; set; }
+        
         private List<ImpactArea.ImpactAreaElement> _ImpactAreas;
         public List<ImpactArea.ImpactAreaElement> ImpactAreas
         {
@@ -288,21 +160,7 @@ namespace ViewModel.ImpactAreaScenario
 
         #endregion
         #region Constructors
-        //public ConditionsPlotEditorVM(List<ImpactArea.ImpactAreaElement> impAreas,List<Inventory.InventoryElement> structInventories, AddFlowFrequencyToConditionVM lp3vm, AddInflowOutflowToConditionVM inOutVM, AddRatingCurveToConditionVM ratingCurveVM, AddStageDamageToConditionVM stageDamageVM, AddExteriorInteriorStageToConditionVM extIntStageVM, ImpactArea.ImpactAreaOwnerElement impactAreaOwnerElement)
-        //{
-        //    _ImpactAreaOwner = impactAreaOwnerElement;
-        //    ImpactAreas = impAreas;
-        //    StructureInventories = structInventories;
-        //    FlowFrequencyVM = lp3vm;
-        //    InflowOutflowVM = inOutVM;
-        //    RatingCurveVM = ratingCurveVM;
-        //    ExteriorInteriorVM = extIntStageVM;
-        //    StageDamageVM = stageDamageVM;
-        //    ListOfLinkedPlots = new List<Plots.IndividualLinkedPlotControlVM>();
-
-        //}
-
-
+        
         /// <summary>
         /// This constructor is used when opening the editor up for editing a previously defined condition
         /// </summary>
@@ -399,37 +257,7 @@ namespace ViewModel.ImpactAreaScenario
             IndividualLinkedPlotControlVM defaultControl3VM, IndividualLinkedPlotControlVM defaultControl5VM, IndividualLinkedPlotControlVM defaultControlFailureVM, IndividualLinkedPlotControlVM DefaultControl7VM, 
             IndividualLinkedPlotControlVM DefaultControl8VM, Editors.EditorActionManager actionManager, IFdaFunction dummyDefaultFunction) :base(dummyDefaultFunction,"","","", actionManager)
         {
-           // _CrosshairData = new CrosshairData[6];
-            //_CrosshairData[0] = defaultControl0VM.CrosshairData;
-            //for(int i =0;i<6;i++)
-            //{
-            //    _CrosshairData[i] = new CrosshairData();
-            //}
-
-           // _ChartModifiers = new FdaCrosshairChartModifier[6];
-            //_ChartModifiers[0] = defaultControl0VM.ChartModifier;
-            //for (int i = 0; i < 6; i++)
-            //{
-            //    _ChartModifiers[i] = new FdaCrosshairChartModifier(false, false, _CrosshairData[i]);
-            //}
-
-            //ownerValidationRules(this);
-            //List<double> xs = new List<double>() { 0, 1, 2, 3, 4, 5 };
-            //List<double> ys = new List<double>() { 0, 1, 2, 3, 4, 5 };
-
-            //ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xs, ys);
-            //EditorVM_0 = new CoordinatesFunctionEditorVM(func, "xlabel", "yLabel", "chartTitle");
-
-            //ICoordinatesFunction func3 = ICoordinatesFunctionsFactory.Factory(xs, ys);
-            //EditorVM_3 = new CoordinatesFunctionEditorVM(func3, "xlabel", "yLabel", "chartTitle");
-
-            //ICoordinatesFunction func7 = ICoordinatesFunctionsFactory.Factory(xs, ys);
-            //EditorVM_7 = new CoordinatesFunctionEditorVM(func7, "xlabel", "yLabel", "chartTitle");
-
-            //ICoordinatesFunction func8 = ICoordinatesFunctionsFactory.Factory(xs, ys);
-            //EditorVM_8 = new CoordinatesFunctionEditorVM(func8, "xlabel", "yLabel", "chartTitle");
-
-
+           
             ImpactAreas = impAreas;
 
             Plot0ControlVM = defaultControl0VM;
@@ -471,44 +299,10 @@ namespace ViewModel.ImpactAreaScenario
 
        
 
-        //public void ToggleThresholdLines()
-        //{
-        //    if (_ThresholdLinesAllowedToShow)
-        //    {
-        //        _ThresholdLinesAllowedToShow = false;
-        //        Plot7ControlVM.IndividualPlotWrapperVM.Metric = null;//this is basically a flag that the callback uses to turn them off
-        //        //Plot8ControlVM.IndividualPlotWrapperVM.Metric = new Metric(); //new PerformanceThreshold(new LateralStructure(0));//this is just to change it from null to a value so that i can turn it back to null
-        //        Plot8ControlVM.IndividualPlotWrapperVM.Metric = null;
-        //    }
-        //    else
-        //    {
-        //        //turn them on
-        //        _ThresholdLinesAllowedToShow = true ;
-        //        IMetric pt = new Metric(SelectedThresholdType, ThresholdValue);// PerformanceThreshold(SelectedThresholdType, ThresholdValue);
-        //        Plot7ControlVM.IndividualPlotWrapperVM.Metric = pt;//this is basically a flag that the callback uses to turn them off
-        //        //Plot8ControlVM.IndividualPlotWrapperVM.Threshold = pt;
-        //    }
-        //}
+        
         public void PlotThresholdLine(double thresholdValue)
         {
-            //if(_ThresholdLinesAllowedToShow == false) { return; }
-            ////I can't use the Threshold property that exists in this class
-            ////because it hasn't changed yet, it is an ordering issue, so i just pass it in.
-            //IMetric metric = new Metric(SelectedThresholdType, thresholdValue);
-            ////PerformanceThreshold pt = new PerformanceThreshold(SelectedThresholdType, thresholdValue);
-            //if(SelectedThresholdType == IMetricEnum.InteriorStage)
-            //{
-            //    Plot7ControlVM.IndividualPlotWrapperVM.Metric = metric;//this will trigger the callback in the view side
-
-            //}
-            //else if (SelectedThresholdType == IMetricEnum.Damages)
-            //{
-            //    Plot7ControlVM.IndividualPlotWrapperVM.Metric = metric;
-            //}
-            ////if(Plot8ControlVM.CurrentVM.GetType() == typeof(PlotsIASIndividualPlotWrapperVM))
-            ////{
-            ////    Plot8ControlVM.IndividualPlotWrapperVM.Threshold = pt;
-            ////}
+            
         }
 
         /// <summary>
@@ -1446,7 +1240,7 @@ namespace ViewModel.ImpactAreaScenario
             elementToSave.LastEditDate = LastEditDate;
             //ICondition modelCondition = CreateCondition();
             //ConditionsElement elementToSave = new ConditionsElement()
-            Saving.PersistenceManagers.IASPersistenceManager manager = Saving.PersistenceFactory.GetConditionsManager();
+            Saving.PersistenceManagers.IASPersistenceManager manager = Saving.PersistenceFactory.GetIASManager();
             if (IsImporter && HasSaved == false)
             {
                 manager.SaveNew(elementToSave);

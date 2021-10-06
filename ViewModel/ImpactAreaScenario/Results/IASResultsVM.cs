@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Model;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,27 +10,30 @@ namespace ViewModel.ImpactAreaScenario.Results
 {
     public class IASResultsVM : BaseViewModel
     {
+        private readonly List<string> _outcomes = new List<string>() { "Damage", "Performance" };
 
-        private ObservableCollection<string> _damageReports = new ObservableCollection<string>() {"Damage with Uncertainty",
-                "Damage by Damage Category" };
+        private readonly List<string> _damageReports = new List<string>() { "Damage with Uncertainty", "Damage by Damage Category" };
 
-        private ObservableCollection<string> _performanceReports = new ObservableCollection<string>() {"Annual Exceedance Probability",
-                "Long-term Risk",
-                "Assurance of Threshold"};
+        private readonly List<string> _performanceReports = new List<string>() { "Annual Exceedance Probability", "Long-term Risk", "Assurance of Threshold" };
 
         private string _selectedOutcome;
         private string _selectedReport;
-        private ObservableCollection<string> _reports = new ObservableCollection<string>();
+        private ThresholdComboItem _selectedThreshold;
+
+        private List<ThresholdComboItem> _thresholds;
+        private List<string> _reports = new List<string>();
         private int _selectedReportIndex = 0;
+        private bool _thresholdComboVisible;
 
         private DamageWithUncertaintyVM _damageWithUncertaintyVM;
         private DamageByDamageCategoryVM _damageByDamageCategoryVM;
-        private PerformanceAEPVM _performanceAEPVM;
-        private PerformanceAssuranceOfThresholdVM _performanceAssuranceOfThresholdVM;
-        private PerformanceLongTermRiskVM _performanceLongTermRiskVM;
+        private PerformanceVMBase _performanceAEPVM;
+        private PerformanceVMBase _performanceAssuranceOfThresholdVM;
+        private PerformanceVMBase _performanceLongTermRiskVM;
 
         private BaseViewModel _currentResultVM;
-        private int _counter;
+
+        #region Properties
         public string IASName { get; set; }
         public List<string> Outcomes { get; set; }
         public int SelectedReportIndex
@@ -43,11 +47,24 @@ namespace ViewModel.ImpactAreaScenario.Results
             set { _selectedOutcome = value; SelectedOutcomeChanged(); }
         }
 
-        public ObservableCollection<string> Reports
+        public List<string> Reports
         {
             get { return _reports; }
             set { _reports = value; NotifyPropertyChanged(); }
         }
+
+        public List<ThresholdComboItem> Thresholds
+        {
+            get { return _thresholds; }
+            set { _thresholds = value; NotifyPropertyChanged(); }
+        }
+
+        public ThresholdComboItem SelectedThreshold
+        {
+            get { return _selectedThreshold; }
+            set { _selectedThreshold = value; NotifyPropertyChanged(); ThresholdChanged(); }
+        }
+
         public string SelectedReport
         {
             get { return _selectedReport; }
@@ -60,79 +77,94 @@ namespace ViewModel.ImpactAreaScenario.Results
             set { _currentResultVM = value; NotifyPropertyChanged(); }
         }
 
-        public int Counter
+        public bool ThresholdComboVisible
         {
-            get { return _counter; }
-            set { _counter = value; NotifyPropertyChanged(); }
+            get { return _thresholdComboVisible; }
+            set { _thresholdComboVisible = value; NotifyPropertyChanged(); }
         }
-       
-        public IASResultsVM()
+
+        #endregion
+
+        //todo: once we have the actual results object, that will be passed in here
+        public IASResultsVM(string iasName)
         {
+            LoadThresholdData();
             loadVMs();
             CurrentResultVM = _damageWithUncertaintyVM;
 
-            IASName = "test name";
-            Outcomes = new List<string>() { "Damage", "Performance" };
-            SelectedOutcome = "Damage";
+            IASName = iasName;
+            Outcomes = _outcomes;
+            SelectedOutcome = _outcomes[0];
 
-            Reports = new ObservableCollection<string>();
-            foreach (string name in _damageReports)
-            {
-                Reports.Add(name);
-            }
+            Reports = _damageReports;
             SelectedReport = _damageReports[0];
 
         }
 
-        
+        private void LoadThresholdData()
+        {
+            //todo: this needs to get loaded with actual data.
+            List<IMetric> thresholds = new List<IMetric>();
+            thresholds.Add(IMetricFactory.Factory(IMetricEnum.Damages, 99));
+            thresholds.Add(IMetricFactory.Factory(IMetricEnum.Damages, 22));
+            thresholds.Add(IMetricFactory.Factory(IMetricEnum.InteriorStage, 4));
+
+            List<ThresholdComboItem> comboItems = new List<ThresholdComboItem>();
+            for (int i = 0; i < thresholds.Count; i++)
+            {
+                comboItems.Add(new ThresholdComboItem(thresholds[i]));
+            }
+
+            Thresholds = comboItems;
+            SelectedThreshold = comboItems[0];
+        }
+
 
         private void loadVMs()
         {
             _damageWithUncertaintyVM = new DamageWithUncertaintyVM();
             _damageByDamageCategoryVM = new DamageByDamageCategoryVM();
-            _performanceAEPVM = new PerformanceAEPVM();
-            _performanceAssuranceOfThresholdVM = new PerformanceAssuranceOfThresholdVM();
-            _performanceLongTermRiskVM = new PerformanceLongTermRiskVM();
+            _performanceAEPVM = new PerformanceAEPVM(Thresholds);
+            _performanceAssuranceOfThresholdVM = new PerformanceAssuranceOfThresholdVM(Thresholds);
+            _performanceLongTermRiskVM = new PerformanceLongTermRiskVM(Thresholds);
 
         }
 
-        public void ButtonNextClick()
+
+        private void ThresholdChanged()
         {
-            CurrentResultVM = _performanceAEPVM;
-            Counter += 1;
+            if(_currentResultVM != null && _currentResultVM is PerformanceVMBase)
+            {
+                ((PerformanceVMBase)_currentResultVM).updateSelectedMetric(SelectedThreshold);
+            }
         }
 
+        /// <summary>
+        /// This method swaps out the viewmodel for the content control in the view.
+        /// </summary>
         private void ReportChanged()
         {
-            switch (SelectedReport)
+            string d = _damageReports[0];
+            if (_damageReports[0].Equals(SelectedReport))
             {
-                case "Damage with Uncertainty":
-                    {
-                        CurrentResultVM = _damageWithUncertaintyVM;
-                        break;
-                    }
-                case "Damage by Damage Category":
-                    {
-                        CurrentResultVM = _damageByDamageCategoryVM;
-                        break;
-                    }
-                case "Annual Exceedance Probability":
-                    {
-                        CurrentResultVM = _performanceAEPVM;
-                        break;
-                    }
-                case "Long-term Risk":
-                    {
-                        CurrentResultVM = _performanceLongTermRiskVM;
-                        break;
-                    }
-                case "Assurance of Threshold":
-                    {
-                        CurrentResultVM = _performanceAssuranceOfThresholdVM;
-                        break;
-                    }
+                CurrentResultVM = _damageWithUncertaintyVM;
             }
-
+            else if (_damageReports[1].Equals(SelectedReport))
+            {
+                CurrentResultVM = _damageByDamageCategoryVM;
+            }
+            else if (_performanceReports[0].Equals(SelectedReport))
+            {
+                CurrentResultVM = _performanceAEPVM;
+            }
+            else if (_performanceReports[1].Equals(SelectedReport))
+            {
+                CurrentResultVM = _performanceLongTermRiskVM;
+            }
+            else if (_performanceReports[2].Equals(SelectedReport))
+            {
+                CurrentResultVM = _performanceAssuranceOfThresholdVM;
+            }
         }
 
 
@@ -140,31 +172,18 @@ namespace ViewModel.ImpactAreaScenario.Results
         {
             if(_selectedOutcome.Equals("Damage"))
             {
-                //Reports = _damageReports;
-                Reports.Clear();
-                foreach (string name in _damageReports)
-                {
-                    Reports.Add(name);
-                }
+                ThresholdComboVisible = false;
+                Reports = _damageReports;   
                 SelectedReport = Reports.First();
             }
             else if(_selectedOutcome.Equals("Performance"))
             {
-                //Reports = _performanceReports;
-                Reports.Clear();
-                foreach (string name in _performanceReports)
-                {
-                    Reports.Add(name);
-                }
+                ThresholdComboVisible = true;
+                Reports = _performanceReports;
                 SelectedReport = Reports.First();
             }
         }
 
-
-        private void loadDummyData()
-        {
-            
-        }
 
     }
 }

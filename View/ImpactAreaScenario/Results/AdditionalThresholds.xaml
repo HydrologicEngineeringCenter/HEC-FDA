@@ -25,7 +25,7 @@
             <Button Name="Remove_btn" Content="Remove" Width="80" Margin="3" Click="Remove_btn_Click" />
         </StackPanel>
 
-        <ListView Grid.Row="1" x:Name="lst" Height="150" Margin="5" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" 
+        <ListView Grid.Row="1" x:Name="lst" Height="300" Margin="5" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" 
                    SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" HorizontalAlignment="Left" Width="420" >
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
@@ -56,7 +56,6 @@
             </ListView.View>
         </ListView>
 
-        <Button x:Name="ok_btn" Content="OK" Width="100" Grid.Row="2" HorizontalAlignment="Left" Click="ok_btn_Click" />
         <Utilities:SaveCloseControl Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
 
 

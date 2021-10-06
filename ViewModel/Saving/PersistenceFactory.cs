@@ -142,7 +142,7 @@ namespace ViewModel.Saving
         {
             return new StructureInventoryPersistenceManager(StudyCacheForSaving);
         }
-        public static IASPersistenceManager GetConditionsManager( )
+        public static IASPersistenceManager GetIASManager( )
         {
             return new IASPersistenceManager(StudyCacheForSaving);
         }

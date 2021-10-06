@@ -5,13 +5,13 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ViewModel.Editors;
 
 namespace ViewModel.ImpactAreaScenario.Results
 {
-    public class AdditionalThresholdsVM : BaseViewModel
+    public class AdditionalThresholdsVM : BaseEditorVM
     {
 
-        //private List<AdditionalThresholdRowItem> _rows;
         private AdditionalThresholdRowItem _selectedRow;
 
         public ObservableCollection<AdditionalThresholdRowItem> Rows
@@ -24,10 +24,9 @@ namespace ViewModel.ImpactAreaScenario.Results
             set { _selectedRow = value; NotifyPropertyChanged(); }
         }
 
-        public AdditionalThresholdsVM()
+        public AdditionalThresholdsVM() : base(null)
         {
             Rows = new ObservableCollection<AdditionalThresholdRowItem>();
-
 
         }
 
@@ -68,28 +67,35 @@ namespace ViewModel.ImpactAreaScenario.Results
             if (selectedIndex > -1)
             {
                 Rows.Remove(SelectedRow);
-                if(selectedIndex>0 && selectedIndex< Rows.Count)
+                //row at beginning or in middle removed: select next row
+                if( selectedIndex< Rows.Count)
                 {
                     SelectedRow = Rows[selectedIndex];
                 }
+                //only row remove: select nothing
+                else if(selectedIndex == 0 && Rows.Count == 0)
+                {
+                    SelectedRow = null;
+                }
+                //last row removed: select previous row
                 else if(selectedIndex == Rows.Count)
                 {
                     SelectedRow = Rows[Rows.Count - 1];
-                }
-                else if(selectedIndex == 0 && Rows.Count>0)
-                {
-                    SelectedRow = Rows[0];
-                }
+                }           
             }
 
 
         }
 
-        public void OkClicked()
+        public override void Save()
         {
-            int i = 0;
+            Saving.PersistenceFactory.GetIASManager().UpdateThresholds();
+
         }
 
-
+        public override void AddValidationRules()
+        {
+            //intentially left blank
+        }
     }
 }

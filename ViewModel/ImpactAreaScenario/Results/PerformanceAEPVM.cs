@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,48 +8,48 @@ using ViewModel.ImpactAreaScenario.Results.RowItems;
 
 namespace ViewModel.ImpactAreaScenario.Results
 {
-    public class PerformanceAEPVM : BaseViewModel
+    public class PerformanceAEPVM : PerformanceVMBase
     {
 
-        public List<PerformanceFrequencyRowItem> Rows { get; set; }
-
-        public PerformanceAEPVM()
+        public PerformanceAEPVM(List<ThresholdComboItem> metrics)
         {
-
-            loadDummyData();
-
+            loadDummyData(metrics);
         }
 
-
-        private void loadDummyData()
+        private void loadDummyData(List<ThresholdComboItem> metrics)
         {
-            List<double> xVals = loadXData();
-            List<double> yVals = loadYData();
+            MetricsToRows = new Dictionary<IMetric, List<IPerformanceRowItem>>();
 
-            List<PerformanceFrequencyRowItem> rows = new List<PerformanceFrequencyRowItem>();
-            for (int i = 0; i < xVals.Count; i++)
+            for (int i = 0; i < metrics.Count; i++)
             {
-                rows.Add(new PerformanceFrequencyRowItem(xVals[i], yVals[i]));
+                List<double> xVals = loadXData(i);
+                List<double> yVals = loadYData(i);
+
+                List<IPerformanceRowItem> rows = new List<IPerformanceRowItem>();
+                for (int j = 0; j < xVals.Count; j++)
+                {
+                    rows.Add(new PerformanceFrequencyRowItem(xVals[j], yVals[j]));
+                }
+                MetricsToRows.Add(metrics[i].Metric, rows);
             }
 
-            Rows = rows;
+            Rows = MetricsToRows[metrics[0].Metric];
         }
 
-        private List<double> loadXData()
+        private List<double> loadXData(int i)
         {
-
             List<double> xValues = new List<double>();
-            xValues.Add(.2);
-            xValues.Add(.5);
+            xValues.Add(i/10);
+            xValues.Add(i/2);
           
             return xValues;
         }
 
-        private List<double> loadYData()
+        private List<double> loadYData(int i)
         {
             List<double> yValues = new List<double>();
-            yValues.Add(1);
-            yValues.Add(2);
+            yValues.Add(i);
+            yValues.Add(i+1);
       
             return yValues;
         }

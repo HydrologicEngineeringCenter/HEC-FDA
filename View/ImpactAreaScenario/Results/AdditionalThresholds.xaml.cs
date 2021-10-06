@@ -30,7 +30,6 @@ namespace View.ImpactAreaScenario.Results
         {
             AdditionalThresholdsVM vm = (AdditionalThresholdsVM)this.DataContext;
             vm.AddRow();
-            this.UpdateLayout();
         }
 
         private void Copy_btn_Click(object sender, RoutedEventArgs e)
@@ -44,11 +43,6 @@ namespace View.ImpactAreaScenario.Results
             AdditionalThresholdsVM vm = (AdditionalThresholdsVM)this.DataContext;
             vm.Remove();
         }
-
-        private void ok_btn_Click(object sender, RoutedEventArgs e)
-        {
-            AdditionalThresholdsVM vm = (AdditionalThresholdsVM)this.DataContext;
-            vm.OkClicked();
-        }
+       
     }
 }

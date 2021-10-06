@@ -23,6 +23,7 @@ namespace View.ImpactAreaScenario.Results
     /// </summary>
     public partial class DamageWithUncertainty : UserControl
     {
+        
         public DamageWithUncertainty()
         {
             InitializeComponent();
@@ -32,27 +33,21 @@ namespace View.ImpactAreaScenario.Results
         {
             //link the plot with its chart view model
             DamageWithUncertaintyVM vm = (DamageWithUncertaintyVM)this.DataContext;
-            Chart2D chart = new Chart2D(vm.ChartViewModel);
+
+            //because this UI gets loaded every time the user switches and comes back to this, we were getting
+            //an exception. We need to create a new chart view model every time it gets loaded and set it in the vm.
+            vm.ChartViewModel = new HEC.Plotting.SciChart2D.ViewModel.SciChart2DChartViewModel(vm.ChartViewModel);
+            Chart2D _chart = new Chart2D(vm.ChartViewModel);
 
             //add the chart to the UI
-            main_grd.Children.Add(chart);
-            Grid.SetRow(chart, 0);
-            Grid.SetColumn(chart, 1);
+            main_grd.Children.Add(_chart);
+            Grid.SetRow(_chart, 0);
+            Grid.SetColumn(_chart, 1);
 
             //plot the line data
             vm.PlotLineData();
+
         }
 
-        //private void DataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
-        //{
-        //    //Add spaces between words and make multiline on "_". 
-        //     string header = Regex.Replace(e.Column.Header.ToString(), "(\\B[A-Z])", " $1");
-        //    string multiLineHeader = Regex.Replace(header, "_ ", Environment.NewLine);
-        //    e.Column.Header = multiLineHeader;
-
-        //    //set the last column to be star width to remove the empty final column
-        //    e.Column.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
-
-        //}
     }
 }
