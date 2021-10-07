@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Utilities;
-
+using Utilities.Ranges;
 using Statistics.Validation;
 using System.Xml.Linq;
 
@@ -104,9 +104,10 @@ namespace Statistics.Histograms
         /// </summary>
         /// <param name="dataRange"> The range of the <see cref="IData"/> to be binned in the new <see cref="IHistogram"/>. </param>
         /// <returns> A <see cref="List{IBin}"/> in which an existing <see cref="IHistogram"/> and new <see cref="IData"/> observations can be binned. </returns>
-        private static List<IBin> ExpandHistogramRange(IHistogram histogram, IRange<double> dataRange)
+        private static void ExpandHistogramRange(IHistogram histogram, IRange<double> dataRange)
         {
             List<IBin> bins = new List<IBin>();
+
             double loRange = histogram.Range.Min - dataRange.Min;
             if (loRange > 0)
             {
@@ -115,7 +116,7 @@ namespace Statistics.Histograms
                 double newMin = histogram.Range.Min - loBinCount * width;
                 bins.AddRange(InitializeEmptyBins(newMin, width, loBinCount));
             }
-            bins.AddRange(histogram.Bins);
+            //bins.AddRange(histogram.Bins);
             double hiRange = dataRange.Max - histogram.Range.Max;
             if (hiRange > 0)
             {
@@ -123,24 +124,37 @@ namespace Statistics.Histograms
                 int hiBinCount = Increments(hiRange, width, Math.Ceiling);
                 bins.AddRange(InitializeEmptyBins(histogram.Range.Max, width, hiBinCount));
             }
-            return bins;
+            //we now need to add this list of empty bins to the existing histogram
+            //BUT HOW!!
+            //histogram.bins is an array and arrays are immutable 
+            //create 
+            histogram.Bins.Append<IBin>((IBin)bins);
         }
         private static IBin[] FillHistogramBins(IHistogram histogram, IData data)
         {
+            IHistogram histogramForAddingObservations = histogram;
             foreach (double x in data.Elements)
             {
                 double[] xToSingleRowArray = new double[1] { x };
                 IData obs = new Data(xToSingleRowArray);
-                AddObservationToHistogram(histogram, obs);
+                //there is a problem of scope. on each iteration, we need the previously augmented histograms
+                AddObservationToHistogram(histogramForAddingObservations, obs);
             }
-            return histogram.Bins;
+            return histogramForAddingObservations.Bins;
         }
 
         private static void AddObservationToHistogram(IHistogram histogram, IData data)
         {
-            if ((data.Range.Min < histogram.Range.Min) || (data.Range.Max > histogram.Range.Max))
+
+            if (data.Range.Min < histogram.Range.Min)
             {
-                ExpandHistogramRange(histogram, data.Range);
+                IRange<double> range = IRangeFactory.Factory(data.Range.Min, histogram.Range.Max);
+                ExpandHistogramRange(histogram, range);
+            }
+            if (data.Range.Max > histogram.Range.Max)
+            {
+                IRange<double> range = IRangeFactory.Factory(histogram.Range.Min, data.Range.Max);
+                ExpandHistogramRange(histogram, range);
             }
             double binWidth = histogram.Bins[0].Range.Max - histogram.Bins[0].Range.Min;
             double index = (data.Elements.FirstOrDefault() - histogram.Range.Min)/binWidth;
