@@ -74,7 +74,7 @@ namespace Statistics.Histograms
         public static IHistogram Fit(IHistogram histogram, IData sample)
         {
             // 1. Expand histogram bins to accommodate new sample data, place new data in the expended bins.
-            return new HistogramBinnedData(FillHistogramBins(ExpandHistogramRange(histogram, sample.Range), sample).ToArray());
+            return new HistogramBinnedData(FillHistogramBins(histogram, sample).ToArray());
             //// 2. Get convergence results
             //List<IConvergenceResult> results = CriteriaResults(criterias, histogram, newHistogram, sample.SampleSize);
             //return new HistogramBinnedData(newHistogram);
@@ -125,27 +125,38 @@ namespace Statistics.Histograms
             }
             return bins;
         }
-        private static IBin[] FillHistogramBins(List<IBin> bins, IData data)
+        private static IBin[] FillHistogramBins(IHistogram histogram, IData data)
         {
-            int i = 0, n = 0;
             foreach (double x in data.Elements)
             {
-                if (x.IsOnRange(bins[i].Range.Min, bins[i].Range.Max, inclusiveMin: true, inclusiveMax: false)) n++;
-                else
-                {
-                    if (n > 0)
-                    {
-                        bins[i] = new Bin(bins[i], n);
-                        n = x.IsOnRange(bins[i + 1].Range.Min, bins[i + 1].Range.Max, inclusiveMin: true, inclusiveMax: false) ? 1 : 0;                        
-                    }
-                    while (!x.IsOnRange(bins[i + 1].Range.Min, bins[i + 1].Range.Max, inclusiveMin: true, inclusiveMax: false)) i++;
-                    i++;
-                }
+                double[] xToSingleRowArray = new double[1] { x };
+                IData obs = new Data(xToSingleRowArray);
+                AddObservationToHistogram(histogram, obs);
             }
-            if (n > 0) bins[i] = new Bin(bins[i], n);
-            return bins.ToArray();
-            //TODO: reeeeaaaaalllly need to test this.
+            return histogram.Bins;
         }
+
+        private static void AddObservationToHistogram(IHistogram histogram, IData data)
+        {
+            if ((data.Range.Min < histogram.Range.Min) || (data.Range.Max > histogram.Range.Max))
+            {
+                ExpandHistogramRange(histogram, data.Range);
+            }
+            double binWidth = histogram.Bins[0].Range.Max - histogram.Bins[0].Range.Min;
+            double index = (data.Elements.FirstOrDefault() - histogram.Range.Min)/binWidth;
+            int indexRounded = (int)Convert.ToInt64(Math.Floor(index));
+            if (indexRounded < 0)
+            {
+                throw new ArgumentException("The computed index is less than zero");
+            } else if (indexRounded > histogram.Bins.Length) {
+                throw new ArgumentException("The computed index is greater than the bin quantity");
+            } else
+            {
+                histogram.Bins[indexRounded] = new Bin(histogram.Bins[indexRounded], 1);
+            }
+        }
+
+
 
         public bool Equals(IHistogram histogram)
         {
@@ -168,6 +179,7 @@ namespace Statistics.Histograms
             if (!(range.Item1 == min && range.Item2 == max)) msgs.Add(IMessageFactory.Factory(IMessageLevels.Message, $"The requested data range: [{min}, {max}) was modified to [{range.Item1}, {range.Item2}) in order to accomidated some data elements outside of the provided range."));
             return range;
         }
+        //does rounding use conventional criteria, round up, or round down?
         protected static int Increments(double range, double width, Func<double, double> rounding) => range < width ? 0 : (int)rounding(range / width);
         protected static List<IBin> InitializeEmptyBins(double min, double width, int nBins)
         {
