@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ViewModel.ImpactAreaScenario.Results;
+using ViewModel.ImpactAreaScenario.Editor;
 
 namespace ViewModel.ImpactAreaScenario
 {

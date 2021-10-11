@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewModel.ImpactAreaScenario.Results
+namespace ViewModel.ImpactAreaScenario.Editor
 {
     public class AdditionalThresholdRowItem
     {

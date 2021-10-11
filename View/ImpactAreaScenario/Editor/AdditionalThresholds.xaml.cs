@@ -12,9 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ViewModel.ImpactAreaScenario.Editor;
 using ViewModel.ImpactAreaScenario.Results;
 
-namespace View.ImpactAreaScenario.Results
+namespace View.ImpactAreaScenario.Editor
 {
     /// <summary>
     /// Interaction logic for AdditionalThresholds.xaml

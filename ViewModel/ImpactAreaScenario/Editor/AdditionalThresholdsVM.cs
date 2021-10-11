@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ViewModel.Editors;
 
-namespace ViewModel.ImpactAreaScenario.Results
+namespace ViewModel.ImpactAreaScenario.Editor
 {
     public class AdditionalThresholdsVM : BaseEditorVM
     {
@@ -27,6 +27,11 @@ namespace ViewModel.ImpactAreaScenario.Results
         public AdditionalThresholdsVM() : base(null)
         {
             Rows = new ObservableCollection<AdditionalThresholdRowItem>();
+        }
+
+        public AdditionalThresholdsVM(List<AdditionalThresholdRowItem> thresholds):base(null)
+        {
+            Rows = new ObservableCollection<AdditionalThresholdRowItem>(thresholds);
 
         }
 
@@ -96,6 +101,11 @@ namespace ViewModel.ImpactAreaScenario.Results
         public override void AddValidationRules()
         {
             //intentially left blank
+        }
+
+        public List<AdditionalThresholdRowItem> GetThresholds()
+        {
+            return Rows.ToList();
         }
     }
 }

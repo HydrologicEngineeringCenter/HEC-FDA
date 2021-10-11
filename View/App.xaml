@@ -7,6 +7,9 @@
              xmlns:IASResultsVM ="clr-namespace:ViewModel.ImpactAreaScenario.Results;assembly=ViewModel"
              xmlns:IASResultsView ="clr-namespace:View.ImpactAreaScenario.Results"
              
+             xmlns:IASEditorVM ="clr-namespace:ViewModel.ImpactAreaScenario.Editor;assembly=ViewModel"
+             xmlns:IASEditorView ="clr-namespace:View.ImpactAreaScenario.Editor"
+             
              xmlns:PlotsOutputVM="clr-namespace:ViewModel.Output;assembly=ViewModel"
              xmlns:PlotsOutputView="clr-namespace:View.Output"
              
@@ -237,6 +240,14 @@
             <OccupancyTypesView:ImportOccupancyTypeGroups/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type IASEditorVM:IASEditorVM }" >
+            <IASEditorView:IASEditor/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type IASEditorVM:AdditionalThresholdsVM }" >
+            <IASEditorView:AdditionalThresholds/>
+        </DataTemplate>
+        
         <DataTemplate DataType="{x:Type IASResultsVM:IASResultsVM }" >
             <IASResultsView:IASResults/>
         </DataTemplate>
@@ -261,9 +272,7 @@
             <IASResultsView:DamageWithUncertainty/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type IASResultsVM:AdditionalThresholdsVM }" >
-            <IASResultsView:AdditionalThresholds/>
-        </DataTemplate>
+        
 
         <!--Output Region-->
         <!--<DataTemplate DataType="{x:Type OutputVM:CreateEconImportFileVM }" >

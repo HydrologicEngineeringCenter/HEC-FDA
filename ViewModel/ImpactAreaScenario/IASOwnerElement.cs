@@ -287,35 +287,47 @@ namespace ViewModel.ImpactAreaScenario
 
         public void AddNewCondition(object arg1, EventArgs arg2)
         {
-            List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.GetChildElementsOfType<ImpactArea.ImpactAreaElement>();
-            Plots.IndividualLinkedPlotControlVM lp3Control = BuildDefaultLP3Control(this);
-            Plots.IndividualLinkedPlotControlVM inflowOutflowControl = BuildDefaultInflowOutflowControl(this);
-            Plots.IndividualLinkedPlotControlVM ratingControl = BuildDefaultRatingControl(this);
-            ratingControl.RequestNavigation += Navigate;
 
-            Plots.IndividualLinkedPlotControlVM extIntStageControl = BuildDefaultExtIntStageControl(this);
-            Plots.IndividualLinkedPlotControlVM failureControl = BuildDefaultLateralFeaturesControl(this);
-            Plots.IndividualLinkedPlotControlVM StageDamageControl = BuildDefaultStageDamageControl(this);
-            Plots.IndividualLinkedPlotControlVM DamageFrequencyControl = BuildDefaultDamageFrequencyControl(this);
 
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                 .WithSiblingRules(this);
-            List<double> xs = new List<double>() { 0 };
-            List<double> ys = new List<double>() { 0 };
-            ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-            IFdaFunction dummyDefault = IFdaFunctionFactory.Factory(IParameterEnum.Rating, (IFunction)coordFunc);
-            IASPlotEditorVM vm = new IASPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl, 
-                failureControl, StageDamageControl, DamageFrequencyControl, actionManager,dummyDefault);
-  
-            vm.RequestNavigation += Navigate;
-            string header = "Create Condition";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateCondition");
-            Navigate(tab, false, false);
-     
+
+            //List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.GetChildElementsOfType<ImpactArea.ImpactAreaElement>();
+            //Plots.IndividualLinkedPlotControlVM lp3Control = BuildDefaultLP3Control(this);
+            //Plots.IndividualLinkedPlotControlVM inflowOutflowControl = BuildDefaultInflowOutflowControl(this);
+            //Plots.IndividualLinkedPlotControlVM ratingControl = BuildDefaultRatingControl(this);
+            //ratingControl.RequestNavigation += Navigate;
+
+            //Plots.IndividualLinkedPlotControlVM extIntStageControl = BuildDefaultExtIntStageControl(this);
+            //Plots.IndividualLinkedPlotControlVM failureControl = BuildDefaultLateralFeaturesControl(this);
+            //Plots.IndividualLinkedPlotControlVM StageDamageControl = BuildDefaultStageDamageControl(this);
+            //Plots.IndividualLinkedPlotControlVM DamageFrequencyControl = BuildDefaultDamageFrequencyControl(this);
+
+            //Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+            //     .WithSiblingRules(this);
+            //List<double> xs = new List<double>() { 0 };
+            //List<double> ys = new List<double>() { 0 };
+            //ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+            //IFdaFunction dummyDefault = IFdaFunctionFactory.Factory(IParameterEnum.Rating, (IFunction)coordFunc);
+            //IASPlotEditorVM vm = new IASPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl,
+            //    failureControl, StageDamageControl, DamageFrequencyControl, actionManager, dummyDefault);
+
+            //vm.RequestNavigation += Navigate;
+            //string header = "Create Condition";
+            //DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateCondition");
+            //Navigate(tab, false, false);
+
+
+
+            ///////////////////////////////////////////
+
+            Editor.IASEditorVM vm2 = new Editor.IASEditorVM();
+            vm2.RequestNavigation += Navigate;
+            DynamicTabVM tab2 = new DynamicTabVM("Impact Area Scenario Editor", vm2, "CreateCondition");
+            Navigate(tab2, false, false);
+
         }
         #endregion
         #region Functions
-        
+
         #endregion
     }
 }
