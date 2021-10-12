@@ -16,8 +16,6 @@ namespace Statistics.Histograms
 
         public double[] BinCounts = new double[] { }; //using double for bin counts to satisfy IData 
         public double BinWidth { get; }
-        internal double Min { get; set; }
-        internal double Max { get; set; }
         
         #region IDistribution Properties
         public double Mean { get; }
@@ -42,12 +40,10 @@ namespace Statistics.Histograms
         public Histogram(double binWidth, double min, double max)
         {
             BinWidth = binWidth;
-            Min = min;
-            Max = max;
 
             Int64 numberOfBins = Convert.ToInt64(Math.Ceiling((max - min) / binWidth));
             BinCounts = new double[numberOfBins];
-            IData data = new Data(BinCounts);
+            IData data = new Data(BinCounts); //This does not work because the bin counts are not the data 
 
             var stats = ISampleStatisticsFactory.Factory(data);
             Mean = stats.Mean;
@@ -55,9 +51,11 @@ namespace Statistics.Histograms
             Variance = stats.Variance;
             Skewness = stats.Skewness;
             StandardDeviation = stats.StandardDeviation;
-            Range = stats.Range;
             SampleSize = stats.SampleSize;
-           // State = Validate(new Validation.HistogramValidator(), out IEnumerable<IMessage> msgs);
+
+            Range = IRangeFactory.Factory(min, max, true, true, true, false);
+
+            // State = Validate(new Validation.HistogramValidator(), out IEnumerable<IMessage> msgs);
             //Messages = stats.Messages.Concat(msgs);
             //IsConverged = false;
         }
@@ -83,7 +81,7 @@ namespace Statistics.Histograms
                 histogram.BinCounts[0] += 1;
             } else if (data.Range.Max > histogram.Range.Max)
             {
-                quantityAdditionalBins = Convert.ToInt64(Math.Ceiling((data.Elements.First() - histogram.Range.Max) / binWidth));
+                quantityAdditionalBins = Convert.ToInt64(Math.Ceiling((data.Elements.First() - histogram.Range.Max) / histogram.BinWidth));
                 double[] newBinCounts = new double[quantityAdditionalBins + histogram.BinCounts.Length];
                 for (Int64 i = 0; i < histogram.BinCounts.Length; i++)
                 {
@@ -128,7 +126,7 @@ namespace Statistics.Histograms
 
         private double FindBinCount(double x, bool cummulative = true)
         {
-            Int64 obsIndex = Convert.ToInt64((x - Min) / BinWidth);
+            Int64 obsIndex = Convert.ToInt64((x - Range.Min) / BinWidth);
             if (cummulative)
             {
                 double sum = 0;

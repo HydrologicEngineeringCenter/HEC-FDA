@@ -37,55 +37,48 @@ namespace Statistics.Histograms
              *          - sample kurtosis
              */
             double n = 0;
-            bool needmin = true;
-            double sum = 0, min = double.NaN, max = double.NaN;
+            double sum = 0;
        
             for (int i = 0; i < histogram.BinCounts.Length; i++) // First pass
             {
                 n += histogram.BinCounts[i];
-                sum += (i * histogram.BinWidth + 0.5 * histogram.BinWidth) * histogram.BinCounts[i];              //bin.MidPoint * bin.Count;
-                if (bin.Count > 0)
-                {
-                    if (needmin)
-                    {
-                        min = bin.MidPoint; 
-                        needmin = false;
-                    }
-                    max = bin.MidPoint;
-                }
-            }            
-            SampleSize = n;
+                sum += (i * histogram.BinWidth + 0.5 * histogram.BinWidth) * histogram.BinCounts[i];
+            }
+           
+            SampleSize = Convert.ToInt32(n);
             Mean = SampleSize > 0 ? sum / SampleSize: double.NaN;
-            Range = IRangeFactory.Factory(min, max, true, true, true, false);
+            Range = histogram.Range;
             /* median:
              *  Is even or odd number of observations in the histogram?
              *      IF odd median observation = n / 2 + 1
              *      ELSE (even) median observation is between n / 2 and n / 2 + 1 observation     
              */
             bool oddn = n % 2 != 0, needMed = true;
-            int medIndex = oddn ? n / 2 : n / 2 + 1, m = 0;
+            double medIndex = oddn ? n / 2 : n / 2 + 1, m = 0;
             /* sample statistics:
              *      mean = sum(x_i) / n
              *      variance = sum((x_i - mean) ^ 2) / (n - 1)
              *      skewness = sum((x_i - mean) ^ 3) / n / sample variance ^ (3 * 1/2)
              *      kurtosis = sum((x_i - mean) ^ 4) / n / (sum((x_i - mean) ^ 2 / n) ^ 2 (note: NOT excess kurtosis)
              */
-            IBin[] _bins = bins.ToArray();
+ 
+
             double deviation = 0, deviation2 = 0, deviation3 = 0, deviation4 = 0;
-            for (int i = 0; i < _bins.Length; i++)
+            for (int i = 0; i < histogram.BinCounts.Length; i++)
             {
-                deviation += _bins[i].MidPoint - Mean;
+                double midpoint = histogram.Range.Min + i * histogram.BinWidth + 0.5 * histogram.BinWidth;
+                deviation += midpoint-Mean;          
                 deviation2 += deviation * deviation;
                 deviation3 += deviation2 * deviation;
                 if (needMed)
                 {
-                    if (m < medIndex && medIndex <= m + _bins[i].Count)
+                    if (m < medIndex && medIndex <= m + histogram.BinCounts[i])
                     {
-                        if (oddn || medIndex + 1 <= m + _bins[i].Count) Median = _bins[i].MidPoint;
-                        else Median = (_bins[i].MidPoint + _bins[i + 1].MidPoint) / 2;
+                        if (oddn || medIndex + 1 <= m + histogram.BinCounts[i]) Median = midpoint;
+                        else Median = (midpoint + midpoint + histogram.BinWidth) / 2;
                         needMed = false;
                     }
-                    else m += _bins[i].Count;
+                    else m += histogram.BinCounts[i];
                 }
             }
             /* If an the data contains a insufficient sample size (observations, degrees of freedom)
