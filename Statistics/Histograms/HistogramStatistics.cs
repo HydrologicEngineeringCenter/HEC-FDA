@@ -22,9 +22,9 @@ namespace Statistics.Histograms
         #endregion
 
         #region Constructor
-        internal HistogramStatistics(IEnumerable<IBin> bins)
+        internal HistogramStatistics(Histogram histogram)
         {
-            if (!Validation.SummaryStatisticsValidator.IsConstructable(bins, out string msg)) throw new Utilities.InvalidConstructorArgumentsException(msg);
+            //if (!Validation.SummaryStatisticsValidator.IsConstructable(bins, out string msg)) throw new Utilities.InvalidConstructorArgumentsException(msg);
             /* This is a 2 pass function:
              *      (1) First, calculate the:
              *          - sample size
@@ -36,13 +36,14 @@ namespace Statistics.Histograms
              *          - sample skewness
              *          - sample kurtosis
              */
-            int n = 0;
+            double n = 0;
             bool needmin = true;
             double sum = 0, min = double.NaN, max = double.NaN;
-            foreach (IBin bin in bins) // First pass
+       
+            for (int i = 0; i < histogram.BinCounts.Length; i++) // First pass
             {
-                n += bin.Count;
-                sum += bin.MidPoint * bin.Count;
+                n += histogram.BinCounts[i];
+                sum += (i * histogram.BinWidth + 0.5 * histogram.BinWidth) * histogram.BinCounts[i];              //bin.MidPoint * bin.Count;
                 if (bin.Count > 0)
                 {
                     if (needmin)
