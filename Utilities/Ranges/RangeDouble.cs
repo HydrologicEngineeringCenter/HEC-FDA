@@ -15,8 +15,8 @@ namespace Utilities.Ranges
         internal bool _MoreThanSingleValueRequirement;
 
         #region Properties
-        public double Min { get; }
-        public double Max { get; }
+        public double Min { get; set; }
+        public double Max { get; set; }
         public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
         #endregion

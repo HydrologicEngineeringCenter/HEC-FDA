@@ -7,8 +7,8 @@ namespace Utilities.Ranges
     internal class RangeInteger: IRange<int>, IValidate<RangeInteger>
     {
         internal bool _NotSingleValueRequirement;
-        public int Min { get; }
-        public int Max { get; }
+        public int Min { get; set; }
+        public int Max { get; set; }
         public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
 

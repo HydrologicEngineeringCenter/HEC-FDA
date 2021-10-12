@@ -27,15 +27,6 @@ namespace Statistics.Validation
             return messages;
         }
 
-        public static bool IsConstructable(IEnumerable<IBin> bins, out string msg)
-        {
-            msg = "";
-            if (bins.IsNullItem()) msg += "The list of bins are invalid because one or more of them are null.";
-            foreach (IBin bin in bins)
-            {
-                if (bin.State > IMessageLevels.Message) msg += $"The {bin.Print()} has the following errors and messages: {bin.Messages.PrintTabbedListOfMessages()}";
-            }
-            return msg.Length == 0;
-        }
+
     }
 }

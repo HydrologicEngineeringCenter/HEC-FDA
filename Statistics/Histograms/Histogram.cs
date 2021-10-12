@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Utilities;
 using Utilities.Ranges;
 using Statistics.Validation;
@@ -9,7 +8,7 @@ using System.Xml.Linq;
 
 namespace Statistics.Histograms
 {
-    internal class Histogram 
+    internal class Histogram : IDistribution
     {
 
         #region Properties
@@ -79,7 +78,9 @@ namespace Statistics.Histograms
                 }
                 histogram.BinCounts = newBinCounts;
                 histogram.BinCounts[0] += 1;
-                histogram.Range.Min = Convert.ToDouble(Math.Floor(data.Elements.First()));
+                double newMin = Convert.ToDouble(Math.Floor(data.Elements.First()));
+                double max = histogram.Range.Max;
+                histogram.Range = IRangeFactory.Factory(newMin, max, true, true, true, false);
             } else if (data.Range.Max > histogram.Range.Max)
             {
                 quantityAdditionalBins = Convert.ToInt64(Math.Ceiling((data.Elements.First() - histogram.Range.Max) / histogram.BinWidth));
@@ -90,7 +91,9 @@ namespace Statistics.Histograms
                 }
                 newBinCounts[histogram.BinCounts.Length + quantityAdditionalBins - 1] += 1;
                 histogram.BinCounts = newBinCounts;
-                histogram.Range.Max = Convert.ToDouble(Math.Ceiling(data.Elements.First()));
+                double newMax = Convert.ToDouble(Math.Ceiling(data.Elements.First()));
+                double min = histogram.Range.Min;
+                histogram.Range = IRangeFactory.Factory(min, newMax, true, true, true, false);
             } else
             {
                 Int64 newObsIndex = Convert.ToInt64((data.Elements.First() - histogram.Range.Min) / histogram.BinWidth);
@@ -180,14 +183,6 @@ namespace Statistics.Histograms
         }
         #endregion
         public static string Print(int n, int nBins, IRange<double> range) => $"Histogram(observations: {n.Print()}, bins: {nBins.Print()}, range: {range.Print(true)})";
-        public static string RequiremedParameterization(bool printNotes)
-        {
-            string msg = $"Histograms require the following parameterization: {Parameterization()}.";
-            if (printNotes) msg += RequirementNotes();
-            return msg;
-        }
-        public static string RequirementNotes() => $"The histogram must contain 1 or more bins (only one bin is unlikely to produce the desired results).";
-        public static string Parameterization() => $"Histogram(observations: [{1}, {int.MaxValue.Print()}], bins: {Bin.Parameterization()}, range: {Resources.DoubleRangeRequirements()})";
         #endregion
         #region IDistribution Functions 
         public double PDF(double x) => (double)FindBinCount(x, false) / (double)SampleSize;
@@ -214,6 +209,21 @@ namespace Statistics.Histograms
             for (int i = 0; i < sampleSize; i++) sample[i] = Sample(r);
             return sample;
         }
+        public string Requirements(bool printNotes)
+        {
+            return "Histogram requirements consist of a min, max, bin width, and some data.";
+        }
+        public Histogram Fit(IEnumerable<double> sample, int nBins)
+        {
+            double min = sample.Min();
+            double max = sample.Max();
+            double binWidth = (min - max) / nBins;
+            Histogram histogram = new Histogram(binWidth, min, max);
+            IData data = new Data(sample);
+            AddObservationsToHistogram(histogram, data);
+            return histogram;
+
+        }
         //public IDistribution SampleDistribution(Random r = null) => IDistribution.Factory(IDataFactory.Factory(Sample(SampleSize, r)), Range.Min, Range.Max, Bins.Length);
         #endregion
 
@@ -231,36 +241,34 @@ namespace Statistics.Histograms
 
 
 
-
-        public string Print(bool round) => round ? Print(SampleSize, Bins.Length, Range) : $"Histogram(observations: {SampleSize}, bins: {Bins.Length}, range: {Range.Print()})";
-        public string Requirements(bool printNotes) => RequiremedParameterization(printNotes);
+ 
+        public string Print(bool round) => round ? Print(SampleSize, BinCounts.Length, Range) : $"Histogram(observations: {SampleSize}, bins: {BinCounts.Length}, range: {Range.Print()})";
         public bool Equals(IDistribution distribution) => distribution.Type == IDistributionEnum.Histogram ? Equals((Histogram)distribution) : false;
 
         public static readonly string XML_BINS = "Bins";
         public static readonly string XML_BIN = "Bin";
-        public static readonly string XML_MIN = "Min";
-        public static readonly string XML_MAX = "Max";
+        public static readonly string XML_MIN = "Inclusive Min";
+        public static readonly string XML_MAX = "Exclusive Max";
         public static readonly string XML_MIDPOINT = "MidPoint";
         public static readonly string XML_COUNT = "Count";
 
-        //Will fix this after re-assessing the histogram approach 
-        //public XElement WriteToXML()
-        //{
-        //    XElement masterElem = new XElement(XML_BINS);
-        //    foreach(Int64 binCount in BinCounts) 
-        //    {
-        //        XElement binElem = new XElement(XML_BIN);
-        //        binElem.SetAttributeValue(XML_MIN, bin.Range.Min);
-        //        binElem.SetAttributeValue(XML_MAX, bin.Range.Max);
-        //        binElem.SetAttributeValue(XML_MIDPOINT, bin.MidPoint);
-        //        binElem.SetAttributeValue(XML_COUNT, bin.Count);
+        public XElement WriteToXML()
+        {
+            XElement masterElem = new XElement(XML_BINS);
+            for (Int64 i=0; i<BinCounts.Length; i++)
+            {
+                XElement binElem = new XElement(XML_BIN);
+                binElem.SetAttributeValue(XML_MIN, i*BinWidth);
+                binElem.SetAttributeValue(XML_MAX, (i+1)*BinWidth);
+                binElem.SetAttributeValue(XML_MIDPOINT, (i+0.5)*BinWidth);
+                binElem.SetAttributeValue(XML_COUNT, BinCounts[i]);
 
-        //        masterElem.Add(binElem);
-        //    }
-        //    return masterElem;
-        //}
+                masterElem.Add(binElem);
+            }
+            return masterElem;
+        }
         #endregion
-        #endregion
+
     }
 
     
