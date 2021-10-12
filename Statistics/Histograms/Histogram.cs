@@ -79,6 +79,7 @@ namespace Statistics.Histograms
                 }
                 histogram.BinCounts = newBinCounts;
                 histogram.BinCounts[0] += 1;
+                histogram.Range.Min = Convert.ToDouble(Math.Floor(data.Elements.First()));
             } else if (data.Range.Max > histogram.Range.Max)
             {
                 quantityAdditionalBins = Convert.ToInt64(Math.Ceiling((data.Elements.First() - histogram.Range.Max) / histogram.BinWidth));
@@ -89,6 +90,7 @@ namespace Statistics.Histograms
                 }
                 newBinCounts[histogram.BinCounts.Length + quantityAdditionalBins - 1] += 1;
                 histogram.BinCounts = newBinCounts;
+                histogram.Range.Max = Convert.ToDouble(Math.Ceiling(data.Elements.First()));
             } else
             {
                 Int64 newObsIndex = Convert.ToInt64((data.Elements.First() - histogram.Range.Min) / histogram.BinWidth);
