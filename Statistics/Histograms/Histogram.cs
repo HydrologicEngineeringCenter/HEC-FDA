@@ -21,6 +21,7 @@ namespace Statistics.Histograms
         public double Median { get; }
         public double Variance { get; }
         public double Skewness { get; }
+        public double Kurtosis { get; }
         public double StandardDeviation { get; }
         public IRange<double> Range { get; set; } //includes min and max 
         public int SampleSize { get; }
@@ -42,16 +43,13 @@ namespace Statistics.Histograms
 
             Int64 numberOfBins = Convert.ToInt64(Math.Ceiling((max - min) / binWidth));
             BinCounts = new double[numberOfBins];
-            IData data = new Data(BinCounts); //This does not work because the bin counts are not the data 
 
-            var stats = ISampleStatisticsFactory.Factory(data);
-            Mean = stats.Mean;
-            Median = stats.Median;
-            Variance = stats.Variance;
-            Skewness = stats.Skewness;
-            StandardDeviation = stats.StandardDeviation;
-            SampleSize = stats.SampleSize;
-
+            SampleSize = GetSampleSize();
+            Mean = GetMean();
+            Median = GetMedian();
+            Variance = GetVariance();
+            Skewness = GetSkewness();
+            StandardDeviation = Math.Pow(Variance, 0.5);
             Range = IRangeFactory.Factory(min, max, true, true, true, false);
 
             // State = Validate(new Validation.HistogramValidator(), out IEnumerable<IMessage> msgs);
@@ -61,6 +59,70 @@ namespace Statistics.Histograms
         #endregion
 
 
+        internal int GetSampleSize()
+        {
+            double sum = 0;
+            for (Int64 i = 0; i < BinCounts.Length; i++)
+            {
+                sum += BinCounts[i];
+            }
+            return Convert.ToInt32(sum);
+        }
+
+        internal double GetMean()
+            {
+                double sum = 0;
+                for (int i = 0; i < BinCounts.Length; i++) // First pass
+                {
+                    //n += BinCounts[i];
+                    sum += (i * BinWidth + 0.5 * BinWidth) * BinCounts[i];
+                }
+            double mean = SampleSize > 0 ? sum / SampleSize : double.NaN;
+            return mean;
+        }
+
+
+        internal double GetMedian()
+        {
+            double median = InverseCDF(0.5);
+            return median;
+
+        }
+
+        internal double GetVariance()
+        {
+            double deviation = 0, deviation2 = 0;
+
+            for (int i = 0; i < BinCounts.Length; i++)
+            {
+                double midpoint = Range.Min + i * BinWidth + 0.5 * BinWidth;
+
+                deviation += midpoint - Mean;
+                deviation2 += deviation * deviation;
+
+            }
+            double variance = SampleSize > 1 ? deviation2 / (SampleSize - 1) : 0;
+            return variance;
+        }
+
+        internal double GetSkewness()
+        {
+            double deviation = 0, deviation2 = 0, deviation3 = 0;
+
+            for (int i = 0; i < BinCounts.Length; i++)
+            {
+                double midpoint = Range.Min + i * BinWidth + 0.5 * BinWidth;
+
+                deviation += midpoint - Mean;
+                deviation2 += deviation * deviation;
+                deviation3 += deviation2 * deviation;
+
+            }
+            double skewness = SampleSize > 2 ? deviation3 / SampleSize / Math.Pow(Variance, 3 / 2) : 0;
+            return skewness;
+        }
+            
+        
 
         #region Functions
         public static void AddObservationToHistogram(Histogram histogram, IData data)
@@ -158,15 +220,7 @@ namespace Statistics.Histograms
 
         }
 
-        internal double GetSampleSize()
-        {
-            double sum = 0;
-            for (Int64 i = 0; i<BinCounts.Length; i++)
-            {
-                sum += BinCounts[i];
-            }
-            return sum;
-        }
+
 
 
         #region Initialization Functions
