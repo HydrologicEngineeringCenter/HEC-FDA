@@ -97,6 +97,16 @@ namespace Statistics.Histograms
             } else
             {
                 Int64 newObsIndex = Convert.ToInt64((data.Elements.First() - histogram.Range.Min) / histogram.BinWidth);
+                if (data.Elements.First() == histogram.Range.Max)
+                {
+                    quantityAdditionalBins = 1;
+                    double[] newBinCounts = new double[quantityAdditionalBins + histogram.BinCounts.Length];
+                    for (Int64 i = 0; i < histogram.BinCounts.Length; i++)
+                    {
+                        newBinCounts[i] = histogram.BinCounts[i];
+                    }
+                    histogram.BinCounts = newBinCounts;
+                }
                 histogram.BinCounts[newObsIndex] += 1;
             }
         }
