@@ -1,10 +1,14 @@
-﻿using FunctionsView.ViewModel;
+﻿using Functions;
+using FunctionsView.ViewModel;
+using HEC.Plotting.Core;
 using HEC.Plotting.SciChart2D.Charts;
 using HEC.Plotting.SciChart2D.Controller;
 using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
+using Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +19,7 @@ using ViewModel.FlowTransforms;
 using ViewModel.FrequencyRelationships;
 using ViewModel.GeoTech;
 using ViewModel.ImpactArea;
+using ViewModel.ImpactAreaScenario.Editor.ChartControls;
 using ViewModel.StageTransforms;
 using ViewModel.Utilities;
 
@@ -27,12 +32,20 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private AggregatedStageDamageElement _selectedStageDamageElement;
         private List<string> _damageCategories;
         private string _selectedDamageCategory;
+        private RatingCurveElement _selectedRatingCurveElement;
 
 
-        public SciChart2DChartViewModel FlowFreqChartVM { get; set; } = new SciChart2DChartViewModel("Flow Frequency");
-        public SciChart2DChartViewModel RatingChartVM { get; set; } = new SciChart2DChartViewModel("Rating Curve");
-        public SciChart2DChartViewModel StageDamageChartVM { get; set; } = new SciChart2DChartViewModel("Stage Damage");
-        public SciChart2DChartViewModel DamageFreqChartVM { get; set; } = new SciChart2DChartViewModel("Damage Frequency");
+        //public SciChart2DChartViewModel FlowFreqChartVM { get; set; } = new SciChart2DChartViewModel("Flow Frequency");
+        public ChartControlBase FrequencyRelationshipControl { get; set; }
+        public ChartControlBase RatingRelationshipControl { get; set; }
+        public ChartControlBase StageDamageControl { get; set; }
+        public ChartControlBase DamageFrequencyControl { get; set; }
+
+
+
+        //public SciChart2DChartViewModel RatingChartVM { get; set; } = new SciChart2DChartViewModel("Rating Curve");
+        //public SciChart2DChartViewModel StageDamageChartVM { get; set; } = new SciChart2DChartViewModel("Stage Damage");
+        //public SciChart2DChartViewModel DamageFreqChartVM { get; set; } = new SciChart2DChartViewModel("Damage Frequency");
         public int Year { get; set; }
 
 
@@ -46,6 +59,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         public List<AnalyticalFrequencyElement> FrequencyElements { get; set; }
         public List<InflowOutflowElement> InflowOutflowElements { get; set; }
         public List<RatingCurveElement> RatingCurveElements { get; set; }
+        
         public List<LeveeFeatureElement> LeveeFeatureElements { get; set; }
         public List<ExteriorInteriorElement> ExteriorInteriorElements { get; set; }
         public List<AggregatedStageDamageElement> StageDamageElements { get; set; }
@@ -58,7 +72,11 @@ namespace ViewModel.ImpactAreaScenario.Editor
         public ImpactAreaElement SelectedImpactAreaElement { get; set; }
         public AnalyticalFrequencyElement SelectedFrequencyElement { get; set; }
         public InflowOutflowElement SelectedInflowOutflowElement { get; set; }
-        public RatingCurveElement SelectedRatingCurveElement { get; set; }
+        public RatingCurveElement SelectedRatingCurveElement
+        {
+            get { return _selectedRatingCurveElement; }
+            set { _selectedRatingCurveElement = value; NotifyPropertyChanged(); }
+        }
         public LeveeFeatureElement SelectedLeveeFeatureElement { get; set; }
         public ExteriorInteriorElement SelectedExteriorInteriorElement { get; set; }
         public AggregatedStageDamageElement SelectedStageDamageElement
@@ -72,6 +90,11 @@ namespace ViewModel.ImpactAreaScenario.Editor
         /// </summary>
         public IASEditorVM():base(null)
         {
+            FrequencyRelationshipControl = new FrequencyRelationshipControl();
+            RatingRelationshipControl = new RatingRelationshipControl();
+            StageDamageControl = new StageDamageControl();
+            DamageFrequencyControl = new DamageFrequencyControl();
+
             //hook up the navigate event for the additional thresholds dialog
             _additionalThresholdsVM = new AdditionalThresholdsVM();
             _additionalThresholdsVM.RequestNavigation += Navigate;
@@ -81,11 +104,53 @@ namespace ViewModel.ImpactAreaScenario.Editor
             LoadElements();
         }
 
-        private void AddCrosshairs()
+        //todo: this ctor probably needs some work
+        public IASEditorVM(IASElement elem) : base(elem, null)
         {
+            FrequencyRelationshipControl = new FrequencyRelationshipControl();
+            RatingRelationshipControl = new RatingRelationshipControl();
+            StageDamageControl = new StageDamageControl();
+            DamageFrequencyControl = new DamageFrequencyControl();
 
-            CrosshairData flowFreqCrosshairData = new CrosshairData(SelectedFrequencyElement.Curve);
-            FlowFreqChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(true, true, flowFreqCrosshairData));
+            //hook up the navigate event for the additional thresholds dialog
+            _additionalThresholdsVM = new AdditionalThresholdsVM();
+            _additionalThresholdsVM.RequestNavigation += Navigate;
+
+            Thresholds = new List<AdditionalThresholdRowItem>();
+
+            LoadElements();
+            FillForm(elem);
+        }
+
+        private void FillForm(IASElement elem)
+        {
+            Name = elem.Name;
+            Description = elem.Description;
+            Year = elem.AnalysisYear;
+            //SelectedImpactAreaElement = elem.ImpactAreaID;
+            FillThresholds(elem);
+
+            //all the available elements have been loaded into this editor. We now want to select
+            //the correct element for each dropdown. If we can't find the correct element then the selected elem 
+            //will be null.
+            SelectedImpactAreaElement = ImpactAreaElements.FirstOrDefault(imp => imp.GetElementID() == elem.ImpactAreaID);
+            SelectedFrequencyElement = FrequencyElements.FirstOrDefault(freq => freq.GetElementID() == elem.FlowFreqID);
+            SelectedInflowOutflowElement = InflowOutflowElements.FirstOrDefault(inf => inf.GetElementID() == elem.InflowOutflowID);
+            SelectedRatingCurveElement = RatingCurveElements.FirstOrDefault(rat => rat.GetElementID() == elem.RatingID);
+            SelectedLeveeFeatureElement = LeveeFeatureElements.FirstOrDefault(levee => levee.GetElementID() == elem.LeveeFailureID);
+            SelectedExteriorInteriorElement = ExteriorInteriorElements.FirstOrDefault(ext => ext.GetElementID() == elem.ExtIntStageID);
+            SelectedStageDamageElement = StageDamageElements.FirstOrDefault(stage => stage.GetElementID() == elem.StageDamageID);
+
+            //todo: plot something?
+            
+
+        }
+        private void FillThresholds(IASElement elem)
+        {
+            //todo: maybe add a different ctor or a fill method to load the rows?
+            _additionalThresholdsVM.Rows = new ObservableCollection<AdditionalThresholdRowItem>();
+            AdditionalThresholdRowItem row = new AdditionalThresholdRowItem(1, elem.ThresholdType, elem.ThresholdValue);
+            _additionalThresholdsVM.Rows.Add(row);
         }
 
         private void LoadElements()
@@ -121,17 +186,23 @@ namespace ViewModel.ImpactAreaScenario.Editor
             SelectedDamageCategory = damCats[0];
         }
 
-        
 
+
+
+
+        #region PlotCurves
         private bool CanPlot()
         {
-          
+            //todo: just for testing
+            return true;
+
+
             StringBuilder errorMsg = new StringBuilder();
-            if(SelectedFrequencyElement == null)
+            if (SelectedFrequencyElement == null)
             {
                 errorMsg.AppendLine("A Flow Frequency is required.");
             }
-            if(SelectedRatingCurveElement == null)
+            if (SelectedRatingCurveElement == null)
             {
                 errorMsg.AppendLine("A Rating Curve is required.");
             }
@@ -139,13 +210,13 @@ namespace ViewModel.ImpactAreaScenario.Editor
             {
                 errorMsg.AppendLine("A Stage Damage is required.");
             }
-            
+
             //todo: actually run the compute and see if it was successful?
-            
-            
+
+
             string msg = errorMsg.ToString();
 
-            if(msg.Length>0)
+            if (msg.Length > 0)
             {
                 MessageBox.Show(msg, "Insufficient Data To Plot", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return false;
@@ -157,42 +228,24 @@ namespace ViewModel.ImpactAreaScenario.Editor
             }
 
         }
-
-        #region PlotCurves
-
-        public void Plot()
+        private IFdaFunction getFrequencyRelationshipFunction()
         {
-            if (CanPlot())
-            {
-                AddCrosshairs();
+            //todo: this will just be getting the selected curve
 
-                PlotTestFlowFreq();
-                PlotTestRating();
-                PlotTestStageDamage();
-                PlotTestDamageFreq();
-
-                //PlotFlowFreq();
-                //PlotRating();
-                //PlotStageDamage();
-            }
-        }
-
-        private void PlotTestFlowFreq()
-        {
             List<double> xValues = new List<double>();
             List<double> yValues = new List<double>();
 
-            for(int i = 0;i<10;i++)
+            for (int i = 0; i < 10; i++)
             {
-                xValues.Add(i/10.0);
-                yValues.Add(i*9);
-            }          
-
-            SciLineData lineData = new NumericLineData(xValues.ToArray(), yValues.ToArray(), "asdf", "asdf", "adsf", "asdf", PlotType.Line);
-            FlowFreqChartVM.LineData.Set(new List<SciLineData>() { lineData });
+                xValues.Add(i / 10.0);
+                yValues.Add(i * 9);
+            }
+            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.OutflowFrequency, coordinatesFunction);
+            return fdaFunction;
         }
 
-        private void PlotTestRating()
+        private IFdaFunction getRatingCurveFunction()
         {
             List<double> xValues = new List<double>();
             List<double> yValues = new List<double>();
@@ -200,28 +253,31 @@ namespace ViewModel.ImpactAreaScenario.Editor
             for (int i = 0; i < 10; i++)
             {
                 xValues.Add(i);
-                yValues.Add(i*11);
+                yValues.Add(i * 11);
             }
 
-            SciLineData lineData = new NumericLineData(xValues.ToArray(), yValues.ToArray(), "asdf", "asdf", "adsf", "asdf", PlotType.Line);
-            RatingChartVM.LineData.Set(new List<SciLineData>() { lineData });
+            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.Rating, coordinatesFunction);
+            return fdaFunction;
         }
 
-        private void PlotTestStageDamage()
+        private IFdaFunction getStageDamageFunction()
         {
             List<double> xValues = new List<double>();
             List<double> yValues = new List<double>();
 
             for (int i = 0; i < 10; i++)
             {
-                xValues.Add(i+2);
-                yValues.Add(i*90);
+                xValues.Add(i + 2);
+                yValues.Add(i * 90);
             }
 
-            SciLineData lineData = new NumericLineData(xValues.ToArray(), yValues.ToArray(), "asdf", "asdf", "adsf", "asdf", PlotType.Line);
-            StageDamageChartVM.LineData.Set(new List<SciLineData>() { lineData });
+            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.InteriorStageDamage, coordinatesFunction);
+            return fdaFunction;
         }
-        private void PlotTestDamageFreq()
+
+        private IFdaFunction getDamageFrequencyFunction()
         {
             List<double> xValues = new List<double>();
             List<double> yValues = new List<double>();
@@ -229,47 +285,46 @@ namespace ViewModel.ImpactAreaScenario.Editor
             for (int i = 0; i < 10; i++)
             {
                 xValues.Add(i / 9.0);
-                yValues.Add(i*110);
+                yValues.Add(i * 110);
             }
 
-            SciLineData lineData = new NumericLineData(xValues.ToArray(), yValues.ToArray(), "asdf", "asdf", "adsf", "asdf", PlotType.Line);
-            DamageFreqChartVM.LineData.Set(new List<SciLineData>() { lineData });
+            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.DamageFrequency, coordinatesFunction);
+            return fdaFunction;
         }
 
-        private void PlotFlowFreq()
+        public void Plot()
         {
-            CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(SelectedFrequencyElement.Curve.Function, "Frequency", "Flow");
-            List<SciLineData> lineData = chartHelper.CreateLineData(false, true, true);
-            foreach (SciLineData ld in lineData)
+            if (CanPlot())
             {
-                ld.XAxisAlignment = HEC.Plotting.Core.DataModel.AxisAlignment.Top;
-                ld.YAxisAlignment = HEC.Plotting.Core.DataModel.AxisAlignment.Right;
-            }
-            DamageFreqChartVM.LineData.Set(lineData);
-        }
+                //get the current curves and set that data on the chart controls
+                //this update call will set the current crosshair data on each one
+                FrequencyRelationshipControl.UpdatePlotData(getFrequencyRelationshipFunction());
+                RatingRelationshipControl.UpdatePlotData(getRatingCurveFunction());
+                StageDamageControl.UpdatePlotData(getStageDamageFunction());
+                DamageFrequencyControl.UpdatePlotData(getDamageFrequencyFunction());
 
-        private void PlotRating()
-        {
-            CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(SelectedRatingCurveElement.Curve.Function, "Stage", "Flow");
-            List<SciLineData> lineData = chartHelper.CreateLineData(false, true, false);
-            foreach (SciLineData ld in lineData)
-            {
-                ld.XAxisAlignment = HEC.Plotting.Core.DataModel.AxisAlignment.Top;
-                ld.YAxisAlignment = HEC.Plotting.Core.DataModel.AxisAlignment.Left;
-            }
-            RatingChartVM.LineData.Set(lineData);
-        }
+                //link the crosshair data to eachother
+                CrosshairData freqRelationshipCrosshairData = FrequencyRelationshipControl.currentCrosshairData;
+                CrosshairData ratingCrosshairData = RatingRelationshipControl.currentCrosshairData;
+                freqRelationshipCrosshairData.Next = new SharedAxisCrosshairData(ratingCrosshairData, Axis.Y, Axis.Y);
+                ratingCrosshairData.Previous = new SharedAxisCrosshairData(freqRelationshipCrosshairData, Axis.Y, Axis.Y);
 
-        private void PlotStageDamage()
-        {
-            CoordinatesFunctionEditorChartHelper chartHelper = new CoordinatesFunctionEditorChartHelper(SelectedStageDamageElement.Curve.Function, "Stage", "Damage");
-            List<SciLineData> lineData = chartHelper.CreateLineData(false, true, true);
-            foreach (SciLineData ld in lineData)
-            {
-                ld.XAxisAlignment = HEC.Plotting.Core.DataModel.AxisAlignment.Bottom;
-                ld.YAxisAlignment = HEC.Plotting.Core.DataModel.AxisAlignment.Left;
+                //CrosshairData stageDamageCrosshairData = StageDamageControl.currentCrosshairData;
+                //ratingCrosshairData.Next = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.X, Axis.X);
+                //stageDamageCrosshairData.Previous = new SharedAxisCrosshairData(ratingCrosshairData, Axis.X, Axis.X);
+
+                //CrosshairData damageFreqCrosshairData = DamageFrequencyControl.currentCrosshairData;
+                //stageDamageCrosshairData.Next = new SharedAxisCrosshairData(damageFreqCrosshairData, Axis.Y, Axis.Y);
+                //damageFreqCrosshairData.Previous = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.Y, Axis.Y);
+
+                FrequencyRelationshipControl.Plot();
+                RatingRelationshipControl.Plot();
+                StageDamageControl.Plot();
+                DamageFrequencyControl.Plot();
+
+   
             }
-            StageDamageChartVM.LineData.Set(lineData);
         }
 
         #endregion
@@ -290,11 +345,22 @@ namespace ViewModel.ImpactAreaScenario.Editor
             {
                 Thresholds = _additionalThresholdsVM.GetThresholds();
 
-                //IASElement elementToSave = new IASElement(Name, Description, Year, SelectedImpactArea.GetElementID(),
-                //flowFreqID, inflowOutflowID, ratingID, extIntID, leveeFailureID, stageDamageID, SelectedThresholdType, ThresholdValue);
-                //CurrentElement = elementToSave;
+                int impAreaID = SelectedImpactAreaElement != null ? SelectedImpactAreaElement.GetElementID() : -1;
+                int flowFreqID = SelectedFrequencyElement != null ? SelectedFrequencyElement.GetElementID() : -1;
+                int inflowOutID = SelectedInflowOutflowElement != null ? SelectedInflowOutflowElement.GetElementID() : -1;
+                int ratingID = SelectedRatingCurveElement != null ? SelectedRatingCurveElement.GetElementID() : -1;
+                int extIntID = SelectedExteriorInteriorElement != null ? SelectedExteriorInteriorElement.GetElementID() : -1;
+                int latStructID = SelectedLeveeFeatureElement != null ? SelectedLeveeFeatureElement.GetElementID() : -1;
+                int stageDamID = SelectedStageDamageElement != null ? SelectedStageDamageElement.GetElementID() : -1;
 
-                //Saving.PersistenceFactory.GetIASManager().SaveNew(elementToSave);
+                List<AdditionalThresholdRowItem> thresholdRowItems = _additionalThresholdsVM.GetThresholds();
+
+                IASElement elementToSave = new IASElement(Name, Description, Year, impAreaID,
+                flowFreqID, inflowOutID,
+                ratingID, extIntID, latStructID, stageDamID, thresholdRowItems[0].ThresholdType, thresholdRowItems[0].ThresholdValue);
+                CurrentElement = elementToSave;
+
+                Saving.PersistenceFactory.GetIASManager().SaveNew(elementToSave);
             }
         }
 

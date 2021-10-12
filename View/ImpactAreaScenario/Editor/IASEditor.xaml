@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:View.ImpactAreaScenario.Editor"
              mc:Ignorable="d" 
+             xmlns:UserControls="clr-namespace:UserControls;assembly=UserControls"
              xmlns:Utilities="clr-namespace:View.Utilities"
              Loaded="UserControl_Loaded"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -24,43 +25,29 @@
         <Grid x:Name="FirstRowGrid" Grid.Row="0" Margin="0,5,5,0">
            
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="140"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-                <Label Grid.Row="0" Grid.Column="0" Content="Name:" HorizontalAlignment="Right" />
-                <TextBox Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Stretch" Text="{Binding Name, ValidatesOnDataErrors=True}" />
+                <Label Grid.Row="0" Grid.Column="0" Content="Name:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
+            <Label Grid.Row="0" Grid.Column="0" Content="*" Foreground="Red" HorizontalAlignment="Right" />
+            <TextBox Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Stretch" Text="{Binding Name, ValidatesOnDataErrors=True}" />
             
             <Label Grid.Row="0" Grid.Column="2" Content="Description:" HorizontalAlignment="Right" />
-            <TextBox Grid.Row="0" Grid.Column="3"  HorizontalAlignment="Stretch"  />
+            <UserControls:TextBoxDescription Grid.Column="3" Description="{Binding Description}" />
 
-            <Label Grid.Row="0" Grid.Column="4" Content="Year:" HorizontalAlignment="Right" />
-            <!--<Calendar Grid.Row="0" Grid.Column="5" Height="170" HorizontalAlignment="Left" Margin="58,32,0,0"  
-   Name="calendar1" DisplayDate="01.01.2021" VerticalAlignment="Top" Width="180"  />-->
-            <!--<TextBox Grid.Row="0" Grid.Column="5"  HorizontalAlignment="Stretch" Text="{Binding Year}" />-->
-            <DatePicker Grid.Row="0" Grid.Column="5">
-                <DatePicker.Resources>
-                    <Style TargetType="DatePickerTextBox">
-                        <Setter Property="Control.Template">
-                            <Setter.Value>
-                                <ControlTemplate>
-                                    <TextBox x:Name="PART_TextBox"
-                                     Text="{Binding Path=SelectedDate, StringFormat = {}{0:yyyy}, 
-                                     RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}" />
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </DatePicker.Resources>
-            </DatePicker>
+            <Label Grid.Row="0" Grid.Column="4" Content="Year:" HorizontalAlignment="Right" Margin="0,0,7,0" />
+            <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" />
+
+            <Utilities:YearField Grid.Row="0" Grid.Column="5"/>
 
         </Grid>
         <Grid x:Name="SecondRowGrid" Grid.Row="1" Margin="0,5,5,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="140"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="*"/>
@@ -68,35 +55,42 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label  Grid.Column="0" Content="Impact Area:" HorizontalAlignment="Right" />
+
             <ComboBox  Grid.Column="1"  HorizontalAlignment="Stretch" ItemsSource="{Binding ImpactAreaElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedImpactAreaElement}" />
 
-            <Button x:Name="addThresholdBtn" Grid.Column="5" Content="Add Thresholds..." Width="120" HorizontalAlignment="Right" Click="addThresholdBtn_Click" />
+
+            <Label Grid.Column="4" Content="Thresholds:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
+            <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" />
+            <Button x:Name="addThresholdBtn" Grid.Column="5" Content="Add Thresholds..."  HorizontalAlignment="Stretch" Click="addThresholdBtn_Click"  />
        
         </Grid>
 
         <Grid x:Name="ThirdRowGrid" Grid.Row="2" Margin="0,5,5,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="140"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Label  Grid.Column="0" Content="Flow Frequency:" HorizontalAlignment="Right" />
+            <Label  Grid.Column="0" Content="Frequency Relationship:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
+            <Label Grid.Row="0" Grid.Column="0" Content="*" Foreground="Red" HorizontalAlignment="Right" />
+
             <ComboBox  Grid.Column="1"  HorizontalAlignment="Stretch" ItemsSource="{Binding FrequencyElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedFrequencyElement}" />
 
             <Label  Grid.Column="2" Content="Inflow-Outflow:" HorizontalAlignment="Right" />
             <ComboBox  Grid.Column="3"  HorizontalAlignment="Stretch" ItemsSource="{Binding InflowOutflowElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedInflowOutflowElement}" />
 
-            <Label  Grid.Column="4" Content="Rating Curve:" HorizontalAlignment="Right" />
+            <Label  Grid.Column="4" Content="Rating Curve:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
+            <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" />
             <ComboBox  Grid.Column="5"  HorizontalAlignment="Stretch" ItemsSource="{Binding RatingCurveElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedRatingCurveElement}" />
-
+            
         </Grid>
 
         <Grid x:Name="FourthRowGrid" Grid.Row="3" Margin="0,5,5,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="140"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="*"/>
@@ -109,7 +103,8 @@
             <Label  Grid.Column="2" Content="Ext-Int Stage:" HorizontalAlignment="Right" />
             <ComboBox  Grid.Column="3"  HorizontalAlignment="Stretch" ItemsSource="{Binding ExteriorInteriorElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedExteriorInteriorElement}"/>
 
-            <Label  Grid.Column="4" Content="Stage Damage:" HorizontalAlignment="Right" />
+            <Label  Grid.Column="4" Content="Stage Damage:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
+            <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" />
             <ComboBox  Grid.Column="5"  HorizontalAlignment="Stretch" ItemsSource="{Binding StageDamageElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedStageDamageElement}" />
 
         </Grid>

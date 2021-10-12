@@ -1,6 +1,7 @@
 ﻿using HEC.Plotting.Core;
 using HEC.Plotting.SciChart2D.Charts;
 using HEC.Plotting.SciChart2D.Controller;
+using HEC.Plotting.SciChart2D.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,20 +49,20 @@ namespace View.ImpactAreaScenario.Editor
             IASEditorVM vm = (IASEditorVM)this.DataContext;
 
             //flow frequency
-            vm.FlowFreqChartVM = new HEC.Plotting.SciChart2D.ViewModel.SciChart2DChartViewModel(vm.FlowFreqChartVM);
-            _flowFreqChart = new Chart2D(vm.FlowFreqChartVM);
+            vm.FrequencyRelationshipControl.ChartVM = new SciChart2DChartViewModel(vm.FrequencyRelationshipControl.ChartVM);
+            _flowFreqChart = new Chart2D(vm.FrequencyRelationshipControl.ChartVM);
 
             //rating
-            vm.RatingChartVM = new HEC.Plotting.SciChart2D.ViewModel.SciChart2DChartViewModel(vm.RatingChartVM);
-            _ratingChart = new Chart2D(vm.RatingChartVM);
+            vm.RatingRelationshipControl.ChartVM = new SciChart2DChartViewModel(vm.RatingRelationshipControl.ChartVM);
+            _ratingChart = new Chart2D(vm.RatingRelationshipControl.ChartVM);
 
             //stage damage
-            vm.StageDamageChartVM = new HEC.Plotting.SciChart2D.ViewModel.SciChart2DChartViewModel(vm.StageDamageChartVM);
-            _stageDamageChart = new Chart2D(vm.StageDamageChartVM);
+            vm.StageDamageControl.ChartVM = new SciChart2DChartViewModel(vm.StageDamageControl.ChartVM);
+            _stageDamageChart = new Chart2D(vm.StageDamageControl.ChartVM);
 
             //damage freq
-            vm.DamageFreqChartVM = new HEC.Plotting.SciChart2D.ViewModel.SciChart2DChartViewModel(vm.DamageFreqChartVM);
-            _damageFreqChart = new Chart2D(vm.DamageFreqChartVM);
+            vm.DamageFrequencyControl.ChartVM = new SciChart2DChartViewModel(vm.DamageFrequencyControl.ChartVM);
+            _damageFreqChart = new Chart2D(vm.DamageFrequencyControl.ChartVM);
 
         }
 
@@ -121,7 +122,7 @@ namespace View.ImpactAreaScenario.Editor
                 _controller.RegisterChart(chart);
             }
             _controller.StateController.ContextMenuEnabled = true;
-            _controller.IsBobberEnabled = true;
+            _controller.IsBobberEnabled = false;
             _controller.IsPanningEnabled = false;
             _controller.IsSelectionEnabled = false;
             _controller.IsRectangleZoomEnabled = false;
