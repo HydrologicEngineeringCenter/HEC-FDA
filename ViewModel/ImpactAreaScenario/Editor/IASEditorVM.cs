@@ -310,20 +310,18 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 freqRelationshipCrosshairData.Next = new SharedAxisCrosshairData(ratingCrosshairData, Axis.Y, Axis.Y);
                 ratingCrosshairData.Previous = new SharedAxisCrosshairData(freqRelationshipCrosshairData, Axis.Y, Axis.Y);
 
-                //CrosshairData stageDamageCrosshairData = StageDamageControl.currentCrosshairData;
-                //ratingCrosshairData.Next = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.X, Axis.X);
-                //stageDamageCrosshairData.Previous = new SharedAxisCrosshairData(ratingCrosshairData, Axis.X, Axis.X);
+                CrosshairData stageDamageCrosshairData = StageDamageControl.currentCrosshairData;
+                ratingCrosshairData.Next = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.X, Axis.X);
+                stageDamageCrosshairData.Previous = new SharedAxisCrosshairData(ratingCrosshairData, Axis.X, Axis.X);
 
-                //CrosshairData damageFreqCrosshairData = DamageFrequencyControl.currentCrosshairData;
-                //stageDamageCrosshairData.Next = new SharedAxisCrosshairData(damageFreqCrosshairData, Axis.Y, Axis.Y);
-                //damageFreqCrosshairData.Previous = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.Y, Axis.Y);
+                CrosshairData damageFreqCrosshairData = DamageFrequencyControl.currentCrosshairData;
+                stageDamageCrosshairData.Next = new SharedAxisCrosshairData(damageFreqCrosshairData, Axis.Y, Axis.Y);
+                damageFreqCrosshairData.Previous = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.Y, Axis.Y);
 
                 FrequencyRelationshipControl.Plot();
                 RatingRelationshipControl.Plot();
                 StageDamageControl.Plot();
                 DamageFrequencyControl.Plot();
-
-   
             }
         }
 
