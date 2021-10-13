@@ -91,19 +91,43 @@ namespace StatisticsTests.Histograms
         }
 
         [Theory]
-        [InlineData(1, 0.2, 1.5)]
+        [InlineData(1, 0.5, 3)]
         public void Histogram_InvCDF(double binWidth, double prob, double expected)
         {
-            double[] data = new double[5] { 1, 2, 3, 4, 5 };
+            double[] data = new double[6] { 1, 2, 3, 4, 5, 6};
             IData obs = new Data(data);
             Histogram histogram = new Histogram(obs, binWidth);
-            double actual = histogram.InverseCDF(0.2);
+            double actual = histogram.InverseCDF(prob);
             double err = Math.Abs((expected - actual) / expected);
             double tol = 0.01;
             Assert.True(err < tol);
         }
 
+        [Theory]
+        [InlineData(1, 2, .4)]
+        public void Histogram_CDF(double binWidth, double val, double expected)
+        {
+            double[] data = new double[5] { 1, 2, 3, 4, 5 };
+            IData obs = new Data(data);
+            Histogram histogram = new Histogram(obs, binWidth);
+            double actual = histogram.CDF(val);
+            double err = Math.Abs((expected - actual) / expected);
+            double tol = 0.01;
+            Assert.True(err < tol);
+        }
 
+        [Theory]
+        [InlineData(1, 2, .2)]
+        public void Histogram_PDF(double binWidth, double val, double expected)
+        {
+            double[] data = new double[5] { 1, 2, 3, 4, 5 };
+            IData obs = new Data(data);
+            Histogram histogram = new Histogram(obs, binWidth);
+            double actual = histogram.PDF(val);
+            double err = Math.Abs((expected - actual) / expected);
+            double tol = 0.01;
+            Assert.True(err < tol);
+        }
 
         [Theory]
         [InlineData(1)]

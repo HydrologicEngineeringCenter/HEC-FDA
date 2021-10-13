@@ -228,13 +228,13 @@ namespace Statistics.Histograms
             throw new NotImplementedException("Need to figure this one out");
         }
 
-        private double FindBinCount(double x, bool cummulative = true)
+        private double FindBinCount(double x, bool cumulative = true)
         {
-            Int64 obsIndex = Convert.ToInt64((x - Min) / BinWidth);
-            if (cummulative)
+            Int64 obsIndex = Convert.ToInt64(Math.Floor((x - Min) / BinWidth));
+            if (cumulative)
             {
                 double sum = 0;
-                for (int i = 0; i==obsIndex; i++)
+                for (int i = 0; i<obsIndex+1; i++)
                 {
                     sum += BinCounts[i];
                 }
@@ -276,21 +276,35 @@ namespace Statistics.Histograms
         public static string Print(int n, int nBins, IRange<double> range) => $"Histogram(observations: {n.Print()}, bins: {nBins.Print()}, range: {range.Print(true)})";
         #endregion
         #region IDistribution Functions 
-        public double PDF(double x) => (double)FindBinCount(x, false) / (double)SampleSize;
-        public double CDF(double x) => (double)FindBinCount(x) / (double)SampleSize;
+        public double PDF(double x)
+        {
+            double nAtX = Convert.ToDouble(FindBinCount(x, false));
+            double n = Convert.ToDouble(SampleSize);
+            return nAtX/n;
+        }
+        public double CDF(double x)
+        {
+            double nAtX = Convert.ToDouble(FindBinCount(x));
+            double n = Convert.ToDouble(SampleSize);
+            return nAtX / n;
+        }
         public double InverseCDF(double p)
         {
+            double pAtN = 0;
+            double n = 0;
+            int i = 0;
             if (!p.IsOnRange(0, 1)) throw new ArgumentOutOfRangeException($"The provided probability value: {p} is not on the a valid range: [0, 1]");
             else
             {
-                double n = 0;
-                for (int i = 0; i<BinCounts.Length; i++)
+                n = BinCounts[i];
+                pAtN = n / SampleSize;
+                while (pAtN<p)
                 {
+                    ++i;
                     n += BinCounts[i];
-                    double pAtN = n / SampleSize;
-                    if (!(pAtN < p)) return i * BinWidth + 0.5 * BinWidth;
+                    pAtN = n / SampleSize;
                 }
-                throw new Exception($"An unexpected error occured while attempting to find the histogram bin associated with the probability value {p}.");
+                return (i + 1) * BinWidth;
             }
         }
         public double Sample(Random r = null) => InverseCDF(r == null ? new Random().NextDouble() : r.NextDouble());
