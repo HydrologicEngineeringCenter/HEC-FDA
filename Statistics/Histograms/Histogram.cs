@@ -15,6 +15,8 @@ namespace Statistics.Histograms
 
         public double[] BinCounts = new double[] { }; //using double for bin counts to satisfy IData 
         public double BinWidth { get; }
+        public double Min { get; set; }
+        public double Max { get; set; }
         
         #region IDistribution Properties
         public double Mean { get; }
@@ -37,20 +39,23 @@ namespace Statistics.Histograms
 
         #region Constructor
         //we will need to initiate the histogram, then call add observations to fill the histogram with data
-        public Histogram(double binWidth, double min, double max)
+        public Histogram(IData data, double binWidth)
         {
             BinWidth = binWidth;
-
-            Int64 numberOfBins = Convert.ToInt64(Math.Ceiling((max - min) / binWidth));
+            Int64 numberOfBins = GetBinQuantity(data);
             BinCounts = new double[numberOfBins];
+            Min = Math.Floor(data.Range.Min);
+            Max = numberOfBins * binWidth + binWidth;
+            AddObservationsToHistogram(data);
 
             SampleSize = GetSampleSize();
+            Range = GetRange(Min, Max);
             Mean = GetMean();
             Median = GetMedian();
             Variance = GetVariance();
             Skewness = GetSkewness();
             StandardDeviation = Math.Pow(Variance, 0.5);
-            Range = IRangeFactory.Factory(min, max, true, true, true, false);
+
 
             // State = Validate(new Validation.HistogramValidator(), out IEnumerable<IMessage> msgs);
             //Messages = stats.Messages.Concat(msgs);
@@ -58,6 +63,19 @@ namespace Statistics.Histograms
         }
         #endregion
 
+        internal int GetBinQuantity(IData data)
+        {
+            int binQuantity = 0;
+            double value = (data.Range.Max - data.Range.Min) / BinWidth;
+            if (value == Convert.ToInt32(value))
+            {
+                binQuantity = Convert.ToInt32(value) + 1;
+            } else
+            {
+                binQuantity = Convert.ToInt32(Math.Ceiling(value));
+            }
+            return binQuantity;
+        }
 
         internal int GetSampleSize()
         {
@@ -69,13 +87,18 @@ namespace Statistics.Histograms
             return Convert.ToInt32(sum);
         }
 
+        internal IRange<double> GetRange(double min, double max)
+        {
+            var range = IRangeFactory.Factory(min, max, true, true, true, false);
+            return range;
+        }
         internal double GetMean()
-            {
-                double sum = 0;
-                for (int i = 0; i < BinCounts.Length; i++) // First pass
+        {           
+            double sum = 0;
+            double min = Min;
+                for (int i = 0; i < BinCounts.Length; i++)
                 {
-                    //n += BinCounts[i];
-                    sum += (i * BinWidth + 0.5 * BinWidth) * BinCounts[i];
+                    sum += (min + i * BinWidth + 0.5 * BinWidth) * BinCounts[i];
                 }
             double mean = SampleSize > 0 ? sum / SampleSize : double.NaN;
             return mean;
@@ -95,9 +118,9 @@ namespace Statistics.Histograms
 
             for (int i = 0; i < BinCounts.Length; i++)
             {
-                double midpoint = Range.Min + i * BinWidth + 0.5 * BinWidth;
+                double midpoint = Min + i * BinWidth + 0.5 * BinWidth;
 
-                deviation += midpoint - Mean;
+                deviation = midpoint - Mean;
                 deviation2 += deviation * deviation;
 
             }
@@ -111,7 +134,7 @@ namespace Statistics.Histograms
 
             for (int i = 0; i < BinCounts.Length; i++)
             {
-                double midpoint = Range.Min + i * BinWidth + 0.5 * BinWidth;
+                double midpoint = Min + i * BinWidth + 0.5 * BinWidth;
 
                 deviation += midpoint - Mean;
                 deviation2 += deviation * deviation;
@@ -121,65 +144,69 @@ namespace Statistics.Histograms
             double skewness = SampleSize > 2 ? deviation3 / SampleSize / Math.Pow(Variance, 3 / 2) : 0;
             return skewness;
         }
-            
-        
+
+
 
         #region Functions
-        public static void AddObservationToHistogram(Histogram histogram, IData data)
-        {
+        public void AddObservationToHistogram(IData data)
+        {   
             Int64 quantityAdditionalBins = 0;
 
-            if (data.Range.Min < histogram.Range.Min)
+            if (data.Range.Min < Min)
             {   
-                quantityAdditionalBins = Convert.ToInt64(Math.Ceiling((histogram.Range.Min - data.Elements.First())/histogram.BinWidth));
-                double[] newBinCounts = new double[quantityAdditionalBins + histogram.BinCounts.Length];
+                quantityAdditionalBins = Convert.ToInt64(Math.Ceiling((Min - data.Elements.First())/BinWidth));
+                double[] newBinCounts = new double[quantityAdditionalBins + BinCounts.Length];
 
-                for (Int64 i = histogram.BinCounts.Length + quantityAdditionalBins -1; i > (quantityAdditionalBins-1); i--)
+                for (Int64 i = BinCounts.Length + quantityAdditionalBins -1; i > (quantityAdditionalBins-1); i--)
                 {
-                    newBinCounts[i] = histogram.BinCounts[i - quantityAdditionalBins];
+                    newBinCounts[i] = BinCounts[i - quantityAdditionalBins];
                 }
-                histogram.BinCounts = newBinCounts;
-                histogram.BinCounts[0] += 1;
-                double newMin = Convert.ToDouble(Math.Floor(data.Elements.First()));
-                double max = histogram.Range.Max;
-                histogram.Range = IRangeFactory.Factory(newMin, max, true, true, true, false);
-            } else if (data.Range.Max > histogram.Range.Max)
+                BinCounts = newBinCounts;
+                BinCounts[0] += 1;
+                double newMin = Min - quantityAdditionalBins * BinWidth;
+                double max = Max;
+                Min = newMin;
+                Range = IRangeFactory.Factory(newMin, max, true, true, true, false);
+            } else if (data.Range.Max > Max)
             {
-                quantityAdditionalBins = Convert.ToInt64(Math.Ceiling((data.Elements.First() - histogram.Range.Max) / histogram.BinWidth));
-                double[] newBinCounts = new double[quantityAdditionalBins + histogram.BinCounts.Length];
-                for (Int64 i = 0; i < histogram.BinCounts.Length; i++)
+                quantityAdditionalBins = Convert.ToInt64(Math.Ceiling((data.Elements.First() - Max+BinWidth) / BinWidth));
+                double[] newBinCounts = new double[quantityAdditionalBins + BinCounts.Length];
+                for (Int64 i = 0; i < BinCounts.Length; i++)
                 {
-                    newBinCounts[i] = histogram.BinCounts[i];
+                    newBinCounts[i] = BinCounts[i];
                 }
-                newBinCounts[histogram.BinCounts.Length + quantityAdditionalBins - 1] += 1;
-                histogram.BinCounts = newBinCounts;
-                double newMax = Convert.ToDouble(Math.Ceiling(data.Elements.First()));
-                double min = histogram.Range.Min;
-                histogram.Range = IRangeFactory.Factory(min, newMax, true, true, true, false);
+                newBinCounts[BinCounts.Length + quantityAdditionalBins-1] += 1;
+                BinCounts = newBinCounts;
+                double newMax = (BinCounts.Length +1) * BinWidth;
+                Max = newMax;
+                double min = Min;
+                Range = IRangeFactory.Factory(min, newMax, true, true, true, false);
             } else
             {
-                Int64 newObsIndex = Convert.ToInt64((data.Elements.First() - histogram.Range.Min) / histogram.BinWidth);
-                if (data.Elements.First() == histogram.Range.Max)
+                Int64 newObsIndex = Convert.ToInt64(Math.Floor((data.Elements.First() - Min) / BinWidth));
+                if (data.Elements.First() == Max)
                 {
                     quantityAdditionalBins = 1;
-                    double[] newBinCounts = new double[quantityAdditionalBins + histogram.BinCounts.Length];
-                    for (Int64 i = 0; i < histogram.BinCounts.Length; i++)
+                    double[] newBinCounts = new double[quantityAdditionalBins + BinCounts.Length];
+                    for (Int64 i = 0; i < BinCounts.Length; i++)
                     {
-                        newBinCounts[i] = histogram.BinCounts[i];
+                        newBinCounts[i] = BinCounts[i];
                     }
-                    histogram.BinCounts = newBinCounts;
+                    BinCounts = newBinCounts;
+                    double newMax = (BinCounts.Length + 1) * BinWidth;
+                    Max = newMax;
                 }
-                histogram.BinCounts[newObsIndex] += 1;
+                BinCounts[newObsIndex] += 1;
             }
         }
 
-        public static void AddObservationsToHistogram(Histogram histogram, IData data)
+        public void AddObservationsToHistogram(IData data)
         {
             foreach (double x in data.Elements)
             {
                 double[] xToSingleRowArray = new double[1] { x };
                 IData obs = new Data(xToSingleRowArray);
-                AddObservationToHistogram(histogram, obs);
+                AddObservationToHistogram(obs);
             }
        
         }
@@ -203,7 +230,7 @@ namespace Statistics.Histograms
 
         private double FindBinCount(double x, bool cummulative = true)
         {
-            Int64 obsIndex = Convert.ToInt64((x - Range.Min) / BinWidth);
+            Int64 obsIndex = Convert.ToInt64((x - Min) / BinWidth);
             if (cummulative)
             {
                 double sum = 0;
@@ -282,9 +309,10 @@ namespace Statistics.Histograms
             double min = sample.Min();
             double max = sample.Max();
             double binWidth = (min - max) / nBins;
-            Histogram histogram = new Histogram(binWidth, min, max);
+
             IData data = new Data(sample);
-            AddObservationsToHistogram(histogram, data);
+            Histogram histogram = new Histogram(data, binWidth);
+  
             return histogram;
 
         }

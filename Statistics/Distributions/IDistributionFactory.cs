@@ -109,9 +109,8 @@ namespace Statistics
             double min = sample.Min();
             double max = sample.Max();
             double binWidth = (min - max) / nBins;
-            Statistics.Histograms.Histogram histogram = new Statistics.Histograms.Histogram(binWidth, min, max);
             IData data = new Data(sample);
-            Statistics.Histograms.Histogram.AddObservationsToHistogram(histogram, data);
+            Statistics.Histograms.Histogram histogram = new Statistics.Histograms.Histogram(data, binWidth);
             return histogram;
         }
         internal static IDistribution Fit(IEnumerable<double> sample, double minimum, double maximum, IDistributionEnum returnType)
