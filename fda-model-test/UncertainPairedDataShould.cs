@@ -15,13 +15,14 @@ namespace fda_model_test
         {
             //Samples below should give min, above should give max
             IDistribution[] yvals = new IDistribution[countByOnes.Length];
-            for(int i = 0; i < countByOnes.Length; i ++)
+            for (int i = 0; i < countByOnes.Length; i++)
             {
                 yvals[i] = IDistributionFactory.FactoryUniform(countByOnes[i] * minSlope, countByOnes[i] * maxSlope, 10);
             }
             UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals);
-            IPairedData pd upd.Sample(probability);
+            IPairedData pd = upd.Sample(probability);
             double actual = pd.Yvals[0] / pd.Xvals[0];
             Assert.Equal(expected, actual);
         }
     }
+}
