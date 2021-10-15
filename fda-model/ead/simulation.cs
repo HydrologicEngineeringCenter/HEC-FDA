@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 namespace ead{
     public class Simulation{
         private statistics.IBootstrap _frequency_flow;
