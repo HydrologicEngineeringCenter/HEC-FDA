@@ -22,7 +22,7 @@ namespace fda_model_test
             UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals);
             IPairedData pd = upd.SamplePairedData(probability);
             double actual = pd.Yvals[0] / pd.Xvals[0];
-            Assert.Equal(expected, actual);
+            Assert.Equal(expectedSlope, actual);
         }
     }
 }
