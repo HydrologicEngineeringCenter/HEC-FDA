@@ -6,7 +6,7 @@ namespace ead{
         private paireddata.UncertainPairedData _flow_stage;
         private paireddata.UncertainPairedData _channelstage_floodplainstage;
         private paireddata.UncertainPairedData _levee_curve;
-        private paireddata.UncertainPairedData _stage_damage;
+        private IList<paireddata.UncertainPairedData> _damage_category_stage_damage;
         private metrics.IContainResults _results;
         
         public metrics.IContainResults Compute(Int64 seed, Int64 iterations){
@@ -22,10 +22,15 @@ namespace ead{
                 //results.AddAEPEstimate
                 //interior exterior
                 //levees
-                paireddata.IPairedData _stage_damage_sample = _stage_damage.SamplePairedData(.5);
-                paireddata.IPairedData damage_frequency = stage_frequency.compose(_stage_damage_sample);
-                double eadEstimate = damage_frequency.integrate();
-                results.AddEADEstimate(eadEstimate);
+                double totalEAD = 0.0;
+                foreach(paireddata.UncertainPairedData pd : _damage_category_stage_damage){
+                    paireddata.IPairedData _stage_damage_sample = pd.SamplePairedData(.5);
+                    paireddata.IPairedData damage_frequency = stage_frequency.compose(_stage_damage_sample);
+                    double eadEstimate = damage_frequency.integrate();
+                    totalEAD += eadEstimate
+                    results.AddEADEstimate(eadEstimate, pd.Category);
+                }
+                results.AddEADEstimate(totalEAD, "Total");
             }
             return results;
         }
