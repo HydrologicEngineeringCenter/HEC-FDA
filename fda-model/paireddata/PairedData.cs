@@ -7,12 +7,18 @@ namespace paireddata
     {
         public double[] Xvals { get; }
         public double[] Yvals { get; }
+        public string Category {get; }
 
         public PairedData(double[] xs, double[] ys){
             Xvals = xs;
             Yvals = ys;
+            Category = "Default";
         }
-
+        public PairedData(double[] xs, double[] ys, string category){
+            Xvals = xs;
+            Yvals = ys;
+            Category = Category;
+        }
         /// <summary>
         /// f implements ISample on PairedData, for a given input double x f produces an output double that represents the linearly interoplated value for y given x.
         /// </summary>

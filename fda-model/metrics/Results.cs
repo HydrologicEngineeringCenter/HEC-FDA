@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 namespace metrics
 {
     public class Results: IContainResults
@@ -7,8 +8,8 @@ namespace metrics
         private double _aepThreshold;
         private double _meanAEP;//replace with inlinehistogram
         private Int64 _aepCount;
-        private double _meanEAD;//replace with inlinehistogram
-        private Int64 _eadCount;
+        private Dictionary<string, double> _meanEADs; //replace double with inline histogram
+        private Dictionary<string, Int64> _eadCounts;
         public double AEPThreshold { 
             get {
                 return _aepThreshold;
@@ -21,8 +22,8 @@ namespace metrics
             _aepThreshold = 0.0;
             _meanAEP = 0.0;
             _aepCount = 0;
-            _meanEAD = 0.0;
-            _eadCount = 0;
+            _meanEADs = new Dictionary<string, double>();
+            _eadCounts = new Dictionary<string, Int64>();
         }
         public void AddAEPEstimate(double aepEstimate)
         {
@@ -30,10 +31,12 @@ namespace metrics
             _aepCount +=1;
         }
 
-        public void AddEADEstimate(double eadEstimate)
+        public void AddEADEstimate(double eadEstimate, string category)
         {
-            _meanEAD = _meanEAD +((eadEstimate - _meanEAD)/(double)_eadCount);
-            _eadCount +=1;
+
+            //TODO: if category doesnt exist, add it
+            _meanEADs[category] = _meanEADs[category] +((eadEstimate - _meanEADs[category])/(double)_eadCounts[category]);
+            _eadCounts[category] +=1;
         }
 
     }
