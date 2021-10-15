@@ -3,6 +3,7 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using Statistics;
+using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,13 +29,17 @@ namespace ViewModel.Output
             set { _HistogramPlotModel = value; }
         }
 
-        public HistogramViewerVM(IMetric metric, IHistogram histogram, double meanValue)
+        public HistogramViewerVM(IMetric metric, Histogram histogram, double meanValue)
         {
             Bins = new List<HistogramBinVM>();
+            double binMin = histogram.Min;
+            double binMax = binMin + histogram.BinWidth;
             //create a list of the binvm's for the UI to pull from
-            foreach(IBin bin in histogram.Bins)
-            {
-                Bins.Add(new HistogramBinVM(bin));
+            foreach(Int64 bin in histogram.BinCounts)
+            {   
+                Bins.Add(new HistogramBinVM(bin, binMin, binMax));
+                binMin += histogram.BinWidth;
+                binMax += histogram.BinWidth;
             }
 
 

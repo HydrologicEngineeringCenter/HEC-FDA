@@ -15,6 +15,7 @@ using Model.Conditions.Locations.Years.Realizations;
 using Model.Conditions.Locations.Years.Results;
 using Model.Samples;
 using Statistics;
+using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -229,7 +230,7 @@ namespace ViewModel.Saving.PersistenceManagers
 
             foreach (ConditionsElement elem in conditions)
             {
-                IReadOnlyDictionary<IMetric, IHistogram> metricsDictionary = ReadMetricsHistogramTable(elem);
+                IReadOnlyDictionary<IMetric, Histogram> metricsDictionary = ReadMetricsHistogramTable(elem);
                 if(metricsDictionary.Count == 0)
                 {
                     //then there is no compute data
@@ -548,7 +549,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="metricDictionary"></param>
         /// <param name="metrics"></param>
         /// <param name="conditionElementID"></param>
-        private void SaveMetricsHistogramTable(IReadOnlyDictionary<IMetric, IHistogram> metricDictionary, IEnumerable<IMetric> metrics, int conditionElementID)
+        private void SaveMetricsHistogramTable(IReadOnlyDictionary<IMetric, Histogram> metricDictionary, IEnumerable<IMetric> metrics, int conditionElementID)
         {
             string[] columnNames = new string[] { _MetricIDName, _MetricMeanValueName, _MetricFunctionName };
             Type[] columnTypes = new Type[] { _MetricIDType, _MetricMeanValueType, _MetricFunctionType };
@@ -569,8 +570,8 @@ namespace ViewModel.Saving.PersistenceManagers
             List<object[]> rows = new List<object[]>();
             int i = 1;
             foreach (IMetric metric in metrics)
-            {
-                IHistogram histo = metricDictionary[metric];
+            {//not sure that this works
+                Histogram histo = metricDictionary[metric];
                 double meanValue = histo.Mean;
                 string curve = histo.WriteToXML().ToString();
                 rows.Add(new object[] { i , meanValue, curve });
@@ -581,10 +582,10 @@ namespace ViewModel.Saving.PersistenceManagers
             tbl.ApplyEdits();
         }
 
-        private IReadOnlyDictionary<IMetric, IHistogram> ReadMetricsHistogramTable(ConditionsElement conditionsElement)
+        private IReadOnlyDictionary<IMetric, Histogram> ReadMetricsHistogramTable(ConditionsElement conditionsElement)
         {
             int condElemID = conditionsElement.GetElementID();
-            Dictionary<IMetric, IHistogram> metricsDictionary = new Dictionary<IMetric, IHistogram>();
+            Dictionary<IMetric, Histogram> metricsDictionary = new Dictionary<IMetric, Histogram>();
             string metricHistogramTable = _MetricHistogramTableNameBase + condElemID;
             DatabaseManager.DataTableView metricsHistogramTable = Storage.Connection.Instance.GetTable(metricHistogramTable);
 
@@ -596,7 +597,7 @@ namespace ViewModel.Saving.PersistenceManagers
                     //i need to get the metric from the metric table
                     int metricId = Convert.ToInt32( row[METRIC_ID_COL]);
                     IMetric metric = GetMetricFromMetricTable(metricId, condElemID);
-                    IHistogram histogram = GetHistogramFromRowData(row);
+                    Histogram histogram = GetHistogramFromRowData(row);
                     metricsDictionary.Add(metric, histogram);
                 }
             }
@@ -644,10 +645,10 @@ namespace ViewModel.Saving.PersistenceManagers
             return metrics;
         }
 
-        private IHistogram GetHistogramFromRowData(object[] row)
+        private Histogram GetHistogramFromRowData(object[] row)
         {
             string histogramXMLString = Convert.ToString( row[_MetricFunctionCol]);
-            return IHistogramFactory.Factory(histogramXMLString);
+            return Histogram.ReadFromXML(histogramXMLString);
         }
 
         #endregion

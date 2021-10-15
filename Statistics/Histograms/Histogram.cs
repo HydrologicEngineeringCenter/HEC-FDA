@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace Statistics.Histograms
 {
-    internal class Histogram : IDistribution
+    public class Histogram : IDistribution
     {
 
         #region Properties
@@ -357,7 +357,7 @@ namespace Statistics.Histograms
         public static readonly string XML_MAX = "Exclusive Max";
         public static readonly string XML_MIDPOINT = "MidPoint";
         public static readonly string XML_COUNT = "Count";
-
+        //TODO: write test on WriteToXML and ReadToXML
         public XElement WriteToXML()
         {
             XElement masterElem = new XElement(XML_BINS);
@@ -372,6 +372,11 @@ namespace Statistics.Histograms
                 masterElem.Add(binElem);
             }
             return masterElem;
+        }
+        //TODO: implement ReadFromXML
+        public static Histogram ReadFromXML(string histogramXMLString)
+        {
+            throw new NotImplementedException();
         }
         #endregion
 

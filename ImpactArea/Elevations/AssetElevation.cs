@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Statistics.Histograms;
 
 namespace ImpactArea.Elevations
 {
@@ -25,8 +26,8 @@ namespace ImpactArea.Elevations
                 composites[j] = Ground.Height.Value(rnos[i]) + Height.Height.Value(rnos[i + 1]);
                 j++;
             }
-            //muy feo. need factories more sophisticated bin count perhaps ets..
-            Statistics.IHistogram h = Statistics.IHistogramFactory.Factory(Statistics.IDataFactory.Factory(composites), 100);
+            //the below histogram may not compile correctly this is a guess
+            Histogram h = new Histogram(Statistics.IDataFactory.Factory(composites), 1);
             return new Elevation(new DistributedValue(h), ElevationEnum.Asset);
         }
     }
