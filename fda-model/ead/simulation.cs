@@ -23,7 +23,7 @@ namespace ead{
                 //interior exterior
                 //levees
                 double totalEAD = 0.0;
-                foreach(paireddata.UncertainPairedData pd : _damage_category_stage_damage){
+                foreach(paireddata.UncertainPairedData pd in _damage_category_stage_damage){
                     paireddata.IPairedData _stage_damage_sample = pd.SamplePairedData(.5);
                     paireddata.IPairedData damage_frequency = stage_frequency.compose(_stage_damage_sample);
                     double eadEstimate = damage_frequency.integrate();
