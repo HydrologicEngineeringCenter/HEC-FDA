@@ -14,7 +14,7 @@ namespace fda_model_test
         public void ProducePairedData(double minSlope, double maxSlope, double probability, double expectedSlope)
         {
             //Samples below should give min, above should give max
-            IDistribution[] yvals = new IDistribution[countByOnes.Length]
+            IDistribution[] yvals = new IDistribution[countByOnes.Length];
             for(int i = 0; i < countByOnes.Length; i ++)
             {
                 yvals[i] = IDistributionFactory.FactoryUniform(countByOnes[i] * minSlope, countByOnes[i] * maxSlope, 10);
