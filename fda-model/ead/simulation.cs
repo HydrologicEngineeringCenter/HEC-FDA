@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 namespace ead{
     public class Simulation{
         private statistics.IBootstrap _frequency_flow;
@@ -7,7 +7,7 @@ namespace ead{
         private paireddata.UncertainPairedData _flow_stage;
         private paireddata.UncertainPairedData _channelstage_floodplainstage;
         private paireddata.UncertainPairedData _levee_curve;
-        private IList<paireddata.UncertainPairedData> _damage_category_stage_damage;
+        private List<paireddata.UncertainPairedData> _damage_category_stage_damage;
         private metrics.IContainResults _results;
         
         public metrics.IContainResults Compute(Int64 seed, Int64 iterations){
