@@ -27,7 +27,7 @@ namespace ead{
                     paireddata.IPairedData _stage_damage_sample = pd.SamplePairedData(.5);
                     paireddata.IPairedData damage_frequency = stage_frequency.compose(_stage_damage_sample);
                     double eadEstimate = damage_frequency.integrate();
-                    totalEAD += eadEstimate
+                    totalEAD += eadEstimate;
                     results.AddEADEstimate(eadEstimate, pd.Category);
                 }
                 results.AddEADEstimate(totalEAD, "Total");

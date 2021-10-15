@@ -21,8 +21,8 @@ namespace metrics
             _aepThreshold = 0.0;
             _meanAEP = 0.0;
             _aepCount = 0;
-            _meanEADs = new Dictionary<string, double>;
-            _eadCounts = new Dictionary<string, Int64>;
+            _meanEADs = new Dictionary<string, double>();
+            _eadCounts = new Dictionary<string, Int64>();
         }
         public void AddAEPEstimate(double aepEstimate)
         {
