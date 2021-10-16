@@ -11,6 +11,16 @@ namespace ead{
         private paireddata.UncertainPairedData _levee_curve;
         private List<paireddata.UncertainPairedData> _damage_category_stage_damage;
         private metrics.IContainResults _results;
+        public Simulation()
+        {
+            _frequency_flow = null;
+            _inflow_outflow = new paireddata.UncertainPairedData();//defaults to null
+            _flow_stage = new paireddata.UncertainPairedData(); //defaults to null
+            _frequency_stage = new paireddata.UncertainPairedData();//defaults to null
+            _channelstage_floodplainstage = new paireddata.UncertainPairedData();//defaults to null
+            _levee_curve = new paireddata.UncertainPairedData(); //defaults to null
+            _damage_category_stage_damage = new List<paireddata.UncertainPairedData>();//defaults to empty
+        }
         public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData inflow_outflow, paireddata.UncertainPairedData flow_stage, paireddata.UncertainPairedData channelstage_floodplainstage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
         {
             _frequency_flow = frequency_flow;
