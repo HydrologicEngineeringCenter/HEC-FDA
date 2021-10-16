@@ -11,7 +11,56 @@ namespace ead{
         private paireddata.UncertainPairedData _levee_curve;
         private List<paireddata.UncertainPairedData> _damage_category_stage_damage;
         private metrics.IContainResults _results;
-        
+        public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData inflow_outflow, paireddata.UncertainPairedData flow_stage, paireddata.UncertainPairedData channelstage_floodplainstage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
+        {
+            _frequency_flow = frequency_flow;
+            _inflow_outflow = inflow_outflow;
+            _flow_stage = flow_stage;
+            _frequency_stage = new paireddata.UncertainPairedData();//defaults to null
+            _channelstage_floodplainstage = channelstage_floodplainstage;
+            _levee_curve = levee_curve;
+            _damage_category_stage_damage = damage_curves;
+        }
+        public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData flow_stage, paireddata.UncertainPairedData channelstage_floodplainstage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
+        {
+            _frequency_flow = frequency_flow;
+            _inflow_outflow = new paireddata.UncertainPairedData();//defaults to null
+            _flow_stage = flow_stage;
+            _frequency_stage = new paireddata.UncertainPairedData();//defaults to null
+            _channelstage_floodplainstage = channelstage_floodplainstage;
+            _levee_curve = levee_curve;
+            _damage_category_stage_damage = damage_curves;
+        }
+        public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData flow_stage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
+        {
+            _frequency_flow = frequency_flow;
+            _inflow_outflow = new paireddata.UncertainPairedData();//defaults to null
+            _flow_stage = flow_stage;
+            _frequency_stage = new paireddata.UncertainPairedData();//defaults to null
+            _channelstage_floodplainstage = new paireddata.UncertainPairedData();//defaults to null
+            _levee_curve = levee_curve;
+            _damage_category_stage_damage = damage_curves;
+        }
+        public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData flow_stage, List<paireddata.UncertainPairedData> damage_curves)
+        {
+            _frequency_flow = frequency_flow;
+            _inflow_outflow = new paireddata.UncertainPairedData();//defaults to null
+            _flow_stage = flow_stage;
+            _frequency_stage = new paireddata.UncertainPairedData();//defaults to null
+            _channelstage_floodplainstage = new paireddata.UncertainPairedData();//defaults to null
+            _levee_curve = new paireddata.UncertainPairedData(); //defaults to null
+            _damage_category_stage_damage = damage_curves;
+        }
+        public Simulation(paireddata.UncertainPairedData frequency_stage, paireddata.UncertainPairedData channelstage_floodplainstage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
+        {
+            _frequency_flow = null;
+            _inflow_outflow = new paireddata.UncertainPairedData();//defaults to null
+            _flow_stage = new paireddata.UncertainPairedData();//defaults to null
+            _frequency_stage = frequency_stage;
+            _channelstage_floodplainstage = channelstage_floodplainstage;
+            _levee_curve = levee_curve;
+            _damage_category_stage_damage = damage_curves;
+        }
         public metrics.IContainResults Compute(Int64 seed, Int64 iterations){
             metrics.IContainResults results = new metrics.Results();
             //results.AEPThreshold = 100.0;//stage or flow or damage threshold

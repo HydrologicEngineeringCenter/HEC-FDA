@@ -15,15 +15,21 @@ namespace paireddata
         public IDistribution[] ys(){
             return _yvals;
         }
+        public UncertainPairedData()
+        {
+            IsNull = true;
+        }
         public UncertainPairedData(double[] xs, IDistribution[] ys){
             _xvals = xs;
             _yvals = ys;
             Category = "Default";
+            IsNull = false;
         }
         public UncertainPairedData(double[] xs, IDistribution[] ys, string category){
             _xvals = xs;
             _yvals = ys;
             Category = category;
+            IsNull = false;
         }
         public IPairedData SamplePairedData(double probability){
             double[] y = new double[_yvals.Length];
