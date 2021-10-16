@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Statistics;
+using interfaces;
 namespace paireddata
 {
     public class UncertainPairedData: IPairedDataProducer, ICategory, ICanBeNull
