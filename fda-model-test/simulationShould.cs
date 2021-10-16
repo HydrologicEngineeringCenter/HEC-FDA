@@ -2,6 +2,7 @@
 using ead;
 using paireddata;
 using Statistics;
+using System.Collections.Generic;
 
 namespace fda_model_test
 {
@@ -10,12 +11,12 @@ namespace fda_model_test
         //These were previously used in pairedDataTest but were moved here to be used for ead compute testing. 
         static double[] Probabilities = { .999999, 0.0000001 };
         static double[] Flows = { 0, 100000 };
-        static double[] Stages = { 0, 200000 };;
+        static double[] Stages = { 0, 200000 };
         //static double[] ProbabilitiesOfFailure = { .001, .01, .1, .5, 1 };
         //static double[] ElevationsOfFailure = { 600, 610, 650, 700, 750 };
         [Theory]
         [InlineData(150000)]
-        public void ProducePairedData(double expected)
+        public void ComputeEAD(double expected)
         {
             
             Statistics.IDistribution flow_frequency = IDistributionFactory.FactoryUniform(0, 100000);
@@ -32,8 +33,10 @@ namespace fda_model_test
             {
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000*i, 10);
             }
-            PairedData stage_damage = new PairedData(Stages, damages, "residential");
-            ead.Simulation s = new ead.Simulation(flow_frequency,flow_stage,stage_damage);
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, "residential");
+            List<UncertainPairedData> upd = new List<UncertainPairedData>();
+            upd.Add(stage_damage);
+            ead.Simulation s = new ead.Simulation(flow_frequency,flow_stage,upd);
             
             metrics.IContainResults r = ead.Compute(0,1);
 
