@@ -33,11 +33,20 @@ namespace metrics
 
         public void AddEADEstimate(double eadEstimate, string category)
         {
-
-            //TODO: if category doesnt exist, add it
-            _meanEADs[category] = _meanEADs[category] +((eadEstimate - _meanEADs[category])/(double)_eadCounts[category]);
-            _eadCounts[category] +=1;
+            if (_meanEADs.ContainsKey(category))
+            {
+                _meanEADs[category] = _meanEADs[category] +((eadEstimate - _meanEADs[category])/(double)_eadCounts[category]);
+                _eadCounts[category] +=1;
+            }
+            else
+            {
+                _meanEADs.Add(category, eadEstimate);
+                _eadCounts.Add(category, 1);
+            }
         }
-
+        public double MeanEAD(string category)
+        {
+            return _meanEADs[category];
+        }
     }
 }
