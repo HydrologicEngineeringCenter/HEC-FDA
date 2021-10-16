@@ -6,6 +6,7 @@ namespace ead{
         private IDistribution _frequency_flow;
         private paireddata.UncertainPairedData _inflow_outflow;
         private paireddata.UncertainPairedData _flow_stage;
+        private paireddata.UncertainPairedData _frequency_stage;
         private paireddata.UncertainPairedData _channelstage_floodplainstage;
         private paireddata.UncertainPairedData _levee_curve;
         private List<paireddata.UncertainPairedData> _damage_category_stage_damage;
@@ -17,17 +18,22 @@ namespace ead{
             for(int i = 0; i < iterations; i ++){
                 paireddata.IPairedData ff = BootstrapToPairedData(_frequency_flow, 1000);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
                 //check if flow transform exists, and use it here
-                paireddata.IPairedData _flow_stage_sample = _flow_stage.SamplePairedData(.5);
-                paireddata.IPairedData stage_frequency = ff.compose(_flow_stage_sample);
+                paireddata.IPairedData _flow_stage_sample = _flow_stage.SamplePairedData(.5);//needs to be a random number
+                paireddata.IPairedData frequency_stage = ff.compose(_flow_stage_sample);
                 //compute aep metrics here
-                //results.AddAEPEstimate
+                double aep = frequency_stage.f(_results.AEPThreshold);
+                _results.AddAEPEstimate(aep);
                 //interior exterior
+                paireddata.IPairedData _channelstage_floodplainstage_sample = _channelstage_floodplainstage.SamplePairedData(.5); //needs to be a random number
+                paireddata.IPairedData frequency_floodplainstage = frequency_stage.compose(_channelstage_floodplainstage_sample);
                 //levees
+                paireddata.IPairedData _levee_curve_sample = _levee_curve.SamplePairedData(.5); //needs to be a random number
+                paireddata.IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
                 double totalEAD = 0.0;
                 foreach(paireddata.UncertainPairedData pd in _damage_category_stage_damage){
-                    paireddata.IPairedData _stage_damage_sample = pd.SamplePairedData(.5);
-                    paireddata.IPairedData damage_frequency = stage_frequency.compose(_stage_damage_sample);
-                    double eadEstimate = damage_frequency.integrate();
+                    paireddata.IPairedData _stage_damage_sample = pd.SamplePairedData(.5);//needs to be a random number
+                    paireddata.IPairedData frequency_damage = frequency_floodplainstage_withLevee.compose(_stage_damage_sample);
+                    double eadEstimate = frequency_damage.integrate();
                     totalEAD += eadEstimate;
                     results.AddEADEstimate(eadEstimate, pd.Category);
                 }

@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using Statistics;
 namespace paireddata
 {
-    public class UncertainPairedData: IPairedDataProducer, ICategory
+    public class UncertainPairedData: IPairedDataProducer, ICategory, ICanBeNull
     {
         private double[] _xvals;
         private IDistribution[] _yvals;
         public string Category {get;}
+        public bool IsNull { get; }
         public double[] xs(){
             return _xvals;
         }
