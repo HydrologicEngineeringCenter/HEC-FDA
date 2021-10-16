@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace fda_model_test
 {
-    class simulationShould
+    public class SimulationShould
     {
         //These were previously used in pairedDataTest but were moved here to be used for ead compute testing. 
         static double[] Probabilities = { .999999, 0.0000001 };
@@ -40,9 +40,9 @@ namespace fda_model_test
             upd.Add(stage_damage);
             ead.Simulation s = new ead.Simulation(flow_frequency,flow_stage,upd);
             
-            metrics.IContainResults r = ead.Compute(0,1);
+            metrics.IContainResults r = s.Compute(0,1);
 
-            Assert.Equal(expectedSlope, r.MeanEAD("residential"));
+            Assert.Equal(expected, r.MeanEAD("residential"));
         }
 
         
