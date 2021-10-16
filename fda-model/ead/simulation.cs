@@ -35,7 +35,7 @@ namespace ead{
             }
             return results;
         }
-        private IPairedData SamplePairedData(IDistribution dist, Int64 ordinates){
+        private paireddata.IPairedData SamplePairedData(IDistribution dist, Int64 ordinates){
             double[] randyPacket = new double[dist.SampleSize];//needs to be initialized with a set of random nubmers between 0 and 1;
             IDistribution bootstrap = dist.Sample(randyPacket);
             double[] x = new double[ordinates];
