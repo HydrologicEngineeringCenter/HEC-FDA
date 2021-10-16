@@ -195,6 +195,10 @@ namespace ead{
         }
         private paireddata.IPairedData BootstrapToPairedData(IDistribution dist, Int64 ordinates){
             double[] randyPacket = new double[dist.SampleSize];//needs to be initialized with a set of random nubmers between 0 and 1;
+            for(int i = 0; i<dist.SampleSize; i++)
+            {
+                randyPacket[i] = (double)i/(double)dist.SampleSize;
+            }
             IDistribution bootstrap = dist.Sample(randyPacket);
             double[] x = new double[ordinates];
             double[] y = new double[ordinates];
