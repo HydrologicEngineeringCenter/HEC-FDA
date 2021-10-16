@@ -21,7 +21,7 @@ namespace fda_model_test
         public void ComputeEAD(double expected)
         {
             
-            Statistics.IDistribution flow_frequency = IDistributionFactory.FactoryUniform(0, 100000);
+            Statistics.IDistribution flow_frequency = IDistributionFactory.FactoryUniform(0, 100000, 1000);
             //create a stage distribution
             IDistribution[] stages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
