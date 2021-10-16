@@ -203,7 +203,8 @@ namespace ead{
             double[] x = new double[ordinates];
             double[] y = new double[ordinates];
             for(int i=0;i<ordinates; i++){
-                double prob = ((double)i)/((double)ordinates);
+                double val = (double) i + .5;
+                double prob = (val)/((double)ordinates);
                 x[i] = prob;
                 y[i] = bootstrap.InverseCDF(prob);
 
