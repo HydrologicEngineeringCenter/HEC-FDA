@@ -22,6 +22,7 @@ namespace StatisticsTests.Distributions
             }
             Statistics.IDistribution bootstrap = dist.Sample(randyPacket);
             Assert.Equal(bootstrap.Mean, .5);
+            Assert.Equal(bootstrap.Type, IDistributionEnum.Uniform);
         }
     }
 }
