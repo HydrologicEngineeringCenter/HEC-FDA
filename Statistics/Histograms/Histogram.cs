@@ -295,21 +295,49 @@ namespace Statistics.Histograms
         }
         public double InverseCDF(double p)
         {
-            double pAtN = 0;
-            double n = 0;
-            int i = 0;
             if (!p.IsOnRange(0, 1)) throw new ArgumentOutOfRangeException($"The provided probability value: {p} is not on the a valid range: [0, 1]");
             else
             {
-                n = BinCounts[i];
-                pAtN = n / SampleSize;
-                while (pAtN<p)
+                if (p==0)
                 {
-                    ++i;
-                    n += BinCounts[i];
-                    pAtN = n / SampleSize;
+                    return Min;
                 }
-                return (i + 1) * BinWidth;
+                if (p==1)
+                {
+                    return Max;
+                }
+                Int64 numobs = Convert.ToInt64(SampleSize * p);
+                if (p <= 0.5)
+                {
+                    Int64 index = 0;
+                    double obs = BinCounts[index];
+                    double cobs = obs;
+                    while (cobs < numobs)
+                    {
+                        index++;
+                        obs = BinCounts[index];
+                        cobs += obs;
+
+                    }
+                    double fraction = (cobs - numobs) / obs;
+                    double binOffSet = Convert.ToDouble(index + 1);
+                    return Min + BinWidth * binOffSet - BinWidth * fraction;
+                } else
+                {
+                    Int64 index = BinCounts.Length - 1;
+                    double obs = BinCounts[index];
+                    double cobs = SampleSize - obs;
+                    while (cobs > numobs)
+                    {
+                        index--;
+                        obs = BinCounts[index];
+                        cobs -= obs;
+                    }
+                    double fraction = (numobs - cobs) / obs;
+                    double binOffSet = Convert.ToDouble(BinCounts.Length - index);
+                    return Max - BinWidth * binOffSet + BinWidth * fraction;
+                }
+                
             }
         }
         public double Sample(Random r = null) => InverseCDF(r == null ? new Random().NextDouble() : r.NextDouble());
@@ -335,7 +363,6 @@ namespace Statistics.Histograms
             return histogram;
 
         }
-        //public IDistribution SampleDistribution(Random r = null) => IDistribution.Factory(IDataFactory.Factory(Sample(SampleSize, r)), Range.Min, Range.Max, Bins.Length);
         #endregion
 
 

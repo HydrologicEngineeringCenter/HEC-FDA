@@ -91,10 +91,10 @@ namespace StatisticsTests.Histograms
         }
 
         [Theory]
-        [InlineData(1, 0.4, 3)]
+        [InlineData(1, 0.4, 2.25)]
         public void Histogram_InvCDF(double binWidth, double prob, double expected)
         {
-            double[] data = new double[6] { 1, 2, 3, 4, 5, 6};
+            double[] data = new double[14] {0,0,1,1,1,2,2,2,2,3,3,3,4,4};
             IData obs = new Data(data);
             Histogram histogram = new Histogram(obs, binWidth);
             double actual = histogram.InverseCDF(prob);
