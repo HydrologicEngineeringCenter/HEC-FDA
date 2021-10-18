@@ -58,20 +58,20 @@ namespace Statistics.Histograms
         public Histogram(IData data, double binWidth)
         {
             BinWidth = binWidth;
-            Int64 numberOfBins = GetBinQuantity(data);
+            Min = Math.Floor(data.Range.Min); //this need not be a integer - it just needs to be the nearest bin start - a function of bin width.
+            Int64 numberOfBins = Convert.ToInt64(Math.Ceiling((data.Range.Max - Min) / binWidth)); 
+            Max = Min + numberOfBins * binWidth;
             BinCounts = new double[numberOfBins];
-            Min = Math.Floor(data.Range.Min);
-            Max = numberOfBins * binWidth + binWidth;
             AddObservationsToHistogram(data);
             Range = GetRange(Min, Max);
 
         }
         #endregion
 
-        internal int GetBinQuantity(IData data)
+        internal int GetBinQuantity()
         {
             int binQuantity = 0;
-            double value = (data.Range.Max - data.Range.Min) / BinWidth;
+            double value = (Min - Max) / BinWidth;
             if (value == Convert.ToInt32(value))
             {
                 binQuantity = Convert.ToInt32(value) + 1;

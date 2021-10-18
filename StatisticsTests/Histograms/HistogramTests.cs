@@ -114,6 +114,8 @@ namespace StatisticsTests.Histograms
             double err = Math.Abs((expected - actual) / expected);
             double tol = 0.01;
             Assert.True(err < tol);
+            double x = 1.3;
+            
         }
 
         [Theory]
@@ -155,7 +157,7 @@ namespace StatisticsTests.Histograms
             IData initialData = new Data(initialObs);
             Histogram histogram = new Histogram(initialData, binWidth);
             double[] data = new double[n];
-
+            
             for (Int64 i = 0; i < n; i++)
             {
                 var randProb = rand.NextDouble();
@@ -167,6 +169,35 @@ namespace StatisticsTests.Histograms
             double err = Math.Abs((expected - actual) / expected);
             double errTol = 0.01;
             Assert.True(err < errTol);
+        }
+
+        [Theory]
+        [InlineData(1000000, .1, 2d, 1d, 2d, 2d)]
+        public void NormallyDistributed_Histogram_CentralTendency(int n, double binWidth, double mean, double standardDeviation, double expectedMean, double expectedMedian)
+        {
+            IDistribution stdNormal = new Statistics.Distributions.Normal(mean, standardDeviation);
+            var rand = new Random();
+            double[] initialObs = new double[1] { stdNormal.InverseCDF(rand.NextDouble()) };
+            IData initialData = new Data(initialObs);
+            Histogram histogram = new Histogram(initialData, binWidth);
+            double[] data = new double[n];
+            for (Int64 i = 0; i < n; i++)
+            {
+                var randProb = rand.NextDouble();
+                data[i] = stdNormal.InverseCDF(randProb);
+            }
+            IData obs = new Data(data);
+            histogram.AddObservationsToHistogram(obs);
+            double actualMean = histogram.Mean;
+            double meanErr = Math.Abs((expectedMean - actualMean) / actualMean);
+
+            double actualMedian = histogram.Median;
+            double medianErr = Math.Abs((expectedMedian - actualMedian) / actualMedian);
+
+            double errTol = 0.01;
+            Assert.True(meanErr < errTol);
+            Assert.True(medianErr < errTol);
+
         }
 
     }
