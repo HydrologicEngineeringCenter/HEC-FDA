@@ -26,7 +26,7 @@ namespace Statistics
         {
             if (distribution.IsNull()) throw new ArgumentNullException($"The sample distribution cannot be constructed because the input distribution is null.");
             if (!(distribution.State < Utilities.IMessageLevels.Error)) throw new ArgumentException($"The specified distribution cannot be sampled because it is being held in an invalid state with the following messages: {distribution.Messages.PrintTabbedListOfMessages()}");           
-            if (packetOfRandomNumbers.IsItemsOnRange(IRangeFactory.Factory(0d, 1d))) throw new ArgumentException($"The sample distribution cannot be sampled because the provided packet or random numbers is null, empty or contains members outside the valid range of: [0, 1].");
+            if (!packetOfRandomNumbers.IsItemsOnRange(IRangeFactory.Factory(0d, 1d))) throw new ArgumentException($"The sample distribution cannot be sampled because the provided packet or random numbers is null, empty or contains members outside the valid range of: [0, 1].");
             if (packetOfRandomNumbers.Length < distribution.SampleSize) throw new ArgumentException($"The parametric bootstrap sample cannot be constructed using the {distribution.Print(true)} distribution. It requires at least {distribution.SampleSize} random value but only {packetOfRandomNumbers.Length} were provided.");
             double[] X = new double[distribution.SampleSize];
             for (int i = 0; i < distribution.SampleSize; i++) X[i] = distribution.InverseCDF(packetOfRandomNumbers[i]);
