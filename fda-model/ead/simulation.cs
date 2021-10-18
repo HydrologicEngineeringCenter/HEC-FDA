@@ -184,10 +184,6 @@ namespace ead{
             foreach(paireddata.UncertainPairedData pd in _damage_category_stage_damage){
                 paireddata.IPairedData _stage_damage_sample = pd.SamplePairedData(.5);//needs to be a random number
                 paireddata.IPairedData frequency_damage = _stage_damage_sample.compose(frequency_stage);
-                for(int i = 0; i < frequency_damage.Xvals.Length; i++)
-                {
-                    System.Console.Write("XVAL " + frequency_damage.Xvals[i] + " YVAL " + frequency_damage.Yvals[i]);
-                }
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
                 _results.AddEADEstimate(eadEstimate, pd.Category);

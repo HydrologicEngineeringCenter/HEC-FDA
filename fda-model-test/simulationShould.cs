@@ -11,7 +11,6 @@ namespace fda_model_test
     public class SimulationShould
     {
         //These were previously used in pairedDataTest but were moved here to be used for ead compute testing. 
-        static double[] Probabilities = { .999999, 0.0000001 };
         static double[] Flows = { 0, 100000 };
         static double[] Stages = { 0, 150000 };
         //static double[] ProbabilitiesOfFailure = { .001, .01, .1, .5, 1 };
@@ -38,11 +37,12 @@ namespace fda_model_test
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, "residential");
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
-            ead.Simulation s = new ead.Simulation(flow_frequency,flow_stage,upd);
+            Simulation s = new Simulation(flow_frequency,flow_stage,upd);
             
             metrics.IContainResults r = s.Compute(0,1);
-
-            Assert.Equal(expected, r.MeanEAD("residential"));
+            double difference = expected - r.MeanEAD("residential");
+            double percentDiff = difference / expected;
+            Assert.True(percentDiff < .01);
         }
 
         
