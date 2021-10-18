@@ -90,7 +90,7 @@ namespace ead{
                         else
                         {
                             paireddata.IPairedData flow_stage_sample = _flow_stage.SamplePairedData(.5);//needs to be a random number
-                            paireddata.IPairedData frequency_stage = ff.compose(flow_stage_sample);
+                            paireddata.IPairedData frequency_stage = flow_stage_sample.compose(ff);
                             ComputeFromStageFrequency(frequency_stage);
                         }
  
@@ -98,7 +98,7 @@ namespace ead{
                     else
                     {
                         paireddata.IPairedData inflow_outflow_sample = _inflow_outflow.SamplePairedData(.5); //should be a random number
-                        paireddata.IPairedData transformff = ff.compose(inflow_outflow_sample);
+                        paireddata.IPairedData transformff = inflow_outflow_sample.compose(ff);
                             if (_flow_stage.IsNull)
                             {
                             //complain loudly
@@ -107,7 +107,7 @@ namespace ead{
                             else
                             {
                                 paireddata.IPairedData flow_stage_sample = _flow_stage.SamplePairedData(.5);//needs to be a random number
-                                paireddata.IPairedData frequency_stage = transformff.compose(flow_stage_sample);
+                                paireddata.IPairedData frequency_stage = flow_stage_sample.compose(transformff);
                                 ComputeFromStageFrequency(frequency_stage);
                             }
                     }
@@ -145,7 +145,7 @@ namespace ead{
             else
             {
                 paireddata.IPairedData _channelstage_floodplainstage_sample = _channelstage_floodplainstage.SamplePairedData(.5); //needs to be a random number
-                paireddata.IPairedData frequency_floodplainstage = frequency_stage.compose(_channelstage_floodplainstage_sample);
+                paireddata.IPairedData frequency_floodplainstage = _channelstage_floodplainstage_sample.compose(frequency_stage);
                 //levees
                 if (_levee_curve.IsNull)
                 {
@@ -183,7 +183,7 @@ namespace ead{
             double totalEAD = 0.0;
             foreach(paireddata.UncertainPairedData pd in _damage_category_stage_damage){
                 paireddata.IPairedData _stage_damage_sample = pd.SamplePairedData(.5);//needs to be a random number
-                paireddata.IPairedData frequency_damage = frequency_stage.compose(_stage_damage_sample);
+                paireddata.IPairedData frequency_damage = _stage_damage_sample.compose(frequency_stage);
                 for(int i = 0; i < frequency_damage.Xvals.Length; i++)
                 {
                     System.Console.Write("XVAL " + frequency_damage.Xvals[i] + " YVAL " + frequency_damage.Yvals[i]);
