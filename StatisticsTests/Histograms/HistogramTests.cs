@@ -114,7 +114,6 @@ namespace StatisticsTests.Histograms
             double err = Math.Abs((expected - actual) / expected);
             double tol = 0.01;
             Assert.True(err < tol);
-            double x = 1.3;
             
         }
 
