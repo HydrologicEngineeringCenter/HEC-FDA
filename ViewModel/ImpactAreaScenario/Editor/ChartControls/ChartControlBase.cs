@@ -1,4 +1,5 @@
 ﻿using Functions;
+using HEC.Plotting.Core.DataModel;
 using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
 using Model;
@@ -12,36 +13,44 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
 {
     public abstract class ChartControlBase : BaseViewModel
     {
-        private string _xAxisLabel;
-        private string _yAxisLabel;
-        private bool _crosshairXPositive;
-        private bool _crosshairYPositive;
-        private string _seriesName;
 
-        public CrosshairData currentCrosshairData { get; set; }
-        public CrosshairData nextCrosshairData { get; set; }
-        public CrosshairData previousCrosshairData { get; set; }
+        public CrosshairData CrosshairData { get; set; }
 
         public IFdaFunction Function { get; set; }
         public SciChart2DChartViewModel ChartVM { get; set; }
+        protected string SeriesName { get; private set; }
+        protected string YAxisLabel { get; private set; }
+        protected string XAxisLabel { get; private set; }
+        protected AxisAlignment XAxisAlignment { get; set; } = AxisAlignment.Default;
+        protected AxisAlignment YAxisAlignment { get; set; } = AxisAlignment.Default;
+
+        private readonly FdaCrosshairChartModifier _modifier;
 
 
         public ChartControlBase(string chartModelUniqueName, string xAxisLabel, string yAxisLabel, string seriesName, bool crosshairXPositive, bool crosshairYPositive)
         {
             ChartVM = new SciChart2DChartViewModel(chartModelUniqueName);
+            _modifier = new FdaCrosshairChartModifier(crosshairXPositive, crosshairYPositive);
+            ChartVM.ModifierGroup.ChildModifiers.Add(_modifier);
 
-            _crosshairXPositive = crosshairXPositive;
-            _crosshairYPositive = crosshairYPositive;
-            _seriesName = seriesName;
-            _xAxisLabel = xAxisLabel;
-            _yAxisLabel = yAxisLabel;
+            SeriesName = seriesName;
+            XAxisLabel = xAxisLabel;
+            YAxisLabel = yAxisLabel;
         }
 
-        public void UpdatePlotData(IFdaFunction function)
+        public void SetFunction(IFdaFunction function)
         {
             Function = function;
-            currentCrosshairData = new CrosshairData(Function);
-            ChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(_crosshairXPositive, _crosshairYPositive, currentCrosshairData));
+            CrosshairData = new CrosshairData(Function);
+            _modifier.CrosshairData = CrosshairData;
+        }
+
+        public void RefreshViewModel()
+        {
+            //The old ChartVM is guaranteed to be non-null.
+            ChartVM.ModifierGroup.ChildModifiers.Remove(_modifier);
+            ChartVM = new SciChart2DChartViewModel(ChartVM);
+            ChartVM.ModifierGroup.ChildModifiers.Add(_modifier);
         }
 
         //public abstract void LinkPlots();
@@ -50,9 +59,13 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
         {
             if (Function != null)
             {
-                List<ICoordinate> coordinates = Function.Coordinates;
-                SciLineData lineData = new NumericLineData(getXValues(), getYValues(), "asdf", _seriesName, _xAxisLabel, _yAxisLabel, PlotType.Line);
-                ChartVM.LineData.Set(new List<SciLineData>() { lineData });
+                SciLineData lineData = new NumericLineData(getXValues(), getYValues(), "asdf", SeriesName, XAxisLabel, YAxisLabel, PlotType.Line)
+                {
+                    XAxisAlignment = XAxisAlignment,
+                    YAxisAlignment = YAxisAlignment,
+                };
+                ChartVM.LineData.Clear();
+                ChartVM.LineData.Add(lineData);
             }
         }
 

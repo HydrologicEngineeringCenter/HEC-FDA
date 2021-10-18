@@ -3,6 +3,7 @@ using HEC.Plotting.Core;
 using SciChart.Charting.ChartModifiers;
 using SciChart.Charting.Model;
 using SciChart.Charting.Numerics.CoordinateCalculators;
+using SciChart.Charting.Visuals.Annotations;
 using SciChart.Core.Extensions;
 using SciChart.Core.Utility.Mouse;
 using System;
@@ -18,71 +19,86 @@ namespace ViewModel.ImpactAreaScenario
 {
     public class FdaCrosshairChartModifier: ChartModifierBase
     {
-        private readonly CrosshairData _crosshairData;
         private readonly bool _xLinePositive;
         private readonly bool _yLinePositive;
         private readonly Line _xLine = new Line() { Stroke = Brushes.Black, StrokeThickness = 1.0, };
-        private readonly Line _xAxisLine = new Line() { Stroke = Brushes.Black, StrokeThickness = 1.0, };
         private readonly Line _yLine = new Line() { Stroke = Brushes.Black, StrokeThickness = 1.0, };
-        private readonly Line _yAxisLine = new Line() { Stroke = Brushes.Black, StrokeThickness = 1.0, };
+        private readonly Rectangle _mouseRect = new Rectangle() { Stroke = Brushes.Red, StrokeThickness = 0.5, Fill = new SolidColorBrush(new Color() { R = 255, G = 0, B = 0, A = 100 }), Width = 5, Height = 5};
         private bool _frozen;
 
-        public FdaCrosshairChartModifier(bool xLinePositive, bool yLinePositive, CrosshairData data)
+        private CrosshairData _crosshairData;
+        public CrosshairData CrosshairData
         {
-            _crosshairData = data;
+            get => _crosshairData;
+            set
+            {
+                if (_crosshairData != null)
+                {
+                    _crosshairData.PreviousUpdated -= PreviousDataUpdated;
+                    _crosshairData.NextUpdated -= NextDataUpdated;
+                }
+
+                _crosshairData = value;
+
+                if (_crosshairData != null)
+                {
+                    _crosshairData.PreviousUpdated += PreviousDataUpdated;
+                    _crosshairData.NextUpdated += NextDataUpdated;
+                }
+            }
+        }
+
+        public FdaCrosshairChartModifier(bool xLinePositive, bool yLinePositive)
+        {
             _xLinePositive = xLinePositive;
             _yLinePositive = yLinePositive;
-
-            _crosshairData.PreviousUpdated += PreviousDataUpdated;
-            _crosshairData.NextUpdated += NextDataUpdated;
         }
 
         public FdaCrosshairChartModifier(FdaCrosshairChartModifier original)
-            :this(original._xLinePositive, original._yLinePositive, original._crosshairData)
+            :this(original._xLinePositive, original._yLinePositive)
         {
-            //Remove strong references to the listeners
-            original._crosshairData.PreviousUpdated -= original.PreviousDataUpdated;
-            original._crosshairData.NextUpdated -= original.NextDataUpdated;
+            CrosshairData = original.CrosshairData;
+            original.CrosshairData = null;
         }
         private double ComputeYFromX(double x)
         {
-            IOrdinate ord = IOrdinateFactory.Factory(x);
-            double retval = double.NaN;
-            try
-            {
-                ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(_crosshairData.Function.Coordinates, _crosshairData.Function.Interpolator);
-                IFunction sampledFunc = Sampler.Sample(func, .5);
-                if (ord.Value() < func.Domain.Min)
-                {
-                    retval = func.Range.Min;
-                }
-                else if (ord.Value() > func.Domain.Max)
-                {
-                    retval = func.Range.Max;
-                }
-                else
-                {
-                    retval = sampledFunc.F(ord).Value();
-                }
-            }
-            catch(Exception e)
-            {
-                //an exception gets thrown if it is out of range
-
-            }
-            return retval;
-            //var renderableSeries = ParentSurface.RenderableSeries[0];
-            //var xAxis = ParentSurface.XAxes[0];
-            //var xCoord = xAxis.GetCurrentCoordinateCalculator().GetCoordinate(x.ToDouble());
-            //var hitTest = renderableSeries.HitTestProvider.HitTest(new Point(xCoord, 0), 10000, true);
-
-            //IComparable output = double.NaN;
-            //if (hitTest.IsHit)
+            //IOrdinate ord = IOrdinateFactory.Factory(x);
+            //double retval = double.NaN;
+            //try
             //{
-            //    output = hitTest.YValue;
+            //    ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(CrosshairData.Function.Coordinates, CrosshairData.Function.Interpolator);
+            //    IFunction sampledFunc = Sampler.Sample(func, .5);
+            //    if (ord.Value() < func.Domain.Min)
+            //    {
+            //        retval = func.Range.Min;
+            //    }
+            //    else if (ord.Value() > func.Domain.Max)
+            //    {
+            //        retval = func.Range.Max;
+            //    }
+            //    else
+            //    {
+            //        retval = sampledFunc.F(ord).Value();
+            //    }
             //}
+            //catch(Exception e)
+            //{
+            //    an exception gets thrown if it is out of range
 
-            //return output;
+            //}
+            //return retval;
+            var renderableSeries = ParentSurface.RenderableSeries[0];
+            var xAxis = ParentSurface.XAxes[0];
+            var xCoord = xAxis.GetCurrentCoordinateCalculator().GetCoordinate(x.ToDouble());
+            var hitTest = renderableSeries.HitTestProvider.HitTest(new Point(xCoord, 0), 10000, true);
+
+            double output = double.NaN;
+            if (hitTest.IsHit)
+            {
+                output = hitTest.YValue.ToDouble();
+            }
+
+            return output;
         }
 
         private double ComputeXFromY(double y)
@@ -93,10 +109,10 @@ namespace ViewModel.ImpactAreaScenario
             {
                 //if the function is distributed then we will throw an exception
                 //when doing an inverseF(x), so we need to sample the function first.
-                ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(_crosshairData.Function.Coordinates, _crosshairData.Function.Interpolator);
+                ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(CrosshairData.Function.Coordinates, CrosshairData.Function.Interpolator);
                 IFunction sampledFunc = Sampler.Sample(func, .5);
                 retval = sampledFunc.InverseF(ord).Value();
-                //retval = _crosshairData.Function.InverseF(ord).Value();
+                //retval = CrosshairData.Function.InverseF(ord).Value();
             }
             catch(Exception e)
             {
@@ -159,7 +175,7 @@ namespace ViewModel.ImpactAreaScenario
                         {
                             y = (double)crosshairData.XValue;
                             x = ComputeXFromY(y);
-                            if (x == double.NaN)
+                            if (x.IsNaN())
                             {
                                 return;
                             }
@@ -168,7 +184,7 @@ namespace ViewModel.ImpactAreaScenario
                         {
                             x = (double)crosshairData.XValue;
                             y = ComputeYFromX(x);
-                            if (y == double.NaN)
+                            if (y.IsNaN())
                             {
                                 return;
                             }
@@ -181,7 +197,7 @@ namespace ViewModel.ImpactAreaScenario
                         {
                             y = (double)crosshairData.YValue;
                             x = ComputeXFromY(y);
-                            if (x == double.NaN)
+                            if (x.IsNaN())
                             {
                                 return;
                             }
@@ -190,7 +206,7 @@ namespace ViewModel.ImpactAreaScenario
                         {
                             x = (double)crosshairData.YValue;
                             y = ComputeYFromX(x);
-                            if(y == double.NaN)
+                            if(y.IsNaN())
                             {
                                 return;
                             }
@@ -198,9 +214,9 @@ namespace ViewModel.ImpactAreaScenario
                     }
                     break;
             }
-            if(x!= double.NaN && y != double.NaN)
+            if (!x.IsNaN() && !y.IsNaN())
             {
-                updateAction.Invoke(x, y);
+                updateAction?.Invoke(x, y);
             }
             
         }
@@ -210,12 +226,12 @@ namespace ViewModel.ImpactAreaScenario
         /// </summary>
         private void NextDataUpdated()
         {
-            UpdateFromData(_crosshairData.Next, _crosshairData.UpdatePreviousValues);
+            UpdateFromData(CrosshairData.Next, CrosshairData.UpdatePreviousValues);
         }
 
         private void PreviousDataUpdated()
         {
-            UpdateFromData(_crosshairData.Previous, _crosshairData.UpdateNextValues);
+            UpdateFromData(CrosshairData.Previous, CrosshairData.UpdateNextValues);
         }
 
         public override void OnModifierMouseDown(ModifierMouseArgs e)
@@ -247,17 +263,12 @@ namespace ViewModel.ImpactAreaScenario
             }
 
 
-            if (!ModifierSurface.Children.Contains(_xLine) && !ModifierSurface.Children.Contains(_yLine))
+            if (!ModifierSurface.Children.Contains(_xLine) && !ModifierSurface.Children.Contains(_yLine) && !ModifierSurface.Children.Contains(_mouseRect))
             {
                 ModifierSurface.Children.Add(_xLine);
                 ModifierSurface.Children.Add(_yLine);
+                ModifierSurface.Children.Add(_mouseRect);
             }
-
-            var xAxes = ParentSurface.XAxes;
-            var yAxes = ParentSurface.YAxes;
-            AddAxisLines(_xAxisLine, xAxes);
-            AddAxisLines(_yAxisLine, yAxes);
-
 
             //Master is always true first.
             if (e.IsMaster)
@@ -277,6 +288,7 @@ namespace ViewModel.ImpactAreaScenario
                 var children = axes[0].ModifierAxisCanvas.Children;
                 if (!children.Contains(axisLine))
                 {
+                    
                     children.Add(axisLine);
                 }
             }
@@ -291,8 +303,8 @@ namespace ViewModel.ImpactAreaScenario
             var xCoordCalc = xAxis.GetCurrentCoordinateCalculator();
             var yCoordCalc = yAxis.GetCurrentCoordinateCalculator();
 
-            var xComp = _crosshairData.XValue;
-            var yComp = _crosshairData.YValue;
+            var xComp = CrosshairData.XValue;
+            var yComp = CrosshairData.YValue;
 
             if (xComp != null && yComp != null)
             {
@@ -349,6 +361,14 @@ namespace ViewModel.ImpactAreaScenario
 
             var xCoordCalc = xAxis.GetCurrentCoordinateCalculator();
             var yCoordCalc = yAxis.GetCurrentCoordinateCalculator();
+            var hitTest2 = renderableSeries.HitTestProvider.VerticalSliceHitTest(new Point(mousePoint.X, mousePoint.Y), true);
+
+            if (hitTest2.IsHit)
+			{
+                var coordinate = new Point(xCoordCalc.GetCoordinate(hitTest2.XValue.ToDouble()),
+                    yCoordCalc.GetCoordinate(hitTest2.YValue.ToDouble()));
+                _mouseRect.CanvasXy(coordinate.X - _mouseRect.Width / 2, coordinate.Y - _mouseRect.Height / 2);
+            }
 
             var hitTest = renderableSeries.HitTestProvider.HitTest(new Point(mousePoint.X, 0), 10000, true);
             if (hitTest.IsHit)
@@ -358,7 +378,7 @@ namespace ViewModel.ImpactAreaScenario
 
                 UpdateLineDataForPoint(xCoordCalc, yCoordCalc, coordinate);
 
-                _crosshairData.UpdateValuesInSharedPlots(hitTest.XValue, hitTest.YValue);
+                CrosshairData.UpdateValuesInSharedPlots(hitTest.XValue, hitTest.YValue);
             }
         }
     }

@@ -1,17 +1,12 @@
 ﻿using Functions;
-using FunctionsView.ViewModel;
 using HEC.Plotting.Core;
-using HEC.Plotting.SciChart2D.Charts;
 using HEC.Plotting.SciChart2D.Controller;
-using HEC.Plotting.SciChart2D.DataModel;
-using HEC.Plotting.SciChart2D.ViewModel;
 using Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using ViewModel.AggregatedStageDamage;
 using ViewModel.Editors;
@@ -25,27 +20,20 @@ using ViewModel.Utilities;
 
 namespace ViewModel.ImpactAreaScenario.Editor
 {
-    public class IASEditorVM : BaseEditorVM
+	public class IASEditorVM : BaseEditorVM
     {
-        private Chart2DController _controller;
-        private AdditionalThresholdsVM _additionalThresholdsVM;
+        private readonly AdditionalThresholdsVM _additionalThresholdsVM = new AdditionalThresholdsVM();
         private AggregatedStageDamageElement _selectedStageDamageElement;
         private List<string> _damageCategories;
         private string _selectedDamageCategory;
         private RatingCurveElement _selectedRatingCurveElement;
 
 
-        //public SciChart2DChartViewModel FlowFreqChartVM { get; set; } = new SciChart2DChartViewModel("Flow Frequency");
-        public ChartControlBase FrequencyRelationshipControl { get; set; }
-        public ChartControlBase RatingRelationshipControl { get; set; }
-        public ChartControlBase StageDamageControl { get; set; }
-        public ChartControlBase DamageFrequencyControl { get; set; }
+        public ChartControlBase FrequencyRelationshipControl { get; } = new FrequencyRelationshipControl();
+        public ChartControlBase RatingRelationshipControl { get; } = new RatingRelationshipControl();
+        public ChartControlBase StageDamageControl { get; } = new StageDamageControl();
+        public ChartControlBase DamageFrequencyControl { get; } = new DamageFrequencyControl();
 
-
-
-        //public SciChart2DChartViewModel RatingChartVM { get; set; } = new SciChart2DChartViewModel("Rating Curve");
-        //public SciChart2DChartViewModel StageDamageChartVM { get; set; } = new SciChart2DChartViewModel("Stage Damage");
-        //public SciChart2DChartViewModel DamageFreqChartVM { get; set; } = new SciChart2DChartViewModel("Damage Frequency");
         public int Year { get; set; }
 
 
@@ -88,38 +76,24 @@ namespace ViewModel.ImpactAreaScenario.Editor
         /// <summary>
         /// This is the create new ctor
         /// </summary>
-        public IASEditorVM():base(null)
+        public IASEditorVM() : this(null)
         {
-            FrequencyRelationshipControl = new FrequencyRelationshipControl();
-            RatingRelationshipControl = new RatingRelationshipControl();
-            StageDamageControl = new StageDamageControl();
-            DamageFrequencyControl = new DamageFrequencyControl();
 
-            //hook up the navigate event for the additional thresholds dialog
-            _additionalThresholdsVM = new AdditionalThresholdsVM();
-            _additionalThresholdsVM.RequestNavigation += Navigate;
-
-            Thresholds = new List<AdditionalThresholdRowItem>();
-
-            LoadElements();
         }
 
         //todo: this ctor probably needs some work
         public IASEditorVM(IASElement elem) : base(elem, null)
         {
-            FrequencyRelationshipControl = new FrequencyRelationshipControl();
-            RatingRelationshipControl = new RatingRelationshipControl();
-            StageDamageControl = new StageDamageControl();
-            DamageFrequencyControl = new DamageFrequencyControl();
-
             //hook up the navigate event for the additional thresholds dialog
-            _additionalThresholdsVM = new AdditionalThresholdsVM();
             _additionalThresholdsVM.RequestNavigation += Navigate;
 
             Thresholds = new List<AdditionalThresholdRowItem>();
 
             LoadElements();
-            FillForm(elem);
+            if (elem != null)
+            {
+                FillForm(elem);
+            }
         }
 
         private void FillForm(IASElement elem)
@@ -299,22 +273,23 @@ namespace ViewModel.ImpactAreaScenario.Editor
             {
                 //get the current curves and set that data on the chart controls
                 //this update call will set the current crosshair data on each one
-                FrequencyRelationshipControl.UpdatePlotData(getFrequencyRelationshipFunction());
-                RatingRelationshipControl.UpdatePlotData(getRatingCurveFunction());
-                StageDamageControl.UpdatePlotData(getStageDamageFunction());
-                DamageFrequencyControl.UpdatePlotData(getDamageFrequencyFunction());
+                FrequencyRelationshipControl.SetFunction(getFrequencyRelationshipFunction());
+                RatingRelationshipControl.SetFunction(getRatingCurveFunction());
+                StageDamageControl.SetFunction(getStageDamageFunction());
+                DamageFrequencyControl.SetFunction(getDamageFrequencyFunction());
+                //DamageFrequencyControl.CrosshairData = new CrosshairData(getDamageFrequencyFunction());
 
                 //link the crosshair data to eachother
-                CrosshairData freqRelationshipCrosshairData = FrequencyRelationshipControl.currentCrosshairData;
-                CrosshairData ratingCrosshairData = RatingRelationshipControl.currentCrosshairData;
+                CrosshairData freqRelationshipCrosshairData = FrequencyRelationshipControl.CrosshairData;
+                CrosshairData ratingCrosshairData = RatingRelationshipControl.CrosshairData;
                 freqRelationshipCrosshairData.Next = new SharedAxisCrosshairData(ratingCrosshairData, Axis.Y, Axis.Y);
                 ratingCrosshairData.Previous = new SharedAxisCrosshairData(freqRelationshipCrosshairData, Axis.Y, Axis.Y);
 
-                CrosshairData stageDamageCrosshairData = StageDamageControl.currentCrosshairData;
+                CrosshairData stageDamageCrosshairData = StageDamageControl.CrosshairData;
                 ratingCrosshairData.Next = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.X, Axis.X);
                 stageDamageCrosshairData.Previous = new SharedAxisCrosshairData(ratingCrosshairData, Axis.X, Axis.X);
 
-                CrosshairData damageFreqCrosshairData = DamageFrequencyControl.currentCrosshairData;
+                CrosshairData damageFreqCrosshairData = DamageFrequencyControl.CrosshairData;
                 stageDamageCrosshairData.Next = new SharedAxisCrosshairData(damageFreqCrosshairData, Axis.Y, Axis.Y);
                 damageFreqCrosshairData.Previous = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.Y, Axis.Y);
 

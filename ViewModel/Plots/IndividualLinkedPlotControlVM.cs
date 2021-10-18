@@ -340,46 +340,45 @@ namespace ViewModel.Plots
 
         private void SetChartModifier(IFdaFunction function)
         {
-            CrosshairData = new CrosshairData(function);
             IParameterEnum funcType = function.ParameterType;
             switch(funcType)
             {
                 case IParameterEnum.InflowFrequency:
                     {
-                        ChartModifier = new FdaCrosshairChartModifier(false, false, CrosshairData);
+                        ChartModifier = new FdaCrosshairChartModifier(false, false);
                         break;
                     }
                 case IParameterEnum.InflowOutflow:
                     {
-                        ChartModifier = new FdaCrosshairChartModifier(false, false, CrosshairData);
+                        ChartModifier = new FdaCrosshairChartModifier(false, false);
                         CrosshairData.UpdateModulator += UpdateDoubleLineModulator;
                         break;
                     }
                 case IParameterEnum.Rating:
                     {
-                        ChartModifier = new FdaCrosshairChartModifier(false, true, CrosshairData);
+                        ChartModifier = new FdaCrosshairChartModifier(false, true);
                         break;
                     }
                 case IParameterEnum.LateralStructureFailure:
                     {
-                        ChartModifier = new FdaCrosshairChartModifier(false, true, CrosshairData);
+                        ChartModifier = new FdaCrosshairChartModifier(false, true);
                         CrosshairData.UpdateHorizontalFailureFunction += UpdateHorizontalLateralStructure;
                         break;
                     }
                 case IParameterEnum.ExteriorInteriorStage:
                     {
-                        ChartModifier = new FdaCrosshairChartModifier(true, true, CrosshairData);
+                        ChartModifier = new FdaCrosshairChartModifier(true, true);
                         CrosshairData.UpdateHorizontalModulator += UpdateHorizontalDoubleLineModulator;
                         break;
                     }
                 case IParameterEnum.InteriorStageDamage:
                     {
-                        ChartModifier = new FdaCrosshairChartModifier(true, true, CrosshairData);
+                        ChartModifier = new FdaCrosshairChartModifier(true, true);
                         break;
                     }
                 case IParameterEnum.DamageFrequency:
                     {
-                        ChartModifier = new FdaCrosshairChartModifier(true, false, CrosshairData);
+                        ChartModifier = new FdaCrosshairChartModifier(true, false);
                         break;
                     }               
                 default:

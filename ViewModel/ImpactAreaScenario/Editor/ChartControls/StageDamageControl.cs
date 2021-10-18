@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HEC.Plotting.Core.DataModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
         public StageDamageControl()
             : base("StageDamage", "Stage", "Damage", "Stage-Damage", true, true)
         {
-
+            YAxisAlignment = AxisAlignment.Left;
         }
 
     }
