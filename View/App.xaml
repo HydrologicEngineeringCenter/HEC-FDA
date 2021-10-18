@@ -299,9 +299,7 @@
         <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:AddStageDamageToIASVM }" >
             <ImpactAreaScenarioView:AddStageDamageToIAS/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:IASPlotEditorVM }" >
-            <ImpactAreaScenarioView:IASPlotEditor/>
-        </DataTemplate>
+        
         <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:AddFlowFrequencyToIASVM }" >
             <ImpactAreaScenarioView:AddFlowFrequencyToIAS/>
         </DataTemplate>

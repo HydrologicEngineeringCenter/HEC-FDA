@@ -173,10 +173,10 @@ namespace ViewModel.StageTransforms
                 {
                     retval = false;
                 }
-                if (!Curve.Equals(elem.Curve))
-                {
-                    retval = false;
-                }
+                //if (!Curve.Equals(elem.Curve))
+                //{
+                //    retval = false;
+                //}
             }
             else
             {

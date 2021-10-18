@@ -318,10 +318,11 @@ namespace ViewModel.ImpactAreaScenario
 
 
             ///////////////////////////////////////////
-
-            Editor.IASEditorVM vm2 = new Editor.IASEditorVM();
-            vm2.RequestNavigation += Navigate;
-            DynamicTabVM tab2 = new DynamicTabVM("Impact Area Scenario Editor", vm2, "CreateCondition");
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                 .WithSiblingRules(this);
+            Editor.IASEditorVM vm = new Editor.IASEditorVM(actionManager);
+            vm.RequestNavigation += Navigate;
+            DynamicTabVM tab2 = new DynamicTabVM("Impact Area Scenario Editor", vm, "CreateIAS");
             Navigate(tab2, false, false);
 
         }

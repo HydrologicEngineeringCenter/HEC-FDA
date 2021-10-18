@@ -69,36 +69,39 @@ namespace View.ImpactAreaScenario.Editor
         private void plotBtn_Click(object sender, RoutedEventArgs e)
         {
             IASEditorVM vm = (IASEditorVM)this.DataContext;
-
-            if (!_plotsHaveBeenAdded)
+            if (vm.CanPlot())
             {
-                //flow frequency                
-                PlotsGrid.Children.Add(_flowFreqChart);
-                Grid.SetRow(_flowFreqChart, 0);
-                Grid.SetColumn(_flowFreqChart, 1);
 
-                //rating
-                PlotsGrid.Children.Add(_ratingChart);
-                Grid.SetRow(_ratingChart, 0);
-                Grid.SetColumn(_ratingChart, 0);
+                if (!_plotsHaveBeenAdded)
+                {
+                    //flow frequency                
+                    PlotsGrid.Children.Add(_flowFreqChart);
+                    Grid.SetRow(_flowFreqChart, 0);
+                    Grid.SetColumn(_flowFreqChart, 1);
 
-                //stage damage
-                PlotsGrid.Children.Add(_stageDamageChart);
-                Grid.SetRow(_stageDamageChart, 1);
-                Grid.SetColumn(_stageDamageChart, 0);
+                    //rating
+                    PlotsGrid.Children.Add(_ratingChart);
+                    Grid.SetRow(_ratingChart, 0);
+                    Grid.SetColumn(_ratingChart, 0);
 
-                //damage freq
-                PlotsGrid.Children.Add(_damageFreqChart);
-                Grid.SetRow(_damageFreqChart, 1);
-                Grid.SetColumn(_damageFreqChart, 1);
+                    //stage damage
+                    PlotsGrid.Children.Add(_stageDamageChart);
+                    Grid.SetRow(_stageDamageChart, 1);
+                    Grid.SetColumn(_stageDamageChart, 0);
 
-                _plotsHaveBeenAdded = true;
+                    //damage freq
+                    PlotsGrid.Children.Add(_damageFreqChart);
+                    Grid.SetRow(_damageFreqChart, 1);
+                    Grid.SetColumn(_damageFreqChart, 1);
+
+                    _plotsHaveBeenAdded = true;
+                }
+
+
+                //todo: link the charts everytime or only once?
+                LinkTheCharts();
+                vm.Plot();
             }
-
-
-            //todo: link the charts everytime or only once?
-            LinkTheCharts();
-            vm.Plot();
         }
 
         private Chart2D[] GetChartsThatAreShowing()
