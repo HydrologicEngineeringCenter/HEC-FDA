@@ -178,7 +178,7 @@ namespace ead{
             }
             return new paireddata.PairedData(x, y);
         }
-        private void ComputeDamagesFromStageFrequency(paireddata.PairedData frequency_stage)
+        private void ComputeDamagesFromStageFrequency(paireddata.IPairedData frequency_stage)
         {
             double totalEAD = 0.0;
             foreach(paireddata.UncertainPairedData pd in _damage_category_stage_damage){
