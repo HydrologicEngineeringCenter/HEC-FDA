@@ -7,7 +7,7 @@ using Statistics.Validation;
 using System.Xml.Linq;
 
 namespace Statistics.Histograms
-{
+{//TODO: REMOVE Idistribution
     public class Histogram : IDistribution
     {
 
@@ -19,14 +19,31 @@ namespace Statistics.Histograms
         public double Max { get; set; }
         
         #region IDistribution Properties
-        public double Mean { get; }
-        public double Median { get; }
-        public double Variance { get; }
-        public double Skewness { get; }
-        public double Kurtosis { get; }
-        public double StandardDeviation { get; }
+        public double Mean { get {
+                return GetMean();
+            } 
+        }
+        public double Median { get {
+                return GetMedian();
+            } 
+        }
+        public double Variance { get {
+                return GetVariance();
+            } 
+        }
+        public double Skewness { get {
+                return GetSkewness();
+            } 
+        }
+        public double StandardDeviation { get {
+                return Math.Pow(Variance, 0.5);
+            } 
+        }
         public IRange<double> Range { get; set; } //includes min and max 
-        public int SampleSize { get; }
+        public int SampleSize { get {
+                return GetSampleSize();
+            }
+        }
         public double Mode { get; }
         
         public IDistributionEnum Type => IDistributionEnum.Histogram;
@@ -38,7 +55,6 @@ namespace Statistics.Histograms
         #endregion
 
         #region Constructor
-        //we will need to initiate the histogram, then call add observations to fill the histogram with data
         public Histogram(IData data, double binWidth)
         {
             BinWidth = binWidth;
@@ -47,19 +63,8 @@ namespace Statistics.Histograms
             Min = Math.Floor(data.Range.Min);
             Max = numberOfBins * binWidth + binWidth;
             AddObservationsToHistogram(data);
-
-            SampleSize = GetSampleSize();
             Range = GetRange(Min, Max);
-            Mean = GetMean();
-            Median = GetMedian();
-            Variance = GetVariance();
-            Skewness = GetSkewness();
-            StandardDeviation = Math.Pow(Variance, 0.5);
 
-
-            // State = Validate(new Validation.HistogramValidator(), out IEnumerable<IMessage> msgs);
-            //Messages = stats.Messages.Concat(msgs);
-            //IsConverged = false;
         }
         #endregion
 

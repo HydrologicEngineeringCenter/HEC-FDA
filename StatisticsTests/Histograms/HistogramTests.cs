@@ -91,7 +91,7 @@ namespace StatisticsTests.Histograms
         }
 
         [Theory]
-        [InlineData(1, 0.5, 3)]
+        [InlineData(1, 0.4, 3)]
         public void Histogram_InvCDF(double binWidth, double prob, double expected)
         {
             double[] data = new double[6] { 1, 2, 3, 4, 5, 6};
