@@ -13,7 +13,7 @@ namespace fda_model_test
         //These were previously used in pairedDataTest but were moved here to be used for ead compute testing. 
         static double[] Probabilities = { .999999, 0.0000001 };
         static double[] Flows = { 0, 100000 };
-        static double[] Stages = { 0, 200000 };
+        static double[] Stages = { 0, 150000 };
         //static double[] ProbabilitiesOfFailure = { .001, .01, .1, .5, 1 };
         //static double[] ElevationsOfFailure = { 600, 610, 650, 700, 750 };
         [Theory]
