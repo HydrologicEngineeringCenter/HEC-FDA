@@ -112,11 +112,11 @@ namespace ViewModel.ImpactAreaScenario
         //    return this;
         //}
 
-        public IASElement build()
-        {
-            return new IASElement(_name, _description,_analysisYear,_impactAreaID,_flowFreqID,
-                _inflowOutflowID,_ratingID,_extIntStageID ,_leveeFailureID, _stageDamageID ,_metricType,_thresholdValue);
-        }
+        //public IASElement build()
+        //{
+        //    return new IASElement(_name, _description,_analysisYear,_impactAreaID,_flowFreqID,
+        //        _inflowOutflowID,_ratingID,_extIntStageID ,_leveeFailureID, _stageDamageID ,_metricType,_thresholdValue);
+        //}
 
     }
 }

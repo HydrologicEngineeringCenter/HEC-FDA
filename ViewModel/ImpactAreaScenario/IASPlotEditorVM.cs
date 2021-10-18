@@ -179,68 +179,68 @@ namespace ViewModel.ImpactAreaScenario
             IndividualLinkedPlotControlVM control3VM, IndividualLinkedPlotControlVM controlLeveeFailureVM, IndividualLinkedPlotControlVM control5VM, IndividualLinkedPlotControlVM control7VM, IndividualLinkedPlotControlVM control8VM,
            IASElement element, Editors.EditorActionManager actionManager) : base(element,"","","",actionManager)
         {
-            ImpactAreas = impAreas;
-            //set the selected impact area
-            foreach(ImpactAreaElement elem in impAreas)
-            {
-                if(element.ImpactAreaID == elem.GetElementID())
-                {
-                    SelectedImpactArea = elem;
-                }
-            }
-            Plot0ControlVM = indLinkedPlotControl0VM;
-            //start with only plot0 button enabled
-            Plot0ControlVM.ImportButtonVM.IsEnabled = true;
+            //ImpactAreas = impAreas;
+            ////set the selected impact area
+            //foreach(ImpactAreaElement elem in impAreas)
+            //{
+            //    if(element.ImpactAreaID == elem.GetElementID())
+            //    {
+            //        SelectedImpactArea = elem;
+            //    }
+            //}
+            //Plot0ControlVM = indLinkedPlotControl0VM;
+            ////start with only plot0 button enabled
+            //Plot0ControlVM.ImportButtonVM.IsEnabled = true;
 
-            Plot1ControlVM = control1VM;
-            Plot3ControlVM = control3VM;
-            PlotFailureControlVM = controlLeveeFailureVM;
-            Plot5ControlVM = control5VM;
-            Plot7ControlVM = control7VM;
-            Plot8ControlVM = control8VM;
+            //Plot1ControlVM = control1VM;
+            //Plot3ControlVM = control3VM;
+            //PlotFailureControlVM = controlLeveeFailureVM;
+            //Plot5ControlVM = control5VM;
+            //Plot7ControlVM = control7VM;
+            //Plot8ControlVM = control8VM;
 
-            AttachEventsToControls();
-            LoadThresholdTypes();
-            Name = element.Name;
-            Description = element.Description;
-            Year = element.AnalysisYear;
-            SelectedThresholdType = element.ThresholdType;
-            ThresholdValue = element.ThresholdValue;
+            //AttachEventsToControls();
+            //LoadThresholdTypes();
+            //Name = element.Name;
+            //Description = element.Description;
+            //Year = element.AnalysisYear;
+            //SelectedThresholdType = element.ThresholdType;
+            //ThresholdValue = element.ThresholdValue;
 
-            if (Plot0ControlVM.CurveImporterVM != null && Plot0ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
-            {
-                Plot0ControlVM.AddCurveToPlot(this, new EventArgs());
-            }
-            if (Plot1ControlVM.CurveImporterVM != null && Plot1ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
-            {
-                Plot1ControlVM.AddCurveToPlot(this, new EventArgs());
-                Plot1ControlVM.CurrentVM = (BaseViewModel)Plot1ControlVM.ModulatorPlotWrapperVM;
-            }
-            if (Plot3ControlVM.CurveImporterVM != null && Plot3ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
-            {
-                Plot3ControlVM.AddCurveToPlot(this, new EventArgs());
-            }
-            if (PlotFailureControlVM.CurveImporterVM != null && PlotFailureControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
-            {
-                PlotFailureControlVM.AddCurveToPlot(this, new EventArgs());
-                PlotFailureControlVM.CrosshairData.IsPlotFailureFunction = true;
-                PlotFailureControlVM.CurrentVM = (BaseViewModel)PlotFailureControlVM.ModulatorPlotWrapperVM;
-            }
-            if (Plot5ControlVM.CurveImporterVM != null && Plot5ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
-            {
-                Plot5ControlVM.AddCurveToPlot(this, new EventArgs());
-                Plot5ControlVM.CrosshairData.IsPlot5Modulator = true;
-                Plot5ControlVM.SetMinMaxModulatorValues();
-                Plot5ControlVM.CurrentVM = (BaseViewModel)Plot5ControlVM.ModulatorPlotWrapperVM;
-            }
-            if (Plot7ControlVM.CurveImporterVM != null && Plot7ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
-            {
-                Plot7ControlVM.AddCurveToPlot(this, new EventArgs());
-            }
+            //if (Plot0ControlVM.CurveImporterVM != null && Plot0ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
+            //{
+            //    Plot0ControlVM.AddCurveToPlot(this, new EventArgs());
+            //}
+            //if (Plot1ControlVM.CurveImporterVM != null && Plot1ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
+            //{
+            //    Plot1ControlVM.AddCurveToPlot(this, new EventArgs());
+            //    Plot1ControlVM.CurrentVM = (BaseViewModel)Plot1ControlVM.ModulatorPlotWrapperVM;
+            //}
+            //if (Plot3ControlVM.CurveImporterVM != null && Plot3ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
+            //{
+            //    Plot3ControlVM.AddCurveToPlot(this, new EventArgs());
+            //}
+            //if (PlotFailureControlVM.CurveImporterVM != null && PlotFailureControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
+            //{
+            //    PlotFailureControlVM.AddCurveToPlot(this, new EventArgs());
+            //    PlotFailureControlVM.CrosshairData.IsPlotFailureFunction = true;
+            //    PlotFailureControlVM.CurrentVM = (BaseViewModel)PlotFailureControlVM.ModulatorPlotWrapperVM;
+            //}
+            //if (Plot5ControlVM.CurveImporterVM != null && Plot5ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
+            //{
+            //    Plot5ControlVM.AddCurveToPlot(this, new EventArgs());
+            //    Plot5ControlVM.CrosshairData.IsPlot5Modulator = true;
+            //    Plot5ControlVM.SetMinMaxModulatorValues();
+            //    Plot5ControlVM.CurrentVM = (BaseViewModel)Plot5ControlVM.ModulatorPlotWrapperVM;
+            //}
+            //if (Plot7ControlVM.CurveImporterVM != null && Plot7ControlVM.CurveImporterVM.SelectedElement != null)//then we are opening an existing node
+            //{
+            //    Plot7ControlVM.AddCurveToPlot(this, new EventArgs());
+            //}
 
 
-            AddEvents();
-            UpdateChartLinkages();
+            //AddEvents();
+            //UpdateChartLinkages();
 
         }
         /// <summary>
@@ -1218,43 +1218,43 @@ namespace ViewModel.ImpactAreaScenario
         }
         public override void Save()
         {
-            //todo: where is the validation?
-            if (Description == null) { Description = ""; }
-            //ConditionLocationYearNoLateralStructure condition = CreateConditionNoLateralStructure();
-            int flowFreqID = GetSelectedElementIDForControl(Plot0ControlVM);
-            int inflowOutflowID = GetSelectedElementIDForControl(Plot1ControlVM);
-            int ratingID = GetSelectedElementIDForControl(Plot3ControlVM);
-            int leveeFailureID = GetSelectedElementIDForControl(PlotFailureControlVM);
-            int extIntID = GetSelectedElementIDForControl(Plot5ControlVM);
-            int stageDamageID = GetSelectedElementIDForControl(Plot7ControlVM);
-            //ConditionBuilder builder = new ConditionBuilder(Name, Description, Year, SelectedImpactArea.GetElementID(), SelectedThresholdType, ThresholdValue)
-            //.WithAnalyticalFreqElem()
-            IASElement elementToSave = new IASElement(Name, Description, Year, SelectedImpactArea.GetElementID(),
-                flowFreqID, inflowOutflowID, ratingID, extIntID, leveeFailureID, stageDamageID, SelectedThresholdType, ThresholdValue);
-            CurrentElement = elementToSave;
-            //because this is a new element i need to pass the reference along so that
-            //i can update this editor when curves get edited or removed while this is open.
-            elementToSave.ConditionsEditor = this;
+            ////todo: where is the validation?
+            //if (Description == null) { Description = ""; }
+            ////ConditionLocationYearNoLateralStructure condition = CreateConditionNoLateralStructure();
+            //int flowFreqID = GetSelectedElementIDForControl(Plot0ControlVM);
+            //int inflowOutflowID = GetSelectedElementIDForControl(Plot1ControlVM);
+            //int ratingID = GetSelectedElementIDForControl(Plot3ControlVM);
+            //int leveeFailureID = GetSelectedElementIDForControl(PlotFailureControlVM);
+            //int extIntID = GetSelectedElementIDForControl(Plot5ControlVM);
+            //int stageDamageID = GetSelectedElementIDForControl(Plot7ControlVM);
+            ////ConditionBuilder builder = new ConditionBuilder(Name, Description, Year, SelectedImpactArea.GetElementID(), SelectedThresholdType, ThresholdValue)
+            ////.WithAnalyticalFreqElem()
+            //IASElement elementToSave = new IASElement(Name, Description, Year, SelectedImpactArea.GetElementID(),
+            //    flowFreqID, inflowOutflowID, ratingID, extIntID, leveeFailureID, stageDamageID, SelectedThresholdType, ThresholdValue);
+            //CurrentElement = elementToSave;
+            ////because this is a new element i need to pass the reference along so that
+            ////i can update this editor when curves get edited or removed while this is open.
+            //elementToSave.ConditionsEditor = this;
 
-            LastEditDate = DateTime.Now.ToString("G");
-            elementToSave.LastEditDate = LastEditDate;
-            //ICondition modelCondition = CreateCondition();
-            //ConditionsElement elementToSave = new ConditionsElement()
-            Saving.PersistenceManagers.IASPersistenceManager manager = Saving.PersistenceFactory.GetIASManager();
-            if (IsImporter && HasSaved == false)
-            {
-                manager.SaveNew(elementToSave);
-                HasSaved = true;
-                OriginalElement = elementToSave;
-            }
-            else
-            {
-                manager.SaveExisting((IASElement)OriginalElement, elementToSave, 0);
-            }
-            SavingText = "Last Saved: " + elementToSave.LastEditDate;
-            //UpdateMessages(true);
-            ReloadMessages(true);
-            HasChanges = false;
+            //LastEditDate = DateTime.Now.ToString("G");
+            //elementToSave.LastEditDate = LastEditDate;
+            ////ICondition modelCondition = CreateCondition();
+            ////ConditionsElement elementToSave = new ConditionsElement()
+            //Saving.PersistenceManagers.IASPersistenceManager manager = Saving.PersistenceFactory.GetIASManager();
+            //if (IsImporter && HasSaved == false)
+            //{
+            //    manager.SaveNew(elementToSave);
+            //    HasSaved = true;
+            //    OriginalElement = elementToSave;
+            //}
+            //else
+            //{
+            //    manager.SaveExisting((IASElement)OriginalElement, elementToSave, 0);
+            //}
+            //SavingText = "Last Saved: " + elementToSave.LastEditDate;
+            ////UpdateMessages(true);
+            //ReloadMessages(true);
+            //HasChanges = false;
         }
 
 

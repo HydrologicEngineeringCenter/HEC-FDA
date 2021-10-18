@@ -131,22 +131,24 @@ namespace ViewModel.ImpactAreaScenario
             set { _AnalysisYear = value; NotifyPropertyChanged(); }
         }
         
-        /// <summary>
-        /// The selected threshold type.
-        /// </summary>
-        public IMetricEnum ThresholdType {
-            get { return _MetricType; }
-            set { _MetricType = value; NotifyPropertyChanged(); }
-        }
+        ///// <summary>
+        ///// The selected threshold type.
+        ///// </summary>
+        //public IMetricEnum ThresholdType {
+        //    get { return _MetricType; }
+        //    set { _MetricType = value; NotifyPropertyChanged(); }
+        //}
 
-        /// <summary>
-        /// The value for the selected threshold.
-        /// </summary>
-        public double ThresholdValue
-        {
-            get { return _ThresholdValue; }
-            set { _ThresholdValue = value; NotifyPropertyChanged(); }
-        }
+        ///// <summary>
+        ///// The value for the selected threshold.
+        ///// </summary>
+        //public double ThresholdValue
+        //{
+        //    get { return _ThresholdValue; }
+        //    set { _ThresholdValue = value; NotifyPropertyChanged(); }
+        //}
+
+        public List<AdditionalThresholdRowItem> Thresholds { get; set; }
 
         #endregion
         #region Constructors
@@ -176,8 +178,7 @@ namespace ViewModel.ImpactAreaScenario
             LeveeFailureID = elem.LeveeFailureID;
             StageDamageID = elem.StageDamageID;
 
-            ThresholdType = elem.ThresholdType;
-            ThresholdValue = elem.ThresholdValue;
+            Thresholds = elem.Thresholds;
             ComputeResults = elem.ComputeResults;           
 
             NamedAction edit = new NamedAction();
@@ -242,7 +243,7 @@ namespace ViewModel.ImpactAreaScenario
         /// <param name="thresholdValue"></param>
         public IASElement(string name, string description, int analysisYear, int impactAreaID,
                      int flowFreqID, int inflowOutflowID, int ratingID, int extIntID, int leveeFailureID, int stageDamageID,
-                   IMetricEnum thresholdType, double thresholdValue) : base()
+                    List<AdditionalThresholdRowItem> thresholds) : base()
         {
             Name = name;
             CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
@@ -262,30 +263,29 @@ namespace ViewModel.ImpactAreaScenario
             LeveeFailureID = leveeFailureID;
 
             StageDamageID = stageDamageID;
+            Thresholds = thresholds;
+           
 
-            ThresholdType = thresholdType;
-            ThresholdValue = thresholdValue;
-
-            NamedAction edit = new Utilities.NamedAction();
-            edit.Header = "Edit Condition";
+            NamedAction edit = new NamedAction();
+            edit.Header = "Edit Impact Area Scenario";
             edit.Action = EditCondition;
 
-            NamedAction compute = new Utilities.NamedAction();
-            compute.Header = "Compute Condition";
+            NamedAction compute = new NamedAction();
+            compute.Header = "Compute Impact Area Scenario";
             compute.Action = ComputeCondition;
 
             _ViewResults.Header = "View Results";
             _ViewResults.Action = ViewResults;
 
-            NamedAction removeCondition = new Utilities.NamedAction();
+            NamedAction removeCondition = new NamedAction();
             removeCondition.Header = "Remove";
             removeCondition.Action = RemoveElement;
 
-            NamedAction renameElement = new Utilities.NamedAction(this);
+            NamedAction renameElement = new NamedAction(this);
             renameElement.Header = "Rename";
             renameElement.Action = Rename;
 
-            List<NamedAction> localActions = new List<Utilities.NamedAction>();
+            List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(edit);
             localActions.Add(compute);
             localActions.Add(_ViewResults);
@@ -556,9 +556,10 @@ namespace ViewModel.ImpactAreaScenario
 
             //Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
             //     .WithSiblingRules(this);
-
-            Editor.IASEditorVM vm = new Editor.IASEditorVM(this);
-
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+               .WithSiblingRules(this);
+            Editor.IASEditorVM vm = new Editor.IASEditorVM(this, actionManager);
+            vm.RequestNavigation += Navigate;
             //ConditionsEditor = new IASPlotEditorVM(impactAreas, lp3Control, infOutControl, ratingControl, leveeFailureControl, extIntStageControl,
             //    stageDamageControl, damageFrequencyControl, this, actionManager);
 
@@ -640,52 +641,53 @@ namespace ViewModel.ImpactAreaScenario
         private void ComputeCondition(object arg1, EventArgs arg2)
         {
 
-            EnterSeedVM enterSeedVM = new EnterSeedVM();
-            string header = "Enter Seed Value";
-            DynamicTabVM tab = new DynamicTabVM(header, enterSeedVM, "EnterSeed");
-            Navigate(tab, true, true);
+            //EnterSeedVM enterSeedVM = new EnterSeedVM();
+            //string header = "Enter Seed Value";
+            //DynamicTabVM tab = new DynamicTabVM(header, enterSeedVM, "EnterSeed");
+            //Navigate(tab, true, true);
 
-            int seedValue = enterSeedVM.Seed;
+            //int seedValue = enterSeedVM.Seed;
 
-            IConditionLocationYearSummary condition = null;
+            //IConditionLocationYearSummary condition = null;
 
-            IFrequencyFunction frequencyFunction = GetFrequencyFunction();
-            List<ITransformFunction> transformFunctions = GetTransformFunctions();
+            //IFrequencyFunction frequencyFunction = GetFrequencyFunction();
+            //List<ITransformFunction> transformFunctions = GetTransformFunctions();
 
-            bool hasLeveeFailure = LeveeFailureID != -1;
-            if (hasLeveeFailure)
-            {
-                LeveeFeatureElement leveeFailureElement = (LeveeFeatureElement)StudyCache.GetChildElementOfType(typeof(LeveeFeatureElement), LeveeFailureID);
-                ILateralStructure latStruct = ILateralStructureFactory.Factory(leveeFailureElement.Elevation, (ITransformFunction)leveeFailureElement.Curve); ;
-                condition = Saving.PersistenceFactory.GetIASManager().CreateIConditionLocationYearSummary(ImpactAreaID,
-                    AnalysisYear, frequencyFunction, transformFunctions, leveeFailureElement, ThresholdType, ThresholdValue);
-            }
-            else 
-            { 
-                condition = Saving.PersistenceFactory.GetIASManager().CreateIConditionLocationYearSummary(ImpactAreaID,
-                    AnalysisYear, frequencyFunction, transformFunctions, ThresholdType, ThresholdValue);
-            }
+            //bool hasLeveeFailure = LeveeFailureID != -1;
+            //if (hasLeveeFailure)
+            //{
+            //    LeveeFeatureElement leveeFailureElement = (LeveeFeatureElement)StudyCache.GetChildElementOfType(typeof(LeveeFeatureElement), LeveeFailureID);
+            //    ILateralStructure latStruct = ILateralStructureFactory.Factory(leveeFailureElement.Elevation, (ITransformFunction)leveeFailureElement.Curve); 
+            //    //todo: Need to handle multiple thresholds
+            //    condition = Saving.PersistenceFactory.GetIASManager().CreateIConditionLocationYearSummary(ImpactAreaID,
+            //        AnalysisYear, frequencyFunction, transformFunctions, leveeFailureElement, ThresholdType, ThresholdValue);
+            //}
+            //else 
+            //{ 
+            //    condition = Saving.PersistenceFactory.GetIASManager().CreateIConditionLocationYearSummary(ImpactAreaID,
+            //        AnalysisYear, frequencyFunction, transformFunctions, ThresholdType, ThresholdValue);
+            //}
 
-            if (condition == null)
-            {
-                return;
-            }
+            //if (condition == null)
+            //{
+            //    return;
+            //}
 
-            IConvergenceCriteria convergenceCriteria = IConvergenceCriteriaFactory.Factory();
-            Dictionary<IMetric, IConvergenceCriteria> metricsDictionary = new Dictionary<IMetric, IConvergenceCriteria>();
-            foreach (IMetric metric in condition.Metrics)
-            {
-                metricsDictionary.Add(metric, IConvergenceCriteriaFactory.Factory());
-            }
+            //IConvergenceCriteria convergenceCriteria = IConvergenceCriteriaFactory.Factory();
+            //Dictionary<IMetric, IConvergenceCriteria> metricsDictionary = new Dictionary<IMetric, IConvergenceCriteria>();
+            //foreach (IMetric metric in condition.Metrics)
+            //{
+            //    metricsDictionary.Add(metric, IConvergenceCriteriaFactory.Factory());
+            //}
 
-            IReadOnlyDictionary<IMetric, IConvergenceCriteria> metrics = new ReadOnlyDictionary<IMetric, IConvergenceCriteria>(metricsDictionary);
+            //IReadOnlyDictionary<IMetric, IConvergenceCriteria> metrics = new ReadOnlyDictionary<IMetric, IConvergenceCriteria>(metricsDictionary);
 
-            IConditionLocationYearResult result = new ConditionLocationYearResult(condition, metrics, seedValue);
-            result.Compute();
-            ComputeResults = result;
-            Saving.PersistenceFactory.GetIASManager().SaveConditionResults(result, this.GetElementID(), frequencyFunction, transformFunctions);
+            //IConditionLocationYearResult result = new ConditionLocationYearResult(condition, metrics, seedValue);
+            //result.Compute();
+            //ComputeResults = result;
+            //Saving.PersistenceFactory.GetIASManager().SaveConditionResults(result, this.GetElementID(), frequencyFunction, transformFunctions);
 
-            DisplayResults(result);
+            //DisplayResults(result);
 
         }
         #endregion
