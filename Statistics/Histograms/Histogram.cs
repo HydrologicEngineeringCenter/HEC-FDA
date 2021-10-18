@@ -182,7 +182,7 @@ namespace Statistics.Histograms
                 }
                 newBinCounts[BinCounts.Length + quantityAdditionalBins-1] += 1;
                 BinCounts = newBinCounts;
-                double newMax = (BinCounts.Length +1) * BinWidth;
+                double newMax = Min + BinCounts.Length * BinWidth; //is this right?
                 Max = newMax;
                 double min = Min;
                 Range = IRangeFactory.Factory(min, newMax, true, true, true, false);
@@ -198,7 +198,7 @@ namespace Statistics.Histograms
                         newBinCounts[i] = BinCounts[i];
                     }
                     BinCounts = newBinCounts;
-                    double newMax = (BinCounts.Length + 1) * BinWidth;
+                    double newMax = Min + BinCounts.Length * BinWidth;//double check
                     Max = newMax;
                 }
                 BinCounts[newObsIndex] += 1;

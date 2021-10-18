@@ -144,7 +144,30 @@ namespace StatisticsTests.Histograms
             Assert.Equal(expected, actual);
         }
 
+        [Theory]
+        [InlineData(1000000, .001, -1.96, .025)]
+        [InlineData(1000000, .001, 1.96, .975)]
+        public void NormallyDistributed_Histogram_CDF(int n, double binWidth, double value, double expected)
+        {
+            IDistribution stdNormal = new Statistics.Distributions.Normal(0, 1);
+            var rand = new Random();
+            double[] initialObs = new double[1] { stdNormal.InverseCDF(rand.NextDouble()) };
+            IData initialData = new Data(initialObs);
+            Histogram histogram = new Histogram(initialData, binWidth);
+            double[] data = new double[n];
 
+            for (Int64 i = 0; i < n; i++)
+            {
+                var randProb = rand.NextDouble();
+                data[i] = stdNormal.InverseCDF(randProb);
+            }
+            IData obs = new Data(data);
+            histogram.AddObservationsToHistogram(obs);
+            double actual = histogram.CDF(value);
+            double err = Math.Abs((expected - actual) / expected);
+            double errTol = 0.01;
+            Assert.True(err < errTol);
+        }
 
     }
 }
