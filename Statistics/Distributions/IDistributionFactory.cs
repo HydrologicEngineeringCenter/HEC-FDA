@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using MathNet.Numerics.Statistics;
-
+using Statistics.Histograms;
 using Utilities;
 
 namespace Statistics
@@ -27,7 +27,7 @@ namespace Statistics
             switch (type) 
             {
                 case IDistributionEnum.Histogram:
-                    return Histograms.Histogram.RequiremedParameterization(true);
+                    throw new NotImplementedException("Parametrization is not implemented for histograms");
                 case IDistributionEnum.Beta4Parameters:
                     return Distributions.Beta4Parameters.RequiredParameterization(true);
                 case IDistributionEnum.LogPearsonIII:
@@ -96,7 +96,7 @@ namespace Statistics
                     case IDistributionEnum.Triangular:
                         return Distributions.Triangular.Fit(sample);
                     case IDistributionEnum.Histogram:
-                        return (IDistribution)IHistogramFactory.Factory(IDataFactory.Factory(sample), nBins: 100);
+                        return (IDistribution)Fit(sample, nBins: 100);
                     case IDistributionEnum.LogPearsonIII:
                         return Distributions.LogPearson3.Fit(sample);
                     default:
@@ -104,9 +104,14 @@ namespace Statistics
                 }
             }          
         }
-        internal static IHistogram Fit(IEnumerable<double> sample, int nBins)
+        internal static Statistics.Histograms.Histogram Fit(IEnumerable<double> sample, int nBins)
         {
-            return IHistogramFactory.Factory(IDataFactory.Factory(sample), nBins);
+            double min = sample.Min();
+            double max = sample.Max();
+            double binWidth = (min - max) / nBins;
+            IData data = new Data(sample);
+            Statistics.Histograms.Histogram histogram = new Statistics.Histograms.Histogram(data, binWidth);
+            return histogram;
         }
         internal static IDistribution Fit(IEnumerable<double> sample, double minimum, double maximum, IDistributionEnum returnType)
         {
@@ -116,7 +121,7 @@ namespace Statistics
             }
             else
             {
-                IDistribution distribution = Fit(sample, (int)returnType / 10);
+                IDistribution distribution = (IDistribution)Fit(sample, (int)returnType / 10);
                 return new Distributions.TruncatedDistribution(distribution, minimum, maximum);
             }
         }

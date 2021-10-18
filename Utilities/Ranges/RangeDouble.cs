@@ -7,16 +7,16 @@ namespace Utilities.Ranges
 {
     internal class RangeDouble : IRange<double>, IValidate<RangeDouble>
     {
-        private readonly double _MinToPrint;
-        private readonly double _MaxToPrint;
-        private readonly bool _InclusiveMin;
-        private readonly bool _InclusiveMax;
-        internal readonly bool _FiniteRequirement;
-        internal readonly bool _MoreThanSingleValueRequirement;
+        private double _MinToPrint;
+        private double _MaxToPrint;
+        private bool _InclusiveMin;
+        private bool _InclusiveMax;
+        internal bool _FiniteRequirement;
+        internal bool _MoreThanSingleValueRequirement;
 
         #region Properties
-        public double Min { get; }
-        public double Max { get; }
+        public double Min { get; set; }
+        public double Max { get; set; }
         public IMessageLevels State { get; }
         public IEnumerable<IMessage> Messages { get; }
         #endregion

@@ -23,11 +23,11 @@ namespace Statistics
         /// <remarks> Summary statistics are computed after generating an object implementing the <see cref="IData"/> interface, which separates the <paramref name="data"/> dataset into a set of <see cref="double"/> precision finite numeric <see cref="IData.Elements"/> and infinite or non-numeric data. </remarks>
         /// <returns> An object implementing the <see cref="ISampleStatistics"/> interface, containing the descriptive statistics for the <see cref="double"/> precision finite numeric element in the <paramref name="data"/> parameter's dataset. </returns>
         public static ISampleStatistics Factory(IEnumerable<double> data) => data.IsNullOrEmpty() ? throw new ArgumentNullException(nameof(data)) : Factory(IDataFactory.Factory(data));
-        /// <summary>
-        /// Returns summary statistics describing the binned data.
-        /// </summary>
-        /// <param name="data"> A set of <see cref="IHistogram.Bins"/>. </param>
-        /// <returns> Descriptive statistics for the binned data. </returns>
-        public static ISampleStatistics Factory(IEnumerable<IBin> data) => data.IsNullItem() ? throw new ArgumentNullException(nameof(data)) : new Histograms.HistogramStatistics(data);
+        ///// <summary>
+        ///// Returns summary statistics describing the binned data.
+        ///// </summary>
+        ///// <param name="data"> A set of <see cref="IHistogram.Bins"/>. </param>
+        ///// <returns> Descriptive statistics for the binned data. </returns>
+        //public static ISampleStatistics Factory(IEnumerable<IBin> data) => data.IsNullItem() ? throw new ArgumentNullException(nameof(data)) : new Histograms.HistogramStatistics(data);
     }
 }

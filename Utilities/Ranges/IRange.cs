@@ -12,11 +12,11 @@ namespace Utilities
         /// <summary>
         /// The minimum (inclusive) value.
         /// </summary>
-        T Min { get; }
+        T Min { get; set; }
         /// <summary>
         /// The maximum (inclusive) value.
         /// </summary>
-        T Max { get; }       
+        T Max { get; set; }       
         /// <summary>
         /// Prints a representation of the range.
         /// </summary>

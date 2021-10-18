@@ -1,6 +1,7 @@
 ﻿using ViewModel.Utilities;
 using Model;
 using Statistics;
+using Statistics.Histograms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +57,7 @@ namespace ViewModel.Output
             SetDimensions(800, 500, 500,400);
             _Results = result;
             IReadOnlyList<IConditionLocationYearRealizationSummary> realizations = result.Realizations;
-            foreach (KeyValuePair<IMetric, IHistogram> entry in result.Metrics)
+            foreach (KeyValuePair<IMetric, Histogram> entry in result.Metrics)
             {
                 if(entry.Key.ParameterType == IParameterEnum.EAD)
                 {
@@ -98,7 +99,7 @@ namespace ViewModel.Output
        
         public void DisplayEADHistogram()
         {
-            foreach (KeyValuePair<IMetric, IHistogram> entry in _Results.Metrics)
+            foreach (KeyValuePair<IMetric, Histogram> entry in _Results.Metrics)
             {
                 if (entry.Key.ParameterType == IParameterEnum.EAD)
                 {
@@ -113,7 +114,7 @@ namespace ViewModel.Output
 
         public void DisplayAEPHistogram()
         {
-            foreach (KeyValuePair<IMetric, IHistogram> entry in _Results.Metrics)
+            foreach (KeyValuePair<IMetric, Histogram> entry in _Results.Metrics)
             {
                 if (entry.Key.ParameterType != IParameterEnum.EAD)
                 {

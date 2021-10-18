@@ -15,13 +15,14 @@ namespace ViewModel.Output
         public int Count { get; }
         public double BinWidth { get;  }
 
-        public HistogramBinVM(IBin bin)
+        public HistogramBinVM(Int64 count, double min, double max)
         {
-            Count = bin.Count;
-            Min = bin.Range.Min;
-            Max = bin.Range.Max;
-            MidPoint = bin.MidPoint;
+            Count = (int)count;
+            Min = min;
+            Max = max;
             BinWidth = Max - Min;
+            MidPoint = BinWidth/2;
+            
         }
 
     }
