@@ -199,8 +199,8 @@ namespace ViewModel.Editors
             }
             if (childElementType == typeof(IASElement))
             {
-                StudyCache.ConditionsElementAdded += SiblingWasAdded;
-                StudyCache.ConditionsElementUpdated += SiblingNameChanged;
+                StudyCache.IASElementAdded += SiblingWasAdded;
+                StudyCache.IASElementUpdated += SiblingNameChanged;
             }
 
         }

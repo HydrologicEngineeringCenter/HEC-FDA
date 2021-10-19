@@ -47,7 +47,7 @@ namespace ViewModel.Study
         public event AddElementEventHandler FailureFunctionAdded;
         public event AddElementEventHandler StageDamageAdded;
         public event AddElementEventHandler StructureInventoryAdded;
-        public event AddElementEventHandler ConditionsElementAdded;
+        public event AddElementEventHandler IASElementAdded;
         public event AddElementEventHandler OccTypeElementAdded;
 
 
@@ -62,7 +62,7 @@ namespace ViewModel.Study
         public event AddElementEventHandler FailureFunctionRemoved;
         public event AddElementEventHandler StageDamageRemoved;
         public event AddElementEventHandler StructureInventoryRemoved;
-        public event AddElementEventHandler ConditionsElementRemoved;
+        public event AddElementEventHandler IASElementRemoved;
         public event AddElementEventHandler OccTypeElementRemoved;
 
 
@@ -77,7 +77,7 @@ namespace ViewModel.Study
         public event UpdateElementEventHandler FailureFunctionUpdated;
         public event UpdateElementEventHandler StageDamageUpdated;
         public event UpdateElementEventHandler StructureInventoryUpdated;
-        public event UpdateElementEventHandler ConditionsElementUpdated;
+        public event UpdateElementEventHandler IASElementUpdated;
         public event UpdateElementEventHandler OccTypeElementUpdated;
         public event AddElementEventHandler PlanAdded;
         public event AddElementEventHandler PlanRemoved;
@@ -95,7 +95,7 @@ namespace ViewModel.Study
         private List<FailureFunctionElement> _Failures = new List<FailureFunctionElement>();
         private List<AggregatedStageDamageElement> _StageDamages = new List<AggregatedStageDamageElement>();
         private List<InventoryElement> _Structures = new List<InventoryElement>();
-        private List<IASElement> _Conditions = new List<IASElement>();
+        private List<IASElementSet> _IASElementSets = new List<IASElementSet>();
 
         #region Properties
         public List<RatingCurveElement> RatingCurveElements { get { return _Ratings; }  }      
@@ -110,7 +110,7 @@ namespace ViewModel.Study
         public List<FailureFunctionElement> FailureFunctionElements { get { return _Failures; } }
         public List<AggregatedStageDamageElement> StageDamageElements { get { return _StageDamages; } }
         public List<InventoryElement> StructureInventoryElements { get { return _Structures; } }
-        public List<IASElement> ConditionsElements { get { return _Conditions; } }
+        public List<IASElementSet> IASElements { get { return _IASElementSets; } }
 
         #region ParentElements
         public TerrainOwnerElement TerrainParent { get; set; }
@@ -124,8 +124,8 @@ namespace ViewModel.Study
 
         public OccupancyTypesOwnerElement OccTypeParent { get; set; }
         public StructureInventoryOwnerElement StructureInventoryParent { get; set; }
-        public IASOwnerElement ConditionsParent { get; set; }
-        public IASTreeOwnerElement ConditionsTreeParent { get; set; }
+        public IASOwnerElement IASParent { get; set; }
+        public IASTreeOwnerElement IASTreeParent { get; set; }
         public AltervativeOwnerElement PlansParent { get; set; }
         public AlternativeComparisonReportOwnerElement AlternativeComparisonReportParent { get; set; }
         #endregion
@@ -227,11 +227,10 @@ namespace ViewModel.Study
                 //StageDamageElements.Remove((AggregatedStageDamageElement)elem);
                 StageDamageRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            if (elem.GetType() == typeof(IASElement))
+            if (elem.GetType() == typeof(IASElementSet))
             {
-                RemoveElementFromList(ConditionsElements, elem);
-                //ConditionsElements.Remove((ConditionsElement)elem);
-                ConditionsElementRemoved?.Invoke(this, elementAddedEventArgs);
+                RemoveElementFromList(IASElements, elem);
+                IASElementRemoved?.Invoke(this, elementAddedEventArgs);
             }
         }
 
@@ -318,10 +317,10 @@ namespace ViewModel.Study
                 StageDamageElements.Add((AggregatedStageDamageElement)elem);
                 StageDamageAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
             }
-            else if (elem.GetType() == typeof(IASElement))
+            else if (elem.GetType() == typeof(IASElementSet))
             {
-                ConditionsElements.Add((IASElement)elem);
-                ConditionsElementAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                IASElements.Add((IASElementSet)elem);
+                IASElementAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
             }
 
         }
@@ -376,9 +375,9 @@ namespace ViewModel.Study
             {
                 UpdateStageDamageElement((AggregatedStageDamageElement)oldElement, (AggregatedStageDamageElement)newElement);
             }
-            else if (oldElement.GetType().Equals(typeof(IASElement)))
+            else if (oldElement.GetType().Equals(typeof(IASElementSet)))
             {
-                UpdateConditionsElement((IASElement)oldElement, (IASElement)newElement);
+                UpdateIASElement((IASElementSet)oldElement, (IASElementSet)newElement);
             }
             else if (oldElement.GetType().Equals(typeof(InventoryElement)))
             {
@@ -588,12 +587,12 @@ namespace ViewModel.Study
                 StageDamageUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
-        public void UpdateConditionsElement(IASElement oldElement, IASElement newElement)
+        public void UpdateIASElement(IASElementSet oldElement, IASElementSet newElement)
         {
             int index = -1;
-            for (int i = 0; i < ConditionsElements.Count; i++)
+            for (int i = 0; i < IASElements.Count; i++)
             {
-                if (ConditionsElements[i].Name.Equals(oldElement.Name))
+                if (IASElements[i].Name.Equals(oldElement.Name))
                 {
                     index = i;
                     break;
@@ -601,9 +600,9 @@ namespace ViewModel.Study
             }
             if (index != -1)
             {
-                ConditionsElements.RemoveAt(index);
-                ConditionsElements.Insert(index, newElement);
-                ConditionsElementUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+                IASElements.RemoveAt(index);
+                IASElements.Insert(index, newElement);
+                IASElementUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
         public void UpdateStructureInventoryElement(InventoryElement oldElement, InventoryElement newElement)
@@ -762,7 +761,7 @@ namespace ViewModel.Study
             }
             if (element.GetType() == typeof(IASOwnerElement))
             {
-                foreach (ChildElement elem in ConditionsElements)
+                foreach (ChildElement elem in IASElements)
                 {
                     retVal.Add(elem);
                 }
@@ -826,7 +825,7 @@ namespace ViewModel.Study
             }
             if (parentType == typeof(IASOwnerElement))
             {
-                return ConditionsParent as T;
+                return IASParent as T;
             }
             return null;
         }
@@ -932,7 +931,7 @@ namespace ViewModel.Study
             }
             if (childElementType == typeof(IASElement))
             {
-                foreach (ChildElement elem in ConditionsElements)
+                foreach (ChildElement elem in IASElements)
                 {
                     retVal.Add(elem );
                 }
@@ -1037,9 +1036,9 @@ namespace ViewModel.Study
                 }
             }
 
-            if (childElementType == typeof(IASElement))
+            if (childElementType == typeof(IASElementSet))
             {
-                foreach (ChildElement elem in ConditionsElements)
+                foreach (ChildElement elem in IASElements)
                 {
                     if (elem.GetElementID() == ID)
                     {

@@ -66,7 +66,7 @@ namespace ViewModel.ImpactAreaScenario
             {
                 if (elem.Name.Equals(((ChildElement)sender).Name))
                 {
-                    ((IASElement)elem).EditCondition(sender, e);
+                    ((IASElement)elem).EditIAS(sender, e);
                     //UpdateTree(); I need to update the tree but only after the editor is closed
                     return;
                 }

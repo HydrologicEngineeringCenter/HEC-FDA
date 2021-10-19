@@ -39,9 +39,9 @@ namespace ViewModel.ImpactAreaScenario
             localActions.Add(addCondition);
 
             Actions = localActions;
-            StudyCache.ConditionsElementAdded += AddConditionsElement;
-            StudyCache.ConditionsElementRemoved += RemoveConditionsElement;
-            StudyCache.ConditionsElementUpdated += UpdateConditionsElement;
+            StudyCache.IASElementAdded += AddConditionsElement;
+            StudyCache.IASElementRemoved += RemoveConditionsElement;
+            StudyCache.IASElementUpdated += UpdateConditionsElement;
 
             //the child elements
             StudyCache.ImpactAreaRemoved += ChildElementRemoved;

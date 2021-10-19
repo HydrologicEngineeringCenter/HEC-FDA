@@ -113,7 +113,7 @@ namespace ViewModel.Study
         public int SelectedTab
         {
             get { return _SelectedTab; }
-            set { _SelectedTab = value; TabChangedEvent(value); }
+            set { _SelectedTab = value; }
         }
 
         public List<ParentElement> MainStudyTree
@@ -481,18 +481,18 @@ namespace ViewModel.Study
             Disposer.Dispose();
         }
 
-        /// <summary>
-        /// The integer value will be 0 for the conditions tree tab
-        /// and 1 for the study tree tab
-        /// </summary>
-        /// <param name="value"></param>
-        public void TabChangedEvent(int value)
-        {
-            if (value == 0)
-            {
-                CurrentStudyElement.UpdateTheConditionsTree(this, new EventArgs());
-            }       
-        }
+        ///// <summary>
+        ///// The integer value will be 0 for the conditions tree tab
+        ///// and 1 for the study tree tab
+        ///// </summary>
+        ///// <param name="value"></param>
+        //public void TabChangedEvent(int value)
+        //{
+        //    if (value == 0)
+        //    {
+        //        CurrentStudyElement.UpdateTheConditionsTree(this, new EventArgs());
+        //    }       
+        //}
 
 
         public void FilterRowsByLevel(FdaLogging.LoggingLevel level)

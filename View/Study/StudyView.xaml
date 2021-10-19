@@ -76,30 +76,30 @@
 
         <TabControl Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"  SelectedIndex="{Binding SelectedTab, Mode=TwoWay}" MinWidth="80">
 
-            <TabItem Header="Conditions" Name="ConditionsTab">
+            <!--<TabItem Header="Conditions" Name="ConditionsTab">
                 <Grid>
                     <TreeView Name="ConditionsTree" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding CurrentStudyElement.ConditionsTree}" >
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}" >
                                 <Setter Property="Header" Value="{Binding CustomTreeViewHeader}"/>
                                 <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
-                                <!--<Setter Property="Expanded" Value="{Binding RenameConditionsTreeElem, Mode=TwoWay}"/>-->
+                                --><!--<Setter Property="Expanded" Value="{Binding RenameConditionsTreeElem, Mode=TwoWay}"/>-->
 
                                 <!--<Setter Property="ItemsSource" Value="{Binding Name}"/>-->
-                                <!--<Setter Property="FontSize" Value="{Binding FontSize}" />-->
+                                <!--<Setter Property="FontSize" Value="{Binding FontSize}" />--><!--
                                 <Setter Property="FontWeight" Value="{Binding IsBold,Converter={StaticResource BoolToBoldConverter}}" />
                                 <Setter Property="ContextMenu" Value="{Binding Actions, Converter={StaticResource converter }}"/>
-                                <!--<Setter Property="ToolTip" Value="{Binding Error}"/>-->
+                                --><!--<Setter Property="ToolTip" Value="{Binding Error}"/>--><!--
                             </Style>
                         </TreeView.ItemContainerStyle>
                         <TreeView.ItemTemplate>
                             <HierarchicalDataTemplate ItemsSource="{Binding Elements}">
                                 <TextBlock Text="{Binding Path=Name}" />
-                                <!-- Conditions Element level-->
+                                --><!-- Conditions Element level--><!--
                                 <HierarchicalDataTemplate.ItemTemplate>
                                     <HierarchicalDataTemplate ItemsSource="{Binding ConditionsTreeNodes}">
                                         <utils:CustomHeader/>
-                                        <!-- Condition components level-->
+                                        --><!-- Condition components level--><!--
                                         <HierarchicalDataTemplate.ItemTemplate>
                                             <DataTemplate>
                                                 <utils:CustomHeader/>
@@ -111,7 +111,7 @@
                         </TreeView.ItemTemplate>
                     </TreeView>
                 </Grid>
-            </TabItem>
+            </TabItem>-->
 
 
             <TabItem Header="Study Tree" Name="StudyTree">

@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ViewModel.ImpactAreaScenario.Editor;
+using ViewModel.Utilities;
 
 namespace View.ImpactAreaScenario.Editor
 {
@@ -48,28 +49,36 @@ namespace View.ImpactAreaScenario.Editor
         {
             IASEditorVM vm = (IASEditorVM)this.DataContext;
 
-            //flow frequency
-            vm.FrequencyRelationshipControl.ChartVM = new SciChart2DChartViewModel(vm.FrequencyRelationshipControl.ChartVM);
-            _flowFreqChart = new Chart2D(vm.FrequencyRelationshipControl.ChartVM);
+            ////flow frequency
+            //vm.FrequencyRelationshipControl.ChartVM = new SciChart2DChartViewModel(vm.FrequencyRelationshipControl.ChartVM);
+            //_flowFreqChart = new Chart2D(vm.FrequencyRelationshipControl.ChartVM);
 
-            //rating
-            vm.RatingRelationshipControl.ChartVM = new SciChart2DChartViewModel(vm.RatingRelationshipControl.ChartVM);
-            _ratingChart = new Chart2D(vm.RatingRelationshipControl.ChartVM);
+            ////rating
+            //vm.RatingRelationshipControl.ChartVM = new SciChart2DChartViewModel(vm.RatingRelationshipControl.ChartVM);
+            //_ratingChart = new Chart2D(vm.RatingRelationshipControl.ChartVM);
 
-            //stage damage
-            vm.StageDamageControl.ChartVM = new SciChart2DChartViewModel(vm.StageDamageControl.ChartVM);
-            _stageDamageChart = new Chart2D(vm.StageDamageControl.ChartVM);
+            ////stage damage
+            //vm.StageDamageControl.ChartVM = new SciChart2DChartViewModel(vm.StageDamageControl.ChartVM);
+            //_stageDamageChart = new Chart2D(vm.StageDamageControl.ChartVM);
 
-            //damage freq
-            vm.DamageFrequencyControl.ChartVM = new SciChart2DChartViewModel(vm.DamageFrequencyControl.ChartVM);
-            _damageFreqChart = new Chart2D(vm.DamageFrequencyControl.ChartVM);
+            ////damage freq
+            //vm.DamageFrequencyControl.ChartVM = new SciChart2DChartViewModel(vm.DamageFrequencyControl.ChartVM);
+            //_damageFreqChart = new Chart2D(vm.DamageFrequencyControl.ChartVM);
 
+        }
+
+        public FdaValidationResult IsValid()
+        {
+            FdaValidationResult result = new FdaValidationResult();
+
+
+            return result;
         }
 
         private void plotBtn_Click(object sender, RoutedEventArgs e)
         {
-            IASEditorVM vm = (IASEditorVM)this.DataContext;
-            if (vm.CanPlot())
+            SpecificIASEditorVM vm = (SpecificIASEditorVM)this.DataContext;
+            //if (vm.IsValid())
             {
 
                 if (!_plotsHaveBeenAdded)
@@ -100,7 +109,7 @@ namespace View.ImpactAreaScenario.Editor
 
                 //todo: link the charts everytime or only once?
                 LinkTheCharts();
-                vm.Plot();
+                //vm.Plot();
             }
         }
 

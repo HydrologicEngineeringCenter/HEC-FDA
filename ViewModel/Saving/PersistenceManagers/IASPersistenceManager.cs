@@ -280,8 +280,8 @@ namespace ViewModel.Saving.PersistenceManagers
                 //    //IConditionLocationYearResult result = new ConditionLocationYearResult(conditionLocationYearSummary, convergenceCriteria, seed, metricsDictionary, realizationSummaries);
                 //    //elem.ComputeResults = result;
                 //}
-
-                StudyCacheForSaving.AddElement(elem);
+                IASElementSet set = new IASElementSet(elem.Name, elem.Description, elem.AnalysisYear, new List<AdditionalThresholdRowItem>(), new List<IASElement>() { elem });
+                StudyCacheForSaving.AddElement(set);
             }
         }
 

@@ -14,5 +14,28 @@
   <PropertyGroup>
     <ReferencePath>
     </ReferencePath>
+    <ShowAllFiles>true</ShowAllFiles>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="ImpactAreaScenario\Editor\IASEditor.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="ImpactAreaScenario\Editor\SpecificIASControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Utilities\YearField.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="ImpactAreaScenario\Editor\IASEditor.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="ImpactAreaScenario\Editor\SpecificIASControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Utilities\YearField.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
 </Project>

@@ -268,7 +268,7 @@ namespace ViewModel.ImpactAreaScenario
 
             NamedAction edit = new NamedAction();
             edit.Header = "Edit Impact Area Scenario";
-            edit.Action = EditCondition;
+            edit.Action = EditIAS;
 
             NamedAction compute = new NamedAction();
             compute.Header = "Compute Impact Area Scenario";
@@ -474,99 +474,20 @@ namespace ViewModel.ImpactAreaScenario
         /// </summary>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
-        public void EditCondition(object arg1, EventArgs arg2)
+        public void EditIAS(object arg1, EventArgs arg2)
         {
 
-
-            //List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.GetChildElementsOfType<ImpactArea.ImpactAreaElement>();
-            //List<FrequencyRelationships.AnalyticalFrequencyElement> freqeles = StudyCache.GetChildElementsOfType<FrequencyRelationships.AnalyticalFrequencyElement>();
-            //List<FlowTransforms.InflowOutflowElement> inflowOutflowList = StudyCache.GetChildElementsOfType<FlowTransforms.InflowOutflowElement>();
-            //List<StageTransforms.RatingCurveElement> ratingeles = StudyCache.GetChildElementsOfType<StageTransforms.RatingCurveElement>();
-
-            //List<StageTransforms.ExteriorInteriorElement> extIntList = StudyCache.GetChildElementsOfType<StageTransforms.ExteriorInteriorElement>();
-            //List<GeoTech.LeveeFeatureElement> leveeList = StudyCache.GetChildElementsOfType<GeoTech.LeveeFeatureElement>();
-            //List<GeoTech.FailureFunctionElement> failureFunctionList = StudyCache.GetChildElementsOfType<GeoTech.FailureFunctionElement>();
-
-            //List<AggregatedStageDamage.AggregatedStageDamageElement> damageles = StudyCache.GetChildElementsOfType<AggregatedStageDamage.AggregatedStageDamageElement>();
-
-
-            //Plots.IndividualLinkedPlotControlVM lp3Control;
-            //Plots.IndividualLinkedPlotControlVM infOutControl;
-            //Plots.IndividualLinkedPlotControlVM ratingControl;
-            //Plots.IndividualLinkedPlotControlVM leveeFailureControl;
-            //Plots.IndividualLinkedPlotControlVM extIntStageControl;
-            //Plots.IndividualLinkedPlotControlVM stageDamageControl;
-            //Plots.IndividualLinkedPlotControlVM damageFrequencyControl;
-
-            //if (FlowFreqID != -1)
-            //{
-            //    lp3Control = BuildLP3ControlFromElement(FlowFreqID);
-            //}
-            //else
-            //{
-            //    lp3Control = IASOwnerElement.BuildDefaultLP3Control(StudyCache.GetParentElementOfType<ImpactAreaScenario.IASOwnerElement>());
-            //}
-
-            //if (InflowOutflowID != -1)
-            //{
-            //    infOutControl = BuildInflowOutflowControlFromElement(InflowOutflowID);
-            //}
-            //else
-            //{
-            //    infOutControl = IASOwnerElement.BuildDefaultInflowOutflowControl(StudyCache.GetParentElementOfType<ImpactAreaScenario.IASOwnerElement>());
-            //}
-
-            //if (RatingID != -1)
-            //{
-            //    ratingControl = BuildRatingControlFromElement(RatingID);
-            //}
-            //else
-            //{
-            //    ratingControl = IASOwnerElement.BuildDefaultRatingControl(StudyCache.GetParentElementOfType<ImpactAreaScenario.IASOwnerElement>());
-            //}
-
-            //if(LeveeFailureID != -1)
-            //{
-            //    leveeFailureControl = BuildLeveeFailureFromElement(LeveeFailureID);
-            //}
-            //else
-            //{
-            //    leveeFailureControl = IASOwnerElement.BuildDefaultLateralFeaturesControl(StudyCache.GetParentElementOfType<IASOwnerElement>());
-            //}
-
-            //if (ExtIntStageID != -1)
-            //{
-            //    extIntStageControl = BuildExtIntControlFromElement(ExtIntStageID);
-            //}
-            //else
-            //{
-            //    extIntStageControl = IASOwnerElement.BuildDefaultExtIntStageControl(StudyCache.GetParentElementOfType<ImpactAreaScenario.IASOwnerElement>());
-            //}
-
-            //if (StageDamageID != -1)
-            //{
-            //    stageDamageControl = BuildStageDamageControlFromElement(StageDamageID);
-            //}
-            //else
-            //{
-            //    stageDamageControl = IASOwnerElement.BuildDefaultStageDamageControl(StudyCache.GetParentElementOfType<ImpactAreaScenario.IASOwnerElement>());
-            //}
-
-            //damageFrequencyControl = IASOwnerElement.BuildDefaultDamageFrequencyControl(StudyCache.GetParentElementOfType<ImpactAreaScenario.IASOwnerElement>());
-
             //Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-            //     .WithSiblingRules(this);
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-               .WithSiblingRules(this);
-            Editor.IASEditorVM vm = new Editor.IASEditorVM(this, actionManager);
-            vm.RequestNavigation += Navigate;
-            //ConditionsEditor = new IASPlotEditorVM(impactAreas, lp3Control, infOutControl, ratingControl, leveeFailureControl, extIntStageControl,
-            //    stageDamageControl, damageFrequencyControl, this, actionManager);
+            //   .WithSiblingRules(this);
+            //Editor.IASEditorVM vm = new Editor.IASEditorVM(this, actionManager);
+            //vm.RequestNavigation += Navigate;
+            ////ConditionsEditor = new IASPlotEditorVM(impactAreas, lp3Control, infOutControl, ratingControl, leveeFailureControl, extIntStageControl,
+            ////    stageDamageControl, damageFrequencyControl, this, actionManager);
 
-            //ConditionsEditor.RequestNavigation += Navigate;
-            string header = "Edit Impact Area Scenario";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "EditIAS");
-            Navigate(tab, false, false);
+            ////ConditionsEditor.RequestNavigation += Navigate;
+            //string header = "Edit Impact Area Scenario";
+            //DynamicTabVM tab = new DynamicTabVM(header, vm, "EditIAS");
+            //Navigate(tab, false, false);
         }
 
 
