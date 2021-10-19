@@ -657,50 +657,39 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         public void Plot()
         {
-            //CanPlot() is being called by the view before calling this method.
-            //if (CanPlot())
-            {
-                //get the current curves and set that data on the chart controls
-                //this update call will set the current crosshair data on each one
-                FrequencyRelationshipControl.UpdatePlotData(getFrequencyRelationshipFunction());
-                RatingRelationshipControl.UpdatePlotData(getRatingCurveFunction());
-                StageDamageControl.UpdatePlotData(getStageDamageFunction());
-                DamageFrequencyControl.UpdatePlotData(getDamageFrequencyFunction());
+            ////CanPlot() is being called by the view before calling this method.
+            ////if (CanPlot())
+            //{
+            //    //get the current curves and set that data on the chart controls
+            //    //this update call will set the current crosshair data on each one
+            //    FrequencyRelationshipControl.UpdatePlotData(getFrequencyRelationshipFunction());
+            //    RatingRelationshipControl.UpdatePlotData(getRatingCurveFunction());
+            //    StageDamageControl.UpdatePlotData(getStageDamageFunction());
+            //    DamageFrequencyControl.UpdatePlotData(getDamageFrequencyFunction());
 
-                //link the crosshair data to eachother
-                CrosshairData freqRelationshipCrosshairData = FrequencyRelationshipControl.currentCrosshairData;
-                CrosshairData ratingCrosshairData = RatingRelationshipControl.currentCrosshairData;
-                freqRelationshipCrosshairData.Next = new SharedAxisCrosshairData(ratingCrosshairData, Axis.Y, Axis.Y);
-                ratingCrosshairData.Previous = new SharedAxisCrosshairData(freqRelationshipCrosshairData, Axis.Y, Axis.Y);
+            //    //link the crosshair data to eachother
+            //    CrosshairData freqRelationshipCrosshairData = FrequencyRelationshipControl.currentCrosshairData;
+            //    CrosshairData ratingCrosshairData = RatingRelationshipControl.currentCrosshairData;
+            //    freqRelationshipCrosshairData.Next = new SharedAxisCrosshairData(ratingCrosshairData, Axis.Y, Axis.Y);
+            //    ratingCrosshairData.Previous = new SharedAxisCrosshairData(freqRelationshipCrosshairData, Axis.Y, Axis.Y);
 
-                CrosshairData stageDamageCrosshairData = StageDamageControl.currentCrosshairData;
-                ratingCrosshairData.Next = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.X, Axis.X);
-                stageDamageCrosshairData.Previous = new SharedAxisCrosshairData(ratingCrosshairData, Axis.X, Axis.X);
+            //    CrosshairData stageDamageCrosshairData = StageDamageControl.currentCrosshairData;
+            //    ratingCrosshairData.Next = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.X, Axis.X);
+            //    stageDamageCrosshairData.Previous = new SharedAxisCrosshairData(ratingCrosshairData, Axis.X, Axis.X);
 
-                CrosshairData damageFreqCrosshairData = DamageFrequencyControl.currentCrosshairData;
-                stageDamageCrosshairData.Next = new SharedAxisCrosshairData(damageFreqCrosshairData, Axis.Y, Axis.Y);
-                damageFreqCrosshairData.Previous = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.Y, Axis.Y);
+            //    CrosshairData damageFreqCrosshairData = DamageFrequencyControl.currentCrosshairData;
+            //    stageDamageCrosshairData.Next = new SharedAxisCrosshairData(damageFreqCrosshairData, Axis.Y, Axis.Y);
+            //    damageFreqCrosshairData.Previous = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.Y, Axis.Y);
 
-                FrequencyRelationshipControl.Plot();
-                RatingRelationshipControl.Plot();
-                StageDamageControl.Plot();
-                DamageFrequencyControl.Plot();
-            }
+            //    FrequencyRelationshipControl.Plot();
+            //    RatingRelationshipControl.Plot();
+            //    StageDamageControl.Plot();
+            //    DamageFrequencyControl.Plot();
+            //}
         }
 
-        #endregion
 
 
-        private Boolean ValidateIAS()
-        {
-            //todo: the rating curve is required is the frequency relationship is of type
-            //flow-frequency. This will need to get added once we complete task 5 in the clean doc.
-            //if (Description == null) { Description = ""; }
-
-            //todo: is this the same as the CanPlot() or are there differences?
-            return CanPlot();
-
-        }
 
         public override void Save()
         {
