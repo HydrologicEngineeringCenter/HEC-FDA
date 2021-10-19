@@ -590,6 +590,117 @@ namespace ViewModel.ImpactAreaScenario.Editor
             }
 
         }
+        private IFdaFunction getFrequencyRelationshipFunction()
+        {
+            //todo: this will just be getting the selected curve
+
+            List<double> xValues = new List<double>();
+            List<double> yValues = new List<double>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                xValues.Add(i / 10.0);
+                yValues.Add(i * 9);
+            }
+            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.OutflowFrequency, coordinatesFunction);
+            return fdaFunction;
+        }
+
+        private IFdaFunction getRatingCurveFunction()
+        {
+            List<double> xValues = new List<double>();
+            List<double> yValues = new List<double>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                xValues.Add(i);
+                yValues.Add(i * 11);
+            }
+
+            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.Rating, coordinatesFunction);
+            return fdaFunction;
+        }
+
+        private IFdaFunction getStageDamageFunction()
+        {
+            List<double> xValues = new List<double>();
+            List<double> yValues = new List<double>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                xValues.Add(i + 2);
+                yValues.Add(i * 90);
+            }
+
+            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.InteriorStageDamage, coordinatesFunction);
+            return fdaFunction;
+        }
+
+        private IFdaFunction getDamageFrequencyFunction()
+        {
+            List<double> xValues = new List<double>();
+            List<double> yValues = new List<double>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                xValues.Add(i / 9.0);
+                yValues.Add(i * 110);
+            }
+
+            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.DamageFrequency, coordinatesFunction);
+            return fdaFunction;
+        }
+
+        public void Plot()
+        {
+            //CanPlot() is being called by the view before calling this method.
+            //if (CanPlot())
+            {
+                //get the current curves and set that data on the chart controls
+                //this update call will set the current crosshair data on each one
+                FrequencyRelationshipControl.UpdatePlotData(getFrequencyRelationshipFunction());
+                RatingRelationshipControl.UpdatePlotData(getRatingCurveFunction());
+                StageDamageControl.UpdatePlotData(getStageDamageFunction());
+                DamageFrequencyControl.UpdatePlotData(getDamageFrequencyFunction());
+
+                //link the crosshair data to eachother
+                CrosshairData freqRelationshipCrosshairData = FrequencyRelationshipControl.currentCrosshairData;
+                CrosshairData ratingCrosshairData = RatingRelationshipControl.currentCrosshairData;
+                freqRelationshipCrosshairData.Next = new SharedAxisCrosshairData(ratingCrosshairData, Axis.Y, Axis.Y);
+                ratingCrosshairData.Previous = new SharedAxisCrosshairData(freqRelationshipCrosshairData, Axis.Y, Axis.Y);
+
+                CrosshairData stageDamageCrosshairData = StageDamageControl.currentCrosshairData;
+                ratingCrosshairData.Next = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.X, Axis.X);
+                stageDamageCrosshairData.Previous = new SharedAxisCrosshairData(ratingCrosshairData, Axis.X, Axis.X);
+
+                CrosshairData damageFreqCrosshairData = DamageFrequencyControl.currentCrosshairData;
+                stageDamageCrosshairData.Next = new SharedAxisCrosshairData(damageFreqCrosshairData, Axis.Y, Axis.Y);
+                damageFreqCrosshairData.Previous = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.Y, Axis.Y);
+
+                FrequencyRelationshipControl.Plot();
+                RatingRelationshipControl.Plot();
+                StageDamageControl.Plot();
+                DamageFrequencyControl.Plot();
+            }
+        }
+
+        #endregion
+
+
+        private Boolean ValidateIAS()
+        {
+            //todo: the rating curve is required is the frequency relationship is of type
+            //flow-frequency. This will need to get added once we complete task 5 in the clean doc.
+            //if (Description == null) { Description = ""; }
+
+            //todo: is this the same as the CanPlot() or are there differences?
+            return CanPlot();
+
+        }
 
         public override void Save()
         {

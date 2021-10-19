@@ -125,7 +125,6 @@ namespace View.ImpactAreaScenario.Editor
 
         private void LinkTheCharts()
         {
-            Guid guid = Guid.NewGuid();
             Chart2D[] charts = GetChartsThatAreShowing();
             var provider = new Chart2DProvider(GetChartsThatAreShowing);
             _controller = new Chart2DController(provider);
@@ -147,10 +146,11 @@ namespace View.ImpactAreaScenario.Editor
 
             //todo: not sure what purpose the mouse group has
             //Set up the mouse event group - this keeps the mouse events all in sync with the others.
-            //_flowFreqChart.SetVerticalMouseEventGroup(guid.ToString());
-            //_ratingChart.SetVerticalMouseEventGroup(guid.ToString());
-            //_stageDamageChart.SetVerticalMouseEventGroup(guid.ToString());
-            //_damageFreqChart.SetVerticalMouseEventGroup(guid.ToString());
+            Guid guid = Guid.NewGuid();
+            _flowFreqChart.SetVerticalMouseEventGroup(guid.ToString());
+            _ratingChart.SetVerticalMouseEventGroup(guid.ToString());
+            _stageDamageChart.SetVerticalMouseEventGroup(guid.ToString());
+            _damageFreqChart.SetVerticalMouseEventGroup(guid.ToString());
 
             // look at SetMinMaxAxisValues in individual linked plot control
 

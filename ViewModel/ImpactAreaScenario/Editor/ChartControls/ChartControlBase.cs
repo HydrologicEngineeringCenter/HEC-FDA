@@ -42,18 +42,14 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
             Function = function;
             currentCrosshairData = new CrosshairData(Function);
             ChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(_crosshairXPositive, _crosshairYPositive, currentCrosshairData));
-
         }
 
         //public abstract void LinkPlots();
 
         public virtual void Plot()
         {
-
             if (Function != null)
             {
-                AddCrosshairs();
-
                 List<ICoordinate> coordinates = Function.Coordinates;
                 SciLineData lineData = new NumericLineData(getXValues(), getYValues(), "asdf", _seriesName, _xAxisLabel, _yAxisLabel, PlotType.Line);
                 ChartVM.LineData.Set(new List<SciLineData>() { lineData });
@@ -86,12 +82,5 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
             }
             return yVals.ToArray();
         }
-
-        public virtual void AddCrosshairs()
-        {
-            CrosshairData crosshairData = new CrosshairData(Function);
-            ChartVM.ModifierGroup.ChildModifiers.Add(new FdaCrosshairChartModifier(_crosshairXPositive,_crosshairYPositive, crosshairData));
-        }
-
     }
 }
