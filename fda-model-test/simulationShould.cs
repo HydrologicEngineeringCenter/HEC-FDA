@@ -44,7 +44,43 @@ namespace fda_model_test
             double percentDiff = difference / expected;
             Assert.True(percentDiff < .01);
         }
+        [Theory]
+        [InlineData(82500)]
+        public void ComputeEAD_withLevee(double expected)
+        {
 
-        
+            Statistics.IDistribution flow_frequency = IDistributionFactory.FactoryUniform(0, 100000, 1000);
+            //create a stage distribution
+            IDistribution[] stages = new IDistribution[2];
+            for (int i = 0; i < 2; i++)
+            {
+                stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
+            }
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages);
+
+            double[] leveestages = new double[] { 0.0d, 100000.0d };
+            IDistribution[] leveefailprobs = new IDistribution[2];
+            for (int i = 0; i < 2; i++)
+            {
+                leveefailprobs[i] = IDistributionFactory.FactoryUniform(0, 0, 10); //no damages at all, perfect levee
+            }
+            UncertainPairedData levee = new UncertainPairedData(leveestages, leveefailprobs);
+            //create a damage distribution
+            IDistribution[] damages = new IDistribution[2];
+            for (int i = 0; i < 2; i++)
+            {
+                damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
+            }
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, "residential");
+            List<UncertainPairedData> upd = new List<UncertainPairedData>();
+            upd.Add(stage_damage);
+            Simulation s = new Simulation(flow_frequency, flow_stage, levee, upd);
+            ead.MeanRandomProvider mrp = new MeanRandomProvider();
+            metrics.IContainResults r = s.Compute(mrp, 1);
+            double difference = expected - r.MeanEAD("residential");
+            double percentDiff = difference / expected;
+            Assert.True(percentDiff < .01);
+        }
+
     }
 }

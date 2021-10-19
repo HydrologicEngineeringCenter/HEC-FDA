@@ -50,6 +50,7 @@ namespace ead{
             _channelstage_floodplainstage = new paireddata.UncertainPairedData();//defaults to null
             _levee_curve = levee_curve;
             _damage_category_stage_damage = damage_curves;
+            _results = new metrics.Results();//defaults to zeros everywhere.
         }
         public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData flow_stage, List<paireddata.UncertainPairedData> damage_curves)
         {
@@ -136,9 +137,9 @@ namespace ead{
                 }
                 else
                 {
-                    paireddata.IPairedData _levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
-                    paireddata.IPairedData frequency_stage_withLevee = frequency_stage.multiply(_levee_curve_sample);
-                    ComputeDamagesFromStageFrequency(rp, frequency_stage_withLevee);
+                    paireddata.IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
+                    //paireddata.IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
+                    ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_stage, levee_curve_sample);
                 }
 
             }
@@ -153,9 +154,9 @@ namespace ead{
                 }
                 else
                 {
-                    paireddata.IPairedData _levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
-                    paireddata.IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
-                    ComputeDamagesFromStageFrequency(rp, frequency_floodplainstage_withLevee);
+                    paireddata.IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
+                    //paireddata.IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
+                    ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_floodplainstage, levee_curve_sample);
                 }
 
             }
@@ -167,7 +168,7 @@ namespace ead{
             double[] y = new double[ordinates];
             for(int i=0;i<ordinates; i++){
                 double val = (double) i + .5;
-                double prob = (val)/((double)ordinates);
+                double prob = 1.0 - (val)/((double)ordinates);
                 x[i] = prob;
                 y[i] = bootstrap.InverseCDF(prob);
 
@@ -180,6 +181,20 @@ namespace ead{
             foreach(paireddata.UncertainPairedData pd in _damage_category_stage_damage){
                 paireddata.IPairedData _stage_damage_sample = pd.SamplePairedData(rp.NextRandom());//needs to be a random number
                 paireddata.IPairedData frequency_damage = _stage_damage_sample.compose(frequency_stage);
+                double eadEstimate = frequency_damage.integrate();
+                totalEAD += eadEstimate;
+                _results.AddEADEstimate(eadEstimate, pd.Category);
+            }
+            _results.AddEADEstimate(totalEAD, "Total");
+        }
+        private void ComputeDamagesFromStageFrequency_WithLevee(interfaces.IProvideRandomNumbers rp, paireddata.IPairedData frequency_stage, paireddata.IPairedData levee)
+        {
+            double totalEAD = 0.0;
+            foreach (paireddata.UncertainPairedData pd in _damage_category_stage_damage)
+            {
+                paireddata.IPairedData stage_damage_sample = pd.SamplePairedData(rp.NextRandom());//needs to be a random number
+                paireddata.IPairedData stage_damage_sample_withLevee = stage_damage_sample.multiply(levee);
+                paireddata.IPairedData frequency_damage = stage_damage_sample_withLevee.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
                 _results.AddEADEstimate(eadEstimate, pd.Category);
