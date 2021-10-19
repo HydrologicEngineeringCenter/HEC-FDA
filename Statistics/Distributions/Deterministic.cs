@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Utilities;
+using Utilities.Serialization;
 
 namespace Statistics.Distributions
 {
@@ -61,10 +62,7 @@ namespace Statistics.Distributions
             }
         }
 
-        public bool Equals(IDistribution distribution)
-        {
-            throw new NotImplementedException();
-        }
+        public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
 
         public double InverseCDF(double p)
         {
@@ -100,7 +98,9 @@ namespace Statistics.Distributions
 
         XElement ISerializeToXML<IDistribution>.WriteToXML()
         {
-            throw new NotImplementedException();
+            XElement ordinateElem = new XElement(SerializationConstants.DETERMINISTIC);
+            ordinateElem.SetAttributeValue(SerializationConstants.CONSTANT_VALUE, Value);
+            return ordinateElem;
         }
         #endregion
     }
