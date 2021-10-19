@@ -10,8 +10,8 @@ namespace impactarea
             _name = name;
             _simulation = sim;
         }
-        public metrics.IContainResults Compute(Int64 seed, Int64 iterations){
-            return _simulation.Compute(seed,iterations);
+        public metrics.IContainResults Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations){
+            return _simulation.Compute(rp,iterations);
         }
 
     }

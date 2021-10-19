@@ -12,10 +12,10 @@ namespace alternatives
             _currentYear = currentYear;
             _futureYear = futureYear;
         }
-        public IList<metrics.IContainResults> ComputeEEAD(Int64 seed, Int64 iterations, double discountRate){
+        public IList<metrics.IContainResults> ComputeEEAD(interfaces.IProvideRandomNumbers rp, Int64 iterations, double discountRate){
             //probably instantiate a rng to seed each impact area differently
-            IList<metrics.IContainResults> currentEAD = _currentYear.Compute(seed,iterations);
-            IList<metrics.IContainResults> futureEAD = _futureYear.Compute(seed, iterations);
+            IList<metrics.IContainResults> currentEAD = _currentYear.Compute(rp,iterations);
+            IList<metrics.IContainResults> futureEAD = _futureYear.Compute(rp, iterations);
             //discoiunt future ead
             IList<metrics.IContainResults> discountedEAD = discount(futureEAD,discountRate, _futureYear.Year - _currentYear.Year);
             //combine the future and current ead

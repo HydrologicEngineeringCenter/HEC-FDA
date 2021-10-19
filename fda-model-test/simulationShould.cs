@@ -38,8 +38,8 @@ namespace fda_model_test
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
             Simulation s = new Simulation(flow_frequency,flow_stage,upd);
-            
-            metrics.IContainResults r = s.Compute(0,1);
+            ead.MeanRandomProvider mrp = new MeanRandomProvider();
+            metrics.IContainResults r = s.Compute(mrp,1);
             double difference = expected - r.MeanEAD("residential");
             double percentDiff = difference / expected;
             Assert.True(percentDiff < .01);

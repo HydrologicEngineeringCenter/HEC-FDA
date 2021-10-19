@@ -15,12 +15,12 @@ namespace scenarios
             _year = year;
             _impactAreas = impactAreas;
         }
-        public IList<metrics.IContainResults> Compute(Int64 seed, Int64 iterations){
+        public IList<metrics.IContainResults> Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations){
             //probably instantiate a rng to seed each impact area differently
             System.Collections.Generic.List<metrics.IContainResults> ret = new System.Collections.Generic.List<metrics.IContainResults>();
 
             foreach(ImpactArea ia in _impactAreas){
-                ret.Add(ia.Compute(seed, iterations));
+                ret.Add(ia.Compute(rp, iterations));
             }
             return ret;
         }

@@ -72,13 +72,13 @@ namespace ead{
             _levee_curve = levee_curve;
             _damage_category_stage_damage = damage_curves;
         }
-        public metrics.IContainResults Compute(Int64 seed, Int64 iterations){
+        public metrics.IContainResults Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations){
             //results.AEPThreshold = 100.0;//stage or flow or damage threshold
             for(int i = 0; i < iterations; i ++){
                 if (_frequency_stage.IsNull)
                 {
                     //if frequency_flow is not defined throw big errors.
-                    paireddata.IPairedData ff = BootstrapToPairedData(_frequency_flow, 1000);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
+                    paireddata.IPairedData ff = BootstrapToPairedData(rp, _frequency_flow, 1000);//ordinates defines the number of values in the frequency curve, more would be a better approximation.
                     //check if flow transform exists, and use it here
                     if (_inflow_outflow.IsNull)
                     {
@@ -89,15 +89,15 @@ namespace ead{
                         }
                         else
                         {
-                            paireddata.IPairedData flow_stage_sample = _flow_stage.SamplePairedData(.5);//needs to be a random number
+                            paireddata.IPairedData flow_stage_sample = _flow_stage.SamplePairedData(rp.NextRandom());
                             paireddata.IPairedData frequency_stage = flow_stage_sample.compose(ff);
-                            ComputeFromStageFrequency(frequency_stage);
+                            ComputeFromStageFrequency(rp, frequency_stage);
                         }
  
                     }
                     else
                     {
-                        paireddata.IPairedData inflow_outflow_sample = _inflow_outflow.SamplePairedData(.5); //should be a random number
+                        paireddata.IPairedData inflow_outflow_sample = _inflow_outflow.SamplePairedData(rp.NextRandom()); //should be a random number
                         paireddata.IPairedData transformff = inflow_outflow_sample.compose(ff);
                             if (_flow_stage.IsNull)
                             {
@@ -106,22 +106,22 @@ namespace ead{
                             }
                             else
                             {
-                                paireddata.IPairedData flow_stage_sample = _flow_stage.SamplePairedData(.5);//needs to be a random number
+                                paireddata.IPairedData flow_stage_sample = _flow_stage.SamplePairedData(rp.NextRandom());//needs to be a random number
                                 paireddata.IPairedData frequency_stage = flow_stage_sample.compose(transformff);
-                                ComputeFromStageFrequency(frequency_stage);
+                                ComputeFromStageFrequency(rp, frequency_stage);
                             }
                     }
 
                 }
                 else
                 {
-                    paireddata.IPairedData frequency_stage_sample = _frequency_stage.SamplePairedData(.5);
-                    ComputeFromStageFrequency(frequency_stage_sample);
+                    paireddata.IPairedData frequency_stage_sample = _frequency_stage.SamplePairedData(rp.NextRandom());
+                    ComputeFromStageFrequency(rp, frequency_stage_sample);
                 }
             }
             return _results;
         }
-        private void ComputeFromStageFrequency(paireddata.IPairedData frequency_stage){
+        private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers rp, paireddata.IPairedData frequency_stage){
             //results.AEPThreshold = 100.0;//stage or flow or damage threshold
             //compute aep metrics here
             double aep = frequency_stage.f(_results.AEPThreshold);
@@ -132,40 +132,36 @@ namespace ead{
                 //levees
                 if (_levee_curve.IsNull)
                 {
-                    ComputeDamagesFromStageFrequency(frequency_stage);
+                    ComputeDamagesFromStageFrequency(rp, frequency_stage);
                 }
                 else
                 {
-                    paireddata.IPairedData _levee_curve_sample = _levee_curve.SamplePairedData(.5); //needs to be a random number
+                    paireddata.IPairedData _levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
                     paireddata.IPairedData frequency_stage_withLevee = frequency_stage.multiply(_levee_curve_sample);
-                    ComputeDamagesFromStageFrequency(frequency_stage_withLevee);
+                    ComputeDamagesFromStageFrequency(rp, frequency_stage_withLevee);
                 }
 
             }
             else
             {
-                paireddata.IPairedData _channelstage_floodplainstage_sample = _channelstage_floodplainstage.SamplePairedData(.5); //needs to be a random number
+                paireddata.IPairedData _channelstage_floodplainstage_sample = _channelstage_floodplainstage.SamplePairedData(rp.NextRandom()); //needs to be a random number
                 paireddata.IPairedData frequency_floodplainstage = _channelstage_floodplainstage_sample.compose(frequency_stage);
                 //levees
                 if (_levee_curve.IsNull)
                 {
-                    ComputeDamagesFromStageFrequency(frequency_floodplainstage);
+                    ComputeDamagesFromStageFrequency(rp, frequency_floodplainstage);
                 }
                 else
                 {
-                    paireddata.IPairedData _levee_curve_sample = _levee_curve.SamplePairedData(.5); //needs to be a random number
+                    paireddata.IPairedData _levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
                     paireddata.IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
-                    ComputeDamagesFromStageFrequency(frequency_floodplainstage_withLevee);
+                    ComputeDamagesFromStageFrequency(rp, frequency_floodplainstage_withLevee);
                 }
 
             }
         }
-        private paireddata.IPairedData BootstrapToPairedData(IDistribution dist, Int64 ordinates){
-            double[] randyPacket = new double[dist.SampleSize];//needs to be initialized with a set of random nubmers between 0 and 1;
-            for(int i = 0; i<dist.SampleSize; i++)
-            {
-                randyPacket[i] = (double)i/(double)dist.SampleSize;
-            }
+        private paireddata.IPairedData BootstrapToPairedData(interfaces.IProvideRandomNumbers rp, IDistribution dist, Int64 ordinates){
+            double[] randyPacket = rp.NextRandomSequence(dist.SampleSize);
             IDistribution bootstrap = dist.Sample(randyPacket);
             double[] x = new double[ordinates];
             double[] y = new double[ordinates];
@@ -178,11 +174,11 @@ namespace ead{
             }
             return new paireddata.PairedData(x, y);
         }
-        private void ComputeDamagesFromStageFrequency(paireddata.IPairedData frequency_stage)
+        private void ComputeDamagesFromStageFrequency(interfaces.IProvideRandomNumbers rp, paireddata.IPairedData frequency_stage)
         {
             double totalEAD = 0.0;
             foreach(paireddata.UncertainPairedData pd in _damage_category_stage_damage){
-                paireddata.IPairedData _stage_damage_sample = pd.SamplePairedData(.5);//needs to be a random number
+                paireddata.IPairedData _stage_damage_sample = pd.SamplePairedData(rp.NextRandom());//needs to be a random number
                 paireddata.IPairedData frequency_damage = _stage_damage_sample.compose(frequency_stage);
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
