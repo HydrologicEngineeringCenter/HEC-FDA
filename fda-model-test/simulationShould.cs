@@ -45,8 +45,9 @@ namespace fda_model_test
             Assert.True(percentDiff < .01);
         }
         [Theory]
-        [InlineData(82500)]
-        public void ComputeEAD_withLevee(double expected)
+        [InlineData(0.0, 82500)]
+        [InlineData(1.0, 115500)]
+        public void ComputeEAD_withLevee(double failprobattop, double expected)
         {
 
             Statistics.IDistribution flow_frequency = IDistributionFactory.FactoryUniform(0, 100000, 1000);
@@ -62,7 +63,7 @@ namespace fda_model_test
             IDistribution[] leveefailprobs = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
-                leveefailprobs[i] = IDistributionFactory.FactoryUniform(0, 0, 10); //no damages at all, perfect levee
+                leveefailprobs[i] = IDistributionFactory.FactoryUniform(0, failprobattop*i, 10); //no damages at all, perfect levee
             }
             UncertainPairedData levee = new UncertainPairedData(leveestages, leveefailprobs);
             //create a damage distribution
