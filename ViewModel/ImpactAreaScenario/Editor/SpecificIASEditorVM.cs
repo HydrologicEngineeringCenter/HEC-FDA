@@ -37,7 +37,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private ChildElementComboItem _selectedFrequencyRelationship;
         private bool _ratingRequired;
 
-
+        
         //public SciChart2DChartViewModel FlowFreqChartVM { get; set; } = new SciChart2DChartViewModel("Flow Frequency");
         public ChartControlBase FrequencyRelationshipControl { get; set; }
         public ChartControlBase RatingRelationshipControl { get; set; }
@@ -121,11 +121,18 @@ namespace ViewModel.ImpactAreaScenario.Editor
             set { _selectedStageDamageElement = value; StageDamageSelectionChanged(); }
         }
 
+        public List<RecommendationRowItem> MessageRows { get; set; }
+
         /// <summary>
         /// This is the create new ctor
         /// </summary>
         public SpecificIASEditorVM(string name)
         {
+            MessageRows = new List<RecommendationRowItem>();
+            for(int i = 0;i<5;i++)
+            {
+                MessageRows.Add(new RecommendationRowItem("headerTest: " + i, "testing: " + i));
+            }
             Initialize();
             Name = name;
         }

@@ -93,6 +93,9 @@ namespace ViewModel.ImpactAreaScenario.Editor
                     impactAreaNames.Add(row.Name);
                     _ImpactAreaEditorDictionary.Add(row.Name, new SpecificIASEditorVM(row.Name));
                 }
+                //todo: an exception gets thrown in the code behind if we don't start with an editor vm loaded in.
+                //what do we do if no impact areas?
+                SelectedImpactAreaName = impactAreaNames[0];
             }
 
             ImpactAreaNames = impactAreaNames;

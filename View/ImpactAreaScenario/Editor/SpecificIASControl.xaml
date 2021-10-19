@@ -7,6 +7,8 @@
              mc:Ignorable="d"
              xmlns:UserControls="clr-namespace:UserControls;assembly=UserControls"
              xmlns:Utilities="clr-namespace:View.Utilities"
+             Loaded="UserControl_Loaded"
+             DataContextChanged="UserControl_DataContextChanged"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <Utilities:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
@@ -80,8 +82,14 @@
                 </Grid>
             </StackPanel>
         </GroupBox>
-        
 
+        <Grid x:Name="FifthRowGrid" Grid.Row="3" Margin="5,5,5,0">
+            <StackPanel Orientation="Horizontal" >
+                <Button x:Name="plotBtn" Content="Plot" Width="100" HorizontalAlignment="Left" Click="plotBtn_Click"/>
+                <Label Content="Damage Category:" />
+                <ComboBox ItemsSource="{Binding DamageCategories}" SelectedItem="{Binding SelectedDamageCategory}" Width="150"/>
+            </StackPanel>
+        </Grid>
 
 
         <Grid x:Name="PlotsGrid" Grid.Row="4" Margin="5,5,5,0">
@@ -93,8 +101,9 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-
         </Grid>
+
+        <local:RecommendationExpanderControl Grid.Row="5" />
 
 
 
