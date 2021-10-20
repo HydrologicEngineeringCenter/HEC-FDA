@@ -150,7 +150,16 @@ namespace Statistics.Distributions
         }
         XElement ISerializeToXML<IDistribution>.WriteToXML()
         {
-            throw new NotImplementedException();
+            XElement ordinateElem = new XElement(SerializationConstants.LOG_PEARSON3);
+            //mean
+            ordinateElem.SetAttributeValue(SerializationConstants.MEAN, Mean);
+            //st dev
+            ordinateElem.SetAttributeValue(SerializationConstants.ST_DEV, StandardDeviation);
+            //skew
+            ordinateElem.SetAttributeValue(SerializationConstants.SKEW, Skewness);
+            //sample size
+            ordinateElem.SetAttributeValue(SerializationConstants.SAMPLE_SIZE, SampleSize);
+            return ordinateElem;
         }
         #endregion
     }

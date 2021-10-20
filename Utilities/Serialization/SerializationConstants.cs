@@ -27,6 +27,8 @@ namespace Utilities.Serialization
         public const string TRIANGULAR = "Triangular";
         public const string UNIFORM = "Uniform";
         public const string LOG_PEARSON3 = "LogPearson3";
+        public const string HISTOGRAM = "Histogram";
+        public const string DETERMINISTIC = "Deterministic";
 
 
         //distribution parameters
@@ -37,6 +39,8 @@ namespace Utilities.Serialization
         public const string MIN = "Min";
         public const string MAX = "Max";
         public const string MOST_LIKELY = "MostLikely";
+        public const string SKEW = "Skew";
+        public const string CONSTANT_VALUE = "Constant Value";
 
 
 
