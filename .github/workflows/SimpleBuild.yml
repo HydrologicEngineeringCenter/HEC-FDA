@@ -58,5 +58,5 @@ jobs:
     
     #Publish
     - name: Publish
-      run: dotnet nuget push "D:\a\fda-utilities\fda-utilities\Build\FDA2.0\*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
+      run: dotnet nuget push "D:\a\fda-model\fda-model\Build\FDA2.0\*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
 
