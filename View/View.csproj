@@ -125,7 +125,6 @@
     <ProjectReference Include="..\Model\Model.csproj" />
     <ProjectReference Include="..\OccupancyTypes\OccupancyTypes.csproj" />
     <ProjectReference Include="..\UserControls\UserControls.vbproj" />
-    <ProjectReference Include="..\Utilities\Utilities.csproj" />
     <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
   </ItemGroup>
 	

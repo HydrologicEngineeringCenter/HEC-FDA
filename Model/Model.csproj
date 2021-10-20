@@ -8,12 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="UnitsNet" Version="4.69.0" />
+    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Functions\Functions.csproj" />
-    <ProjectReference Include="..\Statistics\Statistics.csproj" />
-    <ProjectReference Include="..\Utilities\Utilities.csproj" />
   </ItemGroup>
 
   <ItemGroup>

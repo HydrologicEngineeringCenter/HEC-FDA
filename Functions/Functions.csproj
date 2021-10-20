@@ -2,16 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	  <OutputPath>C:\Temp\FDA2.0</OutputPath>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	<OutputPath>C:\Temp\FDA2.0</OutputPath>	  
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Statistics\Statistics.csproj" />
-    <ProjectReference Include="..\Utilities\Utilities.csproj" />
+    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
