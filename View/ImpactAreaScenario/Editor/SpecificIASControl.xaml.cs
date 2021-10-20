@@ -147,5 +147,11 @@ namespace View.ImpactAreaScenario.Editor
             SpecificIASEditorVM vm = (SpecificIASEditorVM)this.DataContext;
 
         }
+
+        private void addThresholdBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SpecificIASEditorVM vm = (SpecificIASEditorVM)this.DataContext;
+            vm.AddThresholds();
+        }
     }
 }

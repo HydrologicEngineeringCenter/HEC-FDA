@@ -32,7 +32,7 @@
         
 
 
-        <GroupBox Grid.Row="2"  Header="{Binding Name}" >
+        <GroupBox Grid.Row="1"  Header="{Binding Name}" >
             <StackPanel Orientation="Vertical">
                 <Grid x:Name="ThirdRowGrid" Grid.Row="2" Margin="0,5,5,0">
                     <Grid.ColumnDefinitions>
@@ -79,6 +79,19 @@
                     <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" />
                     <ComboBox  Grid.Column="5"  HorizontalAlignment="Stretch" ItemsSource="{Binding StageDamageElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedStageDamageElement}" />
 
+                </Grid>
+                <Grid Margin="0,5,5,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Thresholds:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
+                    <Label Grid.Row="0" Grid.Column="0" Content="*" Foreground="Red" HorizontalAlignment="Right" />
+                    <Button x:Name="addThresholdBtn" Grid.Column="1" Content="Add Thresholds..."  HorizontalAlignment="Stretch" Click="addThresholdBtn_Click"  />
                 </Grid>
             </StackPanel>
         </GroupBox>

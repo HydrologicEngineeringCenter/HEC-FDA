@@ -232,6 +232,12 @@ namespace ViewModel.Saving.PersistenceManagers
             }
         }
 
+        public void SaveNew(IASElementSet iasSet)
+        {
+
+        }
+
+
         /// <summary>
         /// Deletes an element from the parent table.
         /// </summary>
