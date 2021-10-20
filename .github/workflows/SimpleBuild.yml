@@ -33,32 +33,6 @@ jobs:
 
     - name: Add Source
       run: dotnet nuget add source --username HydrologicEngineeringCenter --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/HydrologicEngineeringCenter/index.json"
-      
-    # Restore the application to populate the obj folder with RuntimeIdentifiers
-    - name: Restore
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
-      env:
-        Configuration: ${{ matrix.configuration }}
-        
-    # Build the Application
-    - name: Build
-      run: msbuild $env:Solution_Name /p:Configuration=$env:Configuration
-      env:
-        Configuration: ${{ matrix.configuration }}
-        
-    # Execute all unit tests in the solution
-    - name: Test
-      run: dotnet test --no-build
-      
-    # pack the NuGet
-    - name: Pack 
-      run: dotnet pack --configuration Release
-    
-    #Publish
-    - name: Publish
-      run: dotnet nuget push "D:\a\fda-model\fda-model\Build\FDA2.0\*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
-
-
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
