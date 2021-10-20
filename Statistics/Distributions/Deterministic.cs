@@ -73,10 +73,6 @@ namespace Statistics.Distributions
             }
         }
             
-            
-            
-            //=> string.Compare(Print(), distribution.Print()) == 0 ? true : false;
-
         public double InverseCDF(double p)
         {
             return Value;
