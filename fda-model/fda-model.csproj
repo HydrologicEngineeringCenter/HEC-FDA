@@ -3,11 +3,11 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net48</TargetFramework>
-	  <OutputPath>..\Build\FDA2.0</OutputPath>
+	<OutputPath>..\Build\FDA2.0</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.0.0-Alpha" />
+    <PackageReference Include="USACE.HEC.FDA.Statistics" Version= "1.0.0" />
   </ItemGroup>
 
 </Project>
