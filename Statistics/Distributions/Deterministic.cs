@@ -62,7 +62,20 @@ namespace Statistics.Distributions
             }
         }
 
-        public bool Equals(IDistribution distribution) => string.Compare(Print(), distribution.Print()) == 0 ? true : false;
+        public bool Equals(IDistribution distribution)
+        {
+            if (Value == distribution.Mean)
+            {
+                return true;
+            } else
+            {
+                return false;
+            }
+        }
+            
+            
+            
+            //=> string.Compare(Print(), distribution.Print()) == 0 ? true : false;
 
         public double InverseCDF(double p)
         {
