@@ -37,12 +37,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private ChildElementComboItem _selectedFrequencyRelationship;
         private bool _ratingRequired;
 
-        
-        //public SciChart2DChartViewModel FlowFreqChartVM { get; set; } = new SciChart2DChartViewModel("Flow Frequency");
-        public ChartControlBase FrequencyRelationshipControl { get; set; }
-        public ChartControlBase RatingRelationshipControl { get; set; }
-        public ChartControlBase StageDamageControl { get; set; }
-        public ChartControlBase DamageFrequencyControl { get; set; }
+        public IASPlotControlVM PlotControlVM { get; } = new IASPlotControlVM();
 
         public bool RatingRequired
         {
@@ -50,10 +45,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             set { _ratingRequired = value; NotifyPropertyChanged(); }
         }
 
-
-        //public SciChart2DChartViewModel RatingChartVM { get; set; } = new SciChart2DChartViewModel("Rating Curve");
-        //public SciChart2DChartViewModel StageDamageChartVM { get; set; } = new SciChart2DChartViewModel("Stage Damage");
-        //public SciChart2DChartViewModel DamageFreqChartVM { get; set; } = new SciChart2DChartViewModel("Damage Frequency");
         public int Year { get; set; } = DateTime.Now.Year;
 
 
@@ -151,12 +142,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             Thresholds = new List<AdditionalThresholdRowItem>();
 
             LoadElements();
-
-            FrequencyRelationshipControl = new FrequencyRelationshipControl();
-            RatingRelationshipControl = new RatingRelationshipControl();
-            StageDamageControl = new StageDamageControl();
-            DamageFrequencyControl = new DamageFrequencyControl();
-
 
             StudyCache.ImpactAreaAdded += AddImpactAreaElement;
             StudyCache.ImpactAreaRemoved += RemoveImpactAreaElement;
@@ -835,7 +820,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             //return new IASElement()
             return null;
         }
-
         public void Plot()
         {
             CheckForOverlappingRanges();
@@ -844,35 +828,16 @@ namespace ViewModel.ImpactAreaScenario.Editor
             {
                 //get the current curves and set that data on the chart controls
                 //this update call will set the current crosshair data on each one
-                FrequencyRelationshipControl.UpdatePlotData(getFrequencyRelationshipFunction());
-                RatingRelationshipControl.UpdatePlotData(getRatingCurveFunction());
-                StageDamageControl.UpdatePlotData(getStageDamageFunction());
-                DamageFrequencyControl.UpdatePlotData(getDamageFrequencyFunction());
+                PlotControlVM.FrequencyRelationshipControl.UpdatePlotData(getFrequencyRelationshipFunction());
+                PlotControlVM.RatingRelationshipControl.UpdatePlotData(getRatingCurveFunction());
+                PlotControlVM.StageDamageControl.UpdatePlotData(getStageDamageFunction());
+                PlotControlVM.DamageFrequencyControl.UpdatePlotData(getDamageFrequencyFunction());
 
-                //link the crosshair data to eachother
-                CrosshairData freqRelationshipCrosshairData = FrequencyRelationshipControl.currentCrosshairData;
-                CrosshairData ratingCrosshairData = RatingRelationshipControl.currentCrosshairData;
-                freqRelationshipCrosshairData.Next = new SharedAxisCrosshairData(ratingCrosshairData, Axis.Y, Axis.Y);
-                ratingCrosshairData.Previous = new SharedAxisCrosshairData(freqRelationshipCrosshairData, Axis.Y, Axis.Y);
-
-                //CrosshairData stageDamageCrosshairData = StageDamageControl.currentCrosshairData;
-                //ratingCrosshairData.Next = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.X, Axis.X);
-                //stageDamageCrosshairData.Previous = new SharedAxisCrosshairData(ratingCrosshairData, Axis.X, Axis.X);
-
-                //CrosshairData damageFreqCrosshairData = DamageFrequencyControl.currentCrosshairData;
-                //stageDamageCrosshairData.Next = new SharedAxisCrosshairData(damageFreqCrosshairData, Axis.Y, Axis.Y);
-                //damageFreqCrosshairData.Previous = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.Y, Axis.Y);
-
-                FrequencyRelationshipControl.Plot();
-                RatingRelationshipControl.Plot();
-                StageDamageControl.Plot();
-                DamageFrequencyControl.Plot();
-
-
+                PlotControlVM.Plot();
             }
         }
 
-        #endregion
+                #endregion
 
 
         private Boolean ValidateIAS()

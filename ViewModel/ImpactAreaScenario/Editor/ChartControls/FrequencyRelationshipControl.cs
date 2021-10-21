@@ -1,4 +1,5 @@
-﻿using HEC.Plotting.SciChart2D.DataModel;
+﻿using HEC.Plotting.Core.DataModel;
+using HEC.Plotting.SciChart2D.DataModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
 
 
         public FrequencyRelationshipControl()
-            :base("FrequencyRelationship","Frequency", "Flow", "Flow-Frequency", false, false)
+            : base("FrequencyRelationship", "Frequency", "Flow", "Flow-Frequency", useProbabilityX: true, xAxisAlignment: AxisAlignment.Top, yAxisAlignment: AxisAlignment.Right)
         {
             
         }
