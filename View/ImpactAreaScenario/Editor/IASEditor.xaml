@@ -63,9 +63,7 @@
             <ComboBox  Grid.Column="1"  HorizontalAlignment="Stretch" ItemsSource="{Binding ImpactAreaNames}"  SelectedItem="{Binding SelectedImpactAreaName}" />
 
 
-            <Label Grid.Column="4" Content="Thresholds:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
-            <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" />
-            <Button x:Name="addThresholdBtn" Grid.Column="5" Content="Add Thresholds..."  HorizontalAlignment="Stretch" Click="addThresholdBtn_Click"  />
+            
        
         </Grid>
 

@@ -20,6 +20,9 @@
     <Compile Update="ImpactAreaScenario\Editor\IASEditor.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="ImpactAreaScenario\Editor\RecommendationExpanderControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="ImpactAreaScenario\Editor\SpecificIASControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -29,6 +32,9 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="ImpactAreaScenario\Editor\IASEditor.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="ImpactAreaScenario\Editor\RecommendationExpanderControl.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="ImpactAreaScenario\Editor\SpecificIASControl.xaml">

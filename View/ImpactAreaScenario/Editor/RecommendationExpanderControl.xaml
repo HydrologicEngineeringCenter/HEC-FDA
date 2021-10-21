@@ -107,7 +107,7 @@
         <Expander Name="MessagesExpander" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsExpanded="{Binding IsExpanded}" Collapsed="Expander_Collapsed" Expanded="MessagesExpander_Expanded" Margin="5,5,0,5" >
             <Expander.Header>
                 <StackPanel Orientation="Horizontal"  >
-                    <TextBlock Text="Compute Warnings" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="Warnings" Height="20" VerticalAlignment="Center"/>
                 </StackPanel>
             </Expander.Header>
             <StackPanel>
@@ -124,13 +124,20 @@
                                         <TextBlock Text="{Binding Header}" TextWrapping="Wrap" VerticalAlignment="Bottom" />
                                     </StackPanel>
                                 </Expander.Header>
-                                <StackPanel Orientation="Horizontal" Margin="0" >
+                                <ListView ItemsSource="{Binding Messages}" Background="Transparent" BorderThickness="0" Margin="20,0,0,0">
+                                    <!--<ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding }"
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>-->
+                                </ListView>
+                                <!--<StackPanel Orientation="Horizontal" Margin="0" >
                                     <StackPanel Orientation="Horizontal" Margin="40,0,0,0">
                                         <Label Content="Date: " Margin="0"/>
                                         <Label Content="{Binding Message}" Margin="0"/>
                                     </StackPanel>
                                    
-                                </StackPanel>
+                                </StackPanel>-->
                             </Expander>
                         </DataTemplate>
                     </ListView.ItemTemplate>

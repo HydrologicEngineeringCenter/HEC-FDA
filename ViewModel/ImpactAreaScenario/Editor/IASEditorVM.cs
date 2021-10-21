@@ -30,14 +30,10 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private IASElementSet _currentElement;
         private bool _isInEditMode;
         private Chart2DController _controller;
-        private AdditionalThresholdsVM _additionalThresholdsVM;
 
 
         public int Year { get; set; } = DateTime.Now.Year;
 
-
-       
-        public List<AdditionalThresholdRowItem> Thresholds { get; set; }
         
         //public List<SpecificIASEditorVM> SpecificIASEditors { get; set; }
         public ObservableCollection<ChildElementComboItem> ImpactAreaElements { get; set; }
@@ -91,7 +87,9 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 foreach (ImpactAreaRowItem row in impactAreaRows)
                 {
                     impactAreaNames.Add(row.Name);
-                    _ImpactAreaEditorDictionary.Add(row.Name, new SpecificIASEditorVM(row.Name));
+                    SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(row.Name);
+                    specificIASEditorVM.RequestNavigation += Navigate;
+                    _ImpactAreaEditorDictionary.Add(row.Name, specificIASEditorVM);
                 }
                 //todo: an exception gets thrown in the code behind if we don't start with an editor vm loaded in.
                 //what do we do if no impact areas?
@@ -115,10 +113,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
             CreateEmptySpecificIASEditors();
             //hook up the navigate event for the additional thresholds dialog
-            _additionalThresholdsVM = new AdditionalThresholdsVM();
-            _additionalThresholdsVM.RequestNavigation += Navigate;
-
-            Thresholds = new List<AdditionalThresholdRowItem>();
+            
 
             //LoadElements();
 
@@ -285,18 +280,9 @@ namespace ViewModel.ImpactAreaScenario.Editor
             Description = elem.Description;
             Year = elem.AnalysisYear;
             //SelectedImpactAreaElement = elem.ImpactAreaID;
-            FillThresholds(elem);
 
         }
-        private void FillThresholds(IASElementSet elem)
-        {
-            //todo: maybe add a different ctor or a fill method to load the rows?
-            _additionalThresholdsVM.Rows = new ObservableCollection<AdditionalThresholdRowItem>();
-            foreach (AdditionalThresholdRowItem row in elem.Thresholds)
-            {
-                _additionalThresholdsVM.Rows.Add(row);
-            }
-        }
+        
 
         //private void LoadElements()
         //{
@@ -359,16 +345,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         //    return items;
         //}
 
-        public void AddThresholds()
-        {
-            //AdditionalThresholdsVM vm = new AdditionalThresholdsVM();
-            string header = "Annual Exceedance Probabilities Thresholds";
-            DynamicTabVM tab = new DynamicTabVM(header, _additionalThresholdsVM, "additionalThresholds");
-            Navigate(tab,true, true);
-            Thresholds = _additionalThresholdsVM.GetThresholds();
-            
-
-        }
+        
 
         //private void UpdateRatingRequired()
         //{
@@ -440,17 +417,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
             return vr;
         }
 
-        private FdaValidationResult IsThresholdsValid()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            if (Thresholds.Count == 0)
-            {
-                vr.IsValid = false;
-                vr.ErrorMessage = new StringBuilder("At least one threshold is required.");
-            }
-
-            return vr;
-        }
+      
         #endregion
 
 
@@ -569,7 +536,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             FdaValidationResult vr = new FdaValidationResult();
 
             vr.AddValidationResult( IsYearValid());
-            vr.AddValidationResult( IsThresholdsValid());
 
             //todo: actually run the compute and see if it was successful? - this might be done on each individual ias.
             foreach (KeyValuePair<string, SpecificIASEditorVM>  entry in _ImpactAreaEditorDictionary)

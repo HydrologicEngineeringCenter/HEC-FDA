@@ -80,10 +80,11 @@ namespace ViewModel.ImpactAreaScenario
             {
                 int elemID = args.ID;
 
-                List<IASElement> conditionsElements = StudyCache.GetChildElementsOfType<IASElement>();
-                foreach (IASElement condElem in conditionsElements)
+                List<IASElementSet> conditionsElements = StudyCache.GetChildElementsOfType<IASElementSet>();
+                foreach (IASElementSet condElem in conditionsElements)
                 {
-                    condElem.UpdateElementInEditor_ChildModified(elemID, (ChildElement)newElement);
+                    //todo: this got broken when i changed to the IASElementSet
+                    //condElem.UpdateElementInEditor_ChildModified(elemID, (ChildElement)newElement);
                 }
             }
 

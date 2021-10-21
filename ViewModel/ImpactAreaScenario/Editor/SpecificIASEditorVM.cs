@@ -121,18 +121,14 @@ namespace ViewModel.ImpactAreaScenario.Editor
             set { _selectedStageDamageElement = value; StageDamageSelectionChanged(); }
         }
 
-        public List<RecommendationRowItem> MessageRows { get; set; }
+       
+        public ObservableCollection<RecommendationRowItem> MessageRows { get; set; }
 
         /// <summary>
         /// This is the create new ctor
         /// </summary>
         public SpecificIASEditorVM(string name)
-        {
-            MessageRows = new List<RecommendationRowItem>();
-            for(int i = 0;i<5;i++)
-            {
-                MessageRows.Add(new RecommendationRowItem("headerTest: " + i, "testing: " + i));
-            }
+        {            
             Initialize();
             Name = name;
         }
@@ -148,6 +144,12 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         private void Initialize()
         {
+            MessageRows = new ObservableCollection<RecommendationRowItem>();
+            _additionalThresholdsVM = new AdditionalThresholdsVM();
+            _additionalThresholdsVM.RequestNavigation += Navigate;
+
+            Thresholds = new List<AdditionalThresholdRowItem>();
+
             LoadElements();
 
             FrequencyRelationshipControl = new FrequencyRelationshipControl();
@@ -315,7 +317,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         private void FillForm(IASElement elem)
         {
-            
+
+            FillThresholds(elem);
 
             //all the available elements have been loaded into this editor. We now want to select
             //the correct element for each dropdown. If we can't find the correct element then the selected elem 
@@ -332,7 +335,16 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
 
         }
-       
+
+        private void FillThresholds(IASElement elem)
+        {
+            //todo: maybe add a different ctor or a fill method to load the rows?
+            _additionalThresholdsVM.Rows = new ObservableCollection<AdditionalThresholdRowItem>();
+            foreach (AdditionalThresholdRowItem row in elem.Thresholds)
+            {
+                _additionalThresholdsVM.Rows.Add(row);
+            }
+        }
 
         private void LoadElements()
         {
@@ -412,7 +424,14 @@ namespace ViewModel.ImpactAreaScenario.Editor
             if (SelectedStageDamageElement != null && SelectedStageDamageElement.ChildElement != null)
             {
                 List<string> damCats = new List<string>();
-                damCats.Add("todo: add dam cats");
+
+                AggregatedStageDamageElement elem = (AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement;
+
+                foreach (StageDamageCurve curve in elem.Curves)
+                {
+                    damCats.Add(curve.DamCat);
+                }
+
                 DamageCategories = damCats;
                 SelectedDamageCategory = damCats[0];
             }
@@ -457,11 +476,274 @@ namespace ViewModel.ImpactAreaScenario.Editor
             return vr;
         }
 
-        
+        private FdaValidationResult IsThresholdsValid()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            if (Thresholds.Count == 0)
+            {
+                vr.IsValid = false;
+                vr.ErrorMessage = new StringBuilder("At least one threshold is required.");
+            }
 
-        
+            return vr;
+        }
+
+
+
         #endregion
 
+
+        #region Check overlapping ranges
+
+        private const string INFLOW_OUTFLOW = "Inflow-Outflow";
+        private const string RATING = "Rating-Curve";
+        private const string EXTERIOR_INTERIOR = "Exterior-Interior";
+        private const string STAGE_DAMAGE = "Stage-Damage";
+        private const string FLOW = "Flow";
+        private const string STAGE = "Stage";
+
+        private void CheckForOverlappingRanges()
+        {
+            //Note: the following axis determinations are based on this table:
+            //       flow freq:  frequency,       inflow
+            //inflow - outflow:  inflow,          outflow
+            //          Rating:  Outflow,         Exterior Stage
+            //       Ext - Int:  Exterior Stage,  Interior Stage
+            //    Stage Damage:  Interior Stage,  Damage
+
+            MessageRows.Clear();
+            //assume that the big 3 exist by the time we get here.
+
+            bool inflowOutflowSelected = SelectedInflowOutflowElement.ChildElement != null;
+            bool extInteriorSelected = SelectedExteriorInteriorElement.ChildElement != null;
+
+            if(inflowOutflowSelected && !extInteriorSelected)
+            {
+                //check in-out flows with flow freq
+                CheckRangeValues(SelectedInflowOutflowElement, SelectedFrequencyElement, true, false, INFLOW_OUTFLOW, FLOW);
+                //check outflows with rating flows
+                CheckRangeValues(SelectedRatingCurveElement, SelectedInflowOutflowElement, true, false, RATING, FLOW);
+                //check rating stages with stage-damage stages
+                CheckRangeWithStageDamage((AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement, SelectedRatingCurveElement);
+
+            }
+            else if(!inflowOutflowSelected && extInteriorSelected)
+            {
+                //check rating flows with flow-freq flows
+                CheckRangeValues(SelectedRatingCurveElement, SelectedFrequencyElement,true, false, RATING, FLOW);
+
+                //check rating stages with ext-int exterior stages
+                CheckRangeValues(SelectedExteriorInteriorElement, SelectedRatingCurveElement, false, true, EXTERIOR_INTERIOR, STAGE);
+
+                //check ext-int interior stages with stage-damage stages.
+                CheckRangeWithStageDamage((AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement, SelectedExteriorInteriorElement);
+
+            }
+            else if(inflowOutflowSelected && extInteriorSelected)
+            {
+                //check in-out flows with flow freq
+                CheckRangeValues(SelectedInflowOutflowElement, SelectedFrequencyElement, true, false, INFLOW_OUTFLOW, FLOW);
+
+                //check outflows with rating flows
+                CheckRangeValues(SelectedRatingCurveElement, SelectedInflowOutflowElement, true, false, RATING, FLOW);
+
+                //check rating stages with ext-int exterior stages
+                CheckRangeValues(SelectedExteriorInteriorElement, SelectedRatingCurveElement, false, true, EXTERIOR_INTERIOR, STAGE);
+
+                //check ext-int interior stages with stage-damage stages.
+                CheckRangeWithStageDamage((AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement, SelectedExteriorInteriorElement);
+
+            }
+            else
+            {
+                //check rating flows with flow-freq flows
+                CheckRangeValues(SelectedRatingCurveElement, SelectedFrequencyElement, true, false, RATING, FLOW);
+
+                //check rating stages with stage-damage stages
+                CheckRangeWithStageDamage((AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement, SelectedRatingCurveElement);
+            }
+        }
+
+        /// <summary>
+        /// Dealing with the stage damage element is a little more complicated. The stage damage element has a list of curves. We have to find 
+        /// the correct curve based on what damage category is selected by the user.
+        /// </summary>
+        /// <param name="stageDamElem"></param>
+        /// <param name="otherElem"></param>
+        /// <param name="compareXAxis"></param>
+        private void CheckRangeWithStageDamage(AggregatedStageDamageElement stageDamElem, ChildElementComboItem otherElem)
+        {
+            //this will always compare the x values of the stage-damage to the y values of the other element.
+            double stageDamageMin = -1;
+            double stageDamageMax = -1;
+            double otherMin = -1;
+            double otherMax = -1;
+
+            IFdaFunction otherCurve = otherElem.ChildElement.Curve;
+            StageDamageCurve selectedCurve = null;
+            foreach (StageDamageCurve curve in stageDamElem.Curves)
+            {
+                if(curve.DamCat.Equals(SelectedDamageCategory))
+                {
+                    //I don't think it is possible to not find the correct curve since we are
+                    //pulling the selected dam cat name from the curves and are just matching it back up here.
+                    selectedCurve = curve;
+                   
+                    break;
+                }
+            }
+         
+                stageDamageMin = selectedCurve.Function.Coordinates.First().X.Value();
+                stageDamageMax = selectedCurve.Function.Coordinates.Last().X.Value();
+
+                otherMin = otherCurve.YSeries.Range.Min;
+                otherMax = otherCurve.YSeries.Range.Max;           
+
+            AddRecommendationForNonoverlappingRange(stageDamageMin, stageDamageMax, otherMin, otherMax, STAGE_DAMAGE, STAGE, 
+                stageDamElem.Name, otherElem.ChildElement.Name);
+
+        }
+
+        /// <summary>
+        /// This method finds the non-overlapping regions and creates a message object that gets displayed in the UI. 
+        /// </summary>
+        /// <param name="element1">This needs to be the curve that is associated with that node in the warnings tree.</param>
+        /// <param name="element2"></param>
+        /// <param name="compareXAxis"></param>
+        /// <param name="headerBase"></param>
+        /// <param name="axisLabel"></param>
+        private void CheckRangeValues(ChildElementComboItem element1, ChildElementComboItem element2, bool compareXAxisOnElem1, bool compareXAxisOnElem2, string headerBase, string axisLabel)
+        {
+            ChildElement elem1 = element1.ChildElement;
+            ChildElement elem2 = element2.ChildElement;
+            string name1 = elem1.Name;
+            string name2 = elem2.Name;
+            IParameterRange range1 = null;
+            IParameterRange range2 = null;
+            if(compareXAxisOnElem1)
+            {
+                range1 = elem1.Curve.XSeries;
+            }
+            else
+            {
+                range1 = elem1.Curve.YSeries;
+            }
+            if(compareXAxisOnElem2)
+            {
+                range2 = elem2.Curve.XSeries;
+            }
+            else
+            {
+                range2 = elem2.Curve.YSeries;
+            }
+
+            double min1 = range1.Range.Min;
+            double max1 = range1.Range.Max;
+
+            double min2 = range2.Range.Min;
+            double max2 = range2.Range.Max;
+
+
+            AddRecommendationForNonoverlappingRange(min1, max1, min2, max2, headerBase, axisLabel, name1, name2);
+
+        }
+
+        private void AddRecommendationForNonoverlappingRange(double min1, double max1, double min2, double max2, string headerBase, string axisLabel, string name1, string name2)
+        {
+            RecommendationRowItem ri = new RecommendationRowItem(headerBase + ": " + name1);
+            bool nonOverlapMin = false;
+            bool nonOverlapMax = false;
+            string minRange = "";
+            string maxRange = "";
+
+            //todo: apply some min and max rule.
+            if (min1 != min2)
+            {
+                nonOverlapMin = true;
+                //i want to display the lowest value first
+                minRange = getRangeString(min1, min2);
+            }
+            if (max1 != max2)
+            {
+                nonOverlapMax = true;
+                maxRange = getRangeString(max1, max2);
+            }
+
+            if(nonOverlapMin && nonOverlapMax)
+            {
+                ri.Messages.Add("Non-overlapping " + axisLabel + " with " + name2 + ": " + minRange + " and " + maxRange);
+            }
+            else if(nonOverlapMin)
+            {
+                ri.Messages.Add("Non-overlapping " + axisLabel + " with " + name2 + ": " + minRange);
+            }
+            else if(nonOverlapMax)
+            {
+                ri.Messages.Add("Non-overlapping " + axisLabel + " with " + name2 + ": " + maxRange);
+            }
+
+            if (ri.Messages.Count > 0)
+            {
+                MessageRows.Add(ri);
+            }
+        }
+
+        private string getRangeString(double val1, double val2)
+        {
+            string retval;
+            //i want to display the lowest value first
+            bool val1IsLowest = false;
+            if(val1<val2)
+            {
+                val1IsLowest = true;
+            }
+
+            //only dispaly 2 decimal places
+            val1 = Math.Round(val1, 2);
+            val2 = Math.Round(val2, 2);
+
+            if(val1IsLowest)
+            {
+                retval = "[" + val1 + " - " + val2 + "]";
+            }
+            else
+            {
+                retval = "[" + val2 + " - " + val1 + "]";
+            }
+            return retval;
+        }
+
+        private void CheckRatingFlowsAgainstFreqRelationship()
+        {
+            IParameterRange ySeries = SelectedFrequencyElement.ChildElement.Curve.YSeries;
+            double min = ySeries.Range.Min;
+            double max = ySeries.Range.Max;
+            string flowName = SelectedFrequencyElement.ChildElement.Name;
+
+            IParameterRange ratingYSeries = SelectedRatingCurveElement.ChildElement.Curve.YSeries;
+            double ratingMin = ratingYSeries.Range.Min;
+            double ratingMax = ratingYSeries.Range.Max;
+            string ratName = SelectedRatingCurveElement.ChildElement.Name;
+            
+
+            
+            RecommendationRowItem ri = new RecommendationRowItem("Frequency Relationship");
+            if(min != ratingMin)
+            {
+                ri.Messages.Add(flowName + " has a minimum flow of " + min + " while " + ratName + " has a minimum flow of " + ratingMin +
+                    ". The non-overlapping range will not be used during the compute.");
+            }
+
+
+            if(ri.Messages.Count>0)
+            {
+                MessageRows.Add(ri);
+            }
+            
+        }
+
+
+        #endregion
 
 
         #region PlotCurves
@@ -472,7 +754,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
             vr.AddValidationResult(IsFrequencyRelationshipValid());        
             vr.AddValidationResult( IsRatingCurveValid());
             vr.AddValidationResult( IsStageDamageValid());
-
+            vr.AddValidationResult(IsThresholdsValid());
             //todo: actually run the compute and see if it was successful?
 
             if(!vr.IsValid)
@@ -556,6 +838,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         public void Plot()
         {
+            CheckForOverlappingRanges();
             //CanPlot() is being called by the view before calling this method.
             //if (CanPlot())
             {
@@ -637,6 +920,16 @@ namespace ViewModel.ImpactAreaScenario.Editor
         //    }
 
         //}
+
+        public void AddThresholds()
+        {
+            string header = "Annual Exceedance Probabilities Thresholds";
+            DynamicTabVM tab = new DynamicTabVM(header, _additionalThresholdsVM, "additionalThresholds");
+            Navigate(tab, true, true);
+            Thresholds = _additionalThresholdsVM.GetThresholds();
+
+
+        }
 
     }
 }

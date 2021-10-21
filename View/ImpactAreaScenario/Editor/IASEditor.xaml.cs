@@ -33,11 +33,7 @@ namespace View.ImpactAreaScenario.Editor
             InitializeComponent();
         }
 
-        private void addThresholdBtn_Click(object sender, RoutedEventArgs e)
-        {
-            IASEditorVM vm = (IASEditorVM)this.DataContext;
-            vm.AddThresholds();
-        }
+        
 
         //private void UserControl_Loaded(object sender, RoutedEventArgs e)
         //{
