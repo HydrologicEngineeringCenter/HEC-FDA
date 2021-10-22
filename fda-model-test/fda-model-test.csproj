@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <RootNamespace>fda_model_test</RootNamespace>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
