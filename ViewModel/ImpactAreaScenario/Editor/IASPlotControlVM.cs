@@ -34,9 +34,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
             UpdateMinMax(FrequencyRelationshipControl, RatingRelationshipControl, Axis.Y);
             UpdateMinMax(StageDamageControl, DamageFrequencyControl, Axis.Y);
-
-            //UpdateMinMax(FrequencyRelationshipControl, DamageFrequencyControl, Axis.X);
-            UpdateMinMax(StageDamageControl, RatingRelationshipControl, Axis.X);
+            UpdateMinMax(RatingRelationshipControl, StageDamageControl, Axis.X);
         }
 
         private void UpdateMinMax(ChartControlBase primary, ChartControlBase secondary, Axis axis)
@@ -45,20 +43,11 @@ namespace ViewModel.ImpactAreaScenario.Editor
             Tuple<double, double> leftMinMax = primary.GetMinMax(axis);
             Tuple<double, double> rightMinMax = secondary.GetMinMax(axis);
 
-            double min;
-            if (axis == Axis.Y)
-            {
-                //Y is log for all charts.  don't go lower than the min.
-                min = Math.Max(Math.Min(leftMinMax.Item1, rightMinMax.Item1), 0.00001);
-            }
-            else
-            {
-                min = Math.Min(leftMinMax.Item1, rightMinMax.Item1);
-            }
-            
+            //TODO:  Once Y goes log again, we will need to adjust the min so it doesn't go <= 0, or there needs to be some guarantee outside of this that guarantees the min does not go <= 0.
+            double min = Math.Min(leftMinMax.Item1, rightMinMax.Item1);
             double max = Math.Max(leftMinMax.Item2, rightMinMax.Item2);
 
-            //They're bound, so set the primary's min/max and that should work.
+            //They're bound, so only set the primary's min/max and it will update the secondary min/max.
             primary.SetMinMax(axis, min, max);
         }
     }

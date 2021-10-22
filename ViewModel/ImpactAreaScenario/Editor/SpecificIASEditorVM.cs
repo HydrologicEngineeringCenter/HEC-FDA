@@ -759,7 +759,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
             for (int i = 0; i < 10; i++)
             {
                 xValues.Add(i / 10.0);
-                yValues.Add(i * 9);
+                yValues.Add(i * 900);
             }
             ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
             IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.OutflowFrequency, coordinatesFunction);
@@ -773,8 +773,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
             for (int i = 0; i < 10; i++)
             {
-                xValues.Add(i);
-                yValues.Add(i * 11);
+                xValues.Add(i * 1100);
+                yValues.Add(i);
             }
 
             ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
 {
@@ -27,7 +28,6 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
         private NumericLineData _data;
         private bool _flipXY;
 
-
         public ChartControlBase(string chartModelUniqueName, string xAxisLabel, string yAxisLabel, string seriesName, bool flipXY = false, bool useProbabilityX = false,
             AxisAlignment xAxisAlignment = AxisAlignment.Bottom, AxisAlignment yAxisAlignment = AxisAlignment.Left)
         {
@@ -39,12 +39,13 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
             _xAxisLabel = xAxisLabel;
             _yAxisLabel = yAxisLabel;
 
-            _data = new NumericLineData(getXValues(), getYValues(), "asdf", _seriesName, _xAxisLabel, _yAxisLabel, PlotType.Line)
+            _data = new NumericLineData(getXValues(), getYValues(), chartModelUniqueName, _seriesName, _xAxisLabel, _yAxisLabel, PlotType.Line)
             {
                 XAxisAlignment = xAxisAlignment,
                 YAxisAlignment = yAxisAlignment,
-                UseLogYAxis = true,
+                StrokeColor = Colors.Black,
                 UseProbabilityXAxis = useProbabilityX,
+                FlipXAxisValues = useProbabilityX,
             };
             ChartVM.LineData.Add(_data);
         }
@@ -89,24 +90,7 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
                     throw new NotSupportedException("2D Chart only supports X and Y values.");
             }
 
-            double max = values.Max();
-            double min = values.Min();
-
-            //if (_data.UseLogAxis(axis))
-            //{
-
-            //}
-            //else
-            //{
-            //    min = values.Min();
-            //}
-            //IAxisViewModel axisVm = GetAxisViewModel(axis);
-            //var visibleRange = axisVm.VisibleRange.AsDoubleRange();
-
-            //double min = visibleRange.Min;
-            //double max = visibleRange.Max;
-
-            return new Tuple<double, double>(min, max);
+            return new Tuple<double, double>(values.Min(), values.Max());
         }
 
         public void RefreshChartViewModel()

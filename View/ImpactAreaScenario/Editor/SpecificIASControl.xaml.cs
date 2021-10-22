@@ -36,11 +36,7 @@ namespace View.ImpactAreaScenario.Editor
         private void plotBtn_Click(object sender, RoutedEventArgs e)
         {
             SpecificIASEditorVM vm = (SpecificIASEditorVM)this.DataContext;
-            //if (CanPlot())
-            //{
             vm.Plot();
-            //PlotControl.Plot();
-            //}
         }
 
         private void addThresholdBtn_Click(object sender, RoutedEventArgs e)
