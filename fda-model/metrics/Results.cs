@@ -30,7 +30,7 @@ namespace metrics
         {
             double[] data = new double[1] { aepEstimate };
             IData aep = IDataFactory.Factory(data);
-            if (aep!=null)
+            if (_aep!=null)
             {
                 _aep.AddObservationToHistogram(aep);
             } else
