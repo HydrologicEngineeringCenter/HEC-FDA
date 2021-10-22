@@ -10,7 +10,7 @@ namespace metrics
         private const double AEP_HISTOGRAM_BINWIDTH = .01;
         private const double EAD_HISTOGRAM_BINWIDTH = 10;
         private double _aepThreshold;
-        private Histogram _aep;
+        private Histogram _aep =  null;
         private Dictionary<string, Histogram> _ead; 
 
         public double AEPThreshold { 
@@ -30,7 +30,15 @@ namespace metrics
         {
             double[] data = new double[1] { aepEstimate };
             IData aep = IDataFactory.Factory(data);
-            _aep.AddObservationToHistogram(aep);
+            if (aep!=null)
+            {
+                _aep.AddObservationToHistogram(aep);
+            } else
+            {
+                var histo = new Histogram(aep, AEP_HISTOGRAM_BINWIDTH);
+                _aep = histo;
+            }
+            
 
         }
 
@@ -52,5 +60,6 @@ namespace metrics
         {
             return _ead[category].Mean;
         }
+
     }
 }
