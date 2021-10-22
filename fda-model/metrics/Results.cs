@@ -23,7 +23,7 @@ namespace metrics
         }
         public Results(){
             _aepThreshold = 0.0;
-            _aep = new Histogram(null, AEP_HISTOGRAM_BINWIDTH);
+            _aep = null; //is this necessary?
             _ead = new Dictionary<string, Histogram>();
         }
         public void AddAEPEstimate(double aepEstimate)
