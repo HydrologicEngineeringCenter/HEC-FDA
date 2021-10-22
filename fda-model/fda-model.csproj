@@ -16,7 +16,7 @@
 
 	
   <ItemGroup>
-    <PackageReference Include="USACE.HEC.FDA.Statistics" Version= "1.0.0" />
+    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

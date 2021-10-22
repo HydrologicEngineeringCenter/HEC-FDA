@@ -6,9 +6,7 @@ namespace fda
     public static class FDA
     {
         public static void Main(string[] args){
-            Simulation sim = new Simulation();
-            //load curves with cool info.
-            sim.Compute(1234,100);
+
         }
     }
 }
