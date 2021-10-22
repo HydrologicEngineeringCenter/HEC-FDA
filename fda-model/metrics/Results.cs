@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
+using Statistics;
+using Statistics.Histograms;
 namespace metrics
 {
     public class Results: IContainResults
     {
         //needs access to get AEP and EAD results.
+        private const double AEP_HISTOGRAM_BINWIDTH = .01;
+        private const double EAD_HISTOGRAM_BINWIDTH = 10;
         private double _aepThreshold;
-        private double _meanAEP;//replace with inlinehistogram
-        private Int64 _aepCount;
-        private Dictionary<string, double> _meanEADs; //replace double with inline histogram
-        private Dictionary<string, Int64> _eadCounts;
+        private Histogram _aep;
+        private Dictionary<string, Histogram> _ead; 
+
         public double AEPThreshold { 
             get {
                 return _aepThreshold;
@@ -20,33 +23,34 @@ namespace metrics
         }
         public Results(){
             _aepThreshold = 0.0;
-            _meanAEP = 0.0;
-            _aepCount = 0;
-            _meanEADs = new Dictionary<string, double>();
-            _eadCounts = new Dictionary<string, Int64>();
+            _aep = new Histogram(null, AEP_HISTOGRAM_BINWIDTH);
+            _ead = new Dictionary<string, Histogram>();
         }
         public void AddAEPEstimate(double aepEstimate)
         {
-            _meanAEP = _meanAEP +((aepEstimate - _meanAEP)/(double)_aepCount);
-            _aepCount +=1;
+            double[] data = new double[1] { aepEstimate };
+            IData aep = IDataFactory.Factory(data);
+            _aep.AddObservationToHistogram(aep);
+
         }
 
         public void AddEADEstimate(double eadEstimate, string category)
         {
-            if (_meanEADs.ContainsKey(category))
+            double[] data = new double[1] { eadEstimate };
+            IData ead = IDataFactory.Factory(data);
+            if (_ead.ContainsKey(category))
             {
-                _meanEADs[category] = _meanEADs[category] +((eadEstimate - _meanEADs[category])/(double)_eadCounts[category]);
-                _eadCounts[category] +=1;
+                _ead[category].AddObservationToHistogram(ead); 
             }
             else
             {
-                _meanEADs.Add(category, eadEstimate);
-                _eadCounts.Add(category, 1);
+                var histo = new Histogram(ead, EAD_HISTOGRAM_BINWIDTH);
+                _ead.Add(category, histo);
             }
         }
         public double MeanEAD(string category)
         {
-            return _meanEADs[category];
+            return _ead[category].Mean;
         }
     }
 }
