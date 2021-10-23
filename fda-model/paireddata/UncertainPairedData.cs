@@ -5,6 +5,7 @@ using System.Linq;
 using Utilities;
 using Utilities.Serialization;
 using System.Xml.Linq;
+using System;
 
 namespace paireddata
 {
@@ -68,6 +69,11 @@ namespace paireddata
             }
 
             return masterElem;
+        }
+
+        public UncertainPairedData ReadFromXML(string uncertainPairedDataString)
+        {
+            throw new NotImplementedException();
         }
     }
 }
