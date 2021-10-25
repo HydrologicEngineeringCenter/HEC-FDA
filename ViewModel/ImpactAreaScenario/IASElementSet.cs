@@ -13,19 +13,25 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ViewModel.ImpactAreaScenario.Results;
 using ViewModel.ImpactAreaScenario.Editor;
+using System.Xml.Linq;
+using ViewModel.Saving.PersistenceManagers;
 
 namespace ViewModel.ImpactAreaScenario
 {
     public class IASElementSet : ChildElement
     {
         #region Fields
+        public const string IAS_SET = "IASSet";
+        public const string NAME = "Name";
+        public const string DESCRIPTION = "Description";
+        public const string YEAR = "Year";
 
         public event EventHandler EditConditionsTreeElement;
         public event EventHandler RemoveConditionsTreeElement;
         public event EventHandler RenameConditionsTreeElement;
         public event EventHandler UpdateExpansionValueInTreeElement;
 
-        private string _Description;
+        private string _Description = "";
         private int _AnalysisYear;
 
         private bool _IsExpanded;
@@ -95,7 +101,7 @@ namespace ViewModel.ImpactAreaScenario
         //    set { _ThresholdValue = value; NotifyPropertyChanged(); }
         //}
 
-        public List<AdditionalThresholdRowItem> Thresholds { get; set; }
+        //public List<AdditionalThresholdRowItem> Thresholds { get; set; }
         public List<IASElement> SpecificIASElements { get; set; }
 
         #endregion
@@ -110,21 +116,44 @@ namespace ViewModel.ImpactAreaScenario
         /// in the study tree gets saved.
         /// </summary>
         /// <param name="elem">The condition element</param>
-        public IASElementSet(string name, string description, int year, List<AdditionalThresholdRowItem> thresholds, List<IASElement> elems) : base()
+        public IASElementSet(string name, string description, int year, List<IASElement> elems) : base()
         {
             SpecificIASElements = elems;
-
-            IsExpanded = false;// elem.IsExpanded;
             Name = name;
-            //CustomTreeViewHeader = elem.CustomTreeViewHeader;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
-
             Description = description;
             AnalysisYear = year;
 
-            Thresholds = thresholds;
-            //ComputeResults = elem.ComputeResults;
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
 
+            AddActions();
+        }
+
+        public IASElementSet(string xml)
+        {
+            XDocument doc = XDocument.Parse(xml);
+            XElement setElem = doc.Element(IAS_SET);
+            string setName = setElem.Attribute(NAME).Value;
+            string description = setElem.Attribute(DESCRIPTION).Value;
+            int year = Int32.Parse(setElem.Attribute(YEAR).Value);
+
+            IEnumerable<XElement> iasElements = setElem.Elements("IAS");
+            SpecificIASElements = new List<IASElement>();
+            foreach(XElement elem in iasElements)
+            {
+                SpecificIASElements.Add(new IASElement(elem));
+            }
+
+            Name = setName;
+            Description = description;
+            AnalysisYear = year;
+
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
+
+            AddActions();
+        }
+
+        private void AddActions()
+        {
             NamedAction edit = new NamedAction();
             edit.Header = "Edit Impact Area Scenario";
             edit.Action = EditCondition;
@@ -152,10 +181,7 @@ namespace ViewModel.ImpactAreaScenario
             localActions.Add(renameElement);
 
             Actions = localActions;
-
-
         }
-
 
 
         /// <summary>
@@ -459,10 +485,26 @@ namespace ViewModel.ImpactAreaScenario
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             IASElementSet elem = (IASElementSet)elementToClone;
-            IASElementSet newElem = new IASElementSet(elem.Name, elem.Description, elem.AnalysisYear, elem.Thresholds, null);
+            IASElementSet newElem = new IASElementSet(elem.Name, elem.Description, elem.AnalysisYear, null);
             return newElem;
         }
 
         #endregion
+
+        public XElement WriteToXML()
+        {
+            XElement setElement = new XElement(IAS_SET);
+            setElement.SetAttributeValue(NAME, Name);
+            setElement.SetAttributeValue(DESCRIPTION, Description);
+            setElement.SetAttributeValue(YEAR, AnalysisYear);
+
+            foreach(IASElement elem in SpecificIASElements)
+            {
+                setElement.Add(elem.WriteToXML());
+            }
+
+            return setElement;
+        }
+
     }
 }

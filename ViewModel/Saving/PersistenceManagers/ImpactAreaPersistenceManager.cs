@@ -179,9 +179,9 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public void Remove(ChildElement element)
         {
-            //RemoveFromParentTable(element, TableName);
+            RemoveFromParentTable(element, TableName);
             //DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            //StudyCacheForSaving.RemoveElement((ImpactAreaElement)element);
+            StudyCacheForSaving.RemoveElement(element, element.GetElementID());
 
         }
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )

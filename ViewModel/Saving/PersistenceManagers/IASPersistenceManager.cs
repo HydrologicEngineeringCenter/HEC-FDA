@@ -64,14 +64,10 @@ namespace ViewModel.Saving.PersistenceManagers
         private const string TABLE_NAME = "Conditions";
         internal override string ChangeTableConstant { get { return "????"; } }
         private static readonly string[] ColumnNames =
-            { "Name", "Description", "AnalysisYear", "ImpactAreaID",
-                "FlowFreqID", "InOutFlowID","RatingID","LeveeFailureID",
-            "ExtIntStageID","StageDamageID","Thresholds", "Seed" };
+            { "Name","XML"};
 
         private static readonly Type[] TableColTypes =
-            { typeof(string), typeof(string), typeof(int), typeof(int),
-                typeof(int), typeof(int), typeof(int), typeof(int),
-                typeof(int), typeof(int), typeof(string), typeof(int)};
+            { typeof(string), typeof(string)};
 
 
         /// <summary>
@@ -113,13 +109,13 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <returns></returns>
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            IASElement element = (IASElement)elem;
-            int seed = 999; //todo: make this the actual seed.
-            string thresholds = WriteThresholdsToXML(element.Thresholds).ToString();
-            object[] retval = new object[] { element.Name, element.Description, element.AnalysisYear, element.ImpactAreaID,
-                element.FlowFreqID, element.InflowOutflowID, element.RatingID,
-                element.LeveeFailureID, element.ExtIntStageID, element.StageDamageID, thresholds, seed};
-
+            IASElementSet element = (IASElementSet)elem;
+            //int seed = 999; //todo: make this the actual seed.
+            //string thresholds = WriteThresholdsToXML(element.Thresholds).ToString();
+            //object[] retval = new object[] { element.Name, element.Description, element.AnalysisYear, element.ImpactAreaID,
+            //    element.FlowFreqID, element.InflowOutflowID, element.RatingID,
+            //    element.LeveeFailureID, element.ExtIntStageID, element.StageDamageID, thresholds, seed};
+            object[] retval = new object[] {element.Name, element.WriteToXML() };
             return retval;
         }
 
@@ -162,58 +158,44 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <returns></returns>
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            string name = (string)rowData[NAME_COL];
-            string description = (string)rowData[DESC_COL];
-            int year = Convert.ToInt32(rowData[ANALYSIS_YEAR_COL]);
-            int impAreaID = Convert.ToInt32(rowData[IMPACT_AREA_COL]);
-            int flowFreqID = Convert.ToInt32(rowData[FLOW_FREQ_COL]);
-            int infOutflowID = Convert.ToInt32(rowData[INFLOW_OUTFLOW_COL]);
-            int ratingID = Convert.ToInt32(rowData[RATING_COL]);
-            int extIntID = Convert.ToInt32(rowData[EXT_INT_COL]);
-            int leveeFailureID = Convert.ToInt32(rowData[LEVEE_FAILURE_COL]);
-            int stageDamageID = Convert.ToInt32(rowData[STAGE_DAMAGE_COL]);
-            string thresholdsString = (string)rowData[THRESHOLDS_COL];
-            //double thresholdValue = Convert.ToInt32(rowData[THRESHOLD_VALUE_COL]);
-
-            List<AdditionalThresholdRowItem> thresholdRowItems = ReadThresholdsXML(thresholdsString);
-
-            IASElement elem = new IASElement(name, description, year, impAreaID, flowFreqID, infOutflowID,
-                ratingID, extIntID, leveeFailureID, stageDamageID, thresholdRowItems);
+            string xml = (string)rowData[2];
+            IASElementSet elem = new IASElementSet(xml);
             return elem;
+
+            //string name = (string)rowData[NAME_COL];
+            //string description = (string)rowData[DESC_COL];
+            //int year = Convert.ToInt32(rowData[ANALYSIS_YEAR_COL]);
+            //int impAreaID = Convert.ToInt32(rowData[IMPACT_AREA_COL]);
+            //int flowFreqID = Convert.ToInt32(rowData[FLOW_FREQ_COL]);
+            //int infOutflowID = Convert.ToInt32(rowData[INFLOW_OUTFLOW_COL]);
+            //int ratingID = Convert.ToInt32(rowData[RATING_COL]);
+            //int extIntID = Convert.ToInt32(rowData[EXT_INT_COL]);
+            //int leveeFailureID = Convert.ToInt32(rowData[LEVEE_FAILURE_COL]);
+            //int stageDamageID = Convert.ToInt32(rowData[STAGE_DAMAGE_COL]);
+            //string thresholdsString = (string)rowData[THRESHOLDS_COL];
+            ////double thresholdValue = Convert.ToInt32(rowData[THRESHOLD_VALUE_COL]);
+
+            //List<AdditionalThresholdRowItem> thresholdRowItems = ReadThresholdsXML(thresholdsString);
+
+            //IASElement elem = new IASElement(name, description, year, impAreaID, flowFreqID, infOutflowID,
+            //    ratingID, extIntID, leveeFailureID, stageDamageID, thresholdRowItems);
+            //return elem;
         }
 
-        public List<AdditionalThresholdRowItem> ReadThresholdsXML(string thresholdsXML)
-        {
-            List<AdditionalThresholdRowItem> thresholdRows = new List<AdditionalThresholdRowItem>();
-            XDocument doc = XDocument.Parse(thresholdsXML);
-            XElement functionsElem = doc.Element("Thresholds");
-            IEnumerable<XElement> rows = functionsElem.Elements("Row");
-            int i = 0;
-            foreach(XElement rowElem in rows)
-            {
-                i++;
-                string thresholdType = rowElem.Attribute("Type").Value;
-                IMetricEnum metricEnum = ConvertStringToMetricEnum(thresholdType);
-                double thresholdValue = Double.Parse( rowElem.Attribute("Value").Value);
-                thresholdRows.Add( new AdditionalThresholdRowItem(i, metricEnum, thresholdValue));
-            }
-            return thresholdRows;
-        }
+        
+        //private void ReadIASSetFromXML(string xml)
+        //{
+        //    XDocument doc = XDocument.Parse(xml);
+        //    XElement setElem = doc.Element(IAS_SET);
+        //    string setName = setElem.Attribute(NAME).Value;
+        //    string description = setElem.Attribute(DESCRIPTION).Value;
+        //    int year = Int32.Parse( setElem.Attribute(YEAR).Value);
 
-        public XElement WriteThresholdsToXML(List<AdditionalThresholdRowItem> thresholds)
-        {
-            XElement functionsElem = new XElement("Thresholds");
+        //}
 
-            foreach (AdditionalThresholdRowItem row in thresholds)
-            {
-                XElement rowElement = new XElement("Row");
-                rowElement.SetAttributeValue("Type", row.ThresholdType);
-                rowElement.SetAttributeValue("Value", row.ThresholdValue);
-                functionsElem.Add(rowElement);
-            }
+        
 
-            return functionsElem;
-        }
+        
 
         #endregion
 
@@ -223,19 +205,16 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="element"></param>
         public void SaveNew(ChildElement element)
         {
-            if (element.GetType() == typeof(IASElement))
+            if (element.GetType() == typeof(IASElementSet))
             {
                 string editDate = DateTime.Now.ToString("G");
                 element.LastEditDate = editDate;
-                SaveNewElementToParentTable(GetRowDataFromElement((IASElement)element), TableName, TableColumnNames, TableColumnTypes);
-                StudyCacheForSaving.AddElement((IASElement)element);
+                SaveNewElementToParentTable(GetRowDataFromElement((IASElementSet)element), TableName, TableColumnNames, TableColumnTypes);
+                StudyCacheForSaving.AddElement((IASElementSet)element);
             }
         }
 
-        public void SaveNew(IASElementSet iasSet)
-        {
-
-        }
+        
 
 
         /// <summary>
@@ -246,7 +225,7 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             int id = element.GetElementID();
             RemoveFromParentTable(element, TableName);
-            StudyCacheForSaving.RemoveElement((IASElement)element, id);
+            StudyCacheForSaving.RemoveElement((IASElementSet)element, id);
         }
 
         /// <summary>
@@ -265,9 +244,8 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         public void Load()
         {
-            List<ChildElement> conditions = CreateElementsFromRows(TableName, (rowData) => CreateElementFromRowData(rowData));
-
-            foreach (IASElement elem in conditions)
+            List<ChildElement> iasElems = CreateElementsFromRows(TableName, (rowData) => CreateElementFromRowData(rowData));
+            foreach (IASElementSet elem in iasElems)
             {
                 //IReadOnlyDictionary<IMetric, IHistogram> metricsDictionary = ReadMetricsHistogramTable(elem);
                 //if(metricsDictionary.Count == 0)
@@ -286,8 +264,8 @@ namespace ViewModel.Saving.PersistenceManagers
                 //    //IConditionLocationYearResult result = new ConditionLocationYearResult(conditionLocationYearSummary, convergenceCriteria, seed, metricsDictionary, realizationSummaries);
                 //    //elem.ComputeResults = result;
                 //}
-                IASElementSet set = new IASElementSet(elem.Name, elem.Description, elem.AnalysisYear, new List<AdditionalThresholdRowItem>(), new List<IASElement>() { elem });
-                StudyCacheForSaving.AddElement(set);
+                //IASElementSet set = new IASElementSet(elem.Name, elem.Description, elem.AnalysisYear, new List<AdditionalThresholdRowItem>(), new List<IASElement>() { elem });
+                StudyCacheForSaving.AddElement(elem);
             }
         }
 
@@ -363,6 +341,10 @@ namespace ViewModel.Saving.PersistenceManagers
             return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
         }
 
+
+        //todo: I think this method is responsible for adding a * and message on the ias element. Is this still
+        //what we want.
+
         /// <summary>
         /// This will update the condition element in the database. This will trigger
         /// an update to the study cache and the study tree as well.
@@ -371,106 +353,103 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="newID">The new ID that will replace the existing one in the condition database (-1)</param>
         public void UpdateConditionsChildElementRemoved(ChildElement elem, int originalID, int newID)
         {
-            List<IASElement> conditionsElements = StudyCache.GetChildElementsOfType<IASElement>();
-            //update the db and save existing. This should prompt the change event
-            //in the cache which tells the cond owner element to update its children.
-            //the owner could then check wich ones are open and call an update from there?
-            if (elem is ImpactAreaElement)
-            {
-                foreach (IASElement condElem in conditionsElements)
-                {
-                    if (condElem.ImpactAreaID == originalID)
-                    {
-                        IASElement newElement = (IASElement)condElem.CloneElement(condElem);
-                        newElement.ImpactAreaID = newID;
-                        SaveExisting(condElem, newElement);
-                    }
-                }
-            }
-            else if (elem is AnalyticalFrequencyElement)
-            {
-                foreach (IASElement condElem in conditionsElements)
-                {
-                    if (condElem.FlowFreqID == originalID)
-                    {
-                        IASElement newElement = (IASElement)condElem.CloneElement(condElem);
-                        newElement.FlowFreqID = newID;
-                        SaveExisting(condElem, newElement);
-                    }
-                }
-            }
-            else if (elem is InflowOutflowElement)
-            {
-                foreach (IASElement condElem in conditionsElements)
-                {
-                    if (condElem.InflowOutflowID == originalID)
-                    {
-                        IASElement newElement = (IASElement)condElem.CloneElement(condElem);
-                        newElement.InflowOutflowID = newID;
-                        SaveExisting(condElem, newElement);
-                    }
-                }
-            }
-            else if (elem is RatingCurveElement)
-            {
-                //only update the conditions that were actually using this element
-                foreach (IASElement condElem in conditionsElements)
-                {
-                    if (condElem.RatingID == originalID)
-                    {
-                        IASElement newElement = (IASElement)condElem.CloneElement(condElem);
-                        newElement.RatingID = newID;
-                        newElement.UpdateTreeViewHeader(newElement.Name + "*");
-                        newElement.ToolTip = "Rating curve " + elem.Name + " was deleted. Condition is out of sync.";
-                        SaveExisting(condElem, newElement);
-                    }
-                }
-            }
-            else if (elem is LeveeFeatureElement)
-            {
-                //only update the conditions that were actually using this element
-                foreach (IASElement condElem in conditionsElements)
-                {
-                    if (condElem.LeveeFailureID == originalID)
-                    {
-                        IASElement newElement = (IASElement)condElem.CloneElement(condElem);
-                        newElement.LeveeFailureID = newID;
-                        SaveExisting(condElem, newElement);
-                    }
-                }
-            }
-            else if (elem is ExteriorInteriorElement)
-            {
-                //only update the conditions that were actually using this element
-                foreach (IASElement condElem in conditionsElements)
-                {
-                    if (condElem.ExtIntStageID == originalID)
-                    {
-                        IASElement newElement = (IASElement)condElem.CloneElement(condElem);
-                        newElement.ExtIntStageID = newID;
-                        SaveExisting(condElem, newElement);
-                    }
-                }
-            }
-            else if (elem is AggregatedStageDamageElement)
-            {
-                //only update the conditions that were actually using this element
-                foreach (IASElement condElem in conditionsElements)
-                {
-                    if (condElem.StageDamageID == originalID)
-                    {
-                        IASElement newElement = (IASElement)condElem.CloneElement(condElem);
-                        newElement.StageDamageID = newID;
-                        SaveExisting(condElem, newElement);
-                    }
-                }
-            }
+            //List<IASElementSet> conditionsElements = StudyCache.GetChildElementsOfType<IASElementSet>();
+            ////update the db and save existing. This should prompt the change event
+            ////in the cache which tells the cond owner element to update its children.
+            ////the owner could then check wich ones are open and call an update from there?
+            //if (elem is ImpactAreaElement)
+            //{
+            //    foreach (IASElement condElem in conditionsElements)
+            //    {
+            //        if (condElem.ImpactAreaID == originalID)
+            //        {
+            //            IASElement newElement = (IASElement)condElem.CloneElement(condElem);
+            //            newElement.ImpactAreaID = newID;
+            //            SaveExisting(condElem, newElement);
+            //        }
+            //    }
+            //}
+            //else if (elem is AnalyticalFrequencyElement)
+            //{
+            //    foreach (IASElement condElem in conditionsElements)
+            //    {
+            //        if (condElem.FlowFreqID == originalID)
+            //        {
+            //            IASElement newElement = (IASElement)condElem.CloneElement(condElem);
+            //            newElement.FlowFreqID = newID;
+            //            SaveExisting(condElem, newElement);
+            //        }
+            //    }
+            //}
+            //else if (elem is InflowOutflowElement)
+            //{
+            //    foreach (IASElement condElem in conditionsElements)
+            //    {
+            //        if (condElem.InflowOutflowID == originalID)
+            //        {
+            //            IASElement newElement = (IASElement)condElem.CloneElement(condElem);
+            //            newElement.InflowOutflowID = newID;
+            //            SaveExisting(condElem, newElement);
+            //        }
+            //    }
+            //}
+            //else if (elem is RatingCurveElement)
+            //{
+            //    //only update the conditions that were actually using this element
+            //    foreach (IASElement condElem in conditionsElements)
+            //    {
+            //        if (condElem.RatingID == originalID)
+            //        {
+            //            IASElement newElement = (IASElement)condElem.CloneElement(condElem);
+            //            newElement.RatingID = newID;
+            //            newElement.UpdateTreeViewHeader(newElement.Name + "*");
+            //            newElement.ToolTip = "Rating curve " + elem.Name + " was deleted. Condition is out of sync.";
+            //            SaveExisting(condElem, newElement);
+            //        }
+            //    }
+            //}
+            //else if (elem is LeveeFeatureElement)
+            //{
+            //    //only update the conditions that were actually using this element
+            //    foreach (IASElement condElem in conditionsElements)
+            //    {
+            //        if (condElem.LeveeFailureID == originalID)
+            //        {
+            //            IASElement newElement = (IASElement)condElem.CloneElement(condElem);
+            //            newElement.LeveeFailureID = newID;
+            //            SaveExisting(condElem, newElement);
+            //        }
+            //    }
+            //}
+            //else if (elem is ExteriorInteriorElement)
+            //{
+            //    //only update the conditions that were actually using this element
+            //    foreach (IASElement condElem in conditionsElements)
+            //    {
+            //        if (condElem.ExtIntStageID == originalID)
+            //        {
+            //            IASElement newElement = (IASElement)condElem.CloneElement(condElem);
+            //            newElement.ExtIntStageID = newID;
+            //            SaveExisting(condElem, newElement);
+            //        }
+            //    }
+            //}
+            //else if (elem is AggregatedStageDamageElement)
+            //{
+            //    //only update the conditions that were actually using this element
+            //    foreach (IASElement condElem in conditionsElements)
+            //    {
+            //        if (condElem.StageDamageID == originalID)
+            //        {
+            //            IASElement newElement = (IASElement)condElem.CloneElement(condElem);
+            //            newElement.StageDamageID = newID;
+            //            SaveExisting(condElem, newElement);
+            //        }
+            //    }
+            //}
         }
 
-        public void UpdateThresholds()
-        {
-            //todo: implement me
-        }
+  
 
         /// <summary>
         /// This saves all the results of a compute.

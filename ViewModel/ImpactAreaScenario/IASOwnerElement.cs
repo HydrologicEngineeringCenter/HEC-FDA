@@ -110,13 +110,14 @@ namespace ViewModel.ImpactAreaScenario
         }
         private void UpdateEditorWhileEditing(ChildElement elem, int removedElementID)
         {
-            List<IASElement> conditionsElements = StudyCache.GetChildElementsOfType<IASElement>();
-            foreach(IASElement condElem in conditionsElements)
+            List<IASElementSet> conditionsElements = StudyCache.GetChildElementsOfType<IASElementSet>();
+            foreach(IASElementSet condElem in conditionsElements)
             {
-                if(condElem.ConditionsEditor != null)
-                {
-                    condElem.ConditionsEditor.UpdateEditorWhileEditing_ChildRemoved(removedElementID, elem);
-                }
+                //todo:what to do here.
+                //if(condElem.ConditionsEditor != null)
+                //{
+                //    condElem.ConditionsEditor.UpdateEditorWhileEditing_ChildRemoved(removedElementID, elem);
+                //}
             }
         }
 

@@ -30,6 +30,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private IASElementSet _currentElement;
         private bool _isInEditMode;
         private Chart2DController _controller;
+        private List<ImpactAreaRowItem> _ImpactAreaNames; 
 
 
         public int Year { get; set; } = DateTime.Now.Year;
@@ -37,19 +38,18 @@ namespace ViewModel.ImpactAreaScenario.Editor
         
         //public List<SpecificIASEditorVM> SpecificIASEditors { get; set; }
         public ObservableCollection<ChildElementComboItem> ImpactAreaElements { get; set; }
-        private List<string> _ImpactAreaNames; 
-        public List<string> ImpactAreaNames
+        public List<ImpactAreaRowItem> ImpactAreas
         {
             get { return _ImpactAreaNames; }
             set { _ImpactAreaNames = value; NotifyPropertyChanged(); }
         }
-        private string _SelectedImpactAreaName;
-        public string SelectedImpactAreaName
+        private ImpactAreaRowItem _SelectedImpactArea;
+        public ImpactAreaRowItem SelectedImpactArea
         {
-            get { return _SelectedImpactAreaName; }
-            set { _SelectedImpactAreaName = value; SelectedImpactAreaNameChanged(); NotifyPropertyChanged(); }
+            get { return _SelectedImpactArea; }
+            set { _SelectedImpactArea = value; SelectedImpactAreaNameChanged(); NotifyPropertyChanged(); }
         }
-        private Dictionary<string, SpecificIASEditorVM> _ImpactAreaEditorDictionary;
+        private Dictionary<ImpactAreaRowItem, SpecificIASEditorVM> _ImpactAreaEditorDictionary;
 
         private SpecificIASEditorVM _SelectedEditorVM;
         public SpecificIASEditorVM SelectedEditorVM
@@ -62,215 +62,65 @@ namespace ViewModel.ImpactAreaScenario.Editor
         /// </summary>
         public IASEditorVM(EditorActionManager manager):base(manager)
         {
-            Initialize();
-            //SpecificIASEditors = new List<SpecificIASEditorVM>();
-            
-
+            CreateEmptySpecificIASEditors();
         }
 
-        private void SelectedImpactAreaNameChanged()
-        {
-            if(_ImpactAreaEditorDictionary.ContainsKey(SelectedImpactAreaName))
-            {
-                SelectedEditorVM = _ImpactAreaEditorDictionary[SelectedImpactAreaName];
-            }
-        }
 
-        private void CreateEmptySpecificIASEditors()
-        {
-            _ImpactAreaEditorDictionary = new Dictionary<string, SpecificIASEditorVM>();
-            List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-            List<string> impactAreaNames = new List<string>();
-            if (impactAreaElements.Count > 0)
-            {
-                ObservableCollection<ImpactAreaRowItem> impactAreaRows = impactAreaElements[0].ImpactAreaRows;
-                foreach (ImpactAreaRowItem row in impactAreaRows)
-                {
-                    impactAreaNames.Add(row.Name);
-                    SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(row.Name);
-                    specificIASEditorVM.RequestNavigation += Navigate;
-                    _ImpactAreaEditorDictionary.Add(row.Name, specificIASEditorVM);
-                }
-                //todo: an exception gets thrown in the code behind if we don't start with an editor vm loaded in.
-                //what do we do if no impact areas?
-                SelectedImpactAreaName = impactAreaNames[0];
-            }
-
-            ImpactAreaNames = impactAreaNames;
-        }
 
         //todo: this ctor probably needs some work
         public IASEditorVM(IASElementSet elem, EditorActionManager manager) : base(elem, manager)
         {
             _currentElement = elem;
             _isInEditMode = true;
-            Initialize();
             FillForm(elem);
         }
 
-        private void Initialize()
+        private void CreateEmptySpecificIASEditors()
         {
+            ImpactAreas = new List<ImpactAreaRowItem>();
+            _ImpactAreaEditorDictionary = new Dictionary<ImpactAreaRowItem, SpecificIASEditorVM>();
 
-            CreateEmptySpecificIASEditors();
-            //hook up the navigate event for the additional thresholds dialog
-            
+            ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetImpactAreaRowItems();
+            foreach (ImpactAreaRowItem row in impactAreaRows)
+            {
+                ImpactAreas.Add(row);
+                SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(row);
+                specificIASEditorVM.RequestNavigation += Navigate;
+                _ImpactAreaEditorDictionary.Add(row, specificIASEditorVM);
+            }
+            //todo: an exception gets thrown in the code behind if we don't start with an editor vm loaded in.
+            //what do we do if no impact areas?
+            SelectedImpactArea = ImpactAreas[0];
 
-            //LoadElements();
 
-            //StudyCache.ImpactAreaAdded += AddImpactAreaElement;
-            //StudyCache.ImpactAreaRemoved += RemoveImpactAreaElement;
-            //StudyCache.ImpactAreaUpdated += UpdateImpactAreaElement;
-
-            //StudyCache.FlowFrequencyAdded += AddFlowFreqElement;
-            //StudyCache.FlowFrequencyRemoved += RemoveFlowFreqElement;
-            //StudyCache.FlowFrequencyUpdated += UpdateFlowFreqElement;
-
-            //StudyCache.InflowOutflowAdded += AddInOutElement;
-            //StudyCache.InflowOutflowRemoved += RemoveInOutElement;
-            //StudyCache.InflowOutflowUpdated += UpdateInOutElement;
-
-            //StudyCache.RatingAdded += AddRatingElement;
-            //StudyCache.RatingRemoved += RemoveRatingElement;
-            //StudyCache.RatingUpdated += UpdateRatingElement;
-
-            //StudyCache.LeveeAdded += AddLeveeElement;
-            //StudyCache.LeveeRemoved += RemoveLeveeElement;
-            //StudyCache.LeveeUpdated += UpdateLeveeElement;
-
-            //StudyCache.ExteriorInteriorAdded += AddExtIntElement;
-            //StudyCache.ExteriorInteriorRemoved += RemoveExtIntElement;
-            //StudyCache.ExteriorInteriorUpdated += UpdateExtIntElement;
-
-            //StudyCache.StageDamageAdded += AddStageDamageElement;
-            //StudyCache.StageDamageRemoved += RemoveStageDamageElement;
-            //StudyCache.StageDamageUpdated += UpdateStageDamageElement;
         }
 
+        private ObservableCollection<ImpactAreaRowItem> GetImpactAreaRowItems()
+        {
+            ObservableCollection<ImpactAreaRowItem> impactAreaRows = new ObservableCollection<ImpactAreaRowItem>();
+            List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+            if (impactAreaElements.Count > 0)
+            {
+                //todo: deal with this "[0]"
+                //this should probably return a list not an obs collection
+                impactAreaRows = impactAreaElements[0].ImpactAreaRows;
+            }
+            return impactAreaRows;
+        }
+
+        
+
+        private void SelectedImpactAreaNameChanged()
+        {
+            if(_ImpactAreaEditorDictionary.ContainsKey(SelectedImpactArea))
+            {
+                SelectedEditorVM = _ImpactAreaEditorDictionary[SelectedImpactArea];
+            }
+        }
 
         #region Live Update Event Methods
 
-        //private void AddStageDamageElement(object sender, Saving.ElementAddedEventArgs e)
-        //{
-        //    StageDamageElements.Add(new ChildElementComboItem((ChildElement)e.Element));
-        //}
-        //private void RemoveStageDamageElement(object sender, Saving.ElementAddedEventArgs e)
-        //{
-        //    removeElement(((ChildElement)e.Element).GetElementID(), StageDamageElements);
-        //}
-        //private void UpdateStageDamageElement(object sender, Saving.ElementUpdatedEventArgs e)
-        //{
-        //    updateElement(StageDamageElements, SelectedStageDamageElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
-        //}
-
-        //private void AddExtIntElement(object sender, Saving.ElementAddedEventArgs e)
-        //{
-        //    ExteriorInteriorElements.Add(new ChildElementComboItem((ChildElement)e.Element));
-        //}
-        //private void RemoveExtIntElement(object sender, Saving.ElementAddedEventArgs e)
-        //{
-        //    removeElement(((ChildElement)e.Element).GetElementID(), ExteriorInteriorElements);
-        //}
-        //private void UpdateExtIntElement(object sender, Saving.ElementUpdatedEventArgs e)
-        //{
-        //    updateElement(ExteriorInteriorElements, SelectedExteriorInteriorElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
-        //}
-
-        //private void AddLeveeElement(object sender, Saving.ElementAddedEventArgs e)
-        //{
-        //    LeveeFeatureElements.Add(new ChildElementComboItem((ChildElement)e.Element));
-        //}
-        //private void RemoveLeveeElement(object sender, Saving.ElementAddedEventArgs e)
-        //{
-        //    removeElement(((ChildElement)e.Element).GetElementID(), LeveeFeatureElements);
-        //}
-        //private void UpdateLeveeElement(object sender, Saving.ElementUpdatedEventArgs e)
-        //{
-        //    updateElement(LeveeFeatureElements, SelectedLeveeFeatureElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
-        //}
-
-        //private void AddInOutElement(object sender, Saving.ElementAddedEventArgs e)
-        //{
-        //    InflowOutflowElements.Add(new ChildElementComboItem((ChildElement)e.Element));
-        //}
-        //private void RemoveInOutElement(object sender, Saving.ElementAddedEventArgs e)
-        //{
-        //    removeElement(((ChildElement)e.Element).GetElementID(), InflowOutflowElements);
-        //}
-        //private void UpdateInOutElement(object sender, Saving.ElementUpdatedEventArgs e)
-        //{
-        //    updateElement(InflowOutflowElements, SelectedInflowOutflowElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
-        //}
-
-
-        //private void AddFlowFreqElement(object sender, Saving.ElementAddedEventArgs e)
-        //{
-        //    FrequencyElements.Add(new ChildElementComboItem((ChildElement)e.Element));
-        //}
-        //private void RemoveFlowFreqElement(object sender, Saving.ElementAddedEventArgs e)
-        //{
-        //    removeElement(((ChildElement)e.Element).GetElementID(), FrequencyElements);
-        //}
-        //private void UpdateFlowFreqElement(object sender, Saving.ElementUpdatedEventArgs e)
-        //{
-        //    updateElement(FrequencyElements, SelectedFrequencyElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
-        //}
-
-        //private void AddImpactAreaElement(object sender, Saving.ElementAddedEventArgs e)
-        //{
-        //    ImpactAreaElements.Add(new ChildElementComboItem((ChildElement)e.Element));
-        //}
-        //private void RemoveImpactAreaElement(object sender, Saving.ElementAddedEventArgs e)
-        //{
-        //    removeElement(((ChildElement)e.Element).GetElementID(), ImpactAreaElements);
-        //}
-        //private void UpdateImpactAreaElement(object sender, Saving.ElementUpdatedEventArgs e)
-        //{
-        //    updateElement(ImpactAreaElements, SelectedImpactAreaElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
-        //}
-
-        //private void AddRatingElement(object sender, Saving.ElementAddedEventArgs e)
-        //{
-        //    RatingCurveElements.Add(new ChildElementComboItem((ChildElement)e.Element));
-        //}
-        //private void RemoveRatingElement(object sender, Saving.ElementAddedEventArgs e)
-        //{
-        //    removeElement(((ChildElement)e.Element).GetElementID(), RatingCurveElements);
-        //}
-        //private void UpdateRatingElement(object sender, Saving.ElementUpdatedEventArgs e)
-        //{
-        //    updateElement(RatingCurveElements, SelectedRatingCurveElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
-        //}
-
-        //private void removeElement(int idToRemove, ObservableCollection<ChildElementComboItem> collection )
-        //{
-        //    collection.Remove(collection.Where(elem => elem.ChildElement != null && elem.ChildElement.GetElementID() == idToRemove).Single());
-        //}
-
-        //private void updateElement(ObservableCollection<ChildElementComboItem> collection, ChildElementComboItem selectedItem,
-        //     ChildElement oldElement, ChildElement newElement)
-        //{
-        //    int idToUpdate = oldElement.GetElementID();
-
-        //    ChildElementComboItem itemToUpdate = collection.Where(elem => elem.ChildElement != null && elem.ChildElement.GetElementID() == idToUpdate).SingleOrDefault();
-        //    if (itemToUpdate != null)
-        //    {
-        //        int index = collection.IndexOf(itemToUpdate);
-
-        //        //this was an attempt to update the selected item if that is the one we are swapping out. For some reason
-        //        //this doesn't work. I was trying to find a way to pass the property into this method and was unsuccessful.
-        //        //bool needToUpdateSelected = selectedItem.ChildElement != null && selectedItem.ChildElement.GetElementID() == idToUpdate;
-
-        //        //if (index != -1)
-        //        //{
-        //        //    collection.RemoveAt(index);
-        //        //    collection.Insert(index, new ChildElementComboItem(newElement));
-        //        //    if (needToUpdateSelected)
-        //        //    {
-        //        //        propToUpdate (collection[index]);
-        //        //    }
-        //        //}
-        //    }
-        //}
+        
 
         #endregion
 
@@ -281,7 +131,42 @@ namespace ViewModel.ImpactAreaScenario.Editor
             Year = elem.AnalysisYear;
             //SelectedImpactAreaElement = elem.ImpactAreaID;
 
+            ImpactAreas = new List<ImpactAreaRowItem>();
+            _ImpactAreaEditorDictionary = new Dictionary<ImpactAreaRowItem, SpecificIASEditorVM>();
+
+            //this is the list of current impact area rows in the study. They might not match the items
+            //that were saved in the db. The user might have deleted the old impact area set and brought in 
+            //a new one. I think we should only display saved items that still match up.
+            ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetImpactAreaRowItems();
+
+            //this is the list that was saved
+            List<IASElement> specificIASElements = elem.SpecificIASElements;
+            foreach (ImpactAreaRowItem row in impactAreaRows)
+            {
+                ImpactAreas.Add(row);
+                //try to find the saved ias with this row's id.
+                IASElement foundElement = specificIASElements.FirstOrDefault(ias => ias.ImpactAreaID == row.ID);
+                if (foundElement != null)
+                {
+                    SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(foundElement, row.Name);
+                    specificIASEditorVM.RequestNavigation += Navigate;
+                    _ImpactAreaEditorDictionary.Add(row, specificIASEditorVM);
+
+                }
+                else
+                {
+                    SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(row);
+                    specificIASEditorVM.RequestNavigation += Navigate;
+                    _ImpactAreaEditorDictionary.Add(row, specificIASEditorVM);
+
+                }
+            }
+            //todo: an exception gets thrown in the code behind if we don't start with an editor vm loaded in.
+            //what do we do if no impact areas?
+            SelectedImpactArea = ImpactAreas[0];
+
         }
+
         
 
         //private void LoadElements()
@@ -538,9 +423,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
             vr.AddValidationResult( IsYearValid());
 
             //todo: actually run the compute and see if it was successful? - this might be done on each individual ias.
-            foreach (KeyValuePair<string, SpecificIASEditorVM>  entry in _ImpactAreaEditorDictionary)
+            foreach (KeyValuePair<ImpactAreaRowItem, SpecificIASEditorVM>  entry in _ImpactAreaEditorDictionary)
             {
-                string name = entry.Key;
                 SpecificIASEditorVM vm = entry.Value;
 
                 vr.AddValidationResult(vm.IsValid());
@@ -669,9 +553,9 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
                 //get the list of specific IAS elements.
                 List<IASElement> elementsToSave = new List<IASElement>();
-                foreach (KeyValuePair<string, SpecificIASEditorVM> entry in _ImpactAreaEditorDictionary)
+                foreach (KeyValuePair<ImpactAreaRowItem, SpecificIASEditorVM> entry in _ImpactAreaEditorDictionary)
                 {
-                    string name = entry.Key;
+                    //string name = entry.Key;
                     SpecificIASEditorVM vm = entry.Value;
 
                     elementsToSave.Add( vm.GetElement());
@@ -694,14 +578,18 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 //ratingID, extIntID, latStructID, stageDamID, thresholdRowItems);
                 //CurrentElement = elementToSave;
 
-                //if (_isInEditMode)
-                //{
-                //    Saving.PersistenceFactory.GetIASManager().SaveExisting(_currentElement, elementToSave);
-                //}
-                //else
-                //{
-                //    Saving.PersistenceFactory.GetIASManager().SaveNew(elementToSave);
-                //}
+                IASElementSet elemToSave = new IASElementSet(Name, Description, Year, elementsToSave);
+
+                if (_isInEditMode)
+                {
+                    Saving.PersistenceFactory.GetIASManager().SaveExisting(_currentElement, elemToSave);
+                }
+                else
+                {
+                    Saving.PersistenceFactory.GetIASManager().SaveNew(elemToSave);
+                    _isInEditMode = true;
+                }
+                _currentElement = elemToSave;
             }
         }
 

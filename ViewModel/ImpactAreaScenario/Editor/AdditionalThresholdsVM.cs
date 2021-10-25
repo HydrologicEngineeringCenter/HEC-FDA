@@ -94,7 +94,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         public override void Save()
         {
-            Saving.PersistenceFactory.GetIASManager().UpdateThresholds();
+            //Saving.PersistenceFactory.GetIASManager().UpdateThresholds();
 
         }
 

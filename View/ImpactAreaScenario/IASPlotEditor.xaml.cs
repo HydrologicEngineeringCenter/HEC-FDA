@@ -1089,8 +1089,8 @@ namespace View.ImpactAreaScenario
         //#endregion
         private void btn_AddImpactAreas_Click(object sender, RoutedEventArgs e)
         {
-            IASPlotEditorVM vm = (IASPlotEditorVM)this.DataContext;
-            vm.LaunchNewImpactArea(sender, e);
+            //IASPlotEditorVM vm = (IASPlotEditorVM)this.DataContext;
+            //vm.LaunchNewImpactArea(sender, e);
         }
 
         //private void RemoveAreaPlots()

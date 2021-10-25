@@ -37,7 +37,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private ChildElementComboItem _selectedFrequencyRelationship;
         private bool _ratingRequired;
 
-        
+        public int IndexLocationID { get; private set; }
         //public SciChart2DChartViewModel FlowFreqChartVM { get; set; } = new SciChart2DChartViewModel("Flow Frequency");
         public ChartControlBase FrequencyRelationshipControl { get; set; }
         public ChartControlBase RatingRelationshipControl { get; set; }
@@ -85,11 +85,11 @@ namespace ViewModel.ImpactAreaScenario.Editor
             get { return _selectedDamageCategory; }
             set { _selectedDamageCategory = value; NotifyPropertyChanged(); }
         }
-        public ChildElementComboItem SelectedImpactAreaElement
-        {
-            get { return _selectedImpactAreaElement; }
-            set { _selectedImpactAreaElement = value; NotifyPropertyChanged(); }
-        }
+        //public ChildElementComboItem SelectedImpactAreaElement
+        //{
+        //    get { return _selectedImpactAreaElement; }
+        //    set { _selectedImpactAreaElement = value; NotifyPropertyChanged(); }
+        //}
         public ChildElementComboItem SelectedFrequencyElement
         {
             get { return _selectedFrequencyRelationship; }
@@ -127,19 +127,22 @@ namespace ViewModel.ImpactAreaScenario.Editor
         /// <summary>
         /// This is the create new ctor
         /// </summary>
-        public SpecificIASEditorVM(string name)
+        public SpecificIASEditorVM(ImpactAreaRowItem rowItem)
         {            
             Initialize();
-            Name = name;
+            Name = rowItem.Name;
+            IndexLocationID = rowItem.ID;
         }
 
         //todo: this ctor probably needs some work
-        public SpecificIASEditorVM(IASElement elem, EditorActionManager manager)
+        public SpecificIASEditorVM(IASElement elem, string impactAreaName)
         {
             _currentElement = elem;
             _isInEditMode = true;
             Initialize();
             FillForm(elem);
+            IndexLocationID = elem.ImpactAreaID;
+            Name = impactAreaName;
         }
 
         private void Initialize()
@@ -158,9 +161,9 @@ namespace ViewModel.ImpactAreaScenario.Editor
             DamageFrequencyControl = new DamageFrequencyControl();
 
 
-            StudyCache.ImpactAreaAdded += AddImpactAreaElement;
-            StudyCache.ImpactAreaRemoved += RemoveImpactAreaElement;
-            StudyCache.ImpactAreaUpdated += UpdateImpactAreaElement;
+            //StudyCache.ImpactAreaAdded += AddImpactAreaElement;
+            //StudyCache.ImpactAreaRemoved += RemoveImpactAreaElement;
+            //StudyCache.ImpactAreaUpdated += UpdateImpactAreaElement;
 
             StudyCache.FlowFrequencyAdded += AddFlowFreqElement;
             StudyCache.FlowFrequencyRemoved += RemoveFlowFreqElement;
@@ -264,10 +267,10 @@ namespace ViewModel.ImpactAreaScenario.Editor
         {
             removeElement(((ChildElement)e.Element).GetElementID(), ImpactAreaElements);
         }
-        private void UpdateImpactAreaElement(object sender, Saving.ElementUpdatedEventArgs e)
-        {
-            updateElement(ImpactAreaElements, SelectedImpactAreaElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
-        }
+        //private void UpdateImpactAreaElement(object sender, Saving.ElementUpdatedEventArgs e)
+        //{
+        //    updateElement(ImpactAreaElements, SelectedImpactAreaElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
+        //}
 
         private void AddRatingElement(object sender, Saving.ElementAddedEventArgs e)
         {
@@ -323,13 +326,22 @@ namespace ViewModel.ImpactAreaScenario.Editor
             //all the available elements have been loaded into this editor. We now want to select
             //the correct element for each dropdown. If we can't find the correct element then the selected elem 
             //will be null.
-            SelectedImpactAreaElement = ImpactAreaElements.FirstOrDefault(imp => imp.ChildElement != null && imp.ChildElement.GetElementID() == elem.ImpactAreaID);
+            //SelectedImpactAreaElement = ImpactAreaElements.FirstOrDefault(imp => imp.ChildElement != null && imp.ChildElement.GetElementID() == elem.ImpactAreaID);
             SelectedFrequencyElement = FrequencyElements.FirstOrDefault(freq => freq.ChildElement != null && freq.ChildElement.GetElementID() == elem.FlowFreqID);
             SelectedInflowOutflowElement = InflowOutflowElements.FirstOrDefault(inf => inf.ChildElement != null && inf.ChildElement.GetElementID() == elem.InflowOutflowID);
             SelectedRatingCurveElement = RatingCurveElements.FirstOrDefault(rat => rat.ChildElement != null && rat.ChildElement.GetElementID() == elem.RatingID);
             SelectedLeveeFeatureElement = LeveeFeatureElements.FirstOrDefault(levee => levee.ChildElement != null && levee.ChildElement.GetElementID() == elem.LeveeFailureID);
             SelectedExteriorInteriorElement = ExteriorInteriorElements.FirstOrDefault(ext => ext.ChildElement != null && ext.ChildElement.GetElementID() == elem.ExtIntStageID);
             SelectedStageDamageElement = StageDamageElements.FirstOrDefault(stage => stage.ChildElement != null && stage.ChildElement.GetElementID() == elem.StageDamageID);
+
+            //i don't want a selected value to ever be null. Even if there are no elements there should be a blank row option.
+            //so if it is null, i will set it to the first option which is empty.
+            if(SelectedFrequencyElement == null) SelectedFrequencyElement = FrequencyElements[0];
+            if (SelectedInflowOutflowElement == null) SelectedInflowOutflowElement = InflowOutflowElements[0];
+            if (SelectedRatingCurveElement == null) SelectedRatingCurveElement = RatingCurveElements[0];
+            if (SelectedLeveeFeatureElement == null) SelectedLeveeFeatureElement = LeveeFeatureElements[0];
+            if (SelectedExteriorInteriorElement == null) SelectedExteriorInteriorElement = ExteriorInteriorElements[0];
+            if (SelectedStageDamageElement == null) SelectedStageDamageElement = StageDamageElements[0];
 
             //todo: plot something?
 
@@ -343,7 +355,9 @@ namespace ViewModel.ImpactAreaScenario.Editor
             foreach (AdditionalThresholdRowItem row in elem.Thresholds)
             {
                 _additionalThresholdsVM.Rows.Add(row);
+                Thresholds.Add(row);
             }
+            
         }
 
         private void LoadElements()
@@ -353,10 +367,10 @@ namespace ViewModel.ImpactAreaScenario.Editor
             //this means that when asking for the selected combo item, it should never be null.
             List<ChildElement> childElems = new List<ChildElement>();
 
-            List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-            childElems.AddRange(impactAreaElements);
-            ImpactAreaElements = CreateComboItems(childElems);
-            SelectedImpactAreaElement = ImpactAreaElements.First();
+            //List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+            //childElems.AddRange(impactAreaElements);
+            //ImpactAreaElements = CreateComboItems(childElems);
+            //SelectedImpactAreaElement = ImpactAreaElements.First();
 
             List<AnalyticalFrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
             childElems.Clear();
@@ -832,16 +846,28 @@ namespace ViewModel.ImpactAreaScenario.Editor
         public IASElement GetElement()
         {
             //todo: if this is being called, do we assume everything is valid?
-            //return new IASElement()
-            return null;
+            //int impAreaID = SelectedImpactAreaElement.ChildElement != null ? SelectedImpactAreaElement.ChildElement.GetElementID() : -1;
+            int flowFreqID = SelectedFrequencyElement.ChildElement != null ? SelectedFrequencyElement.ChildElement.GetElementID() : -1;
+            int inflowOutID = SelectedInflowOutflowElement.ChildElement != null ? SelectedInflowOutflowElement.ChildElement.GetElementID() : -1;
+            int ratingID = SelectedRatingCurveElement.ChildElement != null ? SelectedRatingCurveElement.ChildElement.GetElementID() : -1;
+            int extIntID = SelectedExteriorInteriorElement.ChildElement != null ? SelectedExteriorInteriorElement.ChildElement.GetElementID() : -1;
+            int latStructID = SelectedLeveeFeatureElement.ChildElement != null ? SelectedLeveeFeatureElement.ChildElement.GetElementID() : -1;
+            int stageDamID = SelectedStageDamageElement.ChildElement != null ? SelectedStageDamageElement.ChildElement.GetElementID() : -1;
+
+            List<AdditionalThresholdRowItem> thresholdRowItems = _additionalThresholdsVM.GetThresholds();
+
+            IASElement elementToSave = new IASElement(IndexLocationID,
+            flowFreqID, inflowOutID,
+            ratingID, extIntID, latStructID, stageDamID, thresholdRowItems);
+            return elementToSave;
         }
 
         public void Plot()
         {
-            CheckForOverlappingRanges();
-            //CanPlot() is being called by the view before calling this method.
-            //if (CanPlot())
+            FdaValidationResult validationResult = IsValid();
+            if (validationResult.IsValid)
             {
+                CheckForOverlappingRanges();
                 //get the current curves and set that data on the chart controls
                 //this update call will set the current crosshair data on each one
                 FrequencyRelationshipControl.UpdatePlotData(getFrequencyRelationshipFunction());
@@ -855,22 +881,18 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 freqRelationshipCrosshairData.Next = new SharedAxisCrosshairData(ratingCrosshairData, Axis.Y, Axis.Y);
                 ratingCrosshairData.Previous = new SharedAxisCrosshairData(freqRelationshipCrosshairData, Axis.Y, Axis.Y);
 
-                //CrosshairData stageDamageCrosshairData = StageDamageControl.currentCrosshairData;
-                //ratingCrosshairData.Next = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.X, Axis.X);
-                //stageDamageCrosshairData.Previous = new SharedAxisCrosshairData(ratingCrosshairData, Axis.X, Axis.X);
-
-                //CrosshairData damageFreqCrosshairData = DamageFrequencyControl.currentCrosshairData;
-                //stageDamageCrosshairData.Next = new SharedAxisCrosshairData(damageFreqCrosshairData, Axis.Y, Axis.Y);
-                //damageFreqCrosshairData.Previous = new SharedAxisCrosshairData(stageDamageCrosshairData, Axis.Y, Axis.Y);
-
                 FrequencyRelationshipControl.Plot();
                 RatingRelationshipControl.Plot();
                 StageDamageControl.Plot();
                 DamageFrequencyControl.Plot();
-
-
+            }
+            else
+            {
+                MessageBox.Show(validationResult.ErrorMessage.ToString(), "Insufficient Data", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
+
+
 
         #endregion
 

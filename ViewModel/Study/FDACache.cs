@@ -125,7 +125,7 @@ namespace ViewModel.Study
         public OccupancyTypesOwnerElement OccTypeParent { get; set; }
         public StructureInventoryOwnerElement StructureInventoryParent { get; set; }
         public IASOwnerElement IASParent { get; set; }
-        public IASTreeOwnerElement IASTreeParent { get; set; }
+        //public IASTreeOwnerElement IASTreeParent { get; set; }
         public AltervativeOwnerElement PlansParent { get; set; }
         public AlternativeComparisonReportOwnerElement AlternativeComparisonReportParent { get; set; }
         #endregion
@@ -151,6 +151,7 @@ namespace ViewModel.Study
         /// <param name="elem">The element to remove</param>
         public void RemoveElement(ChildElement elem, int id)
         {
+
             Saving.ElementAddedEventArgs elementAddedEventArgs = new Saving.ElementAddedEventArgs(elem);
             elementAddedEventArgs.ID = id;
 
