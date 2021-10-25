@@ -10,7 +10,7 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
     {
 
         public StageDamageControl()
-            : base("StageDamage", "Stage", "Damage", "Stage-Damage", true, true)
+            : base("StageDamage", "Stage", "Damage", "Stage-Damage")
         {
 
         }

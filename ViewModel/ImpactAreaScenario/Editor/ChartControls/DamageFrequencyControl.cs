@@ -10,7 +10,7 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
     {
 
         public DamageFrequencyControl()
-            : base("DamageFrequency", "Frequency", "Damage", "Damage-Frequency", true, false)
+            : base("DamageFrequency", "Frequency", "Damage", "Damage-Frequency", useProbabilityX: true, yAxisAlignment: HEC.Plotting.Core.DataModel.AxisAlignment.Right)
         {
 
         }
