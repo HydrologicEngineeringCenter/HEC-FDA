@@ -2,6 +2,8 @@ using Xunit;
 using paireddata;
 using System.Collections.Generic;
 using Statistics;
+using System.Xml.Linq;
+
 namespace fda_model_test
 {
     public class UncertainPairedDataShould
