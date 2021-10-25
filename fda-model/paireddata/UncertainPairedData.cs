@@ -56,7 +56,7 @@ namespace paireddata
                 XElement yele = _yvals[i].ToXML();
                 rowele.Add(xele);
                 rowele.Add(yele);
-                masterElem.Add(rowElement);
+                masterElem.Add(rowele);
             }
             return masterElem;
         }
