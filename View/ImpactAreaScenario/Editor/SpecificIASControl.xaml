@@ -7,8 +7,6 @@
              mc:Ignorable="d"
              xmlns:UserControls="clr-namespace:UserControls;assembly=UserControls"
              xmlns:Utilities="clr-namespace:View.Utilities"
-             Loaded="UserControl_Loaded"
-             DataContextChanged="UserControl_DataContextChanged"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <Utilities:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
@@ -105,16 +103,7 @@
         </Grid>
 
 
-        <Grid x:Name="PlotsGrid" Grid.Row="4" Margin="5,5,5,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-        </Grid>
+        <local:IASPlotControl x:Name="PlotControl" Grid.Row="4" Margin="5,5,5,0" DataContext="{Binding PlotControlVM}" Visibility="{Binding PlotControlVisibility}"/>
 
         <local:RecommendationExpanderControl Grid.Row="5" />
 

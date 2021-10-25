@@ -10,7 +10,7 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
     {
 
         public RatingRelationshipControl()
-            : base("Rating", "Stage", "Flow", "Rating-Curve",false, true)
+            : base("Rating", "Stage", "Flow", "Rating-Curve", flipXY: true, xAxisAlignment: HEC.Plotting.Core.DataModel.AxisAlignment.Top)
         {
 
         }
