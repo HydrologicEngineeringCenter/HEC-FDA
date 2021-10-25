@@ -24,5 +24,21 @@ namespace fda_model_test
             double actual = pd.Yvals[0] / pd.Xvals[0];
             Assert.Equal(expectedSlope, actual);
         }
+        [Theory]
+        [InlineData(1.0, 2.0)]
+        [InlineData(1.0, 3.0)]
+        public void SerializeAndDeserialize(double minSlope, double maxSlope)
+        {
+            //Samples below should give min, above should give max
+            IDistribution[] yvals = new IDistribution[countByOnes.Length];
+            for (int i = 0; i < countByOnes.Length; i++)
+            {
+                yvals[i] = IDistributionFactory.FactoryUniform(countByOnes[i] * minSlope, countByOnes[i] * maxSlope, 10);
+            }
+            UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals);
+            XElement ele = upd.WriteToXML();
+            UncertainPairedData upd2 = UncertainPairedData.ReadFromXML(ele);
+            Assert.Equal(upd, upd2);
+        }
     }
 }
