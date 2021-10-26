@@ -126,7 +126,7 @@ namespace metrics
             double[] longTermRisk =  new double[3];
             for (int i = 0; i < longTermPeriod.Length; i++)
             {
-                longTermRisk[i] = M1-Math.Pow((1-MeanAEP),longTermPeriod[i]);       
+                longTermRisk[i] = 1-Math.Pow((1-MeanAEP),longTermPeriod[i]);       
             }
             return longTermRisk;
         }
