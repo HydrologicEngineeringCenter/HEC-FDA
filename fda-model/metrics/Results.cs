@@ -7,14 +7,15 @@ namespace metrics
     public class Results: IContainResults
     {
         //needs access to get AEP and EAD results.
-        private const double AEP_HISTOGRAM_BINWIDTH = .01;
+        private const double AEP_HISTOGRAM_BINWIDTH = .0001;
         private const double EAD_HISTOGRAM_BINWIDTH = 10;
-        private const double CNEP_HISTOGRAM_BINWIDTH = .01;
+        private const double CNEP_HISTOGRAM_BINWIDTH = .0001;
         private double _aepThreshold; //I think we should name refactor this, because the threshold applies in the calculation of all performance metrics
         // the only one that might be different is assurance of AEP, but I think we'll just report assurance of AEP like we do CNEP, that is what we set up in the design document
         private Histogram _aep =  null;
         private Dictionary<string, Histogram> _ead; 
         private Dictionary<double, Histogram> _cnep;
+        
 
         public double AEPThreshold { 
             get {
@@ -72,11 +73,11 @@ namespace metrics
 
         public double[] AssuranceOfAEP()
         {
-            double[] standardProbabilities = new double[8] {.5, .2, .1, .04, .02, .01, .004, .002};
+            double[] standardExceedanceProbabilities = new double[8] {.5, .2, .1, .04, .02, .01, .004, .002};
             double[] assuranceOfAEP = new double[8];
-            for (int i=0; i<standardProbabilities.Length; i++)
+            for (int i=0; i<standardExceedanceProbabilities.Length; i++)
             {
-                assuranceOfAEP[i] = _aep.CDF(1-standardProbabilities[i]);
+                assuranceOfAEP[i] = _aep.CDF(standardExceedanceProbabilities[i]);
             }
             return assuranceOfAEP;
         }
