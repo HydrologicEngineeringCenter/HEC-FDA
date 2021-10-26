@@ -26,8 +26,6 @@ namespace View.ImpactAreaScenario.Editor
     public partial class SpecificIASControl : UserControl
     {
 
-        private bool _plotsHaveBeenAdded;
-
         public SpecificIASControl()
         {
             InitializeComponent();

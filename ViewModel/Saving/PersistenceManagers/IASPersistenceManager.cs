@@ -40,20 +40,7 @@ namespace ViewModel.Saving.PersistenceManagers
     /// </summary>
     public class IASPersistenceManager : SavingBase, IElementManager
     {
-        private const int ID_COL = 0;
-        private const int NAME_COL = 1;
-        private const int DESC_COL = 2;
-        private const int ANALYSIS_YEAR_COL = 3;
-        private const int IMPACT_AREA_COL = 4;
-        private const int FLOW_FREQ_COL = 5;
-        private const int INFLOW_OUTFLOW_COL = 6;
-        private const int RATING_COL = 7;
-        private const int LEVEE_FAILURE_COL = 8;
-        private const int EXT_INT_COL = 9;
-        private const int STAGE_DAMAGE_COL = 10;
-        private const int THRESHOLDS_COL = 11;
-        //private const int THRESHOLD_VALUE_COL = 12;
-        private const int SEED_COL = 12;
+        
 
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
@@ -61,7 +48,7 @@ namespace ViewModel.Saving.PersistenceManagers
         private const string ELEMENT_TYPE = "Condition";
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("ConditionsPersistenceManager");
 
-        private const string TABLE_NAME = "Conditions";
+        private const string TABLE_NAME = "ImpactAreaScenarios";
         internal override string ChangeTableConstant { get { return "????"; } }
         private static readonly string[] ColumnNames =
             { "Name","XML"};

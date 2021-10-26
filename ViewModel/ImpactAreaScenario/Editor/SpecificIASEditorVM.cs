@@ -1,25 +1,17 @@
 ﻿using Functions;
-using FunctionsView.ViewModel;
-using HEC.Plotting.Core;
-using HEC.Plotting.SciChart2D.Charts;
 using HEC.Plotting.SciChart2D.Controller;
-using HEC.Plotting.SciChart2D.DataModel;
-using HEC.Plotting.SciChart2D.ViewModel;
 using Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using ViewModel.AggregatedStageDamage;
-using ViewModel.Editors;
 using ViewModel.FlowTransforms;
 using ViewModel.FrequencyRelationships;
 using ViewModel.GeoTech;
 using ViewModel.ImpactArea;
-using ViewModel.ImpactAreaScenario.Editor.ChartControls;
 using ViewModel.StageTransforms;
 using ViewModel.Utilities;
 
@@ -27,18 +19,29 @@ namespace ViewModel.ImpactAreaScenario.Editor
 {
     public class SpecificIASEditorVM : BaseViewModel
     {
-        private IASElement _currentElement;
-        private bool _isInEditMode;
-        private Chart2DController _controller;
-        private AdditionalThresholdsVM _additionalThresholdsVM;
+        private ThresholdsVM _additionalThresholdsVM;
         private ChildElementComboItem _selectedStageDamageElement;
-        private List<string> _damageCategories;
-        private string _selectedDamageCategory;
+        private List<StageDamageCurve> _damageCategories;
+        private StageDamageCurve _selectedDamageCurve;
         private ChildElementComboItem _selectedFrequencyRelationship;
         private bool _ratingRequired;
+        private bool _showWarnings;
+        private ChildElementComboItem _selectedImpactAreaElement;
+        private ChildElementComboItem _selectedInflowOutflowElement;
+        private ChildElementComboItem _selectedRatingCurveElement;
+        private ChildElementComboItem _selectedLeveeElement;
+        private ChildElementComboItem _selectedExteriorInteriorElement;
+
+
+        public int IndexLocationID { get; private set; }
 
         public IASPlotControlVM PlotControlVM { get; } = new IASPlotControlVM();
 
+        public bool ShowWarnings
+        {
+            get { return _showWarnings; }
+            set { _showWarnings = value; NotifyPropertyChanged(); }
+        }
         public bool RatingRequired
         {
             get { return _ratingRequired; }
@@ -48,16 +51,15 @@ namespace ViewModel.ImpactAreaScenario.Editor
         public int Year { get; set; } = DateTime.Now.Year;
 
 
-        public List<string> DamageCategories
+        public List<StageDamageCurve> DamageCategories
         {
             get { return _damageCategories; }
             set { _damageCategories = value; NotifyPropertyChanged(); }
         }
-        public List<AdditionalThresholdRowItem> Thresholds { get; set; }
+        public List<ThresholdRowItem> Thresholds { get; set; }
         public ObservableCollection<ChildElementComboItem> ImpactAreaElements { get; set; }
         public ObservableCollection<ChildElementComboItem> FrequencyElements { get; set; }
         public ObservableCollection<ChildElementComboItem> InflowOutflowElements { get; set; }
-        //public List<RatingCurveElement> RatingCurveElements { get; set; }
         public ObservableCollection<ChildElementComboItem> RatingCurveElements { get; set; }
 
         public ObservableCollection<ChildElementComboItem> LeveeFeatureElements { get; set; }
@@ -65,22 +67,11 @@ namespace ViewModel.ImpactAreaScenario.Editor
         public ObservableCollection<ChildElementComboItem> StageDamageElements { get; set; }
 
 
-        private ChildElementComboItem _selectedImpactAreaElement;
-        private ChildElementComboItem _selectedInflowOutflowElement;
-        private ChildElementComboItem _selectedRatingCurveElement;
-        private ChildElementComboItem _selectedLeveeElement;
-        private ChildElementComboItem _selectedExteriorInteriorElement;
-
-        public string SelectedDamageCategory
+        public StageDamageCurve SelectedDamageCurve
         {
-            get { return _selectedDamageCategory; }
-            set { _selectedDamageCategory = value; NotifyPropertyChanged(); }
+            get { return _selectedDamageCurve; }
+            set { _selectedDamageCurve = value; NotifyPropertyChanged(); }
         }
-        //public ChildElementComboItem SelectedImpactAreaElement
-        //{
-        //    get { return _selectedImpactAreaElement; }
-        //    set { _selectedImpactAreaElement = value; NotifyPropertyChanged(); }
-        //}
         public ChildElementComboItem SelectedFrequencyElement
         {
             get { return _selectedFrequencyRelationship; }
@@ -111,7 +102,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             get { return _selectedStageDamageElement; }
             set { _selectedStageDamageElement = value; StageDamageSelectionChanged(); }
         }
-
        
         public ObservableCollection<RecommendationRowItem> MessageRows { get; set; }
 
@@ -126,10 +116,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
         }
 
         //todo: this ctor probably needs some work
-        public SpecificIASEditorVM(IASElement elem, string impactAreaName)
+        public SpecificIASEditorVM(SpecificIAS elem, string impactAreaName)
         {
-            _currentElement = elem;
-            _isInEditMode = true;
             Initialize();
             FillForm(elem);
             IndexLocationID = elem.ImpactAreaID;
@@ -139,17 +127,12 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private void Initialize()
         {
             MessageRows = new ObservableCollection<RecommendationRowItem>();
-            _additionalThresholdsVM = new AdditionalThresholdsVM();
+            _additionalThresholdsVM = new ThresholdsVM();
             _additionalThresholdsVM.RequestNavigation += Navigate;
 
-            Thresholds = new List<AdditionalThresholdRowItem>();
+            Thresholds = new List<ThresholdRowItem>();
 
             LoadElements();
-
-
-            //StudyCache.ImpactAreaAdded += AddImpactAreaElement;
-            //StudyCache.ImpactAreaRemoved += RemoveImpactAreaElement;
-            //StudyCache.ImpactAreaUpdated += UpdateImpactAreaElement;
 
             StudyCache.FlowFrequencyAdded += AddFlowFreqElement;
             StudyCache.FlowFrequencyRemoved += RemoveFlowFreqElement;
@@ -253,10 +236,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
         {
             removeElement(((ChildElement)e.Element).GetElementID(), ImpactAreaElements);
         }
-        //private void UpdateImpactAreaElement(object sender, Saving.ElementUpdatedEventArgs e)
-        //{
-        //    updateElement(ImpactAreaElements, SelectedImpactAreaElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
-        //}
 
         private void AddRatingElement(object sender, Saving.ElementAddedEventArgs e)
         {
@@ -304,7 +283,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         #endregion
 
-        private void FillForm(IASElement elem)
+        private void FillForm(SpecificIAS elem)
         {
 
             FillThresholds(elem);
@@ -312,7 +291,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             //all the available elements have been loaded into this editor. We now want to select
             //the correct element for each dropdown. If we can't find the correct element then the selected elem 
             //will be null.
-            //SelectedImpactAreaElement = ImpactAreaElements.FirstOrDefault(imp => imp.ChildElement != null && imp.ChildElement.GetElementID() == elem.ImpactAreaID);
             SelectedFrequencyElement = FrequencyElements.FirstOrDefault(freq => freq.ChildElement != null && freq.ChildElement.GetElementID() == elem.FlowFreqID);
             SelectedInflowOutflowElement = InflowOutflowElements.FirstOrDefault(inf => inf.ChildElement != null && inf.ChildElement.GetElementID() == elem.InflowOutflowID);
             SelectedRatingCurveElement = RatingCurveElements.FirstOrDefault(rat => rat.ChildElement != null && rat.ChildElement.GetElementID() == elem.RatingID);
@@ -329,21 +307,12 @@ namespace ViewModel.ImpactAreaScenario.Editor
             if (SelectedExteriorInteriorElement == null) SelectedExteriorInteriorElement = ExteriorInteriorElements[0];
             if (SelectedStageDamageElement == null) SelectedStageDamageElement = StageDamageElements[0];
 
-            //todo: plot something?
-
-
         }
 
-        private void FillThresholds(IASElement elem)
+        private void FillThresholds(SpecificIAS elem)
         {
-            //todo: maybe add a different ctor or a fill method to load the rows?
-            _additionalThresholdsVM.Rows = new ObservableCollection<AdditionalThresholdRowItem>();
-            foreach (AdditionalThresholdRowItem row in elem.Thresholds)
-            {
-                _additionalThresholdsVM.Rows.Add(row);
-                Thresholds.Add(row);
-            }
-            
+            _additionalThresholdsVM.AddRows(elem.Thresholds);
+            Thresholds = elem.Thresholds;
         }
 
         private void LoadElements()
@@ -352,11 +321,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             //I will always add an empty ChildElementComboItem and then select it by default.
             //this means that when asking for the selected combo item, it should never be null.
             List<ChildElement> childElems = new List<ChildElement>();
-
-            //List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-            //childElems.AddRange(impactAreaElements);
-            //ImpactAreaElements = CreateComboItems(childElems);
-            //SelectedImpactAreaElement = ImpactAreaElements.First();
 
             List<AnalyticalFrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
             childElems.Clear();
@@ -403,7 +367,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             {
                 items.Add(new ChildElementComboItem(elem));
             }
-
             return items;
         }
 
@@ -432,8 +395,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
                     damCats.Add(curve.DamCat);
                 }
 
-                DamageCategories = damCats;
-                SelectedDamageCategory = damCats[0];
+                DamageCategories = elem.Curves;
+                SelectedDamageCurve = DamageCategories[0];
             }
         }
 
@@ -453,7 +416,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         private FdaValidationResult IsRatingCurveValid()
         {
-            //todo: the rating curve is required is the frequency relationship is of type
+            //todo: the rating curve is required if the frequency relationship is of type
             //flow-frequency. This will need to get added once we complete task 5 in the clean doc.
             FdaValidationResult vr = new FdaValidationResult();
             if (_ratingRequired && SelectedRatingCurveElement.ChildElement == null)
@@ -493,260 +456,10 @@ namespace ViewModel.ImpactAreaScenario.Editor
         #endregion
 
 
-        #region Check overlapping ranges
-
-        private const string INFLOW_OUTFLOW = "Inflow-Outflow";
-        private const string RATING = "Rating-Curve";
-        private const string EXTERIOR_INTERIOR = "Exterior-Interior";
-        private const string STAGE_DAMAGE = "Stage-Damage";
-        private const string FLOW = "Flow";
-        private const string STAGE = "Stage";
-
-        private void CheckForOverlappingRanges()
-        {
-            //Note: the following axis determinations are based on this table:
-            //       flow freq:  frequency,       inflow
-            //inflow - outflow:  inflow,          outflow
-            //          Rating:  Outflow,         Exterior Stage
-            //       Ext - Int:  Exterior Stage,  Interior Stage
-            //    Stage Damage:  Interior Stage,  Damage
-
-            MessageRows.Clear();
-            //assume that the big 3 exist by the time we get here.
-
-            bool inflowOutflowSelected = SelectedInflowOutflowElement.ChildElement != null;
-            bool extInteriorSelected = SelectedExteriorInteriorElement.ChildElement != null;
-
-            if(inflowOutflowSelected && !extInteriorSelected)
-            {
-                //check in-out flows with flow freq
-                CheckRangeValues(SelectedInflowOutflowElement, SelectedFrequencyElement, true, false, INFLOW_OUTFLOW, FLOW);
-                //check outflows with rating flows
-                CheckRangeValues(SelectedRatingCurveElement, SelectedInflowOutflowElement, true, false, RATING, FLOW);
-                //check rating stages with stage-damage stages
-                CheckRangeWithStageDamage((AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement, SelectedRatingCurveElement);
-
-            }
-            else if(!inflowOutflowSelected && extInteriorSelected)
-            {
-                //check rating flows with flow-freq flows
-                CheckRangeValues(SelectedRatingCurveElement, SelectedFrequencyElement,true, false, RATING, FLOW);
-
-                //check rating stages with ext-int exterior stages
-                CheckRangeValues(SelectedExteriorInteriorElement, SelectedRatingCurveElement, false, true, EXTERIOR_INTERIOR, STAGE);
-
-                //check ext-int interior stages with stage-damage stages.
-                CheckRangeWithStageDamage((AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement, SelectedExteriorInteriorElement);
-
-            }
-            else if(inflowOutflowSelected && extInteriorSelected)
-            {
-                //check in-out flows with flow freq
-                CheckRangeValues(SelectedInflowOutflowElement, SelectedFrequencyElement, true, false, INFLOW_OUTFLOW, FLOW);
-
-                //check outflows with rating flows
-                CheckRangeValues(SelectedRatingCurveElement, SelectedInflowOutflowElement, true, false, RATING, FLOW);
-
-                //check rating stages with ext-int exterior stages
-                CheckRangeValues(SelectedExteriorInteriorElement, SelectedRatingCurveElement, false, true, EXTERIOR_INTERIOR, STAGE);
-
-                //check ext-int interior stages with stage-damage stages.
-                CheckRangeWithStageDamage((AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement, SelectedExteriorInteriorElement);
-
-            }
-            else
-            {
-                //check rating flows with flow-freq flows
-                CheckRangeValues(SelectedRatingCurveElement, SelectedFrequencyElement, true, false, RATING, FLOW);
-
-                //check rating stages with stage-damage stages
-                CheckRangeWithStageDamage((AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement, SelectedRatingCurveElement);
-            }
-        }
-
         /// <summary>
-        /// Dealing with the stage damage element is a little more complicated. The stage damage element has a list of curves. We have to find 
-        /// the correct curve based on what damage category is selected by the user.
+        /// This method checks to see if this specific IAS is valid for both saving and plotting.
         /// </summary>
-        /// <param name="stageDamElem"></param>
-        /// <param name="otherElem"></param>
-        /// <param name="compareXAxis"></param>
-        private void CheckRangeWithStageDamage(AggregatedStageDamageElement stageDamElem, ChildElementComboItem otherElem)
-        {
-            //this will always compare the x values of the stage-damage to the y values of the other element.
-            double stageDamageMin = -1;
-            double stageDamageMax = -1;
-            double otherMin = -1;
-            double otherMax = -1;
-
-            IFdaFunction otherCurve = otherElem.ChildElement.Curve;
-            StageDamageCurve selectedCurve = null;
-            foreach (StageDamageCurve curve in stageDamElem.Curves)
-            {
-                if(curve.DamCat.Equals(SelectedDamageCategory))
-                {
-                    //I don't think it is possible to not find the correct curve since we are
-                    //pulling the selected dam cat name from the curves and are just matching it back up here.
-                    selectedCurve = curve;
-                   
-                    break;
-                }
-            }
-         
-                stageDamageMin = selectedCurve.Function.Coordinates.First().X.Value();
-                stageDamageMax = selectedCurve.Function.Coordinates.Last().X.Value();
-
-                otherMin = otherCurve.YSeries.Range.Min;
-                otherMax = otherCurve.YSeries.Range.Max;           
-
-            AddRecommendationForNonoverlappingRange(stageDamageMin, stageDamageMax, otherMin, otherMax, STAGE_DAMAGE, STAGE, 
-                stageDamElem.Name, otherElem.ChildElement.Name);
-
-        }
-
-        /// <summary>
-        /// This method finds the non-overlapping regions and creates a message object that gets displayed in the UI. 
-        /// </summary>
-        /// <param name="element1">This needs to be the curve that is associated with that node in the warnings tree.</param>
-        /// <param name="element2"></param>
-        /// <param name="compareXAxis"></param>
-        /// <param name="headerBase"></param>
-        /// <param name="axisLabel"></param>
-        private void CheckRangeValues(ChildElementComboItem element1, ChildElementComboItem element2, bool compareXAxisOnElem1, bool compareXAxisOnElem2, string headerBase, string axisLabel)
-        {
-            ChildElement elem1 = element1.ChildElement;
-            ChildElement elem2 = element2.ChildElement;
-            string name1 = elem1.Name;
-            string name2 = elem2.Name;
-            IParameterRange range1 = null;
-            IParameterRange range2 = null;
-            if(compareXAxisOnElem1)
-            {
-                range1 = elem1.Curve.XSeries;
-            }
-            else
-            {
-                range1 = elem1.Curve.YSeries;
-            }
-            if(compareXAxisOnElem2)
-            {
-                range2 = elem2.Curve.XSeries;
-            }
-            else
-            {
-                range2 = elem2.Curve.YSeries;
-            }
-
-            double min1 = range1.Range.Min;
-            double max1 = range1.Range.Max;
-
-            double min2 = range2.Range.Min;
-            double max2 = range2.Range.Max;
-
-
-            AddRecommendationForNonoverlappingRange(min1, max1, min2, max2, headerBase, axisLabel, name1, name2);
-
-        }
-
-        private void AddRecommendationForNonoverlappingRange(double min1, double max1, double min2, double max2, string headerBase, string axisLabel, string name1, string name2)
-        {
-            RecommendationRowItem ri = new RecommendationRowItem(headerBase + ": " + name1);
-            bool nonOverlapMin = false;
-            bool nonOverlapMax = false;
-            string minRange = "";
-            string maxRange = "";
-
-            //todo: apply some min and max rule.
-            if (min1 != min2)
-            {
-                nonOverlapMin = true;
-                //i want to display the lowest value first
-                minRange = getRangeString(min1, min2);
-            }
-            if (max1 != max2)
-            {
-                nonOverlapMax = true;
-                maxRange = getRangeString(max1, max2);
-            }
-
-            if(nonOverlapMin && nonOverlapMax)
-            {
-                ri.Messages.Add("Non-overlapping " + axisLabel + " with " + name2 + ": " + minRange + " and " + maxRange);
-            }
-            else if(nonOverlapMin)
-            {
-                ri.Messages.Add("Non-overlapping " + axisLabel + " with " + name2 + ": " + minRange);
-            }
-            else if(nonOverlapMax)
-            {
-                ri.Messages.Add("Non-overlapping " + axisLabel + " with " + name2 + ": " + maxRange);
-            }
-
-            if (ri.Messages.Count > 0)
-            {
-                MessageRows.Add(ri);
-            }
-        }
-
-        private string getRangeString(double val1, double val2)
-        {
-            string retval;
-            //i want to display the lowest value first
-            bool val1IsLowest = false;
-            if(val1<val2)
-            {
-                val1IsLowest = true;
-            }
-
-            //only dispaly 2 decimal places
-            val1 = Math.Round(val1, 2);
-            val2 = Math.Round(val2, 2);
-
-            if(val1IsLowest)
-            {
-                retval = "[" + val1 + " - " + val2 + "]";
-            }
-            else
-            {
-                retval = "[" + val2 + " - " + val1 + "]";
-            }
-            return retval;
-        }
-
-        private void CheckRatingFlowsAgainstFreqRelationship()
-        {
-            IParameterRange ySeries = SelectedFrequencyElement.ChildElement.Curve.YSeries;
-            double min = ySeries.Range.Min;
-            double max = ySeries.Range.Max;
-            string flowName = SelectedFrequencyElement.ChildElement.Name;
-
-            IParameterRange ratingYSeries = SelectedRatingCurveElement.ChildElement.Curve.YSeries;
-            double ratingMin = ratingYSeries.Range.Min;
-            double ratingMax = ratingYSeries.Range.Max;
-            string ratName = SelectedRatingCurveElement.ChildElement.Name;
-            
-
-            
-            RecommendationRowItem ri = new RecommendationRowItem("Frequency Relationship");
-            if(min != ratingMin)
-            {
-                ri.Messages.Add(flowName + " has a minimum flow of " + min + " while " + ratName + " has a minimum flow of " + ratingMin +
-                    ". The non-overlapping range will not be used during the compute.");
-            }
-
-
-            if(ri.Messages.Count>0)
-            {
-                MessageRows.Add(ri);
-            }
-            
-        }
-
-
-        #endregion
-
-
-        #region PlotCurves
+        /// <returns></returns>
         public FdaValidationResult IsValid()
         {
             FdaValidationResult vr = new FdaValidationResult();
@@ -755,7 +468,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
             vr.AddValidationResult( IsRatingCurveValid());
             vr.AddValidationResult( IsStageDamageValid());
             vr.AddValidationResult(IsThresholdsValid());
-            //todo: actually run the compute and see if it was successful?
+
+            //todo: actually run the compute and see if it was successful.
 
             if(!vr.IsValid)
             {
@@ -764,57 +478,88 @@ namespace ViewModel.ImpactAreaScenario.Editor
             return vr;
 
         }
+        #region PlotCurves
         private IFdaFunction getFrequencyRelationshipFunction()
         {
-            //todo: this will just be getting the selected curve
-
-            List<double> xValues = new List<double>();
-            List<double> yValues = new List<double>();
-
-            for (int i = 0; i < 10; i++)
+            IFdaFunction retval = null;
+            if(SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement != null)
             {
-                xValues.Add(i / 10.0);
-                yValues.Add(i * 900);
+                retval = SelectedFrequencyElement.ChildElement.Curve;
             }
-            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
-            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.OutflowFrequency, coordinatesFunction);
-            return fdaFunction;
+
+            return retval;
+
+
+
+            //todo: delete, just for testing
+            //List<double> xValues = new List<double>();
+            //List<double> yValues = new List<double>();
+
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    xValues.Add(i / 10.0);
+            //    yValues.Add(i * 900);
+            //}
+            //ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            //IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.OutflowFrequency, coordinatesFunction);
+            //return fdaFunction;
         }
 
         private IFdaFunction getRatingCurveFunction()
         {
-            List<double> xValues = new List<double>();
-            List<double> yValues = new List<double>();
-
-            for (int i = 0; i < 10; i++)
+            IFdaFunction retval = null;
+            if (SelectedRatingCurveElement != null && SelectedRatingCurveElement.ChildElement != null)
             {
-                xValues.Add(i * 1100);
-                yValues.Add(i);
+                retval = SelectedRatingCurveElement.ChildElement.Curve;
             }
 
-            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
-            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.Rating, coordinatesFunction);
-            return fdaFunction;
+            return retval;
+
+            //List<double> xValues = new List<double>();
+            //List<double> yValues = new List<double>();
+
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    xValues.Add(i * 1100);
+            //    yValues.Add(i);
+            //}
+
+            //ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            //IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.Rating, coordinatesFunction);
+            //return fdaFunction;
         }
 
         private IFdaFunction getStageDamageFunction()
         {
-            List<double> xValues = new List<double>();
-            List<double> yValues = new List<double>();
 
-            for (int i = 0; i < 10; i++)
+            IFdaFunction retval = null;
+            if (SelectedDamageCurve != null)
             {
-                xValues.Add(i + 2);
-                yValues.Add(i * 90);
+                //the iparameterEnum type does not matter here. I just need to turn the coordinates function into an ifdaFunction
+                retval = IFdaFunctionFactory.Factory(IParameterEnum.InteriorStageDamage, SelectedDamageCurve.Function);
             }
+            return retval;
+           
 
-            ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
-            IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.InteriorStageDamage, coordinatesFunction);
-            return fdaFunction;
+
+            //List<double> xValues = new List<double>();
+            //List<double> yValues = new List<double>();
+
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    xValues.Add(i + 2);
+            //    yValues.Add(i * 90);
+            //}
+
+            //ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            //IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.InteriorStageDamage, coordinatesFunction);
+            //return fdaFunction;
         }
 
         private IFdaFunction getDamageFrequencyFunction()
         {
+            //todo: this will be the result from the compute. I don't think we need this method once the compute is happening.
+
             List<double> xValues = new List<double>();
             List<double> yValues = new List<double>();
 
@@ -829,30 +574,15 @@ namespace ViewModel.ImpactAreaScenario.Editor
             return fdaFunction;
         }
 
-        public IASElement GetElement()
-        {
-            //todo: if this is being called, do we assume everything is valid?
-            //int impAreaID = SelectedImpactAreaElement.ChildElement != null ? SelectedImpactAreaElement.ChildElement.GetElementID() : -1;
-            int flowFreqID = SelectedFrequencyElement.ChildElement != null ? SelectedFrequencyElement.ChildElement.GetElementID() : -1;
-            int inflowOutID = SelectedInflowOutflowElement.ChildElement != null ? SelectedInflowOutflowElement.ChildElement.GetElementID() : -1;
-            int ratingID = SelectedRatingCurveElement.ChildElement != null ? SelectedRatingCurveElement.ChildElement.GetElementID() : -1;
-            int extIntID = SelectedExteriorInteriorElement.ChildElement != null ? SelectedExteriorInteriorElement.ChildElement.GetElementID() : -1;
-            int latStructID = SelectedLeveeFeatureElement.ChildElement != null ? SelectedLeveeFeatureElement.ChildElement.GetElementID() : -1;
-            int stageDamID = SelectedStageDamageElement.ChildElement != null ? SelectedStageDamageElement.ChildElement.GetElementID() : -1;
-
-            List<AdditionalThresholdRowItem> thresholdRowItems = _additionalThresholdsVM.GetThresholds();
-
-            IASElement elementToSave = new IASElement(IndexLocationID,
-            flowFreqID, inflowOutID,
-            ratingID, extIntID, latStructID, stageDamID, thresholdRowItems);
-            return elementToSave;
-        }
+       
         public void Plot()
         {
             FdaValidationResult validationResult = IsValid();
             if (validationResult.IsValid)
             {
-                CheckForOverlappingRanges();
+                MessageRows.Clear();
+                OverlappingRangeHelper.CheckForOverlappingRanges(SelectedFrequencyElement, SelectedInflowOutflowElement, SelectedRatingCurveElement,
+                    SelectedExteriorInteriorElement, (AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement, SelectedDamageCurve, MessageRows);
                 //get the current curves and set that data on the chart controls
                 //this update call will set the current crosshair data on each one
                 PlotControlVM.FrequencyRelationshipControl.UpdatePlotData(getFrequencyRelationshipFunction());
@@ -861,6 +591,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 PlotControlVM.DamageFrequencyControl.UpdatePlotData(getDamageFrequencyFunction());
 
                 PlotControlVM.Plot();
+                ShowWarnings = true;
             }
             else
             {
@@ -868,54 +599,29 @@ namespace ViewModel.ImpactAreaScenario.Editor
             }
         }
 
-                #endregion
+        #endregion
 
-
-        private Boolean ValidateIAS()
+        /// <summary>
+        /// This method is used to convert the values in the editor into an SpecificIAS object. This object gets passed to the
+        /// saving manager to save. Before calling this method make sure to check if it is valid.
+        /// </summary>
+        /// <returns></returns>
+        public SpecificIAS GetElement()
         {
-            //todo: the rating curve is required is the frequency relationship is of type
-            //flow-frequency. This will need to get added once we complete task 5 in the clean doc.
-            //if (Description == null) { Description = ""; }
+            int flowFreqID = SelectedFrequencyElement.ChildElement != null ? SelectedFrequencyElement.ChildElement.GetElementID() : -1;
+            int inflowOutID = SelectedInflowOutflowElement.ChildElement != null ? SelectedInflowOutflowElement.ChildElement.GetElementID() : -1;
+            int ratingID = SelectedRatingCurveElement.ChildElement != null ? SelectedRatingCurveElement.ChildElement.GetElementID() : -1;
+            int extIntID = SelectedExteriorInteriorElement.ChildElement != null ? SelectedExteriorInteriorElement.ChildElement.GetElementID() : -1;
+            int latStructID = SelectedLeveeFeatureElement.ChildElement != null ? SelectedLeveeFeatureElement.ChildElement.GetElementID() : -1;
+            int stageDamID = SelectedStageDamageElement.ChildElement != null ? SelectedStageDamageElement.ChildElement.GetElementID() : -1;
 
-            //todo: is this the same as the CanPlot() or are there differences?
-            //return IsValid();
-            return true;
+            List<ThresholdRowItem> thresholdRowItems = _additionalThresholdsVM.GetThresholds();
+
+            SpecificIAS elementToSave = new SpecificIAS(IndexLocationID,
+            flowFreqID, inflowOutID,
+            ratingID, extIntID, latStructID, stageDamID, thresholdRowItems);
+            return elementToSave;
         }
-
-        //public override void Save()
-        //{
-        //    bool isValid = ValidateIAS();
-
-        //    if (isValid)
-        //    {
-        //        Thresholds = _additionalThresholdsVM.GetThresholds();
-
-        //        int impAreaID = SelectedImpactAreaElement.ChildElement != null ? SelectedImpactAreaElement.ChildElement.GetElementID() : -1;
-        //        int flowFreqID = SelectedFrequencyElement.ChildElement != null ? SelectedFrequencyElement.ChildElement.GetElementID() : -1;
-        //        int inflowOutID = SelectedInflowOutflowElement.ChildElement != null ? SelectedInflowOutflowElement.ChildElement.GetElementID() : -1;
-        //        int ratingID = SelectedRatingCurveElement.ChildElement != null ? SelectedRatingCurveElement.ChildElement.GetElementID() : -1;
-        //        int extIntID = SelectedExteriorInteriorElement.ChildElement != null ? SelectedExteriorInteriorElement.ChildElement.GetElementID() : -1;
-        //        int latStructID = SelectedLeveeFeatureElement.ChildElement != null ? SelectedLeveeFeatureElement.ChildElement.GetElementID() : -1;
-        //        int stageDamID = SelectedStageDamageElement.ChildElement != null ? SelectedStageDamageElement.ChildElement.GetElementID() : -1;
-
-        //        List<AdditionalThresholdRowItem> thresholdRowItems = _additionalThresholdsVM.GetThresholds();
-
-        //        IASElement elementToSave = new IASElement(Name, Description, Year, impAreaID,
-        //        flowFreqID, inflowOutID,
-        //        ratingID, extIntID, latStructID, stageDamID, thresholdRowItems);
-        //        CurrentElement = elementToSave;
-
-        //        if (_isInEditMode)
-        //        {
-        //            Saving.PersistenceFactory.GetIASManager().SaveExisting(_currentElement, elementToSave);
-        //        }
-        //        else
-        //        {
-        //            Saving.PersistenceFactory.GetIASManager().SaveNew(elementToSave);
-        //        }
-        //    }
-
-        //}
 
         public void AddThresholds()
         {

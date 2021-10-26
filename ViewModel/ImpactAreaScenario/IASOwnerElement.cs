@@ -1,14 +1,12 @@
-﻿using ViewModel.AggregatedStageDamage;
+﻿using Model;
+using System;
+using System.Collections.Generic;
+using ViewModel.AggregatedStageDamage;
 using ViewModel.FlowTransforms;
 using ViewModel.FrequencyRelationships;
 using ViewModel.GeoTech;
 using ViewModel.StageTransforms;
 using ViewModel.Utilities;
-using Functions;
-using Model;
-using System;
-using System.Collections.Generic;
-using ViewModel.ImpactAreaScenario;
 
 namespace ViewModel.ImpactAreaScenario
 {
@@ -19,10 +17,6 @@ namespace ViewModel.ImpactAreaScenario
         #region Fields
         #endregion
         #region Properties
-        //public override string GetTableConstant()
-        //{
-        //    return TableName;
-        //}
 
         #endregion
         #region Constructors
@@ -141,196 +135,18 @@ namespace ViewModel.ImpactAreaScenario
             RemoveElement(e.Element);
         }
 
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
-
-        #region BuildDefaultPlotControls
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultLP3Control(ParentElement ownerElement)
-        {
-            List<AnalyticalFrequencyElement> listOfLp3 = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
-
-            AddFlowFrequencyToIASVM lp3Importer = new AddFlowFrequencyToIASVM(listOfLp3);
-            lp3Importer.RequestNavigation += ownerElement.Navigate;
-
-            bool isXAxisLog = false;
-            bool isYAxisLog = true;
-            bool isProbabilityXAxis = true;
-            bool isProbabilityYAxis = false;
-            bool isXAxisOnBottom = false;
-            bool isYAxisOnLeft = false;
-
-            return new Plots.IndividualLinkedPlotControlVM( IFdaFunctionEnum.InflowFrequency,
-                new Plots.IASIndividualPlotWrapperVM(isXAxisLog, isYAxisLog, isProbabilityXAxis, isProbabilityYAxis, isXAxisOnBottom, isYAxisOnLeft),
-                new Plots.IndividualLinkedPlotCoverButtonVM("Flow Frequency Curve"),
-                lp3Importer);
-        }
-
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultInflowOutflowControl(ParentElement ownerElement)
-        {
-            List<InflowOutflowElement> listOfInfOut = StudyCache.GetChildElementsOfType<InflowOutflowElement>();
-            AddInflowOutflowToIASVM inOutImporter = new AddInflowOutflowToIASVM(listOfInfOut);
-            inOutImporter.RequestNavigation += ownerElement.Navigate;
-
-            bool isXAxisLog = true;
-            bool isYAxisLog = true;
-            bool isProbabilityXAxis = false;
-            bool isProbabilityYAxis = false;
-            bool isXAxisOnBottom = false;
-            bool isYAxisOnLeft = false;
-
-            return new Plots.IndividualLinkedPlotControlVM(IFdaFunctionEnum.InflowOutflow,
-                new Plots.IASIndividualPlotWrapperVM(isXAxisLog, isYAxisLog, isProbabilityXAxis, isProbabilityYAxis, isXAxisOnBottom, isYAxisOnLeft),
-                new Plots.IndividualLinkedPlotCoverButtonVM("Inflow Outflow"),
-                inOutImporter, 
-                new Plots.DoubleLineModulatorCoverButtonVM(),
-                new Plots.DoubleLineModulatorWrapperVM());
-        }
-
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultRatingControl(ParentElement ownerElement)
-        {
-            List<RatingCurveElement> listOfRatingCurves = StudyCache.GetChildElementsOfType<RatingCurveElement>();
-            AddRatingCurveToIASVM ratImporter = new AddRatingCurveToIASVM(listOfRatingCurves);
-
-            bool isXAxisLog = false;
-            bool isYAxisLog = true;
-            bool isProbabilityXAxis = false;
-            bool isProbabilityYAxis = false;
-            bool isXAxisOnBottom = false;
-            bool isYAxisOnLeft = true;
-
-            return new Plots.IndividualLinkedPlotControlVM(IFdaFunctionEnum.Rating,
-                new Plots.IASIndividualPlotWrapperVM(isXAxisLog, isYAxisLog, isProbabilityXAxis, isProbabilityYAxis, isXAxisOnBottom, isYAxisOnLeft),
-                new Plots.IndividualLinkedPlotCoverButtonVM("Rating Curve"),
-                ratImporter);
-        }
-
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultExtIntStageControl(ParentElement ownerElement)
-        {
-            List<StageTransforms.ExteriorInteriorElement> listOfExtIntElements = StudyCache.GetChildElementsOfType<ExteriorInteriorElement>();
-            AddExteriorInteriorStageToIASVM extIntImporter = new AddExteriorInteriorStageToIASVM(listOfExtIntElements);
-            extIntImporter.RequestNavigation += ownerElement.Navigate;
-
-            bool isXAxisLog = false;
-            bool isYAxisLog = false;
-            bool isProbabilityXAxis = false;
-            bool isProbabilityYAxis = false;
-            bool isXAxisOnBottom = true;
-            bool isYAxisOnLeft = true;
-
-            return new Plots.IndividualLinkedPlotControlVM(IFdaFunctionEnum.ExteriorInteriorStage,
-                new Plots.IASIndividualPlotWrapperVM(isXAxisLog, isYAxisLog, isProbabilityXAxis, isProbabilityYAxis, isXAxisOnBottom, isYAxisOnLeft),
-                new Plots.IndividualLinkedPlotCoverButtonVM("Ext Int Stage Curve"),
-                extIntImporter,
-                new Plots.DoubleLineModulatorHorizontalCoverButtonVM("Ext Int Stage Curve"),
-                new Plots.HorizontalDoubleLineModulatorWrapperVM());
-        }
-
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultLateralFeaturesControl(ParentElement ownerElement)
-        {
-            List<LeveeFeatureElement> listOfLeveeFeatureElements = StudyCache.GetChildElementsOfType<LeveeFeatureElement>();
-            AddFailureFunctionToIASVM failureImporter = new AddFailureFunctionToIASVM(listOfLeveeFeatureElements);
-            failureImporter.RequestNavigation += ownerElement.Navigate;
-
-            bool isXAxisLog = false;
-            bool isYAxisLog = false;
-            bool isProbabilityXAxis = false;
-            bool isProbabilityYAxis = false;
-            bool isXAxisOnBottom = false;
-            bool isYAxisOnLeft = true;
-
-            Plots.IndividualLinkedPlotCoverButtonVM coverButton = new Plots.IndividualLinkedPlotCoverButtonVM("Lateral Structure");
-
-            return new Plots.IndividualLinkedPlotControlVM(IFdaFunctionEnum.LateralStructureFailure,
-                new Plots.IASIndividualPlotWrapperVM(isXAxisLog, isYAxisLog, isProbabilityXAxis, isProbabilityYAxis, isXAxisOnBottom, isYAxisOnLeft),
-                coverButton,
-                failureImporter,
-                new Plots.DoubleLineModulatorHorizontalCoverButtonVM("Lateral Structure"),
-                new Plots.IASHorizontalFailureFunctionVM());
-        }
-
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultStageDamageControl(ParentElement ownerElement)
-        {
-            List<AggregatedStageDamage.AggregatedStageDamageElement> listOfStageDamage = StudyCache.GetChildElementsOfType<AggregatedStageDamageElement>();
-            AddStageDamageToIASVM stageDamageImporter = new AddStageDamageToIASVM(listOfStageDamage);
-            stageDamageImporter.RequestNavigation += ownerElement.Navigate;
-
-            bool isXAxisLog = false;
-            bool isYAxisLog = true;
-            bool isProbabilityXAxis = false;
-            bool isProbabilityYAxis = false;
-            bool isXAxisOnBottom = true;
-            bool isYAxisOnLeft = true;
-
-            return new Plots.IndividualLinkedPlotControlVM(IFdaFunctionEnum.InteriorStageDamage,
-                new Plots.IASIndividualPlotWrapperVM(isXAxisLog, isYAxisLog, isProbabilityXAxis, isProbabilityYAxis, isXAxisOnBottom, isYAxisOnLeft),
-                new Plots.IndividualLinkedPlotCoverButtonVM("Int Stage Damage Curve"),
-                stageDamageImporter);
-        }
-
-        public static Plots.IndividualLinkedPlotControlVM BuildDefaultDamageFrequencyControl(ParentElement ownerElement)
-        {
-
-            bool isXAxisLog = false;
-            bool isYAxisLog = true;
-            bool isProbabilityXAxis = true;
-            bool isProbabilityYAxis = false;
-            bool isXAxisOnBottom = true;
-            bool isYAxisOnLeft = false;
-
-            return new Plots.IndividualLinkedPlotControlVM(IFdaFunctionEnum.DamageFrequency,
-                new Plots.IASIndividualPlotWrapperVM(isXAxisLog, isYAxisLog, isProbabilityXAxis, isProbabilityYAxis, isXAxisOnBottom, isYAxisOnLeft),
-                new Plots.IndividualLinkedPlotCoverButtonVM("Preview Compute"),
-                null);
-        }
-
-        #endregion
-
         public void AddNewCondition(object arg1, EventArgs arg2)
         {
 
-
-
-            //List<ImpactArea.ImpactAreaElement> impactAreas = StudyCache.GetChildElementsOfType<ImpactArea.ImpactAreaElement>();
-            //Plots.IndividualLinkedPlotControlVM lp3Control = BuildDefaultLP3Control(this);
-            //Plots.IndividualLinkedPlotControlVM inflowOutflowControl = BuildDefaultInflowOutflowControl(this);
-            //Plots.IndividualLinkedPlotControlVM ratingControl = BuildDefaultRatingControl(this);
-            //ratingControl.RequestNavigation += Navigate;
-
-            //Plots.IndividualLinkedPlotControlVM extIntStageControl = BuildDefaultExtIntStageControl(this);
-            //Plots.IndividualLinkedPlotControlVM failureControl = BuildDefaultLateralFeaturesControl(this);
-            //Plots.IndividualLinkedPlotControlVM StageDamageControl = BuildDefaultStageDamageControl(this);
-            //Plots.IndividualLinkedPlotControlVM DamageFrequencyControl = BuildDefaultDamageFrequencyControl(this);
-
-            //Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-            //     .WithSiblingRules(this);
-            //List<double> xs = new List<double>() { 0 };
-            //List<double> ys = new List<double>() { 0 };
-            //ICoordinatesFunction coordFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-            //IFdaFunction dummyDefault = IFdaFunctionFactory.Factory(IParameterEnum.Rating, (IFunction)coordFunc);
-            //IASPlotEditorVM vm = new IASPlotEditorVM(impactAreas, lp3Control, inflowOutflowControl, ratingControl, extIntStageControl,
-            //    failureControl, StageDamageControl, DamageFrequencyControl, actionManager, dummyDefault);
-
-            //vm.RequestNavigation += Navigate;
-            //string header = "Create Condition";
-            //DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateCondition");
-            //Navigate(tab, false, false);
-
-
-
-            ///////////////////////////////////////////
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                  .WithSiblingRules(this);
             Editor.IASEditorVM vm = new Editor.IASEditorVM(actionManager);
             vm.RequestNavigation += Navigate;
-            DynamicTabVM tab2 = new DynamicTabVM("Impact Area Scenario Editor", vm, "CreateIAS");
-            Navigate(tab2, false, false);
+            DynamicTabVM tab = new DynamicTabVM("Impact Area Scenario Editor", vm, "CreateIAS");
+            Navigate(tab, false, false);
 
         }
         #endregion
-        #region Functions
 
-        #endregion
     }
 }

@@ -9,35 +9,42 @@ using ViewModel.Editors;
 
 namespace ViewModel.ImpactAreaScenario.Editor
 {
-    public class AdditionalThresholdsVM : BaseEditorVM
+    public class ThresholdsVM : BaseViewModel
     {
 
-        private AdditionalThresholdRowItem _selectedRow;
+        private ThresholdRowItem _selectedRow;
 
-        public ObservableCollection<AdditionalThresholdRowItem> Rows
+        public ObservableCollection<ThresholdRowItem> Rows
         {
             get; set;
         }
-        public AdditionalThresholdRowItem SelectedRow
+        public ThresholdRowItem SelectedRow
         {
             get { return _selectedRow; }
             set { _selectedRow = value; NotifyPropertyChanged(); }
         }
 
-        public AdditionalThresholdsVM() : base(null)
+        public ThresholdsVM()
         {
-            Rows = new ObservableCollection<AdditionalThresholdRowItem>();
+            Rows = new ObservableCollection<ThresholdRowItem>();
         }
 
-        public AdditionalThresholdsVM(List<AdditionalThresholdRowItem> thresholds):base(null)
+        public ThresholdsVM(List<ThresholdRowItem> thresholds)
         {
-            Rows = new ObservableCollection<AdditionalThresholdRowItem>(thresholds);
+            Rows = new ObservableCollection<ThresholdRowItem>(thresholds);
 
         }
 
+        public void AddRows(List<ThresholdRowItem> rows)
+        {
+            foreach (ThresholdRowItem row in rows)
+            {
+                Rows.Add(row);
+            }
+        }
         public void AddRow()
         {
-            Rows.Add(new AdditionalThresholdRowItem(getNextIdInteger(), IMetricEnum.ExteriorStage, 0));
+            Rows.Add(new ThresholdRowItem(getNextIdInteger(), IMetricEnum.ExteriorStage, 0));
             SelectedRow = Rows[Rows.Count - 1];
         }
 
@@ -46,7 +53,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
             int selectedIndex = Rows.IndexOf(SelectedRow);
             if (selectedIndex > -1)
             {
-                AdditionalThresholdRowItem newRI = new AdditionalThresholdRowItem(getNextIdInteger(), SelectedRow.ThresholdType, SelectedRow.ThresholdValue);
+                ThresholdRowItem newRI = new ThresholdRowItem(getNextIdInteger(), SelectedRow.ThresholdType, SelectedRow.ThresholdValue);
                 Rows.Add(newRI);
                 SelectedRow = newRI;
             }
@@ -62,7 +69,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
             }
             else
             {
-                return 0;
+                return 1;
             }
         }
 
@@ -92,18 +99,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         }
 
-        public override void Save()
-        {
-            //Saving.PersistenceFactory.GetIASManager().UpdateThresholds();
-
-        }
-
-        public override void AddValidationRules()
-        {
-            //intentially left blank
-        }
-
-        public List<AdditionalThresholdRowItem> GetThresholds()
+        public List<ThresholdRowItem> GetThresholds()
         {
             return Rows.ToList();
         }

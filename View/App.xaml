@@ -244,8 +244,8 @@
             <IASEditorView:IASEditor/>
         </DataTemplate>
         
-        <DataTemplate DataType="{x:Type IASEditorVM:AdditionalThresholdsVM }" >
-            <IASEditorView:AdditionalThresholds/>
+        <DataTemplate DataType="{x:Type IASEditorVM:ThresholdsVM }" >
+            <IASEditorView:Thresholds/>
         </DataTemplate>
         
         <DataTemplate DataType="{x:Type IASResultsVM:IASResultsVM }" >

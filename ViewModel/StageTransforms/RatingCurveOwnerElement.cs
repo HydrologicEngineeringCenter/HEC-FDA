@@ -90,7 +90,7 @@ namespace ViewModel.StageTransforms
               // .WithParentGuid(this.GUID)
                //.WithCanOpenMultipleTimes(true);
 
-            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve, "Outflow - Exterior Stage", "Outflow", "Exterior Stage", actionManager);
+            Editors.CurveEditorVM vm = new Editors.CurveEditorVM(defaultCurve,  "Outflow", "Exterior Stage", "Outflow - Exterior Stage", actionManager);
             //StudyCache.AddSiblingRules(vm,this);
             //vm.AddSiblingRules(this);
             string header = "Create Rating Curve " + vm.Name;

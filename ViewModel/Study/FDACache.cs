@@ -930,7 +930,7 @@ namespace ViewModel.Study
                 }
                 return retVal;
             }
-            if (childElementType == typeof(IASElement))
+            if (childElementType == typeof(SpecificIAS))
             {
                 foreach (ChildElement elem in IASElements)
                 {

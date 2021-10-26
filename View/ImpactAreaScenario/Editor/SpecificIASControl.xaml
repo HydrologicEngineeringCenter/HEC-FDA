@@ -54,7 +54,6 @@
                     <Label  Grid.Column="4" Content="Rating Curve:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
                     <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" Visibility="{Binding RatingRequired,Converter={StaticResource BoolToVisibilityConverter}}" />
                     <ComboBox  Grid.Column="5"  HorizontalAlignment="Stretch" ItemsSource="{Binding RatingCurveElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedRatingCurveElement}" />
-                    <!--<ComboBox  Grid.Column="5"  HorizontalAlignment="Stretch" ItemsSource="{Binding Test}"  SelectedItem="{Binding SelectedInt}" />-->
 
                 </Grid>
 
@@ -98,14 +97,14 @@
             <StackPanel Orientation="Horizontal" >
                 <Button x:Name="plotBtn" Content="Plot" Width="100" HorizontalAlignment="Left" Click="plotBtn_Click"/>
                 <Label Content="Damage Category:" />
-                <ComboBox ItemsSource="{Binding DamageCategories}" SelectedItem="{Binding SelectedDamageCategory}" Width="150"/>
+                <ComboBox ItemsSource="{Binding DamageCategories}" SelectedItem="{Binding SelectedDamageCurve}" DisplayMemberPath="DamCat" Width="300"/>
             </StackPanel>
         </Grid>
 
 
         <local:IASPlotControl x:Name="PlotControl" Grid.Row="4" Margin="5,5,5,0" DataContext="{Binding PlotControlVM}" Visibility="{Binding PlotControlVisibility}"/>
 
-        <local:RecommendationExpanderControl Grid.Row="5" />
+        <local:RecommendationExpanderControl Grid.Row="5" Visibility="{Binding ShowWarnings,Converter={StaticResource BoolToVisibilityConverter}}" />
 
 
 

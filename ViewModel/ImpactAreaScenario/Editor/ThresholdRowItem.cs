@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ViewModel.ImpactAreaScenario.Editor
 {
-    public class AdditionalThresholdRowItem
+    public class ThresholdRowItem
     {
 
         public int ID { get; set; }
@@ -16,7 +16,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         
         public double ThresholdValue { get; set; }
 
-        public AdditionalThresholdRowItem(int id, IMetricEnum thresholdType, double value)
+        public ThresholdRowItem(int id, IMetricEnum thresholdType, double value)
         {
             ID = id;
             ThresholdType = thresholdType;

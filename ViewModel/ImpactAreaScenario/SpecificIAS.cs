@@ -1,23 +1,12 @@
-﻿using ViewModel.AggregatedStageDamage;
-using ViewModel.FlowTransforms;
-using ViewModel.FrequencyRelationships;
-using ViewModel.GeoTech;
-using ViewModel.ImpactArea;
-using ViewModel.StageTransforms;
-using ViewModel.Utilities;
-using Model;
-using Model.Conditions.Locations.Years.Results;
-using Statistics;
+﻿using Model;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using ViewModel.ImpactAreaScenario.Results;
-using ViewModel.ImpactAreaScenario.Editor;
 using System.Xml.Linq;
+using ViewModel.ImpactAreaScenario.Editor;
 
 namespace ViewModel.ImpactAreaScenario
 {
-    public class IASElement
+    public class SpecificIAS
     {
         #region Notes
         #endregion
@@ -75,35 +64,25 @@ namespace ViewModel.ImpactAreaScenario
         public int StageDamageID { get; set; }
 
 
-        public List<AdditionalThresholdRowItem> Thresholds { get; set; }
+        public List<ThresholdRowItem> Thresholds { get; set; }
 
         #endregion
         #region Constructors
 
-        
-
-       
-
-        /// <summary>
-        /// The constructor for a conditions element.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="description"></param>
-        /// <param name="analysisYear"></param>
-        /// <param name="impactAreaID"></param>
-        /// <param name="flowFreqID"></param>
-        /// <param name="inflowOutflowID"></param>
-        /// <param name="ratingID"></param>
-        /// <param name="extIntID"></param>
-        /// <param name="leveeFailureID"></param>
-        /// <param name="stageDamageID"></param>
-        /// <param name="thresholdType"></param>
-        /// <param name="thresholdValue"></param>
-        public IASElement(int impactAreaID,
-                     int flowFreqID, int inflowOutflowID, int ratingID, int extIntID, int leveeFailureID, int stageDamageID,
-                    List<AdditionalThresholdRowItem> thresholds) : base()
+/// <summary>
+/// This is a specific IAS element. The IAS element set will hold a list of these.
+/// </summary>
+/// <param name="impactAreaID"></param>
+/// <param name="flowFreqID"></param>
+/// <param name="inflowOutflowID"></param>
+/// <param name="ratingID"></param>
+/// <param name="extIntID"></param>
+/// <param name="leveeFailureID"></param>
+/// <param name="stageDamageID"></param>
+/// <param name="thresholds"></param>
+        public SpecificIAS(int impactAreaID, int flowFreqID, int inflowOutflowID, int ratingID, int extIntID, 
+            int leveeFailureID, int stageDamageID, List<ThresholdRowItem> thresholds) : base()
         {
-
             ImpactAreaID = impactAreaID;
             FlowFreqID = flowFreqID;
             InflowOutflowID = inflowOutflowID;
@@ -112,12 +91,15 @@ namespace ViewModel.ImpactAreaScenario
             LeveeFailureID = leveeFailureID;
             StageDamageID = stageDamageID;
             Thresholds = thresholds;
- 
         }
 
-        public IASElement(XElement iasElem)
+        /// <summary>
+        /// This ctor is used to load elements from the database.
+        /// </summary>
+        /// <param name="iasElem"></param>
+        public SpecificIAS(XElement iasElem)
         {
-            List<AdditionalThresholdRowItem> thresholdRows = new List<AdditionalThresholdRowItem>();
+            List<ThresholdRowItem> thresholdRows = new List<ThresholdRowItem>();
 
             ImpactAreaID = Int32.Parse(iasElem.Attribute(IMPACT_AREA).Value);
 
@@ -131,8 +113,13 @@ namespace ViewModel.ImpactAreaScenario
             Thresholds = ReadThresholdsXML(iasElem.Element(THRESHOLDS));        
         }
        
+        #endregion
         
-
+        /// <summary>
+        /// Intentionally leaving commented out for now. - Cody 10/26/21
+        /// </summary>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
         private void ComputeCondition(object arg1, EventArgs arg2)
         {
 
@@ -185,7 +172,6 @@ namespace ViewModel.ImpactAreaScenario
             //DisplayResults(result);
 
         }
-        #endregion
 
 
 
@@ -193,7 +179,7 @@ namespace ViewModel.ImpactAreaScenario
         {
             XElement functionsElem = new XElement("Thresholds");
 
-            foreach (AdditionalThresholdRowItem row in Thresholds)
+            foreach (ThresholdRowItem row in Thresholds)
             {
                 XElement rowElement = new XElement("Row");
                 rowElement.SetAttributeValue("Type", row.ThresholdType);
@@ -242,9 +228,9 @@ namespace ViewModel.ImpactAreaScenario
         }
 
 
-        private List<AdditionalThresholdRowItem> ReadThresholdsXML(XElement thresholdsElem)
+        private List<ThresholdRowItem> ReadThresholdsXML(XElement thresholdsElem)
         {
-            List<AdditionalThresholdRowItem> thresholdRows = new List<AdditionalThresholdRowItem>();
+            List<ThresholdRowItem> thresholdRows = new List<ThresholdRowItem>();
             IEnumerable<XElement> rows = thresholdsElem.Elements("Row");
             int i = 0;
             foreach (XElement rowElem in rows)
@@ -253,7 +239,7 @@ namespace ViewModel.ImpactAreaScenario
                 string thresholdType = rowElem.Attribute("Type").Value;
                 IMetricEnum metricEnum = ConvertStringToMetricEnum(thresholdType);
                 double thresholdValue = Double.Parse(rowElem.Attribute("Value").Value);
-                thresholdRows.Add(new AdditionalThresholdRowItem(i, metricEnum, thresholdValue));
+                thresholdRows.Add(new ThresholdRowItem(i, metricEnum, thresholdValue));
             }
             return thresholdRows;
         }
