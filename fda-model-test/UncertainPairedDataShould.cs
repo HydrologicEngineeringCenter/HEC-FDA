@@ -40,7 +40,26 @@ namespace fda_model_test
             UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals);
             XElement ele = upd.WriteToXML();
             UncertainPairedData upd2 = UncertainPairedData.ReadFromXML(ele);
-            Assert.Equal(upd, upd2);
+
+            double[] minExpected = new double[upd.ys().Length];
+            double[] minActual = new double[upd2.ys().Length];
+            double[] maxExpected = new double[upd.ys().Length];
+            double[] maxActual = new double[upd2.ys().Length];
+
+            for (int i = 0; i<upd.ys().Length; i++)
+            {
+                minExpected[i] = upd.ys()[i].Min;
+                maxExpected[i] = upd.ys()[i].Max;
+            }
+            for (int i=0; i<upd2.ys().Length; i++)
+            {
+                minActual[i] = upd2.ys()[i].Min;
+                maxActual[i] = upd2.ys()[i].Max;
+            }
+
+            Assert.Equal(upd.xs(), upd2.xs());
+            Assert.Equal(minExpected,minActual);
+            Assert.Equal(maxExpected, maxActual);
         }
     }
 }
