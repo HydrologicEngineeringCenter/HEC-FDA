@@ -73,12 +73,22 @@ namespace metrics
         public double[] AssuranceOfAEP()
         {
             double[] standardProbabilities = new double[8] {.5, .2, .1, .04, .02, .01, .004, .002};
-            double[] assuranceofAEP = new double[8];
+            double[] assuranceOfAEP = new double[8];
             for (int i=0, i<standardProbabilities.Length; i++)
             {
                 assuranceofAEP[i] = _aep.CDF(1-standardProbabilities[i]);
             }
             return assuranceofAEP;
+        }
+
+        public double[] ConditionalNonExceedanceProbability()
+        {
+            double[] standardProbabilities = new double[8] {.5, .2, .1, .04, .02, .01, .004, .002};
+            double[] conditionalNonExceedanceProbability = new double[8];
+            for (int i=0, i<standardProbabilities.Length; i++)
+            {
+                conditionalNonExceedanceProbability[i] = 1-_cnep[standardProbabilities[i]].CDF(_aepThreshold);
+            }
         }
 
         public void AddEADEstimate(double eadEstimate, string category)
@@ -99,9 +109,7 @@ namespace metrics
         {
             return _ead[category].Mean;
         }
-        /// <summary>
-        /// EADExceededWithProbabilityQ returns EAD that has a a .25, .5, and .75 probability of being exceeded.
-        /// <summary/>
+
         public double[] EADExceededWithProbabilityQ(string category)
         {
             double[] quartiles = new double[3];

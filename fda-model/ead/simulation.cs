@@ -133,8 +133,8 @@ namespace ead{
             for (int i=0; i<standardProbabilities.Length; i++)
             {
                 stageOfEvent[i] = frequency_stage.f_inverse(standardProbabilities[i]);
+                _results.AddStageForCNEP(standardProbabilities[i],stageOfEvent[i]);
             }
-            //add each stage to their histogram-specific event now 
 
             //interior exterior
             if (_channelstage_floodplainstage.IsNull)
