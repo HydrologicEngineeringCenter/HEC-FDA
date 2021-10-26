@@ -127,6 +127,15 @@ namespace ead{
             //compute aep metrics here
             double aep = frequency_stage.f(_results.AEPThreshold);
             _results.AddAEPEstimate(aep);
+            //here we need to grab the stage of a given event 
+            double[] stageOfEvent = new double[8];
+            double[] standardProbabilities = new double[8] {.5, .2, .1, .04, .02, .01, .004, .002};
+            for (int i=0; i<standardProbabilities.Length; i++)
+            {
+                stageOfEvent[i] = frequency_stage.f_inverse(standardProbabilities[i]);
+            }
+            //add each stage to their histogram-specific event now 
+
             //interior exterior
             if (_channelstage_floodplainstage.IsNull)
             {

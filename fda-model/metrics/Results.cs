@@ -9,10 +9,12 @@ namespace metrics
         //needs access to get AEP and EAD results.
         private const double AEP_HISTOGRAM_BINWIDTH = .01;
         private const double EAD_HISTOGRAM_BINWIDTH = 10;
+        private const double CNEP_HISTOGRAM_BINWIDTH = .01;
         private double _aepThreshold; //I think we should name refactor this, because the threshold applies in the calculation of all performance metrics
         // the only one that might be different is assurance of AEP, but I think we'll just report assurance of AEP like we do CNEP, that is what we set up in the design document
         private Histogram _aep =  null;
         private Dictionary<string, Histogram> _ead; 
+        private Dictionary<double, Histogram> _cnep;
 
         public double AEPThreshold { 
             get {
@@ -26,6 +28,7 @@ namespace metrics
             _aepThreshold = 0.0;
             _aep = null; //is this necessary?
             _ead = new Dictionary<string, Histogram>();
+            _cnep = new Dictionary<double, Histogram>();
         }
         public void AddAEPEstimate(double aepEstimate)
         {
@@ -41,6 +44,20 @@ namespace metrics
             }
             
 
+        }
+
+        public void AddStageForCNEP(double standardProbability, double stageForCNEP)
+        {
+            double[] data = new double[1] {stageForCNEP};
+            IData stage = IDataFactory.Factory(stage);
+            if (_cnep.ContainsKey(standardProbability))
+            {
+                _cnep[standardProbability].AddObservationToHistogram(stage);
+            } else
+            {
+                var histo = new Histogram(stageForCNEP,CNEP_HISTOGRAM_BINWIDTH);
+                _cnep.Add(standardProbability,histo);
+            }
         }
 
         public double MeanAEP()
