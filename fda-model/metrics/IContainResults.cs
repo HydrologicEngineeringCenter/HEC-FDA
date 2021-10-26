@@ -11,7 +11,7 @@ namespace metrics
         double MeanAEP();
         double MedianAEP();
         double[] AssuranceOfAEP();
-        double[] EADExceededWithProbability(string category);
+        double[] EADExceededWithProbabilityQ(string category);
         double[] LongTermRisk();
     }
 }

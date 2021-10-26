@@ -49,13 +49,13 @@ namespace metrics
         public void AddStageForCNEP(double standardProbability, double stageForCNEP)
         {
             double[] data = new double[1] {stageForCNEP};
-            IData stage = IDataFactory.Factory(stage);
+            IData stage = IDataFactory.Factory(data);
             if (_cnep.ContainsKey(standardProbability))
             {
                 _cnep[standardProbability].AddObservationToHistogram(stage);
             } else
             {
-                var histo = new Histogram(stageForCNEP,CNEP_HISTOGRAM_BINWIDTH);
+                var histo = new Histogram(stage,CNEP_HISTOGRAM_BINWIDTH);
                 _cnep.Add(standardProbability,histo);
             }
         }
@@ -74,21 +74,22 @@ namespace metrics
         {
             double[] standardProbabilities = new double[8] {.5, .2, .1, .04, .02, .01, .004, .002};
             double[] assuranceOfAEP = new double[8];
-            for (int i=0, i<standardProbabilities.Length; i++)
+            for (int i=0; i<standardProbabilities.Length; i++)
             {
-                assuranceofAEP[i] = _aep.CDF(1-standardProbabilities[i]);
+                assuranceOfAEP[i] = _aep.CDF(1-standardProbabilities[i]);
             }
-            return assuranceofAEP;
+            return assuranceOfAEP;
         }
 
         public double[] ConditionalNonExceedanceProbability()
         {
             double[] standardProbabilities = new double[8] {.5, .2, .1, .04, .02, .01, .004, .002};
             double[] conditionalNonExceedanceProbability = new double[8];
-            for (int i=0, i<standardProbabilities.Length; i++)
+            for (int i=0; i<standardProbabilities.Length; i++)
             {
                 conditionalNonExceedanceProbability[i] = 1-_cnep[standardProbabilities[i]].CDF(_aepThreshold);
             }
+            return conditionalNonExceedanceProbability;
         }
 
         public void AddEADEstimate(double eadEstimate, string category)
@@ -126,7 +127,7 @@ namespace metrics
             double[] longTermRisk =  new double[3];
             for (int i = 0; i < longTermPeriod.Length; i++)
             {
-                longTermRisk[i] = 1-Math.Pow((1-MeanAEP),longTermPeriod[i]);       
+                longTermRisk[i] = 1-Math.Pow((1-MeanAEP()),longTermPeriod[i]);       
             }
             return longTermRisk;
         }
