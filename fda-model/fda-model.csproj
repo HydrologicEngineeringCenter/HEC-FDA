@@ -8,7 +8,7 @@
 
 	<PropertyGroup>
 		<PackageId>USACE.HEC.FDA.Model</PackageId>
-		<Version>1.0.0</Version>
+		<VersionPrefix>1.1.0</VersionPrefix>
 		<Description>A library for handling HEC-FDA Flood Risk Analysis computations</Description>
 		<Authors>Hydrologic Engineering Center</Authors>
 		<RepositoryUrl>https://github.com/HydrologicEngineeringCenter/fda-model</RepositoryUrl>
@@ -16,7 +16,7 @@
 
 	
   <ItemGroup>
-    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.0.3" />
+    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2021.10.26.2156" />
   </ItemGroup>
 
 </Project>

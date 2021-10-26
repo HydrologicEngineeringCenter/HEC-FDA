@@ -8,10 +8,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C9D31C05-5D20-46A5-B761-B9AC6C188CD8}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		.github\workflows\CI.yaml = .github\workflows\CI.yaml
+		.github\workflows\CICD.yml = .github\workflows\CICD.yml
 		LICENSE = LICENSE
-		nuget.config = nuget.config
 		README.md = README.md
-		.github\workflows\SimpleBuild.yml = .github\workflows\SimpleBuild.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fda-model-test", "fda-model-test\fda-model-test.csproj", "{F9FBA186-4776-4A20-85A3-3F928F9F5F7B}"
