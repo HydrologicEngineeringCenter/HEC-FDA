@@ -122,14 +122,9 @@ namespace metrics
             return quartiles;
         }
 
-        public double[] LongTermRisk()
+        public double LongTermRisk(double years)
         {
-            double[] longTermPeriod = new double[3] {10, 25, 50};
-            double[] longTermRisk =  new double[3];
-            for (int i = 0; i < longTermPeriod.Length; i++)
-            {
-                longTermRisk[i] = 1-Math.Pow((1-MeanAEP()),longTermPeriod[i]);       
-            }
+            double longTermRisk = 1-Math.Pow((1-MeanAEP()),years);       
             return longTermRisk;
         }
 
