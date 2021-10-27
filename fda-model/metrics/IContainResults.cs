@@ -10,8 +10,9 @@ namespace metrics
         double MeanEAD(string category);
         double MeanAEP();
         double MedianAEP();
-        double AssuranceOfAEP();
-        double EADExceededWithProbabilityQ(string category);
-        double LongTermRisk();
+        double AssuranceOfAEP(double exceedanceProbability);
+        double ConditionalNonExceedanceProbability(double exceedanceProbability);
+        double EADExceededWithProbabilityQ(string category, double exceedanceProbability);
+        double LongTermExceedanceProbability(double years);
     }
 }

@@ -10,8 +10,7 @@ namespace metrics
         private const double AEP_HISTOGRAM_BINWIDTH = .0001;
         private const double EAD_HISTOGRAM_BINWIDTH = 10;
         private const double CNEP_HISTOGRAM_BINWIDTH = .0001;
-        private double _aepThreshold; //I think we should name refactor this, because the threshold applies in the calculation of all performance metrics
-        // the only one that might be different is assurance of AEP, but I think we'll just report assurance of AEP like we do CNEP, that is what we set up in the design document
+        private double _aepThreshold; 
         private Histogram _aep =  null;
         private Dictionary<string, Histogram> _ead; 
         private Dictionary<double, Histogram> _cnep;
@@ -109,10 +108,10 @@ namespace metrics
             return quartile;
         }
         
-        public double LongTermRisk(double years)
+        public double LongTermExceedanceProbability(double years)
         {
-            double longTermRisk = 1-Math.Pow((1-MeanAEP()),years);       
-            return longTermRisk;
+            double ltep = 1-Math.Pow((1-MeanAEP()),years);       
+            return ltep;
         }
 
 
