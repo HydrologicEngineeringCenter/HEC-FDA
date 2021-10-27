@@ -41,8 +41,8 @@ namespace fda_model_test
             ead.MeanRandomProvider mrp = new MeanRandomProvider();
             metrics.IContainResults r = s.Compute(mrp,1);
             double difference = expected - r.MeanEAD("residential");
-            double percentDiff = difference / expected;
-            Assert.True(percentDiff < .01);
+            double relativeDifference = difference / expected;
+            Assert.True(relativeDifference < .01);
         }
         [Theory]
         [InlineData(1234, 100, 138098)]
@@ -73,8 +73,8 @@ namespace fda_model_test
             RandomProvider rp = new RandomProvider(seed);
             metrics.IContainResults r = s.Compute(rp, iterations);
             double difference = expected - r.MeanEAD("residential");
-            double percentDiff = difference / expected;
-            Assert.True(percentDiff < .01);
+            double relativeDifference = difference / expected;
+            Assert.True(relativeDifference < .01);
         }
         [Theory]
         [InlineData(0.0, 82500)]
@@ -111,8 +111,8 @@ namespace fda_model_test
             ead.MeanRandomProvider mrp = new MeanRandomProvider();
             metrics.IContainResults r = s.Compute(mrp, 1);
             double difference = expected - r.MeanEAD("residential");
-            double percentDiff = difference / expected;
-            Assert.True(percentDiff < .01);
+            double relativeDifference = difference / expected;
+            Assert.True(relativeDifference < .01);
         }
 
     }

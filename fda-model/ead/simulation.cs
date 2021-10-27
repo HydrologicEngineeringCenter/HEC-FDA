@@ -125,7 +125,7 @@ namespace ead{
         private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers rp, paireddata.IPairedData frequency_stage){
             //results.AEPThreshold = 100.0;//stage or flow or damage threshold
             //compute aep metrics here
-            double aep = frequency_stage.f(_results.AEPThreshold);
+            double aep = frequency_stage.f_inverse(_results.AEPThreshold);
             _results.AddAEPEstimate(aep);
             //here we need to grab the stage of a given event 
             double[] stageOfEvent = new double[8];
