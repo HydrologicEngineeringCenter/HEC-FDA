@@ -112,14 +112,11 @@ namespace metrics
             return _ead[category].Mean;
         }
 
-        public double[] EADExceededWithProbabilityQ(string category)
+        public double EADExceededWithProbabilityQ(string category, double exceedanceProbability)
         {
-            double[] quartiles = new double[3];
-            quartiles[0] = _ead[category].InverseCDF(0.75);
-            quartiles[1] = _ead[category].InverseCDF(0.5);
-            quartiles[2] = _ead[category].InverseCDF(0.25);
-
-            return quartiles;
+            double nonExceedanceProbability = 1 - exceedanceProbability;
+            double quartile = _ead[category].InverseCDF(nonExceedanceProbability);
+            return quartile;
         }
 
         public double LongTermRisk(double years)
