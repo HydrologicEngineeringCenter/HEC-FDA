@@ -71,25 +71,15 @@ namespace metrics
             return _aep.Median;
         }
 
-        public double[] AssuranceOfAEP()
-        {
-            double[] standardExceedanceProbabilities = new double[8] {.5, .2, .1, .04, .02, .01, .004, .002};
-            double[] assuranceOfAEP = new double[8];
-            for (int i=0; i<standardExceedanceProbabilities.Length; i++)
-            {
-                assuranceOfAEP[i] = _aep.CDF(standardExceedanceProbabilities[i]);
-            }
+        public double AssuranceOfAEP(double exceedanceProbability)
+        {   //assurance of AEP is a non-exceedance probability
+            double assuranceOfAEP = _aep.CDF(exceedanceProbability);
             return assuranceOfAEP;
         }
 
-        public double[] ConditionalNonExceedanceProbability()
+        public double ConditionalNonExceedanceProbability(double exceedanceProbability)
         {
-            double[] standardProbabilities = new double[8] {.5, .2, .1, .04, .02, .01, .004, .002};
-            double[] conditionalNonExceedanceProbability = new double[8];
-            for (int i=0; i<standardProbabilities.Length; i++)
-            {
-                conditionalNonExceedanceProbability[i] = 1-_cnep[standardProbabilities[i]].CDF(_aepThreshold);
-            }
+            double conditionalNonExceedanceProbability = 1-_cnep[exceedanceProbability].CDF(_aepThreshold);
             return conditionalNonExceedanceProbability;
         }
 
@@ -118,7 +108,7 @@ namespace metrics
             double quartile = _ead[category].InverseCDF(nonExceedanceProbability);
             return quartile;
         }
-
+        
         public double LongTermRisk(double years)
         {
             double longTermRisk = 1-Math.Pow((1-MeanAEP()),years);       
