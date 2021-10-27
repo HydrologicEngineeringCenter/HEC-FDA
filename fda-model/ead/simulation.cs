@@ -132,7 +132,7 @@ namespace ead{
             double[] standardProbabilities = new double[8] {.5, .2, .1, .04, .02, .01, .004, .002};
             for (int i=0; i<standardProbabilities.Length; i++)
             {
-                stageOfEvent[i] = frequency_stage.f_inverse(standardProbabilities[i]);
+                stageOfEvent[i] = frequency_stage.f(standardProbabilities[i]);
                 _results.AddStageForCNEP(standardProbabilities[i],stageOfEvent[i]);
             }
 

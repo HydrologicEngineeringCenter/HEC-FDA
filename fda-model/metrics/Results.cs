@@ -9,7 +9,7 @@ namespace metrics
         //needs access to get AEP and EAD results.
         private const double AEP_HISTOGRAM_BINWIDTH = .0001;
         private const double EAD_HISTOGRAM_BINWIDTH = 10;
-        private const double CNEP_HISTOGRAM_BINWIDTH = .0001;
+        private const double CNEP_HISTOGRAM_BINWIDTH = .01;
         private double _aepThreshold; 
         private Histogram _aep =  null;
         private Dictionary<string, Histogram> _ead; 
