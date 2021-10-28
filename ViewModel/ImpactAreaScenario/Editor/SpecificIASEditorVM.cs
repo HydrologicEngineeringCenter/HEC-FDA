@@ -280,7 +280,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
             ChildElementComboItem itemToUpdate = collection.Where(elem => elem.ChildElement != null && elem.ChildElement.GetElementID() == idToUpdate).SingleOrDefault();
             if (itemToUpdate != null)
             {
-                int index = collection.IndexOf(itemToUpdate);
+                itemToUpdate.ChildElement = newElement;
+                //int index = collection.IndexOf(itemToUpdate);
 
                 //this was an attempt to update the selected item if that is the one we are swapping out. For some reason
                 //this doesn't work. I was trying to find a way to pass the property into this method and was unsuccessful.

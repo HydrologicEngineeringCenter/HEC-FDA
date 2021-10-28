@@ -60,7 +60,7 @@
             </Grid.ColumnDefinitions>
             <Label  Grid.Column="0" Content="Impact Area:" HorizontalAlignment="Right" />
 
-            <ComboBox  Grid.Column="1"  HorizontalAlignment="Stretch" ItemsSource="{Binding ImpactAreas}" DisplayMemberPath="Name"  SelectedItem="{Binding SelectedImpactArea}" />
+            <ComboBox  Grid.Column="1"  HorizontalAlignment="Stretch" ItemsSource="{Binding ImpactAreas}" DisplayMemberPath="Name"  SelectedItem="{Binding SelectedImpactArea}" IsEnabled="{Binding HasImpactArea}" />
 
 
             

@@ -14,22 +14,33 @@ namespace ViewModel.ImpactAreaScenario.Editor
     /// </summary>
     public class ChildElementComboItem:BaseViewModel
     {
-
-        public ChildElement ChildElement { get; set; }
-        public string Name { get; set; }
+        private string _Name;
+        private ChildElement _ChildElement;
+        public ChildElement ChildElement
+        {
+            get { return _ChildElement; }
+            set { _ChildElement = value; Name = _ChildElement.Name; }
+        }
+        public string Name
+        {
+            get { return _Name; }
+            set { _Name = value; NotifyPropertyChanged(); }
+        }
 
         public ChildElementComboItem(ChildElement element)
         {
-            ChildElement = element;
             if(element == null)
             {
-                Name = "";
+                _Name = "";
             }
             else
             {
-                Name = element.Name;
+                _Name = element.Name;
             }
+            _ChildElement = element;
         }
+
+        
 
     }
 }

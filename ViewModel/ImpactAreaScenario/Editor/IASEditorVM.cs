@@ -36,11 +36,17 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private Dictionary<ImpactAreaRowItem, SpecificIASEditorVM> _ImpactAreaEditorDictionary;
 
         private SpecificIASEditorVM _SelectedEditorVM;
+        private bool _HasImpactArea = true;
 
         #endregion
 
 
         #region Properties
+        public bool HasImpactArea
+        {
+            get { return _HasImpactArea; }
+            set { _HasImpactArea = value; NotifyPropertyChanged(); }
+        }
         public int Year { get; set; } = DateTime.Now.Year;
 
         
@@ -90,15 +96,25 @@ namespace ViewModel.ImpactAreaScenario.Editor
             _ImpactAreaEditorDictionary = new Dictionary<ImpactAreaRowItem, SpecificIASEditorVM>();
 
             ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetImpactAreaRowItems();
-            foreach (ImpactAreaRowItem row in impactAreaRows)
+            if (impactAreaRows.Count > 0)
             {
-                ImpactAreas.Add(row);
-                SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(row);
-                specificIASEditorVM.RequestNavigation += Navigate;
-                _ImpactAreaEditorDictionary.Add(row, specificIASEditorVM);
+                foreach (ImpactAreaRowItem row in impactAreaRows)
+                {
+                    ImpactAreas.Add(row);
+                    SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(row);
+                    specificIASEditorVM.RequestNavigation += Navigate;
+                    _ImpactAreaEditorDictionary.Add(row, specificIASEditorVM);
+                }
             }
-            //todo: an exception gets thrown in the code behind if we don't start with an editor vm loaded in.
-            //what do we do if no impact areas?
+            else
+            {
+                ImpactAreaRowItem defaultRow = new ImpactAreaRowItem(-1, "Default", -1, new ObservableCollection<object>() { "Default" });
+                ImpactAreas.Add(defaultRow);
+                SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(defaultRow);
+                specificIASEditorVM.RequestNavigation += Navigate;
+                _ImpactAreaEditorDictionary.Add(defaultRow, specificIASEditorVM);
+                HasImpactArea = false;
+            }
             SelectedImpactArea = ImpactAreas[0];
 
 
@@ -149,6 +165,10 @@ namespace ViewModel.ImpactAreaScenario.Editor
             foreach (ImpactAreaRowItem row in impactAreaRows)
             {
                 ImpactAreas.Add(row);
+
+                //todo: check to see if the row id is -1. If that is the case then it is the default.
+                //then do i need to check to see if there are other impact areas? what if there are others.
+
                 //try to find the saved ias with this row's id.
                 SpecificIAS foundElement = specificIASElements.FirstOrDefault(ias => ias.ImpactAreaID == row.ID);
                 if (foundElement != null)

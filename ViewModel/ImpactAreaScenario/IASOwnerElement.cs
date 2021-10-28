@@ -1,10 +1,12 @@
 ﻿using Model;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using ViewModel.AggregatedStageDamage;
 using ViewModel.FlowTransforms;
 using ViewModel.FrequencyRelationships;
 using ViewModel.GeoTech;
+using ViewModel.ImpactArea;
 using ViewModel.StageTransforms;
 using ViewModel.Utilities;
 
@@ -146,13 +148,20 @@ namespace ViewModel.ImpactAreaScenario
 
         public void AddNewCondition(object arg1, EventArgs arg2)
         {
-
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                 .WithSiblingRules(this);
-            Editor.IASEditorVM vm = new Editor.IASEditorVM(actionManager);
-            vm.RequestNavigation += Navigate;
-            DynamicTabVM tab = new DynamicTabVM("Impact Area Scenario Editor", vm, "CreateIAS");
-            Navigate(tab, false, false);
+            List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+            if (impactAreaElements.Count == 0)
+            {
+                MessageBox.Show("An impact area is required to create an impact area scenario.", "No Impact Areas", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+            else
+            {
+                Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                     .WithSiblingRules(this);
+                Editor.IASEditorVM vm = new Editor.IASEditorVM(actionManager);
+                vm.RequestNavigation += Navigate;
+                DynamicTabVM tab = new DynamicTabVM("Impact Area Scenario Editor", vm, "CreateIAS");
+                Navigate(tab, false, false);
+            }
 
         }
         #endregion
