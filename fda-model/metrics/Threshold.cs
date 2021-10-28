@@ -8,10 +8,10 @@ namespace metrics
 {
     public class Threshold
     {
-        public string ThresholdType { get; }
+        public ThresholdEnum ThresholdType { get; }
         public double ThresholdValue { get; }
 
-        public Threshold(string thresholdType, double thresholdValue)
+        public Threshold(ThresholdEnum thresholdType, double thresholdValue)
         {
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;

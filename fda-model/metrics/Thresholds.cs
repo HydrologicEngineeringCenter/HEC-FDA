@@ -16,7 +16,7 @@ namespace metrics
             //need to add default here
         }
 
-        public void AddThreshold(int id, string thresholdType, double thresholdValue)
+        public void AddThreshold(int id, ThresholdEnum thresholdType, double thresholdValue)
         {
             Threshold threshold = new Threshold(thresholdType, thresholdValue);
             _thresholds.Add(id, threshold);

@@ -217,16 +217,16 @@ namespace ead{
         {
             metrics.Thresholds thresholds = new metrics.Thresholds();
             int id = 0;
-            string thresholdType;
+            metrics.ThresholdEnum thresholdType;
             double thresholdValue;
             if (_levee_curve!=null)
             {
-                thresholdType = "exterior_stage";
+                thresholdType = metrics.ThresholdEnum.ExteriorStage;
                 thresholdValue = 40;//this should be the top elevation of the levee
                 
             }else
             {
-                thresholdType = "interior_stage";
+                thresholdType = metrics.ThresholdEnum.InteriorStage;
                 thresholdValue = 50;//this should be 5% of the damage from the 1% event
             }
             thresholds.AddThreshold(id, thresholdType, thresholdValue);
