@@ -28,13 +28,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
         {
             Rows = new ObservableCollection<ThresholdRowItem>();
         }
-
-        public ThresholdsVM(List<ThresholdRowItem> thresholds)
-        {
-            Rows = new ObservableCollection<ThresholdRowItem>(thresholds);
-
-        }
-
+ 
+     
         public void AddRows(List<ThresholdRowItem> rows)
         {
             foreach (ThresholdRowItem row in rows)
@@ -53,7 +48,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
             int selectedIndex = Rows.IndexOf(SelectedRow);
             if (selectedIndex > -1)
             {
-                ThresholdRowItem newRI = new ThresholdRowItem(getNextIdInteger(), SelectedRow.ThresholdType, SelectedRow.ThresholdValue);
+                ThresholdRowItem newRI = new ThresholdRowItem(getNextIdInteger(), SelectedRow.ThresholdType.Metric, SelectedRow.ThresholdValue);
                 Rows.Add(newRI);
                 SelectedRow = newRI;
             }
@@ -76,7 +71,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         public void Remove()
         {
             int selectedIndex = Rows.IndexOf(SelectedRow);
-            if (selectedIndex > -1)
+            if (selectedIndex > 0)
             {
                 Rows.Remove(SelectedRow);
                 //row at beginning or in middle removed: select next row

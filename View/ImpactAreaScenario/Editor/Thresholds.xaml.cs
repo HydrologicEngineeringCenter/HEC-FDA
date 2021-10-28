@@ -31,6 +31,11 @@ namespace View.ImpactAreaScenario.Editor
             ThresholdsVM vm = (ThresholdsVM)this.DataContext;
             vm.Remove();
         }
-       
+
+        private void ok_btn_Click(object sender, RoutedEventArgs e)
+        {
+            var myWindow = Window.GetWindow(this);
+            myWindow.Close();
+        }
     }
 }

@@ -331,6 +331,113 @@ namespace ViewModel.Saving.PersistenceManagers
 
         //todo: I think this method is responsible for adding a * and message on the ias element. Is this still
         //what we want.
+        private string WasImpactAreaModified(IASElementSet iasElems, ImpactAreaElement elem )
+        {
+            ObservableCollection<ImpactAreaRowItem> impactAreaRows = ((ImpactAreaElement)elem).ImpactAreaRows;
+            
+            foreach(ImpactAreaRowItem row in impactAreaRows)
+            {
+                foreach(SpecificIAS ias in iasElems.SpecificIASElements)
+                {
+                    if(ias.ImpactAreaID == row.ID)
+                    {
+                        return "Impact Area has changed.";
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public void CheckForMissingBaseElements()
+        {
+
+        }
+
+        private string WasAnalyticalFrequencyElementModified(IASElementSet iasElems,ChildElement elem, int elemID )
+        {
+            List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.FlowFreqID == elemID).ToList();
+            return iasList.Count > 0 ? CreateTooltipMessage("Analytical Frequency", elem.Name) : null;
+        }
+
+        private string WasInflowOutflowModified(IASElementSet iasElems, ChildElement elem, int elemID)
+        {
+            List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.InflowOutflowID == elemID).ToList();
+            return iasList.Count > 0 ? CreateTooltipMessage("Inflow-Outflow", elem.Name) : null;
+        }
+
+        private string WasRatingModified(IASElementSet iasElems, ChildElement elem, int elemID)
+        {
+            List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.RatingID == elemID).ToList();
+            return iasList.Count > 0 ? CreateTooltipMessage("Rating", elem.Name) : null;
+        }
+
+        private string WasExteriorInteriorModified(IASElementSet iasElems, ChildElement elem, int elemID)
+        {
+            List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.ExtIntStageID == elemID).ToList();
+            return iasList.Count > 0 ? CreateTooltipMessage("Exterior-Interior Stage", elem.Name) : null;
+        }
+
+        private string WasStageDamageModified(IASElementSet iasElems, ChildElement elem, int elemID)
+        {
+            List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.StageDamageID == elemID).ToList();
+            return iasList.Count > 0 ? CreateTooltipMessage("Aggregates Stage-Damage", elem.Name) : null;
+        }
+
+        private string WasLeveeElementModified(IASElementSet iasElems, ChildElement elem, int elemID)
+        {
+            List<SpecificIAS> iasList = iasElems.SpecificIASElements.Where(ias => ias.LeveeFailureID == elemID).ToList();
+            return iasList.Count > 0 ? CreateTooltipMessage("Levee-Failure", elem.Name) : null;
+        }
+
+        private string CreateTooltipMessage(string curveType, string curveName)
+        {
+            return curveType + " " + curveName + " was modified since last save.";
+        }
+
+        /// <summary>
+        /// The elemID is required here because the modified element, if it was removed, no longer has a valid id.
+        /// </summary>
+        /// <param name="iasSet"></param>
+        /// <param name="elemModified"></param>
+        /// <param name="elemID"></param>
+        private void CheckIASSetForBaseDataModified(IASElementSet iasSet, ChildElement elemModified, int elemID)
+        {
+            string msg = null;
+            if (elemModified is ImpactAreaElement)
+            {
+                msg = WasImpactAreaModified(iasSet, (ImpactAreaElement)elemModified);               
+            }
+            else if (elemModified is AnalyticalFrequencyElement)
+            {
+                msg = WasAnalyticalFrequencyElementModified(iasSet,elemModified, elemID);
+            }
+            else if (elemModified is InflowOutflowElement)
+            {
+                msg = WasInflowOutflowModified(iasSet, elemModified, elemID);
+            }
+            else if (elemModified is RatingCurveElement)
+            {
+                msg = WasRatingModified(iasSet, elemModified, elemID);
+            }
+            else if (elemModified is LeveeFeatureElement)
+            {
+                msg = WasLeveeElementModified(iasSet, elemModified, elemID);
+            }
+            else if (elemModified is ExteriorInteriorElement)
+            {
+                msg = WasExteriorInteriorModified(iasSet, elemModified, elemID);
+            }
+            else if (elemModified is AggregatedStageDamageElement)
+            {
+                msg = WasStageDamageModified(iasSet, elemModified, elemID);
+            }
+            if (msg != null)
+            {
+                iasSet.ToolTip = msg;
+                iasSet.UpdateTreeViewHeader(iasSet.Name + "*");
+            }
+        }
 
         /// <summary>
         /// This will update the condition element in the database. This will trigger
@@ -338,102 +445,15 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         /// <param name="elem">The child element that has been removed</param>
         /// <param name="newID">The new ID that will replace the existing one in the condition database (-1)</param>
-        public void UpdateConditionsChildElementRemoved(ChildElement elem, int originalID, int newID)
+        public void UpdateIASTooltipsChildElementModified(ChildElement elem, int originalID, int newID)
         {
-            //List<IASElementSet> conditionsElements = StudyCache.GetChildElementsOfType<IASElementSet>();
-            ////update the db and save existing. This should prompt the change event
-            ////in the cache which tells the cond owner element to update its children.
-            ////the owner could then check wich ones are open and call an update from there?
-            //if (elem is ImpactAreaElement)
-            //{
-            //    foreach (IASElement condElem in conditionsElements)
-            //    {
-            //        if (condElem.ImpactAreaID == originalID)
-            //        {
-            //            IASElement newElement = (IASElement)condElem.CloneElement(condElem);
-            //            newElement.ImpactAreaID = newID;
-            //            SaveExisting(condElem, newElement);
-            //        }
-            //    }
-            //}
-            //else if (elem is AnalyticalFrequencyElement)
-            //{
-            //    foreach (IASElement condElem in conditionsElements)
-            //    {
-            //        if (condElem.FlowFreqID == originalID)
-            //        {
-            //            IASElement newElement = (IASElement)condElem.CloneElement(condElem);
-            //            newElement.FlowFreqID = newID;
-            //            SaveExisting(condElem, newElement);
-            //        }
-            //    }
-            //}
-            //else if (elem is InflowOutflowElement)
-            //{
-            //    foreach (IASElement condElem in conditionsElements)
-            //    {
-            //        if (condElem.InflowOutflowID == originalID)
-            //        {
-            //            IASElement newElement = (IASElement)condElem.CloneElement(condElem);
-            //            newElement.InflowOutflowID = newID;
-            //            SaveExisting(condElem, newElement);
-            //        }
-            //    }
-            //}
-            //else if (elem is RatingCurveElement)
-            //{
-            //    //only update the conditions that were actually using this element
-            //    foreach (IASElement condElem in conditionsElements)
-            //    {
-            //        if (condElem.RatingID == originalID)
-            //        {
-            //            IASElement newElement = (IASElement)condElem.CloneElement(condElem);
-            //            newElement.RatingID = newID;
-            //            newElement.UpdateTreeViewHeader(newElement.Name + "*");
-            //            newElement.ToolTip = "Rating curve " + elem.Name + " was deleted. Condition is out of sync.";
-            //            SaveExisting(condElem, newElement);
-            //        }
-            //    }
-            //}
-            //else if (elem is LeveeFeatureElement)
-            //{
-            //    //only update the conditions that were actually using this element
-            //    foreach (IASElement condElem in conditionsElements)
-            //    {
-            //        if (condElem.LeveeFailureID == originalID)
-            //        {
-            //            IASElement newElement = (IASElement)condElem.CloneElement(condElem);
-            //            newElement.LeveeFailureID = newID;
-            //            SaveExisting(condElem, newElement);
-            //        }
-            //    }
-            //}
-            //else if (elem is ExteriorInteriorElement)
-            //{
-            //    //only update the conditions that were actually using this element
-            //    foreach (IASElement condElem in conditionsElements)
-            //    {
-            //        if (condElem.ExtIntStageID == originalID)
-            //        {
-            //            IASElement newElement = (IASElement)condElem.CloneElement(condElem);
-            //            newElement.ExtIntStageID = newID;
-            //            SaveExisting(condElem, newElement);
-            //        }
-            //    }
-            //}
-            //else if (elem is AggregatedStageDamageElement)
-            //{
-            //    //only update the conditions that were actually using this element
-            //    foreach (IASElement condElem in conditionsElements)
-            //    {
-            //        if (condElem.StageDamageID == originalID)
-            //        {
-            //            IASElement newElement = (IASElement)condElem.CloneElement(condElem);
-            //            newElement.StageDamageID = newID;
-            //            SaveExisting(condElem, newElement);
-            //        }
-            //    }
-            //}
+            List<IASElementSet> conditionsElements = StudyCache.GetChildElementsOfType<IASElementSet>();
+
+            foreach(IASElementSet set in conditionsElements)
+            {
+                CheckIASSetForBaseDataModified(set, elem, originalID);
+            }
+
         }
 
   

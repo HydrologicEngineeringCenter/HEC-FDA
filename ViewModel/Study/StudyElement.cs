@@ -602,6 +602,8 @@ namespace ViewModel.Study
                 //}
 
                 //UpdateTheConditionsTree(this, new EventArgs());
+
+                Saving.PersistenceFactory.GetIASManager().CheckForMissingBaseElements();
                 UpdateTransactionsAndMessages?.Invoke(this, new EventArgs());
                 LoadMapLayers?.Invoke(this, new EventArgs());
             }

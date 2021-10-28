@@ -110,7 +110,7 @@ namespace ViewModel.Study
         public List<FailureFunctionElement> FailureFunctionElements { get { return _Failures; } }
         public List<AggregatedStageDamageElement> StageDamageElements { get { return _StageDamages; } }
         public List<InventoryElement> StructureInventoryElements { get { return _Structures; } }
-        public List<IASElementSet> IASElements { get { return _IASElementSets; } }
+        public List<IASElementSet> IASElementSets { get { return _IASElementSets; } }
 
         #region ParentElements
         public TerrainOwnerElement TerrainParent { get; set; }
@@ -230,7 +230,7 @@ namespace ViewModel.Study
             }
             if (elem.GetType() == typeof(IASElementSet))
             {
-                RemoveElementFromList(IASElements, elem);
+                RemoveElementFromList(IASElementSets, elem);
                 IASElementRemoved?.Invoke(this, elementAddedEventArgs);
             }
         }
@@ -320,7 +320,7 @@ namespace ViewModel.Study
             }
             else if (elem.GetType() == typeof(IASElementSet))
             {
-                IASElements.Add((IASElementSet)elem);
+                IASElementSets.Add((IASElementSet)elem);
                 IASElementAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
             }
 
@@ -591,9 +591,9 @@ namespace ViewModel.Study
         public void UpdateIASElement(IASElementSet oldElement, IASElementSet newElement)
         {
             int index = -1;
-            for (int i = 0; i < IASElements.Count; i++)
+            for (int i = 0; i < IASElementSets.Count; i++)
             {
-                if (IASElements[i].Name.Equals(oldElement.Name))
+                if (IASElementSets[i].Name.Equals(oldElement.Name))
                 {
                     index = i;
                     break;
@@ -601,8 +601,8 @@ namespace ViewModel.Study
             }
             if (index != -1)
             {
-                IASElements.RemoveAt(index);
-                IASElements.Insert(index, newElement);
+                IASElementSets.RemoveAt(index);
+                IASElementSets.Insert(index, newElement);
                 IASElementUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
@@ -762,7 +762,7 @@ namespace ViewModel.Study
             }
             if (element.GetType() == typeof(IASOwnerElement))
             {
-                foreach (ChildElement elem in IASElements)
+                foreach (ChildElement elem in IASElementSets)
                 {
                     retVal.Add(elem);
                 }
@@ -930,9 +930,9 @@ namespace ViewModel.Study
                 }
                 return retVal;
             }
-            if (childElementType == typeof(SpecificIAS))
+            if (childElementType == typeof(IASElementSet))
             {
-                foreach (ChildElement elem in IASElements)
+                foreach (ChildElement elem in IASElementSets)
                 {
                     retVal.Add(elem );
                 }
@@ -1039,7 +1039,7 @@ namespace ViewModel.Study
 
             if (childElementType == typeof(IASElementSet))
             {
-                foreach (ChildElement elem in IASElements)
+                foreach (ChildElement elem in IASElementSets)
                 {
                     if (elem.GetElementID() == ID)
                     {

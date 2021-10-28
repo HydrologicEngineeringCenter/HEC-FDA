@@ -244,7 +244,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 {
                     SpecificIASEditorVM vm = entry.Value;
 
-                    elementsToSave.Add( vm.GetElement());
+                    elementsToSave.Add( vm.CreateSpecificIAS());
                 }
 
                 if(Description == null)

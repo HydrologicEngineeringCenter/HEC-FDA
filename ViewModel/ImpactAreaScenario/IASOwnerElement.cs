@@ -68,19 +68,28 @@ namespace ViewModel.ImpactAreaScenario
         /// <param name="args"></param>
         private void ChildElementUpdated(object sender, Saving.ElementUpdatedEventArgs args)
         {
-            //these elements will be the sub elements of the condition (ie: rating, inflow-outflow, etc)
-            BaseFdaElement newElement = args.NewElement;
-            if (newElement is ChildElement)
-            {
-                int elemID = args.ID;
 
-                List<IASElementSet> conditionsElements = StudyCache.GetChildElementsOfType<IASElementSet>();
-                foreach (IASElementSet condElem in conditionsElements)
-                {
-                    //todo: this got broken when i changed to the IASElementSet
-                    //condElem.UpdateElementInEditor_ChildModified(elemID, (ChildElement)newElement);
-                }
+            int removedElementID = args.ID;
+            if (args.NewElement is ChildElement)
+            {
+                ChildElement childElem = (ChildElement)args.NewElement;
+                //UpdateEditorWhileEditing(childElem, removedElementID);
+                Saving.PersistenceFactory.GetIASManager().UpdateIASTooltipsChildElementModified(childElem, removedElementID, -1);
             }
+
+            //these elements will be the sub elements of the condition (ie: rating, inflow-outflow, etc)
+            //BaseFdaElement newElement = args.NewElement;
+            //if (newElement is ChildElement)
+            //{
+            //    int elemID = args.ID;
+
+            //    List<IASElementSet> conditionsElements = StudyCache.GetChildElementsOfType<IASElementSet>();
+            //    foreach (IASElementSet condElem in conditionsElements)
+            //    {
+            //        //todo: this got broken when i changed to the IASElementSet
+            //        //condElem.UpdateElementInEditor_ChildModified(elemID, (ChildElement)newElement);
+            //    }
+            //}
 
         }
 
@@ -98,22 +107,22 @@ namespace ViewModel.ImpactAreaScenario
             if (args.Element is ChildElement)
             {
                 ChildElement childElem = (ChildElement)args.Element;
-                UpdateEditorWhileEditing(childElem, removedElementID);
-                Saving.PersistenceFactory.GetIASManager().UpdateConditionsChildElementRemoved(childElem, removedElementID, -1);
+                //UpdateEditorWhileEditing(childElem, removedElementID);
+                Saving.PersistenceFactory.GetIASManager().UpdateIASTooltipsChildElementModified(childElem, removedElementID, -1);
             }
         }
-        private void UpdateEditorWhileEditing(ChildElement elem, int removedElementID)
-        {
-            List<IASElementSet> conditionsElements = StudyCache.GetChildElementsOfType<IASElementSet>();
-            foreach(IASElementSet condElem in conditionsElements)
-            {
-                //todo:what to do here.
-                //if(condElem.ConditionsEditor != null)
-                //{
-                //    condElem.ConditionsEditor.UpdateEditorWhileEditing_ChildRemoved(removedElementID, elem);
-                //}
-            }
-        }
+        //private void UpdateEditorWhileEditing(ChildElement elem, int removedElementID)
+        //{
+        //    List<IASElementSet> conditionsElements = StudyCache.GetChildElementsOfType<IASElementSet>();
+        //    foreach(IASElementSet condElem in conditionsElements)
+        //    {
+        //        //todo:what to do here.
+        //        //if(condElem.ConditionsEditor != null)
+        //        //{
+        //        //    condElem.ConditionsEditor.UpdateEditorWhileEditing_ChildRemoved(removedElementID, elem);
+        //        //}
+        //    }
+        //}
 
         #endregion
         #region Voids

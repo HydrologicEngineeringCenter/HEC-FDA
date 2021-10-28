@@ -41,7 +41,7 @@ namespace ViewModel
         public String ToolTip
         {
             get { return _Tooltip; }
-            set { _Tooltip = value; }
+            set { _Tooltip = value; NotifyPropertyChanged(); }
         }
         public bool TableContainsGeoData
         {

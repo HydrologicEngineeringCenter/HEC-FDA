@@ -31,10 +31,20 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private ChildElementComboItem _selectedRatingCurveElement;
         private ChildElementComboItem _selectedLeveeElement;
         private ChildElementComboItem _selectedExteriorInteriorElement;
-
+        private bool _showEAD;
+        private double _EAD;
 
         public int IndexLocationID { get; private set; }
-
+        public double EAD
+        {
+            get { return _EAD; }
+            set { _EAD = value; NotifyPropertyChanged(); }
+        }
+        public bool ShowEAD
+        {
+            get { return _showEAD; }
+            set { _showEAD = value; NotifyPropertyChanged(); }
+        }
         public IASPlotControlVM PlotControlVM { get; } = new IASPlotControlVM();
 
         public bool ShowWarnings
@@ -169,6 +179,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private void RemoveStageDamageElement(object sender, Saving.ElementAddedEventArgs e)
         {
             removeElement(((ChildElement)e.Element).GetElementID(), StageDamageElements);
+            SelectedStageDamageElement = StageDamageElements[0];
         }
         private void UpdateStageDamageElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
@@ -182,6 +193,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private void RemoveExtIntElement(object sender, Saving.ElementAddedEventArgs e)
         {
             removeElement(((ChildElement)e.Element).GetElementID(), ExteriorInteriorElements);
+            SelectedExteriorInteriorElement = ExteriorInteriorElements[0];
         }
         private void UpdateExtIntElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
@@ -195,6 +207,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private void RemoveLeveeElement(object sender, Saving.ElementAddedEventArgs e)
         {
             removeElement(((ChildElement)e.Element).GetElementID(), LeveeFeatureElements);
+            SelectedLeveeFeatureElement = LeveeFeatureElements[0];
         }
         private void UpdateLeveeElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
@@ -204,6 +217,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private void AddInOutElement(object sender, Saving.ElementAddedEventArgs e)
         {
             InflowOutflowElements.Add(new ChildElementComboItem((ChildElement)e.Element));
+            SelectedInflowOutflowElement = InflowOutflowElements[0];
         }
         private void RemoveInOutElement(object sender, Saving.ElementAddedEventArgs e)
         {
@@ -222,6 +236,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private void RemoveFlowFreqElement(object sender, Saving.ElementAddedEventArgs e)
         {
             removeElement(((ChildElement)e.Element).GetElementID(), FrequencyElements);
+            SelectedFrequencyElement = FrequencyElements[0];
         }
         private void UpdateFlowFreqElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
@@ -244,6 +259,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private void RemoveRatingElement(object sender, Saving.ElementAddedEventArgs e)
         {
             removeElement(((ChildElement)e.Element).GetElementID(), RatingCurveElements);
+            SelectedRatingCurveElement = RatingCurveElements[0];
         }
         private void UpdateRatingElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
@@ -253,6 +269,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private void removeElement(int idToRemove, ObservableCollection<ChildElementComboItem> collection)
         {
             collection.Remove(collection.Where(elem => elem.ChildElement != null && elem.ChildElement.GetElementID() == idToRemove).Single());
+
         }
 
         private void updateElement(ObservableCollection<ChildElementComboItem> collection, ChildElementComboItem selectedItem,
@@ -439,19 +456,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             return vr;
         }
 
-        private FdaValidationResult IsThresholdsValid()
-        {
-            FdaValidationResult vr = new FdaValidationResult();
-            if (Thresholds.Count == 0)
-            {
-                vr.IsValid = false;
-                vr.ErrorMessage = new StringBuilder("At least one threshold is required.");
-            }
-
-            return vr;
-        }
-
-
 
         #endregion
 
@@ -467,7 +471,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             vr.AddValidationResult(IsFrequencyRelationshipValid());        
             vr.AddValidationResult( IsRatingCurveValid());
             vr.AddValidationResult( IsStageDamageValid());
-            vr.AddValidationResult(IsThresholdsValid());
 
             //todo: actually run the compute and see if it was successful.
 
@@ -592,6 +595,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
                 PlotControlVM.Plot();
                 ShowWarnings = true;
+                EAD = .123;
+                ShowEAD = true;
             }
             else
             {
@@ -606,7 +611,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         /// saving manager to save. Before calling this method make sure to check if it is valid.
         /// </summary>
         /// <returns></returns>
-        public SpecificIAS GetElement()
+        public SpecificIAS CreateSpecificIAS()
         {
             int flowFreqID = SelectedFrequencyElement.ChildElement != null ? SelectedFrequencyElement.ChildElement.GetElementID() : -1;
             int inflowOutID = SelectedInflowOutflowElement.ChildElement != null ? SelectedInflowOutflowElement.ChildElement.GetElementID() : -1;

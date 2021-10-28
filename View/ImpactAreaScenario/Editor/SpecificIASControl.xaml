@@ -86,9 +86,8 @@
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="Thresholds:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
-                    <Label Grid.Row="0" Grid.Column="0" Content="*" Foreground="Red" HorizontalAlignment="Right" />
-                    <Button x:Name="addThresholdBtn" Grid.Column="1" Content="Add Thresholds..."  HorizontalAlignment="Stretch" Click="addThresholdBtn_Click"  />
+                    <Label Grid.Column="0" Content="Thresholds:" HorizontalAlignment="Right" Margin="0,0,0,0"/>
+                    <Button x:Name="addThresholdBtn" Grid.Column="1" Content="Add Additional Thresholds..."  HorizontalAlignment="Stretch" Click="addThresholdBtn_Click"  />
                 </Grid>
             </StackPanel>
         </GroupBox>
@@ -98,6 +97,8 @@
                 <Button x:Name="plotBtn" Content="Plot" Width="100" HorizontalAlignment="Left" Click="plotBtn_Click"/>
                 <Label Content="Damage Category:" />
                 <ComboBox ItemsSource="{Binding DamageCategories}" SelectedItem="{Binding SelectedDamageCurve}" DisplayMemberPath="DamCat" Width="300"/>
+                <Label Content="EAD: " Visibility="{Binding ShowEAD,Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <TextBlock Text="{Binding EAD}" Visibility="{Binding ShowEAD,Converter={StaticResource BoolToVisibilityConverter}}" VerticalAlignment="Center"/>
             </StackPanel>
         </Grid>
 

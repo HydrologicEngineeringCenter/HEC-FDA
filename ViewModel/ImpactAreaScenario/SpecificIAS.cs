@@ -182,7 +182,7 @@ namespace ViewModel.ImpactAreaScenario
             foreach (ThresholdRowItem row in Thresholds)
             {
                 XElement rowElement = new XElement("Row");
-                rowElement.SetAttributeValue("Type", row.ThresholdType);
+                rowElement.SetAttributeValue("Type", row.ThresholdType.Metric);
                 rowElement.SetAttributeValue("Value", row.ThresholdValue);
                 functionsElem.Add(rowElement);
             }
@@ -237,40 +237,40 @@ namespace ViewModel.ImpactAreaScenario
             {
                 i++;
                 string thresholdType = rowElem.Attribute("Type").Value;
-                IMetricEnum metricEnum = ConvertStringToMetricEnum(thresholdType);
+                ThresholdType metricEnum = ConvertStringToMetricEnum(thresholdType);
                 double thresholdValue = Double.Parse(rowElem.Attribute("Value").Value);
-                thresholdRows.Add(new ThresholdRowItem(i, metricEnum, thresholdValue));
+                thresholdRows.Add(new ThresholdRowItem(i, metricEnum.Metric, thresholdValue));
             }
             return thresholdRows;
         }
 
-        private IMetricEnum ConvertStringToMetricEnum(string metric)
+        private ThresholdType ConvertStringToMetricEnum(string metric)
         {
             switch (metric.ToUpper())
             {
                 case "NOTSET":
                     {
-                        return IMetricEnum.NotSet;
+                        return new ThresholdType( IMetricEnum.NotSet, "Not Set");
                     }
                 case "EXTERIORSTAGEAEP":
                 case "EXTERIORSTAGE":
                     {
-                        return IMetricEnum.ExteriorStage;
+                        return new ThresholdType(IMetricEnum.ExteriorStage, "Exterior Stage");
                     }
                 case "INTERIORSTAGEAEP":
                 case "INTERIORSTAGE":
                     {
-                        return IMetricEnum.InteriorStage;
+                        return new ThresholdType( IMetricEnum.InteriorStage, "Interior Stage");
                     }
                 case "DAMAGEAEP":
                 case "DAMAGES":
                     {
-                        return IMetricEnum.Damages;
+                        return new ThresholdType( IMetricEnum.Damages, "Damages");
                     }
                 case "EAD":
                 case "EXPECTEDANNUALDAMAGE":
                     {
-                        return IMetricEnum.ExpectedAnnualDamage;
+                        return new ThresholdType( IMetricEnum.ExpectedAnnualDamage, "Expected Annual Damage");
                     }
             }
             throw new Exception("Could not convert string: " + metric + " to an IMetricEnum.");
