@@ -11,7 +11,7 @@ namespace ead{
         private paireddata.UncertainPairedData _levee_curve;
         private List<paireddata.UncertainPairedData> _damage_category_stage_damage;
         private metrics.IContainResults _results;
- 
+        private metrics.Thresholds _thresholds;
 
         public Simulation()
         {
@@ -192,6 +192,7 @@ namespace ead{
             foreach(paireddata.UncertainPairedData pd in _damage_category_stage_damage){
                 paireddata.IPairedData _stage_damage_sample = pd.SamplePairedData(rp.NextRandom());//needs to be a random number
                 paireddata.IPairedData frequency_damage = _stage_damage_sample.compose(frequency_stage);
+                //here we need to do something that identifies default threshold 
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
                 _results.AddEADEstimate(eadEstimate, pd.Category);
@@ -213,24 +214,10 @@ namespace ead{
             _results.AddEADEstimate(totalEAD, "Total");
         }
 
-        private metrics.Thresholds ComputeDefaultThreshold()
+
+        public paireddata.IPairedData ComputeDamageFrequency(paireddata.IPairedData frequency_stage, paireddata.IPairedData stageDamage)
         {
-            metrics.Thresholds thresholds = new metrics.Thresholds();
-            int id = 0;
-            metrics.ThresholdEnum thresholdType;
-            double thresholdValue;
-            if (_levee_curve!=null)
-            {
-                thresholdType = metrics.ThresholdEnum.ExteriorStage;
-                thresholdValue = 40;//this should be the top elevation of the levee
-                
-            }else
-            {
-                thresholdType = metrics.ThresholdEnum.InteriorStage;
-                thresholdValue = 50;//this should be 5% of the damage from the 1% event
-            }
-            thresholds.AddThreshold(id, thresholdType, thresholdValue);
-            return thresholds;
+                       return stageDamage.compose(frequency_stage);
         }
     }
 }
