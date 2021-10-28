@@ -13,6 +13,14 @@ namespace ead{
         private metrics.IContainResults _results;
         private metrics.Thresholds _thresholds;
 
+        public bool HasLevee
+        {
+            get
+            {
+                return !_levee_curve.IsNull;
+            }
+        }
+
         public Simulation()
         {
             _frequency_flow = null;

@@ -10,8 +10,8 @@ namespace metrics
 {
     public class Performance
 {
-    private const double AEP_HISTOGRAM_BINWIDTH = .0001;
-    private const double CNEP_HISTOGRAM_BINWIDTH = .01;
+    private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .0001;
+    private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .01;
     private Threshold _threshold;
     private Histogram _aep = null;
     private Dictionary<string, Histogram> _ead;
@@ -36,7 +36,7 @@ namespace metrics
             }
             else
             {
-                var histo = new Histogram(aep, AEP_HISTOGRAM_BINWIDTH);
+                var histo = new Histogram(aep, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
                 _aep = histo;
             }
 
@@ -53,7 +53,7 @@ namespace metrics
             }
             else
             {
-                var histo = new Histogram(stage, CNEP_HISTOGRAM_BINWIDTH);
+                var histo = new Histogram(stage, CNEP_HISTOGRAM_DEFAULT_BINWIDTH);
                 _cnep.Add(standardProbability, histo);
             }
         }
