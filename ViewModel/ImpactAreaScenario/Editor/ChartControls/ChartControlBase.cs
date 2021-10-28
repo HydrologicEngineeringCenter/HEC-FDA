@@ -11,12 +11,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 
 namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
 {
     public abstract class ChartControlBase : BaseViewModel
     {
+        private static readonly double[] ProbabilityTicks = new double[] { 0.999, 0.99, 0.9, 0.5, 0.1, 0.01, 0.001 };
+
         private string _xAxisLabel;
         private string _yAxisLabel;
         private string _seriesName;
@@ -32,8 +35,11 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
             AxisAlignment xAxisAlignment = AxisAlignment.Bottom, AxisAlignment yAxisAlignment = AxisAlignment.Left)
         {
             _flipXY = flipXY;
-            ChartVM = new SciChart2DChartViewModel(chartModelUniqueName);
-            ChartVM.LegendVisibility = System.Windows.Visibility.Collapsed;
+            ChartVM = new SciChart2DChartViewModel(chartModelUniqueName)
+            {
+                LegendVisibility = Visibility.Collapsed,
+                IsVisualXcelleratorEnabled = false,                     //Probability axis has difficulty rendering lines with the visual xcellerator options.
+            };
 
             _seriesName = seriesName;
             _xAxisLabel = xAxisLabel;
@@ -46,6 +52,7 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
                 StrokeColor = Colors.Black,
                 UseProbabilityXAxis = useProbabilityX,
                 FlipXAxisValues = useProbabilityX,
+                CustomProbabilityTicks = ProbabilityTicks,
             };
             ChartVM.LineData.Add(_data);
         }
