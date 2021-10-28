@@ -10,7 +10,7 @@ namespace metrics
     {
         public ThresholdEnum ThresholdType { get; }
         public double ThresholdValue { get; }
-        private ProjectPerformance performance;
+        public ProjectPerformance performance { get; set; }
 
         public Threshold(ThresholdEnum thresholdType, double thresholdValue)
         {

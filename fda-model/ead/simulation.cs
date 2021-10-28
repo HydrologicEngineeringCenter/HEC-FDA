@@ -133,17 +133,19 @@ namespace ead{
             return _results;
         }
         private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers rp, paireddata.IPairedData frequency_stage){
-            //results.AEPThreshold = 100.0;//stage or flow or damage threshold
-            //compute aep metrics here
-            double aep = frequency_stage.f_inverse(_results.AEPThreshold);
-            _results.AddAEPEstimate(aep);
-            //here we need to grab the stage of a given event 
-            double[] stageOfEvent = new double[8];
-            double[] standardProbabilities = new double[8] {.5, .2, .1, .04, .02, .01, .004, .002};
-            for (int i=0; i<standardProbabilities.Length; i++)
+
+            foreach(KeyValuePair<int,metrics.Threshold> threshold in _thresholds.GetThresholds())
             {
-                stageOfEvent[i] = frequency_stage.f(standardProbabilities[i]);
-                _results.AddStageForCNEP(standardProbabilities[i],stageOfEvent[i]);
+                double aep = frequency_stage.f_inverse(threshold.Value.ThresholdValue);
+                threshold.Value.Performance.AddAEPEstimate(aep);
+
+                double[] stageOfEvent = new double[5];
+                double[] er101RequiredProbabilities = new double[] { .1, .02, .01, .004, .002 };
+                for (int i = 0; i < er101RequiredProbabilities.Length; i++)
+                {
+                    stageOfEvent[i] = frequency_stage.f(er101RequiredProbabilities[i]);
+                    threshold.Value.Performance.AddStageForCNEP(er101RequiredProbabilities[i], stageOfEvent[i]);
+                }
             }
 
             //interior exterior

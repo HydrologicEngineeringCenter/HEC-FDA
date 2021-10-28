@@ -49,5 +49,10 @@ namespace metrics
         {
             _thresholds.Remove(id);
         } 
+
+        public Dictionary<int, Threshold> GetThresholds()
+        {
+            return _thresholds;
+        }
 }
 }
