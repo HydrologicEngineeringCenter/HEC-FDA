@@ -60,7 +60,7 @@ namespace ead{
             _channelstage_floodplainstage = new paireddata.UncertainPairedData();//defaults to null
             _levee_curve = levee_curve;
             _damage_category_stage_damage = damage_curves;
-            _results = new metrics.Results();//defaults to zeros everywhere.
+            _results = new metrics.ExpectedAnnualDamageResults();//defaults to zeros everywhere.
         }
         public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData flow_stage, List<paireddata.UncertainPairedData> damage_curves)
         {
@@ -71,7 +71,7 @@ namespace ead{
             _channelstage_floodplainstage = new paireddata.UncertainPairedData();//defaults to null
             _levee_curve = new paireddata.UncertainPairedData(); //defaults to null
             _damage_category_stage_damage = damage_curves;
-            _results = new metrics.Results();//defaults to zeros everywhere.
+            _results = new metrics.ExpectedAnnualDamageResults();//defaults to zeros everywhere.
         }
         public Simulation(paireddata.UncertainPairedData frequency_stage, paireddata.UncertainPairedData channelstage_floodplainstage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
         {

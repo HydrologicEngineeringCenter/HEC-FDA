@@ -17,7 +17,7 @@ namespace fda_model_test
         {
             Statistics.IDistribution uniform = new Statistics.Distributions.Uniform(0, 1);
             var rand = new Random(1234);
-            Results results = new Results();
+            ExpectedAnnualDamageResults results = new ExpectedAnnualDamageResults();
             double[] aeps = new double[n];
 
             for (Int64 i = 0; i < n; i++)

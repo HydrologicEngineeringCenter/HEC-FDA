@@ -8,20 +8,22 @@ using Statistics.Histograms;
 
 namespace metrics
 {
-    public class Performance
+    public class ProjectPerformance
 {
     private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .0001;
     private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .01;
-    private Threshold _threshold;
+        private ThresholdEnum _thresholdType;
+        private double _thresholdValue;
     private Histogram _aep = null;
     private Dictionary<string, Histogram> _ead;
     private Dictionary<double, Histogram> _cnep;
 
 
 
-    public Performance(Threshold threshold)
+    public ProjectPerformance(ThresholdEnum thresholdType, double thresholdValue)
     {
-            _threshold = threshold;
+            _thresholdType = thresholdType;
+            _thresholdValue = thresholdValue;
             _aep = null; //is this necessary?
             _cnep = new Dictionary<double, Histogram>();
 
@@ -76,7 +78,7 @@ namespace metrics
 
         public double ConditionalNonExceedanceProbability(double exceedanceProbability)
         {
-            double conditionalNonExceedanceProbability = 1 - _cnep[exceedanceProbability].CDF(_threshold.ThresholdValue);
+            double conditionalNonExceedanceProbability = 1 - _cnep[exceedanceProbability].CDF(_thresholdValue);
             return conditionalNonExceedanceProbability;
         }
 

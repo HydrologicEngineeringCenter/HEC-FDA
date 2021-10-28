@@ -4,16 +4,12 @@ using Statistics;
 using Statistics.Histograms;
 namespace metrics
 {
-    public class Results: IContainResults
+    public class ExpectedAnnualDamageResults: IContainResults
     {
         //needs access to get AEP and EAD results.
-        private const double AEP_HISTOGRAM_BINWIDTH = .0001;
         private const double EAD_HISTOGRAM_BINWIDTH = 10;
-        private const double CNEP_HISTOGRAM_BINWIDTH = .01;
-        private double _aepThreshold; 
-        private Histogram _aep =  null;
         private Dictionary<string, Histogram> _ead; 
-        private Dictionary<double, Histogram> _cnep;
+   
         
 
         public double AEPThreshold { 
@@ -24,7 +20,7 @@ namespace metrics
             _aepThreshold = value;
             }
         }
-        public Results(){
+        public ExpectedAnnualDamageResults(){
             _aepThreshold = 0.0;
             _aep = null; //is this necessary?
             _ead = new Dictionary<string, Histogram>();
