@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Statistics;
 namespace ead{
-    public class Simulation{
+    public class Simulation {
         private IDistribution _frequency_flow;
         private paireddata.UncertainPairedData _inflow_outflow;
         private paireddata.UncertainPairedData _flow_stage;
@@ -11,6 +11,8 @@ namespace ead{
         private paireddata.UncertainPairedData _levee_curve;
         private List<paireddata.UncertainPairedData> _damage_category_stage_damage;
         private metrics.IContainResults _results;
+ 
+
         public Simulation()
         {
             _frequency_flow = null;
@@ -209,6 +211,26 @@ namespace ead{
                 _results.AddEADEstimate(eadEstimate, pd.Category);
             }
             _results.AddEADEstimate(totalEAD, "Total");
+        }
+
+        private metrics.Thresholds ComputeDefaultThreshold()
+        {
+            metrics.Thresholds thresholds = new metrics.Thresholds();
+            int id = 0;
+            string thresholdType;
+            double thresholdValue;
+            if (_levee_curve!=null)
+            {
+                thresholdType = "exterior_stage";
+                thresholdValue = 40;//this should be the top elevation of the levee
+                
+            }else
+            {
+                thresholdType = "interior_stage";
+                thresholdValue = 50;//this should be 5% of the damage from the 1% event
+            }
+            thresholds.AddThreshold(id, thresholdType, thresholdValue);
+            return thresholds;
         }
     }
 }
