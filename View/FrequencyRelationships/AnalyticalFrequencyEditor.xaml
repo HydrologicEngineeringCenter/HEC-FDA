@@ -3,15 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Ca="clr-namespace:Consequences_Assist;assembly=Consequences_Assist"
-             xmlns:Cac="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              xmlns:local="clr-namespace:View.FrequencyRelationships"
              xmlns:functions="clr-namespace:FunctionsView.View;assembly=FunctionsView"
              xmlns:oxy="http://oxyplot.org/wpf"
              xmlns:cmds="clr-namespace:View.Commands"
              xmlns:Utilities="clr-namespace:View.Utilities"
              xmlns:controls="clr-namespace:UserControls.UserControls;assembly=UserControls"
-             xmlns:UserControls="clr-namespace:UserControls;assembly=UserControls"
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              Loaded="UserControl_Loaded"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="650">
@@ -44,7 +42,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Content="Description:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <UserControls:TextBoxDescription Grid.Column="1" Description="{Binding Description}" Margin="5"/>
+            <UserControls:TextBoxDescription Grid.Column="1" Text="{Binding Description}" Margin="5"/>
         </Grid>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>

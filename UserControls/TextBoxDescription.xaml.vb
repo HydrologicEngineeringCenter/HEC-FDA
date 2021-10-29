@@ -1,58 +1,99 @@
-﻿Public Class TextBoxDescription
-    Implements System.ComponentModel.INotifyPropertyChanged
-    Public Event PropertyChanged As System.ComponentModel.PropertyChangedEventHandler Implements System.ComponentModel.INotifyPropertyChanged.PropertyChanged
-    Public Shared ReadOnly DescriptionProperty As System.Windows.DependencyProperty = System.Windows.DependencyProperty.Register("Description", GetType(String), GetType(TextBoxDescription))
-    'Public Shared ReadOnly DescriptionWindowProperty As System.Windows.DependencyProperty = System.Windows.DependencyProperty.Register("DescriptionWindow", GetType(Consequences_Assist.Controls.DescriptionWindow), GetType(Consequences_Assist.Controls.TextBoxDescription), New System.Windows.PropertyMetadata(New DescriptionWindow("programmaticOverridesequence start!"), New System.Windows.PropertyChangedCallback(AddressOf OnDescriptionChanged), New System.Windows.CoerceValueCallback(AddressOf CoerceValue)))
-    Private _DescriptionWindow As New DescriptionWindow
-    Private _OldText As String
-    Sub New()
-        ' This call is required by the designer.
-        InitializeComponent()
-        ' Add any initialization after the InitializeComponent() call.
+﻿Imports System.ComponentModel
+Imports System.Windows
+Imports System.Windows.Data
+Namespace UserControls
+    Public Class TextBoxDescription
+        Implements System.ComponentModel.INotifyPropertyChanged
+        Public Shared ReadOnly TextProperty As DependencyProperty = DependencyProperty.Register("Text", GetType(String), GetType(TextBoxDescription), New FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault))
+        Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
+        Private _DescriptionWindow As DescriptionWindow
+        Private _MaxHeight
+        Public Property Text As String
+            Get
+                Return GetValue(TextProperty)
+            End Get
+            Set(value As String)
+                SetValue(TextProperty, value)
+            End Set
+        End Property
+        Public ReadOnly Property Left As Double
+            Get
+                Return Me.PointToScreen(New Point(0, 0)).X
+            End Get
+        End Property
+        Public ReadOnly Property MaxAllowableHeight As Double
+            Get
+                Return Math.Max(Window.GetWindow(Me).ActualHeight - Me.PointToScreen(New Point(0, 0)).Y - 25, _DescriptionWindow.MinHeight)
+            End Get
+        End Property
+        Public ReadOnly Property Top As Double
+            Get
+                Return Me.PointToScreen(New Point(0, 0)).Y
+            End Get
+        End Property
+        Sub New()
+            ' This call is required by the designer.
+            InitializeComponent()
+            ' Add any initialization after the InitializeComponent() call.
 
-    End Sub
-    Sub New(ByVal descriptionstring As String)
-        InitializeComponent()
-        _DescriptionWindow.Description = descriptionstring
-    End Sub
-    Public Property DescriptionWindow As DescriptionWindow
-        Get
-            Return _DescriptionWindow
-        End Get
-        Set(value As DescriptionWindow)
-            _DescriptionWindow = value
-            NotifyPropertyChanged("DescriptionWindow")
-        End Set
-    End Property
+        End Sub
+        Private Sub ParentMove(sender As System.Object, e As System.EventArgs)
+            If IsNothing(_DescriptionWindow) Then Exit Sub
+            _DescriptionWindow.Top = Top
+            _DescriptionWindow.Left = Left
+        End Sub
+        Private Sub ParentResize(sender As System.Object, e As System.EventArgs)
+            If IsNothing(_DescriptionWindow) Then Exit Sub
+            _DescriptionWindow.MaxHeight = MaxAllowableHeight
+            _DescriptionWindow.Width = ActualWidth
+            _DescriptionWindow.MaxWidth = ActualWidth
+            _DescriptionWindow.MinWidth = ActualWidth
+            _DescriptionWindow.Top = Top
+            _DescriptionWindow.Left = Left
+        End Sub
+        Private Sub HandlePopOut()
+            Dim parent As Window = Window.GetWindow(Me)
+            RemoveHandler parent.LocationChanged, AddressOf ParentMove
+            RemoveHandler parent.SizeChanged, AddressOf ParentResize
+            _DescriptionWindow.MaxHeight = Int32.MaxValue
+            _DescriptionWindow.MaxWidth = Int32.MaxValue
+            _DescriptionWindow.MinWidth = 100
+            Arrow.Visibility = Visibility.Collapsed
+            Expand.IsEnabled = False
 
-    Public Property Description As String
-        Get
-            Return "Hello"
-        End Get
-        Set(value As String)
-            _DescriptionWindow.Description = value
-            SetValue(DescriptionProperty, value)
-            NotifyPropertyChanged("Description")
-        End Set
-    End Property
-    Private Shared Sub OnDescriptionChanged()
+        End Sub
+        Private Sub WindowCloses(sender As System.Object, e As System.EventArgs)
+            RemoveHandler _DescriptionWindow.RequestPopOut, AddressOf HandlePopOut
+            _DescriptionWindow = Nothing
+            Dim parent As Window = Window.GetWindow(Me)
+            RemoveHandler parent.LocationChanged, AddressOf ParentMove
+            RemoveHandler parent.SizeChanged, AddressOf ParentResize
+            Arrow.Visibility = Visibility.Visible
+            Expand.IsEnabled = True
+        End Sub
+        Private Sub Expand_Click(sender As System.Object, e As System.Windows.RoutedEventArgs) Handles Expand.Click
 
-    End Sub
-    Private Overloads Shared Function CoerceValue()
-        Return Nothing
-    End Function
-    Private Sub NotifyPropertyChanged(ByVal info As String)
-        RaiseEvent PropertyChanged(Me, New System.ComponentModel.PropertyChangedEventArgs(info))
-    End Sub
-    Private Sub Expand_Click(sender As System.Object, e As System.Windows.RoutedEventArgs) Handles Expand.Click
-        _OldText = DescriptionWindow.Description
-        _DescriptionWindow.ShowDialog()
-        If _DescriptionWindow.DialogResult Then
-            DescriptionWindow = _DescriptionWindow
-        Else
-            'user pressed cancel or red x
-            DescriptionWindow.Description = _OldText
-        End If
-        DescriptionWindow = New DescriptionWindow(_DescriptionWindow.Description)
-    End Sub
-End Class
+            Dim parent As Window = Window.GetWindow(Me)
+            AddHandler parent.LocationChanged, AddressOf ParentMove
+            AddHandler parent.SizeChanged, AddressOf ParentResize
+            Dim location As Point = Me.PointToScreen(New Point(0, 0))
+            _DescriptionWindow = New DescriptionWindow()
+            _DescriptionWindow.Owner = parent
+            _DescriptionWindow.DataContext = Me
+            _DescriptionWindow.MaxHeight = MaxAllowableHeight
+            _DescriptionWindow.Width = ActualWidth
+            _DescriptionWindow.MaxWidth = ActualWidth
+            _DescriptionWindow.MinWidth = ActualWidth
+            _DescriptionWindow.Top = Top
+            _DescriptionWindow.Left = Left
+            _DescriptionWindow.Show()
+            AddHandler _DescriptionWindow.Closing, AddressOf WindowCloses
+            AddHandler _DescriptionWindow.RequestPopOut, AddressOf HandlePopOut
+        End Sub
+
+        Private Sub TxtDescription_KeyDown(sender As Object, e As Input.KeyEventArgs)
+            Dim t As System.Windows.Controls.TextBox = DirectCast(sender, System.Windows.Controls.TextBox)
+            Text = t.Text
+        End Sub
+    End Class
+End Namespace

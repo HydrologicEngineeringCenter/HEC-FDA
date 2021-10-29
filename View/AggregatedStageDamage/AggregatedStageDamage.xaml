@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:View.AggregatedStageDamage"
-             xmlns:UserControls="clr-namespace:UserControls;assembly=UserControls"
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              xmlns:Utilities="clr-namespace:View.Utilities"
              xmlns:functions="clr-namespace:FunctionsView.View;assembly=FunctionsView"
              mc:Ignorable="d" 
@@ -34,7 +34,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Content="Description:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <UserControls:TextBoxDescription Grid.Column="1" Description="{Binding Description}" Margin="5"/>
+            <UserControls:TextBoxDescription Grid.Column="1" Text="{Binding Description}" Margin="5"/>
         </Grid>
 
         <StackPanel Grid.Row="2" Margin="5" Orientation="Horizontal">

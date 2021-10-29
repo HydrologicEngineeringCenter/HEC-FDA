@@ -5,12 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:View.StageTransforms"
              xmlns:Utilities="clr-namespace:View.Utilities"
-             xmlns:CA="clr-namespace:Consequences_Assist;assembly=Consequences_Assist"
-             xmlns:CAC="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              xmlns:functions="clr-namespace:FunctionsView.View;assembly=FunctionsView"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
-             xmlns:UserControls="clr-namespace:UserControls;assembly=UserControls"
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              d:DesignHeight="420" d:DesignWidth="610">
     <Grid>
         <Grid.RowDefinitions>
@@ -43,7 +41,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Content="Description:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <UserControls:TextBoxDescription Grid.Column="1" Description="{Binding Description}" Margin="5"/>
+            <UserControls:TextBoxDescription Grid.Column="1" Text="{Binding Description}" Margin="5"/>
             <!--<CAC:TextBoxDescription Grid.Column="1" Text="{Binding Description}" Margin="5"/>-->
         </Grid>
         <Grid x:Name="editorGrid" Grid.Row="2">
