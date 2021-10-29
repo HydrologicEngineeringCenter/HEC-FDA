@@ -29,15 +29,15 @@ namespace ViewModel.ImpactAreaScenario
 
             NamedAction addCondition = new NamedAction();
             addCondition.Header = "Create New Impact Area Scenario";
-            addCondition.Action = AddNewCondition;
+            addCondition.Action = AddNewIASSet;
 
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addCondition);
 
             Actions = localActions;
-            StudyCache.IASElementAdded += AddConditionsElement;
+            StudyCache.IASElementAdded += AddIASElementSet;
             StudyCache.IASElementRemoved += RemoveConditionsElement;
-            StudyCache.IASElementUpdated += UpdateConditionsElement;
+            StudyCache.IASElementUpdated += UpdateIASElementSet;
 
             //the child elements
             StudyCache.ImpactAreaRemoved += ChildElementRemoved;
@@ -70,29 +70,12 @@ namespace ViewModel.ImpactAreaScenario
         /// <param name="args"></param>
         private void ChildElementUpdated(object sender, Saving.ElementUpdatedEventArgs args)
         {
-
             int removedElementID = args.ID;
             if (args.NewElement is ChildElement)
             {
                 ChildElement childElem = (ChildElement)args.NewElement;
-                //UpdateEditorWhileEditing(childElem, removedElementID);
                 Saving.PersistenceFactory.GetIASManager().UpdateIASTooltipsChildElementModified(childElem, removedElementID, -1);
             }
-
-            //these elements will be the sub elements of the condition (ie: rating, inflow-outflow, etc)
-            //BaseFdaElement newElement = args.NewElement;
-            //if (newElement is ChildElement)
-            //{
-            //    int elemID = args.ID;
-
-            //    List<IASElementSet> conditionsElements = StudyCache.GetChildElementsOfType<IASElementSet>();
-            //    foreach (IASElementSet condElem in conditionsElements)
-            //    {
-            //        //todo: this got broken when i changed to the IASElementSet
-            //        //condElem.UpdateElementInEditor_ChildModified(elemID, (ChildElement)newElement);
-            //    }
-            //}
-
         }
 
         /// <summary>
@@ -109,27 +92,14 @@ namespace ViewModel.ImpactAreaScenario
             if (args.Element is ChildElement)
             {
                 ChildElement childElem = (ChildElement)args.Element;
-                //UpdateEditorWhileEditing(childElem, removedElementID);
                 Saving.PersistenceFactory.GetIASManager().UpdateIASTooltipsChildElementModified(childElem, removedElementID, -1);
             }
         }
-        //private void UpdateEditorWhileEditing(ChildElement elem, int removedElementID)
-        //{
-        //    List<IASElementSet> conditionsElements = StudyCache.GetChildElementsOfType<IASElementSet>();
-        //    foreach(IASElementSet condElem in conditionsElements)
-        //    {
-        //        //todo:what to do here.
-        //        //if(condElem.ConditionsEditor != null)
-        //        //{
-        //        //    condElem.ConditionsEditor.UpdateEditorWhileEditing_ChildRemoved(removedElementID, elem);
-        //        //}
-        //    }
-        //}
 
         #endregion
         #region Voids
 
-        private void UpdateConditionsElement(object sender, Saving.ElementUpdatedEventArgs e)
+        private void UpdateIASElementSet(object sender, Saving.ElementUpdatedEventArgs e)
         {
             //so if the element has an editor that is open (not null)
             //then we need to update it with the new element. I guess
@@ -137,7 +107,7 @@ namespace ViewModel.ImpactAreaScenario
             //((ConditionsElement)e.OldElement).UpdateElementInEditor_ChildRemoved((ConditionsElement)e.NewElement);
             UpdateElement(e.OldElement, e.NewElement);
         }
-        private void AddConditionsElement(object sender, Saving.ElementAddedEventArgs e)
+        private void AddIASElementSet(object sender, Saving.ElementAddedEventArgs e)
         {
             AddElement(e.Element);
         }
@@ -146,7 +116,7 @@ namespace ViewModel.ImpactAreaScenario
             RemoveElement(e.Element);
         }
 
-        public void AddNewCondition(object arg1, EventArgs arg2)
+        public void AddNewIASSet(object arg1, EventArgs arg2)
         {
             List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
             if (impactAreaElements.Count == 0)

@@ -1,26 +1,11 @@
-﻿using Functions;
-using FunctionsView.ViewModel;
-using HEC.Plotting.Core;
-using HEC.Plotting.SciChart2D.Charts;
-using HEC.Plotting.SciChart2D.Controller;
-using HEC.Plotting.SciChart2D.DataModel;
-using HEC.Plotting.SciChart2D.ViewModel;
-using Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using ViewModel.AggregatedStageDamage;
 using ViewModel.Editors;
-using ViewModel.FlowTransforms;
-using ViewModel.FrequencyRelationships;
-using ViewModel.GeoTech;
 using ViewModel.ImpactArea;
-using ViewModel.ImpactAreaScenario.Editor.ChartControls;
-using ViewModel.StageTransforms;
 using ViewModel.Utilities;
 
 namespace ViewModel.ImpactAreaScenario.Editor
@@ -90,12 +75,16 @@ namespace ViewModel.ImpactAreaScenario.Editor
             FillForm(elem);
         }
 
+        /// <summary>
+        /// Loads the dictionary that links the specific impact area with the specific ias.
+        /// </summary>
         private void CreateEmptySpecificIASEditors()
         {
             ImpactAreas = new List<ImpactAreaRowItem>();
             _ImpactAreaEditorDictionary = new Dictionary<ImpactAreaRowItem, SpecificIASEditorVM>();
 
             ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetImpactAreaRowItems();
+            //we don't allow this editor to open unless there are impact areas so this should always be true.
             if (impactAreaRows.Count > 0)
             {
                 foreach (ImpactAreaRowItem row in impactAreaRows)
@@ -105,29 +94,24 @@ namespace ViewModel.ImpactAreaScenario.Editor
                     specificIASEditorVM.RequestNavigation += Navigate;
                     _ImpactAreaEditorDictionary.Add(row, specificIASEditorVM);
                 }
+                SelectedImpactArea = ImpactAreas[0];
             }
-            else
-            {
-                ImpactAreaRowItem defaultRow = new ImpactAreaRowItem(-1, "Default", -1, new ObservableCollection<object>() { "Default" });
-                ImpactAreas.Add(defaultRow);
-                SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(defaultRow);
-                specificIASEditorVM.RequestNavigation += Navigate;
-                _ImpactAreaEditorDictionary.Add(defaultRow, specificIASEditorVM);
-                HasImpactArea = false;
-            }
-            SelectedImpactArea = ImpactAreas[0];
+         
 
 
         }
 
+        /// <summary>
+        /// Grabs the list of impact area rows from the impact area element. There should only ever be one
+        /// impact area element in the study. If there is none, then this editor should not be able to open.
+        /// </summary>
+        /// <returns></returns>
         private ObservableCollection<ImpactAreaRowItem> GetImpactAreaRowItems()
         {
             ObservableCollection<ImpactAreaRowItem> impactAreaRows = new ObservableCollection<ImpactAreaRowItem>();
             List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
             if (impactAreaElements.Count > 0)
             {
-                //todo: deal with this "[0]"
-                //this should probably return a list not an obs collection
                 impactAreaRows = impactAreaElements[0].ImpactAreaRows;
             }
             return impactAreaRows;
@@ -135,7 +119,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         
         /// <summary>
-        /// The user has changed the selected impact area in the combobox.
+        /// The user has changed the selected impact area in the combobox. We swap out the selected view model
+        /// and the view will adjust based on binding.
         /// </summary>
         private void SelectedImpactAreaChanged()
         {
@@ -146,6 +131,13 @@ namespace ViewModel.ImpactAreaScenario.Editor
         }
 
 
+        /// <summary>
+        /// This method compares the specific ias's that were saved to the current state of the impact areas.
+        /// It seems possible that there are new impact areas or deleted impact areas. If there are new impact areas
+        /// I create an empty specific IAS for it. If the impact area doesn't exist (was deleted), then the specific ias 
+        /// that was linked to it will not get added to this editor. If the user saves, it will be gone for good.
+        /// </summary>
+        /// <param name="elem"></param>
         private void FillForm(IASElementSet elem)
         {
             Name = elem.Name;
@@ -166,9 +158,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             {
                 ImpactAreas.Add(row);
 
-                //todo: check to see if the row id is -1. If that is the case then it is the default.
-                //then do i need to check to see if there are other impact areas? what if there are others.
-
                 //try to find the saved ias with this row's id.
                 SpecificIAS foundElement = specificIASElements.FirstOrDefault(ias => ias.ImpactAreaID == row.ID);
                 if (foundElement != null)
@@ -186,15 +175,10 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
                 }
             }
-            //todo: an exception gets thrown in the code behind if we don't start with an editor vm loaded in.
-            //what do we do if no impact areas?
+            //There should always be an impact area.
             SelectedImpactArea = ImpactAreas[0];
-
         }
 
-        
-
-        
 
         #region validation
 
@@ -222,7 +206,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
         /// <returns></returns>
         private Boolean ValidateIAS()
         {
-
             FdaValidationResult vr = new FdaValidationResult();
 
             vr.AddValidationResult( IsYearValid());
@@ -231,10 +214,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
             foreach (KeyValuePair<ImpactAreaRowItem, SpecificIASEditorVM>  entry in _ImpactAreaEditorDictionary)
             {
                 SpecificIASEditorVM vm = entry.Value;
-
                 vr.AddValidationResult(vm.IsValid());
             }
-
 
             if (!vr.IsValid)
             {
@@ -257,13 +238,11 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
             if (isValid)
             {
-
                 //get the list of specific IAS elements.
                 List<SpecificIAS> elementsToSave = new List<SpecificIAS>();
                 foreach (KeyValuePair<ImpactAreaRowItem, SpecificIASEditorVM> entry in _ImpactAreaEditorDictionary)
                 {
                     SpecificIASEditorVM vm = entry.Value;
-
                     elementsToSave.Add( vm.CreateSpecificIAS());
                 }
 

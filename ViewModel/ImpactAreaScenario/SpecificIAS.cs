@@ -22,7 +22,6 @@ namespace ViewModel.ImpactAreaScenario
         private const string STAGE_DAMAGE = "StageDamage";
         private const string THRESHOLDS = "Thresholds";
 
-
         #endregion
         #region Properties
 
@@ -31,8 +30,6 @@ namespace ViewModel.ImpactAreaScenario
         /// done, then this will be null.
         /// </summary>
         public IConditionLocationYearResult ComputeResults { get; set; }
-
-
 
         /// <summary>
         /// The impact area ID for the selected impact area. It will be -1 if no selection was made.

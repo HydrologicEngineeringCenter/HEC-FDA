@@ -15,18 +15,12 @@ namespace ViewModel.ImpactAreaScenario
         public const string DESCRIPTION = "Description";
         public const string YEAR = "Year";
 
-        public event EventHandler EditConditionsTreeElement;
-        public event EventHandler RemoveConditionsTreeElement;
-        public event EventHandler RenameConditionsTreeElement;
-        public event EventHandler UpdateExpansionValueInTreeElement;
-
         private string _Description = "";
         private int _AnalysisYear;
-
         private bool _IsExpanded;
-
         private NamedAction _ViewResults = new NamedAction();
-#endregion
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -34,21 +28,6 @@ namespace ViewModel.ImpactAreaScenario
         /// done, then this will be null.
         /// </summary>
         public IConditionLocationYearResult ComputeResults { get; set; }
-
-        public bool IsExpanded
-        {
-            get { return _IsExpanded; }
-            set { _IsExpanded = value; }
-        }
-        public bool IsBold
-        {
-            get { return false; }
-        }
-        public int FontSize
-        {
-            get { return 12; }
-        }
-
 
         public string Description
         {
@@ -88,9 +67,9 @@ namespace ViewModel.ImpactAreaScenario
         {
             XDocument doc = XDocument.Parse(xml);
             XElement setElem = doc.Element(IAS_SET);
-            string setName = setElem.Attribute(NAME).Value;
-            string description = setElem.Attribute(DESCRIPTION).Value;
-            int year = Int32.Parse(setElem.Attribute(YEAR).Value);
+            Name = setElem.Attribute(NAME).Value;
+            Description = setElem.Attribute(DESCRIPTION).Value;
+            AnalysisYear = Int32.Parse(setElem.Attribute(YEAR).Value);
 
             IEnumerable<XElement> iasElements = setElem.Elements("IAS");
             SpecificIASElements = new List<SpecificIAS>();
@@ -99,12 +78,7 @@ namespace ViewModel.ImpactAreaScenario
                 SpecificIASElements.Add(new SpecificIAS(elem));
             }
 
-            Name = setName;
-            Description = description;
-            AnalysisYear = year;
-
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
-
             AddActions();
         }
 
@@ -112,7 +86,7 @@ namespace ViewModel.ImpactAreaScenario
         {
             NamedAction edit = new NamedAction();
             edit.Header = "Edit Impact Area Scenario";
-            edit.Action = EditCondition;
+            edit.Action = EditIASSet;
 
             NamedAction compute = new NamedAction();
             compute.Header = "Compute Impact Area Scenario";
@@ -157,17 +131,14 @@ namespace ViewModel.ImpactAreaScenario
         /// </summary>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
-        public void EditCondition(object arg1, EventArgs arg2)
+        public void EditIASSet(object arg1, EventArgs arg2)
         {
 
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                .WithSiblingRules(this);
             Editor.IASEditorVM vm = new Editor.IASEditorVM(this, actionManager);
             vm.RequestNavigation += Navigate;
-            //ConditionsEditor = new IASPlotEditorVM(impactAreas, lp3Control, infOutControl, ratingControl, leveeFailureControl, extIntStageControl,
-            //    stageDamageControl, damageFrequencyControl, this, actionManager);
 
-            //ConditionsEditor.RequestNavigation += Navigate;
             string header = "Edit Impact Area Scenario";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditIAS");
             Navigate(tab, false, false);
@@ -243,50 +214,6 @@ namespace ViewModel.ImpactAreaScenario
         #endregion
         #region Voids
         
-        //private void UpdateIsElementExpanded(object sender, EventArgs e)
-        //{
-        //    if (UpdateExpansionValueInTreeElement != null)
-        //    {
-        //        UpdateExpansionValueInTreeElement.Invoke(this, e);
-        //    }
-        //}
-        //private void RenameConditionsTreeElem(object sender, EventArgs e)
-        //{
-        //    if (RenameConditionsTreeElement != null)
-        //    {
-        //        RenameConditionsTreeElement.Invoke(this, e);
-        //    }
-        //}
-        //private void RemoveConditionsTreeElem(object sender, EventArgs e)
-        //{
-        //    if (RemoveConditionsTreeElement != null)
-        //    {
-        //        RemoveConditionsTreeElement.Invoke(this, e);
-        //    }
-        //}
-
-        //private void EditConditionsTreeElem(object sender, EventArgs e)
-        //{
-        //    if (EditConditionsTreeElement != null)
-        //    {
-        //        EditConditionsTreeElement.Invoke(this, e);
-        //    }
-        //}
-
-        /// <summary>
-        /// This will update an element that has been modified while the editor is open.
-        /// For example a rating curve that was modified.
-        /// </summary>
-        /// <param name="elemID">The ID of the element that was modified (ie: rating curve)</param>
-        /// <param name="newElement">The new element (ie: rating element)</param>
-        //public void UpdateElementInEditor_ChildModified(int elemID, ChildElement newElement)
-        //{
-        //    //todo: i think i need to set this to null when it closes? not sure.
-        //    if (ConditionsEditor != null)
-        //    {
-        //        ConditionsEditor.UpdateEditorWhileEditing_ChildModified(elemID, newElement);
-        //    }
-        //}
 
         #endregion
         #region Functions

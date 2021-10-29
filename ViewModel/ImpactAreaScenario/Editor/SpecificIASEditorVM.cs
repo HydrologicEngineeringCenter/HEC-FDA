@@ -1,5 +1,4 @@
 ﻿using Functions;
-using HEC.Plotting.SciChart2D.Controller;
 using Model;
 using System;
 using System.Collections.Generic;
@@ -26,7 +25,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private ChildElementComboItem _selectedFrequencyRelationship;
         private bool _ratingRequired;
         private bool _showWarnings;
-        private ChildElementComboItem _selectedImpactAreaElement;
         private ChildElementComboItem _selectedInflowOutflowElement;
         private ChildElementComboItem _selectedRatingCurveElement;
         private ChildElementComboItem _selectedLeveeElement;
@@ -113,6 +111,9 @@ namespace ViewModel.ImpactAreaScenario.Editor
             set { _selectedStageDamageElement = value; StageDamageSelectionChanged(); }
         }
        
+        /// <summary>
+        /// The rows that show up in the "Warnings" expander after hitting the plot button.
+        /// </summary>
         public ObservableCollection<RecommendationRowItem> MessageRows { get; set; }
 
         /// <summary>
@@ -125,7 +126,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             IndexLocationID = rowItem.ID;
         }
 
-        //todo: this ctor probably needs some work
         public SpecificIASEditorVM(SpecificIAS elem, string impactAreaName)
         {
             Initialize();
@@ -281,21 +281,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             if (itemToUpdate != null)
             {
                 itemToUpdate.ChildElement = newElement;
-                //int index = collection.IndexOf(itemToUpdate);
-
-                //this was an attempt to update the selected item if that is the one we are swapping out. For some reason
-                //this doesn't work. I was trying to find a way to pass the property into this method and was unsuccessful.
-                //bool needToUpdateSelected = selectedItem.ChildElement != null && selectedItem.ChildElement.GetElementID() == idToUpdate;
-
-                //if (index != -1)
-                //{
-                //    collection.RemoveAt(index);
-                //    collection.Insert(index, new ChildElementComboItem(newElement));
-                //    if (needToUpdateSelected)
-                //    {
-                //        propToUpdate (collection[index]);
-                //    }
-                //}
             }
         }
 
@@ -303,7 +288,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         private void FillForm(SpecificIAS elem)
         {
-
             FillThresholds(elem);
 
             //all the available elements have been loaded into this editor. We now want to select
@@ -316,14 +300,32 @@ namespace ViewModel.ImpactAreaScenario.Editor
             SelectedExteriorInteriorElement = ExteriorInteriorElements.FirstOrDefault(ext => ext.ChildElement != null && ext.ChildElement.GetElementID() == elem.ExtIntStageID);
             SelectedStageDamageElement = StageDamageElements.FirstOrDefault(stage => stage.ChildElement != null && stage.ChildElement.GetElementID() == elem.StageDamageID);
 
-            //i don't want a selected value to ever be null. Even if there are no elements there should be a blank row option.
+            //i don't want a selected value to ever be null. Even if there are no elements we should select the blank row option.
             //so if it is null, i will set it to the first option which is empty.
-            if(SelectedFrequencyElement == null) SelectedFrequencyElement = FrequencyElements[0];
-            if (SelectedInflowOutflowElement == null) SelectedInflowOutflowElement = InflowOutflowElements[0];
-            if (SelectedRatingCurveElement == null) SelectedRatingCurveElement = RatingCurveElements[0];
-            if (SelectedLeveeFeatureElement == null) SelectedLeveeFeatureElement = LeveeFeatureElements[0];
-            if (SelectedExteriorInteriorElement == null) SelectedExteriorInteriorElement = ExteriorInteriorElements[0];
-            if (SelectedStageDamageElement == null) SelectedStageDamageElement = StageDamageElements[0];
+            if (SelectedFrequencyElement == null)
+            {
+                SelectedFrequencyElement = FrequencyElements[0];
+            }
+            if (SelectedInflowOutflowElement == null)
+            {
+                SelectedInflowOutflowElement = InflowOutflowElements[0];
+            }
+            if (SelectedRatingCurveElement == null)
+            {
+                SelectedRatingCurveElement = RatingCurveElements[0];
+            }
+            if (SelectedLeveeFeatureElement == null)
+            {
+                SelectedLeveeFeatureElement = LeveeFeatureElements[0];
+            }
+            if (SelectedExteriorInteriorElement == null)
+            {
+                SelectedExteriorInteriorElement = ExteriorInteriorElements[0];
+            }
+            if (SelectedStageDamageElement == null)
+            {
+                SelectedStageDamageElement = StageDamageElements[0];
+            }
 
         }
 
@@ -400,6 +402,11 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 RatingRequired = true;
             }
         }
+
+        /// <summary>
+        /// When the stage damage selection is changed we need to update the dam cats that go into
+        /// the combo next to the plot button.
+        /// </summary>
         private void StageDamageSelectionChanged()
         {
             if (SelectedStageDamageElement != null && SelectedStageDamageElement.ChildElement != null)
@@ -492,21 +499,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             }
 
             return retval;
-
-
-
-            //todo: delete, just for testing
-            //List<double> xValues = new List<double>();
-            //List<double> yValues = new List<double>();
-
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    xValues.Add(i / 10.0);
-            //    yValues.Add(i * 900);
-            //}
-            //ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
-            //IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.OutflowFrequency, coordinatesFunction);
-            //return fdaFunction;
         }
 
         private IFdaFunction getRatingCurveFunction()
@@ -519,18 +511,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
             return retval;
 
-            //List<double> xValues = new List<double>();
-            //List<double> yValues = new List<double>();
-
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    xValues.Add(i * 1100);
-            //    yValues.Add(i);
-            //}
-
-            //ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
-            //IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.Rating, coordinatesFunction);
-            //return fdaFunction;
         }
 
         private IFdaFunction getStageDamageFunction()
@@ -635,8 +615,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             DynamicTabVM tab = new DynamicTabVM(header, _additionalThresholdsVM, "additionalThresholds");
             Navigate(tab, true, true);
             Thresholds = _additionalThresholdsVM.GetThresholds();
-
-
         }
 
     }
