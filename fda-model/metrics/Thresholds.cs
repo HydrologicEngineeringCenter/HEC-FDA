@@ -11,6 +11,18 @@ namespace metrics
         private List<Threshold> _thresholds;
         private Threshold _defaultThreshold;
 
+        public List<Threshold> ListOfThresholds
+        {
+            get
+            {
+                return _thresholds;
+            }
+            set
+            {
+                _thresholds = value;
+            }
+        }
+
         public Thresholds(bool hasLevee, ead.Simulation simulation)
         {
             _thresholds = new List<Threshold>();
@@ -30,9 +42,6 @@ namespace metrics
             _thresholds.Remove(threshold);
         } 
 
-        public List<Threshold> GetThresholds()
-        {
-            return _thresholds;
-        }
+
 }
 }

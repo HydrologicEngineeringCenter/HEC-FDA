@@ -142,7 +142,7 @@ namespace ead{
         private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers rp, paireddata.IPairedData frequency_stage){
             //TODO: this still needs to accomodate different threshold types 
             //will refactor after discussing revised approach
-            foreach(var threshold in _performanceThresholds.GetThresholds())
+            foreach(var threshold in _performanceThresholds.ListOfThresholds)
             {
                 double aep = frequency_stage.f_inverse(threshold.ThresholdValue);
                 threshold.Performance.AddAEPEstimate(aep);
