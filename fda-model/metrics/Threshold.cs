@@ -11,6 +11,7 @@ namespace metrics
         public ThresholdEnum ThresholdType { get; set; }
         public double ThresholdValue { get; set; }
         public ProjectPerformance Performance { get; set; }
+        public int ThresholdID { get; }
 
         public Threshold(bool isDefault, bool hasLevee, ead.Simulation simulation)
         {
@@ -20,17 +21,19 @@ namespace metrics
             }
             else
             {
+                ThresholdID = 0;
                 this.SetDefault(hasLevee, simulation);
                 Performance = new ProjectPerformance(this.ThresholdType, this.ThresholdValue);
             }
             
         }
 
-        public Threshold(ThresholdEnum thresholdType=0, double thresholdValue=0)
+        public Threshold(int thresholdID, ThresholdEnum thresholdType=0, double thresholdValue=0)
         {
             ThresholdType = thresholdType;
             ThresholdValue = thresholdValue;
-            Performance = new ProjectPerformance(thresholdType, thresholdValue);
+            Performance = new ProjectPerformance(thresholdType, thresholdValue); 
+            ThresholdID = thresholdID;
         }
 
         public void SetDefault(bool hasLevee, ead.Simulation simulation) //or simulation or ISimulation 

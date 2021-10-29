@@ -8,25 +8,29 @@ namespace metrics
 {
     public class Thresholds
 {
-        private Dictionary<int, Threshold> _thresholds;
+        private List<Threshold> _thresholds;
+        private Threshold _defaultThreshold;
 
-        public Thresholds()
+        public Thresholds(bool hasLevee, ead.Simulation simulation)
         {
-            _thresholds = new Dictionary<int, Threshold>();
+            _thresholds = new List<Threshold>();
+            bool isDefault = true;
+            _defaultThreshold = new Threshold(isDefault, hasLevee, simulation);
+            _thresholds.Add(_defaultThreshold);
         
         }      
 
-        public void AddThreshold(int id, Threshold threshold)
+        public void AddThreshold(Threshold threshold)
         {
-            _thresholds.Add(id, threshold);
+            _thresholds.Add(threshold);
         }
 
-        public void RemoveThreshold(int id)
+        public void RemoveThreshold(Threshold threshold)
         {
-            _thresholds.Remove(id);
+            _thresholds.Remove(threshold);
         } 
 
-        public Dictionary<int, Threshold> GetThresholds()
+        public List<Threshold> GetThresholds()
         {
             return _thresholds;
         }

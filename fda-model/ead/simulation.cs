@@ -134,17 +134,17 @@ namespace ead{
         }
         private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers rp, paireddata.IPairedData frequency_stage){
 
-            foreach(KeyValuePair<int,metrics.Threshold> threshold in _thresholds.GetThresholds())
+            foreach(var threshold in _thresholds.GetThresholds())
             {
-                double aep = frequency_stage.f_inverse(threshold.Value.ThresholdValue);
-                threshold.Value.Performance.AddAEPEstimate(aep);
+                double aep = frequency_stage.f_inverse(threshold.ThresholdValue);
+                threshold.Performance.AddAEPEstimate(aep);
 
                 double[] stageOfEvent = new double[5];
                 double[] er101RequiredProbabilities = new double[] { .1, .02, .01, .004, .002 };
                 for (int i = 0; i < er101RequiredProbabilities.Length; i++)
                 {
                     stageOfEvent[i] = frequency_stage.f(er101RequiredProbabilities[i]);
-                    threshold.Value.Performance.AddStageForCNEP(er101RequiredProbabilities[i], stageOfEvent[i]);
+                    threshold.Performance.AddStageForCNEP(er101RequiredProbabilities[i], stageOfEvent[i]);
                 }
             }
 
