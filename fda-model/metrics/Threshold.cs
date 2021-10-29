@@ -13,21 +13,6 @@ namespace metrics
         public ProjectPerformance Performance { get; set; }
         public int ThresholdID { get; }
 
-        public Threshold(bool isDefault, bool hasLevee, ead.Simulation simulation)
-        {
-            if (!isDefault)
-            {
-                throw new Exception("If not setting a default threshold, you must provide a threshold type and value");
-            }
-            else
-            {
-                ThresholdID = 0;
-                this.SetDefault(hasLevee, simulation);
-                Performance = new ProjectPerformance(this.ThresholdType, this.ThresholdValue);
-            }
-            
-        }
-
         public Threshold(int thresholdID, ThresholdEnum thresholdType=0, double thresholdValue=0)
         {
             ThresholdType = thresholdType;
@@ -36,25 +21,6 @@ namespace metrics
             ThresholdID = thresholdID;
         }
 
-        public void SetDefault(bool hasLevee, ead.Simulation simulation) //or simulation or ISimulation 
-        {
-            if (hasLevee)
-            {
-                ThresholdType = ThresholdEnum.ExteriorStage;
-                paireddata.IPairedData leveeCurve = new paireddata.PairedData(null, null); //instead, access levee from simulation
-                ThresholdValue = leveeCurve.Xvals.Max();
-            }
-            else
-            {
-                ThresholdType = ThresholdEnum.InteriorStage;
-                paireddata.IPairedData frequencyStage = new paireddata.PairedData(null, null); //instead access from simulation
-                paireddata.IPairedData stageDamage = new paireddata.PairedData(null, null); //instead access from simulation
-                paireddata.IPairedData damageFrequency = simulation.ComputeDamageFrequency(frequencyStage, stageDamage);
-                double percentOfDamage = 0.05;
-                double damageRecurrenceInterval = 0.01;
-                double significantDamage = percentOfDamage * damageFrequency.f_inverse(damageRecurrenceInterval);
-                ThresholdValue = stageDamage.f_inverse(significantDamage);
-            }
-        }
+      
     }
 }

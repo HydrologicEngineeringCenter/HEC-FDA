@@ -11,7 +11,16 @@ namespace ead{
         private paireddata.UncertainPairedData _levee_curve;
         private List<paireddata.UncertainPairedData> _damage_category_stage_damage;
         private metrics.IContainResults _eadResults;
-        private metrics.Thresholds _performanceThresholds;
+        private metrics.Thresholds _performanceThresholds = new metrics.Thresholds();
+
+        public metrics.Thresholds PerformanceThresholds
+        {
+            get
+            {
+                return _performanceThresholds;
+            }
+          
+        }
 
         public bool HasLevee
         {
@@ -30,7 +39,6 @@ namespace ead{
             _channelstage_floodplainstage = new paireddata.UncertainPairedData();//defaults to null
             _levee_curve = new paireddata.UncertainPairedData(); //defaults to null
             _damage_category_stage_damage = new List<paireddata.UncertainPairedData>();//defaults to empty
-            _performanceThresholds = new metrics.Thresholds(HasLevee, this);
         }
         public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData inflow_outflow, paireddata.UncertainPairedData flow_stage, paireddata.UncertainPairedData channelstage_floodplainstage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
         {
@@ -41,7 +49,6 @@ namespace ead{
             _channelstage_floodplainstage = channelstage_floodplainstage;
             _levee_curve = levee_curve;
             _damage_category_stage_damage = damage_curves;
-            _performanceThresholds = new metrics.Thresholds(HasLevee, this);
         }
         public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData flow_stage, paireddata.UncertainPairedData channelstage_floodplainstage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
         {
@@ -52,7 +59,6 @@ namespace ead{
             _channelstage_floodplainstage = channelstage_floodplainstage;
             _levee_curve = levee_curve;
             _damage_category_stage_damage = damage_curves;
-            _performanceThresholds = new metrics.Thresholds(HasLevee, this);
         }
         public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData flow_stage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
         {
@@ -64,7 +70,6 @@ namespace ead{
             _levee_curve = levee_curve;
             _damage_category_stage_damage = damage_curves;
             _eadResults = new metrics.ExpectedAnnualDamageResults();//defaults to zeros everywhere.
-            _performanceThresholds = new metrics.Thresholds(HasLevee, this);
         }
         public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData flow_stage, List<paireddata.UncertainPairedData> damage_curves)
         {
@@ -76,8 +81,8 @@ namespace ead{
             _levee_curve = new paireddata.UncertainPairedData(); //defaults to null
             _damage_category_stage_damage = damage_curves;
             _eadResults = new metrics.ExpectedAnnualDamageResults();//defaults to zeros everywhere.
-            _performanceThresholds = new metrics.Thresholds(HasLevee, this);
         }
+
         public Simulation(paireddata.UncertainPairedData frequency_stage, paireddata.UncertainPairedData channelstage_floodplainstage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
         {
             _frequency_flow = null;
@@ -88,7 +93,6 @@ namespace ead{
             _levee_curve = levee_curve;
             _damage_category_stage_damage = damage_curves;
             //TODO: is there a reason that this constructor does not have a _results object instantiated?
-            _performanceThresholds = new metrics.Thresholds(HasLevee, this);
         }
         public metrics.IContainResults Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations){
             //results.AEPThreshold = 100.0;//stage or flow or damage threshold

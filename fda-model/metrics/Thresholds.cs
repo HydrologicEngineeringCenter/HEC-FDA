@@ -23,13 +23,10 @@ namespace metrics
             }
         }
 
-        public Thresholds(bool hasLevee, ead.Simulation simulation)
+        public Thresholds()
         {
             _thresholds = new List<Threshold>();
-            bool isDefault = true;
-            _defaultThreshold = new Threshold(isDefault, hasLevee, simulation);
-            _thresholds.Add(_defaultThreshold);
-        
+                   
         }      
 
         public void AddThreshold(Threshold threshold)
