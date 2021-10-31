@@ -29,5 +29,28 @@ namespace Model
         /// <param name="abbreviate"> <see langword="true"/> if an abbreviated label should be printed, <see langword="false"/> otherwise. </param>
         /// <returns> A <see cref="string"/> label. </returns>
         public static string PrintYLabel(IFdaFunction fx, bool abbreviate) => fx.XSeries.ParameterType.PrintLabel(fx.XSeries.Units, abbreviate);
+        public static object ToUncertainPairedData(this IFdaFunction fx)
+        {
+            double[] xvals = new double[fx.Function.Coordinates.Count];
+            Statistics.IDistribution[] yvals = new Statistics.IDistribution[fx.Function.Coordinates.Count];
+            int counter = 0;
+            foreach(ICoordinate c in fx.Function.Coordinates)
+            {
+                xvals[counter] = c.X.Value();//should always be certain.
+                IDistributedOrdinate d = c.Y as IDistributedOrdinate;
+                if (d == null)
+                {
+                    //must be determinisitc, create deterministic distribution.
+                    yvals[counter] = Statistics.Distributions.Deterministic(c.Y.Value());
+                }
+                else
+                {
+                    yvals[counter] = d.Distribution;//need to modify IDistributedOrdinate to give up it's distribution.
+                }
+                
+            }
+            //create an uncertainpaireddata.
+            return null;
+        }
     }
 }
