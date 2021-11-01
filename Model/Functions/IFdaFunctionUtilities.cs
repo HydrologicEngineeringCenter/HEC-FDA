@@ -1,9 +1,6 @@
 ﻿using Model.Functions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Functions;
-
+using paireddata;
 namespace Model
 {
     /// <summary>
@@ -41,16 +38,15 @@ namespace Model
                 if (d == null)
                 {
                     //must be determinisitc, create deterministic distribution.
-                    yvals[counter] = Statistics.Distributions.Deterministic(c.Y.Value());
+                    yvals[counter] = new Statistics.Distributions.Deterministic(c.Y.Value());
                 }
                 else
                 {
-                    yvals[counter] = d.Distribution;//need to modify IDistributedOrdinate to give up it's distribution.
+                   //need to modify IDistributedOrdinate to give up it's distribution.
                 }
                 
             }
-            //create an uncertainpaireddata.
-            return null;
+            return new UncertainPairedData(xvals, yvals);
         }
     }
 }
