@@ -39,16 +39,16 @@ namespace alternatives
             Int64 periodOfAnalysis = interpolatedEADs.Length;
             double[] presentValueInterestFactor = new double[periodOfAnalysis];
             double sumPresentValueEAD = 0;
-            for (int i=1; i<periodOfAnalysis+1; i++)
+            for (int i=0; i<periodOfAnalysis; i++)
             {
-                presentValueInterestFactor[i] = 1 / Math.Pow(1 + discountRate, i);
+                presentValueInterestFactor[i] = 1 / Math.Pow(1 + discountRate, i+1);
                 sumPresentValueEAD += interpolatedEADs[i] * presentValueInterestFactor[i];
             }
             return sumPresentValueEAD;
         }
         private double[] Interpolate(double baseEAD, double mlfEAD, Int64 baseYear, Int64 mlfYear, Int64 periodOfAnalysis)
         {
-            Int64 yearsBetweenBaseAndMLFInclusive = mlfYear - baseYear + 1;
+            Int64 yearsBetweenBaseAndMLFInclusive = mlfYear - baseYear;
             Int64 yearsAfterMLF = periodOfAnalysis - mlfYear;
             double[] interpolatedEADs = new double[periodOfAnalysis];
             for (Int64 i =0; i<yearsBetweenBaseAndMLFInclusive; i++)
