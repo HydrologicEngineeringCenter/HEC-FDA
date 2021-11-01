@@ -27,7 +27,7 @@ namespace Model
         /// <param name="abbreviate"> <see langword="true"/> if an abbreviated label should be printed, <see langword="false"/> otherwise. </param>
         /// <returns> A <see cref="string"/> label. </returns>
         public static string PrintYLabel(IFdaFunction fx, bool abbreviate) => fx.XSeries.ParameterType.PrintLabel(fx.XSeries.Units, abbreviate);
-        public static object ToUncertainPairedData(this IFdaFunction fx)
+        public static UncertainPairedData ToUncertainPairedData(this IFdaFunction fx)
         {
             double[] xvals = new double[fx.Function.Coordinates.Count];
             Statistics.IDistribution[] yvals = new Statistics.IDistribution[fx.Function.Coordinates.Count];
