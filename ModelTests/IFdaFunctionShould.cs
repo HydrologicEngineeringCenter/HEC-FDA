@@ -16,6 +16,7 @@ namespace ModelTests
         [Fact]
         void ReturnEquivalentXandYasUncertainPairedData()
         {
+
             List<double> listx = new List<double> { 0, 1, 2, 5, 10 };
             List<Statistics.IDistribution> listy = new List<Statistics.IDistribution>();
             for (int i = 0; i < listx.Count; i++ )
@@ -27,10 +28,10 @@ namespace ModelTests
             UncertainPairedData upd = func.ToUncertainPairedData();
 
             double[] expectedXFromIFdaFunction = new double[func.Coordinates.Count];
-            double[] actualXFromUncertainPD = upd.xs();
+            double[] expectedXFromUncertainPD = upd.xs();
 
             Statistics.IDistribution[] expectedYFromIFdaFunciton = new Statistics.IDistribution[func.Coordinates.Count];
-            Statistics.IDistribution[] actualYFromUncertainPD = upd.ys();
+            Statistics.IDistribution[] expectedYFromUncertainPD = upd.ys();
 
             for(int i = 0; i< func.Coordinates.Count; i++)
             {
@@ -38,9 +39,10 @@ namespace ModelTests
                 var temp = (IDistributedOrdinate)func.Coordinates[i].Y;
                 expectedYFromIFdaFunciton[i] = temp.Dist;      
             }
-
-            Assert.Equal(expectedXFromIFdaFunction, actualXFromUncertainPD);
-            Assert.Equal(expectedYFromIFdaFunciton, actualYFromUncertainPD);
+            Assert.Equal(expectedXFromUncertainPD, listx.ToArray());
+            Assert.Equal(expectedXFromIFdaFunction, listx.ToArray());
+            Assert.Equal(expectedYFromUncertainPD, listy);
+            Assert.Equal(expectedYFromIFdaFunciton, listy);
         }
     }
 }
