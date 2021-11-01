@@ -1,6 +1,7 @@
 ﻿using Model.Functions;
 using Functions;
 using paireddata;
+using Statistics;
 namespace Model
 {
     /// <summary>
@@ -42,7 +43,7 @@ namespace Model
                 }
                 else
                 {
-                   //need to modify IDistributedOrdinate to give up it's distribution.
+                    yvals[counter] = (IDistribution)d; //need to modify IDistributedOrdinate to give up it's distribution.
                 }
                 
             }
