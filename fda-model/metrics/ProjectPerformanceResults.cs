@@ -15,7 +15,6 @@ namespace metrics
         private ThresholdEnum _thresholdType;
         private double _thresholdValue;
     private Histogram _aep = null;
-    private Dictionary<string, Histogram> _ead;
     private Dictionary<double, Histogram> _cnep;
 
 

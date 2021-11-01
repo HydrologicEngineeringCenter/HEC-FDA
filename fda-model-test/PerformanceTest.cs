@@ -38,8 +38,8 @@ namespace fda_model_test
             upd.Add(stage_damage);
             Simulation s = new Simulation(flow_frequency, flow_stage, upd);
             RandomProvider rp = new RandomProvider(seed);
-            metrics.IContainResults r = s.Compute(rp, iterations);
-            double difference = expected - r.MeanEAD("residential");
+            metrics.Results r = s.Compute(rp, iterations);
+            double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .01);
         }

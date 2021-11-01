@@ -37,12 +37,13 @@ namespace fda_model_test
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, "residential");
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
-            metrics.Threshold threshold = new metrics.Threshold(1, metrics.ThresholdEnum.ExteriorStage, 150000);
+            
+            metrics.Threshold threshold = new metrics.Threshold(1, metrics.ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
             Simulation s = new Simulation(flow_frequency,flow_stage,upd);
             s.PerformanceThresholds.AddThreshold(threshold);
             ead.MeanRandomProvider mrp = new MeanRandomProvider();
-            metrics.IContainResults r = s.Compute(mrp,1);
-            double difference = expected - r.MeanEAD("residential");
+            metrics.Results r = s.Compute(mrp,1);
+            double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .01);
         }
@@ -73,8 +74,8 @@ namespace fda_model_test
             upd.Add(stage_damage);
             Simulation s = new Simulation(flow_frequency, flow_stage, upd);
             RandomProvider rp = new RandomProvider(seed);
-            metrics.IContainResults r = s.Compute(rp, iterations);
-            double difference = expected - r.MeanEAD("residential");
+            metrics.Results r = s.Compute(rp, iterations);
+            double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .01);
         }
@@ -111,8 +112,8 @@ namespace fda_model_test
             upd.Add(stage_damage);
             Simulation s = new Simulation(flow_frequency, flow_stage, levee, upd);
             ead.MeanRandomProvider mrp = new MeanRandomProvider();
-            metrics.IContainResults r = s.Compute(mrp, 1);
-            double difference = expected - r.MeanEAD("residential");
+            metrics.Results r = s.Compute(mrp, 1);
+            double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .01);
         }

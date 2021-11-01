@@ -4,15 +4,15 @@ using Statistics;
 using Statistics.Histograms;
 namespace metrics
 {
-    public class Results
+    public class Results: IContainResults
     {
-        public Thresholds thresholds { get; set; }
-        public ExpectedAnnualDamageResults expectedAnnualDamageResults { get; set; }
+        public Thresholds Thresholds { get; set; }
+        public ExpectedAnnualDamageResults ExpectedAnnualDamageResults { get; set; }
 
         public Results()
         {
-            thresholds = new Thresholds();
-            expectedAnnualDamageResults = new ExpectedAnnualDamageResults();
+            Thresholds = new Thresholds();
+            ExpectedAnnualDamageResults = new ExpectedAnnualDamageResults();
         }
 
 

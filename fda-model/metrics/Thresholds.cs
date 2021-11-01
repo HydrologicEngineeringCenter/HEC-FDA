@@ -9,8 +9,6 @@ namespace metrics
     public class Thresholds
 {
         private List<Threshold> _thresholds;
-        private Threshold _defaultThreshold;
-
         public List<Threshold> ListOfThresholds
         {
             get
