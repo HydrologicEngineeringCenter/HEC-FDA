@@ -43,11 +43,11 @@ namespace Model
                 }
                 else
                 {
-                    yvals[counter] = (IDistribution)d; //need to modify IDistributedOrdinate to give up it's distribution.
+                    yvals[counter] = d.Dist; //need to modify IDistributedOrdinate to give up it's distribution.
                 }
                 
             }
-            return new UncertainPairedData(xvals, yvals);
+            return new UncertainPairedData(xvals, yvals, fx.ParameterType.ToString());
         }
     }
 }

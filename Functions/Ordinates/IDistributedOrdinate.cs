@@ -17,7 +17,7 @@ namespace Functions
         /// Enumerated type of the distribution.
         /// </summary>
         IOrdinateEnum Type { get; }
-
+        Statistics.IDistribution Dist { get; }
         double Mean { get; }
         double Median { get; }
         double Variance { get; }
