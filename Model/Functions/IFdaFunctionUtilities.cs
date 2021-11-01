@@ -45,7 +45,7 @@ namespace Model
                 {
                     yvals[counter] = d.Dist; //need to modify IDistributedOrdinate to give up it's distribution.
                 }
-                
+                counter++;
             }
             return new UncertainPairedData(xvals, yvals, fx.ParameterType.ToString());
         }
