@@ -4,7 +4,7 @@ using Statistics;
 using Statistics.Histograms;
 namespace metrics
 {
-    public class ExpectedAnnualDamageResults: IContainResults
+    public class ExpectedAnnualDamageResults
     {
         //needs access to get AEP and EAD results.
         private const double EAD_HISTOGRAM_BINWIDTH = 10;
