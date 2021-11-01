@@ -10,8 +10,6 @@ namespace ead{
         private paireddata.UncertainPairedData _channelstage_floodplainstage;
         private paireddata.UncertainPairedData _levee_curve;
         private List<paireddata.UncertainPairedData> _damage_category_stage_damage;
-        //private metrics.IContainResults _eadResults;
-        //private metrics.Thresholds _performanceThresholds = new metrics.Thresholds();
         private metrics.Results _results = new metrics.Results();
 
         public metrics.Thresholds PerformanceThresholds
@@ -71,7 +69,6 @@ namespace ead{
             _levee_curve = levee_curve;
             _damage_category_stage_damage = damage_curves;
             _results = new metrics.Results();
-            //_eadResults = new metrics.ExpectedAnnualDamageResults();//defaults to zeros everywhere.
         }
         public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData flow_stage, List<paireddata.UncertainPairedData> damage_curves)
         {
@@ -82,7 +79,6 @@ namespace ead{
             _channelstage_floodplainstage = new paireddata.UncertainPairedData();//defaults to null
             _levee_curve = new paireddata.UncertainPairedData(); //defaults to null
             _damage_category_stage_damage = damage_curves;
-            //_eadResults = new metrics.ExpectedAnnualDamageResults();//defaults to zeros everywhere.
             _results = new metrics.Results();
 
         }
@@ -148,21 +144,6 @@ namespace ead{
             return _results;
         }
         private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers rp, paireddata.IPairedData frequency_stage){
-            //TODO: this still needs to accomodate different threshold types 
-            //will refactor after discussing revised approach
-            foreach(var threshold in _results.Thresholds.ListOfThresholds)
-            {
-                double aep = frequency_stage.f_inverse(threshold.ThresholdValue);
-                threshold.Performance.AddAEPEstimate(aep);
-
-                double[] stageOfEvent = new double[5];
-                double[] er101RequiredProbabilities = new double[] { .1, .02, .01, .004, .002 };
-                for (int i = 0; i < er101RequiredProbabilities.Length; i++)
-                {
-                    stageOfEvent[i] = frequency_stage.f(er101RequiredProbabilities[i]);
-                    threshold.Performance.AddStageForCNEP(er101RequiredProbabilities[i], stageOfEvent[i]);
-                }
-            }
 
             //interior exterior
             if (_channelstage_floodplainstage.IsNull)
@@ -178,7 +159,7 @@ namespace ead{
                     //paireddata.IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
                     ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_stage, levee_curve_sample);
                 }
-
+                ComputePerformance(frequency_stage);
             }
             else
             {
@@ -188,14 +169,16 @@ namespace ead{
                 if (_levee_curve.IsNull)
                 {
                     ComputeDamagesFromStageFrequency(rp, frequency_floodplainstage);
+                    ComputePerformance(frequency_floodplainstage);
                 }
                 else
                 {
                     paireddata.IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
                     //paireddata.IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
                     ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_floodplainstage, levee_curve_sample);
+                    ComputePerformance(frequency_stage);
                 }
-
+                
             }
         }
         private paireddata.IPairedData BootstrapToPairedData(interfaces.IProvideRandomNumbers rp, IDistribution dist, Int64 ordinates){
@@ -240,6 +223,22 @@ namespace ead{
             _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total");
         }
 
+        public void ComputePerformance(paireddata.IPairedData frequency_stage)
+        {
+            foreach (var threshold in _results.Thresholds.ListOfThresholds)
+            {
+                double aep = frequency_stage.f_inverse(threshold.ThresholdValue);
+                threshold.Performance.AddAEPEstimate(aep);
+
+                double[] stageOfEvent = new double[5];
+                double[] er101RequiredProbabilities = new double[] { .1, .02, .01, .004, .002 };
+                for (int i = 0; i < er101RequiredProbabilities.Length; i++)
+                {
+                    stageOfEvent[i] = frequency_stage.f(er101RequiredProbabilities[i]);
+                    threshold.Performance.AddStageForCNEP(er101RequiredProbabilities[i], stageOfEvent[i]);
+                }
+            }
+        }
 
         public paireddata.IPairedData ComputeDamageFrequency(paireddata.IPairedData frequency_stage, paireddata.IPairedData stageDamage)
         {
