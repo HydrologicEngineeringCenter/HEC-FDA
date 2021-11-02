@@ -69,9 +69,9 @@ namespace ViewModel.Study
         public event UpdateElementEventHandler StructureInventoryUpdated;
         public event UpdateElementEventHandler IASElementUpdated;
         public event UpdateElementEventHandler OccTypeElementUpdated;
-        public event AddElementEventHandler PlanAdded;
-        public event AddElementEventHandler PlanRemoved;
-        public event UpdateElementEventHandler PlanUpdated;
+        public event AddElementEventHandler AlternativeAdded;
+        public event AddElementEventHandler AlternativeRemoved;
+        public event UpdateElementEventHandler AlternativeUpdated;
 
 
         #region Properties
@@ -101,7 +101,8 @@ namespace ViewModel.Study
         public OccupancyTypesOwnerElement OccTypeParent { get; set; }
         public StructureInventoryOwnerElement StructureInventoryParent { get; set; }
         public IASOwnerElement IASParent { get; set; }
-        public AltervativeOwnerElement PlansParent { get; set; }
+        //public IASTreeOwnerElement IASTreeParent { get; set; }
+        public AltervativeOwnerElement AlternativeParent { get; set; }
         public AlternativeComparisonReportOwnerElement AlternativeComparisonReportParent { get; set; }
         #endregion
         #endregion

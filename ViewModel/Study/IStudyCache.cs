@@ -15,7 +15,7 @@ namespace ViewModel.Study
         T GetParentElementOfType<T>() where T : ParentElement;
         ChildElement GetChildElementOfType(Type type, int ID);
 
-        event FDACache.AddElementEventHandler PlanAdded;
+        event FDACache.AddElementEventHandler AlternativeAdded;
 
         event FDACache.AddElementEventHandler RatingAdded;
         event FDACache.AddElementEventHandler TerrainAdded;
@@ -31,7 +31,7 @@ namespace ViewModel.Study
         event FDACache.AddElementEventHandler IASElementAdded;
         event FDACache.AddElementEventHandler OccTypeElementAdded;
 
-        event FDACache.AddElementEventHandler PlanRemoved;
+        event FDACache.AddElementEventHandler AlternativeRemoved;
         event FDACache.AddElementEventHandler RatingRemoved;
         event FDACache.AddElementEventHandler TerrainRemoved;
         event FDACache.AddElementEventHandler ImpactAreaRemoved;
@@ -46,7 +46,7 @@ namespace ViewModel.Study
         event FDACache.AddElementEventHandler IASElementRemoved;
         event FDACache.AddElementEventHandler OccTypeElementRemoved;
 
-        event FDACache.UpdateElementEventHandler PlanUpdated;
+        event FDACache.UpdateElementEventHandler AlternativeUpdated;
         event FDACache.UpdateElementEventHandler RatingUpdated;
         event FDACache.UpdateElementEventHandler TerrainUpdated;
         event FDACache.UpdateElementEventHandler ImpactAreaUpdated;
