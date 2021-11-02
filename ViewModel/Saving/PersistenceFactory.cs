@@ -146,5 +146,9 @@ namespace ViewModel.Saving
         {
             return new IASPersistenceManager(StudyCacheForSaving);
         }
+        public static AlternativePersistenceManager GetAlternativeManager()
+        {
+            return new AlternativePersistenceManager(StudyCacheForSaving);
+        }
     }
 }
