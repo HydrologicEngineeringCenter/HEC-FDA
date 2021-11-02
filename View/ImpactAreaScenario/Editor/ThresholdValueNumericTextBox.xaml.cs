@@ -17,7 +17,7 @@ using System.Windows.Shapes;
 namespace View.ImpactAreaScenario.Editor
 {
     /// <summary>
-    /// Interaction logic for ThresholdValueNumericTextBox.xaml
+    /// Limits the input to numeric values.
     /// </summary>
     public partial class ThresholdValueNumericTextBox : UserControl
     {
@@ -30,7 +30,6 @@ namespace View.ImpactAreaScenario.Editor
         {
             Regex regex = new Regex("[^0-9.-]+");
             e.Handled = regex.IsMatch(e.Text);
-
         }
 
         

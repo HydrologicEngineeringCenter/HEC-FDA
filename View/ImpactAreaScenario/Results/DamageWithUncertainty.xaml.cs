@@ -42,10 +42,11 @@ namespace View.ImpactAreaScenario.Results
             //add the chart to the UI
             main_grd.Children.Add(_chart);
             Grid.SetRow(_chart, 0);
+            Grid.SetRowSpan(_chart, 2);
             Grid.SetColumn(_chart, 1);
 
-            //plot the line data
-            vm.PlotLineData();
+            //plot the histogram
+            vm.PlotHistogram();
 
         }
 

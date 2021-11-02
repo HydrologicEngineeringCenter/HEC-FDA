@@ -1,7 +1,9 @@
 ﻿using Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Xml.Linq;
+using ViewModel.ImpactArea;
 using ViewModel.ImpactAreaScenario.Results;
 using ViewModel.Utilities;
 
@@ -145,10 +147,48 @@ namespace ViewModel.ImpactAreaScenario
         }
 
 
+        private List<SpecificIASResultVM> GetResults()
+        {
+            
+            List<SpecificIASResultVM> results = new List<SpecificIASResultVM>();
+
+            //this is kind of messy. Quite a bit of code to get the name of the impact area from the impact area id.
+            List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+            if (impactAreaElements.Count > 0)
+            {
+                ObservableCollection<ImpactAreaRowItem> impactAreaRows = impactAreaElements[0].ImpactAreaRows;
+
+                foreach (SpecificIAS ias in SpecificIASElements)
+                {
+                    int impactAreaID = ias.ImpactAreaID;
+                    string impactAreaName = GetImpactAreaNameFromID(impactAreaRows, impactAreaID);
+                    if (impactAreaName != null)
+                    {
+                        SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, ias.Thresholds);
+                        results.Add(result);
+                    }
+                }
+            }
+            return results;
+        }
+
+        private string GetImpactAreaNameFromID(ObservableCollection<ImpactAreaRowItem> rows, int id)
+        {
+            foreach(ImpactAreaRowItem row in rows)
+            {
+                if(row.ID == id)
+                {
+                    return row.Name;
+                }
+            }
+            return null;
+        }
+
         private void DisplayResults(IConditionLocationYearResult result)
         {
-            IASResultsVM resultViewer = new IASResultsVM(Name);
-            string header = "Results";
+            List<SpecificIASResultVM> results = GetResults();
+            IASResultsVM resultViewer = new IASResultsVM(results);
+            string header = "Results for " + Name;
             DynamicTabVM tab = new DynamicTabVM(header, resultViewer, "resultViewer");
             Navigate(tab, false, false);
         }

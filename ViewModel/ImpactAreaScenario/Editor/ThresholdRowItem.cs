@@ -48,5 +48,10 @@ namespace ViewModel.ImpactAreaScenario.Editor
             ThresholdTypes.Add(new ThresholdType( IMetricEnum.Damages, "Damages"));
         }
 
+        public IMetric GetMetric()
+        {
+            return IMetricFactory.Factory(ThresholdType.Metric, ThresholdValue);
+        }
+
     }
 }

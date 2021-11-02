@@ -21,8 +21,7 @@ namespace View.Alternatives
     /// </summary>
     public partial class CreateNewAlternative : UserControl
     {
-        //private const string ADD_MSG = "Add Increment";
-        //private const string REMOVE_MSG = "Remove Increment";
+
         private int _Index = 0;
         public CreateNewAlternative()
         {
@@ -31,7 +30,6 @@ namespace View.Alternatives
         private void AddFirstIncrement()
         {
             CreateNewAlternativeComparisonReportVM vm = (CreateNewAlternativeComparisonReportVM)this.DataContext;
-            //add increment
             vm.AddIncrement();
             //create row item without delete button
             _Index++;
@@ -47,9 +45,7 @@ namespace View.Alternatives
         private void btn_addIncrement_Click(object sender, RoutedEventArgs e)
         {
             CreateNewAlternativeComparisonReportVM vm = (CreateNewAlternativeComparisonReportVM)this.DataContext;
-            //add increment
             vm.AddIncrement();
-            // grab the latest increment from vm
 
             //create a new Row UI
             _Index++;

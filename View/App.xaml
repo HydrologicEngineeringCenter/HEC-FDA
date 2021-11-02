@@ -12,10 +12,7 @@
              
              xmlns:PlotsOutputVM="clr-namespace:ViewModel.Output;assembly=ViewModel"
              xmlns:PlotsOutputView="clr-namespace:View.Output"
-             
-             xmlns:PlotsVM="clr-namespace:ViewModel.Plots;assembly=ViewModel"
-             xmlns:PlotsView="clr-namespace:View.Plots"
-             
+                          
              xmlns:AlternativeComparisonReportVM="clr-namespace:ViewModel.AlternativeComparisonReport;assembly=ViewModel"
              xmlns:AlternativeView="clr-namespace:View.Alternatives"
              
@@ -252,6 +249,10 @@
             <IASResultsView:IASResults/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type IASResultsVM:SpecificIASResultVM }" >
+            <IASResultsView:SpecificIASResultsControl/>
+        </DataTemplate>
+        
         <DataTemplate DataType="{x:Type IASResultsVM:DamageByDamageCategoryVM }" >
             <IASResultsView:DamageByDamageCategory/>
         </DataTemplate>
@@ -281,74 +282,18 @@
         <DataTemplate DataType="{x:Type OutputVM:IndexLocationsVM }" >
             <OutputView:IndexLocations/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:IASEditorVM }" >
-            <ImpactAreaScenarioView:IASEditor/>
-        </DataTemplate>
+    
         <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:EnterSeedVM }" >
             <ImpactAreaScenarioView:EnterSeed/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:AddInflowOutflowToIASVM }" >
-            <ImpactAreaScenarioView:AddInflowOutflowToIAS/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:AddExteriorInteriorStageToIASVM }" >
-            <ImpactAreaScenarioView:AddExteriorInteriorStageToIAS/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:AddFailureFunctionToIASVM }" >
-            <ImpactAreaScenarioView:AddFailureFunctionToIAS/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:AddStageDamageToIASVM }" >
-            <ImpactAreaScenarioView:AddStageDamageToIAS/>
-        </DataTemplate>
+  
+      
+       
         
-        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:AddFlowFrequencyToIASVM }" >
-            <ImpactAreaScenarioView:AddFlowFrequencyToIAS/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:AddRatingCurveToIASVM }" >
-            <ImpactAreaScenarioView:AddRatingCurveToIAS/>
-        </DataTemplate>
-        <!--todo: Refactor: CO-->
-        <!--<DataTemplate DataType="{x:Type LinkedPlotsVM:LinkedPlotsUpdatedVM }" >
-            <LinkedPlotsView:LinkedPlotsUpdated/>
-        </DataTemplate>-->
         
-        <!--todo: Refactor: CO-->
-        <!--Plots Region -->
-        <!--<DataTemplate DataType="{x:Type PlotsVM:ParentUserControlVM }" >
-            <PlotsView:ParentUserControl/>
-        </DataTemplate>-->
-        <!--<DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotVM }" >
-            <PlotsView:IndividualLinkedPlot/>
-        </DataTemplate>-->
+       
 
-        <DataTemplate DataType="{x:Type PlotsVM:IASIndividualPlotWrapperVM }" >
-            <PlotsView:IASIndividualPlotWrapper/>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type PlotsVM:DoubleLineModulatorWrapperVM }" >
-            <ImpactAreaScenarioView:IASDoubleLineModulatorWrapper/>
-        </DataTemplate>
-        <!--todo: Refactor: CO-->
-        <!--<DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotControlVM }" >
-            <PlotsView:IndividualLinkedPlotControl/>
-        </DataTemplate>-->
-        <DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotCoverButtonVM }" >
-            <PlotsView:IndividualLinkedPlotCoverButton/>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type PlotsVM:HorizontalDoubleLineModulatorWrapperVM }" >
-            <PlotsView:HorizontalDoubleLineModulatorWrapper/>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type PlotsVM:IASHorizontalFailureFunctionVM }" >
-            <PlotsView:IASHorizontalFailureFunction/>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type PlotsVM:DoubleLineModulatorHorizontalCoverButtonVM }" >
-            <PlotsView:DoubleLineModulatorHorizontalCoverButton/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type PlotsVM:DoubleLineModulatorCoverButtonVM }" >
-            <PlotsView:DoubleLineModulatorCoverButton/>
-        </DataTemplate>
+       
 
         <DataTemplate DataType="{x:Type PlotsOutputVM:LinkedPlotsVM }" >
             <PlotsOutputView:LinkedPlots/>

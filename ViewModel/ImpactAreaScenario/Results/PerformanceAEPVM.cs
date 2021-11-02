@@ -1,4 +1,6 @@
-﻿using Model;
+﻿using HEC.Plotting.SciChart2D.DataModel;
+using HEC.Plotting.SciChart2D.ViewModel;
+using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +13,12 @@ namespace ViewModel.ImpactAreaScenario.Results
     public class PerformanceAEPVM : PerformanceVMBase
     {
 
+        private readonly HistogramData2D _data;
+        public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("chart title");
+
         public PerformanceAEPVM(List<ThresholdComboItem> metrics)
         {
+            _data = new HistogramData2D(5, 0, new double[] { }, "Chart", "Series", "X Data", "YData");
             loadDummyData(metrics);
         }
 
@@ -52,6 +58,17 @@ namespace ViewModel.ImpactAreaScenario.Results
             yValues.Add(i+1);
       
             return yValues;
+        }
+
+
+        public void PlotHistogram()
+        {
+            double binWidth = 5;
+            double binStart = 2.5;
+            double[] values = new double[] { 2, 2.5, 2.7, 3.5, 3.8, 1, 1.5 };
+
+            HistogramData2D _data = new HistogramData2D(binWidth, binStart, values, "Chart", "Series", "X Data", "YData");
+            ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
         }
 
     }

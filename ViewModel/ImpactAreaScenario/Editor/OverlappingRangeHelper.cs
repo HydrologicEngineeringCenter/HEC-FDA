@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ViewModel.AggregatedStageDamage;
 using ViewModel.Utilities;
 
@@ -15,7 +13,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private const double OVERLAP_RULE_PERCENT = .05;
         private const string INFLOW_OUTFLOW = "Inflow-Outflow";
         private const string RATING = "Rating-Curve";
-        private const string EXTERIOR_INTERIOR = "Exterior-Interior";
         private const string STAGE_DAMAGE = "Stage-Damage";
         private const string FLOW = "Flow";
         private const string STAGE = "Stage";
@@ -35,7 +32,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             //we do not care about the exterior interior curve, just skip it.
 
             bool inflowOutflowSelected = SelectedInflowOutflowElement.ChildElement != null;
-            //bool extInteriorSelected = SelectedExteriorInteriorElement.ChildElement != null;
 
             if (inflowOutflowSelected)
             {
@@ -47,33 +43,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 CheckRangeWithStageDamage(StageDamageElement, SelectedRatingCurveElement, SelectedDamageCurve, messageRows);
 
             }
-            //else if (!inflowOutflowSelected && extInteriorSelected)
-            //{
-            //    //check rating flows with flow-freq flows
-            //    CheckRangeValues(SelectedRatingCurveElement, SelectedFrequencyElement, true, false, RATING, FLOW, messageRows);
-
-            //    //check rating stages with ext-int exterior stages
-            //    CheckRangeValues(SelectedExteriorInteriorElement, SelectedRatingCurveElement, false, true, EXTERIOR_INTERIOR, STAGE, messageRows);
-
-            //    //check ext-int interior stages with stage-damage stages.
-            //    CheckRangeWithStageDamage(StageDamageElement, SelectedExteriorInteriorElement, SelectedDamageCurve, messageRows);
-
-            //}
-            //else if (inflowOutflowSelected && extInteriorSelected)
-            //{
-            //    //check in-out flows with flow freq
-            //    CheckRangeValues(SelectedInflowOutflowElement, SelectedFrequencyElement, true, false, INFLOW_OUTFLOW, FLOW, messageRows);
-
-            //    //check outflows with rating flows
-            //    CheckRangeValues(SelectedRatingCurveElement, SelectedInflowOutflowElement, true, false, RATING, FLOW, messageRows);
-
-            //    //check rating stages with ext-int exterior stages
-            //    CheckRangeValues(SelectedExteriorInteriorElement, SelectedRatingCurveElement, false, true, EXTERIOR_INTERIOR, STAGE, messageRows);
-
-            //    //check ext-int interior stages with stage-damage stages.
-            //    CheckRangeWithStageDamage(StageDamageElement, SelectedExteriorInteriorElement, SelectedDamageCurve, messageRows);
-
-            //}
             else
             {
                 //check rating flows with flow-freq flows

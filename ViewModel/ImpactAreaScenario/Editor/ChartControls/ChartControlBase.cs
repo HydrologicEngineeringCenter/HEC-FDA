@@ -28,7 +28,7 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
         public SciChart2DChartViewModel ChartVM { get; private set; }
 
         //This will probably become 3 lines
-        private NumericLineData _data;
+        private readonly NumericLineData _data;
         private bool _flipXY;
 
         public ChartControlBase(string chartModelUniqueName, string xAxisLabel, string yAxisLabel, string seriesName, bool flipXY = false, bool useProbabilityX = false,

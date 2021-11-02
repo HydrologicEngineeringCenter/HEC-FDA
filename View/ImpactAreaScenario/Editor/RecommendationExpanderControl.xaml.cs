@@ -1,22 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace View.ImpactAreaScenario.Editor
 {
     /// <summary>
-    /// Interaction logic for RecommendationExpanderControl.xaml
+    /// This is the control that goes at the bottom of the IASEditor and gives the user information about
+    /// non-overlapping ranges.
     /// </summary>
     public partial class RecommendationExpanderControl : UserControl
     {      

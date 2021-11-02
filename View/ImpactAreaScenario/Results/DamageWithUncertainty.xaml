@@ -9,6 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid x:Name="main_grd">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="500"/>
             
         </Grid.RowDefinitions>
@@ -17,19 +18,23 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <DataGrid Grid.Row="0" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Label Content="Mean:" />
+            <Label Content="{Binding Mean}"/>
+        </StackPanel>
+        <DataGrid Grid.Row="1" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
                    HorizontalAlignment="Left"
                   VerticalAlignment="Top" Width="200" IsReadOnly="True" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding ExpectedAnnualDamageMeasure}" Width="110">
+                <DataGridTextColumn Binding="{Binding Frequency}" Width="110">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Expected Annual Damage Measure" TextWrapping="Wrap" />
+                        <TextBlock Text="Probability that damage exceeds indicated value" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>    
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding DollarsInThousands}" Width="*">
+                <DataGridTextColumn Binding="{Binding Value}" Width="*">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Dollars in Thousands" TextWrapping="Wrap" />
+                        <TextBlock Text="Indicated value" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
             </DataGrid.Columns>
