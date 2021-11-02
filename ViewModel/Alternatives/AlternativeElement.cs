@@ -22,7 +22,16 @@ namespace ViewModel.Alternatives
             if(elementToClone is AlternativeElement)
             {
                 AlternativeElement elem = (AlternativeElement)elementToClone;
+                AlternativeElement elemToReturn = new AlternativeElement(elem.IASElementSets);
+                return elemToReturn;
             }
+            return null;
         }
+
+        public string WriteToXML()
+        {
+            return "";
+        }
+
     }
 }

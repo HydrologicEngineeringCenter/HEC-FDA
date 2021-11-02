@@ -40,8 +40,8 @@ namespace ViewModel.Alternatives
             FdaValidationResult vr = IsValid(selectedRows);
             if(vr.IsValid)
             {
-                AlternativeElement elemToSave = new AlternativeElement();
-                Saving.PersistenceFactory.GetExteriorInteriorManager
+                AlternativeElement elemToSave = new AlternativeElement(GetSelectedIASSets());
+                Saving.PersistenceFactory.GetAlternativeManager().SaveNew(elemToSave);
             }
 
         }
