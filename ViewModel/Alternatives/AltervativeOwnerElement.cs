@@ -17,23 +17,23 @@ namespace ViewModel.Alternatives
             Name = "Alternatives";
             CustomTreeViewHeader = new CustomHeaderVM(Name);
 
-            NamedAction addPlan = new NamedAction();
-            addPlan.Header = "Add Plan";
-            addPlan.Action = AddNewPlan;
+            NamedAction addAlternative = new NamedAction();
+            addAlternative.Header = "Add Alternative...";
+            addAlternative.Action = AddNewAlternative;
 
             List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(addPlan);
+            localActions.Add(addAlternative);
             //localActions.Add(ImportRatingCurve);
 
             Actions = localActions;
 
-            StudyCache.PlanAdded += AddPlanElement;
-            StudyCache.PlanRemoved += RemovePlanElement;
-            StudyCache.PlanUpdated += UpdatePlanElement;
+            StudyCache.AlternativeAdded += AddAlternativeElement;
+            StudyCache.AlternativeRemoved += RemoveAlternativeElement;
+            StudyCache.AlternativeUpdated += UpdateAlternativeElement;
 
         }
 
-        public void AddNewPlan(object arg1, EventArgs arg2)
+        public void AddNewAlternative(object arg1, EventArgs arg2)
         {
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSiblingRules(this);
@@ -50,20 +50,20 @@ namespace ViewModel.Alternatives
             }
 
             CreateNewAlternativeVM vm = new CreateNewAlternativeVM(conditions, actionManager);
-            string header = "Create Plan";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateNewPlan");
+            string header = "Create Alternative";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateNewAlternative");
             Navigate(tab, false, true);
         }
 
-        private void UpdatePlanElement(object sender, Saving.ElementUpdatedEventArgs e)
+        private void UpdateAlternativeElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
             UpdateElement(e.OldElement, e.NewElement);
         }
-        private void AddPlanElement(object sender, Saving.ElementAddedEventArgs e)
+        private void AddAlternativeElement(object sender, Saving.ElementAddedEventArgs e)
         {
             AddElement(e.Element);
         }
-        private void RemovePlanElement(object sender, Saving.ElementAddedEventArgs e)
+        private void RemoveAlternativeElement(object sender, Saving.ElementAddedEventArgs e)
         {
             RemoveElement(e.Element);
         }
