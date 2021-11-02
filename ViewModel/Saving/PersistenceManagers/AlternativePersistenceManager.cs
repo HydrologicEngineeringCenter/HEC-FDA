@@ -1,12 +1,89 @@
-﻿using System;
+﻿using FdaLogging;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ViewModel.Alternatives;
+using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
-    class AlternativePersistenceManager
+    public class AlternativePersistenceManager : SavingBase, IElementManager
     {
+        public override string TableName => "alternatives";
+
+        public override string[] TableColumnNames => new string[]{NAME, "xml"};
+
+        public override Type[] TableColumnTypes => new Type[] { typeof(string), typeof(string) };
+
+
+        public AlternativePersistenceManager(Study.FDACache studyCache)
+        {
+            StudyCacheForSaving = studyCache;
+        }
+
+
+        public override ChildElement CreateElementFromRowData(object[] rowData)
+        {
+            throw new NotImplementedException();
+        }
+
+        #region Logging
+        public ObservableCollection<LogItem> GetLogMessages(string elementName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ObservableCollection<LogItem> GetLogMessagesByLevel(LoggingLevel level, string elementName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Log(LoggingLevel level, string message, string elementName)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        public override object[] GetRowDataFromElement(ChildElement elem)
+        {
+            object[] retval = new object[] { elem.Name, ((AlternativeElement)elem).WriteToXML() };
+            return retval;
+        }
+
+
+        public void Load()
+        {
+            List<ChildElement> iasElems = CreateElementsFromRows(TableName, (rowData) => CreateElementFromRowData(rowData));
+            foreach (AlternativeElement elem in iasElems)
+            {
+                StudyCacheForSaving.AddElement(elem);
+            }
+        }   
+
+        public void Remove(ChildElement element)
+        {
+            int id = element.GetElementID();
+            RemoveFromParentTable(element, TableName);
+            StudyCacheForSaving.RemoveElement((AlternativeElement)element, id);
+        }
+
+        public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex)
+        {
+            base.SaveExisting(oldElement, elementToSave);
+        }
+
+        public void SaveNew(ChildElement element)
+        {
+            if (element.GetType() == typeof(AlternativeElement))
+            {
+                string editDate = DateTime.Now.ToString("G");
+                element.LastEditDate = editDate;
+                SaveNewElementToParentTable(GetRowDataFromElement((AlternativeElement)element), TableName, TableColumnNames, TableColumnTypes);
+                StudyCacheForSaving.AddElement((AlternativeElement)element);
+            }
+        }
     }
 }

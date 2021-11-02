@@ -16,7 +16,7 @@ namespace ViewModel.Alternatives
         public AlternativeRowItem(IASElementSet elem)
         {
             Element = elem;
-            Name = elem.Name + " Analysis Year: " + elem.AnalysisYear;
+            Name = elem.Name + " (" + elem.AnalysisYear + ")";
             IsSelected = false;
         }
     }
