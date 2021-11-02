@@ -8,17 +8,49 @@ namespace paireddata
         public double[] Xvals { get; }
         public double[] Yvals { get; }
         public string Category {get; }
-
+        //sorting Array.Sort(yarr,System.Collections.Comparer.);//make sure that this is ascending 
+        //or array.reverse
+        //we need the right comparer to sort the right way the first way 
         public PairedData(double[] xs, double[] ys){
+            if (!IsMonotonicallyIncreasing(xs))
+            {
+                Array.Sort(xs);
+            }
             Xvals = xs;
+            if (!IsMonotonicallyIncreasing(ys))
+            {
+                Array.Sort(ys);
+            }
             Yvals = ys;
             Category = "Default";
         }
         public PairedData(double[] xs, double[] ys, string category){
+            if (!IsMonotonicallyIncreasing(xs))
+            {
+                Array.Sort(xs);
+
+            }
             Xvals = xs;
+            if (!IsMonotonicallyIncreasing(ys))
+            {
+                Array.Sort(ys);
+            }
             Yvals = ys;
             Category = Category;
         }
+        public bool IsMonotonicallyIncreasing(double[] arrayOfData)
+        {
+
+            for (int i = 0; i < arrayOfData.Length-1; i++)
+            {
+                if (arrayOfData[i] >= arrayOfData[i + 1])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         /// <summary>
         /// f implements ISample on PairedData, for a given input double x f produces an output double that represents the linearly interoplated value for y given x.
         /// </summary>

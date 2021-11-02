@@ -19,8 +19,8 @@ namespace fda_model_test
         static double[] Stages = { 0, 150000 };
 
         [Theory]
-        [InlineData(1234, 100, 0.002, 0)]
-        public void ComputeEAD_Iterations(int seed, int iterations, double exceedanceProbability, double expected)
+        [InlineData(1234, 1, 0.5)]
+        public void ComputePerformance(int seed, int iterations, double expected)
         {
 
             Statistics.IDistribution flow_frequency = IDistributionFactory.FactoryUniform(0, 100000, 1000);
@@ -47,10 +47,11 @@ namespace fda_model_test
             RandomProvider rp = new RandomProvider(seed);
             metrics.Results r = s.Compute(rp, iterations);
 
-            double actual = r.Thresholds.ListOfThresholds.Last().Performance.ConditionalNonExceedanceProbability(exceedanceProbability); 
+            double actual = r.Thresholds.ListOfThresholds.Last().Performance.MeanAEP(); 
+            
             double difference = expected - actual;
             double relativeDifference = difference / expected;
-            Assert.True(relativeDifference < .01);
+            Assert.True(relativeDifference < .02);
         }
     }
 
