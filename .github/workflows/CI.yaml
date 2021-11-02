@@ -28,6 +28,11 @@ jobs:
     - name: Build
       run: msbuild $env:Solution_Name /p:Configuration=Debug
         
-    # Execute all unit tests in the solution
     - name: Execute unit tests
       run: dotnet test --no-build
+      
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.4
+      with:
+        name: HEC-FDA-2.0-Snapshot
+        path: C:\Temp\FDA2.0\
