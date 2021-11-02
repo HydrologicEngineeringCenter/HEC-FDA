@@ -11,12 +11,16 @@ using Statistics;
 
 namespace fda_model_test
 {
+   
     public class PerformanceTest
     {
         //These were previously used in pairedDataTest but were moved here to be used for ead compute testing. 
         static double[] Flows = { 0, 100000 };
         static double[] Stages = { 0, 150000 };
-        public void ComputeEAD_Iterations(int seed, int iterations, double expected)
+
+        [Theory]
+        [InlineData(1234, 100, 0.002, 0)]
+        public void ComputeEAD_Iterations(int seed, int iterations, double exceedanceProbability, double expected)
         {
 
             Statistics.IDistribution flow_frequency = IDistributionFactory.FactoryUniform(0, 100000, 1000);
@@ -36,14 +40,19 @@ namespace fda_model_test
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, "residential");
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
+
             Simulation s = new Simulation(flow_frequency, flow_stage, upd);
+            Threshold threshold = new Threshold(0, ThresholdEnum.ExteriorStage, 150000);
+            s.PerformanceThresholds.AddThreshold(threshold);
             RandomProvider rp = new RandomProvider(seed);
             metrics.Results r = s.Compute(rp, iterations);
-            double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");
+
+            double actual = r.Thresholds.ListOfThresholds.Last().Performance.ConditionalNonExceedanceProbability(exceedanceProbability); 
+            double difference = expected - actual;
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .01);
         }
     }
 
 }
-    
+
