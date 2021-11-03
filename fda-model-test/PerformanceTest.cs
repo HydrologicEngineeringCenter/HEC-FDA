@@ -79,6 +79,28 @@ namespace fda_model_test
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .02);
         }
+
+        [Theory]
+        [InlineData(5, .5, .5)]
+        [InlineData(10, .2, .8)]
+        [InlineData(15, .1, .9)]
+        [InlineData(20, .04, .96)]
+        [InlineData(25, .02, .98)]
+        [InlineData(30, .01, .99)]
+        [InlineData(35, .004, .996)]
+        [InlineData(40, .002, .998)]
+        public void ComputeCNEP(double thresholdValue, double exceedanceProbability, double expected)
+        {
+            ead.Simulation simulation = new Simulation();
+            paireddata.IPairedData frequency_stage = new PairedData(NonExceedanceProbs, StageForNonExceedanceProbs);
+            Threshold threshold = new Threshold(1, ThresholdEnum.ExteriorStage, thresholdValue);
+            simulation.PerformanceThresholds.AddThreshold(threshold);
+            simulation.ComputePerformance(frequency_stage);
+            double actual = simulation.PerformanceThresholds.ListOfThresholds.First().Performance.ConditionalNonExceedanceProbability(exceedanceProbability);
+            double difference = expected - actual;
+            double relativeDifference = difference / expected;
+            Assert.True(relativeDifference < .02);
+        }
     }
 
 }

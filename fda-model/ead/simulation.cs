@@ -243,12 +243,21 @@ namespace ead{
         {
             paireddata.IPairedData levee_frequency_stage = levee_curve_sample.compose(frequency_stage);
             double aep = 0;
+            //extrapolate below
+            if (levee_frequency_stage.Xvals[0] != 0)
+            {
+                double initialProbOfStageInRange = levee_frequency_stage.Xvals[0] - 0;
+                double initialProbFailure = (levee_frequency_stage.Yvals[0] + 0) / 2;
+                aep += initialProbOfStageInRange * initialProbFailure;
+            }
+            //within function range
             for (int i = 1; i < levee_frequency_stage.Xvals.Length; i++)
             {
                 double probabilityOfStageInRange = levee_frequency_stage.Xvals[i] - levee_frequency_stage.Xvals[i - 1];
                 double averageProbFailure = (levee_frequency_stage.Yvals[i] + levee_frequency_stage.Yvals[i - 1]) / 2;
                 aep += probabilityOfStageInRange * averageProbFailure;
             }
+            //extrapolate above
             double finalProbOfStageInRange = 1 - levee_frequency_stage.Xvals[levee_frequency_stage.Xvals.Length - 1];
             double finalAvgProbFailure = levee_frequency_stage.Yvals[levee_frequency_stage.Yvals.Length - 1];
             aep += finalProbOfStageInRange * finalAvgProbFailure;
