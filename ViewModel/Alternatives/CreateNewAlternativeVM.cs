@@ -17,7 +17,6 @@ namespace ViewModel.Alternatives
 {
     public class CreateNewAlternativeVM : BaseEditorVM
     {
-        public CustomObservableCollection<AlternativeRowItem> Rows { get; } = new CustomObservableCollection<AlternativeRowItem>();
 
         #region Constructors
         /// <summary>

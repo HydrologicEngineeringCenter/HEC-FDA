@@ -101,6 +101,7 @@ namespace ViewModel.Alternatives
         }
         public void ViewResults(object arg1, EventArgs arg2)
         {
+
             //todo: Cody will do this in part 2 of task2.
         }
         public void EditAlternative(object arg1, EventArgs arg2)
@@ -140,6 +141,8 @@ namespace ViewModel.Alternatives
             }
             return altElement.ToString();
         }
+
+        
 
     }
 }

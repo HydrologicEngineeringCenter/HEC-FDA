@@ -576,6 +576,24 @@ namespace ViewModel.Study
                 AlternativeUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
+        public void UpdateAlternativeElement(AlternativeElement oldElement, AlternativeElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < AlternativeElements.Count; i++)
+            {
+                if (AlternativeElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                AlternativeElements.RemoveAt(index);
+                AlternativeElements.Insert(index, newElement);
+                AlternativeUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
         public void UpdateStructureInventoryElement(InventoryElement oldElement, InventoryElement newElement)
         {
             int index = -1;
