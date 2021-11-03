@@ -5,19 +5,11 @@ on:
     branches: [ main ]
 
 jobs:
-
   build:
-
-    strategy:
-      matrix:
-        configuration: [Debug]
-
     runs-on: windows-latest
                          
-
     env:
       Solution_Name: fda-model.sln                                  
-
 
     steps:
     - name: Checkout
@@ -25,28 +17,18 @@ jobs:
       with:
         fetch-depth: 0
         
-
-
-    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.2
       
     - name: Add Github Source
       run: dotnet nuget add source --username HydrologicEngineeringCenter --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/HydrologicEngineeringCenter/index.json"
       
-    # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
-      env:
-        Configuration: ${{ matrix.configuration }}
+      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=Debug
         
-    # Build the Application
     - name: Build
-      run: msbuild $env:Solution_Name /p:Configuration=$env:Configuration
-      env:
-        Configuration: ${{ matrix.configuration }}
+      run: msbuild $env:Solution_Name /p:Configuration=Debug
         
-    # Execute all unit tests in the solution
     - name: Test
       run: dotnet test --no-build
       
