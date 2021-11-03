@@ -189,8 +189,6 @@ namespace ead{
             for(int i=0;i<ordinates; i++){
                 double val = (double) i + .5;
                 //equally spaced non-exceedance (cumulative) probabilities in increasing order
-                //TODO: did I break something by moving from exceedance probs to non-exceedance probs
-                //in the performance compute, I believe I expect an exceedance prob 
                 double prob = (val)/((double)ordinates);
                 x[i] = prob;
                 //y values in increasing order 
@@ -207,7 +205,6 @@ namespace ead{
             foreach(paireddata.UncertainPairedData pd in _damage_category_stage_damage){
                 paireddata.IPairedData _stage_damage_sample = pd.SamplePairedData(rp.NextRandom());//needs to be a random number
                 paireddata.IPairedData frequency_damage = _stage_damage_sample.compose(frequency_stage);
-                //here we need to do something that identifies default threshold 
                 double eadEstimate = frequency_damage.integrate();
                 totalEAD += eadEstimate;
                 _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pd.Category);

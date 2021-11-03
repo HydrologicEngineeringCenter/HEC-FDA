@@ -50,11 +50,11 @@ namespace fda_model_test
         }
 
         [Theory]
-        [InlineData(new double[] { 1, .5, 0 }, new double[] { 0, 1000, 11000 }, 3250)]
-        [InlineData(new double[] { 1, .5 }, new double[] { 0, 1000 }, 750)]
+        [InlineData(new double[] { 0, .5, 1 }, new double[] { 0, 1000, 11000 }, 3250)]
+        [InlineData(new double[] { 0, .5 }, new double[] { 0, 1000 }, 750)]
         public void Integrate(double[] probs, double[] vals, double expected)
         {
-            //integrate should extrapolate last value out to zero probability if probabilty space not defined to zero.
+            //integrate should extrapolate last value out to probability=1 if probabilty space not defined to 1.
             PairedData paired = new PairedData(probs, vals);
 
             double actual = paired.integrate();
