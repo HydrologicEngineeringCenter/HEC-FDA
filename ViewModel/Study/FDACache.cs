@@ -594,6 +594,24 @@ namespace ViewModel.Study
                 AlternativeUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
+        public void UpdateAlternativeElement(AlternativeElement oldElement, AlternativeElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < AlternativeElements.Count; i++)
+            {
+                if (AlternativeElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                AlternativeElements.RemoveAt(index);
+                AlternativeElements.Insert(index, newElement);
+                AlternativeUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
         public void UpdateStructureInventoryElement(InventoryElement oldElement, InventoryElement newElement)
         {
             int index = -1;
@@ -687,6 +705,14 @@ namespace ViewModel.Study
             else if (element is IASOwnerElement)
             {
                 retVal.AddRange(IASElementSets);
+            }
+            if (element.GetType() == typeof(AltervativeOwnerElement))
+            {
+                foreach (ChildElement elem in AlternativeElements)
+                {
+                    retVal.Add(elem);
+                }
+                return retVal;
             }
             if (element.GetType() == typeof(AltervativeOwnerElement))
             {
@@ -833,6 +859,14 @@ namespace ViewModel.Study
                 }
                 return retVal;
             }
+            if (childElementType == typeof(AlternativeElement))
+            {
+                foreach (ChildElement elem in AlternativeElements)
+                {
+                    retVal.Add(elem);
+                }
+                return retVal;
+            }
             return retVal;
         }
         public List<T> GetChildElementsOfType<T>() where T : ChildElement
@@ -888,6 +922,16 @@ namespace ViewModel.Study
             else if (childElementType == typeof(IASElementSet))
             {
                 childElem = IASElementSets.Where(elem => elem.GetElementID() == ID).FirstOrDefault();
+            }
+            if (childElementType == typeof(AlternativeElement))
+            {
+                foreach (ChildElement elem in AlternativeElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
             }
             if (childElementType == typeof(AlternativeElement))
             {
