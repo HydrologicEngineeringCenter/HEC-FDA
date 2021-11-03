@@ -17,10 +17,12 @@ namespace fda_model_test
         //These were previously used in pairedDataTest but were moved here to be used for ead compute testing. 
         static double[] Flows = { 0, 100000 };
         static double[] Stages = { 0, 150000 };
+        static double[] NonExceedanceProbs = { .5, .8, .9, .96, .98, .99, .996, .998 };
+        static double[] StageForNonExceedanceProbs = { 5, 10, 15, 20, 25, 30, 35, 40 };
 
         [Theory]
         [InlineData(1234, 1, 0.5)]
-        public void ComputePerformance(int seed, int iterations, double expected)
+        public void ComputePerformanceWithSimulation(int seed, int iterations, double expected)
         {
 
             Statistics.IDistribution flow_frequency = IDistributionFactory.FactoryUniform(0, 100000, 1000);
@@ -49,6 +51,30 @@ namespace fda_model_test
 
             double actual = r.Thresholds.ListOfThresholds.Last().Performance.MeanAEP(); 
             
+            double difference = expected - actual;
+            double relativeDifference = difference / expected;
+            Assert.True(relativeDifference < .02);
+        }
+
+
+
+        [Theory]
+        [InlineData(5,.5)]
+        [InlineData(10,.2)]
+        [InlineData(15,.1)]
+        [InlineData(20,.04)]
+        [InlineData(25, .02)]
+        [InlineData(30,.01)]
+        [InlineData(35, .004)]
+        [InlineData(40, .002)]
+        public void ComputeAEP(double thresholdValue, double expected)
+        {
+            ead.Simulation simulation = new Simulation(); 
+            paireddata.IPairedData frequency_stage = new PairedData(NonExceedanceProbs, StageForNonExceedanceProbs);
+            Threshold threshold = new Threshold(1, ThresholdEnum.ExteriorStage, thresholdValue);
+            simulation.PerformanceThresholds.AddThreshold(threshold);
+            simulation.ComputePerformance(frequency_stage);
+            double actual = simulation.PerformanceThresholds.ListOfThresholds.First().Performance.MeanAEP();
             double difference = expected - actual;
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .02);
