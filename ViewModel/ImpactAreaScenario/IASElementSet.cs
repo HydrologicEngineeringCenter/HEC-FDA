@@ -24,7 +24,7 @@ namespace ViewModel.ImpactAreaScenario
         #endregion
 
         #region Properties
-
+        public bool HasComputed { get; set; }
         /// <summary>
         /// These are the results after doing a compute. If a compute has not been
         /// done, then this will be null.

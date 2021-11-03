@@ -41,6 +41,7 @@ namespace ViewModel.Study
         public event AddElementEventHandler StageDamageAdded;
         public event AddElementEventHandler StructureInventoryAdded;
         public event AddElementEventHandler IASElementAdded;
+        public event AddElementEventHandler AlternativeAdded;
         public event AddElementEventHandler OccTypeElementAdded;
 
         public event AddElementEventHandler RatingRemoved;
@@ -55,6 +56,7 @@ namespace ViewModel.Study
         public event AddElementEventHandler StageDamageRemoved;
         public event AddElementEventHandler StructureInventoryRemoved;
         public event AddElementEventHandler IASElementRemoved;
+        public event AddElementEventHandler AlternativeRemoved;
         public event AddElementEventHandler OccTypeElementRemoved;
 
         public event UpdateElementEventHandler RatingUpdated;
@@ -70,8 +72,6 @@ namespace ViewModel.Study
         public event UpdateElementEventHandler StructureInventoryUpdated;
         public event UpdateElementEventHandler IASElementUpdated;
         public event UpdateElementEventHandler OccTypeElementUpdated;
-        public event AddElementEventHandler AlternativeAdded;
-        public event AddElementEventHandler AlternativeRemoved;
         public event UpdateElementEventHandler AlternativeUpdated;
 
 
@@ -102,7 +102,6 @@ namespace ViewModel.Study
         public OccupancyTypesOwnerElement OccTypeParent { get; set; }
         public StructureInventoryOwnerElement StructureInventoryParent { get; set; }
         public IASOwnerElement IASParent { get; set; }
-        //public IASTreeOwnerElement IASTreeParent { get; set; }
         public AltervativeOwnerElement AlternativeParent { get; set; }
         public AlternativeComparisonReportOwnerElement AlternativeComparisonReportParent { get; set; }
         #endregion
@@ -177,7 +176,6 @@ namespace ViewModel.Study
                 RemoveElementFromList(FailureFunctionElements, elem);
                 FailureFunctionRemoved?.Invoke(this, elementAddedEventArgs);
             }
-
             else if (elem.GetType() == typeof(OccupancyTypesElement))
             {
                 RemoveElementFromList(OccTypeElements, elem);
@@ -197,6 +195,11 @@ namespace ViewModel.Study
             {
                 RemoveElementFromList(IASElementSets, elem);
                 IASElementRemoved?.Invoke(this, elementAddedEventArgs);
+            }
+            else if (elem.GetType() == typeof(AlternativeElement))
+            {
+                RemoveElementFromList(AlternativeElements, elem);
+                AlternativeRemoved?.Invoke(this, elementAddedEventArgs);
             }
         }
 
@@ -287,6 +290,11 @@ namespace ViewModel.Study
                 IASElementSets.Add((IASElementSet)elem);
                 IASElementAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
+            else if (elem.GetType() == typeof(AlternativeElement))
+            {
+                AlternativeElements.Add((AlternativeElement)elem);
+                AlternativeAdded?.Invoke(this, new ElementAddedEventArgs(elem));
+            }
         }
         #endregion
     
@@ -339,7 +347,11 @@ namespace ViewModel.Study
             {
                 UpdateIASElement((IASElementSet)oldElement, (IASElementSet)newElement);
             }
-            else if (oldElement is InventoryElement )
+            else if (oldElement.GetType().Equals(typeof(AlternativeElement)))
+            {
+                UpdateAlternativeElement((AlternativeElement)oldElement, (AlternativeElement)newElement);
+            }
+            else if (oldElement.GetType().Equals(typeof(InventoryElement)))
             {
                 UpdateStructureInventoryElement((InventoryElement)oldElement, (InventoryElement)newElement);
             }
@@ -545,6 +557,24 @@ namespace ViewModel.Study
                 IASElementUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
+        public void UpdateAlternativeElement(AlternativeElement oldElement, AlternativeElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < AlternativeElements.Count; i++)
+            {
+                if (AlternativeElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                AlternativeElements.RemoveAt(index);
+                AlternativeElements.Insert(index, newElement);
+                AlternativeUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
         public void UpdateStructureInventoryElement(InventoryElement oldElement, InventoryElement newElement)
         {
             int index = -1;
@@ -638,6 +668,14 @@ namespace ViewModel.Study
             else if (element is IASOwnerElement)
             {
                 retVal.AddRange(IASElementSets);
+            }
+            if (element.GetType() == typeof(AltervativeOwnerElement))
+            {
+                foreach (ChildElement elem in AlternativeElements)
+                {
+                    retVal.Add(elem);
+                }
+                return retVal;
             }
             return retVal;
 
@@ -752,6 +790,14 @@ namespace ViewModel.Study
             {
                 retVal.AddRange(IASElementSets);
             }
+            if (childElementType == typeof(AlternativeElement))
+            {
+                foreach (ChildElement elem in AlternativeElements)
+                {
+                    retVal.Add(elem);
+                }
+                return retVal;
+            }
             return retVal;
         }
         public List<T> GetChildElementsOfType<T>() where T : ChildElement
@@ -807,6 +853,16 @@ namespace ViewModel.Study
             else if (childElementType == typeof(IASElementSet))
             {
                 childElem = IASElementSets.Where(elem => elem.GetElementID() == ID).FirstOrDefault();
+            }
+            if (childElementType == typeof(AlternativeElement))
+            {
+                foreach (ChildElement elem in AlternativeElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
             }
 
             return childElem;

@@ -30,18 +30,21 @@
         </Grid>
 
 
-        <TextBlock Grid.Row="1" Text="Impact Area Scenario:" Margin="10,0,0,0" VerticalAlignment="Bottom"/>
+        <TextBlock Grid.Row="1" Text="Pick Two Impact Area Scenarios:" Margin="10,0,0,0" VerticalAlignment="Bottom"/>
 
         <ListBox Grid.Row="2" Name="lst_conditions" ItemsSource="{Binding Rows}"   SelectionMode="Multiple" Margin="10,5,10,10">
-                <ListBox.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="ToolTip" Value="{Binding Tooltip}"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
                     <DataTemplate>
-                    <!--<CheckBox Content="{Binding Name}"   IsChecked="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" />-->
-                    <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}" />
-
+                    <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}" IsEnabled="{Binding HasComputed}" />
                 </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
 
-        <Utilities:OKCloseControl Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5" />
+        <Utilities:SaveCloseControl Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5" />
     </Grid>
 </UserControl>
