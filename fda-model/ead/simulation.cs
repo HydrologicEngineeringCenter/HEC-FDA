@@ -152,14 +152,16 @@ namespace ead{
                 if (_levee_curve.IsNull)
                 {
                     ComputeDamagesFromStageFrequency(rp, frequency_stage);
+                    ComputePerformance(frequency_stage);
                 }
                 else
                 {
                     paireddata.IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
                     //paireddata.IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
                     ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_stage, levee_curve_sample);
+                    ComputeLeveePerformance(frequency_stage, levee_curve_sample);
                 }
-                ComputePerformance(frequency_stage);
+                
             }
             else
             {
@@ -175,8 +177,8 @@ namespace ead{
                 {
                     paireddata.IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
                     //paireddata.IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
-                    ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_floodplainstage, levee_curve_sample);
-                    ComputePerformance(frequency_stage);//this is where we need to handle AEP differently 
+                    ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_floodplainstage, levee_curve_sample);                  
+                    ComputeLeveePerformance(frequency_stage,levee_curve_sample);
                 }
                 
             }
@@ -233,15 +235,40 @@ namespace ead{
                 double thresholdValue = threshold.ThresholdValue;
                 double aep = 1-frequency_stage.f_inverse(thresholdValue);
                 threshold.Performance.AddAEPEstimate(aep);
+                ComputeConditionalNonExceedanceProbability(frequency_stage, threshold);
+            }
+        }
+        //this method assumes that the levee fragility function spans the entire probability domain 
+        public void ComputeLeveePerformance(paireddata.IPairedData frequency_stage, paireddata.IPairedData levee_curve_sample)
+        {
+            paireddata.IPairedData levee_frequency_stage = levee_curve_sample.compose(frequency_stage);
+            double aep = 0;
+            for (int i = 1; i < levee_frequency_stage.Xvals.Length; i++)
+            {
+                double probabilityOfStageInRange = levee_frequency_stage.Xvals[i] - levee_frequency_stage.Xvals[i - 1];
+                double averageProbFailure = (levee_frequency_stage.Yvals[i] + levee_frequency_stage.Yvals[i - 1]) / 2;
+                aep += probabilityOfStageInRange * averageProbFailure;
+            }
+            double finalProbOfStageInRange = 1 - levee_frequency_stage.Xvals[levee_frequency_stage.Xvals.Length - 1];
+            double finalAvgProbFailure = levee_frequency_stage.Yvals[levee_frequency_stage.Yvals.Length - 1];
+            aep += finalProbOfStageInRange * finalAvgProbFailure;
+            foreach (var threshold in _results.Thresholds.ListOfThresholds)
+            {
+                threshold.Performance.AddAEPEstimate(aep);
+                ComputeConditionalNonExceedanceProbability(frequency_stage, threshold);
+            }
+            
+        }
 
-                double[] stageOfEvent = new double[5];
-                double[] er101RequiredExceedanceProbabilities = new double[] { .1, .02, .01, .004, .002 };
-                for (int i = 0; i < er101RequiredExceedanceProbabilities.Length; i++)
-                {
-                    //frequency_stage is non-exceedance probability 
-                    stageOfEvent[i] = frequency_stage.f(1-er101RequiredExceedanceProbabilities[i]);
-                    threshold.Performance.AddStageForCNEP(er101RequiredExceedanceProbabilities[i], stageOfEvent[i]);
-                }
+        public void ComputeConditionalNonExceedanceProbability(paireddata.IPairedData frequency_stage, metrics.Threshold threshold)
+        {
+            double[] stageOfEvent = new double[5];
+            double[] er101RequiredExceedanceProbabilities = new double[] { .1, .02, .01, .004, .002 };
+            for (int i = 0; i < er101RequiredExceedanceProbabilities.Length; i++)
+            {
+                //frequency_stage is non-exceedance probability 
+                stageOfEvent[i] = frequency_stage.f(1 - er101RequiredExceedanceProbabilities[i]);
+                threshold.Performance.AddStageForCNEP(er101RequiredExceedanceProbabilities[i], stageOfEvent[i]);
             }
         }
 
