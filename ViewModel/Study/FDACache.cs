@@ -48,6 +48,7 @@ namespace ViewModel.Study
         public event AddElementEventHandler StageDamageAdded;
         public event AddElementEventHandler StructureInventoryAdded;
         public event AddElementEventHandler IASElementAdded;
+        public event AddElementEventHandler AlternativeAdded;
         public event AddElementEventHandler OccTypeElementAdded;
 
 
@@ -63,6 +64,7 @@ namespace ViewModel.Study
         public event AddElementEventHandler StageDamageRemoved;
         public event AddElementEventHandler StructureInventoryRemoved;
         public event AddElementEventHandler IASElementRemoved;
+        public event AddElementEventHandler AlternativeRemoved;
         public event AddElementEventHandler OccTypeElementRemoved;
 
 
@@ -79,8 +81,6 @@ namespace ViewModel.Study
         public event UpdateElementEventHandler StructureInventoryUpdated;
         public event UpdateElementEventHandler IASElementUpdated;
         public event UpdateElementEventHandler OccTypeElementUpdated;
-        public event AddElementEventHandler AlternativeAdded;
-        public event AddElementEventHandler AlternativeRemoved;
         public event UpdateElementEventHandler AlternativeUpdated;
 
         private List<RatingCurveElement> _Ratings = new List<RatingCurveElement>();
@@ -96,6 +96,7 @@ namespace ViewModel.Study
         private List<AggregatedStageDamageElement> _StageDamages = new List<AggregatedStageDamageElement>();
         private List<InventoryElement> _Structures = new List<InventoryElement>();
         private List<IASElementSet> _IASElementSets = new List<IASElementSet>();
+        private List<AlternativeElement> _AlternativeElements = new List<AlternativeElement>();
 
         #region Properties
         public List<RatingCurveElement> RatingCurveElements { get { return _Ratings; }  }      
@@ -111,6 +112,8 @@ namespace ViewModel.Study
         public List<AggregatedStageDamageElement> StageDamageElements { get { return _StageDamages; } }
         public List<InventoryElement> StructureInventoryElements { get { return _Structures; } }
         public List<IASElementSet> IASElementSets { get { return _IASElementSets; } }
+        public List<AlternativeElement> AlternativeElements { get { return _AlternativeElements; } }
+
 
         #region ParentElements
         public TerrainOwnerElement TerrainParent { get; set; }
@@ -125,7 +128,6 @@ namespace ViewModel.Study
         public OccupancyTypesOwnerElement OccTypeParent { get; set; }
         public StructureInventoryOwnerElement StructureInventoryParent { get; set; }
         public IASOwnerElement IASParent { get; set; }
-        //public IASTreeOwnerElement IASTreeParent { get; set; }
         public AltervativeOwnerElement AlternativeParent { get; set; }
         public AlternativeComparisonReportOwnerElement AlternativeComparisonReportParent { get; set; }
         #endregion
@@ -152,86 +154,78 @@ namespace ViewModel.Study
         public void RemoveElement(ChildElement elem, int id)
         {
 
-            Saving.ElementAddedEventArgs elementAddedEventArgs = new Saving.ElementAddedEventArgs(elem);
+            ElementAddedEventArgs elementAddedEventArgs = new ElementAddedEventArgs(elem);
             elementAddedEventArgs.ID = id;
 
             if (elem.GetType() == typeof(TerrainElement))
             {
                 RemoveElementFromList(TerrainElements, elem);
-                //TerrainElements.Remove((TerrainElement)elem);
                 TerrainRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            if (elem.GetType() == typeof(ImpactAreaElement))
+            else if (elem.GetType() == typeof(ImpactAreaElement))
             {
                 RemoveElementFromList(ImpactAreaElements, elem);
-                //ImpactAreaElements.Remove((ImpactAreaElement)elem);
                 ImpactAreaRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            if (elem.GetType() == typeof(WaterSurfaceElevationElement))
+            else if (elem.GetType() == typeof(WaterSurfaceElevationElement))
             {
                 RemoveElementFromList(WaterSurfaceElements, elem);
-                //WaterSurfaceElements.Remove((WaterSurfaceElevationElement)elem);
                 WaterSurfaceElevationRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            if (elem.GetType() == typeof(AnalyticalFrequencyElement))
+            else if (elem.GetType() == typeof(AnalyticalFrequencyElement))
             {
                 RemoveElementFromList(FlowFrequencyElements, elem);
-                //FlowFrequencyElements.Remove((AnalyticalFrequencyElement)elem);
                 FlowFrequencyRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            if (elem.GetType() == typeof(InflowOutflowElement))
+            else if (elem.GetType() == typeof(InflowOutflowElement))
             {
                 RemoveElementFromList(InflowOutflowElements, elem);
-                //InflowOutflowElements.Remove((InflowOutflowElement)elem);
                 InflowOutflowRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            if (elem.GetType() == typeof(RatingCurveElement))
+            else if (elem.GetType() == typeof(RatingCurveElement))
             {
                 RemoveElementFromList(RatingCurveElements, elem);
-                //RatingCurveElements.Remove((RatingCurveElement)elem);
                 RatingRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            if (elem.GetType() == typeof(ExteriorInteriorElement))
+            else if (elem.GetType() == typeof(ExteriorInteriorElement))
             {
                 RemoveElementFromList(ExteriorInteriorElements, elem);
-                //ExteriorInteriorElements.Remove((ExteriorInteriorElement)elem);
                 ExteriorInteriorRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            if (elem.GetType() == typeof(LeveeFeatureElement))
+            else if (elem.GetType() == typeof(LeveeFeatureElement))
             {
                 RemoveElementFromList(LeveeElements, elem);
-                //LeveeElements.Remove((LeveeFeatureElement)elem);
                 LeveeRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            if (elem.GetType() == typeof(FailureFunctionElement))
+            else if (elem.GetType() == typeof(FailureFunctionElement))
             {
                 RemoveElementFromList(FailureFunctionElements, elem);
-                //FailureFunctionElements.Remove((FailureFunctionElement)elem);
                 FailureFunctionRemoved?.Invoke(this, elementAddedEventArgs);
             }
-           
-            if (elem.GetType() == typeof(OccupancyTypesElement))
+            else if (elem.GetType() == typeof(OccupancyTypesElement))
             {
                 RemoveElementFromList(OccTypeElements, elem);
-                //OccTypeElements.Remove((OccupancyTypesElement)elem);
                 OccTypeElementRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            if (elem.GetType() == typeof(InventoryElement))
+            else if (elem.GetType() == typeof(InventoryElement))
             {
                 RemoveElementFromList(StructureInventoryElements, elem);
-                //StructureInventoryElements.Remove((InventoryElement)elem);
                 StructureInventoryRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            if (elem.GetType() == typeof(AggregatedStageDamageElement))
+            else if (elem.GetType() == typeof(AggregatedStageDamageElement))
             {
                 RemoveElementFromList(StageDamageElements, elem);
-                //StageDamageElements.Remove((AggregatedStageDamageElement)elem);
                 StageDamageRemoved?.Invoke(this, elementAddedEventArgs);
             }
-            if (elem.GetType() == typeof(IASElementSet))
+            else if (elem.GetType() == typeof(IASElementSet))
             {
                 RemoveElementFromList(IASElementSets, elem);
                 IASElementRemoved?.Invoke(this, elementAddedEventArgs);
+            }
+            else if (elem.GetType() == typeof(AlternativeElement))
+            {
+                RemoveElementFromList(AlternativeElements, elem);
+                AlternativeRemoved?.Invoke(this, elementAddedEventArgs);
             }
         }
 
@@ -261,67 +255,72 @@ namespace ViewModel.Study
             if (elem.GetType() == typeof(TerrainElement))
             {
                 TerrainElements.Add((TerrainElement)elem);
-                TerrainAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                TerrainAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem.GetType() == typeof(ImpactAreaElement))
             {
                 ImpactAreaElements.Add((ImpactAreaElement)elem);
-                ImpactAreaAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                ImpactAreaAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem.GetType() == typeof(WaterSurfaceElevationElement))
             {
                 WaterSurfaceElements.Add((WaterSurfaceElevationElement)elem);
-                WaterSurfaceElevationAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                WaterSurfaceElevationAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem.GetType() == typeof(AnalyticalFrequencyElement))
             {
                 FlowFrequencyElements.Add((AnalyticalFrequencyElement)elem);
-                FlowFrequencyAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                FlowFrequencyAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem.GetType() == typeof(InflowOutflowElement))
             {
                 InflowOutflowElements.Add((InflowOutflowElement)elem);
-                InflowOutflowAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                InflowOutflowAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem.GetType() == typeof(RatingCurveElement))
             {
                 RatingCurveElements.Add((RatingCurveElement)elem);
-                RatingAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                RatingAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem.GetType() == typeof(ExteriorInteriorElement))
             {
                 ExteriorInteriorElements.Add((ExteriorInteriorElement)elem);
-                ExteriorInteriorAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                ExteriorInteriorAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem.GetType() == typeof(LeveeFeatureElement))
             {
                 LeveeElements.Add((LeveeFeatureElement)elem);
-                LeveeAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                LeveeAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem.GetType() == typeof(FailureFunctionElement))
             {
                 FailureFunctionElements.Add((FailureFunctionElement)elem);
-                FailureFunctionAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                FailureFunctionAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem.GetType() == typeof(OccupancyTypesElement))
             {
                 OccTypeElements.Add((OccupancyTypesElement)elem);
-                OccTypeElementAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                OccTypeElementAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem.GetType() == typeof(InventoryElement))
             {
                 StructureInventoryElements.Add((InventoryElement)elem);
-                StructureInventoryAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                StructureInventoryAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem.GetType() == typeof(AggregatedStageDamageElement))
             {
                 StageDamageElements.Add((AggregatedStageDamageElement)elem);
-                StageDamageAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                StageDamageAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem.GetType() == typeof(IASElementSet))
             {
                 IASElementSets.Add((IASElementSet)elem);
-                IASElementAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                IASElementAdded?.Invoke(this, new ElementAddedEventArgs(elem));
+            }
+            else if (elem.GetType() == typeof(AlternativeElement))
+            {
+                AlternativeElements.Add((AlternativeElement)elem);
+                AlternativeAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
 
         }
@@ -379,6 +378,10 @@ namespace ViewModel.Study
             else if (oldElement.GetType().Equals(typeof(IASElementSet)))
             {
                 UpdateIASElement((IASElementSet)oldElement, (IASElementSet)newElement);
+            }
+            else if (oldElement.GetType().Equals(typeof(AlternativeElement)))
+            {
+                UpdateAlternativeElement((AlternativeElement)oldElement, (AlternativeElement)newElement);
             }
             else if (oldElement.GetType().Equals(typeof(InventoryElement)))
             {
@@ -606,6 +609,24 @@ namespace ViewModel.Study
                 IASElementUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
+        public void UpdateAlternativeElement(AlternativeElement oldElement, AlternativeElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < AlternativeElements.Count; i++)
+            {
+                if (AlternativeElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                AlternativeElements.RemoveAt(index);
+                AlternativeElements.Insert(index, newElement);
+                AlternativeUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
         public void UpdateStructureInventoryElement(InventoryElement oldElement, InventoryElement newElement)
         {
             int index = -1;
@@ -763,6 +784,14 @@ namespace ViewModel.Study
             if (element.GetType() == typeof(IASOwnerElement))
             {
                 foreach (ChildElement elem in IASElementSets)
+                {
+                    retVal.Add(elem);
+                }
+                return retVal;
+            }
+            if (element.GetType() == typeof(AltervativeOwnerElement))
+            {
+                foreach (ChildElement elem in AlternativeElements)
                 {
                     retVal.Add(elem);
                 }
@@ -938,6 +967,14 @@ namespace ViewModel.Study
                 }
                 return retVal;
             }
+            if (childElementType == typeof(AlternativeElement))
+            {
+                foreach (ChildElement elem in AlternativeElements)
+                {
+                    retVal.Add(elem);
+                }
+                return retVal;
+            }
             return retVal;
         }
         public List<T> GetChildElementsOfType<T>() where T : ChildElement
@@ -1040,6 +1077,16 @@ namespace ViewModel.Study
             if (childElementType == typeof(IASElementSet))
             {
                 foreach (ChildElement elem in IASElementSets)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+            if (childElementType == typeof(AlternativeElement))
+            {
+                foreach (ChildElement elem in AlternativeElements)
                 {
                     if (elem.GetElementID() == ID)
                     {

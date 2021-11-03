@@ -24,7 +24,7 @@ namespace ViewModel.ImpactAreaScenario
         #endregion
 
         #region Properties
-
+        public bool HasComputed { get; set; }
         /// <summary>
         /// These are the results after doing a compute. If a compute has not been
         /// done, then this will be null.
@@ -201,7 +201,8 @@ namespace ViewModel.ImpactAreaScenario
         //Intentionally left blank until the compute is completed in the model. -cody 10/26/21
         private void ComputeCondition(object arg1, EventArgs arg2)
         {
-
+            //todo: not sure how this should ultimately get handled.
+            HasComputed = true;
             //EnterSeedVM enterSeedVM = new EnterSeedVM();
             //string header = "Enter Seed Value";
             //DynamicTabVM tab = new DynamicTabVM(header, enterSeedVM, "EnterSeed");
