@@ -623,6 +623,7 @@ namespace ViewModel.Study
             Saving.PersistenceFactory.GetStageDamageManager().Load();
             Saving.PersistenceFactory.GetStructureInventoryManager().Load();
             Saving.PersistenceFactory.GetIASManager().Load();
+            Saving.PersistenceFactory.GetAlternativeManager().Load();
             Saving.PersistenceFactory.GetOccTypeManager().Load();
 
         }

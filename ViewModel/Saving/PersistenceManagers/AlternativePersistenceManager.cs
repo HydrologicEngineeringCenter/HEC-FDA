@@ -27,7 +27,9 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            throw new NotImplementedException();
+            string xml = (string)rowData[2];
+            AlternativeElement elem = new AlternativeElement(xml);
+            return elem;
         }
 
         #region Logging
