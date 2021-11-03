@@ -677,6 +677,14 @@ namespace ViewModel.Study
                 }
                 return retVal;
             }
+            if (element.GetType() == typeof(AltervativeOwnerElement))
+            {
+                foreach (ChildElement elem in AlternativeElements)
+                {
+                    retVal.Add(elem);
+                }
+                return retVal;
+            }
             return retVal;
 
         }
@@ -798,6 +806,14 @@ namespace ViewModel.Study
                 }
                 return retVal;
             }
+            if (childElementType == typeof(AlternativeElement))
+            {
+                foreach (ChildElement elem in AlternativeElements)
+                {
+                    retVal.Add(elem);
+                }
+                return retVal;
+            }
             return retVal;
         }
         public List<T> GetChildElementsOfType<T>() where T : ChildElement
@@ -853,6 +869,16 @@ namespace ViewModel.Study
             else if (childElementType == typeof(IASElementSet))
             {
                 childElem = IASElementSets.Where(elem => elem.GetElementID() == ID).FirstOrDefault();
+            }
+            if (childElementType == typeof(AlternativeElement))
+            {
+                foreach (ChildElement elem in AlternativeElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
             }
             if (childElementType == typeof(AlternativeElement))
             {
