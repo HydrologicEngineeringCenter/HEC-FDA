@@ -17,6 +17,7 @@ namespace alternatives
             _periodOfAnalysis = periodOfAnalysis;
         }
         public double ComputeEEAD(interfaces.IProvideRandomNumbers rp, Int64 iterations, double discountRate){
+
             //probably instantiate a rng to seed each impact area differently
             IList<metrics.Results> baseYearResults = _currentYear.Compute(rp,iterations);//this is a list of impact area-specific ead
             IList<metrics.Results> mlfYearResults = _futureYear.Compute(rp, iterations);
