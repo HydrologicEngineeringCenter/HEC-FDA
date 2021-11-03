@@ -178,7 +178,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         }
         private void RemoveStageDamageElement(object sender, Saving.ElementAddedEventArgs e)
         {
-            removeElement(((ChildElement)e.Element).GetElementID(), StageDamageElements);
+            removeElement(e.ID, StageDamageElements);
             SelectedStageDamageElement = StageDamageElements[0];
         }
         private void UpdateStageDamageElement(object sender, Saving.ElementUpdatedEventArgs e)
@@ -192,7 +192,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         }
         private void RemoveExtIntElement(object sender, Saving.ElementAddedEventArgs e)
         {
-            removeElement(((ChildElement)e.Element).GetElementID(), ExteriorInteriorElements);
+            removeElement(e.ID, ExteriorInteriorElements);
             SelectedExteriorInteriorElement = ExteriorInteriorElements[0];
         }
         private void UpdateExtIntElement(object sender, Saving.ElementUpdatedEventArgs e)
@@ -206,7 +206,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         }
         private void RemoveLeveeElement(object sender, Saving.ElementAddedEventArgs e)
         {
-            removeElement(((ChildElement)e.Element).GetElementID(), LeveeFeatureElements);
+            removeElement(e.ID, LeveeFeatureElements);
             SelectedLeveeFeatureElement = LeveeFeatureElements[0];
         }
         private void UpdateLeveeElement(object sender, Saving.ElementUpdatedEventArgs e)
@@ -221,7 +221,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         }
         private void RemoveInOutElement(object sender, Saving.ElementAddedEventArgs e)
         {
-            removeElement(((ChildElement)e.Element).GetElementID(), InflowOutflowElements);
+            removeElement(e.ID, InflowOutflowElements);
         }
         private void UpdateInOutElement(object sender, Saving.ElementUpdatedEventArgs e)
         {
@@ -235,7 +235,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         }
         private void RemoveFlowFreqElement(object sender, Saving.ElementAddedEventArgs e)
         {
-            removeElement(((ChildElement)e.Element).GetElementID(), FrequencyElements);
+            removeElement(e.ID, FrequencyElements);
             SelectedFrequencyElement = FrequencyElements[0];
         }
         private void UpdateFlowFreqElement(object sender, Saving.ElementUpdatedEventArgs e)
@@ -249,7 +249,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         }
         private void RemoveImpactAreaElement(object sender, Saving.ElementAddedEventArgs e)
         {
-            removeElement(((ChildElement)e.Element).GetElementID(), ImpactAreaElements);
+            removeElement(e.ID, ImpactAreaElements);
         }
 
         private void AddRatingElement(object sender, Saving.ElementAddedEventArgs e)
@@ -258,7 +258,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         }
         private void RemoveRatingElement(object sender, Saving.ElementAddedEventArgs e)
         {
-            removeElement(((ChildElement)e.Element).GetElementID(), RatingCurveElements);
+            removeElement(e.ID, RatingCurveElements);
             SelectedRatingCurveElement = RatingCurveElements[0];
         }
         private void UpdateRatingElement(object sender, Saving.ElementUpdatedEventArgs e)
@@ -268,7 +268,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         private void removeElement(int idToRemove, ObservableCollection<ChildElementComboItem> collection)
         {
-            collection.Remove(collection.Where(elem => elem.ChildElement != null && elem.ChildElement.GetElementID() == idToRemove).Single());
+            collection.Remove(collection.Where(elem => elem.ChildElement != null && elem.ID == idToRemove).Single());
 
         }
 

@@ -16,6 +16,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
     {
         private string _Name;
         private ChildElement _ChildElement;
+
+        public int ID { get; set; } = -1;
         public ChildElement ChildElement
         {
             get { return _ChildElement; }
@@ -36,6 +38,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
             else
             {
                 _Name = element.Name;
+                ID = element.GetElementID();
             }
             _ChildElement = element;
         }
