@@ -45,8 +45,8 @@ namespace ViewModel.Alternatives
             ID = elem.GetElementID();
             Year = elem.AnalysisYear;
             HasComputed = elem.HasComputed;
-            //Name needs to be after the Year property is set.
-            Name = elem.Name;
+            //Name needs to be after the Year property is set to get the proper display name.
+            Name = elem.Name ;
             IsSelected = false;
             UpdateTooltip();
 
