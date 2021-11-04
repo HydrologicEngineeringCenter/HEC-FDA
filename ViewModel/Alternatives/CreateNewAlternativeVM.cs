@@ -19,6 +19,8 @@ namespace ViewModel.Alternatives
 
         public ObservableCollection<AlternativeRowItem> Rows { get; set; }
 
+
+        #region Constructors
         /// <summary>
         /// Create new ctor
         /// </summary>
@@ -26,7 +28,7 @@ namespace ViewModel.Alternatives
         public CreateNewAlternativeVM( EditorActionManager actionManager) : base(actionManager)
         {
             Rows = CreateRowsForIASElementsInStudy();
-            ListenEvents();
+            ListenToIASEvents();
         }
 
         /// <summary>
@@ -39,10 +41,12 @@ namespace ViewModel.Alternatives
             Description = elem.Description;
             List<int> iASElementSets = elem.IASElementSets;
             SelectSavedRows(iASElementSets);
-            ListenEvents();
+            ListenToIASEvents();
         }
 
-        private void ListenEvents()
+        #endregion
+
+        private void ListenToIASEvents()
         {
             StudyCache.IASElementAdded += IASAdded;
             StudyCache.IASElementRemoved += IASRemoved;
@@ -76,26 +80,27 @@ namespace ViewModel.Alternatives
            
         }
 
-        private void SelectSavedRows(List<int> iasIDs)
+        private void SelectSavedRows(List<int> savedIASIDs)
         {
-            //i don't think it is possible to get out of sync here, but in case it is, i will do the following:
-            //if an id that was saved no longer exists then i will ignore that id. If a new id exists that
-            //wasn't saved then i will make a row for it.
-            ObservableCollection<AlternativeRowItem> alternativeRowItems = CreateRowsForIASElementsInStudy();
-            foreach(int id in iasIDs)
+            //if an id that was saved no longer exists then i will ignore that id when populating the rows. The alternative will
+            //still point to the missing id until the user saves. If a new id exists that wasn't saved then i will make a row for it.
+            ObservableCollection<AlternativeRowItem> currentIASRowsInStudy = CreateRowsForIASElementsInStudy();
+            foreach(int id in savedIASIDs)
             {
-                foreach(AlternativeRowItem row in alternativeRowItems)
+                foreach(AlternativeRowItem row in currentIASRowsInStudy)
                 {
                     if(row.ID == id)
                     {
                         row.IsSelected = true;
+                        //i don't think it is possible for a saved IAS to not be computed so i mark it computed.
                         row.HasComputed = true;
                     }
                 }
             }
-            Rows = alternativeRowItems;
+            Rows = currentIASRowsInStudy;
         }
         
+
         private ObservableCollection<AlternativeRowItem> CreateRowsForIASElementsInStudy()
         {
             List<IASElementSet> elems = StudyCache.GetChildElementsOfType<IASElementSet>();
@@ -109,12 +114,6 @@ namespace ViewModel.Alternatives
             return rows;
         }
 
-
-        //public override void AddValidationRules()
-        //{
-        //    AddRule(nameof(Name), () => Name != null, "Name cannot be empty.");
-        //    AddRule(nameof(Name), () => Name != "", "Name cannot be empty.");
-        //}
         public override void Save()
         {
             List<AlternativeRowItem> selectedRows = GetSelectedRows();
@@ -156,6 +155,10 @@ namespace ViewModel.Alternatives
             return vr;
         }
 
+        /// <summary>
+        /// Gets the IAS element id's for the selected rows.
+        /// </summary>
+        /// <returns></returns>
         private List<int> GetSelectedIASSets()
         {
             List<int> selectedSets = new List<int>();
@@ -168,6 +171,11 @@ namespace ViewModel.Alternatives
             }
             return selectedSets;
         }
+
+        /// <summary>
+        /// Gets the rows that the user has selected.
+        /// </summary>
+        /// <returns></returns>
         private List<AlternativeRowItem> GetSelectedRows()
         {
             List<AlternativeRowItem> selectedRows = new List<AlternativeRowItem>();
@@ -180,19 +188,6 @@ namespace ViewModel.Alternatives
             }
             return selectedRows;
         }
-
-        //public class ConditionWrapper
-        //{
-        //    public bool IsSelected { get; set; }
-        //    public string Name { get; set; }
-        //    public InflowOutflowElement Condition { get; set; }
-        //    public ConditionWrapper(InflowOutflowElement condition)
-        //    {
-        //        Condition = condition;
-        //        Name = Condition.Name;
-        //        IsSelected = false;
-        //    }
-        //}
 
 
     }
