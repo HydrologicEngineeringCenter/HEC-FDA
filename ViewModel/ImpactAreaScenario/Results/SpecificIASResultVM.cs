@@ -7,12 +7,21 @@ namespace ViewModel.ImpactAreaScenario.Results
 {
     public class SpecificIASResultVM : BaseViewModel
     {
+        private const string DAMAGE = "Damage";
+        private const string PERFORMANCE = "Performance";
+        private const string DAMAGE_WITH_UNCERTAINTY = "Damage with Uncertainty";
+        private const string DAMAGE_BY_DAMCAT = "Damage by Damage Category";
+        private const string ANNUAL_EXC_PROB = "Annual Exceedance Probability";
+        private const string LONG_TERM_RISK = "Long-term Risk";
+        private const string ASSURANCE_OF_THRESHOLD = "Assurance of Threshold";
 
-        private readonly List<string> _outcomes = new List<string>() { "Damage", "Performance" };
 
-        private readonly List<string> _damageReports = new List<string>() { "Damage with Uncertainty", "Damage by Damage Category" };
 
-        private readonly List<string> _performanceReports = new List<string>() { "Annual Exceedance Probability", "Long-term Risk", "Assurance of Threshold" };
+        private readonly List<string> _outcomes = new List<string>() { DAMAGE, PERFORMANCE };
+
+        private readonly List<string> _damageReports = new List<string>() { DAMAGE_WITH_UNCERTAINTY, DAMAGE_BY_DAMCAT };
+
+        private readonly List<string> _performanceReports = new List<string>() { ANNUAL_EXC_PROB, LONG_TERM_RISK, ASSURANCE_OF_THRESHOLD };
 
         private string _selectedOutcome;
         private string _selectedReport;
@@ -92,10 +101,10 @@ namespace ViewModel.ImpactAreaScenario.Results
 
             IASName = iasName;
             Outcomes = _outcomes;
-            SelectedOutcome = _outcomes[0];
+            SelectedOutcome = DAMAGE;
 
             Reports = _damageReports;
-            SelectedReport = _damageReports[0];
+            SelectedReport = DAMAGE_WITH_UNCERTAINTY;
 
         }
 
@@ -144,23 +153,23 @@ namespace ViewModel.ImpactAreaScenario.Results
         private void ReportChanged()
         {
             string d = _damageReports[0];
-            if (_damageReports[0].Equals(SelectedReport))
+            if (DAMAGE_WITH_UNCERTAINTY.Equals(SelectedReport))
             {
                 CurrentResultVM = _damageWithUncertaintyVM;
             }
-            else if (_damageReports[1].Equals(SelectedReport))
+            else if (DAMAGE_BY_DAMCAT.Equals(SelectedReport))
             {
                 CurrentResultVM = _damageByDamageCategoryVM;
             }
-            else if (_performanceReports[0].Equals(SelectedReport))
+            else if (ANNUAL_EXC_PROB.Equals(SelectedReport))
             {
                 CurrentResultVM = _performanceAEPVM;
             }
-            else if (_performanceReports[1].Equals(SelectedReport))
+            else if (LONG_TERM_RISK.Equals(SelectedReport))
             {
                 CurrentResultVM = _performanceLongTermRiskVM;
             }
-            else if (_performanceReports[2].Equals(SelectedReport))
+            else if (ASSURANCE_OF_THRESHOLD.Equals(SelectedReport))
             {
                 CurrentResultVM = _performanceAssuranceOfThresholdVM;
             }
@@ -169,13 +178,13 @@ namespace ViewModel.ImpactAreaScenario.Results
 
         private void SelectedOutcomeChanged()
         {
-            if (_selectedOutcome.Equals("Damage"))
+            if (DAMAGE.Equals( _selectedOutcome))
             {
                 ThresholdComboVisible = false;
                 Reports = _damageReports;
                 SelectedReport = Reports.First();
             }
-            else if (_selectedOutcome.Equals("Performance"))
+            else if (PERFORMANCE.Equals( _selectedOutcome))
             {
                 ThresholdComboVisible = true;
                 Reports = _performanceReports;
