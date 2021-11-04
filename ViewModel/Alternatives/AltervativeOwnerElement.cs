@@ -1,12 +1,6 @@
-﻿using ViewModel.FlowTransforms;
-using ViewModel.Utilities;
-using Functions;
-using Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ViewModel.Utilities;
 
 namespace ViewModel.Alternatives
 {
@@ -23,7 +17,6 @@ namespace ViewModel.Alternatives
 
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addAlternative);
-            //localActions.Add(ImportRatingCurve);
 
             Actions = localActions;
 
