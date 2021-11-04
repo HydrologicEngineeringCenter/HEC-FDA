@@ -8,17 +8,49 @@ namespace paireddata
         public double[] Xvals { get; }
         public double[] Yvals { get; }
         public string Category {get; }
-
+        //sorting Array.Sort(yarr,System.Collections.Comparer.);//make sure that this is ascending 
+        //or array.reverse
+        //we need the right comparer to sort the right way the first way 
         public PairedData(double[] xs, double[] ys){
+            if (!IsMonotonicallyIncreasing(xs))
+            {
+                Array.Sort(xs);
+            }
             Xvals = xs;
+            if (!IsMonotonicallyIncreasing(ys))
+            {
+                Array.Sort(ys);
+            }
             Yvals = ys;
             Category = "Default";
         }
         public PairedData(double[] xs, double[] ys, string category){
+            if (!IsMonotonicallyIncreasing(xs))
+            {
+                Array.Sort(xs);
+
+            }
             Xvals = xs;
+            if (!IsMonotonicallyIncreasing(ys))
+            {
+                Array.Sort(ys);
+            }
             Yvals = ys;
             Category = Category;
         }
+        public bool IsMonotonicallyIncreasing(double[] arrayOfData)
+        {
+
+            for (int i = 0; i < arrayOfData.Length-1; i++)
+            {
+                if (arrayOfData[i] >= arrayOfData[i + 1])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         /// <summary>
         /// f implements ISample on PairedData, for a given input double x f produces an output double that represents the linearly interoplated value for y given x.
         /// </summary>
@@ -90,7 +122,7 @@ namespace paireddata
 
         /// <summary>
         ///Calcualtes the area under the paired data curve across the range of x values using trapizoidal integration. 
-        ///Assumes X vals are probabilities decreasing from 1. Assumes an additional x ord of 0, and y ordinate equal to the last one in the array.
+        ///Assumes X vals are non-exceedance probabilities increasing from 0. Assumes an additional x ord of 1, and y ordinate equal to the last one in the array.
         /// </summary>
         public double integrate(){
             double triangle;
@@ -99,15 +131,15 @@ namespace paireddata
             double y1=0.0;
             double ead=0.0;
             for(int i=0; i<Xvals.Length; i ++){
-                double xdelta = x1-Xvals[i];
+                double xdelta = Xvals[i]-x1;
                 square = xdelta * y1;
                 triangle = ((xdelta)*(Yvals[i] - y1))/2.0;
                 ead += square + triangle;
                 x1 = Xvals[i];
                 y1 = Yvals[i];
             }
-            if (x1 != 0.0){
-                double xdelta = x1-0;
+            if (x1 != 1){
+                double xdelta = 1-x1;
                 ead += xdelta*y1;
             }
             return ead;

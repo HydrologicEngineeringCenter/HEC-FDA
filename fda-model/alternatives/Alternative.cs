@@ -17,12 +17,13 @@ namespace alternatives
             _periodOfAnalysis = periodOfAnalysis;
         }
         public double ComputeEEAD(interfaces.IProvideRandomNumbers rp, Int64 iterations, double discountRate){
+
             //probably instantiate a rng to seed each impact area differently
-            IList<metrics.IContainResults> baseYearResults = _currentYear.Compute(rp,iterations);//this is a list of impact area-specific ead
-            IList<metrics.IContainResults> mlfYearResults = _futureYear.Compute(rp, iterations);
+            IList<metrics.Results> baseYearResults = _currentYear.Compute(rp,iterations);//this is a list of impact area-specific ead
+            IList<metrics.Results> mlfYearResults = _futureYear.Compute(rp, iterations);
             //I am not sure how to use the IContainResults
-            double baseEAD = baseYearResults.Last().MeanEAD("Total");
-            double mlfEAD = mlfYearResults.Last().MeanEAD("Total");
+            double baseEAD = baseYearResults.Last().ExpectedAnnualDamageResults.MeanEAD("Total");
+            double mlfEAD = mlfYearResults.Last().ExpectedAnnualDamageResults.MeanEAD("Total");
             double[] interpolatedEADs = Interpolate(baseEAD, mlfEAD, _currentYear.Year, _futureYear.Year, _periodOfAnalysis);
             double sumPresentValueEAD = PresentValueCompute(interpolatedEADs, discountRate);
             double averageAnnualEquivalentDamage = IntoAverageAnnualEquivalentTerms(sumPresentValueEAD, _periodOfAnalysis, discountRate);
