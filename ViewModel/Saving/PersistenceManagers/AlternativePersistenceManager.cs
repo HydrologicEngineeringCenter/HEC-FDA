@@ -33,6 +33,8 @@ namespace ViewModel.Saving.PersistenceManagers
         }
 
         #region Logging
+        //todo: not sure what to do with logging stuff yet. Waiting until a later task to determine
+        //if this should all get removed from the base class or not.
         public ObservableCollection<LogItem> GetLogMessages(string elementName)
         {
             throw new NotImplementedException();

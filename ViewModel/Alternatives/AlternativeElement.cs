@@ -11,9 +11,22 @@ namespace ViewModel.Alternatives
 {
     public class AlternativeElement : ChildElement
     {
+        private const string ALTERNATIVE = "Alternative";
+        private const string NAME = "Name";
+        private const string DESCRIPTION = "Description";
+        private const string IAS_SET = "IASSet";
+        private const string ID = "ID";
+
         public List<int> IASElementSets { get; set; }
 
         #region Constructors
+
+        /// <summary>
+        /// Ctor for constructing new alternative element.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="description"></param>
+        /// <param name="IASElements"></param>
         public AlternativeElement(string name, string description, List<int> IASElements)
         {
             Name = name;
@@ -22,6 +35,11 @@ namespace ViewModel.Alternatives
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
             AddActions();
         }
+
+        /// <summary>
+        /// Ctor for loading an element from the database.
+        /// </summary>
+        /// <param name="xml"></param>
         public AlternativeElement(string xml)
         {
             XDocument doc = XDocument.Parse(xml);
@@ -84,7 +102,7 @@ namespace ViewModel.Alternatives
         }
         public void ViewResults(object arg1, EventArgs arg2)
         {
-
+            //todo: Cody will do this in part 2 of task2.
         }
         public void EditAlternative(object arg1, EventArgs arg2)
         {
@@ -108,11 +126,7 @@ namespace ViewModel.Alternatives
             return null;
         }
 
-        private const string ALTERNATIVE = "Alternative";
-        private const string NAME = "Name";
-        private const string DESCRIPTION = "Description";
-        private const string IAS_SET = "IASSet";
-        private const string ID = "ID";
+        
         public string WriteToXML()
         {
             XElement altElement = new XElement(ALTERNATIVE);
@@ -125,11 +139,8 @@ namespace ViewModel.Alternatives
                 setElement.SetAttributeValue(ID, elemID);
                 altElement.Add(setElement);
             }
-
             return altElement.ToString();
         }
-
-        
 
     }
 }
