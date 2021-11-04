@@ -35,7 +35,6 @@ namespace ViewModel.Alternatives
             set { _Year = value; NotifyPropertyChanged(); }
         }
         public int ID { get; set; }
-        //public IASElementSet Element { get; set; }
         public string Tooltip
         {
             get { return _Tooltip; }
@@ -46,7 +45,7 @@ namespace ViewModel.Alternatives
             ID = elem.GetElementID();
             Year = elem.AnalysisYear;
             HasComputed = elem.HasComputed;
-            //Name needs to be after the Year property is set.
+            //Name needs to be after the Year property is set to get the proper display name.
             Name = elem.Name ;
             IsSelected = false;
             UpdateTooltip();
