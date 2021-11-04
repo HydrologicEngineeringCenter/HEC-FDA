@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using ViewModel.Alternatives.Results;
 using ViewModel.ImpactAreaScenario;
 using ViewModel.Utilities;
 
@@ -102,8 +103,15 @@ namespace ViewModel.Alternatives
         }
         public void ViewResults(object arg1, EventArgs arg2)
         {
-            //todo: Cody will do this in part 2 of task2.
+
+            List<AlternativeResultBase> results = new List<AlternativeResultBase>();
+            results.Add(new EADDamageByDamCatVM());
+            AlternativeResultsVM vm = new AlternativeResultsVM(results);
+            string header = "Alternative Results: " + Name;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeResults" + Name);
+            Navigate(tab, false, true);
         }
+
         public void EditAlternative(object arg1, EventArgs arg2)
         {
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()

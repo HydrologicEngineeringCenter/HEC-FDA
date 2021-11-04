@@ -4,6 +4,9 @@
              
              xmlns:EditorsVM ="clr-namespace:ViewModel.Editors;assembly=ViewModel"
              
+             xmlns:AlternativeResultsVM="clr-namespace:ViewModel.Alternatives.Results;assembly=ViewModel"
+             xmlns:AlternativeResultsView ="clr-namespace:View.Alternatives.Results"
+
              xmlns:IASResultsVM ="clr-namespace:ViewModel.ImpactAreaScenario.Results;assembly=ViewModel"
              xmlns:IASResultsView ="clr-namespace:View.ImpactAreaScenario.Results"
              
@@ -237,6 +240,13 @@
             <OccupancyTypesView:ImportOccupancyTypeGroups/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type AlternativeResultsVM:AlternativeResultsVM }" >
+            <AlternativeResultsView:AlternativeResults/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type AlternativeResultsVM:EADDamageByDamCatVM }" >
+            <AlternativeResultsView:EADDamageByDamCat/>
+        </DataTemplate>
+        
         <DataTemplate DataType="{x:Type IASEditorVM:IASEditorVM }" >
             <IASEditorView:IASEditor/>
         </DataTemplate>
