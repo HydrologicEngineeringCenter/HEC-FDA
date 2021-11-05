@@ -110,7 +110,8 @@ namespace fda_model_test
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, "residential");
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
-            Simulation s = new Simulation(flow_frequency, flow_stage, levee, upd);
+            Simulation s = Simulation.builder().withFlowFrequency(flow_frequency).withFlowStage(flow_stage).withLevee(levee).withStageDamages(upd).build();
+            //Simulation s = new Simulation(flow_frequency, flow_stage, levee, upd);
             ead.MeanRandomProvider mrp = new MeanRandomProvider();
             metrics.Results r = s.Compute(mrp, 1);
             double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");

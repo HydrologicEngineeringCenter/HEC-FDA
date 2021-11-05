@@ -68,7 +68,7 @@ namespace fda_model_test
         [InlineData(40, .002)]
         public void ComputeAEP(double thresholdValue, double expected)
         {
-            ead.Simulation simulation = new Simulation(); 
+            ead.Simulation simulation = Simulation.builder().build(); 
             paireddata.IPairedData frequency_stage = new PairedData(NonExceedanceProbs, StageForNonExceedanceProbs);
             Threshold threshold = new Threshold(1, ThresholdEnum.ExteriorStage, thresholdValue);
             simulation.PerformanceThresholds.AddThreshold(threshold);
@@ -86,7 +86,7 @@ namespace fda_model_test
         [InlineData(40, 50, .095253)]
         public void ComputeLTEP(double thresholdValue, int years, double expected)
         {
-            ead.Simulation simulation = new Simulation();
+            ead.Simulation simulation = Simulation.builder().build();
             paireddata.IPairedData frequency_stage = new PairedData(NonExceedanceProbs, StageForNonExceedanceProbs);
             Threshold threshold = new Threshold(1, ThresholdEnum.ExteriorStage, thresholdValue);
             simulation.PerformanceThresholds.AddThreshold(threshold);
@@ -102,7 +102,7 @@ namespace fda_model_test
         [InlineData(45,.026)]
         public void ComputeLeveeAEP(double thresholdValue, double expected)
         {
-            ead.Simulation simulation = new Simulation();
+            ead.Simulation simulation = Simulation.builder().build();
             paireddata.IPairedData frequency_stage = new PairedData(NonExceedanceProbs, StageForNonExceedanceProbs);
             paireddata.IPairedData levee_curve = new PairedData(StageForNonExceedanceProbs, ProbLeveeFailure);
             Threshold threshold = new Threshold(1, ThresholdEnum.ExteriorStage, thresholdValue);

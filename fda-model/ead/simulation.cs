@@ -29,7 +29,7 @@ namespace ead{
             }
         }
 
-        public Simulation()
+        internal Simulation()
         {
             _frequency_flow = null;
             _inflow_outflow = new paireddata.UncertainPairedData();//defaults to null
@@ -38,6 +38,7 @@ namespace ead{
             _channelstage_floodplainstage = new paireddata.UncertainPairedData();//defaults to null
             _levee_curve = new paireddata.UncertainPairedData(); //defaults to null
             _damage_category_stage_damage = new List<paireddata.UncertainPairedData>();//defaults to empty
+            _results = new metrics.Results();
         }
         public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData inflow_outflow, paireddata.UncertainPairedData flow_stage, paireddata.UncertainPairedData channelstage_floodplainstage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
         {
@@ -59,7 +60,7 @@ namespace ead{
             _levee_curve = levee_curve;
             _damage_category_stage_damage = damage_curves;
         }
-        public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData flow_stage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
+        /*public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData flow_stage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
         {
             _frequency_flow = frequency_flow;
             _inflow_outflow = new paireddata.UncertainPairedData();//defaults to null
@@ -70,6 +71,7 @@ namespace ead{
             _damage_category_stage_damage = damage_curves;
             _results = new metrics.Results();
         }
+        */
         public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData flow_stage, List<paireddata.UncertainPairedData> damage_curves)
         {
             _frequency_flow = frequency_flow;
@@ -285,5 +287,42 @@ namespace ead{
         {
                        return stageDamage.compose(frequency_stage);
         }
+        public static SimulationBuilder builder()
+        {
+            return new SimulationBuilder(new Simulation());
+        }
+        public class SimulationBuilder
+        {
+            private Simulation _sim;
+            internal SimulationBuilder(Simulation sim)
+            {
+                _sim = sim;
+            }
+            public Simulation build()
+            {
+                return _sim;
+            }
+            public SimulationBuilder withFlowFrequency(Statistics.IDistribution dist)
+            {
+                _sim._frequency_flow = dist;
+                return new SimulationBuilder(_sim);
+            }
+            public SimulationBuilder withFlowStage(paireddata.UncertainPairedData upd)
+            {
+                _sim._flow_stage = upd;
+                return new SimulationBuilder(_sim);
+            }
+            public SimulationBuilder withLevee(paireddata.UncertainPairedData upd)
+            {
+                _sim._levee_curve = upd;
+                return new SimulationBuilder(_sim);
+            }
+            public SimulationBuilder withStageDamages(List<paireddata.UncertainPairedData> upd)
+            {
+                _sim._damage_category_stage_damage = upd;
+                return new SimulationBuilder(_sim);
+            }
+        }
     }
+
 }
