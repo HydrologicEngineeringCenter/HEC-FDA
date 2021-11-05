@@ -40,62 +40,6 @@ namespace ead{
             _damage_category_stage_damage = new List<paireddata.UncertainPairedData>();//defaults to empty
             _results = new metrics.Results();
         }
-        public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData inflow_outflow, paireddata.UncertainPairedData flow_stage, paireddata.UncertainPairedData channelstage_floodplainstage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
-        {
-            _frequency_flow = frequency_flow;
-            _inflow_outflow = inflow_outflow;
-            _flow_stage = flow_stage;
-            _frequency_stage = new paireddata.UncertainPairedData();//defaults to null
-            _channelstage_floodplainstage = channelstage_floodplainstage;
-            _levee_curve = levee_curve;
-            _damage_category_stage_damage = damage_curves;
-        }
-        public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData flow_stage, paireddata.UncertainPairedData channelstage_floodplainstage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
-        {
-            _frequency_flow = frequency_flow;
-            _inflow_outflow = new paireddata.UncertainPairedData();//defaults to null
-            _flow_stage = flow_stage;
-            _frequency_stage = new paireddata.UncertainPairedData();//defaults to null
-            _channelstage_floodplainstage = channelstage_floodplainstage;
-            _levee_curve = levee_curve;
-            _damage_category_stage_damage = damage_curves;
-        }
-        /*public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData flow_stage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
-        {
-            _frequency_flow = frequency_flow;
-            _inflow_outflow = new paireddata.UncertainPairedData();//defaults to null
-            _flow_stage = flow_stage;
-            _frequency_stage = new paireddata.UncertainPairedData();//defaults to null
-            _channelstage_floodplainstage = new paireddata.UncertainPairedData();//defaults to null
-            _levee_curve = levee_curve;
-            _damage_category_stage_damage = damage_curves;
-            _results = new metrics.Results();
-        }
-        */
-        public Simulation(IDistribution frequency_flow, paireddata.UncertainPairedData flow_stage, List<paireddata.UncertainPairedData> damage_curves)
-        {
-            _frequency_flow = frequency_flow;
-            _inflow_outflow = new paireddata.UncertainPairedData();//defaults to null
-            _flow_stage = flow_stage;
-            _frequency_stage = new paireddata.UncertainPairedData();//defaults to null
-            _channelstage_floodplainstage = new paireddata.UncertainPairedData();//defaults to null
-            _levee_curve = new paireddata.UncertainPairedData(); //defaults to null
-            _damage_category_stage_damage = damage_curves;
-            _results = new metrics.Results();
-
-        }
-
-        public Simulation(paireddata.UncertainPairedData frequency_stage, paireddata.UncertainPairedData channelstage_floodplainstage, paireddata.UncertainPairedData levee_curve, List<paireddata.UncertainPairedData> damage_curves)
-        {
-            _frequency_flow = null;
-            _inflow_outflow = new paireddata.UncertainPairedData();//defaults to null
-            _flow_stage = new paireddata.UncertainPairedData();//defaults to null
-            _frequency_stage = frequency_stage;
-            _channelstage_floodplainstage = channelstage_floodplainstage;
-            _levee_curve = levee_curve;
-            _damage_category_stage_damage = damage_curves;
-            //TODO: is there a reason that this constructor does not have a _results object instantiated?
-        }
         public metrics.Results Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations){
             //results.AEPThreshold = 100.0;//stage or flow or damage threshold
             for(int i = 0; i < iterations; i ++){
@@ -300,6 +244,8 @@ namespace ead{
             }
             public Simulation build()
             {
+
+                //probably do validation here.
                 return _sim;
             }
             public SimulationBuilder withFlowFrequency(Statistics.IDistribution dist)
@@ -307,9 +253,24 @@ namespace ead{
                 _sim._frequency_flow = dist;
                 return new SimulationBuilder(_sim);
             }
+            public SimulationBuilder withInflowOutflow(paireddata.UncertainPairedData upd)
+            {
+                _sim._inflow_outflow = upd;
+                return new SimulationBuilder(_sim);
+            }
             public SimulationBuilder withFlowStage(paireddata.UncertainPairedData upd)
             {
                 _sim._flow_stage = upd;
+                return new SimulationBuilder(_sim);
+            }
+            public SimulationBuilder withFrequencyStage(paireddata.UncertainPairedData upd)
+            {
+                _sim._flow_stage = upd;
+                return new SimulationBuilder(_sim);
+            }
+            public SimulationBuilder withInteriorExterior(paireddata.UncertainPairedData upd)
+            {
+                _sim._channelstage_floodplainstage = upd;
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withLevee(paireddata.UncertainPairedData upd)
@@ -320,6 +281,11 @@ namespace ead{
             public SimulationBuilder withStageDamages(List<paireddata.UncertainPairedData> upd)
             {
                 _sim._damage_category_stage_damage = upd;
+                return new SimulationBuilder(_sim);
+            }
+            public SimulationBuilder withPerformanceMetrics(metrics.Results mr)
+            {
+                _sim._results = mr;
                 return new SimulationBuilder(_sim);
             }
         }

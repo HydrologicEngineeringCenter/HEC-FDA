@@ -44,7 +44,11 @@ namespace fda_model_test
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
 
-            Simulation s = new Simulation(flow_frequency, flow_stage, upd);
+            Simulation s = Simulation.builder()
+                .withFlowFrequency(flow_frequency)
+                .withFlowStage(flow_stage)
+                .withStageDamages(upd)
+                .build();
             Threshold threshold = new Threshold(0, ThresholdEnum.ExteriorStage, 150000);
             s.PerformanceThresholds.AddThreshold(threshold);
             RandomProvider rp = new RandomProvider(seed);
