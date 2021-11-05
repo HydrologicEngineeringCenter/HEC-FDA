@@ -44,7 +44,11 @@ namespace fda_model_test
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
 
-            Simulation s = new Simulation(flow_frequency, flow_stage, upd);
+            Simulation s = Simulation.builder()
+                .withFlowFrequency(flow_frequency)
+                .withFlowStage(flow_stage)
+                .withStageDamages(upd)
+                .build();
             Threshold threshold = new Threshold(0, ThresholdEnum.ExteriorStage, 150000);
             s.PerformanceThresholds.AddThreshold(threshold);
             RandomProvider rp = new RandomProvider(seed);
@@ -68,7 +72,7 @@ namespace fda_model_test
         [InlineData(40, .002)]
         public void ComputeAEP(double thresholdValue, double expected)
         {
-            ead.Simulation simulation = new Simulation(); 
+            ead.Simulation simulation = Simulation.builder().build(); 
             paireddata.IPairedData frequency_stage = new PairedData(NonExceedanceProbs, StageForNonExceedanceProbs);
             Threshold threshold = new Threshold(1, ThresholdEnum.ExteriorStage, thresholdValue);
             simulation.PerformanceThresholds.AddThreshold(threshold);
@@ -86,7 +90,7 @@ namespace fda_model_test
         [InlineData(40, 50, .095253)]
         public void ComputeLTEP(double thresholdValue, int years, double expected)
         {
-            ead.Simulation simulation = new Simulation();
+            ead.Simulation simulation = Simulation.builder().build();
             paireddata.IPairedData frequency_stage = new PairedData(NonExceedanceProbs, StageForNonExceedanceProbs);
             Threshold threshold = new Threshold(1, ThresholdEnum.ExteriorStage, thresholdValue);
             simulation.PerformanceThresholds.AddThreshold(threshold);
@@ -102,7 +106,7 @@ namespace fda_model_test
         [InlineData(45,.026)]
         public void ComputeLeveeAEP(double thresholdValue, double expected)
         {
-            ead.Simulation simulation = new Simulation();
+            ead.Simulation simulation = Simulation.builder().build();
             paireddata.IPairedData frequency_stage = new PairedData(NonExceedanceProbs, StageForNonExceedanceProbs);
             paireddata.IPairedData levee_curve = new PairedData(StageForNonExceedanceProbs, ProbLeveeFailure);
             Threshold threshold = new Threshold(1, ThresholdEnum.ExteriorStage, thresholdValue);

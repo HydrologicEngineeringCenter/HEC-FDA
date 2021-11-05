@@ -43,12 +43,18 @@ namespace fda_model_test
             List<UncertainPairedData> updFuture = new List<UncertainPairedData>();
             updFuture.Add(future_stage_damage);
 
-
-            Simulation sBase = new Simulation(flow_frequency, flow_stage, updBase);
+            Simulation sBase = Simulation.builder()
+                .withFlowFrequency(flow_frequency)
+                .withFlowStage(flow_stage)
+                .withStageDamages(updBase)
+                .build();
             //it feels weird that the EAD for this simulation is 150k because probability 
             //goes from 0 to 0.5
-            Simulation sFuture = new Simulation(flow_frequency, flow_stage, updFuture);
-
+            Simulation sFuture = Simulation.builder()
+                .withFlowFrequency(flow_frequency)
+                .withFlowStage(flow_stage)
+                .withStageDamages(updFuture)
+                .build();
             impactarea.ImpactArea impactAreaBase = new impactarea.ImpactArea("BaseYear", sBase);
             IList<impactarea.ImpactArea> impactAreaListBaseYear = new List<impactarea.ImpactArea>();
             impactAreaListBaseYear.Add(impactAreaBase);

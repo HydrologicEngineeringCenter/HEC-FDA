@@ -39,7 +39,11 @@ namespace fda_model_test
             upd.Add(stage_damage);
             
             metrics.Threshold threshold = new metrics.Threshold(1, metrics.ThresholdEnum.ExteriorStage, 150000);//do we want to access this through _results?
-            Simulation s = new Simulation(flow_frequency,flow_stage,upd);
+            Simulation s = Simulation.builder()
+                .withFlowFrequency(flow_frequency)
+                .withFlowStage(flow_stage)
+                .withStageDamages(upd)
+                .build();
             s.PerformanceThresholds.AddThreshold(threshold);
             ead.MeanRandomProvider mrp = new MeanRandomProvider();
             metrics.Results r = s.Compute(mrp,1);
@@ -72,7 +76,11 @@ namespace fda_model_test
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, "residential");
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
-            Simulation s = new Simulation(flow_frequency, flow_stage, upd);
+            Simulation s = Simulation.builder()
+                .withFlowFrequency(flow_frequency)
+                .withFlowStage(flow_stage)
+                .withStageDamages(upd)
+                .build();
             RandomProvider rp = new RandomProvider(seed);
             metrics.Results r = s.Compute(rp, iterations);
             double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");
@@ -110,7 +118,13 @@ namespace fda_model_test
             UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, "residential");
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
-            Simulation s = new Simulation(flow_frequency, flow_stage, levee, upd);
+            Simulation s = Simulation.builder()
+                .withFlowFrequency(flow_frequency)
+                .withFlowStage(flow_stage)
+                .withLevee(levee)
+                .withStageDamages(upd)
+                .build();
+            //Simulation s = new Simulation(flow_frequency, flow_stage, levee, upd);
             ead.MeanRandomProvider mrp = new MeanRandomProvider();
             metrics.Results r = s.Compute(mrp, 1);
             double difference = expected - r.ExpectedAnnualDamageResults.MeanEAD("residential");
