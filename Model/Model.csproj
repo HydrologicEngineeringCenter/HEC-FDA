@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard1.3</TargetFramework>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<OutputPath>..\Output\</OutputPath>
 	</PropertyGroup>
 
 	<PropertyGroup>
