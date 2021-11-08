@@ -3,21 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ViewModel.ImpactAreaScenario.Results.RowItems;
 
 namespace ViewModel.Alternatives.Results
 {
-    public class EADDamageByDamCatVM : AlternativeResultBase
+    public class DamageByImpactAreaVM : AlternativeResultBase
     {
 
-        public List<DamageCategoryRowItem> Rows { get; set; }
+        public List<ImpactAreaRowItem> Rows { get; set; }
 
 
-        public EADDamageByDamCatVM()
+        public DamageByImpactAreaVM():base("Damage by Impact Area")
         {
             loadDummyData();
         }
-
 
 
         private void loadDummyData()
@@ -25,10 +23,10 @@ namespace ViewModel.Alternatives.Results
             List<string> xVals = loadXData();
             List<double> yVals = loadYData();
 
-            List<DamageCategoryRowItem> rows = new List<DamageCategoryRowItem>();
+            List<ImpactAreaRowItem> rows = new List<ImpactAreaRowItem>();
             for (int i = 0; i < xVals.Count; i++)
             {
-                rows.Add(new DamageCategoryRowItem(xVals[i], yVals[i]));
+                rows.Add(new ImpactAreaRowItem(xVals[i], yVals[i]));
             }
 
             Rows = rows;
@@ -38,8 +36,8 @@ namespace ViewModel.Alternatives.Results
         {
 
             List<string> xValues = new List<string>();
-            xValues.Add("Residential");
-            xValues.Add("Commercial");
+            xValues.Add("Impact1");
+            xValues.Add("Impact2");
             return xValues;
         }
 
@@ -50,5 +48,6 @@ namespace ViewModel.Alternatives.Results
             yValues.Add(2);
             return yValues;
         }
+
     }
 }
