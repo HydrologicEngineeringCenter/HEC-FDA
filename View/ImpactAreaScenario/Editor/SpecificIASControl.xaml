@@ -30,7 +30,7 @@
         
 
 
-        <GroupBox Grid.Row="1"  Header="{Binding Name}" >
+        <GroupBox Grid.Row="1"  Header="{Binding ImpactAreaRowItem.Name}" >
             <StackPanel Orientation="Vertical">
                 <Grid x:Name="ThirdRowGrid" Grid.Row="2" Margin="0,5,5,0">
                     <Grid.ColumnDefinitions>
@@ -94,7 +94,7 @@
 
         <Grid x:Name="FifthRowGrid" Grid.Row="3" Margin="5,5,5,0">
             <StackPanel Orientation="Horizontal" >
-                <Button x:Name="plotBtn" Content="Plot" Width="100" HorizontalAlignment="Left" Click="plotBtn_Click"/>
+                <Button x:Name="plotBtn" Content="Preview Compute" Width="120" HorizontalAlignment="Left" Click="plotBtn_Click"/>
                 <Label Content="Damage Category:" />
                 <ComboBox ItemsSource="{Binding DamageCategories}" SelectedItem="{Binding SelectedDamageCurve}" DisplayMemberPath="DamCat" Width="300"/>
                 <Label Content="EAD: " Visibility="{Binding ShowEAD,Converter={StaticResource BoolToVisibilityConverter}}"/>

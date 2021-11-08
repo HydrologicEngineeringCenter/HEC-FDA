@@ -32,7 +32,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private bool _showEAD;
         private double _EAD;
 
-        public int IndexLocationID { get; private set; }
+        public ImpactAreaRowItem ImpactAreaRowItem { get; }
+        //public int IndexLocationID { get; private set; }
         public double EAD
         {
             get { return _EAD; }
@@ -122,16 +123,17 @@ namespace ViewModel.ImpactAreaScenario.Editor
         public SpecificIASEditorVM(ImpactAreaRowItem rowItem)
         {            
             Initialize();
-            Name = rowItem.Name;
-            IndexLocationID = rowItem.ID;
+            ImpactAreaRowItem = rowItem;
+            //IndexLocationID = rowItem.ID;
         }
 
-        public SpecificIASEditorVM(SpecificIAS elem, string impactAreaName)
+        public SpecificIASEditorVM(SpecificIAS elem, ImpactAreaRowItem rowItem)
         {
             Initialize();
             FillForm(elem);
-            IndexLocationID = elem.ImpactAreaID;
-            Name = impactAreaName;
+            ImpactAreaRowItem = rowItem;
+            //IndexLocationID = elem.ImpactAreaID;
+            //Name = impactAreaName;
         }
 
         private void Initialize()
@@ -594,19 +596,24 @@ namespace ViewModel.ImpactAreaScenario.Editor
         /// <returns></returns>
         public SpecificIAS CreateSpecificIAS()
         {
-            int flowFreqID = SelectedFrequencyElement.ChildElement != null ? SelectedFrequencyElement.ChildElement.GetElementID() : -1;
-            int inflowOutID = SelectedInflowOutflowElement.ChildElement != null ? SelectedInflowOutflowElement.ChildElement.GetElementID() : -1;
-            int ratingID = SelectedRatingCurveElement.ChildElement != null ? SelectedRatingCurveElement.ChildElement.GetElementID() : -1;
-            int extIntID = SelectedExteriorInteriorElement.ChildElement != null ? SelectedExteriorInteriorElement.ChildElement.GetElementID() : -1;
-            int latStructID = SelectedLeveeFeatureElement.ChildElement != null ? SelectedLeveeFeatureElement.ChildElement.GetElementID() : -1;
-            int stageDamID = SelectedStageDamageElement.ChildElement != null ? SelectedStageDamageElement.ChildElement.GetElementID() : -1;
+            int flowFreqID = GetComboElementID(SelectedFrequencyElement);
+            int inflowOutID = GetComboElementID(SelectedInflowOutflowElement);
+            int ratingID = GetComboElementID(SelectedRatingCurveElement);
+            int extIntID = GetComboElementID(SelectedExteriorInteriorElement);
+            int latStructID = GetComboElementID(SelectedLeveeFeatureElement);
+            int stageDamID = GetComboElementID(SelectedStageDamageElement);
 
             List<ThresholdRowItem> thresholdRowItems = _additionalThresholdsVM.GetThresholds();
 
-            SpecificIAS elementToSave = new SpecificIAS(IndexLocationID,
+            SpecificIAS elementToSave = new SpecificIAS(ImpactAreaRowItem.ID,
             flowFreqID, inflowOutID,
             ratingID, extIntID, latStructID, stageDamID, thresholdRowItems);
             return elementToSave;
+        }
+
+        private int GetComboElementID(ChildElementComboItem comboItem)
+        {
+            return (comboItem != null && comboItem.ChildElement != null) ? comboItem.ChildElement.GetElementID() : -1;
         }
 
         public void AddThresholds()

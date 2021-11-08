@@ -73,7 +73,9 @@ namespace ViewModel.ImpactAreaScenario.Editor
             _currentElement = elem;
             _isInEditMode = true;
             FillForm(elem);
-        }
+        }   
+
+      
 
         /// <summary>
         /// Loads the dictionary that links the specific impact area with the specific ias.
@@ -162,7 +164,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 SpecificIAS foundElement = specificIASElements.FirstOrDefault(ias => ias.ImpactAreaID == row.ID);
                 if (foundElement != null)
                 {
-                    SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(foundElement, row.Name);
+                    SpecificIASEditorVM specificIASEditorVM = new SpecificIASEditorVM(foundElement, row);
                     specificIASEditorVM.RequestNavigation += Navigate;
                     _ImpactAreaEditorDictionary.Add(row, specificIASEditorVM);
 
@@ -187,7 +189,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private FdaValidationResult IsYearValid()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            if (Year < 1900 && Year > 3000)
+            if (Year < 1900 || Year > 3000)
             {
                 vr.IsValid = false;
                 vr.ErrorMessage = new StringBuilder( "A year is required and must be greater than 1900 and less than 3000");
