@@ -8,6 +8,14 @@
 		<OutputPath>..\Output\</OutputPath>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<PackageId>HenryGeorgist.Framework.View</PackageId>
+		<VersionPrefix>1.0.0</VersionPrefix>
+		<Description>A library providing functionality for MVVM Views</Description>
+		<Authors>Will Lehman</Authors>
+		<RepositoryUrl>https://github.com/HenryGeorgist/Framework</RepositoryUrl>
+	</PropertyGroup>
+
 	<ItemGroup>
 	  <ProjectReference Include="..\Base\Base.csproj" />
 	  <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
