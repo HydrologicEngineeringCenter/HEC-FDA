@@ -9,7 +9,7 @@ jobs:
     runs-on: windows-latest
                          
     env:
-      Solution_Name: MVVMBase.sln                                  
+      Solution_Name: MVVMBase/MVVMBase.sln                                  
 
     steps:
     - name: Checkout
