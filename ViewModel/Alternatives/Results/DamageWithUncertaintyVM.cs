@@ -9,7 +9,7 @@ using ViewModel.ImpactAreaScenario.Results.RowItems;
 
 namespace ViewModel.Alternatives.Results
 {
-    public class AAEQDamageWithUncertaintyVM : AlternativeResultBase
+    public class DamageWithUncertaintyVM : AlternativeResultBase
     {
 
         private readonly HistogramData2D _data;
@@ -17,7 +17,7 @@ namespace ViewModel.Alternatives.Results
 
         public List<EadRowItem> Rows { get; set; }
         public double Mean { get; set; }
-        public AAEQDamageWithUncertaintyVM():base("test")
+        public DamageWithUncertaintyVM():base("Damage with Uncertainty")
         {
             //load with dummy data
             _data = new HistogramData2D(5, 0, new double[] { }, "Chart", "Series", "X Data", "YData");
