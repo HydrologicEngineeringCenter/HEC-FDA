@@ -8,6 +8,7 @@ using Base.Events;
 using System.IO;
 using System.Threading;
 
+
 namespace View.Implementations
 {
     public sealed class TextFileMessageSubscriber : Base.Interfaces.IRecieveMessages, IDisposable

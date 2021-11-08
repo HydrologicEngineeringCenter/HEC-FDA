@@ -1,15 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.31903.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{E470E6D8-9115-44E3-84DE-1287DD11B837}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base", "Base\Base.csproj", "{6E93F5FB-E0D2-4E8D-AD79-31A62CD125F9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewModel", "ViewModel\ViewModel.csproj", "{53281A58-6D57-48B5-8EA2-23D6343F95FE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E470E6D8-9115-44E3-84DE-1287DD11B837} = {E470E6D8-9115-44E3-84DE-1287DD11B837}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "View", "View\View.csproj", "{FCA23ADF-EDF6-4F7F-AD17-3708A7D4F29A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{53281A58-6D57-48B5-8EA2-23D6343F95FE} = {53281A58-6D57-48B5-8EA2-23D6343F95FE}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +42,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CE897F41-90C4-40B0-95EE-0DB569E0A62D}
 	EndGlobalSection
 EndGlobal
