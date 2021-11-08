@@ -28,9 +28,6 @@ jobs:
 
     - name: Build
       run: msbuild $env:Solution_Name /p:Configuration=Debug
-        
-    - name: Test
-      run: dotnet test --no-build
 
     - name: Pack 
       run: |
