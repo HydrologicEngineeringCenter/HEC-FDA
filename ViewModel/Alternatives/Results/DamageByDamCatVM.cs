@@ -7,13 +7,13 @@ using ViewModel.ImpactAreaScenario.Results.RowItems;
 
 namespace ViewModel.Alternatives.Results
 {
-    public class AAEQDamageByDamCatVM : AlternativeResultBase
+    public class DamageByDamCatVM : AlternativeResultBase
     {
 
         public List<DamageCategoryRowItem> Rows { get; set; }
 
 
-        public AAEQDamageByDamCatVM():base("test")
+        public DamageByDamCatVM():base("Damage by Damage Category")
         {
             loadDummyData();
         }
@@ -50,7 +50,5 @@ namespace ViewModel.Alternatives.Results
             yValues.Add(2);
             return yValues;
         }
-
     }
-
 }

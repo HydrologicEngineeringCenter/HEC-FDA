@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using ViewModel.Alternatives.Results;
+using ViewModel.Alternatives.Results.ResultObject;
 using ViewModel.ImpactAreaScenario;
 using ViewModel.Utilities;
 
@@ -100,12 +101,22 @@ namespace ViewModel.Alternatives
         {
             //todo: waiting for hec to put the new model in.
         }
+
+        private AlternativeResult CreateAlternativeResult()
+        {
+            YearResult yr1 = new YearResult(2021, new DamageWithUncertaintyVM(), new DamageByImpactAreaVM(), new DamageByDamCatVM());
+            YearResult yr2 = new YearResult(2022, new DamageWithUncertaintyVM(), new DamageByImpactAreaVM(), new DamageByDamCatVM());
+
+            EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
+            AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM(), new DamageByImpactAreaVM(), new DamageByDamCatVM());
+            AlternativeResult altResult = new AlternativeResult(eadResult, aaeqResult);
+
+            return altResult;
+        }
         public void ViewResults(object arg1, EventArgs arg2)
         {
 
-            List<AlternativeResultBase> results = new List<AlternativeResultBase>();
-            results.Add(new EADDamageByDamCatVM());
-            AlternativeResultsVM vm = new AlternativeResultsVM(results);
+            AlternativeResultsVM vm = new AlternativeResultsVM(CreateAlternativeResult());
             string header = "Alternative Results: " + Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeResults" + Name);
             Navigate(tab, false, true);
