@@ -4,6 +4,7 @@
 		<TargetFramework>net48-windows</TargetFramework>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<UseWPF>True</UseWPF>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<OutputPath>..\Output\</OutputPath>
 	</PropertyGroup>
 
