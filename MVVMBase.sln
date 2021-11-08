@@ -1,20 +1,26 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.1.31903.286
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{E470E6D8-9115-44E3-84DE-1287DD11B837}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Model\Model.csproj", "{E470E6D8-9115-44E3-84DE-1287DD11B837}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base", "Base\Base.csproj", "{6E93F5FB-E0D2-4E8D-AD79-31A62CD125F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Base", "Base\Base.csproj", "{6E93F5FB-E0D2-4E8D-AD79-31A62CD125F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewModel", "ViewModel\ViewModel.csproj", "{53281A58-6D57-48B5-8EA2-23D6343F95FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViewModel", "ViewModel\ViewModel.csproj", "{53281A58-6D57-48B5-8EA2-23D6343F95FE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E470E6D8-9115-44E3-84DE-1287DD11B837} = {E470E6D8-9115-44E3-84DE-1287DD11B837}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "View", "View\View.csproj", "{FCA23ADF-EDF6-4F7F-AD17-3708A7D4F29A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "View", "View\View.csproj", "{FCA23ADF-EDF6-4F7F-AD17-3708A7D4F29A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{53281A58-6D57-48B5-8EA2-23D6343F95FE} = {53281A58-6D57-48B5-8EA2-23D6343F95FE}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3A735BBA-E9B4-4DA3-BF18-F0D4245A0FAC}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\CI.yaml = .github\workflows\CI.yaml
+		.github\workflows\CICD.yml = .github\workflows\CICD.yml
 	EndProjectSection
 EndProject
 Global

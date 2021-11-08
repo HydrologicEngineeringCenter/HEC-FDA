@@ -2,7 +2,7 @@ name: CI
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -28,7 +28,5 @@ jobs:
         
     - name: Build
       run: msbuild $env:Solution_Name /p:Configuration=Debug
-        
-    - name: Test
-      run: dotnet test --no-build
+    
       
