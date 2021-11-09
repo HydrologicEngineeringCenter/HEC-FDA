@@ -25,24 +25,19 @@ namespace View.Utilities
             InitializeComponent();
         }
 
-       
-
         private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = !IsValid(combined_text(sender as TextBox, e.Text));
-
         }
 
         public static bool IsValid(string str)
         {
-            int i;
-            return int.TryParse(str, out i) && i >= 0 && i <= 3000;
+            return int.TryParse(str, out int i) && i >= 0 && i <= 3000;
         }
 
-        private string combined_text(TextBox tb, string new_text)
+        private string combined_text(TextBox tb, string newText)
         {
-            string s = tb.Text.Substring(0, tb.SelectionStart) + new_text + tb.Text.Substring(tb.SelectionStart + tb.SelectionLength);
-            return s;
+            return tb.Text.Substring(0, tb.SelectionStart) + newText + tb.Text.Substring(tb.SelectionStart + tb.SelectionLength);
         }
     }
 }

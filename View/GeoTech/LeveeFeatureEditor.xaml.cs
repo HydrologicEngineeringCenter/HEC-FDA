@@ -24,6 +24,8 @@ namespace View.GeoTech
     /// </summary>
     public partial class LeveeFeatureEditor : UserControl
     {
+        private Chart2D _chart;
+
         public LeveeFeatureEditor()
         {
             InitializeComponent();
@@ -32,15 +34,14 @@ namespace View.GeoTech
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            CurveEditorVM vm = (CurveEditorVM)this.DataContext;
-            CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
-            //Chart2D chart = new Chart2D(new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel));
-            editorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
-            Chart2D chart = new Chart2D(editorVM.CoordinatesChartViewModel);
-            PlotGrid.Children.Add(chart);
-            Grid.SetColumn(chart, 2);
-            //Grid.SetColumnSpan(chart, 2);
-            //Grid.SetRow(chart, 3);
+            CurveEditorVM vm = DataContext as CurveEditorVM;
+            if (_chart == null && vm != null)
+            {
+                CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
+                _chart = new Chart2D(editorVM.CoordinatesChartViewModel);
+                PlotGrid.Children.Add(_chart);
+                Grid.SetColumn(_chart, 2);
+            }
         }
 
         private void rad_default_Checked(object sender, RoutedEventArgs e)

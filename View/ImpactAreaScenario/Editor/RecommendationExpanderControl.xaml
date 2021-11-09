@@ -88,8 +88,7 @@
         </Style>
 
     </UserControl.Resources>
-
-
+    
     <Grid Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="ListRow" Height="35"/>
@@ -98,8 +97,6 @@
             <ColumnDefinition Width="150" />
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
-
 
         <Expander Name="MessagesExpander" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsExpanded="{Binding IsExpanded}" Collapsed="Expander_Collapsed" Expanded="MessagesExpander_Expanded" Margin="5,5,0,5" >
             <Expander.Header>
@@ -118,17 +115,15 @@
                                     </StackPanel>
                                 </Expander.Header>
                                 <ListView ItemsSource="{Binding Messages}" Background="Transparent" BorderThickness="0" Margin="20,0,0,0">
-                                  
+
                                 </ListView>
-                               
+
                             </Expander>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
             </StackPanel>
         </Expander>
-
-
 
     </Grid>
 </UserControl>

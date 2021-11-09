@@ -15,8 +15,6 @@ namespace ViewModel.ImpactAreaScenario.Results
         private const string LONG_TERM_RISK = "Long-term Risk";
         private const string ASSURANCE_OF_THRESHOLD = "Assurance of Threshold";
 
-
-
         private readonly List<string> _outcomes = new List<string>() { DAMAGE, PERFORMANCE };
 
         private readonly List<string> _damageReports = new List<string>() { DAMAGE_WITH_UNCERTAINTY, DAMAGE_BY_DAMCAT };
@@ -27,7 +25,6 @@ namespace ViewModel.ImpactAreaScenario.Results
         private string _selectedReport;
         private ThresholdComboItem _selectedThreshold;
 
-        private List<ThresholdComboItem> _thresholds;
         private List<string> _reports = new List<string>();
         private int _selectedReportIndex = 0;
         private bool _thresholdComboVisible;
@@ -60,11 +57,8 @@ namespace ViewModel.ImpactAreaScenario.Results
             set { _reports = value; NotifyPropertyChanged(); }
         }
 
-        public List<ThresholdComboItem> Thresholds
-        {
-            get { return _thresholds; }
-            set { _thresholds = value; NotifyPropertyChanged(); }
-        }
+        public List<ThresholdComboItem> Thresholds { get; } = new List<ThresholdComboItem>();
+        
 
         public ThresholdComboItem SelectedThreshold
         {
@@ -123,7 +117,7 @@ namespace ViewModel.ImpactAreaScenario.Results
                 comboItems.Add(new ThresholdComboItem(row.GetMetric()));
             }
 
-            Thresholds = comboItems;
+            Thresholds.AddRange( comboItems);
             SelectedThreshold = comboItems[0];
         }
 
@@ -141,9 +135,9 @@ namespace ViewModel.ImpactAreaScenario.Results
 
         private void ThresholdChanged()
         {
-            if (_currentResultVM != null && _currentResultVM is PerformanceVMBase)
+            if (_currentResultVM is PerformanceVMBase currentResult)
             {
-                ((PerformanceVMBase)_currentResultVM).updateSelectedMetric(SelectedThreshold);
+                currentResult.updateSelectedMetric(SelectedThreshold);
             }
         }
 
@@ -152,47 +146,59 @@ namespace ViewModel.ImpactAreaScenario.Results
         /// </summary>
         private void ReportChanged()
         {
-            string d = _damageReports[0];
-            if (DAMAGE_WITH_UNCERTAINTY.Equals(SelectedReport))
+            switch(SelectedReport)
             {
-                CurrentResultVM = _damageWithUncertaintyVM;
+                case DAMAGE_WITH_UNCERTAINTY:
+                    {
+                        CurrentResultVM = _damageWithUncertaintyVM;
+                        break;
+                    }
+                case DAMAGE_BY_DAMCAT:
+                    {
+                        CurrentResultVM = _damageByDamageCategoryVM;
+                        break;
+                    }
+                case ANNUAL_EXC_PROB:
+                    {
+                        CurrentResultVM = _performanceAEPVM;
+                        break;
+                    }
+                case LONG_TERM_RISK:
+                    {
+                        CurrentResultVM = _performanceLongTermRiskVM;
+                        break;
+                    }
+                case ASSURANCE_OF_THRESHOLD:
+                    {
+                        CurrentResultVM = _performanceAssuranceOfThresholdVM;
+                        break;
+                    }
             }
-            else if (DAMAGE_BY_DAMCAT.Equals(SelectedReport))
-            {
-                CurrentResultVM = _damageByDamageCategoryVM;
-            }
-            else if (ANNUAL_EXC_PROB.Equals(SelectedReport))
-            {
-                CurrentResultVM = _performanceAEPVM;
-            }
-            else if (LONG_TERM_RISK.Equals(SelectedReport))
-            {
-                CurrentResultVM = _performanceLongTermRiskVM;
-            }
-            else if (ASSURANCE_OF_THRESHOLD.Equals(SelectedReport))
-            {
-                CurrentResultVM = _performanceAssuranceOfThresholdVM;
-            }
+
         }
 
 
         private void SelectedOutcomeChanged()
         {
-            if (DAMAGE.Equals( _selectedOutcome))
+            switch(_selectedOutcome)
             {
-                ThresholdComboVisible = false;
-                Reports = _damageReports;
-                SelectedReport = Reports.First();
+                case DAMAGE:
+                    {
+                        ThresholdComboVisible = false;
+                        Reports = _damageReports;
+                        SelectedReport = Reports.First();
+                        break;
+                    }
+                case PERFORMANCE:
+                    {
+                        ThresholdComboVisible = true;
+                        Reports = _performanceReports;
+                        SelectedReport = Reports.First();
+                        break;
+                    }
             }
-            else if (PERFORMANCE.Equals( _selectedOutcome))
-            {
-                ThresholdComboVisible = true;
-                Reports = _performanceReports;
-                SelectedReport = Reports.First();
-            }
+
         }
-
-
 
     }
 }

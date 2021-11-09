@@ -8,18 +8,24 @@ namespace ViewModel.Utilities
 {
     public class FdaValidationResult
     {
-        public bool IsValid { get; set; }
-        public StringBuilder ErrorMessage { get; set; } = new StringBuilder();
-
-        public FdaValidationResult(bool isValid = true)
+        public bool IsValid
         {
-            IsValid = isValid;
+            get { return _Errors.Count == 0; }
+        }
+        private readonly List<string> _Errors = new List<string>();
+
+        public string ErrorMessage
+        {
+            get  { return string.Join(Environment.NewLine, _Errors);}
         }
 
-        public FdaValidationResult(bool isValid, string errorMsg)
+        public FdaValidationResult()
         {
-            IsValid = isValid;
-            ErrorMessage.Append(errorMsg);
+        }
+
+        public FdaValidationResult( string errorMsg)
+        {
+            _Errors.Add(errorMsg);
         }
 
         /// <summary>
@@ -29,15 +35,22 @@ namespace ViewModel.Utilities
         /// <param name="message"></param>
         public void InsertNewLineMessage(int index, string message)
         {
-            ErrorMessage.Insert(index, message + Environment.NewLine);
+            _Errors.Insert(index, message);
         }
 
-        public void AddValidationResult(FdaValidationResult result)
+        public void AddErrorMessages(List<string> errors)
         {
-            if(!result.IsValid)
+            if (errors.Count > 0)
             {
-                IsValid = false;
-                ErrorMessage.AppendLine(result.ErrorMessage.ToString());
+                _Errors.AddRange(errors);
+            }
+        }
+
+        public void AddErrorMessage(string msg)
+        {
+            if (msg != null && msg != "")
+            {
+                _Errors.Add(msg);
             }
         }
     }

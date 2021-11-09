@@ -13,7 +13,7 @@ namespace ViewModel.ImpactAreaScenario.Results
 
         private SpecificIASResultVM _selectedResult;
 
-        public List<SpecificIASResultVM> Results { get; set; }
+        public List<SpecificIASResultVM> Results { get; } = new List<SpecificIASResultVM>();
         public SpecificIASResultVM SelectedResult
         {
             get { return _selectedResult; }
@@ -23,7 +23,7 @@ namespace ViewModel.ImpactAreaScenario.Results
 
         public IASResultsVM(List<SpecificIASResultVM> results)
         {
-            Results = results;
+            Results.AddRange( results);
             SelectedResult = results[0];
         }
 

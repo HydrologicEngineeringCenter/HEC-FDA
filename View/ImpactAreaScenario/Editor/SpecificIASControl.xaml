@@ -24,15 +24,9 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-
-        
-
-        
-
-
         <GroupBox Grid.Row="1"  Header="{Binding ImpactAreaRowItem.Name}" >
             <StackPanel Orientation="Vertical">
-                <Grid x:Name="ThirdRowGrid" Grid.Row="2" Margin="0,5,5,0">
+                <Grid Grid.Row="2" Margin="0,5,5,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="140"/>
                         <ColumnDefinition Width="*"/>
@@ -46,8 +40,6 @@
 
                     <ComboBox  Grid.Column="1"  HorizontalAlignment="Stretch" ItemsSource="{Binding FrequencyElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedFrequencyElement}" />
 
-
-
                     <Label  Grid.Column="2" Content="Inflow-Outflow:" HorizontalAlignment="Right" />
                     <ComboBox  Grid.Column="3"  HorizontalAlignment="Stretch" ItemsSource="{Binding InflowOutflowElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedInflowOutflowElement}" />
 
@@ -57,7 +49,7 @@
 
                 </Grid>
 
-                <Grid x:Name="FourthRowGrid" Grid.Row="3" Margin="0,5,5,0">
+                <Grid Grid.Row="3" Margin="0,5,5,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="140"/>
                         <ColumnDefinition Width="*"/>
@@ -87,14 +79,14 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Content="Thresholds:" HorizontalAlignment="Right" Margin="0,0,0,0"/>
-                    <Button x:Name="addThresholdBtn" Grid.Column="1" Content="Add Additional Thresholds..."  HorizontalAlignment="Stretch" Click="addThresholdBtn_Click"  />
+                    <Button Grid.Column="1" Content="Add Additional Thresholds..."  HorizontalAlignment="Stretch" Click="addThresholdBtn_Click"  />
                 </Grid>
             </StackPanel>
         </GroupBox>
 
-        <Grid x:Name="FifthRowGrid" Grid.Row="3" Margin="5,5,5,0">
+        <Grid Grid.Row="3" Margin="5,5,5,0">
             <StackPanel Orientation="Horizontal" >
-                <Button x:Name="plotBtn" Content="Preview Compute" Width="120" HorizontalAlignment="Left" Click="plotBtn_Click"/>
+                <Button Content="Preview Compute" Width="120" HorizontalAlignment="Left" Click="plotBtn_Click"/>
                 <Label Content="Damage Category:" />
                 <ComboBox ItemsSource="{Binding DamageCategories}" SelectedItem="{Binding SelectedDamageCurve}" DisplayMemberPath="DamCat" Width="300"/>
                 <Label Content="EAD: " Visibility="{Binding ShowEAD,Converter={StaticResource BoolToVisibilityConverter}}"/>
@@ -102,12 +94,9 @@
             </StackPanel>
         </Grid>
 
-
-        <local:IASPlotControl x:Name="PlotControl" Grid.Row="4" Margin="5,5,5,0" DataContext="{Binding PlotControlVM}" Visibility="{Binding PlotControlVisibility}"/>
+        <local:IASPlotControl Grid.Row="4" Margin="5,5,5,0" DataContext="{Binding PlotControlVM}" Visibility="{Binding PlotControlVisibility}"/>
 
         <local:RecommendationExpanderControl Grid.Row="5" Visibility="{Binding ShowWarnings,Converter={StaticResource BoolToVisibilityConverter}}" />
-
-
 
     </Grid>
 </UserControl>

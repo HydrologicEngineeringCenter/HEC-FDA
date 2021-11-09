@@ -13,9 +13,9 @@ namespace ViewModel.ImpactAreaScenario.Results
     {
 
         private readonly HistogramData2D _data;
-        public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("chart title");
+        public SciChart2DChartViewModel ChartViewModel { get; } = new SciChart2DChartViewModel("chart title");
 
-        public List<EadRowItem> Rows { get; set; }
+        public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
         public DamageWithUncertaintyVM()
         {
@@ -38,7 +38,7 @@ namespace ViewModel.ImpactAreaScenario.Results
                 rows.Add(new EadRowItem(xVals[i], yVals[i]));
             }
 
-            Rows = rows;
+            Rows.AddRange( rows);
         }
 
         private List<double> loadXData()
@@ -69,6 +69,7 @@ namespace ViewModel.ImpactAreaScenario.Results
 
             HistogramData2D _data = new HistogramData2D(binWidth, binStart, values, "Chart", "Series", "X Data", "YData");
             ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
+            //_data.UpdateHistogram(binWidth, binStart, values)
         }
 
     }

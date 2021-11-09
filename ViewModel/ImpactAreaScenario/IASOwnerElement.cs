@@ -74,7 +74,7 @@ namespace ViewModel.ImpactAreaScenario
             if (args.NewElement is ChildElement)
             {
                 ChildElement childElem = (ChildElement)args.NewElement;
-                Saving.PersistenceFactory.GetIASManager().UpdateIASTooltipsChildElementModified(childElem, removedElementID, -1);
+                Saving.PersistenceFactory.GetIASManager().UpdateIASTooltipsChildElementModified(childElem, removedElementID);
             }
         }
 
@@ -92,7 +92,7 @@ namespace ViewModel.ImpactAreaScenario
             if (args.Element is ChildElement)
             {
                 ChildElement childElem = (ChildElement)args.Element;
-                Saving.PersistenceFactory.GetIASManager().UpdateIASTooltipsChildElementModified(childElem, removedElementID, -1);
+                Saving.PersistenceFactory.GetIASManager().UpdateIASTooltipsChildElementModified(childElem, removedElementID);
             }
         }
 
@@ -101,10 +101,6 @@ namespace ViewModel.ImpactAreaScenario
 
         private void UpdateIASElementSet(object sender, Saving.ElementUpdatedEventArgs e)
         {
-            //so if the element has an editor that is open (not null)
-            //then we need to update it with the new element. I guess
-            //we just care about the curves and the impact area.
-            //((ConditionsElement)e.OldElement).UpdateElementInEditor_ChildRemoved((ConditionsElement)e.NewElement);
             UpdateElement(e.OldElement, e.NewElement);
         }
         private void AddIASElementSet(object sender, Saving.ElementAddedEventArgs e)

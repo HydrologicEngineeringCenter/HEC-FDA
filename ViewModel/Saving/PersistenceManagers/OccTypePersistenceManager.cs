@@ -499,8 +499,7 @@ namespace ViewModel.Saving.PersistenceManagers
             }
             if (indexToRemove != -1)
             {
-                StudyCacheForSaving.RemoveElement(elems[indexToRemove], groupID);
-                //StudyCacheForSaving.OccTypeElements.RemoveAt(indexToRemove);
+                StudyCacheForSaving.RemoveElement(elems[indexToRemove]);
             }
         }
 

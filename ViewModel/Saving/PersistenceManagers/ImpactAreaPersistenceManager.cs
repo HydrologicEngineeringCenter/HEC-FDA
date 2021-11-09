@@ -153,7 +153,7 @@ namespace ViewModel.Saving.PersistenceManagers
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
-            StudyCacheForSaving.RemoveElement(element, element.GetElementID());
+            StudyCacheForSaving.RemoveElement(element);
 
         }
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )

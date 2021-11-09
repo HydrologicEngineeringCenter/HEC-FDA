@@ -26,81 +26,11 @@ namespace View.ImpactAreaScenario.Editor
     /// </summary>
     public partial class IASEditor : UserControl
     {
-       
 
         public IASEditor()
         {
             InitializeComponent();
         }
-
-        
-
-        //private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    IASEditorVM vm = (IASEditorVM)this.DataContext;
-
-        //    ////flow frequency
-        //    //vm.FrequencyRelationshipControl.ChartVM = new SciChart2DChartViewModel(vm.FrequencyRelationshipControl.ChartVM);
-        //    //_flowFreqChart = new Chart2D(vm.FrequencyRelationshipControl.ChartVM);
-
-        //    ////rating
-        //    //vm.RatingRelationshipControl.ChartVM = new SciChart2DChartViewModel(vm.RatingRelationshipControl.ChartVM);
-        //    //_ratingChart = new Chart2D(vm.RatingRelationshipControl.ChartVM);
-
-        //    ////stage damage
-        //    //vm.StageDamageControl.ChartVM = new SciChart2DChartViewModel(vm.StageDamageControl.ChartVM);
-        //    //_stageDamageChart = new Chart2D(vm.StageDamageControl.ChartVM);
-
-        //    ////damage freq
-        //    //vm.DamageFrequencyControl.ChartVM = new SciChart2DChartViewModel(vm.DamageFrequencyControl.ChartVM);
-        //    //_damageFreqChart = new Chart2D(vm.DamageFrequencyControl.ChartVM);
-
-        //}
-
-       
-
-        //private void plotBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    SpecificIASEditorVM vm = (SpecificIASEditorVM)this.DataContext;
-        //    //if (vm.IsValid())
-        //    {
-
-        //        if (!_plotsHaveBeenAdded)
-        //        {
-        //            //flow frequency                
-        //            PlotsGrid.Children.Add(_flowFreqChart);
-        //            Grid.SetRow(_flowFreqChart, 0);
-        //            Grid.SetColumn(_flowFreqChart, 1);
-
-        //            //rating
-        //            PlotsGrid.Children.Add(_ratingChart);
-        //            Grid.SetRow(_ratingChart, 0);
-        //            Grid.SetColumn(_ratingChart, 0);
-
-        //            //stage damage
-        //            PlotsGrid.Children.Add(_stageDamageChart);
-        //            Grid.SetRow(_stageDamageChart, 1);
-        //            Grid.SetColumn(_stageDamageChart, 0);
-
-        //            //damage freq
-        //            PlotsGrid.Children.Add(_damageFreqChart);
-        //            Grid.SetRow(_damageFreqChart, 1);
-        //            Grid.SetColumn(_damageFreqChart, 1);
-
-        //            _plotsHaveBeenAdded = true;
-        //        }
-
-
-        //        //todo: link the charts everytime or only once?
-        //        LinkTheCharts();
-        //        //vm.Plot();
-        //    }
-        //}
-
-        
-
-        
-
 
     }
 }

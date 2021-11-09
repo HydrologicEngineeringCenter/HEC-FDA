@@ -19,8 +19,6 @@ namespace ViewModel.ImpactAreaScenario
 
         private string _Description = "";
         private int _AnalysisYear;
-        private bool _IsExpanded;
-        private NamedAction _ViewResults = new NamedAction();
         #endregion
 
         #region Properties
@@ -43,7 +41,7 @@ namespace ViewModel.ImpactAreaScenario
             set { _AnalysisYear = value; NotifyPropertyChanged(); }
         }
 
-        public List<SpecificIAS> SpecificIASElements { get; set; }
+        public List<SpecificIAS> SpecificIASElements { get; } = new List<SpecificIAS>();
 
         #endregion
         #region Constructors
@@ -51,7 +49,7 @@ namespace ViewModel.ImpactAreaScenario
         
         public IASElementSet(string name, string description, int year, List<SpecificIAS> elems) : base()
         {
-            SpecificIASElements = elems;
+            SpecificIASElements.AddRange( elems);
             Name = name;
             Description = description;
             AnalysisYear = year;
@@ -74,7 +72,6 @@ namespace ViewModel.ImpactAreaScenario
             AnalysisYear = Int32.Parse(setElem.Attribute(YEAR).Value);
 
             IEnumerable<XElement> iasElements = setElem.Elements("IAS");
-            SpecificIASElements = new List<SpecificIAS>();
             foreach(XElement elem in iasElements)
             {
                 SpecificIASElements.Add(new SpecificIAS(elem));
@@ -94,8 +91,9 @@ namespace ViewModel.ImpactAreaScenario
             compute.Header = "Compute Impact Area Scenario";
             compute.Action = ComputeCondition;
 
-            _ViewResults.Header = "View Results";
-            _ViewResults.Action = ViewResults;
+            NamedAction viewResults = new NamedAction();
+            viewResults.Header = "View Results";
+            viewResults.Action = ViewResults;
 
             NamedAction removeCondition = new NamedAction();
             removeCondition.Header = "Remove";
@@ -108,7 +106,7 @@ namespace ViewModel.ImpactAreaScenario
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(edit);
             localActions.Add(compute);
-            localActions.Add(_ViewResults);
+            localActions.Add(viewResults);
             localActions.Add(removeCondition);
             localActions.Add(renameElement);
 
@@ -146,6 +144,16 @@ namespace ViewModel.ImpactAreaScenario
             Navigate(tab, false, false);
         }
 
+        private ObservableCollection<ImpactAreaRowItem> GetStudyImpactAreaRowItems()
+        {
+            ObservableCollection<ImpactAreaRowItem> impactAreaRows = new ObservableCollection<ImpactAreaRowItem>();
+            List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+            if (impactAreaElements.Count > 0)
+            {
+                impactAreaRows = impactAreaElements[0].ImpactAreaRows;
+            }
+            return impactAreaRows;
+        }
 
         private List<SpecificIASResultVM> GetResults()
         {
@@ -153,10 +161,8 @@ namespace ViewModel.ImpactAreaScenario
             List<SpecificIASResultVM> results = new List<SpecificIASResultVM>();
 
             //this is kind of messy. Quite a bit of code to get the name of the impact area from the impact area id.
-            List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-            if (impactAreaElements.Count > 0)
-            {
-                ObservableCollection<ImpactAreaRowItem> impactAreaRows = impactAreaElements[0].ImpactAreaRows;
+
+            ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetStudyImpactAreaRowItems();
 
                 foreach (SpecificIAS ias in SpecificIASElements)
                 {
@@ -168,20 +174,22 @@ namespace ViewModel.ImpactAreaScenario
                         results.Add(result);
                     }
                 }
-            }
+            
             return results;
         }
 
         private string GetImpactAreaNameFromID(ObservableCollection<ImpactAreaRowItem> rows, int id)
         {
+            string rowName = null;
             foreach(ImpactAreaRowItem row in rows)
             {
                 if(row.ID == id)
                 {
-                    return row.Name;
+                    rowName = row.Name;
+                    break;
                 }
             }
-            return null;
+            return rowName;
         }
 
         private void DisplayResults(IConditionLocationYearResult result)
@@ -198,58 +206,9 @@ namespace ViewModel.ImpactAreaScenario
         }
 
         
-        //Intentionally left blank until the compute is completed in the model. -cody 10/26/21
         private void ComputeCondition(object arg1, EventArgs arg2)
         {
-
-            //EnterSeedVM enterSeedVM = new EnterSeedVM();
-            //string header = "Enter Seed Value";
-            //DynamicTabVM tab = new DynamicTabVM(header, enterSeedVM, "EnterSeed");
-            //Navigate(tab, true, true);
-
-            //int seedValue = enterSeedVM.Seed;
-
-            //IConditionLocationYearSummary condition = null;
-
-            //IFrequencyFunction frequencyFunction = GetFrequencyFunction();
-            //List<ITransformFunction> transformFunctions = GetTransformFunctions();
-
-            //bool hasLeveeFailure = LeveeFailureID != -1;
-            //if (hasLeveeFailure)
-            //{
-            //    LeveeFeatureElement leveeFailureElement = (LeveeFeatureElement)StudyCache.GetChildElementOfType(typeof(LeveeFeatureElement), LeveeFailureID);
-            //    ILateralStructure latStruct = ILateralStructureFactory.Factory(leveeFailureElement.Elevation, (ITransformFunction)leveeFailureElement.Curve); 
-            //    //todo: Need to handle multiple thresholds
-            //    condition = Saving.PersistenceFactory.GetIASManager().CreateIConditionLocationYearSummary(ImpactAreaID,
-            //        AnalysisYear, frequencyFunction, transformFunctions, leveeFailureElement, ThresholdType, ThresholdValue);
-            //}
-            //else 
-            //{ 
-            //    condition = Saving.PersistenceFactory.GetIASManager().CreateIConditionLocationYearSummary(ImpactAreaID,
-            //        AnalysisYear, frequencyFunction, transformFunctions, ThresholdType, ThresholdValue);
-            //}
-
-            //if (condition == null)
-            //{
-            //    return;
-            //}
-
-            //IConvergenceCriteria convergenceCriteria = IConvergenceCriteriaFactory.Factory();
-            //Dictionary<IMetric, IConvergenceCriteria> metricsDictionary = new Dictionary<IMetric, IConvergenceCriteria>();
-            //foreach (IMetric metric in condition.Metrics)
-            //{
-            //    metricsDictionary.Add(metric, IConvergenceCriteriaFactory.Factory());
-            //}
-
-            //IReadOnlyDictionary<IMetric, IConvergenceCriteria> metrics = new ReadOnlyDictionary<IMetric, IConvergenceCriteria>(metricsDictionary);
-
-            //IConditionLocationYearResult result = new ConditionLocationYearResult(condition, metrics, seedValue);
-            //result.Compute();
-            //ComputeResults = result;
-            //Saving.PersistenceFactory.GetIASManager().SaveConditionResults(result, this.GetElementID(), frequencyFunction, transformFunctions);
-
-            //DisplayResults(result);
-
+        //Intentionally left blank until the compute is completed in the model. -cody 10/26/21
         }
         #endregion
         #region Voids

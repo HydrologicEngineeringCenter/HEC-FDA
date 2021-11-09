@@ -14,21 +14,24 @@ namespace ViewModel.ImpactAreaScenario.Editor
     /// </summary>
     public class ChildElementComboItem:BaseViewModel
     {
+        private const int INVALID_ID = -1;
         private string _Name;
         private ChildElement _ChildElement;
-
-        public int ID { get; set; } = -1;
+        public int ID { get; set; } = INVALID_ID;
         public ChildElement ChildElement
         {
             get { return _ChildElement; }
-            set { _ChildElement = value; Name = _ChildElement.Name; }
+            set 
+            { 
+                _ChildElement = value; 
+                Name = _ChildElement.Name; 
+            }
         }
         public string Name
         {
             get { return _Name; }
             set { _Name = value; NotifyPropertyChanged(); }
         }
-
         public ChildElementComboItem(ChildElement element)
         {
             if(element == null)
@@ -42,8 +45,5 @@ namespace ViewModel.ImpactAreaScenario.Editor
             }
             _ChildElement = element;
         }
-
-        
-
     }
 }

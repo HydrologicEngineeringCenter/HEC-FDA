@@ -202,55 +202,48 @@ namespace View.Inventory.OccupancyTypes.Controls
         //    Grid.SetColumn(_OtherChart, 2);
         //}
 
-        public void AddChart()
+        private void AddChart()
         {
-            OccupancyTypeEditable vm = (OccupancyTypeEditable)this.DataContext;
+            OccupancyTypeEditable vm = DataContext as OccupancyTypeEditable;
             if (vm == null)
             {
                 return;
             }
 
-            StructureTabGrid.Children.Remove(_StructureChart);
-            ContentTabGrid.Children.Remove(_ContentChart);
-            VehicleTabGrid.Children.Remove(_VehicleChart);
-            OtherTabGrid.Children.Remove(_OtherChart);
-
-
             //set the chart view models
-            
-            vm.StructureEditorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(vm.StructureEditorVM.CoordinatesChartViewModel);
-            Chart2D structChart = new Chart2D(vm.StructureEditorVM.CoordinatesChartViewModel);
-            
-            vm.ContentEditorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(vm.ContentEditorVM.CoordinatesChartViewModel);
-            Chart2D contentChart = new Chart2D(vm.ContentEditorVM.CoordinatesChartViewModel);
-            
-            vm.VehicleEditorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(vm.VehicleEditorVM.CoordinatesChartViewModel);
-            Chart2D vehicleChart = new Chart2D(vm.VehicleEditorVM.CoordinatesChartViewModel);
-            
-            vm.OtherEditorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(vm.OtherEditorVM.CoordinatesChartViewModel);
-            Chart2D otherChart = new Chart2D(vm.OtherEditorVM.CoordinatesChartViewModel);
+            if (_StructureChart == null)
+            {
+                _StructureChart = new Chart2D(vm.StructureEditorVM.CoordinatesChartViewModel);
 
-            _StructureChart = structChart;
-            _ContentChart = contentChart;
-            _VehicleChart = vehicleChart;
-            _OtherChart = otherChart;
+                StructureTabGrid.Children.Add(_StructureChart);
+                Grid.SetRow(_StructureChart, 2);
+                Grid.SetColumn(_StructureChart, 2);
+            }
+            if (_ContentChart == null)
+            {
+                _ContentChart = new Chart2D(vm.ContentEditorVM.CoordinatesChartViewModel);
 
-            //add the new charts to the UI
-            StructureTabGrid.Children.Add(_StructureChart);
-            Grid.SetRow(_StructureChart, 2);
-            Grid.SetColumn(_StructureChart, 2);
+                ContentTabGrid.Children.Add(_ContentChart);
+                Grid.SetRow(_ContentChart, 2);
+                Grid.SetColumn(_ContentChart, 2);
+            }
+            if (_VehicleChart == null)
+            {
+                _VehicleChart = new Chart2D(vm.VehicleEditorVM.CoordinatesChartViewModel);
 
-            ContentTabGrid.Children.Add(_ContentChart);
-            Grid.SetRow(_ContentChart, 2);
-            Grid.SetColumn(_ContentChart, 2);
+                VehicleTabGrid.Children.Add(_VehicleChart);
+                Grid.SetRow(_VehicleChart, 2);
+                Grid.SetColumn(_VehicleChart, 2);
+            }
+            if(_OtherChart == null)
+            {
+                _OtherChart = new Chart2D(vm.OtherEditorVM.CoordinatesChartViewModel);
 
-            VehicleTabGrid.Children.Add(_VehicleChart);
-            Grid.SetRow(_VehicleChart, 2);
-            Grid.SetColumn(_VehicleChart, 2);
+                OtherTabGrid.Children.Add(_OtherChart);
+                Grid.SetRow(_OtherChart, 2);
+                Grid.SetColumn(_OtherChart, 2);
+            }
 
-            OtherTabGrid.Children.Add(_OtherChart);
-            Grid.SetRow(_OtherChart, 2);
-            Grid.SetColumn(_OtherChart, 2);
         }
 
 

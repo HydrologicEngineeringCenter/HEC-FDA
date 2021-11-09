@@ -3,8 +3,8 @@
     public class EadRowItem
     {
 
-        public double Frequency { get; set; }
-        public double Value { get; set; }
+        public double Frequency { get;  }
+        public double Value { get;  }
 
         public EadRowItem(double frequency, double value)
         {

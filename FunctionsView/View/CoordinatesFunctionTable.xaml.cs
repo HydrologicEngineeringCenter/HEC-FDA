@@ -53,10 +53,6 @@ namespace FunctionsView.View
             dg_table.ArrowUpInFirstRow += Dg_table_ArrowUpInFirstRow;
             dg_table.PostPasteData += Dg_table_PostPasteData;
 
-            //foreach(DataGridColumn col in dg_table.Columns)
-            //{
-            //    col.IsReadOnly = true;
-            //}
         }
 
         private void Dg_table_PostPasteData()

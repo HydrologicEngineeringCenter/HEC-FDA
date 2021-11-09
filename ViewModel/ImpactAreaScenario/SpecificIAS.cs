@@ -61,7 +61,7 @@ namespace ViewModel.ImpactAreaScenario
         public int StageDamageID { get; set; }
 
 
-        public List<ThresholdRowItem> Thresholds { get; set; }
+        public List<ThresholdRowItem> Thresholds { get; } = new List<ThresholdRowItem>();
 
         #endregion
         #region Constructors
@@ -87,7 +87,7 @@ namespace ViewModel.ImpactAreaScenario
             ExtIntStageID = extIntID;
             LeveeFailureID = leveeFailureID;
             StageDamageID = stageDamageID;
-            Thresholds = thresholds;
+            Thresholds.AddRange(thresholds);
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace ViewModel.ImpactAreaScenario
             ExtIntStageID = Int32.Parse(iasElem.Element(EXTERIOR_INTERIOR).Attribute(ID).Value);
             StageDamageID = Int32.Parse(iasElem.Element(STAGE_DAMAGE).Attribute(ID).Value);
 
-            Thresholds = ReadThresholdsXML(iasElem.Element(THRESHOLDS));        
+            Thresholds.AddRange( ReadThresholdsXML(iasElem.Element(THRESHOLDS)));
         }
        
         #endregion
@@ -119,54 +119,6 @@ namespace ViewModel.ImpactAreaScenario
         /// <param name="arg2"></param>
         private void ComputeCondition(object arg1, EventArgs arg2)
         {
-
-            //EnterSeedVM enterSeedVM = new EnterSeedVM();
-            //string header = "Enter Seed Value";
-            //DynamicTabVM tab = new DynamicTabVM(header, enterSeedVM, "EnterSeed");
-            //Navigate(tab, true, true);
-
-            //int seedValue = enterSeedVM.Seed;
-
-            //IConditionLocationYearSummary condition = null;
-
-            //IFrequencyFunction frequencyFunction = GetFrequencyFunction();
-            //List<ITransformFunction> transformFunctions = GetTransformFunctions();
-
-            //bool hasLeveeFailure = LeveeFailureID != -1;
-            //if (hasLeveeFailure)
-            //{
-            //    LeveeFeatureElement leveeFailureElement = (LeveeFeatureElement)StudyCache.GetChildElementOfType(typeof(LeveeFeatureElement), LeveeFailureID);
-            //    ILateralStructure latStruct = ILateralStructureFactory.Factory(leveeFailureElement.Elevation, (ITransformFunction)leveeFailureElement.Curve); 
-            //    //todo: Need to handle multiple thresholds
-            //    condition = Saving.PersistenceFactory.GetIASManager().CreateIConditionLocationYearSummary(ImpactAreaID,
-            //        AnalysisYear, frequencyFunction, transformFunctions, leveeFailureElement, ThresholdType, ThresholdValue);
-            //}
-            //else 
-            //{ 
-            //    condition = Saving.PersistenceFactory.GetIASManager().CreateIConditionLocationYearSummary(ImpactAreaID,
-            //        AnalysisYear, frequencyFunction, transformFunctions, ThresholdType, ThresholdValue);
-            //}
-
-            //if (condition == null)
-            //{
-            //    return;
-            //}
-
-            //IConvergenceCriteria convergenceCriteria = IConvergenceCriteriaFactory.Factory();
-            //Dictionary<IMetric, IConvergenceCriteria> metricsDictionary = new Dictionary<IMetric, IConvergenceCriteria>();
-            //foreach (IMetric metric in condition.Metrics)
-            //{
-            //    metricsDictionary.Add(metric, IConvergenceCriteriaFactory.Factory());
-            //}
-
-            //IReadOnlyDictionary<IMetric, IConvergenceCriteria> metrics = new ReadOnlyDictionary<IMetric, IConvergenceCriteria>(metricsDictionary);
-
-            //IConditionLocationYearResult result = new ConditionLocationYearResult(condition, metrics, seedValue);
-            //result.Compute();
-            //ComputeResults = result;
-            //Saving.PersistenceFactory.GetIASManager().SaveConditionResults(result, this.GetElementID(), frequencyFunction, transformFunctions);
-
-            //DisplayResults(result);
 
         }
 
@@ -269,8 +221,11 @@ namespace ViewModel.ImpactAreaScenario
                     {
                         return new ThresholdType( IMetricEnum.ExpectedAnnualDamage, "Expected Annual Damage");
                     }
+                default:
+                    {
+                        throw new ArgumentOutOfRangeException("Could not convert string: " + metric + " to an IMetricEnum.");
+                    }
             }
-            throw new Exception("Could not convert string: " + metric + " to an IMetricEnum.");
         }
 
     }

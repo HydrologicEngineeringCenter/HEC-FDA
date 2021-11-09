@@ -11,7 +11,6 @@ namespace View.ImpactAreaScenario.Editor
     {      
         private static readonly int LIST_ROW = 0;
 
-        
         public RecommendationExpanderControl()
         {
             InitializeComponent();          
@@ -23,7 +22,6 @@ namespace View.ImpactAreaScenario.Editor
             {
                 MainGrid.RowDefinitions[LIST_ROW].Height = GridLength.Auto;
                 MessagesExpander.Margin = new Thickness(5, 5, 5, 5);
-
             }
         }
 
@@ -34,9 +32,7 @@ namespace View.ImpactAreaScenario.Editor
                 MainGrid.RowDefinitions[LIST_ROW].Height = new GridLength(1, GridUnitType.Star);
                 MessagesExpander.Margin = new Thickness(5, 5, 5, 5);
             }
-
         }
 
-      
     }
 }

@@ -8,7 +8,7 @@ using ViewModel.Utilities;
 
 namespace ViewModel.ImpactAreaScenario.Editor
 {
-    class OverlappingRangeHelper
+    public static class OverlappingRangeHelper
     {
         private const double OVERLAP_RULE_PERCENT = .05;
         private const string INFLOW_OUTFLOW = "Inflow-Outflow";
@@ -215,8 +215,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             }
             return retval;
         }
-
-        
 
     }
 }

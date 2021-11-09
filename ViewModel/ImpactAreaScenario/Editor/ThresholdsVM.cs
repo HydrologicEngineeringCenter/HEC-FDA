@@ -11,13 +11,10 @@ namespace ViewModel.ImpactAreaScenario.Editor
 {
     public class ThresholdsVM : BaseViewModel
     {
-
         private ThresholdRowItem _selectedRow;
 
-        public ObservableCollection<ThresholdRowItem> Rows
-        {
-            get; set;
-        }
+        public ObservableCollection<ThresholdRowItem> Rows { get; } = new ObservableCollection<ThresholdRowItem>();
+
         public ThresholdRowItem SelectedRow
         {
             get { return _selectedRow; }
@@ -26,10 +23,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         public ThresholdsVM()
         {
-            Rows = new ObservableCollection<ThresholdRowItem>();
         }
  
-     
         public void AddRows(List<ThresholdRowItem> rows)
         {
             foreach (ThresholdRowItem row in rows)
@@ -52,7 +47,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 Rows.Add(newRI);
                 SelectedRow = newRI;
             }
-
         }
 
         private int getNextIdInteger()
@@ -71,7 +65,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         public void Remove()
         {
             int selectedIndex = Rows.IndexOf(SelectedRow);
-            if (selectedIndex > 0)
+            if (selectedIndex > -1)
             {
                 Rows.Remove(SelectedRow);
                 //row at beginning or in middle removed: select next row
@@ -90,8 +84,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
                     SelectedRow = Rows[Rows.Count - 1];
                 }           
             }
-
-
         }
 
         public List<ThresholdRowItem> GetThresholds()

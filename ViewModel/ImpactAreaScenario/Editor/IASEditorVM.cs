@@ -14,11 +14,11 @@ namespace ViewModel.ImpactAreaScenario.Editor
     {
 
         #region Fields
-        private IASElementSet _currentElement;
-        private bool _isInEditMode;
-        private List<ImpactAreaRowItem> _ImpactAreaNames; 
+        private IASElementSet _CurrentElement;
+        private bool _IsInEditMode;
+        private List<ImpactAreaRowItem> _ImpactAreaNames = new List<ImpactAreaRowItem>(); 
         private ImpactAreaRowItem _SelectedImpactArea;
-        private Dictionary<ImpactAreaRowItem, SpecificIASEditorVM> _ImpactAreaEditorDictionary;
+        private Dictionary<ImpactAreaRowItem, SpecificIASEditorVM> _ImpactAreaEditorDictionary = new Dictionary<ImpactAreaRowItem, SpecificIASEditorVM>();
 
         private SpecificIASEditorVM _SelectedEditorVM;
         private bool _HasImpactArea = true;
@@ -33,9 +33,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
             set { _HasImpactArea = value; NotifyPropertyChanged(); }
         }
         public int Year { get; set; } = DateTime.Now.Year;
-
         
-        public ObservableCollection<ChildElementComboItem> ImpactAreaElements { get; set; }
         public List<ImpactAreaRowItem> ImpactAreas
         {
             get { return _ImpactAreaNames; }
@@ -62,7 +60,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
         }
 
 
-
         /// <summary>
         /// This is the ctor for opening an existing element.
         /// </summary>
@@ -70,21 +67,17 @@ namespace ViewModel.ImpactAreaScenario.Editor
         /// <param name="manager"></param>
         public IASEditorVM(IASElementSet elem, EditorActionManager manager) : base(elem, manager)
         {
-            _currentElement = elem;
-            _isInEditMode = true;
+            _CurrentElement = elem;
+            _IsInEditMode = true;
             FillForm(elem);
         }   
 
-      
 
         /// <summary>
         /// Loads the dictionary that links the specific impact area with the specific ias.
         /// </summary>
         private void CreateEmptySpecificIASEditors()
         {
-            ImpactAreas = new List<ImpactAreaRowItem>();
-            _ImpactAreaEditorDictionary = new Dictionary<ImpactAreaRowItem, SpecificIASEditorVM>();
-
             ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetImpactAreaRowItems();
             //we don't allow this editor to open unless there are impact areas so this should always be true.
             if (impactAreaRows.Count > 0)
@@ -98,9 +91,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 }
                 SelectedImpactArea = ImpactAreas[0];
             }
-         
-
-
         }
 
         /// <summary>
@@ -132,7 +122,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             }
         }
 
-
         /// <summary>
         /// This method compares the specific ias's that were saved to the current state of the impact areas.
         /// It seems possible that there are new impact areas or deleted impact areas. If there are new impact areas
@@ -145,9 +134,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             Name = elem.Name;
             Description = elem.Description;
             Year = elem.AnalysisYear;
-
-            ImpactAreas = new List<ImpactAreaRowItem>();
-            _ImpactAreaEditorDictionary = new Dictionary<ImpactAreaRowItem, SpecificIASEditorVM>();
 
             //this is the list of current impact area rows in the study. They might not match the items
             //that were saved in the db for this IAS. The user might have deleted the old impact area set and brought in 
@@ -181,26 +167,17 @@ namespace ViewModel.ImpactAreaScenario.Editor
             SelectedImpactArea = ImpactAreas[0];
         }
 
-
         #region validation
-
-       
 
         private FdaValidationResult IsYearValid()
         {
             FdaValidationResult vr = new FdaValidationResult();
             if (Year < 1900 || Year > 3000)
             {
-                vr.IsValid = false;
-                vr.ErrorMessage = new StringBuilder( "A year is required and must be greater than 1900 and less than 3000");
+                vr.AddErrorMessage( "A year is required and must be greater than 1900 and less than 3000");
             }
-
             return vr;
         }
-
-      
-       
-
 
         /// <summary>
         /// Validates that the data entered is sufficient to save the form
@@ -210,13 +187,13 @@ namespace ViewModel.ImpactAreaScenario.Editor
         {
             FdaValidationResult vr = new FdaValidationResult();
 
-            vr.AddValidationResult( IsYearValid());
+            vr.AddErrorMessage( IsYearValid().ErrorMessage);
 
             //todo: actually run the compute and see if it was successful? - this might be done on each individual ias.
             foreach (KeyValuePair<ImpactAreaRowItem, SpecificIASEditorVM>  entry in _ImpactAreaEditorDictionary)
             {
                 SpecificIASEditorVM vm = entry.Value;
-                vr.AddValidationResult(vm.IsValid());
+                vr.AddErrorMessage(vm.IsValid().ErrorMessage + Environment.NewLine);
             }
 
             if (!vr.IsValid)
@@ -229,7 +206,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 //if no msg's then we can save
                 return true;
             }
-
         }
 
         #endregion
@@ -254,19 +230,18 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 }
                 IASElementSet elemToSave = new IASElementSet(Name, Description, Year, elementsToSave);
 
-                if (_isInEditMode)
+                if (_IsInEditMode)
                 {
-                    Saving.PersistenceFactory.GetIASManager().SaveExisting(_currentElement, elemToSave);
+                    Saving.PersistenceFactory.GetIASManager().SaveExisting(_CurrentElement, elemToSave);
                 }
                 else
                 {
                     Saving.PersistenceFactory.GetIASManager().SaveNew(elemToSave);
-                    _isInEditMode = true;
+                    _IsInEditMode = true;
                 }
-                _currentElement = elemToSave;
+                _CurrentElement = elemToSave;
             }
         }
-
 
     }
 }

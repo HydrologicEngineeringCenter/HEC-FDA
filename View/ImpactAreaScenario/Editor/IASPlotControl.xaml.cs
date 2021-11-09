@@ -74,11 +74,6 @@ namespace View.ImpactAreaScenario.Editor
             //This updates the vertical chart group, we want to split that up.
             _controller.RegisterChart(_flowFreqChart, _ratingChart, _stageDamageChart, _damageFreqChart);
 
-            //This fixes an issue where there's a thick bar in between the charts.
-            //Guid guid = new Guid();
-            //_flowFreqChart.SetVerticalChartGroup(guid.ToString());
-            //_damageFreqChart.SetVerticalChartGroup(guid.ToString());
-
             _controller.BindChart(Visibility.Visible, ChartDirectionality.Vertical, ShareableAxis.X, _flowFreqChart, _damageFreqChart);
             _controller.BindChart(Visibility.Visible, ChartDirectionality.Vertical, ShareableAxis.X, _ratingChart, _stageDamageChart);
 
@@ -138,15 +133,6 @@ namespace View.ImpactAreaScenario.Editor
                 _stageDamageChart,
                 _damageFreqChart
             };
-        }
-
-        public void Plot()
-        {
-            //Values have been updated, and are ready to show.
-            _flowFreqChart.ZoomToExtents(TimeSpan.Zero);
-            _ratingChart.ZoomToExtents(TimeSpan.Zero);
-            _stageDamageChart.ZoomToExtents(TimeSpan.Zero);
-            _damageFreqChart.ZoomToExtents(TimeSpan.Zero);
         }
     }
 }

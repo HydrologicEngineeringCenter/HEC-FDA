@@ -9,12 +9,12 @@ namespace ViewModel.ImpactAreaScenario.Results
 {
     public class Results
     {
-        public  DamageWithUncertaintyVM DamageWithUncertaintyVM { get; set; }
-        public DamageByDamageCategoryVM DamageByDamageCategoryVM { get; set; }
-        public PerformanceVMBase PerformanceAEPVM { get; set; }
-        public PerformanceVMBase PerformanceAssuranceOfThresholdVM { get; set; }
-        public PerformanceVMBase PerformanceLongTermRiskVM { get; set; }
-        public ImpactAreaRowItem ImpactArea { get; set; }
+        public DamageWithUncertaintyVM DamageWithUncertaintyVM { get; }
+        public DamageByDamageCategoryVM DamageByDamageCategoryVM { get; }
+        public PerformanceVMBase PerformanceAEPVM { get; }
+        public PerformanceVMBase PerformanceAssuranceOfThresholdVM { get; }
+        public PerformanceVMBase PerformanceLongTermRiskVM { get; }
+        public ImpactAreaRowItem ImpactArea { get; }
 
         public Results(DamageWithUncertaintyVM damageWithUncertainty, DamageByDamageCategoryVM damageByDamageCategory,
             PerformanceVMBase performanceAEP, PerformanceVMBase performanceAssuranceOfThreshold, PerformanceVMBase performanceLongTermRisk)

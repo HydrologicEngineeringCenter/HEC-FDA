@@ -33,14 +33,14 @@ namespace View.ImpactAreaScenario.Editor
 
         private void plotBtn_Click(object sender, RoutedEventArgs e)
         {
-            SpecificIASEditorVM vm = (SpecificIASEditorVM)this.DataContext;
-            vm.Plot();
+            SpecificIASEditorVM vm = DataContext as SpecificIASEditorVM;
+            vm?.Plot();
         }
 
         private void addThresholdBtn_Click(object sender, RoutedEventArgs e)
         {
-            SpecificIASEditorVM vm = (SpecificIASEditorVM)this.DataContext;
-            vm.AddThresholds();
+            SpecificIASEditorVM vm = DataContext as SpecificIASEditorVM;
+            vm?.AddThresholds();
         }
     }
 }

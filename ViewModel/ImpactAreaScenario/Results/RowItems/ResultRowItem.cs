@@ -8,8 +8,8 @@ namespace ViewModel.ImpactAreaScenario.Results.RowItems
 {
     public class ResultRowItem:BaseViewModel
     {
-        public string Name{get;set;}
-        public SpecificIASResultVM Result { get; set; }
+        public string Name{get;}
+        public SpecificIASResultVM Result { get; }
         public ResultRowItem(SpecificIASResultVM result)
         {
             Name = result.Name;

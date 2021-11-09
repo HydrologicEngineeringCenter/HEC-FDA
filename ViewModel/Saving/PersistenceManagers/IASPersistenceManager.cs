@@ -22,14 +22,13 @@ namespace ViewModel.Saving.PersistenceManagers
         //of the element. But since they get stored as strings if a developer changes the name of the class
         //you would no longer get any of the old logs. So i use this constant.
         private const string ELEMENT_TYPE = "IAS";
+        private const int XML_COLUMN = 2;
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("IASPersistenceManager");
 
         private const string TABLE_NAME = "ImpactAreaScenarios";
-        private static readonly string[] ColumnNames =
-            { "Name","XML"};
+        private static readonly string[] ColumnNames = { "Name","XML"};
 
-        private static readonly Type[] TableColTypes =
-            { typeof(string), typeof(string)};
+        private static readonly Type[] TableColTypes = { typeof(string), typeof(string)};
 
 
         /// <summary>
@@ -71,11 +70,14 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <returns></returns>
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            IASElementSet element = (IASElementSet)elem;
-            object[] retval = new object[] {element.Name, element.WriteToXML() };
+            object[] retval = null;
+            IASElementSet element = elem as IASElementSet;
+            if (element != null)
+            {
+                retval = new object[] { element.Name, element.WriteToXML() };
+            }
             return retval;
         }
-
 
         /// <summary>
         /// Converts the row in the main table into an actual condition element.
@@ -84,9 +86,8 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <returns></returns>
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            string xml = (string)rowData[2];
-            IASElementSet elem = new IASElementSet(xml);
-            return elem;
+            string xml = (string)rowData[XML_COLUMN];
+            return new IASElementSet(xml);
         }
 
 
@@ -98,7 +99,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="element"></param>
         public void SaveNew(ChildElement element)
         {
-            if (element.GetType() == typeof(IASElementSet))
+            if (element is IASElementSet)
             {
                 string editDate = DateTime.Now.ToString("G");
                 element.LastEditDate = editDate;
@@ -113,9 +114,11 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="element"></param>
         public void Remove(ChildElement element)
         {
-            int id = element.GetElementID();
-            RemoveFromParentTable(element, TableName);
-            StudyCacheForSaving.RemoveElement((IASElementSet)element, id);
+            if (element is IASElementSet)
+            {
+                RemoveFromParentTable(element, TableName);
+                StudyCacheForSaving.RemoveElement((IASElementSet)element);
+            }
         }
 
         /// <summary>
@@ -134,7 +137,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         public void Load()
         {
-            List<ChildElement> iasElems = CreateElementsFromRows(TableName, (rowData) => CreateElementFromRowData(rowData));
+            List<ChildElement> iasElems = CreateElementsFromRows(TableName, rowData => CreateElementFromRowData(rowData));
             foreach (IASElementSet elem in iasElems)
             {
                 StudyCacheForSaving.AddElement(elem);
@@ -272,8 +275,8 @@ namespace ViewModel.Saving.PersistenceManagers
         /// an update to the study cache and the study tree as well.
         /// </summary>
         /// <param name="elem">The child element that has been removed</param>
-        /// <param name="newID">The new ID that will replace the existing one in the condition database (-1)</param>
-        public void UpdateIASTooltipsChildElementModified(ChildElement elem, int originalID, int newID)
+        /// <param name="originalID">The original id </param>
+        public void UpdateIASTooltipsChildElementModified(ChildElement elem, int originalID)
         {
             List<IASElementSet> conditionsElements = StudyCache.GetChildElementsOfType<IASElementSet>();
 

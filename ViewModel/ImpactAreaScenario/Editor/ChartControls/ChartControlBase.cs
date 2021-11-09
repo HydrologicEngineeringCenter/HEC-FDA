@@ -65,18 +65,21 @@ namespace ViewModel.ImpactAreaScenario.Editor.ChartControls
 
         private IAxisViewModel GetAxisViewModel(Axis axis)
         {
-            var vm = ChartVM.AxisViewModel as SciChartAxisViewModel;
-            IAxisViewModel axisVm;
-            switch (axis)
+            IAxisViewModel axisVm = null;
+            SciChartAxisViewModel vm = ChartVM.AxisViewModel as SciChartAxisViewModel;
+            if (vm != null)
             {
-                case Axis.X:
-                    axisVm = vm.XAxisViewModels[0];
-                    break;
-                case Axis.Y:
-                    axisVm = vm.YAxisViewModels[0];
-                    break;
-                default:
-                    throw new NotSupportedException("2D chart only supports X and Y axes.");
+                switch (axis)
+                {
+                    case Axis.X:
+                        axisVm = vm.XAxisViewModels[0];
+                        break;
+                    case Axis.Y:
+                        axisVm = vm.YAxisViewModels[0];
+                        break;
+                    default:
+                        throw new NotSupportedException("2D chart only supports X and Y axes.");
+                }
             }
             return axisVm;
         }

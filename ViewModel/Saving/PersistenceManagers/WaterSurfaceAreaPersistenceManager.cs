@@ -207,7 +207,7 @@ namespace ViewModel.Saving.PersistenceManagers
             {
                 RemoveWaterSurfElevFiles((WaterSurfaceElevationElement)element);
             }
-            StudyCacheForSaving.RemoveElement((WaterSurfaceElevationElement)element, -1);
+            StudyCacheForSaving.RemoveElement((WaterSurfaceElevationElement)element);
 
         }
 

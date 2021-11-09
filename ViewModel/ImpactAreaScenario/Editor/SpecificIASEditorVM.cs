@@ -1,4 +1,5 @@
 ﻿using Functions;
+using HEC.CS.Collections;
 using Model;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using ViewModel.FlowTransforms;
 using ViewModel.FrequencyRelationships;
 using ViewModel.GeoTech;
 using ViewModel.ImpactArea;
+using ViewModel.Saving;
 using ViewModel.StageTransforms;
 using ViewModel.Utilities;
 
@@ -20,7 +22,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
     {
         private ThresholdsVM _additionalThresholdsVM;
         private ChildElementComboItem _selectedStageDamageElement;
-        private List<StageDamageCurve> _damageCategories;
         private StageDamageCurve _selectedDamageCurve;
         private ChildElementComboItem _selectedFrequencyRelationship;
         private bool _ratingRequired;
@@ -33,7 +34,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private double _EAD;
 
         public ImpactAreaRowItem ImpactAreaRowItem { get; }
-        //public int IndexLocationID { get; private set; }
         public double EAD
         {
             get { return _EAD; }
@@ -60,20 +60,15 @@ namespace ViewModel.ImpactAreaScenario.Editor
         public int Year { get; set; } = DateTime.Now.Year;
 
 
-        public List<StageDamageCurve> DamageCategories
-        {
-            get { return _damageCategories; }
-            set { _damageCategories = value; NotifyPropertyChanged(); }
-        }
-        public List<ThresholdRowItem> Thresholds { get; set; }
-        public ObservableCollection<ChildElementComboItem> ImpactAreaElements { get; set; }
-        public ObservableCollection<ChildElementComboItem> FrequencyElements { get; set; }
-        public ObservableCollection<ChildElementComboItem> InflowOutflowElements { get; set; }
-        public ObservableCollection<ChildElementComboItem> RatingCurveElements { get; set; }
+        public List<StageDamageCurve> DamageCategories { get; }
 
-        public ObservableCollection<ChildElementComboItem> LeveeFeatureElements { get; set; }
-        public ObservableCollection<ChildElementComboItem> ExteriorInteriorElements { get; set; }
-        public ObservableCollection<ChildElementComboItem> StageDamageElements { get; set; }
+        public List<ThresholdRowItem> Thresholds { get; } = new List<ThresholdRowItem>();
+        public CustomObservableCollection<ChildElementComboItem> FrequencyElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
+        public CustomObservableCollection<ChildElementComboItem> InflowOutflowElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
+        public CustomObservableCollection<ChildElementComboItem> RatingCurveElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
+        public CustomObservableCollection<ChildElementComboItem> LeveeFeatureElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
+        public CustomObservableCollection<ChildElementComboItem> ExteriorInteriorElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
+        public CustomObservableCollection<ChildElementComboItem> StageDamageElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
 
 
         public StageDamageCurve SelectedDamageCurve
@@ -111,7 +106,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
             get { return _selectedStageDamageElement; }
             set { _selectedStageDamageElement = value; StageDamageSelectionChanged(); }
         }
-       
+
         /// <summary>
         /// The rows that show up in the "Warnings" expander after hitting the plot button.
         /// </summary>
@@ -121,10 +116,9 @@ namespace ViewModel.ImpactAreaScenario.Editor
         /// This is the create new ctor
         /// </summary>
         public SpecificIASEditorVM(ImpactAreaRowItem rowItem)
-        {            
+        {
             Initialize();
             ImpactAreaRowItem = rowItem;
-            //IndexLocationID = rowItem.ID;
         }
 
         public SpecificIASEditorVM(SpecificIAS elem, ImpactAreaRowItem rowItem)
@@ -132,8 +126,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             Initialize();
             FillForm(elem);
             ImpactAreaRowItem = rowItem;
-            //IndexLocationID = elem.ImpactAreaID;
-            //Name = impactAreaName;
         }
 
         private void Initialize()
@@ -141,8 +133,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             MessageRows = new ObservableCollection<RecommendationRowItem>();
             _additionalThresholdsVM = new ThresholdsVM();
             _additionalThresholdsVM.RequestNavigation += Navigate;
-
-            Thresholds = new List<ThresholdRowItem>();
 
             LoadElements();
 
@@ -174,100 +164,89 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         #region Live Update Event Methods
 
-        private void AddStageDamageElement(object sender, Saving.ElementAddedEventArgs e)
+        private void AddStageDamageElement(object sender, ElementAddedEventArgs e)
         {
             StageDamageElements.Add(new ChildElementComboItem((ChildElement)e.Element));
         }
-        private void RemoveStageDamageElement(object sender, Saving.ElementAddedEventArgs e)
+        private void RemoveStageDamageElement(object sender, ElementAddedEventArgs e)
         {
             removeElement(e.ID, StageDamageElements);
             SelectedStageDamageElement = StageDamageElements[0];
         }
-        private void UpdateStageDamageElement(object sender, Saving.ElementUpdatedEventArgs e)
+        private void UpdateStageDamageElement(object sender, ElementUpdatedEventArgs e)
         {
             updateElement(StageDamageElements, SelectedStageDamageElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
         }
 
-        private void AddExtIntElement(object sender, Saving.ElementAddedEventArgs e)
+        private void AddExtIntElement(object sender, ElementAddedEventArgs e)
         {
             ExteriorInteriorElements.Add(new ChildElementComboItem((ChildElement)e.Element));
         }
-        private void RemoveExtIntElement(object sender, Saving.ElementAddedEventArgs e)
+        private void RemoveExtIntElement(object sender, ElementAddedEventArgs e)
         {
             removeElement(e.ID, ExteriorInteriorElements);
             SelectedExteriorInteriorElement = ExteriorInteriorElements[0];
         }
-        private void UpdateExtIntElement(object sender, Saving.ElementUpdatedEventArgs e)
+        private void UpdateExtIntElement(object sender, ElementUpdatedEventArgs e)
         {
             updateElement(ExteriorInteriorElements, SelectedExteriorInteriorElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
         }
 
-        private void AddLeveeElement(object sender, Saving.ElementAddedEventArgs e)
+        private void AddLeveeElement(object sender, ElementAddedEventArgs e)
         {
             LeveeFeatureElements.Add(new ChildElementComboItem((ChildElement)e.Element));
         }
-        private void RemoveLeveeElement(object sender, Saving.ElementAddedEventArgs e)
+        private void RemoveLeveeElement(object sender, ElementAddedEventArgs e)
         {
             removeElement(e.ID, LeveeFeatureElements);
             SelectedLeveeFeatureElement = LeveeFeatureElements[0];
         }
-        private void UpdateLeveeElement(object sender, Saving.ElementUpdatedEventArgs e)
+        private void UpdateLeveeElement(object sender, ElementUpdatedEventArgs e)
         {
             updateElement(LeveeFeatureElements, SelectedLeveeFeatureElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
         }
 
-        private void AddInOutElement(object sender, Saving.ElementAddedEventArgs e)
+        private void AddInOutElement(object sender, ElementAddedEventArgs e)
         {
             InflowOutflowElements.Add(new ChildElementComboItem((ChildElement)e.Element));
             SelectedInflowOutflowElement = InflowOutflowElements[0];
         }
-        private void RemoveInOutElement(object sender, Saving.ElementAddedEventArgs e)
+        private void RemoveInOutElement(object sender, ElementAddedEventArgs e)
         {
             removeElement(e.ID, InflowOutflowElements);
         }
-        private void UpdateInOutElement(object sender, Saving.ElementUpdatedEventArgs e)
+        private void UpdateInOutElement(object sender, ElementUpdatedEventArgs e)
         {
             updateElement(InflowOutflowElements, SelectedInflowOutflowElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
         }
 
 
-        private void AddFlowFreqElement(object sender, Saving.ElementAddedEventArgs e)
+        private void AddFlowFreqElement(object sender, ElementAddedEventArgs e)
         {
             FrequencyElements.Add(new ChildElementComboItem((ChildElement)e.Element));
         }
-        private void RemoveFlowFreqElement(object sender, Saving.ElementAddedEventArgs e)
+        private void RemoveFlowFreqElement(object sender, ElementAddedEventArgs e)
         {
             removeElement(e.ID, FrequencyElements);
             SelectedFrequencyElement = FrequencyElements[0];
         }
-        private void UpdateFlowFreqElement(object sender, Saving.ElementUpdatedEventArgs e)
+        private void UpdateFlowFreqElement(object sender, ElementUpdatedEventArgs e)
         {
             updateElement(FrequencyElements, SelectedFrequencyElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
         }
-
-        private void AddImpactAreaElement(object sender, Saving.ElementAddedEventArgs e)
-        {
-            ImpactAreaElements.Add(new ChildElementComboItem((ChildElement)e.Element));
-        }
-        private void RemoveImpactAreaElement(object sender, Saving.ElementAddedEventArgs e)
-        {
-            removeElement(e.ID, ImpactAreaElements);
-        }
-
-        private void AddRatingElement(object sender, Saving.ElementAddedEventArgs e)
+        private void AddRatingElement(object sender, ElementAddedEventArgs e)
         {
             RatingCurveElements.Add(new ChildElementComboItem((ChildElement)e.Element));
         }
-        private void RemoveRatingElement(object sender, Saving.ElementAddedEventArgs e)
+        private void RemoveRatingElement(object sender, ElementAddedEventArgs e)
         {
             removeElement(e.ID, RatingCurveElements);
             SelectedRatingCurveElement = RatingCurveElements[0];
         }
-        private void UpdateRatingElement(object sender, Saving.ElementUpdatedEventArgs e)
+        private void UpdateRatingElement(object sender, ElementUpdatedEventArgs e)
         {
             updateElement(RatingCurveElements, SelectedRatingCurveElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
         }
-
         private void removeElement(int idToRemove, ObservableCollection<ChildElementComboItem> collection)
         {
             collection.Remove(collection.Where(elem => elem.ChildElement != null && elem.ID == idToRemove).Single());
@@ -287,54 +266,37 @@ namespace ViewModel.ImpactAreaScenario.Editor
         }
 
         #endregion
-
+        /// <summary>
+        /// This collection should always have the first item by the empty row option. If the id is not found in the collection
+        /// then the first row will be selected (the empty row).
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <param name="id"></param>
+        private void SelectRowForElementId(ObservableCollection<ChildElementComboItem> collection, int id)
+        {
+            SelectedFrequencyElement = collection.FirstOrDefault(elem => elem.ChildElement != null && elem.ChildElement.GetElementID() == id);
+            if (SelectedFrequencyElement == null)
+            {
+                SelectedFrequencyElement = collection[0];
+            }
+        }
         private void FillForm(SpecificIAS elem)
         {
             FillThresholds(elem);
-
             //all the available elements have been loaded into this editor. We now want to select
-            //the correct element for each dropdown. If we can't find the correct element then the selected elem 
-            //will be null.
-            SelectedFrequencyElement = FrequencyElements.FirstOrDefault(freq => freq.ChildElement != null && freq.ChildElement.GetElementID() == elem.FlowFreqID);
-            SelectedInflowOutflowElement = InflowOutflowElements.FirstOrDefault(inf => inf.ChildElement != null && inf.ChildElement.GetElementID() == elem.InflowOutflowID);
-            SelectedRatingCurveElement = RatingCurveElements.FirstOrDefault(rat => rat.ChildElement != null && rat.ChildElement.GetElementID() == elem.RatingID);
-            SelectedLeveeFeatureElement = LeveeFeatureElements.FirstOrDefault(levee => levee.ChildElement != null && levee.ChildElement.GetElementID() == elem.LeveeFailureID);
-            SelectedExteriorInteriorElement = ExteriorInteriorElements.FirstOrDefault(ext => ext.ChildElement != null && ext.ChildElement.GetElementID() == elem.ExtIntStageID);
-            SelectedStageDamageElement = StageDamageElements.FirstOrDefault(stage => stage.ChildElement != null && stage.ChildElement.GetElementID() == elem.StageDamageID);
-
-            //i don't want a selected value to ever be null. Even if there are no elements we should select the blank row option.
-            //so if it is null, i will set it to the first option which is empty.
-            if (SelectedFrequencyElement == null)
-            {
-                SelectedFrequencyElement = FrequencyElements[0];
-            }
-            if (SelectedInflowOutflowElement == null)
-            {
-                SelectedInflowOutflowElement = InflowOutflowElements[0];
-            }
-            if (SelectedRatingCurveElement == null)
-            {
-                SelectedRatingCurveElement = RatingCurveElements[0];
-            }
-            if (SelectedLeveeFeatureElement == null)
-            {
-                SelectedLeveeFeatureElement = LeveeFeatureElements[0];
-            }
-            if (SelectedExteriorInteriorElement == null)
-            {
-                SelectedExteriorInteriorElement = ExteriorInteriorElements[0];
-            }
-            if (SelectedStageDamageElement == null)
-            {
-                SelectedStageDamageElement = StageDamageElements[0];
-            }
-
+            //the correct element for each dropdown. 
+            SelectRowForElementId(FrequencyElements, elem.FlowFreqID);
+            SelectRowForElementId(InflowOutflowElements, elem.InflowOutflowID);
+            SelectRowForElementId(RatingCurveElements, elem.RatingID);
+            SelectRowForElementId(LeveeFeatureElements, elem.LeveeFailureID);
+            SelectRowForElementId(ExteriorInteriorElements, elem.ExtIntStageID);
+            SelectRowForElementId(StageDamageElements, elem.StageDamageID);
         }
 
         private void FillThresholds(SpecificIAS elem)
         {
             _additionalThresholdsVM.AddRows(elem.Thresholds);
-            Thresholds = elem.Thresholds;
+            Thresholds.AddRange(elem.Thresholds);
         }
 
         private void LoadElements()
@@ -347,37 +309,37 @@ namespace ViewModel.ImpactAreaScenario.Editor
             List<AnalyticalFrequencyElement> analyticalFrequencyElements = StudyCache.GetChildElementsOfType<AnalyticalFrequencyElement>();
             childElems.Clear();
             childElems.AddRange(analyticalFrequencyElements);
-            FrequencyElements = CreateComboItems(childElems);
+            FrequencyElements.AddRange(CreateComboItems(childElems));
             SelectedFrequencyElement = FrequencyElements.First();
 
             List<InflowOutflowElement> inflowOutflowElements = StudyCache.GetChildElementsOfType<InflowOutflowElement>();
             childElems.Clear();
             childElems.AddRange(inflowOutflowElements);
-            InflowOutflowElements = CreateComboItems(childElems);
+            InflowOutflowElements.AddRange(CreateComboItems(childElems));
             SelectedInflowOutflowElement = InflowOutflowElements.First();
 
             List<RatingCurveElement> ratingCurveElements = StudyCache.GetChildElementsOfType<RatingCurveElement>();
             childElems.Clear();
             childElems.AddRange(ratingCurveElements);
-            RatingCurveElements = CreateComboItems(childElems);
+            RatingCurveElements.AddRange(CreateComboItems(childElems));
             SelectedRatingCurveElement = RatingCurveElements.First();
 
             List<LeveeFeatureElement> leveeFeatureElements = StudyCache.GetChildElementsOfType<LeveeFeatureElement>();
             childElems.Clear();
             childElems.AddRange(leveeFeatureElements);
-            LeveeFeatureElements = CreateComboItems(childElems);
+            LeveeFeatureElements.AddRange(CreateComboItems(childElems));
             SelectedLeveeFeatureElement = LeveeFeatureElements.First();
 
             List<ExteriorInteriorElement> exteriorInteriorElements = StudyCache.GetChildElementsOfType<ExteriorInteriorElement>();
             childElems.Clear();
             childElems.AddRange(exteriorInteriorElements);
-            ExteriorInteriorElements = CreateComboItems(childElems);
+            ExteriorInteriorElements.AddRange(CreateComboItems(childElems));
             SelectedExteriorInteriorElement = ExteriorInteriorElements.First();
 
             List<AggregatedStageDamageElement> aggregatedStageDamageElements = StudyCache.GetChildElementsOfType<AggregatedStageDamageElement>();
             childElems.Clear();
             childElems.AddRange(aggregatedStageDamageElements);
-            StageDamageElements = CreateComboItems(childElems);
+            StageDamageElements.AddRange(CreateComboItems(childElems));
             SelectedStageDamageElement = StageDamageElements.First();
         }
 
@@ -392,7 +354,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
             return items;
         }
 
-        
+
 
         private void UpdateRatingRequired()
         {
@@ -422,48 +384,33 @@ namespace ViewModel.ImpactAreaScenario.Editor
                     damCats.Add(curve.DamCat);
                 }
 
-                DamageCategories = elem.Curves;
+                DamageCategories.Clear();
+                DamageCategories.AddRange(elem.Curves);
                 SelectedDamageCurve = DamageCategories[0];
             }
         }
 
         #region validation
 
-        private FdaValidationResult IsFrequencyRelationshipValid()
+        private string IsFrequencyRelationshipValid()
         {
-            FdaValidationResult vr = new FdaValidationResult();
-            if (SelectedFrequencyElement.ChildElement == null)
-            {
-                vr.IsValid = false;
-                vr.ErrorMessage = new StringBuilder("A Frequency Relationship is required.");
-            }
-
-            return vr;
+            return SelectedFrequencyElement.ChildElement == null ? "A Frequency Relationship is required." : null;      
         }
 
-        private FdaValidationResult IsRatingCurveValid()
+        private string IsRatingCurveValid()
         {
             //todo: the rating curve is required if the frequency relationship is of type
             //flow-frequency. This will need to get added once we complete task 5 in the clean doc.
-            FdaValidationResult vr = new FdaValidationResult();
+            string msg = null;
             if (_ratingRequired && SelectedRatingCurveElement.ChildElement == null)
             {
-                vr.IsValid = false;
-                vr.ErrorMessage = new StringBuilder("A Rating Curve is required when using a flow-frequency relationship.");
+                msg = "A Rating Curve is required when using a flow-frequency relationship.";
             }
-
-            return vr;
+            return msg;
         }
-        private FdaValidationResult IsStageDamageValid()
+        private string IsStageDamageValid()
         {
-            FdaValidationResult vr = new FdaValidationResult();
-            if (SelectedStageDamageElement.ChildElement == null)
-            {
-                vr.IsValid = false;
-                vr.ErrorMessage = new StringBuilder("A Stage Damage is required.");
-            }
-
-            return vr;
+            return SelectedStageDamageElement.ChildElement == null ? "A Stage Damage is required." : null;
         }
 
 
@@ -478,15 +425,15 @@ namespace ViewModel.ImpactAreaScenario.Editor
         {
             FdaValidationResult vr = new FdaValidationResult();
 
-            vr.AddValidationResult(IsFrequencyRelationshipValid());        
-            vr.AddValidationResult( IsRatingCurveValid());
-            vr.AddValidationResult( IsStageDamageValid());
+            vr.AddErrorMessage(IsFrequencyRelationshipValid());
+            vr.AddErrorMessage(IsRatingCurveValid());
+            vr.AddErrorMessage(IsStageDamageValid());
 
             //todo: actually run the compute and see if it was successful.
 
-            if(!vr.IsValid)
+            if (!vr.IsValid)
             {
-                vr.InsertNewLineMessage(0, "Errors in Impact Area: " + Name);
+                vr.InsertNewLineMessage(0, "Errors in Impact Area: " + ImpactAreaRowItem.Name);
             }
             return vr;
 
@@ -495,7 +442,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private IFdaFunction getFrequencyRelationshipFunction()
         {
             IFdaFunction retval = null;
-            if(SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement != null)
+            if (SelectedFrequencyElement != null && SelectedFrequencyElement.ChildElement != null)
             {
                 retval = SelectedFrequencyElement.ChildElement.Curve;
             }
@@ -512,7 +459,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             }
 
             return retval;
-
         }
 
         private IFdaFunction getStageDamageFunction()
@@ -525,7 +471,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 retval = IFdaFunctionFactory.Factory(IParameterEnum.InteriorStageDamage, SelectedDamageCurve.Function);
             }
             return retval;
-           
+
 
 
             //List<double> xValues = new List<double>();
@@ -560,7 +506,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
             return fdaFunction;
         }
 
-       
+
         public void Plot()
         {
             FdaValidationResult validationResult = IsValid();
@@ -621,7 +567,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
             string header = "Annual Exceedance Probabilities Thresholds";
             DynamicTabVM tab = new DynamicTabVM(header, _additionalThresholdsVM, "additionalThresholds");
             Navigate(tab, true, true);
-            Thresholds = _additionalThresholdsVM.GetThresholds();
+            Thresholds.Clear();
+            Thresholds.AddRange(_additionalThresholdsVM.GetThresholds());
         }
 
     }

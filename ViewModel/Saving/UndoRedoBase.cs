@@ -93,12 +93,10 @@ namespace ViewModel.Saving
 
         public void Remove(ChildElement element)
         {
-            //important to get the element id before removing it from the parent table or else you wont get it.
-            int id = GetElementId(TableName, element.Name);
+            int id = element.GetElementID();
+            StudyCacheForSaving.RemoveElement(element);
             RemoveElementFromChangeTable(ChangeTableName, id, ELEMENT_ID_COL_NAME);
             RemoveFromParentTable(element, TableName);
-            //DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            StudyCacheForSaving.RemoveElement(element, id);
 
         }
 

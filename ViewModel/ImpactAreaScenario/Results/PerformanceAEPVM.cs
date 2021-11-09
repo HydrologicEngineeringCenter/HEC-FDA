@@ -14,11 +14,12 @@ namespace ViewModel.ImpactAreaScenario.Results
     {
 
         private readonly HistogramData2D _data;
-        public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("chart title");
+        public SciChart2DChartViewModel ChartViewModel { get; } = new SciChart2DChartViewModel("chart title");
 
         public PerformanceAEPVM(List<ThresholdComboItem> metrics)
         {
             _data = new HistogramData2D(5, 0, new double[] { }, "Chart", "Series", "X Data", "YData");
+            ChartViewModel.LineData.Add(_data);
             loadDummyData(metrics);
         }
 
@@ -67,6 +68,7 @@ namespace ViewModel.ImpactAreaScenario.Results
             double binStart = 2.5;
             double[] values = new double[] { 2, 2.5, 2.7, 3.5, 3.8, 1, 1.5 };
 
+            //todo: update this logic with the updateHistogram call once Ryan fixes it.
             HistogramData2D _data = new HistogramData2D(binWidth, binStart, values, "Chart", "Series", "X Data", "YData");
             ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
         }

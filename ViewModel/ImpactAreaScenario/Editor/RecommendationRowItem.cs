@@ -11,7 +11,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
         public string Header { get; set; }
 
-        public List<string> Messages { get; set; }
+        public List<string> Messages { get;}
 
         public RecommendationRowItem(string header, List<string> msgs)
         {
