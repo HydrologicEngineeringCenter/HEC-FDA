@@ -9,7 +9,7 @@ namespace ViewModel.Alternatives
 {
     public class AlternativeRowItem : BaseViewModel
     {
-        private bool _hasComputed;
+        private bool _HasComputed;
         private bool _IsSelected;
         private string _Name;
         private int _Year;
@@ -26,8 +26,8 @@ namespace ViewModel.Alternatives
         }
         public bool HasComputed
         {
-            get { return _hasComputed; }
-            set { _hasComputed = value; UpdateTooltip(); NotifyPropertyChanged(); }
+            get { return _HasComputed; }
+            set { _HasComputed = value; UpdateTooltip(); NotifyPropertyChanged(); }
         }
         public int Year
         {
@@ -35,7 +35,6 @@ namespace ViewModel.Alternatives
             set { _Year = value; NotifyPropertyChanged(); }
         }
         public int ID { get; set; }
-        //public IASElementSet Element { get; set; }
         public string Tooltip
         {
             get { return _Tooltip; }
@@ -47,7 +46,7 @@ namespace ViewModel.Alternatives
             Year = elem.AnalysisYear;
             HasComputed = elem.HasComputed;
             //Name needs to be after the Year property is set.
-            Name = elem.Name ;
+            Name = elem.Name;
             IsSelected = false;
             UpdateTooltip();
 
