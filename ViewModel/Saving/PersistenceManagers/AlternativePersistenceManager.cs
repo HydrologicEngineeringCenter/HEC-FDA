@@ -18,12 +18,10 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public override Type[] TableColumnTypes => new Type[] { typeof(string), typeof(string) };
 
-
         public AlternativePersistenceManager(Study.FDACache studyCache)
         {
             StudyCacheForSaving = studyCache;
         }
-
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
@@ -71,7 +69,7 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             int id = element.GetElementID();
             RemoveFromParentTable(element, TableName);
-            StudyCacheForSaving.RemoveElement((AlternativeElement)element, id);
+            StudyCacheForSaving.RemoveElement((AlternativeElement)element);
         }
 
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex)
