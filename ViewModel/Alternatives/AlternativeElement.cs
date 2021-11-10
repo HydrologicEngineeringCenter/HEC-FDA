@@ -17,7 +17,7 @@ namespace ViewModel.Alternatives
         private const string IAS_SET = "IASSet";
         private const string ID = "ID";
 
-        public List<int> IASElementSets { get; set; }
+        public List<int> IASElementSets { get; } = new List<int>();
 
         #region Constructors
 
@@ -31,7 +31,7 @@ namespace ViewModel.Alternatives
         {
             Name = name;
             Description = description;
-            IASElementSets = IASElements;
+            IASElementSets.AddRange(IASElements);
             CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
             AddActions();
         }
@@ -48,7 +48,6 @@ namespace ViewModel.Alternatives
             Description = altElement.Attribute(DESCRIPTION).Value;
 
             IEnumerable<XElement> iasElements = altElement.Elements(IAS_SET);
-            IASElementSets = new List<int>();
             foreach (XElement elem in iasElements)
             {
                 int iasID = Int32.Parse(elem.Attribute(ID).Value);
