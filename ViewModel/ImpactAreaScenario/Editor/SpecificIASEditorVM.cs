@@ -60,7 +60,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         public int Year { get; set; } = DateTime.Now.Year;
 
 
-        public List<StageDamageCurve> DamageCategories { get; }
+        public List<StageDamageCurve> DamageCategories { get; } = new List<StageDamageCurve>();
 
         public List<ThresholdRowItem> Thresholds { get; } = new List<ThresholdRowItem>();
         public CustomObservableCollection<ChildElementComboItem> FrequencyElements { get; } = new CustomObservableCollection<ChildElementComboItem>();

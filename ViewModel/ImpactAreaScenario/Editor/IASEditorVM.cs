@@ -193,7 +193,11 @@ namespace ViewModel.ImpactAreaScenario.Editor
             foreach (KeyValuePair<ImpactAreaRowItem, SpecificIASEditorVM>  entry in _ImpactAreaEditorDictionary)
             {
                 SpecificIASEditorVM vm = entry.Value;
-                vr.AddErrorMessage(vm.IsValid().ErrorMessage + Environment.NewLine);
+                FdaValidationResult validationResult = vm.IsValid();
+                if (!validationResult.IsValid)
+                {
+                    vr.AddErrorMessage(validationResult.ErrorMessage + Environment.NewLine);
+                }
             }
 
             if (!vr.IsValid)
