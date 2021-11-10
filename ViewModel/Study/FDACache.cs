@@ -89,6 +89,7 @@ namespace ViewModel.Study
         public List<AggregatedStageDamageElement> StageDamageElements { get; } = new List<AggregatedStageDamageElement>();
         public List<InventoryElement> StructureInventoryElements { get; } = new List<InventoryElement>();
         public List<IASElementSet> IASElementSets { get; } = new List<IASElementSet>();
+        public List<AlternativeElement> AlternativeElements { get; } = new List<AlternativeElement>();
 
         #region ParentElements
         public TerrainOwnerElement TerrainParent { get; set; }

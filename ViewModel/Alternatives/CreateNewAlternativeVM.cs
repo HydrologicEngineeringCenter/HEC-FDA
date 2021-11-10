@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 using ViewModel.Utilities;
 using System.Windows;
 using System.Collections.ObjectModel;
+using HEC.CS.Collections;
 
 namespace ViewModel.Alternatives
 {
     public class CreateNewAlternativeVM : BaseEditorVM
     {
-
-        public ObservableCollection<AlternativeRowItem> Rows { get; set; }
+        public CustomObservableCollection<AlternativeRowItem> Rows { get; } = new CustomObservableCollection<AlternativeRowItem>();
 
         #region Constructors
         /// <summary>
@@ -26,7 +26,7 @@ namespace ViewModel.Alternatives
         /// <param name="actionManager"></param>
         public CreateNewAlternativeVM( EditorActionManager actionManager) : base(actionManager)
         {
-            Rows = CreateRowsForIASElementsInStudy();
+            Rows.AddRange(CreateRowsForIASElementsInStudy());
             ListenToIASEvents();
         }
 
@@ -75,15 +75,14 @@ namespace ViewModel.Alternatives
                 foundRow.Name = newElement.Name;
                 foundRow.HasComputed = newElement.HasComputed;
                 foundRow.Year = newElement.AnalysisYear;
-            }
-           
+            }   
         }
 
         private void SelectSavedRows(List<int> savedIASIDs)
         {
             //if an id that was saved no longer exists then i will ignore that id when populating the rows. The alternative will
             //still point to the missing id until the user saves. If a new id exists that wasn't saved then i will make a row for it.
-            ObservableCollection<AlternativeRowItem> currentIASRowsInStudy = CreateRowsForIASElementsInStudy();
+            List<AlternativeRowItem> currentIASRowsInStudy = CreateRowsForIASElementsInStudy();
             foreach(int id in savedIASIDs)
             {
                 foreach(AlternativeRowItem row in currentIASRowsInStudy)
@@ -96,15 +95,15 @@ namespace ViewModel.Alternatives
                     }
                 }
             }
-            Rows = currentIASRowsInStudy;
+            Rows.AddRange( currentIASRowsInStudy);
         }
         
 
-        private ObservableCollection<AlternativeRowItem> CreateRowsForIASElementsInStudy()
+        private List<AlternativeRowItem> CreateRowsForIASElementsInStudy()
         {
             List<IASElementSet> elems = StudyCache.GetChildElementsOfType<IASElementSet>();
 
-            ObservableCollection<AlternativeRowItem> rows = new ObservableCollection<AlternativeRowItem>();
+            List<AlternativeRowItem> rows = new List<AlternativeRowItem>();
             foreach (IASElementSet elem in elems)
             {
                 AlternativeRowItem condWrapper = new AlternativeRowItem(elem);
@@ -119,7 +118,6 @@ namespace ViewModel.Alternatives
             FdaValidationResult vr = IsValid(selectedRows);
             if(vr.IsValid)
             {
-
                 if (selectedRows[0].Year == selectedRows[1].Year)
                 {
                     var Result = MessageBox.Show("Two impact area scenarios with different analysis years must be selected to calculate average annual equivalent damage." + Environment.NewLine +
@@ -148,7 +146,7 @@ namespace ViewModel.Alternatives
             //There has to be two and only two selected impact areas.
             if(selectedRows.Count != 2)
             {
-                vr.AddValidationResult( new FdaValidationResult(false, "Two impact area scenarios are required to create an alternative."));
+                vr.AddErrorMessage("Two impact area scenarios are required to create an alternative.");
             }
 
             return vr;
