@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ViewModel.Editors;
 using ViewModel.Utilities;
 
 namespace ViewModel.Alternatives
@@ -23,12 +24,11 @@ namespace ViewModel.Alternatives
             StudyCache.AlternativeAdded += AddAlternativeElement;
             StudyCache.AlternativeRemoved += RemoveAlternativeElement;
             StudyCache.AlternativeUpdated += UpdateAlternativeElement;
-
         }
 
         public void AddNewAlternative(object arg1, EventArgs arg2)
         {
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+            EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);
 
             CreateNewAlternativeVM vm = new CreateNewAlternativeVM( actionManager);

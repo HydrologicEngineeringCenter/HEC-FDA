@@ -19,7 +19,6 @@ namespace ViewModel.Alternatives
 
         public ObservableCollection<AlternativeRowItem> Rows { get; set; }
 
-
         #region Constructors
         /// <summary>
         /// Create new ctor
