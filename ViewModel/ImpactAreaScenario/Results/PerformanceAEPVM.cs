@@ -14,7 +14,7 @@ namespace ViewModel.ImpactAreaScenario.Results
     {
 
         private readonly HistogramData2D _data;
-        public SciChart2DChartViewModel ChartViewModel { get; } = new SciChart2DChartViewModel("chart title");
+        public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("chart title");
 
         public PerformanceAEPVM(List<ThresholdComboItem> metrics)
         {

@@ -12,7 +12,6 @@ namespace View.StageTransforms
     /// </summary>
     public partial class RatingCurveEditor : UserControl
     {
-        private Chart2D _chart;
         public RatingCurveEditor()  
         {
             InitializeComponent();
@@ -21,12 +20,16 @@ namespace View.StageTransforms
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             CurveEditorVM vm = DataContext as CurveEditorVM;
-            if (_chart == null && vm != null)
+            if ( vm != null)
             {
                 CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
-                _chart = new Chart2D(editorVM.CoordinatesChartViewModel);
-                editorGrid.Children.Add(_chart);
-                Grid.SetColumn(_chart, 2);
+
+                SciChart2DChartViewModel sciChart2DChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
+                Chart2D chart = new Chart2D(sciChart2DChartViewModel);
+                editorVM.CoordinatesChartViewModel = sciChart2DChartViewModel;
+
+                editorGrid.Children.Add(chart);
+                Grid.SetColumn(chart, 2);
             }
         }
     }

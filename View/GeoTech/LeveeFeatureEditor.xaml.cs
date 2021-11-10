@@ -24,23 +24,22 @@ namespace View.GeoTech
     /// </summary>
     public partial class LeveeFeatureEditor : UserControl
     {
-        private Chart2D _chart;
-
         public LeveeFeatureEditor()
         {
             InitializeComponent();
-         
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             CurveEditorVM vm = DataContext as CurveEditorVM;
-            if (_chart == null && vm != null)
+            if ( vm != null)
             {
                 CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
-                _chart = new Chart2D(editorVM.CoordinatesChartViewModel);
-                PlotGrid.Children.Add(_chart);
-                Grid.SetColumn(_chart, 2);
+                editorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
+                Chart2D chart = new Chart2D(editorVM.CoordinatesChartViewModel);
+                
+                PlotGrid.Children.Add(chart);
+                Grid.SetColumn(chart, 2);
             }
         }
 

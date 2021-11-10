@@ -10,7 +10,6 @@ namespace View.ImpactAreaScenario.Results
     /// </summary>
     public partial class PerformanceAEP : UserControl
     {
-        private Chart2D _chart;
         public PerformanceAEP()
         {
             InitializeComponent();
@@ -21,17 +20,17 @@ namespace View.ImpactAreaScenario.Results
             //link the plot with its chart view model
             PerformanceAEPVM vm = DataContext as PerformanceAEPVM;
 
-            if (_chart == null && vm != null)
+            if ( vm != null)
             {
-                _chart = new Chart2D(vm.ChartViewModel);
-
+                vm.ChartViewModel = new HEC.Plotting.SciChart2D.ViewModel.SciChart2DChartViewModel(vm.ChartViewModel);
+                Chart2D _chart = new Chart2D(vm.ChartViewModel);
                 //add the chart to the UI
                 main_grd.Children.Add(_chart);
                 Grid.SetRow(_chart, 0);
                 Grid.SetColumn(_chart, 1);
+                //plot the line data
+                vm.PlotHistogram();
             }
-            //plot the line data
-            vm?.PlotHistogram();
 
         }
     }

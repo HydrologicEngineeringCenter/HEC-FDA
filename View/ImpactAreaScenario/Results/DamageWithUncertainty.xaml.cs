@@ -1,4 +1,5 @@
 ﻿using HEC.Plotting.SciChart2D.Charts;
+using HEC.Plotting.SciChart2D.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,6 @@ namespace View.ImpactAreaScenario.Results
     /// </summary>
     public partial class DamageWithUncertainty : UserControl
     {
-        private Chart2D _Chart;
         public DamageWithUncertainty()
         {
             InitializeComponent();
@@ -34,17 +34,18 @@ namespace View.ImpactAreaScenario.Results
             //link the plot with its chart view model
             DamageWithUncertaintyVM vm = DataContext as DamageWithUncertaintyVM;
 
-            if (_Chart == null && vm != null)
+            if (vm != null)
             {
-                _Chart = new Chart2D(vm.ChartViewModel);
+                vm.ChartViewModel = new SciChart2DChartViewModel(vm.ChartViewModel);
+                Chart2D chart = new Chart2D(vm.ChartViewModel);
                 //add the chart to the UI
-                main_grd.Children.Add(_Chart);
-                Grid.SetRow(_Chart, 0);
-                Grid.SetRowSpan(_Chart, 2);
-                Grid.SetColumn(_Chart, 1);
+                main_grd.Children.Add(chart);
+                Grid.SetRow(chart, 0);
+                Grid.SetRowSpan(chart, 2);
+                Grid.SetColumn(chart, 1);
+                //plot the histogram
+                vm.PlotHistogram();
             }
-            //plot the histogram
-            vm?.PlotHistogram();
 
         }
 
