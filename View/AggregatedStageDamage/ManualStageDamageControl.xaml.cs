@@ -61,9 +61,7 @@ namespace View.AggregatedStageDamage
             {
                 CoordinatesFunctionEditorVM editorVM = vm.Rows[rowIndex].EditorVM;
 
-                //SciChart2DChartViewModel sciChart2DChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
                 _Chart = new Chart2D(editorVM.CoordinatesChartViewModel);
-                //editorVM.CoordinatesChartViewModel = sciChart2DChartViewModel;
 
                 if (_lastChart != null)
                 {

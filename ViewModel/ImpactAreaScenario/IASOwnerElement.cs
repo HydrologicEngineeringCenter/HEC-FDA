@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using ViewModel.AggregatedStageDamage;
+using ViewModel.Editors;
 using ViewModel.FlowTransforms;
 using ViewModel.FrequencyRelationships;
 using ViewModel.GeoTech;
@@ -121,7 +122,7 @@ namespace ViewModel.ImpactAreaScenario
             }
             else
             {
-                Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                EditorActionManager actionManager = new EditorActionManager()
                      .WithSiblingRules(this);
                 Editor.IASEditorVM vm = new Editor.IASEditorVM(actionManager);
                 vm.RequestNavigation += Navigate;

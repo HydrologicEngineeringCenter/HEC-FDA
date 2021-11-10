@@ -6,6 +6,8 @@ using System.Xml.Linq;
 using ViewModel.ImpactArea;
 using ViewModel.ImpactAreaScenario.Results;
 using ViewModel.Utilities;
+using ViewModel.Saving;
+using ViewModel.Editors;
 
 namespace ViewModel.ImpactAreaScenario
 {
@@ -121,7 +123,7 @@ namespace ViewModel.ImpactAreaScenario
         /// <param name="e"></param>
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetIASManager().Remove(this);
+            PersistenceFactory.GetIASManager().Remove(this);
         }
 
         
@@ -134,7 +136,7 @@ namespace ViewModel.ImpactAreaScenario
         public void EditIASSet(object arg1, EventArgs arg2)
         {
 
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+            EditorActionManager actionManager = new EditorActionManager()
                .WithSiblingRules(this);
             Editor.IASEditorVM vm = new Editor.IASEditorVM(this, actionManager);
             vm.RequestNavigation += Navigate;

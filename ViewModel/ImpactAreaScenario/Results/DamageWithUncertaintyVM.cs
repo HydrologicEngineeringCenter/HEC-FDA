@@ -69,7 +69,6 @@ namespace ViewModel.ImpactAreaScenario.Results
 
             HistogramData2D _data = new HistogramData2D(binWidth, binStart, values, "Chart", "Series", "X Data", "YData");
             ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
-            //_data.UpdateHistogram(binWidth, binStart, values)
         }
 
     }

@@ -11,6 +11,7 @@ using ViewModel.ImpactArea;
 using ViewModel.ImpactAreaScenario;
 using ViewModel.Inventory;
 using ViewModel.Inventory.OccupancyTypes;
+using ViewModel.Saving;
 using ViewModel.StageTransforms;
 using ViewModel.Utilities;
 using ViewModel.Watershed;
@@ -25,8 +26,8 @@ namespace ViewModel.Study
     /// </summary>
     public class FDACache: IStudyCache
     {
-        public delegate void AddElementEventHandler(object sender, Saving.ElementAddedEventArgs args);
-        public delegate void UpdateElementEventHandler(object sender, Saving.ElementUpdatedEventArgs args);
+        public delegate void AddElementEventHandler(object sender, ElementAddedEventArgs args);
+        public delegate void UpdateElementEventHandler(object sender, ElementUpdatedEventArgs args);
 
         public event AddElementEventHandler RatingAdded;
         public event AddElementEventHandler TerrainAdded;
@@ -127,7 +128,7 @@ namespace ViewModel.Study
         public void RemoveElement(ChildElement elem)
         {
 
-            Saving.ElementAddedEventArgs elementAddedEventArgs = new Saving.ElementAddedEventArgs(elem);
+            ElementAddedEventArgs elementAddedEventArgs = new ElementAddedEventArgs(elem);
             elementAddedEventArgs.ID = elem.GetElementID();
 
             if (elem.GetType() == typeof(TerrainElement))
@@ -223,67 +224,67 @@ namespace ViewModel.Study
             if (elem is TerrainElement )
             {
                 TerrainElements.Add((TerrainElement)elem);
-                TerrainAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                TerrainAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is ImpactAreaElement )
             {
                 ImpactAreaElements.Add((ImpactAreaElement)elem);
-                ImpactAreaAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                ImpactAreaAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is WaterSurfaceElevationElement )
             {
                 WaterSurfaceElements.Add((WaterSurfaceElevationElement)elem);
-                WaterSurfaceElevationAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                WaterSurfaceElevationAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is AnalyticalFrequencyElement )
             {
                 FlowFrequencyElements.Add((AnalyticalFrequencyElement)elem);
-                FlowFrequencyAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                FlowFrequencyAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is InflowOutflowElement)
             {
                 InflowOutflowElements.Add((InflowOutflowElement)elem);
-                InflowOutflowAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                InflowOutflowAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is RatingCurveElement )
             {
                 RatingCurveElements.Add((RatingCurveElement)elem);
-                RatingAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                RatingAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is ExteriorInteriorElement )
             {
                 ExteriorInteriorElements.Add((ExteriorInteriorElement)elem);
-                ExteriorInteriorAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                ExteriorInteriorAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is LeveeFeatureElement )
             {
                 LeveeElements.Add((LeveeFeatureElement)elem);
-                LeveeAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                LeveeAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is FailureFunctionElement )
             {
                 FailureFunctionElements.Add((FailureFunctionElement)elem);
-                FailureFunctionAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                FailureFunctionAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is OccupancyTypesElement )
             {
                 OccTypeElements.Add((OccupancyTypesElement)elem);
-                OccTypeElementAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                OccTypeElementAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is InventoryElement )
             {
                 StructureInventoryElements.Add((InventoryElement)elem);
-                StructureInventoryAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                StructureInventoryAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is AggregatedStageDamageElement )
             {
                 StageDamageElements.Add((AggregatedStageDamageElement)elem);
-                StageDamageAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                StageDamageAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
             else if (elem is IASElementSet )
             {
                 IASElementSets.Add((IASElementSet)elem);
-                IASElementAdded?.Invoke(this, new Saving.ElementAddedEventArgs(elem));
+                IASElementAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
         }
         #endregion
@@ -359,7 +360,7 @@ namespace ViewModel.Study
             {
                 TerrainElements.RemoveAt(index);
                 TerrainElements.Insert(index, newElement);
-                TerrainUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+                TerrainUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
         public void UpdateRatingCurve(RatingCurveElement oldElement, RatingCurveElement newElement)
@@ -378,7 +379,7 @@ namespace ViewModel.Study
             {
                 RatingCurveElements.RemoveAt(index);
                 RatingCurveElements.Insert(index, newElement);
-                RatingUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+                RatingUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
         public void UpdateImpactAreaElement(ImpactAreaElement oldElement, ImpactAreaElement newElement)
@@ -396,7 +397,7 @@ namespace ViewModel.Study
             {
                 ImpactAreaElements.RemoveAt(index);
                 ImpactAreaElements.Insert(index, newElement);
-                ImpactAreaUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+                ImpactAreaUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
         public void UpdateWaterSurfaceElevationElement(WaterSurfaceElevationElement oldElement, WaterSurfaceElevationElement newElement)
@@ -414,7 +415,7 @@ namespace ViewModel.Study
             {
                 WaterSurfaceElements.RemoveAt(index);
                 WaterSurfaceElements.Insert(index, newElement);
-                WaterSurfaceElevationUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+                WaterSurfaceElevationUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
         public void UpdateFlowFrequencyElement(AnalyticalFrequencyElement oldElement, AnalyticalFrequencyElement newElement)
@@ -432,7 +433,7 @@ namespace ViewModel.Study
             {
                 FlowFrequencyElements.RemoveAt(index);
                 FlowFrequencyElements.Insert(index, newElement);
-                FlowFrequencyUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+                FlowFrequencyUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
         public void UpdateInflowOutflowElement(InflowOutflowElement oldElement, InflowOutflowElement newElement)
@@ -450,7 +451,7 @@ namespace ViewModel.Study
             {
                 InflowOutflowElements.RemoveAt(index);
                 InflowOutflowElements.Insert(index, newElement);
-                InflowOutflowUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+                InflowOutflowUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
         public void UpdateExteriorInteriorElement(ExteriorInteriorElement oldElement, ExteriorInteriorElement newElement)
@@ -468,7 +469,7 @@ namespace ViewModel.Study
             {
                 ExteriorInteriorElements.RemoveAt(index);
                 ExteriorInteriorElements.Insert(index, newElement);
-                ExteriorInteriorUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+                ExteriorInteriorUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
         public void UpdateLeveeElement(LeveeFeatureElement oldElement, LeveeFeatureElement newElement)
@@ -486,7 +487,7 @@ namespace ViewModel.Study
             {
                 LeveeElements.RemoveAt(index);
                 LeveeElements.Insert(index, newElement);
-                LeveeUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+                LeveeUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
         public void UpdateFailureFunctionElement(FailureFunctionElement oldElement, FailureFunctionElement newElement)
@@ -504,7 +505,7 @@ namespace ViewModel.Study
             {
                 FailureFunctionElements.RemoveAt(index);
                 FailureFunctionElements.Insert(index, newElement);
-                FailureFunctionUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+                FailureFunctionUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
         public void UpdateStageDamageElement(AggregatedStageDamageElement oldElement, AggregatedStageDamageElement newElement)
@@ -522,7 +523,7 @@ namespace ViewModel.Study
             {
                 StageDamageElements.RemoveAt(index);
                 StageDamageElements.Insert(index, newElement);
-                StageDamageUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+                StageDamageUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
         public void UpdateIASElement(IASElementSet oldElement, IASElementSet newElement)
@@ -540,7 +541,7 @@ namespace ViewModel.Study
             {
                 IASElementSets.RemoveAt(index);
                 IASElementSets.Insert(index, newElement);
-                IASElementUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+                IASElementUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
         public void UpdateStructureInventoryElement(InventoryElement oldElement, InventoryElement newElement)
@@ -558,7 +559,7 @@ namespace ViewModel.Study
             {
                 StructureInventoryElements.RemoveAt(index);
                 StructureInventoryElements.Insert(index, newElement);
-                StructureInventoryUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(oldElement, newElement));
+                StructureInventoryUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
 
@@ -578,7 +579,7 @@ namespace ViewModel.Study
                 OccTypeElements.RemoveAt(index);
                 OccTypeElements.Insert(index, element);
                 //the old element parameter doesn't matter in this case. I only need the new one.
-                OccTypeElementUpdated?.Invoke(this, new Saving.ElementUpdatedEventArgs(element, element));
+                OccTypeElementUpdated?.Invoke(this, new ElementUpdatedEventArgs(element, element));
             }
         }
         #endregion
