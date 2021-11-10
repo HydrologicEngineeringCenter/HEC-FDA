@@ -25,13 +25,13 @@ namespace ViewModel.Alternatives.Results
         private string _SelectedDamageMeasure;
         private string _SelectedReport;
         private bool _YearsVisible;
-        private AAEQDamageByDamCatVM _AAEQDamageByDamCatVM;
-        private AAEQDamageByImpactAreaVM _AAEQDamageByImpactAreaVM;
-        private AAEQDamageWithUncertaintyVM _AAEQDamageWithUncertaintyVM;
+        //private AAEQDamageByDamCatVM _AAEQDamageByDamCatVM;
+        //private AAEQDamageByImpactAreaVM _AAEQDamageByImpactAreaVM;
+        //private AAEQDamageWithUncertaintyVM _AAEQDamageWithUncertaintyVM;
 
-        private DamageByDamCatVM _EADDamageByDamCatVM;
-        private DamageByImpactAreaVM _EADDamageByImpactAreaVM;
-        private DamageWithUncertaintyVM _EADDamageWithUncertaintyVM;
+        //private DamageByDamCatVM _EADDamageByDamCatVM;
+        //private DamageByImpactAreaVM _EADDamageByImpactAreaVM;
+        //private DamageWithUncertaintyVM _EADDamageWithUncertaintyVM;
 
         private List<int> _Years = new List<int>() { 2021, 2022 };
         private YearResult _SelectedYear;
@@ -82,7 +82,7 @@ namespace ViewModel.Alternatives.Results
             set { _SelectedReport = value; SelectedReportChanged(); NotifyPropertyChanged(); }
         }
 
-        public AlternativeResult AlternativeResult { get; set; }
+        public AlternativeResult AlternativeResult { get;  }
         
 
         public AlternativeResultsVM(AlternativeResult altResult)
@@ -100,7 +100,7 @@ namespace ViewModel.Alternatives.Results
 
             _SelectedDamageMeasure = EAD;
             SelectedYear = altResult.EADResult.YearResults[0];
-            //_SelectedReport = DAMAGE_WITH_UNCERTAINTY;
+            _SelectedReport = DAMAGE_WITH_UNCERTAINTY;
 
             //CurrentResultVM = altResult.EADResult.YearResults[0].DamageWithUncertaintyVM;
 

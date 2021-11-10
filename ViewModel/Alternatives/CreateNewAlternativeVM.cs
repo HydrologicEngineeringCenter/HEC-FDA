@@ -35,6 +35,8 @@ namespace ViewModel.Alternatives
         /// <param name="elem"></param>
         public CreateNewAlternativeVM(AlternativeElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
+            _IsInEditMode = true;
+            _CurrentElement = elem;
             Name = elem.Name;
             Description = elem.Description;
             List<int> iASElementSets = elem.IASElementSets;
@@ -71,9 +73,10 @@ namespace ViewModel.Alternatives
             AlternativeRowItem foundRow = Rows.Where(row => row.ID == idToUpdate).SingleOrDefault();
             if(foundRow != null)
             {
-                foundRow.Name = newElement.Name;
                 foundRow.HasComputed = newElement.HasComputed;
                 foundRow.Year = newElement.AnalysisYear;
+                //name has to be set after the year for the display name to get updated properly.
+                foundRow.Name = newElement.Name;
             }   
         }
 
@@ -129,7 +132,16 @@ namespace ViewModel.Alternatives
                 }
 
                 AlternativeElement elemToSave = new AlternativeElement(Name, Description, GetSelectedIASSets());
-                Saving.PersistenceFactory.GetAlternativeManager().SaveNew(elemToSave);
+                if (_IsInEditMode)
+                {
+                    Saving.PersistenceFactory.GetAlternativeManager().SaveExisting(_CurrentElement, elemToSave);
+                }
+                else
+                {
+                    Saving.PersistenceFactory.GetAlternativeManager().SaveNew(elemToSave);
+                    _IsInEditMode = true;
+                }
+                _CurrentElement = elemToSave;
             }
             else
             {

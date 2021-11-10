@@ -30,7 +30,7 @@
             <ComboBox ItemsSource="{Binding AlternativeResult.EADResult.YearResults}" SelectedItem="{Binding SelectedYear}" DisplayMemberPath="Year"  Visibility="{Binding YearsVisible, Converter={StaticResource BoolToVisibilityConverter}}"  Margin="5" Width="200"/>
 
             <Label Content="Report:" Margin="5" />
-            <ComboBox ItemsSource="{Binding Reports}"  SelectedItem="{Binding CurrentResultVM.ReportName}"  Margin="5" Width="200"/>
+            <ComboBox ItemsSource="{Binding Reports}"  SelectedItem="{Binding SelectedReport}"  Margin="5" Width="200"/>
 
         </StackPanel>
 
