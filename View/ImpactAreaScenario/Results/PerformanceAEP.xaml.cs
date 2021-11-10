@@ -23,11 +23,11 @@ namespace View.ImpactAreaScenario.Results
             if ( vm != null)
             {
                 vm.ChartViewModel = new HEC.Plotting.SciChart2D.ViewModel.SciChart2DChartViewModel(vm.ChartViewModel);
-                Chart2D _chart = new Chart2D(vm.ChartViewModel);
+                Chart2D chart = new Chart2D(vm.ChartViewModel);
                 //add the chart to the UI
-                main_grd.Children.Add(_chart);
-                Grid.SetRow(_chart, 0);
-                Grid.SetColumn(_chart, 1);
+                main_grd.Children.Add(chart);
+                Grid.SetRow(chart, 0);
+                Grid.SetColumn(chart, 1);
                 //plot the line data
                 vm.PlotHistogram();
             }
