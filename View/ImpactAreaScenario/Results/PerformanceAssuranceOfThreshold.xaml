@@ -28,7 +28,7 @@
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding AEP}" Width="*">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Assurance of Threshold" TextWrapping="Wrap" />
+                        <TextBlock Text="Assurance" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
             </DataGrid.Columns>

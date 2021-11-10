@@ -25,6 +25,7 @@ namespace View.AggregatedStageDamage
     public partial class ManualStageDamageControl : UserControl
     {
         private Chart2D _lastChart;
+        private Chart2D _Chart;
         public ManualStageDamageControl()
         {
             InitializeComponent();
@@ -60,22 +61,21 @@ namespace View.AggregatedStageDamage
             {
                 CoordinatesFunctionEditorVM editorVM = vm.Rows[rowIndex].EditorVM;
 
-                SciChart2DChartViewModel sciChart2DChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
-                Chart2D chart = new Chart2D(sciChart2DChartViewModel);
-                editorVM.CoordinatesChartViewModel = sciChart2DChartViewModel;
+                _Chart = new Chart2D(editorVM.CoordinatesChartViewModel);
 
                 if (_lastChart != null)
                 {
                     editorGrid.Children.Remove(_lastChart);
                 }
-                _lastChart = chart;
-                editorGrid.Children.Add(chart);
-                Grid.SetColumn(chart, 2);
+                _lastChart = _Chart;
+                editorGrid.Children.Add(_Chart);
+                Grid.SetColumn(_Chart, 2);
             }
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+
             ManualStageDamageVM vm = (ManualStageDamageVM)this.DataContext;
             vm.SelectedRowChanged += Vm_SelectedRowChanged;
             //make sure the first row is selected

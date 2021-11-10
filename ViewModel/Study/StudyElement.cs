@@ -589,19 +589,20 @@ namespace ViewModel.Study
 
                 if (loadStudyCache)
                 {
-                    cache.ConditionsParent = c;
+                    cache.IASParent = c;
                     LoadElementsFromDB();
                 }
 
-                IASTreeOwnerElement ct = new IASTreeOwnerElement(c);
-                cache.ConditionsElementUpdated += ConditionsElementWasUpdated; //ct.ConditionWasUpdated;
-                cache.ConditionsElementAdded += UpdateTheConditionsTree;
-                if (loadStudyCache)
-                {
-                    cache.ConditionsTreeParent = ct;
-                }
+                //IASTreeOwnerElement ct = new IASTreeOwnerElement(c);
+                //cache.IASElementUpdated += ConditionsElementWasUpdated; //ct.ConditionWasUpdated;
+                //cache.IASElementAdded += UpdateTheConditionsTree;
+                //if (loadStudyCache)
+                //{
+                //    cache.IASTreeParent = ct;
+                //}
 
-                UpdateTheConditionsTree(this, new EventArgs());
+                //UpdateTheConditionsTree(this, new EventArgs());
+
                 UpdateTransactionsAndMessages?.Invoke(this, new EventArgs());
                 LoadMapLayers?.Invoke(this, new EventArgs());
             }
@@ -628,89 +629,89 @@ namespace ViewModel.Study
 
         #endregion
 
-        /// <summary>
-        /// This stuff is getting a little wierd. It was done before the new "StudyCache" stuff. So it seems like i could just go straight to the cache
-        /// and not have to get the nodes from the study tree, but i want them to be linked. I don't want the conditions tree to have its own nodes.
-        /// when a conditions element gets updated (saved) then it actually gets rid of the old one and creates a new one. This breaks the connection to 
-        /// the one in the conditions tree. So i need to call update on the conditions tree, but it was losing the "isExpanded" value, so i am adding
-        /// this method inbetween.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        private void ConditionsElementWasUpdated(object sender, Saving.ElementUpdatedEventArgs args)
-        {
-            UpdateTheConditionsTree(sender, args);
-            if(ConditionsTree.Count<= 0) { return; }
-            //get the current 
-            IASElement oldElem = (IASElement)args.OldElement;
-            if(oldElem.IsExpanded == true)
-            {
-                //i need to expand the new element that was added to the cond tree
-                string name = args.NewElement.Name;
+        ///// <summary>
+        ///// This stuff is getting a little wierd. It was done before the new "StudyCache" stuff. So it seems like i could just go straight to the cache
+        ///// and not have to get the nodes from the study tree, but i want them to be linked. I don't want the conditions tree to have its own nodes.
+        ///// when a conditions element gets updated (saved) then it actually gets rid of the old one and creates a new one. This breaks the connection to 
+        ///// the one in the conditions tree. So i need to call update on the conditions tree, but it was losing the "isExpanded" value, so i am adding
+        ///// this method inbetween.
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="args"></param>
+        //private void ConditionsElementWasUpdated(object sender, Saving.ElementUpdatedEventArgs args)
+        //{
+        //    UpdateTheConditionsTree(sender, args);
+        //    if(ConditionsTree.Count<= 0) { return; }
+        //    //get the current 
+        //    IASElement oldElem = (IASElement)args.OldElement;
+        //    if(oldElem.IsExpanded == true)
+        //    {
+        //        //i need to expand the new element that was added to the cond tree
+        //        string name = args.NewElement.Name;
 
-                foreach(IASElement elem in ConditionsTree[0].Elements)
-                {
-                    if(elem.Name.Equals(name))
-                    {
-                        elem.IsExpanded = true;
-                    }
-                }
-            }
-        }
+        //        foreach(IASElement elem in ConditionsTree[0].Elements)
+        //        {
+        //            if(elem.Name.Equals(name))
+        //            {
+        //                elem.IsExpanded = true;
+        //            }
+        //        }
+        //    }
+        //}
 
 
-        /// <summary>
-        /// The study tree tab shows in real time the state of the study.
-        /// When you switch to the conditions tab this method will grab the state of the 
-        /// study tree conditions and mirror that in the conditions tab.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void UpdateTheConditionsTree(object sender, EventArgs e)
-        {
-            //ObservableCollection<BaseFdaElement> conditions = new ObservableCollection<BaseFdaElement>();
-            //get all the current conditions
-            //ConditionsOwnerElement studyTreeCondOwnerElement = 
-            if (Elements.Count <= 0) { return; }
-            //{
-                //foreach (ParentElement owner in Elements)
-                //{
-                //    if (owner.GetType() == typeof(ConditionsOwnerElement))
-                //    {
-                //        conditions = owner.Elements;
-                //        studyTreeCondOwnerElement = (ConditionsOwnerElement)owner;
-                //    }
-                //}
-            //}
-            //else
-            //{
-            //    return;
-            //}
-            //List<ConditionsElement> conditions = StudyCache.GetChildElementsOfType<ConditionsElement>();
-            IASOwnerElement studyCondOwner = StudyCache.GetParentElementOfType<IASOwnerElement>();
-            IASTreeOwnerElement condTreeCondOwnerElement = new IASTreeOwnerElement(studyCondOwner);
-            condTreeCondOwnerElement.RequestNavigation += Navigate;
-            condTreeCondOwnerElement.UpdateConditionsTree += UpdateTheConditionsTree;
+        ///// <summary>
+        ///// The study tree tab shows in real time the state of the study.
+        ///// When you switch to the conditions tab this method will grab the state of the 
+        ///// study tree conditions and mirror that in the conditions tab.
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="e"></param>
+        //public void UpdateTheConditionsTree(object sender, EventArgs e)
+        //{
+        //    //ObservableCollection<BaseFdaElement> conditions = new ObservableCollection<BaseFdaElement>();
+        //    //get all the current conditions
+        //    //ConditionsOwnerElement studyTreeCondOwnerElement = 
+        //    if (Elements.Count <= 0) { return; }
+        //    //{
+        //        //foreach (ParentElement owner in Elements)
+        //        //{
+        //        //    if (owner.GetType() == typeof(ConditionsOwnerElement))
+        //        //    {
+        //        //        conditions = owner.Elements;
+        //        //        studyTreeCondOwnerElement = (ConditionsOwnerElement)owner;
+        //        //    }
+        //        //}
+        //    //}
+        //    //else
+        //    //{
+        //    //    return;
+        //    //}
+        //    //List<ConditionsElement> conditions = StudyCache.GetChildElementsOfType<ConditionsElement>();
+        //    IASOwnerElement studyCondOwner = StudyCache.GetParentElementOfType<IASOwnerElement>();
+        //    IASTreeOwnerElement condTreeCondOwnerElement = new IASTreeOwnerElement(studyCondOwner);
+        //    condTreeCondOwnerElement.RequestNavigation += Navigate;
+        //    condTreeCondOwnerElement.UpdateConditionsTree += UpdateTheConditionsTree;
 
-            if (studyCondOwner.Elements.Count > 0)
-            {
-                foreach (IASElement elem in studyCondOwner.Elements)
-                {
-                    //create a new conditions element and change the way it renames, removes, and edits. The parent node
-                    //will then tell the study tree what to do
-                    IASElement condElem = new IASElement(elem);
-                    condElem.EditConditionsTreeElement += condTreeCondOwnerElement.EditCondition;
-                    condElem.RemoveConditionsTreeElement += condTreeCondOwnerElement.RemoveElement;
-                    condElem.RenameConditionsTreeElement += condTreeCondOwnerElement.RenameElement;
-                    condElem.UpdateExpansionValueInTreeElement += condTreeCondOwnerElement.UpdateElementExpandedValue;
-                    condTreeCondOwnerElement.AddElement(condElem, false);
-                }
+        //    if (studyCondOwner.Elements.Count > 0)
+        //    {
+        //        foreach (IASElement elem in studyCondOwner.Elements)
+        //        {
+        //            //create a new conditions element and change the way it renames, removes, and edits. The parent node
+        //            //will then tell the study tree what to do
+        //            IASElement condElem = new IASElement(elem);
+        //            condElem.EditConditionsTreeElement += condTreeCondOwnerElement.EditCondition;
+        //            condElem.RemoveConditionsTreeElement += condTreeCondOwnerElement.RemoveElement;
+        //            condElem.RenameConditionsTreeElement += condTreeCondOwnerElement.RenameElement;
+        //            condElem.UpdateExpansionValueInTreeElement += condTreeCondOwnerElement.UpdateElementExpandedValue;
+        //            condTreeCondOwnerElement.AddElement(condElem, false);
+        //        }
 
-            }
+        //    }
 
-            //have to make it new to call the notified prop changed
-            ConditionsTree = new ObservableCollection<ParentElement>() { condTreeCondOwnerElement };
-        }
+        //    //have to make it new to call the notified prop changed
+        //    ConditionsTree = new ObservableCollection<ParentElement>() { condTreeCondOwnerElement };
+        //}
 
 
 

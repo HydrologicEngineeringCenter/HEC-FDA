@@ -57,11 +57,9 @@
     </UserControl.Resources>
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <!--<RowDefinition Height="32" />-->
             <RowDefinition Height="32" />
             <RowDefinition Height="500*" />
             <RowDefinition Height="5" />
-            <!--<RowDefinition Height="27" MinHeight="27"/>-->
             <RowDefinition Height="Auto" MinHeight="27"/>
 
         </Grid.RowDefinitions>
@@ -69,57 +67,17 @@
             <ColumnDefinition Width="250" MinWidth="100" />
             <ColumnDefinition Width="*"  />
         </Grid.ColumnDefinitions>
-        <!--<Menu Grid.ColumnSpan="2" Name="MainMenu" VerticalAlignment="Stretch"/>-->
 
         <Label Name="lbl_Study" Grid.Row="0" Grid.ColumnSpan="2"  Content="{Binding CurrentStudyElement.CustomTreeViewHeader}" FontSize="14" MouseRightButtonDown="lbl_Study_MouseRightButtonDown"  ContextMenu="{Binding CurrentStudyElement.Actions, Converter={StaticResource converter }}"/>
 
 
         <TabControl Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1"  SelectedIndex="{Binding SelectedTab, Mode=TwoWay}" MinWidth="80">
 
-            <TabItem Header="Conditions" Name="ConditionsTab">
-                <Grid>
-                    <TreeView Name="ConditionsTree" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding CurrentStudyElement.ConditionsTree}" >
-                        <TreeView.ItemContainerStyle>
-                            <Style TargetType="{x:Type TreeViewItem}" >
-                                <Setter Property="Header" Value="{Binding CustomTreeViewHeader}"/>
-                                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
-                                <!--<Setter Property="Expanded" Value="{Binding RenameConditionsTreeElem, Mode=TwoWay}"/>-->
-
-                                <!--<Setter Property="ItemsSource" Value="{Binding Name}"/>-->
-                                <!--<Setter Property="FontSize" Value="{Binding FontSize}" />-->
-                                <Setter Property="FontWeight" Value="{Binding IsBold,Converter={StaticResource BoolToBoldConverter}}" />
-                                <Setter Property="ContextMenu" Value="{Binding Actions, Converter={StaticResource converter }}"/>
-                                <!--<Setter Property="ToolTip" Value="{Binding Error}"/>-->
-                            </Style>
-                        </TreeView.ItemContainerStyle>
-                        <TreeView.ItemTemplate>
-                            <HierarchicalDataTemplate ItemsSource="{Binding Elements}">
-                                <TextBlock Text="{Binding Path=Name}" />
-                                <!-- Conditions Element level-->
-                                <HierarchicalDataTemplate.ItemTemplate>
-                                    <HierarchicalDataTemplate ItemsSource="{Binding ConditionsTreeNodes}">
-                                        <utils:CustomHeader/>
-                                        <!-- Condition components level-->
-                                        <HierarchicalDataTemplate.ItemTemplate>
-                                            <DataTemplate>
-                                                <utils:CustomHeader/>
-                                            </DataTemplate>
-                                        </HierarchicalDataTemplate.ItemTemplate>
-                                    </HierarchicalDataTemplate>
-                                </HierarchicalDataTemplate.ItemTemplate>
-                            </HierarchicalDataTemplate>
-                        </TreeView.ItemTemplate>
-                    </TreeView>
-                </Grid>
-            </TabItem>
-
-
             <TabItem Header="Study Tree" Name="StudyTree">
                 <Grid>
                     <TreeView Name="StudyTreeView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding CurrentStudyElement.Elements, Mode=TwoWay}" >
-                        <!---->
                         <TreeView.ItemContainerStyle>
-                            <Style TargetType="{x:Type TreeViewItem}"> 
+                            <Style TargetType="{x:Type TreeViewItem}">
                                 <Setter Property="Header" Value="{Binding CustomTreeViewHeader}"/>
                                 <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
                                 <Setter Property="ItemsSource" Value="{Binding Elements, Mode=TwoWay}"/>
@@ -132,12 +90,12 @@
                     </TreeView>
                 </Grid>
             </TabItem>
-            
-                <TabItem Name="Maps" Header="Map Layers">
+
+            <TabItem Name="Maps" Header="Map Layers">
                 <Grid Name="MaptreeviewGRID">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <OpenGL:MapTreeView x:Name="MapTreeView" />
-                        </ScrollViewer>
+                        <OpenGL:MapTreeView x:Name="MapTreeView" />
+                    </ScrollViewer>
                 </Grid>
             </TabItem>
         </TabControl>
@@ -145,66 +103,40 @@
 
 
 
-                        <utils:TabControlNoReload  x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1" ItemsSource="{Binding TabFactoryInstance.Tabs}" 
-                                                   SelectedIndex="{Binding TabFactoryInstance.SelectedDynamicTabIndex, Mode=TwoWay}" SelectionChanged="DynamicTabControl_SelectionChanged"  
+        <utils:TabControlNoReload  x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1" ItemsSource="{Binding TabFactoryInstance.Tabs}" 
+                                                   SelectedIndex="{Binding TabFactoryInstance.SelectedDynamicTabIndex, Mode=TwoWay}"   
                                                    Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  
                                                      IsSynchronizedWithCurrentItem="True"  Style="{StaticResource TabControlNoReloadStyle}">
 
 
-                            <utils:TabControlNoReload.ItemTemplate>
-                                <DataTemplate DataType="VMUtils:DynamicTabVM">
-                                    <utils:TabHeaderControl/>
-                 
-                                </DataTemplate>
-                            </utils:TabControlNoReload.ItemTemplate>
-
-
-
-                            <utils:TabControlNoReload.ContentTemplate>
-                                <DataTemplate DataType="VMUtils:DynamicTabVM">
-                                    <ContentControl Name="masterControl" Content="{Binding BaseVM}" />
-                                </DataTemplate>
-                            </utils:TabControlNoReload.ContentTemplate>
-
-                        </utils:TabControlNoReload>
-
-
-        <!--<TabControl  x:Name="DynamicTabControl"  Grid.Row="1" Grid.Column="1" ItemsSource="{Binding TabFactoryInstance.Tabs}" 
-                                                   SelectedIndex="{Binding TabFactoryInstance.SelectedDynamicTabIndex, Mode=TwoWay}" SelectionChanged="DynamicTabControl_SelectionChanged"  
-                                                   Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  
-                                                     IsSynchronizedWithCurrentItem="True"  >
-
-
-            <TabControl.ItemTemplate>
+            <utils:TabControlNoReload.ItemTemplate>
                 <DataTemplate DataType="VMUtils:DynamicTabVM">
                     <utils:TabHeaderControl/>
+
                 </DataTemplate>
-            </TabControl.ItemTemplate>
+            </utils:TabControlNoReload.ItemTemplate>
 
 
 
-            <TabControl.ContentTemplate>
+            <utils:TabControlNoReload.ContentTemplate>
                 <DataTemplate DataType="VMUtils:DynamicTabVM">
                     <ContentControl Name="masterControl" Content="{Binding BaseVM}" />
                 </DataTemplate>
-            </TabControl.ContentTemplate>
+            </utils:TabControlNoReload.ContentTemplate>
 
-        </TabControl>-->
-
-
+        </utils:TabControlNoReload>
 
 
         <GridSplitter Grid.Row="1" Grid.Column="0" Margin="0,22,0,0" Background="Gray" BorderBrush="DarkGray" BorderThickness="1" HorizontalAlignment="Right" Width="3"/>
 
-                        <GridSplitter Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" />
-                        <!--<utils:TransactionMessageControl Grid.Row="3" Grid.ColumnSpan="2" />-->
+        <GridSplitter Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" />
         <Grid Grid.Row="4" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="250" />
             </Grid.ColumnDefinitions>
-                <utils:MessageExpanderControl ExpandedHeight="200" HeaderText="Messages" />
-                <Label Grid.Column="1" Content="{Binding SaveStatus}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,5,0" FontSize="10" />
+            <utils:MessageExpanderControl ExpandedHeight="200" HeaderText="Messages" />
+            <Label Grid.Column="1" Content="{Binding SaveStatus}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,5,0" FontSize="10" />
         </Grid>
     </Grid>
 </UserControl>

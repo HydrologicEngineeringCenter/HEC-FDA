@@ -113,7 +113,7 @@ namespace ViewModel.Saving.PersistenceManagers
                 element.CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png");
                 return;
             }
-            StudyCacheForSaving.RemoveElement((TerrainElement)element,-1);
+            StudyCacheForSaving.RemoveElement((TerrainElement)element);
 
         }
 

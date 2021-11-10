@@ -79,7 +79,7 @@ namespace ViewModel.Saving
             {
                 return new StageDamagePersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(ImpactAreaScenario.IASElement))
+            else if (element.GetType() == typeof(ImpactAreaScenario.IASElementSet))
             {
                 return new IASPersistenceManager(StudyCacheForSaving);
             }

@@ -28,7 +28,7 @@
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding EAD}" Width="*">
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Expected Annual Damage (Dollars in Thousands)" TextWrapping="Wrap" />
+                        <TextBlock Text="Expected Annual Damage" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
             </DataGrid.Columns>

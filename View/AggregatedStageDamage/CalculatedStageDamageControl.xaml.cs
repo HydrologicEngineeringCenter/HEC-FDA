@@ -25,34 +25,30 @@ namespace View.AggregatedStageDamage
     public partial class CalculatedStageDamageControl : UserControl
     {
         private Chart2D _lastChart;
-
+        private Chart2D _Chart;
 
         public CalculatedStageDamageControl()
         {
             InitializeComponent();
-            
-            
         }
 
         private void linkChartViewModel()
         {
-            CalculatedStageDamageVM vm = (CalculatedStageDamageVM)this.DataContext;
+            CalculatedStageDamageVM vm = (CalculatedStageDamageVM)DataContext;
             int rowIndex = vm.SelectedRowIndex;
             if (rowIndex >= 0)
             {
                 CoordinatesFunctionEditorVM editorVM = vm.Rows[rowIndex].EditorVM;
 
-                SciChart2DChartViewModel sciChart2DChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
-                Chart2D chart = new Chart2D(sciChart2DChartViewModel);
-                editorVM.CoordinatesChartViewModel = sciChart2DChartViewModel;
+                _Chart = new Chart2D(editorVM.CoordinatesChartViewModel);
 
                 if (_lastChart != null)
                 {
                     editorGrid.Children.Remove(_lastChart);
                 }
-                _lastChart = chart;
-                editorGrid.Children.Add(chart);
-                Grid.SetColumn(chart, 2);
+                _lastChart = _Chart;
+                editorGrid.Children.Add(_Chart);
+                Grid.SetColumn(_Chart, 2);
             }
         }
 

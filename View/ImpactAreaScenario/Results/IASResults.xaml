@@ -3,10 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:View.ImpactAreaScenario"
-                          xmlns:Utilities="clr-namespace:View.Utilities"
+             xmlns:local="clr-namespace:View.ImpactAreaScenario.Results"
              xmlns:utils="clr-namespace:View.Utilities"
-
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -15,11 +13,9 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-
+            <RowDefinition Height="Auto"/>
+            
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -27,26 +23,12 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-            <Label Content="Impact Area Scenario: " Margin="5" />
-            <Label Content="{Binding IASName}"  Margin="5" />
-        </StackPanel>
-        
-        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-            <Label Content="Outcomes:" Margin="5" />
-            <ComboBox Name="outcomes_cmb" ItemsSource="{Binding Outcomes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedOutcome}"  Margin="5" Width="150"/>
-
-            <Label Content="Report:" Margin="5" />
-            <ComboBox ItemsSource="{Binding Reports, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  SelectedItem="{Binding SelectedReport}"  Margin="5" Width="200"/>
-
-            <Label Content="Threshold Type:" Margin="5" Visibility="{Binding ThresholdComboVisible, Converter={StaticResource BoolToVisibilityConverter}}"  />
-            <ComboBox ItemsSource="{Binding Thresholds}" DisplayMemberPath="Description" Visibility="{Binding ThresholdComboVisible, Converter={StaticResource BoolToVisibilityConverter}}" SelectedItem="{Binding SelectedThreshold}"  Margin="5" Width="200"/>
-
+            <Label Content="Impact Area: " Margin="5" />
+            <ComboBox ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedResult}" DisplayMemberPath="IASName" Width="200" Margin="5"/>
         </StackPanel>
 
+        <local:SpecificIASResultsControl DataContext="{Binding SelectedResult}" Grid.Row="1" Grid.ColumnSpan="2" />
 
-        <ContentControl Grid.Row="3" Grid.ColumnSpan="2" Name="resultsControl" Content="{Binding CurrentResultVM, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"   HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  />
-
-        <Utilities:OKCloseControl Grid.Row="4" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5" />
+        <utils:OKCloseControl Grid.Row="4" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5" />
     </Grid>
 </UserControl>

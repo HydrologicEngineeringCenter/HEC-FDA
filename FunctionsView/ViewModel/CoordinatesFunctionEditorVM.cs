@@ -52,7 +52,6 @@ namespace FunctionsView.ViewModel
         public SciChart2DChartViewModel CoordinatesChartViewModel
         {
             get { return _chartViewModel; }
-            set { _chartViewModel = value; }
         }
         public ICoordinatesFunction Function
         {

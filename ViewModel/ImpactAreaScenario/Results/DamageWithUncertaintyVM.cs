@@ -11,19 +11,25 @@ namespace ViewModel.ImpactAreaScenario.Results
 {
     public class DamageWithUncertaintyVM : BaseViewModel
     {
-        public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("chart title");
 
-        public List<EadRowItem> Rows { get; set; }
+        private readonly HistogramData2D _data;
+        public SciChart2DChartViewModel ChartViewModel { get; } = new SciChart2DChartViewModel("chart title");
 
+        public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
+        public double Mean { get; set; }
         public DamageWithUncertaintyVM()
         {
+            //load with dummy data
+            _data = new HistogramData2D(5, 0, new double[] { }, "Chart", "Series", "X Data", "YData");
+            ChartViewModel.LineData.Add(_data);
             loadDummyData();
+            Mean = .123;
         }
 
 
         private void loadDummyData()
         {
-            List<string> xVals = loadXData();
+            List<double> xVals = loadXData();
             List<double> yVals = loadYData();
 
             List<EadRowItem> rows = new List<EadRowItem>();
@@ -32,16 +38,15 @@ namespace ViewModel.ImpactAreaScenario.Results
                 rows.Add(new EadRowItem(xVals[i], yVals[i]));
             }
 
-            Rows = rows;
+            Rows.AddRange( rows);
         }
 
-        private List<string> loadXData()
+        private List<double> loadXData()
         {
-            List<string>  xValues = new List<string>();
-            xValues.Add("Mean");
-            xValues.Add("First Quartile");
-            xValues.Add("Median");
-            xValues.Add("Third Quartile");
+            List<double>  xValues = new List<double>();
+            xValues.Add(.75);
+            xValues.Add(.5);
+            xValues.Add(.25);
 
             return xValues;
         }
@@ -52,23 +57,18 @@ namespace ViewModel.ImpactAreaScenario.Results
             yValues.Add(1);
             yValues.Add(2);
             yValues.Add(3);
-            yValues.Add(4);
             return yValues;
         }
 
 
-        public void PlotLineData()
+        public void PlotHistogram()
         {
-            List<double> xValues = new List<double>();
-            xValues.Add(1);
-            xValues.Add(2);
+            double binWidth = 5;
+            double binStart = 2.5;
+            double[] values = new double[] {2,2.5, 2.7, 3.5, 3.8, 1, 1.5 };
 
-            List<double> yValues = new List<double>();
-            yValues.Add(1);
-            yValues.Add(2);
-
-            SciLineData lineData = new NumericLineData(xValues.ToArray(), yValues.ToArray(), "asdf", "asdf", "adsf", "asdf", PlotType.Line);
-            ChartViewModel.LineData.Set(new List<SciLineData>() { lineData });
+            HistogramData2D _data = new HistogramData2D(binWidth, binStart, values, "Chart", "Series", "X Data", "YData");
+            ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
         }
 
     }

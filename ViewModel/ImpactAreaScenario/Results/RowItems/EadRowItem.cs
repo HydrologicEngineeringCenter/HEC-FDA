@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ViewModel.ImpactAreaScenario.Results.RowItems
+﻿namespace ViewModel.ImpactAreaScenario.Results.RowItems
 {
     public class EadRowItem
     {
 
-        public string ExpectedAnnualDamageMeasure { get; set; }
-        public double DollarsInThousands { get; set; }
+        public double Frequency { get;  }
+        public double Value { get;  }
 
-        public EadRowItem(string ead, double value)
+        public EadRowItem(double frequency, double value)
         {
-            ExpectedAnnualDamageMeasure = ead;
-            DollarsInThousands = value;
+            Frequency = frequency;
+            Value = value;
         }
 
     }

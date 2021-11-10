@@ -197,10 +197,10 @@ namespace ViewModel.Editors
                 StudyCache.StageDamageAdded += SiblingWasAdded;
                 StudyCache.StageDamageUpdated += SiblingNameChanged;
             }
-            if (childElementType == typeof(IASElement))
+            if (childElementType == typeof(SpecificIAS))
             {
-                StudyCache.ConditionsElementAdded += SiblingWasAdded;
-                StudyCache.ConditionsElementUpdated += SiblingNameChanged;
+                StudyCache.IASElementAdded += SiblingWasAdded;
+                StudyCache.IASElementUpdated += SiblingNameChanged;
             }
 
         }

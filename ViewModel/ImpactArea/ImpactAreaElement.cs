@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using ViewModel.Utilities;
+using ViewModel.ImpactAreaScenario;
+using System.Windows;
 
 namespace ViewModel.ImpactArea
 {
@@ -86,7 +88,32 @@ namespace ViewModel.ImpactArea
 
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetImpactAreaManager().Remove(this);
+
+            List<IASElementSet> iasElems = StudyCache.GetChildElementsOfType<IASElementSet>();
+            if (iasElems.Count > 0)
+            {
+                StringBuilder sb = new StringBuilder(Environment.NewLine).Append(Environment.NewLine);
+                foreach(IASElementSet set in iasElems)
+                {
+                    sb.Append("\t").Append("* ").Append(set.Name).Append(Environment.NewLine);
+                }
+
+                var result = MessageBox.Show("Deleting the impact area will also delete all existing impact area scenarios: " +
+                    sb.ToString() + Environment.NewLine + "Do you want to continue with the delete?", "Do You Want to Continue", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    Saving.PersistenceFactory.GetImpactAreaManager().Remove(this);
+                    //delete the IAS's.
+                    foreach(IASElementSet set in iasElems)
+                    {
+                        Saving.PersistenceFactory.GetIASManager().Remove(set);
+                    }
+                }
+            }
+            else
+            {
+                Saving.PersistenceFactory.GetImpactAreaManager().Remove(this);
+            }
         }
 
         private void ImpactAreasToMapWindow(object arg1, EventArgs arg2)
