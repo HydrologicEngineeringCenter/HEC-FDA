@@ -7,7 +7,7 @@
              xmlns:functions="clr-namespace:FunctionsView.View;assembly=FunctionsView"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
-             xmlns:UserControls="clr-namespace:UserControls;assembly=UserControls"
+             xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              d:DesignHeight="420" d:DesignWidth="610">
     <Grid>
         <Grid.RowDefinitions>

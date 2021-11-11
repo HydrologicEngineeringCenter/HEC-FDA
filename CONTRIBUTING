@@ -15,7 +15,7 @@ We are targeting a robust test coverage for the code, please write tests for new
 -  Ideally, please do not push code that has not been tested; at a minimum please do not submit a pull request on untested code. 
 
 ## Submitting changes
-Please create a GitHub Pull Request with a clear list of what you've done. We can always use more test coverage. Please follow our coding conventions (below) and make sure all of your commits are atomic (one feature per commit). Please keep commits to a given branch small/few in number and maintain short branch life. For any given class you have touched:
+Please create a GitHub Pull Request with a clear list of what you've done and add one of the labels to categorize the changes. We can always use more test coverage. Please follow our coding conventions (below) and make sure all of your commits are atomic (one feature per commit). Please keep commits to a given branch small/few in number and maintain short branch life. For any given class you have touched:
 - Remove commented out code unless there is a special reason (and add reason to comments).
 - Fix all throw not implemented exceptions. 
 - Fix TODO statements, or explain why TODO remains.
@@ -35,3 +35,8 @@ Always write a clear log message for your commits. Feel free to tag @rnugent3 fo
 - Please avoid the term "test" except for unit tests and debugging aids. 
 - Please use camel casing generally, and, start private fields with an underscore then capital letter, and start properties and methods capitalized.
 - Please start interfaces with an upper-case "I" and start bases with "Base." 
+
+## Requesting Feedback 
+- Feel free to request feedback through a pull request. 
+- Mark the pull request as draft. 
+- Request a review and specify that the pull request represents work in progress. 

@@ -14,7 +14,10 @@ namespace Functions.Ordinates
         #region Fields
         internal Statistics.IDistribution _Distribution;
         #endregion
-
+        public Statistics.IDistribution Dist
+        {
+            get { return _Distribution; }
+        }
         #region Properties
         public IOrdinateEnum Type
         {

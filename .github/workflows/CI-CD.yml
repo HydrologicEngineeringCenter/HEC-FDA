@@ -1,0 +1,43 @@
+name: CI-CD
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  CI-CD:
+    runs-on: windows-latest                     
+    env:
+      Solution_Name: Fda.sln                                  
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Add Source
+      run: dotnet nuget add source --username HydrologicEngineeringCenter --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/HydrologicEngineeringCenter/index.json"
+
+    - name: Restore the application
+      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=Debug
+
+    - name: Build
+      run: msbuild $env:Solution_Name /p:Configuration=Debug
+        
+    # Execute all unit tests in the solution
+    - name: Execute unit tests
+      run: dotnet test --no-build
+
+    # Upload the output folder 
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.4
+      with:
+        name: HEC-FDA-2.0-Snapshot
+        path: C:\Temp\FDA2.0\
+
+
+  

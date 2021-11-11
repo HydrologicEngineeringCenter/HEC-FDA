@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Statistics;
+using Statistics.Histograms;
 
 namespace Model.Conditions.Locations.Years.Results
 {
@@ -14,7 +15,7 @@ namespace Model.Conditions.Locations.Years.Results
         public int Seed { get; }
         public IConditionLocationYearSummary ConditionLocationTime { get; }
         public IReadOnlyList<IConditionLocationYearRealizationSummary> Realizations { get; private set; }
-        public IReadOnlyDictionary<IMetric, Statistics.IHistogram> Metrics { get;  set; }
+        public IReadOnlyDictionary<IMetric, Statistics.Histograms.Histogram> Metrics { get;  set; }
         public IReadOnlyDictionary<IMetric, Statistics.IConvergenceResult> Convergence { get; private set; }
 
         public ConditionLocationYearResult(IConditionLocationYearSummary condition, IReadOnlyDictionary<IMetric, Statistics.IConvergenceCriteria> criteria, int seed)
@@ -37,7 +38,7 @@ namespace Model.Conditions.Locations.Years.Results
         /// <param name="seed"></param>
         /// <param name="metricsDictionary"></param>
         public ConditionLocationYearResult(IConditionLocationYearSummary condition, IReadOnlyDictionary<IMetric, Statistics.IConvergenceCriteria> criteria,
-            int seed, IReadOnlyDictionary<IMetric, IHistogram> metricsDictionary,
+            int seed, IReadOnlyDictionary<IMetric, Histogram> metricsDictionary,
             IReadOnlyList<IConditionLocationYearRealizationSummary> realizations)
         {
             Seed = seed;
@@ -60,7 +61,7 @@ namespace Model.Conditions.Locations.Years.Results
              * the number of complete sets * the size of those sets + the number of iterations in the current (incomplete) set.
              */
             var converged = new Dictionary<IMetric, IConvergenceResult>();
-            var histograms = new Dictionary<IMetric, Statistics.IHistogram>();
+            var histograms = new Dictionary<IMetric, Histogram>();
             var realizations = new List<IConditionLocationYearRealizationSummary>();
             foreach (var i in _criteria) converged[i.Key] = Statistics.IConvergenceResultFactory.Factory();
             int s = 0, n = 0, I = 1, N = 1; //I = 10000, N = 10000;
@@ -103,7 +104,7 @@ namespace Model.Conditions.Locations.Years.Results
             }
             return set;
         }
-        private Dictionary<IMetric, Statistics.IHistogram> UpdateHistograms(ConcurrentBag<IConditionLocationYearRealizationSummary> realizations, Dictionary<IMetric, Statistics.IHistogram> histograms)
+        private Dictionary<IMetric, Histogram> UpdateHistograms(ConcurrentBag<IConditionLocationYearRealizationSummary> realizations, Dictionary<IMetric, Histogram> histograms)
         {
             //TODO: Parallelize adding lists to histograms
             
@@ -127,14 +128,14 @@ namespace Model.Conditions.Locations.Years.Results
             if (histograms.Count == 0)
             {
                 foreach (var metric in metrics)
-                {
+                {// not sure if the below histograms are constructed correctly, just fixed error
                     if (metric.Key.ParameterType != IParameterEnum.EAD)
                     {
-                        histograms[metric.Key] = Statistics.IHistogramFactory.Factory(Statistics.IDataFactory.Factory(metric.Value, true), 0, 1, 100);
+                        histograms[metric.Key] = new Histogram(Statistics.IDataFactory.Factory(metric.Value, true), 0.01); 
                     }
                     else
                     {
-                        histograms[metric.Key] = Statistics.IHistogramFactory.Factory(Statistics.IDataFactory.Factory(metric.Value, true), 10);
+                        histograms[metric.Key] = new Histogram(Statistics.IDataFactory.Factory(metric.Value, true), .1);
                     }
                 }
             }
@@ -142,7 +143,7 @@ namespace Model.Conditions.Locations.Years.Results
             {
                 foreach (var metric in metrics)
                 {
-                    histograms[metric.Key] = Statistics.IHistogramFactory.Factory(histograms[metric.Key], Statistics.IDataFactory.Factory(metric.Value, true));
+                    histograms[metric.Key].AddObservationToHistogram(Statistics.IDataFactory.Factory(metric.Value, true));
                 }
             }
             return histograms;
