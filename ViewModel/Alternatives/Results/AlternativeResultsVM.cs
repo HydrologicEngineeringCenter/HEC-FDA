@@ -117,7 +117,8 @@ namespace ViewModel.Alternatives.Results
         private void SelectedYearChanged()
         {
             //i can assume we are on EAD if a year is changing.
-           // List<YearResult> yearResults = _AlternativeResult.EADResult.YearResults;
+            // List<YearResult> yearResults = _AlternativeResult.EADResult.YearResults;
+            SelectedReport = DAMAGE_WITH_UNCERTAINTY;
             CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
 
         }
@@ -127,11 +128,13 @@ namespace ViewModel.Alternatives.Results
             if(EAD.Equals(_SelectedDamageMeasure))
             {
                 YearsVisible = true;
+                SelectedReport = DAMAGE_WITH_UNCERTAINTY;
                 CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
             }
             else if(AAEQ.Equals(_SelectedDamageMeasure))
             {
                 YearsVisible = false;
+                SelectedReport = DAMAGE_WITH_UNCERTAINTY;
                 CurrentResultVM = AlternativeResult.AAEQResult.DamageWithUncertaintyVM;
             }
         }
@@ -152,7 +155,7 @@ namespace ViewModel.Alternatives.Results
             {
                 if (EAD.Equals(_SelectedDamageMeasure))
                 {
-                    CurrentResultVM = SelectedYear.DamageByImpactAreaVM ;
+                    CurrentResultVM = SelectedYear.DamageByImpactAreaVM;
                 }
                 else if (AAEQ.Equals(_SelectedDamageMeasure))
                 {

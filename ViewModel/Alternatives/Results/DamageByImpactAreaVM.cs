@@ -44,8 +44,8 @@ namespace ViewModel.Alternatives.Results
         private List<double> loadYData()
         {
             List<double> yValues = new List<double>();
-            yValues.Add(1);
-            yValues.Add(2);
+            yValues.Add(11);
+            yValues.Add(22);
             return yValues;
         }
 
