@@ -39,7 +39,7 @@
             <TextBox Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Stretch" Text="{Binding Name, ValidatesOnDataErrors=True}" />
 
             <Label Grid.Row="0" Grid.Column="2" Content="Description:" HorizontalAlignment="Right" />
-            <UserControls:TextBoxDescription Grid.Column="3" Description="{Binding Description}" />
+            <!--<UserControls:TextBoxDescription Grid.Column="3" Description="{Binding Description}" />-->
 
             <Label Grid.Row="0" Grid.Column="4" Content="Year:" HorizontalAlignment="Right" Margin="0,0,7,0" />
             <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" />
