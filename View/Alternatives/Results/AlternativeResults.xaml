@@ -26,7 +26,7 @@
             <Label Content="Damage Measure: " Margin="5" />
             <ComboBox ItemsSource="{Binding DamageMeasure}" SelectedItem="{Binding SelectedDamageMeasure}" Width="200" Margin="5"/>
 
-            <Label Content="Analysis Year:" Margin="5" />
+            <Label Content="Analysis Year:" Visibility="{Binding YearsVisible, Converter={StaticResource BoolToVisibilityConverter}}"  Margin="5" />
             <ComboBox ItemsSource="{Binding AlternativeResult.EADResult.YearResults}" SelectedItem="{Binding SelectedYear}" DisplayMemberPath="Year"  Visibility="{Binding YearsVisible, Converter={StaticResource BoolToVisibilityConverter}}"  Margin="5" Width="200"/>
 
             <Label Content="Report:" Margin="5" />

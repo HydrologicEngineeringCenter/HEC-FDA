@@ -7,6 +7,32 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <DataGrid Grid.Row="0" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
+                   HorizontalAlignment="Left"
+                  VerticalAlignment="Top" Width="250" IsReadOnly="True" CanUserReorderColumns="False"
+                  CanUserSortColumns="false" Margin="5">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding ImpactArea}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Impact Area" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding EAD}" Width="*">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Expected Annual Damage" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+
+        </DataGrid>
     </Grid>
 </UserControl>

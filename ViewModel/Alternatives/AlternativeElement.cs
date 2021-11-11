@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Xml.Linq;
 using ViewModel.Alternatives.Results;
 using ViewModel.Alternatives.Results.ResultObject;
@@ -99,7 +100,67 @@ namespace ViewModel.Alternatives
         }
         public void ComputeAlternative(object arg1, EventArgs arg2)
         {
-            //todo: waiting for hec to put the new model in.
+            FdaValidationResult vr = RunPreComputeValidation();
+            if(!vr.IsValid)
+            {
+                MessageBox.Show(vr.ErrorMessage, "Invalid Setup", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+
+            //todo: Run calculations. waiting for hec to put the new model in.
+            IASElementSet[] elems = GetElementsFromID();
+            //grab the result objects off the ias elements and run the calculation.
+
+        }
+
+        private IASElementSet[] GetElementsFromID()
+        {
+            IASElementSet[] iASElems = new IASElementSet[] { null, null };
+            int firstID = IASElementSets[0];
+            int secondID = IASElementSets[1];
+            //do the ias elements still exist:
+            //get the current ias elements in the study
+            List<IASElementSet> currentElementSets = StudyCache.GetChildElementsOfType<IASElementSet>();
+            foreach (IASElementSet set in currentElementSets)
+            {
+                int setID = set.GetElementID();
+                if (setID == firstID)
+                {
+                    iASElems[0] = set;
+                }
+                else if (setID == secondID)
+                {
+                    iASElems[1] = set;
+                }
+            }
+            return iASElems;
+        }
+
+        private FdaValidationResult RunPreComputeValidation()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            //do the ias elements still exist:
+            IASElementSet[] iASElems = GetElementsFromID();
+            IASElementSet firstElem = iASElems[0];
+            IASElementSet secondElem = iASElems[1];
+
+            if (firstElem == null || secondElem == null)
+            {
+                vr.AddErrorMessage("There are no longer two impact area scenarios linked to this alternative.");
+            }
+            else
+            {
+                //are the years still different
+                int firstYear = firstElem.AnalysisYear;
+                int secondYear = secondElem.AnalysisYear;
+                if (firstYear == secondYear)
+                {
+                    vr.AddErrorMessage("The selected impact area scenarios both have the same analysis year.");
+                    vr.AddErrorMessage("Different years are required to run the calculation.");
+                }
+                //do they have compute results. -not sure if this one is needed.
+            }
+
+            return vr;
         }
 
         private AlternativeResult CreateAlternativeResult()
