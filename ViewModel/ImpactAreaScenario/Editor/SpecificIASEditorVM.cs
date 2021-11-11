@@ -266,31 +266,48 @@ namespace ViewModel.ImpactAreaScenario.Editor
         }
 
         #endregion
-        /// <summary>
-        /// This collection should always have the first item by the empty row option. If the id is not found in the collection
-        /// then the first row will be selected (the empty row).
-        /// </summary>
-        /// <param name="collection"></param>
-        /// <param name="id"></param>
-        private void SelectRowForElementId(ObservableCollection<ChildElementComboItem> collection, int id)
-        {
-            SelectedFrequencyElement = collection.FirstOrDefault(elem => elem.ChildElement != null && elem.ChildElement.GetElementID() == id);
-            if (SelectedFrequencyElement == null)
-            {
-                SelectedFrequencyElement = collection[0];
-            }
-        }
+    
         private void FillForm(SpecificIAS elem)
         {
             FillThresholds(elem);
             //all the available elements have been loaded into this editor. We now want to select
             //the correct element for each dropdown. 
-            SelectRowForElementId(FrequencyElements, elem.FlowFreqID);
-            SelectRowForElementId(InflowOutflowElements, elem.InflowOutflowID);
-            SelectRowForElementId(RatingCurveElements, elem.RatingID);
-            SelectRowForElementId(LeveeFeatureElements, elem.LeveeFailureID);
-            SelectRowForElementId(ExteriorInteriorElements, elem.ExtIntStageID);
-            SelectRowForElementId(StageDamageElements, elem.StageDamageID);
+            //all the available elements have been loaded into this editor. We now want to select
+            //the correct element for each dropdown. If we can't find the correct element then the selected elem 
+            //will be null.
+            SelectedFrequencyElement = FrequencyElements.FirstOrDefault(freq => freq.ChildElement != null && freq.ChildElement.GetElementID() == elem.FlowFreqID);
+            SelectedInflowOutflowElement = InflowOutflowElements.FirstOrDefault(inf => inf.ChildElement != null && inf.ChildElement.GetElementID() == elem.InflowOutflowID);
+            SelectedRatingCurveElement = RatingCurveElements.FirstOrDefault(rat => rat.ChildElement != null && rat.ChildElement.GetElementID() == elem.RatingID);
+            SelectedLeveeFeatureElement = LeveeFeatureElements.FirstOrDefault(levee => levee.ChildElement != null && levee.ChildElement.GetElementID() == elem.LeveeFailureID);
+            SelectedExteriorInteriorElement = ExteriorInteriorElements.FirstOrDefault(ext => ext.ChildElement != null && ext.ChildElement.GetElementID() == elem.ExtIntStageID);
+            SelectedStageDamageElement = StageDamageElements.FirstOrDefault(stage => stage.ChildElement != null && stage.ChildElement.GetElementID() == elem.StageDamageID);
+
+            //i don't want a selected value to ever be null. Even if there are no elements we should select the blank row option.
+            //so if it is null, i will set it to the first option which is empty.
+            if (SelectedFrequencyElement == null)
+            {
+                SelectedFrequencyElement = FrequencyElements[0];
+            }
+            if (SelectedInflowOutflowElement == null)
+            {
+                SelectedInflowOutflowElement = InflowOutflowElements[0];
+            }
+            if (SelectedRatingCurveElement == null)
+            {
+                SelectedRatingCurveElement = RatingCurveElements[0];
+            }
+            if (SelectedLeveeFeatureElement == null)
+            {
+                SelectedLeveeFeatureElement = LeveeFeatureElements[0];
+            }
+            if (SelectedExteriorInteriorElement == null)
+            {
+                SelectedExteriorInteriorElement = ExteriorInteriorElements[0];
+            }
+            if (SelectedStageDamageElement == null)
+            {
+                SelectedStageDamageElement = StageDamageElements[0];
+            }
         }
 
         private void FillThresholds(SpecificIAS elem)
