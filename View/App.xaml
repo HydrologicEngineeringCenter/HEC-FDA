@@ -252,17 +252,6 @@
         <DataTemplate DataType="{x:Type AlternativeResultsVM:DamageWithUncertaintyVM }" >
             <AlternativeResultsView:EADDamageWithUncertainty/>
         </DataTemplate>
-
-        <DataTemplate DataType="{x:Type AlternativeResultsVM:AAEQDamageByDamCatVM }" >
-            <AlternativeResultsView:AAEQDamageByDamCat/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type AlternativeResultsVM:AAEQDamageByImpactAreaVM }" >
-            <AlternativeResultsView:AAEQDamageByImpactArea/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type AlternativeResultsVM:AAEQDamageWithUncertaintyVM }" >
-            <AlternativeResultsView:AAEQDamageWithUncertainty/>
-        </DataTemplate>
-
         <DataTemplate DataType="{x:Type IASEditorVM:IASEditorVM }" >
             <IASEditorView:IASEditor/>
         </DataTemplate>
