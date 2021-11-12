@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
 using ViewModel.Alternatives.Results;
@@ -117,7 +114,6 @@ namespace ViewModel.Alternatives
             IASElementSet[] iASElems = new IASElementSet[] { null, null };
             int firstID = IASElementSets[0];
             int secondID = IASElementSets[1];
-            //do the ias elements still exist:
             //get the current ias elements in the study
             List<IASElementSet> currentElementSets = StudyCache.GetChildElementsOfType<IASElementSet>();
             foreach (IASElementSet set in currentElementSets)
@@ -176,7 +172,6 @@ namespace ViewModel.Alternatives
         }
         public void ViewResults(object arg1, EventArgs arg2)
         {
-
             AlternativeResultsVM vm = new AlternativeResultsVM(CreateAlternativeResult());
             string header = "Alternative Results: " + Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeResults" + Name);

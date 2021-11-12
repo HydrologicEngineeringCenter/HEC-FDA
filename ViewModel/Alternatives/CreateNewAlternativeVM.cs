@@ -1,17 +1,11 @@
-﻿using ViewModel.ImpactAreaScenario;
-using ViewModel.Editors;
-using ViewModel.FlowTransforms;
-using Functions;
-using Model;
+﻿using HEC.CS.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ViewModel.Utilities;
 using System.Windows;
-using System.Collections.ObjectModel;
-using HEC.CS.Collections;
+using ViewModel.Editors;
+using ViewModel.ImpactAreaScenario;
+using ViewModel.Utilities;
 
 namespace ViewModel.Alternatives
 {
@@ -39,8 +33,7 @@ namespace ViewModel.Alternatives
             _CurrentElement = elem;
             Name = elem.Name;
             Description = elem.Description;
-            List<int> iASElementSets = elem.IASElementSets;
-            SelectSavedRows(iASElementSets);
+            SelectSavedRows(elem.IASElementSets);
             ListenToIASEvents();
         }
 
@@ -99,7 +92,6 @@ namespace ViewModel.Alternatives
             }
             Rows.AddRange( currentIASRowsInStudy);
         }
-        
 
         private List<AlternativeRowItem> CreateRowsForIASElementsInStudy()
         {
@@ -150,7 +142,6 @@ namespace ViewModel.Alternatives
 
         }
 
-
         private FdaValidationResult IsValid(List<AlternativeRowItem> selectedRows)
         {
             FdaValidationResult vr = new FdaValidationResult();
@@ -196,7 +187,6 @@ namespace ViewModel.Alternatives
             }
             return selectedRows;
         }
-
 
     }
 }

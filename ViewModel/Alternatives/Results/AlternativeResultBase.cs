@@ -8,10 +8,8 @@ namespace ViewModel.Alternatives.Results
 {
     public class AlternativeResultBase
     {
-        public String ReportName { get; }
-        public AlternativeResultBase(string reportName)
+        public AlternativeResultBase()
         {
-            ReportName = reportName;
         }
 
     }

@@ -49,7 +49,5 @@ namespace ViewModel.Alternatives
         {
             RemoveElement(e.Element);
         }
-
- 
     }
 }
