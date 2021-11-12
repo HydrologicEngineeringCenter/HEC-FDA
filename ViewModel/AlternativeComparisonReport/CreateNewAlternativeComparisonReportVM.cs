@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using ViewModel.Alternatives;
 
 namespace ViewModel.AlternativeComparisonReport
 {
@@ -13,19 +14,18 @@ namespace ViewModel.AlternativeComparisonReport
     {
         private string _SelectedWithProjectPlan;
         private ObservableCollection<Increment> _Increments = new ObservableCollection<Increment>();
-        //private ObservableCollection<string> _SelectedPlan1 = new ObservableCollection<string>();
-        //private ObservableCollection<string> _SelectedPlan2 = new ObservableCollection<string>();
+        private int _SelectedIndex = 0;
 
-        //public ObservableCollection<string> SelectedPlan1
-        //{
-        //    get { return _SelectedPlan1; }
-        //    set { _SelectedPlan1 = value; NotifyPropertyChanged(); }
-        //}
-        //public ObservableCollection<string> SelectedPlan2
-        //{
-        //    get { return _SelectedPlan2; }
-        //    set { _SelectedPlan2 = value; NotifyPropertyChanged(); }
-        //}
+        public List<AlternativeElement> ProjectAlternatives { get; } = new List<AlternativeElement>();
+        public AlternativeElement SelectedWithoutProjectAlternative { get; set; }
+
+        public int SelectedIndex
+        {
+            get { return _SelectedIndex; }
+            set { _SelectedIndex = value; NotifyPropertyChanged(); }
+        }
+        public ObservableCollection<ComparisonRowItemVM> Rows { get; } = new ObservableCollection<ComparisonRowItemVM>();
+
         public ObservableCollection<Increment> Increments
         {
             get { return _Increments; }
@@ -47,15 +47,27 @@ namespace ViewModel.AlternativeComparisonReport
 
        // public bool IsUsingSecondIncrement { get; set; }
 
-        public CreateNewAlternativeComparisonReportVM(List<string> plans, EditorActionManager actionManager) : base(actionManager)
+        public CreateNewAlternativeComparisonReportVM( EditorActionManager actionManager) : base(actionManager)
         {
-            Plans = plans;
+            LoadRows();
+            //StudyCache.StageDamageAdded += AddStageDamageElement;
+
         }
 
-        public void AddIncrement()
+        private void LoadRows()
         {
-            Increment inc = new Increment("Increment " + Increments.Count, Plans);
-            Increments.Add(inc);
+            List<AlternativeElement> alts = StudyCache.GetChildElementsOfType<AlternativeElement>();
+            ProjectAlternatives.AddRange(alts);
+            Rows.Add(new ComparisonRowItemVM(ProjectAlternatives));
+            if(alts.Count>0)
+            {
+                SelectedWithoutProjectAlternative = alts[0];
+            }
+        }
+
+        public void AddComparison()
+        {
+            Rows.Add(new ComparisonRowItemVM(ProjectAlternatives));
         }
 
         public override void Save()
@@ -107,5 +119,16 @@ namespace ViewModel.AlternativeComparisonReport
                 return false;
             }
         }
+
+        public void RemoveSelectedRow()
+        {
+            if(SelectedIndex>0)
+            {
+                int newIndex = SelectedIndex - 1;
+                Rows.RemoveAt(SelectedIndex);
+                SelectedIndex = newIndex;
+            }
+        }
+
     }
 }

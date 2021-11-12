@@ -4,6 +4,7 @@
              
              xmlns:EditorsVM ="clr-namespace:ViewModel.Editors;assembly=ViewModel"
              
+             
              xmlns:AlternativeResultsVM="clr-namespace:ViewModel.Alternatives.Results;assembly=ViewModel"
              xmlns:AlternativeResultsView ="clr-namespace:View.Alternatives.Results"
 
@@ -17,6 +18,8 @@
              xmlns:PlotsOutputView="clr-namespace:View.Output"
                           
              xmlns:AlternativeComparisonReportVM="clr-namespace:ViewModel.AlternativeComparisonReport;assembly=ViewModel"
+             xmlns:AlternativeComparisonReport ="clr-namespace:View.AlternativeComparisonReport"
+             
              xmlns:AlternativeView="clr-namespace:View.Alternatives"
              
              xmlns:PlansVM="clr-namespace:ViewModel.Alternatives;assembly=ViewModel"
@@ -238,6 +241,10 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type OccupancyTypesVM:ImportOccupancyTypesVM }" >
             <OccupancyTypesView:ImportOccupancyTypeGroups/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type AlternativeComparisonReportVM:ComparisonRowItemVM }" >
+            <AlternativeComparisonReport:ComparisonRowItem/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type AlternativeResultsVM:AlternativeResultsVM }" >

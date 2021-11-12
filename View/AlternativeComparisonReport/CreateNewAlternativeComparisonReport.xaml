@@ -82,10 +82,32 @@
                 <ComboBox Grid.Column="1" ItemsSource="{Binding Plans}" SelectedItem="{Binding SelectedWithoutProjectPlan}" HorizontalAlignment="Stretch" Height="22"/>
             </Grid>
         </Grid>-->
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button Grid.Row="1" Content="Add Comparison" Width="125" Height="22" HorizontalAlignment="Left" Margin="5" Click="btn_addIncrement_Click" />
+            <Button Content="Remove Comparison" Width="125" Height="22" Click="RemoveButton_Click"/>
+        </StackPanel>
 
-        <Button x:Name="btn_addIncrement" Grid.Row="1" Content="Add Increment" Width="110" Height="22" HorizontalAlignment="Left" Margin="30,0,0,0" Click="btn_addIncrement_Click" />
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <ListBox Grid.Row="2"  x:Name="lst_Increments" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Margin="5" />
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="Without Project:" Margin="5"/>
+                <ComboBox Grid.Column="1" ItemsSource="{Binding ProjectAlternatives}" SelectedItem="{Binding SelectedWithoutProjectAlternative}" DisplayMemberPath="Name" Height="22" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="5"/>
+            </Grid>
+
+            <ListBox ItemsSource="{Binding Rows}"  SelectedIndex="{Binding SelectedIndex}" BorderThickness="0" Grid.Column="1"  HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" />
+        </Grid>
 
         <!--<Grid Name="grid_secondIncrement" Grid.Row="3" Margin="5,10,5,5" Visibility="Hidden">
             <Grid.RowDefinitions>
