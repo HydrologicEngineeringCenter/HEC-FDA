@@ -1,25 +1,22 @@
-﻿using System;
+﻿using HEC.CS.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ViewModel.Alternatives;
 
 namespace ViewModel.AlternativeComparisonReport
 {
     public class ComparisonRowItemVM : BaseViewModel
     {
-        private AlternativeElement _SelectedAlternative;
+        private AlternativeComboItem _SelectedAlternative;
 
-        public AlternativeElement SelectedAlternative
+        public AlternativeComboItem SelectedAlternative
         {
             get { return _SelectedAlternative; }
             set { _SelectedAlternative = value;NotifyPropertyChanged(); }
         }
-        public List<AlternativeElement> Alternatives { get; } = new List<AlternativeElement>();
-        public ComparisonRowItemVM(List<AlternativeElement> elems)
+        //public List<AlternativeComboItem> Alternatives { get; set; } = new List<AlternativeComboItem>();
+        public CustomObservableCollection<AlternativeComboItem> Alternatives { get; set; }
+        public ComparisonRowItemVM( CustomObservableCollection<AlternativeComboItem> elems)
         {
-            Alternatives.AddRange(elems);
+            Alternatives = elems;
             if(elems.Count>0)
             {
                 SelectedAlternative = elems[0];

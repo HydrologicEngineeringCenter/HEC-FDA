@@ -103,7 +103,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Content="Without Project:" Margin="5"/>
-                <ComboBox Grid.Column="1" ItemsSource="{Binding ProjectAlternatives}" SelectedItem="{Binding SelectedWithoutProjectAlternative}" DisplayMemberPath="Name" Height="22" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="5"/>
+                <ComboBox Grid.Column="1" ItemsSource="{Binding ProjectAlternatives, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedWithoutProjectAlternative}" DisplayMemberPath="Name" Height="22" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="5"/>
             </Grid>
 
             <ListBox ItemsSource="{Binding Rows}"  SelectedIndex="{Binding SelectedIndex}" BorderThickness="0" Grid.Column="1"  HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" />

@@ -258,7 +258,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         {
             int idToUpdate = oldElement.GetElementID();
 
-            ChildElementComboItem itemToUpdate = collection.Where(elem => elem.ChildElement != null && elem.ChildElement.GetElementID() == idToUpdate).SingleOrDefault();
+            ChildElementComboItem itemToUpdate = collection.Where(elem => elem.ChildElement != null && elem.ID == idToUpdate).SingleOrDefault();
             if (itemToUpdate != null)
             {
                 itemToUpdate.ChildElement = newElement;

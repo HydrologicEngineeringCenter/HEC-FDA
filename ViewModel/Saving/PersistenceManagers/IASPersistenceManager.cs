@@ -116,8 +116,9 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             if (element is IASElementSet)
             {
-                RemoveFromParentTable(element, TableName);
+                //remove from the cache first while you can still get the element's id.
                 StudyCacheForSaving.RemoveElement((IASElementSet)element);
+                RemoveFromParentTable(element, TableName);
             }
         }
 
