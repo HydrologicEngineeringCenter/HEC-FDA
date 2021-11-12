@@ -67,9 +67,9 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public void Remove(ChildElement element)
         {
-            int id = element.GetElementID();
-            RemoveFromParentTable(element, TableName);
+            //remove from the cache first while you can still get the element's id.
             StudyCacheForSaving.RemoveElement((AlternativeElement)element);
+            RemoveFromParentTable(element, TableName);
         }
 
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex)

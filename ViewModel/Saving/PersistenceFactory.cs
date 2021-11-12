@@ -83,6 +83,10 @@ namespace ViewModel.Saving
             {
                 return new IASPersistenceManager(StudyCacheForSaving);
             }
+            else if(element.GetType() == typeof(Alternatives.AlternativeElement))
+            {
+                return new AlternativePersistenceManager(StudyCacheForSaving);
+            }
            
             return null;
         }

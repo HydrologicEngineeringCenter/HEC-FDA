@@ -422,7 +422,16 @@ namespace ViewModel.Saving
             {
                 SQLiteCommand command = Storage.Connection.Instance.Reader.DbConnection.CreateCommand();
                 command.CommandText = "select ID from " + tableName + " where Name = '" + elementName + "'";
-                retval = Convert.ToInt32(command.ExecuteScalar());
+                object id = command.ExecuteScalar();
+                if (id == null)
+                {
+                    retval = -1;
+                }
+                else
+                {
+                    retval = Convert.ToInt32(command.ExecuteScalar());
+                }
+                return retval;
             }
             catch(Exception e)
             {

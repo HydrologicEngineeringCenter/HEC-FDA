@@ -46,8 +46,8 @@ namespace ViewModel.AlternativeComparisonReport
            
 
             CreateNewAlternativeComparisonReportVM vm = new CreateNewAlternativeComparisonReportVM( actionManager);
-            string header = "Create Alternative";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateNewAlternative");
+            string header = "Create Alternative Comparison Report";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateNewAlternativeCompReport");
             Navigate(tab, false, true);
         }
 
