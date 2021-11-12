@@ -15,9 +15,9 @@ namespace ViewModel.Alternatives.Results
         private readonly HistogramData2D _data;
         public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("chart title");
 
-        public List<EadRowItem> Rows { get; set; }
+        public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
-        public DamageWithUncertaintyVM():base("Damage with Uncertainty")
+        public DamageWithUncertaintyVM():base()
         {
             //load with dummy data
             _data = new HistogramData2D(5, 0, new double[] { }, "Chart", "Series", "X Data", "YData");
@@ -32,13 +32,10 @@ namespace ViewModel.Alternatives.Results
             List<double> xVals = loadXData();
             List<double> yVals = loadYData();
 
-            List<EadRowItem> rows = new List<EadRowItem>();
             for (int i = 0; i < xVals.Count; i++)
             {
-                rows.Add(new EadRowItem(xVals[i], yVals[i]));
+                Rows.Add(new EadRowItem(xVals[i], yVals[i]));
             }
-
-            Rows = rows;
         }
 
         private List<double> loadXData()
@@ -59,7 +56,6 @@ namespace ViewModel.Alternatives.Results
             yValues.Add(3);
             return yValues;
         }
-
 
         public void PlotHistogram()
         {

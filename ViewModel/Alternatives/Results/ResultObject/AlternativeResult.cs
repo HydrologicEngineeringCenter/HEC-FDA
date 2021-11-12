@@ -8,7 +8,6 @@ namespace ViewModel.Alternatives.Results.ResultObject
 {
     public class AlternativeResult
     {
-
         public EADResult EADResult{get;set;}
         public AAEQResult AAEQResult { get; set; }
 
