@@ -9,6 +9,7 @@ using ViewModel.StageTransforms;
 using ViewModel.ImpactArea;
 using ViewModel.WaterSurfaceElevation;
 using ViewModel.FrequencyRelationships;
+using ViewModel.AlternativeComparisonReport;
 
 namespace ViewModel.Saving
 {
@@ -87,6 +88,10 @@ namespace ViewModel.Saving
             {
                 return new AlternativePersistenceManager(StudyCacheForSaving);
             }
+            else if(element is AlternativeComparisonReportElement)
+            {
+                return new AlternativeComparisonReportPersistenceManager(StudyCacheForSaving);
+            }
            
             return null;
         }
@@ -153,6 +158,10 @@ namespace ViewModel.Saving
         public static AlternativePersistenceManager GetAlternativeManager()
         {
             return new AlternativePersistenceManager(StudyCacheForSaving);
+        }
+        public static AlternativeComparisonReportPersistenceManager GetAlternativeCompReportManager()
+        {
+            return new AlternativeComparisonReportPersistenceManager(StudyCacheForSaving);
         }
     }
 }

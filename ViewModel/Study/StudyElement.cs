@@ -624,6 +624,7 @@ namespace ViewModel.Study
             Saving.PersistenceFactory.GetStructureInventoryManager().Load();
             Saving.PersistenceFactory.GetIASManager().Load();
             Saving.PersistenceFactory.GetAlternativeManager().Load();
+            Saving.PersistenceFactory.GetAlternativeCompReportManager().Load();
             Saving.PersistenceFactory.GetOccTypeManager().Load();
 
         }

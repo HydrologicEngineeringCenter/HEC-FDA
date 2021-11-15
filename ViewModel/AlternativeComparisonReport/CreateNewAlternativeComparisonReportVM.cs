@@ -14,8 +14,11 @@ namespace ViewModel.AlternativeComparisonReport
 {
     public class CreateNewAlternativeComparisonReportVM : BaseEditorVM
     {
+        private AlternativeComparisonReportElement _CurrentElement;
+        private bool _IsInEditMode;
+
         //private string _SelectedWithProjectPlan;
-        private ObservableCollection<Increment> _Increments = new ObservableCollection<Increment>();
+        //private ObservableCollection<Increment> _Increments = new ObservableCollection<Increment>();
         private int _SelectedIndex = 0;
         private CustomObservableCollection<AlternativeComboItem> _ProjectAlternatives = new CustomObservableCollection<AlternativeComboItem>();
         public CustomObservableCollection<AlternativeComboItem> ProjectAlternatives
@@ -23,7 +26,7 @@ namespace ViewModel.AlternativeComparisonReport
             get { return _ProjectAlternatives; }
         }
         public AlternativeComboItem SelectedWithoutProjectAlternative { get; set; }
-
+        public string Description { get; set; }
         public int SelectedIndex
         {
             get { return _SelectedIndex; }
@@ -31,35 +34,66 @@ namespace ViewModel.AlternativeComparisonReport
         }
         public ObservableCollection<ComparisonRowItemVM> Rows { get; } = new ObservableCollection<ComparisonRowItemVM>();
 
-        public ObservableCollection<Increment> Increments
-        {
-            get { return _Increments; }
-            set { _Increments = value; NotifyPropertyChanged(); }
-        }
-        public List<string> Plans { get; set; }
-        //change from string to "plan" once that object exists
-        //public string SelectedWithoutProjectPlan
-        //{
-        //    get;set;
-        //}
-        //public string SelectedWithProjectPlan
-        //{
-        //    get { return _SelectedWithProjectPlan; }
-        //    set { _SelectedWithProjectPlan = value; NotifyPropertyChanged(); }
-        //}
-        //public string SelectedWithProjectPlanSecondIncrement { get; set; }
-
-
-       // public bool IsUsingSecondIncrement { get; set; }
-
         public CreateNewAlternativeComparisonReportVM( EditorActionManager actionManager) : base(actionManager)
         {
             LoadRows();
+            ListenToAlternativeEvents();
+        }
+
+        public CreateNewAlternativeComparisonReportVM(AlternativeComparisonReportElement elem, EditorActionManager actionManager) : base(actionManager)
+        {
+            _CurrentElement = elem;
+            _IsInEditMode = true;
+            FillForm(elem);
+            ListenToAlternativeEvents();
+        }
+
+        private void ListenToAlternativeEvents()
+        {
             StudyCache.AlternativeAdded += AddAlternative;
             StudyCache.AlternativeRemoved += RemoveAlternative;
             StudyCache.AlternativeUpdated += UpdateAlternative;
         }
 
+        private void FillForm(AlternativeComparisonReportElement elem)
+        {
+            Name = elem.Name;
+            Description = elem.Description;
+            LoadRows();
+            //select the correct combo items in the first row.
+            SelectWithoutProjectCombo(elem.WithoutProjAltID);
+            List<int> withProjAltIDs = elem.WithProjAltIDs;
+            SelectWithProjectCombo(Rows[0], withProjAltIDs[0]);
+            //the first row is taken care of, now add rows and select correctly for the other with proj alts
+            for(int i = 1;i<withProjAltIDs.Count;i++)
+            {
+                ComparisonRowItemVM newRow = new ComparisonRowItemVM(_ProjectAlternatives);
+                Rows.Add(newRow);
+                SelectWithProjectCombo(newRow, withProjAltIDs[i]);
+            }
+        }
+
+        private void SelectWithProjectCombo(ComparisonRowItemVM row, int withProjID)
+        {
+            AlternativeComboItem comboToSelect = ProjectAlternatives.FirstOrDefault(comboItem => comboItem.ID == withProjID);
+            if (comboToSelect != null)
+            {
+                row.SelectedAlternative = comboToSelect;
+            }
+        }
+
+        private void SelectWithoutProjectCombo(int withoutProjID)
+        {
+            AlternativeComboItem comboToSelect = ProjectAlternatives.FirstOrDefault(comboItem => comboItem.ID == withoutProjID);
+            if(comboToSelect != null)
+            {
+                SelectedWithoutProjectAlternative = comboToSelect;
+            }
+        }
+
+        /// <summary>
+        /// Adds the first row and fills the comboboxes with the available alternatives.
+        /// </summary>
         private void LoadRows()
         {
             List<AlternativeElement> alts = StudyCache.GetChildElementsOfType<AlternativeElement>();
@@ -130,53 +164,73 @@ namespace ViewModel.AlternativeComparisonReport
 
         public override void Save()
         {
-            //the second increment onward will not have the second plan defined. You need to
-            //get it from the first plan of the previous increment.
-            int i = 0;
-        }
-
-        public override bool RunSpecialValidation()
-        {
-            bool isFirstValid = IsFirstIncrementValid();
-            if(!isFirstValid)
+            if(Description == null)
             {
-                MessageBox.Show("Not all increments have plans defined.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
+                Description = "";
             }
-            foreach (Increment inc in Increments)
+            List<int> selectedIds = new List<int>();
+            foreach(ComparisonRowItemVM row in Rows)
             {
-                if(!IsFirstPlanDefined(inc))
-                {
-                    MessageBox.Show("Not all increments have plans defined.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return false;
-                }
+                selectedIds.Add(row.SelectedAlternative.ID);
             }
-            return true;
-        }
+            AlternativeComparisonReportElement elemToSave = new AlternativeComparisonReportElement(Name, Description, SelectedWithoutProjectAlternative.ID, selectedIds);
 
-        private bool IsFirstPlanDefined(Increment inc)
-        {
-            if (inc.SelectedPlan1 != null)
+            if (_IsInEditMode)
             {
-                return true;
+                //todo: create the manager
+                PersistenceFactory.GetAlternativeCompReportManager().SaveExisting(_CurrentElement, elemToSave);
             }
             else
             {
-                return false;
+                PersistenceFactory.GetAlternativeCompReportManager().SaveNew(elemToSave);
+                _IsInEditMode = true;
             }
+            _CurrentElement = elemToSave;
+
         }
-        private bool IsFirstIncrementValid()
-        {
-            Increment inc = Increments[0];
-            if(inc.SelectedPlan1 != null && inc.SelectedPlan2 != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+
+        //public override bool RunSpecialValidation()
+        //{
+        //    bool isFirstValid = IsFirstIncrementValid();
+        //    if(!isFirstValid)
+        //    {
+        //        MessageBox.Show("Not all increments have plans defined.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        //        return false;
+        //    }
+        //    foreach (Increment inc in Increments)
+        //    {
+        //        if(!IsFirstPlanDefined(inc))
+        //        {
+        //            MessageBox.Show("Not all increments have plans defined.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        //            return false;
+        //        }
+        //    }
+        //    return true;
+        //}
+
+        //private bool IsFirstPlanDefined(Increment inc)
+        //{
+        //    if (inc.SelectedPlan1 != null)
+        //    {
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
+        //private bool IsFirstIncrementValid()
+        //{
+        //    Increment inc = Increments[0];
+        //    if(inc.SelectedPlan1 != null && inc.SelectedPlan2 != null)
+        //    {
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
 
         public void RemoveSelectedRow()
         {
