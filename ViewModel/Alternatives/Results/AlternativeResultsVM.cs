@@ -11,7 +11,7 @@ namespace ViewModel.Alternatives.Results
         private const string EAD = "EAD";
         private const string AAEQ = "AAEQ";
 
-        private AlternativeResultBase _selectedResult;
+        private IAlternativeResult _selectedResult;
         private string _SelectedDamageMeasure;
         private string _SelectedReport;
         private bool _YearsVisible;
@@ -30,7 +30,7 @@ namespace ViewModel.Alternatives.Results
             set { _SelectedYear = value;  SelectedYearChanged(); NotifyPropertyChanged(); }
         }
         
-        public AlternativeResultBase CurrentResultVM
+        public IAlternativeResult CurrentResultVM
         {
             get { return _selectedResult; }
             set { _selectedResult = value; NotifyPropertyChanged(); }
@@ -72,7 +72,6 @@ namespace ViewModel.Alternatives.Results
         private void SelectedYearChanged()
         {
             //i can assume we are on EAD if a year is changing.
-            // List<YearResult> yearResults = _AlternativeResult.EADResult.YearResults;
             SelectedReport = DAMAGE_WITH_UNCERTAINTY;
             CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
         }

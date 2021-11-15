@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using ViewModel.Editors;
 using ViewModel.ImpactAreaScenario;
+using ViewModel.Saving;
 using ViewModel.Utilities;
 
 namespace ViewModel.Alternatives
@@ -50,17 +51,17 @@ namespace ViewModel.Alternatives
             StudyCache.IASElementUpdated += IASUpdated;
         }
 
-        private void IASAdded(object sender, Saving.ElementAddedEventArgs e)
+        private void IASAdded(object sender, ElementAddedEventArgs e)
         {
             Rows.Add(new AlternativeRowItem((IASElementSet)e.Element));
         }
 
-        private void IASRemoved(object sender, Saving.ElementAddedEventArgs e)
+        private void IASRemoved(object sender, ElementAddedEventArgs e)
         {
             Rows.Remove(Rows.Where(row => row.ID == e.ID).Single());
         }
 
-        private void IASUpdated(object sender, Saving.ElementUpdatedEventArgs e)
+        private void IASUpdated(object sender, ElementUpdatedEventArgs e)
         {
             IASElementSet oldElement = (IASElementSet)e.OldElement;
             IASElementSet newElement = (IASElementSet)e.NewElement;
@@ -130,11 +131,11 @@ namespace ViewModel.Alternatives
                 AlternativeElement elemToSave = new AlternativeElement(Name, Description, GetSelectedIASSets());
                 if (_IsInEditMode)
                 {
-                    Saving.PersistenceFactory.GetAlternativeManager().SaveExisting(_CurrentElement, elemToSave);
+                    PersistenceFactory.GetAlternativeManager().SaveExisting(_CurrentElement, elemToSave);
                 }
                 else
                 {
-                    Saving.PersistenceFactory.GetAlternativeManager().SaveNew(elemToSave);
+                    PersistenceFactory.GetAlternativeManager().SaveNew(elemToSave);
                     _IsInEditMode = true;
                 }
                 _CurrentElement = elemToSave;

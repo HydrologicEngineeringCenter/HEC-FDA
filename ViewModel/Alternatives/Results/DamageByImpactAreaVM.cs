@@ -2,7 +2,7 @@
 
 namespace ViewModel.Alternatives.Results
 {
-    public class DamageByImpactAreaVM : AlternativeResultBase
+    public class DamageByImpactAreaVM : IAlternativeResult
     {
 
         public List<ImpactAreaRowItem> Rows { get; } = new List<ImpactAreaRowItem>();
