@@ -43,6 +43,7 @@ namespace ViewModel.Study
         public event AddElementEventHandler IASElementAdded;
         public event AddElementEventHandler AlternativeAdded;
         public event AddElementEventHandler OccTypeElementAdded;
+        public event AddElementEventHandler AlternativeCompReportAdded;
 
         public event AddElementEventHandler RatingRemoved;
         public event AddElementEventHandler TerrainRemoved;
@@ -58,6 +59,7 @@ namespace ViewModel.Study
         public event AddElementEventHandler IASElementRemoved;
         public event AddElementEventHandler AlternativeRemoved;
         public event AddElementEventHandler OccTypeElementRemoved;
+        public event AddElementEventHandler AlternativeCompReportRemoved;
 
         public event UpdateElementEventHandler RatingUpdated;
         public event UpdateElementEventHandler TerrainUpdated;
@@ -73,6 +75,7 @@ namespace ViewModel.Study
         public event UpdateElementEventHandler IASElementUpdated;
         public event UpdateElementEventHandler OccTypeElementUpdated;
         public event UpdateElementEventHandler AlternativeUpdated;
+        public event UpdateElementEventHandler AlternativeCompReportUpdated;
 
 
         #region Properties
@@ -90,6 +93,7 @@ namespace ViewModel.Study
         public List<InventoryElement> StructureInventoryElements { get; } = new List<InventoryElement>();
         public List<IASElementSet> IASElementSets { get; } = new List<IASElementSet>();
         public List<AlternativeElement> AlternativeElements { get; } = new List<AlternativeElement>();
+        public List<AlternativeComparisonReportElement> AlternativeCompReports { get; } = new List<AlternativeComparisonReportElement>();
 
         #region ParentElements
         public TerrainOwnerElement TerrainParent { get; set; }
@@ -202,6 +206,11 @@ namespace ViewModel.Study
                 RemoveElementFromList(AlternativeElements, elem);
                 AlternativeRemoved?.Invoke(this, elementAddedEventArgs);
             }
+            else if(elem is AlternativeComparisonReportElement)
+            {
+                RemoveElementFromList(AlternativeCompReports, elem);
+                AlternativeCompReportRemoved?.Invoke(this, elementAddedEventArgs);    
+            }
         }
 
         private void RemoveElementFromList<T>(List<T> list, ChildElement elem) where T : ChildElement
@@ -296,6 +305,11 @@ namespace ViewModel.Study
                 AlternativeElements.Add((AlternativeElement)elem);
                 AlternativeAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
+            else if(elem is AlternativeComparisonReportElement)
+            {
+                AlternativeCompReports.Add((AlternativeComparisonReportElement)elem);
+                AlternativeCompReportAdded?.Invoke(this, new ElementAddedEventArgs(elem));
+            }
         }
         #endregion
     
@@ -355,6 +369,10 @@ namespace ViewModel.Study
             else if (oldElement.GetType().Equals(typeof(InventoryElement)))
             {
                 UpdateStructureInventoryElement((InventoryElement)oldElement, (InventoryElement)newElement);
+            }
+            else if(oldElement is AlternativeComparisonReportElement)
+            {
+                UpdateAlternativeCompReportElement((AlternativeComparisonReportElement)oldElement, (AlternativeComparisonReportElement)newElement);
             }
         }
 
@@ -576,6 +594,26 @@ namespace ViewModel.Study
                 AlternativeUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
+
+        public void UpdateAlternativeCompReportElement(AlternativeComparisonReportElement oldElement, AlternativeComparisonReportElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < AlternativeCompReports.Count; i++)
+            {
+                if (AlternativeCompReports[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                AlternativeCompReports.RemoveAt(index);
+                AlternativeCompReports.Insert(index, newElement);
+                AlternativeCompReportUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
+
         public void UpdateStructureInventoryElement(InventoryElement oldElement, InventoryElement newElement)
         {
             int index = -1;
@@ -670,7 +708,7 @@ namespace ViewModel.Study
             {
                 retVal.AddRange(IASElementSets);
             }
-            if (element.GetType() == typeof(AltervativeOwnerElement))
+            else if (element.GetType() == typeof(AltervativeOwnerElement))
             {
                 foreach (ChildElement elem in AlternativeElements)
                 {
@@ -678,7 +716,7 @@ namespace ViewModel.Study
                 }
                 return retVal;
             }
-            if (element.GetType() == typeof(AltervativeOwnerElement))
+            else if (element.GetType() == typeof(AltervativeOwnerElement))
             {
                 foreach (ChildElement elem in AlternativeElements)
                 {
@@ -686,6 +724,11 @@ namespace ViewModel.Study
                 }
                 return retVal;
             }
+            else if(element is AlternativeComparisonReportElement)
+            {
+                retVal.AddRange(AlternativeCompReports);
+            }
+
             return retVal;
 
         }
@@ -815,6 +858,10 @@ namespace ViewModel.Study
                 }
                 return retVal;
             }
+            else if(childElementType == typeof(AlternativeComparisonReportElement))
+            {
+                retVal.AddRange(AlternativeCompReports);
+            }
             return retVal;
         }
         public List<T> GetChildElementsOfType<T>() where T : ChildElement
@@ -891,7 +938,10 @@ namespace ViewModel.Study
                     }
                 }
             }
-
+            else if(childElementType == typeof(AlternativeComparisonReportElement))
+            {
+                childElem = AlternativeCompReports.Where(elem => elem.GetElementID() == ID).FirstOrDefault();
+            }
             return childElem;
         }
 

@@ -7,6 +7,7 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ViewModel.Storage;
 
 namespace ViewModel.Saving
 {
@@ -420,7 +421,7 @@ namespace ViewModel.Saving
             int retval = -1;
             try
             {
-                SQLiteCommand command = Storage.Connection.Instance.Reader.DbConnection.CreateCommand();
+                SQLiteCommand command = Connection.Instance.Reader.DbConnection.CreateCommand();
                 command.CommandText = "select ID from " + tableName + " where Name = '" + elementName + "'";
                 object id = command.ExecuteScalar();
                 if (id == null)
@@ -429,7 +430,7 @@ namespace ViewModel.Saving
                 }
                 else
                 {
-                    retval = Convert.ToInt32(command.ExecuteScalar());
+                    retval = Convert.ToInt32(id);
                 }
                 return retval;
             }

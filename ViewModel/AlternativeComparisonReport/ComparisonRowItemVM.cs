@@ -12,8 +12,8 @@ namespace ViewModel.AlternativeComparisonReport
             get { return _SelectedAlternative; }
             set { _SelectedAlternative = value;NotifyPropertyChanged(); }
         }
-        //public List<AlternativeComboItem> Alternatives { get; set; } = new List<AlternativeComboItem>();
-        public CustomObservableCollection<AlternativeComboItem> Alternatives { get; set; }
+        //public List<AlternativeComboItem> Alternatives { get;  } = new List<AlternativeComboItem>();
+        public CustomObservableCollection<AlternativeComboItem> Alternatives { get; }
         public ComparisonRowItemVM( CustomObservableCollection<AlternativeComboItem> elems)
         {
             Alternatives = elems;

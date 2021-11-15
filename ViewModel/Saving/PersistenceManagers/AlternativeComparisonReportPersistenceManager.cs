@@ -2,20 +2,23 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ViewModel.Alternatives;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ViewModel.AlternativeComparisonReport;
 using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
-    public class AlternativePersistenceManager : SavingBase, IElementManager
+    public class AlternativeComparisonReportPersistenceManager : SavingBase, IElementManager
     {
-        public override string TableName => "alternatives";
+        public override string TableName => "alternative_comparison_reports";
 
-        public override string[] TableColumnNames => new string[]{NAME, "xml"};
+        public override string[] TableColumnNames => new string[] { NAME, "xml" };
 
         public override Type[] TableColumnTypes => new Type[] { typeof(string), typeof(string) };
 
-        public AlternativePersistenceManager(Study.FDACache studyCache)
+        public AlternativeComparisonReportPersistenceManager(Study.FDACache studyCache)
         {
             StudyCacheForSaving = studyCache;
         }
@@ -23,7 +26,7 @@ namespace ViewModel.Saving.PersistenceManagers
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
             string xml = (string)rowData[2];
-            AlternativeElement elem = new AlternativeElement(xml);
+            AlternativeComparisonReportElement elem = new AlternativeComparisonReportElement(xml);
             return elem;
         }
 
@@ -48,7 +51,7 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            object[] retval = new object[] { elem.Name, ((AlternativeElement)elem).WriteToXML() };
+            object[] retval = new object[] { elem.Name, ((AlternativeComparisonReportElement)elem).WriteToXML() };
             return retval;
         }
 
@@ -56,16 +59,16 @@ namespace ViewModel.Saving.PersistenceManagers
         public void Load()
         {
             List<ChildElement> iasElems = CreateElementsFromRows(TableName, (rowData) => CreateElementFromRowData(rowData));
-            foreach (AlternativeElement elem in iasElems)
+            foreach (AlternativeComparisonReportElement elem in iasElems)
             {
                 StudyCacheForSaving.AddElement(elem);
             }
-        }   
+        }
 
         public void Remove(ChildElement element)
         {
             //remove from the cache first while you can still get the element's id.
-            StudyCacheForSaving.RemoveElement((AlternativeElement)element);
+            StudyCacheForSaving.RemoveElement((AlternativeComparisonReportElement)element);
             RemoveFromParentTable(element, TableName);
         }
 
@@ -76,12 +79,12 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public void SaveNew(ChildElement element)
         {
-            if (element.GetType() == typeof(AlternativeElement))
+            if (element is AlternativeComparisonReportElement)
             {
                 string editDate = DateTime.Now.ToString("G");
                 element.LastEditDate = editDate;
-                SaveNewElementToParentTable(GetRowDataFromElement((AlternativeElement)element), TableName, TableColumnNames, TableColumnTypes);
-                StudyCacheForSaving.AddElement((AlternativeElement)element);
+                SaveNewElementToParentTable(GetRowDataFromElement((AlternativeComparisonReportElement)element), TableName, TableColumnNames, TableColumnTypes);
+                StudyCacheForSaving.AddElement((AlternativeComparisonReportElement)element);
             }
         }
     }
