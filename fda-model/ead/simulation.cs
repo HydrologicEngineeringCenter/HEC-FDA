@@ -218,12 +218,11 @@ namespace ead{
         public void ComputeConditionalNonExceedanceProbability(paireddata.IPairedData frequency_stage, metrics.Threshold threshold)
         {
             double[] stageOfEvent = new double[5];
-            double[] er101RequiredExceedanceProbabilities = new double[] { .1, .02, .01, .004, .002 };
-            for (int i = 0; i < er101RequiredExceedanceProbabilities.Length; i++)
+            double[] er101RequiredNonExceedanceProbabilities = new double[] { .9, .98, .99, .996, .998 };
+            for (int i = 0; i < er101RequiredNonExceedanceProbabilities.Length; i++)
             {
-                //frequency_stage is non-exceedance probability 
-                stageOfEvent[i] = frequency_stage.f(1 - er101RequiredExceedanceProbabilities[i]);
-                threshold.Performance.AddStageForCNEP(er101RequiredExceedanceProbabilities[i], stageOfEvent[i]);
+                stageOfEvent[i] = frequency_stage.f(er101RequiredNonExceedanceProbabilities[i]);
+                threshold.Performance.AddStageForCNEP(er101RequiredNonExceedanceProbabilities[i], stageOfEvent[i]);
             }
         }
 
@@ -265,7 +264,7 @@ namespace ead{
             }
             public SimulationBuilder withFrequencyStage(paireddata.UncertainPairedData upd)
             {
-                _sim._flow_stage = upd;
+                _sim._frequency_stage = upd;
                 return new SimulationBuilder(_sim);
             }
             public SimulationBuilder withInteriorExterior(paireddata.UncertainPairedData upd)

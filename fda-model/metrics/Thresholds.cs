@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 namespace metrics
 {
     public class Thresholds
-{
-        private List<Threshold> _thresholds;
+{       //TODO: I think this should be a dictioary where the key is the threshold ID. 
+        //this would probably be the easiest way to grab each threshold by ID
+        private List<Threshold> _thresholds; 
         public List<Threshold> ListOfThresholds
         {
             get

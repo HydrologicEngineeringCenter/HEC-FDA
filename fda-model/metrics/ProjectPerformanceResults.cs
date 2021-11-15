@@ -10,6 +10,7 @@ namespace metrics
 {
     public class ProjectPerformance
 {
+        //TODO: Everything should be written in terms on non-exceedance probability 
     private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .0001;
     private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .01;
         private ThresholdEnum _thresholdType;
@@ -44,18 +45,18 @@ namespace metrics
 
         }
 
-        public void AddStageForCNEP(double standardProbability, double stageForCNEP)
+        public void AddStageForCNEP(double standardNonExceedanceProbability, double stageForCNEP)
         {
             double[] data = new double[1] { stageForCNEP };
             IData stage = IDataFactory.Factory(data);
-            if (_cnep.ContainsKey(standardProbability))
+            if (_cnep.ContainsKey(standardNonExceedanceProbability))
             {
-                _cnep[standardProbability].AddObservationToHistogram(stage);
+                _cnep[standardNonExceedanceProbability].AddObservationToHistogram(stage);
             }
             else
             {
                 var histo = new Histogram(stage, CNEP_HISTOGRAM_DEFAULT_BINWIDTH);
-                _cnep.Add(standardProbability, histo);
+                _cnep.Add(standardNonExceedanceProbability, histo);
             }
         }
 
@@ -77,7 +78,7 @@ namespace metrics
 
         public double ConditionalNonExceedanceProbability(double exceedanceProbability)
         {
-            double conditionalNonExceedanceProbability = 1 - _cnep[exceedanceProbability].CDF(_thresholdValue);
+            double conditionalNonExceedanceProbability = _cnep[exceedanceProbability].CDF(_thresholdValue);
             return conditionalNonExceedanceProbability;
         }
 
