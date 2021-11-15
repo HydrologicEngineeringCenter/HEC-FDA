@@ -9,7 +9,7 @@ using ViewModel.ImpactAreaScenario.Results.RowItems;
 
 namespace ViewModel.Alternatives.Results
 {
-    public class DamageWithUncertaintyVM : AlternativeResultBase
+    public class DamageWithUncertaintyVM : IAlternativeResult
     {
 
         private readonly HistogramData2D _data;

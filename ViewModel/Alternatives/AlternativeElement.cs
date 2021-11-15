@@ -6,6 +6,8 @@ using ViewModel.Alternatives.Results;
 using ViewModel.Alternatives.Results.ResultObject;
 using ViewModel.ImpactAreaScenario;
 using ViewModel.Utilities;
+using ViewModel.Saving;
+using ViewModel.Editors;
 
 namespace ViewModel.Alternatives
 {
@@ -93,7 +95,7 @@ namespace ViewModel.Alternatives
 
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetAlternativeManager().Remove(this);
+            PersistenceFactory.GetAlternativeManager().Remove(this);
         }
         public void ComputeAlternative(object arg1, EventArgs arg2)
         {
@@ -180,7 +182,7 @@ namespace ViewModel.Alternatives
 
         public void EditAlternative(object arg1, EventArgs arg2)
         {
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+            EditorActionManager actionManager = new EditorActionManager()
                 .WithSiblingRules(this);
 
             CreateNewAlternativeVM vm = new CreateNewAlternativeVM(this, actionManager);

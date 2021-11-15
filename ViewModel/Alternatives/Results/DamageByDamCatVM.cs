@@ -3,7 +3,7 @@ using ViewModel.ImpactAreaScenario.Results.RowItems;
 
 namespace ViewModel.Alternatives.Results
 {
-    public class DamageByDamCatVM : AlternativeResultBase
+    public class DamageByDamCatVM : IAlternativeResult
     {
         public List<DamageCategoryRowItem> Rows { get; } = new List<DamageCategoryRowItem>();
 

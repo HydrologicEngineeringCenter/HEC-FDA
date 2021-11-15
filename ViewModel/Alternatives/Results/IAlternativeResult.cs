@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace ViewModel.Alternatives.Results
 {
-    public class AlternativeResultBase
+    public interface IAlternativeResult
     {
-        public AlternativeResultBase()
-        {
-        }
 
     }
 }
