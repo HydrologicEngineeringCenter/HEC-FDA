@@ -45,15 +45,12 @@ namespace metrics
         {
             double[] data = new double[1] { stageForCNEP };
             IData stage = IDataFactory.Factory(data);
-            if (_cnep.ContainsKey(standardNonExceedanceProbability))
+            if (!_cnep.ContainsKey(standardNonExceedanceProbability))
             {
-                _cnep[standardNonExceedanceProbability].AddObservationToHistogram(stage);
-            }
-            else
-            {
-                var histo = new Histogram(stage, CNEP_HISTOGRAM_DEFAULT_BINWIDTH);
+                var histo = new Histogram(null, CNEP_HISTOGRAM_DEFAULT_BINWIDTH);
                 _cnep.Add(standardNonExceedanceProbability, histo);
             }
+            _cnep[standardNonExceedanceProbability].AddObservationToHistogram(stage);
         }
 
         public double MeanAEP()
