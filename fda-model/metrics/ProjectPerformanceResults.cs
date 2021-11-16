@@ -32,17 +32,13 @@ namespace metrics
         {
             double[] data = new double[1] { aepEstimate };
             IData aep = IDataFactory.Factory(data);
-            if (_aep != null)
-            {
-                _aep.AddObservationToHistogram(aep);
-            }
-            else
+            if (_aep == null)
             {
                 var histo = new Histogram(aep, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
                 _aep = histo;
+                
             }
-
-
+            _aep.AddObservationToHistogram(aep);
         }
 
         public void AddStageForCNEP(double standardNonExceedanceProbability, double stageForCNEP)
