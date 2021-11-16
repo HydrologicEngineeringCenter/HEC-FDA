@@ -14,7 +14,6 @@ namespace fda_model_test
    
     public class PerformanceTest
     {
-        //These were previously used in pairedDataTest but were moved here to be used for ead compute testing. 
         static double[] Flows = { 0, 100000 };
         static double[] Stages = { 0, 150000 };
         static double[] NonExceedanceProbs = { .5, .8, .9, .96, .98, .99, .996, .998 };
@@ -122,10 +121,10 @@ namespace fda_model_test
 
         [Theory]
         [InlineData(3456,10000,28.75,.1,.8054)]
-        [InlineData(5678,10000,100,.02,.998)]
-        [InlineData(6789,10000,60.6,.01,.8382)]
-        [InlineData(9876,10000,45.65,.004,.6136)]
-        [InlineData(8765,10000,92.59,.002,.9002)]
+        [InlineData(5678, 10000, 100, .02, .998)]
+        [InlineData(6789, 10000, 60.6, .01, .8382)]
+        [InlineData(9876, 10000, 45.65, .004, .6136)]
+        [InlineData(8765, 10000, 92.59, .002, .9002)]
         public void ComputeConditionalNonExceedanceProbability_Test(int seed, int iterations, double thresholdValue, double recurrenceInterval, double expected)
         {
             double nonExceedanceProbability = 1 - recurrenceInterval;
