@@ -34,7 +34,7 @@ namespace metrics
             IData aep = IDataFactory.Factory(data);
             if (_aep == null)
             {
-                var histo = new Histogram(aep, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
+                var histo = new Histogram(null, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
                 _aep = histo;
                 
             }
