@@ -213,7 +213,7 @@ namespace ViewModel.ImpactAreaScenario
             //Intentionally left blank until the compute is completed in the model. -cody 10/26/21
             HasComputed = true;
             //i am just saving here to trigger the update event. Once we have the real compute we will want to save the results.
-            Saving.PersistenceFactory.GetIASManager().SaveExisting(this, this);
+            PersistenceFactory.GetIASManager().SaveExisting(this, this);
         }
         #endregion
         #region Voids

@@ -4,6 +4,8 @@
              
              xmlns:EditorsVM ="clr-namespace:ViewModel.Editors;assembly=ViewModel"
              
+             xmlns:AlternativeCompReportResultsVM="clr-namespace:ViewModel.AlternativeComparisonReport.Results;assembly=ViewModel"
+             xmlns:AlternativeCompReportResultsView ="clr-namespace:View.AlternativeComparisonReport.Results"
              
              xmlns:AlternativeResultsVM="clr-namespace:ViewModel.Alternatives.Results;assembly=ViewModel"
              xmlns:AlternativeResultsView ="clr-namespace:View.Alternatives.Results"
@@ -247,6 +249,16 @@
             <AlternativeComparisonReport:ComparisonRowItem/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:AlternativeComparisonReportResultsVM }" >
+            <AlternativeCompReportResultsView:AlternativeComparisonReportResults/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:EADSummaryVM }" >
+            <AlternativeCompReportResultsView:EADSummary/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:AAEQSummaryVM }" >
+            <AlternativeCompReportResultsView:AAEQSummary/>
+        </DataTemplate>
+        
         <DataTemplate DataType="{x:Type AlternativeResultsVM:AlternativeResultsVM }" >
             <AlternativeResultsView:AlternativeResults/>
         </DataTemplate>

@@ -1,13 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ViewModel.Alternatives.Results;
 using ViewModel.ImpactAreaScenario.Results.RowItems;
 
-namespace ViewModel.Alternatives.Results
+namespace ViewModel.AlternativeComparisonReport.Results
 {
-    public class DamageByDamCatVM : IAlternativeResult
+    public class AAEQSummaryVM : IAlternativeResult
     {
-        public List<DamageCategoryRowItem> Rows { get; } = new List<DamageCategoryRowItem>();
+        public List<AAEQSummaryRowItem> Rows { get; } = new List<AAEQSummaryRowItem>();
 
-        public DamageByDamCatVM()
+        public AAEQSummaryVM() 
         {
             loadDummyData();
         }
@@ -19,7 +24,7 @@ namespace ViewModel.Alternatives.Results
 
             for (int i = 0; i < xVals.Count; i++)
             {
-                Rows.Add(new DamageCategoryRowItem(xVals[i], yVals[i]));
+                Rows.Add(new AAEQSummaryRowItem());
             }
         }
 
@@ -38,5 +43,6 @@ namespace ViewModel.Alternatives.Results
             yValues.Add(2);
             return yValues;
         }
+
     }
 }

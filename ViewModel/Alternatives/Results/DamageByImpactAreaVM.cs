@@ -8,7 +8,7 @@ namespace ViewModel.Alternatives.Results
         public List<ImpactAreaRowItem> Rows { get; } = new List<ImpactAreaRowItem>();
 
 
-        public DamageByImpactAreaVM():base()
+        public DamageByImpactAreaVM()
         {
             loadDummyData();
         }

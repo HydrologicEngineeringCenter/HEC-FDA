@@ -17,7 +17,7 @@ namespace ViewModel.Alternatives.Results
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
-        public DamageWithUncertaintyVM():base()
+        public DamageWithUncertaintyVM()
         {
             //load with dummy data
             _data = new HistogramData2D(5, 0, new double[] { }, "Chart", "Series", "X Data", "YData");
