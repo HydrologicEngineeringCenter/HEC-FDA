@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using ViewModel.ImpactArea;
 using ViewModel.ImpactAreaScenario.Results;
 using ViewModel.Utilities;
+using ViewModel.Saving;
 
 namespace ViewModel.ImpactAreaScenario
 {
@@ -121,7 +122,7 @@ namespace ViewModel.ImpactAreaScenario
         /// <param name="e"></param>
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetIASManager().Remove(this);
+            PersistenceFactory.GetIASManager().Remove(this);
         }
 
         
@@ -211,7 +212,7 @@ namespace ViewModel.ImpactAreaScenario
             //Intentionally left blank until the compute is completed in the model. -cody 10/26/21
             HasComputed = true;
             //i am just saving here to trigger the update event. Once we have the real compute we will want to save the results.
-            Saving.PersistenceFactory.GetIASManager().SaveExisting(this, this);
+            PersistenceFactory.GetIASManager().SaveExisting(this, this);
         }
         #endregion
         #region Voids

@@ -9,6 +9,7 @@ using System.Windows;
 using ViewModel.Alternatives;
 using ViewModel.Saving;
 using HEC.CS.Collections;
+using ViewModel.Utilities;
 
 namespace ViewModel.AlternativeComparisonReport
 {
@@ -162,8 +163,39 @@ namespace ViewModel.AlternativeComparisonReport
             Rows.Add(new ComparisonRowItemVM( _ProjectAlternatives));
         }
 
+        private FdaValidationResult IsValid()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            //can't have the same without and with
+            AlternativeElement alternative = SelectedWithoutProjectAlternative.Alternative;
+            foreach(ComparisonRowItemVM row in Rows)
+            {
+                if(row.SelectedAlternative.Alternative == alternative)
+                {
+                    vr.AddErrorMessage("The same selection cannot be used for the without project and the with project.");
+                    break;
+                }
+            }
+            //can't have repeat "with" selections
+            //create a list of the selected "with" alternatives
+            List<AlternativeElement> selectedAlts = Rows.Select(row => row.SelectedAlternative.Alternative).ToList();
+            bool isUnique = selectedAlts.Distinct().Count() == selectedAlts.Count();
+            if(!isUnique)
+            {
+                vr.AddErrorMessage("With project selections must be unique.");
+            }
+            return vr;
+        }
+
         public override void Save()
         {
+            FdaValidationResult result = IsValid();
+            if(!result.IsValid)
+            {
+                MessageBox.Show(result.ErrorMessage.ToString(), "Cannot Save", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+
             if(Description == null)
             {
                 Description = "";

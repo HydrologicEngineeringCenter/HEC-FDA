@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using ViewModel.AlternativeComparisonReport.Results;
+using ViewModel.Alternatives.Results;
+using ViewModel.Alternatives.Results.ResultObject;
 using ViewModel.Utilities;
 
 namespace ViewModel.AlternativeComparisonReport
@@ -113,17 +116,17 @@ namespace ViewModel.AlternativeComparisonReport
                 .WithSiblingRules(this);
 
             CreateNewAlternativeComparisonReportVM vm = new CreateNewAlternativeComparisonReportVM(this, actionManager);
-            string header = "Edit Alternative " + Name;
+            string header = "Edit Alternative Comparison Report" + Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditAlternative" + Name);
             Navigate(tab, false, true);
         }
 
         public void ViewResults(object arg1, EventArgs arg2)
         {
-            //AlternativeResultsVM vm = new AlternativeResultsVM(CreateAlternativeResult());
-            //string header = "Alternative Results: " + Name;
-            //DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeResults" + Name);
-            //Navigate(tab, false, true);
+            AlternativeComparisonReportResultsVM vm = new AlternativeComparisonReportResultsVM(CreateAlternativeResult());
+            string header = "Alternative Comparison Report Results: " + Name;
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "AlternativeComparisonReportResults" + Name);
+            Navigate(tab, false, true);
         }
 
         public void ComputeAlternative(object arg1, EventArgs arg2)
@@ -138,6 +141,17 @@ namespace ViewModel.AlternativeComparisonReport
             //IASElementSet[] elems = GetElementsFromID();
             ////grab the result objects off the ias elements and run the calculation.
 
+        }
+        private AlternativeResult CreateAlternativeResult()
+        {
+            YearResult yr1 = new YearResult(2021, new DamageWithUncertaintyVM(), new DamageByImpactAreaVM(), new DamageByDamCatVM());
+            YearResult yr2 = new YearResult(2022, new DamageWithUncertaintyVM(), new DamageByImpactAreaVM(), new DamageByDamCatVM());
+
+            EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
+            AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM(), new DamageByImpactAreaVM(), new DamageByDamCatVM());
+            AlternativeResult altResult = new AlternativeResult(eadResult, aaeqResult);
+
+            return altResult;
         }
 
         public void RemoveElement(object sender, EventArgs e)

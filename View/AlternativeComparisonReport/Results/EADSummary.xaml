@@ -1,0 +1,252 @@
+﻿<UserControl x:Class="View.AlternativeComparisonReport.Results.EADSummary"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             
+             xmlns:local="clr-namespace:View.AlternativeComparisonReport.Results"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <!--<UserControl.Resources>
+        <Style TargetType="{x:Type Border}">
+            <Setter Property="Background" Value="Bisque" />
+            <Setter Property="TextBlock.FontSize" Value="14" />
+            <Setter Property="BorderBrush" Value="Black" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Border Grid.Column="1" Grid.ColumnSpan="4">
+                <TextBlock Text="Main application" TextAlignment="Center" />
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0">
+                <TextBlock Grid.Column="1" Text="Experiment 1" TextAlignment="Center" />
+            </Border>
+
+            <Border Grid.Column="1">
+                <TextBlock Grid.Column="1" Text="Experiment 2" TextAlignment="Center" />
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0">
+                <TextBlock Grid.Column="1" Text="Mode 1" TextAlignment="Center" />
+            </Border>
+
+            <Border Grid.Column="1">
+                <TextBlock Grid.Column="1" Text="Mode 2" TextAlignment="Center" />
+            </Border>
+
+            <Border Grid.Column="2">
+                <TextBlock Grid.Column="1" Text="Mode 1" TextAlignment="Center" />
+            </Border>
+
+            <Border Grid.Column="4">
+                <TextBlock Grid.Column="1" Text="Mode 2" TextAlignment="Center" />
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0">
+                <TextBlock Grid.Column="1" Text="Mode 1" TextAlignment="Center" />
+            </Border>
+
+            <Border Grid.Column="1">
+                <TextBlock Grid.Column="1" Text="Mode 2" TextAlignment="Center" />
+            </Border>
+
+            <Border Grid.Column="2">
+                <TextBlock Grid.Column="1" Text="Mode 1" TextAlignment="Center" />
+            </Border>
+
+            <Border Grid.Column="4">
+                <TextBlock Grid.Column="1" Text="Mode 2" TextAlignment="Center" />
+            </Border>
+        </Grid>
+
+        <DataGrid Name="datagrid1" AutoGenerateColumns="False" Grid.Row="3" RowHeaderWidth="10" Loaded="datagrid1_Loaded">
+            <DataGrid.Columns>
+                <DataGridTextColumn x:Name="Column1" Binding="{Binding Name}" Header="column 1" Width="100" />
+                <DataGridTextColumn x:Name="Column2" Binding="{Binding Age}"  Header="column 2" Width="80" />
+                <DataGridTextColumn x:Name="Column3" Binding="{Binding Sample}" Header="column 3" Width="80" />
+                <DataGridTextColumn x:Name="Column4" Binding="{Binding Sample}" Header="column 4" Width="*" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>-->
+
+    <!--<DataGrid ItemsSource="{Binding Rows}">
+        <DataGrid.Columns>
+            <DataGridTemplateColumn Width="400">
+                <DataGridTemplateColumn.Header>
+                    <StackPanel Width="400" HorizontalAlignment="Center">
+                        <Label HorizontalContentAlignment="Center" FontWeight="Bold">EXPERIMENT 1</Label>
+                        <Line Stroke="Black"
+                                                      X1="0"
+                                                      X2="400"
+                                                      Y1="0"
+                                                      Y2="0" />
+                        <StackPanel Width="400" Orientation="Horizontal">
+                            <Label Width="200" HorizontalContentAlignment="Center">MODE 1</Label>
+                            <Line Stroke="Black"
+                                                          X1="1"
+                                                          X2="1"
+                                                          Y1="0"
+                                                          Y2="26" />
+                            <Label Width="200" HorizontalContentAlignment="Center">MODE 2</Label>
+                        </StackPanel>
+                        <Line Stroke="Black"
+                                                      X1="0"
+                                                      X2="400"
+                                                      Y1="0"
+                                                      Y2="0" />
+                        <StackPanel Width="400" Orientation="Horizontal">
+                            <Label Width="100" HorizontalContentAlignment="Center">VALUE 1</Label>
+                            <Line Stroke="Black"
+                                                          X1="1"
+                                                          X2="1"
+                                                          Y1="0"
+                                                          Y2="26" />
+                            <Label Width="100" HorizontalContentAlignment="Center">VALUE 2</Label>
+                            <Line Stroke="Black"
+                                                          X1="1"
+                                                          X2="1"
+                                                          Y1="0"
+                                                          Y2="26" />
+                            <Label Width="100" HorizontalContentAlignment="Center">VALUE 1</Label>
+                            <Line Stroke="Black"
+                                                          X1="1"
+                                                          X2="1"
+                                                          Y1="0"
+                                                          Y2="26" />
+                            <Label Width="100" HorizontalContentAlignment="Center">VALUE 2</Label>
+                        </StackPanel>
+                    </StackPanel>
+                </DataGridTemplateColumn.Header>
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <StackPanel Width="400" Orientation="Horizontal">
+                            <ComboBox Width="100" />
+                            <ComboBox Width="100" />
+                            <ComboBox Width="100" />
+                            <ComboBox Width="100" />
+                        </StackPanel>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+        </DataGrid.Columns>
+    </DataGrid>-->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    <DataGrid Name="dataGrid1" ItemsSource="{Binding Rows}" AutoGenerateColumns="False" HorizontalAlignment="Left"
+                  VerticalAlignment="Top"  IsReadOnly="True" CanUserResizeColumns="False" CanUserReorderColumns="False"
+                  CanUserSortColumns="false" Margin="5">
+        <DataGrid.Columns>
+            <DataGridTextColumn Binding="{Binding WithoutProjAlternative}" Width="110">
+                <DataGridTextColumn.Header>
+                    <TextBlock Text="Without-Project Alternative" TextWrapping="Wrap" />
+                </DataGridTextColumn.Header>
+            </DataGridTextColumn>
+            <DataGridTextColumn Binding="{Binding WithoutProjEAD}" Width="110">
+                <DataGridTextColumn.Header>
+                    <TextBlock Text="Without-Project EAD Damage" TextWrapping="Wrap" />
+                </DataGridTextColumn.Header>
+            </DataGridTextColumn>
+            <DataGridTextColumn Binding="{Binding WithProjAlternative}" Width="110">
+                <DataGridTextColumn.Header>
+                    <TextBlock Text="With-Project Alternative" TextWrapping="Wrap" />
+                </DataGridTextColumn.Header>
+            </DataGridTextColumn>
+            <DataGridTextColumn Binding="{Binding WithProjEAD}" Width="110">
+                <DataGridTextColumn.Header>
+                    <TextBlock Text="With-Project EAD Damage" TextWrapping="Wrap" />
+                </DataGridTextColumn.Header>
+            </DataGridTextColumn>
+            <DataGridTextColumn Binding="{Binding EADDamageReduced}" Width="110">
+                <DataGridTextColumn.Header>
+                    <TextBlock Text="EAD Reduced" TextWrapping="Wrap" />
+                </DataGridTextColumn.Header>
+            </DataGridTextColumn>
+            
+            <DataGridTemplateColumn>
+                <DataGridTemplateColumn.HeaderTemplate >
+                    <DataTemplate>
+                        <Grid ShowGridLines="False">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock  Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Text="Probability EAD reduced exceeds indicated values" TextWrapping="Wrap" Tag="FirstName"  />
+                            <TextBlock  Grid.Row="1" Grid.Column="0" Text="0.75" Tag="LastName" HorizontalAlignment="Center" />
+                            <TextBlock  Grid.Row="1" Grid.Column="1" Text="0.5" Tag="LastName"  HorizontalAlignment="Center"/>
+                            <TextBlock  Grid.Row="1" Grid.Column="2" Text="0.25" Tag="LastName"  HorizontalAlignment="Center"/>
+
+                        </Grid>
+                    </DataTemplate>
+                </DataGridTemplateColumn.HeaderTemplate>
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding Point75}" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Point5}" Grid.Row="1" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="{Binding Point25}" Grid.Row="1" HorizontalAlignment="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+        </DataGrid.Columns>
+    </DataGrid>
+
+
+</UserControl>
