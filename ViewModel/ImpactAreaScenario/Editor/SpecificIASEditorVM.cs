@@ -250,7 +250,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private void removeElement(int idToRemove, ObservableCollection<ChildElementComboItem> collection)
         {
             collection.Remove(collection.Where(elem => elem.ChildElement != null && elem.ID == idToRemove).Single());
-
         }
 
         private void updateElement(ObservableCollection<ChildElementComboItem> collection, ChildElementComboItem selectedItem,
