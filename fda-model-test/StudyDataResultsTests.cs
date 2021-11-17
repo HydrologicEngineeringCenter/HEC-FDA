@@ -44,17 +44,15 @@ namespace fda_model_test
         };
 
         [Theory]
-        [InlineData(20.74)]
-        public void ComputeMeanEAD_Test(double expected)
+        [InlineData(20.74, 490)]
+        public void ComputeMeanEAD_Test(double expected, double thresholdStage)
         {
             IDistribution flowFrequency = IDistributionFactory.FactoryLogPearsonIII(3.537, .438, .075, 125);
             UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions);
             UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, "residential");
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
-
-            //we need to compute the default threshold here 
-            metrics.Threshold threshold = new metrics.Threshold(1, ThresholdEnum.InteriorStage, 490);
+            metrics.Threshold threshold = new metrics.Threshold(1, ThresholdEnum.InteriorStage, thresholdStage);
             Simulation simulation = Simulation.builder()
                 .withFlowFrequency(flowFrequency)
                 .withFlowStage(flowStage)
@@ -63,6 +61,34 @@ namespace fda_model_test
             simulation.PerformanceThresholds.AddThreshold(threshold);
             ead.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             metrics.Results results = simulation.Compute(meanRandomProvider, 1);
+            double difference = expected - results.ExpectedAnnualDamageResults.MeanEAD("residential");
+            double relativeDifference = difference / expected;
+            Assert.True(relativeDifference < .01);
+        }
+
+        [Theory]
+        [InlineData(10000,1234,21.09, .05, .01)]
+        public void ComputeMeanEADWithIterations_Test(int iterations, int seed, double expected, double thresholdDamagePercent, double thresholdDamageRecurrence)
+        {
+            IDistribution flowFrequency = IDistributionFactory.FactoryLogPearsonIII(3.537, .438, .075, 125);
+            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions);
+            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, "residential");
+            List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
+            stageDamageList.Add(stageDamage);
+            Simulation simulation = Simulation.builder()
+                .withFlowFrequency(flowFrequency)
+                .withFlowStage(flowStage)
+                .withStageDamages(stageDamageList)
+                .build();
+            IPairedData frequencyDamage = simulation.ComputeDamageFrequency(flowFrequency, flowStage, stageDamage);
+            double thresholdDamage = thresholdDamagePercent * frequencyDamage.f(thresholdDamageRecurrence);
+            ead.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            IPairedData stageDamageMean = stageDamage.SamplePairedData(meanRandomProvider.NextRandom());
+            double thresholdStage = stageDamageMean.f_inverse(thresholdDamage);
+            metrics.Threshold threshold = new metrics.Threshold(1, ThresholdEnum.InteriorStage, thresholdStage);
+            simulation.PerformanceThresholds.AddThreshold(threshold);
+            ead.RandomProvider randomProvider = new RandomProvider(seed);
+            metrics.Results results = simulation.Compute(randomProvider, iterations);
             double difference = expected - results.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .01);

@@ -230,6 +230,16 @@ namespace ead{
         {
                        return stageDamage.compose(frequency_stage);
         }
+
+        public paireddata.IPairedData ComputeDamageFrequency(IDistribution flowFrequencyDistribution, paireddata.UncertainPairedData flowStageUncertain, paireddata.UncertainPairedData stageDamageUncertin)
+        {
+            ead.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            paireddata.IPairedData frequencyFlow = BootstrapToPairedData(meanRandomProvider, flowFrequencyDistribution, 1000);
+            paireddata.IPairedData ratingCurve = flowStageUncertain.SamplePairedData(meanRandomProvider.NextRandom());
+            paireddata.IPairedData frequencyStage = ratingCurve.compose(frequencyFlow);
+            paireddata.IPairedData stageDamage = stageDamageUncertin.SamplePairedData(meanRandomProvider.NextRandom());
+            return stageDamage.compose(frequencyStage);
+        }
         public static SimulationBuilder builder()
         {
             return new SimulationBuilder(new Simulation());
