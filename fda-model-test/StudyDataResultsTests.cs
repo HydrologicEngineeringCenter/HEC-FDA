@@ -80,6 +80,8 @@ namespace fda_model_test
                 .withFlowStage(flowStage)
                 .withStageDamages(stageDamageList)
                 .build();
+
+            //compute default threshold 
             IPairedData frequencyDamage = simulation.ComputeDamageFrequency(flowFrequency, flowStage, stageDamage);
             double thresholdDamage = thresholdDamagePercent * frequencyDamage.f(thresholdDamageRecurrence);
             ead.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
@@ -87,8 +89,10 @@ namespace fda_model_test
             double thresholdStage = stageDamageMean.f_inverse(thresholdDamage);
             metrics.Threshold threshold = new metrics.Threshold(1, ThresholdEnum.InteriorStage, thresholdStage);
             simulation.PerformanceThresholds.AddThreshold(threshold);
+
             ead.RandomProvider randomProvider = new RandomProvider(seed);
             metrics.Results results = simulation.Compute(randomProvider, iterations);
+
             double difference = expected - results.ExpectedAnnualDamageResults.MeanEAD("residential");
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .01);
