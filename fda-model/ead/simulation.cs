@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Statistics;
 using paireddata;
 using metrics;
-using ead;
 using System.Linq;
 namespace ead{
     public class Simulation {

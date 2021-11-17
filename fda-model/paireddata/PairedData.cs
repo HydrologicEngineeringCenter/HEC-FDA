@@ -12,29 +12,36 @@ namespace paireddata
         //or array.reverse
         //we need the right comparer to sort the right way the first way 
         public PairedData(double[] xs, double[] ys){
-            if (!IsMonotonicallyIncreasing(xs))
+            if (xs != null && ys != null)
             {
-                Array.Sort(xs);
+                if (!IsMonotonicallyIncreasing(xs))
+                {
+                    Array.Sort(xs);
+
+                }
+                if (!IsMonotonicallyIncreasing(ys))
+                {
+                    Array.Sort(ys);
+                }
             }
             Xvals = xs;
-            if (!IsMonotonicallyIncreasing(ys))
-            {
-                Array.Sort(ys);
-            }
             Yvals = ys;
             Category = "Default";
         }
         public PairedData(double[] xs, double[] ys, string category){
-            if (!IsMonotonicallyIncreasing(xs))
+           if(xs != null && ys != null)
             {
-                Array.Sort(xs);
+                if (!IsMonotonicallyIncreasing(xs))
+                {
+                    Array.Sort(xs);
 
+                }
+                if (!IsMonotonicallyIncreasing(ys))
+                {
+                    Array.Sort(ys);
+                }
             }
             Xvals = xs;
-            if (!IsMonotonicallyIncreasing(ys))
-            {
-                Array.Sort(ys);
-            }
             Yvals = ys;
             Category = Category;
         }
@@ -122,43 +129,51 @@ namespace paireddata
 
         public PairedData SumYsForGivenX(IPairedData input)
         {
-            double[] x = new double[input.Xvals.Length];
-            double[] ySum = new double[input.Yvals.Length];
-            for (int i=0; i<input.Xvals.Length; i++)
+            if (Xvals != null && Yvals != null)
             {
-                int index = Array.BinarySearch(Xvals, input.Xvals[i]);
-                double yValueFromSubject = 0;
-                if (index >= 0)
+
+                double[] x = new double[input.Xvals.Length];
+                double[] ySum = new double[input.Yvals.Length];
+                for (int i = 0; i < input.Xvals.Length; i++)
                 {
-                    //value matched exactly
-                    yValueFromSubject = Yvals[index];
-
-                } else
-                {
-                    index = ~index;
-
-                    //if the x value from input is greater than all x values in subject
-                    if (index == Xvals.Length)
+                    int index = Array.BinarySearch(Xvals, input.Xvals[i]);
+                    double yValueFromSubject = 0;
+                    if (index >= 0)
                     {
-                        yValueFromSubject = Yvals[Yvals.Length - 1];
-                    }
+                        //value matched exactly
+                        yValueFromSubject = Yvals[index];
 
-                    //if the x value from the input is less than all x values in subject
-                    if (index == 0)
+                    }
+                    else
                     {
-                        yValueFromSubject = Yvals[0];
+                        index = ~index;
+
+                        //if the x value from input is greater than all x values in subject
+                        if (index == Xvals.Length)
+                        {
+                            yValueFromSubject = Yvals[Yvals.Length - 1];
+                        }
+
+                        //if the x value from the input is less than all x values in subject
+                        if (index == 0)
+                        {
+                            yValueFromSubject = Yvals[0];
+                        }
+                        else //x value from the input is within range of x values in subject, but does not match exactly
+                        { //Interpolate Y=mx+b
+                            double slope = (Yvals[index] - Yvals[index - 1]) / (Xvals[index] - Xvals[index - 1]);
+                            double intercept = Yvals[index] - slope * Xvals[index];
+                            yValueFromSubject = intercept + slope * input.Xvals[i];
+                        }
                     }
-                    else //x value from the input is within range of x values in subject, but does not match exactly
-                    { //Interpolate Y=mx+b
-                        double slope = (Yvals[index] - Yvals[index - 1]) / (Xvals[index] - Xvals[index - 1]);
-                        double intercept = Yvals[index] - slope * Xvals[index];
-                        yValueFromSubject = intercept + slope * input.Xvals[i];
-                    }
+                    ySum[i] = input.Yvals[i] + yValueFromSubject;
+                    x[i] = input.Xvals[i];
                 }
-                ySum[i] = input.Yvals[i] + yValueFromSubject;
-                x[i] = input.Xvals[i];
+                return new PairedData(x, ySum);
+            } else
+            {
+                return new PairedData(input.Xvals,input.Yvals);
             }
-            return new PairedData(x, ySum);
         }
 
         /// <summary>
