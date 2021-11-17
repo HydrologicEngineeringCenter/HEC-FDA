@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ViewModel.Study
 {
@@ -25,6 +22,9 @@ namespace ViewModel.Study
         private Single _UpdatedPriceIndex;
         #endregion
         #region Properties
+
+        public double DiscountRate { get; set; }
+        public int PeriodOfAnalysis { get; set; }
         public string StudyName {
             get { return _StudyName; }
             set { _StudyName = value; }

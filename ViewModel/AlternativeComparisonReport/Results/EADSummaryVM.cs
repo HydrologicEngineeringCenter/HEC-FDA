@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using ViewModel.Alternatives.Results;
-using ViewModel.ImpactAreaScenario.Results.RowItems;
 
 namespace ViewModel.AlternativeComparisonReport.Results
 {
@@ -19,29 +14,10 @@ namespace ViewModel.AlternativeComparisonReport.Results
 
         private void loadDummyData()
         {
-            List<string> xVals = loadXData();
-            List<double> yVals = loadYData();
-
-            for (int i = 0; i < xVals.Count; i++)
+            for (int i = 0; i < 3; i++)
             {
                 Rows.Add(new EADSummaryRowItem());
             }
-        }
-
-        private List<string> loadXData()
-        {
-            List<string> xValues = new List<string>();
-            xValues.Add("Residential");
-            xValues.Add("Commercial");
-            return xValues;
-        }
-
-        private List<double> loadYData()
-        {
-            List<double> yValues = new List<double>();
-            yValues.Add(1);
-            yValues.Add(2);
-            return yValues;
         }
     }
 }

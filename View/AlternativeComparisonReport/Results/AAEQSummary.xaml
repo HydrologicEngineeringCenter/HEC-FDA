@@ -36,7 +36,6 @@
                         <TextBlock Text="AAEQ Damage Reduced" TextWrapping="Wrap" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.HeaderTemplate >
                         <DataTemplate>
@@ -54,7 +53,6 @@
                                 <TextBlock  Grid.Row="1" Grid.Column="0" Text="0.75" Tag="LastName" HorizontalAlignment="Center" />
                                 <TextBlock  Grid.Row="1" Grid.Column="1" Text="0.5" Tag="LastName"  HorizontalAlignment="Center"/>
                                 <TextBlock  Grid.Row="1" Grid.Column="2" Text="0.25" Tag="LastName"  HorizontalAlignment="Center"/>
-
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>

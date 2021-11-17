@@ -22,7 +22,6 @@ namespace ViewModel.AlternativeComparisonReport.Results
         private EADSummaryVM _EADSummaryVM = new EADSummaryVM();
         private AAEQSummaryVM _AAEQSummaryVM = new AAEQSummaryVM();
 
-
         public bool YearsVisible
         {
             get { return _YearsVisible; }
@@ -144,6 +143,5 @@ namespace ViewModel.AlternativeComparisonReport.Results
                 }
             }
         }
-
     }
 }

@@ -1,5 +1,4 @@
 ﻿using HEC.CS.Collections;
-using System.Collections.Generic;
 
 namespace ViewModel.AlternativeComparisonReport
 {
@@ -12,7 +11,6 @@ namespace ViewModel.AlternativeComparisonReport
             get { return _SelectedAlternative; }
             set { _SelectedAlternative = value;NotifyPropertyChanged(); }
         }
-        //public List<AlternativeComboItem> Alternatives { get;  } = new List<AlternativeComboItem>();
         public CustomObservableCollection<AlternativeComboItem> Alternatives { get; }
         public ComparisonRowItemVM( CustomObservableCollection<AlternativeComboItem> elems)
         {

@@ -39,6 +39,5 @@ namespace ViewModel.AlternativeComparisonReport
             _Alternative = elem;
             Name = elem.Name;
         }
-
     }
 }

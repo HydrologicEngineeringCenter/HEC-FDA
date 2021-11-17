@@ -4,9 +4,7 @@ namespace ViewModel.Alternatives.Results
 {
     public class DamageByImpactAreaVM : IAlternativeResult
     {
-
         public List<ImpactAreaRowItem> Rows { get; } = new List<ImpactAreaRowItem>();
-
 
         public DamageByImpactAreaVM()
         {
@@ -39,6 +37,5 @@ namespace ViewModel.Alternatives.Results
             yValues.Add(22);
             return yValues;
         }
-
     }
 }
