@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ViewModel.AlternativeComparisonReport;
 using ViewModel.Utilities;
 
@@ -12,6 +9,7 @@ namespace ViewModel.Saving.PersistenceManagers
 {
     public class AlternativeComparisonReportPersistenceManager : SavingBase, IElementManager
     {
+        private const int XML_COL = 2;
         public override string TableName => "alternative_comparison_reports";
 
         public override string[] TableColumnNames => new string[] { NAME, "xml" };
@@ -25,7 +23,7 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            string xml = (string)rowData[2];
+            string xml = (string)rowData[XML_COL];
             AlternativeComparisonReportElement elem = new AlternativeComparisonReportElement(xml);
             return elem;
         }
@@ -54,7 +52,6 @@ namespace ViewModel.Saving.PersistenceManagers
             object[] retval = new object[] { elem.Name, ((AlternativeComparisonReportElement)elem).WriteToXML() };
             return retval;
         }
-
 
         public void Load()
         {

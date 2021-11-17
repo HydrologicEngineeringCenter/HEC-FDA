@@ -6,37 +6,14 @@
              xmlns:local="clr-namespace:View.Alternatives"
              xmlns:UserControls="clr-namespace:UserControls;assembly=UserControls"
              mc:Ignorable="d" 
-             Loaded="UserControl_Loaded"
              xmlns:OkClose="clr-namespace:View.Utilities"
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
-        <!--this data template is for the increment rows for all subsequent increments after the first-->
-        <!--<DataTemplate x:Key="DefaultTemplate">
-            <Grid x:Name="GridItem" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="120" />
-                    <ColumnDefinition Width="120" />
-                    <ColumnDefinition Width="120" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Content="{Binding Name}" Margin="5" />
-                <ComboBox x:Name="cmb_Plans1" Grid.Column="1" ItemsSource="{Binding Plans}" Margin="5,1,0,0" SelectedItem="{Binding SelectedPlan1}" />
-                <Label Grid.Column="2" Content="{Binding Name}" Margin="5" />
-                <ComboBox x:Name="cmb_Plans2" Grid.Column="3" ItemsSource="{Binding Plans}" SelectedItem="{Binding SelectedPlan2}" Width="50" />
-            </Grid>
-        </DataTemplate>-->
-    </UserControl.Resources>
-    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="70"/>
-            <!--<RowDefinition Height="45"/>-->
             <RowDefinition Height="35"/>
-
             <RowDefinition Height="*"/>
             <RowDefinition Height="35"/>
-
-
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
@@ -54,34 +31,6 @@
             <UserControls:TextBoxDescription Grid.Row="1" Grid.Column="1" Description="{Binding Description}" Margin="5"/>
         </Grid>
 
-        <!--<Grid Grid.Row="1" Margin="5,10,5,5" >
-            <Grid.RowDefinitions>
-                <RowDefinition Height="35"/>
-                <RowDefinition Height="35"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="120"/>
-                <ColumnDefinition Width=".5*"/>
-                <ColumnDefinition Width=".5*" />
-            </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Content="Increment 1:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <Grid Grid.Row="0" Grid.Column="1" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Content="With Project:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <ComboBox Grid.Column="1" ItemsSource="{Binding Plans}" SelectedItem="{Binding SelectedWithProjectPlan}" HorizontalAlignment="Stretch" Height="22"/>
-            </Grid>
-            <Grid Grid.Row="0" Grid.Column="2" Margin="0,0,5,0" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Content="Without Project:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <ComboBox Grid.Column="1" ItemsSource="{Binding Plans}" SelectedItem="{Binding SelectedWithoutProjectPlan}" HorizontalAlignment="Stretch" Height="22"/>
-            </Grid>
-        </Grid>-->
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <Button Grid.Row="1" Content="Add Comparison" Width="125" Height="22" HorizontalAlignment="Left" Margin="5" Click="btn_addIncrement_Click" />
             <Button Content="Remove Comparison" Width="125" Height="22" Click="RemoveButton_Click"/>
@@ -108,35 +57,7 @@
 
             <ListBox ItemsSource="{Binding Rows}"  SelectedIndex="{Binding SelectedIndex}" BorderThickness="0" Grid.Column="1"  HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" />
         </Grid>
-
-        <!--<Grid Name="grid_secondIncrement" Grid.Row="3" Margin="5,10,5,5" Visibility="Hidden">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="35"/>
-                <RowDefinition Height="35"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="120"/>
-                <ColumnDefinition Width=".5*"/>
-                <ColumnDefinition Width=".5*" />
-            </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Content="Increment 2:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <Grid Grid.Row="0" Grid.Column="1" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Content="With Project:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <ComboBox Grid.Column="1" ItemsSource="{Binding Plans}" SelectedItem="{Binding SelectedWithProjectPlanSecondIncrement}" HorizontalAlignment="Stretch" Height="22"/>
-            </Grid>
-            <Grid Grid.Row="0" Grid.Column="2" Margin="0,0,5,0" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Content="Without Project:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <ComboBox Grid.Column="1" ItemsSource="{Binding Plans}" SelectedItem="{Binding SelectedWithProjectPlan}" HorizontalAlignment="Stretch" IsEnabled="False" Height="22"/>
-            </Grid>
-        </Grid>-->
+        
         <OkClose:OKCloseControl Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
 
     </Grid>

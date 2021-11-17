@@ -1,9 +1,6 @@
-﻿using ViewModel.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ViewModel.Utilities;
 
 namespace ViewModel.AlternativeComparisonReport
 {
@@ -45,14 +42,7 @@ namespace ViewModel.AlternativeComparisonReport
         {
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSiblingRules(this);
-
-            List<string> plans = new List<string>();
-            for(int i = 0;i<5;i++)
-            {
-                plans.Add("plan " + i);
-            }
-           
-
+          
             CreateNewAlternativeComparisonReportVM vm = new CreateNewAlternativeComparisonReportVM( actionManager);
             string header = "Create Alternative Comparison Report";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "CreateNewAlternativeCompReport");

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using ViewModel.AggregatedStageDamage;
 using ViewModel.FlowTransforms;
@@ -69,7 +68,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
         public CustomObservableCollection<ChildElementComboItem> LeveeFeatureElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
         public CustomObservableCollection<ChildElementComboItem> ExteriorInteriorElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
         public CustomObservableCollection<ChildElementComboItem> StageDamageElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
-
 
         public StageDamageCurve SelectedDamageCurve
         {
@@ -369,8 +367,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             }
             return items;
         }
-
-
 
         private void UpdateRatingRequired()
         {

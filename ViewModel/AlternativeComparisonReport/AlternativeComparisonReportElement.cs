@@ -33,6 +33,10 @@ namespace ViewModel.AlternativeComparisonReport
             AddActions();
         }
 
+        /// <summary>
+        /// The ctor used to load an element from the database.
+        /// </summary>
+        /// <param name="xml"></param>
         public AlternativeComparisonReportElement(string xml)
         {
             XDocument doc = XDocument.Parse(xml);
@@ -131,17 +135,13 @@ namespace ViewModel.AlternativeComparisonReport
 
         public void ComputeAlternative(object arg1, EventArgs arg2)
         {
-            //FdaValidationResult vr = RunPreComputeValidation();
-            //if (!vr.IsValid)
-            //{
-            //    MessageBox.Show(vr.ErrorMessage, "Invalid Setup", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            //}
-
-            ////todo: Run calculations. waiting for hec to put the new model in.
-            //IASElementSet[] elems = GetElementsFromID();
-            ////grab the result objects off the ias elements and run the calculation.
-
+            //waiting for HEC to get the new model plugged in. 11/16/21
         }
+
+        /// <summary>
+        /// This is a dummy result object that Cody created to fill the results UI with dummy data.
+        /// </summary>
+        /// <returns></returns>
         private AlternativeResult CreateAlternativeResult()
         {
             YearResult yr1 = new YearResult(2021, new DamageWithUncertaintyVM(), new DamageByImpactAreaVM(), new DamageByDamCatVM());

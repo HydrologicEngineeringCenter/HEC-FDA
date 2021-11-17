@@ -11,7 +11,6 @@ namespace ViewModel.ImpactAreaScenario.Results
 {
     public class DamageWithUncertaintyVM : BaseViewModel
     {
-
         private readonly HistogramData2D _data;
         public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("Damage Uncertainty");
 
@@ -25,7 +24,6 @@ namespace ViewModel.ImpactAreaScenario.Results
             loadDummyData();
             Mean = .123;
         }
-
 
         private void loadDummyData()
         {
@@ -60,7 +58,6 @@ namespace ViewModel.ImpactAreaScenario.Results
             return yValues;
         }
 
-
         public void PlotHistogram()
         {
             double binWidth = 5;
@@ -70,6 +67,5 @@ namespace ViewModel.ImpactAreaScenario.Results
             HistogramData2D _data = new HistogramData2D(binWidth, binStart, values, "Chart", "Series", "X Data", "YData");
             ChartViewModel.LineData.Set(new List<SciLineData>() { _data });
         }
-
     }
 }

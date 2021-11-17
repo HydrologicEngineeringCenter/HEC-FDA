@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ViewModel.AlternativeComparisonReport.Results
+﻿namespace ViewModel.AlternativeComparisonReport.Results
 {
     public class AAEQSummaryRowItem
     {
-
         public double WithoutProjAlternative { get; set; }
         public double WithoutProjAAEQ { get; set; }
         public double WithProjAlternative { get; set; }
@@ -28,7 +21,5 @@ namespace ViewModel.AlternativeComparisonReport.Results
             Point5 = 7;
             Point25 = 8;
         }
-
-
     }
 }
