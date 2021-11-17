@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ViewModel.Saving;
 using ViewModel.Utilities;
 
 namespace ViewModel.AlternativeComparisonReport
@@ -25,15 +26,15 @@ namespace ViewModel.AlternativeComparisonReport
             StudyCache.AlternativeCompReportUpdated += UpdateAlternativeCompReportElement;
         }
 
-        private void UpdateAlternativeCompReportElement(object sender, Saving.ElementUpdatedEventArgs e)
+        private void UpdateAlternativeCompReportElement(object sender, ElementUpdatedEventArgs e)
         {
             UpdateElement(e.OldElement, e.NewElement);
         }
-        private void AddAlternativeCompReportElement(object sender, Saving.ElementAddedEventArgs e)
+        private void AddAlternativeCompReportElement(object sender, ElementAddedEventArgs e)
         {
             AddElement(e.Element);
         }
-        private void RemoveAlternativeCompReportElement(object sender, Saving.ElementAddedEventArgs e)
+        private void RemoveAlternativeCompReportElement(object sender, ElementAddedEventArgs e)
         {
             RemoveElement(e.Element);
         }

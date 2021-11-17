@@ -107,7 +107,7 @@ namespace ViewModel.Study
         public OccupancyTypesOwnerElement OccTypeParent { get; set; }
         public StructureInventoryOwnerElement StructureInventoryParent { get; set; }
         public IASOwnerElement IASParent { get; set; }
-        public AltervativeOwnerElement AlternativeParent { get; set; }
+        public AlternativeOwnerElement AlternativeParent { get; set; }
         public AlternativeComparisonReportOwnerElement AlternativeComparisonReportParent { get; set; }
         #endregion
         #endregion
@@ -744,15 +744,7 @@ namespace ViewModel.Study
             {
                 retVal.AddRange(IASElementSets);
             }
-            else if (element.GetType() == typeof(AltervativeOwnerElement))
-            {
-                foreach (ChildElement elem in AlternativeElements)
-                {
-                    retVal.Add(elem);
-                }
-                return retVal;
-            }
-            else if (element.GetType() == typeof(AltervativeOwnerElement))
+            else if (element.GetType() == typeof(AlternativeOwnerElement))
             {
                 foreach (ChildElement elem in AlternativeElements)
                 {
@@ -886,14 +878,6 @@ namespace ViewModel.Study
                 }
                 return retVal;
             }
-            if (childElementType == typeof(AlternativeElement))
-            {
-                foreach (ChildElement elem in AlternativeElements)
-                {
-                    retVal.Add(elem);
-                }
-                return retVal;
-            }
             else if(childElementType == typeof(AlternativeComparisonReportElement))
             {
                 retVal.AddRange(AlternativeCompReports);
@@ -953,16 +937,6 @@ namespace ViewModel.Study
             else if (childElementType == typeof(IASElementSet))
             {
                 childElem = IASElementSets.Where(elem => elem.GetElementID() == ID).FirstOrDefault();
-            }
-            if (childElementType == typeof(AlternativeElement))
-            {
-                foreach (ChildElement elem in AlternativeElements)
-                {
-                    if (elem.GetElementID() == ID)
-                    {
-                        return elem;
-                    }
-                }
             }
             if (childElementType == typeof(AlternativeElement))
             {

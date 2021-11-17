@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using ViewModel.AlternativeComparisonReport.Results;
 using ViewModel.Alternatives.Results;
 using ViewModel.Alternatives.Results.ResultObject;
+using ViewModel.Saving;
 using ViewModel.Utilities;
 
 namespace ViewModel.AlternativeComparisonReport
@@ -156,7 +154,7 @@ namespace ViewModel.AlternativeComparisonReport
 
         public void RemoveElement(object sender, EventArgs e)
         {
-            Saving.PersistenceFactory.GetAlternativeCompReportManager().Remove(this);
+            PersistenceFactory.GetAlternativeCompReportManager().Remove(this);
         }
 
     }

@@ -15,6 +15,7 @@ using ViewModel.WaterSurfaceElevation;
 using ViewModel.ImpactArea;
 using Functions;
 using ViewModel.AlternativeComparisonReport;
+using ViewModel.Saving;
 
 namespace ViewModel.Study
 {
@@ -533,7 +534,7 @@ namespace ViewModel.Study
                 loadStudyCache = true;
                 cache = FDACache.Create();
                 StudyCache = cache;
-                Saving.PersistenceFactory.StudyCacheForSaving = cache;
+                PersistenceFactory.StudyCacheForSaving = cache;
 
 
                 TerrainOwnerElement t = new TerrainOwnerElement();
@@ -581,7 +582,7 @@ namespace ViewModel.Study
                 IASOwnerElement c = new IASOwnerElement();
                 AddElement(c);
 
-                Alternatives.AltervativeOwnerElement plans = new Alternatives.AltervativeOwnerElement();
+                Alternatives.AlternativeOwnerElement plans = new Alternatives.AlternativeOwnerElement();
                 AddElement(plans);
 
                 AlternativeComparisonReportOwnerElement altComparisonReportOwner = new AlternativeComparisonReportOwnerElement();
@@ -611,21 +612,21 @@ namespace ViewModel.Study
         #region Load Elements
         private void LoadElementsFromDB()
         {
-            Saving.PersistenceFactory.GetRatingManager().Load();
-            Saving.PersistenceFactory.GetTerrainManager().Load();
-            Saving.PersistenceFactory.GetImpactAreaManager().Load();
-            Saving.PersistenceFactory.GetWaterSurfaceManager().Load();
-            Saving.PersistenceFactory.GetFlowFrequencyManager().Load();
-            Saving.PersistenceFactory.GetInflowOutflowManager().Load();
-            Saving.PersistenceFactory.GetExteriorInteriorManager().Load();
-            Saving.PersistenceFactory.GetLeveeManager().Load();
-            Saving.PersistenceFactory.GetFailureFunctionManager().Load();
-            Saving.PersistenceFactory.GetStageDamageManager().Load();
-            Saving.PersistenceFactory.GetStructureInventoryManager().Load();
-            Saving.PersistenceFactory.GetIASManager().Load();
-            Saving.PersistenceFactory.GetAlternativeManager().Load();
-            Saving.PersistenceFactory.GetAlternativeCompReportManager().Load();
-            Saving.PersistenceFactory.GetOccTypeManager().Load();
+            PersistenceFactory.GetRatingManager().Load();
+            PersistenceFactory.GetTerrainManager().Load();
+            PersistenceFactory.GetImpactAreaManager().Load();
+            PersistenceFactory.GetWaterSurfaceManager().Load();
+            PersistenceFactory.GetFlowFrequencyManager().Load();
+            PersistenceFactory.GetInflowOutflowManager().Load();
+            PersistenceFactory.GetExteriorInteriorManager().Load();
+            PersistenceFactory.GetLeveeManager().Load();
+            PersistenceFactory.GetFailureFunctionManager().Load();
+            PersistenceFactory.GetStageDamageManager().Load();
+            PersistenceFactory.GetStructureInventoryManager().Load();
+            PersistenceFactory.GetIASManager().Load();
+            PersistenceFactory.GetAlternativeManager().Load();
+            PersistenceFactory.GetAlternativeCompReportManager().Load();
+            PersistenceFactory.GetOccTypeManager().Load();
 
         }
 
@@ -640,7 +641,7 @@ namespace ViewModel.Study
         ///// </summary>
         ///// <param name="sender"></param>
         ///// <param name="args"></param>
-        //private void ConditionsElementWasUpdated(object sender, Saving.ElementUpdatedEventArgs args)
+        //private void ConditionsElementWasUpdated(object sender, ElementUpdatedEventArgs args)
         //{
         //    UpdateTheConditionsTree(sender, args);
         //    if(ConditionsTree.Count<= 0) { return; }

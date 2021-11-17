@@ -5,9 +5,9 @@ using ViewModel.Utilities;
 
 namespace ViewModel.Alternatives
 {
-    public class AltervativeOwnerElement: ParentElement
+    public class AlternativeOwnerElement: ParentElement
     {
-        public AltervativeOwnerElement():base()
+        public AlternativeOwnerElement():base()
         {
             Name = "Alternatives";
             CustomTreeViewHeader = new CustomHeaderVM(Name);

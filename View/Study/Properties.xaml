@@ -43,20 +43,20 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Label Name="LblProjectName" Content="Study Name:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-            <Label Name="LblProjectDescription" Content="Study Description:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-            <Label Name="LblProjectFile" Content="Study File:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-            <Label Name="LblCreatedBy" Content="Created By:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-            <Label Name="LblCreatedDate" Content="Created Date:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            <Label Content="Study Name:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            <Label Content="Study Description:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            <Label Content="Study File:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            <Label Content="Created By:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            <Label Content="Created Date:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
 
-            <TextBox Name="TxtProjectName" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="3" IsReadOnly="False" Text="{Binding StudyName}"/>
+            <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="3" IsReadOnly="False" Text="{Binding StudyName}"/>
             <CA:TextBoxDescription Grid.Row="1" Grid.Column="1" Margin="3" Text="{Binding StudyDescription}"/>
-            <TextBox Name="TxtProjectFile" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True" Margin="3" Text="{Binding StudyPath, Mode=OneWay}"/>
-            <TextBox Name="TxtCreatedBy" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True" Margin="3" Text="{Binding CreatedBy, Mode=OneWay}"/>
-            <TextBox Name="TxtCreatedDate" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True" Margin="3" Text="{Binding CreatedDate, Mode=OneWay}"/>
+            <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True" Margin="3" Text="{Binding StudyPath, Mode=OneWay}"/>
+            <TextBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True" Margin="3" Text="{Binding CreatedBy, Mode=OneWay}"/>
+            <TextBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True" Margin="3" Text="{Binding CreatedDate, Mode=OneWay}"/>
         </Grid>
         
-        <GroupBox Grid.Row="2" Header="FDA Study Properties" HorizontalAlignment="Stretch" Name="GBFDAProjectProperties" VerticalAlignment="Stretch" Margin="5,0,5,0">
+        <GroupBox Grid.Row="2" Header="FDA Study Properties" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,5,0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -71,7 +71,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <Label Name="LblProjectNotes" Content="Study Notes:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <Label  Content="Study Notes:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                 <CA:TextBoxDescription Grid.Row="0" Grid.Column="1" Margin="0,3,0,3" />
 
                 <Label Grid.Row="1" Grid.Column="0" Content="Discount Rate:"  HorizontalAlignment="Right"/>
@@ -81,11 +81,11 @@
                 <Label Grid.Row="2" Grid.Column="0" Content="Period of Analysis:" HorizontalAlignment="Right"/>
                 <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding PeriodOfAnalysis}" Margin="0,3,0,3"/>
                 
-                <Label Name="LblMonetaryUnit" Content="Monetary Unit:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <ComboBox Name="CmbMonetaryUnits" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" ItemsSource="{Binding Source={StaticResource MonetaryUnits}}" SelectedItem="{Binding Path=MonetaryUnit}"/>
+                <Label  Content="Monetary Unit:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <ComboBox  Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" ItemsSource="{Binding Source={StaticResource MonetaryUnits}}" SelectedItem="{Binding Path=MonetaryUnit}"/>
                 
-                <Label Name="LblMeasurementUnit" Content="Unit System:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <ComboBox Name="CmbUnitsSystem" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" ItemsSource="{Binding Source={StaticResource UnitSystems}}" SelectedItem="{Binding Path=UnitSystem}"/>
+                <Label  Content="Unit System:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <ComboBox  Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" ItemsSource="{Binding Source={StaticResource UnitSystems}}" SelectedItem="{Binding Path=UnitSystem}"/>
 
                 <GroupBox Header="Price Information" Grid.Row="5" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" >
                     <Grid>
@@ -98,13 +98,13 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Label Name="LblSurveyedYear" Content="Surveyed Year:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <Label Name="LblUpdatedYear" Content="Updated Year:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <Label Name="LblUpdatedPriceIndexr" Content="Updated Price Index:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <Label Content="Surveyed Year:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <Label Content="Updated Year:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <Label Content="Updated Price Index:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
 
-                        <TextBox Name="TxtSurveyedYear" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding Path=SurveyedYear, ValidatesOnDataErrors=True}"/>
-                        <TextBox Name="TxtUpdatedYear" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"  Text="{Binding Path=UpdatedYear, ValidatesOnDataErrors=True}"/>
-                        <TextBox Name="TxtUpdatedPriceIndex" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding Path=UpdatedPriceIndex, ValidatesOnDataErrors=True}"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding Path=SurveyedYear, ValidatesOnDataErrors=True}"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"  Text="{Binding Path=UpdatedYear, ValidatesOnDataErrors=True}"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding Path=UpdatedPriceIndex, ValidatesOnDataErrors=True}"/>
                     </Grid>
                 </GroupBox>
 
