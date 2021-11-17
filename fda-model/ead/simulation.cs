@@ -240,6 +240,20 @@ namespace ead{
             paireddata.IPairedData stageDamage = stageDamageUncertin.SamplePairedData(meanRandomProvider.NextRandom());
             return stageDamage.compose(frequencyStage);
         }
+
+        private void ComputeDefaultThreshold()
+        {
+            ead.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            paireddata.IPairedData frequencyFlow = BootstrapToPairedData(meanRandomProvider, _frequency_flow, 1000);
+            paireddata.IPairedData ratingCurve = _flow_stage.SamplePairedData(meanRandomProvider.NextRandom());
+            paireddata.IPairedData frequencyStage = ratingCurve.compose(frequencyFlow);
+
+            //this needs a way to get the total stage-damage function 
+            //probably a method in paired data that sums row elements across vectors 
+            //essentially we need a row sum 
+            //but to do that, we'll need to be able to match up the stages
+            //so perhaps similar logic 
+        }
         public static SimulationBuilder builder()
         {
             return new SimulationBuilder(new Simulation());

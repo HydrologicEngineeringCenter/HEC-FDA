@@ -120,6 +120,47 @@ namespace paireddata
             return new PairedData(x, y);
         }
 
+        public IPairedData SumYsForGivenX(IPairedData input)
+        {
+            double[] x = new double[input.Xvals.Length];
+            double[] ySum = new double[input.Yvals.Length];
+            for (int i=0; i<input.Xvals.Length; i++)
+            {
+                int index = Array.BinarySearch(Xvals, input.Xvals[i]);
+                double yValueFromSubject = 0;
+                if (index >= 0)
+                {
+                    //value matched exactly
+                    yValueFromSubject = Yvals[index];
+
+                } else
+                {
+                    index = ~index;
+
+                    //if the x value from input is greater than all x values in subject
+                    if (index == Xvals.Length)
+                    {
+                        yValueFromSubject = Yvals[Yvals.Length - 1];
+                    }
+
+                    //if the x value from the input is less than all x values in subject
+                    if (index == 0)
+                    {
+                        yValueFromSubject = Yvals[0];
+                    }
+                    else //x value from the input is within range of x values in subject, but does not match exactly
+                    { //Interpolate Y=mx+b
+                        double slope = (Yvals[index] - Yvals[index - 1]) / (Xvals[index] - Xvals[index - 1]);
+                        double intercept = Yvals[index] - slope * Xvals[index];
+                        yValueFromSubject = intercept + slope * input.Xvals[i];
+                    }
+                }
+                ySum[i] = input.Yvals[i] + yValueFromSubject;
+                x[i] = input.Xvals[i];
+            }
+            return new PairedData(x, ySum);
+        }
+
         /// <summary>
         ///Calcualtes the area under the paired data curve across the range of x values using trapizoidal integration. 
         ///Assumes X vals are non-exceedance probabilities increasing from 0. Assumes an additional x ord of 1, and y ordinate equal to the last one in the array.
