@@ -10,6 +10,13 @@ using ViewModel.ImpactArea;
 using ViewModel.WaterSurfaceElevation;
 using ViewModel.FrequencyRelationships;
 using ViewModel.AlternativeComparisonReport;
+using ViewModel.Alternatives;
+using ViewModel.ImpactAreaScenario;
+using ViewModel.AggregatedStageDamage;
+using ViewModel.Inventory;
+using ViewModel.GeoTech;
+using ViewModel.FlowTransforms;
+using ViewModel.Utilities;
 
 namespace ViewModel.Saving
 {
@@ -33,67 +40,67 @@ namespace ViewModel.Saving
         }
         
 
-        public static IElementManager GetElementManager(Utilities.ChildElement element)
+        public static IElementManager GetElementManager(ChildElement element)
         {
-
+            IElementManager manager = null;
             if (element.GetType() == typeof(TerrainElement))
             {
-                return new TerrainElementPersistenceManager(StudyCacheForSaving);
+                manager = new TerrainElementPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(RatingCurveElement))
             {
-                return new RatingElementPersistenceManager(StudyCacheForSaving);
+                manager = new RatingElementPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(ExteriorInteriorElement))
             {
-                return new ExteriorInteriorPersistenceManager(StudyCacheForSaving);
+                manager = new ExteriorInteriorPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(ImpactAreaElement))
             {
-                return new ImpactAreaPersistenceManager(StudyCacheForSaving);
+                manager = new ImpactAreaPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(WaterSurfaceElevationElement))
             {
-                return new WaterSurfaceAreaPersistenceManager(StudyCacheForSaving);
+                manager = new WaterSurfaceAreaPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(AnalyticalFrequencyElement))
             {
-                return new FlowFrequencyPersistenceManager(StudyCacheForSaving);
+                manager = new FlowFrequencyPersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(FlowTransforms.InflowOutflowElement))
+            else if (element.GetType() == typeof(InflowOutflowElement))
             {
-                return new InflowOutflowPersistenceManager(StudyCacheForSaving);
+                manager = new InflowOutflowPersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(GeoTech.LeveeFeatureElement))
+            else if (element.GetType() == typeof(LeveeFeatureElement))
             {
-                return new LeveePersistenceManager(StudyCacheForSaving);
+                manager = new LeveePersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(GeoTech.FailureFunctionElement))
+            else if (element.GetType() == typeof(FailureFunctionElement))
             {
-                return new FailureFunctionPersistenceManager(StudyCacheForSaving);
+                manager = new FailureFunctionPersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(Inventory.InventoryElement))
+            else if (element.GetType() == typeof(InventoryElement))
             {
-                return new StructureInventoryPersistenceManager(StudyCacheForSaving);
+                manager = new StructureInventoryPersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(AggregatedStageDamage.AggregatedStageDamageElement))
+            else if (element.GetType() == typeof(AggregatedStageDamageElement))
             {
-                return new StageDamagePersistenceManager(StudyCacheForSaving);
+                manager = new StageDamagePersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(ImpactAreaScenario.IASElementSet))
+            else if (element.GetType() == typeof(IASElementSet))
             {
-                return new IASPersistenceManager(StudyCacheForSaving);
+                manager = new IASPersistenceManager(StudyCacheForSaving);
             }
-            else if(element.GetType() == typeof(Alternatives.AlternativeElement))
+            else if(element.GetType() == typeof(AlternativeElement))
             {
-                return new AlternativePersistenceManager(StudyCacheForSaving);
+                manager = new AlternativePersistenceManager(StudyCacheForSaving);
             }
             else if(element is AlternativeComparisonReportElement)
             {
-                return new AlternativeComparisonReportPersistenceManager(StudyCacheForSaving);
+                manager = new AlternativeComparisonReportPersistenceManager(StudyCacheForSaving);
             }
            
-            return null;
+            return manager;
         }
 
         public static RatingElementPersistenceManager GetRatingManager()

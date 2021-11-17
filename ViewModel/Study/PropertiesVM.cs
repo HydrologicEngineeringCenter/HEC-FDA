@@ -20,11 +20,21 @@ namespace ViewModel.Study
         private int _SurveyedYear;
         private int _UpdatedYear;
         private Single _UpdatedPriceIndex;
+        private double _DiscountRate;
+        private int _PeriodOfAnalysis;
         #endregion
         #region Properties
 
-        public double DiscountRate { get; set; }
-        public int PeriodOfAnalysis { get; set; }
+        public double DiscountRate
+        {
+            get { return _DiscountRate; }
+            set { _DiscountRate = value; NotifyPropertyChanged(); }
+        }
+        public int PeriodOfAnalysis
+        {
+            get { return _PeriodOfAnalysis; }
+            set { _PeriodOfAnalysis = value; NotifyPropertyChanged(); }
+        }
         public string StudyName {
             get { return _StudyName; }
             set { _StudyName = value; }

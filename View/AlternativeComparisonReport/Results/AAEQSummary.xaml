@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <DataGrid Name="dataGrid1" ItemsSource="{Binding Rows}" AutoGenerateColumns="False" HorizontalAlignment="Left"
+        <DataGrid ItemsSource="{Binding Rows}" AutoGenerateColumns="False" HorizontalAlignment="Left"
                   VerticalAlignment="Top"  IsReadOnly="True" CanUserResizeColumns="False" CanUserReorderColumns="False"
                   CanUserSortColumns="false" Margin="5">
             <DataGrid.Columns>
@@ -49,10 +49,10 @@
                                     <ColumnDefinition Width="80"/>
                                     <ColumnDefinition Width="80"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock  Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Text="Probability AAEQ damage reduced exceeds indicated values" TextWrapping="Wrap" Tag="FirstName"  />
-                                <TextBlock  Grid.Row="1" Grid.Column="0" Text="0.75" Tag="LastName" HorizontalAlignment="Center" />
-                                <TextBlock  Grid.Row="1" Grid.Column="1" Text="0.5" Tag="LastName"  HorizontalAlignment="Center"/>
-                                <TextBlock  Grid.Row="1" Grid.Column="2" Text="0.25" Tag="LastName"  HorizontalAlignment="Center"/>
+                                <TextBlock  Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Text="Probability AAEQ damage reduced exceeds indicated values" TextWrapping="Wrap"  />
+                                <TextBlock  Grid.Row="1" Grid.Column="0" Text="0.75"  HorizontalAlignment="Center" />
+                                <TextBlock  Grid.Row="1" Grid.Column="1" Text="0.5"   HorizontalAlignment="Center"/>
+                                <TextBlock  Grid.Row="1" Grid.Column="2" Text="0.25"  HorizontalAlignment="Center"/>
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>

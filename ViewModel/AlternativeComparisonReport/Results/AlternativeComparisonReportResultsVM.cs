@@ -98,50 +98,50 @@ namespace ViewModel.AlternativeComparisonReport.Results
         }
         private void SelectedReportChanged()
         {
-            if (DAMAGE_WITH_UNCERTAINTY.Equals(SelectedReport))
+            switch(SelectedReport)
             {
-                if (EAD.Equals(_SelectedDamageMeasure))
-                {
-                    CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
-                }
-                else if (AAEQ.Equals(_SelectedDamageMeasure))
-                {
-                    CurrentResultVM = AlternativeResult.AAEQResult.DamageWithUncertaintyVM;
-                }
+                case DAMAGE_WITH_UNCERTAINTY:
+                    if (EAD.Equals(_SelectedDamageMeasure))
+                    {
+                        CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
+                    }
+                    else if (AAEQ.Equals(_SelectedDamageMeasure))
+                    {
+                        CurrentResultVM = AlternativeResult.AAEQResult.DamageWithUncertaintyVM;
+                    }
+                    break;
+                case DAMAGE_BY_IMPACT_AREA:
+                    if (EAD.Equals(_SelectedDamageMeasure))
+                    {
+                        CurrentResultVM = SelectedYear.DamageByImpactAreaVM;
+                    }
+                    else if (AAEQ.Equals(_SelectedDamageMeasure))
+                    {
+                        CurrentResultVM = AlternativeResult.AAEQResult.DamageByImpactAreaVM;
+                    }
+                    break;
+                case DAMAGE_BY_DAMAGE_CATEGORY:
+                    if (EAD.Equals(_SelectedDamageMeasure))
+                    {
+                        CurrentResultVM = SelectedYear.DamageByDamCatVM;
+                    }
+                    else if (AAEQ.Equals(_SelectedDamageMeasure))
+                    {
+                        CurrentResultVM = AlternativeResult.AAEQResult.DamageByDamCatVM;
+                    }
+                    break;
+                case SUMMARY:
+                    if (EAD.Equals(_SelectedDamageMeasure))
+                    {
+                        CurrentResultVM = _EADSummaryVM;
+                    }
+                    else if (AAEQ.Equals(_SelectedDamageMeasure))
+                    {
+                        CurrentResultVM = _AAEQSummaryVM;
+                    }
+                    break;
             }
-            else if (DAMAGE_BY_IMPACT_AREA.Equals(SelectedReport))
-            {
-                if (EAD.Equals(_SelectedDamageMeasure))
-                {
-                    CurrentResultVM = SelectedYear.DamageByImpactAreaVM;
-                }
-                else if (AAEQ.Equals(_SelectedDamageMeasure))
-                {
-                    CurrentResultVM = AlternativeResult.AAEQResult.DamageByImpactAreaVM;
-                }
-            }
-            else if (DAMAGE_BY_DAMAGE_CATEGORY.Equals(SelectedReport))
-            {
-                if (EAD.Equals(_SelectedDamageMeasure))
-                {
-                    CurrentResultVM = SelectedYear.DamageByDamCatVM;
-                }
-                else if (AAEQ.Equals(_SelectedDamageMeasure))
-                {
-                    CurrentResultVM = AlternativeResult.AAEQResult.DamageByDamCatVM;
-                }
-            }
-            else if(SUMMARY.Equals(SelectedReport))
-            {
-                if (EAD.Equals(_SelectedDamageMeasure))
-                {
-                    CurrentResultVM = _EADSummaryVM;
-                }
-                else if (AAEQ.Equals(_SelectedDamageMeasure))
-                {
-                    CurrentResultVM = _AAEQSummaryVM;
-                }
-            }
+
         }
     }
 }

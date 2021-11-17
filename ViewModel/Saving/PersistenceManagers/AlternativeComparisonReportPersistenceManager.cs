@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ViewModel.AlternativeComparisonReport;
+using ViewModel.Study;
 using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
@@ -16,15 +17,18 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public override Type[] TableColumnTypes => new Type[] { typeof(string), typeof(string) };
 
-        public AlternativeComparisonReportPersistenceManager(Study.FDACache studyCache)
+        public AlternativeComparisonReportPersistenceManager(FDACache studyCache)
         {
             StudyCacheForSaving = studyCache;
         }
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            string xml = (string)rowData[XML_COL];
-            AlternativeComparisonReportElement elem = new AlternativeComparisonReportElement(xml);
+            AlternativeComparisonReportElement elem = null;
+            if (rowData[XML_COL] is string xml)
+            {
+                elem = new AlternativeComparisonReportElement(xml);
+            }
             return elem;
         }
 
@@ -49,7 +53,11 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public override object[] GetRowDataFromElement(ChildElement elem)
         {
-            object[] retval = new object[] { elem.Name, ((AlternativeComparisonReportElement)elem).WriteToXML() };
+            object[] retval = null;
+            if (elem is AlternativeComparisonReportElement altElement)
+            {
+                retval = new object[] { elem.Name, altElement.WriteToXML() };
+            }
             return retval;
         }
 
@@ -65,8 +73,11 @@ namespace ViewModel.Saving.PersistenceManagers
         public void Remove(ChildElement element)
         {
             //remove from the cache first while you can still get the element's id.
-            StudyCacheForSaving.RemoveElement((AlternativeComparisonReportElement)element);
-            RemoveFromParentTable(element, TableName);
+            if (element is AlternativeComparisonReportElement altElement)
+            {
+                StudyCacheForSaving.RemoveElement(altElement);
+                RemoveFromParentTable(element, TableName);
+            }
         }
 
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex)
@@ -76,12 +87,12 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public void SaveNew(ChildElement element)
         {
-            if (element is AlternativeComparisonReportElement)
+            if (element is AlternativeComparisonReportElement altElem)
             {
                 string editDate = DateTime.Now.ToString("G");
                 element.LastEditDate = editDate;
-                SaveNewElementToParentTable(GetRowDataFromElement((AlternativeComparisonReportElement)element), TableName, TableColumnNames, TableColumnTypes);
-                StudyCacheForSaving.AddElement((AlternativeComparisonReportElement)element);
+                SaveNewElementToParentTable(GetRowDataFromElement(altElem), TableName, TableColumnNames, TableColumnTypes);
+                StudyCacheForSaving.AddElement(altElem);
             }
         }
     }
