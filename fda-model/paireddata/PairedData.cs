@@ -120,7 +120,7 @@ namespace paireddata
             return new PairedData(x, y);
         }
 
-        public IPairedData SumYsForGivenX(IPairedData input)
+        public PairedData SumYsForGivenX(IPairedData input)
         {
             double[] x = new double[input.Xvals.Length];
             double[] ySum = new double[input.Yvals.Length];
