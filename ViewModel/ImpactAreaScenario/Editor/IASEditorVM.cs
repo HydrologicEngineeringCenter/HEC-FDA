@@ -32,7 +32,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
             get { return _HasImpactArea; }
             set { _HasImpactArea = value; NotifyPropertyChanged(); }
         }
-        public int Year { get; set; } = DateTime.Now.Year;
+        public int? Year { get; set; } = DateTime.Now.Year;
         
         public List<ImpactAreaRowItem> ImpactAreas
         {
@@ -172,7 +172,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private FdaValidationResult IsYearValid()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            if (Year < 1900 || Year > 3000)
+            if (Year == null || Year < 1900 || Year > 3000)
             {
                 vr.AddErrorMessage( "A year is required and must be greater than 1900 and less than 3000");
             }
@@ -232,7 +232,8 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 {
                     Description = "";
                 }
-                IASElementSet elemToSave = new IASElementSet(Name, Description, Year, elementsToSave);
+
+                IASElementSet elemToSave = new IASElementSet(Name, Description, Year.Value, elementsToSave);
 
                 if (_IsInEditMode)
                 {
