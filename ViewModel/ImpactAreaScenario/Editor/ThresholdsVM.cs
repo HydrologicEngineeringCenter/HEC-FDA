@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ViewModel.Editors;
+using ViewModel.Utilities;
 
 namespace ViewModel.ImpactAreaScenario.Editor
 {
@@ -89,6 +90,26 @@ namespace ViewModel.ImpactAreaScenario.Editor
         public List<ThresholdRowItem> GetThresholds()
         {
             return Rows.ToList();
+        }
+
+        public FdaValidationResult IsValid()
+        {
+            FdaValidationResult result = new FdaValidationResult();
+            foreach(ThresholdRowItem ri in Rows)
+            {
+                if(!IsRowUnique(ri))
+                {
+                    result.AddErrorMessage("Threshold rows must be unique.");
+                    break;
+                }
+            }
+            return result;
+        }
+
+        private bool IsRowUnique(ThresholdRowItem rowItem)
+        {
+            List<ThresholdRowItem> selections = Rows.Where(row => row.ThresholdType.Metric == rowItem.ThresholdType.Metric && row.ThresholdValue == rowItem.ThresholdValue).ToList();
+            return selections.Count() == 1;    
         }
     }
 }

@@ -57,7 +57,7 @@
             </ListView.View>
         </ListView>
 
-        <Button x:Name="ok_btn" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="OK" Width="40" Height="22" Click="ok_btn_Click" Margin="5"/>
+        <Button Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="OK" Width="40" Height="22" Click="ok_btn_Click" Margin="5"/>
 
     </Grid>
 </UserControl>

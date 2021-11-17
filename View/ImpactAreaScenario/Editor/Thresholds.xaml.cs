@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using ViewModel.ImpactAreaScenario.Editor;
+using ViewModel.Utilities;
 
 namespace View.ImpactAreaScenario.Editor
 {
@@ -16,26 +17,43 @@ namespace View.ImpactAreaScenario.Editor
 
         private void Add_btn_Click(object sender, RoutedEventArgs e)
         {
-            ThresholdsVM vm = (ThresholdsVM)this.DataContext;
-            vm.AddRow();
+            if (DataContext is ThresholdsVM vm)
+            {
+                vm.AddRow();
+            }
         }
 
         private void Copy_btn_Click(object sender, RoutedEventArgs e)
         {
-            ThresholdsVM vm = (ThresholdsVM)this.DataContext;
-            vm.Copy();
+            if (DataContext is ThresholdsVM vm)
+            {
+                vm.Copy();
+            }
         }
 
         private void Remove_btn_Click(object sender, RoutedEventArgs e)
         {
-            ThresholdsVM vm = (ThresholdsVM)this.DataContext;
-            vm.Remove();
+            if (DataContext is ThresholdsVM vm)
+            {
+                vm.Remove();
+            }
         }
 
         private void ok_btn_Click(object sender, RoutedEventArgs e)
         {
-            var myWindow = Window.GetWindow(this);
-            myWindow.Close();
+            if (DataContext is ThresholdsVM vm)
+            {
+                FdaValidationResult result = vm.IsValid();
+                if (result.IsValid)
+                {
+                    var myWindow = Window.GetWindow(this);
+                    myWindow.Close();
+                }
+                else
+                {
+                    MessageBox.Show(result.ErrorMessage.ToString(), "Duplicate Rows", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
+            }
         }
     }
 }
