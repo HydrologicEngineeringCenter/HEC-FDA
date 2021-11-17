@@ -11,10 +11,8 @@ namespace ViewModel.AlternativeComparisonReport
     {
         private AlternativeElement _Alternative;
         private string _Name;
-        public AlternativeElement Alternative
-        {
-            get { return _Alternative; }
-        }
+        public AlternativeElement Alternative { get { return _Alternative; } }
+
         /// <summary>
         /// I don't love storing the ID in here. The problem i am trying to solve is that if the user does 
         /// a name change, then i can't ask this element what its id is, because its name has already been 
