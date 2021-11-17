@@ -18,19 +18,21 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public override Type[] TableColumnTypes => new Type[] { typeof(string), typeof(string) };
 
-
         public AlternativePersistenceManager(Study.FDACache studyCache)
         {
             StudyCacheForSaving = studyCache;
         }
 
-
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            throw new NotImplementedException();
+            string xml = (string)rowData[2];
+            AlternativeElement elem = new AlternativeElement(xml);
+            return elem;
         }
 
         #region Logging
+        //todo: not sure what to do with logging stuff yet. Waiting until a later task to determine
+        //if this should all get removed from the base class or not.
         public ObservableCollection<LogItem> GetLogMessages(string elementName)
         {
             throw new NotImplementedException();
@@ -67,7 +69,7 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             int id = element.GetElementID();
             RemoveFromParentTable(element, TableName);
-            StudyCacheForSaving.RemoveElement((AlternativeElement)element, id);
+            StudyCacheForSaving.RemoveElement((AlternativeElement)element);
         }
 
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex)
