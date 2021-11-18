@@ -308,10 +308,14 @@ namespace ead{
             IPairedData leveePairedData = uncertainPairedData.SamplePairedData(meanRandomProvider.NextRandom());
             for (int i=0; i<leveePairedData.Xvals.Length; i++)
             {
-                if (leveePairedData.Xvals[i] == 1)
+                if (leveePairedData.Yvals[i] == 1)
                 {
-                    stageList.Add(leveePairedData.Yvals[i]);
+                    stageList.Add(leveePairedData.Xvals[i]);
                 }
+            }
+            if (stageList.Count == 0)
+            {
+                throw new ArgumentNullException("The levee curve is invalid. The top of levee must have probability = 1");
             }
             return stageList.Min();
         }
