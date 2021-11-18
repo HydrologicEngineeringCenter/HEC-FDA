@@ -33,7 +33,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         private bool _showEAD;
         private double _EAD;
 
-        public ImpactAreaRowItem ImpactAreaRowItem { get; }
+        public ImpactAreaRowItem CurrentImpactArea { get; }
         public double EAD
         {
             get { return _EAD; }
@@ -60,7 +60,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         public int Year { get; set; } = DateTime.Now.Year;
 
 
-        public List<StageDamageCurve> DamageCategories { get; } = new List<StageDamageCurve>();
+        public CustomObservableCollection<StageDamageCurve> DamageCategories { get; } = new CustomObservableCollection<StageDamageCurve>();
 
         public List<ThresholdRowItem> Thresholds { get; } = new List<ThresholdRowItem>();
         public CustomObservableCollection<ChildElementComboItem> FrequencyElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
@@ -118,14 +118,14 @@ namespace ViewModel.ImpactAreaScenario.Editor
         public SpecificIASEditorVM(ImpactAreaRowItem rowItem)
         {
             Initialize();
-            ImpactAreaRowItem = rowItem;
+            CurrentImpactArea = rowItem;
         }
 
         public SpecificIASEditorVM(SpecificIAS elem, ImpactAreaRowItem rowItem)
         {
             Initialize();
+            CurrentImpactArea = rowItem;
             FillForm(elem);
-            ImpactAreaRowItem = rowItem;
         }
 
         private void Initialize()
@@ -391,17 +391,11 @@ namespace ViewModel.ImpactAreaScenario.Editor
         {
             if (SelectedStageDamageElement != null && SelectedStageDamageElement.ChildElement != null)
             {
-                List<string> damCats = new List<string>();
-
                 AggregatedStageDamageElement elem = (AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement;
-
-                foreach (StageDamageCurve curve in elem.Curves)
-                {
-                    damCats.Add(curve.DamCat);
-                }
+                List<StageDamageCurve> stageDamageCurves = elem.Curves.Where(curve => curve.ImpArea.ID == CurrentImpactArea.ID).ToList();
 
                 DamageCategories.Clear();
-                DamageCategories.AddRange(elem.Curves);
+                DamageCategories.AddRange(stageDamageCurves);
                 SelectedDamageCurve = DamageCategories[0];
             }
         }
@@ -449,7 +443,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
             if (!vr.IsValid)
             {
-                vr.InsertNewLineMessage(0, "Errors in Impact Area: " + ImpactAreaRowItem.Name);
+                vr.InsertNewLineMessage(0, "Errors in Impact Area: " + CurrentImpactArea.Name);
             }
             return vr;
 
@@ -567,7 +561,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
             List<ThresholdRowItem> thresholdRowItems = _additionalThresholdsVM.GetThresholds();
 
-            SpecificIAS elementToSave = new SpecificIAS(ImpactAreaRowItem.ID,
+            SpecificIAS elementToSave = new SpecificIAS(CurrentImpactArea.ID,
             flowFreqID, inflowOutID,
             ratingID, extIntID, latStructID, stageDamID, thresholdRowItems);
             return elementToSave;
