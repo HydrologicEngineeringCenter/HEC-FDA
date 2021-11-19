@@ -9,6 +9,7 @@ namespace ViewModel.Study
 {
     public interface IStudyCache
     {
+        StudyPropertiesElement GetStudyPropertiesElement();
         List<ChildElement> GetChildElementsOfType(Type elementType);
         List<ChildElement> GetChildrenOfParent(ParentElement element);
         List<T> GetChildElementsOfType<T>() where T : ChildElement ;

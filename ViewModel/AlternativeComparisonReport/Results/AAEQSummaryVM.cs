@@ -6,9 +6,12 @@ namespace ViewModel.AlternativeComparisonReport.Results
     public class AAEQSummaryVM : IAlternativeResult
     {
         public List<AAEQSummaryRowItem> Rows { get; } = new List<AAEQSummaryRowItem>();
-
-        public AAEQSummaryVM() 
+        public double DiscountRate { get; set; }
+        public int PeriodOfAnalysis { get; set; }
+        public AAEQSummaryVM(double discountRate, int period) 
         {
+            DiscountRate = discountRate;
+            PeriodOfAnalysis = period;
             loadDummyData();
         }
 

@@ -208,7 +208,7 @@ namespace ViewModel.Saving.PersistenceManagers
         /// </summary>
         public void Load()
         {
-            List<ChildElement> ratings = CreateElementsFromRows( TableName, (asdf) => CreateElementFromRowData(asdf));
+            List<ChildElement> ratings = CreateElementsFromRows( TableName, rowData => CreateElementFromRowData(rowData));
             foreach (RatingCurveElement elem in ratings)
             {
                 StudyCacheForSaving.AddElement(elem);

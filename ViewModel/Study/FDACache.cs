@@ -94,6 +94,7 @@ namespace ViewModel.Study
         public List<IASElementSet> IASElementSets { get; } = new List<IASElementSet>();
         public List<AlternativeElement> AlternativeElements { get; } = new List<AlternativeElement>();
         public List<AlternativeComparisonReportElement> AlternativeCompReports { get; } = new List<AlternativeComparisonReportElement>();
+        public StudyPropertiesElement StudyPropertiesElement { get; set; }
 
         #region ParentElements
         public TerrainOwnerElement TerrainParent { get; set; }
@@ -310,6 +311,10 @@ namespace ViewModel.Study
                 AlternativeCompReports.Add((AlternativeComparisonReportElement)elem);
                 AlternativeCompReportAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
+            else if(elem is StudyPropertiesElement element)
+            {
+                StudyPropertiesElement = element;
+            }
         }
         #endregion
     
@@ -373,6 +378,10 @@ namespace ViewModel.Study
             else if(oldElement is AlternativeComparisonReportElement)
             {
                 UpdateAlternativeCompReportElement((AlternativeComparisonReportElement)oldElement, (AlternativeComparisonReportElement)newElement);
+            }
+            else if(oldElement is StudyPropertiesElement)
+            {
+                StudyPropertiesElement = (StudyPropertiesElement)newElement;
             }
         }
 
@@ -846,6 +855,10 @@ namespace ViewModel.Study
             {
                 retVal.AddRange(AlternativeCompReports);
             }
+            else if(childElementType == typeof(StudyPropertiesElement))
+            {
+                retVal.Add(StudyPropertiesElement);
+            }
             return retVal;
         }
         public List<T> GetChildElementsOfType<T>() where T : ChildElement
@@ -921,6 +934,16 @@ namespace ViewModel.Study
 
         #endregion
 
-
+        public StudyPropertiesElement GetStudyPropertiesElement()
+        {
+            if (StudyPropertiesElement != null)
+            {
+                return StudyPropertiesElement;
+            }
+            else
+            {
+                throw new MemberAccessException("A study properties element does not exist in the cache.");
+            }
+        }
     }
 }

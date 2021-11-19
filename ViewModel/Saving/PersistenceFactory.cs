@@ -170,5 +170,9 @@ namespace ViewModel.Saving
         {
             return new AlternativeComparisonReportPersistenceManager(StudyCacheForSaving);
         }
+        public static StudyPropertiesPersistenceManager GetStudyPropertiesPersistenceManager()
+        {
+            return new StudyPropertiesPersistenceManager(StudyCacheForSaving);
+        }
     }
 }

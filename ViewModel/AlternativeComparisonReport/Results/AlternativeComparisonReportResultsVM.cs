@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ViewModel.Alternatives.Results;
 using ViewModel.Alternatives.Results.ResultObject;
+using ViewModel.Study;
 
 namespace ViewModel.AlternativeComparisonReport.Results
 {
@@ -19,8 +20,8 @@ namespace ViewModel.AlternativeComparisonReport.Results
         private bool _YearsVisible;
         private YearResult _SelectedYear;
 
-        private EADSummaryVM _EADSummaryVM = new EADSummaryVM();
-        private AAEQSummaryVM _AAEQSummaryVM = new AAEQSummaryVM();
+        private EADSummaryVM _EADSummaryVM;
+        private AAEQSummaryVM _AAEQSummaryVM;
 
         public bool YearsVisible
         {
@@ -60,6 +61,10 @@ namespace ViewModel.AlternativeComparisonReport.Results
 
         public AlternativeComparisonReportResultsVM(AlternativeResult altResult)
         {
+            StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
+           
+            _AAEQSummaryVM = new AAEQSummaryVM(studyPropElem.DiscountRate, studyPropElem.PeriodOfAnalysis);
+            _EADSummaryVM = new EADSummaryVM(studyPropElem.DiscountRate, studyPropElem.PeriodOfAnalysis);
             AlternativeResult = altResult;
             YearsVisible = true;
 
@@ -77,8 +82,27 @@ namespace ViewModel.AlternativeComparisonReport.Results
         private void SelectedYearChanged()
         {
             //i can assume we are on EAD if a year is changing.
-            SelectedReport = DAMAGE_WITH_UNCERTAINTY;
-            CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
+            //we want to select the same vm when switching years
+            if(CurrentResultVM == null || CurrentResultVM is DamageWithUncertaintyVM)
+            {
+                CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
+                SelectedReport = DAMAGE_WITH_UNCERTAINTY;
+            }
+            else if(CurrentResultVM is DamageByDamCatVM)
+            {
+                CurrentResultVM = SelectedYear.DamageByDamCatVM;
+                SelectedReport = DAMAGE_BY_DAMAGE_CATEGORY;
+            }
+            else if(CurrentResultVM is DamageByImpactAreaVM)
+            {
+                CurrentResultVM = SelectedYear.DamageByImpactAreaVM;
+                SelectedReport = DAMAGE_BY_IMPACT_AREA;
+            }
+            else if(CurrentResultVM is EADSummaryVM)
+            {
+                CurrentResultVM = _EADSummaryVM;
+                SelectedReport = SUMMARY;
+            }
         }
 
         private void SelectedDamageMeasureChanged()

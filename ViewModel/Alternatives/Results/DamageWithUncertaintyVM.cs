@@ -9,28 +9,53 @@ using ViewModel.ImpactAreaScenario.Results.RowItems;
 
 namespace ViewModel.Alternatives.Results
 {
-    public class DamageWithUncertaintyVM : IAlternativeResult
+    public class DamageWithUncertaintyVM : BaseViewModel, IAlternativeResult
     {
 
         private readonly HistogramData2D _data;
+        private bool _RateAndPeriodVisible;
         public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("chart title");
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
-        public DamageWithUncertaintyVM()
+
+        public double DiscountRate { get; set; }
+        public int PeriodOfAnalysis { get; set; }
+        public bool RateAndPeriodVisible { get; }
+
+        /// <summary>
+        /// Ctor for EAD versions which don't have discount rate and period of analysis.
+        /// </summary>
+        public DamageWithUncertaintyVM(double mean, double other)
         {
+            RateAndPeriodVisible = false;
             //load with dummy data
             _data = new HistogramData2D(5, 0, new double[] { }, "Chart", "Series", "X Data", "YData");
             ChartViewModel.LineData.Add(_data);
-            loadDummyData();
-            Mean = .123;
+            loadDummyData(other);
+            Mean = mean;
+        }
+
+        /// <summary>
+        /// Ctor for AAEQ versions which have discount rate and period of analysis.
+        /// </summary>
+        public DamageWithUncertaintyVM(double discountRate, int periodOfAnalysis, double mean, double other)
+        {
+            DiscountRate = discountRate;
+            PeriodOfAnalysis = periodOfAnalysis;
+            RateAndPeriodVisible = true;
+            //load with dummy data
+            _data = new HistogramData2D(5, 0, new double[] { }, "Chart", "Series", "X Data", "YData");
+            ChartViewModel.LineData.Add(_data);
+            loadDummyData(other);
+            Mean = mean;
         }
 
 
-        private void loadDummyData()
+        private void loadDummyData(double other)
         {
             List<double> xVals = loadXData();
-            List<double> yVals = loadYData();
+            List<double> yVals = loadYData(other);
 
             for (int i = 0; i < xVals.Count; i++)
             {
@@ -48,12 +73,12 @@ namespace ViewModel.Alternatives.Results
             return xValues;
         }
 
-        private List<double> loadYData()
+        private List<double> loadYData(double firstVal)
         {
             List<double> yValues = new List<double>();
-            yValues.Add(1);
-            yValues.Add(2);
-            yValues.Add(3);
+            yValues.Add(firstVal);
+            yValues.Add(firstVal+1);
+            yValues.Add(firstVal + 2);
             return yValues;
         }
 

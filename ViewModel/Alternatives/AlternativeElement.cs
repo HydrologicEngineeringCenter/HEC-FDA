@@ -8,6 +8,7 @@ using ViewModel.ImpactAreaScenario;
 using ViewModel.Utilities;
 using ViewModel.Saving;
 using ViewModel.Editors;
+using ViewModel.Study;
 
 namespace ViewModel.Alternatives
 {
@@ -161,14 +162,21 @@ namespace ViewModel.Alternatives
             return vr;
         }
 
+
+
         private AlternativeResult CreateAlternativeResult()
         {
-            YearResult yr1 = new YearResult(2021, new DamageWithUncertaintyVM(), new DamageByImpactAreaVM(), new DamageByDamCatVM());
-            YearResult yr2 = new YearResult(2022, new DamageWithUncertaintyVM(), new DamageByImpactAreaVM(), new DamageByDamCatVM());
+            AlternativeResult altResult = null;
+            StudyPropertiesElement studyPropElem = StudyCache.GetStudyPropertiesElement();
+
+            double discountRate = studyPropElem.DiscountRate;
+            int period = studyPropElem.PeriodOfAnalysis;
+            YearResult yr1 = new YearResult(2021, new DamageWithUncertaintyVM(.123, 1), new DamageByImpactAreaVM(), new DamageByDamCatVM());
+            YearResult yr2 = new YearResult(2022, new DamageWithUncertaintyVM(.456, 4), new DamageByImpactAreaVM(), new DamageByDamCatVM());
 
             EADResult eadResult = new EADResult(new List<YearResult>() { yr1, yr2 });
-            AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM(), new DamageByImpactAreaVM(), new DamageByDamCatVM());
-            AlternativeResult altResult = new AlternativeResult(eadResult, aaeqResult);
+            AAEQResult aaeqResult = new AAEQResult(new DamageWithUncertaintyVM(discountRate, period, .7, 8), new DamageByImpactAreaVM(discountRate, period), new DamageByDamCatVM());
+            altResult = new AlternativeResult(eadResult, aaeqResult);
 
             return altResult;
         }

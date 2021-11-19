@@ -110,7 +110,9 @@ namespace ViewModel.Study
         public override void Save()
         {
             //create the sqlite database for this study
-            _StudyElement.CreateStudyFromViewModel(_StudyName, _FolderPath);
+            string studyDescription = "";
+            //todo: is there a way to get the description from an old fda study?
+            _StudyElement.CreateStudyFromViewModel(_StudyName, _FolderPath, studyDescription);
 
             StructureInventoryLibrary.SharedData.StudyDatabase = new DatabaseManager.SQLiteManager(Storage.Connection.Instance.ProjectFile);
 

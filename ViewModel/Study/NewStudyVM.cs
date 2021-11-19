@@ -102,7 +102,7 @@ namespace ViewModel.Study
 
         public override void Save()
         {
-            _StudyElement.CreateStudyFromViewModel(_StudyName, _Path);
+            _StudyElement.CreateStudyFromViewModel(_StudyName, _Path, _Description);
         }
 
 

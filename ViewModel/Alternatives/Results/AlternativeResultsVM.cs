@@ -72,8 +72,22 @@ namespace ViewModel.Alternatives.Results
         private void SelectedYearChanged()
         {
             //i can assume we are on EAD if a year is changing.
-            SelectedReport = DAMAGE_WITH_UNCERTAINTY;
-            CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
+            //we want to select the same vm when switching years
+            if (CurrentResultVM == null || CurrentResultVM is DamageWithUncertaintyVM)
+            {
+                CurrentResultVM = SelectedYear.DamageWithUncertaintyVM;
+                SelectedReport = DAMAGE_WITH_UNCERTAINTY;
+            }
+            else if (CurrentResultVM is DamageByDamCatVM)
+            {
+                CurrentResultVM = SelectedYear.DamageByDamCatVM;
+                SelectedReport = DAMAGE_BY_DAMAGE_CATEGORY;
+            }
+            else if (CurrentResultVM is DamageByImpactAreaVM)
+            {
+                CurrentResultVM = SelectedYear.DamageByImpactAreaVM;
+                SelectedReport = DAMAGE_BY_IMPACT_AREA;
+            }
         }
 
         private void SelectedDamageMeasureChanged()

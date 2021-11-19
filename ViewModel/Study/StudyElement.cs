@@ -372,7 +372,7 @@ namespace ViewModel.Study
         }
       
 
-        public void CreateStudyFromViewModel(string studyName, string folderPathForNewStudy)
+        public void CreateStudyFromViewModel(string studyName, string folderPathForNewStudy, string description)
         {
             Name = studyName;
             UpdateTreeViewHeader(Name);
@@ -388,8 +388,6 @@ namespace ViewModel.Study
             {
                 Storage.Connection.Instance.ProjectFile = folderPathForNewStudy + "\\" + studyName + "\\" + studyName + ".sqlite";
             }
-            PropertiesVM properties = new PropertiesVM(studyName, folderPathForNewStudy);
-            properties.Save();
             AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(studyName, Utilities.Transactions.TransactionEnum.CreateNew, "Initialize study"));
             foreach (NamedAction action in Actions)
             {
@@ -416,21 +414,29 @@ namespace ViewModel.Study
             }
             StudyCache = null;
             AddBaseElements();
+            SaveDefaultStudyProperties(studyName, folderPathForNewStudy, description);
+        }
+
+        private void SaveDefaultStudyProperties(string studyName, string folderPathForNewStudy, string description)
+        {
+            StudyPropertiesElement elemToSave = new StudyPropertiesElement(studyName, folderPathForNewStudy, description);
+            PersistenceFactory.GetStudyPropertiesPersistenceManager().SaveNew(elemToSave);
         }
 
         private void StudyProperties(object arg1, EventArgs arg2)
         {
-            if (!Storage.Connection.Instance.IsConnectionNull)
+            List<StudyPropertiesElement> studyProps = StudyCache.GetChildElementsOfType<StudyPropertiesElement>();
+            if(studyProps.Count>0)
             {
-                PropertiesVM prop =  new PropertiesVM(Storage.Connection.Instance.GetTable(PropertiesVM.TableName));
+                PropertiesVM prop =  new PropertiesVM(studyProps[0]);
                 string header = "Study Properties";
                 DynamicTabVM tab = new DynamicTabVM(header, prop, "Properties");
                 Navigate(tab, true, true);
+
             }
-            else
-            {
-                //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Study Properties was accessed without the study path or study name being defined.", FdaModel.Utilities.Messager.ErrorMessageEnum.Report | FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel));
-            }
+
+            
+            
         }
 
         public void OpenStudyFromFilePath(string name, string path)
@@ -498,16 +504,6 @@ namespace ViewModel.Study
             DynamicTabVM tab = new DynamicTabVM(header, ESVM, "OpenStudy");
             Navigate( tab, false, false);
 
-            //if (!ESVM.WasCanceled)
-            //{
-            //    if (!ESVM.HasError)
-            //    {
-            //        OpenStudyFromFilePath(ESVM.StudyName, ESVM.Path);
-            //    }
-            //}
-
-
-
         }
         
         public override void AddValidationRules()
@@ -517,8 +513,7 @@ namespace ViewModel.Study
         }
 
 
-
-
+      
         public void AddBaseElements()
         {
 
@@ -594,16 +589,6 @@ namespace ViewModel.Study
                     LoadElementsFromDB();
                 }
 
-                //IASTreeOwnerElement ct = new IASTreeOwnerElement(c);
-                //cache.IASElementUpdated += ConditionsElementWasUpdated; //ct.ConditionWasUpdated;
-                //cache.IASElementAdded += UpdateTheConditionsTree;
-                //if (loadStudyCache)
-                //{
-                //    cache.IASTreeParent = ct;
-                //}
-
-                //UpdateTheConditionsTree(this, new EventArgs());
-
                 UpdateTransactionsAndMessages?.Invoke(this, new EventArgs());
                 LoadMapLayers?.Invoke(this, new EventArgs());
             }
@@ -627,7 +612,7 @@ namespace ViewModel.Study
             PersistenceFactory.GetAlternativeManager().Load();
             PersistenceFactory.GetAlternativeCompReportManager().Load();
             PersistenceFactory.GetOccTypeManager().Load();
-
+            PersistenceFactory.GetStudyPropertiesManager().Load();
         }
 
         #endregion

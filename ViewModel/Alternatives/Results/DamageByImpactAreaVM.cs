@@ -5,9 +5,19 @@ namespace ViewModel.Alternatives.Results
     public class DamageByImpactAreaVM : IAlternativeResult
     {
         public List<ImpactAreaRowItem> Rows { get; } = new List<ImpactAreaRowItem>();
-
+        public double DiscountRate { get; set; }
+        public int PeriodOfAnalysis { get; set; }
+        public bool RateAndPeriodVisible { get; }
         public DamageByImpactAreaVM()
         {
+            RateAndPeriodVisible = false;
+            loadDummyData();
+        }
+        public DamageByImpactAreaVM(double discountRate, int period)
+        {
+            DiscountRate = discountRate;
+            PeriodOfAnalysis = period;
+            RateAndPeriodVisible = true;
             loadDummyData();
         }
 

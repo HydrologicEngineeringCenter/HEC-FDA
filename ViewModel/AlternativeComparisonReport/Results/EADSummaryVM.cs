@@ -6,9 +6,12 @@ namespace ViewModel.AlternativeComparisonReport.Results
     public class EADSummaryVM : IAlternativeResult
     {
         public List<EADSummaryRowItem> Rows { get; } = new List<EADSummaryRowItem>();
-
-        public EADSummaryVM() 
+        public double DiscountRate { get; set; }
+        public int PeriodOfAnalysis { get; set; }
+        public EADSummaryVM(double discountRate, int period) 
         {
+            DiscountRate = discountRate;
+            PeriodOfAnalysis = period;
             loadDummyData();
         }
 

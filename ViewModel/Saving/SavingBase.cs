@@ -170,6 +170,10 @@ namespace ViewModel.Saving
         #region save new
         public void SaveNewElement(ChildElement element)
         {
+            if (!Connection.Instance.IsOpen)
+            {
+                Connection.Instance.Open();
+            }
             //update the edit date
             string editDate = DateTime.Now.ToString("G");
             element.LastEditDate = editDate;
@@ -180,19 +184,27 @@ namespace ViewModel.Saving
         }
         public void SaveNewElementToParentTable(object[] rowData, string tableName, string[] TableColumnNames, Type[] TableColumnTypes)
         {
-            DatabaseManager.DataTableView tbl = Storage.Connection.Instance.GetTable(tableName);
+            if (!Connection.Instance.IsOpen)
+            {
+                Connection.Instance.Open();
+            }
+            DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(tableName);
             if (tbl == null)
             {
-                Storage.Connection.Instance.CreateTableWithPrimaryKey(tableName, TableColumnNames, TableColumnTypes);
+                Connection.Instance.CreateTableWithPrimaryKey(tableName, TableColumnNames, TableColumnTypes);
             }
 
-            Storage.Connection.Instance.AddRowToTableWithPrimaryKey(rowData, tableName, TableColumnNames);
+            Connection.Instance.AddRowToTableWithPrimaryKey(rowData, tableName, TableColumnNames);
 
         }
 
 
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave)
         {
+            if (!Connection.Instance.IsOpen)
+            {
+                Connection.Instance.Open();
+            }
             string editDate = DateTime.Now.ToString("G");
             elementToSave.LastEditDate = editDate;
 
@@ -211,9 +223,9 @@ namespace ViewModel.Saving
         public virtual void RemoveFromParentTable(ChildElement element, string tableName)
         {
 
-            if (Storage.Connection.Instance.IsOpen != true)
+            if (!Connection.Instance.IsOpen)
             {
-                Storage.Connection.Instance.Open();
+                Connection.Instance.Open();
             }
 
             element.RemoveElementFromMapWindow(this, new EventArgs());
