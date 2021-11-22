@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:View.Alternatives"
              xmlns:UserControls="clr-namespace:UserControls;assembly=UserControls"
              mc:Ignorable="d" 
-             xmlns:OkClose="clr-namespace:View.Utilities"
+             xmlns:Utils="clr-namespace:View.Utilities"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
@@ -58,7 +58,7 @@
             <ListBox ItemsSource="{Binding Rows}"  SelectedIndex="{Binding SelectedIndex}" BorderThickness="0" Grid.Column="1"  HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" />
         </Grid>
         
-        <OkClose:OKCloseControl Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+        <Utils:SaveCloseControl Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
 
     </Grid>
 </UserControl>

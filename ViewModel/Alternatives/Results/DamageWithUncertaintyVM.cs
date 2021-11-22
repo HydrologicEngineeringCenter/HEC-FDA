@@ -1,19 +1,13 @@
 ﻿using HEC.Plotting.SciChart2D.DataModel;
 using HEC.Plotting.SciChart2D.ViewModel;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ViewModel.ImpactAreaScenario.Results.RowItems;
 
 namespace ViewModel.Alternatives.Results
 {
     public class DamageWithUncertaintyVM : BaseViewModel, IAlternativeResult
     {
-
         private readonly HistogramData2D _data;
-        private bool _RateAndPeriodVisible;
         public SciChart2DChartViewModel ChartViewModel { get; set; } = new SciChart2DChartViewModel("chart title");
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
@@ -50,7 +44,6 @@ namespace ViewModel.Alternatives.Results
             loadDummyData(other);
             Mean = mean;
         }
-
 
         private void loadDummyData(double other)
         {

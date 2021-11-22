@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using ViewModel.Utilities;
 using System.Collections.ObjectModel;
-using ViewModel.ImpactAreaScenario;
-using ViewModel.Tabs;
-using ViewModel.StageTransforms;
-using ViewModel.Watershed;
-using ViewModel.Inventory;
-using ViewModel.AggregatedStageDamage;
-using ViewModel.GeoTech;
-using ViewModel.FlowTransforms;
-using ViewModel.FrequencyRelationships;
-using ViewModel.WaterSurfaceElevation;
-using ViewModel.ImpactArea;
-using Functions;
 using ViewModel.AlternativeComparisonReport;
+using ViewModel.ImpactArea;
+using ViewModel.ImpactAreaScenario;
 using ViewModel.Saving;
+using ViewModel.Storage;
+using ViewModel.Tabs;
+using ViewModel.Utilities;
+using ViewModel.Watershed;
+using ViewModel.WaterSurfaceElevation;
 
 namespace ViewModel.Study
 {
@@ -26,7 +20,6 @@ namespace ViewModel.Study
         public event EventHandler RenameTreeViewElement;
         public event EventHandler AddBackInTreeViewElement;
         public event EventHandler OpeningADifferentStudy;
-
         public event EventHandler SaveTheOpenTabs;
         public event EventHandler UpdateTransactionsAndMessages;
         public event EventHandler LoadMapLayers;
@@ -38,26 +31,21 @@ namespace ViewModel.Study
         #region Fields
         #endregion
         #region Properties
-
-    
         public ObservableCollection<ParentElement> ConditionsTree
         {
             get { return _ConditionsTree; }
             set { _ConditionsTree = value; NotifyPropertyChanged(); }
         }
-     
-
         #endregion
         #region Constructors
-
         public StudyElement() : base()
         {
             PopulateRecentStudies();
 
             FontSize = 18;
             Name = "Study";
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png");
-            _Elements = new System.Collections.ObjectModel.ObservableCollection<BaseFdaElement>();
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Terrain.png");
+            _Elements = new ObservableCollection<BaseFdaElement>();
 
             NamedAction open = new NamedAction();
             open.Header = "Open Study";
@@ -70,10 +58,6 @@ namespace ViewModel.Study
             NamedAction create = new NamedAction();
             create.Header = "Create Study";
             create.Action = CreateStudyFromWindow;
-
-            //NamedAction rename = new NamedAction();
-            //rename.Header = "Rename Study";
-            //rename.Action = RenameStudy;
 
             NamedAction properties = new NamedAction();
             properties.Header = "Study Properties";
@@ -90,21 +74,10 @@ namespace ViewModel.Study
             transactions.Action = ViewTransactions;
             transactions.IsEnabled = false;
 
-            
-
-            //NamedAction otherTesting = new NamedAction();
-            //otherTesting.Header = "Other Testing";
-            //otherTesting.Action = otherTestingAction;
-
-            //NamedAction recent = new NamedAction();
-            //recent.Header = "Recent";
-            //recent.Action = OpenStudy;
-
             List<NamedAction> localactions = new List<NamedAction>();
             localactions.Add(create);
             localactions.Add(open);
             localactions.Add(importStudyFromOldFda);
-           // localactions.Add(rename);
             localactions.Add(properties);
             localactions.Add(save);
             localactions.Add(transactions);
@@ -126,11 +99,7 @@ namespace ViewModel.Study
 
             localactions.Add(seperator);
 
-
             Actions = localactions;
-
-
-            //Save();
         }
 
         private void ViewTransactions(object arg1, EventArgs arg2)
@@ -140,19 +109,17 @@ namespace ViewModel.Study
             Navigate(tab );
         }
 
-
-
         #endregion
         #region Voids
         private void RenameStudy(object sender, EventArgs e)
         {
+            //todo: how to rename a study
             //RenameVM renameViewModel = new RenameVM(this, CloneElement);
             //renameViewModel.ParentGUID = this.GUID;
             //Navigate(renameViewModel, false, true, "Rename");
         }
         private void OpenStudyFromRecent(object sender, EventArgs e)
         {
-            //ClearStudy?.Invoke(sender, e);
             string filePath = ((RecentFileNamedAction)sender).FilePath;
             OpenStudyFromFilePath(System.IO.Path.GetFileNameWithoutExtension(filePath), filePath);
         }
@@ -183,19 +150,7 @@ namespace ViewModel.Study
                 }
                 idx++;
             }
-            //if(registryStudies.Count == 0)
-            //{
-
-            //}
-            //else
-            //{
-            //    for(int i = 0;i<registryStudies.Count;i++)
-            //    {
-                    
-            //    }
-            //}
         }
-
 
         private void UpdateRecentStudiesFile(string filepath)
         {
@@ -253,105 +208,9 @@ namespace ViewModel.Study
             }
         }
 
-
-
-        //private void otherTestingAction(object arg1, EventArgs arg2)
-        //{
-
-        //}
-        //private void TestingAction(object arg1, EventArgs arg2)
-        //{
-
-        //    double[] peakFlowData = new double[] { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000 };
-        //    FdaModel.Functions.FrequencyFunctions.LogPearsonIII zero = new FdaModel.Functions.FrequencyFunctions.LogPearsonIII(peakFlowData);
-
-        //    double[] x = new double[] { 0, 10000 };// 200, 500, 1200, 2000, 10000 };
-        //    double[] y = new double[] { 300, 13000 };// 300, 500, 1000, 2500, 10000 };
-        //    OrdinatesFunction one = new OrdinatesFunction(x, y, FdaModel.Functions.FunctionTypes.InflowOutflow);
-
-        //    double[] xs = new double[] { 100, 200, 500, 1000, 2000,12000 };
-        //    double[] ys = new double[] { 1, 2, 5, 10, 20 ,25};
-        //    FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction three = new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(xs, ys, FdaModel.Functions.FunctionTypes.Rating);
-
-        //    double[] xval = new double[] {  2, 3, 4, 5, 6, 7, 8, 9, 10,20 };
-        //    double[] yval = new double[] {  1, 2, 3, 4, 5, 6, 7, 8, 9,20 };
-        //    OrdinatesFunction five = new OrdinatesFunction(xval, yval, FdaModel.Functions.FunctionTypes.ExteriorInteriorStage);
-
-        //    double[] x3 = new double[] { .2f, .3f, .4f, .5f, .6f, .7f, .8f, .9f };
-        //    double[] y3 = new double[] { 2, 200, 300, 600, 1100, 2000, 3000, 4000 };
-        //    OrdinatesFunction six = new OrdinatesFunction(x3, y3, FdaModel.Functions.FunctionTypes.InteriorStageFrequency);
-
-        //    double[] x4 = new double[] { 5, 7, 8, 9, 10, 12, 15, 20,25 };
-        //    double[] y4 = new double[] { 600, 1100, 1300, 1800, 2000, 3000, 4000, 4200,10000 };
-        //    OrdinatesFunction seven = new OrdinatesFunction(x4, y4, FdaModel.Functions.FunctionTypes.InteriorStageDamage);
-
-        //    double[] x5 = new double[] { .2f, .3f, .4f, .5f, .6f, .7f, .8f, .9f };
-        //    double[] y5 = new double[] { 2, 200, 300, 600, 1100, 2000, 3000, 4000 };
-        //    OrdinatesFunction eight = new OrdinatesFunction(x5, y5, FdaModel.Functions.FunctionTypes.DamageFrequency);
-
-        //    double[] x62 = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        //    double[] y62 = new double[] { 0, .05f, .1f, .2f, .3f, .4f, .7f, .8f, .9f, .95f, 1 };
-        //    FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction nine = new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(x62, y62, FdaModel.Functions.FunctionTypes.LeveeFailure);
-
-        //    double[] x2 = new double[] { .2f, .3f, .4f, .5f, .6f, .7f, .8f, .9f };
-        //    double[] y2 = new double[] { 1, 2, 3, 4, 5, 6, 7, 8 };
-        //    FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction four = new FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction(x2, y2, FdaModel.Functions.FunctionTypes.ExteriorStageFrequency);
-
-
-
-
-        //    //4. Create Threshold
-        //    PerformanceThreshold threshold = new PerformanceThreshold(PerformanceThresholdTypes.InteriorStage, 8);
-
-
-        //    //5. Create computable object
-        //    List<FdaModel.Functions.BaseFunction> myListOfBaseFunctions = new List<FdaModel.Functions.BaseFunction>() { zero,one, three,five, seven };
-        //    //InputFunctions = myListOfBaseFunctions;
-
-        //    LateralStructure myLateralStruct = new LateralStructure(10);
-
-        //    Condition simpleTest = new Condition(2008, "russian river", myListOfBaseFunctions, threshold, myLateralStruct); //bool call Validate
-
-        //    Random randomNumberGenerator = new Random(0);
-
-        //    FdaModel.ComputationPoint.Outputs.Realization simpleTestResult = new FdaModel.ComputationPoint.Outputs.Realization(simpleTest, false, false); //bool oldCompute, bool performance only
-
-        //    simpleTestResult.Compute(randomNumberGenerator);
-
-        //    //foreach (FdaModel.Functions.BaseFunction func in simpleTestResult.Functions)
-        //    //{
-        //    //    if( func.FunctionType == FdaModel.Functions.FunctionTypes.ExteriorStageFrequency)
-        //    //    {
-        //    //        List<FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction> listOfOrdFuncs = new List<FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction>() { nine, (FdaModel.Functions.OrdinatesFunctions.OrdinatesFunction)func };
-
-        //    //        FdaViewModel.Plots.ParentUserControlVM vm = new Plots.ParentUserControlVM(listOfOrdFuncs);
-        //    //        //NewStudyVM vm = new NewStudyVM();
-        //    //        Navigate(vm, true, true);
-        //    //    }
-        //    //}
-            
-
-        //    //Output.LinkedPlotsVM vm2 = new Output.LinkedPlotsVM(simpleTestResult);
-        //    Plots.LinkedPlotsVM vm = new Plots.LinkedPlotsVM(simpleTestResult);
-
-        //    Navigate( vm, true, true);
-
-
-
-
-
-
-
-
-
-
-        //}
-
         private void SaveStudy(object arg1, EventArgs arg2)
         {
-            // Save();
             SaveTheOpenTabs?.Invoke(arg1, arg2);
-
         }
         private void CreateStudyFromWindow(object arg1, EventArgs arg2)
         {
@@ -359,19 +218,8 @@ namespace ViewModel.Study
             string header = "Create New Study";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "StudyElement");
             Navigate( tab, false,false);
-            //if (!vm.HasError)
-            //{
-            //    CreateStudyFromViewModel(vm);
-                
-            //}
-        }
-
-        public void CreateStudyFromOldFdaImportFile(ImportFromOldFdaVM vm)
-        {
-
         }
       
-
         public void CreateStudyFromViewModel(string studyName, string folderPathForNewStudy, string description)
         {
             Name = studyName;
@@ -380,13 +228,13 @@ namespace ViewModel.Study
             string newStudyPath = folderPathForNewStudy + "\\" + studyName + "\\" + studyName + ".sqlite";
             if (!System.IO.File.Exists(newStudyPath))
             {
-                Storage.Connection.Instance.ProjectFile = newStudyPath;
+                Connection.Instance.ProjectFile = newStudyPath;
                 UpdateRecentStudiesFile(newStudyPath);
 
             }
             else
             {
-                Storage.Connection.Instance.ProjectFile = folderPathForNewStudy + "\\" + studyName + "\\" + studyName + ".sqlite";
+                Connection.Instance.ProjectFile = folderPathForNewStudy + "\\" + studyName + "\\" + studyName + ".sqlite";
             }
             AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(studyName, Utilities.Transactions.TransactionEnum.CreateNew, "Initialize study"));
             foreach (NamedAction action in Actions)
@@ -416,13 +264,11 @@ namespace ViewModel.Study
             AddBaseElements();
             SaveDefaultStudyProperties(studyName, folderPathForNewStudy, description);
         }
-
         private void SaveDefaultStudyProperties(string studyName, string folderPathForNewStudy, string description)
         {
             StudyPropertiesElement elemToSave = new StudyPropertiesElement(studyName, folderPathForNewStudy, description);
             PersistenceFactory.GetStudyPropertiesPersistenceManager().SaveNew(elemToSave);
         }
-
         private void StudyProperties(object arg1, EventArgs arg2)
         {
             List<StudyPropertiesElement> studyProps = StudyCache.GetChildElementsOfType<StudyPropertiesElement>();
@@ -432,11 +278,7 @@ namespace ViewModel.Study
                 string header = "Study Properties";
                 DynamicTabVM tab = new DynamicTabVM(header, prop, "Properties");
                 Navigate(tab, true, true);
-
-            }
-
-            
-            
+            } 
         }
 
         public void OpenStudyFromFilePath(string name, string path)
@@ -447,7 +289,7 @@ namespace ViewModel.Study
 
             UpdateRecentStudiesFile(path);
             
-            Storage.Connection.Instance.ProjectFile = path;
+            Connection.Instance.ProjectFile = path;
 
             Name = name;
             UpdateTreeViewHeader(name);
@@ -457,7 +299,8 @@ namespace ViewModel.Study
             foreach (BaseFdaElement ele in Elements)
             {
                 if (ele is ParentElement)
-                {             
+                {         
+                    //todo: what is this?
                     //((ParentElement)ele).AddChildrenFromTable();
                 }
             }
@@ -486,7 +329,6 @@ namespace ViewModel.Study
             }
 
             StudyStatusBar.SaveStatus = "Study Loaded: " + DateTime.Now.ToString("G");
-
         }
 
         private void ImportStudyFromOldFda(object sender, EventArgs e)
@@ -506,19 +348,11 @@ namespace ViewModel.Study
 
         }
         
-        public override void AddValidationRules()
-        {
-
-            //throw new NotImplementedException();
-        }
-
-
-      
         public void AddBaseElements()
         {
-
-            Elements.Clear();//clear out any existing ones from an existing study
-            if (Storage.Connection.Instance.IsConnectionNull) return;
+            //clear out any existing ones from an existing study
+            Elements.Clear();
+            if (Connection.Instance.IsConnectionNull) return;
 
             //the tabs are in the fdastudyvm, i might need to throw an event here that is saying that a new study is opening and then remove all the tabs and 
             //deal with the map window.
@@ -531,7 +365,6 @@ namespace ViewModel.Study
                 StudyCache = cache;
                 PersistenceFactory.StudyCacheForSaving = cache;
 
-
                 TerrainOwnerElement t = new TerrainOwnerElement();
                 AddElement(t);
                 t.RenameMapTreeViewElement += RenameTreeViewElement;
@@ -541,7 +374,6 @@ namespace ViewModel.Study
                 ImpactAreaOwnerElement i = new ImpactAreaOwnerElement();
                 AddElement(i);
                 cache.ImpactAreaParent = i;
-
 
                 WaterSurfaceElevationOwnerElement wse = new WaterSurfaceElevationOwnerElement();
 
@@ -555,20 +387,13 @@ namespace ViewModel.Study
                 ft.AddBaseElements(cache);
                 AddElement(ft);
 
-
-
                 StageTransforms.StageTransformsOwnerElement s = new StageTransforms.StageTransformsOwnerElement();
                 s.AddBaseElements(cache);
                 AddElement(s);
 
-                //Hydraulics.FloodPlainDataOwnerElement h = new Hydraulics.FloodPlainDataOwnerElement(this);
-                //this.AddElement(h);
-
                 GeoTech.LateralStructuresOwnerElement ls = new GeoTech.LateralStructuresOwnerElement();
                 ls.AddBaseElements(cache);
                 AddElement(ls);
-
-
 
                 Inventory.InventoryOwnerElement inv = new Inventory.InventoryOwnerElement();
                 inv.AddBaseElements(cache);
@@ -617,98 +442,8 @@ namespace ViewModel.Study
 
         #endregion
 
-        ///// <summary>
-        ///// This stuff is getting a little wierd. It was done before the new "StudyCache" stuff. So it seems like i could just go straight to the cache
-        ///// and not have to get the nodes from the study tree, but i want them to be linked. I don't want the conditions tree to have its own nodes.
-        ///// when a conditions element gets updated (saved) then it actually gets rid of the old one and creates a new one. This breaks the connection to 
-        ///// the one in the conditions tree. So i need to call update on the conditions tree, but it was losing the "isExpanded" value, so i am adding
-        ///// this method inbetween.
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="args"></param>
-        //private void ConditionsElementWasUpdated(object sender, ElementUpdatedEventArgs args)
-        //{
-        //    UpdateTheConditionsTree(sender, args);
-        //    if(ConditionsTree.Count<= 0) { return; }
-        //    //get the current 
-        //    IASElement oldElem = (IASElement)args.OldElement;
-        //    if(oldElem.IsExpanded == true)
-        //    {
-        //        //i need to expand the new element that was added to the cond tree
-        //        string name = args.NewElement.Name;
-
-        //        foreach(IASElement elem in ConditionsTree[0].Elements)
-        //        {
-        //            if(elem.Name.Equals(name))
-        //            {
-        //                elem.IsExpanded = true;
-        //            }
-        //        }
-        //    }
-        //}
-
-
-        ///// <summary>
-        ///// The study tree tab shows in real time the state of the study.
-        ///// When you switch to the conditions tab this method will grab the state of the 
-        ///// study tree conditions and mirror that in the conditions tab.
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //public void UpdateTheConditionsTree(object sender, EventArgs e)
-        //{
-        //    //ObservableCollection<BaseFdaElement> conditions = new ObservableCollection<BaseFdaElement>();
-        //    //get all the current conditions
-        //    //ConditionsOwnerElement studyTreeCondOwnerElement = 
-        //    if (Elements.Count <= 0) { return; }
-        //    //{
-        //        //foreach (ParentElement owner in Elements)
-        //        //{
-        //        //    if (owner.GetType() == typeof(ConditionsOwnerElement))
-        //        //    {
-        //        //        conditions = owner.Elements;
-        //        //        studyTreeCondOwnerElement = (ConditionsOwnerElement)owner;
-        //        //    }
-        //        //}
-        //    //}
-        //    //else
-        //    //{
-        //    //    return;
-        //    //}
-        //    //List<ConditionsElement> conditions = StudyCache.GetChildElementsOfType<ConditionsElement>();
-        //    IASOwnerElement studyCondOwner = StudyCache.GetParentElementOfType<IASOwnerElement>();
-        //    IASTreeOwnerElement condTreeCondOwnerElement = new IASTreeOwnerElement(studyCondOwner);
-        //    condTreeCondOwnerElement.RequestNavigation += Navigate;
-        //    condTreeCondOwnerElement.UpdateConditionsTree += UpdateTheConditionsTree;
-
-        //    if (studyCondOwner.Elements.Count > 0)
-        //    {
-        //        foreach (IASElement elem in studyCondOwner.Elements)
-        //        {
-        //            //create a new conditions element and change the way it renames, removes, and edits. The parent node
-        //            //will then tell the study tree what to do
-        //            IASElement condElem = new IASElement(elem);
-        //            condElem.EditConditionsTreeElement += condTreeCondOwnerElement.EditCondition;
-        //            condElem.RemoveConditionsTreeElement += condTreeCondOwnerElement.RemoveElement;
-        //            condElem.RenameConditionsTreeElement += condTreeCondOwnerElement.RenameElement;
-        //            condElem.UpdateExpansionValueInTreeElement += condTreeCondOwnerElement.UpdateElementExpandedValue;
-        //            condTreeCondOwnerElement.AddElement(condElem, false);
-        //        }
-
-        //    }
-
-        //    //have to make it new to call the notified prop changed
-        //    ConditionsTree = new ObservableCollection<ParentElement>() { condTreeCondOwnerElement };
-        //}
-
-
-
         #endregion
         #region Functions
-  
         #endregion
-
-
-
     }
 }

@@ -13,7 +13,6 @@ namespace ViewModel.Saving
 {
     public abstract class SavingBase : BaseViewModel
     {
-        //private const int MAX_CHANGE_NUMBER = 4;
         /// <summary>
         /// The FDACache stores all the elements in memory. 
         /// </summary>
@@ -21,17 +20,13 @@ namespace ViewModel.Saving
         public abstract string TableName { get; }
         public const string ID_COL_NAME = "id";
         public const string NAME = "name";
-        //todo: move these out of here and put in the rating element persistence manager which is what is using it
         public const string ELEMENT_ID_COL_NAME = "elem_id";
-
         public const string LAST_EDIT_DATE = "last_edit_date";
-
         public const string DESCRIPTION = "description";
         public const string CURVE_DISTRIBUTION_TYPE = "curve_distribution_type";
         //todo: some elems use the curve type in their tables and some don't. Am i using the curve type for something? investigate?
         public const string CURVE_TYPE = "curve_type";
         public const string CURVE = "curve";
-
 
         public abstract string[] TableColumnNames { get; }
         public abstract Type[] TableColumnTypes { get; }
@@ -41,8 +36,8 @@ namespace ViewModel.Saving
 
         public static async void SaveElementOnBackGroundThread(ChildElement elementToSave, BaseFdaElement elementToChangeActionsAndHeader, Action<ChildElement> SavingAction, string savingMessage) 
         {
-            elementToChangeActionsAndHeader.CustomTreeViewHeader = new CustomHeaderVM(elementToChangeActionsAndHeader.Name, "", savingMessage, true);//need to create a method to just append the note and gif
-
+            //need to create a method to just append the note and gif
+            elementToChangeActionsAndHeader.CustomTreeViewHeader = new CustomHeaderVM(elementToChangeActionsAndHeader.Name, "", savingMessage, true);
             //clear the actions while it is saving
             List<NamedAction> actions = new List<NamedAction>();
             foreach (NamedAction act in elementToChangeActionsAndHeader.Actions)
@@ -53,17 +48,16 @@ namespace ViewModel.Saving
 
             await Task.Run(() =>
             {
-                if (!Storage.Connection.Instance.IsConnectionNull)
+                if (!Connection.Instance.IsConnectionNull)
                 {
-                    if (!Storage.Connection.Instance.IsOpen)
+                    if (!Connection.Instance.IsOpen)
                     {
-                        Storage.Connection.Instance.Open();
+                        Connection.Instance.Open();
                     }
                     System.Threading.Thread.Sleep(5000);
 
                     SavingAction(elementToSave);
-
-                    
+               
                     elementToChangeActionsAndHeader.CustomTreeViewHeader = new CustomHeaderVM(elementToChangeActionsAndHeader.Name);
 
                     //restore the actions
@@ -74,8 +68,8 @@ namespace ViewModel.Saving
 
         public static async void SaveElementsOnBackGroundThread(List<ChildElement> elementsToSave, BaseFdaElement elementToChangeActionsAndHeader, Action<ChildElement> SavingAction, string savingMessage)
         {
-            elementToChangeActionsAndHeader.CustomTreeViewHeader = new CustomHeaderVM(elementToChangeActionsAndHeader.Name, "", savingMessage, true);//need to create a method to just append the note and gif
-
+            //need to create a method to just append the note and gif
+            elementToChangeActionsAndHeader.CustomTreeViewHeader = new CustomHeaderVM(elementToChangeActionsAndHeader.Name, "", savingMessage, true);
             //clear the actions while it is saving
             List<NamedAction> actions = new List<NamedAction>();
             foreach (NamedAction act in elementToChangeActionsAndHeader.Actions)
@@ -86,19 +80,17 @@ namespace ViewModel.Saving
 
             await Task.Run(() =>
             {
-                if (!Storage.Connection.Instance.IsConnectionNull)
+                if (!Connection.Instance.IsConnectionNull)
                 {
-                    if (!Storage.Connection.Instance.IsOpen)
+                    if (!Connection.Instance.IsOpen)
                     {
-                        Storage.Connection.Instance.Open();
+                        Connection.Instance.Open();
                     }
-                    //System.Threading.Thread.Sleep(5000);
 
                     foreach (ChildElement elem in elementsToSave)
                     {
                         SavingAction(elem);
                     }
-
 
                     elementToChangeActionsAndHeader.CustomTreeViewHeader = new CustomHeaderVM(elementToChangeActionsAndHeader.Name);
 
@@ -111,12 +103,12 @@ namespace ViewModel.Saving
         public List<ChildElement> CreateElementsFromRows(string tableName, Func<object[], ChildElement> createElemsFromRowDataAction)
         {
             List<ChildElement> elems = new List<ChildElement>();
-            if (!Storage.Connection.Instance.IsOpen)
+            if (!Connection.Instance.IsOpen)
             {
-                Storage.Connection.Instance.Open();
+                Connection.Instance.Open();
             }
 
-            DataTable table = Storage.Connection.Instance.GetDataTable(tableName);
+            DataTable table = Connection.Instance.GetDataTable(tableName);
             foreach (DataRow row in table.Rows)
             {
                 elems.Add(createElemsFromRowDataAction(row.ItemArray));
@@ -143,7 +135,7 @@ namespace ViewModel.Saving
             return -1;
         }
 
-        private int GetElementIndexInTable(System.Data.DataTable tableView, string name, int nameIndexInTheRow)
+        private int GetElementIndexInTable(DataTable tableView, string name, int nameIndexInTheRow)
         {
             if (tableView != null)
             {
@@ -198,7 +190,6 @@ namespace ViewModel.Saving
 
         }
 
-
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave)
         {
             if (!Connection.Instance.IsOpen)
@@ -230,12 +221,12 @@ namespace ViewModel.Saving
 
             element.RemoveElementFromMapWindow(this, new EventArgs());
 
-            if (Storage.Connection.Instance.TableNames().Contains(tableName))
+            if (Connection.Instance.TableNames().Contains(tableName))
             {
-                DatabaseManager.DataTableView parentTableView = Storage.Connection.Instance.GetTable(tableName);
+                DatabaseManager.DataTableView parentTableView = Connection.Instance.GetTable(tableName);
                 if (parentTableView != null)
                 {
-                    DataTable dt = Storage.Connection.Instance.GetDataTable(tableName);
+                    DataTable dt = Connection.Instance.GetDataTable(tableName);
                     int parentTableIndex = GetElementIndexInTable(dt, element.Name, 1);
                     if (parentTableIndex != -1)
                     {
@@ -249,12 +240,7 @@ namespace ViewModel.Saving
 
         #endregion
 
-
-
-
         #region save existing
-
-       
 
         /// <summary>
         /// This sends a sql "update" command to the database.
@@ -265,9 +251,9 @@ namespace ViewModel.Saving
         /// <param name="values">The values that you want in the columns listed in "columns"</param>
         public void UpdateTableRow(string tableName, int primaryKey, string primaryKeyColName, string[] columns, object[] values)
         {
-            if (!Storage.Connection.Instance.IsOpen)
+            if (!Connection.Instance.IsOpen)
             {
-                Storage.Connection.Instance.Open();
+                Connection.Instance.Open();
             }
             //columns and values need to be corespond to each other, you don't have to update columns that don't need it
             StringBuilder sb = new StringBuilder("update ").Append(tableName).Append(" set ");
@@ -279,10 +265,9 @@ namespace ViewModel.Saving
             sb.Remove(sb.Length - 1, 1);
             sb.Append(" where ").Append(primaryKeyColName).Append(" = ").Append(primaryKey);
 
-            SQLiteCommand command = Storage.Connection.Instance.Reader.DbConnection.CreateCommand();
+            SQLiteCommand command = Connection.Instance.Reader.DbConnection.CreateCommand();
             command.CommandText = sb.ToString();
             command.ExecuteNonQuery();
-
         }
 
         /// <summary>
@@ -296,9 +281,9 @@ namespace ViewModel.Saving
         {
             //this sql query looks like this:
             //update occupancy_types set Name = 'codyistesting' where GroupID = 1 and OcctypeID = 1
-            if (!Storage.Connection.Instance.IsOpen)
+            if (!Connection.Instance.IsOpen)
             {
-                Storage.Connection.Instance.Open();
+                Connection.Instance.Open();
             }
             //columns and values need to be corespond to each other, you don't have to update columns that don't need it
             StringBuilder sb = new StringBuilder("update ").Append(tableName).Append(" set ");
@@ -316,19 +301,18 @@ namespace ViewModel.Saving
             //remove the last "and"
             sb.Remove(sb.Length - 4, 4);
 
-            SQLiteCommand command = Storage.Connection.Instance.Reader.DbConnection.CreateCommand();
+            SQLiteCommand command = Connection.Instance.Reader.DbConnection.CreateCommand();
             command.CommandText = sb.ToString();
             command.ExecuteNonQuery();
-
         }
 
         public void DeleteRowWithCompoundKey(string tableName, int[] primaryKeys, string[] primaryKeyColNames)
         {
             //this sql query looks like this:
             //delete from occupancy_types where GroupID = 1 and OcctypeID = 27
-            if (!Storage.Connection.Instance.IsOpen)
+            if (!Connection.Instance.IsOpen)
             {
-                Storage.Connection.Instance.Open();
+                Connection.Instance.Open();
             }
             StringBuilder sb = new StringBuilder("delete from ").Append(tableName).Append(" where ");
             for (int i = 0; i < primaryKeys.Length; i++)
@@ -338,38 +322,36 @@ namespace ViewModel.Saving
             //remove the last "and"
             sb.Remove(sb.Length - 4, 4);
 
-            SQLiteCommand command = Storage.Connection.Instance.Reader.DbConnection.CreateCommand();
+            SQLiteCommand command = Connection.Instance.Reader.DbConnection.CreateCommand();
             command.CommandText = sb.ToString();
             command.ExecuteNonQuery();
-
         }
 
         public void DeleteRowWithKey(string tableName, int key, string keyColName)
         {
             //this sql query looks like this:
             //delete from occupancy_types where GroupID = 1
-            if (!Storage.Connection.Instance.IsOpen)
+            if (!Connection.Instance.IsOpen)
             {
-                Storage.Connection.Instance.Open();
+                Connection.Instance.Open();
             }
             //if the table doesn't exist, then there is nothing to delete
-            if(Storage.Connection.Instance.GetTable(tableName) == null)
+            if(Connection.Instance.GetTable(tableName) == null)
             {
                 return;
             }
 
             StringBuilder sb = new StringBuilder("delete from ").Append(tableName).Append(" where ").Append(keyColName).Append(" = ").Append(key);
-            SQLiteCommand command = Storage.Connection.Instance.Reader.DbConnection.CreateCommand();
+            SQLiteCommand command = Connection.Instance.Reader.DbConnection.CreateCommand();
             command.CommandText = sb.ToString();
             command.ExecuteNonQuery();
-
         }
 
         public bool DidParentTableRowValuesChange(ChildElement element, object[] rowData, string oldName, string tableName)
         {
-            if (!Storage.Connection.Instance.IsOpen) { Storage.Connection.Instance.Open(); }
-            DatabaseManager.DataTableView tableView = Storage.Connection.Instance.GetTable(tableName);
-            DataTable dt = Storage.Connection.Instance.GetDataTable(tableName);
+            if (!Connection.Instance.IsOpen) { Connection.Instance.Open(); }
+            DatabaseManager.DataTableView tableView = Connection.Instance.GetTable(tableName);
+            DataTable dt = Connection.Instance.GetDataTable(tableName);
             int rowIndex = GetElementIndexInTable(dt, oldName, 1);
             //int rowIndex = GetElementIndexInTable(tableView, oldName, 1);
             if (rowIndex != -1)
@@ -409,11 +391,6 @@ namespace ViewModel.Saving
 
         #endregion
 
-
-
-
-
-
         #region UndoRedo
 
         abstract public ChildElement CreateElementFromRowData(object[] rowData);
@@ -448,7 +425,7 @@ namespace ViewModel.Saving
             }
             catch(Exception e)
             {
-                //some message? Name doesn't exist in the database.
+                //todo: some message? Name doesn't exist in the database.
                 retval = -1;
             }
             return retval;

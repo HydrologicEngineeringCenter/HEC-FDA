@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows;
 using ViewModel.Utilities;
 
@@ -10,25 +9,9 @@ namespace ViewModel.Study
         #region Notes
         #endregion
         #region Fields
-        //private StudyPropertiesElement _CurrentElement;
 
-        //public static readonly string TableName = "Study Properties";
-        //private  string _StudyName;
-        //private readonly string _StudyPath;
-        //private string _StudyDescription;
-        //private readonly string _CreatedBy;
-        //private readonly string _CreatedDate;
-        //private string _StudyNotes;
-        //private MonetaryUnitsEnum _MonetaryUnit;
-        //private UnitsSystemEnum _UnitSystem;
-        //private int _SurveyedYear;
-        //private int _UpdatedYear;
-        //private Single _UpdatedPriceIndex;
-        //private double _DiscountRate;
-        //private int _PeriodOfAnalysis;
         #endregion
         #region Properties
-
         public double DiscountRate { get; set; }
         public int PeriodOfAnalysis { get; set; }
         public string StudyName { get; set; }
@@ -41,46 +24,10 @@ namespace ViewModel.Study
         public UnitsSystemEnum UnitSystem { get; set; }
         public int SurveyedYear { get; set; }
         public int UpdatedYear { get; set; }
-
         public double UpdatedPriceIndex { get; set; }
         
         #endregion
-        #region Constructors
-        //public PropertiesVM():base(null)
-        //{
-        //    _StudyName = "Example Study Name";
-        //    _StudyPath = "C:\\Temp\\FDA";
-        //    _StudyDescription = "Example Study Description";
-        //    _CreatedBy = System.Environment.UserName;
-        //    _CreatedDate = DateTime.Now.ToShortDateString();
-        //    _StudyNotes = "These are my notes";
-        //    _MonetaryUnit = MonetaryUnitsEnum.Millions;
-        //    _UnitSystem = UnitsSystemEnum.English;
-        //    _SurveyedYear = DateTime.Now.Year - 1;
-        //    _UpdatedYear = DateTime.Now.Year;
-        //    _UpdatedPriceIndex = 0.01f;
-        //}
-        /// <summary>
-        /// This is called when creating a new study
-        /// </summary>
-        /// <param name="studyName"></param>
-        /// <param name="studyPath"></param>
-        //public PropertiesVM(string studyName, string studyPath, string studyDescription):base(null)
-        //{
-        //    _StudyName = studyName;
-        //    _StudyPath = studyPath;
-        //    _StudyDescription = studyDescription;
-        //    _CreatedBy = Environment.UserName;
-        //    _CreatedDate = DateTime.Now.ToShortDateString();
-        //    _StudyNotes = "";
-        //    _MonetaryUnit = MonetaryUnitsEnum.Millions;
-        //    _UnitSystem = UnitsSystemEnum.English;
-        //    _SurveyedYear = DateTime.Now.Year - 1;
-        //    _UpdatedYear = DateTime.Now.Year;
-        //    _UpdatedPriceIndex = 0.01f;
-        //    _DiscountRate = .025;
-        //    _PeriodOfAnalysis = 50;
-        //}
+        #region Constructors      
 
         public PropertiesVM(StudyPropertiesElement elem):base(elem, null)
         {
@@ -119,7 +66,6 @@ namespace ViewModel.Study
                 vr.AddErrorMessage("Period of Analysis must be between 0 and 500.");
             }
             return vr;
-
         }
         public override void Save()
         {

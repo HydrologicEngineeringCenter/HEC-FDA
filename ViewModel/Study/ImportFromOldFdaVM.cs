@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ViewModel.Study
 {
@@ -10,12 +7,11 @@ namespace ViewModel.Study
     {
         public event EventHandler Import;
         #region Fields
+        private StudyElement _StudyElement;
         private string _FolderPath;
         private string _StudyName;
-        private string _Description;
         #endregion
-        #region Properties
-        
+        #region Properties       
         public string ImportFilePath
         {
             get;set;
@@ -31,7 +27,6 @@ namespace ViewModel.Study
                     _FolderPath = value;
                     NotifyPropertyChanged();
                 }
-
             }
         }
         public string StudyName
@@ -44,26 +39,17 @@ namespace ViewModel.Study
                     _StudyName = value;
                     NotifyPropertyChanged();
                 }
-
             }
         }
 
-        private StudyElement _StudyElement;
         #endregion
         #region Constructors
-        //public NewStudyVM() : base(null)
-        //{
-        //    _Path = "C:\\temp\\FDA\\";
-        //    _StudyName = "Example";
-        //    _Description = "My description";
-        //}
 
         public ImportFromOldFdaVM(StudyElement studyElement) : base(null)
         {
             _StudyElement = studyElement;
             _FolderPath = "C:\\temp\\FDA\\";
             _StudyName = "Example";
-            _Description = "My description";
         }
         #endregion
         #region Voids
@@ -72,17 +58,13 @@ namespace ViewModel.Study
             AddRule(nameof(FolderPath), () => FolderPath != null, "Path cannot be null.");
             AddRule(nameof(FolderPath), () => FolderPath != "", "Path cannot be null.");
 
-            //path must be a valid path and not currently exist //possibly allow for creation of new directory here, but would require invalid character search.
-            //AddRule(nameof(Path), () => System.IO.Directory.Exists(Path), "Directory must exist");
             //path must not contain invalid characters
             AddRule(nameof(FolderPath), () =>
             {
                 foreach (Char c in System.IO.Path.GetInvalidPathChars())
                 {
-
                     if (FolderPath.Contains(c))
                     {
-
                         return false;
                     }
                 }
@@ -96,15 +78,12 @@ namespace ViewModel.Study
             //check if folder with that name already exists
             AddRule(nameof(StudyName), () =>
             {
-
                 if (System.IO.File.Exists(FolderPath + "\\" + StudyName + "\\" + StudyName + ".sqlite"))
                 {
                     return false;
                 }
                 return true;
             }, "A study with that name already exists.");
-
-            //notes can be null.
         }
 
         public override void Save()
@@ -119,7 +98,6 @@ namespace ViewModel.Study
             //import all the data from the import file
             Import?.Invoke(this, new EventArgs());
         }
-
 
         #endregion
         #region Functions

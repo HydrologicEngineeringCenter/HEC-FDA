@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using ViewModel.Utilities;
 
@@ -168,7 +164,6 @@ namespace ViewModel.Study
             return newElem;
         }
 
-
         public string WriteToXML()
         {
             XElement studyPropsElem = new XElement(STUDY_PROPERTIES);
@@ -190,6 +185,5 @@ namespace ViewModel.Study
         }
 
         #endregion
-
     }
 }

@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ViewModel.Saving.PersistenceManagers;
-using ViewModel.Watershed;
-using ViewModel.StageTransforms;
-using ViewModel.ImpactArea;
-using ViewModel.WaterSurfaceElevation;
-using ViewModel.FrequencyRelationships;
+﻿using ViewModel.AggregatedStageDamage;
 using ViewModel.AlternativeComparisonReport;
 using ViewModel.Alternatives;
-using ViewModel.ImpactAreaScenario;
-using ViewModel.AggregatedStageDamage;
-using ViewModel.Inventory;
-using ViewModel.GeoTech;
 using ViewModel.FlowTransforms;
+using ViewModel.FrequencyRelationships;
+using ViewModel.GeoTech;
+using ViewModel.ImpactArea;
+using ViewModel.ImpactAreaScenario;
+using ViewModel.Inventory;
+using ViewModel.Saving.PersistenceManagers;
+using ViewModel.StageTransforms;
 using ViewModel.Utilities;
+using ViewModel.Watershed;
+using ViewModel.WaterSurfaceElevation;
 
 namespace ViewModel.Saving
 {
@@ -39,7 +34,6 @@ namespace ViewModel.Saving
             
         }
         
-
         public static IElementManager GetElementManager(ChildElement element)
         {
             IElementManager manager = null;

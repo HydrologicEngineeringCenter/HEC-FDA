@@ -12,7 +12,6 @@ namespace ViewModel.AlternativeComparisonReport
 {
     public class CreateNewAlternativeComparisonReportVM : BaseEditorVM
     {
-        private AlternativeComparisonReportElement _CurrentElement;
         private bool _IsInEditMode;
 
         private int _SelectedIndex = 0;
@@ -38,7 +37,7 @@ namespace ViewModel.AlternativeComparisonReport
 
         public CreateNewAlternativeComparisonReportVM(AlternativeComparisonReportElement elem, EditorActionManager actionManager) : base(actionManager)
         {
-            _CurrentElement = elem;
+            CurrentElement = elem;
             _IsInEditMode = true;
             FillForm(elem);
             ListenToAlternativeEvents();
@@ -140,7 +139,7 @@ namespace ViewModel.AlternativeComparisonReport
         private FdaValidationResult IsValid()
         {
             FdaValidationResult vr = new FdaValidationResult();
-            string errorMsg = "'Without Project' and 'With Project' selections must be unique";
+            string errorMsg = "'Without Project' and 'With Project' selections must be unique.";
             //can't have the same without and with
             AlternativeElement alternative = SelectedWithoutProjectAlternative.Alternative;
             foreach(ComparisonRowItemVM row in Rows)
@@ -187,14 +186,14 @@ namespace ViewModel.AlternativeComparisonReport
 
             if (_IsInEditMode)
             {
-                PersistenceFactory.GetAlternativeCompReportManager().SaveExisting(_CurrentElement, elemToSave);
+                PersistenceFactory.GetAlternativeCompReportManager().SaveExisting(CurrentElement, elemToSave);
             }
             else
             {
                 PersistenceFactory.GetAlternativeCompReportManager().SaveNew(elemToSave);
                 _IsInEditMode = true;
             }
-            _CurrentElement = elemToSave;
+            CurrentElement = elemToSave;
 
         }
 

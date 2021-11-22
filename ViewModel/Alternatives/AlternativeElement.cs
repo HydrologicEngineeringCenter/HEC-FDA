@@ -156,13 +156,10 @@ namespace ViewModel.Alternatives
                     vr.AddErrorMessage("The selected impact area scenarios both have the same analysis year.");
                     vr.AddErrorMessage("Different years are required to run the calculation.");
                 }
-                //do they have compute results. -not sure if this one is needed.
             }
 
             return vr;
         }
-
-
 
         private AlternativeResult CreateAlternativeResult()
         {
@@ -210,7 +207,6 @@ namespace ViewModel.Alternatives
             return null;
         }
 
-        
         public string WriteToXML()
         {
             XElement altElement = new XElement(ALTERNATIVE);
@@ -225,6 +221,5 @@ namespace ViewModel.Alternatives
             }
             return altElement.ToString();
         }
-
     }
 }
