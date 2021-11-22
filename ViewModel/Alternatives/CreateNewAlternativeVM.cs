@@ -12,7 +12,9 @@ namespace ViewModel.Alternatives
 {
     public class CreateNewAlternativeVM : BaseEditorVM
     {
-
+        private bool _IsInEditMode;
+        public CustomObservableCollection<AlternativeRowItem> Rows { get; } = new CustomObservableCollection<AlternativeRowItem>();
+        
         #region Constructors
         /// <summary>
         /// Create new ctor
@@ -31,7 +33,7 @@ namespace ViewModel.Alternatives
         public CreateNewAlternativeVM(AlternativeElement elem, EditorActionManager actionManager) :base(elem, actionManager)
         {
             _IsInEditMode = true;
-            _CurrentElement = elem;
+            CurrentElement = elem;
             Name = elem.Name;
             Description = elem.Description;
             SelectSavedRows(elem.IASElementSets);
@@ -127,14 +129,14 @@ namespace ViewModel.Alternatives
                 AlternativeElement elemToSave = new AlternativeElement(Name, Description, GetSelectedIASSets());
                 if (_IsInEditMode)
                 {
-                    PersistenceFactory.GetAlternativeManager().SaveExisting(_CurrentElement, elemToSave);
+                    PersistenceFactory.GetAlternativeManager().SaveExisting(CurrentElement, elemToSave);
                 }
                 else
                 {
                     PersistenceFactory.GetAlternativeManager().SaveNew(elemToSave);
                     _IsInEditMode = true;
                 }
-                _CurrentElement = elemToSave;
+                CurrentElement = elemToSave;
             }
             else
             {

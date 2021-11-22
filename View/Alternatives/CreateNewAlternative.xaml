@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:View.Alternatives"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              mc:Ignorable="d" 
+             xmlns:utils="clr-namespace:View.Utilities"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
@@ -44,6 +45,6 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
-        <Utilities:SaveCloseControl Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5" />
+        <utils:SaveCloseControl Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5" />
     </Grid>
 </UserControl>
