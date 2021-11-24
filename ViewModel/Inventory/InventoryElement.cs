@@ -175,6 +175,13 @@ namespace ViewModel.Inventory
             LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(Storage.Connection.Instance.Reader);
             LifeSimGIS.PointFeatures pointFeatures = (LifeSimGIS.PointFeatures)gpr.ConvertToGisFeatures(_TableConstant + this.Name);
             LifeSimGIS.VectorFeatures features = pointFeatures;
+
+            //todo: for testing, delete me
+            LifeSimGIS.PointD[] pointDs = pointFeatures.GetPointsArray();
+
+            //end delete me
+
+
             //read from table.
             DatabaseManager.DataTableView dtv = Storage.Connection.Instance.Reader.GetTableManager(_TableConstant + this.Name);
             int[] geometryColumns = { 0, 1 };

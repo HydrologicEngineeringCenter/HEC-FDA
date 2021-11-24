@@ -67,6 +67,11 @@ namespace View
             {
                 ViewModel.Utilities.AddGriddedDataEventArgs gargs = args as ViewModel.Utilities.AddGriddedDataEventArgs;
                 
+                //todo: delete this, just for testing
+                
+                //gargs.Features.GridReader.SampleValues()
+                //end delete
+
                 OpenGLMapping.RasterFeatureNode rfn = new RasterFeatureNode(new MapRaster(gargs.Features, gargs.Ramp, args.FeatureName, mtv.MapWindow), args.FeatureName);
                 mtv.AddGisData(rfn, 0, true);
                 if (sender.GetType().Name == nameof(ViewModel.Watershed.TerrainElement))

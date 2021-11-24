@@ -42,8 +42,8 @@
                 <GroupBox Grid.Row="1" Grid.ColumnSpan="2" Header="Ground Elevation Source" Visibility="{Binding FirstFloorElevationIsChecked, Converter={StaticResource BoolToInverseVisConverter}}">
                     <Grid  Grid.ColumnSpan="2" Grid.Row="1" >
                         <StackPanel Orientation="Horizontal" Margin="5">
-                            <RadioButton Content="From Terrain File" IsChecked="True" Margin="0,0,10,0"/>
-                            <RadioButton Content="From Structures File" Margin="10,0,0,0"/>
+                            <RadioButton Content="From Terrain File" IsChecked="{Binding FromTerrainFile}" Margin="0,0,10,0"/>
+                            <RadioButton Content="From Structures File" IsChecked="True" Margin="10,0,0,0"/>
                         </StackPanel>
                     </Grid>
                 </GroupBox>

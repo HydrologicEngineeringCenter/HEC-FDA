@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ViewModel.Watershed;
 
 namespace ViewModel.Inventory
 {
@@ -45,7 +46,10 @@ namespace ViewModel.Inventory
             get { return _FirstFloorElevationIsChecked; }
             set { _FirstFloorElevationIsChecked = value; ElevationRadioChanged(); NotifyPropertyChanged(); }
         }
-        
+
+        public bool FromTerrainFile { get; set; }
+
+
         public CustomObservableCollection<DefineSIAttributesRowItem> RequiredRows { get; } = new CustomObservableCollection<DefineSIAttributesRowItem>();
         public CustomObservableCollection<DefineSIAttributesRowItem> OptionalRows { get; } = new CustomObservableCollection<DefineSIAttributesRowItem>();
 
@@ -227,6 +231,15 @@ namespace ViewModel.Inventory
 
         public bool Validate(ref string errorMessage)
         {
+            if (FromTerrainFile)
+            {
+                List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
+                if (terrainElements.Count > 0)
+                {
+                    GetElevationForStructures(terrainElements[0].Name);
+                }
+            }
+
             AreAllFirstFloorElevationsDefined();
             bool isValid = ValidateSIAttributes(ref errorMessage);
 
@@ -235,13 +248,41 @@ namespace ViewModel.Inventory
             return isValid;
         }
 
+        private void GetElevationForStructures(string terrainName)
+        {
+            string filePath = Storage.Connection.Instance.GetTerrainFile(terrainName);
+            if (filePath == null) { return; }
+            LifeSimGIS.RasterFeatures terrainRasterFeatures = new LifeSimGIS.RasterFeatures(filePath);
+
+
+
+            //LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(Storage.Connection.Instance.Reader);
+            //LifeSimGIS.PointFeatures pointFeatures = (LifeSimGIS.PointFeatures)gpr.ConvertToGisFeatures(_TableConstant + this.Name);
+            //LifeSimGIS.VectorFeatures features = pointFeatures;
+
+            //convert structs to features
+            
+            LifeSimGIS.ShapefileReader myReader = new LifeSimGIS.ShapefileReader(_Path);
+            LifeSimGIS.PointFeatures pointFeatures = (LifeSimGIS.PointFeatures)myReader.ToFeatures();
+
+
+
+
+            LifeSimGIS.PointD[] pointDs = pointFeatures.GetPointsArray();
+
+            //todo: i can pass in a default value for missing data
+            float[] elevations = terrainRasterFeatures.GridReader.SampleValues(pointDs);
+            int i = 0;
+
+        }
+
         private void AreAllFirstFloorElevationsDefined()
         {
             if (File.Exists(System.IO.Path.ChangeExtension(_Path, "dbf")))
             {
                 DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(Path, ".dbf"));
                 DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-
+                
                 object[] rows = dtv.GetColumn(_FirstFloorElevRow.SelectedValue);
                 foreach (object row in rows)
                 {
