@@ -91,6 +91,12 @@ namespace ViewModel.Storage
         {
             get { return _ProjectDirectory + "\\" + _TerrainFolderName; }
         }
+        /// <summary>
+        /// Returns the first file in the terrain directory with the name provided. If it can't
+        /// find it, it returns null;
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public string GetTerrainFile(string name)
         {
             string[] files = Directory.GetFiles(Connection.Instance.TerrainDirectory, name + ".*");

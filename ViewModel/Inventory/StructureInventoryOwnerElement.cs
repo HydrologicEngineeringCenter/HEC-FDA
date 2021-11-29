@@ -99,7 +99,7 @@ namespace ViewModel.Inventory
 
 
             ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(collectionOfPointFiles, actionManager, false);
-
+            vm.RequestNavigation += Navigate;
             
             string header = "Import Structure Inventory";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStructureInventory");

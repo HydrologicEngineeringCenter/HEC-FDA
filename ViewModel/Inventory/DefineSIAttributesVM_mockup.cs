@@ -1,11 +1,14 @@
 ﻿using DatabaseManager;
 using HEC.CS.Collections;
+using LifeSimGIS;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using ViewModel.Utilities;
 using ViewModel.Watershed;
 
 namespace ViewModel.Inventory
@@ -214,9 +217,10 @@ namespace ViewModel.Inventory
             }
             else
             {
+                //todo: one change extension has a period the other doesn't?
                 if (File.Exists(System.IO.Path.ChangeExtension(_Path, "dbf")))
                 {
-                    DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(Path, ".dbf"));
+                    DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(_Path, ".dbf"));
                     DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
                     object[] occtypesFromFile = dtv.GetColumn(_OccupancyTypeRow.SelectedItem);
@@ -229,51 +233,141 @@ namespace ViewModel.Inventory
             return uniqueList.Distinct().ToList();
         }
 
+        private object[] GetStructureNames()
+        {
+            object[] structureNames = null;
+            //todo: one change extension has a period the other doesn't?
+            if (File.Exists(System.IO.Path.ChangeExtension(_Path, "dbf")))
+            {
+                DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(_Path, ".dbf"));
+                DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+
+                structureNames = dtv.GetColumn(_StructureIDRow.SelectedValue);
+            }
+            return structureNames;
+        }
+
         public bool Validate(ref string errorMessage)
         {
+            int badElevationNumber = -9999;
+            bool isValid = true;
             if (FromTerrainFile)
             {
-                List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
-                if (terrainElements.Count > 0)
+                float[] elevs = GetStructureElevationsFromTerrainFile(ref errorMessage);
+                if(errorMessage != null && errorMessage.Length>0)
                 {
-                    GetElevationForStructures(terrainElements[0].Name);
+                    isValid = false;
+                }
+                if(elevs != null)
+                {
+                    List<int> idsWithNoElevation = new List<int>();
+                    for(int i = 0;i<elevs.Count();i++)
+                    {
+                        if(elevs[i] == badElevationNumber)
+                        {
+                            idsWithNoElevation.Add(i);
+                        }
+                    }
+                    object[] structureNames = GetStructureNames();
+                    //get list of structure names that don't have elevs
+                    List<string> missingElevStructNames = new List<string>();
+                    foreach(int i in idsWithNoElevation)
+                    {
+                        missingElevStructNames.Add(structureNames[i].ToString());
+                    }
+                    StructureMissingElevationEditorVM vm = new StructureMissingElevationEditorVM(missingElevStructNames);
+                    DynamicTabVM tab = new DynamicTabVM("Missing Elevations", vm, "missingElevations");
+                    Navigate(tab);
                 }
             }
 
             AreAllFirstFloorElevationsDefined();
-            bool isValid = ValidateSIAttributes(ref errorMessage);
+            isValid = ValidateSIAttributes(ref errorMessage);
 
             //are all elev values filled in?
 
             return isValid;
         }
 
-        private void GetElevationForStructures(string terrainName)
+        private RasterFeatures GetTerrainRasterFeatures(string filePath)
         {
-            string filePath = Storage.Connection.Instance.GetTerrainFile(terrainName);
-            if (filePath == null) { return; }
-            LifeSimGIS.RasterFeatures terrainRasterFeatures = new LifeSimGIS.RasterFeatures(filePath);
+            RasterFeatures terrainRasterFeatures = null;
+            try
+            {
+                terrainRasterFeatures = new RasterFeatures(filePath);
+                return terrainRasterFeatures;
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show(ex.Message, "Compute Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                //isValid = false;
+                //errorMessage = "Exception thrown when reading terrain file and converting to raster features.";
+                //return isValid;
+                return terrainRasterFeatures;
+            }
 
+        }
 
+        private PointD[] GetStructurePoints()
+        {
+            PointD[] pointDs = null;
+            try
+            {
+                ShapefileReader myReader = new ShapefileReader(_Path);
+                PointFeatures pointFeatures = (PointFeatures)myReader.ToFeatures();
+                pointDs = pointFeatures.GetPointsArray();
+            }
+            catch (Exception ex)
+            {
+                //isValid = false;
+                //errorMessage = "Exception thrown when reading structure file and converting to points.";
+                //return isValid;
+                //return pointDs;
+            }
+            return pointDs;
+        }
 
-            //LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(Storage.Connection.Instance.Reader);
-            //LifeSimGIS.PointFeatures pointFeatures = (LifeSimGIS.PointFeatures)gpr.ConvertToGisFeatures(_TableConstant + this.Name);
-            //LifeSimGIS.VectorFeatures features = pointFeatures;
-
-            //convert structs to features
-            
-            LifeSimGIS.ShapefileReader myReader = new LifeSimGIS.ShapefileReader(_Path);
-            LifeSimGIS.PointFeatures pointFeatures = (LifeSimGIS.PointFeatures)myReader.ToFeatures();
-
-
-
-
-            LifeSimGIS.PointD[] pointDs = pointFeatures.GetPointsArray();
-
-            //todo: i can pass in a default value for missing data
-            float[] elevations = terrainRasterFeatures.GridReader.SampleValues(pointDs);
-            int i = 0;
-
+        private float[] GetStructureElevationsFromTerrainFile(ref string errorMessage)
+        {
+            float[] elevations = null;
+            //todo: should i just do a try catch around the whole thing to reduce all the if statements?
+            bool isValid = true;
+            List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
+            if (terrainElements.Count > 0)
+            {
+                string firstTerrainName = terrainElements[0].Name;
+                string filePath = Storage.Connection.Instance.GetTerrainFile(firstTerrainName);
+                if (filePath != null)
+                {
+                    RasterFeatures terrainRasters = GetTerrainRasterFeatures(filePath);
+                    if (terrainRasters != null)
+                    {
+                        PointD[] structPoints = GetStructurePoints();
+                        if(structPoints != null)
+                        {
+                            //todo: i can pass in a default value for missing data
+                            elevations = terrainRasters.GridReader.SampleValues(structPoints);
+                        }
+                        else
+                        {
+                            errorMessage = "Exception thrown when reading structure file and converting to points.";
+                        }        
+                    }
+                    else
+                    {
+                        errorMessage = "Exception thrown when reading terrain file and converting to raster features.";
+                    }
+                }
+                else
+                {
+                    errorMessage = "A terrain file exists in the study but the file could not be found in the study directory with the name of: " + firstTerrainName;
+                }
+            }
+            else
+            {
+                errorMessage = "You have selected to get structure elevations using a terrain file. A terrain file does not exist in this study. Import one and try again.";
+            }
+            return elevations;
         }
 
         private void AreAllFirstFloorElevationsDefined()
@@ -282,12 +376,12 @@ namespace ViewModel.Inventory
             {
                 DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(Path, ".dbf"));
                 DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-                
+
                 object[] rows = dtv.GetColumn(_FirstFloorElevRow.SelectedValue);
                 foreach (object row in rows)
                 {
-                    if("".Equals(row.ToString()))
-                    { 
+                    if ("".Equals(row.ToString()))
+                    {
                         //blank entry
                         //todo;
                     }

@@ -85,6 +85,7 @@ namespace ViewModel.Inventory
             AvailablePaths = pointFiles;
 
             _DefineSIAttributes = new DefineSIAttributesVM_mockup();
+            _DefineSIAttributes.RequestNavigation += Navigate;
             _AttributeLinkingList = new AttributeLinkingListVM();
             CurrentViewIsEnabled = true;
             CurrentView = _DefineSIAttributes;
