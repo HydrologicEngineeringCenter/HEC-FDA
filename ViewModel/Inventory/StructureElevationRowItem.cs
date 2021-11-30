@@ -10,7 +10,7 @@ namespace ViewModel.Inventory
     {
 
         public string Name { get; set; }
-        public double Elevation { get; set; }
+        public double? Elevation { get; set; }
 
         public StructureElevationRowItem(string name)
         {

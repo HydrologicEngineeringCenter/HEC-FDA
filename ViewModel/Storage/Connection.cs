@@ -24,7 +24,7 @@ namespace ViewModel.Storage
         #endregion
         #region Properties
         public string ProjectFile
-        {
+        {   
             get { return _SqliteReader.DataBasePath; }
             set
             {
@@ -39,7 +39,6 @@ namespace ViewModel.Storage
                         SetUpForExistingStudy(value);
                     }
                     _SqliteReader = new DatabaseManager.SQLiteManager(value);
-                    _SqliteReader.EditsSaved += _SqliteReader_EditsSaved;
                 }
                 else
                 {
@@ -54,12 +53,16 @@ namespace ViewModel.Storage
                         
                     }                    
                     _SqliteReader = new DatabaseManager.SQLiteManager(value);
-                    _SqliteReader.EditsSaved += _SqliteReader_EditsSaved;
                 }
                 //add a logging target for the sqlite db.
                 FdaLogging.Initializer.Initialize(_SqliteReader);
                 //NLogDataBaseHelper.CreateDBTargets(value);
             }
+        }
+
+        private void _SqliteReader_EditsSaved1(string tableName, List<DatabaseManager.TableEdit> editsSaved)
+        {
+            throw new NotImplementedException();
         }
 
         private void SetUpForExistingStudy(string value)
@@ -153,14 +156,7 @@ namespace ViewModel.Storage
                 geoWriter.RenameFeatures(oldName, newName);
             }
         }
-        private void _SqliteReader_EditsSaved(string tableName)
-        {
-            //if (IsConnectionNull)
-            //{
-            //    FdaModel.Utilities.Messager.Logger.Instance.ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("Saving edits failed, the directory and file name have not been set",
-            //        FdaModel.Utilities.Messager.ErrorMessageEnum.Model | FdaModel.Utilities.Messager.ErrorMessageEnum.Minor));
-            //}
-        }
+        
         public void DeleteTable(string tableName)
         {
             _SqliteReader.DeleteTable(tableName);

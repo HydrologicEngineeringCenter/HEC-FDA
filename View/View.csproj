@@ -20,7 +20,7 @@
       <HintPath>..\lib\Consequences_Assist.dll</HintPath>
     </Reference>
     <Reference Include="DatabaseManager">
-      <HintPath>..\lib\DatabaseManager.dll</HintPath>
+      <HintPath>..\..\database-management\DataBase_Reader\bin\Debug\DatabaseManager.dll</HintPath>
     </Reference>  
 	  <Reference Include="FdaLogger">
       <HintPath>..\lib\FdaLogger.dll</HintPath>

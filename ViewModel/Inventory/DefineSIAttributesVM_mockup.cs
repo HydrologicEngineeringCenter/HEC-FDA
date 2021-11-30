@@ -280,8 +280,11 @@ namespace ViewModel.Inventory
                     Navigate(tab);
                 }
             }
+            else
+            {
+                AreAllFirstFloorElevationsDefined();
+            }
 
-            AreAllFirstFloorElevationsDefined();
             isValid = ValidateSIAttributes(ref errorMessage);
 
             //are all elev values filled in?
@@ -378,14 +381,15 @@ namespace ViewModel.Inventory
                 DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
                 object[] rows = dtv.GetColumn(_FirstFloorElevRow.SelectedValue);
-                foreach (object row in rows)
+                List<int> indexesWithNoValue = new List<int>();
+                for(int i = 0;i<rows.Length;i++)
                 {
-                    if ("".Equals(row.ToString()))
+                    if (!(rows[i] is double))
                     {
-                        //blank entry
-                        //todo;
+                        indexesWithNoValue.Add(i);
                     }
                 }
+                //todo: pop up the editor to edit these.
             }
         }
 
