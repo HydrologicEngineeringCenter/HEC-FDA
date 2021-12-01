@@ -91,6 +91,8 @@ namespace ViewModel.Inventory
             CurrentView = _DefineSIAttributes;
 
         }
+
+        
         //public ImportStructuresFromShapefileVM() : base()
         //{
         //    _DefineSIAttributes = new DefineSIAttributesVM();
@@ -184,29 +186,32 @@ namespace ViewModel.Inventory
 
             LifeSimGIS.ShapefileReader myReader = new LifeSimGIS.ShapefileReader(SelectedPath);
 
-            //create the data table that will get written out
-            DataTable newStructureTable = manager.CreateEmptyStructuresTable();
+            ////create the data table that will get written out
+            //DataTable newStructureTable = manager.CreateEmptyStructuresTable();
 
-            //this is the table from the shapefile that was passed in. We will need to map it to our columns defined above.
-            DataTableView attributeTableFromFile = myReader.GetAttributeTable();
-            if (attributeTableFromFile.ParentDatabase.DataBaseOpen == false)
-            {
-                attributeTableFromFile.ParentDatabase.Open();
-            }
+            ////this is the table from the shapefile that was passed in. We will need to map it to our columns defined above.
+            //DataTableView attributeTableFromFile = myReader.GetAttributeTable();
+            //if (attributeTableFromFile.ParentDatabase.DataBaseOpen == false)
+            //{
+            //    attributeTableFromFile.ParentDatabase.Open();
+            //}
 
-            for (int i = 0; i < attributeTableFromFile.NumberOfRows; i++)
-            {
-                //newStructureTable.Rows.Add(CreateRowForStructure(newStructureTable, attributeTableFromFile, i));
-            }
+            //for (int i = 0; i < attributeTableFromFile.NumberOfRows; i++)
+            //{
+            //    newStructureTable.Rows.Add(CreateRowForStructure(newStructureTable, attributeTableFromFile, i));
+            //}
 
-            attributeTableFromFile.ParentDatabase.Close();
+            //attributeTableFromFile.ParentDatabase.Close();
 
+            DataTable newStructureTable = _DefineSIAttributes.CreateStructureTable(SelectedPath);
             //this line will create the child table in the database.
             manager.Save(newStructureTable, Name, myReader.ToFeatures());
             //this line will add it to the parent table.
             Save();
             return true;
         }
+
+        
 
         public bool NextButtonClicked()
         {
@@ -262,10 +267,9 @@ namespace ViewModel.Inventory
 
 
 
-        //private DataRow CreateRowForStructure(DataTable newStructureTable, DataTableView attributeTableFromFile, int i)
+        //private DataRow CreateRowForStructure(DataRow dataRow, DataTableView attributeTableFromFile, int i)
         //{
-        //    //we are going to create a new row in our table that contains everything we need for a single structure.
-        //    DataRow dataRow = newStructureTable.NewRow();
+        //    //we are going to create a new row in our table that contains everything we need for a single structure.            
 
         //    AssignOcctypeNameAndOcctypeGroupNameToRow(dataRow, attributeTableFromFile, i);
 
@@ -288,10 +292,10 @@ namespace ViewModel.Inventory
 
 
 
-        private void AssignDamageCategoryToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
-        {
+        //private void AssignDamageCategoryToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
+        //{
 
-        }
+        //}
 
         //private void AssignModuleValueToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
         //{
@@ -450,6 +454,7 @@ namespace ViewModel.Inventory
 
         //    }
         //}
+
         //private void AssignFoundationHeight_FirstFloorElevation_GroundElevationToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
         //{
         //    if (_DefineSIAttributes.FirstFloorElevationIsChecked == true)

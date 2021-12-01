@@ -15,6 +15,13 @@ namespace ViewModel.Saving.PersistenceManagers
     public class StructureInventoryPersistenceManager : SavingBase, IElementManager
     {
         public static readonly string STRUCTURE_INVENTORY_TABLE_CONSTANT = "structure_inventory_";
+
+        public static readonly string STRUCTURE_ID = "StructureID";
+        public static readonly string BEG_DAM_DEPTH = "BeginningDamageDepth";
+        public static readonly string YEAR_IN_CONSTRUCTION = "YearInConstruction";
+        public static readonly string NOTES = "Notes";
+        public static readonly string OTHER = "Other";
+
         private const int ID_COL = 0;
         private const int NAME_COL = 1;
         private const int DESC_COL = 2;
@@ -95,10 +102,14 @@ namespace ViewModel.Saving.PersistenceManagers
         };
 
 
+
         #region utilities
         public DataTable CreateEmptyStructuresTable()
         {
             DataTable newStructureTable = new DataTable(Name);
+
+            newStructureTable.Columns.Add(STRUCTURE_ID, typeof(string));
+
             newStructureTable.Columns.Add(StructureInventoryBaseElement.fidField, typeof(string));
             newStructureTable.Columns.Add(StructureInventoryBaseElement.geomField, typeof(string));
 
@@ -116,8 +127,17 @@ namespace ViewModel.Saving.PersistenceManagers
             newStructureTable.Columns.Add(StructureInventoryBaseElement.YearField, typeof(string));
             newStructureTable.Columns.Add(StructureInventoryBaseElement.ModuleField, typeof(string));
 
+            newStructureTable.Columns.Add(BEG_DAM_DEPTH, typeof(string));
+            newStructureTable.Columns.Add(YEAR_IN_CONSTRUCTION, typeof(string));
+            newStructureTable.Columns.Add(NOTES, typeof(string));
+            newStructureTable.Columns.Add(OTHER, typeof(string));
+
+
             return newStructureTable;
         }
+
+        
+
 
         /// <summary>
         /// 

@@ -3,11 +3,13 @@ using HEC.CS.Collections;
 using LifeSimGIS;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using ViewModel.Saving.PersistenceManagers;
 using ViewModel.Utilities;
 using ViewModel.Watershed;
 
@@ -107,6 +109,11 @@ namespace ViewModel.Inventory
         private DefineSIAttributesRowItem _VehicleValueRow = new DefineSIAttributesRowItem("Vehicle Value:");
         private DefineSIAttributesRowItem _YearRow = new DefineSIAttributesRowItem("Year:");
         private DefineSIAttributesRowItem _ModuleRow = new DefineSIAttributesRowItem("Module:");
+        private DefineSIAttributesRowItem _BegDamDepthRow = new DefineSIAttributesRowItem("Beginning Damage Depth:");
+        private DefineSIAttributesRowItem _YearInConstructionRow = new DefineSIAttributesRowItem("Year In Construction:");
+        private DefineSIAttributesRowItem _NotesRow = new DefineSIAttributesRowItem("Notes/Metadata:");
+        private DefineSIAttributesRowItem _OtherRow = new DefineSIAttributesRowItem("Other:");
+
 
         private void LoadRows()
         {
@@ -126,6 +133,10 @@ namespace ViewModel.Inventory
             OptionalRows.Add(_VehicleValueRow);
             OptionalRows.Add(_YearRow);
             OptionalRows.Add(_ModuleRow);
+            OptionalRows.Add(_BegDamDepthRow);
+            OptionalRows.Add(_YearInConstructionRow);
+            OptionalRows.Add(_NotesRow);
+            OptionalRows.Add(_OtherRow);
         }
 
 
@@ -247,37 +258,81 @@ namespace ViewModel.Inventory
             return structureNames;
         }
 
+        private List<StructureMissingDataRowItem> GetMissingTerrainElevations(ref string errorMessage)
+        {
+            List<StructureMissingDataRowItem> missingDataRows = new List<StructureMissingDataRowItem>();
+            int badElevationNumber = -9999;
+
+            float[] elevs = GetStructureElevationsFromTerrainFile(ref errorMessage);
+            if (errorMessage != null && errorMessage.Length > 0)
+            {
+                //isValid = false;
+            }
+            if (elevs != null)
+            {
+                List<int> idsWithNoElevation = new List<int>();
+                for (int i = 0; i < elevs.Count(); i++)
+                {
+                    if (elevs[i] == badElevationNumber)
+                    {
+                        idsWithNoElevation.Add(i);
+                    }
+                }
+                object[] structureNames = GetStructureNames();
+                //get list of structure names that don't have elevs
+                foreach (int i in idsWithNoElevation)
+                {
+                    string uniqueName = structureNames[i].ToString();
+                    StructureMissingDataRowItem missingRow = new StructureMissingDataRowItem(uniqueName);
+                    missingRow.IsMissingTerrainElevation = true;
+                    missingDataRows.Add(missingRow);
+                }
+                //StructureMissingElevationEditorVM vm = new StructureMissingElevationEditorVM(missingElevStructNames);
+                //DynamicTabVM tab = new DynamicTabVM("Missing Elevations", vm, "missingElevations");
+                //Navigate(tab);
+            }
+            return missingDataRows;
+
+        }
+
         public bool Validate(ref string errorMessage)
         {
             int badElevationNumber = -9999;
             bool isValid = true;
-            if (FromTerrainFile)
+            if(!FirstFloorElevationIsChecked)
             {
-                float[] elevs = GetStructureElevationsFromTerrainFile(ref errorMessage);
-                if(errorMessage != null && errorMessage.Length>0)
+                if (FromTerrainFile)
                 {
-                    isValid = false;
-                }
-                if(elevs != null)
-                {
-                    List<int> idsWithNoElevation = new List<int>();
-                    for(int i = 0;i<elevs.Count();i++)
+                    float[] elevs = GetStructureElevationsFromTerrainFile(ref errorMessage);
+                    if (errorMessage != null && errorMessage.Length > 0)
                     {
-                        if(elevs[i] == badElevationNumber)
+                        isValid = false;
+                    }
+                    if (elevs != null)
+                    {
+                        List<int> idsWithNoElevation = new List<int>();
+                        for (int i = 0; i < elevs.Count(); i++)
                         {
-                            idsWithNoElevation.Add(i);
+                            if (elevs[i] == badElevationNumber)
+                            {
+                                idsWithNoElevation.Add(i);
+                            }
                         }
+                        object[] structureNames = GetStructureNames();
+                        //get list of structure names that don't have elevs
+                        List<string> missingElevStructNames = new List<string>();
+                        foreach (int i in idsWithNoElevation)
+                        {
+                            missingElevStructNames.Add(structureNames[i].ToString());
+                        }
+                        //StructureMissingElevationEditorVM vm = new StructureMissingElevationEditorVM(missingElevStructNames);
+                        //DynamicTabVM tab = new DynamicTabVM("Missing Elevations", vm, "missingElevations");
+                        //Navigate(tab);
                     }
-                    object[] structureNames = GetStructureNames();
-                    //get list of structure names that don't have elevs
-                    List<string> missingElevStructNames = new List<string>();
-                    foreach(int i in idsWithNoElevation)
-                    {
-                        missingElevStructNames.Add(structureNames[i].ToString());
-                    }
-                    StructureMissingElevationEditorVM vm = new StructureMissingElevationEditorVM(missingElevStructNames);
-                    DynamicTabVM tab = new DynamicTabVM("Missing Elevations", vm, "missingElevations");
-                    Navigate(tab);
+                }
+                else
+                {
+                    //todo: do i need to validate that the fd height and the grd elev are all filled in?
                 }
             }
             else
@@ -392,6 +447,26 @@ namespace ViewModel.Inventory
                 //todo: pop up the editor to edit these.
             }
         }
+        //private List<string> AreAllStructureValuesDefinedForRow(DefineSIAttributesRowItem row)
+        //{
+        //    if(row.UseDefault)
+        //    if (File.Exists(System.IO.Path.ChangeExtension(_Path, "dbf")))
+        //    {
+        //        DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(Path, ".dbf"));
+        //        DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+
+        //        object[] rows = dtv.GetColumn(_FirstFloorElevRow.SelectedValue);
+        //        List<int> indexesWithNoValue = new List<int>();
+        //        for (int i = 0; i < rows.Length; i++)
+        //        {
+        //            if (!(rows[i] is double))
+        //            {
+        //                indexesWithNoValue.Add(i);
+        //            }
+        //        }
+        //        //todo: pop up the editor to edit these.
+        //    }
+        //}
 
         private bool ValidateSIAttributes(ref string errorMessage)
         {
@@ -444,6 +519,87 @@ namespace ViewModel.Inventory
 
             return isValid;
         }
+
+
+        public DataTable CreateStructureTable(string shapefilePath)
+        {
+            StructureInventoryPersistenceManager manager = Saving.PersistenceFactory.GetStructureInventoryManager();
+            DataTable table = manager.CreateEmptyStructuresTable();
+
+            ShapefileReader myReader = new ShapefileReader(shapefilePath);
+            DataTableView attributeTableFromFile = myReader.GetAttributeTable();
+
+            //todo: what is this? is this necessary? 
+            if (attributeTableFromFile.ParentDatabase.DataBaseOpen == false)
+            {
+                attributeTableFromFile.ParentDatabase.Open();
+            }
+
+            for (int i = 0; i < attributeTableFromFile.NumberOfRows; i++)
+            {
+                DataRow row = table.NewRow();
+                AssignValuesToRow(row, attributeTableFromFile, i);
+                table.Rows.Add(row);
+            }
+
+            return table;
+        }
+
+        private void AssignValuesToRow(DataRow row,  DataTableView dataTableView, int i)
+        {
+            //todo: group name?
+
+            //id
+            row[StructureInventoryPersistenceManager.STRUCTURE_ID] = GetValueForRow(dataTableView, i, _StructureIDRow);
+
+            //occtypes and damcats
+            row[StructureInventoryBaseElement.OccupancyTypeField] = GetValueForRow(dataTableView, i, _OccupancyTypeRow);
+            row[StructureInventoryBaseElement.OccupancyTypeGroupName] = GetValueForRow(dataTableView, i, _OccupancyTypeRow);
+            row[StructureInventoryBaseElement.damCatField] = GetValueForRow(dataTableView, i, _OccupancyTypeRow);
+
+            //foundation and elevation
+            row[StructureInventoryBaseElement.FoundationHeightField] = GetValueForRow(dataTableView, i, _FoundationHeightRow);
+            row[StructureInventoryBaseElement.FirstFloorElevationField] = GetValueForRow(dataTableView, i, _FirstFloorElevRow);
+            row[StructureInventoryBaseElement.GroundElevationField] = GetValueForRow(dataTableView, i, _GroundElevRow);
+
+            //asset values
+            row[StructureInventoryBaseElement.StructureValueField] = GetValueForRow(dataTableView, i, _StructureValueRow);
+            row[StructureInventoryBaseElement.ContentValueField] = GetValueForRow(dataTableView, i, _ContentValueRow);
+            row[StructureInventoryBaseElement.OtherValueField] = GetValueForRow(dataTableView, i, _OtherValueRow);
+            row[StructureInventoryBaseElement.VehicleValueField] = GetValueForRow(dataTableView, i, _VehicleValueRow);
+
+            //optional fields
+            row[StructureInventoryBaseElement.YearField] = GetValueForRow(dataTableView, i, _YearRow);
+            row[StructureInventoryBaseElement.ModuleField] = GetValueForRow(dataTableView, i, _ModuleRow);
+            row[StructureInventoryPersistenceManager.BEG_DAM_DEPTH] = GetValueForRow(dataTableView, i, _OccupancyTypeRow);
+            row[StructureInventoryPersistenceManager.YEAR_IN_CONSTRUCTION] = GetValueForRow(dataTableView, i, _OccupancyTypeRow);
+            row[StructureInventoryPersistenceManager.NOTES] = GetValueForRow(dataTableView, i, _OccupancyTypeRow);
+            row[StructureInventoryPersistenceManager.OTHER] = GetValueForRow(dataTableView, i, _OccupancyTypeRow);
+
+        }
+
+        /// <summary>
+        /// This will either use the default value the user defined or will grab the correct value from the attribute table.
+        /// </summary>
+        /// <param name="attributeTableFromFile"></param>
+        /// <param name="i"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
+        private string GetValueForRow(DataTableView attributeTableFromFile, int i, DefineSIAttributesRowItem row)
+        {
+            string retval = null;
+            if (row.UseDefault)
+            {
+                retval = row.DefaultValue;
+            }
+            else
+            {
+                retval = attributeTableFromFile.GetCell(row.SelectedItem, i).ToString();
+            }
+            return retval;
+        }
+
+
 
         #endregion
 

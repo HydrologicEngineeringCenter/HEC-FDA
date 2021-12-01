@@ -22,13 +22,14 @@
         <DataGrid Grid.Row="1" ItemsSource="{Binding Rows}" AutoGenerateColumns="False" Margin="5">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Name}" Header="Name" IsReadOnly="True" Width="*"/>
-                <DataGridTemplateColumn Header="Elevation" Width="*">
+                <DataGridTextColumn Binding="{Binding Elevation}" Header="Elevation"  Width="*"/>
+                <!--<DataGridTemplateColumn Header="Elevation" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox Text="{Binding Elevation, TargetNullValue=''}" PreviewTextInput="OnPreviewTextInput" />
+                            <TextBox Text="{Binding Elevation}" PreviewTextInput="OnPreviewTextInput" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                </DataGridTemplateColumn>-->
             </DataGrid.Columns>
         </DataGrid>
         

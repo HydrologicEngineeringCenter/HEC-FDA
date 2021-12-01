@@ -10,18 +10,12 @@ namespace ViewModel.Inventory
     public class StructureMissingElevationEditorVM : BaseEditorVM
     {
 
-        public List<StructureElevationRowItem> Rows { get; } = new List<StructureElevationRowItem>();
+        public List<StructureMissingDataRowItem> Rows { get; } = new List<StructureMissingDataRowItem>();
 
 
-        public StructureMissingElevationEditorVM(List<string> structNames):base(null)
+        public StructureMissingElevationEditorVM(List<StructureMissingDataRowItem> rows):base(null)
         {
-
-            foreach(string name in structNames)
-            {
-                Rows.Add(new StructureElevationRowItem(name));
-            }
-
-            
+            Rows = rows;         
         }
 
         public override void AddValidationRules()

@@ -9,9 +9,9 @@
              d:DesignHeight="575" d:DesignWidth="600">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"  Name="SymbolsRow"></RowDefinition>
-            <RowDefinition Height="*" Name="ShapeDetailsRow"></RowDefinition>
-            <RowDefinition Height="Auto" Name="ApplyOKRow"></RowDefinition>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="5" Orientation="Vertical">
