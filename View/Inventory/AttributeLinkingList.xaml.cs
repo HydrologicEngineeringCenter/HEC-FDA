@@ -247,66 +247,66 @@ namespace View.Inventory
             //}
         }
 
-        private void AddOccTypeGroupWithCheckBox(ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement eleA, ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement eleB = null, bool checkFirstElement = false, bool checkSecondElement = false)
-        {
+        //private void AddOccTypeGroupWithCheckBox(ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement eleA, ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement eleB = null, bool checkFirstElement = false, bool checkSecondElement = false)
+        //{
 
-            RowDefinition newRow = new RowDefinition();
-            newRow.Height = new GridLength(23);
+        //    RowDefinition newRow = new RowDefinition();
+        //    newRow.Height = new GridLength(23);
 
-            if (eleB != null)
-            {
+        //    if (eleB != null)
+        //    {
                 
-                CheckBox cb = new CheckBox();
-                cb.Content = eleA.Name;
+        //        CheckBox cb = new CheckBox();
+        //        cb.Content = eleA.Name;
 
-                CheckBox cb2 = new CheckBox();
-                cb2.Content = eleB.Name;
+        //        CheckBox cb2 = new CheckBox();
+        //        cb2.Content = eleB.Name;
 
-                grd_OccTypeGroupNames.RowDefinitions.Add(newRow);
+        //        grd_OccTypeGroupNames.RowDefinitions.Add(newRow);
 
-                Grid.SetRow(cb, grd_OccTypeGroupNames.RowDefinitions.Count - 1);
-                Grid.SetColumn(cb, 0);
+        //        Grid.SetRow(cb, grd_OccTypeGroupNames.RowDefinitions.Count - 1);
+        //        Grid.SetColumn(cb, 0);
 
-                Grid.SetRow(cb2, grd_OccTypeGroupNames.RowDefinitions.Count - 1);
-                Grid.SetColumn(cb2, 1);
+        //        Grid.SetRow(cb2, grd_OccTypeGroupNames.RowDefinitions.Count - 1);
+        //        Grid.SetColumn(cb2, 1);
 
-                grd_OccTypeGroupNames.Children.Add(cb);
-                grd_OccTypeGroupNames.Children.Add(cb2);
+        //        grd_OccTypeGroupNames.Children.Add(cb);
+        //        grd_OccTypeGroupNames.Children.Add(cb2);
 
-                cb.Checked += Cb_Checked;
-                cb.Unchecked += Cb_Unchecked;
-                cb2.Checked += Cb_Checked;
-                cb2.Unchecked += Cb_Unchecked;
-                if (checkFirstElement == true)
-                {
-                    cb.IsChecked = true;
-                }
-                if (checkSecondElement == true)
-                {
-                    cb2.IsChecked = true;
+        //        cb.Checked += Cb_Checked;
+        //        cb.Unchecked += Cb_Unchecked;
+        //        cb2.Checked += Cb_Checked;
+        //        cb2.Unchecked += Cb_Unchecked;
+        //        if (checkFirstElement == true)
+        //        {
+        //            cb.IsChecked = true;
+        //        }
+        //        if (checkSecondElement == true)
+        //        {
+        //            cb2.IsChecked = true;
                     
-                }
-            }
-            else //there is one last one. Put it in column 0
-            {
-                CheckBox cb = new CheckBox();
-                cb.Content = eleA.Name;           
-                grd_OccTypeGroupNames.RowDefinitions.Add(newRow);
-                Grid.SetRow(cb, grd_OccTypeGroupNames.RowDefinitions.Count - 1);
-                Grid.SetColumn(cb, 0);               
-                grd_OccTypeGroupNames.Children.Add(cb);
-                cb.Checked += Cb_Checked;
-                cb.Unchecked += Cb_Unchecked;
-                if(checkFirstElement == true)
-                {
-                    cb.IsChecked = true;
-                }
+        //        }
+        //    }
+        //    else //there is one last one. Put it in column 0
+        //    {
+        //        CheckBox cb = new CheckBox();
+        //        cb.Content = eleA.Name;           
+        //        grd_OccTypeGroupNames.RowDefinitions.Add(newRow);
+        //        Grid.SetRow(cb, grd_OccTypeGroupNames.RowDefinitions.Count - 1);
+        //        Grid.SetColumn(cb, 0);               
+        //        grd_OccTypeGroupNames.Children.Add(cb);
+        //        cb.Checked += Cb_Checked;
+        //        cb.Unchecked += Cb_Unchecked;
+        //        if(checkFirstElement == true)
+        //        {
+        //            cb.IsChecked = true;
+        //        }
 
-            }
+        //    }
 
 
 
-        }
+        //}
 
         private void Cb_Unchecked(object sender, RoutedEventArgs e)
         {
@@ -401,6 +401,11 @@ namespace View.Inventory
         private void rad_UseDefaults_Checked(object sender, RoutedEventArgs e)
         {
             grp_DefaultOccTypeAssignments.Visibility = Visibility.Visible;
+
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
 
         }
     }

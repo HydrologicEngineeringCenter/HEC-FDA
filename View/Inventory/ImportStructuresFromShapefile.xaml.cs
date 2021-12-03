@@ -67,6 +67,7 @@ namespace View.Inventory
         {
             NextButton.Visibility = Visibility.Visible;
             NextButton.Content = "Next→";
+            PreviousButton.Visibility = Visibility.Collapsed;
             ViewModel.Inventory.ImportStructuresFromShapefileVM vm = (ViewModel.Inventory.ImportStructuresFromShapefileVM)this.DataContext;
             vm.PreviousButtonClicked();
             stack_ShapefilePath.Visibility = Visibility.Visible;

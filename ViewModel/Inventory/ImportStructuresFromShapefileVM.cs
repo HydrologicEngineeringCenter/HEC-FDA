@@ -8,6 +8,7 @@ using ViewModel.FlowTransforms;
 using ViewModel.Inventory.OccupancyTypes;
 using ViewModel.Saving.PersistenceManagers;
 using ViewModel.Utilities;
+using ViewModel.Watershed;
 
 namespace ViewModel.Inventory
 {
@@ -146,30 +147,99 @@ namespace ViewModel.Inventory
         }
 
         #region Next Button Click
-
-        private bool NextButtonClickedWhileDefiningSIAttributes()
+        private bool ValidateRules(ref string errorMessage)
         {
-            //i need validation before moving on to the next screen
-            string errorMessage = null;
-            if (ValidateSIAttributes(ref errorMessage) == false)
+            bool isValid = true;
+            Validate();
+            if (HasFatalError)
             {
-                MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK);
-                return false;
+                isValid = false;
+                errorMessage = Error;
+            }
+            return isValid;
+        }
+
+        private bool ValidateTerrainFileExists(ref string errorMessage)
+        {
+            bool isValid = true;
+            if (!_DefineSIAttributes.FirstFloorElevationIsChecked && _DefineSIAttributes.FromTerrainFile)
+            {
+                //then the user wants to use the terrain file to get elevations. Validate that the terrain file exists.
+                List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
+                if (terrainElements.Count == 0)
+                {
+                    errorMessage = "'From Terrain File' has been selected, but no terrain file exists in the study. Import a terrain file to use this option.";
+                    isValid = false;
+                }
             }
 
-            List<string> occtypes = _DefineSIAttributes.GetUniqueOccupancyTypes();          
+            return isValid;
+        }
 
-            //todo: what is this?
-            if (IsInEditMode == true)
+        private bool ValidateDefineSIAttributes(ref string errorMessage)
+        {            
+            //validate the property rules like "Name".
+            bool isValid = ValidateRules(ref errorMessage);
+            if (isValid)
             {
-                _AttributeLinkingList.IsInEditMode = true;
+                //validate that all the required selections have been made.
+                isValid = _DefineSIAttributes.ValidateSelectionsMade(ref errorMessage);
+                if(isValid)
+                {
+                    isValid = ValidateTerrainFileExists(ref errorMessage);
+                    if (isValid)
+                    {
+                        //if we are still valid, then check for missing data in the database file.
+                        StructuresMissingDataManager missingDataManager = _DefineSIAttributes.Validate(ref errorMessage);
+                        if (missingDataManager.GetRows().Count > 0)
+                        {
+                            StructureMissingElevationEditorVM vm = new StructureMissingElevationEditorVM(missingDataManager.GetRows(), _DefineSIAttributes.FirstFloorElevationIsChecked, _DefineSIAttributes.FromTerrainFile);
+                            DynamicTabVM tab = new DynamicTabVM("Missing Data", vm, "missingData");
+                            Navigate(tab);
+                            isValid = false;
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK);
+                }
             }
             else
             {
-                //todo: What? why am i passing in part of itself?
-                _AttributeLinkingList = new AttributeLinkingListVM(occtypes, StudyCache.GetChildElementsOfType<OccupancyTypesElement>(), _AttributeLinkingList.OccupancyTypesInStudy);
+                MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK);
             }
-            CurrentView = _AttributeLinkingList;
+
+            return isValid;
+        }
+
+        private bool NextButtonClickedWhileDefiningSIAttributes()
+        {
+            //Run validation before moving on to the next screen
+            string errorMessage = null;
+            bool isValid = ValidateDefineSIAttributes(ref errorMessage);
+
+            //if we are valid, then move onto the next page
+            if (isValid)
+            {
+                List<string> occtypes = _DefineSIAttributes.GetUniqueOccupancyTypes();
+
+                //todo: what is this?
+                if (IsInEditMode == true)
+                {
+                    _AttributeLinkingList.IsInEditMode = true;
+                }
+                else
+                {
+                    //todo: What? why am i passing in part of itself?
+                    _AttributeLinkingList = new AttributeLinkingListVM(occtypes, StudyCache.GetChildElementsOfType<OccupancyTypesElement>(), _AttributeLinkingList.OccupancyTypesInStudy);
+                }
+                CurrentView = _AttributeLinkingList;
+            }
             return true;
         }
 
@@ -211,7 +281,22 @@ namespace ViewModel.Inventory
             return true;
         }
 
-        
+        private void SwitchToAttributeLinkingList()
+        {
+            List<string> occtypes = _DefineSIAttributes.GetUniqueOccupancyTypes();
+
+            //todo: what is this?
+            if (IsInEditMode == true)
+            {
+                _AttributeLinkingList.IsInEditMode = true;
+            }
+            else
+            {
+                //todo: What? why am i passing in part of itself?
+                _AttributeLinkingList = new AttributeLinkingListVM(occtypes, StudyCache.GetChildElementsOfType<OccupancyTypesElement>(), _AttributeLinkingList.OccupancyTypesInStudy);
+            }
+            CurrentView = _AttributeLinkingList;
+        }
 
         public bool NextButtonClicked()
         {
@@ -219,11 +304,20 @@ namespace ViewModel.Inventory
             //return true;
             if (CurrentView is DefineSIAttributesVM_mockup)
             {
-                bool success = NextButtonClickedWhileDefiningSIAttributes();
-                if (!success)
+
+                //Run validation before moving on to the next screen
+                string errorMessage = null;
+                bool isValid = ValidateDefineSIAttributes(ref errorMessage);
+
+                //if we are valid, then move onto the next page
+                if (isValid)
                 {
-                    return false;
+                    SwitchToAttributeLinkingList();
                 }
+
+                //todo: the point of this boolean is so that the code behind and make some changes in the view. Ideally
+                //this would get changed to use binding and we could get rid of this boolean.
+                return isValid;
             }
             else if (CurrentView is AttributeLinkingListVM)
             {
@@ -509,24 +603,22 @@ namespace ViewModel.Inventory
         //    return true;
         //}
 
-        private bool ValidateSIAttributes(ref string errorMessage)
+        private bool ValidateDefineSIAttributesSelectionsMade(ref string errorMessage)
         {
             bool isValid = true;
             //this will run through all the "rules". I am not using the OK close control for the buttons so i need to handle
             //that on my own.
-            Validate();
-            if (HasFatalError)
+            
+
+            bool selectionsMade = _DefineSIAttributes.ValidateSelectionsMade(ref errorMessage);
+            if(!selectionsMade)
             {
                 isValid = false;
-                errorMessage = Error;
             }
 
-            if( !_DefineSIAttributes.Validate(ref errorMessage))
-            {
-                isValid = false;
-            }
-            return isValid;
-            
+           
+
+            return isValid;            
         }
 
 

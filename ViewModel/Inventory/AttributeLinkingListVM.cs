@@ -25,6 +25,9 @@ namespace ViewModel.Inventory
 
         #endregion
         #region Properties
+
+        public List<OccupancyTypesElement> OccTypeGroups { get; set; }
+
         public bool IsInEditMode { get; set; }
         public List<string> SelectedListOfOccTypeStrings
         {
@@ -82,6 +85,8 @@ namespace ViewModel.Inventory
             OccupancyTypesInFile = occTypesInFile;
             ListOfOccTypeGroups = occtypeGroups;
             OccupancyTypesInStudy = occtypeNamesFromStudy;
+
+            OccTypeGroups = occtypeGroups;
 
             LoadDictionary();
                 

@@ -11,20 +11,33 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="100" />
-                <RowDefinition Height="400" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <GroupBox Header="Load Occupancy Types from the Following Sets" Grid.Row="0" Margin="5">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
+                   
+                    <ItemsControl ItemsSource="{Binding OccTypeGroups}" Margin="20">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Content="{Binding Name}" Checked="CheckBox_Checked" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
 
-                    <Grid Name="grd_OccTypeGroupNames">
+                    <!--<Grid Name="grd_OccTypeGroupNames">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width=".5*"/>
                         <ColumnDefinition Width=".5*"/>
                     </Grid.ColumnDefinitions>
                         
-                    <!--<RadioButton Name="rad_UseDefaults" Content="Use Defaults" IsChecked="{Binding UseDefaultsIsChecked}" Checked="rad_UseDefaults_Checked" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                    <RadioButton Grid.Column="1" Name="rad_FromFile" Content="Import From File" IsChecked="{Binding FromFileIsChecked}" Checked="rad_FromFile_Checked" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" />-->
-                </Grid>
+                    --><!--<RadioButton Name="rad_UseDefaults" Content="Use Defaults" IsChecked="{Binding UseDefaultsIsChecked}" Checked="rad_UseDefaults_Checked" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <RadioButton Grid.Column="1" Name="rad_FromFile" Content="Import From File" IsChecked="{Binding FromFileIsChecked}" Checked="rad_FromFile_Checked" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" />--><!--
+                </Grid>-->
                 </ScrollViewer>
 
             </GroupBox>

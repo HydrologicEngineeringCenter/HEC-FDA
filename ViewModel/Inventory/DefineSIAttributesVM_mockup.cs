@@ -263,7 +263,8 @@ namespace ViewModel.Inventory
             List<StructureMissingDataRowItem> missingDataRows = new List<StructureMissingDataRowItem>();
             int badElevationNumber = -9999;
 
-            float[] elevs = GetStructureElevationsFromTerrainFile(ref errorMessage);
+            StructureElevationsFromTerrainFile elevsFromTerrainHelper = new StructureElevationsFromTerrainFile();
+            float[] elevs = elevsFromTerrainHelper.GetStructureElevationsFromTerrainFile(ref errorMessage);
             if (errorMessage != null && errorMessage.Length > 0)
             {
                 //isValid = false;
@@ -283,8 +284,7 @@ namespace ViewModel.Inventory
                 foreach (int i in idsWithNoElevation)
                 {
                     string uniqueName = structureNames[i].ToString();
-                    StructureMissingDataRowItem missingRow = new StructureMissingDataRowItem(uniqueName);
-                    missingRow.IsMissingTerrainElevation = true;
+                    StructureMissingDataRowItem missingRow = new StructureMissingDataRowItem(uniqueName, MissingDataType.TerrainElevation);
                     missingDataRows.Add(missingRow);
                 }
                 //StructureMissingElevationEditorVM vm = new StructureMissingElevationEditorVM(missingElevStructNames);
@@ -295,178 +295,89 @@ namespace ViewModel.Inventory
 
         }
 
-        public bool Validate(ref string errorMessage)
+        public bool ValidateSelectionsMade(ref string errorMessage)
         {
-            int badElevationNumber = -9999;
             bool isValid = true;
-            if(!FirstFloorElevationIsChecked)
+            isValid = ValidateSIAttributes(ref errorMessage); //todo: early exit?
+            //todo: if we are still valid then check the id's?
+            if (isValid)
             {
-                if (FromTerrainFile)
+                List<StructureMissingDataRowItem> missingDataRows = AreAllStructureValuesDefinedForRow(_StructureIDRow, MissingDataType.ID);
+                if (missingDataRows.Count > 0)
                 {
-                    float[] elevs = GetStructureElevationsFromTerrainFile(ref errorMessage);
-                    if (errorMessage != null && errorMessage.Length > 0)
-                    {
-                        isValid = false;
-                    }
-                    if (elevs != null)
-                    {
-                        List<int> idsWithNoElevation = new List<int>();
-                        for (int i = 0; i < elevs.Count(); i++)
-                        {
-                            if (elevs[i] == badElevationNumber)
-                            {
-                                idsWithNoElevation.Add(i);
-                            }
-                        }
-                        object[] structureNames = GetStructureNames();
-                        //get list of structure names that don't have elevs
-                        List<string> missingElevStructNames = new List<string>();
-                        foreach (int i in idsWithNoElevation)
-                        {
-                            missingElevStructNames.Add(structureNames[i].ToString());
-                        }
-                        //StructureMissingElevationEditorVM vm = new StructureMissingElevationEditorVM(missingElevStructNames);
-                        //DynamicTabVM tab = new DynamicTabVM("Missing Elevations", vm, "missingElevations");
-                        //Navigate(tab);
-                    }
-                }
-                else
-                {
-                    //todo: do i need to validate that the fd height and the grd elev are all filled in?
+                    isValid = false;
+                    errorMessage = "There are missing values in the selected structure id column.";
                 }
             }
-            else
-            {
-                AreAllFirstFloorElevationsDefined();
-            }
-
-            isValid = ValidateSIAttributes(ref errorMessage);
-
-            //are all elev values filled in?
-
             return isValid;
         }
 
-        private RasterFeatures GetTerrainRasterFeatures(string filePath)
+        public StructuresMissingDataManager Validate(ref string errorMessage)
         {
-            RasterFeatures terrainRasterFeatures = null;
-            try
-            {
-                terrainRasterFeatures = new RasterFeatures(filePath);
-                return terrainRasterFeatures;
-            }
-            catch (Exception ex)
-            {
-                //MessageBox.Show(ex.Message, "Compute Failed", MessageBoxButton.OK, MessageBoxImage.Error);
-                //isValid = false;
-                //errorMessage = "Exception thrown when reading terrain file and converting to raster features.";
-                //return isValid;
-                return terrainRasterFeatures;
-            }
+            int badElevationNumber = -9999;
 
-        }
+            StructuresMissingDataManager missingDataManager = new StructuresMissingDataManager();
 
-        private PointD[] GetStructurePoints()
-        {
-            PointD[] pointDs = null;
-            try
-            {
-                ShapefileReader myReader = new ShapefileReader(_Path);
-                PointFeatures pointFeatures = (PointFeatures)myReader.ToFeatures();
-                pointDs = pointFeatures.GetPointsArray();
-            }
-            catch (Exception ex)
-            {
-                //isValid = false;
-                //errorMessage = "Exception thrown when reading structure file and converting to points.";
-                //return isValid;
-                //return pointDs;
-            }
-            return pointDs;
-        }
+            //check structure id? what to do if it isn't all there or unique? Early exit?
+            missingDataManager.AddStructuresWithMissingData(AreAllStructureValuesDefinedForRow(_StructureIDRow, MissingDataType.ID));
 
-        private float[] GetStructureElevationsFromTerrainFile(ref string errorMessage)
-        {
-            float[] elevations = null;
-            //todo: should i just do a try catch around the whole thing to reduce all the if statements?
-            bool isValid = true;
-            List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
-            if (terrainElements.Count > 0)
+            if (!FirstFloorElevationIsChecked)
             {
-                string firstTerrainName = terrainElements[0].Name;
-                string filePath = Storage.Connection.Instance.GetTerrainFile(firstTerrainName);
-                if (filePath != null)
+                if (FromTerrainFile)
                 {
-                    RasterFeatures terrainRasters = GetTerrainRasterFeatures(filePath);
-                    if (terrainRasters != null)
-                    {
-                        PointD[] structPoints = GetStructurePoints();
-                        if(structPoints != null)
-                        {
-                            //todo: i can pass in a default value for missing data
-                            elevations = terrainRasters.GridReader.SampleValues(structPoints);
-                        }
-                        else
-                        {
-                            errorMessage = "Exception thrown when reading structure file and converting to points.";
-                        }        
-                    }
-                    else
-                    {
-                        errorMessage = "Exception thrown when reading terrain file and converting to raster features.";
-                    }
+                    List<StructureMissingDataRowItem> missingTerrainElevRows = GetMissingTerrainElevations(ref errorMessage);
+                    missingDataManager.AddStructuresWithMissingData(missingTerrainElevRows);
                 }
                 else
                 {
-                    errorMessage = "A terrain file exists in the study but the file could not be found in the study directory with the name of: " + firstTerrainName;
+                    //check foundation height and ground elevation
+                    missingDataManager.AddStructuresWithMissingData( AreAllStructureValuesDefinedForRow(_FoundationHeightRow, MissingDataType.FoundationHt));
+                    missingDataManager.AddStructuresWithMissingData(AreAllStructureValuesDefinedForRow(_GroundElevRow, MissingDataType.GroundElevation));
                 }
             }
             else
             {
-                errorMessage = "You have selected to get structure elevations using a terrain file. A terrain file does not exist in this study. Import one and try again.";
+                missingDataManager.AddStructuresWithMissingData(AreAllStructureValuesDefinedForRow(_FirstFloorElevRow, MissingDataType.FirstFloorElevation));
             }
-            return elevations;
+
+            //check occupancy type?
+            missingDataManager.AddStructuresWithMissingData(AreAllStructureValuesDefinedForRow(_OccupancyTypeRow, MissingDataType.Occtype));
+
+            //check structure value
+            missingDataManager.AddStructuresWithMissingData(AreAllStructureValuesDefinedForRow(_StructureValueRow, MissingDataType.StructureValue));
+
+
+            
+
+            return missingDataManager;
+
         }
 
-        private void AreAllFirstFloorElevationsDefined()
+        private List<StructureMissingDataRowItem> AreAllStructureValuesDefinedForRow(DefineSIAttributesRowItem row, MissingDataType missingType)
         {
-            if (File.Exists(System.IO.Path.ChangeExtension(_Path, "dbf")))
+            List<StructureMissingDataRowItem> missingDataRows = new List<StructureMissingDataRowItem>();
+            if (!row.UseDefault)
             {
-                DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(Path, ".dbf"));
-                DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-
-                object[] rows = dtv.GetColumn(_FirstFloorElevRow.SelectedValue);
-                List<int> indexesWithNoValue = new List<int>();
-                for(int i = 0;i<rows.Length;i++)
+                if (File.Exists(System.IO.Path.ChangeExtension(_Path, "dbf")))
                 {
-                    if (!(rows[i] is double))
+                    DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(Path, ".dbf"));
+                    DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+
+                    object[] rows = dtv.GetColumn(row.SelectedValue);
+                    for (int i = 0; i < rows.Length; i++)
                     {
-                        indexesWithNoValue.Add(i);
+                        if (rows[i] == DBNull.Value || rows[i].ToString() == "")
+                        {
+                            //todo: this will break if this isn't selected (default);
+                            string structId = dtv.GetCell(_StructureIDRow.SelectedItem, i).ToString();
+                            StructureMissingDataRowItem missingDataRow = new StructureMissingDataRowItem(structId, missingType);
+                            missingDataRows.Add(missingDataRow);
+                        }
                     }
                 }
-                //todo: pop up the editor to edit these.
             }
+            return missingDataRows;
         }
-        //private List<string> AreAllStructureValuesDefinedForRow(DefineSIAttributesRowItem row)
-        //{
-        //    if(row.UseDefault)
-        //    if (File.Exists(System.IO.Path.ChangeExtension(_Path, "dbf")))
-        //    {
-        //        DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(Path, ".dbf"));
-        //        DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-
-        //        object[] rows = dtv.GetColumn(_FirstFloorElevRow.SelectedValue);
-        //        List<int> indexesWithNoValue = new List<int>();
-        //        for (int i = 0; i < rows.Length; i++)
-        //        {
-        //            if (!(rows[i] is double))
-        //            {
-        //                indexesWithNoValue.Add(i);
-        //            }
-        //        }
-        //        //todo: pop up the editor to edit these.
-        //    }
-        //}
 
         private bool ValidateSIAttributes(ref string errorMessage)
         {
@@ -478,27 +389,27 @@ namespace ViewModel.Inventory
             if(!_StructureIDRow.IsValid())
             {
                 isValid = false;
-                errorMessage = "A Structure ID selection or default value is required.";
+                errorMessage = "A structure id selection or default value is required.";
             }
             else if(!_OccupancyTypeRow.IsValid())
             {
                 isValid = false;
-                errorMessage = "An Occupancy Type selection or default value is required.";
+                errorMessage = "An occupancy type selection or default value is required.";
             }
-            else if (!_OccupancyTypeRow.IsValid())
+            else if (!_StructureValueRow.IsValid())
             {
                 isValid = false;
-                errorMessage = "An Occupancy Type selection or default value is required.";
+                errorMessage = "A structure value selection or default value is required.";
             }
 
 
-            if (FirstFloorElevationIsChecked == true)
+            if (FirstFloorElevationIsChecked)
             {
                 //first floor elevation
                 if (!_FirstFloorElevRow.IsValid())
                 {
                     isValid = false;
-                    errorMessage = "A First Floor Elevation selection or default value is required.";
+                    errorMessage = "A first floor elevation selection or default value is required.";
                 }
             }
             else
@@ -507,12 +418,12 @@ namespace ViewModel.Inventory
                 if (!_FoundationHeightRow.IsValid())
                 {
                     isValid = false;
-                    errorMessage = "A Foundation Height selection or default value is required.";
+                    errorMessage = "A foundation height selection or default value is required.";
                 }
                 else if (!_GroundElevRow.IsValid())
                 {
                     isValid = false;
-                    errorMessage = "A Ground Elevation selection or default value is required.";
+                    errorMessage = "A ground elevation selection or default value is required.";
                 }
 
             }
