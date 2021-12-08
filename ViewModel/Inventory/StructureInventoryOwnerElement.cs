@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using ViewModel.Utilities;
+using ViewModel.Inventory.OccupancyTypes;
+using System.Windows;
 
 namespace ViewModel.Inventory
 {
@@ -80,13 +82,20 @@ namespace ViewModel.Inventory
         }
         public void AddStructureInventory(object arg1, EventArgs arg2)
         {
-            //ImportFromShapefileVM vm = new ImportFromShapefileVM();
-            // get any point shapefiles from the map window
-            //List<string> pointShapePaths = new List<string>();
-            //ShapefilePathsOfType(ref pointShapePaths, Utilities.VectorFeatureType.Point);
+            List<OccupancyTypesElement> occtypeElems = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
+            if (occtypeElems.Count == 0)
+            {
+                MessageBox.Show("Occupancy types must be imported before importing structure inventories.", "Missing Occtypes", MessageBoxButton.OK);
+                return;
+            }
 
-            //get the list of paths that exist in the map window
-            ObservableCollection<string> collectionOfPointFiles = new ObservableCollection<string>();
+                //ImportFromShapefileVM vm = new ImportFromShapefileVM();
+                // get any point shapefiles from the map window
+                //List<string> pointShapePaths = new List<string>();
+                //ShapefilePathsOfType(ref pointShapePaths, Utilities.VectorFeatureType.Point);
+
+                //get the list of paths that exist in the map window
+                ObservableCollection<string> collectionOfPointFiles = new ObservableCollection<string>();
             List<string> pointShapePaths = new List<string>();
             ShapefilePathsOfType(ref pointShapePaths, VectorFeatureType.Point);
             foreach (string path in pointShapePaths)

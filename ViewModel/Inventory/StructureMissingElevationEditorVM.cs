@@ -30,15 +30,16 @@ namespace ViewModel.Inventory
         {
             Rows = rows;
             UsingFirstFloorElevation = usingFirstFloorElevation;
-            ElevsFromTerrainFile = elevsFromTerrainFile;
-            if(!usingFirstFloorElevation && !elevsFromTerrainFile)
+            if (usingFirstFloorElevation)
             {
-                FromStructureFile = true;
+                ElevsFromTerrainFile = false;
             }
             else
             {
-                FromStructureFile = false;
+                ElevsFromTerrainFile = elevsFromTerrainFile;
             }
+            FromStructureFile = !usingFirstFloorElevation && !elevsFromTerrainFile;
+          
         }
 
         public override void AddValidationRules()

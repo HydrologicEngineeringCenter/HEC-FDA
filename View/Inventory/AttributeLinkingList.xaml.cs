@@ -21,17 +21,12 @@ namespace View.Inventory
     public partial class AttributeLinkingList : UserControl
     {
         //private Dictionary<string, string> _OcctypesDictionary = new Dictionary<string, string>();
-        private List<AttributeLinkingListRowItem> ListOfRows = new List<AttributeLinkingListRowItem>();
+        //private List<AttributeLinkingListRowItem> ListOfRows = new List<AttributeLinkingListRowItem>();
 
 
         public AttributeLinkingList()
         {
             InitializeComponent();
-
-
-         
-            
-
         }
         
         //private void AddRow(string columnOneText,List<Consequences_Assist.ComputableObjects.OccupancyType> columnTwoList)
@@ -74,68 +69,68 @@ namespace View.Inventory
 
         //}
 
-        private void AddNextRow(string columnOneText)
-        {
-            AttributeLinkingListRowItem ri = new AttributeLinkingListRowItem(columnOneText);
-            RowDefinition newRow = new RowDefinition();
+        //private void AddNextRow(string columnOneText)
+        //{
+        //    AttributeLinkingListRowItem ri = new AttributeLinkingListRowItem(columnOneText);
+        //    RowDefinition newRow = new RowDefinition();
 
-            newRow.Height = new GridLength(23);
+        //    newRow.Height = new GridLength(23);
 
-            LinkingGrid.RowDefinitions.Add(newRow);
-            Grid.SetRow(ri, LinkingGrid.RowDefinitions.Count - 1);
-            Grid.SetColumn(ri, 0);
-            Grid.SetColumnSpan(ri, 2);
-            LinkingGrid.Children.Add(ri);
+        //    LinkingGrid.RowDefinitions.Add(newRow);
+        //    Grid.SetRow(ri, LinkingGrid.RowDefinitions.Count - 1);
+        //    Grid.SetColumn(ri, 0);
+        //    Grid.SetColumnSpan(ri, 2);
+        //    LinkingGrid.Children.Add(ri);
 
-            ListOfRows.Add(ri);
+        //    ListOfRows.Add(ri);
 
             
 
-        }
+        //}
 
-        private void AddNextRowWithAlreadySelectedItem(string columnOneText, List<string> columnTwoList,string selectedValue)
-        {
-            AttributeLinkingListRowItem ri = new AttributeLinkingListRowItem(columnOneText);
-            ListOfRows.Add(ri);
+        //private void AddNextRowWithAlreadySelectedItem(string columnOneText, List<string> columnTwoList,string selectedValue)
+        //{
+        //    AttributeLinkingListRowItem ri = new AttributeLinkingListRowItem(columnOneText);
+        //    ListOfRows.Add(ri);
 
-            RowDefinition newRow = new RowDefinition();
+        //    RowDefinition newRow = new RowDefinition();
 
-            newRow.Height = new GridLength(23);
+        //    newRow.Height = new GridLength(23);
 
-            LinkingGrid.RowDefinitions.Add(newRow);
-            Grid.SetRow(ri, LinkingGrid.RowDefinitions.Count - 1);
-            Grid.SetColumn(ri, 0);
-            Grid.SetColumnSpan(ri, 2);
-            LinkingGrid.Children.Add(ri);
+        //    LinkingGrid.RowDefinitions.Add(newRow);
+        //    Grid.SetRow(ri, LinkingGrid.RowDefinitions.Count - 1);
+        //    Grid.SetColumn(ri, 0);
+        //    Grid.SetColumnSpan(ri, 2);
+        //    LinkingGrid.Children.Add(ri);
 
-            //automatically select the previously selected value
-            if(selectedValue == "" || selectedValue == null)
-            {
-                ri.SetSelectedIndex(-1);
-                return;
-            }
-            if (columnTwoList != null)
-            {
-                for (int i = 0; i < columnTwoList.Count; i++)
-                {
+        //    //automatically select the previously selected value
+        //    if(selectedValue == "" || selectedValue == null)
+        //    {
+        //        ri.SetSelectedIndex(-1);
+        //        return;
+        //    }
+        //    if (columnTwoList != null)
+        //    {
+        //        for (int i = 0; i < columnTwoList.Count; i++)
+        //        {
 
-                    if (columnTwoList[i].Equals(selectedValue))
-                    {
-                        ri.SetSelectedIndex(i);
-                        //_OcctypesDictionary.Add(ri.OldOccType, ri.NewOccType);
+        //            if (columnTwoList[i].Equals(selectedValue))
+        //            {
+        //                ri.SetSelectedIndex(i);
+        //                //_OcctypesDictionary.Add(ri.OldOccType, ri.NewOccType);
 
-                        break;
-                    }
-                }
-            }
+        //                break;
+        //            }
+        //        }
+        //    }
 
 
-        }
+        //}
         
       
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
+        //private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        //{
             //ViewModel.Inventory.AttributeLinkingListVM vm = (ViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
             //if (vm == null)
             //{
@@ -245,7 +240,7 @@ namespace View.Inventory
 
 
             //}
-        }
+        //}
 
         //private void AddOccTypeGroupWithCheckBox(ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement eleA, ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement eleB = null, bool checkFirstElement = false, bool checkSecondElement = false)
         //{
@@ -308,105 +303,102 @@ namespace View.Inventory
 
         //}
 
-        private void Cb_Unchecked(object sender, RoutedEventArgs e)
-        {
-            //remove this groups occtypes from the list of selected occtypes in the vm
+        //private void Cb_Unchecked(object sender, RoutedEventArgs e)
+        //{
+        //    //remove this groups occtypes from the list of selected occtypes in the vm
             
-            ViewModel.Inventory.AttributeLinkingListVM vm = (ViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
-            string groupName = ((CheckBox)sender).Content.ToString();
-            vm.RemoveSelectedGroupFromList(groupName);
+        //    ViewModel.Inventory.AttributeLinkingListVM vm = (ViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
+        //    string groupName = ((CheckBox)sender).Content.ToString();
+        //    vm.RemoveSelectedGroupFromList(groupName);
 
-            AutoSelectOccType();
-            ////automatically select the right choice if the strings match. this could probably be enhanced further
-            //foreach (AttributeLinkingListRowItem ri in ListOfRows)
-            //{
-            //    if (ri.cmb_NewOccType.SelectedIndex == -1)
-            //    {
-            //        foreach (ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement ele in ViewModel.Inventory.OccupancyTypes.OccupancyTypesOwnedElement.ListOfOccupancyTypesGroups)
-            //        {
-            //            if (ele.OccTypesGroupName == groupName)
-            //            {
-            //                //foreach(Consequences_Assist.ComputableObjects.OccupancyType ot in ele.ListOfOccupancyTypes)
-            //                for (int i = 0; i < ele.ListOfOccupancyTypes.Count; i++)
-            //                {
-            //                    if (ele.ListOfOccupancyTypes[i].Name == ri.OldOccType)
-            //                    {
-            //                        ri.cmb_NewOccType.SelectedIndex = i;
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-        }
+        //    AutoSelectOccType();
+        //    ////automatically select the right choice if the strings match. this could probably be enhanced further
+        //    //foreach (AttributeLinkingListRowItem ri in ListOfRows)
+        //    //{
+        //    //    if (ri.cmb_NewOccType.SelectedIndex == -1)
+        //    //    {
+        //    //        foreach (ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement ele in ViewModel.Inventory.OccupancyTypes.OccupancyTypesOwnedElement.ListOfOccupancyTypesGroups)
+        //    //        {
+        //    //            if (ele.OccTypesGroupName == groupName)
+        //    //            {
+        //    //                //foreach(Consequences_Assist.ComputableObjects.OccupancyType ot in ele.ListOfOccupancyTypes)
+        //    //                for (int i = 0; i < ele.ListOfOccupancyTypes.Count; i++)
+        //    //                {
+        //    //                    if (ele.ListOfOccupancyTypes[i].Name == ri.OldOccType)
+        //    //                    {
+        //    //                        ri.cmb_NewOccType.SelectedIndex = i;
+        //    //                    }
+        //    //                }
+        //    //            }
+        //    //        }
+        //    //    }
+        //    //}
+        //}
 
-        private void Cb_Checked(object sender, RoutedEventArgs e)
-        {
-            ViewModel.Inventory.AttributeLinkingListVM vm = (ViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
-            string groupName = ((CheckBox)sender).Content.ToString();
-            vm.AddSelectedGroupToList(groupName);
+        //private void Cb_Checked(object sender, RoutedEventArgs e)
+        //{
+        //    ViewModel.Inventory.AttributeLinkingListVM vm = (ViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
+        //    string groupName = ((CheckBox)sender).Content.ToString();
+        //    vm.AddSelectedGroupToList(groupName);
 
-            AutoSelectOccType();
+        //    AutoSelectOccType();
            
 
-        }
+        //}
 
-        private void AutoSelectOccType()
-        {
-            ViewModel.Inventory.AttributeLinkingListVM vm = (ViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
+        //private void AutoSelectOccType()
+        //{
+        //    ViewModel.Inventory.AttributeLinkingListVM vm = (ViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
 
-            string[] occtypeAndGroupName = new string[2];
-            //automatically select the right choice if the strings match. this could probably be enhanced further
-            foreach (AttributeLinkingListRowItem ri in ListOfRows)
-            {
-                if (ri.cmb_NewOccType.SelectedIndex == -1)
-                {
+        //    string[] occtypeAndGroupName = new string[2];
+        //    //automatically select the right choice if the strings match. this could probably be enhanced further
+        //    foreach (AttributeLinkingListRowItem ri in ListOfRows)
+        //    {
+        //        if (ri.cmb_NewOccType.SelectedIndex == -1)
+        //        {
 
-                    foreach(string s in vm.SelectedListOfOccTypeStrings)
-                    {
-                        occtypeAndGroupName = vm.ParseOccTypeNameAndGroupNameFromCombinedString(s);
-                        if(occtypeAndGroupName[0] == ri.OldOccType)
-                        {
-                            ri.cmb_NewOccType.SelectedItem = s;
-                        }
+        //            foreach(string s in vm.SelectedListOfOccTypeStrings)
+        //            {
+        //                occtypeAndGroupName = vm.ParseOccTypeNameAndGroupNameFromCombinedString(s);
+        //                if(occtypeAndGroupName[0] == ri.OldOccType)
+        //                {
+        //                    ri.cmb_NewOccType.SelectedItem = s;
+        //                }
 
-                    }
+        //            }
 
-                    //foreach (ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement ele in ViewModel.Inventory.OccupancyTypes.OccupancyTypesOwnedElement.ListOfOccupancyTypesGroups)
-                    //{
-                    //    if (ele.OccTypesGroupName == groupName)
-                    //    {
-                    //        //foreach(Consequences_Assist.ComputableObjects.OccupancyType ot in ele.ListOfOccupancyTypes)
-                    //        for (int i = 0; i < ele.ListOfOccupancyTypes.Count; i++)
-                    //        {
-                    //            if (ele.ListOfOccupancyTypes[i].Name == ri.OldOccType)
-                    //            {
-                    //                ri.cmb_NewOccType.SelectedIndex = i + 1; // +1 becuase i have added a blank space at spot 0
-                    //            }
-                    //        }
-                    //    }
-                    //}
-                }
-            }
+        //            //foreach (ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement ele in ViewModel.Inventory.OccupancyTypes.OccupancyTypesOwnedElement.ListOfOccupancyTypesGroups)
+        //            //{
+        //            //    if (ele.OccTypesGroupName == groupName)
+        //            //    {
+        //            //        //foreach(Consequences_Assist.ComputableObjects.OccupancyType ot in ele.ListOfOccupancyTypes)
+        //            //        for (int i = 0; i < ele.ListOfOccupancyTypes.Count; i++)
+        //            //        {
+        //            //            if (ele.ListOfOccupancyTypes[i].Name == ri.OldOccType)
+        //            //            {
+        //            //                ri.cmb_NewOccType.SelectedIndex = i + 1; // +1 becuase i have added a blank space at spot 0
+        //            //            }
+        //            //        }
+        //            //    }
+        //            //}
+        //        }
+        //    }
 
             
-        }
+        //}
 
-        private void rad_FromFile_Checked(object sender, RoutedEventArgs e)
-        {
-            grp_DefaultOccTypeAssignments.Visibility = Visibility.Collapsed;
+        //private void rad_FromFile_Checked(object sender, RoutedEventArgs e)
+        //{
+        //    grp_DefaultOccTypeAssignments.Visibility = Visibility.Collapsed;
 
-        }
+        //}
 
-        private void rad_UseDefaults_Checked(object sender, RoutedEventArgs e)
-        {
-            grp_DefaultOccTypeAssignments.Visibility = Visibility.Visible;
+        //private void rad_UseDefaults_Checked(object sender, RoutedEventArgs e)
+        //{
+        //    grp_DefaultOccTypeAssignments.Visibility = Visibility.Visible;
 
-        }
+        //}
 
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-
-        }
+        
     }
 }

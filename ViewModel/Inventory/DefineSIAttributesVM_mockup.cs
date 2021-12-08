@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using ViewModel.Inventory.OccupancyTypes;
 using ViewModel.Saving.PersistenceManagers;
 using ViewModel.Utilities;
 using ViewModel.Watershed;
@@ -26,7 +27,8 @@ namespace ViewModel.Inventory
         //private ObservableCollection<string> _AvailablePaths = new ObservableCollection<string>();
         private string _Path;
 
-        private bool _FirstFloorElevationIsChecked = true;
+        private bool _FirstFloorElevationIsSelected = true;
+        private bool _FromTerrainFileIsSelected;
 
 
         #endregion
@@ -46,20 +48,26 @@ namespace ViewModel.Inventory
             get { return _Path; }
             set { _Path = value; PathChanged(); }
         }
-        public bool FirstFloorElevationIsChecked
+        public bool FirstFloorElevationIsSelected
         {
-            get { return _FirstFloorElevationIsChecked; }
-            set { _FirstFloorElevationIsChecked = value; ElevationRadioChanged(); NotifyPropertyChanged(); }
+            get { return _FirstFloorElevationIsSelected; }
+            set { _FirstFloorElevationIsSelected = value; ElevationRadioChanged(); NotifyPropertyChanged(); }
         }
 
-        public bool FromTerrainFile { get; set; }
+        public bool FromTerrainFileIsSelected
+        {
+            get { return _FromTerrainFileIsSelected; }
+            set { _FromTerrainFileIsSelected = value; FromTerrainFileSelectionChanged(); }
+        }
 
+        
 
         public CustomObservableCollection<DefineSIAttributesRowItem> RequiredRows { get; } = new CustomObservableCollection<DefineSIAttributesRowItem>();
         public CustomObservableCollection<DefineSIAttributesRowItem> OptionalRows { get; } = new CustomObservableCollection<DefineSIAttributesRowItem>();
 
         public List<DefineSIAttributesRowItem> FirstFloorElevationRows { get; } = new List<DefineSIAttributesRowItem>();
         public List<DefineSIAttributesRowItem> GroundElevationRows { get; } = new List<DefineSIAttributesRowItem>();
+        public List<DefineSIAttributesRowItem> TerrainElevationRows { get; } = new List<DefineSIAttributesRowItem>();
 
 
         #endregion
@@ -68,29 +76,34 @@ namespace ViewModel.Inventory
         {
             LoadRows();
             RequiredRows.AddRange(FirstFloorElevationRows);
+            FirstFloorElevationIsSelected = true;
             //AvailablePaths = availablePointFiles;
         }
 
-
-        //public DefineSIAttributesVM(List<string> stringColumnNames, List<string> numericColumnNames) : base()
-        //{
-        //    StringColumnNames = stringColumnNames;
-        //    NumericColumnNames = numericColumnNames;
-        //}
-
         #endregion
         #region Voids
-
+        private void FromTerrainFileSelectionChanged()
+        {
+            RequiredRows.Clear();
+            if (FromTerrainFileIsSelected)
+            {
+                RequiredRows.AddRange(TerrainElevationRows);
+            }
+            else
+            {
+                RequiredRows.AddRange(GroundElevationRows);
+            }
+        }
         private void ElevationRadioChanged()
         {
-                RequiredRows.Clear();
-            if(_FirstFloorElevationIsChecked)
+            RequiredRows.Clear();
+            if(_FirstFloorElevationIsSelected)
             {
                 RequiredRows.AddRange(FirstFloorElevationRows);
             }
             else
             {
-                RequiredRows.AddRange(GroundElevationRows);
+                FromTerrainFileSelectionChanged();
             }
 
         }
@@ -128,6 +141,11 @@ namespace ViewModel.Inventory
             GroundElevationRows.Add(_GroundElevRow);
             GroundElevationRows.Add(_StructureValueRow);
 
+            TerrainElevationRows.Add(_StructureIDRow);
+            TerrainElevationRows.Add(_OccupancyTypeRow);
+            TerrainElevationRows.Add(_FoundationHeightRow);
+            TerrainElevationRows.Add(_StructureValueRow);
+
             OptionalRows.Add(_ContentValueRow);
             OptionalRows.Add(_OtherValueRow);
             OptionalRows.Add(_VehicleValueRow);
@@ -148,70 +166,57 @@ namespace ViewModel.Inventory
 
         private void UpdateRows()
         {
-            List<string> stringColumnNames = GetStringColumnNames();
-            List<string> numericColumnNames = GetNumericColumnNames();
-            List<string> allColumnNames = new List<string>(stringColumnNames);         
-            allColumnNames.AddRange(numericColumnNames);
+            List<string> allColumnNames = GetColumnNames();      
 
             //required rows
             _StructureIDRow.Items.Clear();
             _StructureIDRow.Items.AddRange(allColumnNames);
             _OccupancyTypeRow.Items.Clear();
-            _OccupancyTypeRow.Items.AddRange(stringColumnNames);
+            _OccupancyTypeRow.Items.AddRange(allColumnNames);
             _FirstFloorElevRow.Items.Clear();
-            _FirstFloorElevRow.Items.AddRange(numericColumnNames);
+            _FirstFloorElevRow.Items.AddRange(allColumnNames);
             _StructureValueRow.Items.Clear();
-            _StructureValueRow.Items.AddRange(numericColumnNames);
+            _StructureValueRow.Items.AddRange(allColumnNames);
             _FoundationHeightRow.Items.Clear();
-            _FoundationHeightRow.Items.AddRange(numericColumnNames);
+            _FoundationHeightRow.Items.AddRange(allColumnNames);
             _GroundElevRow.Items.Clear();
-            _GroundElevRow.Items.AddRange(numericColumnNames);
+            _GroundElevRow.Items.AddRange(allColumnNames);
 
             //optional rows
             _ContentValueRow.Items.Clear();
-            _ContentValueRow.Items.AddRange(numericColumnNames);
+            _ContentValueRow.Items.AddRange(allColumnNames);
             _OtherValueRow.Items.Clear();
-            _OtherValueRow.Items.AddRange(numericColumnNames);
+            _OtherValueRow.Items.AddRange(allColumnNames);
             _VehicleValueRow.Items.Clear();
-            _VehicleValueRow.Items.AddRange(numericColumnNames);
+            _VehicleValueRow.Items.AddRange(allColumnNames);
             _YearRow.Items.Clear();
-            _YearRow.Items.AddRange(numericColumnNames);
+            _YearRow.Items.AddRange(allColumnNames);
             _ModuleRow.Items.Clear();
-            _ModuleRow.Items.AddRange(stringColumnNames);
+            _ModuleRow.Items.AddRange(allColumnNames);
         }
 
-        private List<string> GetNumericColumnNames()
+        //private List<string> GetNumericColumnNames()
+        //{
+        //    DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(_Path, ".dbf"));
+        //    DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+
+        //    List<string> numericColumnNames = new List<string>();
+
+        //    for (int i = 0; i < dtv.ColumnNames.Count(); i++)
+        //    {
+        //        if (dtv.ColumnTypes[i] != typeof(string))
+        //        {
+        //            numericColumnNames.Add(dtv.ColumnNames[i]);
+        //        }
+        //    }
+        //    return numericColumnNames;
+        //}
+
+        private List<string> GetColumnNames()
         {
             DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(_Path, ".dbf"));
             DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-
-            List<string> numericColumnNames = new List<string>();
-
-            for (int i = 0; i < dtv.ColumnNames.Count(); i++)
-            {
-                if (dtv.ColumnTypes[i] != typeof(string))
-                {
-                    numericColumnNames.Add(dtv.ColumnNames[i]);
-                }
-            }
-            return numericColumnNames;
-        }
-
-        private List<string> GetStringColumnNames()
-        {
-            DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(_Path, ".dbf"));
-            DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
-
-            List<string> stringColumnNames = new List<string>();
-
-            for (int i = 0; i < dtv.ColumnNames.Count(); i++)
-            {
-                if (dtv.ColumnTypes[i] == typeof(string))
-                {
-                    stringColumnNames.Add(dtv.ColumnNames[i]);
-                }
-            }
-            return stringColumnNames;
+            return dtv.ColumnNames.ToList();
         }
 
 
@@ -222,25 +227,19 @@ namespace ViewModel.Inventory
         {
             List<string> uniqueList = new List<string>();
 
-            if (_OccupancyTypeRow.UseDefault)
+            //todo: one change extension has a period the other doesn't?
+            if (File.Exists(System.IO.Path.ChangeExtension(_Path, "dbf")))
             {
-                uniqueList.Add(_OccupancyTypeRow.DefaultValue);
-            }
-            else
-            {
-                //todo: one change extension has a period the other doesn't?
-                if (File.Exists(System.IO.Path.ChangeExtension(_Path, "dbf")))
-                {
-                    DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(_Path, ".dbf"));
-                    DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+                DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(_Path, ".dbf"));
+                DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
-                    object[] occtypesFromFile = dtv.GetColumn(_OccupancyTypeRow.SelectedItem);
-                    foreach (object o in occtypesFromFile)
-                    {
-                        uniqueList.Add((string)o);
-                    }
+                object[] occtypesFromFile = dtv.GetColumn(_OccupancyTypeRow.SelectedItem);
+                foreach (object o in occtypesFromFile)
+                {
+                    uniqueList.Add((string)o);
                 }
             }
+
             return uniqueList.Distinct().ToList();
         }
 
@@ -253,7 +252,7 @@ namespace ViewModel.Inventory
                 DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(_Path, ".dbf"));
                 DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
-                structureNames = dtv.GetColumn(_StructureIDRow.SelectedValue);
+                structureNames = dtv.GetColumn(_StructureIDRow.SelectedItem);
             }
             return structureNames;
         }
@@ -263,7 +262,7 @@ namespace ViewModel.Inventory
             List<StructureMissingDataRowItem> missingDataRows = new List<StructureMissingDataRowItem>();
             int badElevationNumber = -9999;
 
-            StructureElevationsFromTerrainFile elevsFromTerrainHelper = new StructureElevationsFromTerrainFile();
+            StructureElevationsFromTerrainFile elevsFromTerrainHelper = new StructureElevationsFromTerrainFile(_Path);
             float[] elevs = elevsFromTerrainHelper.GetStructureElevationsFromTerrainFile(ref errorMessage);
             if (errorMessage != null && errorMessage.Length > 0)
             {
@@ -314,16 +313,14 @@ namespace ViewModel.Inventory
 
         public StructuresMissingDataManager Validate(ref string errorMessage)
         {
-            int badElevationNumber = -9999;
-
             StructuresMissingDataManager missingDataManager = new StructuresMissingDataManager();
 
             //check structure id? what to do if it isn't all there or unique? Early exit?
             missingDataManager.AddStructuresWithMissingData(AreAllStructureValuesDefinedForRow(_StructureIDRow, MissingDataType.ID));
 
-            if (!FirstFloorElevationIsChecked)
+            if (!FirstFloorElevationIsSelected)
             {
-                if (FromTerrainFile)
+                if (FromTerrainFileIsSelected)
                 {
                     List<StructureMissingDataRowItem> missingTerrainElevRows = GetMissingTerrainElevations(ref errorMessage);
                     missingDataManager.AddStructuresWithMissingData(missingTerrainElevRows);
@@ -356,26 +353,24 @@ namespace ViewModel.Inventory
         private List<StructureMissingDataRowItem> AreAllStructureValuesDefinedForRow(DefineSIAttributesRowItem row, MissingDataType missingType)
         {
             List<StructureMissingDataRowItem> missingDataRows = new List<StructureMissingDataRowItem>();
-            if (!row.UseDefault)
-            {
-                if (File.Exists(System.IO.Path.ChangeExtension(_Path, "dbf")))
-                {
-                    DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(Path, ".dbf"));
-                    DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
-                    object[] rows = dtv.GetColumn(row.SelectedValue);
-                    for (int i = 0; i < rows.Length; i++)
+            if (File.Exists(System.IO.Path.ChangeExtension(_Path, "dbf")))
+            {
+                DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(Path, ".dbf"));
+                DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+
+                object[] rows = dtv.GetColumn(row.SelectedItem);
+                for (int i = 0; i < rows.Length; i++)
+                {
+                    if (rows[i] == DBNull.Value || rows[i].ToString() == "")
                     {
-                        if (rows[i] == DBNull.Value || rows[i].ToString() == "")
-                        {
-                            //todo: this will break if this isn't selected (default);
-                            string structId = dtv.GetCell(_StructureIDRow.SelectedItem, i).ToString();
-                            StructureMissingDataRowItem missingDataRow = new StructureMissingDataRowItem(structId, missingType);
-                            missingDataRows.Add(missingDataRow);
-                        }
+                        string structId = dtv.GetCell(_StructureIDRow.SelectedItem, i).ToString();
+                        StructureMissingDataRowItem missingDataRow = new StructureMissingDataRowItem(structId, missingType);
+                        missingDataRows.Add(missingDataRow);
                     }
                 }
             }
+
             return missingDataRows;
         }
 
@@ -403,7 +398,7 @@ namespace ViewModel.Inventory
             }
 
 
-            if (FirstFloorElevationIsChecked)
+            if (FirstFloorElevationIsSelected)
             {
                 //first floor elevation
                 if (!_FirstFloorElevRow.IsValid())
@@ -432,7 +427,7 @@ namespace ViewModel.Inventory
         }
 
 
-        public DataTable CreateStructureTable(string shapefilePath)
+        public DataTable CreateStructureTable(string shapefilePath, CustomObservableCollection<OccTypeSelectionRowItem> occtypeSelectionRows)
         {
             StructureInventoryPersistenceManager manager = Saving.PersistenceFactory.GetStructureInventoryManager();
             DataTable table = manager.CreateEmptyStructuresTable();
@@ -446,15 +441,35 @@ namespace ViewModel.Inventory
                 attributeTableFromFile.ParentDatabase.Open();
             }
 
+            //loop over all structures and grab the values that we want to store in our database from the 
+            //structure inventory table.
             for (int i = 0; i < attributeTableFromFile.NumberOfRows; i++)
             {
                 DataRow row = table.NewRow();
+                string structureOcctypeName = GetValueForRow(attributeTableFromFile, i, _OccupancyTypeRow);
+                OccTypeDisplayName occTypeDisplayName = GetOccTypeDisplayObject(structureOcctypeName, occtypeSelectionRows);
+                //here i can get the occtype object and from there get the group name/id. I can then pass that into the assign values to row() and add it to the correct column.
+                //occTypeDisplayName.OccType
+
                 AssignValuesToRow(row, attributeTableFromFile, i);
                 table.Rows.Add(row);
             }
 
             return table;
         }
+
+        private OccTypeDisplayName GetOccTypeDisplayObject(string occTypeName, CustomObservableCollection<OccTypeSelectionRowItem> occtypeSelectionRows)
+        {
+            OccTypeDisplayName selectedOccTypeObject = null;
+            OccTypeSelectionRowItem rowForThisOcctype = occtypeSelectionRows.Where(row => row.OccTypeName.Equals(occTypeName)).FirstOrDefault();
+            if(rowForThisOcctype != null)
+            {
+                selectedOccTypeObject = rowForThisOcctype.SelectedOccType;
+            }
+            return selectedOccTypeObject;
+        }
+
+
 
         private void AssignValuesToRow(DataRow row,  DataTableView dataTableView, int i)
         {
@@ -482,10 +497,10 @@ namespace ViewModel.Inventory
             //optional fields
             row[StructureInventoryBaseElement.YearField] = GetValueForRow(dataTableView, i, _YearRow);
             row[StructureInventoryBaseElement.ModuleField] = GetValueForRow(dataTableView, i, _ModuleRow);
-            row[StructureInventoryPersistenceManager.BEG_DAM_DEPTH] = GetValueForRow(dataTableView, i, _OccupancyTypeRow);
-            row[StructureInventoryPersistenceManager.YEAR_IN_CONSTRUCTION] = GetValueForRow(dataTableView, i, _OccupancyTypeRow);
-            row[StructureInventoryPersistenceManager.NOTES] = GetValueForRow(dataTableView, i, _OccupancyTypeRow);
-            row[StructureInventoryPersistenceManager.OTHER] = GetValueForRow(dataTableView, i, _OccupancyTypeRow);
+            row[StructureInventoryPersistenceManager.BEG_DAM_DEPTH] = GetValueForRow(dataTableView, i, _BegDamDepthRow);
+            row[StructureInventoryPersistenceManager.YEAR_IN_CONSTRUCTION] = GetValueForRow(dataTableView, i, _YearInConstructionRow);
+            row[StructureInventoryPersistenceManager.NOTES] = GetValueForRow(dataTableView, i, _NotesRow);
+            row[StructureInventoryPersistenceManager.OTHER] = GetValueForRow(dataTableView, i, _OtherRow);
 
         }
 
@@ -498,16 +513,12 @@ namespace ViewModel.Inventory
         /// <returns></returns>
         private string GetValueForRow(DataTableView attributeTableFromFile, int i, DefineSIAttributesRowItem row)
         {
-            string retval = null;
-            if (row.UseDefault)
+            string value = null;
+            if(row.SelectedItem != null)
             {
-                retval = row.DefaultValue;
+                value = attributeTableFromFile.GetCell(row.SelectedItem, i).ToString();
             }
-            else
-            {
-                retval = attributeTableFromFile.GetCell(row.SelectedItem, i).ToString();
-            }
-            return retval;
+            return value;
         }
 
 

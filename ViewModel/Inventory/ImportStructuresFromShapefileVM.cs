@@ -70,7 +70,7 @@ namespace ViewModel.Inventory
         public string SelectedPath
         {
             get { return _SelectedPath; }
-            set { _SelectedPath = value; _DefineSIAttributes.Path = value; }
+            set { _SelectedPath = value; SelectedPathChanged(); }
         }
 
         public ObservableCollection<string> AvailablePaths
@@ -87,7 +87,7 @@ namespace ViewModel.Inventory
 
             _DefineSIAttributes = new DefineSIAttributesVM_mockup();
             _DefineSIAttributes.RequestNavigation += Navigate;
-            _AttributeLinkingList = new AttributeLinkingListVM();
+            //_AttributeLinkingList = new AttributeLinkingListVM();
             CurrentViewIsEnabled = true;
             CurrentView = _DefineSIAttributes;
 
@@ -141,6 +141,14 @@ namespace ViewModel.Inventory
         #endregion
         #region Voids
 
+        private void SelectedPathChanged()
+        {
+            _DefineSIAttributes.Path = SelectedPath;
+            //the selected file has changed. I set the second page to null
+            //so that it will grab everything fresh.
+            _AttributeLinkingList = null;
+        }
+
         public void PreviousButtonClicked()
         {
             CurrentView = _DefineSIAttributes;
@@ -162,7 +170,7 @@ namespace ViewModel.Inventory
         private bool ValidateTerrainFileExists(ref string errorMessage)
         {
             bool isValid = true;
-            if (!_DefineSIAttributes.FirstFloorElevationIsChecked && _DefineSIAttributes.FromTerrainFile)
+            if (!_DefineSIAttributes.FirstFloorElevationIsSelected && _DefineSIAttributes.FromTerrainFileIsSelected)
             {
                 //then the user wants to use the terrain file to get elevations. Validate that the terrain file exists.
                 List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
@@ -193,7 +201,7 @@ namespace ViewModel.Inventory
                         StructuresMissingDataManager missingDataManager = _DefineSIAttributes.Validate(ref errorMessage);
                         if (missingDataManager.GetRows().Count > 0)
                         {
-                            StructureMissingElevationEditorVM vm = new StructureMissingElevationEditorVM(missingDataManager.GetRows(), _DefineSIAttributes.FirstFloorElevationIsChecked, _DefineSIAttributes.FromTerrainFile);
+                            StructureMissingElevationEditorVM vm = new StructureMissingElevationEditorVM(missingDataManager.GetRows(), _DefineSIAttributes.FirstFloorElevationIsSelected, _DefineSIAttributes.FromTerrainFileIsSelected);
                             DynamicTabVM tab = new DynamicTabVM("Missing Data", vm, "missingData");
                             Navigate(tab);
                             isValid = false;
@@ -217,31 +225,36 @@ namespace ViewModel.Inventory
             return isValid;
         }
 
-        private bool NextButtonClickedWhileDefiningSIAttributes()
-        {
-            //Run validation before moving on to the next screen
-            string errorMessage = null;
-            bool isValid = ValidateDefineSIAttributes(ref errorMessage);
+        //private bool NextButtonClickedWhileDefiningSIAttributes()
+        //{
+        //    //Run validation before moving on to the next screen
+        //    string errorMessage = null;
+        //    bool isValid = ValidateDefineSIAttributes(ref errorMessage);
 
-            //if we are valid, then move onto the next page
-            if (isValid)
-            {
-                List<string> occtypes = _DefineSIAttributes.GetUniqueOccupancyTypes();
+        //    //if we are valid, then move onto the next page
+        //    if (isValid)
+        //    {
+        //        List<string> occtypes = _DefineSIAttributes.GetUniqueOccupancyTypes();
 
-                //todo: what is this?
-                if (IsInEditMode == true)
-                {
-                    _AttributeLinkingList.IsInEditMode = true;
-                }
-                else
-                {
-                    //todo: What? why am i passing in part of itself?
-                    _AttributeLinkingList = new AttributeLinkingListVM(occtypes, StudyCache.GetChildElementsOfType<OccupancyTypesElement>(), _AttributeLinkingList.OccupancyTypesInStudy);
-                }
-                CurrentView = _AttributeLinkingList;
-            }
-            return true;
-        }
+        //        if (_AttributeLinkingList == null)
+        //        {
+        //            _AttributeLinkingList = new AttributeLinkingListVM(occtypes);
+        //                }
+
+        //        //todo: what is this?
+        //        if (IsInEditMode == true)
+        //        {
+        //            _AttributeLinkingList.IsInEditMode = true;
+        //        }
+        //        else
+        //        {
+        //            //todo: What? why am i passing in part of itself?
+        //            //_AttributeLinkingList = new AttributeLinkingListVM(occtypes, StudyCache.GetChildElementsOfType<OccupancyTypesElement>(), _AttributeLinkingList.OccupancyTypesInStudy);
+        //        }
+        //        CurrentView = _AttributeLinkingList;
+        //    }
+        //    return true;
+        //}
 
         private bool NextButtonClickWhileOnAttributeLinkingList()
         {
@@ -273,7 +286,7 @@ namespace ViewModel.Inventory
 
             //attributeTableFromFile.ParentDatabase.Close();
 
-            DataTable newStructureTable = _DefineSIAttributes.CreateStructureTable(SelectedPath);
+            DataTable newStructureTable = _DefineSIAttributes.CreateStructureTable(SelectedPath, _AttributeLinkingList.Rows);
             //this line will create the child table in the database.
             manager.Save(newStructureTable, Name, myReader.ToFeatures());
             //this line will add it to the parent table.
@@ -281,20 +294,27 @@ namespace ViewModel.Inventory
             return true;
         }
 
+
         private void SwitchToAttributeLinkingList()
         {
-            List<string> occtypes = _DefineSIAttributes.GetUniqueOccupancyTypes();
 
             //todo: what is this?
-            if (IsInEditMode == true)
+            //if (IsInEditMode == true)
+            //{
+            //    _AttributeLinkingList.IsInEditMode = true;
+            //}
+            //else
+            //{
+            //    //todo: What? why am i passing in part of itself?
+            //    _AttributeLinkingList = new AttributeLinkingListVM(occtypes, StudyCache.GetChildElementsOfType<OccupancyTypesElement>(), _AttributeLinkingList.OccupancyTypesInStudy);
+            //}
+
+            if(_AttributeLinkingList == null)
             {
-                _AttributeLinkingList.IsInEditMode = true;
+                List<string> occtypes = _DefineSIAttributes.GetUniqueOccupancyTypes();
+                _AttributeLinkingList = new AttributeLinkingListVM(occtypes);
             }
-            else
-            {
-                //todo: What? why am i passing in part of itself?
-                _AttributeLinkingList = new AttributeLinkingListVM(occtypes, StudyCache.GetChildElementsOfType<OccupancyTypesElement>(), _AttributeLinkingList.OccupancyTypesInStudy);
-            }
+
             CurrentView = _AttributeLinkingList;
         }
 
@@ -667,31 +687,31 @@ namespace ViewModel.Inventory
         /// </summary>
         public override void Save()
         {
-            //create a "master occtype group" for this structure inv
-            // 1.) create the string name
-            string groupName = Name + " > Occupancy Types";
-            //2.) create the list of occtype 
-            List<IOccupancyType> newListOfOccType = new List<IOccupancyType>();
-            List<string> listOfKeys = AttributeLinkingList.OccupancyTypesDictionary.Keys.ToList();
-            for (int i = 0; i < listOfKeys.Count; i++)
-            {
-                IOccupancyType ot = OccupancyTypeFactory.Factory();
-                if (AttributeLinkingList.OccupancyTypesDictionary[listOfKeys[i]] != "")
-                {
-                    //find the chosen occtype and replace the name with the name from the file
-                    string[] occtypeAndGroupName = new string[2];
-                    occtypeAndGroupName = AttributeLinkingList.ParseOccTypeNameAndGroupNameFromCombinedString(AttributeLinkingList.OccupancyTypesDictionary[listOfKeys[i]]);
-                    ot = GetOcctypeFromGroup(occtypeAndGroupName[0], occtypeAndGroupName[1]);
-                    ot.Name = listOfKeys[i];
+            ////create a "master occtype group" for this structure inv
+            //// 1.) create the string name
+            //string groupName = Name + " > Occupancy Types";
+            ////2.) create the list of occtype 
+            //List<IOccupancyType> newListOfOccType = new List<IOccupancyType>();
+            //List<string> listOfKeys = AttributeLinkingList.OccupancyTypesDictionary.Keys.ToList();
+            //for (int i = 0; i < listOfKeys.Count; i++)
+            //{
+            //    IOccupancyType ot = OccupancyTypeFactory.Factory();
+            //    if (AttributeLinkingList.OccupancyTypesDictionary[listOfKeys[i]] != "")
+            //    {
+            //        //find the chosen occtype and replace the name with the name from the file
+            //        string[] occtypeAndGroupName = new string[2];
+            //        occtypeAndGroupName = AttributeLinkingList.ParseOccTypeNameAndGroupNameFromCombinedString(AttributeLinkingList.OccupancyTypesDictionary[listOfKeys[i]]);
+            //        ot = GetOcctypeFromGroup(occtypeAndGroupName[0], occtypeAndGroupName[1]);
+            //        ot.Name = listOfKeys[i];
 
-                }
-                else
-                {
-                    //they made no selection so create an empty occtype
-                    ot.Name = listOfKeys[i];
-                }
-                newListOfOccType.Add(ot);
-            }
+            //    }
+            //    else
+            //    {
+            //        //they made no selection so create an empty occtype
+            //        ot.Name = listOfKeys[i];
+            //    }
+            //    newListOfOccType.Add(ot);
+            //}
 
             //Dictionary<string, bool[]> _OcctypeTabsSelectedDictionary = new Dictionary<string, bool[]>();
 
@@ -701,8 +721,8 @@ namespace ViewModel.Inventory
             //    _OcctypeTabsSelectedDictionary.Add(ot.Name, tabsCheckedArray);
 
             //}
-            int newGroupID = Saving.PersistenceFactory.GetOccTypeManager().GetUnusedId();
-            OccupancyTypesElement newOccTypeGroup = new OccupancyTypesElement(groupName,newGroupID, newListOfOccType);
+            //int newGroupID = Saving.PersistenceFactory.GetOccTypeManager().GetUnusedId();
+            //OccupancyTypesElement newOccTypeGroup = new OccupancyTypesElement(groupName,newGroupID, newListOfOccType);
             //todo: cody commented out on 2/20/2020 - put back in when occtypes are working
             //Saving.PersistenceFactory.GetOccTypeManager().SaveNew(newOccTypeGroup);
 
@@ -710,11 +730,12 @@ namespace ViewModel.Inventory
             InventoryElement elementToSave = new InventoryElement(SIBase, false);
 
             //as of oct 2018 there is no editing, so it should always save as a new element
-            Saving.PersistenceManagers.StructureInventoryPersistenceManager manager = Saving.PersistenceFactory.GetStructureInventoryManager();
+            StructureInventoryPersistenceManager manager = Saving.PersistenceFactory.GetStructureInventoryManager();
             if (IsImporter && HasSaved == false)
             {
                 OccupancyTypesOwnerElement owner = StudyCache.GetParentElementOfType<OccupancyTypesOwnerElement>();
 
+                //todo: why are we doing this? is this on a background thread? 12/7/21
                 //clear the actions while it is saving
                 List<NamedAction> actions = new List<NamedAction>();
                 foreach (NamedAction act in owner.Actions)
@@ -733,23 +754,23 @@ namespace ViewModel.Inventory
             }
         }
 
-        private IOccupancyType GetOcctypeFromGroup(string occtypeName, string groupName)
-        {
-            foreach (OccupancyTypes.OccupancyTypesElement group in StudyCache.GetChildElementsOfType<OccupancyTypesElement>())// OccupancyTypes.OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups)
-            {
-                if (group.Name == groupName)
-                {
-                    foreach (IOccupancyType ot in group.ListOfOccupancyTypes)
-                    {
-                        if (ot.Name == occtypeName)
-                        {
-                            return ot;
-                        }
-                    }
-                }
-            }
-            return OccupancyTypeFactory.Factory(); // if it gets here then no occtype matching the names given exists. Should we send an error message?
-        }
+        //private IOccupancyType GetOcctypeFromGroup(string occtypeName, string groupName)
+        //{
+        //    foreach (OccupancyTypes.OccupancyTypesElement group in StudyCache.GetChildElementsOfType<OccupancyTypesElement>())// OccupancyTypes.OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups)
+        //    {
+        //        if (group.Name == groupName)
+        //        {
+        //            foreach (IOccupancyType ot in group.ListOfOccupancyTypes)
+        //            {
+        //                if (ot.Name == occtypeName)
+        //                {
+        //                    return ot;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return OccupancyTypeFactory.Factory(); // if it gets here then no occtype matching the names given exists. Should we send an error message?
+        //}
 
 
 

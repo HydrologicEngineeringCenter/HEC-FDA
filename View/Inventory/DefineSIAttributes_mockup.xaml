@@ -20,11 +20,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="160" />
         </Grid.RowDefinitions>
-        <!--<GroupBox Header="Structure Inventory Shapefile" Grid.Row="0" >
-            <CA:ComboBoxWithBrowser ItemsSource="{Binding Path=AvailablePaths}" SelectedPath="{Binding SelectedPath}" Filter="Shapefiles (*.shp) |*.shp|All files (*.*) |*.*" ValidateToShapeTypes="True" ShapeTypeFilter="Point" Name="cmb_Path" />
-        </GroupBox>-->
-        <!--Attributes-->
-        <!--<GroupBox Header="Define Structure Attribute Information" Margin="5">-->
+
         <GroupBox Header="Required Attributes" Grid.Row="1" >
             <Grid>
                 <Grid.RowDefinitions>
@@ -35,14 +31,14 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
-                    <RadioButton Content="First Floor Elevation" IsChecked="{Binding FirstFloorElevationIsChecked}" Margin="0,0,10,0" VerticalAlignment="Center"  />
-                    <RadioButton Content="Ground Elevation and Foundation Height"  Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"  />
+                    <RadioButton Content="First Floor Elevation" IsChecked="{Binding FirstFloorElevationIsSelected}" Margin="0,0,10,0" VerticalAlignment="Center"  />
+                    <RadioButton Content="Ground Elevation and Foundation Height" IsChecked="{Binding FirstFloorElevationIsSelected, Converter={StaticResource InverseBooleanConverter}}" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"  />
                 </StackPanel>
 
-                <GroupBox Grid.Row="1" Grid.ColumnSpan="2" Header="Ground Elevation Source" Visibility="{Binding FirstFloorElevationIsChecked, Converter={StaticResource BoolToInverseVisConverter}}">
+                <GroupBox Grid.Row="1" Grid.ColumnSpan="2" Header="Ground Elevation Source" Visibility="{Binding FirstFloorElevationIsSelected, Converter={StaticResource BoolToInverseVisConverter}}">
                     <Grid  Grid.ColumnSpan="2" Grid.Row="1" >
                         <StackPanel Orientation="Horizontal" Margin="5">
-                            <RadioButton Content="From Terrain File" IsChecked="{Binding FromTerrainFile}" Margin="0,0,10,0"/>
+                            <RadioButton Content="From Terrain File" IsChecked="{Binding FromTerrainFileIsSelected}" Margin="0,0,10,0"/>
                             <RadioButton Content="From Structures File" IsChecked="True" Margin="10,0,0,0"/>
                         </StackPanel>
                     </Grid>
@@ -51,19 +47,13 @@
                 <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width=".8*"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width=".2*"/>
+                        <ColumnDefinition Width="*"/>
+                        
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Row="0" Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                         <Underline><Bold>Import Attributes</Bold></Underline>
                     </TextBlock>
-                    <TextBlock Grid.Row="0" Grid.Column="2" TextAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                        <Underline><Bold>Missing</Bold></Underline>
-                    </TextBlock>
-                    <TextBlock Grid.Row="0" Grid.Column="3" TextAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                        <Underline><Bold>Default Value</Bold></Underline>
-                    </TextBlock>
+                
                 </Grid>
                 
                 <ItemsControl Grid.Row="3" ItemsSource="{Binding RequiredRows}" Grid.ColumnSpan="2" Margin="5" >
@@ -77,9 +67,7 @@
                                 </Grid.ColumnDefinitions>
                                 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Margin="2" Text="{Binding Name}" TextAlignment="Right" VerticalAlignment="Center"/>
-                                <ComboBox Grid.Row="0" Grid.Column="1"  IsEnabled="{Binding Path=UseDefault,Converter={StaticResource InverseBooleanConverter}}" ItemsSource="{Binding Items}" SelectedItem="{Binding Path=SelectedItem}" Margin="2"   HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                                <!--<CheckBox Grid.Row="0" Grid.Column="2" Margin="2"   HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Path=UseDefault}"/>
-                                <TextBox Grid.Row="0" Grid.Column="3" Margin="2"   HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=UseDefault}" Text="{Binding Path=DefaultValue}"/>-->
+                                <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Items}" SelectedItem="{Binding Path=SelectedItem}" Margin="2"   HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
 
                             </Grid>
                         </DataTemplate>
@@ -102,10 +90,7 @@
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Row="0" Grid.Column="0" Margin="2" Text="{Binding Name}" TextAlignment="Right" VerticalAlignment="Center"/>
-                            <ComboBox Grid.Row="0" Grid.Column="1"  IsEnabled="{Binding Path=UseDefault,Converter={StaticResource InverseBooleanConverter}}" ItemsSource="{Binding Items}" SelectedItem="{Binding Path=SelectedItem}" Margin="2"   HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                            <!--<CheckBox Grid.Row="0" Grid.Column="2" Margin="2"   HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Path=UseDefault}"/>
-                            <TextBox Grid.Row="0" Grid.Column="3" Margin="2"   HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding Path=UseDefault}" Text="{Binding Path=DefaultValue}"/>-->
-
+                            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Items}" SelectedItem="{Binding Path=SelectedItem}" Margin="2"   HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

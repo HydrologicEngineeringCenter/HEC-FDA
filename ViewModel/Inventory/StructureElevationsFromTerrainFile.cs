@@ -10,8 +10,11 @@ namespace ViewModel.Inventory
 {
     public class StructureElevationsFromTerrainFile:BaseViewModel
     {
-
-
+        private string _Path;
+        public StructureElevationsFromTerrainFile(string path)
+        {
+            _Path = path;
+        }
         private RasterFeatures GetTerrainRasterFeatures(string filePath)
         {
             RasterFeatures terrainRasterFeatures = null;
