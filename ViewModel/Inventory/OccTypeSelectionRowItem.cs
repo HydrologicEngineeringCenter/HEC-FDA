@@ -19,6 +19,11 @@ namespace ViewModel.Inventory
             set { _SelectedOccType = value; NotifyPropertyChanged(); }
         }
 
+        public bool SelectionMade()
+        {
+            return SelectedOccType != null;
+        }
+
         public CustomObservableCollection<OccTypeDisplayName> PossibleOccTypes { get; } = new CustomObservableCollection<OccTypeDisplayName>();
 
         public OccTypeSelectionRowItem(string occTypeName)

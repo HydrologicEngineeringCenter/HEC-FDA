@@ -16,10 +16,12 @@
 
   <ItemGroup>
     <Compile Remove="Inventory\AttributeLinkingListRowItem.xaml.cs" />
+    <Compile Remove="Inventory\OccupancyTypesFromFile.xaml.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <Page Remove="Inventory\AttributeLinkingListRowItem.xaml" />
+    <Page Remove="Inventory\OccupancyTypesFromFile.xaml" />
   </ItemGroup>
 	
   <ItemGroup>
@@ -29,6 +31,9 @@
     </Reference>
     <Reference Include="DatabaseManager">
       <HintPath>..\..\database-management\DataBase_Reader\bin\Debug\DatabaseManager.dll</HintPath>
+    </Reference>
+    <Reference Include="DataTableViewControl">
+      <HintPath>..\lib\DataTableViewControl.dll</HintPath>
     </Reference>  
 	  <Reference Include="FdaLogger">
       <HintPath>..\lib\FdaLogger.dll</HintPath>
@@ -39,6 +44,9 @@
     <Reference Include="GDALAssist, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\GDALAssist.dll</HintPath>
+    </Reference>
+    <Reference Include="GenericControlsWPF">
+      <HintPath>..\lib\GenericControlsWPF.dll</HintPath>
     </Reference>
     <Reference Include="HecCs, Version=1.2.7326.22211, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

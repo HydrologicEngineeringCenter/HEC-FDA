@@ -110,10 +110,6 @@ namespace ViewModel.Inventory
                 localactions.Add(mapWindow);
             }
 
-            NamedAction attributeTable = new NamedAction();
-            attributeTable.Header = "Open Attribute Table";
-            attributeTable.Action = OpenAttributeTable;
-
             NamedAction removeInventory = new NamedAction();
             removeInventory.Header = "Remove";
             removeInventory.Action = RemoveElement;
@@ -122,9 +118,6 @@ namespace ViewModel.Inventory
             renameElement.Header = "Rename";
             renameElement.Action = Rename;
 
-            //localactions.Add(addToMapWindow);
-            //localactions.Add(edit);
-            localactions.Add(attributeTable);
             localactions.Add(removeInventory);
             localactions.Add(renameElement);
 

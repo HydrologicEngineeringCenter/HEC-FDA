@@ -14,7 +14,6 @@
             </Grid.RowDefinitions>
             <GroupBox Header="Load Occupancy Types from the Following Sets" Grid.Row="0" Margin="5">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-
                     <ItemsControl ItemsSource="{Binding OccTypeGroups}" Margin="5">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -27,9 +26,7 @@
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
-
                 </ScrollViewer>
-
             </GroupBox>
 
             <GroupBox Grid.Column="0" Header="Default Occupancy Type Assignments" Margin="5" Grid.Row="1">
@@ -51,35 +48,21 @@
                     </Border>
 
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1" Grid.ColumnSpan="2">
-                        <!--<Grid  Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="150"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>-->
-                            <ItemsControl ItemsSource="{Binding Rows}" >
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="145"/>
-                                                <ColumnDefinition Width="*"/>
-
-                                            </Grid.ColumnDefinitions>
-                                        
+                        <ItemsControl ItemsSource="{Binding Rows}" >
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="145"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
                                         <TextBlock  Grid.Column="0" Margin="2" Text="{Binding OccTypeName}" TextAlignment="Right" VerticalAlignment="Center"/>
-                                            <ComboBox  Grid.Column="1" ItemsSource="{Binding PossibleOccTypes}" DisplayMemberPath="DisplayName" SelectedItem="{Binding Path=SelectedOccType}" Margin="2"   HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                        <ComboBox  Grid.Column="1" ItemsSource="{Binding PossibleOccTypes}" DisplayMemberPath="DisplayName" SelectedItem="{Binding Path=SelectedOccType}" Margin="2"   HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
 
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                                <!--<ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <WrapPanel/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>-->
-                            </ItemsControl>
-
-                        <!--</Grid>-->
                     </ScrollViewer>
                 </Grid>
             </GroupBox>
