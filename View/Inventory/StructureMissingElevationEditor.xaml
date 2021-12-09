@@ -16,7 +16,6 @@
     </UserControl.Resources>
     <Grid>
         <Grid.Resources>
-            <!--DataTemplate for Published Date column defined in Grid.Resources.  PublishDate is a property on the ItemsSource of type DateTime -->
             <DataTemplate x:Key="DateTemplate" >
                 <StackPanel Width="20" Height="30">
                     <Border Background="LightBlue" BorderBrush="Black" BorderThickness="1">
@@ -27,7 +26,6 @@
                     </Border>
                 </StackPanel>
             </DataTemplate>
-            <!--DataTemplate for the Published Date column when in edit mode. -->
             <DataTemplate x:Key="EditingDateTemplate">
                 <DatePicker SelectedDate="{Binding PublishDate}"  />
             </DataTemplate>

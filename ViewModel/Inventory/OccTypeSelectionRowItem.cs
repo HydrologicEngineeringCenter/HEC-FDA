@@ -33,7 +33,6 @@ namespace ViewModel.Inventory
 
         public void UpdateSelectedGroups(List<OcctypeGroupRowItem> selectedGroups)
         {
-
             //add all the occtypes to the list of possible occtypes
             PossibleOccTypes.Clear();
             foreach(OcctypeGroupRowItem row in selectedGroups)
@@ -46,9 +45,7 @@ namespace ViewModel.Inventory
                 }
             }
 
-            //if we have a selected occtype, then we want to check that it is still in one of our
-            //selected groups
-            //bool shouldSelectedOcctypeStaySelected = ShouldSelectedOcctypeStaySelected(selectedGroups);
+            //if we have a selected occtype, then we want to check that it is still in one of our selected groups
             bool foundSelectedOccType = false;
             if(SelectedOccType != null)
             {
@@ -62,12 +59,11 @@ namespace ViewModel.Inventory
                 }
             }
 
+            //if we did not find our currently selected occtype then we should see if we can auto select it.
             if (!foundSelectedOccType)
             {
-                //we need to see if we can auto select an occtype.
                 AutoSelectOcctype();
             }
-
         }
 
         private void AutoSelectOcctype()
@@ -83,25 +79,5 @@ namespace ViewModel.Inventory
             }
         }
 
-        //private bool ShouldSelectedOcctypeStaySelected(List<OcctypeGroupRowItem> selectedGroups)
-        //{
-        //    bool selectedOcctypeShouldStaySelected = false;
-        //    if (SelectedOccType != null)
-        //    {
-        //        foreach (OcctypeGroupRowItem row in selectedGroups)
-        //        {
-        //            List<IOccupancyType> occTypes = row.GroupElement.ListOfOccupancyTypes;
-        //            if (occTypes.Contains(SelectedOccType))
-        //            {
-        //                selectedOcctypeShouldStaySelected = true;
-        //                break;
-        //            }
-        //        }
-        //    }
-        //    return selectedOcctypeShouldStaySelected;
-        //}
-
-
     }
-
 }

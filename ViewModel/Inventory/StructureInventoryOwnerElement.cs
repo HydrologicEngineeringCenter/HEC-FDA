@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using ViewModel.Utilities;
-using ViewModel.Inventory.OccupancyTypes;
 using System.Windows;
+using ViewModel.Inventory.OccupancyTypes;
+using ViewModel.Utilities;
 
 namespace ViewModel.Inventory
 {
-    //[Author(q0heccdm, 6 / 14 / 2017 3:38:41 PM)]
-    public class StructureInventoryOwnerElement : Utilities.ParentElement
+    public class StructureInventoryOwnerElement : ParentElement
     {
         #region Notes
         // Created By: q0heccdm

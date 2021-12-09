@@ -1,9 +1,6 @@
 ﻿using LifeSimGIS;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ViewModel.Watershed;
 
 namespace ViewModel.Inventory
@@ -20,18 +17,13 @@ namespace ViewModel.Inventory
             RasterFeatures terrainRasterFeatures = null;
             try
             {
-                terrainRasterFeatures = new RasterFeatures(filePath);
-                return terrainRasterFeatures;
+                return new RasterFeatures(filePath);
             }
             catch (Exception ex)
             {
-                //MessageBox.Show(ex.Message, "Compute Failed", MessageBoxButton.OK, MessageBoxImage.Error);
-                //isValid = false;
-                //errorMessage = "Exception thrown when reading terrain file and converting to raster features.";
-                //return isValid;
+                //todo: do what?
                 return terrainRasterFeatures;
             }
-
         }
 
         private PointD[] GetStructurePoints()
@@ -45,10 +37,7 @@ namespace ViewModel.Inventory
             }
             catch (Exception ex)
             {
-                //isValid = false;
-                //errorMessage = "Exception thrown when reading structure file and converting to points.";
-                //return isValid;
-                //return pointDs;
+                //todo: do what?
             }
             return pointDs;
         }
@@ -95,7 +84,5 @@ namespace ViewModel.Inventory
             }
             return elevations;
         }
-
-
     }
 }

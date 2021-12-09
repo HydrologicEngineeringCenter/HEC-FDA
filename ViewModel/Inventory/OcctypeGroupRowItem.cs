@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ViewModel.Inventory.OccupancyTypes;
 
 namespace ViewModel.Inventory
@@ -16,17 +12,12 @@ namespace ViewModel.Inventory
         public bool IsSelected
         {
             get { return _IsSelected; }
-            set { _IsSelected = value; SelectionChanged(); OcctypeGroupSelectionChanged?.Invoke(this, new EventArgs()); NotifyPropertyChanged(); }
+            set { _IsSelected = value; OcctypeGroupSelectionChanged?.Invoke(this, new EventArgs()); NotifyPropertyChanged(); }
         }
 
         public OcctypeGroupRowItem(OccupancyTypesElement groupElement)
         {
             GroupElement = groupElement;
-        }
-
-        private void SelectionChanged()
-        {
-
         }
 
     }

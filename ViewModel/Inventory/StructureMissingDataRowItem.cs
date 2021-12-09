@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ViewModel.Inventory
+﻿namespace ViewModel.Inventory
 {
     public class StructureMissingDataRowItem
-    {
-        
+    {      
         public string ID { get; set; }
         public bool IsMissingID { get; set; }
         public bool IsMissingFirstFloorElevation { get; set; }
@@ -17,7 +10,6 @@ namespace ViewModel.Inventory
         public bool IsMissingGroundElevation { get; set; }
         public bool IsMissingStructureValue { get; set; }
         public bool IsMissingTerrainElevation { get; set; }
-
 
         public StructureMissingDataRowItem(string id, MissingDataType missingType)
         {
@@ -47,9 +39,6 @@ namespace ViewModel.Inventory
                     break;
             }
         }
-
-        
-
 
     }
 }

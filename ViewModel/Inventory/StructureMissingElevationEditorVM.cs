@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ViewModel.Editors;
+﻿using System.Collections.Generic;
 
 namespace ViewModel.Inventory
 {
-    public class StructureMissingElevationEditorVM : BaseEditorVM
+    public class StructureMissingElevationEditorVM : BaseViewModel
     {
         private bool _UsingFirstFloorElevation;
         private bool _ElevsFromTerrainFile;
@@ -25,8 +20,7 @@ namespace ViewModel.Inventory
 
         public bool FromStructureFile { get; set; }
 
-
-        public StructureMissingElevationEditorVM(List<StructureMissingDataRowItem> rows, bool usingFirstFloorElevation, bool elevsFromTerrainFile) :base(null)
+        public StructureMissingElevationEditorVM(List<StructureMissingDataRowItem> rows, bool usingFirstFloorElevation, bool elevsFromTerrainFile)
         {
             Rows = rows;
             UsingFirstFloorElevation = usingFirstFloorElevation;
@@ -38,20 +32,7 @@ namespace ViewModel.Inventory
             {
                 ElevsFromTerrainFile = elevsFromTerrainFile;
             }
-            FromStructureFile = !usingFirstFloorElevation && !elevsFromTerrainFile;
-          
-        }
-
-        public override void AddValidationRules()
-        {
-            //this is here so that we don't look for a name property.
-        }
-
-        public override void Save()
-        {
-            //validate that there is a value for each row.
-
-            int i = 0;
+            FromStructureFile = !usingFirstFloorElevation && !elevsFromTerrainFile;      
         }
     }
 }

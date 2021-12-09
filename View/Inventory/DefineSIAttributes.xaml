@@ -55,7 +55,7 @@
                     </TextBlock>
                 
                 </Grid>
-                
+
                 <ItemsControl Grid.Row="3" ItemsSource="{Binding RequiredRows}" Grid.ColumnSpan="2" Margin="5" >
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -63,9 +63,9 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="145"/>
                                     <ColumnDefinition Width="*"/>
-                                   
+
                                 </Grid.ColumnDefinitions>
-                                
+
                                 <TextBlock Grid.Row="0" Grid.Column="0" Margin="2" Text="{Binding Name}" TextAlignment="Right" VerticalAlignment="Center"/>
                                 <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Items}" SelectedItem="{Binding Path=SelectedItem}" Margin="2"   HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
 
@@ -73,7 +73,6 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                
 
             </Grid>
 
@@ -86,7 +85,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="145"/>
                                 <ColumnDefinition Width="*"/>
-                               
+
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Row="0" Grid.Column="0" Margin="2" Text="{Binding Name}" TextAlignment="Right" VerticalAlignment="Center"/>
@@ -97,7 +96,5 @@
             </ItemsControl>
         </GroupBox>
 
-        
-        
     </Grid>
 </UserControl>

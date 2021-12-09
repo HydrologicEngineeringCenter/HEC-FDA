@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ViewModel.Inventory
 {
+    /// <summary>
+    /// This class is used to help organize the missing data from the structures dbf file. 
+    /// </summary>
     public class StructuresMissingDataManager
     {
-        
         private Dictionary<string, StructureMissingDataRowItem> _MissingDataRows = new Dictionary<string, StructureMissingDataRowItem>();
 
         //there are three cases: First floor elev, from terrain file, from structure file
@@ -69,7 +68,5 @@ namespace ViewModel.Inventory
         {
             return _MissingDataRows.Values.ToList();
         }
-
-
     }
 }

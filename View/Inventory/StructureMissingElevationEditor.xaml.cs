@@ -4,9 +4,7 @@ using System.Windows.Input;
 
 namespace View.Inventory
 {
-    /// <summary>
-    /// Interaction logic for StructureGroundElevationValidation_mockup.xaml
-    /// </summary>
+
     public partial class StructureMissingElevationEditor : UserControl
     {
         public StructureMissingElevationEditor()
