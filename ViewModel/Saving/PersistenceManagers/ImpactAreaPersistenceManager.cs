@@ -15,11 +15,17 @@ namespace ViewModel.Saving.PersistenceManagers
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
         //you would no longer get any of the old logs. So i use this constant.
-        private const string ELEMENT_TYPE = "impact_area";
+        private const string ELEMENT_TYPE = "impactAreaSet";
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("ImpactAreaPersistenceManager");
+        private static readonly string[] TableColNames = { NAME, DESCRIPTION };
+        private static readonly Type[] TableColTypes = { typeof(string), typeof(string) };
+        public static string IndexPointTableNameConstant = "impact_areas -";
 
-        private const string TABLE_NAME = "impact_areas";
-        internal override string ChangeTableConstant { get { return "?????"; } }
+        private const string TABLE_NAME = "impact_area_set";
+        private const int NAME_COL = 1;
+        private const int DESCRIPTION_COL = 2;
+        private const int INDEX_TABLE_NAME_COL = 2;
+        private const int INDEX_TABLE_ID_COL = 0;
 
         public override string TableName
         {
@@ -28,15 +34,9 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public override string[] TableColumnNames
         {
-            get
-            {
-                return TableColNames;
-            }
+            get{return TableColNames;}
         }
 
-        private static readonly string[] TableColNames = { NAME, DESCRIPTION };
-        private static readonly Type[] TableColTypes = { typeof(string), typeof(string) };
-        private static string IndexPointTableNameConstant = "IndexPointTable -";
         /// <summary>
         /// The types of the columns in the parent table
         /// </summary>
@@ -44,8 +44,6 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             get { return TableColTypes; }
         }
-
-
 
         public ImpactAreaPersistenceManager(Study.FDACache studyCache)
         {
@@ -55,30 +53,26 @@ namespace ViewModel.Saving.PersistenceManagers
         #region utilities
         private object[] GetRowDataFromElement(ImpactAreaElement element)
         {
-                return new object[] { element.Name, element.Description };
+            return new object[] { element.Name, element.Description };
         }
         public override ChildElement CreateElementFromRowData(object[] rowData)
         {
-            ObservableCollection<ImpactAreaRowItem> dummyCollection = new ObservableCollection<ImpactAreaRowItem>();
+            string name = (string)rowData[NAME_COL];
+            ObservableCollection<ImpactAreaRowItem> impactAreaRowItems = GetRowsFromIndexTable(name);
+            return new ImpactAreaElement(name, (string)rowData[DESCRIPTION_COL], impactAreaRowItems);
+        }
 
-            ImpactAreaElement iae = new ImpactAreaElement((string)rowData[1], (string)rowData[2], dummyCollection);
-
-            ObservableCollection<object> tempCollection = new ObservableCollection<object>();
-            DatabaseManager.DataTableView indexTable = Storage.Connection.Instance.GetTable(IndexPointTableNameConstant + rowData[1]);
-            foreach (object[] row in indexTable.GetRows(0, indexTable.NumberOfRows-1))
-            {
-                //each row here should be a name and an index point
-                int id = (int)row[0];
-                ImpactAreaRowItem ri = new ImpactAreaRowItem(id, row[2].ToString(), Convert.ToDouble(row[3]), tempCollection);
-                tempCollection.Add(ri);
-            }
+        private ObservableCollection<ImpactAreaRowItem> GetRowsFromIndexTable(string impactAreaSetName)
+        {
             ObservableCollection<ImpactAreaRowItem> items = new ObservableCollection<ImpactAreaRowItem>();
-            foreach (object row in tempCollection)
+            DatabaseManager.DataTableView indexTable = Storage.Connection.Instance.GetTable(IndexPointTableNameConstant + impactAreaSetName);
+            foreach (object[] row in indexTable.GetRows(0, indexTable.NumberOfRows - 1))
             {
-                items.Add((ImpactAreaRowItem)row);
+                int id = (int)row[INDEX_TABLE_ID_COL];
+                string name = row[INDEX_TABLE_NAME_COL].ToString();
+                items.Add( new ImpactAreaRowItem(id, name));
             }
-            iae.ImpactAreaRows = items;
-            return iae;
+            return items;
         }
 
         private void SaveImpactAreaTable(ImpactAreaElement element)
@@ -93,46 +87,35 @@ namespace ViewModel.Saving.PersistenceManagers
             {
                 if (Storage.Connection.Instance.TableNames().Contains(IndexPointTableNameConstant + element.Name))
                 {
-                    //already exists... delete?
+                    //already exists... delete
                     Storage.Connection.Instance.DeleteTable(IndexPointTableNameConstant + element.Name);
                 }
                 LifeSimGIS.GeoPackageWriter gpw = new LifeSimGIS.GeoPackageWriter(Storage.Connection.Instance.Reader);
 
-                System.Data.DataTable dt = new System.Data.DataTable(IndexPointTableNameConstant + element.Name);
+                DataTable dt = new DataTable(IndexPointTableNameConstant + element.Name);
                 dt.Columns.Add("Name", typeof(string));
-                dt.Columns.Add("IndexPoint", typeof(double));
 
                 foreach (ImpactAreaRowItem row in element.ImpactAreaRows)
                 {
-                    dt.Rows.Add(row.Name, row.IndexPoint);
+                    dt.Rows.Add(row.Name);
                 }
 
                 DatabaseManager.InMemoryReader imr = new DatabaseManager.InMemoryReader(dt);
                 gpw.AddFeatures(IndexPointTableNameConstant + element.Name, polyFeatures, imr.GetTableManager(imr.TableNames[0]));
             }
-
         }
         private void UpdateExistingTable(ImpactAreaElement element)
         {
-
             DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable(IndexPointTableNameConstant + element.Name);
 
             object[] nameArray = new object[element.ImpactAreaRows.Count];
-            object[] indexPointArray = new object[element.ImpactAreaRows.Count];
-            int i = 0;
-            foreach (ImpactAreaRowItem row in element.ImpactAreaRows)
+            for(int i = 0;i<element.ImpactAreaRows.Count;i++)
             {
-                nameArray[i] = row.Name;
-                indexPointArray[i] = row.IndexPoint;
-                i++;
+                nameArray[i] = element.ImpactAreaRows[i].Name;
             }
-
             dtv.EditColumn(2, nameArray);
-            dtv.EditColumn(3, indexPointArray);
-
             dtv.ApplyEdits();
         }
-
 
         #endregion
 
@@ -142,13 +125,11 @@ namespace ViewModel.Saving.PersistenceManagers
             {
                 string editDate = DateTime.Now.ToString("G");
                 element.LastEditDate = editDate;
-
                 SaveNewElementToParentTable(GetRowDataFromElement((ImpactAreaElement)element), TableName, TableColumnNames, TableColumnTypes);
                 SaveImpactAreaTable((ImpactAreaElement)element);
                 StudyCacheForSaving.AddElement((ImpactAreaElement)element);
             }
         }
-
 
         public void Remove(ChildElement element)
         {
@@ -160,8 +141,7 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             base.SaveExisting(oldElement, elementToSave);
             if (!oldElement.Name.Equals(elementToSave.Name))
-                {
-
+            {
                 string oldName = IndexPointTableNameConstant + oldElement.Name;
                 string newName = IndexPointTableNameConstant + elementToSave.Name;
                 LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
@@ -179,8 +159,6 @@ namespace ViewModel.Saving.PersistenceManagers
                 StudyCacheForSaving.AddElement(elem);
             }
         }
-
-
 
         public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)
         {

@@ -18,7 +18,6 @@
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
 
-        <!--<QH:HelpButton Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Margin="2" PathIsEmbeddedResource="True" xmlPATH="ImpactAreaImporterHelp.xml" AssemblyName="HEC-GeoFDA" RootNamespace="GeoFDA" ToolTip="Get Help On Impact Area Importer"/>-->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="120"/>
@@ -35,7 +34,7 @@
 
             <Label Content="Description:" Grid.Row="1" Margin="5"/>
             <CA:TextBoxDescription Margin="5" Text="{Binding Path=Description}" Grid.Row="1" Grid.Column="1"/>
-            
+
             <Label Content="Shapefile Path:" Grid.Row="2" Margin="5"/>
             <CA:ComboBoxWithBrowser ItemsSource="{Binding Path=AvailablePaths}" SelectedPath="{Binding SelectedPath}" Filter="Shapefiles (*.shp) |*.shp|All files (*.*) |*.*" ValidateToShapeTypes="True" ShapeTypeFilter="Polygon" Margin="5" Name="cmb_Path" Grid.Row="2" Grid.Column="1"/>
 
@@ -43,21 +42,11 @@
             <ComboBox ItemsSource="{Binding Path=UniqueFields, Mode=TwoWay}" SelectedItem="{Binding SelectedUniqueName, Mode=TwoWay}"  Margin="5" Name="Cmb_UniqueName"  Grid.Row="3" Grid.Column="1" SelectionChanged="Cmb_UniqueName_SelectionChanged" />
         </Grid>
 
-        <!--<CA:ValidationDataGrid Grid.Row="2" Margin="5"  x:Name="ImpactAreasGrid" Width="350" AutoGenerateColumns="True" ItemsSource="{Binding SelectedImpactAreaUniqueNameSet.RowItems}" MinHeight="180" CanUserAddRows="False"/>-->
-        <!--<Grid Grid.Row="2">-->
-            <!--<Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{Binding ElementName=Col1,Path=ActualWidth}"/>
-                <ColumnDefinition Width="{Binding ElementName=Col2,Path=ActualWidth}"/>
-
-            </Grid.ColumnDefinitions>-->
-        
         <DataGrid Grid.Row="2" Margin="5"  Name="dgrid_ImpactAreasGrid" AutoGenerateColumns="False" CanUserResizeColumns="True" ItemsSource="{Binding ListOfRows}" MinHeight="180" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="*"  x:Name="Col1" Header="Unique Name" Binding="{Binding Name}"/>
-                <DataGridTextColumn Width="*" x:Name="Col2" Header="Index" Binding="{Binding IndexPoint}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <!--</Grid>-->
 
         <OkClose:OKCloseControl Grid.Row="5" />
     </Grid>

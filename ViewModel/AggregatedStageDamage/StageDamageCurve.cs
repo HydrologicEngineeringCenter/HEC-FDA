@@ -31,7 +31,7 @@ namespace ViewModel.AggregatedStageDamage
             ICoordinatesFunction coordFunction = ICoordinatesFunctionsFactory.Factory(functionElem.ToString());
 
             //todo i need to create the row item from the id? i just need to grab it from the database i guess
-            ImpArea = new ImpactAreaRowItem(selectedImpArea, "teststageDamageCurve", -1, new System.Collections.ObjectModel.ObservableCollection<object>());
+            ImpArea = new ImpactAreaRowItem(selectedImpArea, "teststageDamageCurve");
             DamCat = selectedDamCat;
             Function = coordFunction;
 

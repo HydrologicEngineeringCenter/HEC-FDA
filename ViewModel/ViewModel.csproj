@@ -8,6 +8,10 @@
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ImpactArea\ImpactAreaEditorVM.cs" />
+  </ItemGroup>
 	
   <ItemGroup>
     <Reference Include="BitMiracle.LibTiff.NET40">

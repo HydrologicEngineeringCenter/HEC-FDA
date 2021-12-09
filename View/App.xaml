@@ -164,9 +164,7 @@
             <HydraulicsView:GridImporter/>
         </DataTemplate>
         <!--Impact Area Region-->
-        <DataTemplate DataType="{x:Type ImpactAreaVM:ImpactAreaEditorVM }" >
-            <ImpactAreaView:ImpactAreaEditor/>
-        </DataTemplate>
+
         <DataTemplate DataType="{x:Type ImpactAreaVM:ImpactAreaImporterVM }" >
             <ImpactAreaView:ImpactAreaImporter/>
         </DataTemplate>

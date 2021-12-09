@@ -10,22 +10,17 @@ using System.Windows;
 
 namespace ViewModel.ImpactArea
 {
-    public class ImpactAreaElement : Utilities.ChildElement
+    public class ImpactAreaElement : ChildElement
     {
         #region Notes
         #endregion
         #region Fields
-        private const string _TableConstant = "Impact Areas - ";
         private ObservableCollection<ImpactAreaRowItem> _ImpactAreaRows;
         private int _featureNodeHash;
-        //private string _FilePath;
         #endregion
         #region Properties
       
         public string SelectedPath { get; set; }
-        public string SelectedUniqueName { get; set; }
-        public List<string> UniqueNames { get; set; }
-        //public LifeSimGIS.PolygonFeatures PolygonFeatures { get; set; }
         
         public ObservableCollection<ImpactAreaRowItem> ImpactAreaRows
         {
@@ -40,46 +35,33 @@ namespace ViewModel.ImpactArea
         public ImpactAreaElement(string userdefinedname,string description, ObservableCollection<ImpactAreaRowItem> collectionOfRows, string selectedPath ) : base()
         {
             Name = userdefinedname;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ImpactAreas.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ImpactAreas.png");
             Description = description;
-            //_FilePath = shapeFilePath;
-            //SelectedUniqueName = uniqueName;
             ImpactAreaRows = collectionOfRows;
-
-            //if (writeGeoDataToSqlite == true)
-            //{
-            //    WriteImpactAreaTableToSqlite(polyFeatures);
-            //}
-            //ImpactAreaRows = new ObservableCollection<ImpactAreaRowItem>();
-            //foreach (object o in items)
-            //{
-            //    ImpactAreaRows.Add(items as ImpactAreaRowItem);
-            //}
 
             SelectedPath = selectedPath;
 
-            Utilities.NamedAction edit = new Utilities.NamedAction();
-            edit.Header = "Edit Impact Areas";
+            NamedAction edit = new NamedAction();
+            edit.Header = "Edit Impact Area Set";
             edit.Action = Edit;
 
-            Utilities.NamedAction addToMapWindow = new Utilities.NamedAction();
-            addToMapWindow.Header = "Add Impact Areas To Map Window";
+            NamedAction addToMapWindow = new NamedAction();
+            addToMapWindow.Header = "Add Impact Area Set To Map Window";
             addToMapWindow.Action = ImpactAreasToMapWindow;
 
-            Utilities.NamedAction removeImpactArea = new Utilities.NamedAction();
+            NamedAction removeImpactArea = new NamedAction();
             removeImpactArea.Header = "Remove";
             removeImpactArea.Action = RemoveElement;
 
-            Utilities.NamedAction renameElement = new Utilities.NamedAction(this);
+            NamedAction renameElement = new NamedAction(this);
             renameElement.Header = "Rename";
             renameElement.Action = Rename;
 
-            List<Utilities.NamedAction> localactions = new List<Utilities.NamedAction>();
+            List<NamedAction> localactions = new List<NamedAction>();
             localactions.Add(addToMapWindow);
             localactions.Add(edit);
             localactions.Add(removeImpactArea);
             localactions.Add(renameElement);
-
 
             Actions = localactions;
 
@@ -120,19 +102,19 @@ namespace ViewModel.ImpactArea
         {
             DatabaseManager.SQLiteManager sqr = new DatabaseManager.SQLiteManager(Storage.Connection.Instance.ProjectFile);
             LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(sqr);
-            LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)gpr.ConvertToGisFeatures("IndexPointTable -" + this.Name);
+            string tableBaseName = ImpactAreaPersistenceManager.IndexPointTableNameConstant;
+            LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)gpr.ConvertToGisFeatures(tableBaseName + Name);
             LifeSimGIS.VectorFeatures features = polyFeatures;
             //read from table.
-            DatabaseManager.DataTableView dtv = sqr.GetTableManager("IndexPointTable -" + this.Name);
+            DatabaseManager.DataTableView dtv = sqr.GetTableManager(tableBaseName + Name);
             int[] geometryColumns = { 0, 1 };
             dtv.DeleteColumns(geometryColumns);
 
             OpenGLMapping.OpenGLDrawInfo ogldi = new OpenGLMapping.OpenGLDrawInfo(true, new OpenTK.Graphics.Color4((byte)255, 0, 0, 255), 1, true, new OpenTK.Graphics.Color4((byte)0, 255, 0, 200));
-            Utilities.AddShapefileEventArgs args = new Utilities.AddShapefileEventArgs(Name, features, dtv, ogldi);
+            AddShapefileEventArgs args = new AddShapefileEventArgs(Name, features, dtv, ogldi);
             AddToMapWindow(this, args);
             _featureNodeHash = args.MapFeatureHash;
-            //Saving.PersistenceFactory.GetImpactAreaManager().ImpactAreasToMapWindow(this);
-            foreach (Utilities.NamedAction a in Actions)
+            foreach (NamedAction a in Actions)
             {
                 if (a.Header.Equals("Add Impact Areas To Map Window"))
                 {
@@ -140,26 +122,16 @@ namespace ViewModel.ImpactArea
                     a.Action = RemoveElementFromMapWindow;
                 }
             }
-
         }
-
-        
 
         public override void RemoveElementFromMapWindow(object arg1, EventArgs arg2)
         {
-            RemoveFromMapWindow(this, new Utilities.RemoveMapFeatureEventArgs(_featureNodeHash));
-            //foreach (Utilities.NamedAction a in Actions)
-            //{
-            //    if (a.Header.Equals("Remove Impact Areas from Map Window"))
-            //    {
-            //        a.Header = "Add Impact Areas To Map Window";
-            //        a.Action = ImpactAreasToMapWindow;
-            //    }
-            //}
+            RemoveFromMapWindow(this, new RemoveMapFeatureEventArgs(_featureNodeHash));
         }
+
         public void removedcallback(OpenGLMapping.FeatureNodeHeader node, bool includeSelected)
         {
-            foreach (Utilities.NamedAction a in Actions)
+            foreach (NamedAction a in Actions)
             {
                 if (a.Header.Equals("Remove Impact Areas from Map Window"))
                 {
@@ -176,91 +148,12 @@ namespace ViewModel.ImpactArea
             //create an observable collection of all the available paths
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                 .WithSiblingRules(this);
-                //.WithParentGuid(this.GUID)
-                //.WithCanOpenMultipleTimes(false);
 
             ImpactAreaImporterVM vm = new ImpactAreaImporterVM(this, ImpactAreaRows, actionManager);
-            //vm.AddSiblingRules(this);
-            //vm.ParentGUID = this.GUID;
-            string header = "Edit Impact Area";
+            string header = "Edit Impact Area Set";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditImpactArea");
             Navigate(tab, false,false);
-
-         
         }
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
-
-        //public  void Save()
-        //{
-        //    LifeSimGIS.ShapefileReader shp = new LifeSimGIS.ShapefileReader(SelectedPath);
-        //    LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)shp.ToFeatures();
-        //    WriteImpactAreaTableToSqlite(polyFeatures);
-        //}
-
-        //private void UpdateExistingTable()
-        //{
-
-        //    DataBase_Reader.SqLiteReader sqlReader = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
-        //    DataBase_Reader.DataTableView dtv = sqlReader.GetTableManager(TableName);
-
-        //    object[] nameArray = new object[ImpactAreaRows.Count];
-        //    object[] indexPointArray = new object[ImpactAreaRows.Count];
-        //    int i = 0;
-        //    foreach (ImpactAreaRowItem row in ImpactAreaRows)
-        //    {
-        //        nameArray[i] = row.Name;
-        //        indexPointArray[i] = row.IndexPoint;
-        //        i++;
-        //    }
-
-        //    dtv.EditColumn(2,nameArray);
-        //    dtv.EditColumn(3, indexPointArray);
-
-        //    dtv.ApplyEdits();
-
-
-        //}
-
-        //private void WriteImpactAreaTableToSqlite(LifeSimGIS.PolygonFeatures polyFeatures)
-        //{
-        //    if (!Storage.Connection.Instance.IsConnectionNull)
-        //    {
-        //        if (Storage.Connection.Instance.TableNames().Contains(TableName))
-        //        {
-        //            //already exists... delete?
-        //            Storage.Connection.Instance.DeleteTable(TableName);
-        //        }
-
-
-
-        //        LifeSimGIS.GeoPackageWriter gpw = new LifeSimGIS.GeoPackageWriter(Storage.Connection.Instance.Reader);
-
-
-        //        System.Data.DataTable dt = new System.Data.DataTable(TableName);
-        //        dt.Columns.Add("Name", typeof(string));
-        //        dt.Columns.Add("IndexPoint", typeof(double));
-
-        //        foreach (ImpactAreaRowItem row in ImpactAreaRows)
-        //        {
-        //            dt.Rows.Add(row.Name, row.IndexPoint);
-
-        //        }
-
-        //        DataBase_Reader.InMemoryReader imr = new DataBase_Reader.InMemoryReader(dt);
-
-        //        gpw.AddFeatures(TableName, polyFeatures, imr.GetTableManager(imr.TableNames[0]));
-        //    }
-
-        //}
-
-        //public override object[] RowData()
-        //{
-        //    return new object[] { Name,Description };
-        //}
-
 
         #endregion
         #region Functions 
@@ -270,11 +163,5 @@ namespace ViewModel.ImpactArea
             return new ImpactAreaElement(elem.Name, elem.Description,elem.ImpactAreaRows,elem.SelectedPath);
         }
         #endregion
-
-        public override string ToString()
-        {
-            return this.Name;
-        }
-
     }
 }

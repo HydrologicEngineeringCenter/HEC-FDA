@@ -74,7 +74,7 @@ namespace ViewModel.AggregatedStageDamage
             if (impactAreaElements.Count == 0)
             {
                 //then we will use the default impact area. It should have an ID of 0
-                ImpactAreaRowItem defaultRI = new ImpactAreaRowItem(0,"Default", -9999, new ObservableCollection<object>());
+                ImpactAreaRowItem defaultRI = new ImpactAreaRowItem(0,"Default");
                 _ImpactAreas.Add(defaultRI);
 
             }
