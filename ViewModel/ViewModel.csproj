@@ -22,7 +22,7 @@
       <HintPath>..\lib\Consequences_Assist.dll</HintPath>
     </Reference>
     <Reference Include="DatabaseManager">
-      <HintPath>..\..\database-management\DataBase_Reader\bin\Debug\DatabaseManager.dll</HintPath>
+      <HintPath>..\lib\DatabaseManager.dll</HintPath>
     </Reference>
     <Reference Include="FdaLogger, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
