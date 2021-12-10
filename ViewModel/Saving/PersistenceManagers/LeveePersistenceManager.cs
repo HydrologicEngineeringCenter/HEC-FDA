@@ -121,28 +121,17 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public void SaveNew(ChildElement element)
         {
-            //if (element.GetType() == typeof(LeveeFeatureElement))
-            //{
-            //    SaveNewElementToParentTable(GetRowDataFromElement((LeveeFeatureElement)element), TableName, TableColumnNames, TableColumnTypes);
-            //    StudyCacheForSaving.AddElement((LeveeFeatureElement)element);
-            //}
             SaveNewElement(element);
             SaveToChangeTable(element);
             Log(FdaLogging.LoggingLevel.Info, "Created new levee failure element: " + element.Name, element.Name);
         }
         public void Remove(ChildElement element)
         {
-            int id = element.GetElementID();
-            RemoveFromParentTable(element, TableName);
-            StudyCacheForSaving.RemoveElement((LeveeFeatureElement)element, id);
-
+            base.Remove(element);
         }
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )
         {
-            //if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((LeveeFeatureElement)elementToSave), oldElement.Name, TableName))
-            //{
-                base.SaveExisting(oldElement, elementToSave, changeTableIndex);
-            //}
+            base.SaveExisting(oldElement, elementToSave, changeTableIndex);
         }
 
         public void Load()
@@ -153,11 +142,6 @@ namespace ViewModel.Saving.PersistenceManagers
                 StudyCacheForSaving.AddElement(elem);
             }
         }
-
-        //public override void AddValidationRules()
-        //{
-        //    //throw new NotImplementedException();
-        //}
 
         public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)
         {
@@ -202,7 +186,5 @@ namespace ViewModel.Saving.PersistenceManagers
             int id = GetElementId(TableName, elementName);
             return FdaLogging.RetrieveFromDB.GetLogMessagesByLevel(level, id, ELEMENT_TYPE);
         }
-
-        
     }
 }

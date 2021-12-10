@@ -28,7 +28,7 @@ namespace ViewModel.Study
         event FDACache.AddElementEventHandler FailureFunctionAdded;
         event FDACache.AddElementEventHandler StageDamageAdded;
         event FDACache.AddElementEventHandler StructureInventoryAdded;
-        event FDACache.AddElementEventHandler ConditionsElementAdded;
+        event FDACache.AddElementEventHandler IASElementAdded;
         event FDACache.AddElementEventHandler OccTypeElementAdded;
 
         event FDACache.AddElementEventHandler PlanRemoved;
@@ -43,7 +43,7 @@ namespace ViewModel.Study
         event FDACache.AddElementEventHandler FailureFunctionRemoved;
         event FDACache.AddElementEventHandler StageDamageRemoved;
         event FDACache.AddElementEventHandler StructureInventoryRemoved;
-        event FDACache.AddElementEventHandler ConditionsElementRemoved;
+        event FDACache.AddElementEventHandler IASElementRemoved;
         event FDACache.AddElementEventHandler OccTypeElementRemoved;
 
         event FDACache.UpdateElementEventHandler PlanUpdated;
@@ -58,7 +58,7 @@ namespace ViewModel.Study
         event FDACache.UpdateElementEventHandler FailureFunctionUpdated;
         event FDACache.UpdateElementEventHandler StageDamageUpdated;
         event FDACache.UpdateElementEventHandler StructureInventoryUpdated;
-        event FDACache.UpdateElementEventHandler ConditionsElementUpdated;
+        event FDACache.UpdateElementEventHandler IASElementUpdated;
         event FDACache.UpdateElementEventHandler OccTypeElementUpdated;
 
     }

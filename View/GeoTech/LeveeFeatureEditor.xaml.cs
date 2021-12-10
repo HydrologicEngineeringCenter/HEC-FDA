@@ -27,20 +27,20 @@ namespace View.GeoTech
         public LeveeFeatureEditor()
         {
             InitializeComponent();
-         
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            CurveEditorVM vm = (CurveEditorVM)this.DataContext;
-            CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
-            //Chart2D chart = new Chart2D(new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel));
-            editorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
-            Chart2D chart = new Chart2D(editorVM.CoordinatesChartViewModel);
-            PlotGrid.Children.Add(chart);
-            Grid.SetColumn(chart, 2);
-            //Grid.SetColumnSpan(chart, 2);
-            //Grid.SetRow(chart, 3);
+            CurveEditorVM vm = DataContext as CurveEditorVM;
+            if ( vm != null)
+            {
+                CoordinatesFunctionEditorVM editorVM = vm.EditorVM;
+                editorVM.CoordinatesChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
+                Chart2D chart = new Chart2D(editorVM.CoordinatesChartViewModel);
+                
+                PlotGrid.Children.Add(chart);
+                Grid.SetColumn(chart, 2);
+            }
         }
 
         private void rad_default_Checked(object sender, RoutedEventArgs e)

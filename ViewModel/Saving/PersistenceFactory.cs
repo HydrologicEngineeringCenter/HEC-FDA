@@ -79,9 +79,9 @@ namespace ViewModel.Saving
             {
                 return new StageDamagePersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(Conditions.ConditionsElement))
+            else if (element.GetType() == typeof(ImpactAreaScenario.IASElementSet))
             {
-                return new ConditionsPersistenceManager(StudyCacheForSaving);
+                return new IASPersistenceManager(StudyCacheForSaving);
             }
            
             return null;
@@ -142,9 +142,9 @@ namespace ViewModel.Saving
         {
             return new StructureInventoryPersistenceManager(StudyCacheForSaving);
         }
-        public static ConditionsPersistenceManager GetConditionsManager( )
+        public static IASPersistenceManager GetIASManager( )
         {
-            return new ConditionsPersistenceManager(StudyCacheForSaving);
+            return new IASPersistenceManager(StudyCacheForSaving);
         }
     }
 }

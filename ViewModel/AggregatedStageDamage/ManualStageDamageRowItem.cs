@@ -51,7 +51,10 @@ namespace ViewModel.AggregatedStageDamage
             ImpactAreas = impAreas;
             SelectedImpArea = ImpactAreas[0];
             DamageCategories = damCats;
-            SelectedDamCat = damCats[0];
+            if (damCats.Count > 0)
+            {
+                SelectedDamCat = damCats[0];
+            }
             EditorVM = new CoordinatesFunctionEditorVM(function, "Stage", "Damage", "Stage-Damage");
         }
 

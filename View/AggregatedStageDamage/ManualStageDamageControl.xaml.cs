@@ -76,6 +76,7 @@ namespace View.AggregatedStageDamage
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+
             ManualStageDamageVM vm = (ManualStageDamageVM)this.DataContext;
             vm.SelectedRowChanged += Vm_SelectedRowChanged;
             //make sure the first row is selected

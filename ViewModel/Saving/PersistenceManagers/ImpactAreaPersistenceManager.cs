@@ -61,14 +61,8 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             ObservableCollection<ImpactAreaRowItem> dummyCollection = new ObservableCollection<ImpactAreaRowItem>();
 
-            //i need to read from the sqlite table and get the polygon features and pass it to the new element
-            //DataBase_Reader.SqLiteReader sqr = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
-            //LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(sqr);
-            //LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)gpr.ConvertToGisFeatures("Impact Areas - " + rowData[0]);
-
             ImpactAreaElement iae = new ImpactAreaElement((string)rowData[1], (string)rowData[2], dummyCollection);
 
-           // int lastRow = Storage.Connection.Instance.GetTable(TableName).NumberOfRows - 1;
             ObservableCollection<object> tempCollection = new ObservableCollection<object>();
             DatabaseManager.DataTableView indexTable = Storage.Connection.Instance.GetTable(IndexPointTableNameConstant + rowData[1]);
             foreach (object[] row in indexTable.GetRows(0, indexTable.NumberOfRows-1))
@@ -140,25 +134,6 @@ namespace ViewModel.Saving.PersistenceManagers
         }
 
 
-        //public void ImpactAreasToMapWindow(ImpactAreaElement element)
-        //{
-        //    DataBase_Reader.SqLiteReader sqr = new DataBase_Reader.SqLiteReader(Storage.Connection.Instance.ProjectFile);
-        //    LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(sqr);
-        //    LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)gpr.ConvertToGisFeatures(IndexPointTableNameConstant + element.Name);
-        //    LifeSimGIS.VectorFeatures features = polyFeatures;
-        //    //read from table.
-        //    DataBase_Reader.DataTableView dtv = sqr.GetTableManager(IndexPointTableNameConstant + element.Name);
-        //    int[] geometryColumns = { 0, 1 };
-        //    dtv.DeleteColumns(geometryColumns);
-
-        //    OpenGLMapping.OpenGLDrawInfo ogldi = new OpenGLMapping.OpenGLDrawInfo(true, new OpenTK.Graphics.Color4((byte)255, 0, 0, 255), 1, true, new OpenTK.Graphics.Color4((byte)0, 255, 0, 200));
-        //    Utilities.AddShapefileEventArgs args = new Utilities.AddShapefileEventArgs(Name, features, dtv, ogldi);
-        //    element.AddToMapWindow(this, args);
-        //    //_featureNodeHash = args.MapFeatureHash;
-           
-
-        //}
-
         #endregion
 
         public void SaveNew(ChildElement element)
@@ -169,9 +144,7 @@ namespace ViewModel.Saving.PersistenceManagers
                 element.LastEditDate = editDate;
 
                 SaveNewElementToParentTable(GetRowDataFromElement((ImpactAreaElement)element), TableName, TableColumnNames, TableColumnTypes);
-                //SaveElementToChangeTable(element.Name, GetRowDataFromElement((ImpactAreaElement)element), ChangeTableConstant, TableColumnNames, TableColumnTypes);
                 SaveImpactAreaTable((ImpactAreaElement)element);
-                //add the rating element to the cache which then raises event that adds it to the owner element
                 StudyCacheForSaving.AddElement((ImpactAreaElement)element);
             }
         }
@@ -179,20 +152,12 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public void Remove(ChildElement element)
         {
-            //RemoveFromParentTable(element, TableName);
-            //DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);
-            //StudyCacheForSaving.RemoveElement((ImpactAreaElement)element);
+            RemoveFromParentTable(element, TableName);
+            StudyCacheForSaving.RemoveElement(element);
 
         }
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex  )
         {
-            //string editDate = DateTime.Now.ToString("G");
-            //elementToSave.LastEditDate = editDate;
-
-            //need to add, did Index point values change
-            //if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((ImpactAreaElement)elementToSave), oldName, TableName))
-            //{
-            //UpdateParentTableRow(elementToSave.Name, changeTableIndex, GetRowDataFromElement((ImpactAreaElement)elementToSave), oldElement.Name, TableName, false, ChangeTableConstant);
             base.SaveExisting(oldElement, elementToSave);
             if (!oldElement.Name.Equals(elementToSave.Name))
                 {
@@ -201,13 +166,9 @@ namespace ViewModel.Saving.PersistenceManagers
                 string newName = IndexPointTableNameConstant + elementToSave.Name;
                 LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
                 myGeoPackWriter.RenameFeatures(oldName, newName);
-                //Storage.Connection.Instance.RenameTable(IndexPointTableNameConstant + oldElement.Name, IndexPointTableNameConstant + elementToSave.Name);
                 
             }
                 UpdateExistingTable((ImpactAreaElement)elementToSave);
-                // update the existing element. This will actually remove the old element and do an insert at that location with the new element.
-              //  StudyCacheForSaving.UpdateImpactAreaElement((ImpactAreaElement)oldElement, (ImpactAreaElement)elementToSave);
-            //}
         }
 
         public void Load()
@@ -219,10 +180,7 @@ namespace ViewModel.Saving.PersistenceManagers
             }
         }
 
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
+
 
         public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)
         {

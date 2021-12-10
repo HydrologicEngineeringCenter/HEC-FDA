@@ -1,0 +1,102 @@
+﻿<UserControl x:Class="View.ImpactAreaScenario.Editor.SpecificIASControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:View.ImpactAreaScenario.Editor"
+             mc:Ignorable="d"
+             xmlns:UserControls="clr-namespace:UserControls;assembly=UserControls"
+             xmlns:Utilities="clr-namespace:View.Utilities"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Utilities:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <GroupBox Grid.Row="1"  Header="{Binding ImpactAreaRowItem.Name}" >
+            <StackPanel Orientation="Vertical">
+                <Grid Grid.Row="2" Margin="0,5,5,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label  Grid.Column="0" Content="Frequency Relationship:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
+                    <Label Grid.Row="0" Grid.Column="0" Content="*" Foreground="Red" HorizontalAlignment="Right" />
+
+                    <ComboBox  Grid.Column="1"  HorizontalAlignment="Stretch" ItemsSource="{Binding FrequencyElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedFrequencyElement}" />
+
+                    <Label  Grid.Column="2" Content="Inflow-Outflow:" HorizontalAlignment="Right" />
+                    <ComboBox  Grid.Column="3"  HorizontalAlignment="Stretch" ItemsSource="{Binding InflowOutflowElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedInflowOutflowElement}" />
+
+                    <Label  Grid.Column="4" Content="Rating Curve:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
+                    <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" Visibility="{Binding RatingRequired,Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <ComboBox  Grid.Column="5"  HorizontalAlignment="Stretch" ItemsSource="{Binding RatingCurveElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedRatingCurveElement}" />
+
+                </Grid>
+
+                <Grid Grid.Row="3" Margin="0,5,5,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label  Grid.Column="0" Content="Lateral Structure:" HorizontalAlignment="Right" />
+                    <ComboBox  Grid.Column="1"  HorizontalAlignment="Stretch" ItemsSource="{Binding LeveeFeatureElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedLeveeFeatureElement}"/>
+
+                    <Label  Grid.Column="2" Content="Ext-Int Stage:" HorizontalAlignment="Right" />
+                    <ComboBox  Grid.Column="3"  HorizontalAlignment="Stretch" ItemsSource="{Binding ExteriorInteriorElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedExteriorInteriorElement}"/>
+
+                    <Label  Grid.Column="4" Content="Stage Damage:" HorizontalAlignment="Right" Margin="0,0,7,0"/>
+                    <Label Grid.Row="0" Grid.Column="4" Content="*" Foreground="Red" HorizontalAlignment="Right" />
+                    <ComboBox  Grid.Column="5"  HorizontalAlignment="Stretch" ItemsSource="{Binding StageDamageElements}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedStageDamageElement}" />
+
+                </Grid>
+                <Grid Margin="0,5,5,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Thresholds:" HorizontalAlignment="Right" Margin="0,0,0,0"/>
+                    <Button Grid.Column="1" Content="Add Additional Thresholds..."  HorizontalAlignment="Stretch" Click="addThresholdBtn_Click"  />
+                </Grid>
+            </StackPanel>
+        </GroupBox>
+
+        <Grid Grid.Row="3" Margin="5,5,5,0">
+            <StackPanel Orientation="Horizontal" >
+                <Button Content="Preview Compute" Width="120" HorizontalAlignment="Left" Click="plotBtn_Click"/>
+                <Label Content="Damage Category:" />
+                <ComboBox ItemsSource="{Binding DamageCategories}" SelectedItem="{Binding SelectedDamageCurve}" DisplayMemberPath="DamCat" Width="300"/>
+                <Label Content="EAD: " Visibility="{Binding ShowEAD,Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <TextBlock Text="{Binding EAD}" Visibility="{Binding ShowEAD,Converter={StaticResource BoolToVisibilityConverter}}" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+
+        <local:IASPlotControl Grid.Row="4" Margin="5,5,5,0" DataContext="{Binding PlotControlVM}" Visibility="{Binding PlotControlVisibility}"/>
+
+        <local:RecommendationExpanderControl Grid.Row="5" Visibility="{Binding ShowWarnings,Converter={StaticResource BoolToVisibilityConverter}}" />
+
+    </Grid>
+</UserControl>

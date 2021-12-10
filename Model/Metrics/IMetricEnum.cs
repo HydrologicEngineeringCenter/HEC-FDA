@@ -25,5 +25,7 @@
         /// Probability weighted average annual flood damages.
         /// </summary>
         ExpectedAnnualDamage = 4,
+
+        Default = 5,
     }
 }

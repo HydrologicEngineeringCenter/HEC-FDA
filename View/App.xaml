@@ -4,12 +4,15 @@
              
              xmlns:EditorsVM ="clr-namespace:ViewModel.Editors;assembly=ViewModel"
              
+             xmlns:IASResultsVM ="clr-namespace:ViewModel.ImpactAreaScenario.Results;assembly=ViewModel"
+             xmlns:IASResultsView ="clr-namespace:View.ImpactAreaScenario.Results"
+             
+             xmlns:IASEditorVM ="clr-namespace:ViewModel.ImpactAreaScenario.Editor;assembly=ViewModel"
+             xmlns:IASEditorView ="clr-namespace:View.ImpactAreaScenario.Editor"
+             
              xmlns:PlotsOutputVM="clr-namespace:ViewModel.Output;assembly=ViewModel"
              xmlns:PlotsOutputView="clr-namespace:View.Output"
-             
-             xmlns:PlotsVM="clr-namespace:ViewModel.Plots;assembly=ViewModel"
-             xmlns:PlotsView="clr-namespace:View.Plots"
-             
+                          
              xmlns:AlternativeComparisonReportVM="clr-namespace:ViewModel.AlternativeComparisonReport;assembly=ViewModel"
              xmlns:AlternativeView="clr-namespace:View.Alternatives"
              
@@ -56,8 +59,8 @@
              xmlns:AggregatedVM="clr-namespace:ViewModel.AggregatedStageDamage;assembly=ViewModel"
              xmlns:AggregatedView="clr-namespace:View.AggregatedStageDamage"
              
-             xmlns:ConditionVM="clr-namespace:ViewModel.Conditions;assembly=ViewModel"
-             xmlns:ConditionsView="clr-namespace:View.Conditions"
+             xmlns:ImpactAreaScenarioVM="clr-namespace:ViewModel.ImpactAreaScenario;assembly=ViewModel"
+             xmlns:ImpactAreaScenarioView="clr-namespace:View.ImpactAreaScenario"
              
              xmlns:OccupancyTypesVM="clr-namespace:ViewModel.Inventory.OccupancyTypes;assembly=ViewModel"
              xmlns:OccupancyTypesView="clr-namespace:View.Inventory.OccupancyTypes"
@@ -234,6 +237,43 @@
             <OccupancyTypesView:ImportOccupancyTypeGroups/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type IASEditorVM:IASEditorVM }" >
+            <IASEditorView:IASEditor/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type IASEditorVM:ThresholdsVM }" >
+            <IASEditorView:Thresholds/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type IASResultsVM:IASResultsVM }" >
+            <IASResultsView:IASResults/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type IASResultsVM:SpecificIASResultVM }" >
+            <IASResultsView:SpecificIASResultsControl/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type IASResultsVM:DamageByDamageCategoryVM }" >
+            <IASResultsView:DamageByDamageCategory/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type IASResultsVM:PerformanceAEPVM }" >
+            <IASResultsView:PerformanceAEP/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type IASResultsVM:PerformanceAssuranceOfThresholdVM }" >
+            <IASResultsView:PerformanceAssuranceOfThreshold/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type IASResultsVM:PerformanceLongTermRiskVM }" >
+            <IASResultsView:PerformanceLongTermRisk/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type IASResultsVM:DamageWithUncertaintyVM }" >
+            <IASResultsView:DamageWithUncertainty/>
+        </DataTemplate>
+
+        
 
         <!--Output Region-->
         <!--<DataTemplate DataType="{x:Type OutputVM:CreateEconImportFileVM }" >
@@ -242,76 +282,18 @@
         <DataTemplate DataType="{x:Type OutputVM:IndexLocationsVM }" >
             <OutputView:IndexLocations/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:ConditionsEditorVM }" >
-            <ConditionsView:ConditionsEditor/>
+    
+        <DataTemplate DataType="{x:Type ImpactAreaScenarioVM:EnterSeedVM }" >
+            <ImpactAreaScenarioView:EnterSeed/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:EnterSeedVM }" >
-            <ConditionsView:EnterSeed/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:AddInflowOutflowToConditionVM }" >
-            <ConditionsView:AddInflowOutflowToCondition/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:AddExteriorInteriorStageToConditionVM }" >
-            <ConditionsView:AddExteriorInteriorStageToCondition/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:AddFailureFunctionToConditionVM }" >
-            <ConditionsView:AddFailureFunctionToCondition/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:AddStageDamageToConditionVM }" >
-            <ConditionsView:AddStageDamageToCondition/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:ConditionsPlotEditorVM }" >
-            <ConditionsView:ConditionsPlotEditor/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:AddFlowFrequencyToConditionVM }" >
-            <ConditionsView:AddFlowFrequencyToCondition/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type ConditionVM:AddRatingCurveToConditionVM }" >
-            <ConditionsView:AddRatingCurveToCondition/>
-        </DataTemplate>
-        <!--todo: Refactor: CO-->
-        <!--<DataTemplate DataType="{x:Type LinkedPlotsVM:LinkedPlotsUpdatedVM }" >
-            <LinkedPlotsView:LinkedPlotsUpdated/>
-        </DataTemplate>-->
+  
+      
+       
         
-        <!--todo: Refactor: CO-->
-        <!--Plots Region -->
-        <!--<DataTemplate DataType="{x:Type PlotsVM:ParentUserControlVM }" >
-            <PlotsView:ParentUserControl/>
-        </DataTemplate>-->
-        <!--<DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotVM }" >
-            <PlotsView:IndividualLinkedPlot/>
-        </DataTemplate>-->
+        
+       
 
-        <DataTemplate DataType="{x:Type PlotsVM:ConditionsIndividualPlotWrapperVM }" >
-            <PlotsView:ConditionsIndividualPlotWrapper/>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type PlotsVM:DoubleLineModulatorWrapperVM }" >
-            <ConditionsView:ConditionsDoubleLineModulatorWrapper/>
-        </DataTemplate>
-        <!--todo: Refactor: CO-->
-        <!--<DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotControlVM }" >
-            <PlotsView:IndividualLinkedPlotControl/>
-        </DataTemplate>-->
-        <DataTemplate DataType="{x:Type PlotsVM:IndividualLinkedPlotCoverButtonVM }" >
-            <PlotsView:IndividualLinkedPlotCoverButton/>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type PlotsVM:HorizontalDoubleLineModulatorWrapperVM }" >
-            <PlotsView:HorizontalDoubleLineModulatorWrapper/>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type PlotsVM:ConditionsHorizontalFailureFunctionVM }" >
-            <PlotsView:ConditionsHorizontalFailureFunction/>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type PlotsVM:DoubleLineModulatorHorizontalCoverButtonVM }" >
-            <PlotsView:DoubleLineModulatorHorizontalCoverButton/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type PlotsVM:DoubleLineModulatorCoverButtonVM }" >
-            <PlotsView:DoubleLineModulatorCoverButton/>
-        </DataTemplate>
+       
 
         <DataTemplate DataType="{x:Type PlotsOutputVM:LinkedPlotsVM }" >
             <PlotsOutputView:LinkedPlots/>

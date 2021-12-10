@@ -26,17 +26,14 @@ namespace View.AggregatedStageDamage
     {
         private Chart2D _lastChart;
 
-
         public CalculatedStageDamageControl()
         {
             InitializeComponent();
-            
-            
         }
 
         private void linkChartViewModel()
         {
-            CalculatedStageDamageVM vm = (CalculatedStageDamageVM)this.DataContext;
+            CalculatedStageDamageVM vm = (CalculatedStageDamageVM)DataContext;
             int rowIndex = vm.SelectedRowIndex;
             if (rowIndex >= 0)
             {

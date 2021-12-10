@@ -243,6 +243,7 @@ public override Type[] ChangeTableColumnTypes
 
         public void Remove(ChildElement element)
         {
+            base.Remove(element);
             //todo: do something here
             //RemoveFromParentTable(element, TableName);
             //DeleteChangeTableAndAssociatedTables(element, ChangeTableConstant);

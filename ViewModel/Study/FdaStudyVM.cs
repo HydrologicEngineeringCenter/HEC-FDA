@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ViewModel.Utilities.Transactions;
 using System.Collections.ObjectModel;
-using ViewModel.Conditions;
+using ViewModel.ImpactAreaScenario;
 using ViewModel.Utilities;
 using System.IO;
 using System.Xml;
@@ -32,28 +32,16 @@ namespace ViewModel.Study
         private int _SelectedTab = 0;
         private int _SelectedTabIndex;
         private ObservableCollection<Utilities.IDynamicTab> _Tabs;
-        //private Guid _CreateNewStudyTabID;
-
-
         private ObservableCollection<TransactionRowItem> _TransactionRows;
         private ObservableCollection<FdaLogging.LogItem> _MessageRows = new ObservableCollection<LogItem>();
         private bool _TransactionsMessagesVisible;
-
         private MapWindowMapTreeViewConnector _MWMTVConn;
-
-        //public static Dictionary<Guid, List<IDynamicTab>> _TabsDictionary;
         private string _SaveStatus;
-
         private bool _MapViewVisible;
         private bool _TabsViewVisible;
         #endregion
         #region Properties
-        //public static readonly DependencyProperty FilterStringProperty = DependencyProperty.Register("SaveStatus", typeof(string), typeof(FdaStudyVM), new UIPropertyMetadata("no version!"));
-        //public string SaveStatus
-        //{
-        //    get { return (string)GetValue(FilterStringProperty); }
-        //    set { SetValue(FilterStringProperty, value); }
-        //}
+
 
         public bool MapViewVisible
         {
@@ -75,8 +63,6 @@ namespace ViewModel.Study
             get { return _MWMTVConn; }
             set { _MWMTVConn = value; }
         }
-
-
         public int SelectedDynamicTabIndex
         {
             get { return _SelectedTabIndex; }
@@ -86,34 +72,14 @@ namespace ViewModel.Study
                 if (_SelectedTabIndex == 0)
                 {
                     _MWMTVConn.UpdateMapWindow();
-                    //UpdateMapWindow();
                 }
             }
         }
 
-
-
-        //public ObservableCollection<IDynamicTab> Tabs
-        //{
-        //    get { return _Tabs; }
-        //    set { _Tabs = value; NotifyPropertyChanged(); }
-        //}
-
-        //public List<BaseViewModel> Avalon
-        //{
-        //    get;set;
-        //}
-
-        //public ObservableCollection<Utilities.DynamicTabVM> PoppedOutTabs
-        //{
-        //    get { return _PoppedOutTabs; }
-        //    set { _PoppedOutTabs = value; NotifyPropertyChanged(); }
-        //}
-
         public int SelectedTab
         {
             get { return _SelectedTab; }
-            set { _SelectedTab = value; TabChangedEvent(value); }
+            set { _SelectedTab = value; }
         }
 
         public List<ParentElement> MainStudyTree
@@ -128,8 +94,6 @@ namespace ViewModel.Study
             get { return _StudyElement; }
             set { _StudyElement = value; NotifyPropertyChanged(); }
         }
-
-
 
         public ObservableCollection<TransactionRowItem> TransactionRows
         {
@@ -209,7 +173,6 @@ namespace ViewModel.Study
             CurrentStudyElement = new StudyElement();
             _StudyElement.RenameTreeViewElement += RenameTheMapTreeViewItem;
             _StudyElement.AddBackInTreeViewElement += AddTheMapTreeViewItemBackIn;           
-           // _StudyElement.SaveTheOpenTabs += SaveTheTabs;
             _StudyElement.RequestNavigation += Navigate;
             _StudyElement.RequestShapefilePaths += ShapefilePaths;
             _StudyElement.RequestShapefilePathsOfType += ShapefilePathsOfType;
@@ -219,11 +182,9 @@ namespace ViewModel.Study
             _StudyElement.UpdateTransactionsAndMessages += UpdateTransactionsAndMessages;
             _StudyElement.LoadMapLayers += LoadMapLayers;
             _StudyElement.OpeningADifferentStudy += OpenADifferentStudy;
-            //_StudyElement.ClearStudy += ClearCurrentStudy;
             _StudyElement.AddBaseElements();
             _MainStudyTree.Add(_StudyElement);
 
-            //FdaModel.Utilities.Messager.Logger.Instance.RequestFlushLogFile += Instance_RequestFlushLogFile;
             InitializeGDAL();
 
             StudyStatusBar.SaveStatusChanged += UpdateSaveStatus;
@@ -236,8 +197,6 @@ namespace ViewModel.Study
             {
                 Environment.SetEnvironmentVariable("GDAL_TIFF_OVR_BLOCKSIZE", "256");
                 string dir = AppDomain.CurrentDomain.BaseDirectory;
-                //dir = new Uri(dir).LocalPath;
-                //dir = System.IO.Path.GetDirectoryName(dir);
                 string ToolDir = dir + @"GDAL\bin";
                 string DataDir = dir + @"GDAL\data";
                 string PluginDir = dir + @"GDAL\bin\gdalplugins";
@@ -292,7 +251,6 @@ namespace ViewModel.Study
                         OpenGLMapping.MapRasters mr = (OpenGLMapping.MapRasters)raster.GetBaseFeature;
                         OpenGLMapping.RasterFeatureNode newNode = new OpenGLMapping.RasterFeatureNode(mr, "new Name");
                             ((Watershed.TerrainElement)elem).NodeToAddBackToMapWindow = newNode;
-                        //_MWMTVConn.MapTreeView.AddGisData(newNode);
                         }
                     }
                 }
@@ -308,7 +266,6 @@ namespace ViewModel.Study
         }
         private void SetMapWindowInConnector(object sender, EventArgs e)
         {
-            //OpenGLMapping.OpenGLMapWindow mapWindow = 
         }
         private void UpdateSaveStatus(object sender, EventArgs e)
         {
@@ -332,17 +289,10 @@ namespace ViewModel.Study
             _MWMTVConn.MapTreeView = mapTreeView;
 
             MapWindowControlVM vm = new MapWindowControlVM(ref _MWMTVConn);
-            //vm.SetMapWindowProperty += SetMapWindowProperty;
             vm.Name = "map window vm";
             DynamicTabVM mapTabVM = new DynamicTabVM("Map", vm, "Map", false, false);
             Navigate(mapTabVM, false, false);
-            //TabController.Instance.AddTab(mapTabVM);
             TabController.Instance.MWMTVConnector = _MWMTVConn;
-            //TabController.Instance.SelectedDynamicTabIndex = 0;
-
-            //for testing, delete me
-            //LoadMapLayers(null, null);
-            //
         }
 
         /// <summary>
@@ -378,34 +328,8 @@ namespace ViewModel.Study
             }
         }
 
-        ///// <summary>
-        ///// For testing only. Delete me
-        ///// </summary>
-        //public static bool CheckForMainThread()
-        //{
-        //    if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA &&
-        //        !Thread.CurrentThread.IsBackground && !Thread.CurrentThread.IsThreadPoolThread && Thread.CurrentThread.IsAlive)
-        //    {
-        //        MethodInfo correctEntryMethod = Assembly.GetEntryAssembly().EntryPoint;
-        //        StackTrace trace = new StackTrace();
-        //        StackFrame[] frames = trace.GetFrames();
-        //        for (int i = frames.Length - 1; i >= 0; i--)
-        //        {
-        //            MethodBase method = frames[i].GetMethod();
-        //            if (correctEntryMethod == method)
-        //            {
-        //                return true;
-        //            }
-        //        }
-        //    }
-        //    return false;
-        //    // throw exception, the current thread is not the main thread...
-        //}
-
         public void LoadMapLayers(object sender, EventArgs e)
         {
-            //bool isMainThread = CheckForMainThread();
-            //Storage.Connection.Instance.ProjectFile = @"C:\Users\cody\Documents\HEC\HEC-FDA\Studies\sep 18\sep 18.sqlite";
             string path = Storage.Connection.Instance.ProjectDirectory + "\\MapLayers.xml";
             if (File.Exists(path) && _MWMTVConn != null)
             {
@@ -428,18 +352,7 @@ namespace ViewModel.Study
             AddTransaction(this, new Utilities.Transactions.TransactionEventArgs(_StudyElement.Name, TransactionEnum.EditExisting,
                 "Openning " + _StudyElement.Name + " for editing.", nameof(CurrentStudyElement)));
 
-            //FdaModel.Utilities.Messager.ErrorMessage err = new FdaModel.Utilities.Messager.ErrorMessage("Test message when opening", FdaModel.Utilities.Messager.ErrorMessageEnum.Report, nameof(CurrentStudyElement));
-
-            //TransactionHelper.LoadTransactionsAndMessages(this, CurrentStudyElement);
         }
-     
-        //private void Instance_RequestFlushLogFile(object sender, EventArgs e)
-        //{
-        //    if (!Storage.Connection.Instance.IsConnectionNull)
-        //    {
-        //        FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
-        //    }
-        //}
 
         private void WriteTransactions(object sender, TransactionEventArgs args)
         {
@@ -455,45 +368,18 @@ namespace ViewModel.Study
                 dtv.ApplyEdits();
             }
         }
-        public override void AddValidationRules()
-        {
-            //AddRule(nameof(StudyElement), () => { return AreConditionsValid(); }, GetConditionErrors());
-        }
 
        
         #endregion
         #region Functions
-        //public override BaseFdaElement GetElementOfTypeAndName(Type t, string name)
-        //{
-        //    return _MainStudyTree[0].GetElementOfTypeAndName(t,name);
-        //}
-        //public override List<T> GetElementsOfType<T>()
-        //{
-        //    return _MainStudyTree[0].GetElementsOfType<T>();
-        //}
+
         public override void Dispose()
         {
             Disposer.DeleteOldLogs();
             Disposer.DeleteLogsOverMaxNumber();
-            //FdaModel.Utilities.Messager.Logger.Instance.Flush(Storage.Connection.Instance.Reader);
-            //FdaModel.Utilities.Initialize.DisposeGDAL();
             WriteMapLayersXMLFile();
             Disposer.Dispose();
         }
-
-        /// <summary>
-        /// The integer value will be 0 for the conditions tree tab
-        /// and 1 for the study tree tab
-        /// </summary>
-        /// <param name="value"></param>
-        public void TabChangedEvent(int value)
-        {
-            if (value == 0)
-            {
-                CurrentStudyElement.UpdateTheConditionsTree(this, new EventArgs());
-            }       
-        }
-
 
         public void FilterRowsByLevel(FdaLogging.LoggingLevel level)
         {
