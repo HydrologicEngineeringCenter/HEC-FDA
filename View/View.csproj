@@ -30,7 +30,7 @@
       <HintPath>..\lib\Consequences_Assist.dll</HintPath>
     </Reference>
     <Reference Include="DatabaseManager">
-      <HintPath>..\..\database-management\DataBase_Reader\bin\Debug\DatabaseManager.dll</HintPath>
+      <HintPath>..\lib\DatabaseManager.dll</HintPath>
     </Reference>
     <Reference Include="DataTableViewControl">
       <HintPath>..\lib\DataTableViewControl.dll</HintPath>
