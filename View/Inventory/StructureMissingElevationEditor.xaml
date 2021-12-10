@@ -38,8 +38,8 @@
         </Grid.RowDefinitions>
         
         <StackPanel Grid.Row="0">
-            <Label Content="Elevations are required for every structure. The following structures must be fixed before the structure inventory can be imported." />
-            <Label Content="If using a terrain file, it is possible these structures are outside the terrain polygon. If using the structure file, the cell with elevation data is empty."/>
+            <Label Content="Each structure should have a value for the required attributes." />
+            <Label Content="The following structures are missing a value for at least one required attribute."/>
         </StackPanel>
 
         <FrameworkElement x:Name="dummyElement" Visibility="Collapsed"/>
