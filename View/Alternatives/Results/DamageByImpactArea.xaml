@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="View.Alternatives.Results.EADDamageByImpactArea"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:View.Alternatives.Results"
+             xmlns:utils="clr-namespace:View.Utilities"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <DataGrid Grid.Row="0" Grid.Column="0"  ItemsSource="{Binding Rows}" AutoGenerateColumns="False" 
+                   HorizontalAlignment="Left"
+                  VerticalAlignment="Top" Width="250" IsReadOnly="True" CanUserReorderColumns="False"
+                  CanUserSortColumns="false" Margin="5">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding ImpactArea}" Width="110">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Impact Area" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding EAD}" Width="*">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Expected Annual Damage" TextWrapping="Wrap" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Visibility="{Binding RateAndPeriodVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Label Content="Discount Rate:" />
+            <Label Content="{Binding DiscountRate}"/>
+            <Label Content="Period of Analysis:" />
+            <Label Content="{Binding PeriodOfAnalysis}"/>
+        </StackPanel>
+
+    </Grid>
+
+</UserControl>

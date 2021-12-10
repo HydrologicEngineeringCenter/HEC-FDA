@@ -41,7 +41,9 @@ namespace ViewModel.Study
         public event AddElementEventHandler StageDamageAdded;
         public event AddElementEventHandler StructureInventoryAdded;
         public event AddElementEventHandler IASElementAdded;
+        public event AddElementEventHandler AlternativeAdded;
         public event AddElementEventHandler OccTypeElementAdded;
+        public event AddElementEventHandler AlternativeCompReportAdded;
 
         public event AddElementEventHandler RatingRemoved;
         public event AddElementEventHandler TerrainRemoved;
@@ -55,7 +57,9 @@ namespace ViewModel.Study
         public event AddElementEventHandler StageDamageRemoved;
         public event AddElementEventHandler StructureInventoryRemoved;
         public event AddElementEventHandler IASElementRemoved;
+        public event AddElementEventHandler AlternativeRemoved;
         public event AddElementEventHandler OccTypeElementRemoved;
+        public event AddElementEventHandler AlternativeCompReportRemoved;
 
         public event UpdateElementEventHandler RatingUpdated;
         public event UpdateElementEventHandler TerrainUpdated;
@@ -70,9 +74,8 @@ namespace ViewModel.Study
         public event UpdateElementEventHandler StructureInventoryUpdated;
         public event UpdateElementEventHandler IASElementUpdated;
         public event UpdateElementEventHandler OccTypeElementUpdated;
-        public event AddElementEventHandler PlanAdded;
-        public event AddElementEventHandler PlanRemoved;
-        public event UpdateElementEventHandler PlanUpdated;
+        public event UpdateElementEventHandler AlternativeUpdated;
+        public event UpdateElementEventHandler AlternativeCompReportUpdated;
 
 
         #region Properties
@@ -89,6 +92,9 @@ namespace ViewModel.Study
         public List<AggregatedStageDamageElement> StageDamageElements { get; } = new List<AggregatedStageDamageElement>();
         public List<InventoryElement> StructureInventoryElements { get; } = new List<InventoryElement>();
         public List<IASElementSet> IASElementSets { get; } = new List<IASElementSet>();
+        public List<AlternativeElement> AlternativeElements { get; } = new List<AlternativeElement>();
+        public List<AlternativeComparisonReportElement> AlternativeCompReports { get; } = new List<AlternativeComparisonReportElement>();
+        public StudyPropertiesElement StudyPropertiesElement { get; set; }
 
         #region ParentElements
         public TerrainOwnerElement TerrainParent { get; set; }
@@ -102,7 +108,7 @@ namespace ViewModel.Study
         public OccupancyTypesOwnerElement OccTypeParent { get; set; }
         public StructureInventoryOwnerElement StructureInventoryParent { get; set; }
         public IASOwnerElement IASParent { get; set; }
-        public AltervativeOwnerElement PlansParent { get; set; }
+        public AlternativeOwnerElement AlternativeParent { get; set; }
         public AlternativeComparisonReportOwnerElement AlternativeComparisonReportParent { get; set; }
         #endregion
         #endregion
@@ -176,7 +182,6 @@ namespace ViewModel.Study
                 RemoveElementFromList(FailureFunctionElements, elem);
                 FailureFunctionRemoved?.Invoke(this, elementAddedEventArgs);
             }
-
             else if (elem.GetType() == typeof(OccupancyTypesElement))
             {
                 RemoveElementFromList(OccTypeElements, elem);
@@ -196,6 +201,16 @@ namespace ViewModel.Study
             {
                 RemoveElementFromList(IASElementSets, elem);
                 IASElementRemoved?.Invoke(this, elementAddedEventArgs);
+            }
+            else if (elem.GetType() == typeof(AlternativeElement))
+            {
+                RemoveElementFromList(AlternativeElements, elem);
+                AlternativeRemoved?.Invoke(this, elementAddedEventArgs);
+            }
+            else if(elem is AlternativeComparisonReportElement)
+            {
+                RemoveElementFromList(AlternativeCompReports, elem);
+                AlternativeCompReportRemoved?.Invoke(this, elementAddedEventArgs);    
             }
         }
 
@@ -286,6 +301,20 @@ namespace ViewModel.Study
                 IASElementSets.Add((IASElementSet)elem);
                 IASElementAdded?.Invoke(this, new ElementAddedEventArgs(elem));
             }
+            else if (elem.GetType() == typeof(AlternativeElement))
+            {
+                AlternativeElements.Add((AlternativeElement)elem);
+                AlternativeAdded?.Invoke(this, new ElementAddedEventArgs(elem));
+            }
+            else if(elem is AlternativeComparisonReportElement)
+            {
+                AlternativeCompReports.Add((AlternativeComparisonReportElement)elem);
+                AlternativeCompReportAdded?.Invoke(this, new ElementAddedEventArgs(elem));
+            }
+            else if(elem is StudyPropertiesElement element)
+            {
+                StudyPropertiesElement = element;
+            }
         }
         #endregion
     
@@ -338,9 +367,21 @@ namespace ViewModel.Study
             {
                 UpdateIASElement((IASElementSet)oldElement, (IASElementSet)newElement);
             }
-            else if (oldElement is InventoryElement )
+            else if (oldElement.GetType().Equals(typeof(AlternativeElement)))
+            {
+                UpdateAlternativeElement((AlternativeElement)oldElement, (AlternativeElement)newElement);
+            }
+            else if (oldElement.GetType().Equals(typeof(InventoryElement)))
             {
                 UpdateStructureInventoryElement((InventoryElement)oldElement, (InventoryElement)newElement);
+            }
+            else if(oldElement is AlternativeComparisonReportElement)
+            {
+                UpdateAlternativeCompReportElement((AlternativeComparisonReportElement)oldElement, (AlternativeComparisonReportElement)newElement);
+            }
+            else if(oldElement is StudyPropertiesElement)
+            {
+                StudyPropertiesElement = (StudyPropertiesElement)newElement;
             }
         }
 
@@ -544,6 +585,44 @@ namespace ViewModel.Study
                 IASElementUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
             }
         }
+        public void UpdateAlternativeElement(AlternativeElement oldElement, AlternativeElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < AlternativeElements.Count; i++)
+            {
+                if (AlternativeElements[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                AlternativeElements.RemoveAt(index);
+                AlternativeElements.Insert(index, newElement);
+                AlternativeUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
+
+        public void UpdateAlternativeCompReportElement(AlternativeComparisonReportElement oldElement, AlternativeComparisonReportElement newElement)
+        {
+            int index = -1;
+            for (int i = 0; i < AlternativeCompReports.Count; i++)
+            {
+                if (AlternativeCompReports[i].Name.Equals(oldElement.Name))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1)
+            {
+                AlternativeCompReports.RemoveAt(index);
+                AlternativeCompReports.Insert(index, newElement);
+                AlternativeCompReportUpdated?.Invoke(this, new ElementUpdatedEventArgs(oldElement, newElement));
+            }
+        }
+
         public void UpdateStructureInventoryElement(InventoryElement oldElement, InventoryElement newElement)
         {
             int index = -1;
@@ -638,6 +717,19 @@ namespace ViewModel.Study
             {
                 retVal.AddRange(IASElementSets);
             }
+            else if (element.GetType() == typeof(AlternativeOwnerElement))
+            {
+                foreach (ChildElement elem in AlternativeElements)
+                {
+                    retVal.Add(elem);
+                }
+                return retVal;
+            }
+            else if(element is AlternativeComparisonReportElement)
+            {
+                retVal.AddRange(AlternativeCompReports);
+            }
+
             return retVal;
 
         }
@@ -751,6 +843,22 @@ namespace ViewModel.Study
             {
                 retVal.AddRange(IASElementSets);
             }
+            if (childElementType == typeof(AlternativeElement))
+            {
+                foreach (ChildElement elem in AlternativeElements)
+                {
+                    retVal.Add(elem);
+                }
+                return retVal;
+            }
+            else if(childElementType == typeof(AlternativeComparisonReportElement))
+            {
+                retVal.AddRange(AlternativeCompReports);
+            }
+            else if(childElementType == typeof(StudyPropertiesElement))
+            {
+                retVal.Add(StudyPropertiesElement);
+            }
             return retVal;
         }
         public List<T> GetChildElementsOfType<T>() where T : ChildElement
@@ -807,12 +915,35 @@ namespace ViewModel.Study
             {
                 childElem = IASElementSets.Where(elem => elem.GetElementID() == ID).FirstOrDefault();
             }
-
+            if (childElementType == typeof(AlternativeElement))
+            {
+                foreach (ChildElement elem in AlternativeElements)
+                {
+                    if (elem.GetElementID() == ID)
+                    {
+                        return elem;
+                    }
+                }
+            }
+            else if(childElementType == typeof(AlternativeComparisonReportElement))
+            {
+                childElem = AlternativeCompReports.Where(elem => elem.GetElementID() == ID).FirstOrDefault();
+            }
             return childElem;
         }
 
         #endregion
 
-
+        public StudyPropertiesElement GetStudyPropertiesElement()
+        {
+            if (StudyPropertiesElement != null)
+            {
+                return StudyPropertiesElement;
+            }
+            else
+            {
+                throw new MemberAccessException("A study properties element does not exist in the cache.");
+            }
+        }
     }
 }

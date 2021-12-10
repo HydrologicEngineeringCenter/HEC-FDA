@@ -185,17 +185,11 @@ namespace ViewModel.Editors
             CurrentElement.LastEditDate = LastEditDate;
             elementToSave.Curve = Curve;
 
-            //todo: delete me just for testing
-            //////////////////////////////////
-            Utilities.WriteToConsole.WriteCoordinatesToConsole(elementToSave.Curve, "Flow Frequency Curve: " + elementToSave.Name);
-            //////////////////////////////////
             ActionManager.SaveUndoRedoHelper.Save(CurrentElement.Name,CurrentElement, elementToSave);
             //saving puts all the right values in the db but does not update the owned element in the tree. (in memory values)
             // i need to update those properties here
             AssignValuesFromEditorToCurrentElement();
 
-            //update the rules to exclude the new name from the banned list
-            //OwnerValidationRules.Invoke(this, _CurrentElement.Name);  
             SavingText = CreateLastSavedText(elementToSave);
 
             ReloadMessages(true);

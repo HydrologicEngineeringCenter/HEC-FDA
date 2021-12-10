@@ -180,7 +180,7 @@ namespace ViewModel.Utilities
         //    {
         //        if (this.TableContainsGeoData == true)
         //        {
-        //            Storage.Connection.Instance.RenameGeoPackageTable(oldTableName, newTableName);
+        //            Connection.Instance.RenameGeoPackageTable(oldTableName, newTableName);
         //        }
         //        else
         //        {

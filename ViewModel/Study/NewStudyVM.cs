@@ -1,9 +1,5 @@
-﻿using Model;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ViewModel.Study
 {
@@ -12,6 +8,7 @@ namespace ViewModel.Study
         #region Notes
         #endregion
         #region Fields
+        private StudyElement _StudyElement;
         private string _Path;
         private string _StudyName;
         private string _Description;
@@ -24,7 +21,6 @@ namespace ViewModel.Study
                     _Path = value;
                     NotifyPropertyChanged();
                 }
-
             }
         }
         public string StudyName
@@ -37,19 +33,11 @@ namespace ViewModel.Study
                     _StudyName = value;
                     NotifyPropertyChanged();
                 }
-
             }
         }
 
-        private StudyElement _StudyElement;
         #endregion
         #region Constructors
-        //public NewStudyVM() : base(null)
-        //{
-        //    _Path = "C:\\temp\\FDA\\";
-        //    _StudyName = "Example";
-        //    _Description = "My description";
-        //}
 
         public NewStudyVM(StudyElement studyElement) : base(null)
         {
@@ -65,8 +53,6 @@ namespace ViewModel.Study
             AddRule(nameof(Path), () => Path != null, "Path cannot be null.");
             AddRule(nameof(Path), () => Path != "", "Path cannot be null.");
 
-            //path must be a valid path and not currently exist //possibly allow for creation of new directory here, but would require invalid character search.
-            //AddRule(nameof(Path), () => System.IO.Directory.Exists(Path), "Directory must exist");
             //path must not contain invalid characters
             AddRule(nameof(Path), () =>
             {
@@ -102,7 +88,7 @@ namespace ViewModel.Study
 
         public override void Save()
         {
-            _StudyElement.CreateStudyFromViewModel(_StudyName, _Path);
+            _StudyElement.CreateStudyFromViewModel(_StudyName, _Path, _Description);
         }
 
 

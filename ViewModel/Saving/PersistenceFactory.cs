@@ -1,14 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ViewModel.Saving.PersistenceManagers;
-using ViewModel.Watershed;
-using ViewModel.StageTransforms;
-using ViewModel.ImpactArea;
-using ViewModel.WaterSurfaceElevation;
+﻿using ViewModel.AggregatedStageDamage;
+using ViewModel.AlternativeComparisonReport;
+using ViewModel.Alternatives;
+using ViewModel.FlowTransforms;
 using ViewModel.FrequencyRelationships;
+using ViewModel.GeoTech;
+using ViewModel.ImpactArea;
+using ViewModel.ImpactAreaScenario;
+using ViewModel.Inventory;
+using ViewModel.Saving.PersistenceManagers;
+using ViewModel.StageTransforms;
+using ViewModel.Utilities;
+using ViewModel.Watershed;
+using ViewModel.WaterSurfaceElevation;
 
 namespace ViewModel.Saving
 {
@@ -31,60 +34,67 @@ namespace ViewModel.Saving
             
         }
         
-
-        public static IElementManager GetElementManager(Utilities.ChildElement element)
+        public static IElementManager GetElementManager(ChildElement element)
         {
-
+            IElementManager manager = null;
             if (element.GetType() == typeof(TerrainElement))
             {
-                return new TerrainElementPersistenceManager(StudyCacheForSaving);
+                manager = new TerrainElementPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(RatingCurveElement))
             {
-                return new RatingElementPersistenceManager(StudyCacheForSaving);
+                manager = new RatingElementPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(ExteriorInteriorElement))
             {
-                return new ExteriorInteriorPersistenceManager(StudyCacheForSaving);
+                manager = new ExteriorInteriorPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(ImpactAreaElement))
             {
-                return new ImpactAreaPersistenceManager(StudyCacheForSaving);
+                manager = new ImpactAreaPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(WaterSurfaceElevationElement))
             {
-                return new WaterSurfaceAreaPersistenceManager(StudyCacheForSaving);
+                manager = new WaterSurfaceAreaPersistenceManager(StudyCacheForSaving);
             }
             else if (element.GetType() == typeof(AnalyticalFrequencyElement))
             {
-                return new FlowFrequencyPersistenceManager(StudyCacheForSaving);
+                manager = new FlowFrequencyPersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(FlowTransforms.InflowOutflowElement))
+            else if (element.GetType() == typeof(InflowOutflowElement))
             {
-                return new InflowOutflowPersistenceManager(StudyCacheForSaving);
+                manager = new InflowOutflowPersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(GeoTech.LeveeFeatureElement))
+            else if (element.GetType() == typeof(LeveeFeatureElement))
             {
-                return new LeveePersistenceManager(StudyCacheForSaving);
+                manager = new LeveePersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(GeoTech.FailureFunctionElement))
+            else if (element.GetType() == typeof(FailureFunctionElement))
             {
-                return new FailureFunctionPersistenceManager(StudyCacheForSaving);
+                manager = new FailureFunctionPersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(Inventory.InventoryElement))
+            else if (element.GetType() == typeof(InventoryElement))
             {
-                return new StructureInventoryPersistenceManager(StudyCacheForSaving);
+                manager = new StructureInventoryPersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(AggregatedStageDamage.AggregatedStageDamageElement))
+            else if (element.GetType() == typeof(AggregatedStageDamageElement))
             {
-                return new StageDamagePersistenceManager(StudyCacheForSaving);
+                manager = new StageDamagePersistenceManager(StudyCacheForSaving);
             }
-            else if (element.GetType() == typeof(ImpactAreaScenario.IASElementSet))
+            else if (element.GetType() == typeof(IASElementSet))
             {
-                return new IASPersistenceManager(StudyCacheForSaving);
+                manager = new IASPersistenceManager(StudyCacheForSaving);
+            }
+            else if(element.GetType() == typeof(AlternativeElement))
+            {
+                manager = new AlternativePersistenceManager(StudyCacheForSaving);
+            }
+            else if(element is AlternativeComparisonReportElement)
+            {
+                manager = new AlternativeComparisonReportPersistenceManager(StudyCacheForSaving);
             }
            
-            return null;
+            return manager;
         }
 
         public static RatingElementPersistenceManager GetRatingManager()
@@ -145,6 +155,18 @@ namespace ViewModel.Saving
         public static IASPersistenceManager GetIASManager( )
         {
             return new IASPersistenceManager(StudyCacheForSaving);
+        }
+        public static AlternativePersistenceManager GetAlternativeManager()
+        {
+            return new AlternativePersistenceManager(StudyCacheForSaving);
+        }
+        public static AlternativeComparisonReportPersistenceManager GetAlternativeCompReportManager()
+        {
+            return new AlternativeComparisonReportPersistenceManager(StudyCacheForSaving);
+        }
+        public static StudyPropertiesPersistenceManager GetStudyPropertiesPersistenceManager()
+        {
+            return new StudyPropertiesPersistenceManager(StudyCacheForSaving);
         }
     }
 }

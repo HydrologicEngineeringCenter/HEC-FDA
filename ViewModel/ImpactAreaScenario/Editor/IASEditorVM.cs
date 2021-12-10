@@ -14,7 +14,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
     {
 
         #region Fields
-        private IASElementSet _CurrentElement;
         private bool _IsInEditMode;
         private List<ImpactAreaRowItem> _ImpactAreaNames = new List<ImpactAreaRowItem>(); 
         private ImpactAreaRowItem _SelectedImpactArea;
@@ -67,7 +66,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         /// <param name="manager"></param>
         public IASEditorVM(IASElementSet elem, EditorActionManager manager) : base(elem, manager)
         {
-            _CurrentElement = elem;
+            CurrentElement = elem;
             _IsInEditMode = true;
             FillForm(elem);
         }   
@@ -237,14 +236,14 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
                 if (_IsInEditMode)
                 {
-                    Saving.PersistenceFactory.GetIASManager().SaveExisting(_CurrentElement, elemToSave);
+                    Saving.PersistenceFactory.GetIASManager().SaveExisting(CurrentElement, elemToSave);
                 }
                 else
                 {
                     Saving.PersistenceFactory.GetIASManager().SaveNew(elemToSave);
                     _IsInEditMode = true;
                 }
-                _CurrentElement = elemToSave;
+                CurrentElement = elemToSave;
             }
         }
 

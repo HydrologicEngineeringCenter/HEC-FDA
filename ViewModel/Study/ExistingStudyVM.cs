@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace ViewModel.Study
 {
@@ -14,7 +10,6 @@ namespace ViewModel.Study
         #region Fields
         private string _Path;
         private string _StudyName;
-        private string _Description;
         #endregion
         #region Properties
         public string Path
@@ -30,12 +25,13 @@ namespace ViewModel.Study
                     {
                         StudyName = System.IO.Path.GetFileNameWithoutExtension(Path);
                         Storage.Connection.Instance.ProjectFile = _Path;
-                        DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable("Study Properties");
-                        if (dtv != null)
-                        {
-                            PropertiesVM pvm = new PropertiesVM(dtv);
-                            Description = pvm.StudyDescription;
-                        }
+                        //todo: what on earth is all this stuff in this setter? -cody 11/18/21
+                        //DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable("Study Properties");
+                        //if (dtv != null)
+                        //{
+                        //    PropertiesVM pvm = new PropertiesVM(dtv);
+                        //    Description = pvm.StudyDescription;
+                        //}
                     }else
                     {
                         //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("You did not select a sqlite file", FdaModel.Utilities.Messager.ErrorMessageEnum.Fatal));
@@ -63,9 +59,6 @@ namespace ViewModel.Study
         public ExistingStudyVM(StudyElement studyElement) : base(null)
         {
             StudyElement = studyElement;
-            //_Path = "C:\\temp\\FDA\\";
-            //_StudyName = "Example";
-            //_Description = "My description";
         }
         #endregion
         #region Voids
@@ -74,15 +67,6 @@ namespace ViewModel.Study
             StudyElement.OpenStudyFromFilePath(StudyName, Path);
         }
 
-        //public override bool RunSpecialValidation()
-        //{
-        //    if(!System.IO.File.Exists(Path))
-        //    {
-        //        MessageBox.Show("File does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        //        return false;
-        //    }
-        //    return true;
-        //}
         public override void AddValidationRules()
         {
             AddRule(nameof(Path), () => Path != null, "Path cannot be null.");
@@ -114,24 +98,8 @@ namespace ViewModel.Study
                 }
                 return true;
             }, "Path contains invalid characters.");
-
-            ////check if folder with that name actually exists
-            //AddRule(nameof(StudyName), () =>
-            //{
-
-            //    if (Path != null && Path != "")
-            //    {
-            //        if (System.IO.File.Exists(Path))
-            //        {
-            //            return true;
-            //        }
-            //    }
-
-            //    return false;
-            //}, "This file does not exist or is not the right file type.");
         }
-
-     
+  
         #endregion
         #region Functions
         #endregion

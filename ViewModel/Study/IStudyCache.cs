@@ -1,22 +1,20 @@
-﻿using ViewModel.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ViewModel.Utilities;
 
 namespace ViewModel.Study
 {
     public interface IStudyCache
     {
+        StudyPropertiesElement GetStudyPropertiesElement();
         List<ChildElement> GetChildElementsOfType(Type elementType);
         List<ChildElement> GetChildrenOfParent(ParentElement element);
         List<T> GetChildElementsOfType<T>() where T : ChildElement ;
         T GetParentElementOfType<T>() where T : ParentElement;
         ChildElement GetChildElementOfType(Type type, int ID);
 
-        event FDACache.AddElementEventHandler PlanAdded;
-
+        event FDACache.AddElementEventHandler AlternativeCompReportAdded;
+        event FDACache.AddElementEventHandler AlternativeAdded;
         event FDACache.AddElementEventHandler RatingAdded;
         event FDACache.AddElementEventHandler TerrainAdded;
         event FDACache.AddElementEventHandler ImpactAreaAdded;
@@ -31,7 +29,8 @@ namespace ViewModel.Study
         event FDACache.AddElementEventHandler IASElementAdded;
         event FDACache.AddElementEventHandler OccTypeElementAdded;
 
-        event FDACache.AddElementEventHandler PlanRemoved;
+        event FDACache.AddElementEventHandler AlternativeCompReportRemoved;
+        event FDACache.AddElementEventHandler AlternativeRemoved;
         event FDACache.AddElementEventHandler RatingRemoved;
         event FDACache.AddElementEventHandler TerrainRemoved;
         event FDACache.AddElementEventHandler ImpactAreaRemoved;
@@ -46,7 +45,8 @@ namespace ViewModel.Study
         event FDACache.AddElementEventHandler IASElementRemoved;
         event FDACache.AddElementEventHandler OccTypeElementRemoved;
 
-        event FDACache.UpdateElementEventHandler PlanUpdated;
+        event FDACache.UpdateElementEventHandler AlternativeCompReportUpdated;
+        event FDACache.UpdateElementEventHandler AlternativeUpdated;
         event FDACache.UpdateElementEventHandler RatingUpdated;
         event FDACache.UpdateElementEventHandler TerrainUpdated;
         event FDACache.UpdateElementEventHandler ImpactAreaUpdated;

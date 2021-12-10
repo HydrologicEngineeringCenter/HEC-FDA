@@ -24,7 +24,7 @@ namespace ViewModel.ImpactAreaScenario
         #endregion
 
         #region Properties
-
+        public bool HasComputed { get; set; }
         /// <summary>
         /// These are the results after doing a compute. If a compute has not been
         /// done, then this will be null.
@@ -210,7 +210,10 @@ namespace ViewModel.ImpactAreaScenario
         
         private void ComputeCondition(object arg1, EventArgs arg2)
         {
-        //Intentionally left blank until the compute is completed in the model. -cody 10/26/21
+            //Intentionally left blank until the compute is completed in the model. -cody 10/26/21
+            HasComputed = true;
+            //i am just saving here to trigger the update event. Once we have the real compute we will want to save the results.
+            PersistenceFactory.GetIASManager().SaveExisting(this, this);
         }
         #endregion
         #region Voids

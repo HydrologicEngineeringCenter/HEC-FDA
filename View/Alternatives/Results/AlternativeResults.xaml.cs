@@ -13,17 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace View.Plans
+namespace View.Alternatives.Results
 {
     /// <summary>
-    /// Interaction logic for CreateNewPlan.xaml
+    /// Interaction logic for AlternativeResults.xaml
     /// </summary>
-    public partial class CreateNewPlan : UserControl
+    public partial class AlternativeResults : UserControl
     {
-        public CreateNewPlan()
+        public AlternativeResults()
         {
             InitializeComponent();
         }
-
     }
 }

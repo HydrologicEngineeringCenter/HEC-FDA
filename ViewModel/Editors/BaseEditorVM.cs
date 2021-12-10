@@ -15,7 +15,7 @@ namespace ViewModel.Editors
 {
     public abstract class BaseEditorVM : BaseViewModel
     {
-        private string _Description;
+        private string _Description = "";
         public string Description
         {
             get { return _Description; }

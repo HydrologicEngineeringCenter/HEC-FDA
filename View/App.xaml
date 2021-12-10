@@ -4,6 +4,12 @@
              
              xmlns:EditorsVM ="clr-namespace:ViewModel.Editors;assembly=ViewModel"
              
+             xmlns:AlternativeCompReportResultsVM="clr-namespace:ViewModel.AlternativeComparisonReport.Results;assembly=ViewModel"
+             xmlns:AlternativeCompReportResultsView ="clr-namespace:View.AlternativeComparisonReport.Results"
+             
+             xmlns:AlternativeResultsVM="clr-namespace:ViewModel.Alternatives.Results;assembly=ViewModel"
+             xmlns:AlternativeResultsView ="clr-namespace:View.Alternatives.Results"
+
              xmlns:IASResultsVM ="clr-namespace:ViewModel.ImpactAreaScenario.Results;assembly=ViewModel"
              xmlns:IASResultsView ="clr-namespace:View.ImpactAreaScenario.Results"
              
@@ -14,6 +20,8 @@
              xmlns:PlotsOutputView="clr-namespace:View.Output"
                           
              xmlns:AlternativeComparisonReportVM="clr-namespace:ViewModel.AlternativeComparisonReport;assembly=ViewModel"
+             xmlns:AlternativeComparisonReport ="clr-namespace:View.AlternativeComparisonReport"
+             
              xmlns:AlternativeView="clr-namespace:View.Alternatives"
              
              xmlns:PlansVM="clr-namespace:ViewModel.Alternatives;assembly=ViewModel"
@@ -237,6 +245,32 @@
             <OccupancyTypesView:ImportOccupancyTypeGroups/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type AlternativeComparisonReportVM:ComparisonRowItemVM }" >
+            <AlternativeComparisonReport:ComparisonRowItem/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:AlternativeComparisonReportResultsVM }" >
+            <AlternativeCompReportResultsView:AlternativeComparisonReportResults/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:EADSummaryVM }" >
+            <AlternativeCompReportResultsView:EADSummary/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type AlternativeCompReportResultsVM:AAEQSummaryVM }" >
+            <AlternativeCompReportResultsView:AAEQSummary/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type AlternativeResultsVM:AlternativeResultsVM }" >
+            <AlternativeResultsView:AlternativeResults/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type AlternativeResultsVM:DamageByDamCatVM }" >
+            <AlternativeResultsView:EADDamageByDamCat/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type AlternativeResultsVM:DamageByImpactAreaVM }" >
+            <AlternativeResultsView:EADDamageByImpactArea/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type AlternativeResultsVM:DamageWithUncertaintyVM }" >
+            <AlternativeResultsView:EADDamageWithUncertainty/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type IASEditorVM:IASEditorVM }" >
             <IASEditorView:IASEditor/>
         </DataTemplate>

@@ -99,12 +99,12 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="element"></param>
         public void SaveNew(ChildElement element)
         {
-            if (element is IASElementSet)
+            if (element is IASElementSet iasElem)
             {
                 string editDate = DateTime.Now.ToString("G");
                 element.LastEditDate = editDate;
-                SaveNewElementToParentTable(GetRowDataFromElement((IASElementSet)element), TableName, TableColumnNames, TableColumnTypes);
-                StudyCacheForSaving.AddElement((IASElementSet)element);
+                SaveNewElementToParentTable(GetRowDataFromElement(iasElem), TableName, TableColumnNames, TableColumnTypes);
+                StudyCacheForSaving.AddElement(iasElem);
             }
         }
 
@@ -114,10 +114,11 @@ namespace ViewModel.Saving.PersistenceManagers
         /// <param name="element"></param>
         public void Remove(ChildElement element)
         {
-            if (element is IASElementSet)
+            if (element is IASElementSet iasElem)
             {
+                //remove from the cache first while you can still get the element's id.
+                StudyCacheForSaving.RemoveElement(iasElem);
                 RemoveFromParentTable(element, TableName);
-                StudyCacheForSaving.RemoveElement((IASElementSet)element);
             }
         }
 
