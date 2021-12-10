@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using ViewModel.Utilities;
 using ViewModel.ImpactAreaScenario;
 using System.Windows;
+using ViewModel.Saving.PersistenceManagers;
 
 namespace ViewModel.ImpactArea
 {

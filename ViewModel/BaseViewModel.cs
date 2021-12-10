@@ -22,14 +22,13 @@ namespace ViewModel
     /// </summary>
     public abstract class BaseViewModel : INotifyPropertyChanged, IDataErrorInfo
     {
-        public event PropertyChangedEventHandler PropertyChanged;
 
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("BaseViewModel");
 
         #region Notes
         #endregion
         #region Events
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
         public event RequestNavigationHandler RequestNavigation;
         public event RequestShapefilePathsHandler RequestShapefilePaths;
         public event RequestShapefilePathsOfTypeHandler RequestShapefilePathsOfType;
