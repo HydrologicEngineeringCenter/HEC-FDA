@@ -88,7 +88,7 @@ namespace ViewModel.Inventory
             //get the list of paths that exist in the map window
             ObservableCollection<string> collectionOfPointFiles = new ObservableCollection<string>();
             List<string> pointShapePaths = new List<string>();
-            ShapefilePathsOfType(ref pointShapePaths, Utilities.VectorFeatureType.Point);
+            ShapefilePathsOfType(ref pointShapePaths, VectorFeatureType.Point);
             foreach (string path in pointShapePaths)
             {
                 collectionOfPointFiles.Add(path);
@@ -97,8 +97,10 @@ namespace ViewModel.Inventory
             Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
                  .WithSiblingRules(this);
 
-            
+
             ImportStructuresFromShapefileVM vm = new ImportStructuresFromShapefileVM(collectionOfPointFiles, actionManager, false);
+
+            
             string header = "Import Structure Inventory";
             DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStructureInventory");
             Navigate(tab, false, false);

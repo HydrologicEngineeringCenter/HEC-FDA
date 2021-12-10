@@ -96,7 +96,7 @@
                 <TextBlock Text="Probability" Margin="2,0,2,0" TextAlignment="Center" VerticalAlignment="Center"/>
             </Border>
         </Grid>-->
-        <ListView Grid.Row="5" Name="lst_ListOfRows" ItemsSource="{Binding ListOfRows}"  HorizontalAlignment="Stretch" Margin="3">
+        <ListView Grid.Row="5" Name="lst_ListOfRows" ItemsSource="{Binding ListOfRows}"  HorizontalAlignment="Stretch"  Margin="3">
             <!--<ListView.ItemTemplate>
                 <DataTemplate>
                     

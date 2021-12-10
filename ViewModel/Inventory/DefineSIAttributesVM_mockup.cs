@@ -1,5 +1,8 @@
-﻿using System;
+﻿using DatabaseManager;
+using HEC.CS.Collections;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,273 +20,49 @@ namespace ViewModel.Inventory
         //private ObservableCollection<string> _AvailablePaths = new ObservableCollection<string>();
         private string _Path;
 
-
-        private List<string> _StringColumnNames;
-        private List<string> _NumericColumnNames;
-
-        private string _OccupancyTypeColumnName;
-        private bool _OccupancyTypeIsUsingDefault = false;
-        private string _OccupancyTypeDefaultValue;
-
-        private string _FoundationHeightColumnName;
-        private bool _FoundationHeightIsUsingDefault = false;
-        private string _FoundationHeightDefaultValue;
-
-
-        private string _GroundElevationColumnName;
-        private bool _GroundElevationIsUsingDefault = false;
-        private string _GroundElevationDefaultValue;
-
-        private string _FirstFloorElevationColumnName;
-        private bool _FirstFloorElevationIsUsingDefault = false;
-        private string _FirstFloorElevationDefaultValue;
-
-
-        private string _StructureValueColumnName;
-        private bool _StructureValueIsUsingDefault = false;
-        private string _StructureValueDefaultValue;
-
-        private string _ContentValueColumnName;
-        private bool _ContentValueIsUsingDefault = false;
-        private string _ContentValueDefaultValue;
-
-        private string _OtherValueColumnName;
-        private bool _OtherValueIsUsingDefault = false;
-        private string _OtherValueDefaultValue;
-
-        private string _VehicleValueColumnName;
-        private bool _VehicleValueIsUsingDefault = false;
-        private string _VehicleValueDefaultValue;
-
         private bool _FirstFloorElevationIsChecked = true;
-        private bool _GroundElevationIsChecked;
 
-        private string _YearColumnName;
-        private bool _YearIsUsingDefault = false;
-        private string _YearDefaultValue;
 
-        private string _ModuleColumnName;
-        private bool _ModuleIsUsingDefault = false;
-        private string _ModuleDefaultValue;
         #endregion
         #region Properties
-
-        //public ObservableCollection<string> AvailablePaths
+        //public List<string> StringColumnNames
         //{
-        //    get { return _AvailablePaths; }
-        //    set { _AvailablePaths = value; NotifyPropertyChanged(); }
+        //    get { return _StringColumnNames; }
+        //    set { _StringColumnNames = value; NotifyPropertyChanged(); }
         //}
-        //public string SelectedPath
+        //public List<string> NumericColumnNames
         //{
-        //    get { return _SelectedPath; }
-        //    set { _SelectedPath = value; NotifyPropertyChanged(); }
+        //    get { return _NumericColumnNames; }
+        //    set { _NumericColumnNames = value; NotifyPropertyChanged(); }
         //}
         public string Path
         {
             get { return _Path; }
-            set { _Path = value; NotifyPropertyChanged(); }
+            set { _Path = value; PathChanged(); }
         }
-        public string ModuleColumnName
-        {
-            get { return _ModuleColumnName; }
-            set { _ModuleColumnName = value; NotifyPropertyChanged(); }
-        }
-        public bool ModuleIsUsingDefault
-        {
-            get { return _ModuleIsUsingDefault; }
-            set { _ModuleIsUsingDefault = value; NotifyPropertyChanged(); }
-        }
-        public string ModuleDefaultValue
-        {
-            get { return _ModuleDefaultValue; }
-            set { _ModuleDefaultValue = value; NotifyPropertyChanged(); }
-        }
-
-        public string YearColumnName
-        {
-            get { return _YearColumnName; }
-            set { _YearColumnName = value; NotifyPropertyChanged(); }
-        }
-        public bool YearIsUsingDefault
-        {
-            get { return _YearIsUsingDefault; }
-            set { _YearIsUsingDefault = value; NotifyPropertyChanged(); }
-        }
-        public string YearDefaultValue
-        {
-            get { return _YearDefaultValue; }
-            set { _YearDefaultValue = value; NotifyPropertyChanged(); }
-        }
-
         public bool FirstFloorElevationIsChecked
         {
             get { return _FirstFloorElevationIsChecked; }
-            set { _FirstFloorElevationIsChecked = value; NotifyPropertyChanged(); }
+            set { _FirstFloorElevationIsChecked = value; ElevationRadioChanged(); NotifyPropertyChanged(); }
         }
-        public bool GroundElevationIsChecked
-        {
-            get { return _GroundElevationIsChecked; }
-            set { _GroundElevationIsChecked = value; NotifyPropertyChanged(); }
-        }
-        public string VehicleValueColumnName
-        {
-            get { return _VehicleValueColumnName; }
-            set { _VehicleValueColumnName = value; NotifyPropertyChanged(); }
-        }
-        public bool VehicleValueIsUsingDefault
-        {
-            get { return _VehicleValueIsUsingDefault; }
-            set { _VehicleValueIsUsingDefault = value; NotifyPropertyChanged(); }
-        }
-        public string VehicleValueDefaultValue
-        {
-            get { return _VehicleValueDefaultValue; }
-            set { _VehicleValueDefaultValue = value; NotifyPropertyChanged(); }
-        }
+        
+        public CustomObservableCollection<DefineSIAttributesRowItem> RequiredRows { get; } = new CustomObservableCollection<DefineSIAttributesRowItem>();
+        public CustomObservableCollection<DefineSIAttributesRowItem> OptionalRows { get; } = new CustomObservableCollection<DefineSIAttributesRowItem>();
 
+        public List<DefineSIAttributesRowItem> FirstFloorElevationRows { get; } = new List<DefineSIAttributesRowItem>();
+        public List<DefineSIAttributesRowItem> GroundElevationRows { get; } = new List<DefineSIAttributesRowItem>();
 
-        public string OtherValueColumnName
-        {
-            get { return _OtherValueColumnName; }
-            set { _OtherValueColumnName = value; NotifyPropertyChanged(); }
-        }
-        public bool OtherValueIsUsingDefault
-        {
-            get { return _OtherValueIsUsingDefault; }
-            set { _OtherValueIsUsingDefault = value; NotifyPropertyChanged(); }
-        }
-        public string OtherValueDefaultValue
-        {
-            get { return _OtherValueDefaultValue; }
-            set { _OtherValueDefaultValue = value; NotifyPropertyChanged(); }
-        }
-
-
-        public string ContentValueColumnName
-        {
-            get { return _ContentValueColumnName; }
-            set { _ContentValueColumnName = value; NotifyPropertyChanged(); }
-        }
-        public bool ContentValueIsUsingDefault
-        {
-            get { return _ContentValueIsUsingDefault; }
-            set { _ContentValueIsUsingDefault = value; NotifyPropertyChanged(); }
-        }
-        public string ContentValueDefaultValue
-        {
-            get { return _ContentValueDefaultValue; }
-            set { _ContentValueDefaultValue = value; NotifyPropertyChanged(); }
-        }
-
-
-        public string StructureValueDefaultValue
-        {
-            get { return _StructureValueDefaultValue; }
-            set { _StructureValueDefaultValue = value; NotifyPropertyChanged(); }
-        }
-        public bool StructureValueIsUsingDefault
-        {
-            get { return _StructureValueIsUsingDefault; }
-            set { _StructureValueIsUsingDefault = value; NotifyPropertyChanged(); }
-        }
-        public string StructureValueColumnName
-        {
-            get { return _StructureValueColumnName; }
-            set { _StructureValueColumnName = value; NotifyPropertyChanged(); }
-        }
-
-
-
-        public string FirstFloorElevationDefaultValue
-        {
-            get { return _FirstFloorElevationDefaultValue; }
-            set { _FirstFloorElevationDefaultValue = value; NotifyPropertyChanged(); }
-        }
-        public bool FirstFloorElevationIsUsingDefault
-        {
-            get { return _FirstFloorElevationIsUsingDefault; }
-            set { _FirstFloorElevationIsUsingDefault = value; NotifyPropertyChanged(); }
-        }
-        public string FirstFloorElevationColumnName
-        {
-            get { return _FirstFloorElevationColumnName; }
-            set { _FirstFloorElevationColumnName = value; NotifyPropertyChanged(); }
-        }
-
-
-
-
-        public string GroundElevationDefaultValue
-        {
-            get { return _GroundElevationDefaultValue; }
-            set { _GroundElevationDefaultValue = value; NotifyPropertyChanged(); }
-        }
-        public bool GroundElevationIsUsingDefault
-        {
-            get { return _GroundElevationIsUsingDefault; }
-            set { _GroundElevationIsUsingDefault = value; NotifyPropertyChanged(); }
-        }
-        public string GroundElevationColumnName
-        {
-            get { return _GroundElevationColumnName; }
-            set { _GroundElevationColumnName = value; NotifyPropertyChanged(); }
-        }
-
-
-
-        public string FoundationHeightDefaultValue
-        {
-            get { return _FoundationHeightDefaultValue; }
-            set { _FoundationHeightDefaultValue = value; NotifyPropertyChanged(); }
-        }
-        public bool FoundationHeightIsUsingDefault
-        {
-            get { return _FoundationHeightIsUsingDefault; }
-            set { _FoundationHeightIsUsingDefault = value; NotifyPropertyChanged(); }
-        }
-
-        public string FoundationHeightColumnName
-        {
-            get { return _FoundationHeightColumnName; }
-            set { _FoundationHeightColumnName = value; NotifyPropertyChanged(); }
-        }
-
-
-
-        public string OccupancyTypeDefaultValue
-        {
-            get { return _OccupancyTypeDefaultValue; }
-            set { _OccupancyTypeDefaultValue = value; NotifyPropertyChanged(); }
-        }
-        public bool OccupancyTypeIsUsingDefault
-        {
-            get { return _OccupancyTypeIsUsingDefault; }
-            set { _OccupancyTypeIsUsingDefault = value; NotifyPropertyChanged(); }
-        }
-
-        public string OccupancyTypeColumnName
-        {
-            get { return _OccupancyTypeColumnName; }
-            set { _OccupancyTypeColumnName = value; NotifyPropertyChanged(); }
-        }
-        public List<string> StringColumnNames
-        {
-            get { return _StringColumnNames; }
-            set { _StringColumnNames = value; NotifyPropertyChanged(); }
-        }
-        public List<string> NumericColumnNames
-        {
-            get { return _NumericColumnNames; }
-            set { _NumericColumnNames = value; NotifyPropertyChanged(); }
-        }
 
         #endregion
         #region Constructors
-        public DefineSIAttributesVM_mockup(string path) : base()
+        public DefineSIAttributesVM_mockup() : base()
         {
-            Path = path;
+            LoadRows();
+            RequiredRows.AddRange(FirstFloorElevationRows);
             //AvailablePaths = availablePointFiles;
         }
+
+
         //public DefineSIAttributesVM(List<string> stringColumnNames, List<string> numericColumnNames) : base()
         //{
         //    StringColumnNames = stringColumnNames;
@@ -292,196 +71,242 @@ namespace ViewModel.Inventory
 
         #endregion
         #region Voids
-        //public void loadUniqueNames(string path)
 
-        //{
+        private void ElevationRadioChanged()
+        {
+                RequiredRows.Clear();
+            if(_FirstFloorElevationIsChecked)
+            {
+                RequiredRows.AddRange(FirstFloorElevationRows);
+            }
+            else
+            {
+                RequiredRows.AddRange(GroundElevationRows);
+            }
 
-        //    List<string> stringColumnNames = new List<string>();
-        //    List<string> numericColumnNames = new List<string>();
+        }
+
+        //required rows
+        private DefineSIAttributesRowItem _StructureIDRow = new DefineSIAttributesRowItem("Structure ID:");
+        private DefineSIAttributesRowItem _OccupancyTypeRow = new DefineSIAttributesRowItem("Occupancy Type:");
+        private DefineSIAttributesRowItem _FirstFloorElevRow = new DefineSIAttributesRowItem("First Floor Elevation Value:");
+        private DefineSIAttributesRowItem _StructureValueRow = new DefineSIAttributesRowItem("Structure Value:");
+        private DefineSIAttributesRowItem _FoundationHeightRow = new DefineSIAttributesRowItem("Foundation Height:");
+        private DefineSIAttributesRowItem _GroundElevRow = new DefineSIAttributesRowItem("Ground Elevation Value:");
+
+        //optional rows
+        private DefineSIAttributesRowItem _ContentValueRow = new DefineSIAttributesRowItem("Content Value:");
+        private DefineSIAttributesRowItem _OtherValueRow = new DefineSIAttributesRowItem("Other Value:");
+        private DefineSIAttributesRowItem _VehicleValueRow = new DefineSIAttributesRowItem("Vehicle Value:");
+        private DefineSIAttributesRowItem _YearRow = new DefineSIAttributesRowItem("Year:");
+        private DefineSIAttributesRowItem _ModuleRow = new DefineSIAttributesRowItem("Module:");
+
+        private void LoadRows()
+        {
+            FirstFloorElevationRows.Add(_StructureIDRow);
+            FirstFloorElevationRows.Add(_OccupancyTypeRow);
+            FirstFloorElevationRows.Add(_FirstFloorElevRow);
+            FirstFloorElevationRows.Add(_StructureValueRow);
+
+            GroundElevationRows.Add(_StructureIDRow);
+            GroundElevationRows.Add(_OccupancyTypeRow);
+            GroundElevationRows.Add(_FoundationHeightRow);
+            GroundElevationRows.Add(_GroundElevRow);
+            GroundElevationRows.Add(_StructureValueRow);
+
+            OptionalRows.Add(_ContentValueRow);
+            OptionalRows.Add(_OtherValueRow);
+            OptionalRows.Add(_VehicleValueRow);
+            OptionalRows.Add(_YearRow);
+            OptionalRows.Add(_ModuleRow);
+        }
 
 
-        //    //CurrentViewIsEnabled = true;
-        //    //SelectedPath = path; //isnt this bound?? yes but it is not working.
-        //    DataBase_Reader.DbfReader dbf = new DataBase_Reader.DbfReader(System.IO.Path.ChangeExtension(path, ".dbf"));
-        //    DataBase_Reader.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+        private void PathChanged()
+        {
+            UpdateRows();
+        }
 
 
-        //    for (int i = 0; i < dtv.ColumnNames.Count(); i++)
-        //    {
-        //        if (dtv.ColumnTypes[i] == typeof(string))
-        //        {
-        //            stringColumnNames.Add(dtv.ColumnNames[i]);
-        //        }
-        //        else
-        //        {
-        //            numericColumnNames.Add(dtv.ColumnNames[i]);
-        //        }
-        //    }
-        //    StringColumnNames = stringColumnNames;
-        //    NumericColumnNames = numericColumnNames;
+        private void UpdateRows()
+        {
+            List<string> stringColumnNames = GetStringColumnNames();
+            List<string> numericColumnNames = GetNumericColumnNames();
+            List<string> allColumnNames = new List<string>(stringColumnNames);         
+            allColumnNames.AddRange(numericColumnNames);
 
-        //    //CurrentView = _DefineSIAttributes;
+            //required rows
+            _StructureIDRow.Items.Clear();
+            _StructureIDRow.Items.AddRange(allColumnNames);
+            _OccupancyTypeRow.Items.Clear();
+            _OccupancyTypeRow.Items.AddRange(stringColumnNames);
+            _FirstFloorElevRow.Items.Clear();
+            _FirstFloorElevRow.Items.AddRange(numericColumnNames);
+            _StructureValueRow.Items.Clear();
+            _StructureValueRow.Items.AddRange(numericColumnNames);
+            _FoundationHeightRow.Items.Clear();
+            _FoundationHeightRow.Items.AddRange(numericColumnNames);
+            _GroundElevRow.Items.Clear();
+            _GroundElevRow.Items.AddRange(numericColumnNames);
 
-        //}
+            //optional rows
+            _ContentValueRow.Items.Clear();
+            _ContentValueRow.Items.AddRange(numericColumnNames);
+            _OtherValueRow.Items.Clear();
+            _OtherValueRow.Items.AddRange(numericColumnNames);
+            _VehicleValueRow.Items.Clear();
+            _VehicleValueRow.Items.AddRange(numericColumnNames);
+            _YearRow.Items.Clear();
+            _YearRow.Items.AddRange(numericColumnNames);
+            _ModuleRow.Items.Clear();
+            _ModuleRow.Items.AddRange(stringColumnNames);
+        }
+
+        private List<string> GetNumericColumnNames()
+        {
+            DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(_Path, ".dbf"));
+            DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+
+            List<string> numericColumnNames = new List<string>();
+
+            for (int i = 0; i < dtv.ColumnNames.Count(); i++)
+            {
+                if (dtv.ColumnTypes[i] != typeof(string))
+                {
+                    numericColumnNames.Add(dtv.ColumnNames[i]);
+                }
+            }
+            return numericColumnNames;
+        }
+
+        private List<string> GetStringColumnNames()
+        {
+            DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(_Path, ".dbf"));
+            DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+
+            List<string> stringColumnNames = new List<string>();
+
+            for (int i = 0; i < dtv.ColumnNames.Count(); i++)
+            {
+                if (dtv.ColumnTypes[i] == typeof(string))
+                {
+                    stringColumnNames.Add(dtv.ColumnNames[i]);
+                }
+            }
+            return stringColumnNames;
+        }
 
 
 
         #endregion
         #region Functions
-        public List<string> GetUniqueOccupancyTypes(string path)
+        public List<string> GetUniqueOccupancyTypes()
         {
             List<string> uniqueList = new List<string>();
 
-            if (OccupancyTypeIsUsingDefault == true)
+            if (_OccupancyTypeRow.UseDefault)
             {
-                uniqueList.Add(OccupancyTypeDefaultValue);
+                uniqueList.Add(_OccupancyTypeRow.DefaultValue);
             }
             else
             {
-                string occTypeHeader = OccupancyTypeColumnName;
-
-                if (!System.IO.File.Exists(System.IO.Path.ChangeExtension(path, "dbf")))
+                if (File.Exists(System.IO.Path.ChangeExtension(_Path, "dbf")))
                 {
-                    //ReportMessage(new FdaModel.Utilities.Messager.ErrorMessage("This path has no associated *.dbf file.", FdaModel.Utilities.Messager.ErrorMessageEnum.ViewModel | FdaModel.Utilities.Messager.ErrorMessageEnum.Report));
-                    return new List<string>();
-                }
-                DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(System.IO.Path.ChangeExtension(path, ".dbf"));
-                DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+                    DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(Path, ".dbf"));
+                    DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
-                object[] occtypesFromFile = dtv.GetColumn(occTypeHeader);
-                foreach (object o in occtypesFromFile)
-                {
-                    uniqueList.Add((string)o);
+                    object[] occtypesFromFile = dtv.GetColumn(_OccupancyTypeRow.SelectedItem);
+                    foreach (object o in occtypesFromFile)
+                    {
+                        uniqueList.Add((string)o);
+                    }
                 }
             }
-
-
-
             return uniqueList.Distinct().ToList();
         }
+
+        public bool Validate(ref string errorMessage)
+        {
+            AreAllFirstFloorElevationsDefined();
+            bool isValid = ValidateSIAttributes(ref errorMessage);
+
+            //are all elev values filled in?
+
+            return isValid;
+        }
+
+        private void AreAllFirstFloorElevationsDefined()
+        {
+            if (File.Exists(System.IO.Path.ChangeExtension(_Path, "dbf")))
+            {
+                DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(Path, ".dbf"));
+                DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+
+                object[] rows = dtv.GetColumn(_FirstFloorElevRow.SelectedValue);
+                foreach (object row in rows)
+                {
+                    if("".Equals(row.ToString()))
+                    { 
+                        //blank entry
+                        //todo;
+                    }
+                }
+            }
+        }
+
         private bool ValidateSIAttributes(ref string errorMessage)
         {
             //here i need to validate all the fields for valid values (no negatives etc)
             //occtype
-            if (OccupancyTypeIsUsingDefault == true)
-            {
-                if (OccupancyTypeDefaultValue == null || OccupancyTypeDefaultValue == "") { errorMessage = "A default occupancy type must be entered"; return false; }
-            }
-            else
-            {
-                if (OccupancyTypeColumnName == null) { errorMessage = "An occupancy type must be selected"; return false; }
+            bool isValid = true;
 
+            //these are the shared required rows
+            if(!_StructureIDRow.IsValid())
+            {
+                isValid = false;
+                errorMessage = "A Structure ID selection or default value is required.";
             }
+            else if(!_OccupancyTypeRow.IsValid())
+            {
+                isValid = false;
+                errorMessage = "An Occupancy Type selection or default value is required.";
+            }
+            else if (!_OccupancyTypeRow.IsValid())
+            {
+                isValid = false;
+                errorMessage = "An Occupancy Type selection or default value is required.";
+            }
+
 
             if (FirstFloorElevationIsChecked == true)
             {
                 //first floor elevation
-                if (FirstFloorElevationIsUsingDefault == true)
+                if (!_FirstFloorElevRow.IsValid())
                 {
-                    if (FirstFloorElevationDefaultValue == null || FirstFloorElevationDefaultValue == "") { errorMessage = "A first floor elevation must be entered"; return false; }
-                }
-                else
-                {
-                    if (FirstFloorElevationColumnName == null) { errorMessage = "A first floor elevation must be entered"; return false; }
-
+                    isValid = false;
+                    errorMessage = "A First Floor Elevation selection or default value is required.";
                 }
             }
             else
             {
                 //found height
-
-                if (FoundationHeightIsUsingDefault == true)
+                if (!_FoundationHeightRow.IsValid())
                 {
-                    if (FoundationHeightDefaultValue == null || FoundationHeightDefaultValue == "") { errorMessage = "A foundation height must be entered"; return false; }
+                    isValid = false;
+                    errorMessage = "A Foundation Height selection or default value is required.";
                 }
-                else
+                else if (!_GroundElevRow.IsValid())
                 {
-                    if (FoundationHeightColumnName == null) { errorMessage = "A foundation height must be entered"; return false; }
-
+                    isValid = false;
+                    errorMessage = "A Ground Elevation selection or default value is required.";
                 }
-                //grnd elevation
-                if (GroundElevationIsUsingDefault == true)
-                {
-                    if (GroundElevationDefaultValue == null || GroundElevationDefaultValue == "") { errorMessage = "A ground elevation must be entered"; return false; }
-                }
-                else
-                {
-                    if (GroundElevationColumnName == null) { errorMessage = "A ground elevation must be entered"; return false; }
-
-                }
-            }
-
-
-
-            //struct value
-            if (StructureValueIsUsingDefault == true)
-            {
-                if (StructureValueDefaultValue == null || StructureValueDefaultValue == "") { errorMessage = "A structure value must be entered"; return false; }
-            }
-            else
-            {
-                if (StructureValueColumnName == null) { errorMessage = "A structure value must be entered"; return false; }
-
-            }
-            //cont value
-            if (ContentValueIsUsingDefault == true)
-            {
-                if (ContentValueDefaultValue == null || ContentValueDefaultValue == "") { errorMessage = "A content value must be entered, or the 'Missing' checkbox should be unchecked."; return false; }
-            }
-            else
-            {
-                //if (_DefineSIAttributes.ContentValueColumnName == null) { return false; }
-
-            }
-            //other value
-            if (OtherValueIsUsingDefault == true)
-            {
-                if (OtherValueDefaultValue == null || OtherValueDefaultValue == "") { errorMessage = "An other value must be entered, or the 'Missing' checkbox should be unchecked."; return false; }
-            }
-            else
-            {
-                //if (_DefineSIAttributes.OtherValueColumnName == null) { return false; }
-
-            }
-            //vehicle value
-            if (VehicleValueIsUsingDefault == true)
-            {
-                if (VehicleValueDefaultValue == null || VehicleValueDefaultValue == "") { errorMessage = "A vehicle value must be entered, or the 'Missing' checkbox should be unchecked."; return false; }
-            }
-            else
-            {
-                //if (_DefineSIAttributes.VehicleValueColumnName == null) { return false; }
-
-            }
-            //Year value
-            if (YearIsUsingDefault == true)
-            {
-                if (YearDefaultValue == null || YearDefaultValue == "") { errorMessage = "A year must be entered, or the 'Missing' checkbox should be unchecked."; return false; }
-            }
-            else
-            {
-                //if (_DefineSIAttributes.VehicleValueColumnName == null) { return false; }
-
-            }
-            //Module value
-            if (ModuleIsUsingDefault == true)
-            {
-                if (ModuleDefaultValue == null || ModuleDefaultValue == "") { errorMessage = "A module must be entered, or the 'Missing' checkbox should be unchecked."; return false; }
-            }
-            else
-            {
-                //if (_DefineSIAttributes.VehicleValueColumnName == null) { return false; }
 
             }
 
-
-            return true;
+            return isValid;
         }
 
         #endregion
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
+
     }
 }

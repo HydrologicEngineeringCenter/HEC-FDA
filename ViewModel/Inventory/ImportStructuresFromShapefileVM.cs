@@ -1,20 +1,18 @@
-﻿using System;
+﻿using DatabaseManager;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using ViewModel.Inventory.OccupancyTypes;
-using System.Windows;
-using ViewModel.Utilities;
 using System.Data;
-using DatabaseManager;
+using System.Linq;
+using System.Windows;
+using ViewModel.FlowTransforms;
+using ViewModel.Inventory.OccupancyTypes;
 using ViewModel.Saving.PersistenceManagers;
+using ViewModel.Utilities;
 
 namespace ViewModel.Inventory
 {
     //[Author(q0heccdm, 6 / 22 / 2017 10:13:12 AM)]
-   public  class ImportStructuresFromShapefileVM:Editors.BaseEditorVM
+    public  class ImportStructuresFromShapefileVM:Editors.BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
@@ -27,7 +25,8 @@ namespace ViewModel.Inventory
 
         private BaseViewModel _CurrentView;
 
-        private DefineSIAttributesVM _DefineSIAttributes;
+
+        private DefineSIAttributesVM_mockup _DefineSIAttributes;
         private AttributeLinkingListVM _AttributeLinkingList;
 
         private ObservableCollection<string> _AvailablePaths;
@@ -44,7 +43,7 @@ namespace ViewModel.Inventory
 
         public bool IsInEditMode { get; set; }
 
-        public DefineSIAttributesVM DefineSIAttributes
+        public DefineSIAttributesVM_mockup DefineSIAttributes
         {
             get { return _DefineSIAttributes; }
             set { _DefineSIAttributes = value; }
@@ -59,6 +58,7 @@ namespace ViewModel.Inventory
             get { return _CurrentViewIsEnabled; }
             set { _CurrentViewIsEnabled = value; NotifyPropertyChanged(); }
         }
+
         public BaseViewModel CurrentView
         {
             get { return _CurrentView; }
@@ -69,7 +69,7 @@ namespace ViewModel.Inventory
         public string SelectedPath
         {
             get { return _SelectedPath; }
-            set { _SelectedPath = value; NotifyPropertyChanged(); }
+            set { _SelectedPath = value; _DefineSIAttributes.Path = value; }
         }
 
         public ObservableCollection<string> AvailablePaths
@@ -84,13 +84,11 @@ namespace ViewModel.Inventory
             IsInEditMode = isInEditMode;
             AvailablePaths = pointFiles;
 
-            _DefineSIAttributes = new DefineSIAttributesVM(SelectedPath);
+            _DefineSIAttributes = new DefineSIAttributesVM_mockup();
             _AttributeLinkingList = new AttributeLinkingListVM();
             CurrentViewIsEnabled = true;
-            CurrentView = _DefineSIAttributes;     
-            
-            
-            
+            CurrentView = _DefineSIAttributes;
+
         }
         //public ImportStructuresFromShapefileVM() : base()
         //{
@@ -104,7 +102,7 @@ namespace ViewModel.Inventory
         //    //    availPaths.Add(path);
         //    //}
         //    //AvailablePaths = availPaths;          
-            
+
         //}
 
         //this constructor is used when opening a previously created structure inventory for editing.
@@ -131,14 +129,14 @@ namespace ViewModel.Inventory
         //    //SelectedPath = selectedShapefilePath;
 
         //    //loadUniqueNames(SelectedPath);
-           
+
         //    CurrentView = _DefineSIAttributes;
 
         //    Name = name;
         //}
         #endregion
         #region Voids
-      
+
         public void PreviousButtonClicked()
         {
             CurrentView = _DefineSIAttributes;
@@ -152,29 +150,20 @@ namespace ViewModel.Inventory
             string errorMessage = null;
             if (ValidateSIAttributes(ref errorMessage) == false)
             {
-                //Navigate( new Utilities.CustomMessageBoxVM(Utilities.CustomMessageBoxVM.ButtonsEnum.OK,errorMessage));
                 MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK);
                 return false;
             }
 
-            List<string> occtypes = new List<string>();
+            List<string> occtypes = _DefineSIAttributes.GetUniqueOccupancyTypes();          
 
-            if (_DefineSIAttributes.OccupancyTypeIsUsingDefault == true)
-            {
-                occtypes.Add(_DefineSIAttributes.OccupancyTypeDefaultValue);
-            }
-            else
-            {
-                occtypes = _DefineSIAttributes.GetUniqueOccupancyTypes(SelectedPath);
-
-            }
-
+            //todo: what is this?
             if (IsInEditMode == true)
             {
                 _AttributeLinkingList.IsInEditMode = true;
             }
             else
             {
+                //todo: What? why am i passing in part of itself?
                 _AttributeLinkingList = new AttributeLinkingListVM(occtypes, StudyCache.GetChildElementsOfType<OccupancyTypesElement>(), _AttributeLinkingList.OccupancyTypesInStudy);
             }
             CurrentView = _AttributeLinkingList;
@@ -184,7 +173,7 @@ namespace ViewModel.Inventory
         private bool NextButtonClickWhileOnAttributeLinkingList()
         {
             string error = "";
-            if (ValidateLinkingList(ref error) == false) { return false; }
+            //if (ValidateLinkingList(ref error) == false) { return false; }
             //We need to write the data to the sqlite file
 
             StructureInventoryPersistenceManager manager = Saving.PersistenceFactory.GetStructureInventoryManager();
@@ -206,7 +195,7 @@ namespace ViewModel.Inventory
 
             for (int i = 0; i < attributeTableFromFile.NumberOfRows; i++)
             {
-                newStructureTable.Rows.Add(CreateRowForStructure(newStructureTable, attributeTableFromFile, i));
+                //newStructureTable.Rows.Add(CreateRowForStructure(newStructureTable, attributeTableFromFile, i));
             }
 
             attributeTableFromFile.ParentDatabase.Close();
@@ -220,30 +209,36 @@ namespace ViewModel.Inventory
 
         public bool NextButtonClicked()
         {
-
-            if(CurrentView.GetType() == typeof(DefineSIAttributesVM))
+            //CurrentView = _AttributeLinkingList;
+            //return true;
+            if (CurrentView is DefineSIAttributesVM_mockup)
             {
-
                 bool success = NextButtonClickedWhileDefiningSIAttributes();
-                if(!success)
+                if (!success)
                 {
                     return false;
                 }
             }
-            else if(CurrentView.GetType() == typeof(AttributeLinkingListVM))
+            else if (CurrentView is AttributeLinkingListVM)
             {
 
                 bool success = NextButtonClickWhileOnAttributeLinkingList();
                 {
-                   if(!success)
+                    if (!success)
                     {
                         return false;
                     }
                 }
-                    
+
             }
 
             return true;
+        }
+
+        public void SwitchVMs()
+        {
+            OccupancyTypesGroupRowItemVM vm = new OccupancyTypesGroupRowItemVM();            //CurrentView = _AttributeLinkingList;
+            CurrentView = vm;
         }
 
         //private DataTable CreateEmptyStructuresTable()
@@ -264,416 +259,309 @@ namespace ViewModel.Inventory
         //    return newStructureTable;
         //}
 
-        
 
-        private DataRow CreateRowForStructure(DataTable newStructureTable, DataTableView attributeTableFromFile, int i)
-        {
-            //we are going to create a new row in our table that contains everything we need for a single structure.
-            DataRow dataRow = newStructureTable.NewRow();
 
-            AssignOcctypeNameAndOcctypeGroupNameToRow(dataRow, attributeTableFromFile, i);
+        //private DataRow CreateRowForStructure(DataTable newStructureTable, DataTableView attributeTableFromFile, int i)
+        //{
+        //    //we are going to create a new row in our table that contains everything we need for a single structure.
+        //    DataRow dataRow = newStructureTable.NewRow();
 
-            AssignFoundationHeight_FirstFloorElevation_GroundElevationToRow(dataRow, attributeTableFromFile, i);
+        //    AssignOcctypeNameAndOcctypeGroupNameToRow(dataRow, attributeTableFromFile, i);
 
-            AssignStructureValueToRow(dataRow, attributeTableFromFile, i);
+        //    AssignFoundationHeight_FirstFloorElevation_GroundElevationToRow(dataRow, attributeTableFromFile, i);
 
-            AssignContentValueToRow(dataRow, attributeTableFromFile, i);
+        //    AssignStructureValueToRow(dataRow, attributeTableFromFile, i);
 
-            AssignOtherValueToRow(dataRow, attributeTableFromFile, i);
+        //    AssignContentValueToRow(dataRow, attributeTableFromFile, i);
 
-            AssignVehicleValueToRow(dataRow, attributeTableFromFile, i);
+        //    AssignOtherValueToRow(dataRow, attributeTableFromFile, i);
 
-            AssignYearValueToRow(dataRow, attributeTableFromFile, i);
+        //    AssignVehicleValueToRow(dataRow, attributeTableFromFile, i);
 
-            AssignModuleValueToRow(dataRow, attributeTableFromFile, i);
- 
-            return dataRow;
-        }
+        //    AssignYearValueToRow(dataRow, attributeTableFromFile, i);
 
-      
+        //    AssignModuleValueToRow(dataRow, attributeTableFromFile, i);
+
+        //    return dataRow;
+        //}
+
+
 
         private void AssignDamageCategoryToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
         {
 
         }
 
-        private void AssignModuleValueToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
-        {
-            if (_DefineSIAttributes.ModuleIsUsingDefault == false)
-            {
-                if (_DefineSIAttributes.ModuleColumnName != null)
-                {
-                    dataRow[StructureInventoryBaseElement.ModuleField] = attributeTableFromFile.GetCell(_DefineSIAttributes.ModuleColumnName, i);
+        //private void AssignModuleValueToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
+        //{
+        //    if (_DefineSIAttributes.ModuleIsUsingDefault == false)
+        //    {
+        //        if (_DefineSIAttributes.ModuleColumnName != null)
+        //        {
+        //            dataRow[StructureInventoryBaseElement.ModuleField] = attributeTableFromFile.GetCell(_DefineSIAttributes.ModuleColumnName, i);
 
-                }
-                else
-                {
-                    dataRow[StructureInventoryBaseElement.ModuleField] = "0";
-                }
-            }
-            else
-            {
-                dataRow[StructureInventoryBaseElement.ModuleField] = _DefineSIAttributes.ModuleDefaultValue;
-            }
-        }
+        //        }
+        //        else
+        //        {
+        //            dataRow[StructureInventoryBaseElement.ModuleField] = "0";
+        //        }
+        //    }
+        //    else
+        //    {
+        //        dataRow[StructureInventoryBaseElement.ModuleField] = _DefineSIAttributes.ModuleDefaultValue;
+        //    }
+        //}
 
-        private void AssignYearValueToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
-        {
-            if (_DefineSIAttributes.YearIsUsingDefault == false)
-            {
-                if (_DefineSIAttributes.YearColumnName != null)
-                {
-                    dataRow[StructureInventoryBaseElement.YearField] = attributeTableFromFile.GetCell(_DefineSIAttributes.YearColumnName, i);
+        //private void AssignYearValueToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
+        //{
+        //    if (_DefineSIAttributes.YearIsUsingDefault == false)
+        //    {
+        //        if (_DefineSIAttributes.YearColumnName != null)
+        //        {
+        //            dataRow[StructureInventoryBaseElement.YearField] = attributeTableFromFile.GetCell(_DefineSIAttributes.YearColumnName, i);
 
-                }
-                else
-                {
-                    dataRow[StructureInventoryBaseElement.YearField] = "0";
-                }
-            }
-            else
-            {
-                dataRow[StructureInventoryBaseElement.YearField] = _DefineSIAttributes.YearDefaultValue;
-            }
-        }
+        //        }
+        //        else
+        //        {
+        //            dataRow[StructureInventoryBaseElement.YearField] = "0";
+        //        }
+        //    }
+        //    else
+        //    {
+        //        dataRow[StructureInventoryBaseElement.YearField] = _DefineSIAttributes.YearDefaultValue;
+        //    }
+        //}
 
-        private void AssignVehicleValueToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
-        {
-            if (_DefineSIAttributes.VehicleValueIsUsingDefault == false)
-            {
-                if (_DefineSIAttributes.VehicleValueColumnName != null)
-                {
-                    dataRow[StructureInventoryBaseElement.VehicleValueField] = attributeTableFromFile.GetCell(_DefineSIAttributes.VehicleValueColumnName, i);
+        //private void AssignVehicleValueToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
+        //{
+        //    if (_DefineSIAttributes.VehicleValueIsUsingDefault == false)
+        //    {
+        //        if (_DefineSIAttributes.VehicleValueColumnName != null)
+        //        {
+        //            dataRow[StructureInventoryBaseElement.VehicleValueField] = attributeTableFromFile.GetCell(_DefineSIAttributes.VehicleValueColumnName, i);
 
-                }
-                else
-                {
-                    dataRow[StructureInventoryBaseElement.VehicleValueField] = "0";
-                }
-            }
-            else
-            {
-                dataRow[StructureInventoryBaseElement.VehicleValueField] = _DefineSIAttributes.VehicleValueDefaultValue;
-            }
-        }
+        //        }
+        //        else
+        //        {
+        //            dataRow[StructureInventoryBaseElement.VehicleValueField] = "0";
+        //        }
+        //    }
+        //    else
+        //    {
+        //        dataRow[StructureInventoryBaseElement.VehicleValueField] = _DefineSIAttributes.VehicleValueDefaultValue;
+        //    }
+        //}
 
-        private void AssignOtherValueToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
-        {
-            if (_DefineSIAttributes.OtherValueIsUsingDefault == false)
-            {
-                if (_DefineSIAttributes.OtherValueColumnName != null)
-                {
-                    dataRow[StructureInventoryBaseElement.OtherValueField] = attributeTableFromFile.GetCell(_DefineSIAttributes.OtherValueColumnName, i);
+        //private void AssignOtherValueToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
+        //{
+        //    if (_DefineSIAttributes.OtherValueIsUsingDefault == false)
+        //    {
+        //        if (_DefineSIAttributes.OtherValueColumnName != null)
+        //        {
+        //            dataRow[StructureInventoryBaseElement.OtherValueField] = attributeTableFromFile.GetCell(_DefineSIAttributes.OtherValueColumnName, i);
 
-                }
-                else
-                {
-                    dataRow[StructureInventoryBaseElement.OtherValueField] = "0";
-                }
-            }
-            else
-            {
-                dataRow[StructureInventoryBaseElement.OtherValueField] = _DefineSIAttributes.OtherValueDefaultValue;
-            }
-        }
+        //        }
+        //        else
+        //        {
+        //            dataRow[StructureInventoryBaseElement.OtherValueField] = "0";
+        //        }
+        //    }
+        //    else
+        //    {
+        //        dataRow[StructureInventoryBaseElement.OtherValueField] = _DefineSIAttributes.OtherValueDefaultValue;
+        //    }
+        //}
 
-        private void AssignContentValueToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
-        {
-            if (_DefineSIAttributes.ContentValueIsUsingDefault == false)
-            {
-                if (_DefineSIAttributes.ContentValueColumnName != null)
-                {
-                    dataRow[StructureInventoryBaseElement.ContentValueField] = attributeTableFromFile.GetCell(_DefineSIAttributes.ContentValueColumnName, i);
-                }
-                else
-                {
-                    dataRow[StructureInventoryBaseElement.ContentValueField] = "0";
-                }
-            }
-            else
-            {
-                dataRow[StructureInventoryBaseElement.ContentValueField] = _DefineSIAttributes.ContentValueDefaultValue;
-            }
-        }
+        //private void AssignContentValueToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
+        //{
+        //    if (_DefineSIAttributes.ContentValueIsUsingDefault == false)
+        //    {
+        //        if (_DefineSIAttributes.ContentValueColumnName != null)
+        //        {
+        //            dataRow[StructureInventoryBaseElement.ContentValueField] = attributeTableFromFile.GetCell(_DefineSIAttributes.ContentValueColumnName, i);
+        //        }
+        //        else
+        //        {
+        //            dataRow[StructureInventoryBaseElement.ContentValueField] = "0";
+        //        }
+        //    }
+        //    else
+        //    {
+        //        dataRow[StructureInventoryBaseElement.ContentValueField] = _DefineSIAttributes.ContentValueDefaultValue;
+        //    }
+        //}
 
-        private void AssignStructureValueToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
-        {
-            if (_DefineSIAttributes.StructureValueIsUsingDefault == false)
-            {
-                dataRow[StructureInventoryBaseElement.StructureValueField] = attributeTableFromFile.GetCell(_DefineSIAttributes.StructureValueColumnName, i);
-            }
-            else
-            {
-                dataRow[StructureInventoryBaseElement.StructureValueField] = _DefineSIAttributes.StructureValueDefaultValue;
-            }
-        }
+        //private void AssignStructureValueToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
+        //{
+        //    if (_DefineSIAttributes.StructureValueIsUsingDefault == false)
+        //    {
+        //        dataRow[StructureInventoryBaseElement.StructureValueField] = attributeTableFromFile.GetCell(_DefineSIAttributes.StructureValueColumnName, i);
+        //    }
+        //    else
+        //    {
+        //        dataRow[StructureInventoryBaseElement.StructureValueField] = _DefineSIAttributes.StructureValueDefaultValue;
+        //    }
+        //}
 
-        private void AssignOcctypeNameAndOcctypeGroupNameToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
-        {
-            if (_DefineSIAttributes.OccupancyTypeIsUsingDefault == false)
-            {
-                //string groupName = "";
-                string occTypeKey = attributeTableFromFile.GetCell(_DefineSIAttributes.OccupancyTypeColumnName, i).ToString(); // this is the old occtype from the dbf of the struc inv.
-                string combinedNewOccTypeAndGroupName = _AttributeLinkingList.OccupancyTypesDictionary[occTypeKey];
-                //deal with the case that no selection was made so the new occtype would be blank
-                if (combinedNewOccTypeAndGroupName == "" || combinedNewOccTypeAndGroupName == null)
-                {
-                    dataRow[StructureInventoryBaseElement.OccupancyTypeField] = occTypeKey;
-                    dataRow[StructureInventoryBaseElement.OccupancyTypeGroupName] = "Undefined";
+        //private void AssignOcctypeNameAndOcctypeGroupNameToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
+        //{
+        //    if (_DefineSIAttributes.OccupancyTypeIsUsingDefault == false)
+        //    {
+        //        //string groupName = "";
+        //        string occTypeKey = attributeTableFromFile.GetCell(_DefineSIAttributes.OccupancyTypeColumnName, i).ToString(); // this is the old occtype from the dbf of the struc inv.
+        //        string combinedNewOccTypeAndGroupName = _AttributeLinkingList.OccupancyTypesDictionary[occTypeKey];
+        //        //deal with the case that no selection was made so the new occtype would be blank
+        //        if (combinedNewOccTypeAndGroupName == "" || combinedNewOccTypeAndGroupName == null)
+        //        {
+        //            dataRow[StructureInventoryBaseElement.OccupancyTypeField] = occTypeKey;
+        //            dataRow[StructureInventoryBaseElement.OccupancyTypeGroupName] = "Undefined";
 
-                }
-                else
-                {
-                    string[] occtypeAndGroupName = _AttributeLinkingList.ParseOccTypeNameAndGroupNameFromCombinedString(combinedNewOccTypeAndGroupName);
-                    dataRow[StructureInventoryBaseElement.OccupancyTypeField] = occtypeAndGroupName[0];
-                    dataRow[StructureInventoryBaseElement.OccupancyTypeGroupName] = occtypeAndGroupName[1];
-                }
+        //        }
+        //        else
+        //        {
+        //            string[] occtypeAndGroupName = _AttributeLinkingList.ParseOccTypeNameAndGroupNameFromCombinedString(combinedNewOccTypeAndGroupName);
+        //            dataRow[StructureInventoryBaseElement.OccupancyTypeField] = occtypeAndGroupName[0];
+        //            dataRow[StructureInventoryBaseElement.OccupancyTypeGroupName] = occtypeAndGroupName[1];
+        //        }
 
-            }
-            else
-            {
+        //    }
+        //    else
+        //    {
 
-                //string groupName = "";
-                string occTypeKey = _DefineSIAttributes.OccupancyTypeDefaultValue;
-                string combinedNewOccTypeAndGroupName = _AttributeLinkingList.OccupancyTypesDictionary[occTypeKey];
-                //deal with the case that no selection was made so the new occtype would be blank
-                if (combinedNewOccTypeAndGroupName == "" || combinedNewOccTypeAndGroupName == null)
-                {
-                    dataRow[StructureInventoryBaseElement.OccupancyTypeField] = occTypeKey;
-                    dataRow[StructureInventoryBaseElement.OccupancyTypeGroupName] = "Undefined";
+        //        //string groupName = "";
+        //        string occTypeKey = _DefineSIAttributes.OccupancyTypeDefaultValue;
+        //        string combinedNewOccTypeAndGroupName = _AttributeLinkingList.OccupancyTypesDictionary[occTypeKey];
+        //        //deal with the case that no selection was made so the new occtype would be blank
+        //        if (combinedNewOccTypeAndGroupName == "" || combinedNewOccTypeAndGroupName == null)
+        //        {
+        //            dataRow[StructureInventoryBaseElement.OccupancyTypeField] = occTypeKey;
+        //            dataRow[StructureInventoryBaseElement.OccupancyTypeGroupName] = "Undefined";
 
-                }
-                else
-                {
-                    string[] occtypeAndGroupName = _AttributeLinkingList.ParseOccTypeNameAndGroupNameFromCombinedString(combinedNewOccTypeAndGroupName);
+        //        }
+        //        else
+        //        {
+        //            string[] occtypeAndGroupName = _AttributeLinkingList.ParseOccTypeNameAndGroupNameFromCombinedString(combinedNewOccTypeAndGroupName);
 
-                    dataRow[StructureInventoryBaseElement.OccupancyTypeField] = occtypeAndGroupName[0];
-                    dataRow[StructureInventoryBaseElement.OccupancyTypeGroupName] = occtypeAndGroupName[1];
-                }
-
-
-            }
-        }
-        private void AssignFoundationHeight_FirstFloorElevation_GroundElevationToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
-        {
-            if (_DefineSIAttributes.FirstFloorElevationIsChecked == true)
-            {
-                if (_DefineSIAttributes.FirstFloorElevationIsUsingDefault == false)
-                {
-                    dataRow[StructureInventoryBaseElement.FirstFloorElevationField] = attributeTableFromFile.GetCell(_DefineSIAttributes.FirstFloorElevationColumnName, i);
-                }
-                else
-                {
-                    dataRow[StructureInventoryBaseElement.FirstFloorElevationField] = _DefineSIAttributes.FirstFloorElevationDefaultValue;
-                }
-                dataRow[StructureInventoryBaseElement.FoundationHeightField] = 0;
-                dataRow[StructureInventoryBaseElement.GroundElevationField] = 0;
-            }
-            else
-            {
-                if (_DefineSIAttributes.FoundationHeightIsUsingDefault == false)
-                {
-                    dataRow[StructureInventoryBaseElement.FoundationHeightField] = attributeTableFromFile.GetCell(_DefineSIAttributes.FoundationHeightColumnName, i);
-                }
-                else
-                {
-                    dataRow[StructureInventoryBaseElement.FoundationHeightField] = _DefineSIAttributes.FoundationHeightDefaultValue;
-                }
-
-                if (_DefineSIAttributes.GroundElevationIsUsingDefault == false)
-                {
-                    dataRow[StructureInventoryBaseElement.GroundElevationField] = attributeTableFromFile.GetCell(_DefineSIAttributes.GroundElevationColumnName, i);
-                }
-                else
-                {
-                    dataRow[StructureInventoryBaseElement.GroundElevationField] = _DefineSIAttributes.GroundElevationDefaultValue;
-                }
-
-                dataRow[StructureInventoryBaseElement.FirstFloorElevationField] = 0;
-            }
-        }
+        //            dataRow[StructureInventoryBaseElement.OccupancyTypeField] = occtypeAndGroupName[0];
+        //            dataRow[StructureInventoryBaseElement.OccupancyTypeGroupName] = occtypeAndGroupName[1];
+        //        }
 
 
-        #endregion
+        //    }
+        //}
+        //private void AssignFoundationHeight_FirstFloorElevation_GroundElevationToRow(DataRow dataRow, DataTableView attributeTableFromFile, int i)
+        //{
+        //    if (_DefineSIAttributes.FirstFloorElevationIsChecked == true)
+        //    {
+        //        if (_DefineSIAttributes.FirstFloorElevationIsUsingDefault == false)
+        //        {
+        //            dataRow[StructureInventoryBaseElement.FirstFloorElevationField] = attributeTableFromFile.GetCell(_DefineSIAttributes.FirstFloorElevationColumnName, i);
+        //        }
+        //        else
+        //        {
+        //            dataRow[StructureInventoryBaseElement.FirstFloorElevationField] = _DefineSIAttributes.FirstFloorElevationDefaultValue;
+        //        }
+        //        dataRow[StructureInventoryBaseElement.FoundationHeightField] = 0;
+        //        dataRow[StructureInventoryBaseElement.GroundElevationField] = 0;
+        //    }
+        //    else
+        //    {
+        //        if (_DefineSIAttributes.FoundationHeightIsUsingDefault == false)
+        //        {
+        //            dataRow[StructureInventoryBaseElement.FoundationHeightField] = attributeTableFromFile.GetCell(_DefineSIAttributes.FoundationHeightColumnName, i);
+        //        }
+        //        else
+        //        {
+        //            dataRow[StructureInventoryBaseElement.FoundationHeightField] = _DefineSIAttributes.FoundationHeightDefaultValue;
+        //        }
+
+        //        if (_DefineSIAttributes.GroundElevationIsUsingDefault == false)
+        //        {
+        //            dataRow[StructureInventoryBaseElement.GroundElevationField] = attributeTableFromFile.GetCell(_DefineSIAttributes.GroundElevationColumnName, i);
+        //        }
+        //        else
+        //        {
+        //            dataRow[StructureInventoryBaseElement.GroundElevationField] = _DefineSIAttributes.GroundElevationDefaultValue;
+        //        }
+
+        //        dataRow[StructureInventoryBaseElement.FirstFloorElevationField] = 0;
+        //    }
+        //}
+
+
+        //#endregion
 
 
 
-        private bool ValidateLinkingList(ref string errorMessage)
-        {
-            //if(_AttributeLinkingList.)
-            if(HasFatalError)//if one of the rules have been violated
-            {
-                return false;
-            }
-            return true;
-        }
+        //private bool ValidateLinkingList(ref string errorMessage)
+        //{
+        //    //if(_AttributeLinkingList.)
+        //    if(HasFatalError)//if one of the rules have been violated
+        //    {
+        //        return false;
+        //    }
+        //    return true;
+        //}
 
         private bool ValidateSIAttributes(ref string errorMessage)
         {
+            bool isValid = true;
             //this will run through all the "rules". I am not using the OK close control for the buttons so i need to handle
             //that on my own.
-            //Validate();
-            //if(HasFatalError)
-            //{
-            //    return false;
-            //}
-
-            //here i need to validate all the fields for valid values (no negatives etc)
-            //occtype
-            if (_DefineSIAttributes.OccupancyTypeIsUsingDefault == true)
+            Validate();
+            if (HasFatalError)
             {
-                if(_DefineSIAttributes.OccupancyTypeDefaultValue == null || _DefineSIAttributes.OccupancyTypeDefaultValue == "") { errorMessage = "A default occupancy type must be entered"; return false; }
-            }
-            else
-            {
-                if (_DefineSIAttributes.OccupancyTypeColumnName == null) { errorMessage = "An occupancy type must be selected"; return false; }
-
+                isValid = false;
+                errorMessage = Error;
             }
 
-            if(_DefineSIAttributes.FirstFloorElevationIsChecked == true)
+            if( !_DefineSIAttributes.Validate(ref errorMessage))
             {
-                //first floor elevation
-                if (_DefineSIAttributes.FirstFloorElevationIsUsingDefault == true)
-                {
-                    if (_DefineSIAttributes.FirstFloorElevationDefaultValue == null || _DefineSIAttributes.FirstFloorElevationDefaultValue == "") { errorMessage = "A first floor elevation must be entered"; return false; }
-                }
-                else
-                {
-                    if (_DefineSIAttributes.FirstFloorElevationColumnName == null) { errorMessage = "A first floor elevation must be entered"; return false; }
-
-                }
+                isValid = false;
             }
-            else
-            {
-                //found height
-
-                if (_DefineSIAttributes.FoundationHeightIsUsingDefault == true)
-                {
-                    if (_DefineSIAttributes.FoundationHeightDefaultValue == null || _DefineSIAttributes.FoundationHeightDefaultValue == "") { errorMessage = "A foundation height must be entered"; return false; }
-                }
-                else
-                {
-                    if (_DefineSIAttributes.FoundationHeightColumnName == null) { errorMessage = "A foundation height must be entered"; return false; }
-
-                }
-                //grnd elevation
-                if (_DefineSIAttributes.GroundElevationIsUsingDefault == true)
-                {
-                    if (_DefineSIAttributes.GroundElevationDefaultValue == null || _DefineSIAttributes.GroundElevationDefaultValue == "") { errorMessage = "A ground elevation must be entered"; return false; }
-                }
-                else
-                {
-                    if (_DefineSIAttributes.GroundElevationColumnName == null) { errorMessage = "A ground elevation must be entered"; return false; }
-
-                }
-            }
+            return isValid;
             
-
-            
-            //struct value
-            if (_DefineSIAttributes.StructureValueIsUsingDefault == true)
-            {
-                if (_DefineSIAttributes.StructureValueDefaultValue == null || _DefineSIAttributes.StructureValueDefaultValue == "") { errorMessage = "A structure value must be entered"; return false; }
-            }
-            else
-            {
-                if (_DefineSIAttributes.StructureValueColumnName == null) { errorMessage = "A structure value must be entered"; return false; }
-
-            }
-            //cont value
-            if (_DefineSIAttributes.ContentValueIsUsingDefault == true)
-            {
-                if (_DefineSIAttributes.ContentValueDefaultValue == null || _DefineSIAttributes.ContentValueDefaultValue == "") { errorMessage = "A content value must be entered, or the 'Missing' checkbox should be unchecked."; return false; }
-            }
-            else
-            {
-                //if (_DefineSIAttributes.ContentValueColumnName == null) { return false; }
-
-            }
-            //other value
-            if (_DefineSIAttributes.OtherValueIsUsingDefault == true)
-            {
-                if (_DefineSIAttributes.OtherValueDefaultValue == null || _DefineSIAttributes.OtherValueDefaultValue == "") { errorMessage = "An other value must be entered, or the 'Missing' checkbox should be unchecked."; return false; }
-            }
-            else
-            {
-                //if (_DefineSIAttributes.OtherValueColumnName == null) { return false; }
-
-            }
-            //vehicle value
-            if (_DefineSIAttributes.VehicleValueIsUsingDefault == true)
-            {
-                if (_DefineSIAttributes.VehicleValueDefaultValue == null || _DefineSIAttributes.VehicleValueDefaultValue == "") { errorMessage = "A vehicle value must be entered, or the 'Missing' checkbox should be unchecked."; return false; }
-            }
-            else
-            {
-                //if (_DefineSIAttributes.VehicleValueColumnName == null) { return false; }
-
-            }
-            //Year value
-            if (_DefineSIAttributes.YearIsUsingDefault == true)
-            {
-                if (_DefineSIAttributes.YearDefaultValue == null || _DefineSIAttributes.YearDefaultValue == "") { errorMessage = "A year must be entered, or the 'Missing' checkbox should be unchecked."; return false; }
-            }
-            else
-            {
-                //if (_DefineSIAttributes.VehicleValueColumnName == null) { return false; }
-
-            }
-            //Module value
-            if (_DefineSIAttributes.ModuleIsUsingDefault == true)
-            {
-                if (_DefineSIAttributes.ModuleDefaultValue == null || _DefineSIAttributes.ModuleDefaultValue == "") { errorMessage = "A module must be entered, or the 'Missing' checkbox should be unchecked."; return false; }
-            }
-            else
-            {
-                //if (_DefineSIAttributes.VehicleValueColumnName == null) { return false; }
-
-            }
-
-
-            return true;
         }
 
-       
-
-        public void loadUniqueNames(string path)
-
-        {
-
-            List<string> stringColumnNames = new List<string>();
-            List<string> numericColumnNames = new List<string>();
 
 
-            CurrentViewIsEnabled = true;
-            SelectedPath = path; //isnt this bound?? yes but it is not working.
-            DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(System.IO.Path.ChangeExtension(SelectedPath, ".dbf"));
-            DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+        //public void loadUniqueNames(string path)
+
+        //{
+
+        //    List<string> stringColumnNames = new List<string>();
+        //    List<string> numericColumnNames = new List<string>();
 
 
-            for (int i = 0; i < dtv.ColumnNames.Count(); i++)
-            {
-                if (dtv.ColumnTypes[i] == typeof(string))
-                {
-                    stringColumnNames.Add(dtv.ColumnNames[i]);
-                }
-                else
-                {
-                    numericColumnNames.Add(dtv.ColumnNames[i]);
-                }
-            }
-            _DefineSIAttributes.StringColumnNames = stringColumnNames;
-            _DefineSIAttributes.NumericColumnNames = numericColumnNames;
+        //    CurrentViewIsEnabled = true;
+        //    SelectedPath = path; //isnt this bound?? yes but it is not working.
+        //    DatabaseManager.DbfReader dbf = new DatabaseManager.DbfReader(System.IO.Path.ChangeExtension(SelectedPath, ".dbf"));
+        //    DatabaseManager.DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
 
-            CurrentView = _DefineSIAttributes;
 
-        }
-        public override void AddValidationRules()
-        {
-            AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
-            AddRule(nameof(Name), () => !(Name == null), "The Name cannot be blank.");
+        //    for (int i = 0; i < dtv.ColumnNames.Count(); i++)
+        //    {
+        //        if (dtv.ColumnTypes[i] == typeof(string))
+        //        {
+        //            stringColumnNames.Add(dtv.ColumnNames[i]);
+        //        }
+        //        else
+        //        {
+        //            numericColumnNames.Add(dtv.ColumnNames[i]);
+        //        }
+        //    }
+        //    _DefineSIAttributes.StringColumnNames = stringColumnNames;
+        //    _DefineSIAttributes.NumericColumnNames = numericColumnNames;
 
-        }
+        //    CurrentView = _DefineSIAttributes;
+
+        //}
+        //public override void AddValidationRules()
+        //{
+        //    AddRule(nameof(Name), () => Name != "", "Name cannot be blank.");
+        //    AddRule(nameof(Name), () => !(Name == null), "The Name cannot be blank.");
+
+        //}
 
         /// <summary>
         /// This method saves a new occtype group for this structure.
@@ -765,8 +653,9 @@ namespace ViewModel.Inventory
             return OccupancyTypeFactory.Factory(); // if it gets here then no occtype matching the names given exists. Should we send an error message?
         }
 
-        
 
+
+        #endregion
         #endregion
         #region Functions
         #endregion

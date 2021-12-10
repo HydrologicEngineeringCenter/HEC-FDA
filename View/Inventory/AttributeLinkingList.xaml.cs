@@ -136,115 +136,115 @@ namespace View.Inventory
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.Inventory.AttributeLinkingListVM vm = (ViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
-            if (vm == null)
-            {
-            }
-            else if(vm.IsInEditMode == true)
-            {
+            //ViewModel.Inventory.AttributeLinkingListVM vm = (ViewModel.Inventory.AttributeLinkingListVM)this.DataContext;
+            //if (vm == null)
+            //{
+            //}
+            //else if(vm.IsInEditMode == true)
+            //{
                 
-                //get all the occtypes that are in the study
-                //Consequences_Assist.ComputableObjects.OccupancyType occtype = new Consequences_Assist.ComputableObjects.OccupancyType("", "");
-                List<string> theListOfOccTypesWithBlankOption = new List<string>();
-                if (vm.SelectedListOfOccTypeStrings != null)
-                {
-                    theListOfOccTypesWithBlankOption = vm.SelectedListOfOccTypeStrings;
+            //    //get all the occtypes that are in the study
+            //    //Consequences_Assist.ComputableObjects.OccupancyType occtype = new Consequences_Assist.ComputableObjects.OccupancyType("", "");
+            //    List<string> theListOfOccTypesWithBlankOption = new List<string>();
+            //    if (vm.SelectedListOfOccTypeStrings != null)
+            //    {
+            //        theListOfOccTypesWithBlankOption = vm.SelectedListOfOccTypeStrings;
                     
-                }
+            //    }
                 
-                List<string> keys = vm.OccupancyTypesDictionary.Keys.ToList<string>();
-                foreach(string k in keys)
-                {
-                    string keyString = k;
-                    string valueString;
-                    bool hasKey= vm.OccupancyTypesDictionary.TryGetValue(k,out valueString);
-                    AddNextRowWithAlreadySelectedItem(keyString,theListOfOccTypesWithBlankOption, valueString);
-                }
+            //    List<string> keys = vm.OccupancyTypesDictionary.Keys.ToList<string>();
+            //    foreach(string k in keys)
+            //    {
+            //        string keyString = k;
+            //        string valueString;
+            //        bool hasKey= vm.OccupancyTypesDictionary.TryGetValue(k,out valueString);
+            //        AddNextRowWithAlreadySelectedItem(keyString,theListOfOccTypesWithBlankOption, valueString);
+            //    }
 
-                ///////////////////////////////////////
-                //   display the occtype groups with the check boxes checked 
-                ///////////////////////////////////////////
-                bool checkOne = false;
-                bool checkTwo = false;
-                for (int i = 0; i < vm.ListOfOccTypeGroups.Count; i = i + 2)
-                {
-                    if (i + 1 == vm.ListOfOccTypeGroups.Count)
-                    {
-                        if (vm.ListOfSelectedOccTypeGroups.Contains(vm.ListOfOccTypeGroups[i]))
-                        {
-                            checkOne = true;
-                        }
-                        else
-                        {
-                            checkOne = false;
-                        }
-                        AddOccTypeGroupWithCheckBox(vm.ListOfOccTypeGroups[i],null,checkOne);
+            //    ///////////////////////////////////////
+            //    //   display the occtype groups with the check boxes checked 
+            //    ///////////////////////////////////////////
+            //    bool checkOne = false;
+            //    bool checkTwo = false;
+            //    for (int i = 0; i < vm.ListOfOccTypeGroups.Count; i = i + 2)
+            //    {
+            //        if (i + 1 == vm.ListOfOccTypeGroups.Count)
+            //        {
+            //            if (vm.ListOfSelectedOccTypeGroups.Contains(vm.ListOfOccTypeGroups[i]))
+            //            {
+            //                checkOne = true;
+            //            }
+            //            else
+            //            {
+            //                checkOne = false;
+            //            }
+            //            AddOccTypeGroupWithCheckBox(vm.ListOfOccTypeGroups[i],null,checkOne);
 
-                    }
-                    else
-                    {
-                        if (vm.ListOfSelectedOccTypeGroups.Contains(vm.ListOfOccTypeGroups[i]))
-                        {
-                            checkOne = true;
-                        }
-                        else
-                        {
-                            checkOne = false;
-                        }
-                        if (vm.ListOfSelectedOccTypeGroups.Contains(vm.ListOfOccTypeGroups[i+1]))
-                        {
-                            checkTwo = true;
-                        }
-                        else
-                        {
-                            checkTwo = false;
-                        }
-                        AddOccTypeGroupWithCheckBox(vm.ListOfOccTypeGroups[i], vm.ListOfOccTypeGroups[i + 1],checkOne,checkTwo);
+            //        }
+            //        else
+            //        {
+            //            if (vm.ListOfSelectedOccTypeGroups.Contains(vm.ListOfOccTypeGroups[i]))
+            //            {
+            //                checkOne = true;
+            //            }
+            //            else
+            //            {
+            //                checkOne = false;
+            //            }
+            //            if (vm.ListOfSelectedOccTypeGroups.Contains(vm.ListOfOccTypeGroups[i+1]))
+            //            {
+            //                checkTwo = true;
+            //            }
+            //            else
+            //            {
+            //                checkTwo = false;
+            //            }
+            //            AddOccTypeGroupWithCheckBox(vm.ListOfOccTypeGroups[i], vm.ListOfOccTypeGroups[i + 1],checkOne,checkTwo);
 
-                    }
-                    checkOne = false;
-                    checkTwo = false;
-                }
-            }
-            else
-            {
-                ////add a blank occtype option to the combobox
-                //Consequences_Assist.ComputableObjects.OccupancyType occtype = new Consequences_Assist.ComputableObjects.OccupancyType("", "");
-                //List<Consequences_Assist.ComputableObjects.OccupancyType> theListOfOccTypesWithBlankOption = new List<Consequences_Assist.ComputableObjects.OccupancyType>();
-                //if (vm.ListOfSelectedOccupancyTypes != null)
-                //{
-                //    theListOfOccTypesWithBlankOption = vm.ListOfSelectedOccupancyTypes;
-                //    theListOfOccTypesWithBlankOption.Insert(0, occtype);
-                //}
+            //        }
+            //        checkOne = false;
+            //        checkTwo = false;
+            //    }
+            //}
+            //else
+            //{
+            //    ////add a blank occtype option to the combobox
+            //    //Consequences_Assist.ComputableObjects.OccupancyType occtype = new Consequences_Assist.ComputableObjects.OccupancyType("", "");
+            //    //List<Consequences_Assist.ComputableObjects.OccupancyType> theListOfOccTypesWithBlankOption = new List<Consequences_Assist.ComputableObjects.OccupancyType>();
+            //    //if (vm.ListOfSelectedOccupancyTypes != null)
+            //    //{
+            //    //    theListOfOccTypesWithBlankOption = vm.ListOfSelectedOccupancyTypes;
+            //    //    theListOfOccTypesWithBlankOption.Insert(0, occtype);
+            //    //}
                 
 
-                for (int i = 0; i < vm.OccupancyTypesInFile.Count; i++)
-                {
-                    //AddRow(vm.OccupancyTypesInFile[i], theListOfOccTypesWithBlankOption);
-                    AddNextRow(vm.OccupancyTypesInFile[i]);
+            //    for (int i = 0; i < vm.OccupancyTypesInFile.Count; i++)
+            //    {
+            //        //AddRow(vm.OccupancyTypesInFile[i], theListOfOccTypesWithBlankOption);
+            //        AddNextRow(vm.OccupancyTypesInFile[i]);
 
-                }
+            //    }
 
 
                 
-                for (int i = 0; i < vm.ListOfOccTypeGroups.Count; i=i+2)
-                {
-                    if (i + 1 == vm.ListOfOccTypeGroups.Count)
-                    {
-                        AddOccTypeGroupWithCheckBox(vm.ListOfOccTypeGroups[i]);
-                    }
-                    else
-                    {
-                        AddOccTypeGroupWithCheckBox(vm.ListOfOccTypeGroups[i], vm.ListOfOccTypeGroups[i + 1]);
+            //    for (int i = 0; i < vm.ListOfOccTypeGroups.Count; i=i+2)
+            //    {
+            //        if (i + 1 == vm.ListOfOccTypeGroups.Count)
+            //        {
+            //            AddOccTypeGroupWithCheckBox(vm.ListOfOccTypeGroups[i]);
+            //        }
+            //        else
+            //        {
+            //            AddOccTypeGroupWithCheckBox(vm.ListOfOccTypeGroups[i], vm.ListOfOccTypeGroups[i + 1]);
 
-                    }
-                }
-
-
+            //        }
+            //    }
 
 
 
-            }
+
+
+            //}
         }
 
         private void AddOccTypeGroupWithCheckBox(ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement eleA, ViewModel.Inventory.OccupancyTypes.OccupancyTypesElement eleB = null, bool checkFirstElement = false, bool checkSecondElement = false)

@@ -217,10 +217,7 @@ namespace ViewModel.Inventory
             //return occtypeAndGroupName;
         }
         #endregion
-        public override void AddValidationRules()
-        {
-            //throw new NotImplementedException();
-        }
+
 
       
     }

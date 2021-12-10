@@ -7,14 +7,13 @@
         xmlns:CA="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
              mc:Ignorable="d" 
              d:DesignHeight="575" d:DesignWidth="600">
-    <Grid Background="WhiteSmoke">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"  Name="SymbolsRow"></RowDefinition>
-            <RowDefinition Height="Auto" Name="ShapeDetailsRow"></RowDefinition>
-            <RowDefinition Height="*" Name="ApplyOKRow"></RowDefinition>
+            <RowDefinition Height="*" Name="ShapeDetailsRow"></RowDefinition>
+            <RowDefinition Height="Auto" Name="ApplyOKRow"></RowDefinition>
         </Grid.RowDefinitions>
-        <!--<qh:HelpButton HorizontalAlignment="Right" Name="ImportFromShapefileHelpButton" TopicNames="ImportFromShapefileHelp" ToolTip="Help" VerticalAlignment="Top" Margin="5" Width="20" Height="20" PathIsEmbeddedResource="True" AssemblyName="HEC-LifeSim" RootNamespace="LifeSim_WPF" xmlPATH="ImportFromShapefile.xml"/>-->
-        <!--SI Set Name-->
+
         <StackPanel Grid.Row="0" Margin="5" Orientation="Vertical">
             <StackPanel Height="23" Name="NameStackPanel" VerticalAlignment="Top" Orientation="Horizontal" Grid.ColumnSpan="2">
                 <TextBlock Name="NameLabel" Text="Name:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
@@ -25,28 +24,13 @@
             <StackPanel Margin="0,5,0,0" Orientation="Vertical" Name="stack_ShapefilePath">
                 <TextBlock Name="SILabel" Text="Structure Inventory Shapefile:" TextAlignment="left" HorizontalAlignment="Left" VerticalAlignment="Center" />
                 <Grid Height="27" Name="SIStackPanel" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                
                     <CA:ComboBoxWithBrowser ItemsSource="{Binding Path=AvailablePaths}" SelectedPath="{Binding SelectedPath}" Filter="Shapefiles (*.shp) |*.shp|All files (*.*) |*.*" ValidateToShapeTypes="True" ShapeTypeFilter="Point" Name="cmb_Path" />
-
                 </Grid>
             </StackPanel>
-
         </StackPanel>
-        <ContentControl Name="ContentUserControl" Grid.Row="1" Content="{Binding CurrentView}" IsEnabled="{Binding Path=CurrentViewIsEnabled}" />
-        <!--<local:DefineSIAttributes x:Name="SIAttributes" Grid.Row="1" StringAttributeNames="{Binding Path=StringColumnNames,Mode=TwoWay}"  DamCatColumnName="{Binding Path=DamCatColumnName}" />-->
-
-        <!--Input Data Path-->
-        <!--<StackPanel Grid.Row="1" Margin="5,5,5,5">-->
-
-
-        <!--<local:DefineSIAttributeInformation Grid.Row="1" x:Name="SIAttributesControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Visibility="Visible"></local:DefineSIAttributeInformation>-->
-        <!--<local:BasementIdentifier Grid.Row="1" x:Name="BasementIdentifierControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Visibility="Collapsed"/>-->
-        <!--<local:AttributeLinkingList Grid.Row="1" x:Name="DefaultDamCatsControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Hidden" GroupBoxHeader="Default Damage Category Assignments" ColumnOneHeader="Damage Category" ColumnTwoHeader="Default Assignment"/>
-        <local:AttributeLinkingList Grid.Row="1" x:Name="DefaultOccTypesControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" GroupBoxHeader="Default Occupancy Type Assignments" ColumnOneHeader="Occupancy Type" ColumnTwoHeader="Default Assignment"/>
-        <local:AttributeLinkingList Grid.Row="1" x:Name="DefaultConstTypesControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" GroupBoxHeader="Default Construction Type Assignments" ColumnOneHeader="Construction Type" ColumnTwoHeader="Default Assignment"/>-->
-        <!--</StackPanel>-->
-
-        <!--Standard Buttons-->
+        
+        <ContentControl  Grid.Row="1" Content="{Binding CurrentView}"  />
+       
         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,5,5">
             <Button Content="←Previous" Height="23" Name="PreviousButton" Width="65" Margin="0,0,0,0"  Visibility="Hidden" Click="PreviousButton_Click"/>
             <Button Content="Next→" Height="23" Name="NextButton" Width="50" Margin="5,0,0,0" Click="NextButton_Click" />

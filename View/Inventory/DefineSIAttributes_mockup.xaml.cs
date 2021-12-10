@@ -25,30 +25,5 @@ namespace View.Inventory
             InitializeComponent();
         }
 
-        private void rad_FirstFloorElevation_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.Inventory.DefineSIAttributesVM vm = (ViewModel.Inventory.DefineSIAttributesVM)this.DataContext;
-            if (vm.FirstFloorElevationIsChecked == true)
-            {
-                AttributeDefinitionGrid.RowDefinitions[2].Height = new GridLength(0);
-                AttributeDefinitionGrid.RowDefinitions[3].Height = new GridLength(0);
-                AttributeDefinitionGrid.RowDefinitions[4].Height = new GridLength(28);
-
-            }
-
-
-        }
-
-        private void rad_GroundElevationAndFoundationHeight_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.Inventory.DefineSIAttributesVM vm = (ViewModel.Inventory.DefineSIAttributesVM)this.DataContext;
-            if (vm.GroundElevationIsChecked == true)
-            {
-                AttributeDefinitionGrid.RowDefinitions[4].Height = new GridLength(0);
-                AttributeDefinitionGrid.RowDefinitions[2].Height = new GridLength(28);
-                AttributeDefinitionGrid.RowDefinitions[3].Height = new GridLength(28);
-            }
-
-        }
     }
 }
