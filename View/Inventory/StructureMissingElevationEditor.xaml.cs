@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -25,6 +26,12 @@ namespace View.Inventory
         private string combined_text(TextBox tb, string newText)
         {
             return tb.Text.Substring(0, tb.SelectionStart) + newText + tb.Text.Substring(tb.SelectionStart + tb.SelectionLength);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var myWindow = Window.GetWindow(this);
+            myWindow.Close();
         }
     }
 }

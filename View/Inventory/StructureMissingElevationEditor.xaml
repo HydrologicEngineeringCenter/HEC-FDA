@@ -48,8 +48,8 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding ID}" Header="Name" IsReadOnly="True" Width="*"/>
                 <DataGridTextColumn Binding="{Binding IsMissingOcctype, Converter={StaticResource BoolToMissing}}" Header="Occtype"  Width="*"/>
-                
-                <DataGridTextColumn Binding="{Binding IsMissingFoundationHt, Converter={StaticResource BoolToMissing}}" Header="Foundation Height"  Width="*" Visibility="{Binding DataContext.FromStructureFile, Converter={StaticResource BoolToVisibilityConverter}, Source={x:Reference dummyElement}}"/>
+
+                <DataGridTextColumn Binding="{Binding IsMissingFoundationHt, Converter={StaticResource BoolToMissing}}" Header="Foundation Height"  Width="*" Visibility="{Binding DataContext.UsingFirstFloorElevation, Converter={StaticResource BoolToInverseVisConverter}, Source={x:Reference dummyElement}}"/>
                 <DataGridTextColumn Binding="{Binding IsMissingGroundElevation, Converter={StaticResource BoolToMissing}}" Visibility="{Binding DataContext.FromStructureFile, Converter={StaticResource BoolToVisibilityConverter}, Source={x:Reference dummyElement}}" Header="Ground Elevation"  Width="*"/>
                 
                 <DataGridTextColumn Binding="{Binding IsMissingFirstFloorElevation, Converter={StaticResource BoolToMissing}}" Header="First Floor Elevation"  Width="*" Visibility="{Binding DataContext.UsingFirstFloorElevation, Converter={StaticResource BoolToVisibilityConverter}, Source={x:Reference dummyElement}}"/>
@@ -59,7 +59,8 @@
             </DataGrid.Columns>
         </DataGrid>
         
-        <utils:OKCloseControl Grid.Row="2" Margin="0,0,5,0"/>
-        
+        <!--<utils:OKCloseControl Grid.Row="2" Margin="0,0,5,0"/>-->
+        <Button Content="Close" Grid.Row="2" Margin="0,0,5,0" Width="60" HorizontalAlignment="Right" Click="Button_Click"/>
+
     </Grid>
 </UserControl>

@@ -38,6 +38,14 @@ namespace ViewModel.Inventory
             }
 
             LoadRows();
+
+            //select the first group
+            if(OccTypeGroups.Count>0)
+            {
+                OccTypeGroups[0].IsSelected = true;
+                UpdateRowsWithSelectedGroups();
+            }
+
         }
 
         /// <summary>

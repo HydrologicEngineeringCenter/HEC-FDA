@@ -282,6 +282,7 @@ namespace ViewModel.Inventory
 
             if (!FirstFloorElevationIsSelected)
             {
+                missingDataManager.AddStructuresWithMissingData(AreAllStructureValuesDefinedForRow(_FoundationHeightRow, MissingDataType.FoundationHt));
                 if (FromTerrainFileIsSelected)
                 {
                     List<StructureMissingDataRowItem> missingTerrainElevRows = GetMissingTerrainElevations(ref errorMessage);
@@ -290,7 +291,6 @@ namespace ViewModel.Inventory
                 else
                 {
                     //check foundation height and ground elevation
-                    missingDataManager.AddStructuresWithMissingData( AreAllStructureValuesDefinedForRow(_FoundationHeightRow, MissingDataType.FoundationHt));
                     missingDataManager.AddStructuresWithMissingData(AreAllStructureValuesDefinedForRow(_GroundElevRow, MissingDataType.GroundElevation));
                 }
             }

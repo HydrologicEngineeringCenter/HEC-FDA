@@ -33,6 +33,7 @@ namespace ViewModel.Inventory
 
         public void UpdateSelectedGroups(List<OcctypeGroupRowItem> selectedGroups)
         {
+            OccTypeDisplayName currentlySelectedItem = SelectedOccType;
             //add all the occtypes to the list of possible occtypes
             PossibleOccTypes.Clear();
             foreach(OcctypeGroupRowItem row in selectedGroups)
@@ -47,13 +48,14 @@ namespace ViewModel.Inventory
 
             //if we have a selected occtype, then we want to check that it is still in one of our selected groups
             bool foundSelectedOccType = false;
-            if(SelectedOccType != null)
+            if(currentlySelectedItem != null)
             {
                 foreach(OccTypeDisplayName ot in PossibleOccTypes)
                 {
-                    if(SelectedOccType.DisplayName.Equals(ot.DisplayName))
+                    if(currentlySelectedItem.DisplayName.Equals(ot.DisplayName))
                     {
                         SelectedOccType = ot;
+                        foundSelectedOccType = true;
                         break;
                     }
                 }
