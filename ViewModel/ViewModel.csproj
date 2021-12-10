@@ -23,6 +23,7 @@
     </Reference>
     <Reference Include="DatabaseManager">
       <HintPath>..\lib\DatabaseManager.dll</HintPath>
+      <Private>true</Private>
     </Reference>
     <Reference Include="FdaLogger, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
