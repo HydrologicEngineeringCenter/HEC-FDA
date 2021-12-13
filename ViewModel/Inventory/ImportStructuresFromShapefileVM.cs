@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Linq;
 using System.Windows;
-using ViewModel.FlowTransforms;
+using ViewModel.Editors;
 using ViewModel.Inventory.OccupancyTypes;
 using ViewModel.Saving.PersistenceManagers;
 using ViewModel.Utilities;
 using ViewModel.Watershed;
+using ViewModel.Saving;
 
 namespace ViewModel.Inventory
 {
-    public  class ImportStructuresFromShapefileVM:Editors.BaseEditorVM
+    public  class ImportStructuresFromShapefileVM:BaseEditorVM
     {
         #region Notes
         // Created By: q0heccdm
@@ -54,7 +54,7 @@ namespace ViewModel.Inventory
         }
         #endregion
         #region Constructors
-        public ImportStructuresFromShapefileVM(ObservableCollection<string> pointFiles, Editors.EditorActionManager actionManager) :base(actionManager)
+        public ImportStructuresFromShapefileVM(ObservableCollection<string> pointFiles, EditorActionManager actionManager) :base(actionManager)
         {
             AvailablePaths = pointFiles;
             _DefineSIAttributes = new DefineSIAttributesVM();
@@ -151,7 +151,7 @@ namespace ViewModel.Inventory
 
         private void SaveStructureInventory()
         {
-            StructureInventoryPersistenceManager manager = Saving.PersistenceFactory.GetStructureInventoryManager();
+            StructureInventoryPersistenceManager manager = PersistenceFactory.GetStructureInventoryManager();
 
             StructureInventoryLibrary.SharedData.StudyDatabase = new SQLiteManager(Storage.Connection.Instance.ProjectFile);
 
@@ -219,7 +219,7 @@ namespace ViewModel.Inventory
             StructureInventoryBaseElement SIBase = new StructureInventoryBaseElement(Name, Description);
             InventoryElement elementToSave = new InventoryElement(SIBase, false);
 
-            StructureInventoryPersistenceManager manager = Saving.PersistenceFactory.GetStructureInventoryManager();
+            StructureInventoryPersistenceManager manager = PersistenceFactory.GetStructureInventoryManager();
             if (IsImporter && HasSaved == false)
             {
                 OccupancyTypesOwnerElement owner = StudyCache.GetParentElementOfType<OccupancyTypesOwnerElement>();

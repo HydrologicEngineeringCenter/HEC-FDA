@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
+using ViewModel.Editors;
 using ViewModel.Utilities;
 
 namespace ViewModel.ImpactArea
@@ -63,7 +64,7 @@ namespace ViewModel.ImpactArea
                     observpaths.Add(s);
                 }
 
-                Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                EditorActionManager actionManager = new EditorActionManager()
                     .WithSiblingRules(this);
 
                 ImpactAreaImporterVM vm = new ImpactAreaImporterVM(observpaths, actionManager);

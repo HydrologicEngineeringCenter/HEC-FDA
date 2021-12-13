@@ -1,12 +1,11 @@
-﻿using ViewModel.ImpactArea;
-using ViewModel.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ViewModel.ImpactArea;
+using ViewModel.Storage;
+using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
@@ -65,7 +64,7 @@ namespace ViewModel.Saving.PersistenceManagers
         private ObservableCollection<ImpactAreaRowItem> GetRowsFromIndexTable(string impactAreaSetName)
         {
             ObservableCollection<ImpactAreaRowItem> items = new ObservableCollection<ImpactAreaRowItem>();
-            DatabaseManager.DataTableView indexTable = Storage.Connection.Instance.GetTable(IndexPointTableNameConstant + impactAreaSetName);
+            DatabaseManager.DataTableView indexTable = Connection.Instance.GetTable(IndexPointTableNameConstant + impactAreaSetName);
             foreach (object[] row in indexTable.GetRows(0, indexTable.NumberOfRows - 1))
             {
                 int id = (int)row[INDEX_TABLE_ID_COL];
@@ -83,14 +82,14 @@ namespace ViewModel.Saving.PersistenceManagers
         }
         private void WriteImpactAreaTableToSqlite(ImpactAreaElement element, LifeSimGIS.PolygonFeatures polyFeatures)
         {
-            if (!Storage.Connection.Instance.IsConnectionNull)
+            if (!Connection.Instance.IsConnectionNull)
             {
-                if (Storage.Connection.Instance.TableNames().Contains(IndexPointTableNameConstant + element.Name))
+                if (Connection.Instance.TableNames().Contains(IndexPointTableNameConstant + element.Name))
                 {
                     //already exists... delete
-                    Storage.Connection.Instance.DeleteTable(IndexPointTableNameConstant + element.Name);
+                    Connection.Instance.DeleteTable(IndexPointTableNameConstant + element.Name);
                 }
-                LifeSimGIS.GeoPackageWriter gpw = new LifeSimGIS.GeoPackageWriter(Storage.Connection.Instance.Reader);
+                LifeSimGIS.GeoPackageWriter gpw = new LifeSimGIS.GeoPackageWriter(Connection.Instance.Reader);
 
                 DataTable dt = new DataTable(IndexPointTableNameConstant + element.Name);
                 dt.Columns.Add("Name", typeof(string));
@@ -106,7 +105,7 @@ namespace ViewModel.Saving.PersistenceManagers
         }
         private void UpdateExistingTable(ImpactAreaElement element)
         {
-            DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable(IndexPointTableNameConstant + element.Name);
+            DatabaseManager.DataTableView dtv = Connection.Instance.GetTable(IndexPointTableNameConstant + element.Name);
 
             object[] nameArray = new object[element.ImpactAreaRows.Count];
             for(int i = 0;i<element.ImpactAreaRows.Count;i++)

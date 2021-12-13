@@ -229,8 +229,6 @@ namespace ViewModel
                 || propertyName.Equals("SaveStatusLevel")
                 || propertyName.Equals("IsExpanded")
                 || propertyName.Equals("SaveStatusVisible"))
-
-
             {
                 //don't validate
             }
@@ -239,7 +237,7 @@ namespace ViewModel
                 HasChanges = true;
                 Validate();
             }
-            this.PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         /// <summary>

@@ -22,7 +22,7 @@ namespace ViewModel.Inventory
 
         public bool IsValid()
         {
-            return SelectedItem != null && SelectedItem != "";
+            return !string.IsNullOrEmpty(SelectedItem);
         }
 
     }

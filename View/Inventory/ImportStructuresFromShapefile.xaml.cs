@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using ViewModel.Inventory;
 using ViewModel.Tabs;
@@ -21,9 +22,12 @@ namespace View.Inventory
         private void Cmb_Path_CmbSelectionMade(string path)
         {
             ImportStructuresFromShapefileVM vm = DataContext as ImportStructuresFromShapefileVM;
-            vm.SelectedPath = path;
+            if (vm != null)
+            {
+                vm.SelectedPath = path;
+            }
 
-            if (!System.IO.File.Exists(System.IO.Path.ChangeExtension(path, "dbf")))
+            if (!File.Exists(Path.ChangeExtension(path, "dbf")))
             {
                 NextButton.IsEnabled = false;
                 return;
@@ -37,7 +41,7 @@ namespace View.Inventory
         {
             ImportStructuresFromShapefileVM vm = DataContext as ImportStructuresFromShapefileVM;
             //this does validation and returns true if it passes
-            if (vm.NextButtonClicked() == true) 
+            if (vm != null && vm.NextButtonClicked() == true) 
             {
                 stack_ShapefilePath.Visibility = Visibility.Collapsed;
                 if (NextButton.Content.ToString() == "Finish")
@@ -63,7 +67,10 @@ namespace View.Inventory
             NextButton.Content = "Next→";
             PreviousButton.Visibility = Visibility.Collapsed;
             ImportStructuresFromShapefileVM vm = DataContext as ImportStructuresFromShapefileVM;
-            vm.PreviousButtonClicked();
+            if (vm != null)
+            {
+                vm.PreviousButtonClicked();
+            }
             stack_ShapefilePath.Visibility = Visibility.Visible;
         }
 

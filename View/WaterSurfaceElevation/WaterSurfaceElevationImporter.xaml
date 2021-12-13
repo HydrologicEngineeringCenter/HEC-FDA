@@ -31,7 +31,7 @@
         </Grid.ColumnDefinitions>
 
 
-        <Grid Name="ProfileNameInfo" Grid.Row="1">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="1*"/>
@@ -39,7 +39,7 @@
             <TextBlock Text="Profile Name:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
             <TextBox Name="TxtName" Text="{Binding Name,ValidatesOnDataErrors=True}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3"/>
         </Grid>
-        <Grid Name="ProfileDescInfo" Grid.Row="2">
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="1*"/>
@@ -47,7 +47,7 @@
             <TextBlock Text="Profile Description:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
             <CA:TextBoxDescription Grid.Row="0" Grid.Column="1" Text="{Binding Description}" Margin="3" />
         </Grid>
-        <Grid Name="DirectoryInfo" Grid.Row="3">
+        <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="1*"/>
@@ -59,8 +59,6 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="1*"/>
-                
-
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Margin="5,0,0,0">
                 <RadioButton Name="RDBWSE" Content="Water Surface Elevation" IsChecked="True" />

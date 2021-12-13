@@ -219,9 +219,6 @@
         <DataTemplate DataType="{x:Type InventoryVM:StructureMissingElevationEditorVM }" >
             <InventoryView:StructureMissingElevationEditor/>
         </DataTemplate>
-        <!--<DataTemplate DataType="{x:Type InventoryVM:StructureInventoryImporterVM }" >
-            <InventoryView:StructureInventoryImporter/>
-        </DataTemplate>-->
 
         <DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromShapefileVM }" >
             <InventoryView:ImportStructuresFromShapefile/>

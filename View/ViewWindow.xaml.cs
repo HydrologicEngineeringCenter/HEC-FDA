@@ -39,7 +39,7 @@ namespace View
 
    
 
-            ViewModel.Utilities.WindowVM vm = (ViewModel.Utilities.WindowVM)this.DataContext;
+            WindowVM vm = (WindowVM)this.DataContext;
             Title = vm.Title;
 
             ViewModel.Study.FdaStudyVM test = (ViewModel.Study.FdaStudyVM)vm.CurrentView;
@@ -55,24 +55,18 @@ namespace View
         }
 
 
-        private void RequestAddToMapWindow(object sender, ViewModel.Utilities.AddMapFeatureEventArgs args)
+        private void RequestAddToMapWindow(object sender, AddMapFeatureEventArgs args)
         {
             Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
             if (sv == null) { return; }
 
-            //ViewModel.Study.FdaStudyVM studyVM = (ViewModel.Study.FdaStudyVM)sv.DataContext;
 
-            OpenGLMapping.MapTreeView mtv = sv.MapTreeView;
-            if (args.GetType().Name == nameof(ViewModel.Utilities.AddGriddedDataEventArgs))
+            MapTreeView mtv = sv.MapTreeView;
+            if (args.GetType().Name == nameof(AddGriddedDataEventArgs))
             {
-                ViewModel.Utilities.AddGriddedDataEventArgs gargs = args as ViewModel.Utilities.AddGriddedDataEventArgs;
-                
-                //todo: delete this, just for testing
-                
-                //gargs.Features.GridReader.SampleValues()
-                //end delete
-
-                OpenGLMapping.RasterFeatureNode rfn = new RasterFeatureNode(new MapRaster(gargs.Features, gargs.Ramp, args.FeatureName, mtv.MapWindow), args.FeatureName);
+                AddGriddedDataEventArgs gargs = args as AddGriddedDataEventArgs;
+              
+                RasterFeatureNode rfn = new RasterFeatureNode(new MapRaster(gargs.Features, gargs.Ramp, args.FeatureName, mtv.MapWindow), args.FeatureName);
                 mtv.AddGisData(rfn, 0, true);
                 if (sender.GetType().Name == nameof(ViewModel.Watershed.TerrainElement))
                 {
@@ -86,11 +80,10 @@ namespace View
                 }
 
             }
-            else if (args.GetType().Name == nameof(ViewModel.Utilities.AddShapefileEventArgs))
+            else if (args.GetType().Name == nameof(AddShapefileEventArgs))
             {
-                ViewModel.Utilities.AddShapefileEventArgs sargs = args as ViewModel.Utilities.AddShapefileEventArgs;
+                AddShapefileEventArgs sargs = args as AddShapefileEventArgs;
 
-                //if (sender.GetType().Name == nameof(ViewModel.ImpactArea.ImpactAreaElement))
                 if (sargs.Features.GetType() == typeof(LifeSimGIS.PolygonFeatures))
                 {
                     LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)sargs.Features;
@@ -102,7 +95,6 @@ namespace View
                     args.MapFeatureHash = vfn.GetHashCode();
                     vfn.RemoveLayerCalled += ((ViewModel.ImpactArea.ImpactAreaElement)sender).removedcallback;
                 }
-                //else if (sender.GetType().Name == nameof(ViewModel.Inventory.InventoryElement))
                 else if (sargs.Features.GetType() == typeof(LifeSimGIS.PointFeatures))
                 {
                     VectorFeatureNode vfn = new VectorFeatureNode(new MapPoints((LifeSimGIS.PointFeatures)sargs.Features, sargs.Attributes, sargs.FeatureName, new OpenGLMapping.OpenGLDrawSingle(sargs.DrawInfo), mtv.MapWindow), sargs.FeatureName);
@@ -189,7 +181,7 @@ namespace View
             throw new NotImplementedException();
         }
 
-        private void RequestRemoveFromMapWindow(object sender, ViewModel.Utilities.RemoveMapFeatureEventArgs args)
+        private void RequestRemoveFromMapWindow(object sender, RemoveMapFeatureEventArgs args)
         {
             Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
             if (sv == null) { return; }
@@ -214,7 +206,7 @@ namespace View
                 files.Add(fn.GetBaseFeature.SourceFile);
             }
         }
-        private void RequestShapefilePathsOfType(ref System.Collections.Generic.List<string> files, ViewModel.Utilities.VectorFeatureType featureType)
+        private void RequestShapefilePathsOfType(ref System.Collections.Generic.List<string> files, VectorFeatureType featureType)
         {
             Study.StudyView sv = GetTheVisualChild<Study.StudyView>(masterControl);
             if (sv == null) { return; }
@@ -224,19 +216,19 @@ namespace View
             {
                 switch (featureType)
                 {
-                    case ViewModel.Utilities.VectorFeatureType.Point:
+                    case VectorFeatureType.Point:
                         if (fn.GetBaseFeature.GetType() == typeof(OpenGLMapping.MapPoints))
                         {
                             files.Add(fn.GetBaseFeature.SourceFile);
                         }
                         break;
-                    case ViewModel.Utilities.VectorFeatureType.Line:
+                    case VectorFeatureType.Line:
                         if (fn.GetBaseFeature.GetType() == typeof(OpenGLMapping.MapLines))
                         {
                             files.Add(fn.GetBaseFeature.SourceFile);
                         }
                         break;
-                    case ViewModel.Utilities.VectorFeatureType.Polygon:
+                    case VectorFeatureType.Polygon:
                         if (fn.GetBaseFeature.GetType() == typeof(OpenGLMapping.MapPolygons))
                         {
                             files.Add(fn.GetBaseFeature.SourceFile);
@@ -249,7 +241,7 @@ namespace View
 
             }
         }
-        public ViewWindow(ViewModel.Utilities.WindowVM newvm)
+        public ViewWindow(WindowVM newvm)
         {
             InitializeComponent();
             DataContext = newvm;
