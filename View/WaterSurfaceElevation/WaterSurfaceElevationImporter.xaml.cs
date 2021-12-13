@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 
 namespace View.WaterSurfaceElevation
@@ -21,8 +11,6 @@ namespace View.WaterSurfaceElevation
     /// </summary>
     public partial class WaterSurfaceElevationImporter : UserControl
     {
-
-        
 
         public WaterSurfaceElevationImporter()
         {
@@ -36,11 +24,9 @@ namespace View.WaterSurfaceElevation
             if (!System.IO.Directory.Exists(fullpath))
             {
                 vm.ListOfRows.Clear();
-                //MessageBox.Show("File does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             //is this an old fda study?
-
 
             List<string> tifFiles = new List<string>();
             List<string> fltFiles = new List<string>();
@@ -60,8 +46,6 @@ namespace View.WaterSurfaceElevation
                 if (System.IO.Path.GetExtension(file) == ".vrt") { vrtFiles.Add(file); }
 
             }
-
-            
 
             //clear out any already existing rows
             vm.ListOfRows.Clear();
@@ -85,12 +69,7 @@ namespace View.WaterSurfaceElevation
                 vm.AddRow(true, System.IO.Path.GetFileName(vrtFile), System.IO.Path.GetFullPath(vrtFile), prob);
             }
 
-
-            //lst_ListOfRows.Items.Clear();
             lst_ListOfRows.ItemsSource = vm.ListOfRows;
-
-            
-
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -103,16 +82,5 @@ namespace View.WaterSurfaceElevation
             }
         }
 
-        //private void btn_OK_Click(object sender, RoutedEventArgs e)
-        //{
-        //    ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM vm = (ViewModel.WaterSurfaceElevation.WaterSurfaceElevationImporterVM)this.DataContext;
-        //    bool validationIsGood = vm.OKButtonClicked();
-        //    if(validationIsGood) //this runs some validation and returns true if everything was good
-        //    {
-        //        var window = Window.GetWindow(this);
-        //        vm.WasCanceled = false;
-        //        window.Close();
-        //    }
-        //}
     }
 }

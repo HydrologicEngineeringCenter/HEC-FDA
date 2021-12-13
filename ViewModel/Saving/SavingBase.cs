@@ -1,13 +1,12 @@
-﻿using ViewModel.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ViewModel.Storage;
+using ViewModel.Utilities;
 
 namespace ViewModel.Saving
 {
@@ -151,12 +150,6 @@ namespace ViewModel.Saving
             }
             return -1;
         }
-
-        public void UpdateRow(string table)
-        {
-
-        }
-
         #endregion
 
         #region save new
@@ -235,7 +228,6 @@ namespace ViewModel.Saving
                     }
                 }
             }
-
         }
 
         #endregion
@@ -353,10 +345,8 @@ namespace ViewModel.Saving
             DatabaseManager.DataTableView tableView = Connection.Instance.GetTable(tableName);
             DataTable dt = Connection.Instance.GetDataTable(tableName);
             int rowIndex = GetElementIndexInTable(dt, oldName, 1);
-            //int rowIndex = GetElementIndexInTable(tableView, oldName, 1);
             if (rowIndex != -1)
             {
-
                 //has the name changed
                 if (!oldName.Equals(element.Name))
                 {                
@@ -370,7 +360,6 @@ namespace ViewModel.Saving
 
         private bool AreListsDifferent(object[] a, object[] b)
         {
-
             for (int i = 0; i < a.Length; i++)
             {
                 //don't evaluate the last edit time which is the second one. - i am getting rid of this which means it will always save because
@@ -396,8 +385,8 @@ namespace ViewModel.Saving
         abstract public ChildElement CreateElementFromRowData(object[] rowData);
 
         #endregion
+        internal virtual string ChangeTableConstant { get { return ""; } }
 
-            internal virtual string ChangeTableConstant { get { return ""; } }
         /// <summary>
         /// Gets the ID for the element with the name provided. Note that the table column name
         /// must be "Name" for this to work.

@@ -11,7 +11,6 @@
          Height="235" Width="280">
     
     <UserControl.Resources>
-        <!--<ViewModel:ImpactAreaEditorVM x:Key="vm"/>-->
         <converter:RadioButtonConverterLeft x:Key="convertLeft"/>
         <converter:RadioButtonConverterRight x:Key="convertRight"/>
         <converter:RadioButtonConverterBoth x:Key="convertBoth" />
@@ -30,7 +29,6 @@
         <Menu Grid.ColumnSpan="2" Name="RenameMenu">
             <MenuItem Name="RenameMenuItem" Header="Rename"/>
         </Menu>
-        <!--<QH:HelpButton Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Margin="2" PathIsEmbeddedResource="True" AssemblyName="HEC-GeoFDA" RootNamespace="GeoFDA" xmlPATH="ImpactAreaEditorHelp.xml" ToolTip="Get Help On Impact Area Editor"/>-->
 
         <Label Name="LblImpactArea" Content="Impact Areas:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         <ComboBox Name="CmbImpactArea" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Path=IAList}"   DisplayMemberPath="Name" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,5,5,5"/>

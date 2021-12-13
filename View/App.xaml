@@ -164,9 +164,7 @@
             <HydraulicsView:GridImporter/>
         </DataTemplate>
         <!--Impact Area Region-->
-        <DataTemplate DataType="{x:Type ImpactAreaVM:ImpactAreaEditorVM }" >
-            <ImpactAreaView:ImpactAreaEditor/>
-        </DataTemplate>
+
         <DataTemplate DataType="{x:Type ImpactAreaVM:ImpactAreaImporterVM }" >
             <ImpactAreaView:ImpactAreaImporter/>
         </DataTemplate>
@@ -217,13 +215,15 @@
         <DataTemplate DataType="{x:Type InventoryVM:DefineSIAttributesVM }" >
             <InventoryView:DefineSIAttributes/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type InventoryVM:DefineSIAttributesVM_mockup }" >
-            <InventoryView:DefineSIAttributes_mockup/>
+
+        <DataTemplate DataType="{x:Type InventoryVM:StructureMissingElevationEditorVM }" >
+            <InventoryView:StructureMissingElevationEditor/>
         </DataTemplate>
-        
+
         <DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromShapefileVM }" >
             <InventoryView:ImportStructuresFromShapefile/>
         </DataTemplate>
+        
         <DataTemplate DataType="{x:Type InventoryVM:ImportFromHAZUSVM }" >
             <InventoryView:ImportFromHAZUS/>
         </DataTemplate>

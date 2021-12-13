@@ -31,7 +31,7 @@
         </Grid.ColumnDefinitions>
 
 
-        <Grid Name="ProfileNameInfo" Grid.Row="1">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="1*"/>
@@ -39,16 +39,15 @@
             <TextBlock Text="Profile Name:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
             <TextBox Name="TxtName" Text="{Binding Name,ValidatesOnDataErrors=True}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3"/>
         </Grid>
-        <Grid Name="ProfileDescInfo" Grid.Row="2">
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             <TextBlock Text="Profile Description:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <!--<TextBox Name="TxtDesc"  Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3"/>-->
             <CA:TextBoxDescription Grid.Row="0" Grid.Column="1" Text="{Binding Description}" Margin="3" />
         </Grid>
-        <Grid Name="DirectoryInfo" Grid.Row="3">
+        <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="1*"/>
@@ -60,8 +59,6 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="1*"/>
-                
-
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Margin="5,0,0,0">
                 <RadioButton Name="RDBWSE" Content="Water Surface Elevation" IsChecked="True" />
@@ -69,55 +66,9 @@
             </StackPanel>
         </Grid>
         
-        <!--<Grid Name="WatershedInfo" Grid.Row="4" Visibility="Collapsed"  >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="110"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="Terrain:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <ComboBox Name="CmbTerrain" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3" ItemsSource="{Binding Path=Terrains}" DisplayMemberPath="Header"/>
-        </Grid>-->
- 
        
-        <!--<Grid Grid.Row="6">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="100"/>
-
-            </Grid.ColumnDefinitions>
-            <Border Name="ColumnOneBorder" Grid.Column="0"  CornerRadius="2" BorderThickness="1" BorderBrush="DarkGray">
-            <TextBlock Text="Name" Margin="2,0,2,0" TextAlignment="Center" VerticalAlignment="Center"/>
-        </Border>
-            <Border Grid.Column="1"  CornerRadius="2" BorderThickness="1" BorderBrush="DarkGray">
-                <TextBlock Text="Return Year" Margin="2,0,2,0" TextAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="2"  CornerRadius="2" BorderThickness="1" BorderBrush="DarkGray">
-                <TextBlock Text="Probability" Margin="2,0,2,0" TextAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-        </Grid>-->
-        <ListView Grid.Row="5" Name="lst_ListOfRows" ItemsSource="{Binding ListOfRows}"  HorizontalAlignment="Stretch" Margin="3">
-            <!--<ListView.ItemTemplate>
-                <DataTemplate>
-                    
-                
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="150"/>
-                        <ColumnDefinition Width="100"/>
-                    </Grid.ColumnDefinitions>
-                    <CheckBox Grid.Column="0" IsChecked="{Binding IsChecked}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" Margin="5"/>
-                        <TextBox Grid.Column="2" Text="{Binding Probability}" HorizontalAlignment="Stretch" Margin="5"/>
-                        <TextBox Grid.Column="3" HorizontalAlignment="Stretch" Margin="5" />
-                </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>-->
-
-
-
+        <ListView Grid.Row="5" Name="lst_ListOfRows" ItemsSource="{Binding ListOfRows}"  HorizontalAlignment="Stretch"  Margin="3">
+           
             <ListView.View >
                 <GridView AllowsColumnReorder="false"  >
 
@@ -159,18 +110,6 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
-                    <!--<GridViewColumnHeader>Last Name
-                        <GridViewColumnHeader.ContextMenu>
-                            <ContextMenu  MenuItem.Click="LastNameCM_Click"  
-                                        Name="LastNameCM">
-                                <MenuItem Header="Ascending" />
-                                <MenuItem Header="Descending" />
-                            </ContextMenu>
-                        </GridViewColumnHeader.ContextMenu>
-                    </GridViewColumnHeader>-->
-
-
-                   
                 </GridView>
 
             </ListView.View>
@@ -180,7 +119,6 @@
         </ListView>
         <Label Grid.Row="8" Grid.Column="0" VerticalAlignment="Top" Content="An associated terrain may need to be defined before computing." />
 
-        <!--<Button Name="btn_OK" Content="OK" Width="50" Height="22" Margin="5" Grid.Row="8" Grid.Column="1" HorizontalAlignment="Right" Click="btn_OK_Click"/>-->
         <Util:OKCloseControl HorizontalAlignment="Right" Grid.Row="8" Grid.Column="1" VerticalAlignment="Bottom"/>
 
     </Grid>

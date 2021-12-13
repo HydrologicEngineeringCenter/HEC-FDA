@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 
 namespace ViewModel.ImpactArea
 {
@@ -26,8 +21,7 @@ namespace ViewModel.ImpactArea
             ObservableCollection<object> tmp = new ObservableCollection<object>();
             foreach(string name in polyNames)
             {
-                //todo is -1 correct here?
-                tmp.Add(new ImpactAreaRowItem(-1,name, 0.0F, tmp));
+                tmp.Add(new ImpactAreaRowItem(-1,name));
             }
 
             RowItems = new ObservableCollection<ImpactAreaRowItem>();
@@ -36,9 +30,7 @@ namespace ViewModel.ImpactArea
             {
                 RowItems.Add(row);
             }          
-        }
-
-        
+        }     
         #endregion
         #region Voids
         #endregion

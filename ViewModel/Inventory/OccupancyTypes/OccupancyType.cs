@@ -13,7 +13,7 @@ using static ViewModel.Saving.PersistenceManagers.OccTypePersistenceManager;
 
 namespace ViewModel.Inventory.OccupancyTypes
 {
-    internal class OccupancyType : BaseViewModel,  IOccupancyType//, IDisplayLogMessages
+    internal class OccupancyType : BaseViewModel,  IOccupancyType
     {
 
         private string _Name;

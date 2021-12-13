@@ -1,0 +1,65 @@
+﻿<UserControl x:Class="View.Inventory.StructureMissingElevationEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:View.Inventory"
+             xmlns:utils="clr-namespace:View.Utilities"
+             xmlns:con="clr-namespace:View.Utilities"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <con:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <con:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <con:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisConverter"/>
+        <con:BoolToMissingConverter x:Key="BoolToMissing"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.Resources>
+            <DataTemplate x:Key="DateTemplate" >
+                <StackPanel Width="20" Height="30">
+                    <Border Background="LightBlue" BorderBrush="Black" BorderThickness="1">
+                        <TextBlock Text="{Binding PublishDate, StringFormat={}{0:MMM}}" FontSize="8" HorizontalAlignment="Center" />
+                    </Border>
+                    <Border Background="White" BorderBrush="Black" BorderThickness="1">
+                        <TextBlock Text="{Binding PublishDate, StringFormat={}{0:yyyy}}" FontSize="8" FontWeight="Bold" HorizontalAlignment="Center" />
+                    </Border>
+                </StackPanel>
+            </DataTemplate>
+            <DataTemplate x:Key="EditingDateTemplate">
+                <DatePicker SelectedDate="{Binding PublishDate}"  />
+            </DataTemplate>
+        </Grid.Resources>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0">
+            <Label Content="Each structure should have a value for the required attributes." />
+            <Label Content="The following structures are missing a value for at least one required attribute."/>
+        </StackPanel>
+
+        <FrameworkElement x:Name="dummyElement" Visibility="Collapsed"/>
+        
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Rows}" AutoGenerateColumns="False" Margin="5">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding ID}" Header="Name" IsReadOnly="True" Width="*"/>
+                <DataGridTextColumn Binding="{Binding IsMissingOcctype, Converter={StaticResource BoolToMissing}}" Header="Occtype"  Width="*"/>
+
+                <DataGridTextColumn Binding="{Binding IsMissingFoundationHt, Converter={StaticResource BoolToMissing}}" Header="Foundation Height"  Width="*" Visibility="{Binding DataContext.UsingFirstFloorElevation, Converter={StaticResource BoolToInverseVisConverter}, Source={x:Reference dummyElement}}"/>
+                <DataGridTextColumn Binding="{Binding IsMissingGroundElevation, Converter={StaticResource BoolToMissing}}" Visibility="{Binding DataContext.FromStructureFile, Converter={StaticResource BoolToVisibilityConverter}, Source={x:Reference dummyElement}}" Header="Ground Elevation"  Width="*"/>
+                
+                <DataGridTextColumn Binding="{Binding IsMissingFirstFloorElevation, Converter={StaticResource BoolToMissing}}" Header="First Floor Elevation"  Width="*" Visibility="{Binding DataContext.UsingFirstFloorElevation, Converter={StaticResource BoolToVisibilityConverter}, Source={x:Reference dummyElement}}"/>
+                <DataGridTextColumn Binding="{Binding IsMissingStructureValue, Converter={StaticResource BoolToMissing}}" Header="Structure Value"  Width="*"/>
+                <DataGridTextColumn Binding="{Binding IsMissingTerrainElevation, Converter={StaticResource BoolToMissing}}" Header="Terrain Elevation"  Width="*" Visibility="{Binding DataContext.ElevsFromTerrainFile, Converter={StaticResource BoolToVisibilityConverter}, Source={x:Reference dummyElement}}" />
+
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        <Button Content="Close" Grid.Row="2" Margin="0,0,5,0" Width="60" HorizontalAlignment="Right" Click="Button_Click"/>
+
+    </Grid>
+</UserControl>

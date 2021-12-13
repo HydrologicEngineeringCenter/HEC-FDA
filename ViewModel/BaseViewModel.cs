@@ -20,15 +20,15 @@ namespace ViewModel
     /// The base class for all view model classes. Contains methods that are common among all view model classes
     /// such as validation, navigation, adding rules.
     /// </summary>
-    public abstract class BaseViewModel : System.ComponentModel.IDataErrorInfo, INotifyPropertyChanged
+    public abstract class BaseViewModel : INotifyPropertyChanged, IDataErrorInfo
     {
-        public event PropertyChangedEventHandler PropertyChanged;
 
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("BaseViewModel");
 
         #region Notes
         #endregion
         #region Events
+        public event PropertyChangedEventHandler PropertyChanged;
         public event RequestNavigationHandler RequestNavigation;
         public event RequestShapefilePathsHandler RequestShapefilePaths;
         public event RequestShapefilePathsOfTypeHandler RequestShapefilePathsOfType;
@@ -229,8 +229,6 @@ namespace ViewModel
                 || propertyName.Equals("SaveStatusLevel")
                 || propertyName.Equals("IsExpanded")
                 || propertyName.Equals("SaveStatusVisible"))
-
-
             {
                 //don't validate
             }
@@ -239,10 +237,7 @@ namespace ViewModel
                 HasChanges = true;
                 Validate();
             }
-            if(PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         /// <summary>
