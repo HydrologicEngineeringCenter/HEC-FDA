@@ -147,19 +147,8 @@ namespace ead{
                 double prob = (val)/((double)ordinates);
                 x[i] = prob;
 
-                //adding some code to trace exception 
-                double alphaIsShape = 4 / (bootstrap.Skewness * bootstrap.Skewness);
-                double beta = 0.5 * bootstrap.StandardDeviation * bootstrap.Skewness;
-                double rate = 1 / beta;
-                double acceptedProbability = 1 - prob;
-                // Initial Guess
-                double d = 1 / (9 * alphaIsShape);
-                double yGamma = 1 - d - (0.98 * MathNet.Numerics.Constants.Sqrt2 * MathNet.Numerics.SpecialFunctions.ErfInv((2.0 * acceptedProbability) - 1.0) * Math.Sqrt(d));
-                double xGamma = alphaIsShape * yGamma * yGamma * yGamma;
-
                 //y values in increasing order 
                 y[i] = bootstrap.InverseCDF(prob);
-        
                 
             }
 
