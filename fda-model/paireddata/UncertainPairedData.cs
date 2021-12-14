@@ -9,8 +9,17 @@ namespace paireddata
 {
     public class UncertainPairedData: IPairedDataProducer, ICategory, ICanBeNull
     {
+        #region Fields 
         private double[] _xvals;
         private IDistribution[] _yvals;
+        #endregion
+
+        #region Properties 
+        public string XLabel { get; }
+        public string YLabel { get; }
+        public string Name { get; }
+        public string Description { get; }
+        public int ID { get; }
         public string Category {get;}
         public bool IsNull { get; }
         public double[] xs(){
@@ -19,22 +28,40 @@ namespace paireddata
         public IDistribution[] ys(){
             return _yvals;
         }
+        #endregion
+
+        #region Constructors 
         public UncertainPairedData()
         {
             IsNull = true;
         }
-        public UncertainPairedData(double[] xs, IDistribution[] ys){
+        //, string xlabel, string ylabel, string name, string description, int ID
+        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string description, int id)
+        {
             _xvals = xs;
             _yvals = ys;
             Category = "Default";
             IsNull = false;
+            XLabel = xlabel;
+            YLabel = ylabel;
+            Name = name;
+            Description = description;
+            ID = id;
         }
-        public UncertainPairedData(double[] xs, IDistribution[] ys, string category){
+        public UncertainPairedData(double[] xs, IDistribution[] ys, string xlabel, string ylabel, string name, string description, int id, string category){
             _xvals = xs;
             _yvals = ys;
             Category = category;
             IsNull = false;
+            XLabel = xlabel;
+            YLabel = ylabel;
+            Name = name;
+            Description = description;
+            ID = id;
         }
+        #endregion
+
+        #region Methods 
         public IPairedData SamplePairedData(double probability){
             double[] y = new double[_yvals.Length];
             for (int i=0;i<_xvals.Length; i++){
@@ -45,45 +72,56 @@ namespace paireddata
 
         public XElement WriteToXML()
         {
-            XElement masterElem = new XElement("UncertainPairedData");
-            masterElem.SetAttributeValue("Category", Category);
-            masterElem.SetAttributeValue("Ordinate_Count", _xvals.Length);
+            XElement masterElement = new XElement("UncertainPairedData");
+            masterElement.SetAttributeValue("Category", Category);
+            masterElement.SetAttributeValue("X Label", XLabel);
+            masterElement.SetAttributeValue("Y Label", YLabel);
+            masterElement.SetAttributeValue("Name", Name);
+            masterElement.SetAttributeValue("Description", Description);
+            masterElement.SetAttributeValue("ID", ID);
+            masterElement.SetAttributeValue("Ordinate_Count", _xvals.Length);
             for (int i=0; i<_xvals.Length; i++)
             {
-                XElement rowele = new XElement("Coordinate");
-                XElement xele = new XElement("X");
-                xele.SetAttributeValue("Value", _xvals[i]);
-                XElement yele = _yvals[i].ToXML();
-                rowele.Add(xele);
-                rowele.Add(yele);
-                masterElem.Add(rowele);
+                XElement rowElement = new XElement("Coordinate");
+                XElement xElement = new XElement("X");
+                xElement.SetAttributeValue("Value", _xvals[i]);
+                XElement yElement = _yvals[i].ToXML();
+                rowElement.Add(xElement);
+                rowElement.Add(yElement);
+                masterElement.Add(rowElement);
             }
-            return masterElem;
+            return masterElement;
         }
 
-        public static UncertainPairedData ReadFromXML(XElement ele)
+        public static UncertainPairedData ReadFromXML(XElement element)
         {
-            string cat = ele.Attribute("Category").Value;
-            int size = Convert.ToInt32(ele.Attribute("Ordinate_Count").Value);
-            double[] xvals = new double[size];
-            IDistribution[] yvals = new IDistribution[size];
+            string category = element.Attribute("Category").Value;
+            string xLabel = element.Attribute("X Label").Value;
+            string yLabel = element.Attribute("Y Label").Value;
+            string name = element.Attribute("Name").Value;
+            string description = element.Attribute("Description").Value;
+            int id = Convert.ToInt32(element.Attribute("ID").Value);
+            int size = Convert.ToInt32(element.Attribute("Ordinate_Count").Value);
+            double[] xValues = new double[size];
+            IDistribution[] yValues = new IDistribution[size];
             int i = 0;
-            foreach(XElement coordele in ele.Elements())
+            foreach(XElement coordinateElement in element.Elements())
             {
-                foreach(XElement ordeles in coordele.Elements())
+                foreach(XElement ordinateElements in coordinateElement.Elements())
                 {
-                    if (ordeles.Name.ToString().Equals("X"))
+                    if (ordinateElements.Name.ToString().Equals("X"))
                     {
-                        xvals[i] = Convert.ToDouble(ordeles.Attribute("Value").Value);
+                        xValues[i] = Convert.ToDouble(ordinateElements.Attribute("Value").Value);
                     }
                     else
                     {
-                        yvals[i] = Statistics.IDistributionExtensions.FromXML(ordeles);
+                        yValues[i] = Statistics.IDistributionExtensions.FromXML(ordinateElements);
                     }
                 }
                 i++;
             }
-            return new UncertainPairedData(xvals,yvals,cat);
+            return new UncertainPairedData(xValues,yValues,xLabel,yLabel,name,description,id,category);
         }
+        #endregion
     }
 }
