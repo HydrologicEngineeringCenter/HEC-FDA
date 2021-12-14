@@ -20,6 +20,11 @@ namespace fda_model_test
         static double[] NonExceedanceProbs = { .5, .8, .9, .96, .98, .99, .996, .998 };
         static double[] StageForNonExceedanceProbs = { 5, 10, 15, 20, 25, 30, 35, 40 };
         static double[] ProbLeveeFailure = { .01, .02, .05, .1, .2, .3, .4, 1 };
+        static string xLabel = "x label";
+        static string yLabel = "y label";
+        static string name = "name";
+        static string description = "description";
+        static int id = 1;
 
         [Theory]
         [InlineData(1234, 1, 0.5)]
@@ -33,14 +38,14 @@ namespace fda_model_test
             {
                 stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages);
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name, description, id);
             //create a damage distribution
             IDistribution[] damages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
             }
-            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, "residential");
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, description, id,  "residential");
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
 

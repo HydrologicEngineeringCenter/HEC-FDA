@@ -15,6 +15,11 @@ namespace fda_model_test
         static double[] Flows = { 0, 100000 };
         static double[] BaseStages = { 0, 150000 };
         static double[] FutureStages = { 0, 300000 };
+        static string xLabel = "x label";
+        static string yLabel = "y label";
+        static string name = "name";
+        static string description = "description";
+        static int id = 1;
 
         [Theory]
         [InlineData(208213.8061,50,.0275,2023,2072,1)]
@@ -29,15 +34,15 @@ namespace fda_model_test
             {
                 stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages);
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name, description, id);
             //create a damage distribution
             IDistribution[] damages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
             }
-            UncertainPairedData base_stage_damage = new UncertainPairedData(BaseStages, damages, "residential");
-            UncertainPairedData future_stage_damage = new UncertainPairedData(FutureStages, damages, "residential");
+            UncertainPairedData base_stage_damage = new UncertainPairedData(BaseStages, damages, xLabel, yLabel, name, description, id, "residential");
+            UncertainPairedData future_stage_damage = new UncertainPairedData(FutureStages, damages, xLabel, yLabel, name, description, id, "residential");
             List<UncertainPairedData> updBase = new List<UncertainPairedData>();
             updBase.Add(base_stage_damage);
             List<UncertainPairedData> updFuture = new List<UncertainPairedData>();
@@ -55,10 +60,10 @@ namespace fda_model_test
                 .withFlowStage(flow_stage)
                 .withStageDamages(updFuture)
                 .build();
-            impactarea.ImpactAreaSimulation impactAreaBase = new impactarea.ImpactAreaSimulation("BaseYear", sBase);
+            impactarea.ImpactAreaSimulation impactAreaBase = new impactarea.ImpactAreaSimulation("BaseYear", sBase, id);
             IList<impactarea.ImpactAreaSimulation> impactAreaListBaseYear = new List<impactarea.ImpactAreaSimulation>();
             impactAreaListBaseYear.Add(impactAreaBase);
-            impactarea.ImpactAreaSimulation impactAreaFuture = new impactarea.ImpactAreaSimulation("FutureYear", sFuture);
+            impactarea.ImpactAreaSimulation impactAreaFuture = new impactarea.ImpactAreaSimulation("FutureYear", sFuture, id);
             IList<impactarea.ImpactAreaSimulation> impactAreaListFutureYear = new List<impactarea.ImpactAreaSimulation>();
             impactAreaListFutureYear.Add(impactAreaFuture);
 

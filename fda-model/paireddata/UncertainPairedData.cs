@@ -74,8 +74,8 @@ namespace paireddata
         {
             XElement masterElement = new XElement("UncertainPairedData");
             masterElement.SetAttributeValue("Category", Category);
-            masterElement.SetAttributeValue("X Label", XLabel);
-            masterElement.SetAttributeValue("Y Label", YLabel);
+            masterElement.SetAttributeValue("XLabel", XLabel);
+            masterElement.SetAttributeValue("YLabel", YLabel);
             masterElement.SetAttributeValue("Name", Name);
             masterElement.SetAttributeValue("Description", Description);
             masterElement.SetAttributeValue("ID", ID);
@@ -96,8 +96,8 @@ namespace paireddata
         public static UncertainPairedData ReadFromXML(XElement element)
         {
             string category = element.Attribute("Category").Value;
-            string xLabel = element.Attribute("X Label").Value;
-            string yLabel = element.Attribute("Y Label").Value;
+            string xLabel = element.Attribute("XLabel").Value;
+            string yLabel = element.Attribute("YLabel").Value;
             string name = element.Attribute("Name").Value;
             string description = element.Attribute("Description").Value;
             int id = Convert.ToInt32(element.Attribute("ID").Value);

@@ -10,9 +10,14 @@ namespace fda_model_test
 {
     public class SimulationShould
     {
-        //These were previously used in pairedDataTest but were moved here to be used for ead compute testing. 
         static double[] Flows = { 0, 100000 };
         static double[] Stages = { 0, 150000 };
+        static string xLabel = "x label";
+        static string yLabel = "y label";
+        static string name = "name";
+        static string description = "description";
+        static int id = 1;
+        //TODO: can the below lines be deleteD?
         //static double[] ProbabilitiesOfFailure = { .001, .01, .1, .5, 1 };
         //static double[] ElevationsOfFailure = { 600, 610, 650, 700, 750 };
         [Theory]
@@ -27,14 +32,14 @@ namespace fda_model_test
             {
                 stages[i] = IDistributionFactory.FactoryUniform(0, 300000*i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages);
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel,yLabel,name,description,id);
             //create a damage distribution
             IDistribution[] damages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000*i, 10);
             }
-            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, "residential");
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, description, id, "residential");
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
             
@@ -66,14 +71,14 @@ namespace fda_model_test
             {
                 stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages);
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name, description, id);
             //create a damage distribution
             IDistribution[] damages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
             }
-            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, "residential");
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, description, id, "residential");
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
             Simulation s = Simulation.builder()
@@ -100,7 +105,7 @@ namespace fda_model_test
             {
                 stages[i] = IDistributionFactory.FactoryUniform(0, 300000 * i, 10);
             }
-            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages);
+            UncertainPairedData flow_stage = new UncertainPairedData(Flows, stages, xLabel, yLabel, name, description, id);
 
             double[] leveestages = new double[] { 0.0d, 100000.0d };
             IDistribution[] leveefailprobs = new IDistribution[2];
@@ -108,14 +113,14 @@ namespace fda_model_test
             {
                 leveefailprobs[i] = IDistributionFactory.FactoryUniform(0, failprobattop*i, 10); //no damages at all, perfect levee
             }
-            UncertainPairedData levee = new UncertainPairedData(leveestages, leveefailprobs);
+            UncertainPairedData levee = new UncertainPairedData(leveestages, leveefailprobs, xLabel, yLabel, name, description, id);
             //create a damage distribution
             IDistribution[] damages = new IDistribution[2];
             for (int i = 0; i < 2; i++)
             {
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
             }
-            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, "residential");
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, description, id,  "residential");
             List<UncertainPairedData> upd = new List<UncertainPairedData>();
             upd.Add(stage_damage);
             Simulation s = Simulation.builder()
