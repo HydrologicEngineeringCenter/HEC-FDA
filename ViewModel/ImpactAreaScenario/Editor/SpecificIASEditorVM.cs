@@ -1,6 +1,8 @@
-﻿using Functions;
+﻿using ead;
+using Functions;
 using HEC.CS.Collections;
 using Model;
+using paireddata;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -57,10 +59,7 @@ namespace ViewModel.ImpactAreaScenario.Editor
         }
 
         public int Year { get; set; } = DateTime.Now.Year;
-
-
         public CustomObservableCollection<StageDamageCurve> DamageCategories { get; } = new CustomObservableCollection<StageDamageCurve>();
-
         public List<ThresholdRowItem> Thresholds { get; } = new List<ThresholdRowItem>();
         public CustomObservableCollection<ChildElementComboItem> FrequencyElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
         public CustomObservableCollection<ChildElementComboItem> InflowOutflowElements { get; } = new CustomObservableCollection<ChildElementComboItem>();
@@ -189,7 +188,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
         {
             updateElement(ExteriorInteriorElements, SelectedExteriorInteriorElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
         }
-
         private void AddLeveeElement(object sender, ElementAddedEventArgs e)
         {
             LeveeFeatureElements.Add(new ChildElementComboItem((ChildElement)e.Element));
@@ -217,8 +215,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
         {
             updateElement(InflowOutflowElements, SelectedInflowOutflowElement, (ChildElement)e.OldElement, (ChildElement)e.NewElement);
         }
-
-
         private void AddFlowFreqElement(object sender, ElementAddedEventArgs e)
         {
             FrequencyElements.Add(new ChildElementComboItem((ChildElement)e.Element));
@@ -249,7 +245,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
         {
             collection.Remove(collection.Where(elem => elem.ChildElement != null && elem.ID == idToRemove).Single());
         }
-
         private void updateElement(ObservableCollection<ChildElementComboItem> collection, ChildElementComboItem selectedItem,
              ChildElement oldElement, ChildElement newElement)
         {
@@ -387,13 +382,20 @@ namespace ViewModel.ImpactAreaScenario.Editor
         {
             if (SelectedStageDamageElement != null && SelectedStageDamageElement.ChildElement != null)
             {
-                AggregatedStageDamageElement elem = (AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement;
-                List<StageDamageCurve> stageDamageCurves = elem.Curves.Where(curve => curve.ImpArea.ID == CurrentImpactArea.ID).ToList();
+                List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
 
                 DamageCategories.Clear();
                 DamageCategories.AddRange(stageDamageCurves);
                 SelectedDamageCurve = DamageCategories[0];
             }
+        }
+
+        //todo: check that these selected items aren't null?
+        private List<StageDamageCurve> GetStageDamageCurves()
+        {
+            AggregatedStageDamageElement elem = (AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement;
+            List<StageDamageCurve> stageDamageCurves = elem.Curves.Where(curve => curve.ImpArea.ID == CurrentImpactArea.ID).ToList();
+            return stageDamageCurves;
         }
 
         #region validation
@@ -435,15 +437,56 @@ namespace ViewModel.ImpactAreaScenario.Editor
             vr.AddErrorMessage(IsRatingCurveValid());
             vr.AddErrorMessage(IsStageDamageValid());
 
-            //todo: actually run the compute and see if it was successful.
-
             if (!vr.IsValid)
             {
                 vr.InsertNewLineMessage(0, "Errors in Impact Area: " + CurrentImpactArea.Name);
             }
             return vr;
-
         }
+
+        private void PreviewCompute()
+        {
+            AnalyticalFrequencyElement freqElem = SelectedFrequencyElement.ChildElement as AnalyticalFrequencyElement;
+            InflowOutflowElement inOutElem = SelectedInflowOutflowElement.ChildElement as InflowOutflowElement;
+            RatingCurveElement ratElem = SelectedRatingCurveElement.ChildElement as RatingCurveElement;
+            ExteriorInteriorElement extIntElem = SelectedExteriorInteriorElement.ChildElement as ExteriorInteriorElement;
+            LeveeFeatureElement leveeElem = SelectedLeveeFeatureElement.ChildElement as LeveeFeatureElement;
+            AggregatedStageDamageElement stageDamageElem = SelectedStageDamageElement.ChildElement as AggregatedStageDamageElement;
+
+            SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
+                stageDamageElem, CurrentImpactArea.ID);
+
+            Simulation simulation = sc.BuildSimulation();
+
+            MeanRandomProvider mrp = new MeanRandomProvider();
+            try
+            {
+                metrics.Results result = simulation.Compute(mrp, 1);
+                Console.WriteLine("Mean ead: " + result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage"));
+                double ead = result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage");
+                double total = result.ExpectedAnnualDamageResults.MeanEAD("Total");
+                int i = 0;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+        }
+
+        private List<UncertainPairedData> GetStageDamagesAsPairedData()
+        {
+            List<UncertainPairedData> stageDamages = new List<UncertainPairedData>();
+            List<StageDamageCurve> stageDamageCurves = GetStageDamageCurves();
+            foreach (StageDamageCurve curve in stageDamageCurves)
+            {
+                //todo: i don't like this.
+                IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.InteriorStageDamage, curve.Function);
+                stageDamages.Add(fdaFunction.ToUncertainPairedData());
+            }
+            return stageDamages;
+        }
+
+
         #region PlotCurves
         private IFdaFunction getFrequencyRelationshipFunction()
         {
@@ -477,27 +520,11 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 retval = IFdaFunctionFactory.Factory(IParameterEnum.InteriorStageDamage, SelectedDamageCurve.Function);
             }
             return retval;
-
-
-
-            //List<double> xValues = new List<double>();
-            //List<double> yValues = new List<double>();
-
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    xValues.Add(i + 2);
-            //    yValues.Add(i * 90);
-            //}
-
-            //ICoordinatesFunction coordinatesFunction = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
-            //IFdaFunction fdaFunction = IFdaFunctionFactory.Factory(IParameterEnum.InteriorStageDamage, coordinatesFunction);
-            //return fdaFunction;
         }
 
         private IFdaFunction getDamageFrequencyFunction()
         {
             //todo: this will be the result from the compute. I don't think we need this method once the compute is happening.
-
             List<double> xValues = new List<double>();
             List<double> yValues = new List<double>();
 
@@ -512,7 +539,6 @@ namespace ViewModel.ImpactAreaScenario.Editor
             return fdaFunction;
         }
 
-
         public void Plot()
         {
             FdaValidationResult validationResult = IsValid();
@@ -521,6 +547,9 @@ namespace ViewModel.ImpactAreaScenario.Editor
                 MessageRows.Clear();
                 OverlappingRangeHelper.CheckForOverlappingRanges(SelectedFrequencyElement, SelectedInflowOutflowElement, SelectedRatingCurveElement,
                     SelectedExteriorInteriorElement, (AggregatedStageDamageElement)SelectedStageDamageElement.ChildElement, SelectedDamageCurve, MessageRows);
+
+                PreviewCompute();
+
                 //get the current curves and set that data on the chart controls
                 //this update call will set the current crosshair data on each one
                 PlotControlVM.FrequencyRelationshipControl.UpdatePlotData(getFrequencyRelationshipFunction());
@@ -576,6 +605,5 @@ namespace ViewModel.ImpactAreaScenario.Editor
             Thresholds.Clear();
             Thresholds.AddRange(_additionalThresholdsVM.GetThresholds());
         }
-
     }
 }

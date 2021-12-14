@@ -48,7 +48,6 @@ namespace ViewModel.ImpactAreaScenario
         #endregion
         #region Constructors
 
-        
         public IASElementSet(string name, string description, int year, List<SpecificIAS> elems) : base()
         {
             SpecificIASElements.AddRange( elems);
@@ -91,7 +90,7 @@ namespace ViewModel.ImpactAreaScenario
 
             NamedAction compute = new NamedAction();
             compute.Header = "Compute Impact Area Scenario";
-            compute.Action = ComputeCondition;
+            compute.Action = ComputeScenario;
 
             NamedAction viewResults = new NamedAction();
             viewResults.Header = "View Results";
@@ -126,8 +125,6 @@ namespace ViewModel.ImpactAreaScenario
             PersistenceFactory.GetIASManager().Remove(this);
         }
 
-        
-
         /// <summary>
         /// Opens the conditions editor.
         /// </summary>
@@ -159,24 +156,22 @@ namespace ViewModel.ImpactAreaScenario
 
         private List<SpecificIASResultVM> GetResults()
         {
-            
             List<SpecificIASResultVM> results = new List<SpecificIASResultVM>();
-
             //this is kind of messy. Quite a bit of code to get the name of the impact area from the impact area id.
+            //todo: get a list of result objects
+            List<metrics.Results> iasResults = new List<metrics.Results>();
 
             ObservableCollection<ImpactAreaRowItem> impactAreaRows = GetStudyImpactAreaRowItems();
-
-                foreach (SpecificIAS ias in SpecificIASElements)
+            foreach (SpecificIAS ias in SpecificIASElements)
+            {
+                int impactAreaID = ias.ImpactAreaID;
+                string impactAreaName = GetImpactAreaNameFromID(impactAreaRows, impactAreaID);
+                if (impactAreaName != null)
                 {
-                    int impactAreaID = ias.ImpactAreaID;
-                    string impactAreaName = GetImpactAreaNameFromID(impactAreaRows, impactAreaID);
-                    if (impactAreaName != null)
-                    {
-                        SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, ias.Thresholds);
-                        results.Add(result);
-                    }
+                    SpecificIASResultVM result = new SpecificIASResultVM(impactAreaName, ias.Thresholds, null);
+                    results.Add(result);
                 }
-            
+            }
             return results;
         }
 
@@ -194,7 +189,7 @@ namespace ViewModel.ImpactAreaScenario
             return rowName;
         }
 
-        private void DisplayResults(IConditionLocationYearResult result)
+        private void ViewResults(object arg1, EventArgs arg2)
         {
             List<SpecificIASResultVM> results = GetResults();
             IASResultsVM resultViewer = new IASResultsVM(results);
@@ -202,16 +197,14 @@ namespace ViewModel.ImpactAreaScenario
             DynamicTabVM tab = new DynamicTabVM(header, resultViewer, "resultViewer");
             Navigate(tab, false, false);
         }
-        private void ViewResults(object arg1, EventArgs arg2)
-        {
-            DisplayResults(ComputeResults);
-        }
-
         
-        private void ComputeCondition(object arg1, EventArgs arg2)
+        private void ComputeScenario(object arg1, EventArgs arg2)
         {
-            //Intentionally left blank until the compute is completed in the model. -cody 10/26/21
             HasComputed = true;
+            foreach(SpecificIAS ias in SpecificIASElements)
+            {
+                ias.ComputeScenario(arg1, arg2);
+            }
             //i am just saving here to trigger the update event. Once we have the real compute we will want to save the results.
             PersistenceFactory.GetIASManager().SaveExisting(this, this);
         }

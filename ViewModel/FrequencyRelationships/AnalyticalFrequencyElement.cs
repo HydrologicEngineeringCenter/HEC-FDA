@@ -1,24 +1,18 @@
-﻿using ViewModel.Editors;
-using ViewModel.Utilities;
-using Functions;
-using Model;
+﻿using Model;
+using Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ViewModel.Editors;
+using ViewModel.Utilities;
 
 namespace ViewModel.FrequencyRelationships
 {
-    public class AnalyticalFrequencyElement : Utilities.ChildElement
+    public class AnalyticalFrequencyElement : ChildElement
     {
         #region Notes
         #endregion
         #region Fields
-        private const string _TableConstant = "Analytical Frequency - ";
-
-        private IFdaFunction _Distribution;
         #endregion
         #region Properties
       
@@ -32,11 +26,6 @@ namespace ViewModel.FrequencyRelationships
         public List<double> AnalyticalFlows { get; set; }
         public List<double> GraphicalFlows { get; set; }
 
-        //public IFdaFunction Distribution
-        //{
-        //    get { return _Distribution; }
-        //    set { _Distribution = value; NotifyPropertyChanged(); }
-        //}
         #endregion
         #region Constructors
         public AnalyticalFrequencyElement(string name, string lastEditDate, string desc, int por, bool isAnalytical, bool isStandard,
@@ -78,9 +67,6 @@ namespace ViewModel.FrequencyRelationships
 
             Actions = localActions;
 
-            //todo: i should create a curve and set the curve object so that the sci chart will have something to show.
-
-
         }
 
 
@@ -94,27 +80,18 @@ namespace ViewModel.FrequencyRelationships
         {
 
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFlowFrequencyManager()
+            Editors.SaveUndoRedoHelper saveHelper = new SaveUndoRedoHelper(Saving.PersistenceFactory.GetFlowFrequencyManager()
                 ,this, (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
                 (editor, element) => AssignValuesFromEditorToElement(editor, element));
             //create action manager
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+            EditorActionManager actionManager = new EditorActionManager()
                 .WithSaveUndoRedo(saveHelper)
                 .WithSiblingRules(this);
-               //.WithParentGuid(this.GUID)
-               //.WithCanOpenMultipleTimes(false);
 
-            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this,"Frequency", "Flow","Analytical Frequency", actionManager);// Name, Distribution, Description, _Owner);
+            AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(this,"Frequency", "Flow","Analytical Frequency", actionManager);
             string header = "Edit " + vm.Name;
             DynamicTabVM tab = new DynamicTabVM(header, vm, "EditAnalyticalFrequency" + vm.Name);
             Navigate(tab, false, false);
-            //if (!vm.WasCanceled)
-            //{
-            //    if (!vm.HasError)
-            //    {
-            //        vm.SaveWhileEditing();
-            //    }
-            //}
         }
 
         public override ChildElement CloneElement(ChildElement elementToClone)
@@ -141,7 +118,6 @@ namespace ViewModel.FrequencyRelationships
 
             vm.Name = element.Name;
             vm.Description = element.Description;
-            //vm.Curve = element.Curve;
             vm.LastEditDate = element.LastEditDate;
             vm.PeriodOfRecord = element.POR;
             vm.IsAnalytical = element.IsAnalytical;
@@ -152,7 +128,6 @@ namespace ViewModel.FrequencyRelationships
             vm.IsLogFlow = element.IsLogFlow;
             vm.AnalyticalFlows = ConvertDoublesToFlowWrappers(element.AnalyticalFlows);
             vm.GraphicalFlows =  ConvertDoublesToFlowWrappers(element.GraphicalFlows);
-
         }
 
         private ObservableCollection<FlowDoubleWrapper> ConvertDoublesToFlowWrappers(List<double> flows)
@@ -164,10 +139,10 @@ namespace ViewModel.FrequencyRelationships
             }
             return flowWrappers;
         }
-
         public ChildElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
         {
-            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
+            //will be formatted like: 2/27/2009 12:12:22 PM
+            string editDate = DateTime.Now.ToString("G"); 
             AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)editorVM;
             double mean = vm.Mean;
             double stDev = vm.StandardDeviation;
@@ -189,34 +164,7 @@ namespace ViewModel.FrequencyRelationships
             return new AnalyticalFrequencyElement(editorVM.Name, editDate, editorVM.Description, por, isAnalytical, isStandard, mean, stDev, skew,
                 isLogFlow, analyticalFlows, graphicalFlows, vm.CreateFdaFunction());
         }
-        //public override void Save()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public override object[] RowData()
-        //{
-        //    return new object[] { Name, LastEditDate, Description, Distribution.GetMean, Distribution.GetStDev, Distribution.GetG, Distribution.GetSampleSize };
-        //}
-
-        //public override bool SavesToRow()
-        //{
-        //    return true;
-        //}
-        //public override bool SavesToTable()
-        //{
-        //    return false;
-        //}
-        //#endregion
-        //#region Functions
-        //public override string TableName
-        //{
-        //    get
-        //    {
-        //        throw new NotImplementedException();
-        //    }
-        //}
-
+        
         public override bool Equals(object obj)
         {
             bool retval = true;
@@ -239,19 +187,6 @@ namespace ViewModel.FrequencyRelationships
                 {
                     retval = false;
                 }
-                //todo: Refactor: Commented Out
-                //if (!Double.Equals(Distribution.GetMean, elem.Distribution.GetMean))
-                //{
-                //    retval = false;
-                //}
-                //if (!Double.Equals(Distribution.GetStDev, elem.Distribution.GetStDev))
-                //{
-                //    retval = false;
-                //}
-                //if (!Double.Equals(Distribution.GetG, elem.Distribution.GetG))
-                //{
-                //    retval = false;
-                //}
             }
             else
             {
@@ -262,17 +197,10 @@ namespace ViewModel.FrequencyRelationships
 
         #endregion
 
+        public IDistribution GetDistribution()
+        {
+            return new Statistics.Distributions.LogPearson3(Mean, StDev, Skew, POR);
+        }
 
-        //todo i think i need a way to set the curve property on this so that the base classes work correctly.
-        //private ICoordinatesFunction CreateFunction()
-        //{
-        //    if(IsAnalytical)
-        //    {
-        //        if(IsStandard)
-        //        {
-
-        //        }
-        //    }
-        //}
     }
 }

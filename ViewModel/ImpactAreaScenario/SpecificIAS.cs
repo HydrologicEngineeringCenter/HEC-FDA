@@ -1,12 +1,20 @@
-﻿using Model;
+﻿using ead;
+using Model;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Xml.Linq;
+using ViewModel.AggregatedStageDamage;
+using ViewModel.FlowTransforms;
+using ViewModel.FrequencyRelationships;
+using ViewModel.GeoTech;
+using ViewModel.ImpactArea;
 using ViewModel.ImpactAreaScenario.Editor;
+using ViewModel.StageTransforms;
 
 namespace ViewModel.ImpactAreaScenario
 {
-    public class SpecificIAS
+    public class SpecificIAS:BaseViewModel
     {
         #region Notes
         #endregion
@@ -29,7 +37,7 @@ namespace ViewModel.ImpactAreaScenario
         /// These are the results after doing a compute. If a compute has not been
         /// done, then this will be null.
         /// </summary>
-        public IConditionLocationYearResult ComputeResults { get; set; }
+        public metrics.Results ComputeResults { get; set; }
 
         /// <summary>
         /// The impact area ID for the selected impact area. It will be -1 if no selection was made.
@@ -117,9 +125,35 @@ namespace ViewModel.ImpactAreaScenario
         /// </summary>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
-        private void ComputeCondition(object arg1, EventArgs arg2)
+        public metrics.Results ComputeScenario(object arg1, EventArgs arg2)
         {
+            AnalyticalFrequencyElement freqElem = (AnalyticalFrequencyElement)StudyCache.GetChildElementOfType(typeof(AnalyticalFrequencyElement), FlowFreqID);
+            InflowOutflowElement inOutElem = (InflowOutflowElement)StudyCache.GetChildElementOfType(typeof(InflowOutflowElement), InflowOutflowID);
+            RatingCurveElement ratElem = (RatingCurveElement)StudyCache.GetChildElementOfType(typeof(RatingCurveElement), RatingID);
+            ExteriorInteriorElement extIntElem = (ExteriorInteriorElement)StudyCache.GetChildElementOfType(typeof(ExteriorInteriorElement), ExtIntStageID);
+            LeveeFeatureElement leveeElem = (LeveeFeatureElement)StudyCache.GetChildElementOfType(typeof(LeveeFeatureElement), LeveeFailureID);
+            AggregatedStageDamageElement stageDamageElem = (AggregatedStageDamageElement)StudyCache.GetChildElementOfType(typeof(AggregatedStageDamageElement), StageDamageID);
 
+            SimulationCreator sc = new SimulationCreator(freqElem, inOutElem, ratElem, extIntElem, leveeElem,
+                stageDamageElem, ImpactAreaID);
+
+            Simulation simulation = sc.BuildSimulation();
+
+            MeanRandomProvider mrp = new MeanRandomProvider();
+            try
+            {
+                metrics.Results result = simulation.Compute(mrp, 1);
+                Console.WriteLine("Mean ead: " + result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage"));
+                double ead = result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage");
+                double total = result.ExpectedAnnualDamageResults.MeanEAD("Total");
+                ComputeResults = result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return null;
+            }
         }
 
 
