@@ -55,11 +55,11 @@ namespace fda_model_test
                 .withFlowStage(flow_stage)
                 .withStageDamages(updFuture)
                 .build();
-            impactarea.ImpactArea impactAreaBase = new impactarea.ImpactArea("BaseYear", sBase);
-            IList<impactarea.ImpactArea> impactAreaListBaseYear = new List<impactarea.ImpactArea>();
+            impactarea.ImpactAreaSimulation impactAreaBase = new impactarea.ImpactAreaSimulation("BaseYear", sBase);
+            IList<impactarea.ImpactAreaSimulation> impactAreaListBaseYear = new List<impactarea.ImpactAreaSimulation>();
             impactAreaListBaseYear.Add(impactAreaBase);
-            impactarea.ImpactArea impactAreaFuture = new impactarea.ImpactArea("FutureYear", sFuture);
-            IList<impactarea.ImpactArea> impactAreaListFutureYear = new List<impactarea.ImpactArea>();
+            impactarea.ImpactAreaSimulation impactAreaFuture = new impactarea.ImpactAreaSimulation("FutureYear", sFuture);
+            IList<impactarea.ImpactAreaSimulation> impactAreaListFutureYear = new List<impactarea.ImpactAreaSimulation>();
             impactAreaListFutureYear.Add(impactAreaFuture);
 
             scenarios.Scenario baseScenario = new scenarios.Scenario(baseYear, impactAreaListBaseYear);
