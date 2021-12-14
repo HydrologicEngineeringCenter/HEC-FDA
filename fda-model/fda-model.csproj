@@ -15,7 +15,7 @@
 
 	
   <ItemGroup>
-    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2021.11.16.1630" />
+    <PackageReference Include="USACE.HEC.FDA.Statistics" Version="1.1.0-alpha-2021.11.22.2155" />
   </ItemGroup>
 
 </Project>
