@@ -11,8 +11,10 @@ namespace ViewModel.Inventory
     {
         public string DisplayName { get; }
         public IOccupancyType OccType { get; }
+        public String GroupName { get; }
         public OccTypeDisplayName(string groupName, IOccupancyType occType)
         {
+            GroupName = groupName;
             OccType = occType;
             DisplayName = groupName + " | " + occType.Name;
         }

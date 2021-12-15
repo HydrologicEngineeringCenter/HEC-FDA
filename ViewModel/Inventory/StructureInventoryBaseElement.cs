@@ -8,7 +8,7 @@ using StructureInventoryLibrary;
 namespace ViewModel.Inventory
 {
     //[Author(q0heccdm, 6 / 14 / 2017 4:00:20 PM)]
-    public class StructureInventoryBaseElement : StructureInventoryLibrary.StructureInventoryBase
+    public class StructureInventoryBaseElement : StructureInventoryBase
     {
         #region Notes
         // Created By: q0heccdm

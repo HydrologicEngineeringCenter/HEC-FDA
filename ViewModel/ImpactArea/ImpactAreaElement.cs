@@ -108,8 +108,6 @@ namespace ViewModel.ImpactArea
             LifeSimGIS.VectorFeatures features = polyFeatures;
             //read from table.
             DatabaseManager.DataTableView dtv = sqr.GetTableManager(tableBaseName + Name);
-            int[] geometryColumns = { 0, 1 };
-            dtv.DeleteColumns(geometryColumns);
 
             OpenGLMapping.OpenGLDrawInfo ogldi = new OpenGLMapping.OpenGLDrawInfo(true, new OpenTK.Graphics.Color4((byte)255, 0, 0, 255), 1, true, new OpenTK.Graphics.Color4((byte)0, 255, 0, 200));
             AddShapefileEventArgs args = new AddShapefileEventArgs(Name, features, dtv, ogldi);
