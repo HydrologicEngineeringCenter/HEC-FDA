@@ -60,10 +60,11 @@ namespace ead{
         /// <param name="computeDefaultThreshold"></param>
         /// <returns></returns>
         public Results Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations, bool computeDefaultThreshold = true){
-            //results.AEPThreshold = 100.0;//stage or flow or damage threshold
-            //TODO: Compute default threshold must occur outside the compute iterations
-            
-            for(int i = 0; i < iterations; i ++){
+            if (computeDefaultThreshold == true)
+            {
+                _results.Thresholds.AddThreshold(ComputeDefaultThreshold());
+            }
+            for (int i = 0; i < iterations; i ++){
                 if (_frequency_stage.IsNull)
                 {
                     //if frequency_flow is not defined throw big errors.
@@ -80,7 +81,7 @@ namespace ead{
                         {
                             IPairedData flow_stage_sample = _flow_stage.SamplePairedData(rp.NextRandom());
                             IPairedData frequency_stage = flow_stage_sample.compose(ff);
-                            ComputeFromStageFrequency(rp, frequency_stage,computeDefaultThreshold);
+                            ComputeFromStageFrequency(rp, frequency_stage);
                         }
  
                     }
@@ -97,7 +98,7 @@ namespace ead{
                             {
                                 IPairedData flow_stage_sample = _flow_stage.SamplePairedData(rp.NextRandom());//needs to be a random number
                                 IPairedData frequency_stage = flow_stage_sample.compose(transformff);
-                                ComputeFromStageFrequency(rp, frequency_stage,computeDefaultThreshold);
+                                ComputeFromStageFrequency(rp, frequency_stage);
                             }
                     }
 
@@ -105,12 +106,12 @@ namespace ead{
                 else
                 {
                     IPairedData frequency_stage_sample = _frequency_stage.SamplePairedData(rp.NextRandom());
-                    ComputeFromStageFrequency(rp, frequency_stage_sample,computeDefaultThreshold);
+                    ComputeFromStageFrequency(rp, frequency_stage_sample);
                 }
             }
             return _results;
         }
-        private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage, bool computeDefaultThreshold = true){
+        private void ComputeFromStageFrequency(interfaces.IProvideRandomNumbers rp, IPairedData frequency_stage){
 
             //interior exterior
             if (_channelstage_floodplainstage.IsNull)
@@ -119,14 +120,14 @@ namespace ead{
                 if (_levee_curve.IsNull)
                 {
                     ComputeDamagesFromStageFrequency(rp, frequency_stage);
-                    ComputePerformance(frequency_stage,computeDefaultThreshold);
+                    ComputePerformance(frequency_stage);
                 }
                 else
                 {
                     IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
                     //IPairedData frequency_stage_withLevee = frequency_stage.multiply(levee_curve_sample);
                     ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_stage, levee_curve_sample);
-                    ComputeLeveePerformance(frequency_stage, levee_curve_sample,computeDefaultThreshold);
+                    ComputeLeveePerformance(frequency_stage, levee_curve_sample);
                 }
                 
             }
@@ -138,14 +139,14 @@ namespace ead{
                 if (_levee_curve.IsNull)
                 {
                     ComputeDamagesFromStageFrequency(rp, frequency_floodplainstage);
-                    ComputePerformance(frequency_floodplainstage,computeDefaultThreshold);
+                    ComputePerformance(frequency_floodplainstage);
                 }
                 else
                 {
                     IPairedData levee_curve_sample = _levee_curve.SamplePairedData(rp.NextRandom()); //needs to be a random number
                     //IPairedData frequency_floodplainstage_withLevee = frequency_floodplainstage.multiply(_levee_curve_sample);
                     ComputeDamagesFromStageFrequency_WithLevee(rp, frequency_floodplainstage, levee_curve_sample);                  
-                    ComputeLeveePerformance(frequency_stage,levee_curve_sample,computeDefaultThreshold);
+                    ComputeLeveePerformance(frequency_stage,levee_curve_sample);
                 }
                 
             }
@@ -195,12 +196,8 @@ namespace ead{
             _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total");
         }
         //TODO: Review access modifiers. I think most if not all of the performance methods should be private.
-        public void ComputePerformance(IPairedData frequency_stage, bool computeDefaultThreshold = true)
+        public void ComputePerformance(IPairedData frequency_stage)
         {
-            if (computeDefaultThreshold == true)
-            {
-                _results.Thresholds.AddThreshold(ComputeDefaultThreshold());
-            }
 
             foreach (var thresholdEntry in _results.Thresholds.ThresholdsDictionary)
             {
@@ -211,12 +208,8 @@ namespace ead{
             }
         }
         //this method assumes that the levee fragility function spans the entire probability domain 
-        public void ComputeLeveePerformance(IPairedData frequency_stage, IPairedData levee_curve_sample, bool computeDefaultThreshold = true)
+        public void ComputeLeveePerformance(IPairedData frequency_stage, IPairedData levee_curve_sample)
         {
-            if (computeDefaultThreshold == true)
-            {
-                _results.Thresholds.AddThreshold(ComputeDefaultThreshold());
-            }
             IPairedData levee_frequency_stage = levee_curve_sample.compose(frequency_stage);
             double aep = 0;
             //extrapolate below
