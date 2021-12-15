@@ -269,7 +269,7 @@ namespace ViewModel.Saving
         /// <param name="primaryKey">The id of the element. The column that the id is in must be "ID"</param>
         /// <param name="columns">The columns that you want to update</param>
         /// <param name="values">The values that you want in the columns listed in "columns"</param>
-        public void UpdateTableRowWithCompoundKey(string tableName, int[] primaryKeys, string[] primaryKeyColNames, string[] columns, object[] values)
+        public void UpdateTableRowWithCompoundKey(string tableName, object[] primaryKeys, string[] primaryKeyColNames, string[] columns, object[] values)
         {
             //this sql query looks like this:
             //update occupancy_types set Name = 'codyistesting' where GroupID = 1 and OcctypeID = 1
@@ -278,7 +278,7 @@ namespace ViewModel.Saving
                 Connection.Instance.Open();
             }
             //columns and values need to be corespond to each other, you don't have to update columns that don't need it
-            StringBuilder sb = new StringBuilder("update ").Append(tableName).Append(" set ");
+            StringBuilder sb = new StringBuilder("update ").Append("'").Append(tableName).Append("' set ");
             for (int i = 0; i < columns.Length; i++)
             {
                 sb.Append(columns[i]).Append(" = '").Append(values[i]).Append("' ").Append(",");
@@ -288,7 +288,7 @@ namespace ViewModel.Saving
             sb.Append(" where ");
             for (int i = 0; i < primaryKeys.Length; i++)
             {
-                sb.Append(primaryKeyColNames[i]).Append(" = ").Append(primaryKeys[i]).Append(" and ");
+                sb.Append(primaryKeyColNames[i]).Append(" = ").Append("'").Append(primaryKeys[i]).Append("' and ");
             }
             //remove the last "and"
             sb.Remove(sb.Length - 4, 4);
@@ -297,6 +297,8 @@ namespace ViewModel.Saving
             command.CommandText = sb.ToString();
             command.ExecuteNonQuery();
         }
+
+       
 
         public void DeleteRowWithCompoundKey(string tableName, int[] primaryKeys, string[] primaryKeyColNames)
         {

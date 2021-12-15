@@ -1,22 +1,20 @@
-﻿using System;
+﻿using FdaLogging;
+using Functions;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using FdaLogging;
 using ViewModel.Inventory.DamageCategory;
 using ViewModel.Inventory.OccupancyTypes;
 using ViewModel.Utilities;
-using Functions;
-using Model;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
     public class OccTypePersistenceManager : SavingBase, IElementManager
     {
+        private const string OCCTYPES_TABLE_NAME = "occupancy_types";
         //These are the columns for the parent table
         private const int PARENT_GROUP_ID_COL = 0;
         private const int PARENT_GROUP_NAME_COL = 1;
@@ -69,7 +67,6 @@ namespace ViewModel.Saving.PersistenceManagers
 
         private const string GroupTablePrefix = "OccTypeGroup-";
         private const string ParentTableName = "occupancy_type_groups";
-        private const string OCCTYPES_TABLE_NAME = "occupancy_types";
 
         private const string PARENT_NAME_FIELD = "Name";
 
@@ -118,42 +115,7 @@ namespace ViewModel.Saving.PersistenceManagers
             }
         }
 
-        //todo: Refactor: removing Statistics.ContinuousDistribution and making it an IDistribution
-        //I think this is taking each row and making a distribution
-        //private IDistributedValue CreateContinuousDistributionFromRow(object[] row, int start, int end)
-        //{
-
-        //    if (row[start].ToString() == "Normal")
-        //    {
-        //        IDistributedValue normDist = DistributedValueFactory.FactoryNormal(0, Convert.ToDouble(row[end]));
-        //        //ICoordinatesFunction norm = ICoordinatesFunctionsFactory. new Statistics.Normal(0, Convert.ToDouble(row[end]));
-        //        return normDist;
-        //    }
-        //    else if (row[start].ToString() == "Uniform")
-        //    {
-        //        IDistributedValue uniformDist = DistributedValueFactory.FactoryUniform(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]));
-        //        //Statistics.Uniform uni = new Statistics.Uniform(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]));
-        //        return uniformDist;
-        //    }
-        //    else if (row[start].ToString() == "None")
-        //    {
-        //        //todo: Refactor: Finish this
-        //        //IDistributedValue constantDist = DistributedValueFactory.fact(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]));
-        //        //Statistics.None non = new Statistics.None();
-        //        //return non;
-
-        //    }
-        //    else if (row[start].ToString() == "Triangular")
-        //    {
-        //        //todo: Refactor: Make sure these inputs are in the correct order, min-max-mostlikely?
-        //        IDistributedValue tri = DistributedValueFactory.FactoryTriangular(Convert.ToDouble(row[start + 1]), Convert.ToDouble(row[start + 2]), Convert.ToDouble(row[start + 3]));
-        //        //Statistics.Uniform tri = new Statistics.Uniform(Convert.ToDouble(row[start]), Convert.ToDouble(row[start + 1]));
-        //        //Statistics.Triangular tri = new Statistics.Triangular(Convert.ToDouble(row[start+1]), Convert.ToDouble(row[start + 2]), Convert.ToDouble(row[start + 3]));
-        //        return tri;
-        //    }
-
-        //    return null;// new Statistics.Normal(); // it should never get here.
-        //}
+       
         /// <summary>
         /// Creates an element based off the row from the parent table
         /// </summary>
@@ -691,18 +653,26 @@ namespace ViewModel.Saving.PersistenceManagers
             //a group and add a new one.
 
             OccupancyTypesElement group = GetElementFromGroupID(ot.GroupID);
-            if(group == null)
+            string oldName = "";
+            string newName = ot.Name;
+            if (group != null)
             {
-                return;
-            }
-            //now replace the occtype with the new one
-            for(int i = 0;i< group.ListOfOccupancyTypes.Count;i++)
-            {
-                if(group.ListOfOccupancyTypes[i].ID == ot.ID)
+                //now replace the occtype with the new one
+                for (int i = 0; i < group.ListOfOccupancyTypes.Count; i++)
                 {
-                    group.ListOfOccupancyTypes[i] = ot;
-                    break;
+                    if (group.ListOfOccupancyTypes[i].ID == ot.ID)
+                    {
+                        oldName = group.ListOfOccupancyTypes[i].Name;
+                        group.ListOfOccupancyTypes[i] = ot;
+                        break;
+                    }
                 }
+            }
+
+            if(!oldName.Equals(newName))
+            {
+                //update the structure inventory occtype names.
+                PersistenceFactory.GetStructureInventoryManager().UpdateOccTypeNames(group.Name, group.Name, oldName, newName);
             }
 
         }
@@ -763,7 +733,7 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public void SaveModifiedOcctype(IOccupancyType ot)
         {
-            int[] keys = new int[] { ot.GroupID, ot.ID };
+            object[] keys = new object[] { ot.GroupID, ot.ID };
             string[] keyColNames = new string[] { "GroupID", "OcctypeID" };
 
             //update the whole row

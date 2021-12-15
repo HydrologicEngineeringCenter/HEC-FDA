@@ -113,8 +113,6 @@ namespace ViewModel.Inventory
 
             //read from table.
             DatabaseManager.DataTableView dtv = Storage.Connection.Instance.Reader.GetTableManager(_TableConstant + this.Name);
-            int[] geometryColumns = { 0, 1 };
-            dtv.DeleteColumns(geometryColumns);
 
             OpenGLDrawInfo ogldi = new OpenGLDrawInfo(15, OpenGLDrawInfo.GlyphType.House1, true, new OpenTK.Graphics.Color4((byte)0, 0, 0, 255), true, new OpenTK.Graphics.Color4((byte)0, 0, 255, 200), true);
 
