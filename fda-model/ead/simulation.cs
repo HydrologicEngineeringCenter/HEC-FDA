@@ -183,6 +183,7 @@ namespace ead{
 
         public void ComputePerformance(IPairedData frequency_stage)
         {
+            _results.Thresholds.AddThreshold(ComputeDefaultThreshold());
             foreach (var threshold in _results.Thresholds.ListOfThresholds)
             {
                 double thresholdValue = threshold.ThresholdValue;
@@ -194,6 +195,7 @@ namespace ead{
         //this method assumes that the levee fragility function spans the entire probability domain 
         public void ComputeLeveePerformance(IPairedData frequency_stage, IPairedData levee_curve_sample)
         {
+            _results.Thresholds.AddThreshold(ComputeDefaultThreshold());
             IPairedData levee_frequency_stage = levee_curve_sample.compose(frequency_stage);
             double aep = 0;
             //extrapolate below
@@ -352,7 +354,6 @@ namespace ead{
             {
 
                 //probably do validation here.
-                _sim._results.Thresholds.AddThreshold(_sim.ComputeDefaultThreshold()); //not sure that this is where this belongs.
                 return _sim;
             }
             public SimulationBuilder withFlowFrequency(Statistics.IDistribution dist)

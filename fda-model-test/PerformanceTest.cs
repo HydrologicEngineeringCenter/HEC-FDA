@@ -73,11 +73,13 @@ namespace fda_model_test
         [InlineData(40, .002)]
         public void ComputeAEP_Test(double thresholdValue, double expected)
         {
+            //TODO: this needs to be re-written to set up the compute better
             ead.Simulation simulation = Simulation.builder().build(); 
             paireddata.IPairedData frequency_stage = new PairedData(NonExceedanceProbs, StageForNonExceedanceProbs);
             Threshold threshold = new Threshold(1, ThresholdEnum.ExteriorStage, thresholdValue);
             simulation.PerformanceThresholds.AddThreshold(threshold);
             simulation.ComputePerformance(frequency_stage);
+            //TODO: I think that we need a dictionary of thresholds, not a list 
             double actual = simulation.PerformanceThresholds.ListOfThresholds.First().Performance.MeanAEP();
             double difference = expected - actual;
             double relativeDifference = difference / expected;
