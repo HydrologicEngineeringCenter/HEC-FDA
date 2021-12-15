@@ -61,6 +61,8 @@ namespace ead{
         /// <returns></returns>
         public Results Compute(interfaces.IProvideRandomNumbers rp, Int64 iterations, bool computeDefaultThreshold = true){
             //results.AEPThreshold = 100.0;//stage or flow or damage threshold
+            //TODO: Compute default threshold must occur outside the compute iterations
+            
             for(int i = 0; i < iterations; i ++){
                 if (_frequency_stage.IsNull)
                 {
