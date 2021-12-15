@@ -142,6 +142,7 @@ namespace ViewModel.ImpactAreaScenario
             MeanRandomProvider mrp = new MeanRandomProvider();
             try
             {
+                //todo: how many iterations?
                 metrics.Results result = simulation.Compute(mrp, 1);
                 Console.WriteLine("Mean ead: " + result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage"));
                 double ead = result.ExpectedAnnualDamageResults.MeanEAD("InteriorStageDamage");
