@@ -184,12 +184,12 @@ namespace ead{
         public void ComputePerformance(IPairedData frequency_stage)
         {
             _results.Thresholds.AddThreshold(ComputeDefaultThreshold());
-            foreach (var threshold in _results.Thresholds.ListOfThresholds)
+            foreach (var thresholdEntry in _results.Thresholds.ThresholdsDictionary)
             {
-                double thresholdValue = threshold.ThresholdValue;
+                double thresholdValue = thresholdEntry.Value.ThresholdValue;
                 double aep = 1-frequency_stage.f_inverse(thresholdValue);
-                threshold.Performance.AddAEPEstimate(aep);
-                ComputeConditionalNonExceedanceProbability(frequency_stage, threshold);
+                thresholdEntry.Value.Performance.AddAEPEstimate(aep);
+                ComputeConditionalNonExceedanceProbability(frequency_stage, thresholdEntry.Value);
             }
         }
         //this method assumes that the levee fragility function spans the entire probability domain 
@@ -216,10 +216,10 @@ namespace ead{
             double finalProbOfStageInRange = 1 - levee_frequency_stage.Xvals[levee_frequency_stage.Xvals.Length - 1];
             double finalAvgProbFailure = levee_frequency_stage.Yvals[levee_frequency_stage.Yvals.Length - 1];
             aep += finalProbOfStageInRange * finalAvgProbFailure;
-            foreach (var threshold in _results.Thresholds.ListOfThresholds)
+            foreach (var thresholdEntry in _results.Thresholds.ThresholdsDictionary)
             {
-                threshold.Performance.AddAEPEstimate(aep);
-                ComputeConditionalNonExceedanceProbability(frequency_stage, threshold);
+                thresholdEntry.Value.Performance.AddAEPEstimate(aep);
+                ComputeConditionalNonExceedanceProbability(frequency_stage, thresholdEntry.Value);
             }
             
         }
