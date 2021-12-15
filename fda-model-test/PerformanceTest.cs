@@ -50,12 +50,13 @@ namespace fda_model_test
                 .withFlowStage(flow_stage)
                 .withStageDamages(upd)
                 .build();
-            Threshold threshold = new Threshold(0, ThresholdEnum.ExteriorStage, 150000);
+            int thresholdID = 1;
+            Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, 150000);
             s.PerformanceThresholds.AddThreshold(threshold);
             RandomProvider rp = new RandomProvider(seed);
             metrics.Results r = s.Compute(rp, iterations);
 
-            double actual = r.Thresholds.ListOfThresholds.Last().Performance.MeanAEP(); 
+            double actual = r.Thresholds.ThresholdsDictionary[thresholdID].Performance.MeanAEP();
             
             double difference = expected - actual;
             double relativeDifference = difference / expected;
@@ -76,11 +77,12 @@ namespace fda_model_test
             //TODO: this needs to be re-written to set up the compute better
             ead.Simulation simulation = Simulation.builder().build(); 
             paireddata.IPairedData frequency_stage = new PairedData(NonExceedanceProbs, StageForNonExceedanceProbs);
-            Threshold threshold = new Threshold(1, ThresholdEnum.ExteriorStage, thresholdValue);
+            int thresholdID = 1;
+            Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, thresholdValue);
             simulation.PerformanceThresholds.AddThreshold(threshold);
             simulation.ComputePerformance(frequency_stage);
             //TODO: I think that we need a dictionary of thresholds, not a list 
-            double actual = simulation.PerformanceThresholds.ListOfThresholds.First().Performance.MeanAEP();
+            double actual = simulation.PerformanceThresholds.ThresholdsDictionary[thresholdID].Performance.MeanAEP();
             double difference = expected - actual;
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .02);
@@ -95,10 +97,11 @@ namespace fda_model_test
         {
             ead.Simulation simulation = Simulation.builder().build();
             paireddata.IPairedData frequency_stage = new PairedData(NonExceedanceProbs, StageForNonExceedanceProbs);
-            Threshold threshold = new Threshold(1, ThresholdEnum.ExteriorStage, thresholdValue);
+            int thresholdID = 1;
+            Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, thresholdValue);
             simulation.PerformanceThresholds.AddThreshold(threshold);
             simulation.ComputePerformance(frequency_stage);
-            double actual = simulation.PerformanceThresholds.ListOfThresholds.First().Performance.LongTermExceedanceProbability(years);
+            double actual = simulation.PerformanceThresholds.ThresholdsDictionary[thresholdID].Performance.LongTermExceedanceProbability(years);
             double difference = expected - actual;
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .02);
@@ -112,10 +115,11 @@ namespace fda_model_test
             ead.Simulation simulation = Simulation.builder().build();
             paireddata.IPairedData frequency_stage = new PairedData(NonExceedanceProbs, StageForNonExceedanceProbs);
             paireddata.IPairedData levee_curve = new PairedData(StageForNonExceedanceProbs, ProbLeveeFailure);
-            Threshold threshold = new Threshold(1, ThresholdEnum.ExteriorStage, thresholdValue);
+            int thresholdID = 1;
+            Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, thresholdValue);
             simulation.PerformanceThresholds.AddThreshold(threshold);
             simulation.ComputeLeveePerformance(frequency_stage, levee_curve);
-            double actual = simulation.PerformanceThresholds.ListOfThresholds.First().Performance.MeanAEP();
+            double actual = simulation.PerformanceThresholds.ThresholdsDictionary[thresholdID].Performance.MeanAEP();
             double difference = expected - actual;
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .02);
@@ -139,11 +143,12 @@ namespace fda_model_test
             Simulation simulation = Simulation.builder()
                 .withFrequencyStage(frequency_stage)
                 .build();
-            Threshold threshold = new Threshold(1, ThresholdEnum.ExteriorStage, thresholdValue);
+            int thresholdID = 1;
+            Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, thresholdValue);
             simulation.PerformanceThresholds.AddThreshold(threshold);
             RandomProvider randomProvider = new RandomProvider(seed);
             metrics.Results results = simulation.Compute(randomProvider, iterations);
-            double actual = results.Thresholds.ListOfThresholds.First().Performance.ConditionalNonExceedanceProbability(nonExceedanceProbability);
+            double actual = results.Thresholds.ThresholdsDictionary[thresholdID].Performance.ConditionalNonExceedanceProbability(nonExceedanceProbability);
             double difference = expected - actual;
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .02);
