@@ -9,6 +9,11 @@ namespace fda_model_test
     public class UncertainPairedDataShould
     {
         static double[] countByOnes = { 1, 2, 3, 4, 5 };
+        static string xLabel = "x label";
+        static string yLabel = "y label";
+        static string name = "name";
+        static string description = "description";
+        static int id = 1;
 
 
         [Theory]
@@ -22,7 +27,7 @@ namespace fda_model_test
             {
                 yvals[i] = IDistributionFactory.FactoryUniform(countByOnes[i] * minSlope, countByOnes[i] * maxSlope, 10);
             }
-            UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals);
+            UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals,xLabel,yLabel,name,description,id);
             IPairedData pd = upd.SamplePairedData(probability);
             double actual = pd.Yvals[0] / pd.Xvals[0];
             Assert.Equal(expectedSlope, actual);
@@ -38,7 +43,7 @@ namespace fda_model_test
             {
                 yvals[i] = IDistributionFactory.FactoryUniform(countByOnes[i] * minSlope, countByOnes[i] * maxSlope, 10);
             }
-            UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals);
+            UncertainPairedData upd = new UncertainPairedData(countByOnes, yvals, xLabel, yLabel, name, description, id);
             XElement ele = upd.WriteToXML();
             UncertainPairedData upd2 = UncertainPairedData.ReadFromXML(ele);
 
