@@ -251,13 +251,13 @@ namespace ead{
 
 
 
-        public IPairedData ComputeDamageFrequency(IDistribution flowFrequencyDistribution, UncertainPairedData flowStageUncertain, UncertainPairedData stageDamageUncertin)
+        public IPairedData ComputeDamageFrequency(IDistribution flowFrequencyDistribution, UncertainPairedData flowStageUncertain, UncertainPairedData stageDamageUncertain)
         {
             MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
             IPairedData frequencyFlow = BootstrapToPairedData(meanRandomProvider, flowFrequencyDistribution, 1000);
             IPairedData ratingCurve = flowStageUncertain.SamplePairedData(meanRandomProvider.NextRandom());
             IPairedData frequencyStage = ratingCurve.compose(frequencyFlow);
-            IPairedData stageDamage = stageDamageUncertin.SamplePairedData(meanRandomProvider.NextRandom());
+            IPairedData stageDamage = stageDamageUncertain.SamplePairedData(meanRandomProvider.NextRandom());
             return stageDamage.compose(frequencyStage);
         }
 
