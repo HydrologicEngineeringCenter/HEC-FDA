@@ -18,7 +18,7 @@ namespace ViewModel.Saving.PersistenceManagers
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("ImpactAreaPersistenceManager");
         private static readonly string[] TableColNames = { NAME, DESCRIPTION };
         private static readonly Type[] TableColTypes = { typeof(string), typeof(string) };
-        public static string IndexPointTableNameConstant = "impact_areas -";
+        public static string IMPACT_AREA_TABLE_PREFIX = "impact_areas -";
 
         private const string TABLE_NAME = "impact_area_set";
         private const int NAME_COL = 1;
@@ -64,7 +64,7 @@ namespace ViewModel.Saving.PersistenceManagers
         private ObservableCollection<ImpactAreaRowItem> GetRowsFromIndexTable(string impactAreaSetName)
         {
             ObservableCollection<ImpactAreaRowItem> items = new ObservableCollection<ImpactAreaRowItem>();
-            DatabaseManager.DataTableView indexTable = Connection.Instance.GetTable(IndexPointTableNameConstant + impactAreaSetName);
+            DatabaseManager.DataTableView indexTable = Connection.Instance.GetTable(IMPACT_AREA_TABLE_PREFIX + impactAreaSetName);
             foreach (object[] row in indexTable.GetRows(0, indexTable.NumberOfRows - 1))
             {
                 int id = (int)row[INDEX_TABLE_ID_COL];
@@ -84,14 +84,13 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             if (!Connection.Instance.IsConnectionNull)
             {
-                if (Connection.Instance.TableNames().Contains(IndexPointTableNameConstant + element.Name))
+                if (Connection.Instance.TableNames().Contains(IMPACT_AREA_TABLE_PREFIX + element.Name))
                 {
                     //already exists... delete
-                    Connection.Instance.DeleteTable(IndexPointTableNameConstant + element.Name);
+                    Connection.Instance.DeleteTable(IMPACT_AREA_TABLE_PREFIX + element.Name);
                 }
                 LifeSimGIS.GeoPackageWriter gpw = new LifeSimGIS.GeoPackageWriter(Connection.Instance.Reader);
-
-                DataTable dt = new DataTable(IndexPointTableNameConstant + element.Name);
+                DataTable dt = new DataTable(IMPACT_AREA_TABLE_PREFIX + element.Name);
                 dt.Columns.Add("Name", typeof(string));
 
                 foreach (ImpactAreaRowItem row in element.ImpactAreaRows)
@@ -100,12 +99,12 @@ namespace ViewModel.Saving.PersistenceManagers
                 }
 
                 DatabaseManager.InMemoryReader imr = new DatabaseManager.InMemoryReader(dt);
-                gpw.AddFeatures(IndexPointTableNameConstant + element.Name, polyFeatures, imr.GetTableManager(imr.TableNames[0]));
+                gpw.AddFeatures(IMPACT_AREA_TABLE_PREFIX + element.Name, polyFeatures, imr.GetTableManager(imr.TableNames[0]));
             }
         }
         private void UpdateExistingTable(ImpactAreaElement element)
         {
-            DatabaseManager.DataTableView dtv = Connection.Instance.GetTable(IndexPointTableNameConstant + element.Name);
+            DatabaseManager.DataTableView dtv = Connection.Instance.GetTable(IMPACT_AREA_TABLE_PREFIX + element.Name);
 
             object[] nameArray = new object[element.ImpactAreaRows.Count];
             for(int i = 0;i<element.ImpactAreaRows.Count;i++)
@@ -133,6 +132,9 @@ namespace ViewModel.Saving.PersistenceManagers
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
+            string impAreaTable = IMPACT_AREA_TABLE_PREFIX + element.Name;
+            RemoveTable(impAreaTable);
+            RemoveFromGeopackageTable(impAreaTable);
             StudyCacheForSaving.RemoveElement(element);
 
         }
@@ -141,8 +143,8 @@ namespace ViewModel.Saving.PersistenceManagers
             base.SaveExisting(oldElement, elementToSave);
             if (!oldElement.Name.Equals(elementToSave.Name))
             {
-                string oldName = IndexPointTableNameConstant + oldElement.Name;
-                string newName = IndexPointTableNameConstant + elementToSave.Name;
+                string oldName = IMPACT_AREA_TABLE_PREFIX + oldElement.Name;
+                string newName = IMPACT_AREA_TABLE_PREFIX + elementToSave.Name;
                 LifeSimGIS.GeoPackageWriter myGeoPackWriter = new LifeSimGIS.GeoPackageWriter(StructureInventoryLibrary.SharedData.StudyDatabase);
                 myGeoPackWriter.RenameFeatures(oldName, newName);
                 

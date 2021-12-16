@@ -101,11 +101,8 @@ namespace ViewModel.Saving
 
         public List<ChildElement> CreateElementsFromRows(string tableName, Func<object[], ChildElement> createElemsFromRowDataAction)
         {
+            OpenConnection();
             List<ChildElement> elems = new List<ChildElement>();
-            if (!Connection.Instance.IsOpen)
-            {
-                Connection.Instance.Open();
-            }
 
             DataTable table = Connection.Instance.GetDataTable(tableName);
             foreach (DataRow row in table.Rows)
@@ -155,10 +152,7 @@ namespace ViewModel.Saving
         #region save new
         public void SaveNewElement(ChildElement element)
         {
-            if (!Connection.Instance.IsOpen)
-            {
-                Connection.Instance.Open();
-            }
+            OpenConnection();
             //update the edit date
             string editDate = DateTime.Now.ToString("G");
             element.LastEditDate = editDate;
@@ -169,10 +163,7 @@ namespace ViewModel.Saving
         }
         public void SaveNewElementToParentTable(object[] rowData, string tableName, string[] TableColumnNames, Type[] TableColumnTypes)
         {
-            if (!Connection.Instance.IsOpen)
-            {
-                Connection.Instance.Open();
-            }
+            OpenConnection();
             DatabaseManager.DataTableView tbl = Connection.Instance.GetTable(tableName);
             if (tbl == null)
             {
@@ -185,10 +176,7 @@ namespace ViewModel.Saving
 
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave)
         {
-            if (!Connection.Instance.IsOpen)
-            {
-                Connection.Instance.Open();
-            }
+            OpenConnection();
             string editDate = DateTime.Now.ToString("G");
             elementToSave.LastEditDate = editDate;
 
@@ -202,15 +190,31 @@ namespace ViewModel.Saving
 
         #endregion
 
-        #region Remove element
-
-        public virtual void RemoveFromParentTable(ChildElement element, string tableName)
+        private void OpenConnection()
         {
-
             if (!Connection.Instance.IsOpen)
             {
                 Connection.Instance.Open();
             }
+        }
+
+        #region Remove element
+        public void RemoveTable(string tableName)
+        {
+            OpenConnection();
+            if (Connection.Instance.TableNames().Contains(tableName))
+            {
+                Connection.Instance.DeleteTable(tableName);                
+            }
+        }
+        public void RemoveFromGeopackageTable(string tableName)
+        {
+            LifeSimGIS.GeoPackageWriter gpw = new LifeSimGIS.GeoPackageWriter(Connection.Instance.Reader);
+            gpw.DeleteFeatures(tableName);
+        }
+        public virtual void RemoveFromParentTable(ChildElement element, string tableName)
+        {
+            OpenConnection();
 
             element.RemoveElementFromMapWindow(this, new EventArgs());
 
@@ -243,10 +247,7 @@ namespace ViewModel.Saving
         /// <param name="values">The values that you want in the columns listed in "columns"</param>
         public void UpdateTableRow(string tableName, int primaryKey, string primaryKeyColName, string[] columns, object[] values)
         {
-            if (!Connection.Instance.IsOpen)
-            {
-                Connection.Instance.Open();
-            }
+            OpenConnection();
             //columns and values need to be corespond to each other, you don't have to update columns that don't need it
             StringBuilder sb = new StringBuilder("update ").Append(tableName).Append(" set ");
             for(int i = 0;i<columns.Length;i++)
@@ -273,10 +274,7 @@ namespace ViewModel.Saving
         {
             //this sql query looks like this:
             //update occupancy_types set Name = 'codyistesting' where GroupID = 1 and OcctypeID = 1
-            if (!Connection.Instance.IsOpen)
-            {
-                Connection.Instance.Open();
-            }
+            OpenConnection();
             //columns and values need to be corespond to each other, you don't have to update columns that don't need it
             StringBuilder sb = new StringBuilder("update ").Append(tableName).Append(" set ");
             for (int i = 0; i < columns.Length; i++)
@@ -302,10 +300,7 @@ namespace ViewModel.Saving
         {
             //this sql query looks like this:
             //delete from occupancy_types where GroupID = 1 and OcctypeID = 27
-            if (!Connection.Instance.IsOpen)
-            {
-                Connection.Instance.Open();
-            }
+            OpenConnection();
             StringBuilder sb = new StringBuilder("delete from ").Append(tableName).Append(" where ");
             for (int i = 0; i < primaryKeys.Length; i++)
             {
@@ -323,10 +318,7 @@ namespace ViewModel.Saving
         {
             //this sql query looks like this:
             //delete from occupancy_types where GroupID = 1
-            if (!Connection.Instance.IsOpen)
-            {
-                Connection.Instance.Open();
-            }
+            OpenConnection();
             //if the table doesn't exist, then there is nothing to delete
             if(Connection.Instance.GetTable(tableName) == null)
             {

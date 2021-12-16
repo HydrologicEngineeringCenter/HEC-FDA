@@ -98,9 +98,9 @@ namespace ViewModel.Saving.PersistenceManagers
             {
                 await Task.Run(() =>
                 {
-                    if (System.IO.File.Exists(element.FileName))//System.IO.File.Exists(Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name))
+                    if (File.Exists(element.FileName))
                     {
-                        System.IO.File.Delete(element.FileName);//Storage.Connection.Instance.TerrainDirectory + "\\" + element.Name);
+                        File.Delete(element.FileName);
                     }
                 });
             }
