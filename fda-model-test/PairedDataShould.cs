@@ -49,6 +49,27 @@ namespace fda_model_test
             Assert.Equal(expected.Yvals, actual.Yvals);
         }
 
+        [Fact]
+        public void SumYsForGivenX_Test()
+        {
+            double[] inputX = new double[6] { 1, 2, 3, 4.5, 5, 6 };
+            double[] inputY = new double[6] { 10, 20, 30, 45, 50, 60 };
+            PairedData inputPairedData = new PairedData(inputX, inputY);
+
+            double[] subjectX = new double[5] { 2, 3, 4, 5, 6 };
+            double[] subjectY = new double[5] { 20, 30, 40, 50, 60 };
+            PairedData subjectPairedData = new PairedData(subjectX, subjectY);
+
+            double[] expectedX = new double[6] { 1, 2, 3, 4.5, 5, 6 };
+            double[] expectedY = new double[6] { 30, 40, 60, 90, 100, 120 };
+            PairedData expected = new PairedData(expectedX, expectedY);
+
+            IPairedData actual = subjectPairedData.SumYsForGivenX(inputPairedData);
+
+            Assert.Equal(expected.Xvals, actual.Xvals);
+            Assert.Equal(expected.Yvals, actual.Yvals);
+        }
+
         [Theory]
         [InlineData(new double[] { 0, .5, 1 }, new double[] { 0, 1000, 11000 }, 3250)]
         [InlineData(new double[] { 0, .5 }, new double[] { 0, 1000 }, 750)]

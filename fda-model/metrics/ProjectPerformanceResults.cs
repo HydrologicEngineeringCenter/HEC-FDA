@@ -10,6 +10,7 @@ namespace metrics
 {
     public class ProjectPerformance
 {
+        //TODO: Everything should be written in terms on non-exceedance probability 
     private const double AEP_HISTOGRAM_DEFAULT_BINWIDTH = .0001;
     private const double CNEP_HISTOGRAM_DEFAULT_BINWIDTH = .01;
         private ThresholdEnum _thresholdType;
@@ -31,32 +32,25 @@ namespace metrics
         {
             double[] data = new double[1] { aepEstimate };
             IData aep = IDataFactory.Factory(data);
-            if (_aep != null)
+            if (_aep == null)
             {
-                _aep.AddObservationToHistogram(aep);
-            }
-            else
-            {
-                var histo = new Histogram(aep, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
+                var histo = new Histogram(null, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
                 _aep = histo;
+                
             }
-
-
+            _aep.AddObservationToHistogram(aep);
         }
 
-        public void AddStageForCNEP(double standardProbability, double stageForCNEP)
+        public void AddStageForCNEP(double standardNonExceedanceProbability, double stageForCNEP)
         {
             double[] data = new double[1] { stageForCNEP };
             IData stage = IDataFactory.Factory(data);
-            if (_cnep.ContainsKey(standardProbability))
+            if (!_cnep.ContainsKey(standardNonExceedanceProbability))
             {
-                _cnep[standardProbability].AddObservationToHistogram(stage);
+                var histo = new Histogram(null, CNEP_HISTOGRAM_DEFAULT_BINWIDTH);
+                _cnep.Add(standardNonExceedanceProbability, histo);
             }
-            else
-            {
-                var histo = new Histogram(stage, CNEP_HISTOGRAM_DEFAULT_BINWIDTH);
-                _cnep.Add(standardProbability, histo);
-            }
+            _cnep[standardNonExceedanceProbability].AddObservationToHistogram(stage);
         }
 
         public double MeanAEP()
@@ -77,7 +71,7 @@ namespace metrics
 
         public double ConditionalNonExceedanceProbability(double exceedanceProbability)
         {
-            double conditionalNonExceedanceProbability = 1 - _cnep[exceedanceProbability].CDF(_thresholdValue);
+            double conditionalNonExceedanceProbability = _cnep[exceedanceProbability].CDF(_thresholdValue);
             return conditionalNonExceedanceProbability;
         }
 

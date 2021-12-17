@@ -14,11 +14,11 @@ namespace fda_model_test
    
     public class PerformanceTest
     {
-        //These were previously used in pairedDataTest but were moved here to be used for ead compute testing. 
         static double[] Flows = { 0, 100000 };
         static double[] Stages = { 0, 150000 };
         static double[] NonExceedanceProbs = { .5, .8, .9, .96, .98, .99, .996, .998 };
         static double[] StageForNonExceedanceProbs = { 5, 10, 15, 20, 25, 30, 35, 40 };
+        static double[] StandardDeviationOfStage = { 6, 11, 16, 21, 26, 31, 36, 41 };
         static double[] ProbLeveeFailure = { .01, .02, .05, .1, .2, .3, .4, 1 };
         static string xLabel = "x label";
         static string yLabel = "y label";
@@ -28,7 +28,7 @@ namespace fda_model_test
 
         [Theory]
         [InlineData(1234, 1, 0.5)]
-        public void ComputePerformanceWithSimulation(int seed, int iterations, double expected)
+        public void ComputePerformanceWithSimulation_Test(int seed, int iterations, double expected)
         {
 
             Statistics.IDistribution flow_frequency = IDistributionFactory.FactoryUniform(0, 100000, 1000);
@@ -45,21 +45,24 @@ namespace fda_model_test
             {
                 damages[i] = IDistributionFactory.FactoryUniform(0, 600000 * i, 10);
             }
-            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, description, id,  "residential");
-            List<UncertainPairedData> upd = new List<UncertainPairedData>();
-            upd.Add(stage_damage);
 
-            Simulation s = Simulation.builder()
+            UncertainPairedData stage_damage = new UncertainPairedData(Stages, damages, xLabel, yLabel, name, description, id,  "residential");
+            List<UncertainPairedData> uncertainPairedDataList = new List<UncertainPairedData>();
+            uncertainPairedDataList.Add(stage_damage);
+
+
+            Simulation simulation = Simulation.builder()
                 .withFlowFrequency(flow_frequency)
                 .withFlowStage(flow_stage)
-                .withStageDamages(upd)
+                .withStageDamages(uncertainPairedDataList)
                 .build();
-            Threshold threshold = new Threshold(0, ThresholdEnum.ExteriorStage, 150000);
-            s.PerformanceThresholds.AddThreshold(threshold);
-            RandomProvider rp = new RandomProvider(seed);
-            metrics.Results r = s.Compute(rp, iterations);
+            int thresholdID = 1;
+            Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, 150000);
+            simulation.PerformanceThresholds.AddThreshold(threshold);
+            RandomProvider randomProvider = new RandomProvider(seed);
+            metrics.Results results = simulation.Compute(randomProvider, iterations,false);
 
-            double actual = r.Thresholds.ListOfThresholds.Last().Performance.MeanAEP(); 
+            double actual = results.Thresholds.ThresholdsDictionary[thresholdID].Performance.MeanAEP();
             
             double difference = expected - actual;
             double relativeDifference = difference / expected;
@@ -75,14 +78,27 @@ namespace fda_model_test
         [InlineData(30,.01)]
         [InlineData(35, .004)]
         [InlineData(40, .002)]
-        public void ComputeAEP(double thresholdValue, double expected)
+        public void ComputeAEP_Test(double thresholdValue, double expected)
         {
-            ead.Simulation simulation = Simulation.builder().build(); 
-            paireddata.IPairedData frequency_stage = new PairedData(NonExceedanceProbs, StageForNonExceedanceProbs);
-            Threshold threshold = new Threshold(1, ThresholdEnum.ExteriorStage, thresholdValue);
+            //TODO: this needs to be re-written to set up the compute better
+            IDistribution[] stageDistributions = new IDistribution[StageForNonExceedanceProbs.Length];
+            for (int i = 0; i<StageForNonExceedanceProbs.Length; i++)
+            {
+                stageDistributions[i] = new Statistics.Distributions.Deterministic(StageForNonExceedanceProbs[i]);
+            }
+            paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions);
+            ead.Simulation simulation = Simulation.builder()
+                .withFrequencyStage(frequency_stage)
+                .build();
+            int thresholdID = 1;
+            Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, thresholdValue);
             simulation.PerformanceThresholds.AddThreshold(threshold);
-            simulation.ComputePerformance(frequency_stage);
-            double actual = simulation.PerformanceThresholds.ListOfThresholds.First().Performance.MeanAEP();
+            ead.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            int iterations = 1;
+            metrics.Results results = simulation.Compute(meanRandomProvider,iterations,false);
+            double actual = results.Thresholds.ThresholdsDictionary[thresholdID].Performance.MeanAEP();
+            //TODO: why do both of these work? Richard did something wrong, it needs to be fixed.
+            //double actual = simulation.PerformanceThresholds.ThresholdsDictionary[thresholdID].Performance.MeanAEP();
             double difference = expected - actual;
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .02);
@@ -93,14 +109,26 @@ namespace fda_model_test
         [InlineData(30, 10, .095618)]
         [InlineData(35, 30, .113293)]
         [InlineData(40, 50, .095253)]
-        public void ComputeLTEP(double thresholdValue, int years, double expected)
+        public void ComputeLTEP_Test(double thresholdValue, int years, double expected)
         {
-            ead.Simulation simulation = Simulation.builder().build();
-            paireddata.IPairedData frequency_stage = new PairedData(NonExceedanceProbs, StageForNonExceedanceProbs);
-            Threshold threshold = new Threshold(1, ThresholdEnum.ExteriorStage, thresholdValue);
+
+            IDistribution[] stageDistributions = new IDistribution[StageForNonExceedanceProbs.Length];
+            for (int i = 0; i < StageForNonExceedanceProbs.Length; i++)
+            {
+                stageDistributions[i] = new Statistics.Distributions.Deterministic(StageForNonExceedanceProbs[i]);
+            }
+            paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions);
+            ead.Simulation simulation = Simulation.builder()
+                .withFrequencyStage(frequency_stage)
+                .build();
+            int thresholdID = 1;
+            Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, thresholdValue);
+            //TODO: we need a better way of adding thresholds 
             simulation.PerformanceThresholds.AddThreshold(threshold);
-            simulation.ComputePerformance(frequency_stage);
-            double actual = simulation.PerformanceThresholds.ListOfThresholds.First().Performance.LongTermExceedanceProbability(years);
+            ead.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            int iterations = 1;
+            metrics.Results results = simulation.Compute(meanRandomProvider, iterations,false);
+            double actual = results.Thresholds.ThresholdsDictionary[thresholdID].Performance.LongTermExceedanceProbability(years);
             double difference = expected - actual;
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .02);
@@ -109,15 +137,57 @@ namespace fda_model_test
 
         [Theory]
         [InlineData(45,.026)]
-        public void ComputeLeveeAEP(double thresholdValue, double expected)
+        public void ComputeLeveeAEP_Test(double thresholdValue, double expected)
         {
-            ead.Simulation simulation = Simulation.builder().build();
-            paireddata.IPairedData frequency_stage = new PairedData(NonExceedanceProbs, StageForNonExceedanceProbs);
-            paireddata.IPairedData levee_curve = new PairedData(StageForNonExceedanceProbs, ProbLeveeFailure);
-            Threshold threshold = new Threshold(1, ThresholdEnum.ExteriorStage, thresholdValue);
+            IDistribution[] stageDistributions = new IDistribution[StageForNonExceedanceProbs.Length];
+            IDistribution[] failureDistributions = new IDistribution[ProbLeveeFailure.Length];
+            for (int i = 0; i < StageForNonExceedanceProbs.Length; i++)
+            {
+                stageDistributions[i] = new Statistics.Distributions.Deterministic(StageForNonExceedanceProbs[i]);
+                failureDistributions[i] = new Statistics.Distributions.Deterministic(ProbLeveeFailure[i]);
+            }
+            paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions);
+            paireddata.UncertainPairedData levee_curve = new UncertainPairedData(StageForNonExceedanceProbs, failureDistributions);
+            Simulation simulation = Simulation.builder()
+                .withFrequencyStage(frequency_stage)
+                .withLevee(levee_curve)
+                .build();
+            int thresholdID = 1;
+            Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, thresholdValue);
             simulation.PerformanceThresholds.AddThreshold(threshold);
-            simulation.ComputeLeveePerformance(frequency_stage, levee_curve);
-            double actual = simulation.PerformanceThresholds.ListOfThresholds.First().Performance.MeanAEP();
+            ead.MeanRandomProvider meanRandomProvider = new MeanRandomProvider();
+            int iterations = 1;
+            Results results = simulation.Compute(meanRandomProvider, iterations,false);
+            double actual = results.Thresholds.ThresholdsDictionary[thresholdID].Performance.MeanAEP();
+            double difference = expected - actual;
+            double relativeDifference = difference / expected;
+            Assert.True(relativeDifference < .02);
+        }
+
+        [Theory]
+        [InlineData(3456,10000,28.75,.1,.8054)]
+        [InlineData(5678, 10000, 100, .02, .998)]
+        [InlineData(6789, 10000, 60.6, .01, .8382)]
+        [InlineData(9876, 10000, 45.65, .004, .6136)]
+        [InlineData(8765, 10000, 92.59, .002, .9002)]
+        public void ComputeConditionalNonExceedanceProbability_Test(int seed, int iterations, double thresholdValue, double recurrenceInterval, double expected)
+        {
+            double nonExceedanceProbability = 1 - recurrenceInterval;
+            IDistribution[] stageDistributions = new IDistribution[NonExceedanceProbs.Length];
+           for (int i = 0; i<NonExceedanceProbs.Length; i++)
+            {
+                stageDistributions[i] = IDistributionFactory.FactoryNormal(StageForNonExceedanceProbs[i],StandardDeviationOfStage[i]);
+            }
+            UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions);
+            Simulation simulation = Simulation.builder()
+                .withFrequencyStage(frequency_stage)
+                .build();
+            int thresholdID = 1;
+            Threshold threshold = new Threshold(thresholdID, ThresholdEnum.ExteriorStage, thresholdValue);
+            simulation.PerformanceThresholds.AddThreshold(threshold);
+            RandomProvider randomProvider = new RandomProvider(seed);
+            metrics.Results results = simulation.Compute(randomProvider, iterations,false);
+            double actual = results.Thresholds.ThresholdsDictionary[thresholdID].Performance.ConditionalNonExceedanceProbability(nonExceedanceProbability);
             double difference = expected - actual;
             double relativeDifference = difference / expected;
             Assert.True(relativeDifference < .02);
