@@ -218,6 +218,10 @@ namespace ViewModel.AggregatedStageDamage
                     int structID = CalculatedVM.SelectedStructures.GetElementID();
                     LastEditDate = DateTime.Now.ToString("G");
                     AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, LastEditDate, Description, wseID, structID, ManualVM.GetStageDamageCurves(), true);
+                    if (CurrentElement == null)
+                    {
+                        CurrentElement = elem;
+                    }
                     CurrentElement.LastEditDate = LastEditDate;
                     Saving.PersistenceManagers.StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
                     manager.SaveNew(elem);

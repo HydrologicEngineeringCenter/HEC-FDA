@@ -200,6 +200,9 @@ namespace ViewModel.Saving.PersistenceManagers
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
+            string inventoryTable = STRUCTURE_INVENTORY_TABLE_CONSTANT + element.Name;
+            RemoveTable(inventoryTable);
+            RemoveFromGeopackageTable(inventoryTable);
             StudyCacheForSaving.RemoveElement((InventoryElement)element);
 
         }

@@ -103,7 +103,7 @@ namespace ViewModel.ImpactArea
         {
             DatabaseManager.SQLiteManager sqr = new DatabaseManager.SQLiteManager(Storage.Connection.Instance.ProjectFile);
             LifeSimGIS.GeoPackageReader gpr = new LifeSimGIS.GeoPackageReader(sqr);
-            string tableBaseName = ImpactAreaPersistenceManager.IndexPointTableNameConstant;
+            string tableBaseName = ImpactAreaPersistenceManager.IMPACT_AREA_TABLE_PREFIX;
             LifeSimGIS.PolygonFeatures polyFeatures = (LifeSimGIS.PolygonFeatures)gpr.ConvertToGisFeatures(tableBaseName + Name);
             LifeSimGIS.VectorFeatures features = polyFeatures;
             //read from table.

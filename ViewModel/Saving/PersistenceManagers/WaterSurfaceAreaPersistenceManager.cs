@@ -200,7 +200,7 @@ namespace ViewModel.Saving.PersistenceManagers
         public void Remove(ChildElement element)
         {
             RemoveFromParentTable(element, TableName);
-            Storage.Connection.Instance.DeleteTable(PathAndProbTableConstant + element.Name); 
+            RemoveTable(PathAndProbTableConstant + element.Name); 
             //if the wse was imported from old fda, then it won't have associated files.
             WaterSurfaceElevationElement elem = (WaterSurfaceElevationElement)element;
             if (elem.HasAssociatedFiles)
