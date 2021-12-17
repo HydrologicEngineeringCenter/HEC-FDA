@@ -131,12 +131,12 @@ namespace ViewModel.AggregatedStageDamage
         public void EditDamageCurve(object arg1, EventArgs arg2)
         {
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetStageDamageManager(), this, 
+            SaveUndoRedoHelper saveHelper = new SaveUndoRedoHelper(Saving.PersistenceFactory.GetStageDamageManager(), this, 
                 (editorVM) => CreateElementFromEditor(editorVM), 
                 (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
                 (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
             //create action manager
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+            EditorActionManager actionManager = new EditorActionManager()
                 .WithSaveUndoRedo(saveHelper)
                  .WithSiblingRules(this);
 

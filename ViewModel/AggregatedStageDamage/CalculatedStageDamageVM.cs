@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ViewModel.Utilities;
 
 namespace ViewModel.AggregatedStageDamage
 {
@@ -64,6 +65,13 @@ namespace ViewModel.AggregatedStageDamage
             loadDepthGrids();
         }
 
+        public CalculatedStageDamageVM(int wseId, int inventoryID, List<StageDamageCurve> curves)
+        {
+            Rows = new ObservableCollection<CalculatedStageDamageRowItem>();
+            loadStructureInventories();
+            loadDepthGrids();
+        }
+
         private void loadDepthGrids()
         {
             WaterSurfaceElevations = new ObservableCollection<WaterSurfaceElevationElement>();
@@ -93,6 +101,16 @@ namespace ViewModel.AggregatedStageDamage
 
         }
 
+        //private FdaValidationResult Validate()
+        //{
+        //    FdaValidationResult vr = new FdaValidationResult();
+
+        //    List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+        //    if (impactAreaElements.Count == 0)
+        //    {
+        //        vr.AddErrorMessage("An impac")
+        //    }
+        //}
 
         public void CalculateCurves()
         {
@@ -103,19 +121,14 @@ namespace ViewModel.AggregatedStageDamage
 
             //todo validation?
             List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-            if(impactAreaElements.Count == 0)
-            {
-                //then use some sort of default impact area
-            }
-            else
-            {
-                //there should only ever be one impact area
-                ImpactAreaElement impactAreaElement = impactAreaElements[0];
-            }
+            
+            //there should only ever be one impact area. To get to this point we know we have an impact area.
+            ImpactAreaElement impactAreaElement = impactAreaElements[0];
+            
             InventoryElement inventoryElement = SelectedStructures;
-            WaterSurfaceElevationElement waterSurfaceElevationElement =  _SelectedWaterSurfaceElevation;
+            WaterSurfaceElevationElement waterSurfaceElevationElement = SelectedWaterSurfaceElevation;
 
-            //todo delete these dummy rows
+            //todo delete these dummy rows once we have the actual compute in place.
             for (int i = 1;i<11;i++)
             {
                 List<double> xs = new List<double>();
@@ -126,7 +139,7 @@ namespace ViewModel.AggregatedStageDamage
                     ys.Add(j);
                 }
                 ICoordinatesFunction testFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-                Rows.Add(new CalculatedStageDamageRowItem(i , impactAreaElements[0].ImpactAreaRows[0], "testDamCat", testFunc));
+                Rows.Add(new CalculatedStageDamageRowItem(i , impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, testFunc));
             }
             //end dummy rows
 
@@ -134,6 +147,24 @@ namespace ViewModel.AggregatedStageDamage
 
         }
 
+        /// <summary>
+        /// This should only be called after validation has been called. Creating a coordinates funtion from the table
+        /// of values can throw an exception. 
+        /// </summary>
+        /// <returns></returns>
+        public List<StageDamageCurve> GetStageDamageCurves()
+        {
+            List<StageDamageCurve> curves = new List<StageDamageCurve>();
+            foreach (CalculatedStageDamageRowItem r in Rows)
+            {
+                //in theory this call can throw an exception, but we handle that in the validation
+                //if we get here, then the curves should be constructable.
+                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, r.EditorVM.CreateFunctionFromTables());
+                curves.Add(curve);
+            }
+
+            return curves;
+        }
 
 
     }

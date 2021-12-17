@@ -21,14 +21,24 @@ namespace ViewModel.AggregatedStageDamage
     {
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("CurveEditorVM");
 
+        private bool _IsInEditMode;
         private string _SavingText;
         private bool _IsManualRadioSelected = true;
+        private BaseViewModel _CurrentVM;
+
         #region properties
+        public BaseViewModel CurrentVM
+        {
+            get { return _CurrentVM; }
+            set { _CurrentVM = value; NotifyPropertyChanged(); }
+        }
         public bool IsManualRadioSelected
         {
             get { return _IsManualRadioSelected; }
-            set { _IsManualRadioSelected = value; }
+            set { _IsManualRadioSelected = value; UpdateVM(); NotifyPropertyChanged(); }
         }
+
+        
 
         public int UndoRowsSelectedIndex
         {
@@ -81,6 +91,7 @@ namespace ViewModel.AggregatedStageDamage
         #region constructors
         public AggregatedStageDamageEditorVM(IFdaFunction defaultCurve, string xLabel, string yLabel, string chartTitle, EditorActionManager actionManager) : base(defaultCurve, xLabel, yLabel, chartTitle, actionManager)
         {
+            _IsInEditMode = false;
             HasChanges = true;
             _ParameterType = defaultCurve.ParameterType;
             PlotTitle = "Curve";
@@ -88,18 +99,25 @@ namespace ViewModel.AggregatedStageDamage
 
             ManualVM = new ManualStageDamageVM();
             CalculatedVM = new CalculatedStageDamageVM();
+            CurrentVM = ManualVM;
         }
 
         public AggregatedStageDamageEditorVM(ChildElement elem, EditorActionManager actionManager) : base(elem, "", "", "", actionManager)
         {
+            _IsInEditMode = true;
             AggregatedStageDamageElement element = (AggregatedStageDamageElement)elem;
             Name = element.Name;
             Description = element.Description;
             IsManualRadioSelected = element.IsManual;
+            ManualVM = new ManualStageDamageVM(element.Curves);
+            CalculatedVM = new CalculatedStageDamageVM(element.SelectedWSE, element.SelectedStructures, element.Curves);
             if (IsManualRadioSelected)
             {
-                ManualVM = new ManualStageDamageVM(element.Curves);
-                CalculatedVM = new CalculatedStageDamageVM();
+                CurrentVM = ManualVM;
+            }
+            else
+            {
+                CurrentVM = CalculatedVM;
             }
         }
 
@@ -107,7 +125,17 @@ namespace ViewModel.AggregatedStageDamage
 
 
         #region voids       
-
+        private void UpdateVM()
+        {
+            if(_IsManualRadioSelected)
+            {
+                CurrentVM = ManualVM;
+            }
+            else
+            {
+                CurrentVM = CalculatedVM;
+            }
+        }
         /// <summary>
         /// This gets used when using the previous and next buttons.
         /// </summary>
@@ -213,21 +241,60 @@ namespace ViewModel.AggregatedStageDamage
                 bool valid = ValidateManualRows();
                 if (valid)
                 {
-                    //continue saving
-                    int wseID = CalculatedVM.SelectedWaterSurfaceElevation.GetElementID();
-                    int structID = CalculatedVM.SelectedStructures.GetElementID();
-                    LastEditDate = DateTime.Now.ToString("G");
-                    AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, LastEditDate, Description, wseID, structID, ManualVM.GetStageDamageCurves(), true);
-                    if (CurrentElement == null)
-                    {
-                        CurrentElement = elem;
-                    }
-                    CurrentElement.LastEditDate = LastEditDate;
-                    Saving.PersistenceManagers.StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
-                    manager.SaveNew(elem);
-
+                    SaveManualEditCurves();
                 }
-            }  
+            } 
+            else
+            {
+                SaveCalculatedCurves();
+            }
+        }
+
+        private void SaveCalculatedCurves()
+        {
+            int wseID = CalculatedVM.SelectedWaterSurfaceElevation.GetElementID();
+            int structID = CalculatedVM.SelectedStructures.GetElementID();
+            LastEditDate = DateTime.Now.ToString("G");
+            AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, LastEditDate, Description, wseID, structID, CalculatedVM.GetStageDamageCurves(), false);
+            if (CurrentElement == null)
+            {
+                CurrentElement = elem;
+            }
+            CurrentElement.LastEditDate = LastEditDate;
+            Saving.PersistenceManagers.StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
+
+            if (_IsInEditMode)
+            {
+                manager.SaveExisting(CurrentElement, elem);
+            }
+            else
+            {
+                manager.SaveNew(elem);
+            }
+
+        }
+
+        private void SaveManualEditCurves()
+        {
+            //int wseID = CalculatedVM.SelectedWaterSurfaceElevation.GetElementID();
+            //int structID = CalculatedVM.SelectedStructures.GetElementID();
+            LastEditDate = DateTime.Now.ToString("G");
+            AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, LastEditDate, Description, -1, -1, ManualVM.GetStageDamageCurves(), true);
+            if (CurrentElement == null)
+            {
+                CurrentElement = elem;
+            }
+            CurrentElement.LastEditDate = LastEditDate;
+            Saving.PersistenceManagers.StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
+
+            if (_IsInEditMode)
+            {
+                manager.SaveExisting(CurrentElement, elem);
+            }
+            else
+            {
+                manager.SaveNew(elem);
+            }
         }
 
         public override void Save()

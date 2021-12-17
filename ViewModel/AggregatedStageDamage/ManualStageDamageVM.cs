@@ -108,7 +108,11 @@ namespace ViewModel.AggregatedStageDamage
             List<double> ys = new List<double>() { 0, 1, 2, 3, 4 };
             ICoordinatesFunction defaultFunction = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
             //for the id, get the last id and add one
-            int lastRowId = Rows[Rows.Count - 1].ID;
+            int lastRowId = 0;
+            if (Rows.Count != 0)
+            {
+                lastRowId = Rows[Rows.Count - 1].ID;
+            }
             Rows.Add(new ManualStageDamageRowItem(lastRowId+1, _ImpactAreas, _DamageCategories, defaultFunction));
         }
 
@@ -136,9 +140,19 @@ namespace ViewModel.AggregatedStageDamage
 
         public void Remove()
         {
-            if (SelectedRowIndex >= 0)
+            int currentIndex = SelectedRowIndex;
+            if (currentIndex >= 0)
             {
-                Rows.RemoveAt(SelectedRowIndex);
+                Rows.RemoveAt(currentIndex);
+            }
+            //now set the selected index
+            if(currentIndex>=Rows.Count)
+            {
+                SelectedRowIndex = Rows.Count - 1;
+            }
+            else
+            {
+                SelectedRowIndex = currentIndex;
             }
         }
 
@@ -150,8 +164,7 @@ namespace ViewModel.AggregatedStageDamage
         public List<StageDamageCurve> GetStageDamageCurves()
         {
             List<StageDamageCurve> curves = new List<StageDamageCurve>();
-            ObservableCollection<ManualStageDamageRowItem> rows = Rows;
-            foreach (ManualStageDamageRowItem r in rows)
+            foreach (ManualStageDamageRowItem r in Rows)
             {
                 //in theory this call can throw an exception, but we handle that in the validation
                 //if we get here, then the curves should be constructable.

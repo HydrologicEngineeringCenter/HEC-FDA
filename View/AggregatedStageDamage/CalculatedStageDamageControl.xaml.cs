@@ -33,23 +33,25 @@ namespace View.AggregatedStageDamage
 
         private void linkChartViewModel()
         {
-            CalculatedStageDamageVM vm = (CalculatedStageDamageVM)DataContext;
-            int rowIndex = vm.SelectedRowIndex;
-            if (rowIndex >= 0)
+            if(DataContext is CalculatedStageDamageVM vm)
             {
-                CoordinatesFunctionEditorVM editorVM = vm.Rows[rowIndex].EditorVM;
-
-                SciChart2DChartViewModel sciChart2DChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
-                Chart2D chart = new Chart2D(sciChart2DChartViewModel);
-                editorVM.CoordinatesChartViewModel = sciChart2DChartViewModel;
-
-                if (_lastChart != null)
+                int rowIndex = vm.SelectedRowIndex;
+                if (rowIndex >= 0)
                 {
-                    editorGrid.Children.Remove(_lastChart);
+                    CoordinatesFunctionEditorVM editorVM = vm.Rows[rowIndex].EditorVM;
+
+                    SciChart2DChartViewModel sciChart2DChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
+                    Chart2D chart = new Chart2D(sciChart2DChartViewModel);
+                    editorVM.CoordinatesChartViewModel = sciChart2DChartViewModel;
+
+                    if (_lastChart != null)
+                    {
+                        editorGrid.Children.Remove(_lastChart);
+                    }
+                    _lastChart = chart;
+                    editorGrid.Children.Add(chart);
+                    Grid.SetColumn(chart, 2);
                 }
-                _lastChart = chart;
-                editorGrid.Children.Add(chart);
-                Grid.SetColumn(chart, 2);
             }
         }
 
