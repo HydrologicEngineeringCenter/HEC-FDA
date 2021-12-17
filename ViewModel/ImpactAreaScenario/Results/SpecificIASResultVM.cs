@@ -20,7 +20,7 @@ namespace ViewModel.ImpactAreaScenario.Results
         private readonly List<string> _damageReports = new List<string>() { DAMAGE_WITH_UNCERTAINTY, DAMAGE_BY_DAMCAT };
 
         private readonly List<string> _performanceReports = new List<string>() { ANNUAL_EXC_PROB, LONG_TERM_RISK, ASSURANCE_OF_THRESHOLD };
-
+        private readonly metrics.Results _IASResult;
         private string _selectedOutcome;
         private string _selectedReport;
         private ThresholdComboItem _selectedThreshold;
@@ -87,8 +87,9 @@ namespace ViewModel.ImpactAreaScenario.Results
         #endregion
 
         //todo: once we have the actual results object, that will be passed in here
-        public SpecificIASResultVM(string iasName, List<ThresholdRowItem> thresholds)
+        public SpecificIASResultVM(string iasName, List<ThresholdRowItem> thresholds, metrics.Results iasResult)
         {
+            _IASResult = iasResult;
             LoadThresholdData(thresholds);
             loadVMs();
             CurrentResultVM = _damageWithUncertaintyVM;
@@ -124,7 +125,7 @@ namespace ViewModel.ImpactAreaScenario.Results
 
         private void loadVMs()
         {
-            _damageWithUncertaintyVM = new DamageWithUncertaintyVM();
+            _damageWithUncertaintyVM = new DamageWithUncertaintyVM(_IASResult);
             _damageByDamageCategoryVM = new DamageByDamageCategoryVM();
             _performanceAEPVM = new PerformanceAEPVM(Thresholds);
             _performanceAssuranceOfThresholdVM = new PerformanceAssuranceOfThresholdVM(Thresholds);

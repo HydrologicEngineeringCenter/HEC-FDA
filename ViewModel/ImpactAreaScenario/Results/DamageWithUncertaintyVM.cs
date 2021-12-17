@@ -16,8 +16,9 @@ namespace ViewModel.ImpactAreaScenario.Results
 
         public List<EadRowItem> Rows { get; } = new List<EadRowItem>();
         public double Mean { get; set; }
-        public DamageWithUncertaintyVM()
+        public DamageWithUncertaintyVM(metrics.Results iasResult)
         {
+            
             //load with dummy data
             _data = new HistogramData2D(5, 0, new double[] { }, "Chart", "Series", "X Data", "YData");
             ChartViewModel.LineData.Add(_data);
