@@ -3,12 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:View.AggregatedStageDamage"
              xmlns:UserControls="clr-namespace:UserControls.UserControls;assembly=UserControls"
              xmlns:Utilities="clr-namespace:View.Utilities"
-             xmlns:functions="clr-namespace:FunctionsView.View;assembly=FunctionsView"
              mc:Ignorable="d" 
+             xmlns:util="clr-namespace:View.Utilities"
              d:DesignHeight="450" d:DesignWidth="610">
+    <UserControl.Resources>
+        <util:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="35"/>
@@ -38,20 +40,15 @@
         </Grid>
 
         <StackPanel Grid.Row="2" Margin="5" Orientation="Horizontal">
-            <RadioButton x:Name="manual_rad" Content="Manual"  Checked="manual_rad_Checked" IsChecked="{Binding IsManualRadioSelected}" Margin="5,0,0,0"/>
-            <RadioButton x:Name="calculated_rad" Content="Computed" Checked="calculated_rad_Checked" Margin="5,0,0,0"/>
+            <RadioButton x:Name="manual_rad" Content="Manual" IsChecked="{Binding IsManualRadioSelected}" Margin="5,0,0,0"/>
+            <RadioButton x:Name="calculated_rad" Content="Computed" IsChecked="{Binding IsManualRadioSelected,Converter={StaticResource InverseBooleanConverter}}" Margin="5,0,0,0"/>
         </StackPanel>
 
         <ContentControl Grid.Row="3" Content="{Binding CurrentVM}" Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-        <!--<local:ManualStageDamageControl x:Name="manual_control" Grid.Row="3" Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DataContext="{Binding ManualVM}"/>-->
-        <!--<local:CalculatedStageDamageControl x:Name="calculated_control" Grid.Row="3" Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Hidden" DataContext="{Binding CalculatedVM}"/>-->
-
         <Utilities:MessageExpanderControl Grid.Row="4" ExpandedHeight="250" StatusLevel="{Binding SaveStatusLevel}" StatusVisible="{Binding SaveStatusVisible}" />
         <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Utilities:SaveControl Grid.Row="0" Grid.ColumnSpan="2"  />
-            <!--<Utilities:SaveCloseControl Grid.Row="3" VerticalAlignment="Bottom"/>-->
-            <Button Name="save_btn" Content="Save" Width="80" Click="save_btn_Click" Margin="5"/>
+            <Utilities:SaveCloseControl Grid.Row="3" VerticalAlignment="Bottom"/>
         </StackPanel>
     </Grid>
 </UserControl>

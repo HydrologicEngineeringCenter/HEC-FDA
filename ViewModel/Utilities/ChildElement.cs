@@ -91,6 +91,7 @@ namespace ViewModel.Utilities
             }
             return -1;
         }
+
         public virtual void Rename(object sender, EventArgs e)
         {
             //ChildElement oldElement = ((NamedAction)sender).Element;

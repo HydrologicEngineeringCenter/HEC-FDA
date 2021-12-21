@@ -1,15 +1,11 @@
-﻿using ViewModel.ImpactArea;
-using ViewModel.Inventory.DamageCategory;
-using ViewModel.Inventory.OccupancyTypes;
-using Functions;
+﻿using Functions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using Utilities;
+using ViewModel.ImpactArea;
+using ViewModel.Inventory.OccupancyTypes;
 
 namespace ViewModel.AggregatedStageDamage
 {
@@ -18,75 +14,90 @@ namespace ViewModel.AggregatedStageDamage
         public event EventHandler SelectedRowChanged;
 
         private ManualStageDamageRowItem _SelectedRow;
-        private ICoordinatesFunction _DefaultFunction;
         private ObservableCollection<ImpactAreaRowItem> _ImpactAreas;
         private ObservableCollection<String> _DamageCategories;
+        private int _SelectedRowIndex = 0;
         public ObservableCollection<ManualStageDamageRowItem> Rows { get; set; }
         public ManualStageDamageRowItem SelectedRow 
         {
             get { return _SelectedRow; }
             set { _SelectedRow = value; NotifyPropertyChanged(); SelectedRowChanged?.Invoke(this, new EventArgs()); }
         }
-        public int SelectedRowIndex 
-        { 
-            get; 
-            set; 
+
+        public int SelectedRowIndex
+        {
+            get { return _SelectedRowIndex; }
+            set { _SelectedRowIndex = value; NotifyPropertyChanged(); }
         }
 
         public ManualStageDamageVM()
         {
-            loadDefaultCurve();
-            //todo: use actual imp areas and dam cats
             loadImpactAreas();
             loadDamageCategories();
-
             Rows = new ObservableCollection<ManualStageDamageRowItem>();
-            Rows.Add(new ManualStageDamageRowItem(1, _ImpactAreas, _DamageCategories, _DefaultFunction));
-
+            Rows.Add(CreateNewRow(1));
         }
 
         public ManualStageDamageVM(List<StageDamageCurve> curves)
         {
             Rows = new ObservableCollection<ManualStageDamageRowItem>();
-            //todo what if the impact areas or damcats have changed?
             loadImpactAreas();
             loadDamageCategories();
             int i = 1;
             foreach(StageDamageCurve curve in curves)
-            {
+            {     
                 ManualStageDamageRowItem newRow = new ManualStageDamageRowItem(i, _ImpactAreas, _DamageCategories, curve.Function);
+                SelectItemsInRow(curve, newRow);
                 Rows.Add(newRow);
                 i++;
             }
         }
 
-        private void loadDefaultCurve()
+        private ManualStageDamageRowItem CreateNewRow(int id)
+        {
+            return new ManualStageDamageRowItem(id, _ImpactAreas, _DamageCategories, CreateDefaultCurve());
+        }
+
+        private void SelectItemsInRow(StageDamageCurve curve, ManualStageDamageRowItem row)
+        {
+            ImpactAreaRowItem selectedImpArea = curve.ImpArea;
+            string selectedDamCat = curve.DamCat;
+            foreach(ImpactAreaRowItem ia in _ImpactAreas)
+            {
+                if(ia.ID == selectedImpArea.ID)
+                {
+                    row.SelectedImpArea = ia;
+                    break;
+                }
+            }
+            foreach (string dc in _DamageCategories)
+            {
+                if (dc.Equals(selectedDamCat))
+                {
+                    row.SelectedDamCat = dc;
+                    break;
+                }
+            }
+        }
+
+        private ICoordinatesFunction CreateDefaultCurve()
         {
             List<double> xs = new List<double>() { 0,1,2,3,4,5,6,7,8,9 };
             List<double> ys = new List<double>() { 0,1,2,3,4,5,6,7,8,9 };
-            _DefaultFunction = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+            return ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
         }
 
         private void loadImpactAreas()
         {
             _ImpactAreas = new ObservableCollection<ImpactAreaRowItem>();
             List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-            if (impactAreaElements.Count == 0)
-            {
-                //then we will use the default impact area. It should have an ID of 0
-                ImpactAreaRowItem defaultRI = new ImpactAreaRowItem(0,"Default");
-                _ImpactAreas.Add(defaultRI);
 
-            }
-            else
+            //there should only ever be one impact area element
+            foreach (ImpactAreaElement elem in impactAreaElements)
             {
-                //there should only ever be one impact area element
-                foreach (ImpactAreaElement elem in impactAreaElements)
+                foreach (ImpactAreaRowItem row in elem.ImpactAreaRows)
                 {
-                    foreach (ImpactAreaRowItem row in elem.ImpactAreaRows)
-                    {
-                        _ImpactAreas.Add(row);
-                    }
+                    _ImpactAreas.Add(row);
                 }
             }
         }
@@ -102,18 +113,19 @@ namespace ViewModel.AggregatedStageDamage
             }
         }
 
+        /// <summary>
+        /// Adds a row to the list of rows.
+        /// </summary>
         public void Add()
-        {
-            List<double> xs = new List<double>() { 0, 1, 2, 3, 4 };
-            List<double> ys = new List<double>() { 0, 1, 2, 3, 4 };
-            ICoordinatesFunction defaultFunction = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+        {        
             //for the id, get the last id and add one
             int lastRowId = 0;
             if (Rows.Count != 0)
             {
                 lastRowId = Rows[Rows.Count - 1].ID;
             }
-            Rows.Add(new ManualStageDamageRowItem(lastRowId+1, _ImpactAreas, _DamageCategories, defaultFunction));
+            Rows.Add(CreateNewRow(lastRowId+1));
+            SelectedRowIndex = Rows.Count - 1;
         }
 
         public void Copy()
@@ -140,19 +152,23 @@ namespace ViewModel.AggregatedStageDamage
 
         public void Remove()
         {
-            int currentIndex = SelectedRowIndex;
-            if (currentIndex >= 0)
+            //don't allow the removing of the last row
+            if (Rows.Count != 1)
             {
-                Rows.RemoveAt(currentIndex);
-            }
-            //now set the selected index
-            if(currentIndex>=Rows.Count)
-            {
-                SelectedRowIndex = Rows.Count - 1;
-            }
-            else
-            {
-                SelectedRowIndex = currentIndex;
+                int currentIndex = SelectedRowIndex;
+                if (currentIndex >= 0)
+                {
+                    Rows.RemoveAt(currentIndex);
+                }
+                //now set the selected index
+                if (currentIndex >= Rows.Count)
+                {
+                    SelectedRowIndex = Rows.Count - 1;
+                }
+                else
+                {
+                    SelectedRowIndex = currentIndex;
+                }
             }
         }
 
@@ -171,8 +187,56 @@ namespace ViewModel.AggregatedStageDamage
                 StageDamageCurve curve = new StageDamageCurve(r.SelectedImpArea, r.SelectedDamCat, r.EditorVM.CreateFunctionFromTables());
                 curves.Add(curve);
             }
-
             return curves;
+        }
+
+        public bool ValidateForm()
+        {
+            bool areRowsUnique = AreManualRowsUniqueCombinations();
+            bool curvesValid = AreManualCurvesValid();
+            return areRowsUnique && curvesValid;
+        }
+
+        private bool AreManualCurvesValid()
+        {
+            ObservableCollection<ManualStageDamageRowItem> rows = Rows;
+            foreach (ManualStageDamageRowItem r in rows)
+            {
+                try
+                {
+                    r.EditorVM.CreateFunctionFromTables();
+                }
+                catch (Exception ex)
+                {
+                    //we have an invalid curve
+                    String msg = "An invalid curve was detected." + Environment.NewLine +
+                        "Invalid curve: " + r.ID + Environment.NewLine + ex.Message;
+                    MessageBox.Show(msg, "Unable to Save", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool AreManualRowsUniqueCombinations()
+        {
+            HashSet<String> rowPairs = new HashSet<string>();
+            ObservableCollection<ManualStageDamageRowItem> rows = Rows;
+            foreach (ManualStageDamageRowItem row in rows)
+            {
+                //todo do we enforce unique names on the impact area names? I hope so or this won't work
+                String uniqueCombo = row.SelectedImpArea.Name + " | " + row.SelectedDamCat;
+                bool added = rowPairs.Add(uniqueCombo);
+                if (!added)
+                {
+                    //then it was a duplicate
+                    String msg = "Stage-Damage curves must have unique impact area and damage category combinations." + Environment.NewLine +
+                        "Repeat curve: " + row.ID;
+                    MessageBox.Show(msg, "Unable to Save", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
+            }
+            return true;
         }
 
     }

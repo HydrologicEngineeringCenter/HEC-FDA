@@ -1,36 +1,33 @@
-﻿using ViewModel.Editors;
-using ViewModel.Utilities;
-using Functions;
-using Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
+using ViewModel.Editors;
+using ViewModel.ImpactArea;
+using ViewModel.Inventory.OccupancyTypes;
+using ViewModel.Utilities;
 
 namespace ViewModel.AggregatedStageDamage
 {
-    public class AggregatedStageDamageOwnerElement : Utilities.ParentElement
+    public class AggregatedStageDamageOwnerElement : ParentElement
     {
         #region Notes
         #endregion
         #region Fields
         #endregion
-        #region Properties
-        
+        #region Properties  
         #endregion
         #region Constructors
         public AggregatedStageDamageOwnerElement() : base()
         {
             Name = "Aggregated Stage Damage Relationships";
             IsBold = false;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+            CustomTreeViewHeader = new CustomHeaderVM(Name);
 
-            Utilities.NamedAction addDamageCurve = new Utilities.NamedAction();
+            NamedAction addDamageCurve = new NamedAction();
             addDamageCurve.Header = "Create New Aggregated Stage Damage Relationship";
-            addDamageCurve.Action = AddNewDamageCurve;
+            addDamageCurve.Action = AddNewStageDamageCurveSet;
 
-            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
+            List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addDamageCurve);
 
             Actions = localActions;
@@ -53,31 +50,31 @@ namespace ViewModel.AggregatedStageDamage
         {
             RemoveElement(e.Element);
         }
-        public void AddNewDamageCurve(object arg1, EventArgs arg2)
+        public void AddNewStageDamageCurveSet(object arg1, EventArgs arg2)
         {
-            List<double> xValues = new List<double>() { 1,2,3,4,5,6 };
-            List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000 };
-            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
-            IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)func);
+            //An impact area is required
+            List<ImpactAreaElement> impactAreaSet = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+            List<OccupancyTypesElement> occTypeElem = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();
+            if (impactAreaSet.Count == 0)
+            {
+                MessageBox.Show("An impact area set is required to create aggregated stage damage curves.", "Impact Area Set Required", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else if(occTypeElem.Count == 0)
+            {
+                MessageBox.Show("Occupancy types must be imported to create aggregated stage damage curves.", "Occupancy Types Required", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                //create action manager
+                EditorActionManager actionManager = new EditorActionManager()
+                     .WithSiblingRules(this);
 
-            //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetStageDamageManager()
-                , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToCurveEditor(editor, element),
-                (editor, element) => AssignValuesFromCurveEditorToElement(editor, element));
-            //create action manager
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                .WithSaveUndoRedo(saveHelper)
-                 .WithSiblingRules(this);
-
-            AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(defaultCurve, "Stage - Damage", "Stage", "Damage", actionManager);
-            DynamicTabVM tab = new DynamicTabVM("Create Damage Curve", vm, "AddNewDamageCurve");
-            Navigate(tab, false, true);           
+                AggregatedStageDamageEditorVM vm = new AggregatedStageDamageEditorVM(null, "Stage - Damage", "Stage", "Damage", actionManager);
+                DynamicTabVM tab = new DynamicTabVM("Create Damage Curve", vm, "AddNewDamageCurve");
+                Navigate(tab, false, true);
+            }
         }
 
-        public void AssignValuesFromElementToCurveEditor(BaseEditorVM editorVM, ChildElement element)
-        {
-
-        }
         #endregion
         #region Functions
 

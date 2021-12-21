@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:View.AggregatedStageDamage"
              xmlns:functions="clr-namespace:FunctionsView.View;assembly=FunctionsView"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
@@ -12,27 +11,24 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="200" />
             <RowDefinition Height="*" />
-
         </Grid.RowDefinitions>
-
-        
+       
         <GroupBox Header="Stage-Damage Curves" Grid.Row="0" Margin="5" HorizontalAlignment="Left">
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal">
-                    <Button x:Name="add_btn" Content="Add" Margin="5" Click="add_btn_Click" Width="80"/>
-                    <Button x:Name="copy_btn" Content="Copy" Margin="5" Click="copy_btn_Click" Width="80"/>
-                    <Button x:Name="remove_btn" Content="Remove" Margin="5" Click="remove_btn_Click" Width="80"/>
+                    <Button Content="Add" Margin="5" Click="add_btn_Click" Width="80"/>
+                    <Button Content="Copy" Margin="5" Click="copy_btn_Click" Width="80"/>
+                    <Button Content="Remove" Margin="5" Click="remove_btn_Click" Width="80"/>
                 </StackPanel>
-              
-                <ListView x:Name="lst" Height="150" Margin="5" ItemsSource="{Binding Rows}"  SelectedItem="{Binding SelectedRow}" SelectedIndex="{Binding SelectedRowIndex}" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" >
-             
+
+                <ListView Height="150" Margin="5" ItemsSource="{Binding Rows}"  SelectedItem="{Binding SelectedRow}" SelectedIndex="{Binding SelectedRowIndex}" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" >
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Curve" Width="50" DisplayMemberBinding="{Binding ID}" />
                             <GridViewColumn Header="Impact Area" Width="412">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox x:Name="cmb_ImpArea" Width="400" SelectedItem="{Binding SelectedImpArea}"  DisplayMemberPath="Name"                  
+                                        <ComboBox Width="400" SelectedItem="{Binding SelectedImpArea}"  DisplayMemberPath="Name"                  
                                             ItemsSource="{Binding ImpactAreas}"     HorizontalAlignment="Center"     />
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
@@ -40,31 +36,24 @@
                             <GridViewColumn Header="Damage Category" Width="412">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox x:Name="cmb_DamCat" Width="400" SelectedItem="{Binding SelectedDamCat}"                  
+                                        <ComboBox Width="400" SelectedItem="{Binding SelectedDamCat}"                  
                                             ItemsSource="{Binding DamageCategories}"      HorizontalAlignment="Center"   />
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
                         </GridView>
                     </ListView.View>
-
                 </ListView>
-
             </StackPanel>
         </GroupBox>
 
-      
-
-            <Grid x:Name="editorGrid" Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition x:Name="plotColumn" Width="*" MinWidth="200"/>
-                </Grid.ColumnDefinitions>
-                <!--If you are looking for where the plot is, it is added in the code behind. -->
+        <Grid x:Name="editorGrid" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" MinWidth="200"/>
+            </Grid.ColumnDefinitions>
+            <!--If you are looking for where the plot is, it is added in the code behind. -->
             <functions:CoordinatesFunctionEditor  Grid.Column="0" Margin="5" EditorVM="{Binding SelectedRow.EditorVM,Mode=TwoWay}" />
-            </Grid>
-
-
-
+        </Grid>
     </Grid>
 </UserControl>
