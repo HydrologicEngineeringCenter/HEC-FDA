@@ -132,6 +132,15 @@
     <None Update="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Update="Resources\AlternativeComparisonReport_20x20.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Alternatives_20x20.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\ImpactAreaScenario_20x20.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
 	

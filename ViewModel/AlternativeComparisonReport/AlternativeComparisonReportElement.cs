@@ -28,7 +28,7 @@ namespace ViewModel.AlternativeComparisonReport
             Description = desc;
             WithoutProjAltID = withoutProjectAltId;
             WithProjAltIDs = withProjAlternativeIds;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/AlternativeComparisonReport_20x20.png");
             AddActions();
         }
 

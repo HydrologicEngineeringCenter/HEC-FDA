@@ -80,73 +80,70 @@ namespace ViewModel.Inventory
         }
 
         #region Next Button Click
-        private bool ValidateRules(ref string errorMessage)
+        private FdaValidationResult ValidateRules()
         {
-            bool isValid = true;
+            FdaValidationResult vr = new FdaValidationResult();
             Validate();
             if (HasFatalError)
             {
-                isValid = false;
-                errorMessage = Error;
+                vr.AddErrorMessage( Error);
             }
-            return isValid;
+            return vr;
         }
 
-        private bool ValidateTerrainFileExists(ref string errorMessage)
+        private FdaValidationResult ValidateTerrainFileExists()
         {
-            bool isValid = true;
+            FdaValidationResult vr = new FdaValidationResult();
             if (!_DefineSIAttributes.FirstFloorElevationIsSelected && _DefineSIAttributes.FromTerrainFileIsSelected)
             {
                 //then the user wants to use the terrain file to get elevations. Validate that the terrain file exists.
                 List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
                 if (terrainElements.Count == 0)
                 {
-                    errorMessage = "'From Terrain File' has been selected, but no terrain file exists in the study. Import a terrain file to use this option.";
-                    isValid = false;
+                    vr.AddErrorMessage("'From Terrain File' has been selected, but no terrain file exists in the study. Import a terrain file to use this option.");
                 }
             }
-            return isValid;
+            return vr;
         }
 
-        private bool ValidateDefineSIAttributes(ref string errorMessage)
-        {            
+        private FdaValidationResult ValidateDefineSIAttributes()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
             //validate the property rules like "Name".
-            bool isValid = ValidateRules(ref errorMessage);
-            if (isValid)
+            FdaValidationResult rulesValid = ValidateRules();
+            if (!rulesValid.IsValid)
             {
-                //validate that all the required selections have been made.
-                isValid = _DefineSIAttributes.ValidateSelectionsMade(ref errorMessage);
-                if(isValid)
-                {
-                    isValid = ValidateTerrainFileExists(ref errorMessage);
-                    if (isValid)
-                    {
-                        //if we are still valid, then check for missing data in the database file.
-                        StructuresMissingDataManager missingDataManager = _DefineSIAttributes.Validate(ref errorMessage);
-                        if (missingDataManager.GetRows().Count > 0)
-                        {
-                            StructureMissingElevationEditorVM vm = new StructureMissingElevationEditorVM(missingDataManager.GetRows(), _DefineSIAttributes.FirstFloorElevationIsSelected, _DefineSIAttributes.FromTerrainFileIsSelected);
-                            DynamicTabVM tab = new DynamicTabVM("Missing Data", vm, "missingData");
-                            Navigate(tab);
-                            isValid = false;
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK);
-                }
-            }
-            else
-            {
-                MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK);
+                vr.AddErrorMessage(rulesValid.ErrorMessage);
             }
 
-            return isValid;
+            //validate that all the required selections have been made.
+            FdaValidationResult selectionsResult = _DefineSIAttributes.ValidateSelectionsMade();
+            if (!selectionsResult.IsValid)
+            {
+                vr.AddErrorMessage(selectionsResult.ErrorMessage);
+            }
+
+            FdaValidationResult terrainValidation = ValidateTerrainFileExists();
+            if (!terrainValidation.IsValid)
+            {
+                vr.AddErrorMessage(terrainValidation.ErrorMessage);
+            }            
+
+            return vr;
+        }
+
+        private bool CheckForMissingValues()
+        {
+            bool missingValues = false;
+            StructuresMissingDataManager missingDataManager = _DefineSIAttributes.Validate();
+            if (missingDataManager.GetRows().Count > 0)
+            {
+                StructureMissingElevationEditorVM vm = new StructureMissingElevationEditorVM(missingDataManager.GetRows(), _DefineSIAttributes.FirstFloorElevationIsSelected, _DefineSIAttributes.FromTerrainFileIsSelected);
+                DynamicTabVM tab = new DynamicTabVM("Missing Data", vm, "missingData");
+                Navigate(tab);
+                missingValues = true;
+            }
+            return missingValues;
         }
 
         private void SaveStructureInventory()
@@ -178,28 +175,40 @@ namespace ViewModel.Inventory
 
         public bool NextButtonClicked()
         {
-            string errorMessage = null;
+            bool isValid = false;
             //todo: the point of this boolean is so that the code behind and make some changes in the view. Ideally
             //this would get changed to use binding and we could get rid of this boolean.
-            bool isValid = true;
             if (CurrentView is DefineSIAttributesVM)
             {
                 //Run validation before moving on to the next screen
-                isValid = ValidateDefineSIAttributes(ref errorMessage);
-                if (isValid)
+                FdaValidationResult defineSIResults = ValidateDefineSIAttributes();
+                if (defineSIResults.IsValid)
                 {
-                    SwitchToAttributeLinkingList();
-                }           
+                    bool missingValues = CheckForMissingValues();
+                    if (!missingValues)
+                    {
+                        SwitchToAttributeLinkingList();
+                        isValid = true;
+                    }
+                }  
+                else
+                {
+                    MessageBox.Show(defineSIResults.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             else if (CurrentView is AttributeLinkingListVM)
             {
-                isValid = _AttributeLinkingList.AreRowsValid();
-                if (isValid)
+                FdaValidationResult rowsValidResult = _AttributeLinkingList.AreRowsValid();
+                if (rowsValidResult.IsValid)
                 {
                     SaveStructureInventory();
+                    isValid = true;
+                }
+                else
+                {
+                    MessageBox.Show(rowsValidResult.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-
             return isValid;
         }
 
