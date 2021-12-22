@@ -42,6 +42,7 @@ namespace View.AggregatedStageDamage
             if (DataContext is ManualStageDamageVM vm)
             {
                 vm.Remove();
+                linkChartViewModel();
             }
         }
 

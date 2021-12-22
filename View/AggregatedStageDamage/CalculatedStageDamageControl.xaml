@@ -11,7 +11,7 @@
     <UserControl.Resources>
         <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </UserControl.Resources>
-    <Grid x:Name="MainGrid">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*"/>
@@ -39,11 +39,11 @@
             <Label Grid.Row="2" Grid.Column="0" Content="Structures:" HorizontalAlignment="Right"/>
             <ComboBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Margin="5" ItemsSource="{Binding Structures}" SelectedItem="{Binding SelectedStructures}" DisplayMemberPath="Name"/>
 
-            <Button x:Name="calculate_btn" Grid.Row="3" Content="Compute Curves" Grid.ColumnSpan="2" Width="100" HorizontalAlignment="Left" Margin="5" Click="calculate_btn_Click"/>
+            <Button Grid.Row="3" Content="Compute Curves" Grid.ColumnSpan="2" Width="100" HorizontalAlignment="Left" Margin="5" Click="calculate_btn_Click"/>
         </Grid>
      
         <GroupBox Grid.Row="0" Grid.Column="1"  Header="Generated Curves" Margin="10,5,5,5" HorizontalAlignment="Left">
-            <ListView x:Name="lst" Height="150" Margin="5" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" SelectedIndex="{Binding SelectedRowIndex}" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+            <ListView Height="150" Margin="5" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" SelectedIndex="{Binding SelectedRowIndex}" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto" >
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="ID" Width="30" DisplayMemberBinding="{Binding ID}" />
@@ -57,7 +57,7 @@
         <Grid x:Name="editorGrid" Grid.Row="1" Grid.ColumnSpan="2" Visibility="{Binding ShowChart, Converter={StaticResource BoolToVisibilityConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition x:Name="plotColumn" Width="*" MinWidth="200"/>
+                <ColumnDefinition Width="*" MinWidth="200"/>
             </Grid.ColumnDefinitions>
             <!--If you are looking for where the plot is, it is added in the code behind. -->
             <functions:CoordinatesFunctionEditor  Grid.Column="0" Margin="5" EditorVM="{Binding SelectedRow.EditorVM,Mode=TwoWay}" />
