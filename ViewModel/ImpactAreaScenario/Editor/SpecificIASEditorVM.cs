@@ -386,7 +386,10 @@ namespace ViewModel.ImpactAreaScenario.Editor
 
                 DamageCategories.Clear();
                 DamageCategories.AddRange(stageDamageCurves);
-                SelectedDamageCurve = DamageCategories[0];
+                if (DamageCategories.Count > 0)
+                {
+                    SelectedDamageCurve = DamageCategories[0];
+                }
             }
         }
 

@@ -35,7 +35,7 @@ namespace ViewModel.Alternatives
             Name = name;
             Description = description;
             IASElementSets.AddRange(IASElements);
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Alternatives_20x20.png");
             AddActions();
         }
 

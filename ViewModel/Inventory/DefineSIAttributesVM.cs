@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using ViewModel.Saving.PersistenceManagers;
+using ViewModel.Utilities;
 
 namespace ViewModel.Inventory
 {
@@ -161,6 +162,14 @@ namespace ViewModel.Inventory
             _YearRow.Items.AddRange(allColumnNames);
             _ModuleRow.Items.Clear();
             _ModuleRow.Items.AddRange(allColumnNames);
+            _BegDamDepthRow.Items.Clear();
+            _BegDamDepthRow.Items.AddRange(allColumnNames);
+            _YearInConstructionRow.Items.Clear();
+            _YearInConstructionRow.Items.AddRange(allColumnNames);
+            _NotesRow.Items.Clear();
+            _NotesRow.Items.AddRange(allColumnNames);
+            _OtherRow.Items.Clear();
+            _OtherRow.Items.AddRange(allColumnNames);
         }
 
         private List<string> GetColumnNames()
@@ -221,8 +230,9 @@ namespace ViewModel.Inventory
         /// </summary>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
-        private List<StructureMissingDataRowItem> GetMissingTerrainElevations(ref string errorMessage)
+        private List<StructureMissingDataRowItem> GetMissingTerrainElevations()
         {
+            string errorMessage = null;
             List<StructureMissingDataRowItem> missingDataRows = new List<StructureMissingDataRowItem>();
             int badElevationNumber = -9999;
 
@@ -260,23 +270,50 @@ namespace ViewModel.Inventory
         /// </summary>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
-        public bool ValidateSelectionsMade(ref string errorMessage)
+        public FdaValidationResult ValidateSelectionsMade()
         {
-            bool isValid = true;
-            isValid = ValidateSIAttributes(ref errorMessage);
-            if (isValid)
+            FdaValidationResult vr = ValidateSIAttributes();
+            if (vr.IsValid)
             {
                 List<StructureMissingDataRowItem> missingDataRows = AreAllStructureValuesDefinedForRow(_StructureIDRow, MissingDataType.ID);
                 if (missingDataRows.Count > 0)
                 {
-                    isValid = false;
-                    errorMessage = "There are missing values in the selected structure id column.";
+                    vr.AddErrorMessage( "There are missing values in the selected structure id column.");
+                }
+                else
+                {
+                    FdaValidationResult validationResult = AreStructureIdsUnique();
+                    if(!validationResult.IsValid)
+                    {
+                        vr.AddErrorMessage( validationResult.ErrorMessage);
+                    }
                 }
             }
-            return isValid;
+            return vr;
         }
 
-        public StructuresMissingDataManager Validate(ref string errorMessage)
+        private FdaValidationResult AreStructureIdsUnique()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            if (File.Exists(System.IO.Path.ChangeExtension(_Path, "dbf")))
+            {
+                DbfReader dbf = new DbfReader(System.IO.Path.ChangeExtension(Path, ".dbf"));
+                DataTableView dtv = dbf.GetTableManager(dbf.GetTableNames()[0]);
+
+                object[] rows = dtv.GetColumn(_StructureIDRow.SelectedItem);
+                object[] distincRows = rows.Distinct().ToArray();
+                if(rows.Count() != distincRows.Count())
+                {
+                    //then there are duplicates
+                    vr.AddErrorMessage("Duplicate structure ID's were found. This is not allowed.");
+                }               
+            }
+
+            return vr;
+        }
+
+        public StructuresMissingDataManager Validate()
         {
             StructuresMissingDataManager missingDataManager = new StructuresMissingDataManager();
 
@@ -285,7 +322,7 @@ namespace ViewModel.Inventory
                 missingDataManager.AddStructuresWithMissingData(AreAllStructureValuesDefinedForRow(_FoundationHeightRow, MissingDataType.FoundationHt));
                 if (FromTerrainFileIsSelected)
                 {
-                    List<StructureMissingDataRowItem> missingTerrainElevRows = GetMissingTerrainElevations(ref errorMessage);
+                    List<StructureMissingDataRowItem> missingTerrainElevRows = GetMissingTerrainElevations();
                     missingDataManager.AddStructuresWithMissingData(missingTerrainElevRows);
                 }
                 else
@@ -343,34 +380,26 @@ namespace ViewModel.Inventory
         /// </summary>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
-        private bool ValidateSIAttributes(ref string errorMessage)
+        private FdaValidationResult ValidateSIAttributes()
         {
-            bool isValid = true;
-
+            FdaValidationResult vr = new FdaValidationResult();
             //these are the shared required rows
             if(!_StructureIDRow.IsValid())
             {
-                isValid = false;
-                errorMessage = "A structure id selection is required.";
+                vr.AddErrorMessage( "A structure ID selection is required.");
             }
-            else if(!_OccupancyTypeRow.IsValid())
+            if(!_OccupancyTypeRow.IsValid())
             {
-                isValid = false;
-                errorMessage = "An occupancy type selection is required.";
+                vr.AddErrorMessage("An occupancy type selection is required.");
             }
-            else if (!_StructureValueRow.IsValid())
-            {
-                isValid = false;
-                errorMessage = "A structure value selection is required.";
-            }
+           
 
             if (FirstFloorElevationIsSelected)
             {
                 //first floor elevation
                 if (!_FirstFloorElevRow.IsValid())
                 {
-                    isValid = false;
-                    errorMessage = "A first floor elevation selection is required.";
+                   vr.AddErrorMessage( "A first floor elevation selection is required.");
                 }
             }
             else
@@ -378,20 +407,23 @@ namespace ViewModel.Inventory
                 //found height
                 if (!_FoundationHeightRow.IsValid())
                 {
-                    isValid = false;
-                    errorMessage = "A foundation height selection is required.";
+                    vr.AddErrorMessage( "A foundation height selection is required.");
                 }
                 if(!FromTerrainFileIsSelected)
                 {
                     if (!_GroundElevRow.IsValid())
                     {
-                        isValid = false;
-                        errorMessage = "A ground elevation selection is required.";
+                        vr.AddErrorMessage("A ground elevation selection is required.");
                     }
                 }
             }
 
-            return isValid;
+            if (!_StructureValueRow.IsValid())
+            {
+                vr.AddErrorMessage("A structure value selection is required.");
+            }
+
+            return vr;
         }
 
         /// <summary>

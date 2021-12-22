@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using ViewModel.Inventory.OccupancyTypes;
+using ViewModel.Utilities;
 
 namespace ViewModel.Inventory
 {
@@ -107,16 +108,15 @@ namespace ViewModel.Inventory
         /// </summary>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
-        public bool AreRowsValid()
+        public FdaValidationResult AreRowsValid()
         {
-            bool isValid = true;
+            FdaValidationResult vr = new FdaValidationResult();
             List<OccTypeSelectionRowItem> rowsWithSelections = Rows.Where(row => row.SelectionMade()).ToList();
             if(rowsWithSelections.Count != Rows.Count)
             {
-                MessageBox.Show("A selection must be made for each occupancy type.", "Error", MessageBoxButton.OK);
-                isValid = false;
+                vr.AddErrorMessage("A selection must be made for each occupancy type.");
             }
-            return isValid;
+            return vr;
         }
 
         #endregion

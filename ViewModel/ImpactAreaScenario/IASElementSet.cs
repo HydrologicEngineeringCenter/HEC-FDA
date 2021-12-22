@@ -55,7 +55,7 @@ namespace ViewModel.ImpactAreaScenario
             Description = description;
             AnalysisYear = year;
 
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/Condition.png");
+            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/ImpactAreaScenario_20x20.png");
 
             AddActions();
         }
