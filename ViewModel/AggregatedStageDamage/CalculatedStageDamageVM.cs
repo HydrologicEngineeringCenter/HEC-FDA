@@ -1,13 +1,12 @@
-﻿using ViewModel.ImpactArea;
-using ViewModel.Inventory;
-using ViewModel.WaterSurfaceElevation;
-using Functions;
+﻿using Functions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
+using ViewModel.ImpactArea;
+using ViewModel.Inventory;
+using ViewModel.Utilities;
+using ViewModel.WaterSurfaceElevation;
 
 namespace ViewModel.AggregatedStageDamage
 {
@@ -21,9 +20,15 @@ namespace ViewModel.AggregatedStageDamage
         private ObservableCollection<InventoryElement> _StructureInventoryElements;
         private InventoryElement _SelectedStructureInventoryElement;
         private CalculatedStageDamageRowItem _SelectedRow;
-
+        private bool _ShowChart;
 
         public ObservableCollection<CalculatedStageDamageRowItem> Rows { get; set; }
+
+        public bool ShowChart
+        {
+            get { return _ShowChart; }
+            set { _ShowChart = value; NotifyPropertyChanged(); }
+        }
         public CalculatedStageDamageRowItem SelectedRow
         {
             get { return _SelectedRow; }
@@ -63,7 +68,55 @@ namespace ViewModel.AggregatedStageDamage
             loadStructureInventories();
             loadDepthGrids();
         }
+        
+        public CalculatedStageDamageVM(int wseId, int inventoryID, List<StageDamageCurve> curves)
+        {
+            Rows = new ObservableCollection<CalculatedStageDamageRowItem>();
+            loadStructureInventories();
+            SelectInventory(inventoryID);
+            loadDepthGrids();
+            SelectDepthGrid(wseId);
+            LoadCurves(curves);
+        }
 
+        private void LoadCurves(List<StageDamageCurve> curves)
+        {
+            int i = 1;
+            foreach (StageDamageCurve curve in curves)
+            {
+                CalculatedStageDamageRowItem newRow = new CalculatedStageDamageRowItem(i, curve.ImpArea, curve.DamCat, curve.Function);
+                Rows.Add(newRow);
+                i++;
+            }
+            if(Rows.Count>0)
+            {
+                ShowChart = true;
+                SelectedRowIndex = 0;
+            }
+        }
+
+        private void SelectInventory(int inventoryID)
+        {
+            foreach(InventoryElement ie in Structures)
+            {
+                if(ie.GetElementID() == inventoryID)
+                {
+                    SelectedStructures = ie;
+                    break;
+                }
+            }
+        }
+        private void SelectDepthGrid(int waterID)
+        {
+            foreach(WaterSurfaceElevationElement wat in WaterSurfaceElevations)
+            {
+                if(wat.GetElementID() == waterID)
+                {
+                    SelectedWaterSurfaceElevation = wat;
+                    break;
+                }
+            }
+        }
         private void loadDepthGrids()
         {
             WaterSurfaceElevations = new ObservableCollection<WaterSurfaceElevationElement>();
@@ -90,9 +143,17 @@ namespace ViewModel.AggregatedStageDamage
             {
                 SelectedStructures = Structures[0];
             }
-
         }
 
+        private FdaValidationResult ValidateForCompute()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            if(SelectedWaterSurfaceElevation == null || SelectedStructures == null)
+            {
+                vr.AddErrorMessage("A water surface elevation and a structure inventory selection is required to compute.");
+            }
+            return vr;
+        }
 
         public void CalculateCurves()
         {
@@ -101,39 +162,80 @@ namespace ViewModel.AggregatedStageDamage
             //These objects basically hold an impact area, damcat, coordinates function. The coordinates function gets created by using
             //the ICoordinatesFunctionsFactory. To get the curves to show up in the UI you just add them to the "Rows" property.
 
-            //todo validation?
-            List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
-            if(impactAreaElements.Count == 0)
+            FdaValidationResult vr = ValidateForCompute();
+            if (vr.IsValid)
             {
-                //then use some sort of default impact area
+                //we know that we have an impact area, we need to verify that we have a structure inventory
+                List<ImpactAreaElement> impactAreaElements = StudyCache.GetChildElementsOfType<ImpactAreaElement>();
+
+                //there should only ever be one impact area. To get to this point we know we have an impact area.
+                ImpactAreaElement impactAreaElement = impactAreaElements[0];
+
+                InventoryElement inventoryElement = SelectedStructures;
+                WaterSurfaceElevationElement waterSurfaceElevationElement = SelectedWaterSurfaceElevation;
+
+                //todo delete these dummy rows once we have the actual compute in place.
+                for (int i = 1; i < 11; i++)
+                {
+                    List<double> xs = new List<double>();
+                    List<double> ys = new List<double>();
+                    for (int j = 0; j <= i; j++)
+                    {
+                        xs.Add(j);
+                        ys.Add(j);
+                    }
+                    ICoordinatesFunction testFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
+                    Rows.Add(new CalculatedStageDamageRowItem(i, impactAreaElements[0].ImpactAreaRows[0], "testDamCat" + i, testFunc));
+                }
+                //end dummy rows
+                ShowChart = true;
+                if (Rows.Count > 0)
+                {
+                    SelectedRowIndex = 0;
+                }
             }
             else
             {
-                //there should only ever be one impact area
-                ImpactAreaElement impactAreaElement = impactAreaElements[0];
+                MessageBox.Show(vr.ErrorMessage, "Unable to Compute", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            InventoryElement inventoryElement = SelectedStructures;
-            WaterSurfaceElevationElement waterSurfaceElevationElement =  _SelectedWaterSurfaceElevation;
-
-            //todo delete these dummy rows
-            for (int i = 1;i<11;i++)
-            {
-                List<double> xs = new List<double>();
-                List<double> ys = new List<double>();
-                for(int j=0;j<=i;j++)
-                {
-                    xs.Add(j);
-                    ys.Add(j);
-                }
-                ICoordinatesFunction testFunc = ICoordinatesFunctionsFactory.Factory(xs, ys, InterpolationEnum.Linear);
-                Rows.Add(new CalculatedStageDamageRowItem(i , impactAreaElements[0].ImpactAreaRows[0], "testDamCat", testFunc));
-            }
-            //end dummy rows
-
-
-
         }
 
+        public FdaValidationResult ValidateForm()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+            if (SelectedWaterSurfaceElevation == null)
+            {
+                vr.AddErrorMessage("A water surface elevation must be selected.");
+            }
+            if (SelectedStructures == null)
+            {
+                vr.AddErrorMessage("A structure inventory must be selected.");
+            }
+            if (Rows.Count == 0)
+            {
+                vr.AddErrorMessage("No curves have been computed. Compute curves to save.");
+            }
+            return vr;
+        }
+
+        /// <summary>
+        /// This should only be called after validation has been called. Creating a coordinates funtion from the table
+        /// of values can throw an exception. 
+        /// </summary>
+        /// <returns></returns>
+        public List<StageDamageCurve> GetStageDamageCurves()
+        {
+            List<StageDamageCurve> curves = new List<StageDamageCurve>();
+            foreach (CalculatedStageDamageRowItem r in Rows)
+            {
+                //in theory this call can throw an exception, but we handle that in the validation
+                //if we get here, then the curves should be constructable.
+                StageDamageCurve curve = new StageDamageCurve(r.ImpactArea, r.DamageCategory, r.EditorVM.CreateFunctionFromTables());
+                curves.Add(curve);
+            }
+
+            return curves;
+        }
 
 
     }

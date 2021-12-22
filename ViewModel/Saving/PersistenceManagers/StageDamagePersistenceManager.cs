@@ -1,14 +1,9 @@
-﻿using ViewModel.AggregatedStageDamage;
-using ViewModel.Utilities;
-using Functions;
-using Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
+using ViewModel.AggregatedStageDamage;
+using ViewModel.Utilities;
 
 namespace ViewModel.Saving.PersistenceManagers
 {
@@ -22,20 +17,19 @@ namespace ViewModel.Saving.PersistenceManagers
         private const int SELECTED_STRUCTURE_COL = 6;
         private const int CURVES_COL = 7;
 
-
         //ELEMENT_TYPE is used to store the type in the log tables. Initially i was actually storing the type
         //of the element. But since they get stored as strings if a developer changes the name of the class
         //you would no longer get any of the old logs. So i use this constant.
         private const string ELEMENT_TYPE = "Stage_Damage";
         private static readonly FdaLogging.FdaLogger LOGGER = new FdaLogging.FdaLogger("StageDamagePersistenceManager");
+        private const String STAGE_DAMAGE_CURVES_TAG = "StageDamageCurves";
 
 
         private const string TABLE_NAME = "stage_damage_relationships";
         internal override string ChangeTableConstant { get { return "Aggregated Stage Damage Function - "; } }
         private static readonly string[] TableColNames = { NAME, LAST_EDIT_DATE, DESCRIPTION, "is_manual", "selected_wse", "selected_structures", "curves" };
     
-
-    private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string), typeof(bool), typeof(int), typeof(int), typeof(string) };
+        private static readonly Type[] TableColTypes = { typeof(string), typeof(string), typeof(string), typeof(bool), typeof(int), typeof(int), typeof(string) };
         /// <summary>
         /// The types of the columns in the parent table
         /// </summary>
@@ -72,7 +66,6 @@ namespace ViewModel.Saving.PersistenceManagers
             }
         }
 
-
         public override string[] TableColumnNames
         {
             get
@@ -86,35 +79,11 @@ namespace ViewModel.Saving.PersistenceManagers
             StudyCacheForSaving = studyCache;
         }
 
-
-
         #region utilities
         private object[] GetRowDataFromElement(AggregatedStageDamageElement element)
         {
             return new object[] { element.Name, element.LastEditDate, element.Description,
                element.IsManual, element.SelectedWSE, element.SelectedStructures, WriteCurvesToXML(element.Curves) };
-
-        }
-
-        private bool canStageDamageElementBeEdited(CreationMethodEnum creationMethod)
-        {
-            switch(creationMethod)
-            {
-                case CreationMethodEnum.Imported:
-                case CreationMethodEnum.InventoryBased:
-                    {
-                        return false;
-                    }
-                case CreationMethodEnum.UserDefined:
-                    {
-                        return true;
-                    }
-                default:
-                    {
-                        return false;
-                    }
-            }
-
         }
 
         public override ChildElement CreateElementFromRowData(object[] rowData)
@@ -156,13 +125,11 @@ namespace ViewModel.Saving.PersistenceManagers
         }
         public void SaveExisting(ChildElement oldElement, ChildElement elementToSave, int changeTableIndex)
         {
-            if (elementToSave.Description == null) { elementToSave.Description = ""; }
-
-            //if (DidParentTableRowValuesChange(elementToSave, GetRowDataFromElement((AggregatedStageDamageElement)elementToSave),oldElement.Name, TableName) 
-              //  || !oldElement.Curve.Equals(elementToSave.Curve) )//AreCurvesDifferent(oldElement.Curve, elementToSave.Curve))
-            {
-                base.SaveExisting(oldElement, elementToSave, changeTableIndex);
+            if (elementToSave.Description == null) 
+            { 
+                elementToSave.Description = ""; 
             }
+            base.SaveExisting(oldElement, elementToSave, changeTableIndex);
         }
 
         public void Load()
@@ -173,7 +140,6 @@ namespace ViewModel.Saving.PersistenceManagers
                 StudyCacheForSaving.AddElement(elem);
             }
         }
-
 
         public ObservableCollection<FdaLogging.LogItem> GetLogMessages(ChildElement element)
         {
@@ -226,8 +192,7 @@ namespace ViewModel.Saving.PersistenceManagers
             }
 
             int elemId = GetElementId(TableName, nameOfTotalFunctionInParentTable);
-           
-            
+                    
             return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
                 element.Curve.DistributionType, ((AggregatedStageDamageElement)element).Method,
                 element.Curve.WriteToXML().ToString(),
@@ -245,10 +210,6 @@ namespace ViewModel.Saving.PersistenceManagers
             int elemId = GetElementId(TableName, element.Name);
             //the new stateId will be one higher than the max that is in the table already.
             int stateId = Storage.Connection.Instance.GetMaxStateIndex(ChangeTableName, elemId, ELEMENT_ID_COL_NAME, STATE_INDEX_COL_NAME) + 1;
-            //return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
-            //    element.Curve.DistributionType, ((AggregatedStageDamageElement)element).Method,
-            //    element.Curve.WriteToXML().ToString(),
-            //    stateId};
 
             return new object[] {elemId, element.Name, element.LastEditDate, element.Description,
                element.IsManual, element.SelectedWSE, element.SelectedStructures, WriteCurvesToXML(element.Curves), stateId};
@@ -258,10 +219,7 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             return GetRowDataFromElement((AggregatedStageDamageElement)elem);
         }
-
-        private const String STAGE_DAMAGE_CURVES_TAG = "StageDamageCurves";
-        
-
+      
         private XElement WriteCurvesToXML(List<StageDamageCurve> curves)
         {
             XElement curvesElement = new XElement(STAGE_DAMAGE_CURVES_TAG);
@@ -285,7 +243,5 @@ namespace ViewModel.Saving.PersistenceManagers
 
             return curves;
         }
-        
-
     }
 }

@@ -737,51 +737,51 @@ namespace ViewModel.Study
         public T GetParentElementOfType<T>() where T:ParentElement
         {
             var parentType = typeof(T);
-            if (parentType is TerrainOwnerElement)
+            if (parentType == typeof(TerrainOwnerElement))
             {
                 return TerrainParent as T;
             }
-            if (parentType is ImpactAreaOwnerElement)
+            if (parentType == typeof( ImpactAreaOwnerElement))
             {
                 return ImpactAreaParent as T;
             }
-            if (parentType is WaterSurfaceElevationOwnerElement)
+            if (parentType == typeof( WaterSurfaceElevationOwnerElement))
             {
                 //todo: is this needed? Doesn't look like it.
             }
-            if (parentType is AnalyticalFrequencyOwnerElement)
+            if (parentType == typeof(AnalyticalFrequencyOwnerElement))
             {
                 return FlowFrequencyParent as T;
             }
-            if (parentType is InflowOutflowOwnerElement)
+            if (parentType == typeof(InflowOutflowOwnerElement))
             {
                 return InflowOutflowParent as T;
             }
-            if (parentType is RatingCurveOwnerElement)
+            if (parentType == typeof(RatingCurveOwnerElement))
             {
                 return RatingCurveParent as T;
             }
-            if (parentType is ExteriorInteriorOwnerElement)
+            if (parentType == typeof(ExteriorInteriorOwnerElement))
             {
                 return ExteriorInteriorParent as T;
             }
-            if (parentType is LeveeFeatureOwnerElement)
+            if (parentType == typeof(LeveeFeatureOwnerElement))
             {
                 return LeveeFeatureParent as T;
             }
-            if (parentType is OccupancyTypesOwnerElement)
+            if (parentType == typeof(OccupancyTypesOwnerElement))
             {
                 return OccTypeParent as T;
             }
-            if (parentType is StructureInventoryOwnerElement)
+            if (parentType == typeof(StructureInventoryOwnerElement))
             {
                 return StructureInventoryParent as T;
             }
-            if (parentType is AggregatedStageDamageOwnerElement)
+            if (parentType == typeof(AggregatedStageDamageOwnerElement))
             {
                 return StageDamageParent as T;
             }
-            if (parentType is IASOwnerElement)
+            if (parentType == typeof(IASOwnerElement))
             {
                 return IASParent as T;
             }

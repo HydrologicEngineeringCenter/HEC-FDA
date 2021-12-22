@@ -1,21 +1,10 @@
-﻿using ViewModel.AggregatedStageDamage;
-using FunctionsView.ViewModel;
+﻿using FunctionsView.ViewModel;
 using HEC.Plotting.SciChart2D.Charts;
 using HEC.Plotting.SciChart2D.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using ViewModel.AggregatedStageDamage;
 
 namespace View.AggregatedStageDamage
 {
@@ -33,33 +22,34 @@ namespace View.AggregatedStageDamage
 
         private void linkChartViewModel()
         {
-            CalculatedStageDamageVM vm = (CalculatedStageDamageVM)DataContext;
-            int rowIndex = vm.SelectedRowIndex;
-            if (rowIndex >= 0)
+            if(DataContext is CalculatedStageDamageVM vm)
             {
-                CoordinatesFunctionEditorVM editorVM = vm.Rows[rowIndex].EditorVM;
-
-                SciChart2DChartViewModel sciChart2DChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
-                Chart2D chart = new Chart2D(sciChart2DChartViewModel);
-                editorVM.CoordinatesChartViewModel = sciChart2DChartViewModel;
-
-                if (_lastChart != null)
+                if (vm.Rows.Count > 0)
                 {
-                    editorGrid.Children.Remove(_lastChart);
+                    CoordinatesFunctionEditorVM editorVM = vm.Rows[vm.SelectedRowIndex].EditorVM;
+
+                    SciChart2DChartViewModel sciChart2DChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
+                    Chart2D chart = new Chart2D(sciChart2DChartViewModel);
+                    editorVM.CoordinatesChartViewModel = sciChart2DChartViewModel;
+
+                    if (_lastChart != null)
+                    {
+                        editorGrid.Children.Remove(_lastChart);
+                    }
+                    _lastChart = chart;
+                    editorGrid.Children.Add(chart);
+                    Grid.SetColumn(chart, 2);
                 }
-                _lastChart = chart;
-                editorGrid.Children.Add(chart);
-                Grid.SetColumn(chart, 2);
             }
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            CalculatedStageDamageVM vm = (CalculatedStageDamageVM)this.DataContext;
-            vm.SelectedRowChanged += Vm_SelectedRowChanged;
-            //make sure the first row is selected
-            lst.SelectedIndex = lst.Items.Count - 1;
-            linkChartViewModel();
+            if (DataContext is CalculatedStageDamageVM vm)
+            {
+                vm.SelectedRowChanged += Vm_SelectedRowChanged;
+                linkChartViewModel();
+            }
         }
 
         private void Vm_SelectedRowChanged(object sender, EventArgs e)
@@ -69,12 +59,9 @@ namespace View.AggregatedStageDamage
 
         private void calculate_btn_Click(object sender, RoutedEventArgs e)
         {
-            CalculatedStageDamageVM vm = (CalculatedStageDamageVM)this.DataContext;
-            vm.CalculateCurves();
-            editorGrid.Visibility = Visibility.Visible;
-            if (lst.Items.Count > 0)
+            if (DataContext is CalculatedStageDamageVM vm)
             {
-                lst.SelectedIndex = 0;
+                vm.CalculateCurves();
             }
         }
     }

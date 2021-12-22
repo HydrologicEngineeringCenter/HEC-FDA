@@ -132,6 +132,14 @@
         <DataTemplate DataType="{x:Type AggregatedVM:AggregatedStageDamageEditorVM }" >
             <AggregatedView:AggregatedStageDamage/>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type AggregatedVM:ManualStageDamageVM }" >
+            <AggregatedView:ManualStageDamageControl/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type AggregatedVM:CalculatedStageDamageVM }" >
+            <AggregatedView:CalculatedStageDamageControl/>
+        </DataTemplate>
+
         <!--FrequencyRelationships Region-->
         <DataTemplate DataType="{x:Type FrequencyRelationshipsVM:AnalyticalFrequencyEditorVM }" >
             <FrequencyRelationshipsView:AnalyticalFrequencyEditor/>
