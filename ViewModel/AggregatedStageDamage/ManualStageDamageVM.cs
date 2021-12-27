@@ -192,9 +192,28 @@ namespace ViewModel.AggregatedStageDamage
 
         public bool ValidateForm()
         {
+            //are there at least 2 points per curve
+            bool atLeast2Points = AreThereTwoPointsPerCurve();
             bool areRowsUnique = AreManualRowsUniqueCombinations();
             bool curvesValid = AreManualCurvesValid();
-            return areRowsUnique && curvesValid;
+            return areRowsUnique && curvesValid && atLeast2Points;
+        }
+
+        private bool AreThereTwoPointsPerCurve()
+        {
+            bool atLeastTwoPoints = true;
+            foreach (ManualStageDamageRowItem r in Rows)
+            {
+                ICoordinatesFunction coordFunc = r.EditorVM.CreateFunctionFromTables();
+                if(coordFunc.Coordinates.Count<2)
+                {
+                    atLeastTwoPoints = false;
+                    String msg = "Mannually entered curves must have at least 2 points.";
+                    MessageBox.Show(msg, "Two Points Required", MessageBoxButton.OK, MessageBoxImage.Error);
+                    break;
+                }
+            }
+            return atLeastTwoPoints;
         }
 
         private bool AreManualCurvesValid()

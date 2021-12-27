@@ -77,13 +77,6 @@ namespace ViewModel.AggregatedStageDamage
 
         #endregion
         #region Functions
-
-        public ChildElement CreateElementFromEditor(BaseEditorVM vm)
-        {
-            CurveEditorVM editorVM = (CurveEditorVM)vm;
-            string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
-            return new AggregatedStageDamageElement(editorVM.Name, editDate, editorVM.Description, editorVM.Curve, CreationMethodEnum.UserDefined);
-        }
         #endregion
     }
 }

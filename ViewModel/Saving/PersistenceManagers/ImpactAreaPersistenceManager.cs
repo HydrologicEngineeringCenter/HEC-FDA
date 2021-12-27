@@ -121,13 +121,23 @@ namespace ViewModel.Saving.PersistenceManagers
         {
             if (element.GetType() == typeof(ImpactAreaElement))
             {
+                //the row items have id's of -1 at this point because they have not been saved. When the element gets added to the cache
+                //they still have -1 which causes problems down the road. Because we only ever have one impact area element, i can just 
+                //assign the id's. This is assuming that the database will start the id's at 1. 
+                ImpactAreaElement impactAreaElement = (ImpactAreaElement)element;
+                for(int i= 0;i<impactAreaElement.ImpactAreaRows.Count;i++)
+                {
+                    impactAreaElement.ImpactAreaRows[i].ID = i+1;
+                }
                 string editDate = DateTime.Now.ToString("G");
                 element.LastEditDate = editDate;
-                SaveNewElementToParentTable(GetRowDataFromElement((ImpactAreaElement)element), TableName, TableColumnNames, TableColumnTypes);
-                SaveImpactAreaTable((ImpactAreaElement)element);
-                StudyCacheForSaving.AddElement((ImpactAreaElement)element);
+                SaveNewElementToParentTable(GetRowDataFromElement(impactAreaElement), TableName, TableColumnNames, TableColumnTypes);
+                SaveImpactAreaTable(impactAreaElement);
+                StudyCacheForSaving.AddElement(impactAreaElement);
             }
         }
+
+        
 
         public void Remove(ChildElement element)
         {
