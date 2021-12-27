@@ -12,6 +12,7 @@
 		<Description>A library providing functionality for MVVM ViewModels</Description>
 		<Authors>Will Lehman</Authors>
 		<RepositoryUrl>https://github.com/HenryGeorgist/Framework</RepositoryUrl>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	<ItemGroup>
