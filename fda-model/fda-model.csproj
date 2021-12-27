@@ -11,6 +11,7 @@
 		<Description>A library for handling HEC-FDA Flood Risk Analysis computations</Description>
 		<Authors>Hydrologic Engineering Center</Authors>
 		<RepositoryUrl>https://github.com/HydrologicEngineeringCenter/fda-model</RepositoryUrl>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	
