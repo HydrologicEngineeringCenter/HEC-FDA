@@ -52,7 +52,7 @@ namespace ViewModel.Validation
             _errorLevel = Base.Enumerations.ErrorLevel.Unassigned;
             try
             {
-                foreach (Rule r in _rules)
+                foreach (IRule r in _rules)
                 {
                     if (!r.Expression())
                     {
@@ -70,7 +70,7 @@ namespace ViewModel.Validation
             catch (Exception e)
             {
                 _errors.Add(e.Message);
-
+                _errorLevel = Base.Enumerations.ErrorLevel.Fatal;
                 //NotifyPropertyChanged(nameof(Error));
                 //if(HasError != prevState) { NotifyPropertyChanged(nameof(HasError)); }
             }
