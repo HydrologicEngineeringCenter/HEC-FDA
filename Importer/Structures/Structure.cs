@@ -267,15 +267,17 @@ namespace Importer
         //}
         //Basically i am going to have to build the datatable from all these structures and do what i did in the "next" button click
         //in "ImportStrucuturesFromShape...". Somehow i will have to use the northing and easting to fill the geometry blob. 
-        public object[] CreateFDA2DatabaseRow(string occTypeGroupName)
+        public object[] CreateFDA2DatabaseRow(string structureID, string occTypeGroupName)
         {
             //geom, occtype, occtypeGroupName, found ht, struct value, cont value, other value, veh value, firstfloorelev, ground elev, year, module
-            object[] row = new object[14];
+            object[] row = new object[18];
             //fid
             //this is not a concept that old fda has. I will just put -1 for now.
-            row[0] = -1;// SidReachId;
+            row[0] = -1;
             //geom, 
-            row[1] = -1;// NorthingCoordinate; //add easting coordinate
+            row[1] = -1;
+            //Structure ID
+            row[2] = structureID;
             //occtype, 
             row[2] = "??"; //CategoryName? - damage category - add dam cat column to db?
             //dam cat
@@ -301,7 +303,14 @@ namespace Importer
             row[12] = YearInServiceInt;
             //module
             row[13] = StructureModuleName;
-
+            //Beginning Damage Depth
+            row[14] = "";
+            //YearInConstruction
+            row[15] = "";
+            //Notes
+            row[16] = "";
+            //other
+            row[17] = "";
             return row;
 
         }

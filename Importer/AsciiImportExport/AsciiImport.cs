@@ -285,7 +285,7 @@ namespace Importer
             DataTable dt = manager.CreateEmptyStructuresTable();
             foreach (KeyValuePair<string, Structure> kvp in structureList.Structures)
             {
-                object[] structRow = kvp.Value.CreateFDA2DatabaseRow(_FileName);
+                object[] structRow = kvp.Value.CreateFDA2DatabaseRow(kvp.Key, _FileName);
                 dt.Rows.Add(structRow);
             }
             StructuresForFDA2 = dt;
@@ -299,7 +299,7 @@ namespace Importer
             DataTable dt = manager.CreateEmptyStructuresTable();
             foreach (KeyValuePair<string, Structure> kvp in structureList.Structures)
             {
-                object[] structRow = kvp.Value.CreateFDA2DatabaseRow(_FileName);
+                object[] structRow = kvp.Value.CreateFDA2DatabaseRow(kvp.Key, _FileName);
                 dt.Rows.Add(structRow);
             }
             //the data table needs to be saved first.
