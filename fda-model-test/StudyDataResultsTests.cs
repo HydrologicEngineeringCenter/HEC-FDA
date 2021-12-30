@@ -15,6 +15,14 @@ namespace fda_model_test
     {
         static IDistribution LP3Distribution = IDistributionFactory.FactoryLogPearsonIII(3.537, .438, .075, 125);
         static double[] RatingCurveFlows = { 0, 1500, 2120, 3140, 4210, 5070, 6240, 7050, 9680 };
+
+        static string xLabel = "x label";
+        static string yLabel = "y label";
+        static string name = "name";
+        static string description = "description";
+        static int id = 1;
+
+
         static IDistribution[] StageDistributions =
         {
             IDistributionFactory.FactoryNormal(458,0),
@@ -48,8 +56,8 @@ namespace fda_model_test
         public void ComputeMeanEAD_Test(double expected)
         {
             IDistribution flowFrequency = IDistributionFactory.FactoryLogPearsonIII(3.537, .438, .075, 125);
-            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions);
-            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, "residential");
+            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name, description, id);
+            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, description, id, "residential");
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
             Simulation simulation = Simulation.builder()
@@ -69,8 +77,8 @@ namespace fda_model_test
         public void ComputeMeanEADWithIterations_Test(int iterations, int seed, double expected)
         {
             IDistribution flowFrequency = IDistributionFactory.FactoryLogPearsonIII(3.537, .438, .075, 125);
-            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions);
-            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, "residential");
+            UncertainPairedData flowStage = new UncertainPairedData(RatingCurveFlows, StageDistributions, xLabel, yLabel, name, description, id);
+            UncertainPairedData stageDamage = new UncertainPairedData(StageDamageStages, DamageDistrbutions, xLabel, yLabel, name, description, id, "residential");
             List<UncertainPairedData> stageDamageList = new List<UncertainPairedData>();
             stageDamageList.Add(stageDamage);
             Simulation simulation = Simulation.builder()

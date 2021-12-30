@@ -86,7 +86,7 @@ namespace fda_model_test
             {
                 stageDistributions[i] = new Statistics.Distributions.Deterministic(StageForNonExceedanceProbs[i]);
             }
-            paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions);
+            paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description, id);
             ead.Simulation simulation = Simulation.builder()
                 .withFrequencyStage(frequency_stage)
                 .build();
@@ -117,7 +117,7 @@ namespace fda_model_test
             {
                 stageDistributions[i] = new Statistics.Distributions.Deterministic(StageForNonExceedanceProbs[i]);
             }
-            paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions);
+            paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description, id);
             ead.Simulation simulation = Simulation.builder()
                 .withFrequencyStage(frequency_stage)
                 .build();
@@ -146,8 +146,8 @@ namespace fda_model_test
                 stageDistributions[i] = new Statistics.Distributions.Deterministic(StageForNonExceedanceProbs[i]);
                 failureDistributions[i] = new Statistics.Distributions.Deterministic(ProbLeveeFailure[i]);
             }
-            paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions);
-            paireddata.UncertainPairedData levee_curve = new UncertainPairedData(StageForNonExceedanceProbs, failureDistributions);
+            paireddata.UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description, id);
+            paireddata.UncertainPairedData levee_curve = new UncertainPairedData(StageForNonExceedanceProbs, failureDistributions, xLabel, yLabel, name, description, id);
             Simulation simulation = Simulation.builder()
                 .withFrequencyStage(frequency_stage)
                 .withLevee(levee_curve)
@@ -178,7 +178,7 @@ namespace fda_model_test
             {
                 stageDistributions[i] = IDistributionFactory.FactoryNormal(StageForNonExceedanceProbs[i],StandardDeviationOfStage[i]);
             }
-            UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions);
+            UncertainPairedData frequency_stage = new UncertainPairedData(NonExceedanceProbs, stageDistributions, xLabel, yLabel, name, description, id);
             Simulation simulation = Simulation.builder()
                 .withFrequencyStage(frequency_stage)
                 .build();
