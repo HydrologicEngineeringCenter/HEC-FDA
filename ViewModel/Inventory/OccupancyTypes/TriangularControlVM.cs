@@ -39,11 +39,16 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 WasModified?.Invoke(this, new EventArgs());
             }
         }
-        public string LabelString { get; set; }
+        public string MinLabelString { get; set; }
+        public string MaxLabelString { get; set; }
+        public bool DisplayMostLikely { get; set; }
 
-        public TriangularControlVM(double mode, double min, double max, string labelString)
+
+        public TriangularControlVM(double mode, double min, double max, string minLabelString, string maxLabelString, bool displayMostLikely = false)
         {
-            LabelString = labelString;
+            DisplayMostLikely = displayMostLikely;
+            MinLabelString = minLabelString;
+            MaxLabelString = maxLabelString;
             MostLikely = mode;
             Min = min;
             Max = max;

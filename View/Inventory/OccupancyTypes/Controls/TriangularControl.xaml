@@ -5,7 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HEC.FDA.View.Inventory.OccupancyTypes.Controls"
              mc:Ignorable="d" 
+             xmlns:utils="clr-namespace:View.Utilities"
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -16,18 +20,18 @@
         <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
             <Label Content="Min:"/>
             <TextBox Width="60" Height="22" Text="{Binding Min, Mode=TwoWay}" TextAlignment="Center"/>
-            <Label Content="{Binding LabelString}"/>
+            <Label Content="{Binding MinLabelString}"/>
         </StackPanel>
-        
-        <!--<StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center">
+
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding DisplayMostLikely, Converter={StaticResource BoolToVisibilityConverter}}">
             <Label Content="Most Likely"/>
-            <TextBox Text="0" IsEnabled="False" Width="60" Height="22" TextAlignment="Center"/>
-        </StackPanel>-->
+            <TextBox Text="0" Width="60" Height="22" TextAlignment="Center"/>
+        </StackPanel>
 
         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
             <Label Content="Max:" />
             <TextBox x:Name="txt_StandDeviation" Text="{Binding Max, Mode=TwoWay}" Width="60" Height="22" TextAlignment="Center"/>
-            <Label Content="{Binding LabelString}"/>
+            <Label Content="{Binding MaxLabelString}"/>
         </StackPanel>
 
     </Grid>

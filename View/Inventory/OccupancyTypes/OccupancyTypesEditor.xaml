@@ -22,6 +22,7 @@
             <!--<RowDefinition Height="Auto"/>-->
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
             
         <Grid Grid.Row="0" Grid.Column="0" Margin="0,0,5,0">
@@ -126,10 +127,14 @@
             <Button Content="Cancel" Height="23" Name="CancelButton" Width="45" Margin="5,0,0,0" />
         </StackPanel>-->
 
-        <Button Name="btn_SaveAll" Grid.Row="1" Grid.Column="0" Width="50" Height="22" Margin="5,5,10,5" HorizontalAlignment="Right" Content="Save All" VerticalAlignment="Bottom" Click="btn_SaveAll_Click"/>
+        <!--<Button Name="btn_SaveAll" Grid.Row="1" Grid.Column="0" Width="50" Height="22" Margin="5,5,10,5" HorizontalAlignment="Right" Content="Save All" VerticalAlignment="Bottom" Click="btn_SaveAll_Click"/>-->
 
         
         <!--<Utils:OKCloseControl Grid.Row="2" HorizontalAlignment="Right" Grid.ColumnSpan="2"/>-->
+        <Utils:MessageExpanderControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  ExpandedHeight="250" StatusLevel="{Binding SaveStatusLevel}" StatusVisible="{Binding SaveStatusVisible}" />
+        <Label Grid.Row="2"  Name="lbl_Saving" Content="{Binding SavingText}" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="10" Width="185" Margin="0,0,100,5"/>
+
+        <Utils:SaveCloseControl Grid.Row="2" HorizontalAlignment="Right" Grid.ColumnSpan="2" VerticalAlignment="Bottom"/>
 
     </Grid>
 </UserControl>

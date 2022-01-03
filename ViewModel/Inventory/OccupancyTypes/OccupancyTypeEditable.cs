@@ -142,6 +142,29 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 IsModified = true; 
             }
         }
+        private ValueUncertaintyVM _ContentToStructureValueUncertainty;
+        public ValueUncertaintyVM ContentToStructureValueUncertainty
+        {
+            get { return _ContentToStructureValueUncertainty; }
+            set
+            {
+                _ContentToStructureValueUncertainty = value;
+                _ContentToStructureValueUncertainty.WasModified += SomethingChanged;
+                IsModified = true;
+            }
+        }
+
+        private ValueUncertaintyVM _OtherToStructureValueUncertainty;
+        public ValueUncertaintyVM OtherToStructureValueUncertainty
+        {
+            get { return _OtherToStructureValueUncertainty; }
+            set
+            {
+                _OtherToStructureValueUncertainty = value;
+                _OtherToStructureValueUncertainty.WasModified += SomethingChanged;
+                IsModified = true;
+            }
+        }
 
         private ValueUncertaintyVM _VehicleValueUncertainty;
         public ValueUncertaintyVM VehicleValueUncertainty 
@@ -320,13 +343,18 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
             //create the value uncertainty vm's
             string valueUncertaintyLabel = "% of Mean";
-            StructureValueUncertainty = new ValueUncertaintyVM(clonedOcctype.StructureValueUncertainty, clonedOcctype.StructureUncertaintyType, valueUncertaintyLabel);
-            ContentValueUncertainty = new ValueUncertaintyVM(clonedOcctype.ContentValueUncertainty, clonedOcctype.ContentUncertaintyType, valueUncertaintyLabel);
-            VehicleValueUncertainty = new ValueUncertaintyVM(clonedOcctype.VehicleValueUncertainty, clonedOcctype.VehicleUncertaintyType, valueUncertaintyLabel);
-            OtherValueUncertainty = new ValueUncertaintyVM(clonedOcctype.OtherValueUncertainty, clonedOcctype.OtherUncertaintyType, valueUncertaintyLabel);
+            StructureValueUncertainty = new MonetaryValueUncertaintyVM(clonedOcctype.StructureValueUncertainty);
+            ContentValueUncertainty = new MonetaryValueUncertaintyVM(clonedOcctype.ContentValueUncertainty);
+            VehicleValueUncertainty = new MonetaryValueUncertaintyVM(clonedOcctype.VehicleValueUncertainty);
+            OtherValueUncertainty = new MonetaryValueUncertaintyVM(clonedOcctype.OtherValueUncertainty);
 
-            string foundationHtLabel = "Feet";
-            FoundationHeightUncertainty = new ValueUncertaintyVM(clonedOcctype.FoundationHeightUncertainty, clonedOcctype.FoundationHtUncertaintyType, foundationHtLabel);
+            //create the value uncertainties in the other tab
+            //todo: what do i pass in here?
+            ContentToStructureValueUncertainty = new OtherValueUncertaintyVM(clonedOcctype.ContentValueUncertainty);
+            OtherToStructureValueUncertainty = new OtherValueUncertaintyVM(clonedOcctype.OtherValueUncertainty);
+
+            string foundationHtLabel = "";
+            FoundationHeightUncertainty = new FoundationValueUncertaintyVM(clonedOcctype.FoundationHeightUncertainty);
             HasChanges = false;
         }
 
@@ -818,6 +846,32 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
                                         .Append("Foundation Height Uncertainty: ").Append(e.Message);
                 string logMessage = "Error constructing foundation height uncertainty: " + e.Message;
+                constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
+            }
+
+            try
+            {
+                ot.ContentToStructureValueUncertainty = ContentToStructureValueUncertainty.CreateOrdinate();
+            }
+            catch (Exception e)
+            {
+                success = false;
+                errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
+                                        .Append("Content to structure: ").Append(e.Message);
+                string logMessage = "Error constructing content to structure uncertainty: " + e.Message;
+                constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
+            }
+
+            try
+            {
+                ot.OtherToStructureValueUncertainty = OtherToStructureValueUncertainty.CreateOrdinate();
+            }
+            catch (Exception e)
+            {
+                success = false;
+                errorMsg.Append(Environment.NewLine).Append('\t').Append('\t').Append('\t')
+                                        .Append("Other to structure: ").Append(e.Message);
+                string logMessage = "Error constructing other to structure uncertainty: " + e.Message;
                 constructionErrors.Add(LogItemFactory.FactoryTemp(LoggingLevel.Fatal, logMessage));
             }
 

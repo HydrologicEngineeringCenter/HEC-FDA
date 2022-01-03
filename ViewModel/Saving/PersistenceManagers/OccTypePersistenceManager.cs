@@ -31,20 +31,17 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private const int FOUND_HT_UNCERTAINTY_TYPE_COL = 5;
         private const int FOUND_HT_UNCERTAINTY_COL = 6; 
 
-        private const int IS_STRUCT_SELECTED_COL = 7;
-        private const int VAR_STRUCT_TYPE_COL = 8;
-        private const int VAR_STRUCT_VALUE_COL = 9;
-        private const int STRUCT_CURVE_COL = 10;
+        private const int IS_CONT_SELECTED_COL = 9;
+        private const int VAR_CONT_VALUE_COL = 10;
+        private const int CONTENT_CURVE_COL = 11;  
 
         private const int IS_CONT_SELECTED_COL = 11;
         private const int VAR_CONT_TYPE_COL = 12;
         private const int VAR_CONT_VALUE_COL = 13;
         private const int CONTENT_CURVE_COL = 14;  
 
-        private const int IS_VEH_SELECTED_COL = 15;
-        private const int VAR_VEH_TYPE_COL = 16;
-        private const int VAR_VEH_VALUE_COL = 17;
-        private const int VEHICLE_CURVE_COL = 18;
+        private const int CONTENT_TO_STRUCT_VALUE_COL = 18;
+        private const int CONTENT_TO_STRUCT_UNCERTAINTY_COL = 19;
 
         private const int IS_OTHER_SELECTED_COL = 19;
         private const int VAR_OTHER_TYPE_COL = 20;
@@ -85,12 +82,13 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             get
             {
-                return new string[] {"GroupID","OcctypeID", "Name", "Description", "DamageCategory",
-                    "FoundHtUncertaintyType", "FoundHtUncertainty",
-                    "IsStructChecked", "StructValueType", "StructValueUncertainty", "StuctureFunction",
-                    "IsContChecked", "ContValueType", "ContentValueUncertainty", "ContentFunction",
-                    "IsVehicleChecked", "VehicleValueType", "VehicleValueUncertainty", "VehicleFunction",
-                    "IsOtherChecked", "OtherValueType", "OtherValueUncertainty", "OtherFunction" };
+                return new string[] {"GroupID","OcctypeID", "Name", 
+                    "Description", "DamageCategory","FoundHtUncertainty",
+                    "IsStructChecked", "StructValueUncertainty", "StuctureFunction",
+                    "IsContChecked", "ContentValueUncertainty", "ContentFunction",
+                    "IsVehicleChecked", "VehicleValueUncertainty", "VehicleFunction",
+                    "IsOtherChecked", "OtherValueUncertainty", "OtherFunction", 
+                    "ContentToStruct", "ContToStructUncert", "OtherToStruct", "OtherToStructUncert" };
             }
         }
 
@@ -99,12 +97,13 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             get
             {
                 return new Type[] {
-                    typeof(int), typeof(int), typeof(string), typeof(string), typeof(string), 
-                    typeof(string), typeof(string),
-                    typeof(bool), typeof(string), typeof(string), typeof(string),
-                    typeof(bool), typeof(string), typeof(string), typeof(string),
-                    typeof(bool), typeof(string), typeof(string), typeof(string),
-                    typeof(bool), typeof(string), typeof(string), typeof(string) };
+                    typeof(int), typeof(int), typeof(string),
+                    typeof(string), typeof(string),  typeof(string),
+                    typeof(bool),  typeof(string), typeof(string),
+                    typeof(bool),  typeof(string), typeof(string),
+                    typeof(bool), typeof(string), typeof(string),
+                    typeof(bool), typeof(string), typeof(string),
+                    typeof(double), typeof(string), typeof(double), typeof(string)};
             }
         }
 
@@ -124,32 +123,29 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             string damCatName = (string)rowData[DAM_CAT_COL];
 
             string foundHtUncertaintyXML = (string)rowData[FOUND_HT_UNCERTAINTY_COL];
-            string foundHtUncertaintyType = (string)rowData[FOUND_HT_UNCERTAINTY_TYPE_COL];
 
             //structures
             bool isStructTabChecked = Convert.ToBoolean(rowData[IS_STRUCT_SELECTED_COL]);
-            string structValueType = (string)rowData[VAR_STRUCT_TYPE_COL];
             string structValueUncertaintyXML = (string)rowData[VAR_STRUCT_VALUE_COL];
             string structDepthDamageXML = (string)rowData[STRUCT_CURVE_COL];
 
             //content
             bool isContenTabChecked = Convert.ToBoolean(rowData[IS_CONT_SELECTED_COL]);
-            string contValueType = (string)rowData[VAR_CONT_TYPE_COL];
             string contentValueUncertaintyXML = (string)rowData[VAR_CONT_VALUE_COL];
             string contentDepthDamageXML = (string)rowData[CONTENT_CURVE_COL];
 
             //vehicle
             bool isVehicleTabChecked = Convert.ToBoolean(rowData[IS_VEH_SELECTED_COL]);
-            string vehicleValueType = (string)rowData[VAR_VEH_TYPE_COL];
             string vehicleValueUncertaintyXML = (string)rowData[VAR_VEH_VALUE_COL];
             string vehicleDepthDamageXML = (string)rowData[VEHICLE_CURVE_COL];
 
             //other
             bool isOtherTabChecked = Convert.ToBoolean(rowData[IS_OTHER_SELECTED_COL]);
-            string otherValueType = (string)rowData[VAR_OTHER_TYPE_COL];
             string otherValueUncertaintyXML = (string)rowData[VAR_OTHER_VALUE_COL];
             string otherDepthDamageXML = (string)rowData[OTHER_CURVE_COL];
 
+            double contentToStructure = Convert.ToDouble( rowData[CONTENT_TO_STRUCT_VALUE_COL]);
+            double otherToStructure = Convert.ToDouble(rowData[OTHER_TO_STRUCT_VALUE_COL]);
 
             Dictionary<string, bool[]> selectedTabsDictionary = new Dictionary<string, bool[]>();
             List<IOccupancyType> listOfOccTypes = new List<IOccupancyType>();
@@ -576,6 +572,10 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             SaveNew(elem);
         }
 
+        /// <summary>
+        /// Updates the name of the group in the group table.
+        /// </summary>
+        /// <param name="groups"></param>
         public void SaveModifiedGroups(List<IOccupancyTypeGroupEditable> groups)
         {
             //these get saved to the parent table.
@@ -1048,22 +1048,22 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             return occtypes;
         }
 
-        private ValueUncertaintyType GetValueUncertaintyType(string value)
-        {
-            if (value == ValueUncertaintyType.PercentOfMean.ToString())
-            {
-                return ValueUncertaintyType.PercentOfMean;
-            }
-            else if (value == ValueUncertaintyType.DeviationFromMean.ToString())
-            {
-                return ValueUncertaintyType.DeviationFromMean;
-            }
-            else if (value == ValueUncertaintyType.Actual.ToString())
-            {
-                return ValueUncertaintyType.Actual;
-            }
-            throw new NotImplementedException("The value was of an unknown type: " + value);
-        }
+        //private ValueUncertaintyType GetValueUncertaintyType(string value)
+        //{
+        //    if (value == ValueUncertaintyType.PercentOfMean.ToString())
+        //    {
+        //        return ValueUncertaintyType.PercentOfMean;
+        //    }
+        //    else if (value == ValueUncertaintyType.DeviationFromMean.ToString())
+        //    {
+        //        return ValueUncertaintyType.DeviationFromMean;
+        //    }
+        //    else if (value == ValueUncertaintyType.Actual.ToString())
+        //    {
+        //        return ValueUncertaintyType.Actual;
+        //    }
+        //    throw new NotImplementedException("The value was of an unknown type: " + value);
+        //}
 
         private IOccupancyType CreateOcctypeFromRow(object[] rowData)
         {
@@ -1075,29 +1075,24 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             string damCatName = (string)rowData[DAM_CAT_COL];
 
             string foundHtUncertaintyXML = (string)rowData[FOUND_HT_UNCERTAINTY_COL];
-            string foundHtUncertaintyType = (string)rowData[FOUND_HT_UNCERTAINTY_TYPE_COL];
 
             //structures
             bool isStructTabChecked = Convert.ToBoolean(rowData[IS_STRUCT_SELECTED_COL]);
-            string structValueType = (string)rowData[VAR_STRUCT_TYPE_COL];
             string structValueUncertaintyXML = (string)rowData[VAR_STRUCT_VALUE_COL];
             string structDepthDamageXML = (string)rowData[STRUCT_CURVE_COL];
 
             //content
             bool isContenTabChecked = Convert.ToBoolean(rowData[IS_CONT_SELECTED_COL]);
-            string contValueType = (string)rowData[VAR_CONT_TYPE_COL];
             string contentValueUncertaintyXML = (string)rowData[VAR_CONT_VALUE_COL];
             string contentDepthDamageXML = (string)rowData[CONTENT_CURVE_COL];
 
             //vehicle
             bool isVehicleTabChecked = Convert.ToBoolean(rowData[IS_VEH_SELECTED_COL]);
-            string vehicleValueType = (string)rowData[VAR_VEH_TYPE_COL];
             string vehicleValueUncertaintyXML = (string)rowData[VAR_VEH_VALUE_COL];
             string vehicleDepthDamageXML = (string)rowData[VEHICLE_CURVE_COL];
 
             //other
             bool isOtherTabChecked = Convert.ToBoolean(rowData[IS_OTHER_SELECTED_COL]);
-            string otherValueType = (string)rowData[VAR_OTHER_TYPE_COL];
             string otherValueUncertaintyXML = (string)rowData[VAR_OTHER_VALUE_COL];
             string otherDepthDamageXML = (string)rowData[OTHER_CURVE_COL];
 
@@ -1153,16 +1148,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private List<object> GetOccTypeRowForOccTypesTable(int elemId, int occtypeId, IOccupancyType ot)
         {
             List<object> rowsList = new List<object>();
-            //bool[] checkedTabs = new bool[4];
-            //if (OccTypesSelectedTabsDictionary.ContainsKey(ot.Name))
-            //{
-            //    checkedTabs = OccTypesSelectedTabsDictionary[ot.Name];
-            //}
-            //else
-            //{
-            //    //can't find the key in the dictionary
-            //    throw new Exception();
-            //}
+           
             //add the group id
             rowsList.Add(elemId);
 
@@ -1175,8 +1161,6 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 rowsList.Add(o);
             }
 
-            //foundation ht uncertainty type
-            rowsList.Add(ot.FoundationHtUncertaintyType.ToString());
             //foundation height xml
             rowsList.Add(ot.FoundationHeightUncertainty.ToXML().ToString());
 
@@ -1184,98 +1168,60 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             //is struct checked
             rowsList.Add(ot.CalculateStructureDamage);
 
-            //structure uncertainty type
-            rowsList.Add(ot.StructureUncertaintyType.ToString());
+
             //structure value uncertainty
             rowsList.Add(ot.StructureValueUncertainty.ToXML().ToString());
 
             //structure depth damage function
             rowsList.Add(ot.StructureDepthDamageFunction.WriteToXML().ToString());
 
-            ////structure variation in value type, min, max, st dev
-            //foreach (object o in GetContinuousDistributionArray(ot.StructureValueUncertainty))
-            //{
-            //    rowsList.Add(o);
-            //}
-
-            ////structure dist type
-            //rowsList.Add(ot.GetStructurePercentDD.Distribution);
-
             //is content checked
             rowsList.Add(ot.CalculateContentDamage);
 
-            //content value uncertainty type
-            rowsList.Add(ot.ContentUncertaintyType.ToString());
             //content value uncertainty
             rowsList.Add(ot.ContentValueUncertainty.ToXML().ToString());
 
             //content depth damage function
             rowsList.Add(ot.ContentDepthDamageFunction.WriteToXML().ToString());
 
-            ////content variation in value type, min, max, st dev
-            //foreach (object o in GetContinuousDistributionArray(ot.ContentValueUncertainty))
-            //{
-            //    rowsList.Add(o);
-            //}
-
-            ////cont dist type
-            //rowsList.Add(ot.GetContentPercentDD.Distribution);
 
             //is vehicle checked
             rowsList.Add(ot.CalculateVehicleDamage);
 
-            //vehicle uncertainty type
-            rowsList.Add(ot.VehicleUncertaintyType.ToString());
             //vehicle value uncertainty
             rowsList.Add(ot.VehicleValueUncertainty.ToXML().ToString());
 
             //vehicle depth damage function 
             rowsList.Add(ot.VehicleDepthDamageFunction.WriteToXML().ToString());
 
-
-            ////vehicle variation in value type, min, max, st dev
-            //foreach (object o in GetContinuousDistributionArray(ot.VehicleValueUncertainty))
-            //{
-            //    rowsList.Add(o);
-            //}
-
-            ////vehicle dist type
-            //rowsList.Add(ot.GetVehiclePercentDD.Distribution);
-
             //is other checked
             rowsList.Add(ot.CalculateOtherDamage);
 
-            //other uncertainty type
-            rowsList.Add(ot.OtherUncertaintyType.ToString());
             //other value uncertainty
             rowsList.Add(ot.OtherValueUncertainty.ToXML().ToString());
 
             //other depth damage function
             rowsList.Add(ot.OtherDepthDamageFunction.WriteToXML().ToString());
 
-            ////Other variation in value type, min, max, st dev
-            //foreach (object o in GetContinuousDistributionArray(ot.OtherValueUncertainty))
-            //{
-            //    rowsList.Add(o);
-            //}
-
-            ////other dist type
-            //rowsList.Add(ot.GetOtherPercentDD.Distribution);
-
-            ////damcats and occtypes group name
-            //rowsList.Add(groupName);
-
-
-            ////structure curve xml
-            //rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetStructurePercentDD.Distribution, ot.GetStructurePercentDD.XValues, ot.GetStructurePercentDD.YValues));
-
-            ////content curve xml
-            //rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetContentPercentDD.Distribution, ot.GetContentPercentDD.XValues, ot.GetContentPercentDD.YValues));
-            ////vehicle curve xml
-            //rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetVehiclePercentDD.Distribution, ot.GetVehiclePercentDD.XValues, ot.GetVehiclePercentDD.YValues));
-            ////other curve xml
-            //rowsList.Add(ExtentionMethods.CreateXMLCurveString(ot.GetOtherPercentDD.Distribution, ot.GetOtherPercentDD.XValues, ot.GetOtherPercentDD.YValues));
-
+            //i don't think this is a concept that exists in most occtype files, so these will likely be null
+            rowsList.Add(ot.ContentToStructureValue);
+            if (ot.ContentToStructureValueUncertainty == null)
+            {
+                rowsList.Add("");
+            }
+            else
+            {
+                rowsList.Add(ot.ContentToStructureValueUncertainty.WriteToXML().ToString());
+            }
+            rowsList.Add(ot.OtherToStructureValue);
+            if (ot.OtherToStructureValueUncertainty == null)
+            {
+                rowsList.Add("");
+            }
+            else
+            {
+                rowsList.Add(ot.OtherToStructureValueUncertainty.WriteToXML().ToString());
+            }
 
             return rowsList;
         }
@@ -1286,39 +1232,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         }
 
-        //private object[] GetContinuousDistributionArray(ICoordinatesFunction cd)
-        //{
-        //    object[] rowItems = new object[4];
-
-        //    if (cd.GetType() == typeof(Statistics.None))
-        //    {
-        //        return new object[] { "None", 0, 0, 0 };
-        //    }
-        //    else if (cd.GetType() == typeof(Statistics.Normal))
-        //    {
-        //        double stDev = ((Statistics.Normal)cd).GetStDev;
-        //        return new object[] { "Normal", 0, 0, stDev };
-
-        //    }
-        //    else if (cd.GetType() == typeof(Statistics.Triangular))
-        //    {
-        //        double min = ((Statistics.Triangular)cd).getMin;
-        //        double max = ((Statistics.Triangular)cd).getMax;
-        //        return new object[] { "Triangular", min, max, 0 };
-
-        //    }
-        //    else if (cd.GetType() == typeof(Statistics.Uniform))
-        //    {
-        //        double min = ((Statistics.Uniform)cd).GetMin;
-        //        double max = ((Statistics.Uniform)cd).GetMax;
-        //        return new object[] { "Uniform", min, max, 0 };
-
-        //    }
-
-        //    return rowItems;
-        //}
-
-
+      
 
         public ObservableCollection<LogItem> GetLogMessages(ChildElement element)
         {

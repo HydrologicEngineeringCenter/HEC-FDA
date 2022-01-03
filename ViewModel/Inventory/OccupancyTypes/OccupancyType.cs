@@ -45,7 +45,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         public IDamageCategory DamageCategory { get; set; }
 
-
         public bool CalculateStructureDamage
         {
             get { return _CalculateStructureDamage; }
@@ -80,11 +79,10 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public IDistribution OtherValueUncertainty { get; set; }
         public IDistribution FoundationHeightUncertainty { get; set; }
 
-        public ValueUncertaintyType StructureUncertaintyType { get; set; }
-        public  ValueUncertaintyType ContentUncertaintyType { get; set; }
-        public ValueUncertaintyType VehicleUncertaintyType { get; set; }
-        public ValueUncertaintyType OtherUncertaintyType { get; set; }
-        public ValueUncertaintyType FoundationHtUncertaintyType { get; set; }
+        public IOrdinate ContentToStructureValueUncertainty { get; set; }
+        public double ContentToStructureValue { get; set; }
+        public IOrdinate OtherToStructureValueUncertainty { get; set; }
+        public double OtherToStructureValue { get; set; }
 
         //These booleans determine if the content/vehicle/other curves are a ratio of structure value or not
         public bool IsContentRatio { get; set; }
@@ -103,6 +101,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             Name = name;
             DamageCategory = DamageCategoryFactory.Factory(damageCategoryName);
         }
+
 
         #region messages section
         public LoggingLevel SaveStatusLevel => throw new NotImplementedException();

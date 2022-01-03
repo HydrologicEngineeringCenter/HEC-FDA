@@ -9,30 +9,33 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
     /// Note that there are only 5 of these in the occtype editor. There is NOT 5 per occtype.
     /// That means that these need to get updated with the new values everytime the occtype changes.
     /// </summary>
-    public class ValueUncertaintyVM:BaseViewModel
+    public abstract class ValueUncertaintyVM : BaseViewModel
     {
         public event EventHandler WasModified;
 
         #region fields
         private IDistribution _ValueUncertainty;
         private IValueUncertainty _CurrentVM;
-        private NormalControlVM _NormalControlVM;
-        private TriangularControlVM _TriangularControlVM;
-        private UniformControlVM _UniformControlVM;
+
+        public NormalControlVM _NormalControlVM;
+        public TriangularControlVM _TriangularControlVM;
+        public UniformControlVM _UniformControlVM;
+        public LogNormalControlVM _LogNormalControlVM;
+
         private ValueUncertaintyType _valueUncertaintyType;
 
         #endregion
 
         #region properties
-        public ValueUncertaintyType ValueUncertaintyType
-        {
-            get { return _valueUncertaintyType; }
-            set 
-            { 
-                _valueUncertaintyType = value; 
-                NotifyPropertyChanged();
-            }
-        }
+        //public ValueUncertaintyType ValueUncertaintyType
+        //{
+        //    get { return _valueUncertaintyType; }
+        //    set 
+        //    { 
+        //        _valueUncertaintyType = value; 
+        //        NotifyPropertyChanged();
+        //    }
+        //}
 
         public IValueUncertainty CurrentVM
         {
@@ -66,7 +69,6 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         #region constructors
         public ValueUncertaintyVM(IDistribution valueUncertaintyOrdinate, ValueUncertaintyType valueUncertaintyType, String labelString)
         {
-            ValueUncertaintyType = ValueUncertaintyType;
             //create the options for the combobox
             UncertaintyTypes = new ObservableCollection<IDistributionEnum>()
             {
@@ -79,15 +81,19 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             //create the vm's for the individual distribution types
 
             //set what values you can, then set some defaults for the other dist types?
-            CreateDistributionControls(valueUncertaintyOrdinate, labelString);
+            //CreateDistributionControls(valueUncertaintyOrdinate, labelString);
 
             ValueUncertainty = valueUncertaintyOrdinate;
+
+            LoadControlVMs(valueUncertaintyOrdinate);
 
             //set the current vm to be of the selected type
             SelectedDistributionTypeChanged();
         }
 
         #endregion
+
+        public abstract void LoadControlVMs(IOrdinate ordinate);
 
         /// <summary>
         /// The selected type of ordinate has changed. This method will convert the current ordinate
@@ -182,7 +188,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
                     }
             }
-            return null;
+            return ordinate;
         }
 
         /// <summary>
@@ -238,7 +244,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             _UniformControlVM.WasModified += ControlWasModified;
         }
 
-        private void ControlWasModified(object sender, EventArgs e)
+        public void ControlWasModified(object sender, EventArgs e)
         {
             WasModified?.Invoke(this, new EventArgs());
         }
@@ -315,12 +321,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                     {
                         CurrentVM = _UniformControlVM;
                         break;
-                    }
                 default:
-                    {
                         CurrentVM = null;
                         break;
-                    }
             }
         }
 

@@ -11,7 +11,6 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
     /// </summary>
     public partial class OccTypeEditorControl : UserControl
     {
-
         public event EventHandler ListViewNeedsUpdating;
         private Chart2D _StructureChart;
         private Chart2D _ContentChart;
@@ -23,100 +22,24 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
             InitializeComponent();
         }
 
-       
-
-      
-
         private void DamageCategoryComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //redraw the list view so that the occtype that changed dam cats will be in the correct group
-            if(this.ListViewNeedsUpdating != null)
+            if(ListViewNeedsUpdating != null)
             {
-                this.ListViewNeedsUpdating(this, new EventArgs());
+                ListViewNeedsUpdating(this, new EventArgs());
             }
         }
 
         private void CreateNewDamCat_Click(object sender, RoutedEventArgs e)
         {
-            OccupancyTypeEditable vm = (OccupancyTypeEditable)this.DataContext;
+            OccupancyTypeEditable vm = (OccupancyTypeEditable)DataContext;
             if (vm == null) { return; }
             vm.LaunchNewDamCatWindow();
-            if (this.ListViewNeedsUpdating != null)
+            if (ListViewNeedsUpdating != null)
             {
-                this.ListViewNeedsUpdating(this, new EventArgs());
+                ListViewNeedsUpdating(this, new EventArgs());
             }
-        }
-        private void OccTypeNameBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
-            //if (vm == null) { return; }
-            //if (vm.SelectedOccType == null) { return; }
-            //vm.UpdateKeyInTabsDictionary(vm.SelectedOccType.Name, OccTypeNameBox.Text);
-            //vm.SelectedOccType.Name = OccTypeNameBox.Text;
-            //if (this.ListViewNeedsUpdating != null)
-            //{
-            //    this.ListViewNeedsUpdating(this, new EventArgs());
-            //}
-        }
-
-
-        //private void EditStructureDamageButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
-        //    if (vm == null) { return; }
-        //    vm.LaunchDepthDamageEditor();
-        //}
-
-        private void StructureValueUncertainty_LostFocus(object sender, RoutedEventArgs e)
-        {
-            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
-            //if (vm == null) 
-            //{ 
-            //    return; 
-            //}
-            //StructureValueUncertainty.ReturnDistribution();
-            //vm.SelectedOccType.StructureValueUncertainty = 
-            //vm.SelectedOccType.StructureValueUncertainty = StructureValueUncertainty.ReturnDistribution();
-        }
-
-        private void ContentValueUncertainty_LostFocus(object sender, RoutedEventArgs e)
-        {
-            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
-            //if (vm == null) { return; }
-            //vm.SelectedOccType.ContentValueUncertainty = ContentValueUncertainty.ReturnDistribution();
-        }
-
-        private void VehicleValueUncertainty_LostFocus(object sender, RoutedEventArgs e)
-        {
-            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
-            //if (vm == null) { return; }
-            //vm.SelectedOccType.VehicleValueUncertainty = VehicleValueUncertainty.ReturnDistribution();
-        }
-
-        private void OtherValueUncertainty_LostFocus(object sender, RoutedEventArgs e)
-        {
-            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
-            //if (vm == null) { return; }
-            //vm.SelectedOccType.OtherValueUncertainty = OtherValueUncertainty.ReturnDistribution();
-        }
-
-        private void OccTypeDescriptionBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
-            //if (vm == null || vm.SelectedOccType == null) { return; }
-            //string desc = OccTypeDescriptionBox.Text;
-            //if(desc == null)
-            //{
-            //    desc = "";
-            //}
-            //vm.SelectedOccType.Description = OccTypeDescriptionBox.Text;
-        }
-
-        private void FoundationHeightUncertainty_LostFocus(object sender, RoutedEventArgs e)
-        {
-            //ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM vm = (HEC.FDA.ViewModel.Inventory.OccupancyTypes.OccupancyTypesEditorVM)this.DataContext;
-            //if(vm == null) { return; }
-            //vm.SelectedOccType.FoundationHeightUncertainty = FoundationHeightUncertainty.ReturnDistribution();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -126,112 +49,46 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
             //create the asset editors for the chart at the OccTypeEditorVM level. Then 
             //when the selection changes i update those 4 editors.
 
-            //OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
-            //CoordinatesFunctionEditorVM editorVM = vm.StructureEditorVM; //vm.SelectedOccType.StructureEditorVM;
-            //Chart = new Chart2D(editorVM.CoordinatesChartViewModel);
-
-
-            //Binding myBinding = new Binding("SelectedOccType.StructureEditorVM");
-            //myBinding.Source = this.DataContext;
-            //chart.SetBinding(Chart2D.DataContextProperty, myBinding);
-
-            //Binding myBinding = new Binding();
-            //myBinding.Source = this.DataContext;
-            //myBinding.Path = new PropertyPath("SelectedOccType.StructureEditorVM");
-            //myBinding.Mode = BindingMode.OneWay;
-            //myBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            //BindingOperations.SetBinding(chart, Chart2D.DataContextProperty, myBinding);
-
-            //StructureTabGrid.Children.Add(Chart);
-            //Grid.SetRow(Chart, 2);
-            //Grid.SetColumn(Chart, 2);
-
-            AddChart();
-
+            //AddChart();
         }
 
-        //public void AddChart()
-        //{
-        //    OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
-        //    if(vm.SelectedOccType == null)
-        //    {
-        //        return;
-        //    }
-
-        //    StructureTabGrid.Children.Remove(_StructureChart);
-        //    ContentTabGrid.Children.Remove(_ContentChart);
-        //    VehicleTabGrid.Children.Remove(_VehicleChart);
-        //    OtherTabGrid.Children.Remove(_OtherChart);
-
-
-        //    //set the chart view models
-        //    _StructureChart = new Chart2D( vm.SelectedOccType.StructureEditorVM.CoordinatesChartViewModel);
-        //    _ContentChart = new Chart2D(vm.SelectedOccType.ContentEditorVM.CoordinatesChartViewModel);
-        //    _VehicleChart = new Chart2D(vm.SelectedOccType.VehicleEditorVM.CoordinatesChartViewModel);
-        //    _OtherChart = new Chart2D(vm.SelectedOccType.OtherEditorVM.CoordinatesChartViewModel);
-
-        //    //add the new charts to the UI
-        //    StructureTabGrid.Children.Add(_StructureChart);
-        //    Grid.SetRow(_StructureChart, 2);
-        //    Grid.SetColumn(_StructureChart, 2);
-
-        //    ContentTabGrid.Children.Add(_ContentChart);
-        //    Grid.SetRow(_ContentChart, 2);
-        //    Grid.SetColumn(_ContentChart, 2);
-
-        //    VehicleTabGrid.Children.Add(_VehicleChart);
-        //    Grid.SetRow(_VehicleChart, 2);
-        //    Grid.SetColumn(_VehicleChart, 2);
-
-        //    OtherTabGrid.Children.Add(_OtherChart);
-        //    Grid.SetRow(_OtherChart, 2);
-        //    Grid.SetColumn(_OtherChart, 2);
-        //}
+        private void UpdateChart(ref Chart2D chart, CoordinatesFunctionEditorVM editorVM)
+        {
+            SciChart2DChartViewModel sciChart2DChartViewModel = new SciChart2DChartViewModel(editorVM.CoordinatesChartViewModel);
+            chart = new Chart2D(sciChart2DChartViewModel);
+            editorVM.CoordinatesChartViewModel = sciChart2DChartViewModel;
+        }
 
         private void AddChart()
         {
-            OccupancyTypeEditable vm = DataContext as OccupancyTypeEditable;
-            if (vm == null)
+            if (DataContext is OccupancyTypeEditable vm)
             {
-                return;
-            }
-
-            //set the chart view models
-            if (_StructureChart == null)
-            {
-                _StructureChart = new Chart2D(vm.StructureEditorVM.CoordinatesChartViewModel);
-
+                //structure
+                UpdateChart(ref _StructureChart, vm.StructureEditorVM);
                 StructureTabGrid.Children.Add(_StructureChart);
                 Grid.SetRow(_StructureChart, 2);
                 Grid.SetColumn(_StructureChart, 2);
-            }
-            if (_ContentChart == null)
-            {
-                _ContentChart = new Chart2D(vm.ContentEditorVM.CoordinatesChartViewModel);
-
+                //content
+                UpdateChart(ref _ContentChart, vm.ContentEditorVM);
                 ContentTabGrid.Children.Add(_ContentChart);
                 Grid.SetRow(_ContentChart, 2);
                 Grid.SetColumn(_ContentChart, 2);
-            }
-            if (_VehicleChart == null)
-            {
-                _VehicleChart = new Chart2D(vm.VehicleEditorVM.CoordinatesChartViewModel);
-
+                //vehicle
+                UpdateChart(ref _VehicleChart, vm.VehicleEditorVM);
                 VehicleTabGrid.Children.Add(_VehicleChart);
                 Grid.SetRow(_VehicleChart, 2);
                 Grid.SetColumn(_VehicleChart, 2);
-            }
-            if(_OtherChart == null)
-            {
-                _OtherChart = new Chart2D(vm.OtherEditorVM.CoordinatesChartViewModel);
-
+                //other
+                UpdateChart(ref _OtherChart, vm.OtherEditorVM);
                 OtherTabGrid.Children.Add(_OtherChart);
                 Grid.SetRow(_OtherChart, 2);
                 Grid.SetColumn(_OtherChart, 2);
             }
-
         }
 
-
+        private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            AddChart();
+        }
     }
 }
