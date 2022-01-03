@@ -33,7 +33,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         private const int IS_CONT_SELECTED_COL = 9;
         private const int VAR_CONT_VALUE_COL = 10;
-        private const int CONTENT_CURVE_COL = 11;  
+        private const int CONTENT_CURVE_COL = 11;
 
         private const int IS_CONT_SELECTED_COL = 11;
         private const int VAR_CONT_TYPE_COL = 12;
@@ -82,12 +82,12 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             get
             {
-                return new string[] {"GroupID","OcctypeID", "Name", 
+                return new string[] {"GroupID","OcctypeID", "Name",
                     "Description", "DamageCategory","FoundHtUncertainty",
                     "IsStructChecked", "StructValueUncertainty", "StuctureFunction",
                     "IsContChecked", "ContentValueUncertainty", "ContentFunction",
                     "IsVehicleChecked", "VehicleValueUncertainty", "VehicleFunction",
-                    "IsOtherChecked", "OtherValueUncertainty", "OtherFunction", 
+                    "IsOtherChecked", "OtherValueUncertainty", "OtherFunction",
                     "ContentToStruct", "ContToStructUncert", "OtherToStruct", "OtherToStructUncert" };
             }
         }
@@ -107,7 +107,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             }
         }
 
-       
+
         /// <summary>
         /// Creates an element based off the row from the parent table
         /// </summary>
@@ -144,7 +144,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             string otherValueUncertaintyXML = (string)rowData[VAR_OTHER_VALUE_COL];
             string otherDepthDamageXML = (string)rowData[OTHER_CURVE_COL];
 
-            double contentToStructure = Convert.ToDouble( rowData[CONTENT_TO_STRUCT_VALUE_COL]);
+            double contentToStructure = Convert.ToDouble(rowData[CONTENT_TO_STRUCT_VALUE_COL]);
             double otherToStructure = Convert.ToDouble(rowData[OTHER_TO_STRUCT_VALUE_COL]);
 
             Dictionary<string, bool[]> selectedTabsDictionary = new Dictionary<string, bool[]>();
@@ -181,7 +181,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             //    //*****************************
 
             //    // if(Convert.ToBoolean(row[7]) == true) // if structures tab is checked
-                
+
             //        ot.StructureValueUncertainty = CreateContinuousDistributionFromRow(row, VAR_STRUCT_VALUE_COL, STRUCT_STDEV_COL);
 
             //        if (row[STRUCT_DIST_TYPE_COL].ToString() == "Normal")
@@ -205,7 +205,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             //            ot.StructureDepthDamageFunction = uci;
             //        }
 
-                
+
 
 
 
@@ -246,7 +246,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             //        //*****************************
 
             //        //if (Convert.ToBoolean(row[19]) == true) // if vehicle tab is checked
-                    
+
             //        //20,23
             //        ot.VehicleValueUncertainty = CreateContinuousDistributionFromRow(row, VAR_VEH_VALUE_COL, VEH_STDEV_COL);
             //        if (row[VEH_DIST_TYPE_COL].ToString() == "Normal")
@@ -310,7 +310,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             ////OccupancyTypesOwnerElement.ListOfOccupancyTypesGroups.Add(ele);
             //}
             return ele;
-                //AddElement(ele,false);
+            //AddElement(ele,false);
         }
 
 
@@ -327,7 +327,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 {
 
                     System.Data.DataTable table = Storage.Connection.Instance.GetDataTable(ParentTableName);
-                    foreach(DataRow row in table.Rows)
+                    foreach (DataRow row in table.Rows)
                     {
                         retval.Add(row);
                     }
@@ -339,18 +339,18 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         public override void Load()
         {
             List<ChildElement> occTypeGroupsToReturn = new List<ChildElement>();
-            
+
             //each row in the parent table will be an occtype element (same as occtype group)
             //if (!Storage.Connection.Instance.IsConnectionNull)
             //{
-                //if (!Storage.Connection.Instance.IsOpen)
-                //{
-                //    Storage.Connection.Instance.Open();
-                //}
-                //if (Storage.Connection.Instance.TableNames().Contains(ParentTableName))
-                //{
+            //if (!Storage.Connection.Instance.IsOpen)
+            //{
+            //    Storage.Connection.Instance.Open();
+            //}
+            //if (Storage.Connection.Instance.TableNames().Contains(ParentTableName))
+            //{
 
-                    //System.Data.DataTable table = Storage.Connection.Instance.GetDataTable(ParentTableName);
+            //System.Data.DataTable table = Storage.Connection.Instance.GetDataTable(ParentTableName);
 
                     foreach (DataRow row in GetParentTableRows())
                     {
@@ -368,23 +368,23 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
 
 
-                    //        DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable(ParentTableName);
-                    //List<object[]> rowData = dtv.GetRows(0, dtv.NumberOfRows - 1);
+            //        DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable(ParentTableName);
+            //List<object[]> rowData = dtv.GetRows(0, dtv.NumberOfRows - 1);
 
-                    ////go over each row in the parent table and create an occtype element
-                    //for (int i = 0; i < dtv.NumberOfRows; i++)
-                    //{
-                    //    //OccupancyTypesElement ele = new OccupancyTypesElement(groupName, TempOccTypes, dummyDictionary);
+            ////go over each row in the parent table and create an occtype element
+            //for (int i = 0; i < dtv.NumberOfRows; i++)
+            //{
+            //    //OccupancyTypesElement ele = new OccupancyTypesElement(groupName, TempOccTypes, dummyDictionary);
 
-                    //        OccupancyTypesElement ele = (OccupancyTypesElement)CreateElementFromRowData(dtv.GetRow(i));
-                    //        occTypeGroupsToReturn.Add(ele);
-
-
+            //        OccupancyTypesElement ele = (OccupancyTypesElement)CreateElementFromRowData(dtv.GetRow(i));
+            //        occTypeGroupsToReturn.Add(ele);
 
 
-                    //}
-               // }
-           // }
+
+
+            //}
+            // }
+            // }
             foreach (Inventory.OccupancyTypes.OccupancyTypesElement elem in occTypeGroupsToReturn)
             {
                 StudyCacheForSaving.AddElement(elem);
@@ -393,32 +393,32 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public void Remove(ChildElement element)
         {
-        //    if (!Storage.Connection.Instance.IsOpen)
-        //    {
-        //        Storage.Connection.Instance.Open();
-        //    }
-        //    //remove row from parent table
-        //    DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable(ParentTableName);
-        //    int index = -1;
-        //    for (int i = 0; i < dtv.NumberOfRows; i++)
-        //    {
-        //        if (dtv.GetRow(i)[PARENT_GROUP_NAME_COL].ToString().Equals(element.Name))
-        //        {
-        //            index = i;
-        //            break;
-        //        }
-        //    }
-        //    if (index == -1) { return; }//throw exception?
-        //    dtv.DeleteRow(index);
-        //    dtv.ApplyEdits();
-        //    //remove the associated table
-        //    string elementTableName = GroupTablePrefix + element.Name;
-        //    if (Storage.Connection.Instance.TableNames().Contains(elementTableName))
-        //    {
-        //        Storage.Connection.Instance.DeleteTable(elementTableName);
-        //    }
-        //    //remove from the study cache
-        //    StudyCacheForSaving.RemoveElement((OccupancyTypesElement)element);
+            //    if (!Storage.Connection.Instance.IsOpen)
+            //    {
+            //        Storage.Connection.Instance.Open();
+            //    }
+            //    //remove row from parent table
+            //    DatabaseManager.DataTableView dtv = Storage.Connection.Instance.GetTable(ParentTableName);
+            //    int index = -1;
+            //    for (int i = 0; i < dtv.NumberOfRows; i++)
+            //    {
+            //        if (dtv.GetRow(i)[PARENT_GROUP_NAME_COL].ToString().Equals(element.Name))
+            //        {
+            //            index = i;
+            //            break;
+            //        }
+            //    }
+            //    if (index == -1) { return; }//throw exception?
+            //    dtv.DeleteRow(index);
+            //    dtv.ApplyEdits();
+            //    //remove the associated table
+            //    string elementTableName = GroupTablePrefix + element.Name;
+            //    if (Storage.Connection.Instance.TableNames().Contains(elementTableName))
+            //    {
+            //        Storage.Connection.Instance.DeleteTable(elementTableName);
+            //    }
+            //    //remove from the study cache
+            //    StudyCacheForSaving.RemoveElement((OccupancyTypesElement)element);
         }
 
         public void DeleteOcctypeGroup(int groupID)
@@ -431,7 +431,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             DeleteRowWithKey(OCCTYPES_TABLE_NAME, groupID, "GroupID");
 
             //remove from the study cache
-            RemoveElementFromCache(groupID); 
+            RemoveElementFromCache(groupID);
         }
 
         /// <summary>
@@ -468,7 +468,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
                 DeleteRowWithCompoundKey(OCCTYPES_TABLE_NAME, keys, keyColNames);
                 DeleteOccTypeFromGroupInCache(occtypeToDelete);
-                  
+
             }
         }
 
@@ -482,8 +482,8 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             else
             {
                 foreach (IOccupancyType occtype in group.ListOfOccupancyTypes)
-                { 
-                    if(occtype.ID == ot.ID)
+                {
+                    if (occtype.ID == ot.ID)
                     {
                         group.ListOfOccupancyTypes.Remove(occtype);
                         return;
@@ -538,7 +538,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
             //  //  SaveNew(element);
             ////}
-           
+
         }
 
 
@@ -585,7 +585,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 object[] newValues = new object[] { group.Name };
                 UpdateTableRow(ParentTableName, group.ID, "ID", columnsToUpdate, newValues);
             }
-      
+
         }
 
         //public void UpdateOccTypeInStudyCache(IOccupancyTypeGroupEditable group, IOccupancyTypeEditable ot)
@@ -665,7 +665,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
                 }
             }
 
-            if(!oldName.Equals(newName))
+            if (!oldName.Equals(newName))
             {
                 //update the structure inventory occtype names.
                 PersistenceFactory.GetStructureInventoryManager().UpdateOccTypeNames(group.Name, group.Name, oldName, newName);
@@ -697,7 +697,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         public void SaveModifiedOcctypes(List<IOccupancyType> occtypes)
         {
-            foreach(IOccupancyType ot in occtypes)
+            foreach (IOccupancyType ot in occtypes)
             {
                 SaveModifiedOcctype(ot);
             }
@@ -712,7 +712,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             List<DataRow> rows = GetParentTableRows();
             List<int> idNums = new List<int>();
-            foreach(DataRow row in rows)
+            foreach (DataRow row in rows)
             {
                 idNums.Add(Convert.ToInt32(row[PARENT_GROUP_ID_COL]));
             }
@@ -768,11 +768,11 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         {
             List<IOccupancyType> occtypes = LoadOcctypes(groupId);
             List<int> occtypeIds = new List<int>();
-            foreach(IOccupancyType ot in occtypes)
+            foreach (IOccupancyType ot in occtypes)
             {
                 occtypeIds.Add(ot.ID);
             }
-            if(occtypeIds.Count>0)
+            if (occtypeIds.Count > 0)
             {
                 return occtypeIds.Max() + 1;
             }
@@ -865,6 +865,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         //}
 
+
         #region import from old fda
         //public void SaveFDA1Elements(OccupancyTypeList ots, string groupName)
         //{
@@ -886,16 +887,16 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             SavingAction(element);
             //OccupancyTypesOwnerElement owner = StudyCacheForSaving.GetParentElementOfType<OccupancyTypesOwnerElement>();
 
-           // //clear the actions while it is saving
-           // List<NamedAction> actions = new List<NamedAction>();
-           // foreach (NamedAction act in owner.Actions)
-           // {
-           //     actions.Add(act);
-           // }
-           // owner.Actions = new List<NamedAction>();
-           // SaveOnBackgroundThread((OccupancyTypesElement)element);
-           // //restore the actions
-           //// owner.Actions = actions;
+            // //clear the actions while it is saving
+            // List<NamedAction> actions = new List<NamedAction>();
+            // foreach (NamedAction act in owner.Actions)
+            // {
+            //     actions.Add(act);
+            // }
+            // owner.Actions = new List<NamedAction>();
+            // SaveOnBackgroundThread((OccupancyTypesElement)element);
+            // //restore the actions
+            //// owner.Actions = actions;
         }
 
         /// <summary>
@@ -971,7 +972,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             foreach (IOccupancyType ot in ListOfOccupancyTypes)
             {
 
-                rows.Add(GetOccTypeRowForOccTypesTable(elemId,i, ot).ToArray());
+                rows.Add(GetOccTypeRowForOccTypesTable(elemId, i, ot).ToArray());
                 i++;
             }
             tbl.AddRows(rows);
@@ -1067,7 +1068,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         private IOccupancyType CreateOcctypeFromRow(object[] rowData)
         {
-            int groupId = Convert.ToInt32( rowData[GROUP_ID_COL]);
+            int groupId = Convert.ToInt32(rowData[GROUP_ID_COL]);
             int occtypId = Convert.ToInt32(rowData[OCCTYPE_ID_COL]);
 
             string name = (string)rowData[NAME_COL];
@@ -1133,6 +1134,13 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
             occtype.OtherUncertaintyType = GetValueUncertaintyType(otherValueType);
             occtype.OtherDepthDamageFunction = UncertainPairedData.ReadFromXML(XElement.Parse(otherDepthDamageXML));
 
+            occtype.ContentToStructureValue = Convert.ToDouble(rowData[CONTENT_TO_STRUCT_VALUE_COL]);
+            string contToStructValueUncertaintyXML = (string)rowData[CONTENT_TO_STRUCT_UNCERTAINTY_COL];
+            occtype.ContentToStructureValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(contToStructValueUncertaintyXML));
+
+            occtype.OtherToStructureValue = Convert.ToDouble(rowData[OTHER_TO_STRUCT_VALUE_COL]);
+            string otherToStructValueUncertaintyXML = (string)rowData[OTHER_TO_STRUCT_UNCERTAINTY_COL];
+            occtype.OtherToStructureValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(otherToStructValueUncertaintyXML));
             //setting all these properties will set the "isModified" to true. But we just created this thing so turn back to false
             occtype.IsModified = false;
             return occtype;
@@ -1148,7 +1156,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         private List<object> GetOccTypeRowForOccTypesTable(int elemId, int occtypeId, IOccupancyType ot)
         {
             List<object> rowsList = new List<object>();
-           
+
             //add the group id
             rowsList.Add(elemId);
 
@@ -1232,7 +1240,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         }
 
-      
+
 
         public ObservableCollection<LogItem> GetLogMessages(ChildElement element)
         {
@@ -1248,7 +1256,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
         /// <param name="elementName"></param>
         public override void Log(LoggingLevel level, string message, string elementName)
         {
-           // int elementId = GetElementId(TableName, elementName);
+            // int elementId = GetElementId(TableName, elementName);
             //LOGGER.Log(level, message, ELEMENT_TYPE, elementId);
         }
 
