@@ -16,14 +16,12 @@ namespace metrics
 
         public void AddEADEstimate(double eadEstimate, string category)
         {
-            double[] data = new double[1] { eadEstimate };
-            IData ead = IDataFactory.Factory(data);
             if (!_ead.ContainsKey(category))
             {
                 var histo = new Histogram(null, EAD_HISTOGRAM_BINWIDTH);
                 _ead.Add(category, histo);
             }
-            _ead[category].AddObservationToHistogram(ead);
+            _ead[category].AddObservationToHistogram(eadEstimate);
         }
         public double MeanEAD(string category)
         {
