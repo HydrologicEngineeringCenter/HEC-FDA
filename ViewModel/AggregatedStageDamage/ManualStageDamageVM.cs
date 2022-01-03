@@ -202,16 +202,21 @@ namespace ViewModel.AggregatedStageDamage
         private bool AreThereTwoPointsPerCurve()
         {
             bool atLeastTwoPoints = true;
+            List<string> rowsThatFailed = new List<string>();
             foreach (ManualStageDamageRowItem r in Rows)
             {
                 ICoordinatesFunction coordFunc = r.EditorVM.CreateFunctionFromTables();
                 if(coordFunc.Coordinates.Count<2)
                 {
+                    rowsThatFailed.Add(r.ID.ToString());
                     atLeastTwoPoints = false;
-                    String msg = "Mannually entered curves must have at least 2 points.";
-                    MessageBox.Show(msg, "Two Points Required", MessageBoxButton.OK, MessageBoxImage.Error);
-                    break;
                 }
+            }
+
+            if(rowsThatFailed.Count>0)
+            {
+                String msg = "Manually entered curves must have at least 2 points." + Environment.NewLine + "Curves in error:" + Environment.NewLine + "\t* ";
+                MessageBox.Show(msg + string.Join(Environment.NewLine + "\t* ", rowsThatFailed), "Two Points Required", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return atLeastTwoPoints;
         }

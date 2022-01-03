@@ -119,7 +119,7 @@ namespace ViewModel.Saving.PersistenceManagers
 
         public void SaveNew(ChildElement element)
         {
-            if (element.GetType() == typeof(ImpactAreaElement))
+            if (element is ImpactAreaElement)
             {
                 //the row items have id's of -1 at this point because they have not been saved. When the element gets added to the cache
                 //they still have -1 which causes problems down the road. Because we only ever have one impact area element, i can just 

@@ -76,7 +76,5 @@ namespace ViewModel.AggregatedStageDamage
         }
 
         #endregion
-        #region Functions
-        #endregion
     }
 }

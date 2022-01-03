@@ -432,8 +432,7 @@ namespace Importer
             List<StageDamageCurve> curves = new List<StageDamageCurve>();
             //todo: cody will fix in task 9
             //StageDamageCurve curve = new StageDamageCurve()
-            AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, CalculationDate, Description, -1,-1, curves, true);
-            return elem;
+            return new AggregatedStageDamageElement(Name, CalculationDate, Description, -1,-1, curves, true);
         }
 
     }
