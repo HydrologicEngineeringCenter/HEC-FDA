@@ -1,11 +1,15 @@
-﻿using Statistics;
-using Statistics.Distributions;
+﻿using Functions;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
+namespace ViewModel.Inventory.OccupancyTypes
 {
-    public class NormalControlVM : IValueUncertainty
+    public class LogNormalControlVM : IValueUncertainty
     {
+
         public event EventHandler WasModified;
         private double _StDev;
         private double _Mean;
@@ -31,7 +35,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         }
 
         public string LabelString { get; set; }
-        public NormalControlVM(double mean, double stDev, string labelString, bool displayMean = false)
+        public LogNormalControlVM(double mean, double stDev, string labelString, bool displayMean = false)
         {
             DisplayMean = displayMean;
             LabelString = labelString;
@@ -39,9 +43,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             StDev = stDev;
         }
 
-        public IDistribution CreateOrdinate()
+        public IOrdinate CreateOrdinate()
         {
-            return new Normal(Mean, StDev);
+            return IDistributedOrdinateFactory.FactoryNormal(Mean, StDev);
         }
     }
 }

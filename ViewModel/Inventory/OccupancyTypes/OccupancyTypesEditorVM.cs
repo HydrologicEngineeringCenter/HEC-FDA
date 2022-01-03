@@ -951,26 +951,23 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
             //we have all the group messages lumped into one list,
             //now sort them out
-            List<SaveAllReportGroupVM> goodGroups = new List<SaveAllReportGroupVM>();
             List<SaveAllReportGroupVM> badGroups = new List<SaveAllReportGroupVM>();
             foreach(SaveAllReportGroupVM group in groupReports)
             {
-                if(group.SuccessfulList.Count>0)
-                {
-                    goodGroups.Add(group);
-                }
                 if(group.UnsuccessfulList.Count>0)
                 {
                     badGroups.Add(group);
                 }
             }
 
-
-            SaveAllReportVM report = new SaveAllReportVM(originalGroupNames, newGroupNames, goodGroups, badGroups);
-            string header = "Save All Report";
-            DynamicTabVM tab = new DynamicTabVM(header, report, "SaveAllReport");
-            Navigate(tab, true,true);
-
+            //we only want to show the save report if there are occtypes that did not save
+            if (badGroups.Count > 0)
+            {
+                SaveAllReportVM report = new SaveAllReportVM(originalGroupNames, newGroupNames, groupReports);
+                string header = "Save All Report";
+                DynamicTabVM tab = new DynamicTabVM(header, report, "SaveAllReport");
+                Navigate(tab, true, true);
+            }
             //StringBuilder sb = new StringBuilder().AppendLine("Saved Successfully:");
             //foreach (IOccupancyTypeGroupEditable group in OccTypeGroups)
             //{
@@ -1095,6 +1092,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         /// </summary>
         public override void Save()
         {
+            SaveAll();
+
             //i think this method has to be here for one of the interfaces. 
             //the individual occtype save is handled by the OccupancyTypeEditable.
 

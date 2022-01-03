@@ -27,12 +27,19 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes.Controls
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-           
-            ValueUncertaintyVM vm = (ValueUncertaintyVM)this.DataContext;
-            if (e.AddedItems.Count > 0)
+            //if(typeof(ValueUncertaintyVM).IsAssignableFrom(DataContext.GetType()))
+            //{
+            //    int i = 0;
+            //}
+
+            if (DataContext is ValueUncertaintyVM vm)
             {
-                vm.SelectionChanged(e.AddedItems[0]);
-                //vm.SelectedDistributionTypeChanged();
+                //ValueUncertaintyVM vm = DataContext;
+                if (e.AddedItems.Count > 0)
+                {
+                    vm.SelectionChanged(e.AddedItems[0]);
+                    //vm.SelectedDistributionTypeChanged();
+                }
             }
         }
 

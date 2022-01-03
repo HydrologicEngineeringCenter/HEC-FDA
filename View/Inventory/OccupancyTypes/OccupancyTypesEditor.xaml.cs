@@ -145,8 +145,8 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
             OccTypeEditorControl.OccTypeNameBox.Text = "";
             OccTypeEditorControl.OccTypeNameBox.IsEnabled = false;
 
-            OccTypeEditorControl.OccTypeDescriptionBox.Text = "";
-            OccTypeEditorControl.OccTypeDescriptionBox.IsEnabled = false;
+            //OccTypeEditorControl.OccTypeDescriptionBox.Text = "";
+            //OccTypeEditorControl.OccTypeDescriptionBox.IsEnabled = false;
 
             OccTypeEditorControl.DamageCategoryComboBox.SelectedIndex = -1;
             OccTypeEditorControl.DamageCategoryComboBox.IsEnabled = false;
@@ -159,8 +159,8 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
             //OccTypeEditorControl.tableWithPlot_vehicle.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
             //OccTypeEditorControl.tableWithPlot_other.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
-            OccTypeEditorControl.txt_YearBox.IsEnabled = false;
-            OccTypeEditorControl.txt_Module.IsEnabled = false;
+            //OccTypeEditorControl.txt_YearBox.IsEnabled = false;
+            //OccTypeEditorControl.txt_Module.IsEnabled = false;
         }
         private void EnableAllControls()
         {
@@ -169,7 +169,7 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
             OccTypeEditorControl.OccTypeNameBox.IsEnabled = true;
 
             //OccTypeEditorControl.OccTypeDescriptionBox.Text = "";
-            OccTypeEditorControl.OccTypeDescriptionBox.IsEnabled = true;
+            //OccTypeEditorControl.OccTypeDescriptionBox.IsEnabled = true;
 
             //OccTypeEditorControl.DamageCategoryComboBox.SelectedIndex = -1;
             OccTypeEditorControl.DamageCategoryComboBox.IsEnabled = true;
@@ -181,8 +181,8 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
             //OccTypeEditorControl.tableWithPlot_vehicle.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
             //OccTypeEditorControl.tableWithPlot_other.Curve = new Statistics.UncertainCurveIncreasing(Statistics.UncertainCurveDataCollection.DistributionsEnum.None);
 
-            OccTypeEditorControl.txt_YearBox.IsEnabled = true;
-            OccTypeEditorControl.txt_Module.IsEnabled = true;
+           // OccTypeEditorControl.txt_YearBox.IsEnabled = true;
+            //OccTypeEditorControl.txt_Module.IsEnabled = true;
         }
     
 
@@ -311,10 +311,10 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
             vm.DeleteOccTypeGroup();
         }
 
-        private void btn_SaveAll_Click(object sender, RoutedEventArgs e)
-        {
-            OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
-            vm.SaveAll();
-        }
+        //private void btn_SaveAll_Click(object sender, RoutedEventArgs e)
+        //{
+        //    OccupancyTypesEditorVM vm = (OccupancyTypesEditorVM)this.DataContext;
+        //    vm.SaveAll();
+        //}
     }
 }

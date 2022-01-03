@@ -171,7 +171,11 @@
         <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:NormalControlVM}">
             <OccupancyTypesControlsView:NormalControl/>
         </DataTemplate>
-        
+
+        <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:LogNormalControlVM}">
+            <OccupancyTypesControlsView:LogNormalControl/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type OccupancyTypesControlsVM:TriangularControlVM}">
             <OccupancyTypesControlsView:TriangularControl/>
         </DataTemplate>
