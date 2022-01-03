@@ -29,7 +29,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         private bool _CalculateOtherDamage;
         private string _Name;
         private string _Description;
-        private IDamageCategory _DamageCategory;
+        private IDamageCategory _DamageCategory2;
+        private string _DamageCategory;
         private bool _IsModified;
         private ObservableCollection<string> _DamageCategoriesList = new ObservableCollection<string>();
 
@@ -84,7 +85,17 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             set { _Description = value; IsModified = true; }
         }
 
-        public IDamageCategory DamageCategory
+        public IDamageCategory DamageCategory2
+        {
+            get { return _DamageCategory2; }
+            set
+            {
+                _DamageCategory2 = value;
+                NotifyPropertyChanged();
+                IsModified = true;
+            }
+        }
+        public string DamageCategory
         {
             get { return _DamageCategory; }
             set
@@ -318,7 +329,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
             Name = clonedOcctype.Name;
             Description = clonedOcctype.Description;
-            DamageCategory = clonedOcctype.DamageCategory;
+            DamageCategory2 = clonedOcctype.DamageCategory;
             CalculateStructureDamage = clonedOcctype.CalculateStructureDamage;
             CalculateContentDamage = clonedOcctype.CalculateContentDamage;
             CalculateVehicleDamage = clonedOcctype.CalculateVehicleDamage;
@@ -371,7 +382,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 if (vm.HasError == false)
                 {
                     //store the new damage category
-                    DamageCategory = DamageCategoryFactory.Factory(vm.Name);
+                    DamageCategory2 = DamageCategoryFactory.Factory(vm.Name);
                     _DamageCategoriesList.Add(vm.Name);
                     //SetDamageCategory();
                     //LoadDamageCategoriesList();
@@ -720,7 +731,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             ot.GroupID = GroupID;
             ot.ID = ID;
             ot.Description = Description;
-            ot.DamageCategory = DamageCategory;
+            ot.DamageCategory = DamageCategory2;
 
             ot.CalculateStructureDamage = CalculateStructureDamage;
             ot.CalculateContentDamage = CalculateContentDamage;

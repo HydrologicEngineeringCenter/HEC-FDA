@@ -532,7 +532,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                     string damCatName = "";
                     if(SelectedOccType != null)
                     {
-                        damCatName = SelectedOccType.DamageCategory.Name;
+                        damCatName = SelectedOccType.DamageCategory2.Name;
                         damCatOptions = SelectedOccType.DamageCategoriesList;
                     }
                     
@@ -843,9 +843,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             List<string> uniqueDamCats = new List<string>();
             foreach (IOccupancyTypeEditable ot in _SelectedOccTypeGroup.Occtypes)
             {
-                if (!uniqueDamCats.Contains(ot.DamageCategory.Name))
+                if (!uniqueDamCats.Contains(ot.DamageCategory2.Name))
                 {
-                    uniqueDamCats.Add(ot.DamageCategory.Name);
+                    uniqueDamCats.Add(ot.DamageCategory2.Name);
                 }
             }
             DamageCategoriesList = uniqueDamCats;
