@@ -30,27 +30,23 @@ namespace metrics
     }
         public void AddAEPEstimate(double aepEstimate)
         {
-            double[] data = new double[1] { aepEstimate };
-            IData aep = IDataFactory.Factory(data);
             if (_aep == null)
             {
                 var histo = new Histogram(null, AEP_HISTOGRAM_DEFAULT_BINWIDTH);
                 _aep = histo;
                 
             }
-            _aep.AddObservationToHistogram(aep);
+            _aep.AddObservationToHistogram(aepEstimate);
         }
 
         public void AddStageForCNEP(double standardNonExceedanceProbability, double stageForCNEP)
         {
-            double[] data = new double[1] { stageForCNEP };
-            IData stage = IDataFactory.Factory(data);
             if (!_cnep.ContainsKey(standardNonExceedanceProbability))
             {
                 var histo = new Histogram(null, CNEP_HISTOGRAM_DEFAULT_BINWIDTH);
                 _cnep.Add(standardNonExceedanceProbability, histo);
             }
-            _cnep[standardNonExceedanceProbability].AddObservationToHistogram(stage);
+            _cnep[standardNonExceedanceProbability].AddObservationToHistogram(stageForCNEP);
         }
 
         public double MeanAEP()
@@ -60,7 +56,7 @@ namespace metrics
 
         public double MedianAEP()
         {
-            return _aep.Median;
+            return _aep.InverseCDF(0.5);
         }
 
         public double AssuranceOfAEP(double exceedanceProbability)

@@ -25,7 +25,7 @@ namespace fda_model_test
 
         static IDistribution[] StageDistributions =
         {
-            IDistributionFactory.FactoryNormal(458,0),
+            IDistributionFactory.FactoryNormal(458,0.00001),
             IDistributionFactory.FactoryNormal(468.33,.312),
             IDistributionFactory.FactoryNormal(469.97,.362),
             IDistributionFactory.FactoryNormal(471.95,.422),
@@ -39,7 +39,7 @@ namespace fda_model_test
         static double[] StageDamageStages = { 470, 471, 472, 473, 474, 475, 476, 477, 478, 479 };
         static IDistribution[] DamageDistrbutions =
         {
-            IDistributionFactory.FactoryNormal(0,0),
+            IDistributionFactory.FactoryNormal(0,0.00001),
             IDistributionFactory.FactoryNormal(.04,.16),
             IDistributionFactory.FactoryNormal(.66,1.02),
             IDistributionFactory.FactoryNormal(2.83,2.47),

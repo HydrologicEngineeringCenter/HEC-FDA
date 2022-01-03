@@ -54,13 +54,13 @@ namespace fda_model_test
 
             for (int i = 0; i<upd.ys().Length; i++)
             {
-                minExpected[i] = upd.ys()[i].Min;
-                maxExpected[i] = upd.ys()[i].Max;
+                minExpected[i] = upd.ys()[i].InverseCDF(0.0);
+                maxExpected[i] = upd.ys()[i].InverseCDF(1.0);
             }
             for (int i=0; i<upd2.ys().Length; i++)
             {
-                minActual[i] = upd2.ys()[i].Min;
-                maxActual[i] = upd2.ys()[i].Max;
+                minActual[i] = upd2.ys()[i].InverseCDF(0.0);
+                maxActual[i] = upd2.ys()[i].InverseCDF(1.0);
             }
 
             Assert.Equal(upd.xs(), upd2.xs());
