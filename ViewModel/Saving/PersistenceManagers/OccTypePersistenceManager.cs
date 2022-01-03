@@ -1136,11 +1136,25 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
             occtype.ContentToStructureValue = Convert.ToDouble(rowData[CONTENT_TO_STRUCT_VALUE_COL]);
             string contToStructValueUncertaintyXML = (string)rowData[CONTENT_TO_STRUCT_UNCERTAINTY_COL];
-            occtype.ContentToStructureValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(contToStructValueUncertaintyXML));
+            if("".Equals(contToStructValueUncertaintyXML))
+            {
+                occtype.ContentToStructureValueUncertainty = null;//todo: some default? Ask richard?
+            }
+            else
+            {
+                occtype.ContentToStructureValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(contToStructValueUncertaintyXML));
+            }
 
             occtype.OtherToStructureValue = Convert.ToDouble(rowData[OTHER_TO_STRUCT_VALUE_COL]);
             string otherToStructValueUncertaintyXML = (string)rowData[OTHER_TO_STRUCT_UNCERTAINTY_COL];
-            occtype.OtherToStructureValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(otherToStructValueUncertaintyXML));
+            if("".Equals(otherToStructValueUncertaintyXML))
+            {
+                occtype.OtherToStructureValueUncertainty = null;
+            }
+            else
+            {
+                occtype.OtherToStructureValueUncertainty = ICoordinateFactory.CreateOrdinate(XElement.Parse(otherToStructValueUncertaintyXML));
+            }
             //setting all these properties will set the "isModified" to true. But we just created this thing so turn back to false
             occtype.IsModified = false;
             return occtype;

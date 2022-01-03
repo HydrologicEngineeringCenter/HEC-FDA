@@ -18,7 +18,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         int ID { get; set; }
         int GroupID { get; set; }
         string Description { get; set; }
-        IDamageCategory DamageCategory { get; set; }
+        IDamageCategory DamageCategory2 { get; set; }
         bool IsModified { get; set; }
         ValueUncertaintyVM StructureValueUncertainty { get; set; }
         ValueUncertaintyVM ContentValueUncertainty { get; set; }
