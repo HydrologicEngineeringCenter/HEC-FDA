@@ -11,7 +11,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         int ID { get; set; }
         string Name { get; set; }
         string Description { get; set; }
-        IDamageCategory DamageCategory { get; set; }
+        string DamageCategory { get; set; }
 
         bool CalculateStructureDamage { get; set; }
         bool CalculateContentDamage { get; set; }

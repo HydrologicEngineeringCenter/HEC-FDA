@@ -1250,7 +1250,7 @@ namespace HEC.FDA.ViewModel.Saving.PersistenceManagers
 
         private object[] GetOccTypeInfoArray(IOccupancyType ot)
         {
-            return new object[] { ot.Name, ot.Description, ot.DamageCategory.Name };
+            return new object[] { ot.Name, ot.Description, ot.DamageCategory };
 
         }
 

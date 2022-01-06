@@ -15,7 +15,7 @@ using HEC.FDA.ViewModel.Utilities;
 namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 {
     //[Author(q0heccdm, 7 / 14 / 2017 1:55:50 PM)]
-    public class OccupancyTypesEditorVM : BaseEditorVM
+    public class OccupancyTypesEditorVM : BaseEditorVM, IDisplayLogMessages
     {
         public event EventHandler CloseEditor;
         //private List<IOccupancyTypeEditable> _NewlyCreatedOcctypes = new List<IOccupancyTypeEditable>();
@@ -33,6 +33,11 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         // Created Date: 7/14/2017 1:55:50 PM
         #endregion
         #region Fields
+        private ObservableCollection<FdaLogging.LogItem> _MessageRows = new ObservableCollection<FdaLogging.LogItem>();
+        private LoggingLevel _SaveStatusLevel;
+        private bool _IsExpanded;
+        private bool _SaveStatusVisible;
+        private string _SavingText;
         private IOccupancyTypeGroupEditable _SelectedOccTypeGroup;
         //private Dictionary<string,DepthDamage.DepthDamageCurve> _DepthDamageCurveDictionary;
         //this dictionary is to keep track of the checkboxes that have been clicked in the tabs for each occtype
@@ -62,6 +67,58 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         #endregion
         #region Properties
+        public List<LogItem> TempErrors
+        {
+            get;
+            set;
+        }
+        public LoggingLevel SaveStatusLevel
+        {
+            get { return _SaveStatusLevel; }
+            set
+            {
+                if (_SaveStatusLevel != value)
+                {
+                    _SaveStatusLevel = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsExpanded
+        {
+            get { return _IsExpanded; }
+            set
+            {
+
+                if (_IsExpanded != value)
+                {
+                    _IsExpanded = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        public ObservableCollection<LogItem> MessageRows
+        {
+            get { return _MessageRows; }
+            set
+            {
+                _MessageRows = value;
+                NotifyPropertyChanged(nameof(SaveStatusLevel));
+                NotifyPropertyChanged("MessageRows");
+                NotifyPropertyChanged("MessageCount");
+            }
+        }
+        public string SavingText
+        {
+            get { return _SavingText; }
+            set { _SavingText = value; NotifyPropertyChanged(); }
+        }
+
+        public int MessageCount
+        {
+            get { return _MessageRows.Count; }
+        }
         public ObservableCollection<IOccupancyTypeGroupEditable> OccTypeGroups
         {
             get { return _OccTypeGroups; }
@@ -131,6 +188,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             OccTypeGroups = new ObservableCollection<IOccupancyTypeGroupEditable>();
             SetDimensions(950, 600, 400, 400);
 
+           // SelectedOccTypeGroup = OccTypeGroups[0];
+            //SelectedOccType = SelectedOccTypeGroup.Occtypes[0];
             //todo: do i need this call?
             //AddEmptyCurvesToEmptyDepthDamages();
 
@@ -201,9 +260,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             ObservableCollection<string> uniqueDamCats = new ObservableCollection<string>();
             foreach (IOccupancyType ot in group.ListOfOccupancyTypes)
             {
-                if (!uniqueDamCats.Contains(ot.DamageCategory.Name))
+                if (!uniqueDamCats.Contains(ot.DamageCategory))
                 {
-                    uniqueDamCats.Add(ot.DamageCategory.Name);
+                    uniqueDamCats.Add(ot.DamageCategory);
                 }
             }
             return uniqueDamCats;
@@ -532,7 +591,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                     string damCatName = "";
                     if(SelectedOccType != null)
                     {
-                        damCatName = SelectedOccType.DamageCategory2.Name;
+                        damCatName = SelectedOccType.DamageCategory;
                         damCatOptions = SelectedOccType.DamageCategoriesList;
                     }
                     
@@ -843,9 +902,9 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             List<string> uniqueDamCats = new List<string>();
             foreach (IOccupancyTypeEditable ot in _SelectedOccTypeGroup.Occtypes)
             {
-                if (!uniqueDamCats.Contains(ot.DamageCategory2.Name))
+                if (!uniqueDamCats.Contains(ot.DamageCategory))
                 {
-                    uniqueDamCats.Add(ot.DamageCategory2.Name);
+                    uniqueDamCats.Add(ot.DamageCategory);
                 }
             }
             DamageCategoriesList = uniqueDamCats;
@@ -945,7 +1004,14 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             List<SaveAllReportGroupVM> groupReports = new List<SaveAllReportGroupVM>();
             foreach(IOccupancyTypeGroupEditable group in OccTypeGroups)
             {
-                groupReports.Add( group.SaveAll());
+                SaveAllReportGroupVM saveAllReport = group.SaveAll();
+                groupReports.Add(saveAllReport);
+                List<LogItem> errors = saveAllReport.Errors;
+                string lastEditDate = DateTime.Now.ToString("G");
+                SavingText = "Last Saved: " + lastEditDate;
+                TempErrors.AddRange(errors);
+                UpdateMessages(true);
+                //UpdateMessages(true);
                 //modifiedOcctypes.AddRange(group.ModifiedOcctypes);
             }
 
@@ -1494,8 +1560,199 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
 
+
+
         #endregion
 
+
+        public void UpdateMessages(bool saving = false)
+        {
+            //todo: just fire update message to the occtype editor
+            //UpdateMessagesEvent?.Invoke(this, new EventArgs());
+            //there are three places that messages come from.
+            // 1.) The sqlite database
+            // 2.) Temp messages from the validation of the "rules" (ie. Name cannot be blank)
+            // 3.) Temp messages from any object that implements IValidate. These messages come out of the model, stats, functions
+
+            //this gets called when still constructing everything. Exit is everything is still null
+            if (SelectedOccType == null || SelectedOccType.StructureEditorVM == null)
+            {
+                return;
+            }
+
+            //get rid of any temp logs
+            ObservableCollection<LogItem> tempList = new ObservableCollection<LogItem>();
+            foreach (LogItem li in MessageRows)
+            {
+                //exclude any temp logs
+                if (!li.IsTempLog())
+                {
+                    //if (li.Message.Equals("Last Saved"))
+                    //{
+                    //    li.Message = "Last Saved: " + li.Date;
+                    //}
+                    tempList.Add(li);
+                }
+
+            }
+
+
+            //get IMessages from the coord func editor
+            //and convert them into temp log messages
+            List<LogItem> funcLogs = GetTempLogsFromCoordinatesFunctionEditor();
+            //add them to the temp errors so that they will be included
+            TempErrors.AddRange(funcLogs);
+
+            //i want all of these messages to be put on the top of the list, but i want to respect their order. This 
+            //means i need to insert at 0 and start with the last in the list
+            for (int i = TempErrors.Count - 1; i >= 0; i--)
+            {
+                tempList.Insert(0, TempErrors[i]);
+            }
+            MessageRows = tempList;
+            TempErrors.Clear();
+            //if we are saving then we want the save status to be visible
+            if (saving)
+            {
+                UpdateSaveStatusLevel();
+            }
+            else
+            {
+                SaveStatusLevel = LoggingLevel.Debug;
+            }
+        }
+
+        private List<LogItem> GetTempLogsFromCoordinatesFunctionEditor()
+        {
+            List<LogItem> logs = new List<LogItem>();
+            List<IMessage> messagesFromEditor = new List<IMessage>();
+
+            //get messages from the editors
+            if (SelectedOccType.StructureEditorVM != null)
+            {
+                messagesFromEditor.AddRange(SelectedOccType.StructureEditorVM.Messages);
+                if (SelectedOccType.StructureEditorVM.Function.Messages != null)
+                {
+                    messagesFromEditor.AddRange(SelectedOccType.StructureEditorVM.Function.Messages);
+                }
+            }
+            if (SelectedOccType.ContentEditorVM != null)
+            {
+                messagesFromEditor.AddRange(SelectedOccType.ContentEditorVM.Messages);
+                if (SelectedOccType.ContentEditorVM.Function.Messages != null)
+                {
+                    messagesFromEditor.AddRange(SelectedOccType.ContentEditorVM.Function.Messages);
+                }
+            }
+            if (SelectedOccType.VehicleEditorVM != null)
+            {
+                messagesFromEditor.AddRange(SelectedOccType.VehicleEditorVM.Messages);
+                if (SelectedOccType.VehicleEditorVM.Function.Messages != null)
+                {
+                    messagesFromEditor.AddRange(SelectedOccType.VehicleEditorVM.Function.Messages);
+                }
+            }
+            if (SelectedOccType.OtherEditorVM != null)
+            {
+                messagesFromEditor.AddRange(SelectedOccType.OtherEditorVM.Messages);
+                if (SelectedOccType.OtherEditorVM.Function.Messages != null)
+                {
+                    messagesFromEditor.AddRange(SelectedOccType.OtherEditorVM.Function.Messages);
+                }
+            }
+
+            foreach (IMessage message in messagesFromEditor)
+            {
+                LoggingLevel level = TranslateValidationLevelToLogLevel(message.Level);
+                logs.Add(LogItemFactory.FactoryTemp(level, message.Notice));
+            }
+            //order the list by the log level. Highest on top
+            var sortedLogList = logs
+                .OrderByDescending(x => (int)(x.LogLevel))
+                .ToList();
+
+            return logs;
+        }
+
+        private LoggingLevel TranslateValidationLevelToLogLevel(IMessageLevels level)
+        {
+            LoggingLevel logLevel = LoggingLevel.Info;
+            switch (level)
+            {
+                case IMessageLevels.FatalError:
+                    {
+                        logLevel = LoggingLevel.Fatal;
+                        break;
+                    }
+                case IMessageLevels.Error:
+                    {
+                        logLevel = LoggingLevel.Error;
+                        break;
+                    }
+                case IMessageLevels.Message:
+                    {
+                        logLevel = LoggingLevel.Warn;
+                        break;
+                    }
+            }
+            return logLevel;
+        }
+
+        private void UpdateSaveStatusLevel()
+        {
+            //This method will also expand the 
+            //basically i want to set the error level to be the highest log level in my list
+            //this will change the background color of the Save button
+            if (ContainsLogLevel(LoggingLevel.Fatal))
+            {
+                IsExpanded = true;
+                SaveStatusLevel = LoggingLevel.Fatal;
+            }
+            else if (ContainsLogLevel(LoggingLevel.Error))
+            {
+                IsExpanded = true;
+                SaveStatusLevel = LoggingLevel.Error;
+            }
+            else if (ContainsLogLevel(LoggingLevel.Warn))
+            {
+                IsExpanded = true;
+                SaveStatusLevel = LoggingLevel.Warn;
+            }
+            else if (ContainsLogLevel(LoggingLevel.Info))
+            {
+                SaveStatusLevel = LoggingLevel.Info;
+            }
+            else
+            {
+                //this is being used here to just be the default lowest level.
+                SaveStatusLevel = LoggingLevel.Debug;
+            }
+        }
+
+        private bool ContainsLogLevel(LoggingLevel level)
+        {
+            bool retval = false;
+            foreach (LogItem li in MessageRows)
+            {
+                if (li.LogLevel == level)
+                {
+                    retval = true;
+                    break;
+                }
+            }
+            return retval;
+        }
+
+        public void FilterRowsByLevel(FdaLogging.LoggingLevel level)
+        {
+
+            //MessageRows = Saving.PersistenceFactory.GetElementManager(CurrentElement).GetLogMessagesByLevel(level, CurrentElement.Name);
+        }
+
+        public void DisplayAllMessages()
+        {
+            //MessageRows = Saving.PersistenceFactory.GetElementManager(CurrentElement).GetLogMessages(CurrentElement.Name);
+        }
 
     }
 }

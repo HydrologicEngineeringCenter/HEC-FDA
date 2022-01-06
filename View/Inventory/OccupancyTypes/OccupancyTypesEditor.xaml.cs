@@ -75,9 +75,9 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
             }
             ListCollectionView lcv = new ListCollectionView(collectionOfOccTypes);
 
-            lcv.GroupDescriptions.Add(new PropertyGroupDescription("DamageCategory.Name"));        
+            lcv.GroupDescriptions.Add(new PropertyGroupDescription("DamageCategory"));        
 
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("DamageCategory.Name", System.ComponentModel.ListSortDirection.Ascending));
+            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("DamageCategory", System.ComponentModel.ListSortDirection.Ascending));
             lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("Name", System.ComponentModel.ListSortDirection.Ascending));
 
             OccTypeListView.ItemsSource = lcv;
@@ -124,10 +124,10 @@ namespace HEC.FDA.View.Inventory.OccupancyTypes
             }
             ListCollectionView lcv = new ListCollectionView(collectionOfOccTypes);
 
-            lcv.GroupDescriptions.Add(new PropertyGroupDescription("OccType.DamageCategory.Name"));
+            lcv.GroupDescriptions.Add(new PropertyGroupDescription("DamageCategory"));
 
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("OccType.DamageCategory.Name", System.ComponentModel.ListSortDirection.Ascending));
-            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("OccType.Name", System.ComponentModel.ListSortDirection.Ascending));
+            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("DamageCategory", System.ComponentModel.ListSortDirection.Ascending));
+            lcv.SortDescriptions.Add(new System.ComponentModel.SortDescription("Name", System.ComponentModel.ListSortDirection.Ascending));
 
             OccTypeListView.ItemsSource = lcv;
             if (OccTypeListView.Items.Count == 0)

@@ -17,7 +17,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
     /// This represents an IOccupancyType while it is in the occupancy type editor. All the values can be edited.
     /// If the user saves, then a new occupancy type based off of these values will replace the original.
     /// </summary>
-    public class OccupancyTypeEditable : BaseEditorVM, IDisplayLogMessages, IOccupancyTypeEditable
+    public class OccupancyTypeEditable : BaseViewModel, IOccupancyTypeEditable
     {
 
         #region Fields
@@ -29,17 +29,13 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         private bool _CalculateOtherDamage;
         private string _Name;
         private string _Description;
-        private IDamageCategory _DamageCategory2;
+        //private IDamageCategory _DamageCategory2;
         private string _DamageCategory;
         private bool _IsModified;
         private ObservableCollection<string> _DamageCategoriesList = new ObservableCollection<string>();
 
 
-        private ObservableCollection<FdaLogging.LogItem> _MessageRows = new ObservableCollection<FdaLogging.LogItem>();
-        private LoggingLevel _SaveStatusLevel;
-        private bool _IsExpanded;
-        private bool _SaveStatusVisible;
-        private string _SavingText;
+      
 
         #endregion
 
@@ -85,16 +81,16 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             set { _Description = value; IsModified = true; }
         }
 
-        public IDamageCategory DamageCategory2
-        {
-            get { return _DamageCategory2; }
-            set
-            {
-                _DamageCategory2 = value;
-                NotifyPropertyChanged();
-                IsModified = true;
-            }
-        }
+        //public IDamageCategory DamageCategory2
+        //{
+        //    get { return _DamageCategory2; }
+        //    set
+        //    {
+        //        _DamageCategory2 = value;
+        //        NotifyPropertyChanged();
+        //        IsModified = true;
+        //    }
+        //}
         public string DamageCategory
         {
             get { return _DamageCategory; }
@@ -164,6 +160,12 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 IsModified = true;
             }
         }
+        private double _ContentToStructure;
+        public double ContentToStructure
+        {
+            get { return _ContentToStructure; }
+            set { _ContentToStructure = value; NotifyPropertyChanged(); }
+        }
 
         private ValueUncertaintyVM _OtherToStructureValueUncertainty;
         public ValueUncertaintyVM OtherToStructureValueUncertainty
@@ -175,6 +177,13 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 _OtherToStructureValueUncertainty.WasModified += SomethingChanged;
                 IsModified = true;
             }
+        }
+
+        private double _OtherToStructure;
+        public double OtherToStructure
+        {
+            get { return _OtherToStructure; }
+            set { _OtherToStructure = value; NotifyPropertyChanged(); }
         }
 
         private ValueUncertaintyVM _VehicleValueUncertainty;
@@ -213,76 +222,43 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             }
         }
 
-        public CoordinatesFunctionEditorVM StructureEditorVM 
-        { 
-            get; 
-            set; 
-        }
-        public CoordinatesFunctionEditorVM ContentEditorVM 
-        { 
-            get; 
-            set; 
-        }
-        public CoordinatesFunctionEditorVM VehicleEditorVM 
-        { 
-            get; 
-            set; 
-        }
-        public CoordinatesFunctionEditorVM OtherEditorVM { get; set; }
-
-        public LoggingLevel SaveStatusLevel
-        {
-            get { return _SaveStatusLevel; }
-            set
-            {
-                if (_SaveStatusLevel != value)
-                {
-                    _SaveStatusLevel = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public bool IsExpanded
-        {
-            get { return _IsExpanded; }
-            set
-            {
-
-                if (_IsExpanded != value)
-                {
-                    _IsExpanded = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-        public ObservableCollection<LogItem> MessageRows
-        {
-            get { return _MessageRows; }
-            set
-            {
-                _MessageRows = value;
-                NotifyPropertyChanged(nameof(SaveStatusLevel));
-                NotifyPropertyChanged("MessageRows");
-                NotifyPropertyChanged("MessageCount");
-            }
-        }
-        public string SavingText
-        {
-            get { return _SavingText; }
-            set { _SavingText = value; NotifyPropertyChanged(); }
-        }
-
-        public int MessageCount
-        {
-            get { return _MessageRows.Count; }
-        }
-
-        public List<LogItem> TempErrors
+        public object OccType
         {
             get;
             set;
         }
+
+        private CoordinatesFunctionEditorVM _StructureEditorVM;
+        public CoordinatesFunctionEditorVM StructureEditorVM
+        {
+            get { return _StructureEditorVM; }
+            set { _StructureEditorVM = value; NotifyPropertyChanged(); }
+        }
+        private CoordinatesFunctionEditorVM _ContentEditorVM;
+
+        public CoordinatesFunctionEditorVM ContentEditorVM
+        {
+            get { return _ContentEditorVM; }
+            set { _ContentEditorVM = value; NotifyPropertyChanged(); }
+        }
+        private CoordinatesFunctionEditorVM _VehicleEditorVM;
+
+        public CoordinatesFunctionEditorVM VehicleEditorVM
+        {
+            get { return _VehicleEditorVM; }
+            set { _VehicleEditorVM = value; NotifyPropertyChanged(); }
+        }
+        private CoordinatesFunctionEditorVM _OtherEditorVM;
+
+        public CoordinatesFunctionEditorVM OtherEditorVM
+        {
+            get { return _OtherEditorVM; }
+            set { _OtherEditorVM = value; NotifyPropertyChanged(); }
+        }
+
+        
+
+        
 
         /// <summary>
         /// This indicates if the occtype has ever been saved before. If false, then
@@ -319,7 +295,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         //    VehicleEditorVM = new CoordinatesFunctionEditorVM(clonedOcctype.VehicleDepthDamageFunction, xLabel, yLabel, chartTitle);
         //    OtherEditorVM = new CoordinatesFunctionEditorVM(clonedOcctype.OtherDepthDamageFunction, xLabel, yLabel, chartTitle);
         //}
-        public OccupancyTypeEditable(IOccupancyType occtype,ref ObservableCollection<string> damageCategoriesList, bool occtypeHasBeenSaved = true):base(null)
+        public OccupancyTypeEditable(IOccupancyType occtype,ref ObservableCollection<string> damageCategoriesList, bool occtypeHasBeenSaved = true)
         {
             DamageCategoriesList = damageCategoriesList;
             HasBeenSaved = occtypeHasBeenSaved;
@@ -329,7 +305,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
             Name = clonedOcctype.Name;
             Description = clonedOcctype.Description;
-            DamageCategory2 = clonedOcctype.DamageCategory;
+            DamageCategory = clonedOcctype.DamageCategory;
             CalculateStructureDamage = clonedOcctype.CalculateStructureDamage;
             CalculateContentDamage = clonedOcctype.CalculateContentDamage;
             CalculateVehicleDamage = clonedOcctype.CalculateVehicleDamage;
@@ -382,7 +358,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
                 if (vm.HasError == false)
                 {
                     //store the new damage category
-                    DamageCategory2 = DamageCategoryFactory.Factory(vm.Name);
+                    DamageCategory = vm.Name;
                     _DamageCategoriesList.Add(vm.Name);
                     //SetDamageCategory();
                     //LoadDamageCategoriesList();
@@ -731,7 +707,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             ot.GroupID = GroupID;
             ot.ID = ID;
             ot.Description = Description;
-            ot.DamageCategory = DamageCategory2;
+            ot.DamageCategory = DamageCategory;
 
             ot.CalculateStructureDamage = CalculateStructureDamage;
             ot.CalculateContentDamage = CalculateContentDamage;
@@ -906,6 +882,49 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         }
 
+        public List<LogItem> SaveOcctype()
+        {
+            FdaValidationResult vr = new FdaValidationResult();
+
+            OccTypePersistenceManager manager = Saving.PersistenceFactory.GetOccTypeManager();
+
+            List<LogItem> errors = new List<LogItem>();
+            IOccupancyType ot = CreateOccupancyType(out errors);
+            if (ot == null)
+            {
+                //if the occtype is null then it failed. There should be errors to add.
+                
+                return errors;
+            }
+            else if (HasBeenSaved)
+            {
+                //update the existing occtype
+                manager.SaveModifiedOcctype(ot);
+            }
+            else if (!HasBeenSaved)
+            {
+                //save this as a new occtype
+                //if it has never been saved then we need a new occtype id for it.
+                //todo: this is weird and i am doing something similar with the occtype groups
+                //i want them to have a property of their id. But i also feel like i shouldn't have 
+                //to be figuring out the id on my own. I should just let the database do it. Like i could 
+                //save it and then ask it what id it was given by the database.
+                ot.ID = Saving.PersistenceFactory.GetOccTypeManager().GetIdForNewOccType(ot.GroupID);
+                manager.SaveNewOccType(ot);
+            }
+
+
+
+            IsModified = false;
+            
+            //this will disable the save button.
+            HasChanges = false;
+            if(errors == null)
+            {
+                errors = new List<LogItem>();
+            }
+            return errors;
+        }
 
     }
 }
