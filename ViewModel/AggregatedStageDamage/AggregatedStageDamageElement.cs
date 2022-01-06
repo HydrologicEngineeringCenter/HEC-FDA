@@ -1,9 +1,9 @@
-﻿using Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Text;
+using System.Windows;
 using ViewModel.Editors;
 using ViewModel.Inventory;
 using ViewModel.Utilities;
@@ -73,53 +73,12 @@ namespace ViewModel.AggregatedStageDamage
             Actions = localActions;
         }
 
-        /// <summary>
-        /// Stage damage element
-        /// </summary>
-        /// <param name="name">Name of element</param>
-        /// <param name="lastEditDate">Last edit date</param>
-        /// <param name="description">Element description</param>
-        /// <param name="curve">The curve that represents the stage vs damage for the element</param>
-        /// <param name="method">Creation method</param>
-        public AggregatedStageDamageElement( string name , string lastEditDate, string description, IFdaFunction curve, CreationMethodEnum method) : base()
-        {
-            LastEditDate = lastEditDate;
-            Name = name;
-            CustomTreeViewHeader = new CustomHeaderVM(Name, "pack://application:,,,/View;component/Resources/StageDamage.png");
-
-            Description = description;
-            if(Description == null)
-            {
-                Description = "";
-            }
-            Curve = curve;
-            _Method = method;
-            //add named actions like edit.
-            NamedAction editDamageCurve = new NamedAction();
-            editDamageCurve.Header = "Edit Aggregated Stage Damage Relationship";
-            editDamageCurve.Action = EditDamageCurve;
-
-            NamedAction removeDamageCurve = new NamedAction();
-            removeDamageCurve.Header = "Remove";
-            removeDamageCurve.Action = RemoveElement;
-
-            NamedAction renameDamageCurve = new NamedAction(this);
-            renameDamageCurve.Header = "Rename";
-            renameDamageCurve.Action = Rename;
-
-            List<NamedAction> localActions = new List<NamedAction>();
-            localActions.Add(editDamageCurve);
-            localActions.Add(removeDamageCurve);
-            localActions.Add(renameDamageCurve);
-
-            Actions = localActions;
-        }
         #endregion
         #region Voids
         public override ChildElement CloneElement(ChildElement elementToClone)
         {
             AggregatedStageDamageElement elem = (AggregatedStageDamageElement)elementToClone;
-            return new AggregatedStageDamageElement(elem.Name, elem.LastEditDate, elem.Description, elem.Curve, elem.Method);
+            return new AggregatedStageDamageElement(elem.Name, elem.LastEditDate, elem.Description, elem.SelectedWSE, elem.SelectedStructures, elem.Curves, elem.IsManual);
         }
         public void RemoveElement(object sender, EventArgs e)
         {
@@ -145,15 +104,22 @@ namespace ViewModel.AggregatedStageDamage
         }
 
         public void ExportDetails(object sender, EventArgs e)
-        {        
-            //todo: Richard will write the logic that loads the table with the desired details.
-            string path = Storage.Connection.Instance.ProjectDirectory + "\\" + Name + "_Structure_Detail.csv";
-            using (var sw = new StreamWriter(path))
+        {
+            if (IsManual)
             {
-                WriteHeaderMetaData(sw);
-                sw.WriteLine();
-                WriteStructureTable(sw);
-            }// the streamwriter WILL be closed and flushed here, even if an exception is thrown.
+                MessageBox.Show("Details cannot be exported for manually entered stage damages.", "Unable to Export Details", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                //todo: Richard will write the logic that loads the table with the desired details.
+                string path = Storage.Connection.Instance.ProjectDirectory + "\\" + Name + "_Structure_Detail.csv";
+                using (var sw = new StreamWriter(path))
+                {
+                    WriteHeaderMetaData(sw);
+                    sw.WriteLine();
+                    WriteStructureTable(sw);
+                }// the streamwriter WILL be closed and flushed here, even if an exception is thrown.
+            }
         }
         private void WriteStructureTable(StreamWriter sw)
         {

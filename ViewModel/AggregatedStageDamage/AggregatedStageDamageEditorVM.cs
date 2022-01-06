@@ -86,12 +86,8 @@ namespace ViewModel.AggregatedStageDamage
         {
             if (IsManualRadioSelected)
             {
-                bool valid = ManualVM.ValidateForm();
-                if (valid)
-                {
-                    SaveManualEditCurves();
-                }
-            } 
+                SaveManualEditCurves();
+            }
             else
             {
                 SaveCalculatedCurves();
@@ -134,21 +130,25 @@ namespace ViewModel.AggregatedStageDamage
 
         private void SaveManualEditCurves()
         {
-            LastEditDate = DateTime.Now.ToString("G");
-            AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, LastEditDate, Description, -1, -1, ManualVM.GetStageDamageCurves(), true);
-          
-            Saving.PersistenceManagers.StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
+            bool valid = ManualVM.ValidateForm();
+            if (valid)
+            {
+                LastEditDate = DateTime.Now.ToString("G");
+                AggregatedStageDamageElement elem = new AggregatedStageDamageElement(Name, LastEditDate, Description, -1, -1, ManualVM.GetStageDamageCurves(), true);
 
-            if (_IsInEditMode)
-            {
-                manager.SaveExisting(CurrentElement, elem);
+                Saving.PersistenceManagers.StageDamagePersistenceManager manager = Saving.PersistenceFactory.GetStageDamageManager();
+
+                if (_IsInEditMode)
+                {
+                    manager.SaveExisting(CurrentElement, elem);
+                }
+                else
+                {
+                    manager.SaveNew(elem);
+                    _IsInEditMode = true;
+                }
+                CurrentElement = elem;
             }
-            else
-            {
-                manager.SaveNew(elem);
-                _IsInEditMode = true;
-            }
-            CurrentElement = elem;
         }
 
         public override void Save()
