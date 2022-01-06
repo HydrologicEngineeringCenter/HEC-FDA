@@ -310,7 +310,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
         private object[] GetOccTypeInfoArray(IOccupancyType ot)
         {
-            return new object[] { ot.Name, ot.Description, ot.DamageCategory.Name };
+            return new object[] { ot.Name, ot.Description, ot.DamageCategory };
 
         }
         //private object[] GetContinuousDistributionArray(ICoordinatesFunction cd)

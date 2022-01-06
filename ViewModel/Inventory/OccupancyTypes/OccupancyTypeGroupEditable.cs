@@ -104,19 +104,17 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
             //}
             SaveAllReportGroupVM saveAllGroup = new SaveAllReportGroupVM(Name);
-            //_savedSuccessful.Clear();
-            ////_savedUnsuccessful.Clear();
+
             foreach(IOccupancyTypeEditable otEditable in ModifiedOcctypes)
             {
-                bool success = otEditable.SaveWithReturnValue();
-                if(!success)
+                List<FdaLogging.LogItem> errorsWhileSaving = otEditable.SaveOcctype();
+                saveAllGroup.Errors.AddRange(errorsWhileSaving);
+                if(errorsWhileSaving.Count>0)
                 {
-                   // _savedUnsuccessful.Add(otEditable);
                     saveAllGroup.UnsuccessfulList.Add(otEditable.Name);
                 }
                 else
                 {
-                    //_savedSuccessful.Add(otEditable);
                     saveAllGroup.SuccessfulList.Add(otEditable.Name);
                 }
             }

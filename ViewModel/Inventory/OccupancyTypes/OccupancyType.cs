@@ -43,7 +43,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             set { _Description = value; IsModified = true; }
         }
 
-        public IDamageCategory DamageCategory { get; set; }
+        public string DamageCategory { get; set; }
 
         public bool CalculateStructureDamage
         {
@@ -99,7 +99,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         public OccupancyType(string name, string damageCategoryName)
         {
             Name = name;
-            DamageCategory = DamageCategoryFactory.Factory(damageCategoryName);
+            DamageCategory = damageCategoryName;
         }
 
 

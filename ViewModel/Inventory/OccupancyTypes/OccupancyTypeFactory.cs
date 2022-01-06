@@ -44,7 +44,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
             ot.CalculateOtherDamage = false;
 
             //todo: what about damage category?
-            ot.DamageCategory = new DamageCategory.DamageCategory(damCatName);
+            ot.DamageCategory = damCatName;
             
             //depth damage curves
             List<double> xs = new List<double>() { 0 };

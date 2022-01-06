@@ -111,6 +111,8 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
 
             _OccTypeEditor = new OccupancyTypesEditorVM( actionManager);
             _OccTypeEditor.FillEditor(ListOfOccupancyTypesGroups);
+            //_OccTypeEditor. SelectedOccTypeGroup = ListOfOccupancyTypesGroups[0];
+            //_OccTypeEditor.SelectedOccType = _OccTypeEditor.SelectedOccTypeGroup.Occtypes[1];
 
             _OccTypeEditor.RequestNavigation += Navigate;
             string header = "Edit Occupancy Types";

@@ -636,7 +636,7 @@ namespace Importer
             //what do i need for a new ot
             ot.Name = Name;
             ot.Description = Description;
-            ot.DamageCategory = DamageCategoryFactory.Factory(CategoryName);
+            ot.DamageCategory = CategoryName;
 
             //the single damage functions will always be in this order
             //public enum StructureValueType { STRUCTURE, CONTENT, OTHER, CAR, TOTAL };

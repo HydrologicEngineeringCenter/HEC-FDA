@@ -487,7 +487,7 @@ namespace HEC.FDA.ViewModel.Inventory
             //occtypes and damcats
             row[StructureInventoryBaseElement.OccupancyTypeField] = selectedOcctype.OccType.Name;
             row[StructureInventoryBaseElement.OccupancyTypeGroupName] = selectedOcctype.GroupName;
-            row[StructureInventoryBaseElement.damCatField] = selectedOcctype.OccType.DamageCategory.Name;
+            row[StructureInventoryBaseElement.damCatField] = selectedOcctype.OccType.DamageCategory;
 
             //foundation and elevation
             if (FirstFloorElevationIsSelected)

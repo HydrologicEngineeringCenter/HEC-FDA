@@ -18,7 +18,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         int ID { get; set; }
         int GroupID { get; set; }
         string Description { get; set; }
-        IDamageCategory DamageCategory2 { get; set; }
+        string DamageCategory { get; set; }
         bool IsModified { get; set; }
         ValueUncertaintyVM StructureValueUncertainty { get; set; }
         ValueUncertaintyVM ContentValueUncertainty { get; set; }
@@ -42,7 +42,7 @@ namespace HEC.FDA.ViewModel.Inventory.OccupancyTypes
         /// and has never been saved.
         /// </summary>
         bool HasBeenSaved { get; }
-        bool SaveWithReturnValue();
+        List<LogItem> SaveOcctype();
         IOccupancyType CreateOccupancyType(out List<LogItem> errors);
 
 
