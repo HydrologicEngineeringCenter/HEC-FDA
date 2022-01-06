@@ -45,7 +45,7 @@ namespace ViewModel.Inventory.OccupancyTypes
 
         public IOrdinate CreateOrdinate()
         {
-            return IDistributedOrdinateFactory.FactoryNormal(Mean, StDev);
+            return IDistributedOrdinateFactory.FactoryLogNormal(Mean, StDev);
         }
     }
 }
