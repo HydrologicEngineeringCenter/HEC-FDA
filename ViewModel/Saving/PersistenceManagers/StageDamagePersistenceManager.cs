@@ -101,10 +101,11 @@ namespace ViewModel.Saving.PersistenceManagers
         #endregion
         public void SaveAssetCurve(ChildElement element, StageDamageAssetType type, string nameOfTotalFunctionInParentTable)
         {
-            if (element.GetType() == typeof(AggregatedStageDamageElement))
-            {
-                object[] data = GetRowDataForAssetTable(element, type, nameOfTotalFunctionInParentTable);
-            }
+            SaveNew(element);
+            //if (element.GetType() == typeof(AggregatedStageDamageElement))
+            //{
+            //    object[] data = GetRowDataForAssetTable(element, type, nameOfTotalFunctionInParentTable);
+            //}
         }
 
         public void SaveNew(ChildElement element)

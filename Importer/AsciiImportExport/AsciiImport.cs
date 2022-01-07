@@ -67,8 +67,6 @@ namespace Importer
         {
             ImportEverything,
             ImportOcctypesOnly,
-            ImportStructuresOnly,
-            ImportWaterSurfaceProfilesOnly
         }
 
         #endregion
@@ -169,7 +167,6 @@ namespace Importer
                 case ImportOptions.ImportEverything:
                     {
                         //write everything you can to sqlite
-                        SaveStructuresToNewFDA();
                         SaveOccupancyTypes(_FileName);
                         //flow-freq 
                         SaveProbabilityFunctions();
@@ -177,7 +174,7 @@ namespace Importer
                         SaveLevees();
                         SaveRatingCurvesToNewFDA();
                         SaveAggregatedStageDamageToNewFDA();
-                        SaveWaterSurfaceProfilesToNewFDA();
+                        //SaveWaterSurfaceProfilesToNewFDA();
 
                         break;
                     }
@@ -185,17 +182,6 @@ namespace Importer
                     {
                         //I don't actually want to save here. I just want to grab them
                         ReadOccTypes();
-                        break;
-                    }
-                case ImportOptions.ImportStructuresOnly:
-                    {
-                        ReadStructuresToNewFDA();
-                        break;
-                    }
-                case ImportOptions.ImportWaterSurfaceProfilesOnly:
-                    {
-                        //write only the wsp's out
-                        ReadWaterSurfaceProfiles();
                         break;
                     }
             }
@@ -274,7 +260,7 @@ namespace Importer
             AggregateDamageFunctionList aggDamageList = GlobalVariables.mp_fdaStudy.GetAggDamgFuncList();
             foreach (KeyValuePair<string, AggregateDamageFunction> kvp in aggDamageList.GetAggDamageFunctions)
             {
-                kvp.Value.SaveToSqlite();
+                //kvp.Value.SaveToSqlite();
             }
         }
 

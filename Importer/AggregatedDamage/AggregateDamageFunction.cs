@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ViewModel.AggregatedStageDamage;
+using ViewModel.ImpactArea;
 using ViewModel.Saving.PersistenceManagers;
 using static System.Console;
 
@@ -428,10 +429,11 @@ namespace Importer
             }
             //always use linear. This is the only option in Old Fda.
             ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(depthsList, damagesList, InterpolationEnum.Linear);
-            IFdaFunction stageDamage = IFdaFunctionFactory.Factory( IParameterEnum.InteriorStageDamage, (IFunction)func);
+            //IFdaFunction stageDamage = IFdaFunctionFactory.Factory( IParameterEnum.InteriorStageDamage, (IFunction)func);
             List<StageDamageCurve> curves = new List<StageDamageCurve>();
-            //todo: cody will fix in task 9
-            //StageDamageCurve curve = new StageDamageCurve()
+            ImpactAreaRowItem ri = new ImpactAreaRowItem(-1, "testImpactArea");
+            StageDamageCurve curve = new StageDamageCurve(ri, "testDamCat", func);
+            curves.Add(curve);
             return new AggregatedStageDamageElement(Name, CalculationDate, Description, -1,-1, curves, true);
         }
 

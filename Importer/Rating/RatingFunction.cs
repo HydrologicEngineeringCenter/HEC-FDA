@@ -416,6 +416,7 @@ namespace Importer
             //always use linear. This is the only option in Old Fda.
             ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(stagesList, flowsList, InterpolationEnum.Linear);
             IFdaFunction rating = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)func);
+            //add the plan year stream reach for the description
             RatingCurveElement elem = new RatingCurveElement(Name,CalculationDate,Description,rating);
             RatingElementPersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetRatingManager();
             manager.SaveNew(elem);

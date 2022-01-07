@@ -29,13 +29,8 @@ namespace ViewModel.Inventory
             addStructureInventory.Header = "Import From Shapefile...";
             addStructureInventory.Action = AddStructureInventory;
 
-            NamedAction addStructureInventoryFromNonGeo = new NamedAction();
-            addStructureInventoryFromNonGeo.Header = "Import From Fda Version 1...";
-            addStructureInventoryFromNonGeo.Action = ImportStructuresFromFDA1;
-
             List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addStructureInventory);
-            localActions.Add(addStructureInventoryFromNonGeo);
 
             Actions = localActions;
 
@@ -59,16 +54,6 @@ namespace ViewModel.Inventory
             AddElement(e.Element);
         }
 
-        public void ImportStructuresFromFDA1(object arg1, EventArgs arg2)
-        {
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
-                 .WithSiblingRules(this);
-
-            ImportStructuresFromFDA1VM vm = new ImportStructuresFromFDA1VM( actionManager);
-            string header = "Import Structure Inventory";
-            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStructureInventoryFromFDA1");
-            Navigate(tab, false, false);
-        }
         public void AddStructureInventory(object arg1, EventArgs arg2)
         {
             List<OccupancyTypesElement> occtypeElems = StudyCache.GetChildElementsOfType<OccupancyTypesElement>();

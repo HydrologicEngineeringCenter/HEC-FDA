@@ -231,13 +231,9 @@
         <DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromShapefileVM }" >
             <InventoryView:ImportStructuresFromShapefile/>
         </DataTemplate>
-        
+
         <DataTemplate DataType="{x:Type InventoryVM:ImportFromHAZUSVM }" >
             <InventoryView:ImportFromHAZUS/>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type InventoryVM:ImportStructuresFromFDA1VM }" >
-            <InventoryView:ImportStructuresFromFDA1/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type InventoryVM:ImportFromNSIVM }" >
@@ -403,9 +399,7 @@
         <DataTemplate DataType="{x:Type WaterSurfaceElevationsVM:WaterSurfaceElevationImporterVM }" >
             <WaterSurfaceElevationsView:WaterSurfaceElevationImporter/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type WaterSurfaceElevationsVM:WaterSurfaceElevationImporterFDA1VM }" >
-            <WaterSurfaceElevationsView:WaterSurfaceElevationImporterFromFDA1/>
-        </DataTemplate>
+
         <!--<Image x:Key="ErrorImageKey" Source="pack://application:,,,/View;component/Resources/Error.png" IsHitTestVisible="false"/>
         <Image x:Key="MessageImageKey" Source="pack://application:,,,/View;component/Resources/Message.png" IsHitTestVisible="false"/>
         <Image x:Key="HelpImageKey" Source="pack://application:,,,/View;component/Resources/help.png" IsHitTestVisible="false"/>-->
