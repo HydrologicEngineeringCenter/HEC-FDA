@@ -49,7 +49,7 @@ namespace ViewModel.Inventory.OccupancyTypes
             double triMax = 2;
             if (ordType == IOrdinateEnum.Triangular)
             {
-                triMostLikely = ((IDistributedOrdinate)ordinate).Mode;
+                triMostLikely = ((IDistributedOrdinate)ordinate).MostLikely;
                 triMin = ((IDistributedOrdinate)ordinate).Range.Min;
                 triMax = ((IDistributedOrdinate)ordinate).Range.Max;
             }
