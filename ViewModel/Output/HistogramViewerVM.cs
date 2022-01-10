@@ -20,7 +20,7 @@ namespace ViewModel.Output
         public double EADMean { get; }
         public double AEPMean { get; }
 
-        public int SampleSize { get; set; }
+        public long SampleSize { get; set; }
         public List<HistogramBinVM> Bins { get; }
 
         public OxyPlot.PlotModel HistogramPlotModel
@@ -60,7 +60,7 @@ namespace ViewModel.Output
         }
 
 
-        private void setUpHistogramPlotModel(int sampleSize, List<HistogramBinVM> bins)
+        private void setUpHistogramPlotModel(long sampleSize, List<HistogramBinVM> bins)
         {
 
             HistogramPlotModel = new OxyPlot.PlotModel();
