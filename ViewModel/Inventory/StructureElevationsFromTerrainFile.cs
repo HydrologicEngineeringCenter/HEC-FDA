@@ -42,11 +42,9 @@ namespace ViewModel.Inventory
             return pointDs;
         }
 
-        public float[] GetStructureElevationsFromTerrainFile(ref string errorMessage)
+        public List<float> GetStructureElevationsFromTerrainFile(ref string errorMessage)
         {
-            float[] elevations = null;
-            //todo: should i just do a try catch around the whole thing to reduce all the if statements?
-            bool isValid = true;
+            List<float> elevations = new List<float>();
             List<TerrainElement> terrainElements = StudyCache.GetChildElementsOfType<TerrainElement>();
             if (terrainElements.Count > 0)
             {
@@ -61,7 +59,15 @@ namespace ViewModel.Inventory
                         if (structPoints != null)
                         {
                             //todo: i can pass in a default value for missing data
-                            elevations = terrainRasters.GridReader.SampleValues(structPoints);
+                            float[] elevs = terrainRasters.GridReader.SampleValues(structPoints);
+                            if(elevs!= null && elevs.Length>0)
+                            {
+                                elevations.AddRange(elevs);
+                            }
+                            else
+                            {
+                                errorMessage = "No elevations were calculated for the structures.";
+                            }
                         }
                         else
                         {
