@@ -403,6 +403,8 @@ namespace Importer
 
         public void SaveToSqlite()
         {
+            string pysr = "(" + PlanName + " " + YearName + " " + StreamName + " " + DamageReachName + ") ";
+            string description = pysr + Description;
             double[] stages = GetStage();
             double[] flows = GetDischarge();
             //these arrays might have a bunch of "Study.badNumber" (-901). I need to get rid of them by only grabbing the correct number of points.
@@ -417,7 +419,7 @@ namespace Importer
             ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(stagesList, flowsList, InterpolationEnum.Linear);
             IFdaFunction rating = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)func);
             //add the plan year stream reach for the description
-            RatingCurveElement elem = new RatingCurveElement(Name,CalculationDate,Description,rating);
+            RatingCurveElement elem = new RatingCurveElement(Name, CalculationDate, description, rating);
             RatingElementPersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetRatingManager();
             manager.SaveNew(elem);
         }

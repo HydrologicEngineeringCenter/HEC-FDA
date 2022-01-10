@@ -898,10 +898,14 @@ namespace Importer
 
         public void SaveToSqlite()
         {
+            string pysr = "("+PlanName + " " + YearName + " " + StreamName + " " + DamageReachName +") ";
+            string description = pysr + Description;
+
             if (ProbabilityFunctionTypeId == FrequencyFunctionType.ANALYTICAL)
             {
                 if (SourceOfStatisticsId == SourceOfStatistics.ENTERED)
                 {
+
                     //LP3 moments
                     double mean = MomentsLp3[0];
                     double stdDev = MomentsLp3[1];
@@ -1015,7 +1019,6 @@ namespace Importer
                     coordFunc = ICoordinatesFunctionsFactory.Factory(inflows, outflows, InterpolationEnum.Linear);
                 }
 
-                string description = PlanName + YearName + StreamName + DamageReachName;
                 IFdaFunction func = IFdaFunctionFactory.Factory(IParameterEnum.InflowOutflow, coordFunc);
                 InflowOutflowElement elem = new InflowOutflowElement(Name, DateTime.Now.ToString(), description, func);
 

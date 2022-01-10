@@ -170,7 +170,6 @@ namespace Importer
                         SaveOccupancyTypes(_FileName);
                         //flow-freq 
                         SaveProbabilityFunctions();
-                        //failure function, ext-int stage
                         SaveLevees();
                         SaveRatingCurvesToNewFDA();
                         SaveAggregatedStageDamageToNewFDA();
@@ -260,58 +259,10 @@ namespace Importer
             AggregateDamageFunctionList aggDamageList = GlobalVariables.mp_fdaStudy.GetAggDamgFuncList();
             foreach (KeyValuePair<string, AggregateDamageFunction> kvp in aggDamageList.GetAggDamageFunctions)
             {
-                //kvp.Value.SaveToSqlite();
-            }
-        }
-
-        private void ReadStructuresToNewFDA()
-        {
-            StructureList structureList = GlobalVariables.mp_fdaStudy.GetStructureList();
-            StructureInventoryPersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetStructureInventoryManager();
-            DataTable dt = manager.CreateEmptyStructuresTable();
-            foreach (KeyValuePair<string, Structure> kvp in structureList.Structures)
-            {
-                object[] structRow = kvp.Value.CreateFDA2DatabaseRow(kvp.Key, _FileName);
-                dt.Rows.Add(structRow);
-            }
-            StructuresForFDA2 = dt;
-        }
-
-        private void SaveStructuresToNewFDA()
-        {
-            StructureList structureList = GlobalVariables.mp_fdaStudy.GetStructureList();
-            //move the create datatable into the pers manager and call it here
-            StructureInventoryPersistenceManager manager = ViewModel.Saving.PersistenceFactory.GetStructureInventoryManager();
-            DataTable dt = manager.CreateEmptyStructuresTable();
-            foreach (KeyValuePair<string, Structure> kvp in structureList.Structures)
-            {
-                object[] structRow = kvp.Value.CreateFDA2DatabaseRow(kvp.Key, _FileName);
-                dt.Rows.Add(structRow);
-            }
-            //the data table needs to be saved first.
-            manager.SaveNew(dt, _FileName);
-            manager.SaveNewInventoryToParentTable(_FileName);
-        }
-
-        private void ReadWaterSurfaceProfiles()
-        {
-            List<WaterSurfaceElevationElement> elems = new List<WaterSurfaceElevationElement>();
-            WaterSurfaceProfileList wspList = GlobalVariables.mp_fdaStudy.GetWspList();
-            foreach (KeyValuePair<string, WaterSurfaceProfile> kvp in wspList.WaterSurfaceProfiles)
-            {
-                elems.Add( kvp.Value.ConvertToFDA2());
-            }
-            WaterSurfaceElevs = elems;
-        }
-
-        private void SaveWaterSurfaceProfilesToNewFDA()
-        {
-            WaterSurfaceProfileList wspList = GlobalVariables.mp_fdaStudy.GetWspList();
-            foreach (KeyValuePair<string, WaterSurfaceProfile> kvp in wspList.WaterSurfaceProfiles)
-            {
                 kvp.Value.SaveToSqlite();
             }
         }
+
         private void SaveRatingCurvesToNewFDA()
         {
             RatingFunctionList ratings = GlobalVariables.mp_fdaStudy.GetRatingFunctionList();

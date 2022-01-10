@@ -22,18 +22,18 @@ namespace ViewModel.FrequencyRelationships
         {
             Name = "Analyitical Flow Frequency Curves";
             IsBold = false;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
-            Utilities.NamedAction addRatingCurve = new Utilities.NamedAction();
-            addRatingCurve.Header = "Create New Analyitical Flow Frequency Curve";
-            addRatingCurve.Action = AddNewFlowFrequencyCurve;
+            CustomTreeViewHeader = new CustomHeaderVM(Name);
+            NamedAction createNew = new NamedAction();
+            createNew.Header = "Create New Analyitical Flow Frequency Curve";
+            createNew.Action = AddNewFlowFrequencyCurve;
 
-            Utilities.NamedAction ImportRatingCurve = new Utilities.NamedAction();
-            ImportRatingCurve.Header = "Import Analyitical Flow Frequency Curve From ASCII";
-            ImportRatingCurve.Action = ImportRatingCurvefromAscii;
+            NamedAction importFlowFreq = new NamedAction();
+            importFlowFreq.Header = "Import Analyitical Flow Frequency Curve From ASCII";
+            importFlowFreq.Action = ImportFlowFreqFromAscii;
 
-            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
-            localActions.Add(addRatingCurve);
-            //localActions.Add(ImportRatingCurve);
+            List<NamedAction> localActions = new List<NamedAction>();
+            localActions.Add(createNew);
+            localActions.Add(importFlowFreq);
 
             Actions = localActions;
 
@@ -58,34 +58,40 @@ namespace ViewModel.FrequencyRelationships
             AddElement(e.Element);
         }
 
-        private void ImportRatingCurvefromAscii(object arg1, EventArgs arg2)
+        private void ImportFlowFreqFromAscii(object arg1, EventArgs arg2)
         {
-            throw new NotImplementedException();
+            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+                 .WithSiblingRules(this);
+
+            //ImportStructuresFromFDA1VM vm = new ImportStructuresFromFDA1VM(actionManager);
+            //string header = "Import Structure Inventory";
+            //DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportStructureInventoryFromFDA1");
+            //Navigate(tab, false, false);
         }
 
         public void AddNewFlowFrequencyCurve(object arg1, EventArgs arg2)
         {
 
             //create save helper
-            Editors.SaveUndoRedoHelper saveHelper = new Editors.SaveUndoRedoHelper(Saving.PersistenceFactory.GetFlowFrequencyManager()
+            SaveUndoRedoHelper saveHelper = new SaveUndoRedoHelper(Saving.PersistenceFactory.GetFlowFrequencyManager()
                 , (editorVM) => CreateElementFromEditor(editorVM), (editor, element) => AssignValuesFromElementToEditor(editor, element),
                 (editor, element) => AssignValuesFromEditorToElement(editor, element));
             //create action manager
-            Editors.EditorActionManager actionManager = new Editors.EditorActionManager()
+            EditorActionManager actionManager = new EditorActionManager()
                 .WithSaveUndoRedo(saveHelper)
                .WithSiblingRules(this);
             //.WithParentGuid(this.GUID)
             //.WithCanOpenMultipleTimes(true);
             List<double> xValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
             List<double> yValues = new List<double>() { 1000, 10000, 15000, 17600, 19500, 28000, 30000, 50000, 74000, 105250, 128500, 158600 };
-            Functions.ICoordinatesFunction func = Functions.ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
+            ICoordinatesFunction func = ICoordinatesFunctionsFactory.Factory(xValues, yValues, InterpolationEnum.Linear);
             IFdaFunction defaultCurve = IFdaFunctionFactory.Factory( IParameterEnum.Rating, (IFunction)func);
             AnalyticalFrequencyEditorVM vm = new AnalyticalFrequencyEditorVM(defaultCurve, "Flow - Frequency", "Frequency", "Flow", actionManager);
             //LogPearsonIII curve = new Statistics.LogPearsonIII(4, .4, .5, 50);
             //Probabilities = 
 
-            //Editors.AnalyticalFrequencyCurveEditor vm = new AnalyticalFrequencyCurveEditor(new UncertainCurveIncreasing(UncertainCurveDataCollection.DistributionsEnum.LogPearsonIII), actionManager);
-            vm.Probabilities = new System.Collections.ObjectModel.ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };
+            //AnalyticalFrequencyCurveEditor vm = new AnalyticalFrequencyCurveEditor(new UncertainCurveIncreasing(UncertainCurveDataCollection.DistributionsEnum.LogPearsonIII), actionManager);
+            vm.Probabilities = new ObservableCollection<double>() { .99, .95, .9, .8, .7, .6, .5, .4, .3, .2, .1, .05, .01 };
             //StudyCache.AddSiblingRules(vm, this);
             //vm.AddSiblingRules(this);
             string header = "Import Frequency";
@@ -151,7 +157,7 @@ namespace ViewModel.FrequencyRelationships
            
         }
 
-        public  ChildElement CreateElementFromEditor(Editors.BaseEditorVM editorVM)
+        public  ChildElement CreateElementFromEditor(BaseEditorVM editorVM)
         {
             string editDate = DateTime.Now.ToString("G"); //will be formatted like: 2/27/2009 12:12:22 PM
             AnalyticalFrequencyEditorVM vm = (AnalyticalFrequencyEditorVM)editorVM;
