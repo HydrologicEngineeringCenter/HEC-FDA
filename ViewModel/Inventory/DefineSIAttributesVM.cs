@@ -18,6 +18,7 @@ namespace ViewModel.Inventory
         private string _Path;
         private bool _FirstFloorElevationIsSelected = true;
         private bool _FromTerrainFileIsSelected;
+        private List<float> _StructureElevations = new List<float>();
 
         //required rows
         private DefineSIAttributesRowItem _StructureIDRow = new DefineSIAttributesRowItem("Structure ID:");
@@ -237,17 +238,17 @@ namespace ViewModel.Inventory
             int badElevationNumber = -9999;
 
             StructureElevationsFromTerrainFile elevsFromTerrainHelper = new StructureElevationsFromTerrainFile(_Path);
-            float[] elevs = elevsFromTerrainHelper.GetStructureElevationsFromTerrainFile(ref errorMessage);
+            _StructureElevations = elevsFromTerrainHelper.GetStructureElevationsFromTerrainFile(ref errorMessage).ToList();
             if (errorMessage != null && errorMessage.Length > 0)
             {
                 MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK);
             }
-            if (elevs != null)
+            if (_StructureElevations != null)
             {
                 List<int> idsWithNoElevation = new List<int>();
-                for (int i = 0; i < elevs.Count(); i++)
+                for (int i = 0; i < _StructureElevations.Count(); i++)
                 {
-                    if (elevs[i] == badElevationNumber)
+                    if (_StructureElevations[i] == badElevationNumber)
                     {
                         idsWithNoElevation.Add(i);
                     }
@@ -489,9 +490,24 @@ namespace ViewModel.Inventory
             row[StructureInventoryBaseElement.damCatField] = selectedOcctype.OccType.DamageCategory.Name;
 
             //foundation and elevation
-            row[StructureInventoryBaseElement.FoundationHeightField] = GetValueForRow(dataTableView, i, _FoundationHeightRow);
-            row[StructureInventoryBaseElement.FirstFloorElevationField] = GetValueForRow(dataTableView, i, _FirstFloorElevRow);
-            row[StructureInventoryBaseElement.GroundElevationField] = GetValueForRow(dataTableView, i, _GroundElevRow);
+            if (FirstFloorElevationIsSelected)
+            {
+                row[StructureInventoryBaseElement.FirstFloorElevationField] = GetValueForRow(dataTableView, i, _FirstFloorElevRow);
+            }
+            else
+            {
+                row[StructureInventoryBaseElement.FoundationHeightField] = GetValueForRow(dataTableView, i, _FoundationHeightRow);
+                if (FromTerrainFileIsSelected)
+                {
+                    row[StructureInventoryBaseElement.GroundElevationField] = _StructureElevations[i];
+
+                }
+                else
+                {
+                    row[StructureInventoryBaseElement.GroundElevationField] = GetValueForRow(dataTableView, i, _GroundElevRow);
+                }
+
+            }
 
             //asset values
             row[StructureInventoryBaseElement.StructureValueField] = GetValueForRow(dataTableView, i, _StructureValueRow);
