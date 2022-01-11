@@ -55,7 +55,7 @@ namespace HEC.FDA.View.Output
 
         }
 
-        private void setUpHistogramPlotModel( int sampleSize, List<HistogramBinVM> bins)
+        private void setUpHistogramPlotModel( Int64 sampleSize, List<HistogramBinVM> bins)
         {
 
             HistogramPlotModel = new OxyPlot.PlotModel();
