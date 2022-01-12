@@ -205,7 +205,7 @@ namespace ead{
                 _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pd.Category);
             }
             _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total");
-            ReportMessage(this, new MessageEventArgs(new Base.Implementations.Message("Total EAD was " + totalEAD)));
+            ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
         }
         //TODO: Review access modifiers. I think most if not all of the performance methods should be private.
         public void ComputePerformance(IPairedData frequency_stage)
