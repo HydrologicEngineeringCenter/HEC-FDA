@@ -121,7 +121,7 @@ namespace ead{
                 }
                 if (i % progressChunks == 0)
                 {
-                    ReportProgress(this, new ProgressReportEventArgs((int)(i % progressChunks)));
+                    ReportProgress(this, new ProgressReportEventArgs((int)(i / progressChunks)));
                 }
                 
             }
