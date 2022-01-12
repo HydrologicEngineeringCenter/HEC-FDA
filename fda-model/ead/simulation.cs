@@ -69,7 +69,12 @@ namespace ead{
             {
                 _results.Thresholds.AddThreshold(ComputeDefaultThreshold());
             }
-            Int64 progressChunks = iterations / 100;
+            Int64 progressChunks = 1;
+            if (iterations > 100)
+            {
+                progressChunks = iterations / 100;
+            }
+            
             for (int i = 0; i < iterations; i ++){
                 if (_frequency_stage.IsNull)
                 {
