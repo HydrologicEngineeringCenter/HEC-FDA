@@ -5,8 +5,10 @@ using Statistics;
 using paireddata;
 using metrics;
 using System.Linq;
+using Base.Events;
+
 namespace ead{
-    public class Simulation {
+    public class Simulation: Base.Interfaces.IReportMessage, Base.Interfaces.IProgressReport {
         private const double THRESHOLD_DAMAGE_PERCENT = 0.05;
         private const double THRESHOLD_DAMAGE_RECURRENCE_INTERVAL = 0.01;
         private const int DEFAULT_THRESHOLD_ID = 0;
@@ -23,6 +25,9 @@ namespace ead{
         //are these things the same?
 
         private Results _results = new Results();
+
+        public event MessageReportedEventHandler MessageReport;
+        public event ProgressReportedEventHandler ProgressReport;
 
         public Thresholds PerformanceThresholds
         {
@@ -64,6 +69,12 @@ namespace ead{
             {
                 _results.Thresholds.AddThreshold(ComputeDefaultThreshold());
             }
+            Int64 progressChunks = 1;
+            if (iterations > 100)
+            {
+                progressChunks = iterations / 100;
+            }
+            
             for (int i = 0; i < iterations; i ++){
                 if (_frequency_stage.IsNull)
                 {
@@ -108,6 +119,11 @@ namespace ead{
                     IPairedData frequency_stage_sample = _frequency_stage.SamplePairedData(rp.NextRandom());
                     ComputeFromStageFrequency(rp, frequency_stage_sample);
                 }
+                if (i % progressChunks == 0)
+                {
+                    ReportProgress(this, new ProgressReportEventArgs((int)(i % progressChunks)));
+                }
+                
             }
             return _results;
         }
@@ -194,6 +210,7 @@ namespace ead{
                 _results.ExpectedAnnualDamageResults.AddEADEstimate(eadEstimate, pd.Category);
             }
             _results.ExpectedAnnualDamageResults.AddEADEstimate(totalEAD, "Total");
+            ReportMessage(this, new MessageEventArgs(new EADMessage(totalEAD)));
         }
         //TODO: Review access modifiers. I think most if not all of the performance methods should be private.
         public void ComputePerformance(IPairedData frequency_stage)
@@ -357,6 +374,17 @@ namespace ead{
         {
             return new SimulationBuilder(new Simulation());
         }
+
+        public void ReportMessage(object sender, MessageEventArgs e)
+        {
+            MessageReport?.Invoke(sender,e);
+        }
+
+        public void ReportProgress(object sender, ProgressReportEventArgs e)
+        {
+            ProgressReport?.Invoke(sender,e);
+        }
+
         public class SimulationBuilder
         {
             private Simulation _sim;
