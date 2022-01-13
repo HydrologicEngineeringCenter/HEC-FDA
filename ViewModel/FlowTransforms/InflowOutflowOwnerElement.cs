@@ -6,34 +6,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ViewModel.Editors;
 
 namespace ViewModel.FlowTransforms
 {
-    public class InflowOutflowOwnerElement : Utilities.ParentElement
+    public class InflowOutflowOwnerElement : ParentElement
     {
         #region Notes
         #endregion
         #region Fields
         #endregion
         #region Properties
-        //public override string GetTableConstant()
-        //{
-        //    return TableName;
-        //}
+
         #endregion
         #region Constructors
         public InflowOutflowOwnerElement( ) : base()
         {
             Name = "Inflow Outflow Relationships";
             IsBold = false;
-            CustomTreeViewHeader = new Utilities.CustomHeaderVM(Name);
+            CustomTreeViewHeader = new CustomHeaderVM(Name);
 
-            Utilities.NamedAction addInflowOutflow = new Utilities.NamedAction();
-            addInflowOutflow.Header = "Create New Inflow Outflow Relationship";
+            NamedAction addInflowOutflow = new NamedAction();
+            addInflowOutflow.Header = "Create New Inflow Outflow Relationship...";
             addInflowOutflow.Action = AddInflowOutflow;
 
-            List<Utilities.NamedAction> localActions = new List<Utilities.NamedAction>();
+            NamedAction importInflowOutflow = new NamedAction();
+            importInflowOutflow.Header = "Import Inflow Outflow From FDA 1.0...";
+            importInflowOutflow.Action = ImportInflowOutflow;
+
+            List<NamedAction> localActions = new List<NamedAction>();
             localActions.Add(addInflowOutflow);
+            localActions.Add(importInflowOutflow);
 
             Actions = localActions;
 
@@ -60,6 +63,17 @@ namespace ViewModel.FlowTransforms
         private void ImportFromASCII(object arg1, EventArgs arg2)
         {
             throw new NotImplementedException();
+        }
+
+        public void ImportInflowOutflow(object arg1, EventArgs arg2)
+        {
+            EditorActionManager actionManager = new EditorActionManager()
+                .WithSiblingRules(this);
+
+            ImportFromFDA1VM vm = new ImportRatingsFromFDA1VM(actionManager);
+            string header = "Import Rating Curve";
+            DynamicTabVM tab = new DynamicTabVM(header, vm, "ImportRatingCurve");
+            Navigate(tab, false, true);
         }
 
         public void AddInflowOutflow(object arg1, EventArgs arg2)
