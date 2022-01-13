@@ -1,5 +1,4 @@
-﻿
-
+﻿using System.Windows;
 namespace View.Windows
 {
     /// <summary>
@@ -11,6 +10,7 @@ namespace View.Windows
         {
             DataContext = bvm;
             InitializeComponent();
+            SizeToContent = SizeToContent.WidthAndHeight;
         }
     }
 }
